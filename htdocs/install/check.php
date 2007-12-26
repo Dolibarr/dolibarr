@@ -261,6 +261,23 @@ else
 
 	    # Upgrade
  	    $versionfrom='2.0.0';
+	    $versionto='2.1.0';
+	    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$versionfrom.' -> '.$versionto.'</b></td><td>';
+	    print $langs->trans("UpgradeDesc").'</td>';
+	    print '<td align="center">';
+	    if ($allowupgrade)
+	    {
+	        print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
+	    }
+	    else
+	    {
+	        print $langs->trans("NotAvailable");   
+	    }
+	    print '</td>';
+	    print '</tr>'."\n";
+	   
+	    # Upgrade
+ 	    $versionfrom='2.1.0';
 	    $versionto='2.2.0';
 	    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$versionfrom.' -> '.$versionto.'</b></td><td>';
 	    print $langs->trans("UpgradeDesc").'</td>';
@@ -277,8 +294,8 @@ else
 	    print '</tr>'."\n";
 	   
             # Upgrade
-            $versionfrom='2.1.0';
-            $versionto='2.2.0';
+            $versionfrom='2.2.0';
+            $versionto='2.4.0';
             print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$versionfrom.' -> '.$versionto.'</b></td><td>';
             print $langs->trans("UpgradeDesc").'</td>';
             print '<td align="center">';
