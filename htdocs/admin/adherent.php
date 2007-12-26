@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			  <benoit.mortier@opensides.be>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -52,7 +51,7 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 	}
 }
 
-// Action activation d'un sous module du module adhérent
+// Action activation d'un sous module du module adherent
 if ($_GET["action"] == 'set')
 {
 	$result=dolibarr_set_const($db, $_GET["name"],$_GET["value"]);
@@ -62,7 +61,7 @@ if ($_GET["action"] == 'set')
 	}
 }
 
-// Action désactivation d'un sous module du module adhérent
+// Action desactivation d'un sous module du module adherent
 if ($_GET["action"] == 'unset')
 {
 	$result=dolibarr_del_const($db,$_GET["name"]);
@@ -152,13 +151,13 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 			    'ADHERENT_MAILMAN_UNSUB_URL',
 			    'ADHERENT_MAILMAN_URL'
 			    );
-	  print_fiche_titre("Mailman - Système de mailing listes",$lien);
+	  print_fiche_titre("Mailman - Systeme de mailing listes",$lien);
 	  form_constantes($constantes);
 	}
 	else
 	{
 	  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
-	  print_fiche_titre("Mailman - Système de mailing listes",$lien);
+	  print_fiche_titre("Mailman - Systeme de mailing listes",$lien);
 	}
 
 	print "<hr>\n";
@@ -181,41 +180,13 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 			    'ADHERENT_SPIP_USER',
 			    'ADHERENT_SPIP_PASS'
 			    );
-	  print_fiche_titre("SPIP - Système de publication en ligne",$lien);
+	  print_fiche_titre("SPIP - Systeme de publication en ligne",$lien);
 	  form_constantes($constantes);
 	}
 	else
 	{
 	  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
-	  print_fiche_titre("SPIP - Système de publication en ligne",$lien);
-	}
-
-	print "<hr>\n";
-}
-
-/*
- * Glasnost
- */
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
-{
-	$var=!$var;
-	if ($conf->global->ADHERENT_USE_GLASNOST)
-	{
-	  $lien=img_tick().' ';
-	  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_GLASNOST">'.$langs->trans("Disable").'</a>';
-	  // Edition des varibales globales rattache au theme Mailman 
-	  $constantes=array('ADHERENT_USE_GLASNOST_AUTO',
-			    'ADHERENT_GLASNOST_SERVEUR',
-			    'ADHERENT_GLASNOST_USER',
-			    'ADHERENT_GLASNOST_PASS'
-			    );
-	  print_fiche_titre("Glasnost - Système de vote en ligne",$lien);
-	  form_constantes($constantes);
-	}
-	else
-	{
-	  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_GLASNOST">'.$langs->trans("Activate").'</a>';
-	  print_fiche_titre("Glasnost - Système de vote en ligne",$lien);
+	  print_fiche_titre("SPIP - Systeme de publication en ligne",$lien);
 	}
 
 	print "<hr>\n";

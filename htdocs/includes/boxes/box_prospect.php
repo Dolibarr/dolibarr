@@ -23,7 +23,7 @@
 /**
     \file       htdocs/includes/boxes/box_prospect.php
     \ingroup    commercial
-    \brief      Module de génération de l'affichage de la box prospect
+    \brief      Module de gï¿½nï¿½ration de l'affichage de la box prospect
 */
 
 
@@ -56,8 +56,8 @@ class box_prospect extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les données en mémoire pour affichage ultérieur
-     *      \param      $max        Nombre maximum d'enregistrements à charger
+     *      \brief      Charge les donnï¿½es en mï¿½moire pour affichage ultï¿½rieur
+     *      \param      $max        Nombre maximum d'enregistrements ï¿½ charger
      */
     function loadBox($max=5)
     {
@@ -117,10 +117,10 @@ class box_prospect extends ModeleBoxes {
                         $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
                     } else {
-                        $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
+                        //$this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
+                        //$this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                        //$this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                        //$this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
                     }
                     $i++;
                 }

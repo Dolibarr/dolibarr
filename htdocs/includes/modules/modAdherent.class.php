@@ -24,7 +24,7 @@
 
 /**
         \defgroup   adherent     Module adherents
-        \brief      Module pour gérer les adhérents d'une association
+        \brief      Module pour gï¿½rer les adhï¿½rents d'une association
 */
 
 /**
@@ -45,7 +45,7 @@ class modAdherent extends DolibarrModules
 
     /**
      *   \brief      Constructeur. Definit les noms, constantes et boites
-     *   \param      DB      handler d'accès base
+     *   \param      DB      handler d'accï¿½s base
      */
     function modAdherent($DB)
     {
@@ -54,8 +54,8 @@ class modAdherent extends DolibarrModules
         $this->numero = 310 ;
     
         $this->family = "hr";
-        $this->name = "Adhérents";
-        $this->description = "Gestion des adhérents d'une association";
+        $this->name = "Adherents";
+        $this->description = "Gestion des adherents d'une association";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_ADHERENT';
         $this->special = 2;
@@ -69,7 +69,7 @@ class modAdherent extends DolibarrModules
         //-------------
         $this->config_page_url = array("adherent.php");
     
-        // Dépendances
+        // Dependances
         //------------
         $this->depends = array();
         $this->requiredby = array();
@@ -78,18 +78,14 @@ class modAdherent extends DolibarrModules
         // Constantes
         //-----------
         $this->const = array();
-        $this->const[0]= array("ADHERENT_MAIL_RESIL","texte","Votre adhesion vient d'etre resiliee.\r\nNous esperons vous revoir tres bientot","Mail de résiliation");
-        $this->const[1]=array("ADHERENT_MAIL_VALID","texte","Votre adhesion vient d'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante : \r\n%DOL_MAIN_URL_ROOT%/public/adherents/","Mail de validation");
-        $this->const[3] = array("ADHERENT_MAIL_RESIL","texte","Votre adhesion vient d'etre resilie.\r\nNous esperons vous revoir tres bientot","Mail de résiliation");
-        $this->const[5] = array("ADHERENT_MAIL_VALID_SUBJECT","chaine","Votre adhesion a ete validee","Sujet du mail de validation");
-        $this->const[6] = array("ADHERENT_MAIL_RESIL_SUBJECT","chaine","Resiliation de votre adhesion","Sujet du mail de resiliation");
-        $this->const[9] = array("ADHERENT_GLASNOST_SERVEUR","chaine","","serveur glasnost");
+        $this->const[0]  = array("ADHERENT_MAIL_RESIL","texte","Votre adhesion vient d'etre resiliee.\r\nNous esperons vous revoir tres bientot","Mail de resiliation");
+        $this->const[1]  = array("ADHERENT_MAIL_VALID","texte","Votre adhesion vient d'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante : \r\n%DOL_MAIN_URL_ROOT%/public/adherents/","Mail de validation");
+        $this->const[3]  = array("ADHERENT_MAIL_RESIL","texte","Votre adhesion vient d'etre resilie.\r\nNous esperons vous revoir tres bientot","Mail de resiliation");
+        $this->const[5]  = array("ADHERENT_MAIL_VALID_SUBJECT","chaine","Votre adhesion a ete validee","Sujet du mail de validation");
+        $this->const[6]  = array("ADHERENT_MAIL_RESIL_SUBJECT","chaine","Resiliation de votre adhesion","Sujet du mail de resiliation");
         $this->const[10] = array("ADHERENT_MAILMAN_UNSUB_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&user=%EMAIL%","Url de desinscription aux listes mailman");
         $this->const[11] = array("ADHERENT_MAILMAN_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%","Url pour les inscriptions mailman");
-        $this->const[12] = array("ADHERENT_MAILMAN_LISTS","chaine","","Listes auxquelles les nouveaux adhérents sont inscris");
-        $this->const[13] = array("ADHERENT_GLASNOST_USER","chaine","","Administrateur glasnost");
-        $this->const[14] = array("ADHERENT_GLASNOST_PASS","chaine","","password de l'administrateur");
-        $this->const[15] = array("ADHERENT_USE_GLASNOST_AUTO","yesno","","inscription automatique a glasnost ?");
+        $this->const[12] = array("ADHERENT_MAILMAN_LISTS","chaine","","Listes auxquelles les nouveaux adherents sont inscris");
         $this->const[16] = array("ADHERENT_USE_SPIP_AUTO","yesno","","Utilisation de SPIP automatiquement");
         $this->const[17] = array("ADHERENT_SPIP_USER","chaine","","Utilisateur de connexion a la base spip");
         $this->const[18] = array("ADHERENT_SPIP_PASS","chaine","","Mot de passe de connexion a la base spip");
@@ -100,7 +96,7 @@ class modAdherent extends DolibarrModules
         $this->const[23] = array("ADHERENT_MAIL_COTIS_SUBJECT","chaine","Recu de votre cotisation","Sujet du mail de validation de cotisation");
         $this->const[25] = array("ADHERENT_CARD_HEADER_TEXT","chaine","%ANNEE%","Texte imprime sur le haut de la carte adherent");
         $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","Association AZERTY","Texte imprime sur le bas de la carte adherent");
-        $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%PRENOM% %NOM%\r\nMembre n° %ID%\r\n%EMAIL%\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%","Texte imprime sur la carte adherent");
+        $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%PRENOM% %NOM%\r\nMembre ne %ID%\r\n%EMAIL%\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%","Texte imprime sur la carte adherent");
         $this->const[28] = array("ADHERENT_MAILMAN_ADMINPW","chaine","","Mot de passe Admin des liste mailman");
         $this->const[29] = array("ADHERENT_MAILMAN_SERVER","chaine","","Serveur hebergeant les interfaces d'Admin des listes mailman");
         $this->const[30] = array("ADHERENT_MAILMAN_LISTS_COTISANT","chaine","","Liste(s) auxquelles les nouveaux cotisants sont inscris automatiquement");
@@ -120,8 +116,8 @@ class modAdherent extends DolibarrModules
         $r=0;
 
         // $this->rights[$r][0]     Id permission (unique tous modules confondus)
-        // $this->rights[$r][1]     Libellé par défaut si traduction de clé "PermissionXXX" non trouvée (XXX = Id permission)
-        // $this->rights[$r][2]     Non utilisé
+        // $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
+        // $this->rights[$r][2]     Non utilise
         // $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
         // $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
         // $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
@@ -135,7 +131,7 @@ class modAdherent extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 72;
-        $this->rights[$r][1] = 'Créer/modifier les adherents';
+        $this->rights[$r][1] = 'Creer/modifier les adherents';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'creer';
@@ -149,7 +145,7 @@ class modAdherent extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 76;
-        $this->rights[$r][1] = 'Exporter les adhérents';
+        $this->rights[$r][1] = 'Exporter les adherents';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'export';
@@ -171,7 +167,7 @@ class modAdherent extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 79;
-        $this->rights[$r][1] = 'Créer/modifier/supprimer les cotisations';
+        $this->rights[$r][1] = 'Creer/modifier/supprimer les cotisations';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'cotisation';
@@ -182,19 +178,19 @@ class modAdherent extends DolibarrModules
         $r=0;
 
         // $this->export_code[$r]          Code unique identifiant l'export (tous modules confondus)
-        // $this->export_label[$r]         Libellé par défaut si traduction de clé "ExportXXX" non trouvée (XXX = Code)
+        // $this->export_label[$r]         Libelle par defaut si traduction de cle "ExportXXX" non trouvee (XXX = Code)
         // $this->export_fields_sql[$r]    Liste des champs exportables en codif sql
         // $this->export_fields_name[$r]   Liste des champs exportables en codif traduction
-        // $this->export_sql[$r]           Requete sql qui offre les données à l'export
+        // $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
         // $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
 
         $r++;
         $this->export_code[$r]=$this->id.'_'.$r;
-        $this->export_label[$r]='Adhérents et adhésions';
+        $this->export_label[$r]='Adherents et adhesions';
         $this->export_fields_array[$r]=array('a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'MorPhy','a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.naiss'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note'=>"Note",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel','c.dateadh'=>'DateSubscription','c.cotisation'=>'Amount');
 		$this->export_entities_array[$r]=array('a.nom'=>"member",'a.prenom'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.adresse'=>"member",'a.cp'=>"member",'a.ville'=>"member",'a.pays'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.naiss'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.dateadh'=>'subscription','c.cotisation'=>'subscription');
         $this->export_alias_array[$r]=array('a.nom'=>"lastname",'a.prenom'=>"firstname",'a.login'=>"login",'a.morphy'=>'morphy','a.adresse'=>"address",'a.cp'=>"zip",'a.ville'=>"town",'a.pays'=>"country",'a.phone'=>"phone",'a.phone_perso'=>"phone_perso",'a.phone_mobile'=>"phone_mobile",'a.email'=>"email",'a.naiss'=>"birthday",'a.statut'=>"status",'a.photo'=>'photo','a.note'=>'note','a.datec'=>'datec','a.datevalid'=>'datevalid','a.tms'=>'datem','a.datefin'=>'dateend','ta.rowid'=>'type_id','ta.libelle'=>'type_label','c.dateadh'=>'date_subscription','c.cotisation'=>'amount_subscription');
-		// On complète avec champs options
+		// On complete avec champs options
 		$sql='SELECT name, label FROM '.MAIN_DB_PREFIX.'adherent_options_label'; 
 		$resql=$this->db->query($sql);
 		while ($obj=$this->db->fetch_object($resql))
@@ -223,8 +219,8 @@ class modAdherent extends DolibarrModules
 
     
     /**
-     *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-     *               Définit également les répertoires de données à créer pour ce module.
+     *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+     *               Definit egalement les repertoires de donnees a creer pour ce module.
      */
     function init()
     {
@@ -244,7 +240,7 @@ class modAdherent extends DolibarrModules
     }
     
     /**
-     *    \brief      Fonction appelée lors de la désactivation d'un module.
+     *    \brief      Fonction appelee lors de la desactivation d'un module.
      *                Supprime de la base les constantes, boites et permissions du module.
      */
     function remove()

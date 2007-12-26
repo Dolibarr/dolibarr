@@ -21,13 +21,13 @@
 
 /**
    \defgroup   telephonie  Module telephonie
-   \brief      Module pour gérer la téléphonie
+   \brief      Module pour gï¿½rer la tï¿½lï¿½phonie
 */
 
 /**
    \file       htdocs/includes/modules/modTelephonie.class.php
    \ingroup    telephonie
-   \brief      Fichier de description et activation du module de Téléphonie
+   \brief      Fichier de description et activation du module de Telephonie
 */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -43,7 +43,7 @@ class modTelephonie extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'acces base
     */
   function modTelephonie($DB)
   {
@@ -59,14 +59,13 @@ class modTelephonie extends DolibarrModules
     $this->version = $this->revision[1];
 
     $this->const_name = "MAIN_MODULE_TELEPHONIE";
-    $this->const_config = MAIN_MODULE_TELEPHONIE;
     $this->special = 2;
     $this->picto='phoning';
 
     // Dir
     $this->dirs = array();
 
-    // Dépendances
+    // Dependances
     $this->depends = array();
     $this->requiredby = array();
 
@@ -82,14 +81,14 @@ class modTelephonie extends DolibarrModules
 
     $this->rights[1][0] = 211; // id de la permission
     $this->rights[1][1] = 'Consulter la telephonie'; // libelle de la permission
-    $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
+    $this->rights[1][3] = 1; // La permission est-elle une permission par defaut
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 212; // id de la permission
     $this->rights[2][1] = 'Commander les lignes'; // libelle de la permission
-    $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
+    $this->rights[2][3] = 0; // La permission est-elle une permission par defaut
     $this->rights[2][4] = 'ligne_commander';
 
     $this->rights[3][0] = 213;
@@ -112,14 +111,14 @@ class modTelephonie extends DolibarrModules
     $this->rights[5][5] = 'config';
 
     $this->rights[6][0] = 192;
-    $this->rights[6][1] = 'Créer des lignes';
+    $this->rights[6][1] = 'Creer des lignes';
     $this->rights[6][2] = 'w';
     $this->rights[6][3] = 0;
     $this->rights[6][4] = 'ligne';
     $this->rights[6][5] = 'creer';
 
     $this->rights[7][0] = 202;
-    $this->rights[7][1] = 'Créer des liaisons ADSL';
+    $this->rights[7][1] = 'Creer des liaisons ADSL';
     $this->rights[7][2] = 'w';
     $this->rights[7][3] = 0;
     $this->rights[7][4] = 'adsl';
@@ -140,7 +139,7 @@ class modTelephonie extends DolibarrModules
     $this->rights[9][5] = 'commander';
 
     $this->rights[10][0] = 205;
-    $this->rights[10][1] = 'Gérer les liaisons';
+    $this->rights[10][1] = 'Gerer les liaisons';
     $this->rights[10][2] = 'w';
     $this->rights[10][3] = 0;
     $this->rights[10][4] = 'adsl';
@@ -183,7 +182,7 @@ class modTelephonie extends DolibarrModules
     $r++;
 
     $this->rights[$r][0] = 231;
-    $this->rights[$r][1] = 'Définir le mode de réglement';
+    $this->rights[$r][1] = 'Definir le mode de reglement';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'contrat';
@@ -191,7 +190,7 @@ class modTelephonie extends DolibarrModules
     $r++;
 
     $this->rights[$r][0] = 193;
-    $this->rights[$r][1] = 'Résilier des lignes';
+    $this->rights[$r][1] = 'Resilier des lignes';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'ligne';
@@ -231,7 +230,7 @@ class modTelephonie extends DolibarrModules
     $r++;
 
     $this->rights[$r][0] = 312;
-    $this->rights[$r][1] = 'Affecter des services à un contrat';
+    $this->rights[$r][1] = 'Affecter des services a un contrat';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'service';
@@ -264,8 +263,8 @@ class modTelephonie extends DolibarrModules
   }
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+    *               Definit egalement les repertoires de donnees a creer pour ce module.
     */
   function init()
   {
@@ -293,7 +292,7 @@ class modTelephonie extends DolibarrModules
   }
 
   /**
-    \brief      Fonction appelée lors de la désactivation d'un module.
+    \brief      Fonction appelee lors de la desactivation d'un module.
     Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
@@ -342,7 +341,7 @@ class modTelephonie extends DolibarrModules
 		  fclose($fp);
                 }
 	      
-	      //print "<tr><td>Création de la table $name/td>";
+	      //print "<tr><td>Creation de la table $name/td>";
 	      $requestnb++;
 	      if (@$this->db->query($buffer))
                 {
@@ -352,7 +351,7 @@ class modTelephonie extends DolibarrModules
                 {
 		  if ($this->db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS')
                     {
-		      //print "<td>Déjà existante</td></tr>";
+		      //print "<td>Deje existante</td></tr>";
 		      $table_exists = 1;
                     }
 		  else
@@ -375,7 +374,7 @@ class modTelephonie extends DolibarrModules
     /***************************************************************************************
     *
     * Chargement fichiers tables/*.key.sql
-    * A faire après les fichiers *.sql
+    * A faire apres les fichiers *.sql
     *
     ***************************************************************************************/
     if ($ok)
@@ -407,7 +406,7 @@ class modTelephonie extends DolibarrModules
 			      {
                             	// Version qualified, delete SQL comments
                                 $buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
-                                //print "Ligne $i qualifiée par version: ".$buf.'<br>';
+                                //print "Ligne $i qualifiee par version: ".$buf.'<br>';
 			      }                      
 			  }
 			

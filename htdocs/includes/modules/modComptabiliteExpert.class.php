@@ -22,7 +22,7 @@
  */
 
 /**     \defgroup   comptabilite_expert     Module comptabilite expert
-        \brief      Module pour inclure des fonctions de comptabilité (gestion de comptes comptables et rapports)
+        \brief      Module pour inclure des fonctions de comptabilitï¿½ (gestion de comptes comptables et rapports)
 */
 
 /**
@@ -44,7 +44,7 @@ class modComptabiliteExpert extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'acces base
     */
   function modComptabiliteExpert($DB)
   {
@@ -56,19 +56,19 @@ class modComptabiliteExpert extends DolibarrModules
     
     $this->family = "financial";
     $this->name = "ComptabiliteExpert";
-    $this->description = "Gestion expert de comptabilité (doubles parties)";
+    $this->description = "Gestion expert de comptabilite (doubles parties)";
 
 //    $this->revision = explode(' ','$Revision$');
 //    $this->version = $this->revision[1];
     $this->version = "development";
 
-    $this->const_name = 'MAIN_MODULE_COMPTABILITE_EXPERT';
+    $this->const_name = 'MAIN_MODULE_COMPTABILITEEXPERT';
     $this->special = 0;
         
     // Config pages
     $this->config_page_url = array("comptaexpert.php");
 
-    // Dépendances
+    // Dependances
     $this->depends = array("modFacture","modBanque");
     $this->requiredby = array();
     $this->conflictwith = array("modComptabilite");
@@ -77,7 +77,7 @@ class modComptabiliteExpert extends DolibarrModules
     // Constantes
     $this->const = array();
 
-    // Répertoires
+    // Repertoires
     $this->dirs = array();
     $this->dirs[0] = $conf->comptaexpert->dir_output;
     $this->dirs[1] = $conf->comptaexpert->dir_output."/rapport";
@@ -99,7 +99,7 @@ class modComptabiliteExpert extends DolibarrModules
     $this->rights[1][5] = 'lire';
 
     $this->rights[2][0] = 132;
-    $this->rights[2][1] = 'Créer/modifier un plan de compte';
+    $this->rights[2][1] = 'Creer/modifier un plan de compte';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'plancompte';
@@ -120,14 +120,14 @@ class modComptabiliteExpert extends DolibarrModules
     $this->rights[4][5] = 'lire';
 
     $this->rights[5][0] = 142;
-    $this->rights[5][1] = 'Créer/modifier/annuler les mouvements comptables';
+    $this->rights[5][1] = 'Creer/modifier/annuler les mouvements comptables';
     $this->rights[5][2] = 'w';
     $this->rights[5][3] = 0;
     $this->rights[5][4] = 'mouvements';
     $this->rights[5][5] = 'creer';
 
     $this->rights[6][0] = 145;
-    $this->rights[6][1] = 'Lire CA, bilans, résultats, journaux, grands livres';
+    $this->rights[6][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
     $this->rights[6][2] = 'r';
     $this->rights[6][3] = 0;
     $this->rights[6][4] = 'comptarapport';
@@ -137,8 +137,8 @@ class modComptabiliteExpert extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+    *               Definit egalement les repertoires de donnees e creer pour ce module.
     */
   function init()
   {
@@ -151,7 +151,7 @@ class modComptabiliteExpert extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelee lors de la desactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

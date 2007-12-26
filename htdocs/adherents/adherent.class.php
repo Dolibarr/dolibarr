@@ -25,7 +25,7 @@
 /**
 	    \file       htdocs/adherents/adherent.class.php
         \ingroup    adherent
-		\brief      Fichier de la classe permettant la gestion d'un adhérent
+		\brief      Fichier de la classe permettant la gestion d'un adherent
 		\author     Rodolphe Qiedeville
 		\author	    Jean-Louis Bergamo
 		\author	    Laurent Destailleur
@@ -40,7 +40,7 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 
 /**
         \class      Adherent
-		\brief      Classe permettant la gestion d'un adhérent
+		\brief      Classe permettant la gestion d'un adherent
 */
 
 class Adherent extends CommonObject
@@ -74,7 +74,7 @@ class Adherent extends CommonObject
 	var $morphy;
 	var $public;
 	var $commentaire;		// Note
-	var $statut;			// -1:brouillon, 0:résilié, >=1:validé,payé
+	var $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
 	var $photo;
 
 	var $datec;
@@ -84,7 +84,7 @@ class Adherent extends CommonObject
 	var $naiss;
 
 	var $typeid;			// Id type adherent
-	var $type;				// Libellé type adherent
+	var $type;				// Libelle type adherent
 	var $need_subscription;
 
 	var $user_id;
@@ -103,8 +103,8 @@ class Adherent extends CommonObject
 
 	/**
 			\brief Adherent
-			\param DB		base de données
-			\param id		id de l'adhérent
+			\param DB		base de donnees
+			\param id		id de l'adherent
 	*/
 	function Adherent($DB)
 	{
@@ -121,12 +121,12 @@ class Adherent extends CommonObject
 		\brief	    Fonction envoyant un email a l'adherent avec le texte fourni en parametre.
 		\param	    text				contenu du message
 		\param	    subject				sujet du message
-		\param 		filename_list       tableau de fichiers attachés
-		\param 		mimetype_list       tableau des types des fichiers attachés
-		\param 		mimefilename_list   tableau des noms des fichiers attachés
+		\param 		filename_list       tableau de fichiers attaches
+		\param 		mimetype_list       tableau des types des fichiers attaches
+		\param 		mimefilename_list   tableau des noms des fichiers attaches
 		\param 		addr_cc             email cc
 		\param 		addr_bcc            email bcc
-		\param 		deliveryreceipt		demande accusé réception
+		\param 		deliveryreceipt		demande accuse reception
 		\param		msgishtml			1=message is a html message, 0=message is not html, 2=auto detect
 		\return		int					<0 si ko, >0 si ok
 		\remarks		La particularite de cette fonction est de remplacer certains champs
@@ -239,7 +239,7 @@ class Adherent extends CommonObject
 
 /**
 		\brief      Renvoie le libelle traduit de la nature d'un adherent (physique ou morale)
-		\param	    morphy		Nature physique ou morale de l'adhérent
+		\param	    morphy		Nature physique ou morale de l'adherent
 */
 
   function getmorphylib($morphy='')
@@ -252,7 +252,7 @@ class Adherent extends CommonObject
   }
 
 /**
-		\brief      Vérifie les données entrées
+		\brief      Verifie les donnees entrees
 		\param	    minimum
 */
 
@@ -264,7 +264,7 @@ class Adherent extends CommonObject
 	{
 	  if ((strlen(trim($this->nom)) + strlen(trim($this->prenom))) == 0)
 	    {
-	      $error_string[$err] = "Vous devez saisir vos nom et prénom ou le nom de votre société.";
+	      $error_string[$err] = "Vous devez saisir vos nom et prenom ou le nom de votre societe.";
 	      $err++;
 	    }
 	}
@@ -311,7 +311,7 @@ class Adherent extends CommonObject
 	{
 	  if (!isset($map[substr($this->amount, $i, 1)] ))
 	    {
-	      $error_string[$err] = "Le montant du don contient un/des caractère(s) invalide(s)";
+	      $error_string[$err] = "Le montant du don contient un/des caractere(s) invalide(s)";
 	      $err++;
 	      $amount_invalid = 1;
 	      break;
@@ -352,7 +352,7 @@ class Adherent extends CommonObject
     }
 
 	/**
-		\brief  	Fonction qui crée l'adhérent
+		\brief  	Fonction qui cree l'adherent
 		\param      user        	Objet user qui demande la creation
 		\param      notrigger		1 ne declenche pas les triggers, 0 sinon
 		\return		int				<0 si ko, >0 si ok
@@ -436,9 +436,9 @@ class Adherent extends CommonObject
 
 
 	/**
-			\brief 		Fonction qui met à jour le commentaire d'un adhérent
+			\brief 		Fonction qui met e jour le commentaire d'un adherent
 			\param		note			Note
-			\param		user			Utilisateur qui réalise la mise a jour
+			\param		user			Utilisateur qui realise la mise a jour
 			\return		int				<0 si KO, >0 si OK
 	*/
 	function update_note($note,$user)
@@ -465,9 +465,9 @@ class Adherent extends CommonObject
 	}
 
 	/**
-			\brief 		Fonction qui met à jour l'adhérent (sauf mot de passe)
-			\param		user			Utilisateur qui réalise la mise a jour
-			\param		notrigger		1=désactive le trigger UPDATE (quand appelé par creation)
+			\brief 		Fonction qui met e jour l'adherent (sauf mot de passe)
+			\param		user			Utilisateur qui realise la mise a jour
+			\param		notrigger		1=desactive le trigger UPDATE (quand appele par creation)
 			\param		nosyncuser		Do not synchronize linked user
 			\return		int				<0 si KO, >0 si OK
 	*/
@@ -509,8 +509,8 @@ class Adherent extends CommonObject
 		$sql.= ",fk_adherent_type=".$this->typeid;
 		$sql.= ",morphy="  ."'".$this->morphy."'";
 		$sql.= ",naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
-		if ($this->datefin)   $sql.= ",datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifié que par effacement cotisation
-		if ($this->datevalid) $sql.= ",datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifié que par validation adherent
+		if ($this->datefin)   $sql.= ",datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifie que par effacement cotisation
+		if ($this->datevalid) $sql.= ",datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifie que par validation adherent
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dolibarr_syslog("Adherent::update sql=".$sql);
@@ -559,7 +559,7 @@ class Adherent extends CommonObject
 	        {
 	        	if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 	       		{
-	       			// Si mot de passe saisi et différent de celui en base
+	       			// Si mot de passe saisi et different de celui en base
 	       			$result=$this->password($user,$this->pass,0,$notrigger);
 	       			
 	       			if (! $nbrowsaffected) $nbrowsaffected++;
@@ -647,7 +647,7 @@ class Adherent extends CommonObject
 
 
 	/**
-			\brief 		Fonction qui supprime l'adhérent et les données associées
+			\brief 		Fonction qui supprime l'adherent et les donnees associees
 			\param		rowid		Id de l'adherent a effacer
 			\return		int			<0 si KO, 0=rien a effacer, >0 si OK
 	*/
@@ -725,8 +725,8 @@ class Adherent extends CommonObject
 		/**
 	 *    \brief     Change le mot de passe d'un utilisateur
 	 *    \param     user             Object user de l'utilisateur qui fait la modification
-	 *    \param     password         Nouveau mot de passe (à générer si non communiqué)
-	 *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
+	 *    \param     password         Nouveau mot de passe (e generer si non communique)
+	 *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par defaut)
 	 *	  \param	 notrigger		  1=Ne declenche pas les triggers
 	 *    \param	 nosyncuser		  Do not synchronize linked user
 	 *    \return    string           If OK return clear password, 0 if no change, < 0 if error
@@ -739,10 +739,10 @@ class Adherent extends CommonObject
 
         dolibarr_syslog("Adherent::Password user=".$user->id." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted);
 
-        // Si nouveau mot de passe non communiqué, on génère par module
+        // Si nouveau mot de passe non communique, on genere par module
         if (! $password)
         {
-        	// TODO Mettre appel au module de génération de mot de passe
+        	// TODO Mettre appel au module de generation de mot de passe
         	$password=creer_pass_aleatoire_1('');
         	//$password=creer_pass_aleatoire_2('');
         }
@@ -828,8 +828,8 @@ class Adherent extends CommonObject
 	
 	
 	/**
-	*		\brief      Fonction qui récupére l'adhérent depuis son login
-	*		\param	    login		login de l'adhérent
+	*		\brief      Fonction qui recupere l'adherent depuis son login
+	*		\param	    login		login de l'adherent
 	*/
 	function fetch_login($login)
 	{
@@ -853,7 +853,7 @@ class Adherent extends CommonObject
 
 
     /**
-    		\brief 		Fonction qui récupére l'adhérent en donnant son rowid
+    		\brief 		Fonction qui recupere l'adherent en donnant son rowid
     		\param		rowid
     		\return		int			<0 si KO, >0 si OK
     */
@@ -928,7 +928,7 @@ class Adherent extends CommonObject
                 $this->user_id        = $obj->user_id;
                 $this->user_login     = $obj->user_login;
 				
-				// Charge autres propriétés
+				// Charge autres proprietes
 				$result=$this->fetch_subscriptions();
 
 				return $result;
@@ -947,7 +947,7 @@ class Adherent extends CommonObject
 
 
     /**
-    		\brief 		Fonction qui récupére pour un adhérent les paramètres
+    		\brief 		Fonction qui recupere pour un adherent les parametres
 						firstsubscription_date
 						fistrsubscription_amount
 						lastsubscription_date
@@ -996,7 +996,7 @@ class Adherent extends CommonObject
 	
 	
 	/**
-		\brief      Fonction qui récupére les données optionelles de l'adhérent
+		\brief      Fonction qui recupere les donnees optionelles de l'adherent
 		\param	    rowid
 	*/
 	function fetch_optionals($rowid)
@@ -1070,18 +1070,18 @@ class Adherent extends CommonObject
   }
 
     /**
-    		\brief      Fonction qui insère la cotisation dans la base de données
+    		\brief      Fonction qui insere la cotisation dans la base de donnees
     					et eventuellement liens dans banques, mailman, etc...
     		\param	    date        	Date d'effet de la cotisation
-    		\param	    montant     	Montant cotisation (accepte 0 pour les adhérents non soumis à cotisation)
+    		\param	    montant     	Montant cotisation (accepte 0 pour les adherents non soumis e cotisation)
     		\param		account_id		Id compte bancaire
     		\param		operation		Type operation (si Id compte bancaire fourni)
     		\param		label			Label operation (si Id compte bancaire fourni)
     		\param		num_chq			Numero cheque (si Id compte bancaire fourni)
-    		\param		emetteur_nom	Nom emetteur chèque
-    		\param		emetteur_banque	Nom banque emetteur chèque
+    		\param		emetteur_nom	Nom emetteur cheque
+    		\param		emetteur_banque	Nom banque emetteur cheque
 			\param		datesubend		Date fin adhesion
-            \return     int         	rowid de l'entrée ajoutée, <0 si erreur
+            \return     int         	rowid de l'entree ajoutee, <0 si erreur
     */
     function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
     {
@@ -1128,7 +1128,7 @@ class Adherent extends CommonObject
 		            $result=$adh->add_to_mailman($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT);
 		        }
 
-	            // Insertion dans la gestion bancaire si configuré pour
+	            // Insertion dans la gestion bancaire si configure pour
 	            if ($conf->global->ADHERENT_BANK_USE && $accountid)
 	            {
 	                $acct=new Account($this->db);
@@ -1169,7 +1169,7 @@ class Adherent extends CommonObject
 	                }
 	            }
 
-				// Ajout de propriétés pour le triggers
+				// Ajout de proprietes pour le triggers
 				$this->last_subscription_date=$dateop;
 				$this->last_subscription_date_start=$date;
 				$this->last_subscription_date_end=$datefin;
@@ -1203,8 +1203,8 @@ class Adherent extends CommonObject
     }
 
 	/**
-	 *		\brief 		Fonction qui vérifie que l'utilisateur est valide
-	 *		\param		user		user adhérent qui valide
+	 *		\brief 		Fonction qui verifie que l'utilisateur est valide
+	 *		\param		user		user adherent qui valide
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
 	function validate($user)
@@ -1244,8 +1244,8 @@ class Adherent extends CommonObject
 
 
 	/**
-	 *		\brief 		Fonction qui résilie un adhérent
-	 *		\param		user		user adhérent qui résilie
+	 *		\brief 		Fonction qui resilie un adherent
+	 *		\param		user		user adherent qui resilie
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
 	function resiliate($user)
@@ -1286,9 +1286,9 @@ class Adherent extends CommonObject
 
 
 	/**
-			\brief 		Fonction qui ajoute l'adhérent au abonnements automatiques
+			\brief 		Fonction qui ajoute l'adherent au abonnements automatiques
 			\param		adht
-			\remarks	mailing-list, spip, glasnost, etc...
+			\remarks	mailing-list, spip, etc...
 			\return		int		<0 si KO, >=0 si OK
 	*/
 	function add_to_abo($adht)
@@ -1305,19 +1305,6 @@ class Adherent extends CommonObject
 			}
 		}
 	
-		// glasnost
-		if ($adht->vote == 'yes' &&
-		defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
-		defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
-		)
-		{
-			$result=$this->add_to_glasnost();
-			if(! $result)
-			{
-				$err+=1;
-			}
-		}
-
 		// spip
 		if (
 		defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
@@ -1343,9 +1330,9 @@ class Adherent extends CommonObject
 
 
 	/**
-			\brief      fonction qui supprime l'adhérent des abonnements automatiques
+			\brief      fonction qui supprime l'adherent des abonnements automatiques
 			\param	    adht
-			\remarks	mailing-list, spip, glasnost, etc...
+			\remarks	mailing-list, spip, etc...
 	*/
 	function del_to_abo($adht)
 	{
@@ -1357,15 +1344,7 @@ class Adherent extends CommonObject
 				$err+=1;
 			}
 		}
-		if ($adht->vote == 'yes' &&
-		defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
-		defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
-		)
-		{
-			if(!$this->del_to_glasnost()){
-				$err+=1;
-			}
-		}
+
 		if (
 		defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
 		defined("ADHERENT_USE_SPIP_AUTO") && ADHERENT_USE_SPIP_AUTO ==1
@@ -1385,7 +1364,7 @@ class Adherent extends CommonObject
 
 
 	/**
-			\brief fonction qui donne les droits rédacteurs dans spip
+			\brief fonction qui donne les droits redacteurs dans spip
 			\return		int		=0 si KO, >0 si OK
 	*/
 	function add_to_spip()
@@ -1419,7 +1398,7 @@ class Adherent extends CommonObject
 	}
 
 	/**
-			\brief fonction qui enlève les droits rédacteurs dans spip
+			\brief fonction qui enleve les droits redacteurs dans spip
 	*/
 	function del_to_spip()
     {
@@ -1446,11 +1425,10 @@ class Adherent extends CommonObject
       }
     }
 
-/**
-		\brief      Fonction qui dit si cet utilisateur est un rédacteur existant dans spip
-		\return     int     1=existe, 0=n'existe pas, -1=erreur
-*/
-
+	/**
+			\brief      Fonction qui dit si cet utilisateur est un redacteur existant dans spip
+			\return     int     1=existe, 0=n'existe pas, -1=erreur
+	*/
 	function is_in_spip()
     {
         if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
@@ -1494,244 +1472,6 @@ class Adherent extends CommonObject
             }
         }
     }
-
-
-	/**
-		\brief      Fonction qui ajoute l'utilisateur dans glasnost
-		\return		int		=0 si KO, >0 si OK
-	*/
-	function add_to_glasnost()
-	{
-		global $conf,$langs;
-
-		require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
-
-		dolibarr_syslog("Adherent::add_to_glasnost");
-		
-		if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
-				defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
-				defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
-				defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
-				){
-			// application token is not useful here
-			$applicationtoken='';
-			list($success, $response) =
-			XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
-			'/RPC2',
-			'callGateway',
-			array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
-			XMLRPC_prepare('getUserIdAndToken'),
-			XMLRPC_prepare(array("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication","$applicationtoken",ADHERENT_GLASNOST_USER,ADHERENT_GLASNOST_PASS))
-			)
-			);
-			if ($success){
-				$userid=$response[0];
-				$usertoken=$response[1];
-			}else{
-				$this->error=$response['faultString'];
-				return 0;
-			}
-
-			list($success,$response)=
-			XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
-			'/RPC2',
-			'callGateway',
-			array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
-			XMLRPC_prepare('addObject'),
-			XMLRPC_prepare(array(
-			"glasnost://".ADHERENT_GLASNOST_SERVEUR."/people",
-			"$applicationtoken",
-			$usertoken,
-			array(
-			'__thingCategory__'=>'object',
-			'__thingName__'=>  'Person',
-			'firstName'=>$this->prenom,
-			'lastName'=>$this->nom,
-			'login'=>$this->login,
-			'email'=>$this->email
-			)
-			)
-			)
-			)
-			);
-			if ($success){
-				$personid=$response[0];
-			}else{
-				$this->error=$response['faultString'];
-				return 0;
-			}
-			return 1;
-		}else{
-			$this->error="Constantes de connexion non definies";
-			return 0;
-		}
-	}
-
-	/**
-			\brief fonction qui enlève l'utilisateur de glasnost
-	*/
-	function del_to_glasnost()
-    {
-		require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
-		
-      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
-	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
-	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
-	  defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
-	  ){
-	// application token is not useful here
-	$applicationtoken='';
-	list($success, $response) =
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
-			 '/RPC2',
-			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
-			       XMLRPC_prepare('getUserIdAndToken'),
-			       XMLRPC_prepare(array("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication","$applicationtoken",ADHERENT_GLASNOST_USER,ADHERENT_GLASNOST_PASS))
-			       )
-			 );
-	if ($success){
-	  $userid=$response[0];
-	  $usertoken=$response[1];
-	}else{
-	  return 0;
-	}
-	// recuperation du personID
-	list($success,$response)=
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
-			 '/RPC2',
-			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
-			       XMLRPC_prepare('getObjectByLogin'),
-			       XMLRPC_prepare(array(
-						    "glasnost://".ADHERENT_GLASNOST_SERVEUR."/people",
-						    "$applicationtoken",
-						    $usertoken,
-						    $this->login
-						    )
-					      )
-			       )
-			 );
-	if ($success){
-	  $personid=$response['id'];
-	}else{
-	  $this->error=$response['faultString'];
-	  return 0;
-	}
-	if (defined('ADHERENT_GLASNOST_DEFAULT_GROUPID') && ADHERENT_GLASNOST_DEFAULT_GROUPID != ''){
-	  // recuperation des personne de ce groupe
-	  list($success,$response)=
-	    XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
-			 '/RPC2',
-			   'callGateway',
-			   array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/groups"),
-				 XMLRPC_prepare('getObject'),
-				 XMLRPC_prepare(array(
-						      "glasnost://".ADHERENT_GLASNOST_SERVEUR."/groups",
-						      "$applicationtoken",
-						      $usertoken,
-						      ADHERENT_GLASNOST_DEFAULT_GROUPID
-						      )
-						)
-				 )
-			   );
-	  if ($success){
-	    $groupids=$response['membersSet'];
-	  }else{
-	    $this->error=$response['faultString'];
-	    return 0;
-	  }
-	  // TODO faire la verification que le user n'est pas dans ce
-	  // groupe par defaut. si il y ai il faut l'effacer et
-	  // modifier le groupe
-	}
-	// suppression du personID
-	list($success,$response)=
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
-			 '/RPC2',
-			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
-			       XMLRPC_prepare('deleteObject'),
-			       XMLRPC_prepare(array(
-						    "glasnost://".ADHERENT_GLASNOST_SERVEUR."/people",
-						    "$applicationtoken",
-						    $usertoken,
-						    $personid
-						    )
-					      )
-			       )
-			 );
-	if ($success){
-	  return 1;
-	}else{
-	  $this->error=$response['faultString'];
-	  return 0;
-	}
-      }else{
-	$this->error="Constantes de connexion non definies";
-	return 0;
-      }
-    }
-
-/**
-		\brief fonction qui vérifie si l'utilisateur est dans glasnost
-*/
-
-  function is_in_glasnost()
-    {
-		require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
-
-      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
-	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
-	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
-	  defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
-	  ){
-	// application token is not useful here
-	$applicationtoken='';
-	list($success, $response) =
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
-			 '/RPC2',
-			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
-			       XMLRPC_prepare('getUserIdAndToken'),
-			       XMLRPC_prepare(array("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication","$applicationtoken",ADHERENT_GLASNOST_USER,ADHERENT_GLASNOST_PASS))
-			       )
-			 );
-	if ($success){
-	  $userid=$response[0];
-	  $usertoken=$response[1];
-	}else{
-	  return 0;
-	}
-	// recuperation du personID
-	list($success,$response)=
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
-			 '/RPC2',
-			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
-			       XMLRPC_prepare('getObjectByLogin'),
-			       XMLRPC_prepare(array(
-						    "glasnost://".ADHERENT_GLASNOST_SERVEUR."/people",
-						    "$applicationtoken",
-						    $usertoken,
-						    $this->login
-						    )
-					      )
-			       )
-			 );
-	if ($success){
-	  $personid=$response['id'];
-	  return 1;
-	}else{
-	  $this->error=$response['faultString'];
-	  return 0;
-	}
-      }else{
-	$this->error="Constantes de connexion non definies";
-	return 0;
-      }
-    }
-
 
 	/**
 			\brief 		Fonction qui rajoute l'utilisateur dans mailman
@@ -1810,8 +1550,8 @@ class Adherent extends CommonObject
 	}
 
 	/**
-		\brief 		Fonction qui désinscrit l'utilisateur de toutes les mailing list mailman
-		\remarks	Utilise lors de la résiliation d'adhésion
+		\brief 		Fonction qui desinscrit l'utilisateur de toutes les mailing list mailman
+		\remarks	Utilise lors de la resiliation d'adhesion
 	*/
 	function del_to_mailman($listes='')
 	{
@@ -1878,7 +1618,7 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retourne le nom complet de l'adhérent
+	 *    \brief      Retourne le nom complet de l'adherent
 	 *    \return     string      	Nom complet
 	 */
     function getFullname()
@@ -1925,9 +1665,9 @@ class Adherent extends CommonObject
 
 
 	/**
-	 *    	\brief      Retourne le libellé du statut d'un adhérent (brouillon, validé, résilié)
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string		Libellé
+	 *    	\brief      Retourne le libelle du statut d'un adherent (brouillon, valide, resilie)
+	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string		Libelle
 	 */
     function getLibStatut($mode=0)
     {
@@ -1935,12 +1675,12 @@ class Adherent extends CommonObject
     }
 
 	/**
-	*    	\brief      Renvoi le libellé d'un statut donné
+	*    	\brief      Renvoi le libelle d'un statut donne
  	*    	\param      statut      			Id statut
 	*		\param		need_subscription		1 si type adherent avec cotisation, 0 sinon
-	*		\param		date_end_subscription	Date fin adhésion
-	*    	\param      mode        			0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
- 	*    	\return     string      			Libellé
+	*		\param		date_end_subscription	Date fin adhesion
+	*    	\param      mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+ 	*    	\return     string      			Libelle
  	*/
     function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
     {
@@ -2081,13 +1821,13 @@ class Adherent extends CommonObject
 
 	
 	/**
-	 *		\brief		Initialise le membre avec valeurs fictives aléatoire
+	 *		\brief		Initialise le membre avec valeurs fictives aleatoire
 	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs;
 
-		// Initialise paramètres
+		// Initialise parametres
 		$this->id=0;
 		$this->specimen=1;
 		$this->nom = 'DOLIBARR';
@@ -2117,7 +1857,7 @@ class Adherent extends CommonObject
 		$this->datevalid=time();
 		
 		$this->typeid=1;				// Id type adherent
-		$this->type='Type adherent';	// Libellé type adherent
+		$this->type='Type adherent';	// Libelle type adherent
 		$this->need_subscription=0;
 		
 		$this->firstsubscription_date=time();
@@ -2164,7 +1904,7 @@ class Adherent extends CommonObject
 		if ($this->nom && $conf->global->LDAP_FIELD_NAME)         $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
 		if ($this->prenom && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->prenom;
 		if ($this->login && $conf->global->LDAP_FIELD_LOGIN)      $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
-		if ($this->pass && $conf->global->LDAP_FIELD_PASSWORD)    $info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypté
+		if ($this->pass && $conf->global->LDAP_FIELD_PASSWORD)    $info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
 		if ($this->poste && $conf->global->LDAP_FIELD_TITLE)      $info[$conf->global->LDAP_FIELD_TITLE] = $this->poste;
 		if ($this->adresse && $conf->global->LDAP_FIELD_ADDRESS)  $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->adresse;
 		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)           $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;

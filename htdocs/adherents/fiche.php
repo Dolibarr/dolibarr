@@ -23,7 +23,7 @@
 /**
         \file       htdocs/adherents/fiche.php
         \ingroup    adherent
-        \brief      Page d'ajout, edition, suppression d'une fiche adhérent
+        \brief      Page d'ajout, edition, suppression d'une fiche adherent
         \version    $Revision$
 */
 
@@ -264,7 +264,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
         }
     }
 
-    // Test validite des paramètres
+    // Test validite des parametres
     if(!isset($type) || $type==''){
         $error++;
         $errmsg .= $langs->trans("ErrorMemberTypeNotDefined")."<br>\n";
@@ -478,36 +478,6 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 	}
 }
 
-if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
-{
-    $result=$adh->fetch($rowid);
-    $adht = new AdherentType($db);
-    $adht->fetch($adh->typeid);
-	if ($result >= 0 && ! sizeof($adh->errors))
-	{
-	    if ($adht->vote == 'yes'){
-	        if (!$adh->add_to_glasnost()){
-	            $errmsg.="Echec du rajout de l'utilisateur dans glasnost: ".$adh->error."<BR>\n";
-	        }
-	    }
-	}
-}
-
-if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
-{
-    $result=$adh->fetch($rowid);
-    $adht = new AdherentType($db);
-    $adht->fetch($adh->typeid);
-	if ($result >= 0 && ! sizeof($adh->errors))
-	{
-	    if ($adht->vote == 'yes'){
-	        if(!$adh->del_to_glasnost()){
-	            $errmsg.="Echec de la suppression de l'utilisateur dans glasnost: ".$adh->error."<BR>\n";
-	        }
-	    }
-	}
-}
-
 if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 {
     $result=$adh->fetch($rowid);
@@ -637,7 +607,7 @@ if ($action == 'edit')
 	$htmls->select_array("morphy",  $morphys, $adh->morphy);
 	print "</td></tr>";
 	
-	// Société
+	// Societe
 	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
 
 	// Adresse
@@ -674,7 +644,7 @@ if ($action == 'edit')
     print $htmls->selectyesno("public",$adh->public,1);
     print "</td></tr>\n";
 
-	// Attributs supplémentaires
+	// Attributs supplementaires
 	foreach($adho->attribute_label as $key=>$value)
 	{
 		print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
@@ -697,7 +667,7 @@ if ($action == 'create')
 {
 	/* ************************************************************************** */
 	/*                                                                            */
-	/* Fiche création                                                             */
+	/* Fiche creation                                                             */
 	/*                                                                            */
 	/* ************************************************************************** */
 
@@ -836,7 +806,7 @@ if ($rowid && $action != 'edit')
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
 
-    // Confirmation de la suppression de l'adhérent
+    // Confirmation de la suppression de l'adherent
     if ($action == 'delete')
     {
         $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete");
@@ -846,7 +816,7 @@ if ($rowid && $action != 'edit')
     // Confirmation de la validation
     if ($action == 'valid')
     {
-		// Crée un tableau formulaire
+		// Cree un tableau formulaire
 		$formquestion=array();
 		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $langs->trans("SendAnEMailToMember",$adh->email),  'value' => 'true');
 
@@ -861,10 +831,10 @@ if ($rowid && $action != 'edit')
         print '<br>';
     }
 
-    // Confirmation de la Résiliation
+    // Confirmation de la Resiliation
     if ($action == 'resign')
     {
-		// Crée un tableau formulaire
+		// Cree un tableau formulaire
 		$formquestion=array();
 		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $langs->trans("SendAnEMailToMember",$adh->email),  'value' => 'false');
 
@@ -873,29 +843,11 @@ if ($rowid && $action != 'edit')
     }
 
     /*
-    * Confirmation de l'ajout dans glasnost
-    */
-    if ($action == 'add_glasnost')
-    {
-        $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans glasnost","Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_add_glasnost");
-        print '<br>';
-    }
-
-    /*
-    * Confirmation de la suppression dans glasnost
-    */
-    if ($action == 'del_glasnost')
-    {
-        $html->form_confirm("fiche.php?rowid=$rowid","Supprimer dans glasnost","Etes-vous sur de vouloir effacer cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_del_glasnost");
-        print '<br>';
-    }
-
-    /*
     * Confirmation de l'ajout dans spip
     */
     if ($action == 'add_spip')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans spip","Etes-vous sur de vouloir ajouter cet adhérent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
+        $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans spip","Etes-vous sur de vouloir ajouter cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
         print '<br>';
     }
 
@@ -904,8 +856,7 @@ if ($rowid && $action != 'edit')
     */
     if ($action == 'del_spip')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adhérent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
-        $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans glasnost","Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_del_spip");
+        $html->form_confirm("fiche.php?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adherent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
         print '<br>';
     }
 
@@ -1029,7 +980,7 @@ if ($rowid && $action != 'edit')
 	
     if ($user->rights->adherent->creer)
 	{
-	    // Réactiver
+	    // Reactiver
 	    if ($adh->statut == 0)
 	    {
 	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Reenable")."</a>\n";
@@ -1047,7 +998,7 @@ if ($rowid && $action != 'edit')
 		
     if ($user->rights->adherent->supprimer)
 	{
-		// Résilier
+		// Resilier
 	    if ($adh->statut >= 1)
 	    {
 	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
@@ -1072,22 +1023,6 @@ if ($rowid && $action != 'edit')
         print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
     }
         
-    // Action Glasnost
-    if ($adht->vote == 'yes' && $conf->global->ADHERENT_USE_GLASNOST)
-    {
-        $isinglasnost=$adh->is_in_glasnost();
-        if ($isinglasnost == 1)
-        {
-            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>\n";
-        }
-        if ($isinglasnost == 0) {
-            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>\n";
-        }
-        if ($isinglasnost == -1) {
-            print '<br><font class="error">Failed to connect to SPIP: '.$adh->error.'</font>';
-        }
-    }
-    
     // Action SPIP
     if ($conf->global->ADHERENT_USE_SPIP)
     {

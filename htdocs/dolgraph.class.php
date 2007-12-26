@@ -68,7 +68,6 @@ class DolGraph
 	var $bordercolor;		// array(R,G,B)
 	var $bgcolor;			// array(R,G,B)
 	var $datacolor;			// array(array(R,G,B),...)
-	var $alpha='25';		// % transparancy
 	
 
 	/*
@@ -80,7 +79,7 @@ class DolGraph
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 
 
-		// Test si module GD pr�sent
+		// Test si module GD present
 		$modules_list = get_loaded_extensions();
 		$isgdinstalled=0;
 		foreach ($modules_list as $module)
@@ -94,7 +93,7 @@ class DolGraph
 		}
 
 
-		// D�fini propri�t�s de l'objet graphe
+		// Defini proprietes de l'objet graphe
 		$this->library=$conf->global->MAIN_GRAPH_LIBRARY;
 
 		$this->bordercolor = array(235,235,224);
@@ -153,7 +152,7 @@ class DolGraph
 
 		// Create graph
 		$class='';
-		if ($this->type == 'bars') $class='BarPlot';
+		if ($this->type == 'bars')  $class='BarPlot';
 		if ($this->type == 'lines') $class='LinePlot';
 		include_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/".$class.".class.php";
 
@@ -201,6 +200,14 @@ class DolGraph
 				$j++;
 			}
 
+			// Artichow ne gere pas les valeurs inconnues
+			// Donc si inconnu, on la fixe a null
+			$newvalues=array();
+			foreach($values as $val)
+			{
+				$newvalues[]=(is_numeric($val) ? $val : null);
+			}
+		
 		
 			if ($this->type == 'bars')
 			{
@@ -208,14 +215,6 @@ class DolGraph
 				//print_r($values);
 				//print '<br>';
 				
-				// Artichow ne gere pas les valeurs inconnues
-				// Donc si inconnu, on la fixe a null
-				$newvalues=array();
-				foreach($values as $val)
-				{
-					$newvalues[]=(is_numeric($val) ? $val : null);
-				}
-
 				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
 				$colorborder=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
 				
@@ -242,36 +241,28 @@ class DolGraph
 	
 			if ($this->type == 'lines')
 			{
-				// Artichow ne gere pas les valeurs inconnues
-				// Donc si inconnu, on la fixe a null
-				$newvalues=array();
-				foreach($values as $val)
-				{
-					$newvalues[]=(is_numeric($val) ? $val : null);
-				}
-	
+				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
+				
 				$plot = new LinePlot($newvalues);
 				//$plot->setSize(1, 0.96);
 				//$plot->setCenter(0.5, 0.52);
 		
-				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],30);
 				$plot->setColor($color);
+				$plot->setThickness(2);
 				
 				// Le mode automatique est plus efficace
 				$plot->SetYMax($this->MaxValue);
 				$plot->SetYMin($this->MinValue);
+				//$plot->setYAxis(0);
+				//$plot->hideLine(true);
 			}
 	
-			$plot->reduce(80);		// Evite temps d'affichage trop long et nombre de ticks absisce satures
+			//$plot->reduce(80);		// Evite temps d'affichage trop long et nombre de ticks absisce satures
 	
-			if ($nblot >= 2)
+			if (sizeof($this->Legend))
 			{
-				$group->legend->add($plot, $this->Legend[$i], Legend::BACKGROUND);
-			}
-			else
-			{
-   				$plot->xAxis->setLabelText($legends);
-				$plot->xAxis->label->setFont(new Tuffy(7));
+				if ($this->type == 'bars')  $group->legend->add($plot, $this->Legend[$i], Legend::BACKGROUND);
+				if ($this->type == 'lines') $group->legend->add($plot, $this->Legend[$i], Legend::LINE);
 			}
 			$group->add($plot);
 
@@ -735,7 +726,6 @@ class DolGraph
     $graph->draw($file);
   }
 
-
   function BarLineOneYearArtichow($file='', $barvalues, $linevalues, $legends='')
   {
     $ok = 0;
@@ -882,11 +872,6 @@ class DolGraph
       }
   }
   
-}
-
-
-function setYear($value) {
-  return $value + 2000;
 }
 
 ?>
