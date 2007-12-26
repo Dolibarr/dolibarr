@@ -29,8 +29,6 @@ PEAR MDB2         2.4.1    Modified BSD License     Oui              Database ac
 PEAR DB           ??       PHP License 2.02         Non!             Database access DB
 PHP_WriteExcel    0.3.0    LGPL 2.1                 Oui              Excel files generation
 PHPExcelReader    2k       PHP License              Non!             Excel files reader
-PHPlot            v4       PHP License              Non!             Graphics
-PHPlot            v5       PHP License              Non!             Graphics
 Scriptaculous     1.8.0    MIT License              Oui              Extension Ajax
 Prototype         1.6.0    MIT License              Oui              Extension Ajax
 Treemenu          1.1      Perso                    Oui              Tree in HTML pages (like categories)
