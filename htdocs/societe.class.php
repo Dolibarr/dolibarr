@@ -644,7 +644,7 @@ class Societe
 
         $sql = "SELECT l.rowid, l.label, l.fk_societe, l.nom, l.address, l.cp";
         $sql .= ", ".$this->db->pdate("l.tms")."as dm, ".$this->db->pdate("l.datec")."as dc";
-        $sql .= ", l.ville, l.fk_pays, l.note";
+        $sql .= ", l.ville, l.fk_pays, l.note, l.tel, l.fax";
         $sql .= ", p.libelle as pays, p.code as pays_code, s.nom as socname";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison as l";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON l.fk_pays = p.rowid";
@@ -671,6 +671,9 @@ class Societe
             $this->pays_id        = $obj->fk_pays;
             $this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
             $this->pays           = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?strtoupper(clean_html($langs->trans('Country'.$obj->pays_code))):$obj->pays):'';
+            $this->tel            = $obj->tel;
+            $this->fax            = $obj->fax;
+            $this->note           = $obj->note;
 
 
             $this->db->free($result);
