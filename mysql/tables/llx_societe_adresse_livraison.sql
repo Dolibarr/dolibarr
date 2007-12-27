@@ -31,6 +31,8 @@ create table llx_societe_adresse_livraison
   cp                 varchar(10),                         -- zipcode
   ville              varchar(50),                         -- town
   fk_pays            integer        DEFAULT 0,            --
+  tel                varchar(20),                         -- phone number
+  fax                varchar(20),                         -- fax number
   note               text,                                --
   fk_user_creat      integer,                             -- utilisateur qui a créé l'info
   fk_user_modif      integer                              -- utilisateur qui a modifié l'info

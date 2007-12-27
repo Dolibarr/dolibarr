@@ -58,6 +58,8 @@ if ($_POST["action"] == 'add' || $_POST["action"] == 'update')
     $livraison->cp                    = $_POST["cp"];
     $livraison->ville                 = $_POST["ville"];
     $livraison->pays_id               = $_POST["pays_id"];
+    $livraison->tel                   = $_POST["tel"];
+    $livraison->fax                   = $_POST["fax"];
     $livraison->note                  = $_POST["note"];
     
     if ($_POST["action"] == 'add')
@@ -179,6 +181,8 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
             $livraison->adresse=$_POST["adresse"];
             $livraison->cp=$_POST["cp"];
             $livraison->ville=$_POST["ville"];
+            $livraison->tel=$_POST["tel"];
+            $livraison->fax=$_POST["fax"];
             $livraison->note=$_POST["note"];
         }
 
@@ -236,6 +240,10 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
         $form->select_pays($livraison->pays_id,'pays_id');
         print '</td></tr>';
         
+        print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$livraison->tel.'"></td></tr>';
+        
+        print '<tr><td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$livraison->fax.'"></td></tr>';
+        
         print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3"><textarea name="note" cols="40" rows="6" wrap="soft">';
         print $livraison->note;
         print '</textarea></td></tr>';
@@ -281,6 +289,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $livraison->zip=$_POST["zip"];
             $livraison->ville=$_POST["ville"];
             $livraison->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
+            $livraison->tel=$_POST["tel"];
+            $livraison->fax=$_POST["fax"];
             $livraison->note=$_POST["note"];
 
             // On positionne pays_id, pays_code et libelle du pays choisi
@@ -335,6 +345,10 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
         $form->select_pays($livraison->pays_id,'pays_id');
         print '</td></tr>';
+        
+        print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$livraison->tel.'"></td></tr>';
+        
+        print '<tr><td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$livraison->fax.'"></td></tr>';
         
         print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3"><textarea name="note" cols="40" rows="6" wrap="soft">';
         print $livraison->note;
@@ -399,6 +413,11 @@ else
 			print '<tr><td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$livraison->lignes[$i]->ville."</td></tr>";
 	
 			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$livraison->lignes[$i]->pays.'</td>';
+			
+			print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($livraison->lignes[$i]->tel).'</td></tr>';
+        
+      print '<tr><td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($livraison->lignes[$i]->fax).'</td></tr>';
+			
 			print '</td></tr>';
 	
 			print '</table>';

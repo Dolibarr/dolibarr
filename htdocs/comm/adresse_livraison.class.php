@@ -47,6 +47,8 @@ class AdresseLivraison
 	var $ville;
 	var $pays_id;
 	var $pays_code;
+	var $tel;
+	var $fax;
 	var $note;
 
 
@@ -169,14 +171,20 @@ class AdresseLivraison
 
 		// Nettoyage des paramètres
 		
-        $this->fk_societe=$socid;
-        $this->label=trim($this->label);
-        $this->nom=trim($this->nom);
-        $this->adresse=trim($this->adresse);
-        $this->cp=trim($this->cp);
-        $this->ville=trim($this->ville);
-        $this->pays_id=trim($this->pays_id);
-        $this->note=trim($this->note);
+        $this->fk_societe = $socid;
+        $this->label      = trim($this->label);
+        $this->nom        = trim($this->nom);
+        $this->adresse    = trim($this->adresse);
+        $this->cp         = trim($this->cp);
+        $this->ville      = trim($this->ville);
+        $this->pays_id    = trim($this->pays_id);
+        $this->tel        = trim($this->tel);
+        $this->tel        = ereg_replace(" ","",$this->tel);
+		    $this->tel        = ereg_replace("\.","",$this->tel);
+		    $this->fax        = trim($this->fax);
+		    $this->fax        = ereg_replace(" ","",$this->fax);
+		    $this->fax        = ereg_replace("\.","",$this->fax);
+        $this->note       = trim($this->note);
 
         $result = $this->verify();		// Verifie que nom et label obligatoire
 
@@ -197,6 +205,12 @@ class AdresseLivraison
 
             $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
             $sql.= ",note = '" . addslashes($this->note) ."'";
+            
+            if ($this->tel)
+            { $sql .= ",tel = '" . $this->tel ."'"; }
+            
+            if ($this->fax)
+            { $sql .= ",fax = '" . $this->fax ."'"; }
 
             if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
             $sql .= " WHERE fk_societe = '" . $socid ."' AND rowid = '" . $idl ."'";
@@ -265,7 +279,7 @@ class AdresseLivraison
              {
              	  $sql = 'SELECT a.rowid as idl, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
              	  $sql .= ','. $this->db->pdate('a.tms').' as date_update, a.fk_societe';
-             	  $sql .= ', a.cp, a.ville, a.note, a.fk_pays';
+             	  $sql .= ', a.cp, a.ville, a.note, a.fk_pays, a.tel, a.fax';
              	  $sql .= ', p.code as pays_code, p.libelle as pays';
              	  $sql .= ' FROM '.MAIN_DB_PREFIX.'societe_adresse_livraison as a';
              	  $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
@@ -294,6 +308,8 @@ class AdresseLivraison
 				            $ligne->pays_id         = $objp->fk_pays;
 				            $ligne->pays_code       = $objp->fk_pays?$objp->pays_code:'';
 				            $ligne->pays            = $objp->fk_pays?($langs->trans('Country'.$objp->pays_code)!='Country'.$objp->pays_code?strtoupper($langs->trans('Country'.$objp->pays_code)):$objp->pays):'';
+				            $ligne->tel             = $objp->tel;
+				            $ligne->fax             = $objp->fax;
 				            $ligne->note            = $objp->note;
 				            
 				            $this->lignes[$i]      = $ligne;
@@ -334,7 +350,7 @@ class AdresseLivraison
 
 		$sql = 'SELECT a.rowid, a.fk_societe, a.label, a.nom, a.address,'.$this->db->pdate('a.datec').' as dc';
 		$sql .= ','. $this->db->pdate('a.tms').' as date_update';
-		$sql .= ', a.cp,a.ville, a.note, a.fk_pays';
+		$sql .= ', a.cp,a.ville, a.note, a.fk_pays, a.tel, a.fax';
 		$sql .= ', p.code as pays_code, p.libelle as pays';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_adresse_livraison as a';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
@@ -363,6 +379,8 @@ class AdresseLivraison
 				$this->pays_code = $obj->fk_pays?$obj->pays_code:'';
 				$this->pays = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
 
+				$this->tel  = $obj->tel;
+				$this->fax  = $obj->fax;
 				$this->note = $obj->note;
 
 				$result = 1;
@@ -470,6 +488,8 @@ class AdresseLivraisonLigne
     var $pays_id;
     var $pays_code;
     var $pays;
+    var $tel;
+    var $fax;
     var $note;
 
     function AdresseLivraisonLigne()
