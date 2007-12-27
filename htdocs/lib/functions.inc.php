@@ -3104,20 +3104,27 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
    \brief     Fonction retournant le nombre de jour entre deux dates sans les jours fériés (jours ouvrés)
    \param	    timestampStart      Timestamp de début
    \param	    timestampEnd        Timestamp de fin
-   \param     inhour              0: sort le nombre de jour , 1: sort le nombre d'heure
+   \param     inhour              0: sort le nombre de jour , 1: sort le nombre d'heure (72 max)
    \param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
    \return    nbjours             Nombre de jours ou d'heures
 */
 function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 {
+	global $langs;
+	
 	if ($timestampStart < $timestampEnd)
 	{
 		$bit = 0;
 		if ($lastday == 1) $bit = 1;
 	  $nbOpenDay = num_between_day($timestampStart, $timestampEnd, $bit) - num_public_holiday($timestampStart, $timestampEnd);
-	  if ($inhour == 1) $nbOpenDay = $nbOpenDay*24;
+	  $nbOpenDay.= " ".$langs->trans("Days");
+	  if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
+	  return $nbOpenDay;
 	}
-	return $nbOpenDay;
+	else
+	{
+		return $langs->trans("Error");
+	}
 }
 
 /**
