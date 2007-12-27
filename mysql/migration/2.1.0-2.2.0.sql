@@ -542,6 +542,7 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (46, '$conf->energi
 insert into `llx_menu_constraint` (`rowid`, `action`) values (47, '$conf->telephonie->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (48, '($user->admin && function_exists("eaccelerator_info"))');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (49, '$conf->import->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (50, '$conf->phenix->enabled');
 
 -- 
 -- Contenu de la table `llx_menu_const`
@@ -638,6 +639,7 @@ insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) value
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (90, 13, 40, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (91, 14, 41, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (92, 15, 31, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (93, 16, 50, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (100, 1715, 13, 1);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (101, 1716, 13, 1);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (102, 1717, 13, 1);
