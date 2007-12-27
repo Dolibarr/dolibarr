@@ -878,7 +878,7 @@ class Propal extends CommonObject
 
                 if ($this->cond_reglement_id)
                 {
-                   $sql = "SELECT rowid, libelle, code";
+                   $sql = "SELECT rowid, libelle, code, libelle_facture";
                    $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
                    $sql.= " WHERE rowid = ".$this->cond_reglement_id;
 
@@ -887,8 +887,9 @@ class Propal extends CommonObject
                    if ($resqlcond)
                    {
                    	$objc = $this->db->fetch_object($resqlcond);
-                   	$this->cond_reglement      = $objc->libelle;
-                   	$this->cond_reglement_code = $objc->code;
+                   	$this->cond_reglement           = $objc->libelle;
+                   	$this->cond_reglement_document  = $objc->libelle_facture;
+                   	$this->cond_reglement_code      = $objc->code;
                   }
                 }
 
