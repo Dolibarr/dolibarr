@@ -3020,7 +3020,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 	        // Paques
 	     
 	        // Calcul du jour de l ascension (38 jours apres Paques)
-	        $date_ascension = dolibarr_mktime(date("H", $date_paques),
+	        $date_ascension = mktime(date("H", $date_paques),
 	         date("i", $date_paques),
 	         date("s", $date_paques),
 	         date("m", $date_paques),
@@ -3033,7 +3033,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 	        //Ascension
 	    
 	        // Calcul de Pentecote (11 jours apres Paques)
-	        $date_pentecote = dolibarr_mktime(date("H", $date_ascension),
+	        $date_pentecote = mktime(date("H", $date_ascension),
 	         date("i", $date_ascension),
 	         date("s", $date_ascension),
 	         date("m", $date_ascension),
@@ -3070,7 +3070,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
         
         // Incrementation du nombre de jour (on avance dans la boucle)
         $jour++;
-        $timestampStart=dolibarr_mktime(0,0,0,$mois,$jour,$annee);
+        $timestampStart=mktime(0,0,0,$mois,$jour,$annee);
    	}
 
     return $nbFerie;
@@ -3112,14 +3112,8 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 {
 	if ($timestampStart < $timestampEnd)
 	{
-		if ($lastday == 1)
-	  {
-		  $bit = 1;
-	  }
-	  else
-	  {
-		  $bit = 0;
-	  }
+		$bit = 0;
+		if ($lastday == 1) $bit = 1;
 	  $nbOpenDay = num_between_day($timestampStart, $timestampEnd, $bit) - num_public_holiday($timestampStart, $timestampEnd);
 	  if ($inhour == 1) $nbOpenDay = $nbOpenDay*24;
 	}
