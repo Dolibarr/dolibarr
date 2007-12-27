@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,17 +16,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_demo.class.php
+        \file       htdocs/includes/triggers/interface_all_Demo.class.php
         \ingroup    core
         \brief      Fichier de demo de personalisation des actions du workflow
         \remarks    Son propre fichier d'actions peut etre créé par recopie de celui-ci:
-                    - Le nom du fichier doit etre interface_xxx.class.php
+                    - Le nom du fichier doit etre: interface_modMymodule_Mytrigger.class.php
+					                           ou: interface_all_Mytrigger.class.php
                     - Le fichier doit rester stocké dans includes/triggers
-                    - Le nom de la classe doit etre InterfaceXxx
+                    - Le nom de la classe doit etre InterfaceMytrigger
+                    - Le nom de la methode constructeur doit etre InterfaceMytrigger
+                    - Le nom de la propriete name doit etre Mytrigger
 */
 
 
@@ -47,10 +49,10 @@ class InterfaceDemo
     {
         $this->db = $DB ;
     
-        $this->name = "Demo";
+        $this->name = "Demo";					// Put here same value than in file and class name
         $this->family = "demo";
         $this->description = "Les triggers de ce composant sont des fonctions vierges. Elles n'ont aucun effet. Ce composant est fourni à des fins de tutorial.";
-        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+        $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version
     }
     
     /**

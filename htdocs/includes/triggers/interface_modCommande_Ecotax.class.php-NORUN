@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+/* Copyright (C) 2007 Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,26 +16,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
-   \file       htdocs/includes/triggers/interface_demo.class.php
+   \file       htdocs/includes/triggers/interface_modCommande_Ecotax.class.php
    \ingroup    core
-   \brief      Fichier de demo de personalisation des actions du workflow
-   \remarks    Son propre fichier d'actions peut etre créé par recopie de celui-ci:
-   - Le nom du fichier doit etre interface_xxx.class.php
-   - Le fichier doit rester stocké dans includes/triggers
-   - Le nom de la classe doit etre InterfaceXxx
+   \brief      Ajout Ecotax sur produit d'un certaine categorie
 */
 
 
 /**
-   \class      InterfaceEditeur
+   \class      InterfaceEcotax
    \brief      Classe des fonctions triggers des actions personalisées du workflow
 */
 
-class InterfaceFraisport
+class InterfaceEcotax
 {
   var $db;
   var $error;
@@ -44,13 +39,13 @@ class InterfaceFraisport
    *   \brief      Constructeur.
    *   \param      DB      Handler d'accès base
    */
-  function InterfaceFraisport($DB)
+  function InterfaceEcotax($DB)
   {
     $this->db = $DB ;
     
-    $this->name = "Frais de port";
+    $this->name = "Ecotax";
     $this->family = "facture";
-    $this->description = "Les triggers de ce composant calculent les frais de port.";
+    $this->description = "Les triggers de ce composant calculent le ecotax du produit si le produit est membre d'une categorie speciale (par default: 'Ecotax', change le valeur du variable \$ecotax dans le trigger pour accomoder votre choix).";
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
   }
@@ -101,45 +96,57 @@ class InterfaceFraisport
   {
     if ($action == 'LINEORDER_INSERT')
       {
-	return $this->_add_line_carrier($action,$object,$user,$langs,$conf);
+	return $this->_add_replace_ecotax($action,$object,$user,$langs,$conf);
       }
     if ($action == 'LINEORDER_DELETE')
       {
-	return $this->_add_line_carrier($action,$object,$user,$langs,$conf);
+	return $this->_add_replace_ecotax($action,$object,$user,$langs,$conf);
       }
     // Renvoi 0 car aucune action de faite
     return 0;
   }
 
 
-  function _add_line_carrier($action,$object,$user,$langs,$conf)
+  function _add_replace_ecotax($action,$object,$user,$langs,$conf)
   {
-    // Ajoute une ligne de frais de port automatiquement
+    // The next 3 parameter can be replaced at will:
+    $desc = "Ecotax"; // the description on the invoice (recupel in Belgium)
+    $txtva = 21;      // the default tax percentage
+    $ecocat = "Ecotax"; // the category products must be in for ecotax to apply
+
+    // Ajoute une ligne de ecotax automatiquement
     // 
-    //
-    if ($conf->global->COMMANDE_ADD_DELIVERY_COST_LINE)
-      {
 	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->fk_commande);
+
+
 	/*
-	 * Calcul le poids du colis
+	 * Calcul le ecotax, dependant du prix
 	 *
 	 */
-	$sql = "SELECT (p.weight*fd.qty), p.weight_units";
-	$sql.= " FROM ".MAIN_DB_PREFIX."product as p,".MAIN_DB_PREFIX."commandedet as fd";
-	$sql.= " WHERE fd.fk_product = p.rowid";
-	$sql.= " AND fd.fk_commande = '".$object->fk_commande."'";
-	
+	$sql = "SELECT fd.price, fd.qty, fd.fk_product";
+	$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as fd";
+	$sql.= " WHERE fd.fk_commande = '".$object->fk_commande."'";
+	$sql.= " AND fd.special_code = '0'";
+
 	$resql = $this->db->query($sql) ;
 	
+	$eco = 0;
 	if ($resql)
 	  {
-	    $weights = array();
-	    $i = 0;
 	    while ( $row = $this->db->fetch_row($resql) )
 	      {
-		$weights[$i] = $row[0];
-		$weights_units[$i] = $row[1];
-		$i++;
+		$price=$row[0];
+		$qty=$row[1];
+		$prod_id=$row[2];
+		if ($this->_is_in_cat($ecocat,$prod_id)) {
+		   if ($price<=100) {
+		      $eco+=5*$qty;
+		   } elseif ($price>100 && $price<=300) {
+		      $eco+=10*$qty;
+		   } else {
+		      $eco+=15*$qty;
+		   }
+		}
 	      }
 	  }
 	else
@@ -150,13 +157,6 @@ class InterfaceFraisport
 	 *
 	 *
 	 */
-	$total = 0;
-	foreach($weights as $id => $weight)
-	  {
-	    $unite = $weights_units[$id];
-	    $w = weight_convert($weight, $unite, 0);
-	    $total = $total + $w;
-	  }
 
 	/*
 	 * Détecte si la ligne existe
@@ -164,7 +164,7 @@ class InterfaceFraisport
 	 */
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commandedet ";
 	$sql.= " WHERE fk_commande = '".$object->fk_commande."'";
-	$sql.= " AND special_code = 1;";
+	$sql.= " AND special_code = 2;";
 	
 	$resql = $this->db->query($sql) ;
 	
@@ -197,17 +197,16 @@ class InterfaceFraisport
 	  {
 	    dolibarr_syslog("Trigger '".$this->name."' in action '$action' [4] SQL ERROR ");
 	  }
+
 	/*
-	 * Calcul les frais de port
+	 * Calcul les ecotax
 	 */
-	$desc = "Frais de port (".$total." kg)";
-	$txtva = 19.6;
 	$rang = $num_lignes + 1;
 
 	// Tout a 0 tant que l'on ne sait pas calculer
-	$total_ht = 0;
-	$total_tva = 0;
-	$total_ttc = 0;
+	$total_ht = $eco;
+	$total_tva = $eco*$txtva/100;
+	$total_ttc = $total_ht+$total_ttc;
 
 	if ($exists > 0)
 	  {
@@ -216,7 +215,7 @@ class InterfaceFraisport
 	    $sql.= " SET description ='".addslashes($desc)."'";
 	    $sql.= ", rang='".$rang."'";
 	    $sql.= " WHERE fk_commande=".$object->fk_commande;
-	    $sql.= " AND special_code=1;";
+	    $sql.= " AND special_code=2;";
 	    
 	    $resql = $this->db->query($sql) ;
 	    
@@ -232,10 +231,13 @@ class InterfaceFraisport
 	else
 	  {
 	    // Insertion dans base de la ligne
+	    // See class CommandeLigne
+	    // we don't use the class CommandeLigne for insert, because
+	    // then the trigger would be called again ... and again ... and ...
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet";
 	    $sql.= " (fk_commande, description, qty, tva_tx,";
 	    $sql.= " fk_product, remise_percent, subprice, price, remise, fk_remise_except,";
-	    $sql.= " rang, info_bits, total_ht, total_tva, total_ttc, special_code)";
+	    $sql.= " marge_tx, marque_tx, rang, info_bits, total_ht, total_tva, total_ttc, special_code)";
 	    $sql.= " VALUES (".$object->fk_commande.",";
 	    $sql.= " '".addslashes($desc)."',";
 	    $sql.= " '1',";
@@ -244,12 +246,12 @@ class InterfaceFraisport
 	    $sql.= " '0',";
 	    $sql.= " '".price2num($total_ht)."',";
 	    $sql.= " '".price2num($total_ht)."',";
-	    $sql.= " 0,0,";
+	    $sql.= " 0,0,0,0,";
 	    $sql.= ' '.$rang.',0,';
 	    $sql.= " '".price2num($total_ht)."',";
 	    $sql.= " '".price2num($total_tva)."',";
 	    $sql.= " '".price2num($total_ttc)."'";
-	    $sql.= ",1);";
+	    $sql.= ",2);";
 	    
 	    $resql = $this->db->query($sql) ;
 	    
@@ -262,12 +264,33 @@ class InterfaceFraisport
 		dolibarr_syslog("Trigger '".$this->name."' in action '$action' [5] SQL ERROR $sql");
 	      }
 	  }
-      }
-    else
-      {
-	// Aucune action car l'option est desactivee
-	return 0;
-      }
   }
+
+  function _is_in_cat($ecocat,$product_id) {
+	/*
+	 * See if the product is in the ecotax category
+	 * Stop and return 0 if the product is not in it
+	 */
+	require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
+	if (!isset($product_id) || empty($product_id)) {
+	   return 0;
+	}
+	$c = new Categorie($this->db);
+	$cats = array();
+        $cats = $c->containing($product_id);
+	$found=0;
+	if (count($cats)==0) {
+	   return 0;
+	}
+	foreach ($cats as $cat) {
+	   if ($cat->label===$ecocat) {
+		$found=1;
+	   }
+	}
+	if ($found==0) {
+	   return 0;
+	}
+	return 1;
+   }
 }
 ?>

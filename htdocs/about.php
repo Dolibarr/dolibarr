@@ -39,6 +39,13 @@ print_fiche_titre("Dolibarr",'','setup');
 
 print "<br>\n";
 
+print $langs->trans("Version").':';
+print '<ul>';
+print '<li>'.DOL_VERSION.'</li>';
+print '</ul>';
+
+print "<br>\n";
+
 print $langs->trans("DolibarrLicense").':';
 print '<ul>';
 print '<li>GNU/GPL</li>';
@@ -108,7 +115,7 @@ if (eregi('^fr_',$langs->getDefaultLang()))
     print 'Vente / Support';
     print '<ul>';
     print '<li>';
-    print 'Contactez Rodolphe Quiédeville sur <a target="blank" href="http://www.dolibarr.com/">www.dolibarr.com</a>';
+    print 'Contactez Rodolphe Quiédeville sur <a target="blank" href="http://rodolphe.quiedeville.org">www.dolibarr.com</a>';
     print '</li>';
     print '</ul>';
 }

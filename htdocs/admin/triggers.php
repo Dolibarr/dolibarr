@@ -25,6 +25,7 @@
 */
 
 require("./pre.inc.php");
+include_once(DOL_DOCUMENT_ROOT ."/interfaces.class.php");
 
 if (!$user->admin)
     accessforbidden();
@@ -61,7 +62,7 @@ function Activate($value)
     if ($modName)
     {
         $file = $modName . ".class.php";
-        include_once("../includes/modules/$file");
+        include_once("../includes/modules/".$file);
         $objMod = new $modName($db);
         $objMod->init();
     }
@@ -88,7 +89,7 @@ function UnActivate($value)
     if ($modName)
     {
         $file = $modName . ".class.php";
-        include_once("../includes/modules/$file");
+        include_once("../includes/modules/".$file);
         $objMod = new $modName($db);
         $objMod->remove();
     }
@@ -107,24 +108,26 @@ function UnActivate($value)
 
 llxHeader("","");
 
+$html = new Form($db);
 
 print_fiche_titre($langs->trans("TriggersAvailable"),'','setup');
 
+print "<br>\n";
 print $langs->trans("TriggersDesc")."<br>";
 print "<br>\n";
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print "  <td colspan=\"2\">".$langs->trans("File")."</td>\n";
-print "  <td>".$langs->trans("Description")."</td>\n";
+//print "  <td>".$langs->trans("Description")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
-//print "  <td align=\"center\">".$langs->trans("Action")."</td>\n";
+print "  <td align=\"center\">".$langs->trans("Active")."</td>\n";
 print "  <td align=\"center\">&nbsp;</td>\n";
 print "</tr>\n";
 
-
-$dir = DOL_DOCUMENT_ROOT . "/includes/triggers/";
+// Define dir directory
+$interfaces=new Interfaces($db);
+$dir = $interfaces->dir;
 
 $handle=opendir($dir);
 $files = array();
@@ -133,39 +136,38 @@ $orders = array();
 $i = 0;
 while (($file = readdir($handle))!==false)
 {
-    if (is_readable($dir.$file) && ereg('^interface_(.*)\.class\.php',$file,$reg))
+    if (is_readable($dir.'/'.$file) && ereg('^interface_([^_]+)_(.+)\.class\.php',$file,$reg))
     {
-        $modName = 'Interface'.ucfirst($reg[1]);
-        if ($modName)
-        {
-	        if (in_array($modName,$modules))
-			{
-				$langs->load("errors");
-        		print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
-	            $objMod = new $modName($db);
-	
-	            $modules[$i] = $modName;
-	            $files[$i] = $file;
-	            $orders[$i] = "$objMod->family";   // Tri par famille
-	            $i++;
-			}
-			else
-			{
-	            include_once($dir.$file);
-	            $objMod = new $modName($db);
-	
-	            $modules[$i] = $modName;
-	            $files[$i] = $file;
-	            $orders[$i] = "$objMod->family";   // Tri par famille
-	            $i++;
-			}
-        }
+        $modName = 'Interface'.ucfirst($reg[2]);
+		//print "file=$file"; print "modName=$modName"; exit;
+		if (in_array($modName,$modules))
+		{
+			$langs->load("errors");
+			print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
+			$objMod = new $modName($db);
+
+			$modules[$i] = $modName;
+			$files[$i] = $file;
+			$orders[$i] = $objMod->family;   // Tri par famille
+			$i++;
+		}
+		else
+		{
+			include_once($dir.'/'.$file);
+			$objMod = new $modName($db);
+
+			$modules[$i] = $modName;
+			$files[$i] = $file;
+			$orders[$i] = $objMod->family;   // Tri par famille
+			$i++;
+		}
     }
 }
 
 asort($orders);
 $var=True;
 
+// Loop on each trigger
 foreach ($orders as $key => $value)
 {
     $tab=split('_',$value);
@@ -180,46 +182,61 @@ foreach ($orders as $key => $value)
     $const_name = $objMod->const_name;
 
     $var=!$var;
+
+	// Define disabledbyname and disabledbymodule
+    $disabledbyname=0;
+    $disabledbymodule=1;
+	$module='';
+    if (eregi('NORUN$',$files[$key])) $disabledbyname=1;
+    if (eregi('^interface_([^_]+)_(.+)\.class\.php',$files[$key],$reg))
+	{
+		// Check if trigger file is for a particular module
+		$module=eregi_replace('^mod','',$reg[1]);
+		$constparam='MAIN_MODULE_'.strtoupper($module);
+		if (strtolower($reg[1]) == 'all') $disabledbymodule=0;
+		else if (empty($conf->global->$constparam)) $disabledbymodule=2;
+	}
     
+	// Show line for trigger file
     print "<tr $bc[$var]>\n";
     
     print '<td valign="top" width="14" align="center">';
     print $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
     print '</td>';
     print '<td valign="top">'.$files[$key]."</td>\n";
-    print '<td valign="top">'.$objMod->getDesc()."</td>\n";
+    //print '<td valign="top">'.$objMod->getDesc()."</td>\n";
     print "<td valign=\"top\" align=\"center\">".$objMod->getVersion()."</td>\n";
 
-    // \todo Activation trigger
+    // Etat trigger
     print "<td valign=\"top\" align=\"center\">";
-    $statut_trigger=1;
-    if (eregi('NORUN$',$files[$key])) $statut_trigger=0;
-    
-    if ($statut_trigger == 1)
-    {
-        print img_tick();
-    }
-    else
+    if ($disabledbyname > 0 || $disabledbymodule > 1)
     {
         print "&nbsp;";
     }
-    
+    else
+    {
+        print img_tick();
+    }
     print "</td>\n";
 	
-/*
-        print "<td valign=\"top\" align=\"center\">";
-        if ($const_value == 1)
-	  {
-            // Module actif
-            print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Disable") . "</a></td>\n";
-        }
-        else
-	  {
-            // Module non actif
-            print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Activate") . "</a></td>\n";
-	  }
-*/
-    print "<td>&nbsp;</td>\n";	
+    print '<td valign="top">';
+	$text ='<b>'.$langs->trans("Description").':</b><br>';
+	$text.=$objMod->getDesc().'<br>';
+	$text.='<br><b>'.$langs->trans("Status").':</b><br>';
+	if ($disabledbyname == 1) 
+	{
+		$text.=$langs->trans("TriggerDisabledByName").'<br>';
+		if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
+	}
+	else
+	{
+		if ($disabledbymodule == 0) $text.=$langs->trans("TriggerAlwaysActive").'<br>';
+		if ($disabledbymodule == 1) $text.=$langs->trans("TriggerActiveAsModuleActive",$module).'<br>';
+		if ($disabledbymodule == 2) $text.=$langs->trans("TriggerDisabledAsModuleDisabled",$module).'<br>';
+	}
+	print $html->textwithhelp('',$text);
+	print "</td>\n";
+
     print "</tr>\n";
     
 }

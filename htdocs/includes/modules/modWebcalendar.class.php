@@ -20,7 +20,7 @@
  */
 
 /**     \defgroup   webcalendar     Module Webcalendar
-        \brief      Module to include Webcalendar into Dolibarr and
+        \brief      Module to include Webcalendar GUI into Dolibarr menu and
                     add Dolibarr events directly inside a Webcalendar database.
 */
 
@@ -60,11 +60,11 @@ class modWebcalendar extends DolibarrModules
 		$this->family = "projects";		
 		// Module title used if translation string 'ModuleXXXName' not found (XXX is id value)
 		$this->name = "Webcalendar";	
-		// Module descriptoin used translation string 'ModuleXXXDesc' not found (XXX is id value)
+		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "Interfaçage avec le calendrier Webcalendar";
-		// Possible values for version are: 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';    
-		// Id used in llx_const table to manage module status (enabled/disabled)	
+		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_WEBCALENDAR';
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 1;

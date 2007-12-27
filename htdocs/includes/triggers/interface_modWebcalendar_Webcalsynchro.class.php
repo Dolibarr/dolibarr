@@ -16,28 +16,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_webcal.class.php
+        \file       htdocs/includes/triggers/interface_modWebcalendar_webcalsynchro.class.php
         \ingroup    webcalendar
-        \brief      Fichier de demo de personalisation des actions du workflow
-        \remarks    Son propre fichier d'actions peut etre créé par recopie de celui-ci:
-                    - Le nom du fichier doit etre interface_xxx.class.php
-                    - Le fichier doit rester stocké dans includes/triggers
-                    - Le nom de la classe doit etre InterfaceXxx
+        \brief      Fichier de gestion des triggers webcalendar
 */
 
 include_once(DOL_DOCUMENT_ROOT.'/lib/webcal.class.php');
 
 
 /**
-        \class      InterfaceWebCal
+        \class      InterfaceWebcalsynchro
         \brief      Classe des fonctions triggers des actions webcalendar
 */
 
-class InterfaceWebCal
+class InterfaceWebcalsynchro
 {
     var $db;
     var $error;
@@ -51,11 +46,11 @@ class InterfaceWebCal
      *   \brief      Constructeur.
      *   \param      DB      Handler d'accès base
      */
-    function InterfaceWebCal($DB)
+    function InterfaceWebcalsynchro($DB)
     {
         $this->db = $DB ;
     
-        $this->name = "WebCal";
+        $this->name = "Webcalsynchro";
         $this->family = "webcal";
         $this->description = "Les triggers de ce composant permettent d'insérer un évênement dans le calendrier webcalendar pour chaque grand évênement Dolibarr.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version

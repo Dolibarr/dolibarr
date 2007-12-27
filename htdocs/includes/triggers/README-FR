@@ -1,9 +1,20 @@
-Ce répertoire contient tous les triggers Dolibarr disponibles.
+Directory content
+--------------------------------------------------------
+Ce répertoire contient tous les triggers Dolibarr.
 
-Le nom de certain trigger se termine par -NORUN ce qui signigie que ceux-ci
-ne seront pas actifs et ne se seront jamais éxécutés.
-Si vous souhiatez les utiliser il suffit de rennommer ceux-ci en supprimant
-la partie -NORUN de leur nom.
+La syntaxe d'un fichier Trigger est:
+> interface_modModule_mytrigger.php[-NORUN]
+
+where:
+> modModule est la partie du nom du descripteur de module trouve dans le
+            repertoire includes/modules pour lequel le trigger doit etre.
+            actiff ou la valeure 'all' si ne doit pas etre actif pour un
+			module particulier.
+> Mytrigger est le nom du trigger. La classe PHP dans le fichier trigger
+            aura pour nom InterfaceMytrigger.
+> -NORUN est optionnel et desactive le fichier trigger si defini. Pour 
+            utiliser un tel fichier trigger, renommer le fichier afin 
+			d'enlever la partie -NORUN.
 
 
 $Id$

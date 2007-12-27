@@ -1,8 +1,17 @@
+Directory content
+--------------------------------------------------------
 This directory contains all available Dolibarr triggers.
 
-Name of some triggers ends with -NORUN. This means that they are not enabled and will
-never be launched.
-If you want to use them, just rename the file name removing the -NORUN part in their name.
+Trigger file name syntax is:
+> interface_modModule_mytrigger.php[-NORUN]
+
+where:
+> modModule is part of module descriptor file name found in includes/modules
+            directory or value 'all' if not enabled by a particular module.
+> Mytrigger is name of the trigger. The PHP class inside the trigger file
+            would be named InterfaceMytrigger.
+> -NORUN is optionnal and disable completely a trigger file if set. To use 
+            a trigger with such a name, rename file to remove the -NORUN part.
 
 
 $Id$

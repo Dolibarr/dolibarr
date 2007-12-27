@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_ldap.class.php
+        \file       htdocs/includes/triggers/interface_modLdap_Ldapsynchro.class.php
         \ingroup    core
         \brief      Fichier de gestion des triggers LDAP
 */
@@ -29,11 +28,11 @@ require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
 
 /**
-        \class      InterfaceLdap
+        \class      InterfaceLdapsynchro
         \brief      Classe des fonctions triggers des actions de synchro LDAP
 */
 
-class InterfaceLdap
+class InterfaceLdapsynchro
 {
     var $db;
     var $error;
@@ -43,11 +42,11 @@ class InterfaceLdap
      *   \brief      Constructeur.
      *   \param      DB      Handler d'accès base
      */
-    function InterfaceLdap($DB)
+    function InterfaceLdapsynchro($DB)
     {
         $this->db = $DB ;
     
-        $this->name = "Ldap";
+        $this->name = "Ldapsynchro";
         $this->family = "ldap";
         $this->description = "Les triggers de ce composant permettent d'effectuer les synchro de Dolibarr vers un annuaire LDAP.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version

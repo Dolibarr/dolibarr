@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +16,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_notification.class.php
+        \file       htdocs/includes/triggers/interface_modNotification_notification.class.php
         \ingroup    notification
         \brief      Fichier de gestion des notifications sur evenement Dolibarr
 */
@@ -45,7 +44,7 @@ class InterfaceNotification
     
         $this->name = "Notification";
         $this->family = "notification";
-        $this->description = "Les triggers de ce composant sont les fonctions qui gèrent les notifications par mail du module Notification.";
+        $this->description = "Les triggers de ce composant envoie les notifications par mail selon configuration du module Notification.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     }
     

@@ -54,67 +54,86 @@ class Interfaces
 	*   \param      user        Objet user
 	*   \param      lang        Objet lang
 	*   \param      conf        Objet conf
-	*   \return     int         Nb triggers déclenchés si pas d'erreurs, -Nb en erreur sinon.
+	*   \return     int         Nb triggers ayant agit si pas d'erreurs, -Nb en erreur sinon.
 	*/
 	function run_triggers($action,$object,$user,$lang,$conf)
 	{
-	
 		$handle=opendir($this->dir);
 		$modules = array();
-		$nbtotal = $nbok = $nbko = 0;
+		$nbfile = $nbtotal = $nbok = $nbko = 0;
 	
 		while (($file = readdir($handle))!==false)
 		{
-			if (is_readable($this->dir."/".$file) && eregi('interface_(.*).class.php$',$file,$reg))
+			if (is_readable($this->dir."/".$file) && eregi('^interface_([^_]+)_(.+)\.class\.php',$file,$reg))
 			{
-				$modName = "Interface".ucfirst($reg[1]);
+				$nbfile++;
+				
+				$modName = "Interface".ucfirst($reg[2]);
 				//print "file=$file"; print "modName=$modName"; exit;
-				if ($modName)
+				if (in_array($modName,$modules))
 				{
-					if (in_array($modName,$modules))
+					$langs->load("errors");
+					dolibarr_syslog("Interface::run_triggers ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
+					continue;
+				}
+
+				// Check if trigger file is disabled by name
+				if (eregi('NORUN$',$file))
+				{
+					continue;
+				}
+				// Check if trigger file is for a particular module
+				$qualified=true;
+				if (strtolower($reg[1]) != 'all')
+				{
+					$module=eregi_replace('^mod','',$reg[1]);
+					$constparam='MAIN_MODULE_'.strtoupper($module);
+					if (empty($conf->global->$constparam)) $qualified=false;
+				}
+				
+				if (! $qualified)
+				{
+					dolibarr_syslog("Interfaces::run_triggers Triggers for file '".$file."' need module to be enabled",LOG_INFO);
+					continue;
+				}
+
+				include_once($this->dir."/".$file);
+				$objMod = new $modName($this->db);
+				if ($objMod)
+				{
+					$modules[$i] = $modName;
+					//dolibarr_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
+					$result=$objMod->run_trigger($action,$object,$user,$lang,$conf);
+					if ($result > 0)
 					{
-						$langs->load("errors");
-						dolibarr_syslog($langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
+						// Action OK
+						$nbtotal++;
+						$nbok++;
 					}
-					else
+					if ($result == 0)
 					{
-						include_once($this->dir."/".$file);
-						$objMod = new $modName($this->db);
-						if ($objMod)
-						{
-				            $modules[$i] = $modName;
-							$result=$objMod->run_trigger($action,$object,$user,$lang,$conf);
-							if ($result > 0)
-							{
-								// Action OK
-								$nbtotal++;
-								$nbok++;
-							}
-							if ($result == 0)
-							{
-								// Aucune action faite
-								$nbtotal++;
-							}
-							if ($result < 0)
-							{
-								// Action KO
-								$nbtotal++;
-								$nbko++;
-								$this->errors[]=$objMod->error;
-							}
-							$i++;
-						}
+						// Aucune action faite
+						$nbtotal++;
 					}
+					if ($result < 0)
+					{
+						// Action KO
+						$nbtotal++;
+						$nbko++;
+						$this->errors[]=$objMod->error;
+					}
+					$i++;
 				}
 			}
 		}
 		if ($nbko)
 		{
-			dolibarr_syslog("Interfaces::run_triggers Found: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko);
+			dolibarr_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_ERR);
 			return -$nbko;
 		}
 		else
 		{
+			//dolibarr_syslog("Interfaces::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);
 			return $nbok;
 		}
 	} 
