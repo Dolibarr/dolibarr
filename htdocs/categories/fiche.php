@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -48,7 +48,6 @@ if ($_REQUEST['origin'])
 	if($_GET['type'] == 2)$idCompanyOrigin = $_REQUEST['origin'];
 	
 }
-
 
 
 /*
@@ -144,7 +143,7 @@ if ($user->rights->categorie->creer)
 			print $categorie->error;
 			print '</div>';
 		}
-		print '<form action="fiche.php?type='.$_GET['type'].'" method="post">';
+		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$_GET['type'].'" method="post">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
 		print '<input type="hidden" name="type" value='.$_GET['type'].'>';
@@ -153,10 +152,10 @@ if ($user->rights->categorie->creer)
 			print '<input type="hidden" name="origin" value='.$_REQUEST['origin'].'>';
 		}
 		print '<input type="hidden" name="nom" value="'.$nom.'">';
-		print '<input type="hidden" name="description" value="'.$description.'">';
+
 		print_fiche_titre($langs->trans("CreateCat"));
 
-		print '<table class="border" width="100%" class="notopnoleftnoright">';
+		print '<table width="100%" class="border">';
 		print '<tr>';
 		print '<td width="25%">'.$langs->trans("Ref").'</td><td><input name="nom" size="25" value="'.$categorie->label.'">';
 		print'</td></tr>';
@@ -164,7 +163,7 @@ if ($user->rights->categorie->creer)
 		
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 		{
-	    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 			$doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes');
 			$doleditor->Create();
 		}
@@ -183,14 +182,14 @@ if ($user->rights->categorie->creer)
 		print $html->selectyesno("visible", 1,1);
 		print '</td></tr>';
 		print '<tr><td colspan="2" align="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation" />';
+		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
 		print ' &nbsp; &nbsp; ';
 		print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel" />';
-		print '</td></tr></form>';
-
+		print '</td></tr>';
+		print '</table>';
+		print '</form>';
 	}
 }
-print '</table>';
 
 
 $db->close();
