@@ -139,6 +139,10 @@ class DolGraph
 	{
 		dolibarr_syslog("DolGraph.class::draw_artichow this->type=".$this->type);
 
+		if (! defined('SHADOW_RIGHT_TOP'))  define('SHADOW_RIGHT_TOP',3);
+		if (! defined('LEGEND_BACKGROUND')) define('LEGEND_BACKGROUND',2);
+		if (! defined('LEGEND_LINE'))       define('LEGEND_LINE',1);
+		
 		// Create graph
 		$class='';
 		if ($this->type == 'bars')  $class='BarPlot';
@@ -225,7 +229,7 @@ class DolGraph
 				if ($this->mode == 'depth') $plot->setBarSpace(2);
 
 				$plot->barShadow->setSize($this->SetShading);
-				$plot->barShadow->setPosition(Shadow::RIGHT_TOP);
+				$plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
 				$plot->barShadow->setColor(new Color(160, 160, 160, 50));
 				$plot->barShadow->smooth(TRUE);
 				//$plot->setSize(1, 0.96);
@@ -258,8 +262,8 @@ class DolGraph
 
 			if (sizeof($this->Legend))
 			{
-				if ($this->type == 'bars')  $group->legend->add($plot, $this->Legend[$i], Legend::BACKGROUND);
-				if ($this->type == 'lines') $group->legend->add($plot, $this->Legend[$i], Legend::LINE);
+				if ($this->type == 'bars')  $group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
+				if ($this->type == 'lines') $group->legend->add($plot, $this->Legend[$i], LEGEND_LINE);
 			}
 			$group->add($plot);
 
