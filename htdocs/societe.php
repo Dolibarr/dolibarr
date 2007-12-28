@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -68,17 +67,17 @@ $modesearch=isset($_GET["mode-search"])?$_GET["mode-search"]:$_POST["mode-search
 
 if ($mode == 'search')
 {
-    $_POST["search_nom"]="$socname";
+    $_POST["search_nom"]=$socname;
 
     $sql = "SELECT s.rowid";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE (";
-    $sql.= "s.nom like '%".$socname."%'";
-	$sql.= " OR s.code_client LIKE '%".$socname."%'";
-	$sql.= " OR s.email like '%".$socname."%'";
-	$sql.= " OR s.url like '%".$socname."%'";
+    $sql.= "s.nom like '%".addslashes($socname)."%'";
+	$sql.= " OR s.code_client LIKE '%".addslashes($socname)."%'";
+	$sql.= " OR s.email like '%".addslashes($socname)."%'";
+	$sql.= " OR s.url like '%".addslashes($socname)."%'";
     $sql.= ")";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
@@ -89,7 +88,7 @@ if ($mode == 'search')
         {
             $obj = $db->fetch_object($result);
             $socid = $obj->rowid;
-            header("Location: soc.php?socid=".$socid."");
+            header("Location: ".DOL_URL_ROOT."/soc.php?socid=".$socid);
             exit;
         }
         $db->free($result);
@@ -221,19 +220,19 @@ if ($result)
       $obj = $db->fetch_object();    
       $var=!$var;    
       print "<tr $bc[$var]><td>";
-      print "<a href=\"soc.php?socid=".$obj->rowid."\">";
+      print "<a href=\"".DOL_URL_ROOT."/soc.php?socid=".$obj->rowid."\">";
       print img_object($langs->trans("ShowCompany"),"company");
-      print "</a>&nbsp;<a href=\"soc.php?socid=".$obj->rowid."\">".stripslashes($obj->nom)."</a></td>\n";
+      print "</a>&nbsp;<a href=\"".DOL_URL_ROOT."/soc.php?socid=".$obj->rowid."\">".$obj->nom."</a></td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
       print "<td>".$obj->siren."&nbsp;</td>\n";
       print '<td align="center">';
       if ($obj->client==1)
 	{
-	  print "<a href=\"comm/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Customer")."</a>\n";
+	  print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Customer")."</a>\n";
 	}
       elseif ($obj->client==2)
 	{
-	  print "<a href=\"comm/prospect/fiche.php?id=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
+	  print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
 	}
       else
 	{
