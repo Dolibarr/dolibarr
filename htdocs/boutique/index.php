@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
  
 /**
@@ -58,10 +57,11 @@ $sql .= " FROM ".OSC_DB_NAME.".orders_total as t";
 $sql .= " JOIN ".OSC_DB_NAME.".orders as o ON o.orders_id = t.orders_id";
 $sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(now()) ";
 $sql .= " GROUP BY mois ORDER BY mois";
- 
-if ( $dbosc->query($sql) )
+
+$result=$dbosc->query($sql);
+if ($result)
 {
-  $num = $dbosc->num_rows();
+  $num = $dbosc->num_rows($result);
 
   $var=True;
   $i=0;
@@ -69,7 +69,7 @@ if ( $dbosc->query($sql) )
     {
 	   while ($i < $num)
 		{
-      	$objp = $dbosc->fetch_object();
+      	$objp = $dbosc->fetch_object($result);
       	$var=!$var;
       	print "<tr $bc[$var]>";
       	print '<td align="left">'.$objp->mois.'</td>';
