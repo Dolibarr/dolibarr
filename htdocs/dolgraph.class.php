@@ -47,6 +47,8 @@ class DolGraph
 {
 	//! Type du graphique
 	var $type='bars';		// bars, lines, ...
+	var $mode='side';		// Mode bars graph: side, depth
+
 	//! Tableau de donnees
 	var $data;				// array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
 	var $width=380;
@@ -146,7 +148,7 @@ class DolGraph
 		// Definition de couleurs
 		$bgcolor=new Color($this->bgcolor[0],$this->bgcolor[1],$this->bgcolor[2]);
 		$colortrans=new Color(0,0,0,100);
-		$colorsemitrans=new Color(255,255,255,50);
+		$colorsemitrans=new Color(255,255,255,60);
 		$colorgradient= new LinearGradient(new Color(235, 235, 235),new Color(255, 255, 255),0);
 
 		// Graph
@@ -163,7 +165,12 @@ class DolGraph
 
 		$group = new PlotGroup;
 		//$group->setSpace(5, 5, 0, 0);
-		$group->setPadding(strlen(max(abs($this->MaxValue),abs($this->MinValue)))*8+20, 10);		// Width on left and right for Y axis values		
+
+		$paddleft=50;
+		$paddright=10;
+		$strl=strlen(max(abs($this->MaxValue),abs($this->MinValue)));
+		if ($strl > 6) $paddleft += ($strln * 4);
+		$group->setPadding($paddleft, $paddright);		// Width on left and right for Y axis values		
 		$group->legend->setSpace(0);
 		$group->legend->setPadding(2,2,2,2);
 		$group->legend->setPosition(NULL,0.1);
@@ -175,7 +182,7 @@ class DolGraph
 		$legends=array();
 		$i=0;
 		$nblot=sizeof($this->data[0])-1;
-		if (! $nblot) $end=1;
+
 		while ($i < $nblot)
 		{
 			$j=0;
@@ -201,18 +208,21 @@ class DolGraph
 				//print "Lot de donnees $i<br>";
 				//print_r($values);
 				//print '<br>';
-
+				
+				$colorgrey=new Color(100,100,100);
 				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
 				$colorborder=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
 
-				//$plot = new BarPlot($newvalues,1,1,0);
-				$plot = new BarPlot($newvalues, $i+1, $nblot);
+				if ($this->mode == 'side')  $plot = new BarPlot($newvalues, $i+1, $nblot);
+				if ($this->mode == 'depth') $plot = new BarPlot($newvalues, 1, 1, ($nblot-$i-1)*5);
 
-				$plot->barBorder->setColor($colorborder);
+				$plot->barBorder->setColor($colorgrey);
 				$plot->setBarColor($color);
 
-				$plot->setBarPadding(0.1, 0.1);
-				$plot->setBarSpace(5);
+				if ($this->mode == 'side')  $plot->setBarPadding(0.1, 0.1);
+				if ($this->mode == 'depth') $plot->setBarPadding(0.1, 0.4);
+				if ($this->mode == 'side')  $plot->setBarSpace(5);
+				if ($this->mode == 'depth') $plot->setBarSpace(2);
 
 				$plot->barShadow->setSize($this->SetShading);
 				$plot->barShadow->setPosition(Shadow::RIGHT_TOP);

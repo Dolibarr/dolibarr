@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -41,7 +40,9 @@ print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
 
 $stats = new PropaleStats($db);
 $year = strftime("%Y", time());
-$data = $stats->getNbByMonthWithPrevYear($year);
+$startyear=$year-2;
+$endyear=$year;
+$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 
 create_exdir($conf->propal->dir_temp);
 
@@ -62,17 +63,24 @@ if (! $mesg)
 {
     $px->SetData($data);
 	$px->SetPrecisionY(0);
-    $px->SetLegend(array($year - 1, $year));
+	$i=$startyear;
+	while ($i <= $endyear)
+	{
+		$legend[]=$i;
+		$i++;
+	}
+    $px->SetLegend($legend);
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
+	$px->mode='depth';
     $px->draw($filename);
 }
 
-$sql = "SELECT count(*), date_format(p.datep,'%Y') as dm, sum(p.price)";
+$sql = "SELECT count(*) as nb, date_format(p.datep,'%Y') as dm, sum(p.total) as total_ttc";
 if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -83,9 +91,10 @@ if($user->societe_id)
    $sql .= " AND p.fk_soc = ".$user->societe_id;
 }
 $sql.= " GROUP BY dm DESC ";
-if ($db->query($sql))
+$result=$db->query($sql);
+if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
 
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NbOfProposals").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
@@ -104,18 +113,18 @@ if ($db->query($sql))
   $i = 0;
   while ($i < $num)
     {
-      $row = $db->fetch_row($i);
-      $nbproduct = $row[0];
-      $year = $row[1];
+      $obj = $db->fetch_object($result);
+      $nbproduct = $obj->nb;
+      $year = $obj->dm;
       print "<tr>";
       print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td>';
       print '<td align="center">'.$nbproduct.'</td>';
-      print '<td align="center">'.price($row[2]).'</td></tr>';
+      print '<td align="center">'.price($obj->total_ttc).'</td></tr>';
       $i++;
     }
 
   print '</table>';
-  $db->free();
+  $db->free($result);
 }
 else
 {

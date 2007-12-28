@@ -16,8 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 class Stats 
@@ -29,24 +27,34 @@ class Stats
       $this->db = $DB;
     }
 
-  function getNbByMonthWithPrevYear($year)
+  function getNbByMonthWithPrevYear($endyear,$startyear)
   {
-    $data1 = $this->getNbByMonth($year - 1);
-    $data2 = $this->getNbByMonth($year);
+  	$datay=array();
+  	
+    $year=$startyear;
+	while($year <= $endyear)
+	{
+  		$datay[$year] = $this->getNbByMonth($year);
+		$year++;
+	}
 
     $data = array();
 
     for ($i = 0 ; $i < 12 ; $i++)
       {
-	$data[$i] = array($data1[$i][0], 
-			  $data1[$i][1],
-			  $data2[$i][1]);
+		$data[$i][]=$datay[$endyear][$i][0];
+		$year=$startyear;
+		while($year <= $endyear)
+		{
+			$data[$i][]=$datay[$year][$i][1];
+			$year++;
+		}
       }
     return $data;
   }
 	
   /**
-   * \brief  Renvoie le nombre de proposition par mois pour une année donnée
+   * \brief  Renvoie le nombre de proposition par mois pour une annee donnee
    *
    */
     function _getNbByMonth($year, $sql)
@@ -85,7 +93,7 @@ class Stats
 
 
   /**
-   * \brief  Renvoie le nombre d'element par année
+   * \brief  Renvoie le nombre d'element par annï¿½e
    *
    */
     function _getNbByYear($sql)
@@ -111,7 +119,7 @@ class Stats
     }
 
   /**
-   * \brief  Renvoie le nombre d'element par mois pour une année donnée
+   * \brief  Renvoie le nombre d'element par mois pour une annï¿½e donnï¿½e
    *
    */
 	 
