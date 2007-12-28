@@ -163,7 +163,7 @@ class DolGraph
 
 		$group = new PlotGroup;
 		//$group->setSpace(5, 5, 0, 0);
-		$group->setPadding(30, 10);
+		$group->setPadding(strlen(max(abs($this->MaxValue),abs($this->MinValue)))*8+20, 10);		// Width on left and right for Y axis values		
 		$group->legend->setSpace(0);
 		$group->legend->setPadding(2,2,2,2);
 		$group->legend->setPosition(NULL,0.1);
