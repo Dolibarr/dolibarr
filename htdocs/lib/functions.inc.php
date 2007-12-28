@@ -1386,8 +1386,8 @@ function dol_loginfunction($notused,$pearstatus)
 	print '</style>'."\n";
 	print '<script language="javascript" type="text/javascript">'."\n";
 	print "function donnefocus() {\n";
-	if (! $_REQUEST["username"]) print "document.getElementsByTagName('INPUT')[0].focus();";
-	else print "document.getElementsByTagName('INPUT')[1].focus();";
+	if (! $_REQUEST["username"]) print "document.getElementById('username').focus();\n";
+	else print "document.getElementById('password').focus();\n";
 	print "}\n";
 	print '</script>'."\n";
 	print '</head>'."\n";
@@ -1423,7 +1423,7 @@ function dol_loginfunction($notused,$pearstatus)
 
 	print '<tr>';
 	print '<td align="left" valign="top"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
-	print '<td><input type="text" name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
+	print '<td><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
 
 	if ($conf->main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
 
@@ -1449,7 +1449,7 @@ function dol_loginfunction($notused,$pearstatus)
 	print '</tr>'."\n";
 
 	print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
-	print '<td valign="top" nowrap="nowrap"><input name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
+	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
 	print '</td></tr>';
 	
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
@@ -1463,7 +1463,7 @@ function dol_loginfunction($notused,$pearstatus)
 		print '<td valign="top" nowrap="nowrap" align="left" class="e">';
 		
 		print '<table><tr><td>';
-		print '<input class="flat" type="text" size="6" maxlength="5" name="code" tabindex="2">';
+		print '<input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3">';
 		print '</td><td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36">';
 		print '</td></tr></table>';
 		

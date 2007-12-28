@@ -176,8 +176,8 @@ print '-->'."\n";
 print '</style>'."\n";
 print '<script language="javascript" type="text/javascript">'."\n";
 print "function donnefocus() {\n";
-if (! $_REQUEST["username"]) print "document.getElementsByTagName('INPUT')[0].focus();";
-else print "document.getElementsByTagName('INPUT')[1].focus();";
+if (! $_REQUEST["username"]) print "document.getElementById('username').focus();\n";
+else print "document.getElementById('password').focus();\n";
 print "}\n";
 print '</script>'."\n";
 print '</head>'."\n";
@@ -215,7 +215,7 @@ print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 print '<tr>';
 print '<td align="left" valign="top"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
-print '<td><input type="text" '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
+print '<td><input id="username" type="text" '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
 
 $title='';
 
@@ -248,7 +248,7 @@ if (function_exists("imagecreatefrompng") && ! $disabled)
 	print '<td valign="top" nowrap="nowrap" align="left" class="e">';
 	
 	print '<table><tr>';
-	print '<td><input class="flat" type="text" size="6" maxlength="5" name="code" tabindex="2"></td>';
+	print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="2"></td>';
 	print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36"></td>';
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
 	print '</tr></table>';
@@ -260,7 +260,7 @@ if (function_exists("imagecreatefrompng") && ! $disabled)
 print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 print '<tr><td colspan="3" style="text-align:center;"><br>';
-print '<input type="submit" '.$disabled.' class="button" value="'.$langs->trans("SendNewPassword").'" tabindex="4">';
+print '<input id="password" type="submit" '.$disabled.' class="button" name="password" value="'.$langs->trans("SendNewPassword").'" tabindex="4">';
 print '</td></tr>'."\n";
 
 print "</table>"."\n";
