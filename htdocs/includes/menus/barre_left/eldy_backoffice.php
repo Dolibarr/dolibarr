@@ -178,7 +178,7 @@ class MenuLeft {
 			    if ($conf->societe->enabled)
 			    {
 			        $langs->load("companies");
-			        $newmenu->add(DOL_URL_ROOT."/societe.php", $langs->trans("ThirdParty"), 1, $user->rights->societe->lire);
+			        $newmenu->add(DOL_URL_ROOT."/societe.php", $langs->trans("ThirdParty"), 0, $user->rights->societe->lire);
 			
 			        if ($user->rights->societe->creer)
 			        {
