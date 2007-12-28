@@ -1,8 +1,0 @@
-Cryptographp v1.4
------------------
-
-
-S'il vous plait, consultez www.cryptographp.com pour la documentation !
-documentation en français et en anglais.
-
-http://www.cryptographp.com

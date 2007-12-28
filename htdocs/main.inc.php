@@ -346,9 +346,14 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	// Verification du code
 	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/includes/cryptographp/cryptographp.fct.php');
-		//print "Info session: ".session_name().session_id();print_r($_SESSION);
-		if (! chk_crypt($_POST['code']))
+		require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
+		require_once ARTICHOW."/AntiSpam.class.php";
+		
+		// On créé l'objet anti-spam
+		$object = new AntiSpam();
+		
+		// Verifie code
+		if (! $object->check('dol_antispam_value',$_POST['code'],true))
 		{
 			session_destroy();
 			dolibarr_syslog('Bad value for code, connexion refused');

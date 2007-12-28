@@ -1422,8 +1422,8 @@ function dol_loginfunction($notused,$pearstatus)
 	print '<tr><td colspan="3">&nbsp;</td></tr>';
 
 	print '<tr>';
-	print '<td align="left"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
-	print '<td><input name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
+	print '<td align="left" valign="top"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
+	print '<td><input type="text" name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
 
 	if ($conf->main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
 
@@ -1446,24 +1446,27 @@ function dol_loginfunction($notused,$pearstatus)
 	print '<td rowspan="2" align="center"><img title="'.$title.'" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
 	print '></td>';
-	print '</tr>';
+	print '</tr>'."\n";
 
-	print '<tr><td align="left" valign="top"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
+	print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
 	print '<td valign="top" nowrap="nowrap"><input name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
 	print '</td></tr>';
 	
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 	
 	// Code de sécurité
-	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
+	$disabled=! $conf->global->MAIN_SECURITY_ENABLECAPTCHA;
+	if (function_exists("imagecreatefrompng") && ! $disabled)
 	{
 		//print "Info session: ".session_name().session_id();print_r($_SESSION);
-		include_once(DOL_DOCUMENT_ROOT.'/includes/cryptographp/cryptographp.fct.php');
-		$cryptinstall = DOL_URL_ROOT.'/includes/cryptographp';
-		print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
-		print '<td><input type="text" size="15" maxlength="10" name="code" tabindex="3"></td>';
-		print '<td align="center">';
-		dsp_crypt('dolibarr.cfg.php',1);
+		print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
+		print '<td valign="top" nowrap="nowrap" align="left" class="e">';
+		
+		print '<table><tr><td>';
+		print '<input class="flat" type="text" size="6" maxlength="5" name="code" tabindex="2">';
+		print '</td><td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36">';
+		print '</td></tr></table>';
+		
 		print '</td>';
 		print '</tr>';
 	}

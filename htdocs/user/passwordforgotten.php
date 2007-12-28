@@ -28,7 +28,6 @@ require("../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/includes/cryptographp/cryptographp.fct.php');
 
 $user->getrights('user');
 
@@ -79,8 +78,14 @@ if ($_GET["action"] == 'validatenewpassword' && $_GET["username"] && $_GET["pass
 // Action modif mot de passe
 if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 {
+	require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
+	require_once ARTICHOW."/AntiSpam.class.php";
+	
+	// On créé l'objet anti-spam
+	$object = new AntiSpam();
+	
 	// Verifie code
-	if (function_exists("imagecreatefrompng") && ! chk_crypt($_POST['code']))
+	if (! $object->check('dol_antispam_value',$_POST['code'],true))
 	{
 		$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 	}
@@ -88,7 +93,7 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 	{
 	    $edituser = new User($db);
 	    $result=$edituser->fetch($_POST["username"]);
-		if ($result < 0)
+		if ($result <= 0 && $edituser->error == 'USERNOTFOUND')
 		{
 	        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists",$_POST["username"]).'</div>';
 			$_POST["username"]='';
@@ -171,7 +176,8 @@ print '-->'."\n";
 print '</style>'."\n";
 print '<script language="javascript" type="text/javascript">'."\n";
 print "function donnefocus() {\n";
-print "document.getElementsByTagName('INPUT')[0].focus();";
+if (! $_REQUEST["username"]) print "document.getElementsByTagName('INPUT')[0].focus();";
+else print "document.getElementsByTagName('INPUT')[1].focus();";
 print "}\n";
 print '</script>'."\n";
 print '</head>'."\n";
@@ -207,8 +213,9 @@ print '<table cellpadding="2" align="center" width="450">'."\n";
 
 print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
-print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
-print '<td><input '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
+print '<tr>';
+print '<td align="left" valign="top"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
+print '<td><input type="text" '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
 
 $title='';
 
@@ -228,25 +235,34 @@ elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.pn
 {
 	$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
 }
-print '<td align="center"><img title="'.$title.'" src="'.$urllogo.'"';
+print '<td rowspan="2" align="center"><img title="'.$title.'" src="'.$urllogo.'"';
 if ($width) print ' width="'.$width.'"';
 print '></td>';
-
 print '</tr>'."\n";
+
 
 if (function_exists("imagecreatefrompng") && ! $disabled)
 {
 	//print "Info session: ".session_name().session_id();print_r($_SESSION);
-	$cryptinstall = DOL_URL_ROOT.'/includes/cryptographp';
-	print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
-	print '<td><input type="text" size="15" maxlength="10" name="code" tabindex="3"></td>';
-	print '<td align="center">';
-	dsp_crypt('dolibarr.cfg.php',1);
+	print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
+	print '<td valign="top" nowrap="nowrap" align="left" class="e">';
+	
+	print '<table><tr>';
+	print '<td><input class="flat" type="text" size="6" maxlength="5" name="code" tabindex="2"></td>';
+	print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36"></td>';
+	print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
+	print '</tr></table>';
+	
 	print '</td>';
 	print '</tr>';
 }
 
-print "<tr>".'<td align="center" colspan="3"><input '.$disabled.' class="button" value="'.$langs->trans("SendNewPassword").'" type="submit"></td></tr>'."\n";
+print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
+
+print '<tr><td colspan="3" style="text-align:center;"><br>';
+print '<input type="submit" '.$disabled.' class="button" value="'.$langs->trans("SendNewPassword").'" tabindex="4">';
+print '</td></tr>'."\n";
+
 print "</table>"."\n";
 
 print "</form>"."\n";

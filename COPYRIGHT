@@ -16,7 +16,6 @@ In alphabetical order of includes directory:
 AdoDb-Date        0.21     Modified BSD License     Oui              Conversion dates
 Php-barcode       0.3pl1   GPL 2.0                  Oui              Bar code generation
 Pibarcode         2.05     Perso (ask mail)         Non!             Bar code generation
-Cryptographp      1.4      CeCILL V2                Oui              Captcha generator
 FCKEditor         2.4.4    GPL 2.0                  Oui              Editor WYSIWYG
 FPDF              1.53     Pas clair (freeware)     Non!             PDF generation (le code d'origine a été modifié et complété)
 FPDI              1.2      Apache License 2.0       Non GPL3 uniqmt  PDF encryption
