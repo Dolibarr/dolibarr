@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -100,8 +99,7 @@ class MenuTop {
 
 
         // Third parties
-        if (($conf->societe->enabled && $user->rights->societe->lire)
-        	|| ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
+        if ($conf->societe->enabled || $conf->fournisseur->enabled)
         {
             $langs->load("companies");
             $langs->load("suppliers");
@@ -115,8 +113,12 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-        
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=companies&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("ThirdParties").'</a></td>';
+
+			if (($conf->societe->enabled && $user->rights->societe->lire)
+				|| ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
+            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=companies&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("ThirdParties").'</a></td>';
+            else
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("ThirdParties").'</font></td>';
         }
 
 
@@ -142,7 +144,7 @@ class MenuTop {
             if ($user->rights->produit->lire)
                 print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a></td>';
             else
-                print '<td class="tmenu"><font class="tmenudisabled">'.$chaine.'</font>';
+                print '<td class="tmenu"><font class="tmenudisabled">'.$chaine.'</font></td>';
         }
 
         // Suppliers
@@ -163,8 +165,7 @@ class MenuTop {
             if ($user->rights->fournisseur->lire)
             		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
             else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Suppliers").'</font>';
-        
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Suppliers").'</font></td>';
         }
         
         // Commercial
@@ -185,13 +186,12 @@ class MenuTop {
             if ($user->rights->commercial->main->lire)
             		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
             else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Commercial").'</font>';
-        
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Commercial").'</font></td>';
         }
 
         // Financial
         if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled
-        	|| $conf->commande->enabled || $conf->facture->enabled)
+        	|| $conf->facture->enabled)
         {
             $langs->load("compta");
         
@@ -206,10 +206,10 @@ class MenuTop {
             }
             
             if ($user->rights->compta->resultat->lire || $user->rights->comptaexpert->plancompte->lire
-            	|| $user->rights->commande->lire || $user->rights->facture->lire || $user->rights->banque->lire)
+            	|| $user->rights->facture->lire || $user->rights->banque->lire)
             		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';
             else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("MenuFinancial").'</font>';
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("MenuFinancial").'</font></td>';
         }
 
         // Projects
@@ -230,11 +230,12 @@ class MenuTop {
             if ($user->rights->projet->lire)
             		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Projects").'</a></td>';
             else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Projects").'</font>';
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Projects").'</font></td>';
         }
 
         // Tools
-        if ($conf->mailing->enabled || $conf->export->enabled || $conf->bookmark->enabled)
+        if ($conf->mailing->enabled || $conf->export->enabled || $conf->bookmark->enabled
+				|| $conf->global->MAIN_MODULE_IMPORT || $conf->global->MAIN_MODULE_DOMAIN)
         {
             $langs->load("other");
             
@@ -253,7 +254,7 @@ class MenuTop {
             		//print '<a '.$class.' href="'.DOL_URL_ROOT.'/societe.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
             		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a></td>';
             else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Tools").'</font>';
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Tools").'</font></td>';
         }
         
         // Telephonie

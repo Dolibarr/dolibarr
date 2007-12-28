@@ -19,7 +19,6 @@ Pibarcode         2.05     Perso (ask mail)         Non!             Bar code ge
 FCKEditor         2.4.4    GPL 2.0                  Oui              Editor WYSIWYG
 FPDF              1.53     Pas clair (freeware)     Non!             PDF generation (le code d'origine a été modifié et complété)
 FPDI              1.2      Apache License 2.0       Non GPL3 uniqmt  PDF encryption
-Jabber            0.4      GPL 2.0                  Oui              Lib jabber
 MagPieRss         0.72     GPL 2.0                  Oui              Load RSS
 NuSoap            0.6.5    LGPL 2.1                 Oui              Interfaces with third tools
 PEAR Core         1.2.1    PHP License 2.00         Non!             Core code for PEAR

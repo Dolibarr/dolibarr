@@ -29,7 +29,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/vcard/vcard.class.php");
 
 
 $contact = new Contact($db);

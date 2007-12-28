@@ -24,7 +24,7 @@
 
 /**
         \defgroup   adherent     Module adherents
-        \brief      Module pour g�rer les adh�rents d'une association
+        \brief      Module pour gerer les adherents d'une association
 */
 
 /**
@@ -58,7 +58,7 @@ class modAdherent extends DolibarrModules
         $this->description = "Gestion des adherents d'une association";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_ADHERENT';
-        $this->special = 2;
+        $this->special = 0;
         $this->picto='user';
     
         // Dir

@@ -175,10 +175,10 @@ class MenuLeft {
 			if ($mainmenu == 'companies')
 			{
 				// Sociétés
-			    if ($conf->societe->enabled && $user->rights->societe->lire)
+			    if ($conf->societe->enabled)
 			    {
 			        $langs->load("companies");
-			        $newmenu->add(DOL_URL_ROOT."/societe.php", $langs->trans("ThirdParty"));
+			        $newmenu->add(DOL_URL_ROOT."/societe.php", $langs->trans("ThirdParty"), 1, $user->rights->societe->lire);
 			
 			        if ($user->rights->societe->creer)
 			        {
@@ -208,7 +208,7 @@ class MenuLeft {
 				}
 
 				// Prospects
-			    if ($conf->societe->enabled && $user->rights->societe->lire)
+			    if ($conf->societe->enabled)
 			    {
 					$langs->load("commercial");
 					$newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("Prospects"), 1, $user->rights->societe->lire);
@@ -218,7 +218,7 @@ class MenuLeft {
 				}
 				
 				// Clients
-			    if ($conf->societe->enabled && $user->rights->societe->lire)
+			    if ($conf->societe->enabled)
 			    {
 					$langs->load("commercial");
 					$newmenu->add(DOL_URL_ROOT."/comm/clients.php?leftmenu=customers", $langs->trans("Customers"), 1, $user->rights->societe->lire);
@@ -837,7 +837,7 @@ class MenuLeft {
 		if (! sizeof($this->menu_array))
 		{
 			print '<div class="blockvmenuimpair">'."\n";
-			print $langs->trans("NoPermission");
+			print $langs->trans("NoMenu");
 			print '</div>';
 		}
 		else

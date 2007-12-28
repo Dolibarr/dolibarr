@@ -32,7 +32,7 @@ require("../../conf/conf.php");
 header('Content-type: text/css');
 // Important: Avoid page request by browser and dynamic build at
 // each Dolibarr page access.
-if (! isset($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
+if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
 {
 	header('Cache-Control: max-age=3600, public, must-revalidate');
 }
@@ -263,6 +263,7 @@ font.tmenudisabled
   margin: 0px 0px 2px 0px;
   font-weight: normal;
   font-size:12px;
+  cursor: not-allowed;
 }
 
 a.tmenu:active

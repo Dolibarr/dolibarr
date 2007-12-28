@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -183,7 +182,7 @@ if ($_POST["delete"])
 llxHeader();
 
 print_fiche_titre($langs->trans("ExternalRSSSetup"), $mesg, 'setup');
-
+print '<br>';
 
 // Formulaire ajout
 print '<form name="externalrssconfig" action="external_rss.php" method="post">';

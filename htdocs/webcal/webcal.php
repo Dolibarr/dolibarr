@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**	    \file       htdocs/wecal/webcal.php
@@ -28,7 +27,15 @@
 
 require("./pre.inc.php");
 
-$url=PHPWEBCALENDAR_URL;
+if (empty($conf->global->PHPWEBCALENDAR_URL))
+{
+	$user->getrights();
+	
+	llxHeader();
+	print '<div class="error">Module Webcalendar was not configured properly.</div>';
+	llxFooter('$Date$ - $Revision$');
+}
+
 $mainmenu=isset($_GET["mainmenu"])?$_GET["mainmenu"]:"";
 $leftmenu=isset($_GET["leftmenu"])?$_GET["leftmenu"]:"";
 
@@ -39,8 +46,8 @@ print "
 </head>
 
 <frameset rows=\"28,*\" border=0 framespacing=0 frameborder=0>
-    <frame name=\"barre\" src=\"webcaltop.php?mainmenu=$mainmenu&leftmenu=$leftmenu\" noresize scrolling=\"NO\" noborder>
-    <frame name=\"main\" src=\"$url\">
+    <frame name=\"barre\" src=\"webcaltop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."\" noresize scrolling=\"NO\" noborder>
+    <frame name=\"main\" src=\"".$conf->global->PHPWEBCALENDAR_URL."\">
     <noframes>
     <body>
 

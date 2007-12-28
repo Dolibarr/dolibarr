@@ -28,7 +28,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 ***************************************************************************/
 
 /**
-        \file       htdocs/lib/vcard/vcard.class.php
+        \file       htdocs/includes/vcard/vcard.class.php
 		\brief      Classe permettant de créer un fichier vcard.
 		\author     Kai Blankenhorn.
 		\version    2.0
