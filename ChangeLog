@@ -1,6 +1,14 @@
 English Dolibarr changelog
 
 
+***** Changelog for 2.4 compared to 2.2 *****
+
+- Replaced phplot and phplot5 librairies by artichow.
+- Removed cryptograph library replaced by artichow.
+- Look enhancement in graphics.
+
+
+
 ***** Changelog for 2.2 compared to 2.1 *****
 
 - Add more statistics on main page.
