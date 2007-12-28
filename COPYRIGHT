@@ -26,12 +26,13 @@ PEAR Auth         ??       PHP License 2.02          Non!             Login (Dat
 PEAR MDB2         2.4.1    Modified BSD License      Oui              Database access MDB2
 PEAR DB           ??       PHP License 2.02          Non!             Database access DB
 PHP_WriteExcel    0.3.0    LGPL 2.1                  Oui              Excel files generation
-PHPExcelReader    2k       PHP License               Non!             Excel files reader
+PHPExcelReader    2k       PHP License 3.0           Non!             Excel files reader
 Scriptaculous     1.8.0    MIT License               Oui              Extension Ajax
 Prototype         1.6.0    MIT License               Oui              Extension Ajax
 Treemenu          1.1      Perso                     Oui              Tree in HTML pages (like categories)
 VCard             2.0      GPL 2.0                   Oui              Fonctions vcard
 
+For licenses compatibility informations:
 http://www.fsf.org/licensing/licenses/index_html
 
 
