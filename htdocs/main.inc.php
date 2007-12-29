@@ -349,7 +349,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
 		require_once ARTICHOW."/AntiSpam.class.php";
 		
-		// On créé l'objet anti-spam
+		// On crê§ l'objet anti-spam
 		$object = new AntiSpam();
 		
 		// Verifie code
@@ -676,7 +676,7 @@ else
  *  \brief      Affiche en-tete HTML
  *  \param      head    	Lignes d'en-tete head optionnelles
  *  \param      title   	Titre page web
- *	\param		disablejs	N'affiche pas les liens vers les js (Ex: qd fonction utilisï¿½e par sous formulaire Ajax)	
+ *	\param		disablejs	N'affiche pas les liens vers les js (Ex: qd fonction utilisee par sous formulaire Ajax)	
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0) 
 {
@@ -729,7 +729,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 		print '<link rel="stylesheet" type="text/css" media="print" href="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
 		
 		// Style sheets pour la class Window
-		if (! empty($conf->global->MAIN_CONFIRM_AJAX))
+		if (! $disablejs && ($conf->use_javascript && $conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX))
 		{
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/default.css">'."\n";
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alphacube.css">'."\n";
@@ -754,6 +754,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 		}
 		if (! $disablejs && $conf->use_ajax)
 		{
+			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
+			
 			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
 			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
 			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
