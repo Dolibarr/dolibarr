@@ -5,7 +5,9 @@ English Dolibarr changelog
 
 - Replaced phplot and phplot5 librairies by artichow.
 - Removed cryptograph library replaced by artichow.
-- Look enhancement in graphics.
+- Look enhancement in graphics (thanks artichow).
+- Some minor fixes.
+- Add tel and fax on delivery addresses.
 
 
 
