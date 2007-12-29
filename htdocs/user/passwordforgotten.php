@@ -29,6 +29,12 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
+// Init session
+$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+session_name($sessionname);
+session_start();
+dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
+
 $user->getrights('user');
 
 $langs->load("main");
@@ -218,6 +224,8 @@ print '<td align="left" valign="top"><br> &nbsp; <b>'.$langs->trans("Login").'</
 print '<td><input id="username" type="text" '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
 
 $title='';
+$title.=$langs->trans("SessionName").': '.session_name();
+if ($conf->main_authentication) $title.=", ".$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
 
 // Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 $width=0;

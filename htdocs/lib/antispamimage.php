@@ -25,16 +25,22 @@
 		\version    $Revision$
 */
 
+if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-
-
-// C'est un wrapper, donc header vierge
-function llxHeader() { }
-
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');
+if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
+if (! defined('NOREQUIRESOC'))  define('NOREQUIRESOC','1');
 
 require_once("../master.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
 require_once ARTICHOW."/AntiSpam.class.php";
+
+// Init session
+$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+session_name($sessionname);
+session_start();
+
 
 // On créé l'objet anti-spam
 $object = new AntiSpam();
@@ -60,4 +66,9 @@ $object->border->setColor($colorbr);
 
 // On affiche l'image à l'écran
 $object->draw();
+
+
+// C'est un wrapper, donc header vierge
+function llxHeader() { }
+
 ?>

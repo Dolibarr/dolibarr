@@ -1425,8 +1425,9 @@ function dol_loginfunction($notused,$pearstatus)
 	print '<td align="left" valign="top"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
 	print '<td><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
 
-	if ($conf->main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
-
+	$title.=$langs->trans("SessionName").': '.session_name();
+	if ($conf->main_authentication) $title.=", ".$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
+	
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$width=0;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
@@ -1462,10 +1463,11 @@ function dol_loginfunction($notused,$pearstatus)
 		print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
 		print '<td valign="top" nowrap="nowrap" align="left" class="e">';
 		
-		print '<table><tr><td>';
-		print '<input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3">';
-		print '</td><td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36">';
-		print '</td></tr></table>';
+		print '<table><tr>';
+		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3"></td>';
+		print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36"></td>';
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
+		print '</tr></table>';
 		
 		print '</td>';
 		print '</tr>';
@@ -3143,122 +3145,6 @@ function num_lines($texte)
 	$a = preg_split($pattern, $texte, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$nblines = ((count($a)+1)/2);
 	return $nblines;
-}
-
-function ajax_indicator($htmlname,$indicator='working')
-{
-	$script.='<span id="indicator'.$htmlname.'" style="display: none">'.img_picto('Working...',$indicator.'.gif').'</span>';
-	return $script;
-}
-
-/**
-   \brief     Récupére la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
-   \param	  htmlname            nom et id du champ
-   \param     keysearch           nom et id complémentaire du champ de collecte
-   \param	  url                 chemin du fichier de réponse : /chemin/fichier.php
-   \param     option              champ supplémentaire de recherche dans les paramétres
-   \param     indicator           Nom de l'image gif sans l'extension
-   \return    script              script complet
-*/
-function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
-{
-	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
-	if ($indicator) $script.=ajax_indicator($htmlname,$indicator);
-	$script.='<script type="text/javascript">';
-	$script.='var myIndicator'.$htmlname.' = {
-                     onCreate: function(){
-                            if($F("'.$keysearch.$htmlname.'")){
-                                  Element.show(\'indicator'.$htmlname.'\');
-                            }
-                     },
-                     
-                     onComplete: function() {
-                            if(Ajax.activeRequestCount == 0){
-                                  Element.hide(\'indicator'.$htmlname.'\');
-                            }
-                     }
-             };';
-	$script.='Ajax.Responders.register(myIndicator'.$htmlname.');';
-	$script.='new Form.Element.Observer($("'.$keysearch.$htmlname.'"), 1,
-			   function(){
-				  var myAjax = new Ajax.Updater( {
-					 success: \'ajdynfield'.$htmlname.'\'},
-					 \''.DOL_URL_ROOT.$url.'\', {
-						method: \'get\',
-						parameters: "'.$keysearch.'="+$F("'.$keysearch.$htmlname.'")+"&htmlname='.$htmlname.$option.'"
-					 });
-				   });';
-	$script.='</script>';
-	$script.='<div class="nocellnopadd" id="ajdynfield'.$htmlname.'"></div>';
-  
-	return $script;
-}
-
-/**
-   \brief     Récupére la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
-   \param	    htmlname            nom et id du champ
-   \param     keysearch           nom et id complémentaire du champ de collecte
-   \param     id                  ID du champ a modifier
-   \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
-   \param     option              champ supplémentaire de recherche dans les paramétres
-   \param     indicator           Nom de l'image gif sans l'extension
-   \return    script              script complet
-*/
-function ajax_updaterWithID($htmlname,$keysearch,$id,$url,$option='',$indicator='working')
-{
-	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
-	if ($indicator) $script.=ajax_indicator($htmlname,$indicator);
-	$script.='<script type="text/javascript">';
-	$script.='var myIndicator'.$htmlname.' = {
-                     onCreate: function(){
-                            if($F("'.$keysearch.$htmlname.'")){
-                                  Element.show(\'indicator'.$htmlname.'\');
-                            }
-                     },
-                     
-                     onComplete: function() {
-                            if(Ajax.activeRequestCount == 0){
-                                  Element.hide(\'indicator'.$htmlname.'\');
-                            }
-                     }
-             };';
-	$script.='Ajax.Responders.register(myIndicator'.$htmlname.');';
-	$script.='new Form.Element.DelayedObserver($("'.$keysearch.$htmlname.'"), 1,
-			   function(){
-			   var elementHTML = $(\''.$id.'\');
-			   var url = \''.DOL_URL_ROOT.$url.'\';
-			   o_options = new Object();
-			   o_options = {method: \'get\',parameters: "'.$keysearch.'="+$F("'.$keysearch.$htmlname.'")+"'.$option.'"};
-				 var myAjax = new Ajax.Updater(elementHTML,url,o_options);
-				 });';
-	$script.='</script>';
-  
-	return $script;
-}
-
-/**
-   \brief     Récupére la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
-   \param	    htmlname            nom et id du champ
-   \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
-   \param     indicator           nom de l'image gif sans l'extension
-   \return    script              script complet
-*/
-function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
-{
-	if ($indicator) $script.= ajax_indicator($htmlname,$indicator);
-	$script.= '<input type="hidden" name="'.$htmlname.'_id" id="'.$htmlname.'_id" value="'.$selected.'" />';
-	$script.= '</div>';
-	$script.= '<div id="result'.$htmlname.'" class="autocomplete"></div>';
-	$script.= '<script type="text/javascript">';
-	$script.= 'new Ajax.Autocompleter(\''.$htmlname.'\',\'result'.$htmlname.'\',\''.DOL_URL_ROOT.$url.'\',{
-	           method: \'post\',
-	           paramName: \''.$htmlname.'\',
-	           indicator: \'indicator'.$htmlname.'\',
-	           afterUpdateElement: ac_return
-	         });';
-	$script.= '</script>';
-	
-	return $script;
 }
 
 /**
