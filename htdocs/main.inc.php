@@ -86,9 +86,9 @@ dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _S
  * Phase identification
  */
 
-// $authmode contient la liste des diff�rents modes d'identification � tester
-// par ordre de pr�f�rence. Attention, rares sont les combinaisons possibles si
-// plusieurs modes sont indiqu�s.
+// $authmode contient la liste des differents modes d'identification a tester
+// par ordre de preference. Attention, rares sont les combinaisons possibles si
+// plusieurs modes sont indiques.
 // Example: array('http','dolibarr');
 // Example: array('http','dolibarr_mdb2');
 // Example: array('ldap');
@@ -136,15 +136,15 @@ if (! sizeof($authmode))
 	exit;
 }
 
-// Si la demande du login a d�j� eu lieu, on le r�cup�re depuis la session
-// sinon appel du module qui r�alise sa demande.
-// A l'issu de cette phase, la variable $login sera d�finie.
+// Si la demande du login a deja eu lieu, on le recupere depuis la session
+// sinon appel du module qui realise sa demande.
+// A l'issu de cette phase, la variable $login sera definie.
 $login='';
 if (! session_id() || ! isset($_SESSION["dol_login"]))
 {
-	// On est pas d�j� authentifi�, on demande le login/mot de passe
-	// A l'issu de cette demande, le login et un jeton doivent avoir �t� plac�
-	// en session dans dol_login et la page rappel�e.
+	// On est pas deja authentifie, on demande le login/mot de passe
+	// A l'issu de cette demande, le login et un jeton doivent avoir ete place
+	// en session dans dol_login et la page rappelee.
 
 	// MODE AUTO
 	if (in_array('forceuser',$authmode) && ! $login)
@@ -166,7 +166,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 
     	$pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
 
-		// \TODO Virer ce test et toujours faire le test sur le champ crypt�
+		// \TODO Virer ce test et toujours faire le test sur le champ crypte
 		if ($conf->password_encrypted)
 		{
 			$cryptType = "md5";
@@ -206,7 +206,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	        }
 	        else 
 	        {
-	            // Non authentifie, un redirect sur page logon a �t� envoy�, on peut finir.
+	            // Non authentifie, un redirect sur page logon a ete envoye, on peut finir.
 	            //dolibarr_syslog("Authentification non realise");
 	        }
 	        exit;
@@ -214,7 +214,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	}
 	
 	// MODE DOLIBARR MDB2
-	//Todo: voir pour l'utiliser par d�faut
+	//Todo: voir pour l'utiliser par defaut
 	if (in_array('dolibarr_mdb2',$authmode) && ! $login)
 	{
     	require_once(PEAR_PATH."/Auth/Auth.php");
@@ -302,7 +302,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		if (! $ldapdn)         $ldapdn=$conf->global->LDAP_SERVER_DN;
 		if (! $ldapadminlogin) $ldapadminlogin=$conf->global->LDAP_ADMIN_DN;
 		if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
-		// Fin code pour compatiblit�
+		// Fin code pour compatiblite
 		
 	    $params = array(
 		    'userattr' => $ldapuserattr,
@@ -349,7 +349,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
 		require_once ARTICHOW."/AntiSpam.class.php";
 		
-		// On crꧠl'objet anti-spam
+		// On cree l'objet anti-spam
 		$object = new AntiSpam();
 		
 		// Verifie code
@@ -457,8 +457,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 }
 else
 {
-	// On est d�j� en session qui a sauvegard� login
-	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifi�s
+	// On est deja en session qui a sauvegarde login
+	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifies
 	$login=$_SESSION["dol_login"];
 	dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
 	$result=$user->fetch($login);
@@ -497,7 +497,7 @@ if (! isset($_SESSION["dol_login"]))
 	// Module Phenix
 	if ($conf->phenix->enabled && $user->phenix_login != "" && $conf->phenix->cookie)
 	{
-		// Cr�ation du cookie permettant la connexion automatique, valide jusqu'� la fermeture du browser
+		// Creation du cookie permettant la connexion automatique, valide jusqu'a la fermeture du browser
 		if (!isset($HTTP_COOKIE_VARS[$conf->phenix->cookie]))
 		{
 			setcookie($conf->phenix->cookie, $user->phenix_login.":".$user->phenix_pass_crypted.":1", 0, "/", "", 0);
