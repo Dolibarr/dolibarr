@@ -122,9 +122,10 @@ class User extends CommonObject
 	/**
 	*	\brief      Charge un objet user avec toutes ces caracteristiques depuis un id ou login
 	*	\param      login       Si defini, login a utiliser pour recherche
-	*	\return		int			<0 if KO, 0 not found, >0 if OK
+	*	\param      sid			Si defini, sid a utiliser pour recherche
+	* 	\return		int			<0 if KO, 0 not found, >0 if OK
 	*/
-	function fetch($login='')
+	function fetch($login='',$sid='')
 	{
 		global $conf;
 
@@ -142,10 +143,10 @@ class User extends CommonObject
 		$sql.= " ".$this->db->pdate("u.datelastlogin")." as datel,";
 		$sql.= " ".$this->db->pdate("u.datepreviouslogin")." as datep";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr' && $this->search_sid != '')
+		if ($sid)
 		{
 			// permet une recherche du user par son SID ActiveDirectory ou Samba
-			$sql .= " WHERE (u.ldap_sid = '".$this->search_sid."' || u.login = '".addslashes($login)."') LIMIT 1";
+			$sql .= " WHERE (u.ldap_sid = '".$sid."' || u.login = '".addslashes($login)."') LIMIT 1";
 		}
 		else if ($login)
 		{

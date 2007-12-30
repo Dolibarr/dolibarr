@@ -145,213 +145,15 @@ if (! sizeof($authmode))
 // sinon appel du module qui realise sa demande.
 // A l'issu de cette phase, la variable $login sera definie.
 $login='';
-if (! session_id() || ! isset($_SESSION["dol_login"]))
+$test=true;
+if (! isset($_SESSION["dol_login"]))
 {
 	// On est pas deja authentifie, on demande le login/mot de passe
-	// A l'issu de cette demande, le login et un jeton doivent avoir ete place
-	// en session dans dol_login et la page rappelee.
-
-	// MODE AUTO
-	if (in_array('forceuser',$authmode) && ! $login)
-	{
-		$login=$dolibarr_auto_user;
-	    dolibarr_syslog ("Authentification ok (en mode force, login=".$login.")");
-	}
-
-	// MODE HTTP (Basic)
-	if (in_array('http',$authmode) && ! $login)
-	{
-		$login=$_SERVER["REMOTE_USER"];
-	}
-
-	// MODE DOLIBARR
-	if (in_array('dolibarr',$authmode) && ! $login)
-	{
-    	require_once(PEAR_PATH."/Auth/Auth.php");
-
-    	$pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
-
-		// \TODO Virer ce test et toujours faire le test sur le champ crypte
-		if ($conf->password_encrypted)
-		{
-			$cryptType = "md5";
-			$fieldtotest="pass_crypted";
-		}
-		else
-		{
-			$cryptType = "none";
-			$fieldtotest="pass";
-		}
-	    
-	    $params = array(
-		    "dsn" => $pear,
-		    "table" => MAIN_DB_PREFIX."user",
-		    "usernamecol" => "login",
-		    "passwordcol" => $fieldtotest,
-		    "cryptType" => $cryptType,
-	    );
-
-	    $aDol = new DOLIAuth("DB", $params, "dol_loginfunction");
-	    $aDol->setSessionName($sessionname);
-    	$aDol->start();
-	    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
-	    if ($result)
-	    {
-	        // Authentification Auth OK, on va chercher le login
-			$login=$aDol->getUsername();
-	        dolibarr_syslog ("Authentification ok (en mode Pear Base Dolibarr)");
-		}
-		else
-		{
-	        if (isset($_POST["loginfunction"]))
-	        {
-	            // Echec authentification
-	            dolibarr_syslog("Authentification ko (en mode Pear Base Dolibarr) pour '".$_POST["username"]."'");
-				sleep(1);
-	        }
-	        else 
-	        {
-	            // Non authentifie, un redirect sur page logon a ete envoye, on peut finir.
-	            //dolibarr_syslog("Authentification non realise");
-	        }
-	        exit;
-        }
-	}
-	
-	// MODE DOLIBARR MDB2
-	//Todo: voir pour l'utiliser par defaut
-	if (in_array('dolibarr_mdb2',$authmode) && ! $login)
-	{
-    	require_once(PEAR_PATH."/Auth/Auth.php");
-
-    	$pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
-
-		if ($conf->password_encrypted)
-		{
-			$cryptType = "md5";
-			$fieldtotest="pass_crypted";
-		}
-		else
-		{
-			$cryptType = "none";
-			$fieldtotest="pass";
-		}
-	    
-	    $params = array(
-		    "dsn" => $pear,
-		    "table" => MAIN_DB_PREFIX."user",
-		    "usernamecol" => "login",
-		    "passwordcol" => $fieldtotest,
-		    "cryptType" => $cryptType,
-	    );
-
-	    $aDol = new DOLIAuth("MDB2", $params, "dol_loginfunction");
-	    $aDol->setSessionName($sessionname);
-    	$aDol->start();
-	    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
-	    if ($result)
-	    {
-	        // Authentification Auth OK, on va chercher le login
-			$login=$aDol->getUsername();
-	        dolibarr_syslog ("Authentification ok (en mode Pear Base Dolibarr_mdb2)");
-		}
-		else
-		{
-	        if (isset($_POST["loginfunction"]))
-	        {
-	            // Echec authentification
-	            dolibarr_syslog("Authentification ko (en mode Pear Base Dolibarr_mdb2) pour '".$_POST["username"]."'");
-				sleep(1);
-	        }
-	        else 
-	        {
-	            // Non authentifie
-	            //dolibarr_syslog("Authentification non realise");
-	        }
-	        exit;
-        }
-	}
-
-	// MODE LDAP
-	if (in_array('ldap',$authmode) && ! $login)
-	{
-		// Authentification Apache KO ou non active, pas de mode force on demande le login
-	    require_once(PEAR_PATH."/Auth/Auth.php");
-	
-		$ldapuserattr=$dolibarr_main_auth_ldap_login_attribute;
-		$ldaphost=$dolibarr_main_auth_ldap_host;
-		$ldapport=$dolibarr_main_auth_ldap_port;
-		$ldapversion=(int) $dolibarr_main_auth_ldap_version;	// Si pas de int, PEAR LDAP plante.
-		$ldapdn=$dolibarr_main_auth_ldap_dn;
-		$ldapadminlogin=$dolibarr_main_auth_ldap_admin_login;
-		$ldapadminpass=$dolibarr_main_auth_ldap_admin_pass;
-		$ldapdebug=((! $dolibarr_main_auth_ldap_debug || $dolibarr_main_auth_ldap_debug=="false")?false:true);
-		
-	    if ($ldapdebug) print "DEBUG: Logging LDAP steps<br>\n";
-
-		// Debut code pour compatibilite (prend info depuis config en base)
-		if (! $ldapuserattr && $conf->ldap->enabled)
-		{
-			if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
-			  {
-			    $ldapuserattr = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
-			  }
-			  else
-			  {
-			    $ldapuserattr = $conf->global->LDAP_FIELD_LOGIN;
-			  }
-		}
-		if (! $ldaphost)       $ldaphost=$conf->global->LDAP_SERVER_HOST;
-		if (! $ldapport)       $ldapport=$conf->global->LDAP_SERVER_PORT;
-		if (! $ldapversion)    $ldapversion=(int) $conf->global->LDAP_SERVER_PROTOCOLVERSION;
-		if (! $ldapdn)         $ldapdn=$conf->global->LDAP_SERVER_DN;
-		if (! $ldapadminlogin) $ldapadminlogin=$conf->global->LDAP_ADMIN_DN;
-		if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
-		// Fin code pour compatiblite
-		
-	    $params = array(
-		    'userattr' => $ldapuserattr,
-		    'host' => $ldaphost,
-		    'port' => $ldapport,
-		    'version' => $ldapversion,
-		    'basedn' => $ldapdn,
-		    'binddn' => $ldapadminlogin,
-		    'bindpw' => $ldapadminpass,
-		    'debug' => $ldapdebug, 
-		    'userfilter' => ''
-	    );
-		if ($ldapdebug) print "DEBUG: params=".join(',',$params)."<br>\n";
-
-	    $aDol = new DOLIAuth("LDAP", $params, "dol_loginfunction");
-	    $aDol->setSessionName($sessionname);
-	    $aDol->start();
-	    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
-	    if ($result)
-	    {
-	    	// Authentification Auth OK, on va chercher le login
-			  $login=$aDol->getUsername();
-	      dolibarr_syslog ("Authentification ok (en mode Pear Base LDAP)");
-		  }
-	    else
-	    {
-	        if (isset($_POST["loginfunction"]))
-	        {
-	           // Echec authentification
-	           dolibarr_syslog("Authentification ko (en mode Pear Base LDAP) pour '".$_POST["username"]."'");
-	        }
-	        else 
-	        {
-	            // Non authentifie
-	            //dolibarr_syslog("Authentification non realise");
-	        }
-	        exit;
-	    }
-    }
+	// A l'issu de cette demande, le login doivent avoir ete place dans dol_login
+	// et en session on place dol_login et dol_password
 
 	// Verification du code securite graphique
-	// \TODO Ce test apres les test PEAR ner sert a rien car il n'empeche pas le brute force cracking
-	// Il doit etre mis avant validation du mot de passe. Mais pour cela il faut virer PEAR.
-	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
+	if ($test && isset($_POST["username"]) && $conf->global->MAIN_SECURITY_ENABLECAPTCHA)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
 		require_once ARTICHOW."/AntiSpam.class.php";
@@ -362,36 +164,209 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		// Verifie code
 		if (! $object->check('dol_antispam_value',$_POST['code'],true))
 		{
-			session_destroy();
 			dolibarr_syslog('Bad value for code, connexion refused');
-
-			// On repart sur page accueil
-			session_name($sessionname);
-			session_start();
 			$langs->load('main');
 			$langs->load('other');
-			$_SESSION["loginmesg"]=$langs->trans("ErrorBadValueForCode");
-			header('Location: '.DOL_URL_ROOT.'/index.php');
-			exit;
+			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
+			$test=false;
 		}
 	}
     
+	// MODE AUTO
+	if ($test && in_array('forceuser',$authmode) && ! $login)
+	{
+		$login=$dolibarr_auto_user;
+	    dolibarr_syslog ("Authentification ok (en mode force, login=".$login.")");
+		$test=false;
+	}
+
+	// MODE HTTP (Basic)
+	if ($test && in_array('http',$authmode) && ! $login)
+	{
+		$login=$_SERVER["REMOTE_USER"];
+		$test=false;
+	}
+
+	// MODE DOLIBARR
+	if ($test && in_array('dolibarr',$authmode) && ! $login)
+	{
+	    $login='';
+	    $usertotest=$_POST["username"];
+	    $passwordtotest=$_POST["password"];
+	    
+	    if (! empty($_POST["username"])) 
+	    {
+	    	// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
+	    	// \TODO Virer ce test et toujours faire le test sur le champ crypte
+			if ($conf->password_encrypted)
+			{
+				$cryptType = "md5";
+				$fieldtotest="pass_crypted";
+			}
+			else
+			{
+				$cryptType = "none";
+				$fieldtotest="pass";
+			}
+			$table = MAIN_DB_PREFIX."user";
+	    	$usernamecol = 'login';
+	    	
+	    	$sql='SELECT '.$fieldtotest.' as password from '.$table.' where '.$usernamecol." = '".addslashes($_POST["username"])."'";
+	    	dolibarr_syslog("main.inc::get password sql=".$sql);
+	    	$resql=$db->query($sql);
+	    	if ($resql)
+	    	{
+	    		$obj=$db->fetch_object($resql);
+	    		if ($obj)
+	    		{
+	    			$password=$obj->password;
+	    			if ($cryptType == 'md5') $password=md5($password);
+	    			if ($password == $_POST["password"])
+	    			{
+	        			dolibarr_syslog("Authentification ok (en mode Base Dolibarr)");
+	    				$login=$_POST["username"];
+						$test=false;
+	    			}
+	    			else
+	    			{
+	            		dolibarr_syslog("Authentification ko bad password (en mode Base Dolibarr) pour '".$_POST["username"]."'");
+						sleep(1);
+						$langs->load('main');
+						$langs->load('other');
+						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
+	    			}
+	    		}
+	    		else
+	    		{
+	            	dolibarr_syslog("Authentification ko user not found (en mode Base Dolibarr) pour '".$_POST["username"]."'");
+					sleep(1);
+					$langs->load('main');
+					$langs->load('other');
+					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
+	    		}
+	    	}
+	    	else
+	    	{
+	            dolibarr_syslog("Authentification ko db error (en mode Base Dolibarr) pour '".$_POST["username"]."', sql=".$sql);
+				sleep(1);
+	            $_SESSION["dol_loginmesg"]=$db->lasterror();
+	    	}
+	    }
+	}
+
+	// MODE LDAP
+	if ($test && in_array('ldap',$authmode) && ! $login)
+	{
+	    $login='';
+	    $usertotest=$_POST["username"];
+	    $passwordtotest=$_POST["password"];
+	    
+	    if (! empty($_POST["username"])) 
+	    {
+	    	// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
+			$ldapuserattr=$dolibarr_main_auth_ldap_login_attribute;
+			$ldaphost=$dolibarr_main_auth_ldap_host;
+			$ldapport=$dolibarr_main_auth_ldap_port;
+			$ldapversion=(int) $dolibarr_main_auth_ldap_version;	// Si pas de int, PEAR LDAP plante.
+			$ldapdn=$dolibarr_main_auth_ldap_dn;
+			$ldapadminlogin=$dolibarr_main_auth_ldap_admin_login;
+			$ldapadminpass=$dolibarr_main_auth_ldap_admin_pass;
+			$ldapservertype=(empty($dolibarr_main_auth_ldap_servertype) ? 'openldap' : $dolibarr_main_auth_ldap_servertype);
+			$ldapdebug=(empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug=="false" ? false : true);
+			
+		    if ($ldapdebug) print "DEBUG: Logging LDAP steps<br>\n";
+	
+			// Debut code pour compatibilite (prend info depuis config en base)
+			// Ne plus utiliser. La config LDAP de connexion doit etre dans le
+			// fichier conf.php
+			if (! $ldapuserattr && $conf->ldap->enabled)
+			{
+				if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
+				  {
+				    $ldapuserattr = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+				  }
+				  else
+				  {
+				    $ldapuserattr = $conf->global->LDAP_FIELD_LOGIN;
+				  }
+			}
+			if (! $ldaphost)       $ldaphost=$conf->global->LDAP_SERVER_HOST;
+			if (! $ldapport)       $ldapport=$conf->global->LDAP_SERVER_PORT;
+			if (! $ldapversion)    $ldapversion=(int) $conf->global->LDAP_SERVER_PROTOCOLVERSION;
+			if (! $ldapdn)         $ldapdn=$conf->global->LDAP_SERVER_DN;
+			if (! $ldapadminlogin) $ldapadminlogin=$conf->global->LDAP_ADMIN_DN;
+			if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
+			// Fin code pour compatiblite
+	    	
+    		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
+			$ldap=new Ldap();
+			$ldap->server=array($ldaphost);
+			$ldap->serverPort=$ldapport;
+			$ldap->ldapProtocolVersion=$ldapversion;
+			$ldap->serverType=$ldapservertype;
+			$ldap->searchUser=$usertotest;
+			$ldap->searchPassword=$passwordtotest;
+			
+			$result=$ldap->connect_bind();
+			if ($result > 0)
+    		{
+    			if ($result == 2)
+    			{
+        			dolibarr_syslog("Authentification ok (en mode LDAP)");
+    				$login=$_POST["username"];
+					$test=false;
+    			}
+    			if ($result == 1)
+    			{
+            		dolibarr_syslog("Authentification ko bad password (en mode LDAP) pour '".$_POST["username"]."'");
+					sleep(1);
+					$langs->load('main');
+					$langs->load('other');
+					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
+    			}
+				$ldap->close();
+    		}
+    		else
+    		{
+            	dolibarr_syslog("Authentification ko failed to connect to LDAP (en mode LDAP) pour '".$_POST["username"]."'");
+				sleep(1);
+				$langs->load('main');
+				$langs->load('other');
+				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
+    		}
+	    }
+    }
+
+    if (! $login)
+    {
+    	// We show login page
+		dol_loginfunction($langs,$conf,$mysoc);
+		exit;
+    }
+	
 	// Charge l'objet user depuis son login ou son SID
 	$result=0;
-	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
+	if ($login && in_array('ldap',$authmode) && $conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 		$ldap=new Ldap();
+		$ldap->server=array($ldaphost);
+		$ldap->serverPort=$ldapport;
+		$ldap->ldapProtocolVersion=$ldapversion;
+		$ldap->serverType=$ldapservertype;
+		$ldap->searchUser=$usertotest;
+		$ldap->searchPassword=$passwordtotest;
+		
 		$result=$ldap->connect_bind();
 		if ($result > 0)
 		{
 			// On charge les attributs du user ldap
 			if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
-	    $ldap->fetch($login);
+		    $ldap->fetch($login);
 	    
-	    if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
-	    if ($ldapdebug) print "DEBUG: pwdLastSet = ".dolibarr_print_date($ldap->pwdlastset,'day')."<br>\n";
-	    if ($ldapdebug) print "DEBUG: badPasswordTime = ".dolibarr_print_date($ldap->badpwdtime,'day')."<br>\n";
+		    if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
+	    	if ($ldapdebug) print "DEBUG: pwdLastSet = ".dolibarr_print_date($ldap->pwdlastset,'day')."<br>\n";
+	    	if ($ldapdebug) print "DEBUG: badPasswordTime = ".dolibarr_print_date($ldap->badpwdtime,'day')."<br>\n";
 	    
 /*	    
 	    // On stop si le mot de passe ldap doit etre modifie
@@ -412,34 +387,34 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		  }
 */	    
 			// On recherche le user dolibarr en fonction de son SID ldap
-		  $user->search_sid = $ldap->getObjectSid($login);
-		  if ($ldapdebug) print "DEBUG: search_sid = ".$user->search_sid."<br>\n";
-		  $result=$user->fetch($login);
-		  if ($result)
-		  {
-		  	//TODO: on verifie si le login a change et on met a jour les attributs dolibarr
-		  	if ($user->login != $ldap->login && $ldap->login)
-		  	{
-		  		$user->login = $ldap->login;
-		  		$user->update($user);
-		  	}
-		    //$resultUpdate = $user->update_ldap2dolibarr();
-		  }
+			$sid = $ldap->getObjectSid($login);
+			if ($ldapdebug) print "DEBUG: sid = ".$sid."<br>\n";
+			$result=$user->fetch($login,$sid);
+			if ($result > 0)
+			{
+				//TODO: on verifie si le login a change et on met a jour les attributs dolibarr
+				if ($user->login != $ldap->login && $ldap->login)
+				{
+					$user->login = $ldap->login;
+					$user->update($user);
+				}
+				//$resultUpdate = $user->update_ldap2dolibarr();
+			}
 		}
 		else
 		{
-			session_destroy();
-		  dolibarr_syslog('Synchro LDAP KO');
-		  if ($ldapdebug) print "DEBUG: Error connect_bind = ".$ldap->error."<br>\n";
-		  $ldap->close();
-
-		  // On repart sur page accueil
-		  session_name($sessionname);
-		  session_start();
-		  $langs->load('admin');
-		  $_SESSION["loginmesg"]=$langs->trans("LDAPSynchroKO");
-		  header('Location: '.DOL_URL_ROOT.'/index.php');
-		  exit;
+		  	if ($ldapdebug) print "DEBUG: Error connect_bind = ".$ldap->error."<br>\n";
+		  	$ldap->close();
+			
+			dolibarr_syslog('Synchro LDAP KO');
+		  	session_destroy();
+			session_name($sessionname);
+			session_start();
+		  	
+			$langs->load('admin');
+		  	$_SESSION["dol_loginmesg"]=$langs->trans("LDAPSynchroKO");
+			header('Location: '.DOL_URL_ROOT.'/index.php');
+			exit;
 		}
 	}
 	else
@@ -449,15 +424,14 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 
 	if ($result <= 0)
 	{
-		session_destroy();
 		dolibarr_syslog('User not found, connexion refused');
-
-		// On repart sur page accueil
+		session_destroy();
 		session_name($sessionname);
 		session_start();
+
 		$langs->load('main');
-		if ($result == 0) $_SESSION["loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-		if ($result < 0)  $_SESSION["loginmesg"]=$user->error;
+		if ($result == 0) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+		if ($result < 0)  $_SESSION["dol_loginmesg"]=$user->error;
 		header('Location: '.DOL_URL_ROOT.'/index.php');
 		exit;
 	}
@@ -467,9 +441,22 @@ else
 	// On est deja en session qui a sauvegarde login
 	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifies
 	$login=$_SESSION["dol_login"];
-	dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
 	$result=$user->fetch($login);
-	$login=$user->login;
+	dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
+	if ($result <= 0)
+	{
+		// Account has been removed after login
+		dolibarr_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARN);
+		session_destroy();
+		session_name($sessionname);
+		session_start();
+
+		$langs->load('main');
+		if ($result == 0) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+		if ($result < 0)  $_SESSION["dol_loginmesg"]=$user->error;
+		header('Location: '.DOL_URL_ROOT.'/index.php');
+		exit;
+	}
 }
 
 // Est-ce une nouvelle session
@@ -477,6 +464,7 @@ if (! isset($_SESSION["dol_login"]))
 {
     // Nouvelle session pour ce login
     $_SESSION["dol_login"]=$user->login;
+    $_SESSION["dol_password"]=$user->pass_crypted;
     dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
     $user->update_last_login_date();
 	
@@ -677,6 +665,178 @@ else
   define('ROWS_9',8);
 }
 
+
+/**
+		\brief      Affiche formulaire de login
+		\remarks    Il faut changer le code html dans cette fonction pour changer le design de la logon
+*/
+function dol_loginfunction($langs,$conf,$mysoc)
+{
+	$langs->load("main");
+	$langs->load("other");
+
+	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+	// Si feuille de style en php existe
+	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
+
+	header('Cache-Control: Public, must-revalidate');
+
+	// Ce DTD est KO car inhibe document.body.scrollTop
+	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+	// Ce DTD est OK
+	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
+
+	// En tete html
+	print "<html>\n";
+	print "<head>\n";
+	print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
+	print "<title>Dolibarr login</title>\n";
+
+	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+
+	print '<style type="text/css">'."\n";
+	print '<!--'."\n";
+	print '#login {';
+	print '  margin-top: 70px;';
+	print '  margin-bottom: 30px;';
+	print '  text-align: center;';
+	print '  font: 12px arial,helvetica;';
+	print '}'."\n";
+	print '#login table {';
+	print '  border: 1px solid #C0C0C0;';
+	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
+	{
+		print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png) repeat-x;';
+	}
+	else
+	{
+		print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/login_background.png) repeat-x;';
+	}
+	print 'font-size: 12px;';
+	print '}'."\n";
+	print '-->'."\n";
+	print '</style>'."\n";
+	print '<script language="javascript" type="text/javascript">'."\n";
+	print "function donnefocus() {\n";
+	if (! $_REQUEST["username"]) print "document.getElementById('username').focus();\n";
+	else print "document.getElementById('password').focus();\n";
+	print "}\n";
+	print '</script>'."\n";
+	print '</head>'."\n";
+
+	// Body
+	print '<body class="body" onload="donnefocus();">';
+
+	// Start Form
+	print '<form id="login" name="login" method="post" action="';
+	print $_SERVER['PHP_SELF'];
+	print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
+	print '">';
+
+	// Table 1
+	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">';
+	if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
+	{
+		// TODO A virer Cas qui ne devrait pas arriver (pour compatibilité)
+		print '<tr><td colspan="3" style="text-align:center;">';
+		print '<img src="/logo.png"></td></tr>';
+	}
+	else
+	{
+		print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>';
+	}
+	print '</table>';
+	print '<br>';
+
+	// Table 2
+	print '<table cellpadding="2" align="center" width="450">';
+
+	print '<tr><td colspan="3">&nbsp;</td></tr>';
+
+	print '<tr>';
+	print '<td align="left" valign="top"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
+	print '<td><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
+
+	$title.=$langs->trans("SessionName").': '.session_name();
+	if ($conf->main_authentication) $title.=", ".$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
+	
+	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
+	$width=0;
+	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
+	if (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
+	{
+		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small);
+	}
+	elseif (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
+	{
+		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
+		$width=96;
+	}
+	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
+	{
+		$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
+	}
+	print '<td rowspan="2" align="center"><img title="'.$title.'" src="'.$urllogo.'"';
+	if ($width) print ' width="'.$width.'"';
+	print '></td>';
+	print '</tr>'."\n";
+
+	print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
+	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
+	print '</td></tr>';
+	
+	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
+	
+	// Code de sécurité
+	$disabled=! $conf->global->MAIN_SECURITY_ENABLECAPTCHA;
+	if (function_exists("imagecreatefrompng") && ! $disabled)
+	{
+		//print "Info session: ".session_name().session_id();print_r($_SESSION);
+		print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
+		print '<td valign="top" nowrap="nowrap" align="left" class="e">';
+		
+		print '<table><tr>';
+		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3"></td>';
+		print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36"></td>';
+		print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
+		print '</tr></table>';
+		
+		print '</td>';
+		print '</tr>';
+	}
+
+	print '<tr><td colspan="3" style="text-align:center;"><br>';
+	print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />';
+	print '</td></tr>';
+
+	if (! $conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
+	{
+		print '<tr><td colspan="3" align="center"><a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">('.$langs->trans("PasswordForgotten").')</a></td></tr>';
+	}
+
+	print '</table>';
+	print '<input type="hidden" name="loginfunction" value="loginfunction" />';
+
+	print '</form>';
+
+	// Message
+	if ($_SESSION["dol_loginmesg"])
+	{
+		print '<center><table width="60%"><tr><td align="center" class="small"><div class="error">';
+		print $_SESSION["dol_loginmesg"];
+		$_SESSION["dol_loginmesg"]="";
+		print '</div></td></tr></table></center>';
+	}
+	if ($conf->global->MAIN_HOME)
+	{
+		print '<center><table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td align="center">';
+		print nl2br($conf->global->MAIN_HOME);
+		print '</td></tr></table></center><br>';
+	}
+	
+	// Fin entete html
+	print "\n</body>\n</html>";
+}
 
 
 /**

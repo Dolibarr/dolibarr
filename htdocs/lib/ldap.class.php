@@ -185,7 +185,8 @@ class Ldap
     /**
      *		\brief		Connect and bind
      *		\return		<0 si KO, 1 si bind anonymous, 2 si bind auth
-     *		\remarks	this->connection and $this->bind are defined
+     * 		\remarks	Use this->server, this->serverPort, this->ldapProtocolVersion, this->serverType, this->searchUser, this->searchPassword
+     * 					After return, this->connection and $this->bind are defined
      */
 	function connect_bind()
 	{
