@@ -396,6 +396,7 @@ FeatureDisabled=Feature disabled
 MoveBox=Move box %s
 Offered=Offered
 NotEnoughPermissions=You don't have permission for this action
+SessionName=Session name
 # Week day
 Monday=Monday
 Tuesday=Tuesday
