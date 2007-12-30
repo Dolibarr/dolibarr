@@ -146,16 +146,14 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
   if (eregi('iceweasel',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->firefox=1;
 }
 
-// Chargement des includes principaux
+// Chargement des includes principaux de librairies communes
 if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
-if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
-if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
-if (! defined('NOREQUIREDB'))   require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
 if (! defined('NOREQUIRETRAN')) require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
 if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
+if (! defined('NOREQUIREDB'))   require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
 
 /*
- * Creation objet $langs
+ * Creation objet $langs (must be before all other code)
  */
 if (! defined('NOREQUIRETRAN')) 
 {
@@ -194,7 +192,7 @@ if (! defined('NOREQUIREDB'))
 }
 
 /*
- * Chargement langage par défaut
+ * Chargement langage par défaut (must be after the setValues of $conf)
  */
 if (! defined('NOREQUIRETRAN')) 
 {
@@ -296,6 +294,10 @@ if (! defined('NOREQUIRESOC'))
 // Sert uniquement dans module telephonie
 $yesno[0]="no";
 $yesno[1]="yes";
+
+// Sert pour styles lignes tableaux
+$bc[0]="class=\"impair\"";
+$bc[1]="class=\"pair\"";
 
 if ( ! defined('MENTION_NPR') ) define('MENTION_NPR','(npr)');
 ?>

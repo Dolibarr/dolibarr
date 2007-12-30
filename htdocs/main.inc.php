@@ -73,14 +73,19 @@ foreach ($_POST as $key => $val)
 
 require_once("master.inc.php");
 
-$bc[0]="class=\"impair\"";
-$bc[1]="class=\"pair\"";
+// Chargement des includes complementaire de presentation
+if ($conf->use_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');
+if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
+if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
 
 // Init session
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;
 session_name($sessionname);
 session_start();
 dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
+
+$bc[0]="class=\"impair\"";
+$bc[1]="class=\"pair\"";
 
 /*
  * Phase identification
@@ -343,7 +348,9 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    }
     }
 
-	// Verification du code
+	// Verification du code securite graphique
+	// \TODO Ce test apres les test PEAR ner sert a rien car il n'empeche pas le brute force cracking
+	// Il doit etre mis avant validation du mot de passe. Mais pour cela il faut virer PEAR.
 	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
@@ -368,7 +375,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 			exit;
 		}
 	}
-	
+    
 	// Charge l'objet user depuis son login ou son SID
 	$result=0;
 	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
@@ -450,7 +457,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		session_start();
 		$langs->load('main');
 		if ($result == 0) $_SESSION["loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-		if ($result < 0) $_SESSION["loginmesg"]=$user->error;
+		if ($result < 0)  $_SESSION["loginmesg"]=$user->error;
 		header('Location: '.DOL_URL_ROOT.'/index.php');
 		exit;
 	}
