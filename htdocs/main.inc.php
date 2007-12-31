@@ -318,6 +318,8 @@ if (! isset($_SESSION["dol_login"]))
 			
 			$result=$ldap->connect_bind();
 			$resultCheck=$ldap->checkPass($usertotest,$passwordtotest);
+			print $ldap->ldapErrorCode.'<br>';
+			print $ldap->ldapErrorText.'<br>';
 			print 'result:'.$resultCheck.'<br>';
 			if ($resultCheck)
     	{
