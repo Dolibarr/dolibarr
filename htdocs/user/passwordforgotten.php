@@ -68,7 +68,7 @@ if ($_GET["action"] == 'validatenewpassword' && $_GET["username"] && $_GET["pass
 	{
 		if (md5($edituser->pass_temp) == $_GET["passwordmd5"])
 		{
-			$newpassword=$edituser->password($user,$edituser->pass_temp,$conf->password_encrypted,0);
+			$newpassword=$edituser->setPassword($user,$edituser->pass_temp,0);
 			dolibarr_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
 			//session_start();
 			//$_SESSION["loginmesg"]=$langs->trans("PasswordChanged");
@@ -112,7 +112,7 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 			}
 			else
 			{
-				$newpassword=$edituser->password($user,'',$conf->password_encrypted,1);
+				$newpassword=$edituser->setPassword($user,'',1);
 			    if ($newpassword < 0)
 			    {
 			        // Echec

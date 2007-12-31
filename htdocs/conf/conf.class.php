@@ -346,9 +346,6 @@ class Conf
 		 * Modification de quelques variable de conf en fonction des Constantes
 		 */
 
-		// Cryped password in database
-		$this->password_encrypted=(! empty($this->global->DATABASE_PWD_ENCRYPTED) ? 1 : 0);
-		
 		// System tools
 		if (! $this->global->SYSTEMTOOLS_MYSQLDUMP) $this->global->SYSTEMTOOLS_MYSQLDUMP="mysqldump";
 

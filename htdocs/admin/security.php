@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -35,8 +34,8 @@ $langs->load("other");
 
 if (!$user->admin) accessforbidden();
 
-// Do not allow change to clear model once passwords are crypted
-$allow_disable_encryption=false;
+// Allow/Disallow change to clear passwords once passwords are crypted
+$allow_disable_encryption=true;
 
 $mesg = '';
 
@@ -264,25 +263,25 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="60">';
-if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
+if ($conf->global->DATABASE_PWD_ENCRYPTED)
 {
 	print img_tick();
 }
 print '</td>';
-if ($conf->global->DATABASE_PWD_ENCRYPTED == 0)
+if (! $conf->global->DATABASE_PWD_ENCRYPTED)
 {
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
-if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
+if($conf->global->DATABASE_PWD_ENCRYPTED)
 {
 	print '<td align="center" width="100">';
 	if ($allow_disable_encryption)
 	{
 		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
-	  //Do not allow "disable encryption" as passwords cannot be decrypted
-	  print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
+	  	//Do not allow "disable encryption" as passwords cannot be decrypted
+	  	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
 	}
 	else
 	{

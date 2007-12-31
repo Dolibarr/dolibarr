@@ -46,7 +46,7 @@ $candisableperms=($user->admin || $user->rights->user->user->supprimer);
 // Defini si peux lire/modifier info user ou mot de passe
 if ($_GET["id"])
 {
-  // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edité
+  // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur editï¿½
   $caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
 		  || (($user->id != $_GET["id"]) && $user->rights->user->user->creer) );
   $caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
@@ -164,7 +164,7 @@ if ($_POST["action"] == 'add' && $canadduser)
 		{
 			if (isset($_POST['password']) && trim($_POST['password']))
 			{
-				$edituser->password($user,trim($_POST['password']),$conf->password_encrypted);
+				$edituser->setPassword($user,trim($_POST['password']),$conf->global->DATABASE_PWD_ENCRYPTED);
 			}
 			
 			$db->commit();
@@ -261,7 +261,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		}
 		if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='')
 		{
-			$ret=$edituser->password($user,$_POST["password"],$conf->password_encrypted,1);
+			$ret=$edituser->setPassword($user,$_POST["password"],1);
 			if ($ret < 0)
 			{
 				$message.='<div class="error">'.$edituser->error.'</div>';
@@ -303,7 +303,7 @@ if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
 
-    $newpassword=$edituser->password($user,'',$conf->password_encrypted);
+    $newpassword=$edituser->setPassword($user,'');
     if ($newpassword < 0)
     {
         // Echec
@@ -398,7 +398,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 {
 	/* ************************************************************************** */
 	/*                                                                            */
-	/* Affichage fiche en mode création                                           */
+	/* Affichage fiche en mode crï¿½ation                                           */
 	/*                                                                            */
 	/* ************************************************************************** */
 	
@@ -667,7 +667,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	print "</td></tr>\n";
 	
-	// Autres caractéristiques issus des autres modules
+	// Autres caractï¿½ristiques issus des autres modules
 	
 	// Module Webcalendar
 	if ($conf->webcal->enabled)
@@ -716,7 +716,7 @@ else
     				$message .= $ldap->error;
     			}
 
-	    		//On vérifie les options du compte
+	    		//On vï¿½rifie les options du compte
 	    		foreach ($ldap->uacf as $key => $statut)
 	    		{
 	    			if ($key == 65536)
@@ -740,7 +740,7 @@ else
 
 
         /*
-         * Confirmation réinitialisation mot de passe
+         * Confirmation rï¿½initialisation mot de passe
          */
         if ($action == 'password')
         {
@@ -758,7 +758,7 @@ else
         }
 
         /*
-         * Confirmation désactivation
+         * Confirmation dï¿½sactivation
          */
         if ($action == 'disable')
         {
@@ -940,7 +940,7 @@ else
             print '<td>'.dolibarr_print_date($fuser->datepreviouslogin,"dayhour").'</td>';
             print "</tr>\n";
 
-            // Autres caractéristiques issus des autres modules
+            // Autres caractï¿½ristiques issus des autres modules
             
             // Module Webcalendar
             if ($conf->webcal->enabled)
@@ -963,7 +963,7 @@ else
                 print "</tr>\n";
             }
             
-            // Module Adhérent
+            // Module Adhï¿½rent
             if ($conf->adherent->enabled)
             {
             	$langs->load("members");
@@ -1048,7 +1048,7 @@ else
 
             print_fiche_titre($langs->trans("ListOfGroupsForUser"));
 
-            // On sélectionne les groups
+            // On sï¿½lectionne les groups
             $uss = array();
 
             $sql = "SELECT ug.rowid, ug.nom ";
@@ -1094,7 +1094,7 @@ else
             }
 
             /*
-             * Groupes affectés
+             * Groupes affectï¿½s
              */
             $sql = "SELECT g.rowid, g.nom ";
             $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
@@ -1384,7 +1384,7 @@ else
             print $fuser->getLibStatut(4);
             print '</td></tr>';
             
-            // Autres caractéristiques issus des autres modules
+            // Autres caractï¿½ristiques issus des autres modules
             
             // Module Webcalendar
             if ($conf->webcal->enabled)

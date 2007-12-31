@@ -560,7 +560,7 @@ class Adherent extends CommonObject
 	        	if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 	       		{
 	       			// Si mot de passe saisi et different de celui en base
-	       			$result=$this->password($user,$this->pass,0,$notrigger);
+	       			$result=$this->setPassword($user,$this->pass,0,$notrigger);
 	       			
 	       			if (! $nbrowsaffected) $nbrowsaffected++;
 	       		}
@@ -787,7 +787,7 @@ class Adherent extends CommonObject
 
 					if ($result >= 0)
 					{
-						$result=$luser->password($user,$this->pass,$conf->password_encrypted,0,0,1);
+						$result=$luser->setPassword($user,$this->pass,0,0,1);
 						if ($result < 0)
 						{
 							$this->error=$luser->error;

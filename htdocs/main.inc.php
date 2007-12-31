@@ -197,17 +197,6 @@ if (! isset($_SESSION["dol_login"]))
 	    if (! empty($_POST["username"])) 
 	    {
 	    	// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
-	    	// \TODO Virer ce test et toujours faire le test sur le champ crypte
-			if ($conf->password_encrypted)
-			{
-				$cryptType = "md5";
-				$fieldtotest="pass_crypted";
-			}
-			else
-			{
-				$cryptType = "none";
-				$fieldtotest="pass";
-			}
 			$table = MAIN_DB_PREFIX."user";
 	    	$usernamecol = 'login';
 	    	
@@ -227,10 +216,15 @@ if (! isset($_SESSION["dol_login"]))
 	    			$passtyped=$_POST["password"];
 
 	    			$passok=false;
+	    			
+	    			// Check crypted password
+	    			$cryptType='';
+	    			if ($conf->global->DATABASE_PWD_ENCRYPTED) $cryptType='md5';
 	    			if ($cryptType == 'md5') 
 	    			{
 	    				if (md5($passtyped) == $passcrypted) $passok=true;
 	    			}
+
 	    			// For compatibility with old versions
 	    			if (! $passok)
 	    			{

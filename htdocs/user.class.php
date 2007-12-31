@@ -863,7 +863,7 @@ class User extends CommonObject
         $result=$this->create();
         if ($result > 0)
         {
-			$result=$this->password($user,$this->pass,$conf->password_encrypted);
+			$result=$this->setPassword($user,$this->pass);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
             $sql.= " SET fk_member=".$member->id;
@@ -996,7 +996,7 @@ class User extends CommonObject
 	        	if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 	       		{
 	       			// Si mot de passe saisi et different de celui en base
-	       			$result=$this->password($user,$this->pass,$conf->password_encrypted,0,$notrigger);
+	       			$result=$this->setPassword($user,$this->pass,0,$notrigger);
 	       			
 	       			if (! $nbrowsaffected) $nbrowsaffected++;
 	       		}
@@ -1141,20 +1141,19 @@ class User extends CommonObject
 	/**
 	*   \brief     	Change le mot de passe d'un utilisateur
 	*   \param     	user             		Object user de l'utilisateur qui fait la modification
-	*   \param     	password         		Nouveau mot de passe (e generer si non communique)
-	*   \param     	noclearpassword			0 ou 1 s'il ne faut pas stocker le mot de passe en clair
+	*   \param     	password         		Nouveau mot de passe en clair (a generer si non communique)
 	*	\param		changelater				1=Change password only after clicking on confirm email
 	*	\param		notrigger				1=Ne declenche pas les triggers
     *	\param		nosyncmember	        Do not synchronize linked member
 	*   \return    	string           		If OK return clear password, 0 if no change, < 0 if error
 	*/
-    function password($user, $password='', $noclearpassword=0, $changelater=0, $notrigger=0, $nosyncmember=0)
+    function setPassword($user, $password='', $changelater=0, $notrigger=0, $nosyncmember=0)
     {
         global $conf, $langs;
 	
 		$error=0;
 		
-        dolibarr_syslog("User::Password user=".$user->id." password=".eregi_replace('.','*',$password)." noclearpassword=".$noclearpassword." changelater=".$changelater." notrigger=".$notrigger);
+        dolibarr_syslog("User::Password user=".$user->id." password=".eregi_replace('.','*',$password)." changelater=".$changelater." notrigger=".$notrigger);
 
         // Si nouveau mot de passe non communique, on genere par module
         if (! $password)
@@ -1173,7 +1172,7 @@ class User extends CommonObject
 	        $sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql.= " SET pass_crypted = '".addslashes($password_crypted)."',";
 			$sql.= " pass_temp = null";
-			if ($noclearpassword)
+			if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
 			{
 				$sql.= ", pass = null";
 			}
@@ -1205,7 +1204,7 @@ class User extends CommonObject
 						
 						if ($result >= 0)
 						{
-							$result=$adh->password($user,$this->pass,0,0,1);	// Cryptage non gere dans module adherent
+							$result=$adh->setPassword($user,$this->pass,0,1);	// Cryptage non gere dans module adherent
 							if ($result < 0)
 							{
 								$this->error=$adh->error;
