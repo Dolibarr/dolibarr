@@ -23,7 +23,7 @@
 /**
        	\file       htdocs/includes/modules/facture/pdf_crabe.modules.php
 		\ingroup    facture
-		\brief      Fichier de la classe permettant de générer les factures au modèle Crabe
+		\brief      Fichier de la classe permettant de gï¿½nï¿½rer les factures au modï¿½le Crabe
 		\author	    Laurent Destailleur
 		\version    $Revision$
 */
@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 /**
 	    \class      pdf_crabe
-		\brief      Classe permettant de générer les factures au modèle Crabe
+		\brief      Classe permettant de gï¿½nï¿½rer les factures au modï¿½le Crabe
 */
 
 class pdf_crabe extends ModelePDFFactures
@@ -44,7 +44,7 @@ class pdf_crabe extends ModelePDFFactures
 
     /**
     		\brief  Constructeur
-    		\param	db		Handler accès base de donnée
+    		\param	db		Handler accï¿½s base de donnï¿½e
     */
     function pdf_crabe($db)
     {
@@ -69,27 +69,27 @@ class pdf_crabe extends ModelePDFFactures
 
         $this->option_logo = 1;                    // Affiche logo
         $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-        $this->option_modereg = 1;                 // Affiche mode règlement
-        $this->option_condreg = 1;                 // Affiche conditions règlement
+        $this->option_modereg = 1;                 // Affiche mode rÃ¨glement
+        $this->option_condreg = 1;                 // Affiche conditions rÃ¨glement
         $this->option_codeproduitservice = 1;      // Affiche code produit-service
         $this->option_multilang = 1;               // Dispo en plusieurs langues
         $this->option_escompte = 1;                // Affiche si il y a eu escompte
-        $this->option_credit_note = 1;             // Gère les avoirs
+        $this->option_credit_note = 1;             // GÃ¨re les avoirs
 
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       		$this->franchise=1;
 
         // Recupere emmetteur
         $this->emetteur=$mysoc;
-        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'Ã©tait pas dÃ©fini
 
         // Defini position des colonnes
         $this->posxdesc=$this->marge_gauche+1;
-        $this->posxtva=121;
-        $this->posxup=132;
-        $this->posxqty=151;
+        $this->posxtva=116;
+        $this->posxup=126;
+        $this->posxqty=145;
         $this->posxdiscount=162;
-        $this->postotalht=177;
+        $this->postotalht=174;
 
         $this->tva=array();
         $this->atleastoneratenotnull=0;
@@ -98,8 +98,8 @@ class pdf_crabe extends ModelePDFFactures
 
 
     /**
-     *		\brief      Fonction générant la facture sur le disque
-     *		\param	    fac		Objet facture à générer (ou id si ancienne methode)
+     *		\brief      Fonction gÃ©nÃ©rant la facture sur le disque
+     *		\param	    fac		Objet facture Ã  gÃ©nÃ©rer (ou id si ancienne methode)
      *		\return	    int     1=ok, 0=ko
      */
     function write_file($fac,$outputlangs='')
@@ -117,7 +117,7 @@ class pdf_crabe extends ModelePDFFactures
 
       if ($conf->facture->dir_output)
       {
-      	// Définition de l'objet $fac (pour compatibilite ascendante)
+      	// Dï¿½finition de l'objet $fac (pour compatibilite ascendante)
       	if (! is_object($fac))
         {
 	        $id = $fac;
@@ -128,7 +128,7 @@ class pdf_crabe extends ModelePDFFactures
 	      $deja_regle = $fac->getSommePaiement();
 	      $amount_credit_not_included = $fac->getSommeCreditNote();
 
-	      // Définition de $dir et $file
+	      // Dï¿½finition de $dir et $file
 	      if ($fac->specimen)
 	      {
 	      	$dir = $conf->facture->dir_output;
@@ -160,7 +160,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf=new FPDI_Protection('P','mm',$this->format);
                 	$pdfrights = array('print'); // Ne permet que l'impression du document
                 	$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-                	$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+                	$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
                 	$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
                 }
 			   else
@@ -204,7 +204,7 @@ class pdf_crabe extends ModelePDFFactures
                 {
 	                $tab_top = 88;
 
-	                $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+	                $pdf->SetFont('Arial','', 9);   // Dans boucle pour gï¿½rer multi-page
 	                $pdf->SetXY ($this->posxdesc-1, $tab_top);
 	                $pdf->MultiCell(190, 3, $fac->note_public, 0, 'J');
 	                $nexY = $pdf->GetY();
@@ -251,12 +251,12 @@ class pdf_crabe extends ModelePDFFactures
                   		}
                   		else
                   		{
-                  			// On vérifie si les lignes personnalisées sont formatées avec fckeditor
+                  			// On vï¿½rifie si les lignes personnalisï¿½es sont formatï¿½es avec fckeditor
                   			$libelleproduitservice.=dol_htmlentities($fac->lignes[$i]->desc);
                   		}
                   	}
                   }
-                  // Si ligne associée à un code produit
+                  // Si ligne associï¿½e ï¿½ un code produit
                   if ($fac->lignes[$i]->produit_id)
                   {
                   	$prodser = new Product($this->db);
@@ -281,40 +281,41 @@ class pdf_crabe extends ModelePDFFactures
 
                     if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
                     {
-                        // Affichage durée si il y en a une
+                        // Affichage duree si il y en a une
                         $libelleproduitservice.=dol_htmlentities("\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")");
                     }
 
-                    $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+                    $pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
-                   	$pdf->writeHTMLCell(112, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+					// Desc
+                   	$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
 
-                    $pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
+                    $pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
                     $nexY = $pdf->GetY();
 
                     // TVA
                     $pdf->SetXY ($this->posxtva, $curY);
-                    $pdf->MultiCell(10, 4, ($fac->lignes[$i]->tva_tx < 0 ? '*':'').abs($fac->lignes[$i]->tva_tx), 0, 'R');
+                    $pdf->MultiCell($this->posxup-$this->posxtva-1, 4, ($fac->lignes[$i]->tva_tx < 0 ? '*':'').abs($fac->lignes[$i]->tva_tx), 0, 'R');
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY ($this->posxup, $curY);
-                    $pdf->MultiCell(18, 4, price($fac->lignes[$i]->subprice), 0, 'R', 0);
+                    $pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($fac->lignes[$i]->subprice), 0, 'R', 0);
 
-                    // Quantité
+                    // Quantite
                     $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell(10, 4, $fac->lignes[$i]->qty, 0, 'R');
+                    $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $fac->lignes[$i]->qty, 0, 'R');	// Enough for 6 chars
 
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
                     if ($fac->lignes[$i]->remise_percent)
                     {
-                        $pdf->MultiCell(14, 4, dolibarr_print_reduction($fac->lignes[$i]->remise_percent), 0, 'R');
+                        $pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dolibarr_print_reduction($fac->lignes[$i]->remise_percent), 0, 'R');
                     }
 
                     // Total HT ligne
                     $pdf->SetXY ($this->postotalht, $curY);
                     $total = price($fac->lignes[$i]->total_ht);
-                    $pdf->MultiCell(23, 4, $total, 0, 'R', 0);
+                    $pdf->MultiCell(26, 4, $total, 0, 'R', 0);
 
                     // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
                     $tvaligne=$fac->lignes[$i]->total_tva;
@@ -539,7 +540,7 @@ class pdf_crabe extends ModelePDFFactures
 	/*
      *	\brief      Affiche infos divers
      *	\param      pdf             Objet PDF
-     *	\param      fac             Objet facture
+     *	\param      object          Objet facture
      *	\param		posy			Position depart
      *	\param		outputlangs		Objet langs
      *	\return     y               Position pour suite
@@ -563,7 +564,7 @@ class pdf_crabe extends ModelePDFFactures
         }
 
         /*
-        *	Conditions de règlements
+        *	Conditions de reglements
         */
         if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement))
         {
@@ -581,7 +582,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
         /*
-        *	Check si absence mode règlement
+        *	Check si absence mode reglement
         */
         if ($object->type != 2 && (! $conf->global->FACTURE_CHQ_NUMBER && ! $conf->global->FACTURE_RIB_NUMBER))
 		{
@@ -595,7 +596,7 @@ class pdf_crabe extends ModelePDFFactures
         }
 
         /*
-         * Propose mode règlement par CHQ
+         * Propose mode reglement par CHQ
          */
         if ($object->type != 2 && (! $object->mode_reglement_code || $object->mode_reglement_code == 'CHQ'))
         {
@@ -635,7 +636,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 		
         /*
-         * Propose mode règlement par RIB
+         * Propose mode reglement par RIB
          */
         if ($object->type != 2 && (! $object->mode_reglement_code || $object->mode_reglement_code == 'VIR'))
         {
@@ -696,7 +697,7 @@ class pdf_crabe extends ModelePDFFactures
 
 
     /*
-     *	\brief      Affiche le total à payer
+     *	\brief      Affiche le total a payer
      *	\param      pdf             Objet PDF
      *	\param      object          Objet facture
      *	\param      deja_regle      Montant deja regle
@@ -744,7 +745,7 @@ class pdf_crabe extends ModelePDFFactures
             $index = 0;
         }
 
-        // Affichage des totaux de TVA par taux (conformément à réglementation)
+        // Affichage des totaux de TVA par taux (conformÃ©ment Ã  rÃ©glementation)
         $pdf->SetFillColor(248,248,248);
 
         foreach( $this->tva as $tvakey => $tvaval )
@@ -808,7 +809,7 @@ class pdf_crabe extends ModelePDFFactures
 	            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOffered"), $useborder, 'L', 1);
 
 	            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-	            $pdf->MultiCell($largcol2, $tab2_hl, price(abs($object->total_ttc - $deja_regle)), $useborder, 'R', 1);
+	            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle), $useborder, 'R', 1);
 				
 				$resteapayer=0;
 			}
@@ -839,7 +840,7 @@ class pdf_crabe extends ModelePDFFactures
     {
         global $conf;
 
-        // Montants exprimés en     (en tab_top - 1)
+        // Montants exprimÃ©s en     (en tab_top - 1)
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentities("Currency".$conf->monnaie));
@@ -859,7 +860,7 @@ class pdf_crabe extends ModelePDFFactures
 
         $pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxtva-1, $tab_top+2);
-        $pdf->MultiCell(12,2, $outputlangs->transnoentities("VAT"),'','C');
+        $pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
 
         $pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxup-1, $tab_top+2);
@@ -867,13 +868,13 @@ class pdf_crabe extends ModelePDFFactures
 
         $pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxqty-1, $tab_top+2);
-        $pdf->MultiCell(11,2, $outputlangs->transnoentities("Qty"),'','C');
+        $pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 
         $pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
         if ($this->atleastonediscount)
         {
             $pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
-            $pdf->MultiCell(16,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+            $pdf->MultiCell(14,2, $outputlangs->transnoentities("ReductionShort"),'','C');
         }
 
         if ($this->atleastonediscount)
@@ -881,14 +882,14 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
         }
         $pdf->SetXY ($this->postotalht-1, $tab_top+2);
-        $pdf->MultiCell(23,2, $outputlangs->transnoentities("TotalHT"),'','C');
+        $pdf->MultiCell(28,2, $outputlangs->transnoentities("TotalHT"),'','C');
 
     }
 
     /*
-     *      \brief      Affiche en-tête facture
+     *      \brief      Affiche en-tete facture
      *      \param      pdf             Objet PDF
-     *      \param      fac             Objet facture
+     *      \param      object          Objet facture
      *      \param      showadress      0=non, 1=oui
      *      \param      outputlang		Objet lang cible
      */
@@ -1016,7 +1017,7 @@ class pdf_crabe extends ModelePDFFactures
             if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');	// deprecated
             else $pdf->MultiCell(80, 4, $this->emetteur->nom, 0, 'L');
 
-            // Caractéristiques emetteur
+            // CaractÃ©ristiques emetteur
             $carac_emetteur = '';
             if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;	// deprecated
             else {
@@ -1076,7 +1077,7 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetFont('Arial','',9);
 				$pdf->MultiCell(106,4, $object->contact->getFullName($outputlangs,1), 0, 'L');
 
-				// Caractéristiques client
+				// CaractÃ©ristiques client
 				$carac_client=$object->contact->adresse;
 				$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
 				if ($this->emetteur->pays_code != $object->contact->pays_code)
@@ -1091,19 +1092,19 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
 				
-				// Nom du contact facturation si c'est une société
+				// Nom du contact facturation si c'est une sociÃ©tÃ©
 				$arrayidcontact = $object->getIdContact('external','BILLING');
 				if (sizeof($arrayidcontact) > 0)
 				{
 					$object->fetch_contact($arrayidcontact[0]);
-					// On vérifie si c'est une société ou un particulier
+					// On vÃ©rifie si c'est une sociÃ©tÃ© ou un particulier
 					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 					{
 						$carac_client .= "\n".$object->contact->getFullName($outputlangs,1);
 					}
 				}
 
-				// Caractéristiques client
+				// CaractÃ©ristiques client
 				$carac_client.="\n".$object->client->adresse;
 				$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
 				if ($this->emetteur->pays_code != $object->client->pays_code)
@@ -1128,7 +1129,7 @@ class pdf_crabe extends ModelePDFFactures
 
         $html=new Form($this->db);
 
-        // Premiere ligne d'info réglementaires
+        // Premiere ligne d'info rÃ©glementaires
         $ligne1="";
         if ($this->emetteur->forme_juridique_code)
         {
@@ -1147,7 +1148,7 @@ class pdf_crabe extends ModelePDFFactures
             $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
         }
 
-        // Deuxieme ligne d'info réglementaires
+        // Deuxieme ligne d'info rÃ©glementaires
         $ligne2="";
         if ($this->emetteur->profid3)
         {
