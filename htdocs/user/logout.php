@@ -18,8 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 /**
@@ -31,8 +29,7 @@ if (!empty ($_SERVER["REMOTE_USER"]))
    die("La d&eacute;connection ne fonctionne actuellement que pour l'authentification par pear");
 
 include_once("../conf/conf.php");
-require_once("../master.inc.php");
-require_once(PEAR_PATH."/Auth/Auth.php");
+require_once("../main.inc.php");
 
 // Module Phenix
 if ($conf->phenix->enabled && $conf->phenix->cookie)
@@ -43,15 +40,10 @@ if ($conf->phenix->enabled && $conf->phenix->cookie)
 
 dolibarr_syslog("End session in DOLSESSID_".$dolibarr_main_db_name);
 
+session_destroy();
 session_name("DOLSESSID_".$dolibarr_main_db_name);
 session_start();
 session_unregister("dol_login");
-
-$a = new DOLIAuth("DB");
-$a->setSessionName("DOLSESSID_".$dolibarr_main_db_name);
-$a->setShowLogin (false);
-$a->start();
-if ($a->getAuth()) $a->logout();
 
 header("Location: ".DOL_URL_ROOT."/index.php");
 ?>
