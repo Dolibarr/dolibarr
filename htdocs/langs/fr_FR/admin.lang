@@ -715,7 +715,7 @@ ProductSetup=Configuration du module Produits
 NumberOfProductShowInSelect=Nombre de produits max dans les listes déroulantes (0=aucune limite)
 ConfirmDeleteProductLineAbility=Confirmation de suppression d'une ligne produit dans les formulaires
 ModifyProductDescAbility=Personnalisation des descriptions produits dans les formulaires
-ViewProductDescInFormAbility=Visualisation des descriptions produits dans les formulaires
+ViewProductDescInFormAbility=Visualisation des descriptions produits dans les formulaires (sinon en tant que tooltip)
 UseSearchToSelectProduct=Utiliser un formulaire de recherche pour choix d'un produit (plutôt que liste déroulante)
 UseEcoTaxeAbility=Prise en charge des éco-taxes (DEEE)
 SetDefaultBarcodeType=Type de code barre utilisé par défaut pour les produits

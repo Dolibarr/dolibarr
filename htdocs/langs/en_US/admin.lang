@@ -716,7 +716,7 @@ ProductSetup=Products module setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)
 ConfirmDeleteProductLineAbility=Confirmation of removal of a line produces in the forms
 ModifyProductDescAbility=Personalization of descriptions produced in the forms
-ViewProductDescInFormAbility=Visualization of descriptions produced in the forms
+ViewProductDescInFormAbility=Visualization of product descriptions in the forms (otherwise as popup tooltip)
 UseSearchToSelectProduct=Use a search form to choose a product (intead of using a list box)
 UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
 SetDefaultBarcodeType=Default barcode type to use for products
@@ -766,7 +766,7 @@ DeliveryOrderModel=Products deliveries receipt model
 DeliveriesOrderAbility=Products deliveries receipt ability
 ##### FCKeditor #####
 ActivateFCKeditor=Activate FCKeditor for:
-FCKeditorForMembers=WYSIWIG creation/edition of users' description and note
+FCKeditorForUsers=WYSIWIG creation/edition of users' description and note
 FCKeditorForCompany=WYSIWIG creation/edition of companies' description and note
 FCKeditorForProduct=WYSIWIG creation/edition of products/services' description and note
 FCKeditorForMembers=WYSIWIG creation/edition of members' description and note

@@ -270,14 +270,15 @@ if (! isset($_SESSION["dol_login"]))
 	    if (! empty($_POST["username"])) 
 	    {
 	    	// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
-			$ldapuserattr=$dolibarr_main_auth_ldap_login_attribute;
 			$ldaphost=$dolibarr_main_auth_ldap_host;
 			$ldapport=$dolibarr_main_auth_ldap_port;
 			$ldapversion=$dolibarr_main_auth_ldap_version;
+			$ldapservertype=(empty($dolibarr_main_auth_ldap_servertype) ? 'openldap' : $dolibarr_main_auth_ldap_servertype);
+
+			$ldapuserattr=$dolibarr_main_auth_ldap_login_attribute;
 			$ldapdn=$dolibarr_main_auth_ldap_dn;
 			$ldapadminlogin=$dolibarr_main_auth_ldap_admin_login;
 			$ldapadminpass=$dolibarr_main_auth_ldap_admin_pass;
-			$ldapservertype=(empty($dolibarr_main_auth_ldap_servertype) ? 'openldap' : $dolibarr_main_auth_ldap_servertype);
 			$ldapdebug=(empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug=="false" ? false : true);
 			
 		    if ($ldapdebug) print "DEBUG: Logging LDAP steps<br>\n";
@@ -325,34 +326,33 @@ if (! isset($_SESSION["dol_login"]))
 			$ldap->searchPassword=$passwordtotest;
 			
 			$result=$ldap->connect_bind();
-
 			if ($result > 0)
-			{
-				if ($result == 2)
     		{
-        	dolibarr_syslog("Authentification ok (en mode LDAP)");
-    			$login=$_POST["username"];
+    			if ($result == 2)
+    			{
+        			dolibarr_syslog("Authentification ok (en mode LDAP)");
+    				$login=$_POST["username"];
 					$test=false;
-    		}
-    		if ($result == 1)
-    		{
-        	dolibarr_syslog("Authentification ko bad password (en mode LDAP) pour '".$_POST["username"]."'");
+    			}
+    			if ($result == 1)
+    			{
+            		dolibarr_syslog("Authentification ko bad password (en mode LDAP) pour '".$_POST["username"]."'");
 					sleep(1);
 					$langs->load('main');
 					$langs->load('other');
 					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
+    			}
     		}
-    	}
-    	else
-    	{
-       	dolibarr_syslog("Authentification ko failed to connect to LDAP (en mode LDAP) pour '".$_POST["username"]."'");
+    		else
+    		{
+            	dolibarr_syslog("Authentification ko failed to connect to LDAP (en mode LDAP) pour '".$_POST["username"]."'");
 				sleep(1);
 				$langs->load('main');
 				$langs->load('other');
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
-    	}
+    		}
     	$ldap->close();
-	   }
+	    }
     }
 
     if (! $login)
@@ -384,7 +384,6 @@ if (! isset($_SESSION["dol_login"]))
 		$ldap->searchPassword=$passwordtotest;
 		
 		$result=$ldap->connect_bind();
-		
 		if ($result > 0)
 		{
 			// On charge les attributs du user ldap

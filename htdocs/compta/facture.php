@@ -2575,7 +2575,7 @@ else
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				// éditeur wysiwyg
-				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 					$doleditor=new DolEditor('dp_desc','',100,'dolibarr_details');
@@ -2648,7 +2648,7 @@ else
 					if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 					
 				  // éditeur wysiwyg
-				  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+				  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				  {
 				  	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 				  	$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');

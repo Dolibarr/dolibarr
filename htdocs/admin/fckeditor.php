@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -43,7 +42,6 @@ $modules = array(
 'MEMBER' => 'FCKeditorForMembers',
 'MAILING' => 'FCKeditorForMailing',
 'DETAILS' => 'FCKeditorForProductDetails',
-'DETAILS_PERSO' => 'FCKeditorForProductDetailsPerso'
 );
 // Conditions pour que l'option soit proposée
 $conditions = array(
@@ -53,7 +51,6 @@ $conditions = array(
 'MEMBER' => $conf->adherent->enabled,
 'MAILING' => $conf->mailing->enabled,
 'DETAILS' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
-'DETAILS_PERSO' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled)
 );
 // Picto
 $picto = array(
@@ -63,7 +60,6 @@ $picto = array(
 'MEMBER' => 'user',
 'MAILING' => 'email',
 'DETAILS' => 'generic',
-'DETAILS_PERSO' => 'generic'
 );
 
 
@@ -83,13 +79,6 @@ foreach($modules as $const => $desc)
 	if ($_GET["action"] == 'disable_'.strtolower($const))
 	{
 		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const);
-		// Si fckeditor est desactivé dans les formulaires,
-		// on le désactive dans la description produit/service et dans la description personnalisée
-	    if ($const == 'DETAILS')
-	    {
-	    	dolibarr_del_const($db, "FCKEDITOR_ENABLE_PRODUCTDESC");
-	    	dolibarr_del_const($db, "FCKEDITOR_ENABLE_DETAILS_PERSO");
-	    }
 		Header("Location: fckeditor.php");
 		exit;
 	}

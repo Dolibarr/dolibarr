@@ -43,10 +43,10 @@ $langs->load("interventions");
 
 $fichinterid = isset($_GET["id"])?$_GET["id"]:'';
 
-// Sécurité d'accès client et commerciaux
+// Sï¿½curitï¿½ d'accï¿½s client et commerciaux
 $socid = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
-//Récupère le résultat de la recherche Ajax
+//Rï¿½cupï¿½re le rï¿½sultat de la recherche Ajax
 //Todo: voir pour le supprimer par la suite
 if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && $_POST['socid_id'])
 {
@@ -88,7 +88,7 @@ if ($_POST["action"] == 'add')
 		$result = $fichinter->create();
 		if ($result > 0)
 		{
-			$_GET["id"]=$result;      // Force raffraichissement sur fiche venant d'etre créée
+			$_GET["id"]=$result;      // Force raffraichissement sur fiche venant d'etre crï¿½ï¿½e
 			$fichinterid=$result;
 		}
 		else
@@ -116,11 +116,11 @@ if ($_POST["action"] == 'update')
   $fichinter->ref = $_POST["ref"];
   
   $fichinter->update($_POST["id"]);
-  $_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre créée
+  $_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre crï¿½ï¿½e
 }
 
 /*
- * Générer ou regénérer le document PDF
+ * Gï¿½nï¿½rer ou regï¿½nï¿½rer le document PDF
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
@@ -210,7 +210,7 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
 }
 
 /*
- *  Mise à jour d'une ligne d'intervention
+ *  Mise ï¿½ jour d'une ligne d'intervention
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_POST["save"] == $langs->trans("Save"))
 {
@@ -598,7 +598,7 @@ elseif ($_GET["id"] > 0)
 		print '</tr>';
 	}
 	
-	// Durée
+	// Durï¿½e
 	print '<tr><td>'.$langs->trans("TotalDuration").'</td><td>'.ConvertSecondToTime($fichinter->duree).'</td></tr>';
 	
 	// Description
@@ -750,7 +750,7 @@ elseif ($_GET["id"] > 0)
 				print '<td>';
 				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 
-				// éditeur wysiwyg
+				// ï¿½diteur wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -768,7 +768,7 @@ elseif ($_GET["id"] > 0)
 				$html->select_date($objp->date_intervention,'di',0,0,0,"date_intervention");
 				print '</td>';
 				
-				// Durée
+				// Durï¿½e
 				print '<td>';
 				$html->select_duree('duration',$objp->duree);
 				print '</td>';
@@ -814,8 +814,8 @@ elseif ($_GET["id"] > 0)
 
 		print '<tr '.$bc[$var].">\n";
 		print '<td>';
-		// éditeur wysiwyg
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+		// ï¿½diteur wysiwyg
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 			$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
@@ -832,7 +832,7 @@ elseif ($_GET["id"] > 0)
 		$html->select_date(time(),'di',0,0,0,"addinter");
 		print '</td>';
 		
-		// Durée
+		// Durï¿½e
 		print '<td>';
 		$html->select_duree('duration');
 		print '</td>';
@@ -894,7 +894,7 @@ elseif ($_GET["id"] > 0)
 
 	print '<table width="100%"><tr><td width="50%" valign="top">';
 	/*
-	* Documents générés
+	* Documents gï¿½nï¿½rï¿½s
 	*/
 	$filename=sanitize_string($fichinter->ref);
 	$filedir=$conf->fichinter->dir_output . "/".$fichinter->ref;

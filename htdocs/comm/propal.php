@@ -66,10 +66,10 @@ else if (isset($_GET["propalid"]) &&  $_GET["propalid"] > 0)
 	$dbtable='propal';
 }
 
-// Sécurité d'accès client et commerciaux
+// Sï¿½curitï¿½ d'accï¿½s client et commerciaux
 $socid = restrictedArea($user, $module, $objectid, $dbtable);
 
-// Nombre de ligne pour choix de produit/service prédéfinis
+// Nombre de ligne pour choix de produit/service prï¿½dï¿½finis
 $NBLINES=4;
 
 $form=new Form($db);
@@ -179,7 +179,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	
 	$db->begin();
 	
-	// Si on a selectionné une propal à copier, on réalise la copie
+	// Si on a selectionnï¿½ une propal ï¿½ copier, on rï¿½alise la copie
 	if($_POST['createmode']=='copy' && $_POST['copie_propal'])
 	{
 		if ($propal->fetch($_POST['copie_propal']) > 0)
@@ -243,7 +243,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	{
 		$error=0;
 
-		// Insertion contact par defaut si défini
+		// Insertion contact par defaut si dï¿½fini
 		if ($_POST["contactidp"])
 		{
 			$result=$propal->add_contact($_POST["contactidp"],'CUSTOMER','external');
@@ -322,13 +322,13 @@ if ($_POST['action'] == 'send')
             
 			if ($_POST['sendto'])
 			{
-				// Le destinataire a été fourni via le champ libre
+				// Le destinataire a ï¿½tï¿½ fourni via le champ libre
 				$sendto = $_POST['sendto'];
 				$sendtoid = 0;
 			}
 			elseif ($_POST['receiver'])
 			{
-				// Le destinataire a été fourni via la liste déroulante
+				// Le destinataire a ï¿½tï¿½ fourni via la liste dï¿½roulante
 				if ($_POST['receiver'] < 0)	// Id du tiers
 				{
 					$sendto = $propal->client->email;
@@ -359,11 +359,11 @@ if ($_POST['action'] == 'send')
                 	}
 
                   $actiontypeid=3;
-                  $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
+                  $actionmsg ='Mail envoyï¿½ par '.$from.' ï¿½ '.$sendto.'.<br>';
 
                   if ($message)
                   {
-                    $actionmsg.='Texte utilisé dans le corps du message:<br>';
+                    $actionmsg.='Texte utilisï¿½ dans le corps du message:<br>';
                     $actionmsg.=$message;
                   }
 
@@ -455,7 +455,7 @@ if ($_POST['action'] == 'send')
     {
 		$langs->load("other");
 		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
-		dolibarr_syslog('Impossible de lire les données de la facture. Le fichier facture n\'a peut-être pas été généré.');
+		dolibarr_syslog('Impossible de lire les donnï¿½es de la facture. Le fichier facture n\'a peut-ï¿½tre pas ï¿½tï¿½ gï¿½nï¿½rï¿½.');
     }
 }
 
@@ -598,7 +598,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 }
 
 /*
- *  Mise à jour d'une ligne dans la propale
+ *  Mise ï¿½ jour d'une ligne dans la propale
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
@@ -658,7 +658,7 @@ if ($_POST['action'] == 'classin')
   $propal->set_project($user, $_POST['projetidp']);
 }
 
-// Conditions de règlement
+// Conditions de rï¿½glement
 if ($_POST["action"] == 'setconditions')
 {
 	$propal = new Propal($db);
@@ -683,7 +683,7 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->propale->creer)
 	$_GET['propalid']=$_REQUEST['propalid'];
 }
 
-// Mode de règlement
+// Mode de rï¿½glement
 if ($_POST["action"] == 'setmode')
 {
 	$propal = new Propal($db);
@@ -815,7 +815,7 @@ if ($_GET['propalid'] > 0)
   
   $rowspan=8;
   
-  // Société
+  // Sociï¿½tï¿½
   print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td>';
   print '</tr>';
   
@@ -896,8 +896,8 @@ if ($_GET['propalid'] > 0)
 	print '</tr>';
 
 
-	// date de livraison (conditionné sur PROPALE_ADD_SHIPPING_DATE car carac à
-	// gérer par les commandes et non les propal
+	// date de livraison (conditionnï¿½ sur PROPALE_ADD_SHIPPING_DATE car carac ï¿½
+	// gï¿½rer par les commandes et non les propal
 	if ($conf->expedition->enabled)
 	{
 		if ($conf->global->PROPALE_ADD_SHIPPING_DATE)
@@ -949,7 +949,7 @@ if ($_GET['propalid'] > 0)
 		}
 	}
 
-	// Conditions et modes de règlement
+	// Conditions et modes de rï¿½glement
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
@@ -1198,7 +1198,7 @@ if ($_GET['propalid'] > 0)
 					print '<td class="nobordernopadding" nowrap="nowrap" align="left">';
 					if (($objp->info_bits & 2) == 2)
 					{
-						// Ligne remise prédéfinie, on ne permet pas modif
+						// Ligne remise prï¿½dï¿½finie, on ne permet pas modif
 					}
 					else
 					{
@@ -1255,7 +1255,7 @@ if ($_GET['propalid'] > 0)
 					print '<td align="center">';
 					if (($objp->info_bits & 2) == 2)
 					{
-						// Ligne remise prédéfinie, on permet pas modif
+						// Ligne remise prï¿½dï¿½finie, on permet pas modif
 					}
 					else
 					{
@@ -1330,7 +1330,7 @@ if ($_GET['propalid'] > 0)
 				}
 				if ($_GET["action"] == 'editline')
 				{
-					// éditeur wysiwyg
+					// ï¿½diteur wysiwyg
 					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 					{
 						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1379,7 +1379,7 @@ if ($_GET['propalid'] > 0)
 				if ($conf->service->enabled)
 				{
 				print "<tr $bc[$var]>";
-				print '<td colspan="5">Si produit de type service à durée limitée: Du ';
+				print '<td colspan="5">Si produit de type service ï¿½ durï¿½e limitï¿½e: Du ';
 				print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
 				print ' au ';
 				print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
@@ -1417,7 +1417,7 @@ if ($_GET['propalid'] > 0)
 		print '<td colspan="4">&nbsp;</td>';
 		print "</tr>\n";
 
-		// Ajout produit produits/services personnalisés
+		// Ajout produit produits/services personnalisï¿½s
 		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
 		print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 		print '<input type="hidden" name="action" value="addligne">';
@@ -1426,8 +1426,8 @@ if ($_GET['propalid'] > 0)
 
 		print '<tr '.$bc[$var].">\n";
 		print '<td '.$colspan.'>';
-		// éditeur wysiwyg
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+		// ï¿½diteur wysiwyg
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 			$doleditor=new DolEditor('dp_desc','',100,'dolibarr_details');
@@ -1456,7 +1456,7 @@ if ($_GET['propalid'] > 0)
 
 		print '</form>';
 
-		// Ajout de produits/services prédéfinis
+		// Ajout de produits/services prï¿½dï¿½finis
 		if ($conf->produit->enabled)
 		{
 			if ($conf->global->PRODUIT_USE_MARKUP)
@@ -1501,8 +1501,8 @@ if ($_GET['propalid'] > 0)
 			}
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 			
-			// éditeur wysiwyg
-			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+			// ï¿½diteur wysiwyg
+			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 				$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
@@ -1530,7 +1530,7 @@ if ($_GET['propalid'] > 0)
 	print "\n";
 
 	/*
-	* Formulaire cloture (signé ou non)
+	* Formulaire cloture (signï¿½ ou non)
 	*/
 	$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
 	$form_close.= '<table class="border" width="100%">';
@@ -1651,7 +1651,7 @@ if ($_GET['propalid'] > 0)
 
 
 	/*
-	* Documents générés
+	* Documents gï¿½nï¿½rï¿½s
 	*/
 	$filename=sanitize_string($propal->ref);
 	$filedir=$conf->propal->dir_output . "/" . sanitize_string($propal->ref);
@@ -1665,7 +1665,7 @@ if ($_GET['propalid'] > 0)
 
 
 	/*
-	* Commandes rattachées
+	* Commandes rattachï¿½es
 	*/
 	if($conf->commande->enabled)
 	{
@@ -1700,7 +1700,7 @@ if ($_GET['propalid'] > 0)
 	print '</td><td valign="top" width="50%">';
 
 	/*
-	* Liste des actions propres à la propal
+	* Liste des actions propres ï¿½ la propal
 	*/
 	$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
@@ -1762,7 +1762,7 @@ if ($_GET['propalid'] > 0)
 			$liste[$key]=$value;
 		}
 
-		// Créé l'objet formulaire mail
+		// Crï¿½ï¿½ l'objet formulaire mail
 		include_once('../html.formmail.class.php');
 		$formmail = new FormMail($db);
 		$formmail->fromname = $user->fullname;
@@ -1776,7 +1776,7 @@ if ($_GET['propalid'] > 0)
 		$formmail->withdeliveryreceipt=1;
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$propal->ref;
-		// Tableau des paramètres complémentaires
+		// Tableau des paramï¿½tres complï¿½mentaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='propal_send';
 		$formmail->param['propalid']=$propal->id;
@@ -1929,7 +1929,7 @@ else
                 $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->rowid;
             }
 
-			// Société
+			// Sociï¿½tï¿½
             print '<td><a href="'.$url.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 
             // Date propale
