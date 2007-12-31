@@ -389,6 +389,7 @@ DetectedVersion=Version détectée
 FollowingConstantsWillBeSubstituted=Les constantes suivantes seront substituées par leur valeur correspondante.
 Refresh=Rafraichir
 BackToList=Retour liste
+GoBack=Retour arrière
 CanBeModifiedIfOk=Peut être modifié si valide
 CanBeModifiedIfKo=Peut être modifié si invalide
 AutomaticCode=Création automatique du code

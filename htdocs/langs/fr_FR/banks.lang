@@ -24,6 +24,7 @@ BalanceMinimalDesired=Solde minimum désiré
 InitialBankBalance=Solde initial
 EndBankBalance=Solde final
 CurrentBalance=Solde actuel
+ShowAllTimeBalance=Afficher balance depuis debut
 Reconciliation=Rapprochement
 RIB=RIB
 IBAN=Identifiant IBAN

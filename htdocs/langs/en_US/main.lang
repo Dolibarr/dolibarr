@@ -388,6 +388,7 @@ DetectedVersion=Detected version
 FollowingConstantsWillBeSubstituted=Following constants will be substitute with corresponding value.
 Refresh=Refresh
 BackToList=Back to list
+GoBack=Go back
 CanBeModifiedIfOk=Can be modified if valid
 CanBeModifiedIfKo=Can be modified if not valid
 AutomaticCode=Automatic code
