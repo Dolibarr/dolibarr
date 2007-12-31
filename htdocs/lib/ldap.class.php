@@ -446,6 +446,7 @@ class Ldap
         $this->result = @ldap_bind( $this->connection,$checkDn,$pass);
         if ( $this->result) {
             // Connected OK - login credentials are fine!
+            $this->ldapUserDN = $checkDn;
             return true;
         } else {
             /* Login failed. Return false, together with the error code and text from
