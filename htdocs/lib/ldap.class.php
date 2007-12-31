@@ -112,7 +112,7 @@ class Ldap
 
         //Server
         if ($conf->global->LDAP_SERVER_HOST)       $this->server[] = $conf->global->LDAP_SERVER_HOST;
-		if ($conf->global->LDAP_SERVER_HOST_SLAVE) $this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
+        if ($conf->global->LDAP_SERVER_HOST_SLAVE) $this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
         $this->serverPort          = $conf->global->LDAP_SERVER_PORT;
         $this->ldapProtocolVersion = $conf->global->LDAP_SERVER_PROTOCOLVERSION;
         $this->dn                  = $conf->global->LDAP_SERVER_DN;

@@ -117,11 +117,6 @@ if ($dolibarr_main_authentication == 'dolibarr')
 {
 	$authmode=array('dolibarr');
 }
-// Authentication mode: dolibarr_mdb2
-if ($dolibarr_main_authentication == 'dolibarr_mdb2')
-{
-	$authmode=array('dolibarr_mdb2');
-}
 // Authentication mode: ldap
 if ($dolibarr_main_authentication == 'ldap')
 {
