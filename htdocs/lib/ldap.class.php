@@ -436,9 +436,11 @@ class Ldap
         ** "uid=username, ou=People, dc=orgname,dc=com"
         */
         if ($this->serverType == "activedirectory") {
-            $checkDn = "$uname@$this->domain";
+        	$domain = eregi_replace('dc=','',$this->domain);
+        	$domain = eregi_replace(',','.',$domain);
+          $checkDn = "$uname@$domain";
         } else {
-            $checkDn = $this->getUserIdentifier() . "=$uname, " . $this->setDn(true);
+        	$checkDn = $this->getUserIdentifier() . "=$uname, " . $this->setDn(true);
         }
         // Try and connect...
         $this->result = @ldap_bind( $this->connection,$checkDn,$pass);
