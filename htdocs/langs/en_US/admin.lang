@@ -710,7 +710,7 @@ LDAPDescUsers=This page allows you to define LDAP attributes name in LDAP tree f
 LDAPDescGroups=This page allows you to define LDAP attributes name in LDAP tree for each data found on Dolibarr groups.
 LDAPDescMembers=This page allows you to define LDAP attributes name in LDAP tree for each data found on Dolibarr members module.
 LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following loaded schemas: <b>core.schema, cosine.schema, inetorgperson.schema</b>). If you use thoose values and OpenLDAP, modify your LDAP config file <b>slapd.conf</b> to have all thoose schemas loaded.
-ForANonAnonymousAccess=For an authenticated access
+ForANonAnonymousAccess=For a write access
 ##### Products #####
 ProductSetup=Products module setup
 NumberOfProductShowInSelect=Max number of products in combos select lists (0=no limit)

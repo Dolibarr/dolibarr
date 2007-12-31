@@ -709,7 +709,7 @@ LDAPDescUsers=Cette page permet de définir le nom des attributs de l'arbre LDAP 
 LDAPDescGroups=Cette page permet de définir le nom des attributs de l'arbre LDAP pour chaque informations des groupes utilisateurs Dolibarr.
 LDAPDescMembers=Cette page permet de définir le nom des attributs de l'arbre LDAP pour chaque informations des membres du module adhérents Dolibarr.
 LDAPDescValues=Les valeurs exemples sont adaptées à <b>OpenLDAP</b> avec les schemas suivant chargés: <b>core.schema, cosine.schema, inetorgperson.schema</b>). Si vous utiliser les valeurs suggérés et OpenLDAP, modifier votre fichier de configuration LDAP <b>slapd.conf</b> pour avoir tous ces schémas actifs.
-ForANonAnonymousAccess=Pour un accès en écriture
+ForANonAnonymousAccess=Pour un accès authentifié (pour accès en écriture par exemple)
 ##### Products #####
 ProductSetup=Configuration du module Produits
 NumberOfProductShowInSelect=Nombre de produits max dans les listes déroulantes (0=aucune limite)
