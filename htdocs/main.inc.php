@@ -211,7 +211,10 @@ if (! isset($_SESSION["dol_login"]))
 			$table = MAIN_DB_PREFIX."user";
 	    	$usernamecol = 'login';
 	    	
-	    	$sql='SELECT '.$fieldtotest.' as password from '.$table.' where '.$usernamecol." = '".addslashes($_POST["username"])."'";
+	    	$sql ='SELECT pass, pass_crypted';
+	    	$sql.=' from '.$table;
+	    	$sql.=' where '.$usernamecol." = '".addslashes($_POST["username"])."'";
+
 	    	dolibarr_syslog("main.inc::get password sql=".$sql);
 	    	$resql=$db->query($sql);
 	    	if ($resql)
@@ -219,9 +222,23 @@ if (! isset($_SESSION["dol_login"]))
 	    		$obj=$db->fetch_object($resql);
 	    		if ($obj)
 	    		{
-	    			$password=$obj->password;
-	    			if ($cryptType == 'md5') $password=md5($password);
-	    			if ($password == $_POST["password"])
+	    			$passclear=$obj->pass;
+	    			$passcrypted=$obj->pass_crypted;
+	    			$passtyped=$_POST["password"];
+
+	    			$passok=false;
+	    			if ($cryptType == 'md5') 
+	    			{
+	    				if (md5($passtyped) == $passcrypted) $passok=true;
+	    			}
+	    			// For compatibility with old versions
+	    			if (! $passok)
+	    			{
+	    				if ($passtyped == $passclear) $passok=true;
+	    			}
+	    			
+	    			// Password ok ?
+	    			if ($passok)
 	    			{
 	        			dolibarr_syslog("Authentification ok (en mode Base Dolibarr)");
 	    				$login=$_POST["username"];
