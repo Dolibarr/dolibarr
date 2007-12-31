@@ -678,6 +678,12 @@ if ($_GET["account"] || $_GET["ref"])
 	    $file = "balance".$account."-".$year.".png";
 	    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
 	    print '</td></tr>';
+	    
+	    print '<tr><td align="center"><br>';
+	    print '<a href="'.$_SERVER["PHP_SELF"].'?mode=showalltime&account='.$account.'">';
+	    print $langs->trans("ShowAllTimeBalance");
+	    print '</a>';
+	    print '</td></tr>';
 	}    
     
     // All time
