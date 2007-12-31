@@ -321,6 +321,7 @@ if (! isset($_SESSION["dol_login"]))
 			print $ldap->ldapErrorCode.'<br>';
 			print $ldap->ldapErrorText.'<br>';
 			print 'domain:'.$ldap->ldapDebugDomain.'<br>';
+			print 'DN:'.$ldap->ldapDebugDN.'<br>';
 			print 'result:'.$resultCheck.'<br>';
 			if ($resultCheck)
     	{
