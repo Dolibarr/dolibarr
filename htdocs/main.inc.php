@@ -318,6 +318,7 @@ if (! isset($_SESSION["dol_login"]))
 			
 			$result=$ldap->connect_bind();
 			$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest);
+			$ldap->close();
 			
 			$ldap->searchUser=$usertotest;
 			if ($resultCheckUserDN) $ldap->searchUser = $ldap->ldapUserDN;
@@ -341,7 +342,6 @@ if (! isset($_SESSION["dol_login"]))
 					$langs->load('other');
 					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
     		}
-				$ldap->close();
     	}
     	else
     	{
@@ -351,6 +351,7 @@ if (! isset($_SESSION["dol_login"]))
 				$langs->load('other');
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
     	}
+    	$ldap->close();
 	   }
     }
 
@@ -376,6 +377,7 @@ if (! isset($_SESSION["dol_login"]))
 			
 		$result=$ldap->connect_bind();
 		$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest);
+		$ldap->close();
 		
 		$ldap->searchUser=$usertotest;
 		if ($resultCheckUserDN) $ldap->searchUser = $ldap->ldapUserDN;
@@ -425,6 +427,7 @@ if (! isset($_SESSION["dol_login"]))
 				}
 				//$resultUpdate = $user->update_ldap2dolibarr();
 			}
+			$ldap->close();
 		}
 		else
 		{
