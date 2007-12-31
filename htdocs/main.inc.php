@@ -311,14 +311,18 @@ if (! isset($_SESSION["dol_login"]))
 			$ldap->serverPort=$ldapport;
 			$ldap->ldapProtocolVersion=$ldapversion;
 			$ldap->serverType=$ldapservertype;
-			$ldap->searchUser=$usertotest;
-			$ldap->searchPassword=$passwordtotest;
+			$ldap->searchUser=$ldapadminlogin;
+			$ldap->searchPassword=$ldapadminpass;
 			
 			if ($ldapdebug) dolibarr_syslog("Authentification LDAP --> Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
 			
+			$result=$ldap->connect_bind();
 			$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest);
+			
+			$ldap->searchUser=$usertotest;
 			if ($resultCheckUserDN) $ldap->searchUser = $ldap->ldapUserDN;
 			
+			$ldap->searchPassword=$passwordtotest;
 			$result=$ldap->connect_bind();
 
 			if ($result > 0)
