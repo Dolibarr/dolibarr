@@ -278,7 +278,7 @@ if (! isset($_SESSION["dol_login"]))
 			$ldapuserattr=$dolibarr_main_auth_ldap_login_attribute;
 			$ldaphost=$dolibarr_main_auth_ldap_host;
 			$ldapport=$dolibarr_main_auth_ldap_port;
-			$ldapversion=(int) $dolibarr_main_auth_ldap_version;	// Si pas de int, PEAR LDAP plante.
+			$ldapversion=$dolibarr_main_auth_ldap_version;
 			$ldapdn=$dolibarr_main_auth_ldap_dn;
 			$ldapadminlogin=$dolibarr_main_auth_ldap_admin_login;
 			$ldapadminpass=$dolibarr_main_auth_ldap_admin_pass;
