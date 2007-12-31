@@ -21,10 +21,6 @@ FPDF              1.53     Public Domain (not clear) Oui              PDF genera
 FPDI              1.2      Apache License 2.0        Non GPL3 uniqmt  PDF encryption
 MagPieRss         0.72     GPL 2.0                   Oui              Load RSS
 NuSoap            0.6.5    LGPL 2.1                  Oui              Interfaces with third tools
-PEAR Core         1.2.1    PHP License 2.00          Non!             Core code for PEAR
-PEAR Auth         ??       PHP License 2.02          Non!             Login (Database MDB2 Database DB, LDAP)
-PEAR MDB2         2.4.1    Modified BSD License      Oui              Database access MDB2
-PEAR DB           ??       PHP License 2.02          Non!             Database access DB
 PHP_WriteExcel    0.3.0    LGPL 2.1                  Oui              Excel files generation
 PHPExcelReader    2k       PHP License 3.0           Non!             Excel files reader
 Scriptaculous     1.8.0    MIT License               Oui              Extension Ajax
