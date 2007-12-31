@@ -117,12 +117,14 @@ if ($_POST["action"] == "set")
         $ok = 0;
         $handle=opendir($dir);
         dolibarr_install_syslog("Ouverture repertoire ".$dir." handle=".$handle,LOG_DEBUG);
-        $table_exists = 0;
+        $tablefound = 0;
         while (($file = readdir($handle))!==false)
         {
             if (eregi('\.sql$',$file) && eregi('^llx_',$file) && ! eregi('\.key\.sql$',$file))
             {
-                $name = substr($file, 0, strlen($file) - 4);
+                $tablefound++;
+                
+            	$name = substr($file, 0, strlen($file) - 4);
                 $buffer = '';
                 $fp = fopen($dir.$file,"r");
                 if ($fp)
@@ -178,12 +180,20 @@ if ($_POST["action"] == "set")
         }
         closedir($handle);
 
-        if ($error == 0)
+        if ($tablefound)
         {
-            print '<tr><td>';
-            print $langs->trans("TablesAndPrimaryKeysCreation").'</td><td>'.$langs->trans("OK").'</td></tr>';
-            $ok = 1;
+	        if ($error == 0)
+	        {
+	            print '<tr><td>';
+	            print $langs->trans("TablesAndPrimaryKeysCreation").'</td><td>'.$langs->trans("OK").'</td></tr>';
+	            $ok = 1;
+	        }
         }
+        else
+        {
+	        print "<tr><td>".$langs->trans("ErrorFailedToFindSomeFiles",$dir)."</td><td>".$langs->trans("Error")."</td></tr>";
+            dolibarr_install_syslog("Failed to find files to create database in directory ".$dir,LOG_ERR);
+         }
     }
 
     
