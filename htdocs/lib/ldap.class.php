@@ -458,6 +458,7 @@ class Ldap
             */
             $this->ldapErrorCode = ldap_errno( $this->connection);
             $this->ldapErrorText = ldap_error( $this->connection);
+            $this->ldapDebugDomain = $domain;
             return false;
         }
     }

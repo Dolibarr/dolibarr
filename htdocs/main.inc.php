@@ -320,6 +320,7 @@ if (! isset($_SESSION["dol_login"]))
 			$resultCheck=$ldap->checkPass($usertotest,$passwordtotest);
 			print $ldap->ldapErrorCode.'<br>';
 			print $ldap->ldapErrorText.'<br>';
+			print 'domain:'.$ldap->ldapDebugDomain.'<br>';
 			print 'result:'.$resultCheck.'<br>';
 			if ($resultCheck)
     	{
