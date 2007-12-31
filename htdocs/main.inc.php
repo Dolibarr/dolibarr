@@ -321,8 +321,8 @@ if (! isset($_SESSION["dol_login"]))
 			
 			$ldap->searchUser=$usertotest;
 			if ($resultCheckUserDN) $ldap->searchUser = $ldap->ldapUserDN;
-			
 			$ldap->searchPassword=$passwordtotest;
+			
 			$result=$ldap->connect_bind();
 
 			if ($result > 0)
@@ -371,10 +371,18 @@ if (! isset($_SESSION["dol_login"]))
 		$ldap->serverPort=$ldapport;
 		$ldap->ldapProtocolVersion=$ldapversion;
 		$ldap->serverType=$ldapservertype;
+		$ldap->searchUser=$ldapadminlogin;
+		$ldap->searchPassword=$ldapadminpass;
+			
+		$result=$ldap->connect_bind();
+		$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest);
+		
 		$ldap->searchUser=$usertotest;
+		if ($resultCheckUserDN) $ldap->searchUser = $ldap->ldapUserDN;
 		$ldap->searchPassword=$passwordtotest;
 		
 		$result=$ldap->connect_bind();
+		
 		if ($result > 0)
 		{
 			// On charge les attributs du user ldap
