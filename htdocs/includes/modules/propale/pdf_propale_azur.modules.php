@@ -440,7 +440,7 @@ class pdf_propale_azur extends ModelePDFPropales
         }
 
         /*
-        *	Conditions de reglements
+        *	Conditions de règlements
         */
         if ($object->cond_reglement_code || $object->cond_reglement)
         {
@@ -458,7 +458,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		}
 
         /*
-        *	Check si absence mode reglement
+        *	Check si absence mode règlement
         */
         if (! $conf->global->FACTURE_CHQ_NUMBER && ! $conf->global->FACTURE_RIB_NUMBER)
 		{
@@ -472,7 +472,7 @@ class pdf_propale_azur extends ModelePDFPropales
         }
 
         /*
-         * Propose mode reglement par CHQ
+         * Propose mode règlement par CHQ
          */
         if (! $object->mode_reglement_code || $object->mode_reglement_code == 'CHQ')
         {
@@ -512,7 +512,7 @@ class pdf_propale_azur extends ModelePDFPropales
 		}
 		
         /*
-         * Propose mode reglement par RIB
+         * Propose mode règlement par RIB
          */
         if (! $object->mode_reglement_code || $object->mode_reglement_code == 'VIR')
         {

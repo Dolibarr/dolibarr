@@ -2738,9 +2738,10 @@ class Facture extends CommonObject
 	$ligne->subprice=100;
 	$ligne->price=100;
 	$ligne->tva_tx=19.6;
-	$ligne->total_ht=100;
-	$ligne->total_ttc=119.6;
-	$ligne->total_tva=19.6;
+	$ligne->remise_percent=10;	
+	$ligne->total_ht=90;
+	$ligne->total_ttc=107.64;
+	$ligne->total_tva=17.64;
 	$prodid = rand(1, $num_prods);
 	$ligne->produit_id=$prodids[$prodid];
 	$this->lignes[$xnbp]=$ligne;

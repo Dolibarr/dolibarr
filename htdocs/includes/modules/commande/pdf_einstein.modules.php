@@ -73,6 +73,7 @@ class pdf_einstein extends ModelePDFCommandes
         $this->option_condreg = 1;                 // Affiche conditions règlement
         $this->option_codeproduitservice = 1;      // Affiche code produit-service
         $this->option_multilang = 1;               // Dispo en plusieurs langues
+        $this->option_escompte = 1;                // Affiche si il y a eu escompte
         $this->option_credit_note = 1;             // Gère les avoirs
 
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
@@ -84,11 +85,11 @@ class pdf_einstein extends ModelePDFCommandes
 
         // Defini position des colonnes
         $this->posxdesc=$this->marge_gauche+1;
-        $this->posxtva=121;
-        $this->posxup=132;
-        $this->posxqty=151;
+        $this->posxtva=116;
+        $this->posxup=126;
+        $this->posxqty=145;
         $this->posxdiscount=162;
-        $this->postotalht=177;
+        $this->postotalht=174;
 
         $this->tva=array();
         $this->atleastoneratenotnull=0;
@@ -151,8 +152,6 @@ class pdf_einstein extends ModelePDFCommandes
             {
 	            $nblignes = sizeof($com->lignes);
 
-                // Initialisation document vierge
-      		
 		           // Protection et encryption du pdf
                if ($conf->global->PDF_SECURITY_ENCRYPTION)
                {
@@ -232,7 +231,7 @@ class pdf_einstein extends ModelePDFCommandes
 
                     // Description de la ligne produit
                     $libelleproduitservice=dol_htmlentities($com->lignes[$i]->libelle);
-                    if ($com->lignes[$i]->desc&&$com->lignes[$i]->desc!=$com->lignes[$i]->libelle)
+                    if ($com->lignes[$i]->desc && $com->lignes[$i]->desc!=$com->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
                         if ($com->lignes[$i]->desc == '(CREDIT_NOTE)' && $com->lignes[$i]->fk_remise_except)
@@ -274,7 +273,8 @@ class pdf_einstein extends ModelePDFCommandes
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-                   	$pdf->writeHTMLCell(112, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+					// Description
+                   	$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
 
                     $pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
                     
@@ -282,27 +282,27 @@ class pdf_einstein extends ModelePDFCommandes
 
                     // TVA
                     $pdf->SetXY ($this->posxtva, $curY);
-                    $pdf->MultiCell(10, 4, ($com->lignes[$i]->tva_tx < 0 ? '*':'').abs($com->lignes[$i]->tva_tx), 0, 'R');
+                    $pdf->MultiCell($this->posxup-$this->posxtva-1, 4, ($com->lignes[$i]->tva_tx < 0 ? '*':'').abs($com->lignes[$i]->tva_tx), 0, 'R');
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY ($this->posxup, $curY);
-                    $pdf->MultiCell(18, 4, price($com->lignes[$i]->subprice), 0, 'R', 0);
+                    $pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($com->lignes[$i]->subprice), 0, 'R', 0);
 
                     // Quantité
                     $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell(10, 4, $com->lignes[$i]->qty, 0, 'R');
+                    $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $com->lignes[$i]->qty, 0, 'R');
 
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
                     if ($com->lignes[$i]->remise_percent)
                     {
-                        $pdf->MultiCell(14, 4, dolibarr_print_reduction($com->lignes[$i]->remise_percent), 0, 'R');
+                        $pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dolibarr_print_reduction($com->lignes[$i]->remise_percent), 0, 'R');
                     }
 
                     // Total HT ligne
                     $pdf->SetXY ($this->postotalht, $curY);
                     $total = price($com->lignes[$i]->total_ht);
-                    $pdf->MultiCell(23, 4, $total, 0, 'R', 0);
+                    $pdf->MultiCell(26, 4, $total, 0, 'R', 0);
 
                     // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 
@@ -390,8 +390,8 @@ class pdf_einstein extends ModelePDFCommandes
 
     /*
      *   \brief      Affiche tableau des versement
-     *   \param      pdf     objet PDF
-     *   \param      com     objet commande
+     *   \param      pdf     	Objet PDF
+     *   \param      object		Objet commande
      */
     function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -402,7 +402,7 @@ class pdf_einstein extends ModelePDFCommandes
 	/*
      *	\brief      Affiche infos divers
      *	\param      pdf             Objet PDF
-     *	\param      com             Objet commande
+     *	\param      object          Objet commande
      *	\param		posy			Position depart
      *	\param		outputlangs		Objet langs
      *	\return     y               Position pour suite
@@ -414,9 +414,9 @@ class pdf_einstein extends ModelePDFCommandes
         $pdf->SetFont('Arial','', 9);
 
         /*
-        *	Affiche la mention TVA non applicable selon option
+        *	If France, show VAT mention if not applicable
         */
-    	if ($this->franchise == 1)
+    	if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
       	{
 	        $pdf->SetFont('Arial','B',8);
 	        $pdf->SetXY($this->marge_gauche, $posy);
@@ -583,7 +583,7 @@ class pdf_einstein extends ModelePDFCommandes
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + 0);
-        $pdf->MultiCell($largcol2, $tab2_hl, price(abs($object->total_ht + $object->remise)), 0, 'R', 1);
+        $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
 
         // Remise globale
         if ($object->remise > 0)
@@ -598,7 +598,7 @@ class pdf_einstein extends ModelePDFCommandes
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("WithDiscountTotalHT"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell($largcol2, $tab2_hl, price(abs($object->total_ht)), 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht), 0, 'R', 1);
 
             $index = 2;
         }
@@ -622,7 +622,7 @@ class pdf_einstein extends ModelePDFCommandes
                 $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
 
                 $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-                $pdf->MultiCell($largcol2, $tab2_hl, price(abs($tvaval)), 0, 'R', 1);
+                $pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
             }
         }
         if (! $this->atleastoneratenotnull)
@@ -632,7 +632,7 @@ class pdf_einstein extends ModelePDFCommandes
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($largcol2, $tab2_hl, price(abs($object->total_tva)), 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
         }
 
         $useborder=0;
@@ -706,7 +706,7 @@ class pdf_einstein extends ModelePDFCommandes
 
         $pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxtva-1, $tab_top+2);
-        $pdf->MultiCell(12,2, $outputlangs->transnoentities("VAT"),'','C');
+        $pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
 
         $pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxup-1, $tab_top+2);
@@ -714,13 +714,13 @@ class pdf_einstein extends ModelePDFCommandes
 
         $pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxqty-1, $tab_top+2);
-        $pdf->MultiCell(11,2, $outputlangs->transnoentities("Qty"),'','C');
+        $pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
 
         $pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
         if ($this->atleastonediscount)
         {
             $pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
-            $pdf->MultiCell(16,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+            $pdf->MultiCell(14,2, $outputlangs->transnoentities("ReductionShort"),'','C');
         }
 
         if ($this->atleastonediscount)
@@ -728,7 +728,7 @@ class pdf_einstein extends ModelePDFCommandes
             $pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
         }
         $pdf->SetXY ($this->postotalht-1, $tab_top+2);
-        $pdf->MultiCell(23,2, $outputlangs->transnoentities("TotalHT"),'','C');
+        $pdf->MultiCell(28,2, $outputlangs->transnoentities("TotalHT"),'','C');
 
     }
 
