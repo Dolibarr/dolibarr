@@ -28,7 +28,7 @@
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/phenix.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/phenix/phenix.class.php');
 
 
 if (!$user->admin)
