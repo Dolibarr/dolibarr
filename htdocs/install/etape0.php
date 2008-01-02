@@ -65,19 +65,24 @@ if ($_POST["action"] == "set")
 }
 
 // Check parameters
-if (! isset($_POST["db_type"]) || ! $_POST["db_type"])
+if (empty($_POST["db_type"]))
 {
 	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseType")).'</div>';
 	$error++;
 }
-if (! isset($_POST["db_host"]) || ! $_POST["db_host"])
+if (empty($_POST["db_host"]))
 {
 	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Server")).'</div>';
 	$error++;
 }
-if (! isset($_POST["db_name"]) || ! $_POST["db_name"])
+if (empty($_POST["db_name"]))
 {
 	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseName")).'</div>';
+	$error++;
+}
+if (empty($_POST["db_user"]))
+{
+	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Login")).'</div>';
 	$error++;
 }
 
@@ -92,7 +97,7 @@ if (! $error)
 	{
 		if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 		{	
-			$databasefortest=$conf->db->name;
+			$databasefortest='';
 			if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
 			{
 				$databasefortest='mysql';
@@ -254,7 +259,7 @@ else
 {
 	if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 	{	
-		print $langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$dolibarr_main_db_user,$dolibarr_main_db_host,$userroot);
+		print $langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$_POST["db_user"],$_POST["db_host"],($userroot?$userroot:'?'));
 		print '<br>';
 		print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
 		print $langs->trans("ErrorGoBackAndCorrectParameters");

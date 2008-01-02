@@ -284,7 +284,7 @@ while (($file = readdir($handle))!==false)
 
 <tr class="bg1">
 <td class="label" valign="top">
-<?php echo $langs->trans("Login"); ?>
+<b><?php echo $langs->trans("Login"); ?></b>
 </td>
 <td class="label" valign="top"><input type="text" name="db_user" value="<?php print isset($dolibarr_main_db_user)?$dolibarr_main_db_user:''; ?>"></td>
 <td class="comment">
@@ -294,7 +294,7 @@ while (($file = readdir($handle))!==false)
 
 <tr>
 <td class="label" valign="top">
-<?php echo $langs->trans("Password"); ?>
+<b><?php echo $langs->trans("Password"); ?></b>
 </td>
 <td class="label" valign="top"><input type="password" name="db_pass" value="<?php print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:''; ?>"></td>
 <td class="comment">
