@@ -28,12 +28,14 @@
 /**
 	\brief		Build a file from an array of events
 	\param		format				'vcal' or 'ical'
+	\param		title				Title of export
+	\param		desc				Description of export
 	\param		events_array		Array of events ('eid','startdate','duration','enddate','title','summary','category','email','url','desc','author')
 	\param		outputfile			Output file
 	\param		filter				Filter
 	\return		int					<0 if ko, Nb of events in file if ok
 */
-function build_calfile($format='vcal',$events_array,$outputfile,$filter='')
+function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$filter='')
 {
 	dolibarr_syslog("xcal.lib.php::build_cal_file Build cal file ".$outputfile." to format ".$format);
 
@@ -49,11 +51,11 @@ function build_calfile($format='vcal',$events_array,$outputfile,$filter='')
 		fwrite($calfileh,"VERSION:2.0\n");
 		fwrite($calfileh,"METHOD:PUBLISH\n");
 		fwrite($calfileh,"PRODID:-//DOLIBARR ".DOL_VERSION."//EN\n");
+		fwrite($calfileh,"X-WR-CALNAME: ".utf8_encode($title)."\n");
+		fwrite($calfileh,"X-WR-CALDESC: ".utf8_encode($desc)."\n");
 		/*
-		X-WR-CALNAME:Agenda du Libre
 		X-WR-TIMEZONE:Europe/Paris
 		CALSCALE:GREGORIAN
-		X-WR-CALDESC:L'Agenda des évènements autour du Libre
 		*/
 		
 		foreach ($events_array as $date => $event)
