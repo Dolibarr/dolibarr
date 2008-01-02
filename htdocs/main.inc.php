@@ -178,8 +178,11 @@ if (! isset($_SESSION["dol_login"]))
 	// MODE HTTP (Basic)
 	if ($test && in_array('http',$authmode) && ! $login)
 	{
-		$login=$_SERVER["REMOTE_USER"];
-		$test=false;
+		if (! empty($_SERVER["REMOTE_USER"]))
+		{
+			$login=$_SERVER["REMOTE_USER"];
+			$test=false;
+		}
 	}
 
 	// MODE DOLIBARR

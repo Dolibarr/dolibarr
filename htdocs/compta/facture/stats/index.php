@@ -46,7 +46,9 @@ print_fiche_titre($langs->trans("BillsStatistics"), $mesg);
 
 $stats = new FactureStats($db, $socid);
 $year = strftime("%Y", time());
-$data = $stats->getNbByMonthWithPrevYear($year);
+$startyear=$year-2;
+$endyear=$year;
+$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 
 create_exdir($conf->facture->dir_temp);
 
@@ -59,14 +61,22 @@ if (! $mesg)
 {
     $px->SetData($data);
     $px->SetPrecisionY(0);
+	$i=$startyear;
+	while ($i <= $endyear)
+	{
+		$legend[]=$i;
+		$i++;
+	}
+    $px->SetLegend($legend);
     $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetLegend(array($year - 1, $year));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
-    $px->SetShading(3);
+    $px->SetYLabel($langs->trans("NbOfInvoices"));
+	$px->SetShading(3);
     $px->SetHorizTickIncrement(1);
     $px->SetPrecisionY(0);
-    $px->draw($filename);
+    $px->mode='depth';
+	$px->draw($filename);
 }
       
 $sql = "SELECT count(*) as nb, date_format(datef,'%Y') as dm, sum(total) as total FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0 ";

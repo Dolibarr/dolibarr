@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
@@ -21,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -53,6 +52,8 @@ if (isset($_GET["msg"])) { $mesg=urldecode($_GET["mesg"]); }
 $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
 
+// Sécurité accés client
+$module='propale';
 if (isset($_GET["socid"]))
 {
 	$objectid=$_GET["socid"];
@@ -66,10 +67,10 @@ else if (isset($_GET["propalid"]) &&  $_GET["propalid"] > 0)
 	$dbtable='propal';
 }
 
-// S�curit� d'acc�s client et commerciaux
+// Sécurité d'accès client et commerciaux
 $socid = restrictedArea($user, $module, $objectid, $dbtable);
 
-// Nombre de ligne pour choix de produit/service pr�d�finis
+// Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
 
 $form=new Form($db);

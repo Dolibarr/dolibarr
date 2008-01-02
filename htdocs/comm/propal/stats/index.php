@@ -73,7 +73,8 @@ if (! $mesg)
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
-    $px->SetShading(3);
+	$px->SetYLabel($langs->trans("NbOfProposals"));
+	$px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
 	$px->mode='depth';

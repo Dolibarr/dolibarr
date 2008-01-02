@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -51,14 +51,14 @@ if ($page == -1) { $page = 0 ; }
 
 // Sécurité accés client
 $user->getrights('facture');
-
-if (isset($_GET["socid"]))
+$module='propale';
+if (! empty($_GET["socid"]))
 {
 	$objectid=$_GET["socid"];
 	$module='societe';
 	$dbtable='';
 }
-else if (isset($_GET["propalid"]) &&  $_GET["propalid"] > 0)
+else if (! empty($_GET["propalid"]))
 {
 	$objectid=$_GET["propalid"];
 	$module='propale';

@@ -50,9 +50,10 @@ llxHeader();
 print_fiche_titre($langs->trans("OrdersStatistics"), $mesg);
 
 $stats = new CommandeStats($db, $socid);
-
 $year = strftime("%Y", time());
-$data = $stats->getNbByMonthWithPrevYear($year);
+$startyear=$year-2;
+$endyear=$year;
+$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 
 // Création répertoire pour images générées
 $dir=$conf->commande->dir_temp;
@@ -81,15 +82,22 @@ if (! $mesg)
 {
     $px->SetData($data);
 	$px->SetPrecisionY(0);
+	$i=$startyear;
+	while ($i <= $endyear)
+	{
+		$legend[]=$i;
+		$i++;
+	}
+    $px->SetLegend($legend);
     $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetLegend(array($year - 1, $year));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("NbOfOrder"));
     $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
-    $px->draw($filename);
+    $px->mode='depth';
+	$px->draw($filename);
 }      
 $rows = $stats->getNbByYear();
 $num = sizeof($rows);
