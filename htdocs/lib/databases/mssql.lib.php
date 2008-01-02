@@ -52,6 +52,8 @@ class DoliDb
   var $database_selected; 
   //! Nom base sélectionnée
   var $database_name;			
+  //! Nom user base
+  var $database_user;		
   //! 1 si une transaction est en cours, 0 sinon
   var $transaction_opened;	
   //! Derniere requete exécutée
@@ -110,6 +112,8 @@ class DoliDb
   function DoliDb($type='mssql', $host, $user, $pass, $name='', $newlink=0)
   {
     global $conf,$langs;
+
+	$this->database_user=$user;
     $this->transaction_opened=0;
         
     if (! function_exists("mssql_connect"))

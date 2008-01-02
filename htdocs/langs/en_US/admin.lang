@@ -534,6 +534,8 @@ WebCalAddEventOnStatusPropal=Add calendar event on commercial proposals status c
 WebCalAddEventOnStatusContract=Add calendar event on contracts status change
 WebCalAddEventOnStatusBill=Add calendar event on bills status change
 WebCalAddEventOnStatusMember=Add calendar event on members status change
+WebCalUrlForVCalExport=An export link to <b>%s</b> format is available at following link: %s
+WebCalCheckWebcalSetup=May be, Webcal module setup is not correctly done.
 ##### Invoices #####
 BillsSetup=Invoices module setup
 BillsDate=Invoices date

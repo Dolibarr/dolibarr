@@ -546,12 +546,13 @@ function dolibarr_print_date($time,$format='')
     // Si format non défini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
     if (! $format) $format=(isset($conf->format_date_text_short) ? $conf->format_date_text_short : '%Y-%m-%d %H:%M:%S');
 
-    if ($format == 'day')         $format=$conf->format_date_short;
-    if ($format == 'hour')        $format=$conf->format_hour_short;
-    if ($format == 'daytext')     $format=$conf->format_date_text_short;
-    if ($format == 'dayhour')     $format=$conf->format_date_hour_short;
-    if ($format == 'dayhourtext') $format=$conf->format_date_hour_text_short;
-    if ($format == 'dayhourldap') $format='%Y%m%d%H%M%SZ';
+    if ($format == 'day')          $format=$conf->format_date_short;
+    if ($format == 'hour')         $format=$conf->format_hour_short;
+    if ($format == 'daytext')      $format=$conf->format_date_text_short;
+    if ($format == 'dayhour')      $format=$conf->format_date_hour_short;
+    if ($format == 'dayhourtext')  $format=$conf->format_date_hour_text_short;
+    if ($format == 'dayhourldap')  $format='%Y%m%d%H%M%SZ';
+    if ($format == 'dayhourxcard') $format='%Y%m%dT%H%M%SZ';
 
     // Si date non definie, on renvoie ''
     if ($time == '') return '';		// $time=0 permis car signifie 01/01/1970 00:00:00
@@ -2653,20 +2654,22 @@ function clean_url($url,$http=1)
    \param   string      StringHtml
    \return  string	    CleanString
 */
-function clean_html($StringHtml)
+function clean_html($StringHtml,$removelinefeed=1)
 {
-  $pattern = "<[^>]+>";
-  $temp = dol_entity_decode($StringHtml);
-  $temp = ereg_replace($pattern,"",$temp);
-  // Supprime aussi les retours
-  $temp=str_replace("\n"," ",$temp);
-  // et les espaces doubles
-  while(STRPOS($temp,"  "))
-  {
-  	$temp = STR_REPLACE("  "," ",$temp);
-  }
-  $CleanString = $temp;
-  return $CleanString;
+	$pattern = "<[^>]+>";
+	$temp = dol_entity_decode($StringHtml);
+	$temp = ereg_replace($pattern,"",$temp);
+
+	// Supprime aussi les retours
+	if ($removelinefeed) $temp=str_replace("\n"," ",$temp);
+
+	// et les espaces doubles
+	while(STRPOS($temp,"  "))
+	{
+		$temp = STR_REPLACE("  "," ",$temp);
+	}
+	$CleanString = $temp;
+	return $CleanString;
 }
 
 /**

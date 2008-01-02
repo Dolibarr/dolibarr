@@ -84,7 +84,7 @@ class DoliDb
 		*/
 		$this->forcecharset=$conf->character_set_client;
 	    $this->forcecollate=$conf->db->dolibarr_main_db_collation;
-	    $this->db_user=$conf->db->user;
+	    $this->database_user=$user;
 
         $this->transaction_opened=0;
 

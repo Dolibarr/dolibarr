@@ -283,6 +283,7 @@ class Conf
 		$this->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
 		$this->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
 		$this->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
+		$this->webcal->dir_temp=DOL_DATA_ROOT.'/webcal/temp';
 		// Module phenix
 		$this->phenix->enabled=defined('MAIN_MODULE_PHENIX')?MAIN_MODULE_PHENIX:0;
 		$this->phenix->db->type=defined('PHPPHENIX_TYPE')?PHPPHENIX_TYPE:'__dolibarr_main_db_type__';

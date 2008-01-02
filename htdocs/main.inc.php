@@ -74,9 +74,9 @@ foreach ($_POST as $key => $val)
 require_once("master.inc.php");
 
 // Chargement des includes complementaire de presentation
-if ($conf->use_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
+if (! defined('NOREQUIREAJAX') && $conf->use_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');
 
 // Init session
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;

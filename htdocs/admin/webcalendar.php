@@ -125,7 +125,7 @@ elseif ($actiontest)
 		// parametre host/user/pass identique.
         //$webcal->localdb->close();
     }
-    elseif ($webcal->connected == 1 && $webcal->database_selected != 1)
+    elseif ($webcal->localdb->connected == 1 && $webcal->localdb->database_selected != 1)
     {
         $mesg ="<div class=\"error\">".$langs->trans("WebCalTestKo1",$_POST["phpwebcalendar_host"],$_POST["phpwebcalendar_dbname"]);
         $mesg.="<br>".$webcal->localdb->error();
@@ -301,6 +301,15 @@ clearstatcache();
 
 if ($mesg) print "<br>$mesg<br>";
 print "<br>";
+
+// Show message
+$message='';
+$urlvcal='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal" target="_blank">'.$dolibarr_main_url_root.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal'.'</a>';
+$message.=$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
+$message.='<br>';
+$urlical='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical" target="_blank">'.$dolibarr_main_url_root.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical'.'</a>';
+$message.=$langs->trans("WebCalUrlForVCalExport",'ical',$urlical);
+print info_admin($message);
 
 $db->close();
 

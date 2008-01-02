@@ -18,7 +18,7 @@
  * $Id$
  */
 
-/**	    \file       htdocs/wecal/webcal.php
+/**	    \file       htdocs/webcal/webcal.php
         \ingroup    webcalendar
 		\brief      Page générant 2 frames, une pour le menu Dolibarr, l'autre pour l'affichage du calendrier
 		\author	    Laurent Destailleur

@@ -74,7 +74,7 @@ class Webcal {
             \return     int         1 en cas de succès, -1,-2,-3 en cas d'erreur, -4 si login webcal non défini
     */
     function add($user)
-{
+	{
         global $langs;
         
         dolibarr_syslog("Webcal::add user=".$user->id);
@@ -173,6 +173,110 @@ class Webcal {
             return -1;
         }
     }
-   
+
+	
+    /**
+    		\brief      Export fichier cal depuis base webcalendar
+			\param		format			'ical' or 'vcal'
+			\param		cachedelay		Do not rebuild file if date older than cachedelay seconds	
+			\param		filename		Force filename
+			\param		filter			Array of filters
+    		\return     int     		<0 if error, nb of events in new file if ok
+    */
+	function build_calfile($format,$cachedelay,$filename,$filters)
+	{
+		global $conf,$langs;
+		
+		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
+
+		dolibarr_syslog("webcal::build_calfile Build cal file format=".$format.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
+
+		// Check parameters
+		if (empty($format)) return -1;
+
+		// Clean parameters
+		if (! $filename)
+		{
+			$extension='vcs';
+			if ($format == 'ical') $extension='ics';
+			$filename=$format.'.'.$extension;
+		}
+		
+		create_exdir($conf->webcal->dir_temp);
+		$outputfile=$conf->webcal->dir_temp.'/'.$filename;
+		$result=0;
+		
+		$buildfile=true;
+		if ($cachedelay)
+		{
+			// \TODO Check cache
+		}
+		
+		if ($buildfile)
+		{
+			// Build event array
+			$eventarray=array();
+			
+			$sql = "SELECT cal_id, cal_create_by, ";
+			$sql.= " cal_date, cal_time, cal_mod_date,";
+			$sql.= " cal_mod_time, cal_duration, cal_priority, cal_type, cal_access, cal_name, cal_description";
+			$sql.= " FROM webcal_entry";
+			$sql.= " order by cal_date";
+
+			dolibarr_syslog("Webcal::build_vcal select events sql=".$sql);
+			$resql=$this->localdb->query($sql);
+			if ($resql)
+			{
+				while ($obj=$this->localdb->fetch_object($resql))
+				{
+					$qualified=true;
+					
+					// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
+					$event=array();
+					$event['uid']=$obj->cal_id;
+					$date=$obj->cal_date;
+					$time=$obj->cal_time;
+					if (eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$',$date,$reg))
+					{
+						$year=$reg[1];
+						$month=$reg[2];
+						$day=$reg[3];
+						if (! empty($filters['year'])  && $year != $filters['year'])  $qualified=false;
+						if (! empty($filters['month']) && $year != $filters['month']) $qualified=false;
+						if (! empty($filters['day'])   && $year != $filters['day'])   $qualified=false;
+					}
+					if (eregi('^([0-9]?[0-9])([0-9][0-9])([0-9][0-9])$',$time,$reg))
+					{
+						$hour=sprintf("%02d",$reg[1]);
+						$min=sprintf("%02d",$reg[2]);
+						$sec=sprintf("%02d",$reg[3]);
+					}
+					$datestart=dolibarr_mktime($hour,$min,$sec,$month,$day,$year);
+					$event['startdate']=$datestart;
+					$event['duration']=$obj->cal_duration;
+					$event['enddate']='';
+					$event['summary']=$obj->cal_name;
+					$event['desc']=$obj->cal_description;
+					$event['author']=$obj->cal_create_by;
+					
+					if ($qualified)
+					{
+						$eventarray[$datestart]=$event;
+					}
+				}
+			}
+			else
+			{
+				dolibarr_syslog("webcal::build_calfile ".$this->localdb->lasterror());
+				return -1;
+			}
+			
+			// Write file
+			$result=build_calfile($format,$eventarray,$outputfile);
+		}
+		
+		return $result;
+	}
+  
 }
 ?>

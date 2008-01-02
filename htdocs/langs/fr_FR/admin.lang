@@ -533,6 +533,8 @@ WebCalAddEventOnStatusPropal=Ajouter évênement dans calendrier sur changement de
 WebCalAddEventOnStatusContract=Ajouter évênement dans calendrier sur changement de statut des contrats
 WebCalAddEventOnStatusBill=Ajouter évênement dans calendrier sur changement de statut des factures
 WebCalAddEventOnStatusMember=Ajouter évênement dans calendrier sur changement de statut des adhérents
+WebCalUrlForVCalExport=Un lien d'export du calendrier au format <b>%s</b> sera disponible à l'url: %s
+WebCalCheckWebcalSetup=La configuration du module Webcal est peut-être incorrecte.
 ##### Invoices #####
 BillsSetup=Configuration du module Factures
 BillsDate=Date des factures

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,8 +29,29 @@
 */
 
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
-require_once("./main.inc.php");
+$original_file = urldecode($_GET["file"]);
+$modulepart = urldecode($_GET["modulepart"]);
+$type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
+
+// Define if we need master or master+main
+$needmasteronly=false;
+if ($modulepart == 'webcal') $needmasteronly=true;
+
+// Load master or main
+if ($needmasteronly)
+{
+	// Pour companylogo, on charge juste environnement sans logon qui charge le user
+	require("./master.inc.php");
+}
+else
+{
+	// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
+	require("./main.inc.php");
+	// master.inc.php is included in main.inc.php
+}
 
 
 // C'est un wrapper, donc header vierge
@@ -52,6 +73,8 @@ if (eregi('\.xls$',$original_file))  	{ $type='application/x-msexcel'; $attachme
 if (eregi('\.jpg$',$original_file)) 	{ $type='image/jpeg'; $attachment = true; }
 if (eregi('\.png$',$original_file)) 	{ $type='image/jpeg'; $attachment = true; }
 if (eregi('\.tiff$',$original_file)) 	{ $type='image/tiff'; $attachment = true; }
+if (eregi('\.vcs$',$original_file))  	{ $type='text/calendar'; $attachment = true; }
+if (eregi('\.ics$',$original_file))  	{ $type='text/calendar'; $attachment = true; }
 
 // Suppression de la chaine de caractère ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
@@ -323,7 +346,12 @@ if ($modulepart)
 		$sqlprotectagainstexternals = '';
     }
 
-
+    // Wrapping pour les factures
+    if ($modulepart == 'webcal')
+    {
+        $accessallowed=1;
+        $original_file=$conf->webcal->dir_temp.'/'.$original_file;
+    }
 }
 
 // Basic protection (against external users only)

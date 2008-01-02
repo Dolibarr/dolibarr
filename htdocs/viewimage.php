@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,30 +28,38 @@
 */
 
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+
+$original_file = urldecode($_GET["file"]);
+$modulepart = urldecode($_GET["modulepart"]);
+$type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
+
+// Define if we need master or master+main
+$needmasteronly=false;
+if ($modulepart == 'companylogo') $needmasteronly=true;
+
+// Load master or main
+if ($needmasteronly)
+{
+	// Pour companylogo, on charge juste environnement sans logon qui charge le user
+	require("./master.inc.php");
+}
+else
+{
+	// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
+	require("./main.inc.php");
+	// master.inc.php is included in main.inc.php
+}
 
 
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
 
 
-$original_file = urldecode($_GET["file"]);
-$modulepart = urldecode($_GET["modulepart"]);
-$type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
 
 // Protection, on interdit les .. dans les chemins
 $original_file = eregi_replace('\.\.','',$original_file);
-
-
-if ($modulepart == 'companylogo')
-{
-	// Pour companylogo, on charge juste environnement sans logon qui charge le user
-	require_once("master.inc.php");
-}
-else
-{
-	// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
-	require_once("main.inc.php");
-}
 
 
 

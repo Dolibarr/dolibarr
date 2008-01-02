@@ -132,7 +132,7 @@ class DoliDb
 		if (isset($conf->db->dolibarr_main_db_collation) && $conf->db->dolibarr_main_db_collation) {
 			$this->forcecollate=$conf->db->dolibarr_main_db_collation;
 		}
-		$this->db_user=$conf->db->user;
+		$this->database_user=$user;
 
 		$this->transaction_opened=0;
 		
