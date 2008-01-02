@@ -72,12 +72,14 @@ if (! $webcal->localdb->connected || ! $webcal->localdb->database_selected)
 $mainmenu=isset($_GET["mainmenu"])?$_GET["mainmenu"]:"";
 $leftmenu=isset($_GET["leftmenu"])?$_GET["leftmenu"]:"";
 
-// Define format, filename and filter
+// Define format, type, filename and filter
 $format='vcal';
+$type='event';
 $filename='';
 if (! empty($_GET["format"])) $format=$_GET["format"];
 if ($format == 'vcal') $filename='webcalendar.vcs';
 if ($format == 'ical') $filename='webcalendar.ics';
+if (! empty($_GET["type"]))   $type=$_GET["type"];
 if (! $filename)
 {
 	$langs->load("main");
@@ -91,7 +93,7 @@ $filters=array();
 if (! empty($_GET["year"])) $filters['year']=$_GET["year"];
 
 // Build file
-$result=$webcal->build_calfile($format,0,$filename,$filters);
+$result=$webcal->build_calfile($format,$type,0,$filename,$filters);
 if ($result >= 0)
 {
 	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=webcal&file='.urlencode($filename));

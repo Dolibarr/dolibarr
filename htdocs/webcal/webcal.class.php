@@ -178,18 +178,19 @@ class Webcal {
     /**
     		\brief      Export fichier cal depuis base webcalendar
 			\param		format			'ical' or 'vcal'
+			\param		type			'event' or 'journal'
 			\param		cachedelay		Do not rebuild file if date older than cachedelay seconds	
 			\param		filename		Force filename
 			\param		filter			Array of filters
     		\return     int     		<0 if error, nb of events in new file if ok
     */
-	function build_calfile($format,$cachedelay,$filename,$filters)
+	function build_calfile($format,$type,$cachedelay,$filename,$filters)
 	{
 		global $conf,$langs;
 		
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
 
-		dolibarr_syslog("webcal::build_calfile Build cal file format=".$format.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
+		dolibarr_syslog("webcal::build_calfile Build cal file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
 
 		// Check parameters
 		if (empty($format)) return -1;
@@ -233,7 +234,8 @@ class Webcal {
 					
 					// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
 					$event=array();
-					$event['uid']=$obj->cal_id;
+					$event['uid']='dolibarrwebcal-'.$this->localdb->database_name.'-'.$obj->cal_id."-export@".$_SERVER["SERVER_NAME"];
+					$event['type']=$type;
 					$date=$obj->cal_date;
 					$time=$obj->cal_time;
 					if (eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$',$date,$reg))
@@ -253,8 +255,8 @@ class Webcal {
 					}
 					$datestart=dolibarr_mktime($hour,$min,$sec,$month,$day,$year);
 					$event['startdate']=$datestart;
-					$event['duration']=$obj->cal_duration;
-					$event['enddate']='';
+					//$event['duration']=$obj->cal_duration;	// Not required with type 'journal'
+					//$event['enddate']='';						// Not required with type 'journal'
 					$event['summary']=$obj->cal_name;
 					$event['desc']=$obj->cal_description;
 					$event['author']=$obj->cal_create_by;

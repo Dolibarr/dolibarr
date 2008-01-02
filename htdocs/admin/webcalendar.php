@@ -304,10 +304,11 @@ print "<br>";
 
 // Show message
 $message='';
-$urlvcal='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal" target="_blank">'.$dolibarr_main_url_root.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal'.'</a>';
+$urlwithouturlroot=eregi_replace(DOL_URL_ROOT.'$','',$dolibarr_main_url_root);
+$urlvcal='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal'.'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
 $message.='<br>';
-$urlical='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical" target="_blank">'.$dolibarr_main_url_root.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical'.'</a>';
+$urlical='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event'.'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'ical',$urlical);
 print info_admin($message);
 

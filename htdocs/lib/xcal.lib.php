@@ -68,8 +68,10 @@ function build_calfile($format='vcal',$events_array,$outputfile,$filter='')
 			
 			if ($eventqualified)
 			{
-				# slurp out the fields to make it more convenient
-				$uid 		= dolibarr_print_date($now,'dayhourxcard').'-'.$event['uid']."-export@".$_SERVER["SERVER_NAME"];
+				// See http://fr.wikipedia.org/wiki/ICalendar for format
+				//$uid 		= dolibarr_print_date($now,'dayhourxcard').'-'.$event['uid']."-export@".$_SERVER["SERVER_NAME"];
+				$uid 		= $event['uid'];
+				$type       = $event['type'];
 				$startdate	= $event['startdate'];
 				$duration	= $event['duration'];
 				$enddate	= $event['enddate'];
@@ -93,32 +95,68 @@ function build_calfile($format='vcal',$events_array,$outputfile,$filter='')
 				$encoding='';
 				if ($format == 'vcal') $encoding='ENCODING=QUOTED-PRINTABLE:';
 				
-				# Output the vCard/iCal VEVENT object
-				fwrite($calfileh,"BEGIN:VEVENT\n");
-				fwrite($calfileh,"UID:".$uid."\n");
-				if ($email <> "")
+				// Output the vCard/iCal VEVENT object
+				if ($type == 'event')
 				{
-					fwrite($calfileh,"ORGANIZER:MAILTO:".$email."\n");
-					fwrite($calfileh,"CONTACT:MAILTO:".$email."\n");
+					fwrite($calfileh,"BEGIN:VEVENT\n");
+					fwrite($calfileh,"UID:".$uid."\n");
+					if (! empty($email))
+					{
+						fwrite($calfileh,"ORGANIZER:MAILTO:".$email."\n");
+						fwrite($calfileh,"CONTACT:MAILTO:".$email."\n");
+					}
+					if (! empty($url))
+					{
+						fwrite($calfileh,"URL:".$url."\n");
+					};
+					
+					fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
+					fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
+					//fwrite($calfileh,'STATUS:CONFIRMED'."\n");	// TENTATIVE, CONFIRMED, CANCELLED
+					fwrite($calfileh,"CATEGORIES:".$category."\n");
+					fwrite($calfileh,"LOCATION:".$location."\n");
+					fwrite($calfileh,"TRANSP:OPAQUE\n");
+					fwrite($calfileh,"CLASS:CONFIDENTIAL\n");
+					fwrite($calfileh,"DTSTAMP:".dolibarr_print_date($now,'dayhourxcard')."\n");
+					$startdatef = dolibarr_print_date($startdate,'dayhourxcard');
+					fwrite($calfileh,"DTSTART:".$startdatef."\n");
+					if (empty($enddate)) $enddate=$startdate+$duration;
+					$enddatef = dolibarr_print_date($enddate,'dayhourxcard');
+					fwrite($calfileh,"DTEND:".$enddatef."\n");
+					fwrite($calfileh,"END:VEVENT\n");
 				}
-				if ($url <> "") {  fwrite($calfileh,"URL:".$url."\n"); };
 				
-				fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
-				fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
-				fwrite($calfileh,"CATEGORIES:".$category."\n");
-				fwrite($calfileh,"LOCATION:".$location."\n");
-				fwrite($calfileh,"TRANSP:OPAQUE\n");
-				fwrite($calfileh,"CLASS:CONFIDENTIAL\n");
-				fwrite($calfileh,"DTSTAMP:".dolibarr_print_date($now,'dayhourxcard')."\n");
+				// Output the vCard/iCal VTODO object
+				// ...
 
-				// Dates
-				$startdatef = dolibarr_print_date($startdate,'dayhourxcard');
-				fwrite($calfileh,"DTSTART:".$startdatef."\n");
+				// Output the vCard/iCal VJOURNAL object
+				if ($type == 'journal')
+				{
+					fwrite($calfileh,"BEGIN:VJOURNAL\n");
+					fwrite($calfileh,"UID:".$uid."\n");
+					if (! empty($email))
+					{
+						fwrite($calfileh,"ORGANIZER:MAILTO:".$email."\n");
+						fwrite($calfileh,"CONTACT:MAILTO:".$email."\n");
+					}
+					if (! empty($url))
+					{
+						fwrite($calfileh,"URL:".$url."\n");
+					};
+					
+					fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
+					fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
+					fwrite($calfileh,'STATUS:CONFIRMED'."\n");
+					fwrite($calfileh,"CATEGORIES:".$category."\n");
+					fwrite($calfileh,"LOCATION:".$location."\n");
+					fwrite($calfileh,"TRANSP:OPAQUE\n");
+					fwrite($calfileh,"CLASS:CONFIDENTIAL\n");
+					fwrite($calfileh,"DTSTAMP:".dolibarr_print_date($startdatef,'dayhourxcard')."\n");
 
-				if (empty($enddate)) $enddate=$startdate+$duration;
-				$enddatef = dolibarr_print_date($enddate,'dayhourxcard');
-				fwrite($calfileh,"DTEND:".$enddatef."\n");
+					fwrite($calfileh,"END:VJOURNAL\n");
+				}
 
+				
 				// Put other info in comment
 				/*
 				$comment=array();
@@ -131,7 +169,6 @@ function build_calfile($format='vcal',$events_array,$outputfile,$filter='')
 				fwrite($calfileh,"COMMENT:" . serialize ($comment) . "\n");
 				*/
 				
-				fwrite($calfileh,"END:VEVENT\n");
 			}
 		}
 
@@ -193,7 +230,7 @@ function CalEncode($line)
 	}
 	$out .= $newpara;
 
-	return trim($out);
+	return utf8_encode(trim($out));
 }
 
 
