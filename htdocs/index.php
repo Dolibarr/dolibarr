@@ -58,14 +58,14 @@ if (defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
 // Affiche warning répertoire install existe (si utilisateur admin)
 if ($user->admin && ! defined("MAIN_REMOVE_INSTALL_WARNING"))
 {
-	if (is_dir(DOL_DOCUMENT_ROOT."/install") && file_exists(DOL_DOCUMENT_ROOT."/install"))
-  {
-  	$langs->load("other");
-    $message=$langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install");
-    $message.=$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install");
+	if (is_dir(DOL_DOCUMENT_ROOT."/install"))
+	{
+		$langs->load("other");
+		$message=$langs->trans("WarningInstallDirExists",DOL_DOCUMENT_ROOT."/install");
+		$message.=$langs->trans("WarningUntilDirRemoved",DOL_DOCUMENT_ROOT."/install");
 		print info_admin($message);
-    print "<br>\n";
-  }
+		print "<br>\n";
+	}
 }
 
 print '<table width="100%" class="notopnoleftnoright">';
