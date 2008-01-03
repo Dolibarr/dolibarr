@@ -234,7 +234,7 @@ class Webcal {
 					
 					// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
 					$event=array();
-					$event['uid']='dolibarrwebcal-'.$this->localdb->database_name.'-'.$obj->cal_id."-export@".$_SERVER["SERVER_NAME"];
+					$event['uid']='dolibarrwebcal-'.$this->localdb->database_name.'-'.$obj->cal_id."@".$_SERVER["SERVER_NAME"];
 					$event['type']=$type;
 					$date=$obj->cal_date;
 					$time=$obj->cal_time;
@@ -260,6 +260,11 @@ class Webcal {
 					$event['summary']=$obj->cal_name;
 					$event['desc']=$obj->cal_description;
 					$event['author']=$obj->cal_create_by;
+					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
+					$url=$conf->global->PHPWEBCALENDAR_URL;
+					if (! eregi('\/$',$url)) $url.='/';
+					$url.='view_entry.php?id='.$obj->cal_id;
+					$event['url']=$url;
 					
 					if ($qualified)
 					{

@@ -51,12 +51,10 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 		fwrite($calfileh,"VERSION:2.0\n");
 		fwrite($calfileh,"METHOD:PUBLISH\n");
 		fwrite($calfileh,"PRODID:-//DOLIBARR ".DOL_VERSION."//EN\n");
+		fwrite($calfileh,"CALSCALE:GREGORIAN\n");
 		fwrite($calfileh,"X-WR-CALNAME:".utf8_encode($title)."\n");
 		fwrite($calfileh,"X-WR-CALDESC:".utf8_encode($desc)."\n");
-		/*
-		X-WR-TIMEZONE:Europe/Paris
-		CALSCALE:GREGORIAN
-		*/
+		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
 		
 		foreach ($events_array as $date => $event)
 		{
@@ -72,16 +70,17 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 			{
 				// See http://fr.wikipedia.org/wiki/ICalendar for format
 				//$uid 		= dolibarr_print_date($now,'dayhourxcard').'-'.$event['uid']."-export@".$_SERVER["SERVER_NAME"];
-				$uid 		= $event['uid'];
-				$type       = $event['type'];
-				$startdate	= $event['startdate'];
-				$duration	= $event['duration'];
-				$enddate	= $event['enddate'];
-				$summary	= $event['summary'];
-				$category	= $event['category'];
-				$location	= $event['location'];
-				$email 		= $event['email'];
-				$url		= $event['url'];
+				$uid 		  = $event['uid'];
+				$type         = $event['type'];
+				$startdate	  = $event['startdate'];
+				$duration	  = $event['duration'];
+				$enddate	  = $event['enddate'];
+				$summary  	  = $event['summary'];
+				$category	  = $event['category'];
+				$location	  = $event['location'];
+				$email 		  = $event['email'];
+				$url		  = $event['url'];
+				$transparency = $event['transparency'];
 				$description=eregi_replace('<br[ \/]?>',"\n",$event['desc']);
  				$description=clean_html($description,0);	// Remove html tags
 
@@ -114,11 +113,31 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					
 					fwrite($calfileh,"SUMMARY:".$encoding.$summary."\n");
 					fwrite($calfileh,"DESCRIPTION:".$encoding.$description."\n");
-					//fwrite($calfileh,'STATUS:CONFIRMED'."\n");	// TENTATIVE, CONFIRMED, CANCELLED
-					fwrite($calfileh,"CATEGORIES:".$category."\n");
-					fwrite($calfileh,"LOCATION:".$location."\n");
-					fwrite($calfileh,"TRANSP:OPAQUE\n");
-					fwrite($calfileh,"CLASS:CONFIDENTIAL\n");
+					//fwrite($calfileh,'STATUS:CONFIRMED'."\n");
+					/*
+					statvalue  = "TENTATIVE"           ;Indicates event is
+				                                        ;tentative.
+				                / "CONFIRMED"           ;Indicates event is
+				                                        ;definite.
+				                / "CANCELLED"           ;Indicates event was
+				                                        ;cancelled.
+				        ;Status values for a "VEVENT"
+
+				     statvalue  =/ "NEEDS-ACTION"       ;Indicates to-do needs action.
+				                / "COMPLETED"           ;Indicates to-do completed.
+				                / "IN-PROCESS"          ;Indicates to-do in process of
+				                / "CANCELLED"           ;Indicates to-do was cancelled.
+				        ;Status values for "VTODO".
+
+				     statvalue  =/ "DRAFT"              ;Indicates journal is draft.
+				                / "FINAL"               ;Indicates journal is final.
+				                / "CANCELLED"           ;Indicates journal is removed.
+							;Status values for "VJOURNAL".
+					*/
+					if (! empty($category)) fwrite($calfileh,"CATEGORIES:".$category."\n");
+					if (! empty($location)) fwrite($calfileh,"LOCATION:".$location."\n");
+					//fwrite($calfileh,"TRANSP:".$transparency."\n");
+					//fwrite($calfileh,"CLASS:PUBLIC\n");				// PUBLIC, PRIVATE, CONFIDENTIAL
 					fwrite($calfileh,"DTSTAMP:".dolibarr_print_date($now,'dayhourxcard')."\n");
 					$startdatef = dolibarr_print_date($startdate,'dayhourxcard');
 					fwrite($calfileh,"DTSTART:".$startdatef."\n");
@@ -130,6 +149,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				
 				// Output the vCard/iCal VTODO object
 				// ...
+				//PERCENT-COMPLETE:39
 
 				// Output the vCard/iCal VJOURNAL object
 				if ($type == 'journal')
