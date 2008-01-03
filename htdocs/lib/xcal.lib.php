@@ -51,8 +51,8 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 		fwrite($calfileh,"VERSION:2.0\n");
 		fwrite($calfileh,"METHOD:PUBLISH\n");
 		fwrite($calfileh,"PRODID:-//DOLIBARR ".DOL_VERSION."//EN\n");
-		fwrite($calfileh,"X-WR-CALNAME: ".utf8_encode($title)."\n");
-		fwrite($calfileh,"X-WR-CALDESC: ".utf8_encode($desc)."\n");
+		fwrite($calfileh,"X-WR-CALNAME:".utf8_encode($title)."\n");
+		fwrite($calfileh,"X-WR-CALDESC:".utf8_encode($desc)."\n");
 		/*
 		X-WR-TIMEZONE:Europe/Paris
 		CALSCALE:GREGORIAN
