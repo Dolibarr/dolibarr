@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C)      2007 Auguria SARL         <info@auguria.org>
@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -31,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
 $langs->load("admin");
 $langs->load("propal");
@@ -134,6 +134,8 @@ else if ($_POST["action"] == 'setdefaultbarcodetype')
 /*
  * Affiche page
  */
+
+$formbarcode=new FormBarCode($db);
 
 llxHeader('',$langs->trans("ProductSetup"));
 
@@ -279,7 +281,7 @@ if ($conf->barcode->enabled && $conf->global->PRODUIT_USE_BARCODE)
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("SetDefaultBarcodeType").'</td>';
 	print '<td width="60" align="right">';
-	print $html->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"coder_id",1);
+	print $formbarcode->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"coder_id",1);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -363,5 +365,5 @@ if ($conf->left_menu == 'default.php' || $conf->left_menu == 'auguria_backoffice
 
 $db->close();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

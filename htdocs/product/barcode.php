@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -31,6 +30,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
 $langs->load("products");
 $langs->load("bills");
@@ -76,6 +76,7 @@ if ($_POST['action'] ==	'setbarcode'	&& $user->rights->barcode->creer)
 llxHeader("","",$langs->trans("BarCode"));
 
 $html = new Form($db);
+$formbarcode = new FormBarCode($db);
 
 $product = new Product($db);
 if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
@@ -132,7 +133,7 @@ print '</tr></table>';
 print '</td><td colspan="2">';
 if ($_GET['action'] == 'editbarcodetype')
 {
-	$html->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$product->id,$product->barcode_type,'barcodetype_id');
+	$formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$product->id,$product->barcode_type,'barcodetype_id');
 }
 else
 {

@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
 $dir = DOL_DOCUMENT_ROOT."/includes/modules/barcode/";
 
@@ -60,6 +61,7 @@ else if ($_POST["action"] == 'setproductusebarcode')
 
 
 $html = new Form($db);
+$formbarcode = new FormBarCode($db);
 
 llxHeader('',$langs->trans("BarcodeSetup"),'BarcodeConfiguration');
 
@@ -164,7 +166,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td align="center">';
-		print $html->setBarcodeEncoder($obj->coder,$barcodelist,$obj->rowid,'form'.$i);
+		print $formbarcode->setBarcodeEncoder($obj->coder,$barcodelist,$obj->rowid,'form'.$i);
 		print "</td></tr>\n";
 		$var=!$var;
 		$i++;
@@ -237,7 +239,7 @@ print '</table>';
       print '<td align="center"><img src="'.dol_genbarcode('123456789012','EAN',1).'"></td>';
       
       print '<td align="center">';
-      print $html->setBarcodeEncoder('EAN13','form'.$i);
+      print $formbarcode->setBarcodeEncoder('EAN13','form'.$i);
 	    print "</td></tr>\n";
 	    $i++;
 
@@ -256,7 +258,7 @@ print '</table>';
       print '<td align="center"><img src="'.dol_genbarcode('123456789012','UPC',1).'"></td>';
       
       print '<td align="center">';
-      print $html->setBarcodeEncoder('UPC','form'.$i);
+      print $formbarcode->setBarcodeEncoder('UPC','form'.$i);
 	    print "</td></tr>\n";
 	    $i++;
 	    
@@ -272,7 +274,7 @@ print '</table>';
       print '<td align="center"><img src="'.dol_genbarcode('123456789','ISBN',1).'"></td>';
       
       print '<td align="center">';
-      print $html->setBarcodeEncoder('ISBN','form'.$i);
+      print $formbarcode->setBarcodeEncoder('ISBN','form'.$i);
 	    print "</td></tr>\n";
 	    $i++;
 	    
@@ -292,7 +294,7 @@ print '</table>';
       print '<td align="center"><img src="'.dol_genbarcode('1234567890','39',1).'"></td>';
       
       print '<td align="center">';
-      print $html->setBarcodeEncoder('C39','form'.$i);
+      print $formbarcode->setBarcodeEncoder('C39','form'.$i);
 	    print "</td></tr>\n";
 	    $i++;
 	    
@@ -313,7 +315,7 @@ print '</table>';
       print '<td align="center"><img src="'.dol_genbarcode('ABCD1234567890','128',1).'"></td>';
       
       print '<td align="center">';
-      print $html->setBarcodeEncoder('C128','form'.$i);
+      print $formbarcode->setBarcodeEncoder('C128','form'.$i);
 	    print "</td></tr>\n";
 	    $i++;
 	    
@@ -329,7 +331,7 @@ print '</table>';
       print '<td align="center"><img src="'.dol_genbarcode('1234567890','I25',1).'"></td>';
       
       print '<td align="center">';
-      print $html->setBarcodeEncoder('I25','form'.$i);
+      print $formbarcode->setBarcodeEncoder('I25','form'.$i);
 	    print "</td></tr>\n";
 	    $i++;
 */
