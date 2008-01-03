@@ -260,11 +260,19 @@ if ($modulepart)
       $accessallowed=1;
       $original_file=DOL_DATA_ROOT.'/graph/fournisseur/'.$original_file;
     }
+
     // Wrapping pour les graph des produits
     if ($modulepart == 'graph_product')
     {
       $accessallowed=1;
       $original_file=DOL_DATA_ROOT.'/graph/product/'.$original_file;
+    }
+
+    // Wrapping pour les code barre
+    if ($modulepart == 'barcode')
+    {
+		$accessallowed=1;
+		$original_file='';
     }
 
 }
@@ -290,29 +298,53 @@ if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 
 
 
-// Ouvre et renvoi fichier
-clearstatcache(); 
-$filename = basename($original_file);
-
-dolibarr_syslog("viewimage.php return file $original_file $filename content-type=$type");
-
-if (! file_exists($original_file))
+if ($modulepart == 'barcode')
 {
-	$langs->load("main");
-	dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
-	exit;
-}
+	// Output files with barcode generators
+	$dir = DOL_DOCUMENT_ROOT."/includes/modules/barcode/";
 
-// Les drois sont ok et fichier trouvé
-if ($type)
-{
-  header('Content-type: '.$type);
+	$generator=$_GET["generator"];
+	$code=$_GET["code"];
+	$encoding=$_GET["encoding"];
+	$readable=$_GET["readable"];
+
+	// Chargement de la classe de codage
+	require_once($dir.$generator.".modules.php");
+	$classname = "mod".ucfirst($generator);
+	$module = new $classname($db);
+	if ($module->encodingIsSupported($encoding))
+	{
+		$result=$module->buildBarCode($code,$encoding,$readable);
+	}
 }
 else
 {
-  header('Content-type: image/png');
-}
+	// Ouvre et renvoi fichier
+	clearstatcache(); 
 
-readfile($original_file);
+	// Output files on disk
+	$filename = basename($original_file);
+
+	dolibarr_syslog("viewimage.php return file $original_file $filename content-type=$type");
+
+	if (! file_exists($original_file))
+	{
+		$langs->load("main");
+		dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
+		exit;
+	}
+
+	// Les drois sont ok et fichier trouvé
+	if ($type)
+	{
+	  header('Content-type: '.$type);
+	}
+	else
+	{
+	  header('Content-type: image/png');
+	}
+
+	readfile($original_file);
+}
 
 ?>

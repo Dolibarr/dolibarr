@@ -3506,31 +3506,6 @@ function viewExcelFileContent($file_to_include='',$max_rows=0,$max_cols=0)
   </SCRIPT>";
 }
 
-/**
-   \brief   Générateur de codes barres
-   \param   $code			  Valeur numérique a coder
-   \param   $encoding		Mode de codage
-   \param   $generator  Générateur utilisé (1=php-barcode, 2=pi_barcode)
-   \param   $readable		Code lisible
-   \return  url
-*/
-function dol_genbarcode($code,$encoding,$generator=1,$readable='Y')
-{
-	$url='';
-	
-	if ($encoding == 'EAN8' || $encoding == 'EAN13') $encoding = 'EAN';
-	
-	if ($generator == 1)
-	{
-		if ($encoding == 'C39' || $encoding == 'C128') $encoding = substr($encoding,1);
-		$url = DOL_URL_ROOT.'/includes/barcode/php-barcode/genbarcode.php?code='.$code.'&encoding='.$encoding.'&scale=1';
-	}
-	else if ($generator == 2)
-	{
-		$url = DOL_URL_ROOT.'/includes/barcode/pi_barcode/pi_barcode.php?code='.$code.'&type='.$encoding.'&height=50&readable='.$readable;
-	}
-	return $url;
-}
 
 /**
    \brief   Retourne un tableau des mois ou le mois sélectionné

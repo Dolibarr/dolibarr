@@ -48,6 +48,7 @@ if (empty($conf->global->PHPWEBCALENDAR_URL))
 $webcal=new WebCal();
 if (! $webcal->localdb->connected || ! $webcal->localdb->database_selected)
 {
+	$langs->load("admin");
 	llxHeader();
 	if ($webcal->localdb->connected == 1 && $webcal->localdb->database_selected != 1)
     {

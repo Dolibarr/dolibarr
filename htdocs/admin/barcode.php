@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**	
@@ -30,6 +29,8 @@
 
 require("./pre.inc.php");
 
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/barcode/";
+
 $langs->load("admin");
 
 if (!$user->admin)
@@ -38,28 +39,66 @@ if (!$user->admin)
 if ($_POST["action"] == 'setcoder')
 {
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
-  $sqlp.= " SET coder = " . $_POST["coder"];
-  $sqlp.= " WHERE rowid = ". $_POST["code_id"];
-  $resql=$db->query($sqlp);
+	$sqlp.= " SET coder = '" . $_POST["coder"]."'";
+	$sqlp.= " WHERE rowid = ". $_POST["code_id"];
+	$resql=$db->query($sqlp);
+	//print $sqlp;
 }
 else if ($_POST["action"] == 'setgenbarcodelocation')
 {
 	dolibarr_set_const($db, "GENBARCODE_LOCATION",$_POST["genbarcodelocation"]);
-  Header("Location: barcode.php");
-  exit;
+	Header("Location: barcode.php");
+	exit;
 }
 else if ($_POST["action"] == 'setproductusebarcode')
 {
-  dolibarr_set_const($db, "PRODUIT_USE_BARCODE",$_POST["value"]);
-  Header("Location: barcode.php");
-  exit;
+	dolibarr_set_const($db, "PRODUIT_USE_BARCODE",$_POST["value"]);
+	Header("Location: barcode.php");
+	exit;
 }
+
+
 
 $html = new Form($db);
 
 llxHeader('',$langs->trans("BarcodeSetup"),'BarcodeConfiguration');
 
 print_fiche_titre($langs->trans("BarcodeSetup"),'','setup');
+
+// Detect bar codes modules
+$barcodelist=array();
+
+clearstatcache();
+
+$handle=opendir($dir);
+
+$var=true;
+
+while (($file = readdir($handle))!==false)
+{
+    if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+    {
+		if (is_readable($dir.$file))
+		{
+			if (eregi('(.*)\.modules\.php',$file,$reg))
+			{
+		        $filebis=$reg[1];
+				
+				// Chargement de la classe de codage
+		        require_once($dir.$file);
+		        $classname = "mod".ucfirst($filebis);
+		        $module = new $classname($db);
+
+				// Show modules according to features level
+			    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+			    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+				$barcodelist[$filebis]=$module->info();
+			}
+		}
+	}
+}
+
 
 /*
  *  CHOIX ENCODAGE
@@ -76,7 +115,7 @@ print '<td width="200" align="center">'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("CodeBarGenerator").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT rowid, code, libelle, coder, example";
+$sql = "SELECT rowid, code as encoding, libelle, coder, example";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
 $resql=$db->query($sql);
 if ($resql)
@@ -92,7 +131,7 @@ if ($resql)
 		print '<tr '.$bc[$var].'><td width="100">';
 		print $obj->libelle;
 		print "</td><td>\n";
-		print $langs->trans('BarcodeDesc'.$obj->code);  
+		print $langs->trans('BarcodeDesc'.$obj->encoding);  
 		//print "L'EAN se compose de 8 caractères, 7 chiffres plus une clé de contrôle.<br>";
 		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
 		//print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
@@ -102,9 +141,21 @@ if ($resql)
 		print '<td align="center">';
 		if ($obj->coder)
 		{
-			$url=dol_genbarcode($obj->example,$obj->code,$obj->coder);
-			if ($url) print '<img src="'.$url.'">';
-			else print $langs->trans("FormatNotSupportedByGenerator");
+			// Chargement de la classe de codage
+			require_once($dir.$obj->coder.".modules.php");
+			$classname = "mod".ucfirst($obj->coder);
+			$module = new $classname($db);
+
+			if ($module->encodingIsSupported($obj->encoding))
+			{
+				$url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($obj->coder).'&code='.urlencode($obj->example).'&encoding='.urlencode($obj->encoding);
+				//print $url;
+				print '<img src="'.$url.'" border="0">';
+			}
+			else
+			{
+				print $langs->trans("FormatNotSupportedByGenerator");
+			}
 		}
 		else
 		{
@@ -113,7 +164,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td align="center">';
-		print $html->setBarcodeEncoder($obj->coder,$obj->rowid,'form'.$i);
+		print $html->setBarcodeEncoder($obj->coder,$barcodelist,$obj->rowid,'form'.$i);
 		print "</td></tr>\n";
 		$var=!$var;
 		$i++;

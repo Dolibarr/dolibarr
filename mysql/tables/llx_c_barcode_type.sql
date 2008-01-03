@@ -23,6 +23,6 @@ create table llx_c_barcode
   rowid    integer            AUTO_INCREMENT PRIMARY KEY,
   code     varchar(16)        NOT NULL,
   libelle  varchar(50)        NOT NULL,
-  coder    integer            NOT NULL DEFAULT 0,
+  coder    varchar(16)        NOT NULL,
   example  varchar(16)        NOT NULL
 )type=innodb;

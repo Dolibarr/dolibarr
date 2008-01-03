@@ -3559,9 +3559,8 @@ class Form
 	 *    \param      selected          Id code pré-sélectionné
 	 *    \param      code_id           Id du code barre
 	 *    \param      idForm            Id du formulaire
-	 *    Todo : ajouter une vérification de désactivation du code barre si il est déjà utilisé dans un module
 	 */
-	function setBarcodeEncoder($selected=0,$code_id,$idForm='formbarcode')
+	function setBarcodeEncoder($selected=0,$barcodelist,$code_id,$idForm='formbarcode')
 	{
 		global $conf, $langs;
 		
@@ -3579,10 +3578,12 @@ class Form
 		$select_encoder.= '<select class="flat" name="coder" onChange="barcode_coder_save(\''.$idForm.'\')">';
 		$select_encoder.= '<option value="0"'.($selected==0?' selected="true"':'').' '.$disable.'>'.$langs->trans('Disable').'</option>';
 		$select_encoder.= '<option value="-1" disabled="disabled">--------------------</option>';
-		$select_encoder.= '<option value="1"'.($selected==1?' selected="true"':'').'>PHP-Barcode</option>';
-		$select_encoder.= '<option value="2"'.($selected==2?' selected="true"':'').'>PI_Barcode</option>';
+		foreach($barcodelist as $key => $value)
+		{
+			$select_encoder.= '<option value="'.$key.'"'.($selected==$key?' selected="true"':'').'>'.$value.'</option>';
+		}
 		$select_encoder.= '</select></form>';
-		
+
 		return $select_encoder;
 	}
    

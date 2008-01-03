@@ -100,7 +100,8 @@ print '</tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
 
 // Barcode image
-print '<td width="300" align="center" rowspan="5"><img src="'.dol_genbarcode($product->barcode,$product->barcode_type_code,$product->barcode_type_coder).'"></td>';
+$url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($product->barcode_type_coder).'&code='.urlencode($product->barcode).'&encoding='.urlencode($product->barcode_type_code);
+print '<td width="300" align="center" rowspan="5"><img src="'.$url.'"></td>';
 
 print '</tr>';
 
