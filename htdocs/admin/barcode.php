@@ -78,22 +78,22 @@ $var=true;
 
 while (($file = readdir($handle))!==false)
 {
-    if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-    {
+	if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+  {
 		if (is_readable($dir.$file))
 		{
 			if (eregi('(.*)\.modules\.php',$file,$reg))
 			{
-		        $filebis=$reg[1];
+				$filebis=$reg[1];
 				
 				// Chargement de la classe de codage
-		        require_once($dir.$file);
-		        $classname = "mod".ucfirst($filebis);
-		        $module = new $classname($db);
+		    require_once($dir.$file);
+		    $classname = "mod".ucfirst($filebis);
+		    $module = new $classname($db);
 
 				// Show modules according to features level
-			    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-			    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+			  if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+			  if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 				$barcodelist[$filebis]=$module->info();
 			}

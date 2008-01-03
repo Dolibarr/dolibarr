@@ -11,3 +11,4 @@ ALTER TABLE llx_societe_adresse_livraison ADD COLUMN tel varchar(20) after fk_pa
 ALTER TABLE llx_societe_adresse_livraison ADD COLUMN fax varchar(20) after tel;
 
 alter table llx_c_barcode_type modify coder varchar(16) NOT NULL;
+update llx_c_barcode_type set coder = 0 where coder in (1,2);
