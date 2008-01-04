@@ -95,7 +95,6 @@ $bc[1]="class=\"pair\"";
 // par ordre de preference. Attention, rares sont les combinaisons possibles si
 // plusieurs modes sont indiques.
 // Example: array('http','dolibarr');
-// Example: array('http','dolibarr_mdb2');
 // Example: array('ldap');
 // Example: array('forceuser');
 $authmode=array();
