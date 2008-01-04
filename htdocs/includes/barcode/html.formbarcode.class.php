@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ class FormBarCode
         
         $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-        $sql.= " WHERE coder > 0";
+        $sql.= " WHERE coder <> '0'";
         $sql.= " ORDER BY rowid";
         $result = $this->db->query($sql);
         if ($result)
