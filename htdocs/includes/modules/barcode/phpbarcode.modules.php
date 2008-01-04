@@ -68,6 +68,7 @@ class modPhpbarcode extends ModeleBarCode
 		$supported=0;
 		if ($encoding == 'EAN8')  $supported=1;
 		if ($encoding == 'EAN13') $supported=1;
+		if ($encoding == 'UPC')   $supported=1;
 		if ($encoding == 'ISBN')  $supported=1;
 		if ($encoding == 'C39')   $supported=1;
 		if ($encoding == 'C128')  $supported=1;

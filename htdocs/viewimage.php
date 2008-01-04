@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -306,7 +307,7 @@ if ($modulepart == 'barcode')
 	$generator=$_GET["generator"];
 	$code=$_GET["code"];
 	$encoding=$_GET["encoding"];
-	$readable=$_GET["readable"];
+	$readable=$_GET["readable"]?$_GET["readable"]:"Y";
 
 	// Chargement de la classe de codage
 	require_once($dir.$generator.".modules.php");
