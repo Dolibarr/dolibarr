@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,91 +188,91 @@ if (! isset($_SESSION["dol_login"]))
 	// MODE DOLIBARR
 	if ($test && in_array('dolibarr',$authmode) && ! $login)
 	{
-	    $login='';
-	    $usertotest=$_POST["username"];
-	    $passwordtotest=$_POST["password"];
+		$login='';
+	  $usertotest=$_POST["username"];
+	  $passwordtotest=$_POST["password"];
 	    
-	    if (! empty($_POST["username"])) 
-	    {
-	    	// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
+	  if (! empty($_POST["username"])) 
+	  {
+	  	// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
 			$table = MAIN_DB_PREFIX."user";
-	    	$usernamecol = 'login';
+	    $usernamecol = 'login';
 	    	
-	    	$sql ='SELECT pass, pass_crypted';
-	    	$sql.=' from '.$table;
-	    	$sql.=' where '.$usernamecol." = '".addslashes($_POST["username"])."'";
+	    $sql ='SELECT pass, pass_crypted';
+	    $sql.=' from '.$table;
+	    $sql.=' where '.$usernamecol." = '".addslashes($_POST["username"])."'";
 
-	    	dolibarr_syslog("main.inc::get password sql=".$sql);
-	    	$resql=$db->query($sql);
-	    	if ($resql)
+	    dolibarr_syslog("main.inc::get password sql=".$sql);
+	    $resql=$db->query($sql);
+	    if ($resql)
+	    {
+	    	$obj=$db->fetch_object($resql);
+	    	if ($obj)
 	    	{
-	    		$obj=$db->fetch_object($resql);
-	    		if ($obj)
+	    		$passclear=$obj->pass;
+	    		$passcrypted=$obj->pass_crypted;
+	    		$passtyped=$_POST["password"];
+
+	    		$passok=false;
+	    			
+	    		// Check crypted password
+	    		$cryptType='';
+	    		if ($conf->global->DATABASE_PWD_ENCRYPTED) $cryptType='md5';
+	    		if ($cryptType == 'md5') 
 	    		{
-	    			$passclear=$obj->pass;
-	    			$passcrypted=$obj->pass_crypted;
-	    			$passtyped=$_POST["password"];
+	    			if (md5($passtyped) == $passcrypted) $passok=true;
+	    		}
 
-	    			$passok=false;
+	    		// For compatibility with old versions
+	    		if (! $passok)
+	    		{
+	    			if ($passtyped == $passclear) $passok=true;
+	    		}
 	    			
-	    			// Check crypted password
-	    			$cryptType='';
-	    			if ($conf->global->DATABASE_PWD_ENCRYPTED) $cryptType='md5';
-	    			if ($cryptType == 'md5') 
-	    			{
-	    				if (md5($passtyped) == $passcrypted) $passok=true;
-	    			}
-
-	    			// For compatibility with old versions
-	    			if (! $passok)
-	    			{
-	    				if ($passtyped == $passclear) $passok=true;
-	    			}
-	    			
-	    			// Password ok ?
-	    			if ($passok)
-	    			{
-	        			dolibarr_syslog("Authentification ok (en mode Base Dolibarr)");
-	    				$login=$_POST["username"];
+	    		// Password ok ?
+	    		if ($passok)
+	    		{
+	    			dolibarr_syslog("Authentification ok (en mode Base Dolibarr)");
+	    			$login=$_POST["username"];
 						$test=false;
-	    			}
-	    			else
-	    			{
-	            		dolibarr_syslog("Authentification ko bad password (en mode Base Dolibarr) pour '".$_POST["username"]."'");
+	    		}
+	    		else
+	    		{
+	    			dolibarr_syslog("Authentification ko bad password (en mode Base Dolibarr) pour '".$_POST["username"]."'");
 						sleep(1);
 						$langs->load('main');
 						$langs->load('other');
 						$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
-	    			}
-	    		}
-	    		else
-	    		{
-	            	dolibarr_syslog("Authentification ko user not found (en mode Base Dolibarr) pour '".$_POST["username"]."'");
-					sleep(1);
-					$langs->load('main');
-					$langs->load('other');
-					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 	    		}
 	    	}
 	    	else
 	    	{
-	            dolibarr_syslog("Authentification ko db error (en mode Base Dolibarr) pour '".$_POST["username"]."', sql=".$sql);
-				sleep(1);
-	            $_SESSION["dol_loginmesg"]=$db->lasterror();
+	    		dolibarr_syslog("Authentification ko user not found (en mode Base Dolibarr) pour '".$_POST["username"]."'");
+					sleep(1);
+					$langs->load('main');
+					$langs->load('other');
+					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 	    	}
 	    }
+	    else
+	    {
+	    	dolibarr_syslog("Authentification ko db error (en mode Base Dolibarr) pour '".$_POST["username"]."', sql=".$sql);
+				sleep(1);
+	      $_SESSION["dol_loginmesg"]=$db->lasterror();
+	    }
+	  }
 	}
 
 	// MODE LDAP
 	if ($test && in_array('ldap',$authmode) && ! $login)
 	{
-	    $login='';
-	    $usertotest=$_POST["username"];
-	    $passwordtotest=$_POST["password"];
+		$login='';
+	  $usertotest=$_POST["username"];
+	  $passwordtotest=$_POST["password"];
 	    
-	    if (! empty($_POST["username"])) 
-	    {
-	    	// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
+	  if (! empty($_POST["username"])) 
+	  {
+	  	// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
 			$ldaphost=$dolibarr_main_auth_ldap_host;
 			$ldapport=$dolibarr_main_auth_ldap_port;
 			$ldapversion=$dolibarr_main_auth_ldap_version;
@@ -284,7 +284,7 @@ if (! isset($_SESSION["dol_login"]))
 			$ldapadminpass=$dolibarr_main_auth_ldap_admin_pass;
 			$ldapdebug=(empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug=="false" ? false : true);
 			
-		    if ($ldapdebug) print "DEBUG: Logging LDAP steps<br>\n";
+		  if ($ldapdebug) print "DEBUG: Logging LDAP steps<br>\n";
 	
 			// Debut code pour compatibilite (prend info depuis config en base)
 			// Ne plus utiliser. La config LDAP de connexion doit etre dans le
@@ -292,13 +292,13 @@ if (! isset($_SESSION["dol_login"]))
 			if (! $ldapuserattr && $conf->ldap->enabled)
 			{
 				if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
-				  {
-				    $ldapuserattr = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
-				  }
-				  else
-				  {
-				    $ldapuserattr = $conf->global->LDAP_FIELD_LOGIN;
-				  }
+				{
+					$ldapuserattr = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+				}
+				else
+				{
+					$ldapuserattr = $conf->global->LDAP_FIELD_LOGIN;
+				}
 			}
 			if (! $ldaphost)       $ldaphost=$conf->global->LDAP_SERVER_HOST;
 			if (! $ldapport)       $ldapport=$conf->global->LDAP_SERVER_PORT;
@@ -309,7 +309,7 @@ if (! isset($_SESSION["dol_login"]))
 			if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
 			// Fin code pour compatiblite
 	    	
-    		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
+    	require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 			$ldap=new Ldap();
 			$ldap->server=array($ldaphost);
 			$ldap->serverPort=$ldapport;
@@ -330,32 +330,77 @@ if (! isset($_SESSION["dol_login"]))
 			
 			$result=$ldap->connect_bind();
 			if ($result > 0)
+			{
+				if ($result == 2)
     		{
-    			if ($result == 2)
-    			{
-        			dolibarr_syslog("Authentification ok (en mode LDAP)");
-    				$login=$_POST["username"];
+    			dolibarr_syslog("Authentification ok (en mode LDAP)");
+    			$login=$_POST["username"];
 					$test=false;
-    			}
-    			if ($result == 1)
-    			{
-            		dolibarr_syslog("Authentification ko bad password (en mode LDAP) pour '".$_POST["username"]."'");
+					// ldap2dolibarr synchronisation
+					if ($login && $conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
+					{
+						// On charge les attributs du user ldap
+						if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
+						$ldap->fetch($login);
+						
+						if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
+						if ($ldapdebug) print "DEBUG: pwdLastSet = ".dolibarr_print_date($ldap->pwdlastset,'day')."<br>\n";
+						if ($ldapdebug) print "DEBUG: badPasswordTime = ".dolibarr_print_date($ldap->badpwdtime,'day')."<br>\n";
+						
+						
+						// On stop si le mot de passe ldap doit etre modifie
+						if ($ldap->pwdlastset == 0)
+						{
+							session_destroy();
+							dolibarr_syslog('User '.$login.' must change password next logon');
+							if ($ldapdebug) print "DEBUG: User ".$login." must change password<br>\n";
+							$ldap->close();
+							
+							// On repart sur page accueil
+							session_name($sessionname);
+							session_start();
+							$langs->load('ldap');
+							$_SESSION["loginmesg"]=$langs->trans("UserMustChangePassNextLogon");
+							header('Location: '.DOL_URL_ROOT.'/index.php');
+							exit;
+						}
+						
+						
+						// On recherche le user dolibarr en fonction de son SID ldap
+						$sid = $ldap->getObjectSid($login);
+						if ($ldapdebug) print "DEBUG: sid = ".$sid."<br>\n";
+						$result=$user->fetch($login,$sid);
+						if ($result > 0)
+						{
+							//TODO: on verifie si le login a change et on met a jour les attributs dolibarr
+							if ($user->login != $ldap->login && $ldap->login)
+							{
+								$user->login = $ldap->login;
+								$user->update($user);
+							}
+							//$resultUpdate = $user->update_ldap2dolibarr();
+						}
+					}
+				}
+				else if ($result == 1)
+    		{
+    			dolibarr_syslog("Authentification ko bad password (en mode LDAP) pour '".$_POST["username"]."'");
 					sleep(1);
 					$langs->load('main');
 					$langs->load('other');
 					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
-    			}
     		}
-    		else
-    		{
-            	dolibarr_syslog("Authentification ko failed to connect to LDAP (en mode LDAP) pour '".$_POST["username"]."'");
+    	}
+    	else
+    	{
+    		dolibarr_syslog("Authentification ko failed to connect to LDAP (en mode LDAP) pour '".$_POST["username"]."'");
 				sleep(1);
 				$langs->load('main');
 				$langs->load('other');
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
-    		}
+    	}
     	$ldap->close();
-	    }
+	   }
     }
 
     if (! $login)
@@ -364,88 +409,6 @@ if (! isset($_SESSION["dol_login"]))
 		dol_loginfunction($langs,$conf,$mysoc);
 		exit;
     }
-	
-	// Charge l'objet user depuis son login ou son SID
-	$result=0;
-	if ($login && in_array('ldap',$authmode) && $conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
-	{
-		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
-		$ldap=new Ldap();
-		$ldap->server=array($ldaphost);
-		$ldap->serverPort=$ldapport;
-		$ldap->ldapProtocolVersion=$ldapversion;
-		$ldap->serverType=$ldapservertype;
-		$ldap->searchUser=$ldapadminlogin;
-		$ldap->searchPassword=$ldapadminpass;
-			
-		$result=$ldap->connect_bind();
-		$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest);
-		$ldap->close();
-		
-		$ldap->searchUser=$usertotest;
-		if ($resultCheckUserDN) $ldap->searchUser = $ldap->ldapUserDN;
-		$ldap->searchPassword=$passwordtotest;
-		
-		$result=$ldap->connect_bind();
-		if ($result > 0)
-		{
-			// On charge les attributs du user ldap
-			if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
-		    $ldap->fetch($login);
-	    
-		    if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
-	    	if ($ldapdebug) print "DEBUG: pwdLastSet = ".dolibarr_print_date($ldap->pwdlastset,'day')."<br>\n";
-	    	if ($ldapdebug) print "DEBUG: badPasswordTime = ".dolibarr_print_date($ldap->badpwdtime,'day')."<br>\n";
-	    
-/*	    
-	    // On stop si le mot de passe ldap doit etre modifie
-	    if ($ldap->pwdlastset == 0)
-	    {
-	    	session_destroy();
-		    dolibarr_syslog('User '.$login.' must change password next logon');
-		    if ($ldapdebug) print "DEBUG: User ".$login." must change password<br>\n";
-		    $ldap->close();
-
-		    // On repart sur page accueil
-		    session_name($sessionname);
-		    session_start();
-		    $langs->load('ldap');
-		    $_SESSION["loginmesg"]=$langs->trans("UserMustChangePassNextLogon");
-		    header('Location: '.DOL_URL_ROOT.'/index.php');
-		    exit;
-		  }
-*/	    
-			// On recherche le user dolibarr en fonction de son SID ldap
-			$sid = $ldap->getObjectSid($login);
-			if ($ldapdebug) print "DEBUG: sid = ".$sid."<br>\n";
-			$result=$user->fetch($login,$sid);
-			if ($result > 0)
-			{
-				//TODO: on verifie si le login a change et on met a jour les attributs dolibarr
-				if ($user->login != $ldap->login && $ldap->login)
-				{
-					$user->login = $ldap->login;
-					$user->update($user);
-				}
-				//$resultUpdate = $user->update_ldap2dolibarr();
-			}
-			$ldap->close();
-		}
-		else
-		{
-		  	if ($ldapdebug) print "DEBUG: Error connect_bind = ".$ldap->error."<br>\n";
-		  	$ldap->close();
-			
-			dolibarr_syslog('Synchro LDAP KO');
-		  	session_destroy();
-			session_name($sessionname);
-			session_start();
-		  	
-			$langs->load('admin');
-		  	$_SESSION["dol_loginmesg"]=$langs->trans("LDAPSynchroKO");
-			header('Location: '.DOL_URL_ROOT.'/index.php');
-			exit;
-		}
 	}
 	else
 	{
