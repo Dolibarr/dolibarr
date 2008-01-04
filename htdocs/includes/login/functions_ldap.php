@@ -146,7 +146,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 						session_name($sessionname);
 						session_start();
 						$langs->load('ldap');
-						$_SESSION["loginmesg"]=$langs->trans("UserMustChangePassNextLogon");
+						$_SESSION["dol_loginmesg"]=$langs->trans("UserMustChangePassNextLogon");
 						header('Location: '.DOL_URL_ROOT.'/index.php');
 						exit;
 					}
