@@ -107,7 +107,30 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		
 		// Code to get user in LDAP (may differ from Dolibarr user)
 		$result=$ldap->connect_bind();
-		$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest);
+		if ($result)
+		{
+			$ldap->fetch($_POST["username"]);
+			// On stop si le mot de passe ldap doit etre modifie
+			if ($ldap->pwdlastset == 0)
+			{
+				session_destroy();
+				dolibarr_syslog('User '.$login.' must change password next logon');
+				if ($ldapdebug) print "DEBUG: User ".$login." must change password<br>\n";
+				$ldap->close();
+						
+				// On repart sur page accueil
+				session_name($sessionname);
+				session_start();
+				$langs->load('ldap');
+				$_SESSION["dol_loginmesg"]=$langs->trans("UserMustChangePassNextLogon");
+				header('Location: '.DOL_URL_ROOT.'/index.php');
+				exit;
+			}
+			else
+			{
+				$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest);
+			}
+		}
 		$ldap->close();
 		
 		$ldap->searchUser=$usertotest;
@@ -133,7 +156,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 					if ($ldapdebug) print "DEBUG: pwdLastSet = ".dolibarr_print_date($ldap->pwdlastset,'day')."<br>\n";
 					if ($ldapdebug) print "DEBUG: badPasswordTime = ".dolibarr_print_date($ldap->badpwdtime,'day')."<br>\n";
 					
-					
+					/*
 					// On stop si le mot de passe ldap doit etre modifie
 					if ($ldap->pwdlastset == 0)
 					{
@@ -150,7 +173,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 						header('Location: '.DOL_URL_ROOT.'/index.php');
 						exit;
 					}
-					
+					*/
 					
 					// On recherche le user dolibarr en fonction de son SID ldap
 					$sid = $ldap->getObjectSid($login);
