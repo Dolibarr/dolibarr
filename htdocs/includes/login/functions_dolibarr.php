@@ -73,7 +73,8 @@ function check_user_password_dolibarr($usertotest,$passwordtotest)
 				// For compatibility with old versions
 				if (! $passok)
 				{
-					if ($passtyped == $passclear) $passok=true;
+					if ((! $passcrypted || $passtyped) 
+						&& ($passtyped == $passclear)) $passok=true;
 				}
 				
 				// Password ok ?
