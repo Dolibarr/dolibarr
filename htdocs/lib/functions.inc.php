@@ -1319,16 +1319,26 @@ function image_format_supported($file)
 
 /**
         \brief      Affiche info admin
-        \param      text		Texte info
+        \param      text			Text info
+        \param      infoonimgalt	Info is shown on alt of star picto
+		\return		string			String with info text
 */
-function info_admin($texte)
+function info_admin($texte,$infoonimgalt=0)
 {
 	global $conf,$langs;
-	$s='<div class="info">';
-	$s.=img_picto($langs->trans("InfoAdmin"),'star');
-	$s.=' ';
-	$s.=$texte;
-	$s.='</div>';
+	$s='';
+	if ($infoonimgalt)
+	{
+		$s.=img_picto($texte,'star');
+	}
+	else
+	{
+		$s.='<div class="info">';
+		$s.=img_picto($langs->trans("InfoAdmin"),'star');
+		$s.=' ';
+		$s.=$texte;
+		$s.='</div>';
+	}
 	return $s;
 }
 

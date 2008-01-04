@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -450,10 +449,7 @@ if ($_GET["action"] == 'create')
 		}
 		else
 		{
-			$arraylist=$caction->liste_array(1,'code');
-			$arraylist[0]='&nbsp;';
-			asort($arraylist);
-			$html->select_array("actioncode", $arraylist, 0);
+			$html->select_type_actions(0, "actioncode");
 		}
 		print '</td></tr>';
 

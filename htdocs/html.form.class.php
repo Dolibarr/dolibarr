@@ -647,7 +647,28 @@ class Form
   }
   
   
-	/**
+		/**
+		*    \brief      Retourne la liste des types de comptes financiers
+		*    \param      selected        Type pré-sélectionné
+		*    \param      htmlname        Nom champ formulaire
+		*/
+		function select_type_actions($selected='',$htmlname='actioncode')
+		{
+			global $langs,$user;
+			
+			require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
+			$caction=new CActionComm($this->db);
+			
+			$arraylist=$caction->liste_array(1,'code');
+			$arraylist[0]='&nbsp;';
+			asort($arraylist);
+			
+			$this->select_array($htmlname, $arraylist, 0);
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+		}
+
+
+  /**
 	 *    \brief      Retourne la liste déroulante des sociétés
 	 *    \param      selected        Societe pré-sélectionnée
 	 *    \param      htmlname        Nom champ formulaire
