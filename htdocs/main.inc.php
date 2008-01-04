@@ -140,6 +140,7 @@ if (! sizeof($authmode))
 // sinon appel du module qui realise sa demande.
 // A l'issu de cette phase, la variable $login sera definie.
 $login='';
+$resultFetchUser='';
 $test=true;
 if (! isset($_SESSION["dol_login"]))
 {
@@ -336,6 +337,7 @@ if (! isset($_SESSION["dol_login"]))
     			dolibarr_syslog("Authentification ok (en mode LDAP)");
     			$login=$_POST["username"];
 					$test=false;
+					
 					// ldap2dolibarr synchronisation
 					if ($login && $conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 					{
@@ -369,8 +371,8 @@ if (! isset($_SESSION["dol_login"]))
 						// On recherche le user dolibarr en fonction de son SID ldap
 						$sid = $ldap->getObjectSid($login);
 						if ($ldapdebug) print "DEBUG: sid = ".$sid."<br>\n";
-						$result=$user->fetch($login,$sid);
-						if ($result > 0)
+						$resultFetchUser=$user->fetch($login,$sid);
+						if ($resultFetchUser > 0)
 						{
 							//TODO: on verifie si le login a change et on met a jour les attributs dolibarr
 							if ($user->login != $ldap->login && $ldap->login)
@@ -382,7 +384,8 @@ if (! isset($_SESSION["dol_login"]))
 						}
 					}
 				}
-				else if ($result == 1)
+				
+				if ($result == 1)
     		{
     			dolibarr_syslog("Authentification ko bad password (en mode LDAP) pour '".$_POST["username"]."'");
 					sleep(1);
@@ -400,22 +403,19 @@ if (! isset($_SESSION["dol_login"]))
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
     	}
     	$ldap->close();
-	   }
     }
-
-    if (! $login)
-    {
-    	// We show login page
+  }
+  
+  if (! $login)
+  {
+  	// We show login page
 		dol_loginfunction($langs,$conf,$mysoc);
 		exit;
-    }
-	}
-	else
-	{
-		$result=$user->fetch($login);
-	}
+  }
+  
+  if (!$resultFetchUser) $resultFetchUser=$user->fetch($login);
 
-	if ($result <= 0)
+	if ($resultFetchUser <= 0)
 	{
 		dolibarr_syslog('User not found, connexion refused');
 		session_destroy();
@@ -423,8 +423,8 @@ if (! isset($_SESSION["dol_login"]))
 		session_start();
 
 		$langs->load('main');
-		if ($result == 0) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-		if ($result < 0)  $_SESSION["dol_loginmesg"]=$user->error;
+		if ($resultFetchUser == 0) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+		if ($resultFetchUser < 0)  $_SESSION["dol_loginmesg"]=$user->error;
 		header('Location: '.DOL_URL_ROOT.'/index.php');
 		exit;
 	}
@@ -434,9 +434,9 @@ else
 	// On est deja en session qui a sauvegarde login
 	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifies
 	$login=$_SESSION["dol_login"];
-	$result=$user->fetch($login);
+	$resultFetchUser=$user->fetch($login);
 	dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
-	if ($result <= 0)
+	if ($resultFetchUser <= 0)
 	{
 		// Account has been removed after login
 		dolibarr_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARN);
@@ -445,8 +445,8 @@ else
 		session_start();
 
 		$langs->load('main');
-		if ($result == 0) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-		if ($result < 0)  $_SESSION["dol_loginmesg"]=$user->error;
+		if ($resultFetchUser == 0) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+		if ($resultFetchUser < 0)  $_SESSION["dol_loginmesg"]=$user->error;
 		header('Location: '.DOL_URL_ROOT.'/index.php');
 		exit;
 	}
