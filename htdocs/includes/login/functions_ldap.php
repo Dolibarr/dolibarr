@@ -155,14 +155,17 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 					// On recherche le user dolibarr en fonction de son SID ldap
 					$sid = $ldap->getObjectSid($login);
 					if ($ldapdebug) print "DEBUG: sid = ".$sid."<br>\n";
+
+					$user=new User($db);
 					$resultFetchUser=$user->fetch($login,$sid);
 					if ($resultFetchUser > 0)
 					{
-						//TODO: on verifie si le login a change et on met a jour les attributs dolibarr
+						// On verifie si le login a change et on met a jour les attributs dolibarr
 						if ($user->login != $ldap->login && $ldap->login)
 						{
 							$user->login = $ldap->login;
 							$user->update($user);
+							// TODO Que faire si update echoue car on update avec un login deja existant.
 						}
 						//$resultUpdate = $user->update_ldap2dolibarr();
 					}

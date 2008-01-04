@@ -154,6 +154,7 @@ if (! isset($_SESSION["dol_login"]))
 			$result=include_once($authfile);
 			if ($result)
 			{
+				// Call function to check user/password
 			    $usertotest=$_POST["username"];
 			    $passwordtotest=$_POST["password"];
 				$function='check_user_password_'.$mode;
@@ -179,8 +180,7 @@ if (! isset($_SESSION["dol_login"]))
 		exit;
     }
 
-	if (!$resultFetchUser) $resultFetchUser=$user->fetch($login);
-
+	$resultFetchUser=$user->fetch($login);
 	if ($resultFetchUser <= 0)
 	{
 		dolibarr_syslog('User not found, connexion refused');
