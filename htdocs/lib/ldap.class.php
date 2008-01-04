@@ -900,6 +900,7 @@ class Ldap
         if (! $result)
         {
         	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+        	return -1;
         }
         else
         {
@@ -916,6 +917,7 @@ class Ldap
         	$this->badpwdtime = $this->convert_time($this->ldap_utf8_decode($result[0]["badpasswordtime"][0]));
 
         	ldap_free_result($this->result);
+        	return 1;
         }
 	}
 	
