@@ -109,9 +109,9 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		$result=$ldap->connect_bind();
 		if ($result)
 		{
-			$ldap->fetch($_POST["username"]);
+			$resultFetchLdapUser = $ldap->fetch($_POST["username"]);
 			// On stop si le mot de passe ldap doit etre modifie sur le domaine
-			if ($ldap->pwdlastset <= 0)
+			if ($resultFetchLdapUser && $ldap->pwdlastset <= 0)
 			{
 				dolibarr_syslog('functions_ldap::User '.$login.' must change password next logon');
 				if ($ldapdebug) print "DEBUG: User ".$login." must change password<br>\n";
