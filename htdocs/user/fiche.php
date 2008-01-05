@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2005      Lionel COUSTEIX      <etm_ltd@tiscali.co.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ $candisableperms=($user->admin || $user->rights->user->user->supprimer);
 // Defini si peux lire/modifier info user ou mot de passe
 if ($_GET["id"])
 {
-  // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edit�
+  // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edite
   $caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
 		  || (($user->id != $_GET["id"]) && $user->rights->user->user->creer) );
   $caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
@@ -398,7 +398,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 {
 	/* ************************************************************************** */
 	/*                                                                            */
-	/* Affichage fiche en mode cr�ation                                           */
+	/* Affichage fiche en mode creation                                           */
 	/*                                                                            */
 	/* ************************************************************************** */
 	
@@ -667,7 +667,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	print "</td></tr>\n";
 	
-	// Autres caract�ristiques issus des autres modules
+	// Autres caracteristiques issus des autres modules
 	
 	// Module Webcalendar
 	if ($conf->webcal->enabled)
@@ -715,18 +715,21 @@ else
     			{
     				$message .= $ldap->error;
     			}
+    			
+    			$passDoNotExpire = 0;
+    			$userChangePassNextLogon = 0;
 
-	    		//On v�rifie les options du compte
+	    		//On verifie les options du compte
 	    		foreach ($ldap->uacf as $key => $statut)
 	    		{
 	    			if ($key == 65536)
 	    			{
-	    				$passDoNotExpire = $langs->trans("LdapUacf_".$statut);
+	    				$passDoNotExpire = 1;
 	    			}
 	    		}
 	    		if ($ldap->pwdlastset == 0 && $ldap->pwdlastset != "")
 	    		{
-	    			$userChangePassNextLogon = $langs->trans("UserMustChangePassNextLogon");
+	    			$userChangePassNextLogon = 1;
 	    		}
     		}
     	}
@@ -740,7 +743,7 @@ else
 
 
         /*
-         * Confirmation r�initialisation mot de passe
+         * Confirmation reinitialisation mot de passe
          */
         if ($action == 'password')
         {
@@ -758,7 +761,7 @@ else
         }
 
         /*
-         * Confirmation d�sactivation
+         * Confirmation desactivation
          */
         if ($action == 'disable')
         {
@@ -839,11 +842,11 @@ else
             {
             	if ($passDoNotExpire)
             	{
-            		print '<td>'.$passDoNotExpire.'</td>';
+            		print '<td>'.$langs->trans("LdapUacf_".$statut);.'</td>';
             	}
             	else if($userChangePassNextLogon)
             	{
-            		print '<td>'.$userChangePassNextLogon.'</td>';
+            		print '<td>'.$langs->trans("UserMustChangePassNextLogon",$ldap->domainFQDN).'</td>';
             	}
             	else
             	{
@@ -940,7 +943,7 @@ else
             print '<td>'.dolibarr_print_date($fuser->datepreviouslogin,"dayhour").'</td>';
             print "</tr>\n";
 
-            // Autres caract�ristiques issus des autres modules
+            // Autres caracteristiques issus des autres modules
             
             // Module Webcalendar
             if ($conf->webcal->enabled)
@@ -963,7 +966,7 @@ else
                 print "</tr>\n";
             }
             
-            // Module Adh�rent
+            // Module Adherent
             if ($conf->adherent->enabled)
             {
             	$langs->load("members");
@@ -1048,7 +1051,7 @@ else
 
             print_fiche_titre($langs->trans("ListOfGroupsForUser"));
 
-            // On s�lectionne les groups
+            // On selectionne les groups
             $uss = array();
 
             $sql = "SELECT ug.rowid, ug.nom ";
@@ -1094,7 +1097,7 @@ else
             }
 
             /*
-             * Groupes affect�s
+             * Groupes affectes
              */
             $sql = "SELECT g.rowid, g.nom ";
             $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
@@ -1244,7 +1247,7 @@ else
             print '<td>';
 			      if ($fuser->ldap_sid)
             {
-            	$text='Mot de passe du domaine';
+            	$text=$langs->trans("DomainPassword");
             }
             else if ($caneditpassword) 
             {
@@ -1384,7 +1387,7 @@ else
             print $fuser->getLibStatut(4);
             print '</td></tr>';
             
-            // Autres caract�ristiques issus des autres modules
+            // Autres caracteristiques issus des autres modules
             
             // Module Webcalendar
             if ($conf->webcal->enabled)
