@@ -846,7 +846,7 @@ else
             	}
             	else if($userChangePassNextLogon)
             	{
-            		print '<td>'.$langs->trans("UserMustChangePassNextLogon",$ldap->domainFQDN).'</td>';
+            		print '<td class="warning">'.$langs->trans("UserMustChangePassNextLogon",$ldap->domainFQDN).'</td>';
             	}
             	else
             	{
