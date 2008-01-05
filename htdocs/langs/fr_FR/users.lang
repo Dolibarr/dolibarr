@@ -79,7 +79,6 @@ GuiLanguage=Langage de l'interface
 InternalUser=Utilisateur interne
 MyInformations=Mes informations
 ExportDataset_user_1=Utilisateurs Dolibarr et attributs
-DomainUser=Utilisateur du domaine
 Reactivate=Réactiver
 CreateInternalUserDesc=Cet écran permet de créer un utilisateur interne à votre société/institution. Pour créer un utilisateur externe (client, fournisseur, ...), utiliser le bouton 'Créer utilisateur Dolibarr' qui se trouve sur la fiche contact du tiers en question.
 InternalExternalDesc=Un utilisateur <b>interne</b> est un utilisateur appartenant à votre société/institution.<br>Un utilisateur <b>externe</b> est un utilisateur client, fournisseur ou autre.<br><br>Dans les 2 cas, les permissions utilisateurs définissent les droits d'accès mais l'utilisateur externe peut en plus avoir un gestionnaire de menu différent de l'utilisateur interne (Voir Accueil - Configuration - Affichage)

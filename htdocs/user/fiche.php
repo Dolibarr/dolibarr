@@ -727,7 +727,7 @@ else
 	    				$passDoNotExpire = 1;
 	    			}
 	    		}
-	    		if ($ldap->pwdlastset == 0 && $ldap->pwdlastset != "")
+	    		if ($ldap->pwdlastset == 0)
 	    		{
 	    			$userChangePassNextLogon = 1;
 	    		}
@@ -882,7 +882,7 @@ else
             }
             else if ($fuser->ldap_sid)
             {
-            	print $langs->trans("DomainUser");
+            	print $langs->trans("DomainUser",$ldap->domainFQDN);
             }
             else
             {
