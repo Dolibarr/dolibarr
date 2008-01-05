@@ -718,15 +718,24 @@ else
     			
     			$passDoNotExpire = 0;
     			$userChangePassNextLogon = 0;
+    			$userDisabled = 0;
 
 	    		//On verifie les options du compte
-	    		foreach ($ldap->uacf as $key => $statut)
+	    		if (sizeof($ldap->uacf) > 0)
 	    		{
-	    			if ($key == 65536)
+	    			foreach ($ldap->uacf as $key => $statut)
 	    			{
-	    				$passDoNotExpire = 1;
+	    				if ($key == 65536)
+	    				{
+	    					$passDoNotExpire = 1;
+	    				}
 	    			}
 	    		}
+	    		else
+	    		{
+	    			$userDisabled = 1;
+	    		}
+	    		
 	    		if ($ldap->pwdlastset == 0)
 	    		{
 	    			$userChangePassNextLogon = 1;
@@ -847,6 +856,10 @@ else
             	else if($userChangePassNextLogon)
             	{
             		print '<td class="warning">'.$langs->trans("UserMustChangePassNextLogon",$ldap->domainFQDN).'</td>';
+            	}
+            	else if($userDisabled)
+            	{
+            		print '<td class="warning">'.$langs->trans("LdapUacf_ACCOUNTDISABLE",$ldap->domainFQDN).'</td>';
             	}
             	else
             	{
