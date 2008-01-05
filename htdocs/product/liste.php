@@ -29,11 +29,12 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
-require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
+if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("products");
 
 $user->getrights('produit');
+if ($conf->categorie->enabled) $user->getrights('categorie');
 
 if (!$user->rights->produit->lire)
   accessforbidden();
@@ -62,7 +63,7 @@ if (isset($_POST["button_removefilter_x"]))
   $snom="";
 }
 
-if (isset($_REQUEST['catid']))
+if ($conf->categorie->enabled && isset($_REQUEST['catid']))
 {
   $catid = $_REQUEST['catid'];
 }
@@ -93,13 +94,11 @@ else
     }
 }
 
-
-
-$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.price_ttc, p.price_base_type,';
+$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price, p.price_ttc, p.price_base_type,';
 $sql.= ' p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-if ($catid || ($conf->categorie->enabled && !$user->rights->categorie->voir))
+if ($conf->categorie->enabled && ($catid || !$user->rights->categorie->voir))
 {
   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
