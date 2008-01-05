@@ -118,7 +118,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 				$ldap->close();
 				sleep(1);
 				$langs->load('ldap');
-				$_SESSION["dol_loginmesg"]=$langs->trans("UserMustChangePassNextLogon");
+				$_SESSION["dol_loginmesg"]=$langs->trans("UserMustChangePassNextLogon",$ldap->domainFQDN);
 				return $login;
 			}
 			else

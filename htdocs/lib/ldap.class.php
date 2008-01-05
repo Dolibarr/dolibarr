@@ -436,6 +436,7 @@ class Ldap
         ** "uid=username, ou=People, dc=orgname,dc=com"
         */
         if ($this->serverType == "activedirectory") {
+        	// FQDN domain
         	$domain = eregi_replace('dc=','',$this->domain);
         	$domain = eregi_replace(',','.',$domain);
           $checkDn = "$uname@$domain";
@@ -918,7 +919,13 @@ class Ldap
 
         	$this->uacf       = $this->parseUACF($this->ldap_utf8_decode($result[0]["useraccountcontrol"][0]));
         	$this->pwdlastset = ($result[0]["pwdlastset"][0] != 0)?$this->convert_time($this->ldap_utf8_decode($result[0]["pwdlastset"][0])):0;
+        	if (!$this->name && !$this->login) $this->pwdlastset = -1;
         	$this->badpwdtime = $this->convert_time($this->ldap_utf8_decode($result[0]["badpasswordtime"][0]));
+        	
+        	// FQDN domain
+        	$domain = eregi_replace('dc=','',$this->domain);
+        	$domain = eregi_replace(',','.',$domain);
+        	$this->domainFQDN = $domain;
 
         	ldap_free_result($this->result);
         	return 1;
