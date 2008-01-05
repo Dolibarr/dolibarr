@@ -719,21 +719,24 @@ else
     			$passDoNotExpire = 0;
     			$userChangePassNextLogon = 0;
     			$userDisabled = 0;
+    			$statutUACF = '';
 
 	    		//On verifie les options du compte
-	    		if (sizeof($ldap->uacf > 0)
+	    		if (sizeof($ldap->uacf) > 0)
 	    		{
 	    			foreach ($ldap->uacf as $key => $statut)
 	    			{
 	    				if ($key == 65536)
 	    				{
 	    					$passDoNotExpire = 1;
+	    					$statutUACF = $statut;
 	    				}
 	    			}
 	    		}
 	    		else
 	    		{
 	    			$userDisabled = 1;
+	    			$statutUACF = "ACCOUNTDISABLE";
 	    		}
 	    		
 	    		if ($ldap->pwdlastset == 0)
@@ -851,7 +854,7 @@ else
             {
             	if ($passDoNotExpire)
             	{
-            		print '<td>'.$langs->trans("LdapUacf_".$statut).'</td>';
+            		print '<td>'.$langs->trans("LdapUacf_".$statutUACF).'</td>';
             	}
             	else if($userChangePassNextLogon)
             	{
@@ -859,7 +862,7 @@ else
             	}
             	else if($userDisabled)
             	{
-            		print '<td class="warning">'.$langs->trans("LdapUacf_ACCOUNTDISABLE",$ldap->domainFQDN).'</td>';
+            		print '<td class="warning">'.$langs->trans("LdapUacf_".$statutUACF,$ldap->domainFQDN).'</td>';
             	}
             	else
             	{
