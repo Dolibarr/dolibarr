@@ -721,7 +721,7 @@ else
     			$userDisabled = 0;
 
 	    		//On verifie les options du compte
-	    		if (sizeof($ldap->uacf) > 0)
+	    		if (sizeof($ldap->uacf > 0)
 	    		{
 	    			foreach ($ldap->uacf as $key => $statut)
 	    			{
