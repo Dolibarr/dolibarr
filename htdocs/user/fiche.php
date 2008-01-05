@@ -842,7 +842,7 @@ else
             {
             	if ($passDoNotExpire)
             	{
-            		print '<td>'.$langs->trans("LdapUacf_".$statut);.'</td>';
+            		print '<td>'.$langs->trans("LdapUacf_".$statut).'</td>';
             	}
             	else if($userChangePassNextLogon)
             	{
