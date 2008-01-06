@@ -85,8 +85,11 @@ EnableGDLibraryDesc=Install or enable GD library with your PHP for use this opti
 EnablePhpAVModuleDesc=You need to install a module compatible with your anti-virus. (Clamav : php4-clamavlib ou php5-clamavlib)
 ##### Webcal #####
 LoginWebcal=Login for Webcalendar
-AddCalendarEntry=Add entry in calendar
 ErrorWebcalLoginNotDefined=The Webcalendar login associated to your Dolibarr login <b>%s</b> is not defined.
+##### Phenix #####
+ErrorPhenixLoginNotDefined=The Phenix login associated to your Dolibarr login <b>%s</b> is not defined.
+##### Calendar common #####
+AddCalendarEntry=Add entry in calendar %s
 NewCompanyToDolibarr=Company %s added into Dolibarr
 ContractValidatedInDolibarr=Contract %s validated in Dolibarr
 ContractCanceledInDolibarr=Contract %s canceled in Dolibarr

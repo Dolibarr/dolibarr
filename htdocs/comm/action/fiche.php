@@ -160,7 +160,8 @@ if ($_POST["action"] == 'add_action')
     	    $societe->fetch($_REQUEST["socid"]);
         	$actioncomm->societe = $societe;
        	}
-        if ($_POST["add_webcal"] == 'on') $actioncomm->use_webcal=1;
+        if ($_POST["add_webcal"] == 'on' && $conf->webcal->enabled) $actioncomm->use_webcal=1;
+        if ($_POST["add_phenix"] == 'on' && $conf->phenix->enabled) $actioncomm->use_phenix=1;
 
         // On crée l'action
         $idaction=$actioncomm->add($user);
@@ -384,7 +385,7 @@ if ($_GET["action"] == 'create')
 		$html->select_duree("duree");
 		print '</td></tr>';
 
-		add_row_for_webcal_link();
+		add_row_for_calendar_link();
 
 		// Note
 		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
@@ -528,7 +529,7 @@ if ($_GET["action"] == 'create')
 		}
 		print '</td></tr>';
 
-		add_row_for_webcal_link();
+		add_row_for_calendar_link();
 
 		// Note
 		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
@@ -782,44 +783,77 @@ llxFooter('$Date$ - $Revision$');
 
 
 /**
-        \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option webcalendar
+        \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option synchro calendrier
         \return     int     Retourne le nombre de lignes ajoutées
 */
-function add_row_for_webcal_link()
+function add_row_for_calendar_link()
 {
-    global $conf,$langs,$user;
-    $nbtr=0;
+	global $conf,$langs,$user;
+  $nbtr=0;
 
-    // Lien avec calendrier si module activé
-    if ($conf->webcal->enabled)
+  // Lien avec calendrier si module activé
+  if ($conf->webcal->enabled)
+  {
+  	if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')
     {
-        if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')
+    	$langs->load("other");
+    	
+    	print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry","Webcalendar").'</td>';
+    	
+      if (! $user->webcal_login)
+      {
+        print '<td><input type="checkbox" disabled name="add_webcal">';
+        print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+        print '</td>';
+        print '</tr>';
+        $nbtr++;
+      }
+      else
+      {
+      	if ($conf->global->PHPWEBCALENDAR_SYNCRO == 'always')
         {
-            $langs->load("other");
-            if (! $user->webcal_login)
-            {
-                print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry").'</td>';
-                print '<td><input type="checkbox" disabled name="add_webcal">';
-                print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-                print '</td>';
-                print '</tr>';
-                $nbtr++;
-            }
-            else
-            {
-                if ($conf->global->PHPWEBCALENDAR_SYNCRO == 'always')
-                {
-                    print '<input type="hidden" name="add_webcal" value="on">';
-                }
-                else
-                {
-                    print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry").'</td>';
-                    print '<td><input type="checkbox" name="add_webcal"'.(($conf->global->PHPWEBCALENDAR_SYNCRO=='always' || $conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault')?' checked':'').'></td>';
-                    print '</tr>';
-                    $nbtr++;
-                }
-            }
+        	print '<input type="hidden" name="add_webcal" value="on">';
         }
+        else
+        {
+          print '<td><input type="checkbox" name="add_webcal"'.(($conf->global->PHPWEBCALENDAR_SYNCRO=='always' || $conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault')?' checked':'').'></td>';
+          print '</tr>';
+          $nbtr++;
+         }
+        }
+      }
+    }
+    
+  if ($conf->phenix->enabled)
+  {
+  	if ($conf->global->PHPPHENIX_SYNCRO != 'never')
+    {
+    	$langs->load("other");
+    	
+    	print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry","Phenix").'</td>';
+      
+      if (! $user->phenix_login)
+      {
+        print '<td><input type="checkbox" disabled name="add_phenix">';
+        print ' '.$langs->transnoentities("ErrorPhenixLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+        print '</td>';
+        print '</tr>';
+        $nbtr++;
+      }
+      else
+      {
+      	if ($conf->global->PHPPHENIX_SYNCRO == 'always')
+        {
+        	print '<input type="hidden" name="add_phenix" value="on">';
+        }
+        else
+        {
+          print '<td><input type="checkbox" name="add_phenix"'.(($conf->global->PHPPHENIX_SYNCRO=='always' || $conf->global->PHPPHENIX_SYNCRO=='yesbydefault')?' checked':'').'></td>';
+          print '</tr>';
+          $nbtr++;
+         }
+        }
+      }
     }
 
     return $nbtr;
