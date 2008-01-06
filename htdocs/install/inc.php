@@ -129,14 +129,21 @@ function stripslashes_deep($value)
 {
    return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
 }
-if (get_magic_quotes_gpc())
+if(eregi('PHP/6', $_SERVER['SERVER_SOFTWARE']))
 {
-   $_GET    = array_map('stripslashes_deep', $_GET);
-   $_POST  = array_map('stripslashes_deep', $_POST);
-   $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
-   $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+	// magic_quotes_* plus prise en compte dans PHP6
 }
-@set_magic_quotes_runtime(0);
+else
+{
+	if (get_magic_quotes_gpc())
+	{
+		$_GET    = array_map('stripslashes_deep', $_GET);
+		$_POST  = array_map('stripslashes_deep', $_POST);
+		$_COOKIE = array_map('stripslashes_deep', $_COOKIE);
+		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+	}
+	@set_magic_quotes_runtime(0);
+}
 
 
 // Defini objet langs
