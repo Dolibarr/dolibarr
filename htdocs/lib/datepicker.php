@@ -49,7 +49,7 @@ if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
 else
 {
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
-	print '<html><head></head><body>'."\n";
+	print '<html><head><title>Calendar</title></head><body>'."\n";
 }
 
 
@@ -88,7 +88,7 @@ function xyzToUnixTimestamp($mysqldate){
 	$year=substr($mysqldate,0,4);
 	$month=substr($mysqldate,4,2);
 	$day=substr($mysqldate,6,2);
-	$unixtimestamp=dolibarr_mktime(0,0,0,$month,$day,$year);
+	$unixtimestamp=dolibarr_mktime(12,0,0,$month,$day,$year);
 	return $unixtimestamp;
 }
 
@@ -96,7 +96,7 @@ function displayBox($selectedDate,$month,$year){
 	global $dolibarr_main_url_root,$langs,$conf;
 	
 	//print "$selectedDate,$month,$year";
-	$thedate=dolibarr_mktime(0,0,0,$month,1,$year);
+	$thedate=dolibarr_mktime(12,0,0,$month,1,$year);
 	//print "thedate=$thedate";
 	$today=mktime();
 	$todayArray=dolibarr_getdate($today);
@@ -120,7 +120,7 @@ function displayBox($selectedDate,$month,$year){
 		echo $langs->trans($selectMonth).", ".$selectYear;
 		?>
 		</td>
-		<td class="dpHead"><button type="buttton" class="dpInvisibleButtons" id="DPCancel" onClick="closeDPBox();">X</button></td>
+		<td class="dpHead"><button type="button" class="dpInvisibleButtons" id="DPCancel" onClick="closeDPBox();">X</button></td>
 	</tr>
 	<tr>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year-1?>','<?php echo $xyz ?>')">&lt;&lt;</td>
@@ -130,30 +130,41 @@ function displayBox($selectedDate,$month,$year){
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>')">&gt;&gt;</td>
 	</tr>
 	<tr  class="dpDayNames">
-		<td width="14.286%"><?php echo $langs->trans("ShortSunday") ?></td>
-		<td width="14.286%"><?php echo $langs->trans("ShortMonday") ?></td>
-		<td width="14.286%"><?php echo $langs->trans("ShortTuesday") ?></td>
-		<td width="14.286%"><?php echo $langs->trans("ShortWednesday") ?></td>
-		<td width="14.286%"><?php echo $langs->trans("ShortThursday") ?></td>
-		<td width="14.286%"><?php echo $langs->trans("ShortFriday") ?></td>
-		<td width="14.286%"><?php echo $langs->trans("ShortSaturday") ?></td>
+		<td width="14%"><?php echo $langs->trans("ShortSunday") ?></td>
+		<td width="14%"><?php echo $langs->trans("ShortMonday") ?></td>
+		<td width="15%"><?php echo $langs->trans("ShortTuesday") ?></td>
+		<td width="14%"><?php echo $langs->trans("ShortWednesday") ?></td>
+		<td width="15%"><?php echo $langs->trans("ShortThursday") ?></td>
+		<td width="14%"><?php echo $langs->trans("ShortFriday") ?></td>
+		<td width="14%"><?php echo $langs->trans("ShortSaturday") ?></td>
 	</tr>
-	<?php 
+<?php 
 		//print "x ".$thedate." y";
 		$firstdate=dolibarr_getdate($thedate);
 		$mydate=$firstdate;
 
 		// Loop on each day of month
-		$day=1;
-		while($firstdate["month"]==$mydate["month"])
+		$stoploop=0; $day=1; $cols=0;
+		while (! $stoploop)
 		{
 			//print_r($mydate);
-			if($mydate["wday"]==0) echo "<TR class=\"dpWeek\">";
-			if($firstdate==$mydate){
-				// firstdate, so we may have to put in blanks
+			if($firstdate==$mydate)	// At first run
+			{
 				echo "<TR class=\"dpWeek\">";
-				for($i=0;$i<$mydate["wday"];$i++)
+				$cols=0;
+				for($i=0;$i< $mydate["wday"];$i++) 
+				{
 					echo "<TD>&nbsp;</TD>";
+					$cols++;
+				}
+			}
+			else
+			{
+				if ($mydate["wday"]==0)
+				{
+					echo "<TR class=\"dpWeek\">";
+					$cols=0;
+				}
 			}
 			
 			$dayclass="dpReg";
@@ -165,18 +176,28 @@ function displayBox($selectedDate,$month,$year){
 			echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".dolibarr_date("n",$thedate).",".$mydate["mday"].",tradMonths)\"";
 			echo " onClick=\"dpClickDay(".$mydate["year"].",".dolibarr_date("n",$thedate).",".$mydate["mday"].",'".$conf->format_date_short_java."')\"";
 			echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
+			$cols++;
 			
-			if($mydate["wday"]==6) echo "</tr>";
+			if ($mydate["wday"]==6) echo "</TR>\n";
+			
 			//$thedate=strtotime("tomorrow",$thedate);
 			$day++;
-			$thedate=dolibarr_mktime(0,0,0,$month,$day,$year);
-			$mydate=dolibarr_getdate($thedate);
+			$thedate=dolibarr_mktime(12,0,0,$month,$day,$year);
+			if ($thedate == '')
+			{
+				$stoploop=1;
+			}
+			else
+			{
+				$mydate=dolibarr_getdate($thedate);
+				if ($firstdate["month"] != $mydate["month"]) $stoploop=1;
+			}
 		}
 		
-		if($mydate["wday"]!=0){
-			for($i=6;$i>=$mydate["wday"];$i--)
-				echo "<TD>&nbsp;</TD>";
-			echo "</TR>";
+		if ($cols < 7)
+		{
+			for($i=6; $i>=$cols; $i--) echo "<TD>&nbsp;</TD>";
+			echo "</TR>\n";
 		}
 	?>
 	<tr><td id="dpExp" class="dpExplanation" colspan="7"><?php 

@@ -667,19 +667,25 @@ function dolibarr_getdate($timestamp,$fast=false)
 		\param		month			Mois
 		\param		day				Jour
 		\param		year			Année
+		\param		gm				Time gm
+		\param		check			No check on parameters (Can use day 32, etc...)
 		\return		timestamp		Date en timestamp, '' if error
 		\remarks	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows  
 */
-function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0)
+function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 {
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
+
 	// Check parameters
-	if (! $month || ! $day)  return '';
-	if ($day   > 31) return '';
-	if ($month > 12) return '';
-	if ($min  < 0 || $min  > 60) return '';
-	if ($hour < 0 || $hour > 24) return '';
-	if ($min  < 0 || $min  > 60) return '';
+	if ($check)
+	{
+		if (! $month || ! $day)  return '';
+		if ($day   > 31) return '';
+		if ($month > 12) return '';
+		if ($min  < 0 || $min  > 60) return '';
+		if ($hour < 0 || $hour > 24) return '';
+		if ($min  < 0 || $min  > 60) return '';
+	}
 	
 	$usealternatemethod=false;
 	if ($year <= 1970) $usealternatemethod=true;		// <= 1970
