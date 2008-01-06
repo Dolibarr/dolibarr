@@ -122,29 +122,26 @@ else if (@is_writable("/")) define('SYSLOG_FILE','/dolibarr_install.log');
 define('SYSLOG_FILE_NO_ERROR',1);
 
 
-// Forcage du parametrage PHP magic_quots_gpc (Sinon il faudrait a chaque POST, conditionner
+// Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
+// (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
 // En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
 function stripslashes_deep($value)
 {
    return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
 }
-if(eregi('PHP/6', $_SERVER['SERVER_SOFTWARE']))
-{
-	// magic_quotes_* plus prise en compte dans PHP6
-}
-else
+//if (! eregi('PHP/6', $_SERVER['SERVER_SOFTWARE']))
+if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en compte dans PHP6
 {
 	if (get_magic_quotes_gpc())
 	{
-		$_GET    = array_map('stripslashes_deep', $_GET);
-		$_POST  = array_map('stripslashes_deep', $_POST);
-		$_COOKIE = array_map('stripslashes_deep', $_COOKIE);
+		$_GET     = array_map('stripslashes_deep', $_GET);
+		$_POST    = array_map('stripslashes_deep', $_POST);
+		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
 		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 	}
 	@set_magic_quotes_runtime(0);
 }
-
 
 // Defini objet langs
 $langs = new Translate('../langs',$conf);

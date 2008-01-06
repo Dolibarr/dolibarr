@@ -33,17 +33,21 @@
 // (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
 // En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
-@set_magic_quotes_runtime(0);
 function stripslashes_deep($value)
 {
    return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
 }
-if (get_magic_quotes_gpc())
+//if (! eregi('PHP/6', $_SERVER['SERVER_SOFTWARE']))
+if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en compte dans PHP6
 {
-   $_GET     = array_map('stripslashes_deep', $_GET);
-   $_POST    = array_map('stripslashes_deep', $_POST);
-   $_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
-   $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+	if (get_magic_quotes_gpc())
+	{
+	   $_GET     = array_map('stripslashes_deep', $_GET);
+	   $_POST    = array_map('stripslashes_deep', $_POST);
+	   $_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
+	   $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+	}
+	@set_magic_quotes_runtime(0);
 }
 
 // Filtre les GET et POST pour supprimer les SQL INJECTION

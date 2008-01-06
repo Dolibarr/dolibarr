@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Océbo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
