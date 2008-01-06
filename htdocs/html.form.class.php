@@ -140,7 +140,7 @@ class Form
 		}
 		$s.='</tr></table>';
 	}
-  return $s;
+	return $s;
  }
 
 	/**

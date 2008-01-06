@@ -1068,37 +1068,47 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '')
 {
-  if ( $user->rights->produit->creer)
-    {
-      if ($product->no_button_edit <> 1)
-	print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+	if ( $user->rights->produit->creer)
+	{
+		if ($product->no_button_edit <> 1)
+		print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
 
-      if ($product->no_button_copy <> 1)
-	print '<a class="butAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
-    }
+		if ($product->no_button_copy <> 1)
+		print '<a class="butAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
+	}
 
-  /*
-    if ($product->isproduct() && $user->rights->commande->creer)
-    {
-    $langs->load('orders');
-    print '<a class="butAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
-    print $langs->trans("CreateCustomerOrder").'</a>';
-    }
+	/*
+	if ($product->isproduct() && $user->rights->commande->creer)
+	{
+	$langs->load('orders');
+	print '<a class="butAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+	print $langs->trans("CreateCustomerOrder").'</a>';
+	}
 
-    if ($product->isproduct() && $user->rights->fournisseur->commande->creer)
-    {
-    $langs->load('orders');
-    print '<a class="butAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
-    print $langs->trans("CreateSupplierOrder").'</a>';
-    }
-  */
+	if ($product->isproduct() && $user->rights->fournisseur->commande->creer)
+	{
+	$langs->load('orders');
+	print '<a class="butAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+	print $langs->trans("CreateSupplierOrder").'</a>';
+	}
+	*/
 
-  $product_is_used = $product->verif_prod_use($product->id);
-  if ($user->rights->produit->supprimer && ! $product_is_used && $product->no_button_delete <> 1)
-    {
-      print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
-    }
-
+	$product_is_used = $product->verif_prod_use($product->id);
+	if ($user->rights->produit->supprimer)
+	{
+		if (! $product_is_used && $product->no_button_delete <> 1)
+		{
+			print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
+		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a>';
+		}
+	}
+	else
+	{
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a>';
+	}
 }
 
 print "\n</div><br>\n";

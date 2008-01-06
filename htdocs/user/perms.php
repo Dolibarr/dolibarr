@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -76,15 +75,15 @@ if ($_GET["action"] == 'delrights' && $caneditperms)
 
 
 
-
-llxHeader('',$langs->trans("Permissions"));
-
-
 /* ************************************************************************** */
 /*                                                                            */
 /* Visu et edition                                                            */
 /*                                                                            */
 /* ************************************************************************** */
+
+llxHeader('',$langs->trans("Permissions"));
+
+$form=new Form($db);
 
 $fuser = new User($db, $_GET["id"]);
 $fuser->fetch();
@@ -294,7 +293,10 @@ if ($result)
             // Permission own by group
             if ($caneditperms) 
             {
-                print '<td align="center">'.$langs->trans("Group").'</td>';
+                print '<td align="center">';
+				print $form->textwithtooltip($langs->trans("Group"),$langs->trans("PermissionInheritedFromAGroup"));
+				//print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id.'" title="'.$langs->trans("PermissionInheritedFromAGroup").'">';
+				print '</td>';
             }
             print '<td align="center" nowrap>';
             print img_tick();
