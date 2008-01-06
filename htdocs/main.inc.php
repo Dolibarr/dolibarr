@@ -319,7 +319,7 @@ if (! empty($_GET["theme"]))
 // Si feuille de style en php existe
 if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 
-if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAVASCRIPT)
+if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
 {
     $conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
 }
