@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,8 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 llxHeader();
 
+$html=new Form($db);
+
 print_fiche_titre($langs->trans("GUISetup"),'','setup');
 
 print $langs->trans("DisplayDesc")."<br>\n";
@@ -83,8 +85,6 @@ print "<br>\n";
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
-	$html=new Form($db);
-
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="action" value="update">';
 
@@ -150,8 +150,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
     $liste_popup_calendar=array(
 		'0'=>$langs->trans("No"),
-		'eldy'=>$langs->trans("Yes").' (style eldy)',
-		'andre'=>$langs->trans("Yes").' (style andre)');
+		'eldy'=>$langs->trans("Yes")
+		//'eldy'=>$langs->trans("Yes").' (style eldy)',
+		//'andre'=>$langs->trans("Yes").' (style andre)'
+		);
     $html->select_array('main_popup_calendar',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptNotDisabled").')';
     print '</td>';
@@ -238,25 +240,35 @@ else
     $var=true;
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td><td>&nbsp;</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>' . ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$conf->global->MAIN_LANG_DEFAULT) . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>' . ($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$conf->global->MAIN_LANG_DEFAULT) . '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>' . yn($conf->global->MAIN_MULTILANGS) . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>' . yn($conf->global->MAIN_MULTILANGS) . '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td>' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
 
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';   
-    print yn($conf->global->MAIN_SHOW_BUGTRACK_LINK)."</td></tr>";
+    print yn($conf->global->MAIN_SHOW_BUGTRACK_LINK)."</td>";
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
 
     // Disable javascript
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';   
-    print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td></tr>";
+    print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td>";
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
     
     // Confirm ajax
     if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
@@ -264,20 +276,26 @@ else
 	    $var=!$var;
 	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';   
 	    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
-	    else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td></tr>";
+	    else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td>";
+		print '<td width="20">'.$html->textwithhelp('',$langs->trans("FeatureDevelopment")).'</td>';
+		print "</tr>";
 	}
 	
     // Calendrier en popup
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';   
     if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
-    else print ($conf->global->MAIN_POPUP_CALENDAR?$langs->trans("Yes").' (style '.$conf->global->MAIN_POPUP_CALENDAR.')':$langs->trans("No"));
-    print "</td></tr>";
+    else print ($conf->global->MAIN_POPUP_CALENDAR?$langs->trans("Yes"):$langs->trans("No"));
+    print "</td>";
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
 
     // Activer onglet preview
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
-    print yn(isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:1)."</td></tr>";
+    print yn(isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:1)."</td>";
+	print '<td width="20">&nbsp;</td>';
+	print "</tr>";
 
     print '</table><br>';
 
