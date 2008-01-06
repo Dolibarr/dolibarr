@@ -48,7 +48,7 @@ if (! $user->rights->produit->lire) accessforbidden();
 
 //Récupère le résultat de la recherche Ajax
 //Todo: voir pour le supprimer par la suite
-if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && $_POST['id_fourn_id'])
+if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && $_POST['id_fourn_id'])
 {
 	$_POST['id_fourn'] = $_POST['id_fourn_id'];
 }

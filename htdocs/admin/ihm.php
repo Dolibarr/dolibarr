@@ -50,7 +50,6 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_MULTILANGS",         $_POST["main_multilangs"]);
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",   $_POST["main_size_liste_limit"]);
 	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"]);
-	dolibarr_set_const($db, "MAIN_DISABLE_AJAX",       $_POST["main_disable_ajax"]);
 	dolibarr_set_const($db, "MAIN_CONFIRM_AJAX",       $_POST["main_confirm_ajax"]);
 	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["main_popup_calendar"]);
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"]);
@@ -130,15 +129,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     print $html->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
-    print '</td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
-    
-    // Désactiver ajax
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';
-    print $html->selectyesno('main_disable_ajax',isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1,1);
-    print ' ('.$langs->trans("AutomaticIfJavascriptDisabled").')';
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -267,12 +257,6 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';   
     print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td></tr>";
-    
-    // Disable ajax
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';   
-    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("Yes").' ('.$langs->trans("JavascriptDisabled").')';
-    else print yn(isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1)."</td></tr>";
     
     // Confirm ajax
     if ($conf->global->MAIN_FEATURES_LEVEL >= 2)

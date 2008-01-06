@@ -120,7 +120,7 @@ $cate_arbo = $c->get_full_arbo($_GET['type']);
 */
 
 
-if ($conf->use_javascript)
+if ($conf->use_javascript_ajax)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("CategoriesTree").'</td>';

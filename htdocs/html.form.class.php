@@ -86,7 +86,7 @@ class Form
     $htmltext=ereg_replace("'","\'",$htmltext);
     $htmltext=ereg_replace("&#039;","\'",$htmltext);
     
-    if ($conf->use_ajax && $tooltipon == 4)
+    if ($conf->use_javascript_ajax && $tooltipon == 4)
     {
     	$s = '<div id="tip'.$i.'">'."\n";
     	$s.= $text;
@@ -101,7 +101,7 @@ class Form
     }
     else
     {
-    	if ($conf->use_javascript)
+    	if ($conf->use_javascript_ajax)
     	{
 			$htmltext=eregi_replace('"',"\'",$htmltext);
     		if ($tooltipon==1 || $tooltipon==3)
@@ -378,7 +378,8 @@ class Form
 		$sql = "SELECT rowid, code, libelle, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 		$sql.= " WHERE active = 1";
-		if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
+		// \TODO A virer
+		if ($conf->use_javascript_ajax && $conf->global->CODE_DE_TEST)
 		{
 			if (is_numeric($selected))
 			{
@@ -394,7 +395,8 @@ class Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
+			// \TODO A virer
+			if ($conf->use_javascript_ajax && $conf->global->CODE_DE_TEST)
 			{
 				$langs->load("companies");
 				$obj = $this->db->fetch_object($resql);
@@ -681,7 +683,7 @@ class Form
         $sql = "SELECT s.rowid, s.nom FROM";
         $sql.= " ".MAIN_DB_PREFIX ."societe as s";
         if ($filter) $sql.= " WHERE ".$filter;
-        if ($selected && $conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
+        if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
         {
         	if ($filter)
         	{
@@ -699,7 +701,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-        	if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
+        	if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
         	{
         		$socid = 0;
         		if ($selected)
@@ -1072,7 +1074,7 @@ class Form
 		{
 			$num = $this->db->num_rows($result);
 			
-			if ($conf->use_ajax)
+			if ($conf->use_javascript_ajax)
 			{
 				if (! $num)
 				{
@@ -1227,7 +1229,7 @@ class Form
 			
 			$num = $this->db->num_rows($result);
 			
-			if ($conf->use_ajax)
+			if ($conf->use_javascript_ajax)
 			{
 				if (! $num)
 				{
@@ -2767,7 +2769,7 @@ class Form
 	        /*
 	         * Affiche date en popup
 	         */
-			if ($conf->use_javascript && $conf->use_popup_calendar)
+			if ($conf->use_javascript_ajax && $conf->use_popup_calendar)
 		    {
 				//print "e".$set_time." t ".$conf->format_date_short;
 				if ($set_time > 0)
@@ -2818,7 +2820,7 @@ class Form
 	        /*
 	         * Affiche date en select
 	         */
-	        if (! $conf->use_javascript || ! $conf->use_popup_calendar)
+	        if (! $conf->use_javascript_ajax || ! $conf->use_popup_calendar)
 	        {
 	/*          
 				if ($set_time == -1)

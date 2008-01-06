@@ -309,8 +309,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		
 		print_titre($langs->trans("NewCompany"));
 
-		//$conf->use_javascript=0;
-		if ($conf->use_javascript)
+		if ($conf->use_javascript_ajax)
 		{
 			print "<br>\n";
 			print $langs->trans("ThirdPartyType").': &nbsp; ';
@@ -414,14 +413,14 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '</textarea></td></tr>';
 
 		print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"';
-		if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="autofilltownfromzip_PopupPostalCode(cp.value,ville)"';
+		if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="autofilltownfromzip_PopupPostalCode(cp.value,ville)"';
 		print '>';
-		if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(cp.value,ville)">';
+		if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(cp.value,ville)">';
 		print '</td>';
 		print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
 		print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
-		$form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript?' onChange="autofilltownfromzip_save_refresh_create()"':'');
+		$form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="autofilltownfromzip_save_refresh_create()"':'');
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
@@ -526,7 +525,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '</td>';
 
 		// Code TVA
-		if ($conf->use_javascript)
+		if ($conf->use_javascript_ajax)
 		{
 			print "\n";
 			print '<script language="JavaScript" type="text/javascript">';
@@ -541,7 +540,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		$s ='<input type="text" class="flat" name="tva_intra_code" size="1" maxlength="2" value="'.$soc->tva_intra_code.'">';
 		$s.='<input type="text" class="flat" name="tva_intra_num" size="12" maxlength="18" value="'.$soc->tva_intra_num.'">';
 		$s.=' ';
-		if ($conf->use_javascript)
+		if ($conf->use_javascript_ajax)
 		{
 			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
 			print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
@@ -768,15 +767,15 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '</textarea></td></tr>';
 
         print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"';
-        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="autofilltownfromzip_PopupPostalCode(cp.value,ville)"';
+        if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' onChange="autofilltownfromzip_PopupPostalCode(cp.value,ville)"';
         print '>';
-        if ($conf->use_javascript && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(cp.value,ville)">';
+        if ($conf->use_javascript_ajax && $conf->global->MAIN_AUTO_FILLTOWNFROMZIP) print ' <input class="button" type="button" name="searchpostalcode" value="'.$langs->trans('FillTownFromZip').'" onclick="autofilltownfromzip_PopupPostalCode(cp.value,ville)">';
         print '</td>';
 
         print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-        $form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript?' onChange="autofilltownfromzip_save_refresh_edit()"':'');
+        $form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="autofilltownfromzip_save_refresh_edit()"':'');
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
@@ -836,7 +835,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '</td>';
 
 		// Code TVA
-		if ($conf->use_javascript)
+		if ($conf->use_javascript_ajax)
 		{
 			print "\n";
 			print '<script language="JavaScript" type="text/javascript">';
@@ -851,7 +850,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
     $s ='<input type="text" class="flat" name="tva_intra_code" size="1" maxlength="2" value="'.$soc->tva_intra_code.'">';
     $s.='<input type="text" class="flat" name="tva_intra_num" size="12" maxlength="18" value="'.$soc->tva_intra_num.'">';
 		$s.=' ';
-		if ($conf->use_javascript)
+		if ($conf->use_javascript_ajax)
 		{
 			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
 	    print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
@@ -1033,7 +1032,7 @@ else
 	print '</td>';
 
 	// VAT Code
-	if ($conf->use_javascript)
+	if ($conf->use_javascript_ajax)
 	{
 		print "\n";
 		print '<script language="JavaScript" type="text/javascript">';
@@ -1053,7 +1052,7 @@ else
 		$s.='<input type="hidden" name="tva_intra_code" size="1" maxlength="2" value="'.$code.'">';
 		$s.='<input type="hidden" name="tva_intra_num" size="12" maxlength="18" value="'.$num.'">';
 		$s.=' &nbsp; ';
-		if ($conf->use_javascript)
+		if ($conf->use_javascript_ajax)
 		{
 			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
 			print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
@@ -1181,7 +1180,7 @@ else
         if ($user->rights->societe->supprimer)
         {
 	        print '<a class="butActionDelete" ';
-	        if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+	        if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 	        {
 	        	$url = $_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action=confirm_delete&confirm=yes';
 	        	print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteCompany').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';

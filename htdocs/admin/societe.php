@@ -257,7 +257,7 @@ print "<form method=\"post\" action=\"societe.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectcompany\">";
 print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectCompany").'</td>';
-if (! $conf->use_ajax)
+if (! $conf->use_javascript_ajax)
 {
   print '<td nowrap="nowrap" align="right" colspan="2">';
   print $langs->trans("NotAvailableWhenAjaxDisabled");	

@@ -407,7 +407,7 @@ class CommonObject
 	 // On recherche les societes
 	 $sql = "SELECT s.rowid, s.nom FROM";
 	 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-	 if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
+	 if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
 	 {
 	 	$sql.= " WHERE rowid = ".$selected;
 	 }
@@ -416,7 +416,7 @@ class CommonObject
 	 $resql = $object->db->query($sql);
 	 if ($resql)
 	 {
-		 if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
+		 if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
 		 {
 		 	$langs->load("companies");
 		 	$obj = $this->db->fetch_object($resql);

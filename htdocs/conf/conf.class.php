@@ -365,17 +365,11 @@ class Conf
 		$this->use_preview_tabs=1;
 		if (isset($this->global->MAIN_USE_PREVIEW_TABS)) $this->use_preview_tabs=$this->global->MAIN_USE_PREVIEW_TABS;
 
-		// conf->use_javascript
-		$this->use_javascript=1;
-		if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) $this->use_javascript=! $this->global->MAIN_DISABLE_JAVASCRIPT;
-
-		// conf->use_ajax
-		$this->use_ajax=0; // No Ajax by default
-		if (isset($this->global->MAIN_DISABLE_AJAX)) $this->use_ajax=! $this->global->MAIN_DISABLE_AJAX;
-		// If no Javascript, Ajax is disabled.
-		if (! $this->use_javascript) $this->use_ajax=0;
-		// If no Ajax, Ajax features are disabled.
-		if (! $this->use_ajax) 
+		// conf->use_javascript_ajax
+		$this->use_javascript_ajax=1;
+		if (isset($this->global->MAIN_DISABLE_JAVASCRIPT)) $this->use_javascript_ajax=! $this->global->MAIN_DISABLE_JAVASCRIPT;
+		// If no javascript_ajax, Ajax features are disabled.
+		if (! $this->use_javascript_ajax) 
 		{
 			$this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
 			$this->global->MAIN_CONFIRM_AJAX=0;

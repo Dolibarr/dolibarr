@@ -248,7 +248,7 @@ print '<td>';
 
 $rangLast = 0;
 $idLast = -1;
-if ($conf->use_javascript)
+if ($conf->use_javascript_ajax)
 {
 	print '<script src="menu.js" type="text/javascript"></script>';
 }
@@ -260,7 +260,7 @@ function affiche($tab,$rang)
 {
 	global $rangLast, $idLast, $menu_handler;
 	
-	if ($conf->use_javascript)
+	if ($conf->use_javascript_ajax)
 	{
 		if($rang == $rangLast)
 		{

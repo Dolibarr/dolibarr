@@ -228,7 +228,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
-  $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',($conf->use_javascript?' onChange="company_save_refresh()"':''));
+  $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',($conf->use_javascript_ajax?' onChange="company_save_refresh()"':''));
   print '</td></tr>';
   
   $var=!$var;
@@ -632,7 +632,7 @@ else
     }
     
     // TVA
-	if ($conf->use_javascript)
+	if ($conf->use_javascript_ajax)
 	{
 		print "\n";
 		print '<script language="JavaScript" type="text/javascript">';
@@ -654,7 +654,7 @@ else
 		$s.='<input type="hidden" name="tva_intra_code" size="1" maxlength="2" value="'.$code.'">';
 		$s.='<input type="hidden" name="tva_intra_num" size="12" maxlength="18" value="'.$num.'">';
 		$s.=' &nbsp; ';
-		if ($conf->use_javascript)
+		if ($conf->use_javascript_ajax)
 		{
 			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
 			print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);

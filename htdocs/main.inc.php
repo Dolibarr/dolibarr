@@ -80,7 +80,7 @@ require_once("master.inc.php");
 // Chargement des includes complementaire de presentation
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
-if (! defined('NOREQUIREAJAX') && $conf->use_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');
+if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');
 
 // Init session
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;
@@ -321,7 +321,7 @@ if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 
 if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAVASCRIPT)
 {
-    $conf->use_javascript=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
+    $conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
 }
 
 // Defini gestionnaire de menu a utiliser
@@ -659,7 +659,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 		print '<link rel="stylesheet" type="text/css" media="print" href="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
 		
 		// Style sheets pour la class Window
-		if (! $disablejs && ($conf->use_javascript && $conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX))
+		if (! $disablejs && $conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 		{
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/default.css">'."\n";
 			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alphacube.css">'."\n";
@@ -678,11 +678,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 		print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
-		if (! $disablejs && ($conf->use_javascript || $conf->use_ajax))
+		if (! $disablejs && $conf->use_javascript_ajax)
 		{
 			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
 		}
-		if (! $disablejs && $conf->use_ajax)
+		if (! $disablejs && $conf->use_javascript_ajax)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
 			
@@ -976,7 +976,7 @@ function llxFooter($foot='',$limitIEbug=1)
         print "\n";
     } 
 
-    if ($conf->use_javascript)
+    if ($conf->use_javascript_ajax)
     {
         print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>';
     }

@@ -213,7 +213,7 @@ print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectproduct\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("UseSearchToSelectProduct").'</td>';
-if (! $conf->use_ajax)
+if (! $conf->use_javascript_ajax)
 {
   print '<td nowrap="nowrap" align="right" colspan="2">';
   print $langs->trans("NotAvailableWhenAjaxDisabled");	

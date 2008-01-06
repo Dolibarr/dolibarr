@@ -619,7 +619,7 @@ if (sizeof($boxarray))
 	print "</table>";
 }
 
-if ($conf->use_ajax)
+if ($conf->use_javascript_ajax)
 {
 	print "\n";
 	print '<script type="text/javascript" language="javascript">

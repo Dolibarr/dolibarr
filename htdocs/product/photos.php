@@ -233,7 +233,7 @@ if ($_GET["id"] || $_GET["ref"])
                 }
                 if ($user->rights->produit->creer)
                 {
-                	if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+                	if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
                 	{
                 		$url = $_SERVER["PHP_SELF"].'?id='.$product->id.'&file='.urlencode($pdir.$viewfilename).'&action=confirm_delete&confirm=yes';
                 		print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeletePicture').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';

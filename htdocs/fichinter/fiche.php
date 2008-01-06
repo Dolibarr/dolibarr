@@ -43,12 +43,12 @@ $langs->load("interventions");
 
 $fichinterid = isset($_GET["id"])?$_GET["id"]:'';
 
-// S�curit� d'acc�s client et commerciaux
+// Securite d'acces client et commerciaux
 $socid = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
-//R�cup�re le r�sultat de la recherche Ajax
+//Recupere le resultat de la recherche Ajax
 //Todo: voir pour le supprimer par la suite
-if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && $_POST['socid_id'])
+if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && $_POST['socid_id'])
 {
 	$_POST['socid'] = $_POST['socid_id'];
 }
@@ -695,7 +695,7 @@ elseif ($_GET["id"] > 0)
 					print '<td align="center">';
 					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 					{
-						if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+						if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 						{
 							$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&ligne='.$objp->rowid.'&action=confirm_deleteline&confirm=yes';
 							print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteInterventionLine').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'deleteline'.$i.'\')">';
@@ -861,7 +861,7 @@ elseif ($_GET["id"] > 0)
 		if ($fichinter->statut == 0 && $user->rights->ficheinter->creer)
 		{
 			print '<a class="butAction" ';
-			if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 			{
 				$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_validate&confirm=yes';
 				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmValidateIntervention').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
@@ -877,7 +877,7 @@ elseif ($_GET["id"] > 0)
 		if ($fichinter->statut == 0 && $user->rights->ficheinter->supprimer)
 		{
 			print '<a class="butActionDelete" ';
-			if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 			{
 				$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_delete&confirm=yes';
 				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans("ConfirmDeleteIntervention").'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';

@@ -1425,7 +1425,7 @@ else
 							print '<td align="center">';
 							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 							{
-								if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+								if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 								{
 									$url = $_SERVER["PHP_SELF"].'?id='.$id.'&lineid='.$objp->rowid.'&action=confirm_deleteline&confirm=yes';
 									print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProductLine').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'deleteline'.$i.'\')">';
@@ -1657,7 +1657,7 @@ else
 				if ($commande->statut == 0 && $commande->total_ttc > 0 && $user->rights->commande->valider)
 				{
 					print '<a class="butAction" ';
-					if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+					if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 					{
 						// on v�rifie si la commande est en num�rotation provisoire
 						$ref = substr($commande->ref, 1, 4);
@@ -1727,7 +1727,7 @@ else
 					if ($user->rights->commande->cloturer)
 					{
 						print '<a class="butAction" ';
-						if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+						if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 						{
 							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_close&confirm=yes';
 							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmCloseOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'close\')"';
@@ -1747,7 +1747,7 @@ else
 					if ($user->rights->commande->annuler && $nb_expedition == 0)
 					{
 						print '<a class="butActionDelete" ';
-						if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+						if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 						{
 							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_cancel&confirm=yes';
 							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmCancelOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'cancel\')"';
@@ -1764,7 +1764,7 @@ else
 				if ($commande->statut == 0 && $user->rights->commande->supprimer)
 				{
 					print '<a class="butActionDelete" ';
-					if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+					if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 					{
 						$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_delete&confirm=yes';
 						print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
