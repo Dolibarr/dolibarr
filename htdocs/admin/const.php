@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -83,11 +82,11 @@ print '<input type="hidden" name="action" value="add">';
 
 print "<tr $bc[$var] class=value><td><input type=\"text\" class=\"flat\" size=\"24\" name=\"constname\" value=\"\"></td>\n";
 print '<td>';
-print '<input type="text" class="flat" size="32" name="constvalue" value="">';
+print '<input type="text" class="flat" size="24" name="constvalue" value="">';
 print '</td><td>';
 $form->select_array('consttype',array('yesno','texte','chaine'),2);
 print '</td><td>';
-print '<input type="text" class="flat" size="24" name="constnote" value="">';
+print '<input type="text" class="flat" size="32" name="constnote" value="">';
 print '</td><td align="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button"><br>';
 print "</td>\n";
@@ -139,14 +138,14 @@ if ($result)
 	}
       else
 	{
-	  print '<input type="text" class="flat" size="32" name="constvalue" value="'.stripslashes($obj->value).'">';
+	  print '<input type="text" class="flat" size="24" name="constvalue" value="'.stripslashes($obj->value).'">';
 	  print '</td><td>';
 	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
 	}
       print '</td><td>';
 
       // Note
-      print '<input type="text" class="flat" size="24" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+      print '<input type="text" class="flat" size="32" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       print '</td><td align="center">';
       print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
       print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';

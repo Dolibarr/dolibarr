@@ -93,49 +93,68 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=true;
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 
     // Langue par defaut
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
     $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default',1);
-    print '</td></tr>';
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 
 
     // Taille max des listes
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
     print $html->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
-    print '</td></tr>';
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
     print $html->selectyesno('main_show_bugtrack_link',$conf->global->MAIN_SHOW_BUGTRACK_LINK,1);
-    print '</td></tr>';
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 
     // Désactiver javascript
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     print $html->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
-    print '</td></tr>';
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
     
     // Désactiver ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';
     print $html->selectyesno('main_disable_ajax',isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1,1);
     print ' ('.$langs->trans("AutomaticIfJavascriptDisabled").')';
-    print '</td></tr>';
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
     
     // Confirmation par popup ajax
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
-    print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
-    print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
-    print '</td></tr>';
-    
+    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+	{
+		$var=!$var;
+	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
+	    print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
+	    print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
+	    print '</td>';
+		print '<td width="20">'.$html->textwithhelp('',$langs->trans("FeatureDevelopment")).'</td>';
+		print '</tr>';
+	}
+	
     // Désactiver le calendrier popup
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
@@ -145,13 +164,17 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		'andre'=>$langs->trans("Yes").' (style andre)');
     $html->select_array('main_popup_calendar',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptNotDisabled").')';
-    print '</td></tr>';
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
 
     // Activer onglet preview
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
     print $html->selectyesno('main_use_preview_tabs',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:1,1);
-    print '</td></tr>';
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
     
     print '</table><br>';
 
@@ -252,11 +275,14 @@ else
     else print yn(isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1)."</td></tr>";
     
     // Confirm ajax
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';   
-    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
-    else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td></tr>";
-    
+    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+	{
+	    $var=!$var;
+	    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';   
+	    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
+	    else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td></tr>";
+	}
+	
     // Calendrier en popup
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';   

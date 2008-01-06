@@ -62,6 +62,7 @@ ClosedBy=Closed by %s
 FileWasRemoved=File was deleted
 FeatureNotYetAvailable=Feature not yet available in this version
 FeatureExperimental=Experimental feature. Not stable in this version
+FeatureDevelopment=Development feature. Not stable in this version
 FeaturesSupported=Features supported
 Width=Width
 Height=Height
