@@ -163,10 +163,10 @@ if ($_GET["id"] > 0)
 	// Date de livraison
 	print '<tr><td height="10">';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('DateDelivery');
+	print $langs->trans('DeliveryDate');
 	print '</td>';
 	
-	if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDateDelivery'),1).'</a></td>';
+	if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="2">';
 	if ($_GET['action'] == 'editdate_livraison')

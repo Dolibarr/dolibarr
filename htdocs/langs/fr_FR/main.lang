@@ -402,6 +402,10 @@ NotEnoughPermissions=Vous n'avez pas les permissions pour cette action
 SessionName=Nom session
 Method=Méthode
 Receive=Réceptionner
+PartialWoman=Partielle
+PartialMan=Partiel
+TotalWoman=Totale
+TotalMan=Total
 # Week day
 Monday=Lundi
 Tuesday=Mardi

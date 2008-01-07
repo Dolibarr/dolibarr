@@ -156,7 +156,7 @@ if ($conf->expedition->enabled)
 {
 	if ($conf->global->PROPALE_ADD_SHIPPING_DATE)
 	{
-		print '<tr><td>'.$langs->trans("DateDelivery").'</td>';
+		print '<tr><td>'.$langs->trans("DeliveryDate").'</td>';
 		print '<td colspan="2">';
 		if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "")
 		{

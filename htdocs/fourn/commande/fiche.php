@@ -1004,20 +1004,20 @@ else
 	      print '<input type="hidden"	name="action" value="livraison">';
 	      print '<table class="border" width="100%">';
 	      print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
-	      print '<tr><td>Date	de livraison</td><td>';
+	      print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
 	      print $form->select_date('','','','','',"commande");
 	      print "</td></tr>\n";
 
-	      print "<tr><td>Livraison</td><td>\n";
+	      print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
 	      $liv = array();
-	      $liv['par']	= "Partielle";
-	      $liv['tot']	= "Totale";
+	      $liv['par']	= $langs->trans("PartialWoman");
+	      $liv['tot']	= $langs->trans("TotalWoman");
 	
 	      print $form->select_array("type",$liv);
 	
 	
 	      print '</td></tr>';
-	      print '<tr><td>Commentaire</td><td><input size="30"	type="text"	name="commentaire"></td></tr>';
+	      print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30"	type="text"	name="commentaire"></td></tr>';
 	      print '<tr><td align="center" colspan="2"><input type="submit" class="button" name="'.$langs->trans("Activate").'"></td></tr>';
 	      print "</table>\n";
 	      print "</form>\n";

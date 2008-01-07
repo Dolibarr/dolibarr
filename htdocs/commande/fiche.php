@@ -799,7 +799,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '</td></tr>';
 			
 			// Date de livraison
-			print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
+			print "<tr><td>".$langs->trans("DeliveryDate")."</td><td>";
 			if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
 			{
 				$tmpdte = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
@@ -1154,10 +1154,10 @@ else
 			{
 				print '<tr><td height="10">';
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
-				print $langs->trans('DateDelivery');
+				print $langs->trans('DeliveryDate');
 				print '</td>';
 
-				if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDateDelivery'),1).'</a></td>';
+				if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 				print '</tr></table>';
 				print '</td><td colspan="2">';
 				if ($_GET['action'] == 'editdate_livraison')

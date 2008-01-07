@@ -6,3 +6,4 @@ DeliveryOrder=Delivery order
 DeliveryOrders=Delivery orders
 DeliveryDate=Delivery date
 CreateDeliveryOrder=Generate delivery order
+SetDeliveryDate=Set shipping date

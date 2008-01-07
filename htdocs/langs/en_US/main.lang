@@ -401,6 +401,10 @@ NotEnoughPermissions=You don't have permission for this action
 SessionName=Session name
 Method=Method
 Receive=Receive
+PartialWoman=Partial
+PartialMan=Partial
+TotalWoman=Total
+TotalMan=Total
 # Week day
 Monday=Monday
 Tuesday=Tuesday

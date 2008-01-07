@@ -6,3 +6,4 @@ DeliveryOrder=Commande livraison
 DeliveryOrders=Commandes livraison
 DeliveryDate=Date livraison
 CreateDeliveryOrder=Générer une commande de livraison
+SetDateLivraison=Configurer la date de livraison

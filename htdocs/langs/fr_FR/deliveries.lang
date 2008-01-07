@@ -6,4 +6,5 @@ DeliveryOrder=Bon de livraison
 DeliveryOrders=Bons de livraison
 DeliveryDate=Date de livraison
 CreateDeliveryOrder=Générer bon de livraison
-QtyDelivered=Qté livrée
+QtyDelivered=Qté livrée 
+SetDeliveryDate=Définir la date de livraison
