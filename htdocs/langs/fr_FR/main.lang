@@ -400,6 +400,8 @@ MoveBox=Déplacer la boite %s
 Offered=Offert
 NotEnoughPermissions=Vous n'avez pas les permissions pour cette action
 SessionName=Nom session
+Method=Méthode
+Receive=Réceptionner
 # Week day
 Monday=Lundi
 Tuesday=Mardi

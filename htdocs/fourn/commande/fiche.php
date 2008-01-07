@@ -48,7 +48,7 @@ if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
 $comclientid = isset($_GET["comid"])?$_GET["comid"]:'';
 
-// S�curit�	acc�s client
+// Securite	acces client
 $socid=0;
 if ($user->societe_id >	0)
 {
@@ -56,7 +56,7 @@ if ($user->societe_id >	0)
   $socid = $user->societe_id;
 }
 
-// R�cup�ration	de l'id	de projet
+// Recuperation	de l'id	de projet
 $projetid =	0;
 if ($_GET["projetid"])
 {
@@ -159,7 +159,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 }
 
 /*
- *	Mise � jour	d'une ligne	dans la	commande
+ *	Mise a jour	d'une ligne	dans la	commande
  */
 if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
 {
@@ -189,12 +189,12 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
       exit;
     }
 
-  $_GET['id']=$_POST['id'];	// Pour	r�affichage	de la fiche	en cours d'�dition
+  $_GET['id']=$_POST['id'];	// Pour	reaffichage	de la fiche	en cours d'edition
 }
 
 if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['cancel'] ==	$langs->trans('Cancel'))
 {
-  Header('Location: fiche.php?id='.$_POST['id']);	  // Pour r�affichage de la	fiche en cours d'�dition
+  Header('Location: fiche.php?id='.$_POST['id']);	  // Pour reaffichage de la	fiche en cours d'edition
   exit;
 }
 
@@ -335,10 +335,10 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
 {
   /*
    * Generation de la	commande
-   * d�finit dans	/includes/modules/commande/modules_commande.php
+   * definit dans	/includes/modules/commande/modules_commande.php
    */
 
-  // Sauvegarde le dernier mod�le	choisi pour	g�n�rer	un document
+  // Sauvegarde le dernier module	choisi pour	generer	un document
   $commande =	new	CommandeFournisseur($db, 0, $_REQUEST['id']);
   $commande->fetch($_REQUEST['id']);
   if ($_REQUEST['model'])
@@ -380,7 +380,7 @@ if ($action=='remove_file')
 
 
 /*
- * Cr��	une	commande
+ * Cree	une	commande
  */
 if ($_GET["action"]	== 'create')
 {
@@ -482,7 +482,7 @@ else
 	   */
 	  if ($_GET['action']	== 'valid')
 	    {
-	      // on v�rifie si la	commande est en num�rotation provisoire
+	      // on verifie si la	commande est en numerotation provisoire
 	      $ref = substr($commande->ref, 1, 4);
 	      if ($ref ==	'PROV')
 		{
@@ -511,7 +511,7 @@ else
 	   */
 	  if ($_GET['action']	== 'approve')
 	    {
-	      $html->form_confirm("fiche.php?id=$commande->id","Approuver	la commande","Etes-vous	s�r	de vouloir approuver cette commande	?","confirm_approve");
+	      $html->form_confirm("fiche.php?id=$commande->id",$langs->trans("ApproveThisOrder"),$langs->trans("ConfirmApproveThisOrder"),"confirm_approve");
 	      print '<br />';
 	    }
 	  /*
@@ -520,7 +520,7 @@ else
 	   */
 	  if ($_GET['action']	== 'refuse')
 	    {
-	      $html->form_confirm("fiche.php?id=$commande->id","Refuser la commande","Etes-vous s�r de vouloir refuser cette commande	?","confirm_refuse");
+	      $html->form_confirm("fiche.php?id=$commande->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder"),"confirm_refuse");
 	      print '<br />';
 	    }
 	  /*
@@ -528,7 +528,7 @@ else
 	   */
 	  if ($_GET['action']	== 'cancel')
 	    {
-	      $html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),"Etes-vous	s�r	de vouloir annuler cette commande ?","confirm_cancel");
+	      $html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder"),"confirm_cancel");
 	      print '<br />';
 	    }
 	
@@ -590,7 +590,7 @@ else
 	      print '</td><td	width="50%"	colspan="3">';
 	      if ($commande->methode_commande)
 		{
-		  print "M�thode : " .$commande->methode_commande;
+		  print $langs->trans("Method")." : " .$commande->methode_commande;
 		}
 	      print "</td></tr>";
 	    }
@@ -734,7 +734,7 @@ else
 						print ' - '.nl2br($objp->product);
 						print '<br>';
 					}
-					// �diteur wysiwyg
+					// editeur wysiwyg
 					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 					{
 						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -782,7 +782,7 @@ else
 			  print '<td colspan="4">&nbsp;</td>';
 	      print '</tr>';
 	      
-	      // Ajout produit produits/services personnalis�s
+	      // Ajout produit produits/services personnalises
 	      print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
 	      print '<input type="hidden"	name="action" value="addligne">';
 	      print '<input type="hidden"	name="id" value="'.$_REQUEST["id"].'">';
@@ -790,7 +790,7 @@ else
 	      $var=true;
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				// �diteur wysiwyg
+				// editeur wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -816,7 +816,7 @@ else
 
 				print '</form>';
 				
-				// Ajout de produits/services pr�d�finis
+				// Ajout de produits/services predefinis
 				if ($conf->produit->enabled)
 				{
 					print '<tr class="liste_titre">';
@@ -846,7 +846,7 @@ else
 				
 				  if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 
-			  	// �diteur wysiwyg
+			  	// editeur wysiwyg
 			  	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 			  	{
 			  		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -925,7 +925,7 @@ else
 	  print '<a name="builddoc"></a>'; // ancre
 	
 	  /*
-	   * Documents	g�n�r�s
+	   * Documents	generes
 	   *
 	   */
 	  $comfournref = sanitize_string($commande->ref);
@@ -995,7 +995,7 @@ else
 	  if ( $user->rights->fournisseur->commande->receptionner	&& ($commande->statut == 3 ||$commande->statut == 4	))
 	    {
 	      /**
-	       * R�ceptionner
+	       * Receptionner
 	       */
 	      $form =	new	Form($db);
 
@@ -1003,7 +1003,7 @@ else
 	      print '<form action="fiche.php?id='.$commande->id.'" method="post">';
 	      print '<input type="hidden"	name="action" value="livraison">';
 	      print '<table class="border" width="100%">';
-	      print '<tr class="liste_titre"><td colspan="2">R�ceptionner</td></tr>';
+	      print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 	      print '<tr><td>Date	de livraison</td><td>';
 	      print $form->select_date('','','','','',"commande");
 	      print "</td></tr>\n";
@@ -1026,7 +1026,7 @@ else
 	}
       else
 	{
-	  // Commande	non	trouv�e
+	  // Commande	non	trouvee
 	  dolibarr_print_error($db);
 	}
     }

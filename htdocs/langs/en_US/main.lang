@@ -399,6 +399,8 @@ MoveBox=Move box %s
 Offered=Offered
 NotEnoughPermissions=You don't have permission for this action
 SessionName=Session name
+Method=Method
+Receive=Receive
 # Week day
 Monday=Monday
 Tuesday=Tuesday
