@@ -17,3 +17,5 @@ update llx_const set value='' where name='MAIN_FORCE_SETLOCALE_LC_ALL'      and 
 update llx_const set value='' where name='MAIN_FORCE_SETLOCALE_LC_MONETARY' and value='MAIN_FORCE_SETLOCALE_LC_MONETARY';
 update llx_const set value='' where name='MAIN_FORCE_SETLOCALE_LC_NUMERIC'  and value='MAIN_FORCE_SETLOCALE_LC_NUMERIC';
 update llx_const set value='' where name='MAIN_FORCE_SETLOCALE_LC_TIME'     and value='MAIN_FORCE_SETLOCALE_LC_TIME';
+
+alter table llx_document_model modify type varchar(20) NOT NULL;
