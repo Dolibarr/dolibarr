@@ -30,6 +30,7 @@ require("./pre.inc.php");
 $langs->load("companies");
 $langs->load("products");
 $langs->load("admin");
+$langs->load("other");
 
 if (!$user->admin)
   accessforbidden();
@@ -38,7 +39,7 @@ if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
 $dirtheme = "../theme";
 
-// Liste des zone de recherche permanantes supportées
+// Liste des zone de recherche permanantes supportï¿½es
 $searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
@@ -118,14 +119,16 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
+    /*
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
     print $html->selectyesno('main_show_bugtrack_link',$conf->global->MAIN_SHOW_BUGTRACK_LINK,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
+	*/
 
-    // Désactiver javascript
+    // Desactivation javascript et ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     print $html->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
@@ -145,7 +148,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '</tr>';
 	}
 	
-    // Désactiver le calendrier popup
+    // Desactiver le calendrier popup
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
     $liste_popup_calendar=array(
@@ -176,7 +179,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<br>';
 
 
-    // Liste des zone de recherche permanantes supportées
+    // Liste des zone de recherche permanantes supportï¿½es
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
     $var=True;
@@ -257,13 +260,15 @@ else
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 
-    $var=!$var;
+    /*
+	$var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';   
     print yn($conf->global->MAIN_SHOW_BUGTRACK_LINK)."</td>";
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
+	*/
 
-    // Disable javascript
+    // Disable javascript/ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';   
     print yn($conf->global->MAIN_DISABLE_JAVASCRIPT)."</td>";
@@ -305,7 +310,7 @@ else
     print '<br>';
 
 
-    // Liste des zone de recherche permanantes supportées
+    // Liste des zone de recherche permanantes supportï¿½es
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
     $var=true;
