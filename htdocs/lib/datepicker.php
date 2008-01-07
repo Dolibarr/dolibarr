@@ -204,12 +204,14 @@ function displayBox($selectedDate,$month,$year){
 		if($selDate)
 		{
 			$tempDate=dolibarr_getdate($selDate);
-			print $langs->trans($tempDate["month"])." ";
+			print $langs->trans($selectMonth)." ";
 			print sprintf("%02s",$tempDate["mday"]);
-			print ", ".$tempDate["year"];
+			print ", ".$selectYear;
 		}
 		else
+		{
 		    print "Click a Date";
+		}
 	?></td></tr>	
 </table>
 <?php
