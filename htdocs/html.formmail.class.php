@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -138,7 +137,32 @@ class FormMail
 			{
 				print '<input type="hidden" name="fromname" value="'.$this->fromname.'">';
 				print '<input type="hidden" name="frommail" value="'.$this->frommail.'">';
-				print "<tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>".$this->fromname.($this->frommail?(" &lt;".$this->frommail."&gt;"):"")."</td></tr>\n";
+				print "<tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>";
+				if ($this->fromtype == 'user')
+				{
+					$langs->load("users");
+					$fuser=new User($this->db);
+					$fuser->id=$this->fromid;
+					$fuser->fetch();
+					print $fuser->getNomUrl(1);
+				}
+				else 
+				{
+					print $this->fromname;
+				}
+				if ($this->frommail)
+				{
+					print " &lt;".$this->frommail."&gt;";
+				}
+				else
+				{
+					if ($this->fromtype)
+					{
+						$langs->load("errors");
+						print '<font class="warning"> &lt;'.$langs->trans("ErrorNoMailDefinedForThisUser").'&gt; </font>';
+					}
+				}
+				print "</td></tr>\n";
 				print "</td></tr>\n";
 			}
 		}

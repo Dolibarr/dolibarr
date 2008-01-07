@@ -1763,9 +1763,11 @@ if ($_GET['propalid'] > 0)
 			$liste[$key]=$value;
 		}
 
-		// Cr�� l'objet formulaire mail
+		// Create form object
 		include_once('../html.formmail.class.php');
 		$formmail = new FormMail($db);
+		$formmail->fromtype = 'user';
+		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->fullname;
 		$formmail->frommail = $user->email;
 		$formmail->withfrom=1;

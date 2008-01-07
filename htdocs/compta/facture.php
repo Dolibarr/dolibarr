@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -2996,8 +2996,8 @@ else
 
 
 			/*
-		* Affiche formulaire mail
-		*/
+			* Affiche formulaire mail
+			*/
 			if ($_GET['action'] == 'presend')
 			{
 				$facref = sanitize_string($fac->ref);
@@ -3031,6 +3031,8 @@ else
 				// Créé l'objet formulaire mail
 				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
 				$formmail = new FormMail($db);
+				$formmail->fromtype = 'user';
+				$formmail->fromid   = $user->id;
 				$formmail->fromname = $user->fullname;
 				$formmail->frommail = $user->email;
 				$formmail->withfrom=1;
