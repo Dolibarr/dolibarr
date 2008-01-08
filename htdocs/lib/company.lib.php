@@ -130,9 +130,15 @@ function societe_prepare_head($objsoc)
 
 function show_actions_todo($conf,$langs,$db,$objsoc)
 {
+	global $bc;
+	
     if ($conf->agenda->enabled)
     {
-	    print_titre($langs->trans("ActionsOnCompany"));
+		require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+		$actionstatic=new ActionComm($db);
+    	$userstatic=new User($db);
+    	
+		print_titre($langs->trans("ActionsOnCompany"));
 		
 	    print '<table width="100%" class="noborder">';
 	    print '<tr class="liste_titre">';
@@ -250,9 +256,15 @@ function show_actions_todo($conf,$langs,$db,$objsoc)
 
 function show_actions_done($conf,$langs,$db,$objsoc)
 {
+	global $bc;
+	
 	if ($conf->agenda->enabled)
     {
-	    print '<table class="noborder" width="100%">';
+		require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+		$actionstatic=new ActionComm($db);
+    	$userstatic=new User($db);
+    	
+    	print '<table class="noborder" width="100%">';
 	    print '<tr class="liste_titre">';
 	    print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
 	    print '</tr>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $langs->load("companies");
@@ -101,7 +100,6 @@ if ($mode == 'search')
 
 llxHeader();
 
-$actionstatic=new ActionComm($db);
 $facturestatic=new Facture($db);
 $contactstatic = new Contact($db);
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      �ric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +18,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/fourn/fiche.php
         \ingroup    fournisseur, facture
         \brief      Page de fiche fournisseur
-        \version    $Revision$
 */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
 $user->getrights();
 
@@ -42,7 +39,7 @@ $langs->load('orders');
 $langs->load('companies');
 $langs->load('commercial');
 
-// S�curit� acc�s client
+// Securite acces client
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id > 0) 
 {
@@ -75,7 +72,6 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
  * Mode fiche
  */  
 $societe = new Fournisseur($db);
-$actionstatic = new ActionComm($db);
 $contactstatic = new Contact($db);
 
 if ( $societe->fetch($socid) )

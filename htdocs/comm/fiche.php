@@ -31,7 +31,6 @@
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
@@ -46,7 +45,7 @@ if ($conf->fichinter->enabled) $langs->load("interventions");
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
-// S�curit� d'acc�s client et commerciaux
+// Securite d'acces client et commerciaux
 $socid = restrictedArea($user, 'societe', $socid);
 
 $sortorder=$_GET["sortorder"];
@@ -129,7 +128,6 @@ if ($mode == 'search') {
 
 llxHeader('',$langs->trans('CustomerCard'));
 
-$actionstatic=new ActionComm($db);
 $facturestatic=new Facture($db);
 $contactstatic = new Contact($db);
 $userstatic=new User($db);
