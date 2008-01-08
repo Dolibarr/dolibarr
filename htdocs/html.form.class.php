@@ -609,7 +609,12 @@ class Form
 			{
 				print '	selected="true"';
 			}
-			print '>'.$key.'</option>'."\n";
+            if ($key == 'rodolphe') print ' disabled="true"';
+			print '>';
+			if ($key == 'all') print $langs->trans("AllMenus");
+			else print $key;
+			if ($key == 'rodolphe') print ' ('.$langs->trans("PersonalizedMenusNotSupported").')';
+			print '</option>'."\n";
 		}
 		print '</select>';
     }
