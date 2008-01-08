@@ -241,6 +241,16 @@ function FPDF($orientation='P',$unit='mm',$format='A4')
 	$this->TextColor='0 g';
 	$this->ColorFlag=false;
 	$this->ws=0;
+	
+	//Correspondance des tailles html en point
+	$this->xxsmall = 6.9;
+	$this->xsmall  = 8.3;
+	$this->small   = 10;
+	$this->medium  = 12;
+	$this->large   = 14.4;
+	$this->xlarge  = 17.28;
+	$this->xxlarge = 20.7;
+	
 	//Standard fonts
 	$this->CoreFonts=array('courier'=>'Courier','courierB'=>'Courier-Bold','courierI'=>'Courier-Oblique','courierBI'=>'Courier-BoldOblique',
 		'helvetica'=>'Helvetica','helveticaB'=>'Helvetica-Bold','helveticaI'=>'Helvetica-Oblique','helveticaBI'=>'Helvetica-BoldOblique',
@@ -1905,7 +1915,7 @@ function _out($s)
 		function writeHTML($html, $ln=true, $fill=0) {
 						
 			// store some variables
-			$html=strip_tags($html,"<h1><h2><h3><h4><h5><h6><b><u><i><a><img><p><br><br/><strong><em><font><blockquote><li><ul><ol><hr><td><th><tr><table><sup><sub><small>"); //remove all unsupported tags
+			$html=strip_tags($html,"<h1><h2><h3><h4><h5><h6><b><u><i><a><img><p><br><br/><strong><em><font><span><blockquote><li><ul><ol><hr><td><th><tr><table><sup><sub><small>"); //remove all unsupported tags
 			//replace carriage returns, newlines and tabs
 			$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " "); 
 			$html = strtr($html, $repTable);
@@ -2247,6 +2257,45 @@ function _out($s)
 					$this->lasth = $this->FontSize * K_CELL_HEIGHT_RATIO;
 					break;
 				}
+				case 'span': {
+					if (isset($attr['style']) && $attr['style']!='') {
+						if (eregi("color",$attr['style'])){
+							$coul = substr($attr['style'],11,-2);
+							list($R, $G, $B) = split(', ', $coul);
+							$this->SetTextColor($R,$G,$B);
+							$this->issetcolor=true;
+						}
+						if (eregi("font-family",$attr['style'])){
+							$fontName = substr($attr['style'],13,-1);
+							$fontName = $this->convertNameFont($fontName);
+							if (isset($fontName) && in_array(strtolower($fontName), $this->fontlist)) {
+								$this->SetFont(strtolower($fontName));
+								$this->issetfont=true;
+								//print 'fontfamily: '.$this->FontFamily.'<br>';
+							}
+						}
+						if (eregi("font-size",$attr['style'])){
+							$headsize = substr($attr['style'],11,-1);
+							$headsize = eregi_replace('-','',$headsize);
+							//print 'headsize1: '.$headsize.'<br>';
+							//print 'recupheadsize: '.$this->$headsize.'<br>';
+							$headsize = intval($this->$headsize)/3;
+							//print 'headsize2: '.$headsize.'<br>';
+						}
+					}	else {
+						$headsize = 1;
+					}	
+					$currentFontSize = $this->FontSize;
+					$this->tempfontsize = $this->FontSizePt;
+					//$this->SetFontSize($this->FontSizePt + $headsize);
+					//print 'fontsizept: '.$this->FontSizePt.'<br>';
+					$this->SetFontSize($this->FontSizePt + $headsize - 3); // Todo: correction pour xx-small
+					$this->lasth = $this->FontSize * K_CELL_HEIGHT_RATIO;
+					//print 'fontsizeptafter: '.$this->FontSizePt.'<br>';
+					//print 'fontsize:'.$this->FontSize.'<br>';
+					//$this->closedHTMLTagHandler('span');
+					break;
+				}
 				case 'h1': 
 				case 'h2': 
 				case 'h3': 
@@ -2329,6 +2378,7 @@ function _out($s)
 					$this->SetXY($this->GetX(), $this->GetY() - (($this->FontSize - $currentFontSize)/3));
 					break;
 				}
+				case 'span':
 				case 'font': {
 					if ($this->issetcolor == true) {
 						$this->SetTextColor($this->prevTextColor[0], $this->prevTextColor[1], $this->prevTextColor[2]);
