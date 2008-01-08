@@ -17,3 +17,5 @@ UserCannotBeDelete=User can not be deleted. May be it is associated on Dolibarr 
 ErrorFieldsRequired=Some required fields were not filled.
 ErrorFailedToCreateDir=Failed to create a directory. Check that Web server user has permissions to write into Dolibarr documents directory. If parameter <b>safe_mode</b> is enabled on this PHP, check that Dolibarr php files owns to web server user (or group).
 ErrorNoMailDefinedForThisUser=No mail defined for this user
+ErrorFeatureNeedJavascript=This feature need javascript to be activated to work. Change this in setup - display.
+ErrorTopMenuMustHaveAParentWithId0=A menu of type 'Top' can't have a parent menu. Put 0 in parent menu or choose a menu of type 'Left'.

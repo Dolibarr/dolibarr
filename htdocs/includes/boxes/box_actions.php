@@ -52,7 +52,7 @@ class box_actions extends ModeleBoxes {
         global $langs;
         $langs->load("boxes");
 
-        $this->boxlabel="Actions commerciales";
+        $this->boxlabel=$langs->trans("BoxLastActions");
     }
    
     /**

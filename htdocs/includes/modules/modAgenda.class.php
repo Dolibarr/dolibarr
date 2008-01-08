@@ -82,6 +82,7 @@ class modAgenda extends DolibarrModules
         // Boites
         //-------
         $this->boxes = array();
+        $this->boxes[0][1] = "box_actions.php";
     
         // Permissions
         //------------

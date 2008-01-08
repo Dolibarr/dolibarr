@@ -183,7 +183,7 @@ div.tmenu
     border-bottom: 1px solid #8B9999;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 2px 0px;
-    font-weight: bold;
+    font-weight: normal;
     font-size: 12px;
     height: 19px;
     background: #b3c5cc;
@@ -194,10 +194,11 @@ div.tmenu
 div.tmenu  .tmenudisabled
 {
 	color: #757575;
-	font-size: 13px;
+	font-size: 12px;
 	padding-left:10px;
 	padding-right:10px;
 	padding-top:3px;
+	cursor: not-allowed;
 }
 
 table.tmenu
@@ -262,7 +263,7 @@ font.tmenudisabled
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 2px 0px;
   font-weight: normal;
-  font-size:12px;
+  font-size: 12px;
   cursor: not-allowed;
 }
 

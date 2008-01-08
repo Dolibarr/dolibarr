@@ -69,7 +69,7 @@ class MenuTop {
 
         if (! session_id()) {
             session_name("DOLSESSID_".$dolibarr_main_db_name);
-            session_start();    // En mode authentification PEAR, la session a déjà été ouverte
+            session_start();
         }
         
         $user->getrights("");
@@ -104,9 +104,7 @@ class MenuTop {
         	}
       	
         }
-        
-        
-
+ 
         print '</ul>';
 
     }

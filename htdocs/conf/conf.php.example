@@ -131,7 +131,7 @@ $character_set_client="ISO-8859-1";
 # $dolibarr_main_authentication="dolibarr";
 # $dolibarr_main_authentication="ldap";
 #
-$dolibarr_main_authentication="dolibarr"
+$dolibarr_main_authentication="dolibarr";
 
 
 # Parameters used to setup LDAP authentication.

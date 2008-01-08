@@ -69,7 +69,7 @@ class MenuTop {
 
         if (! session_id()) {
             session_name("DOLSESSID_".$dolibarr_main_db_name);
-            session_start();    // En mode authentification PEAR, la session a déjà été ouverte
+            session_start();
         }
         
         $user->getrights("");
@@ -86,7 +86,7 @@ class MenuTop {
         }
 
         
-        $menuArbo = new menudb($this->db,'auguria','top');
+        $menuArbo = new MenuDb($this->db,'auguria','top');
  		$tabMenu = $menuArbo->menutopCharger(0,$_SESSION['mainmenu']);
         
         print '<ul>';
@@ -104,8 +104,6 @@ class MenuTop {
         	}
       	
         }
-        
-        
 
         print '</ul>';
 

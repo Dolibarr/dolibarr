@@ -30,7 +30,7 @@ require("../../conf/conf.php");
 header('Content-type: text/css');
 // Important: Avoid page request by browser and dynamic build at
 // each Dolibarr page access.
-if (! isset($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
+if (empty($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
 {
 	header('Cache-Control: max-age=3600, public, must-revalidate');
 }
@@ -167,16 +167,19 @@ div.tmenu
     border-left: 0px;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 2px 0px;
+    font-size: 12px;
+    height: 19px;
     background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/nav.jpg' ?>) ;
     height: 22px;
 }
 div.tmenu  .tmenudisabled
 {
 	color: #757575;
-	font-size: 13px;
+	font-size: 12px;
 	padding-left:10px;
 	padding-right:10px;
 	padding-top:3px;
+	cursor: not-allowed;
 }
 
 table.tmenu
@@ -240,8 +243,9 @@ font.tmenudisabled
   color: #93a5aa;
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 2px 0px;
-  font-weight:bold;
-  font-size:12px;
+  font-weight: normal;
+  font-size: 12px;
+  cursor: not-allowed;  
 }
 
 a.tmenu:active
@@ -906,6 +910,10 @@ font-size: 12px;
 .warning { color: #887711; }
 .error   { color: #550000; font-weight: bold; }
 
+td.warning {	/* Utilise par Smarty */
+  background: #FF99A9;
+}
+
 div.ok {
   color: #114466;
 }
@@ -919,6 +927,13 @@ div.error {
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #8C9CAB;
+}
+
+div.info {	/* Info admin */
+  color: #888888;
+  padding: 0.2em 0.2em 0.2em 0.2em;
+  margin: 0.5em 0em 0.5em 0em;
+  border: 1px solid #ACACAB;
 }
 
 

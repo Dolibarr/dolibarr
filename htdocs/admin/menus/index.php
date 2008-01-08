@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007 Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
+ * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -30,12 +29,15 @@
 require("./pre.inc.php");
 
 $langs->load("other");
+$langs->load("admin");
 
 if (! $user->admin)
   accessforbidden();
 
 $dirtop = "../../includes/menus/barre_top";
 $dirleft = "../../includes/menus/barre_left";
+
+$mesg=$_GET["mesg"];
 
 $menu_handler_top=$conf->global->MAIN_MENU_BARRETOP;
 $menu_handler_left=$conf->global->MAIN_MENU_BARRELEFT;
@@ -139,11 +141,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'down')
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
+	$db->begin();
+	
 	$sql = "SELECT c.rowid, c.fk_constraint FROM ".MAIN_DB_PREFIX."menu_const as c WHERE c.fk_menu = ".$_GET['menuId'];
 	$res  = $db->query($sql);
 	if ($res)
 	{
-
 		while ($obj = $db->fetch_object ($res))
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu_const WHERE rowid = ".$obj->rowid;
@@ -159,9 +162,6 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 				$db->query($sql);
 			}	
 		}
-		
-
-		
 	}
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".$_GET['menuId'];
@@ -169,13 +169,15 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 
 	if ($result == 0)
 	{
-		llxHeader();
-		print '<div class="ok">'.$langs->trans("MenuDeleted").'</div>';
-		llxFooter();
+		$db->commit();
+
+		Header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?mesg='.urlencode($langs->trans("MenuDeleted")));
 		exit ;
 	}
 	else
 	{
+		$db->rollback();
+
 		$reload = 0;
 		$_GET["action"]='';
 	}
@@ -195,6 +197,9 @@ print_fiche_titre($langs->trans("Menus"),'','setup');
 print $langs->trans("MenusEditorDesc")."<br>\n";
 print "<br>\n";
 
+if ($mesg) print '<div class="ok">'.$mesg.'.</div><br>';
+
+
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
@@ -209,7 +214,7 @@ $h++;
 
 dolibarr_fiche_head($head, 'editor', $langs->trans("Menus"));
 
-// Confirmation de la suppression de la facture
+// Confirmation de la suppression menu
 if ($_GET["action"] == 'delete')
 {
 	$sql = "SELECT m.titre FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
@@ -221,8 +226,8 @@ if ($_GET["action"] == 'delete')
     print "<br />\n";
 }
 
-print $html->textwithwarning($langs->trans("FeatureExperimental"),$langs->trans("FeatureExperimental"),-1);
-print '<br>';
+//print $html->textwithwarning($langs->trans("FeatureExperimental"),$langs->trans("FeatureExperimental"),-1);
+//print '<br>';
 
 print '<form name="newmenu" class="nocellnopadding" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
@@ -251,20 +256,93 @@ $idLast = -1;
 if ($conf->use_javascript_ajax)
 {
 	print '<script src="menu.js" type="text/javascript"></script>';
+
+	/*-------------------- MAIN -----------------------
+	tableau des éléments de l'arbre:
+	c'est un tableau à 2 dimensions.
+	Une ligne représente un élément : data[$x]
+	chaque ligne est décomposée en 3 données:
+	  - l'index de l'élément
+	  - l'index de l'élément parent
+	  - la chaîne à afficher
+	ie: data[]= array (index, index parent, chaine )    
+	*/
+	//il faut d'abord déclarer un élément racine de l'arbre
+
+	$data[] = array(0,-1,"racine");
+
+	//puis tous les éléments enfants
+
+
+	$sql = "SELECT m.rowid, m.fk_menu, m.titre, m.langs";
+	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " WHERE menu_handler='".$menu_handler."'";
+	$sql.= " ORDER BY m.order, m.rowid";
+	$res  = $db->query($sql);
+
+	if ($res)
+	{
+		$num = $db->num_rows($res);
+
+		$i = 1;
+		while ($menu = $db->fetch_array ($res))
+		{
+			$langs->load($menu['langs']);
+			$titre = $langs->trans($menu['titre']);
+			$data[] = array($menu['rowid'],$menu['fk_menu'],$titre);
+			$i++;		
+		}
+	}
+
+	//appelle de la fonction récursive (ammorce)
+	//avec recherche depuis la racine.
+	print '<ul class="arbre">';
+	recur($data,0,0);
+	print '<script type="text/javascript">imgDel('.$idLast.')</script>';
+	print '</ul>';
+
+	print '</td>';
+
+	print '</tr>';
+
+	print '</table>';
+
+
+	print '</div>';
+
+
+	/*
+	 * Boutons actions
+	 */
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&amp;action=create">'.$langs->trans("NewMenu").'</a>';
+	print '</div>';
 }
+else
+{
+	$langs->load("errors");
+	print '<div class="error">'.$langs->trans("ErrorFeatureNeedJavascript").'</div>';
+}
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+
+
 
 /* cette fonction gère le décallage des éléments
    suivant leur position dans l'arborescence
 */
 function affiche($tab,$rang) 
 {
-	global $rangLast, $idLast, $menu_handler;
+	global $conf, $rangLast, $idLast, $menu_handler;
 	
 	if ($conf->use_javascript_ajax)
 	{
 		if($rang == $rangLast)
 		{
 			print '<script type="text/javascript">imgDel('.$idLast.');</script>';
+			//print '<a href="'.DOL_URL_ROOT.'/admin/menus/index.php?menu_handler=eldy&action=delete&menuId='.$idLast.'">aa</a>';
 		}
 		elseif($rang > $rangLast)
 		{
@@ -307,9 +385,9 @@ function affiche($tab,$rang)
 	print '<li id=li'.$tab[0].'>';
 	print '<strong>';
 	print '<a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab[0].'">'.$tab[2].'</a></strong>';
-	print '<div class="menuEdit"><a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab[0].'"><img src="../../theme/auguria/img/edit.png" class="menuEdit" id="edit'.$tab[0].'" /></a></div>';
-	print '<div class="menuNew"><a href="edit.php?menu_handler='.$menu_handler.'&action=create&menuId='.$tab[0].'"><img src="../../theme/auguria/img/filenew.png" class="menuNew" id="new'.$tab[0].'" /></a></div>';
-	print '<div class="menuDel"><a href="index.php?menu_handler='.$menu_handler.'&action=delete&menuId='.$tab[0].'"><img src="../../theme/auguria/img/stcomm-1.png" class="menuDel" id="del'.$tab[0].'" /></a></div>';
+	print '<div class="menuEdit"><a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab[0].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$tab[0].'"').'</a></div>';
+	print '<div class="menuNew"><a href="edit.php?menu_handler='.$menu_handler.'&action=create&menuId='.$tab[0].'">'.img_edit_add('default',0,'class="menuNew" id="new'.$tab[0].'"').'</a></div>';
+	print '<div class="menuDel"><a href="index.php?menu_handler='.$menu_handler.'&action=delete&menuId='.$tab[0].'">'.img_delete('default',0,'class="menuDel" id="del'.$tab[0].'"').'</a></div>';
 	print '<div class="menuFleche"><a href="index.php?menu_handler='.$menu_handler.'&action=up&menuId='.$tab[0].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?action=down&menuId='.$tab[0].'">'.img_picto("Descendre","1downarrow").'</a></div>';
 	print '</li>';
 	echo "\n";	
@@ -345,67 +423,5 @@ function recur($tab,$pere,$rang) {
 	}
 }
 
-/*-------------------- MAIN -----------------------
-  tableau des éléments de l'arbre:
-    c'est un tableau à 2 dimensions.
-    Une ligne représente un élément : data[$x]
-    chaque ligne est décomposée en 3 données:
-      - l'index de l'élément
-      - l'index de l'élément parent
-      - la chaîne à afficher
-    ie: data[]= array (index, index parent, chaine )    
-*/
-  //il faut d'abord déclarer un élément racine de l'arbre
-   
-$data[] = array(0,-1,"racine");
-
-  //puis tous les éléments enfants
-  
-
-$sql = "SELECT m.rowid, m.fk_menu, m.titre, m.langs";
-$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-$sql.= " WHERE menu_handler='".$menu_handler."'";
-$sql.= " ORDER BY m.order, m.rowid";
-$res  = $db->query($sql);
-
-if ($res)
-{
-	$num = $db->num_rows();
-
-	$i = 1;
-	while ($menu = $db->fetch_array ($res))
-	{
-		$langs->load($menu['langs']);
-		$titre = $langs->trans($menu['titre']);
-		$data[] = array($menu['rowid'],$menu['fk_menu'],$titre);
-		$i++;		
-	}
-}
-
-  //appelle de la fonction récursive (ammorce)
-  //avec recherche depuis la racine.
-  	print '<ul class="arbre">';
-  		recur($data,0,0);
-  		print '<script type="text/javascript">imgDel('.$idLast.')</script>';
-  	print '</ul>';
-
-
-	print '</td>';
-
-	print '</tr>';
-	
-	print '</table>';
-
-
-print '</div>';
-	
-print '<div class="tabsAction">';
-print '<a class="butAction" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&amp;action=create">'.$langs->trans("NewMenu").'</a>';
-print '</div>';
-
-
-$db->close();
-
-llxFooter('$Date$ - $Revision$');
 ?>
 

@@ -1029,12 +1029,13 @@ function img_edit_remove($alt = "default")
         \param      float       Si il faut y mettre le style "float: right"
         \return     string      Retourne tag img
 */
-function img_edit($alt = "default",$float=0)
+function img_edit($alt = "default", $float=0, $other='')
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Modify");
     $img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'"';
     if ($float) $img.=' style="float: right"';
+	if ($other) $img.=' '.$other;
     $img.='>';
     return $img;
 }

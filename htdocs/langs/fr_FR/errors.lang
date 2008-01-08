@@ -17,3 +17,5 @@ UserCannotBeDelete=L'utilisateur ne peut pas etre supprimée. Peut-être est-il as
 ErrorFieldsRequired=Des champs obligatoires n'ont pas été renseignés
 ErrorFailedToCreateDir=Echec a la creation d'un repertoire. Verifiez que le user du serveur Web a bien les droits d'ecriture dans les repertoires documents de Dolibarr. Si le parametre <b>safe_mode</b> a été activé sur ce PHP, vérifier que les fichiers php dolibarr appartiennent à l'utilisateur du serveur Web.
 ErrorNoMailDefinedForThisUser=EMail non defini pour cet utilisateur
+ErrorFeatureNeedJavascript=Cette fonctionnalité a besoin de javascript activé pour fonctionner. Modifier dans configuration - affichage.
+ErrorTopMenuMustHaveAParentWithId0=Un menu de type 'Top' ne peut avoir de menu père. Mettre 0 dans l'id père ou choisir un menu de type 'Left'.

@@ -12,6 +12,7 @@ BoxLastCustomers=Last customers
 BoxLastCustomerOrders=Last customer orders
 BoxLastSuppliers=Last suppliers
 BoxLastBooks=Last books
+BoxLastActions=Last actions
 BoxCurrentAccounts=Current accounts balance
 BoxSalesTurnover=Sales turnover
 BoxTotalUnpayedCustomerBills=Total unpayed customer's invoices

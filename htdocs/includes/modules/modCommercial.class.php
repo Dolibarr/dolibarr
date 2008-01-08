@@ -80,9 +80,6 @@ class modCommercial extends DolibarrModules
         $this->boxes[1][0] = "Derniers prospects enregistrés";
         $this->boxes[1][1] = "box_prospect.php";
         
-        $this->boxes[2][0] = "Dernières actions";
-        $this->boxes[2][1] = "box_actions.php";
-        
         // Permissions
         $this->rights = array();
         $this->rights_class = 'commercial';
