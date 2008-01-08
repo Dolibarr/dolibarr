@@ -1841,51 +1841,54 @@ else
 			print '</td><td valign="top" width="50%">';
 
 			/*
-			* Liste des actions propres � la commande
+			* Liste des actions propres a la commande
 			*/
-			$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-			$sql .= ' WHERE a.fk_commande = '.$commande->id ;
-			if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$num = $db->num_rows($resql);
-				if ($num)
+    		if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+		    {
+				$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
+				$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
+				$sql .= ' WHERE a.fk_commande = '.$commande->id ;
+				if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
+				$resql = $db->query($sql);
+				if ($resql)
 				{
-					//print '<br>';
-					print_titre($langs->trans('ActionsOnOrder'));
-					$i = 0;
-					$total = 0;
-					$var=true;
-
-					print '<table class="border" width="100%">';
-					print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
-					print "\n";
-
-					while ($i < $num)
+					$num = $db->num_rows($resql);
+					if ($num)
 					{
-						$objp = $db->fetch_object($resql);
-						$var=!$var;
-						print '<tr '.$bc[$var].'>';
-						print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-						print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
-						print '<td>'.stripslashes($objp->label).'</td>';
-						$authoract = new User($db);
-						$authoract->id = $objp->fk_user_author;
-						$authoract->fetch('');
-						print '<td>'.$authoract->login.'</td>';
-						print "</tr>\n";
-						$i++;
+						//print '<br>';
+						print_titre($langs->trans('ActionsOnOrder'));
+						$i = 0;
+						$total = 0;
+						$var=true;
+	
+						print '<table class="border" width="100%">';
+						print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
+						print "\n";
+	
+						while ($i < $num)
+						{
+							$objp = $db->fetch_object($resql);
+							$var=!$var;
+							print '<tr '.$bc[$var].'>';
+							print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
+							print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
+							print '<td>'.stripslashes($objp->label).'</td>';
+							$authoract = new User($db);
+							$authoract->id = $objp->fk_user_author;
+							$authoract->fetch('');
+							print '<td>'.$authoract->login.'</td>';
+							print "</tr>\n";
+							$i++;
+						}
+						print '</table>';
 					}
-					print '</table>';
 				}
-			}
-			else
-			{
-				dolibarr_print_error($db);
-			}
-
+				else
+				{
+					dolibarr_print_error($db);
+				}
+		    }
+		    
 			print '</td></tr></table>';
 
 

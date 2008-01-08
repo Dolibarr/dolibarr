@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
 
 /**
 	    \file       htdocs/includes/menus/barre_top/eldy_frontoffice.php
-		\brief      Gestionnaire nommé eldy du menu du haut
+		\brief      Gestionnaire nommï¿½ eldy du menu du haut
 		\version    $Revision$
 
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entrées de menu à faire apparaitre dans la barre du haut
-        \remarks    doivent être affichées par <a class="tmenu" href="...?mainmenu=...">...</a>
-        \remarks    On peut éventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entrée du menu qui est sélectionnée.
+        \remarks    Toutes les entrï¿½es de menu ï¿½ faire apparaitre dans la barre du haut
+        \remarks    doivent ï¿½tre affichï¿½es par <a class="tmenu" href="...?mainmenu=...">...</a>
+        \remarks    On peut ï¿½ventuellement ajouter l'attribut id="sel" dans la balise <a>
+        \remarks    quand il s'agit de l'entrï¿½e du menu qui est sï¿½lectionnï¿½e.
 */
 
 
@@ -44,7 +44,7 @@ class MenuTop {
     
     /**
      *    \brief      Constructeur
-     *    \param      db      Handler d'accès base de donnée
+     *    \param      db      Handler d'accï¿½s base de donnï¿½e
      */
     function MenuTop($db)
     {
@@ -65,19 +65,19 @@ class MenuTop {
         
         if (! session_id()) {
             session_name("DOLSESSID_".$dolibarr_main_db_name);
-            session_start();    // En mode authentification PEAR, la session a déjà été ouverte
+            session_start();    // En mode authentification PEAR, la session a dï¿½jï¿½ ï¿½tï¿½ ouverte
         }
         
         $user->getrights("");
         
-        // On récupère mainmenu
+        // On rï¿½cupï¿½re mainmenu
         if (isset($_GET["mainmenu"])) {
             // On sauve en session le menu principal choisi
             $mainmenu=$_GET["mainmenu"];
             $_SESSION["mainmenu"]=$mainmenu;
             $_SESSION["leftmenuopened"]="";
         } else {
-            // On va le chercher en session si non défini par le lien    
+            // On va le chercher en session si non dï¿½fini par le lien    
             $mainmenu=$_SESSION["mainmenu"];
         }
 

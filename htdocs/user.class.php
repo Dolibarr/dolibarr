@@ -318,8 +318,8 @@ class User extends CommonObject
             // Where pour la liste des droits a ajouter
             $whereforadd="id=".$rid;
             // Ajout des droits induits
-            if ($subperms) $whereforadd.=" OR (module='$module' AND perms='$perms' AND subperms='lire')";
-            if ($perms)    $whereforadd.=" OR (module='$module' AND perms='lire' AND subperms IS NULL)";
+            if ($subperms)   $whereforadd.=" OR (module='$module' AND perms='$perms' AND (subperms='lire' OR subperms='read'))";
+            else if ($perms) $whereforadd.=" OR (module='$module' AND (perms='lire' OR perms='read') AND subperms IS NULL)";
         }
         else {
             // On a pas demande un droit en particulier mais une liste de droits
@@ -412,8 +412,8 @@ class User extends CommonObject
             // Where pour la liste des droits a supprimer
             $wherefordel="id=".$rid;
             // Suppression des droits induits
-            if ($subperms=='lire') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
-            if ($perms=='lire')    $wherefordel.=" OR (module='$module')";
+            if ($subperms=='lire' || $subperms=='read') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
+            if ($perms=='lire' || $perms=='read')       $wherefordel.=" OR (module='$module')";
         }
         else {
             // On a demande suppression d'un droit sur la base d'un nom de module ou perms

@@ -214,8 +214,10 @@ if ($socid > 0)
 
     print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
-    print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'&afaire=1">'.$langs->trans("AddAction").'</a>';
-
+    if ($conf->agenda->enabled)
+    {
+    	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'&afaire=1">'.$langs->trans("AddAction").'</a>';
+    }
 
     if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
     {
@@ -249,7 +251,10 @@ if ($socid > 0)
 		print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
 		print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
 		print "<td align=\"center\">&nbsp;</td>";
-		print '<td>&nbsp;</td>';
+        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+        {
+        	print '<td>&nbsp;</td>';
+        }
 		print "</tr>";
 
         $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
@@ -276,18 +281,35 @@ if ($socid > 0)
             }
             print '</td>';
             print '<td>'.$obj->poste.'&nbsp;</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->phone;
-
+            
+            print '<td>';
+            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+            	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
+            print $obj->phone;
 	        if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
 	        {
 	            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&amp;socid='.$societe->id.'&amp;call='.$obj->phone.'">';
 	            print img_phone_out("Appel émis") ;
 	        }
-			print '</a></td>';
-
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
-
+            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+	        	print '</a>';
+			print '</td>';
+		
+        	print '<td>';
+            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+        		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
+        	print $obj->fax;
+            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+        		print '</a>';
+        	print '&nbsp;</td>';
+            print '<td>';
+            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+            	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
+            print $obj->email;
+            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+            	print '</a>';
+            print '&nbsp;</td>';
+    		
         	print '<td align="center">';
         	
            	if ($user->rights->societe->contact->creer)
@@ -300,10 +322,14 @@ if ($socid > 0)
         		
         	print '</td>';
 
-            print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
-            print img_object($langs->trans("Rendez-Vous"),"action");
-            print '</a></td>';
-
+            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+            {
+	            print '<td align="center">';
+	            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
+	            print img_object($langs->trans("Rendez-Vous"),"action");
+	            print '</a></td>';
+            }
+            
             print "</tr>\n";
             $i++;
             $tag = !$tag;

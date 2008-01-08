@@ -68,7 +68,7 @@ class box_actions extends ModeleBoxes {
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo",$max));
 		
-		if ($user->rights->commercial->main->lire)
+		if ($user->rights->agenda->myactions->read)
 		{
 			$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp , a.percent as percentage,";
 			$sql.= " ta.code,";

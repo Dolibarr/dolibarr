@@ -49,7 +49,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.datep";
 if ($page == -1) { $page = 0 ; }
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 $user->getrights('facture');
 $module='propale';
 if (! empty($_GET["socid"]))
@@ -65,7 +65,7 @@ else if (! empty($_GET["propalid"]))
 	$dbtable='propal';
 }
 
-// Sécurité d'accès client et commerciaux
+// Sï¿½curitï¿½ d'accï¿½s client et commerciaux
 $socid = restrictedArea($user, $module, $objectid, $dbtable);
 
 
@@ -77,7 +77,7 @@ $socid = restrictedArea($user, $module, $objectid, $dbtable);
 if ($_GET["action"] == 'setstatut')
 {
   /*
-   *  Classée la facture comme facturée
+   *  Classï¿½e la facture comme facturï¿½e
    */
   $propal = new Propal($db);
   $propal->id = $_GET["propalid"];
@@ -163,7 +163,7 @@ if ($_GET["propalid"] > 0)
 	
   $rowspan=8;
     
-    // Société
+    // Sociï¿½tï¿½
     print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
 
 	// Ligne info remises tiers
@@ -203,7 +203,7 @@ if ($_GET["propalid"] > 0)
     print '</td>';
     print '</tr>';
 
-	// Conditions et modes de réglement
+	// Conditions et modes de rï¿½glement
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
@@ -486,7 +486,7 @@ if ($_GET["propalid"] > 0)
 	print '<table width="100%"><tr><td width="50%" valign="top">';
 
     /*
-     * Documents générés
+     * Documents gï¿½nï¿½rï¿½s
      */
     $filename=sanitize_string($propal->ref);
     $filedir=$conf->propal->dir_output . "/" . sanitize_string($propal->ref);
@@ -500,7 +500,7 @@ if ($_GET["propalid"] > 0)
     
 
 	/*
-	 * Commandes rattachées
+	 * Commandes rattachï¿½es
 	 */
 	if($conf->commande->enabled)
 	{
@@ -596,8 +596,10 @@ if ($_GET["propalid"] > 0)
 
 
   /*
-   * Liste des actions propres à la propal
+   * Liste des actions propres a la propal
    */
+    if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+    {
   $sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
   $sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
   $sql .= ' WHERE a.fk_soc = '.$societe->id.' AND a.propalrowid = '.$propal->id ;
@@ -622,7 +624,7 @@ if ($_GET["propalid"] > 0)
 	      $var=!$var;
 	      print '<tr '.$bc[$var].'>';
 	      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-	      print '<td>'.dolibarr_print_date($objp->da,'dayhour')."</td>\n";
+    	  print '<td>'.dolibarr_print_date($objp->da,'dayhour')."</td>\n";
 	      print '<td>'.stripslashes($objp->label).'</td>';
 	      $authoract = new User($db);
 	      $authoract->id = $objp->fk_user_author;
@@ -638,7 +640,7 @@ if ($_GET["propalid"] > 0)
     {
       dolibarr_print_error($db);
     }
-
+    }
 
   print '</td></tr></table>';
     
@@ -672,7 +674,7 @@ else
   $sql.= " WHERE p.fk_soc = s.rowid";
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
   if ($socid)           $sql .= " AND s.rowid = ".$socid;
-    if ($viewstatut <> '') $sql .= " AND p.fk_statut in ($viewstatut)"; // viewstatut peut etre combinaisons séparé par virgules
+    if ($viewstatut <> '') $sql .= " AND p.fk_statut in ($viewstatut)"; // viewstatut peut etre combinaisons sï¿½parï¿½ par virgules
   if ($month > 0)
   {
     if ($year > 0)

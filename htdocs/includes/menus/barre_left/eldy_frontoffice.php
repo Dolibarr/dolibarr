@@ -63,7 +63,7 @@ class MenuLeft {
 
 		if (! session_id()) {
 			session_name("DOLSESSID_".$dolibarr_main_db_name);
-			session_start();    // En mode authentification PEAR, la session a déjà été ouverte
+			session_start();
 		}
 
 		$user->getrights("");
@@ -103,7 +103,7 @@ class MenuLeft {
 
 
 		$newmenu = new Menu();
-		$overwritemenufor=array('home','companies','members','products','suppliers','commercial','accountancy','project','tools');
+		$overwritemenufor=array('home','companies','members','products','suppliers','commercial','accountancy','agenda','project','tools');
 
 		/**
 		* On definit newmenu en fonction de mainmenu et leftmenu
@@ -275,11 +275,14 @@ class MenuLeft {
 				*/
 				// Actions
 				/*
-				$newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions", $langs->trans("Actions"), 0, $user->rights->societe->lire);
-				if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=actions", $langs->trans("NewAction"), 1, $user->rights->societe->lire);
-				if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;status=todo", $langs->trans("MenuToDoActions"), 1, $user->rights->societe->lire);
-				if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;time=today", $langs->trans("Today"), 1, $user->rights->societe->lire);
-				if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=actions", $langs->trans("Reportings"), 1, $user->rights->societe->lire);
+				if ($conf->agenda->enabled)
+				{
+					$newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions", $langs->trans("Agenda"), 0, $user->rights->agenda->myactions->read);
+					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=actions", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
+					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;status=todo", $langs->trans("MenuToDoActions"), 1, $user->rights->agenda->myactions->read);
+					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;time=today", $langs->trans("Today"), 1, $user->rights->agenda->myactions->read);
+					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=actions", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
+				}
 				*/
 				// Propal
 				if ($conf->propal->enabled)
@@ -658,6 +661,24 @@ class MenuLeft {
 
 			}
 
+
+			/*
+			* Menu AGENDA
+			*/
+			/*
+			if ($mainmenu == 'agenda')
+			{
+				// Actions
+				if ($conf->agenda->enabled)
+				{
+					$newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=agenda", $langs->trans("Agenda"), 0, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=agenda", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=agenda&amp;status=todo", $langs->trans("MenuToDoActions"), 1, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=agenda&amp;time=today", $langs->trans("Today"), 1, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=agenda", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
+				}
+			}	
+			*/
 
 			/*
 			* Menu PROJETS

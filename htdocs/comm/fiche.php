@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
@@ -46,7 +46,7 @@ if ($conf->fichinter->enabled) $langs->load("interventions");
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
-// Sécurité d'accès client et commerciaux
+// Sï¿½curitï¿½ d'accï¿½s client et commerciaux
 $socid = restrictedArea($user, 'societe', $socid);
 
 $sortorder=$_GET["sortorder"];
@@ -64,7 +64,7 @@ if ($_GET["action"] == 'attribute_prefix' && $user->rights->societe->creer)
     $societe = new Societe($db, $_GET["socid"]);
     $societe->attribute_prefix($db, $_GET["socid"]);
 }
-// conditions de règlement
+// conditions de rï¿½glement
 if ($_POST["action"] == 'setconditions' && $user->rights->societe->creer)
 {
     
@@ -75,7 +75,7 @@ if ($_POST["action"] == 'setconditions' && $user->rights->societe->creer)
     $result = $db->query($sql);
     if (! $result) dolibarr_print_error($result);
 }
-// mode de règlement
+// mode de rï¿½glement
 if ($_POST["action"] == 'setmode' && $user->rights->societe->creer)
 {
     $societe = new Societe($db, $_GET["socid"]);
@@ -85,7 +85,7 @@ if ($_POST["action"] == 'setmode' && $user->rights->societe->creer)
     $result = $db->query($sql);
     if (! $result) dolibarr_print_error($result);
 }
-// assujétissement à la TVA
+// assujï¿½tissement ï¿½ la TVA
 if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
 {
 	$societe = new Societe($db, $_GET["socid"]);
@@ -192,14 +192,14 @@ if ($socid > 0)
 
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\" target=\"_blank\">".$objsoc->url."</a>&nbsp;</td></tr>";
 
-	// Assujeti à TVA ou pas
+	// Assujeti ï¿½ TVA ou pas
 	print '<tr>';
 	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
 	print yn($objsoc->tva_assuj);
 	print '</td>';
 	print '</tr>';
 
-	// Conditions de réglement par défaut
+	// Conditions de rï¿½glement par dï¿½faut
 	$langs->load('bills');
 	$html = new Form($db);
 	print '<tr><td nowrap>';
@@ -220,7 +220,7 @@ if ($socid > 0)
 	print "</td>";
 	print '</tr>';
 
-	// Mode de règlement
+	// Mode de rï¿½glement
 	print '<tr><td nowrap>';
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('PaymentMode');
@@ -239,7 +239,7 @@ if ($socid > 0)
 	print "</td>";
 	print '</tr>';
 
-    // Réductions relative (Remises-Ristournes-Rabbais)
+    // Rï¿½ductions relative (Remises-Ristournes-Rabbais)
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
     print $langs->trans("CustomerRelativeDiscountShort");
@@ -252,7 +252,7 @@ if ($socid > 0)
     print '</td><td colspan="3">'.($objsoc->remise_client?$objsoc->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
     print '</tr>';
     
-    // Réductions absolues (Remises-Ristournes-Rabbais)
+    // Rï¿½ductions absolues (Remises-Ristournes-Rabbais)
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding">';
     print '<tr><td nowrap>';
@@ -329,7 +329,7 @@ if ($socid > 0)
 
     print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
-    // Nbre max d'éléments des petites listes
+    // Nbre max d'ï¿½lï¿½ments des petites listes
     $MAXLIST=4;
 
     // Lien recap
@@ -536,7 +536,7 @@ if ($socid > 0)
     }
     
     /*
-     * Derniers projets associés
+     * Derniers projets associï¿½s
      */
     if ($conf->projet->enabled)
     {
@@ -609,8 +609,11 @@ if ($socid > 0)
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';
     }
 
-    print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
-
+    if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+    {
+    	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$objsoc->id.'">'.$langs->trans("AddAction").'</a>';
+    }
+    
 	if ($user->rights->societe->contact->creer)
 	{
 	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
@@ -636,7 +639,10 @@ if ($socid > 0)
     print '<td>'.$langs->trans("Poste").'</td><td colspan="2">'.$langs->trans("Tel").'</td>';
     print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
     print "<td>&nbsp;</td>";
-    print '<td>&nbsp;</td>';
+    if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+    {
+    	print '<td>&nbsp;</td>';
+    }
     print "</tr>";
 
     $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
@@ -670,7 +676,7 @@ if ($socid > 0)
         {
             print '<td>';
             print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&amp;socid='.$objsoc->id.'&amp;call='.$obj->phone.'">';
-            print img_phone_out("Appel émis") ;
+            print img_phone_out("Appel emis") ;
             print '</td><td>';
         }
         else
@@ -678,19 +684,39 @@ if ($socid > 0)
         	print '<td colspan="2">';
         }
         
-        print '<a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
-        print '<td><a href="action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->fax).'</a>&nbsp;</td>';
-        print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">'.$obj->email.'</a>&nbsp;</td>';
+        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+        	print '<a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+        print dolibarr_print_phone($obj->phone);
+        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+    	    print '</a>';
+        print '&nbsp;</td>';
+        print '<td>';
+        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+       		print '<a href="action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+        print dolibarr_print_phone($obj->fax);
+        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+        	print '</a>';
+        print '&nbsp;</td>';
+        print '<td>';
+        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+        	print '<a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+        print $obj->email;
+        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+        	print '</a>';
+        print '&nbsp;</td>';
 
         print '<td align="center">';
         print "<a href=\"../contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">";
         print img_edit();
         print '</a></td>';
 
-        print '<td align="center"><a href="action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
-        print img_object($langs->trans("Rendez-Vous"),"action");
-        print '</a></td>';
-
+        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+        {
+        	print '<td align="center"><a href="action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+            print img_object($langs->trans("Rendez-Vous"),"action");
+        	print '</a></td>';
+        }
+        
         print "</tr>\n";
         $i++;
     }
@@ -701,270 +727,245 @@ if ($socid > 0)
 
     /*
      *      Listes des actions a faire
-     *
      */
-	print_titre($langs->trans("ActionsOnCompany"));
-	
-    print '<table width="100%" class="noborder">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$objsoc->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
-    print '</tr>';
-
-    $sql = "SELECT a.id, a.label,";
-    $sql.= " ".$db->pdate("a.datep")." as dp,";
-    $sql.= " ".$db->pdate("a.datea")." as da,";
-    $sql.= " a.percent,";
-    $sql.= " c.code as acode, c.libelle, a.propalrowid, a.fk_user_author, a.fk_contact,";
-	$sql.= " u.login, u.rowid,";
-	$sql.= " sp.name, sp.firstname";
-    $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-    $sql.= " WHERE a.fk_soc = ".$objsoc->id;
-    $sql.= " AND u.rowid = a.fk_user_author";
-    $sql.= " AND c.id=a.fk_action AND a.percent < 100";
-    $sql.= " ORDER BY a.datep DESC, a.id DESC";
-
-	dolibarr_syslog("comm/fiche.php sql=".$sql);
-    $result=$db->query($sql);
-    if ($result)
+    if ($conf->agenda->enabled)
     {
-        $i = 0 ;
-        $num = $db->num_rows($result);
-        $var=true;
-        
-        if ($num)
-        {
-            while ($i < $num)
-            {
-                $var = !$var;
-
-                $obj = $db->fetch_object($result);
-                print "<tr $bc[$var]>";
-
-                if ($oldyear == strftime("%Y",$obj->dp) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
-                {
-                    print '<td width="30" align="center">|</td>';
-                }
-                else
-                {
+	    print_titre($langs->trans("ActionsOnCompany"));
+		
+	    print '<table width="100%" class="noborder">';
+	    print '<tr class="liste_titre">';
+	    print '<td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$objsoc->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
+	    print '</tr>';
+	
+	    $sql = "SELECT a.id, a.label,";
+	    $sql.= " ".$db->pdate("a.datep")." as dp,";
+	    $sql.= " ".$db->pdate("a.datea")." as da,";
+	    $sql.= " a.percent,";
+	    $sql.= " c.code as acode, c.libelle, a.propalrowid, a.fk_user_author, a.fk_contact,";
+		$sql.= " u.login, u.rowid,";
+		$sql.= " sp.name, sp.firstname";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+	    $sql.= " WHERE a.fk_soc = ".$objsoc->id;
+	    $sql.= " AND u.rowid = a.fk_user_author";
+	    $sql.= " AND c.id=a.fk_action AND a.percent < 100";
+	    $sql.= " ORDER BY a.datep DESC, a.id DESC";
+	
+		dolibarr_syslog("comm/fiche.php sql=".$sql);
+	    $result=$db->query($sql);
+	    if ($result)
+	    {
+	        $i = 0 ;
+	        $num = $db->num_rows($result);
+	        $var=true;
+	        
+	        if ($num)
+	        {
+	            while ($i < $num)
+	            {
+	                $var = !$var;
+	
+	                $obj = $db->fetch_object($result);
+	                print "<tr $bc[$var]>";
+	
                     print '<td width="30" align="center">'.strftime("%Y",$obj->dp)."</td>\n";
                     $oldyear = strftime("%Y",$obj->dp);
-                }
-
-                if ($oldmonth == strftime("%Y%b",$obj->dp) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
-                {
-                    print '<td width="30" align="center">|</td>';
-                }
-                else
-                {
+	
                     print '<td width="30" align="center">' .strftime("%b",$obj->dp)."</td>\n";
                     $oldmonth = strftime("%Y%b",$obj->dp);
-                }
-
-                print '<td width="20">'.strftime("%d",$obj->dp)."</td>\n";
-               	print '<td width="30" nowrap="nowrap">'.strftime("%H:%M",$obj->dp).'</td>';
-				
-				// Picto warning
-				print '<td width="16">';
-				if (date("U",$obj->dp) < time()) print ' '.img_warning("Late");
-				else print '&nbsp;';
-				print '</td>';
-
-                // Status/Percent
-                print '<td width="30">&nbsp;</td>';
-
-                if ($obj->propalrowid)
-                {
-                    print '<td><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
-                    $transcode=$langs->trans("Action".$obj->acode);
-                    $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                    print $libelle;
-                    print '</a></td>';
-                }
-                else
-                {
-		            $actionstatic->code=$obj->acode;
-		            $actionstatic->libelle=$obj->libelle;
-		            $actionstatic->id=$obj->id;
-		            print '<td>'.$actionstatic->getNomUrl(1,16).'</td>';
-                }
-                print '<td colspan="2">'.$obj->label.'</td>';
-
-                // Contact pour cette action
-                if ($obj->fk_contact > 0)
-                {
-                    $contactstatic->name=$obj->name;
-                    $contactstatic->firstname=$obj->firstname;
-                    $contactstatic->id=$obj->fk_contact;
-	                print '<td>'.$contactstatic->getNomUrl(1).'</td>';
-                }
-                else
-                {
-                    print '<td>&nbsp;</td>';
-                }
-
-                print '<td width="80" nowrap="nowrap">';
-				$userstatic->id=$obj->fk_user_author;
-				$userstatic->login=$obj->login;
-				print $userstatic->getLoginUrl(1);
-				print '</td>';
-
-				// Statut
-                print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
-
-                print "</tr>\n";
-                $i++;
-            }
-		}
-		else
-		{
-			// Aucun action à faire
-				
-		}
-        $db->free($result);
+	
+	                print '<td width="20">'.strftime("%d",$obj->dp)."</td>\n";
+	               	print '<td width="30" nowrap="nowrap">'.strftime("%H:%M",$obj->dp).'</td>';
+					
+					// Picto warning
+					print '<td width="16">';
+					if (date("U",$obj->dp) < time()) print ' '.img_warning("Late");
+					else print '&nbsp;';
+					print '</td>';
+	
+	                // Status/Percent
+	                print '<td width="30">&nbsp;</td>';
+	
+	                if ($obj->propalrowid)
+	                {
+	                    print '<td><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
+	                    $transcode=$langs->trans("Action".$obj->acode);
+	                    $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+	                    print $libelle;
+	                    print '</a></td>';
+	                }
+	                else
+	                {
+			            $actionstatic->code=$obj->acode;
+			            $actionstatic->libelle=$obj->libelle;
+			            $actionstatic->id=$obj->id;
+			            print '<td>'.$actionstatic->getNomUrl(1,16).'</td>';
+	                }
+	                print '<td colspan="2">'.$obj->label.'</td>';
+	
+	                // Contact pour cette action
+	                if ($obj->fk_contact > 0)
+	                {
+	                    $contactstatic->name=$obj->name;
+	                    $contactstatic->firstname=$obj->firstname;
+	                    $contactstatic->id=$obj->fk_contact;
+		                print '<td>'.$contactstatic->getNomUrl(1).'</td>';
+	                }
+	                else
+	                {
+	                    print '<td>&nbsp;</td>';
+	                }
+	
+	                print '<td width="80" nowrap="nowrap">';
+					$userstatic->id=$obj->fk_user_author;
+					$userstatic->login=$obj->login;
+					print $userstatic->getLoginUrl(1);
+					print '</td>';
+	
+					// Statut
+	                print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+	
+	                print "</tr>\n";
+	                $i++;
+	            }
+			}
+			else
+			{
+				// Aucun action a faire
+					
+			}
+	        $db->free($result);
+	    }
+	    else
+	    {
+	        dolibarr_print_error($db);
+	    }
+	    print "</table>";
+	
+	    print "<br>";
     }
-    else
-    {
-        dolibarr_print_error($db);
-    }
-    print "</table>";
-
-    print "<br>";
-
 
     /*
      *      Listes des actions effectuees
      */
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
-    print '</tr>';
-
-    $sql = "SELECT a.id, a.label,";
-    $sql.= " ".$db->pdate("a.datep")." as dp,";
-    $sql.= " ".$db->pdate("a.datea")." as da,";
-    $sql.= " a.percent,";
-    $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
-    $sql.= " c.code as acode, c.libelle,";
-    $sql.= " u.login, u.rowid,";
-    $sql.= " sp.name, sp.firstname";
-    $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-    $sql.= " WHERE a.fk_soc = ".$objsoc->id;
-    $sql.= " AND u.rowid = a.fk_user_author";
-    $sql.= " AND c.id=a.fk_action AND a.percent = 100";
-    $sql.= " ORDER BY a.datea DESC, a.id DESC";
-
-	dolibarr_syslog("comm/fiche.php sql=".$sql);
-    $result=$db->query($sql);
-    if ($result)
+    if ($conf->agenda->enabled)
     {
-        $i = 0 ;
-        $num = $db->num_rows($result);
-        $oldyear='';
-        $oldmonth='';
-        $var=true;
-
-        while ($i < $num)
-        {
-            $var = !$var;
-
-            $obj = $db->fetch_object($result);
-            print "<tr $bc[$var]>";
-
-            // Champ date
-            if ($oldyear == strftime("%Y",$obj->da) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
-            {
-                print '<td width="30" align="center">|</td>';
-            }
-            else
-            {
+	    print '<table class="noborder" width="100%">';
+	    print '<tr class="liste_titre">';
+	    print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
+	    print '</tr>';
+	
+	    $sql = "SELECT a.id, a.label,";
+	    $sql.= " ".$db->pdate("a.datep")." as dp,";
+	    $sql.= " ".$db->pdate("a.datea")." as da,";
+	    $sql.= " a.percent,";
+	    $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
+	    $sql.= " c.code as acode, c.libelle,";
+	    $sql.= " u.login, u.rowid,";
+	    $sql.= " sp.name, sp.firstname";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+	    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+	    $sql.= " WHERE a.fk_soc = ".$objsoc->id;
+	    $sql.= " AND u.rowid = a.fk_user_author";
+	    $sql.= " AND c.id=a.fk_action AND a.percent = 100";
+	    $sql.= " ORDER BY a.datea DESC, a.id DESC";
+	
+		dolibarr_syslog("comm/fiche.php sql=".$sql);
+	    $result=$db->query($sql);
+	    if ($result)
+	    {
+	        $i = 0 ;
+	        $num = $db->num_rows($result);
+	        $oldyear='';
+	        $oldmonth='';
+	        $var=true;
+	
+	        while ($i < $num)
+	        {
+	            $var = !$var;
+	
+	            $obj = $db->fetch_object($result);
+	            print "<tr $bc[$var]>";
+	
+	            // Champ date
                 print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
                 $oldyear = strftime("%Y",$obj->da);
-            }
-
-            if ($oldmonth == strftime("%Y%b",$obj->da) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
-            {
-                print '<td width="30" align="center">|</td>';
-            }
-            else
-            {
                 print '<td width="30" align="center">'.strftime("%b",$obj->da)."</td>\n";
                 $oldmonth = strftime("%Y%b",$obj->da);
-            }
-            print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
-            print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
-
-			// Picto
-            print '<td width="16">&nbsp;</td>';
-
-            // Espace
-            print '<td width="30">&nbsp;</td>';
-
-			// Action
-    		print '<td>';
-            $actionstatic->code=$obj->acode;
-            $actionstatic->libelle=$obj->libelle;
-            $actionstatic->id=$obj->id;
-            print $actionstatic->getNomUrl(1,16);
-			print '</td>';
-
-    		// Objet lié
-    		print '<td>';
-			if ($obj->propalrowid)
-			{
-				print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowPropal"),"propal");
-				print $langs->trans("Propal");
-				print '</a>';
-			}
-			if ($obj->fk_facture)
-			{
-				$facturestatic->ref=$langs->trans("Invoice");
-				$facturestatic->id=$obj->fk_facture;
-				$facturestatic->type=$obj->type;
-				print $facturestatic->getNomUrl(1,'compta');
-			}
-			else print '&nbsp;';
-    		print '</td>';
-
-			// Libellé
-      print '<td>'.$obj->label.'</td>';
-
-            // Contact pour cette action
-            if ($obj->fk_contact > 0)
-            {
-				$contactstatic->name=$obj->name;
-				$contactstatic->firstname=$obj->firstname;
-				$contactstatic->id=$obj->fk_contact;
-                print '<td>'.$contactstatic->getNomUrl(1).'</td>';
-            }
-            else
-            {
-                print '<td>&nbsp;</td>';
-            }
-
-			// Auteur
-            print '<td nowrap="nowrap" width="80">';
-			$userstatic->id=$obj->rowid;
-			$userstatic->login=$obj->login;
-			print $userstatic->getLoginUrl(1);
-			print '</td>';
-
-			// Statut
-      print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
-			
-            print "</tr>\n";
-            $i++;
-        }
-
-        $db->free($result);
+	            print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
+	            print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
+	
+				// Picto
+	            print '<td width="16">&nbsp;</td>';
+	
+	            // Espace
+	            print '<td width="30">&nbsp;</td>';
+	
+				// Action
+	    		print '<td>';
+	            $actionstatic->code=$obj->acode;
+	            $actionstatic->libelle=$obj->libelle;
+	            $actionstatic->id=$obj->id;
+	            print $actionstatic->getNomUrl(1,16);
+				print '</td>';
+	
+	    		// Objet lie
+	    		print '<td>';
+				if ($obj->propalrowid)
+				{
+					print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowPropal"),"propal");
+					print $langs->trans("Propal");
+					print '</a>';
+				}
+				if ($obj->fk_facture)
+				{
+					$facturestatic->ref=$langs->trans("Invoice");
+					$facturestatic->id=$obj->fk_facture;
+					$facturestatic->type=$obj->type;
+					print $facturestatic->getNomUrl(1,'compta');
+				}
+				else print '&nbsp;';
+	    		print '</td>';
+	
+				// Libelle
+	      print '<td>'.$obj->label.'</td>';
+	
+	            // Contact pour cette action
+	            if ($obj->fk_contact > 0)
+	            {
+					$contactstatic->name=$obj->name;
+					$contactstatic->firstname=$obj->firstname;
+					$contactstatic->id=$obj->fk_contact;
+	                print '<td>'.$contactstatic->getNomUrl(1).'</td>';
+	            }
+	            else
+	            {
+	                print '<td>&nbsp;</td>';
+	            }
+	
+				// Auteur
+	            print '<td nowrap="nowrap" width="80">';
+				$userstatic->id=$obj->rowid;
+				$userstatic->login=$obj->login;
+				print $userstatic->getLoginUrl(1);
+				print '</td>';
+	
+				// Statut
+	      print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+				
+	            print "</tr>\n";
+	            $i++;
+	        }
+	
+	        $db->free($result);
+	    }
+	    else
+	    {
+	        dolibarr_print_error($db);
+	    }
+	 
+	    print "</table><br>";
     }
-    else
-    {
-        dolibarr_print_error($db);
-    }
- 
-    print "</table><br>";
 }
 else
 {

@@ -52,7 +52,7 @@ if ($_GET["action"] == 'addrights' && $caneditperms)
     $edituser = new User($db,$_GET["id"]);
     $edituser->addrights($_GET["rights"],$module);
 
-	// Si on a touché à ces propres droits, on recharge
+	// Si on a touche a ses propres droits, on recharge
 	if ($_GET["id"] == $user->id)
 	{
 		$user->clearrights();
@@ -65,7 +65,7 @@ if ($_GET["action"] == 'delrights' && $caneditperms)
     $edituser = new User($db,$_GET["id"]);
     $edituser->delrights($_GET["rights"],$module);
 
-	// Si on a touché à ces propres droits, on recharge
+	// Si on a touche a ses propres droits, on recharge
 	if ($_GET["id"] == $user->id)
 	{
 		$user->clearrights();
@@ -242,7 +242,7 @@ if ($result)
             $oldmod = $obj->module;
             $var = !$var;
 
-            // Rupture détectée, on récupère objMod
+            // Rupture detectee, on recupere objMod
             $objMod=$modules[$obj->module];
             $picto=($objMod->picto?$objMod->picto:'generic');
 

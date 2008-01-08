@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      ï¿½ric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,7 +34,7 @@ $langs->load("companies");
 $langs->load("suppliers");
 
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 $socid='';
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0) 
@@ -80,9 +80,9 @@ if ($type == "f") {
 	$titre=$langs->trans("ListOfContacts").' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche="fiche.php";
 }
-if ($view == 'phone')  { $text="( Vue Téléphones)"; }
+if ($view == 'phone')  { $text="( Vue Tï¿½lï¿½phones)"; }
 if ($view == 'mail')   { $text=" (Vue EMail)"; }
-if ($view == 'recent') { $text=" (Récents)"; }
+if ($view == 'recent') { $text=" (Rï¿½cents)"; }
 $titre = $titre." $text";
 
 if ($_POST["button_removefilter"])
@@ -225,10 +225,13 @@ if ($result)
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_societe" size="14" value="'.$search_societe.'">';
     print '</td>';
-    print '<td class="liste_titre">';
-    print '&nbsp;';
-    print '</td>';
-
+    if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+    {
+    	print '<td class="liste_titre">';
+    	print '&nbsp;';
+    	print '</td>';
+    }
+    
     if ($_GET["view"] == 'phone')
     {
         print '<td class="liste_titre">';
@@ -285,8 +288,11 @@ if ($result)
         }
         print '</td>';
 		
-        print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
-
+    	if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+    	{
+        	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+    	}
+    	
         if ($_GET["view"] == 'phone')
         {
             print '<td>'.dolibarr_print_phone($obj->phone_mobile,$obj->fp_pays).'&nbsp;</td>';

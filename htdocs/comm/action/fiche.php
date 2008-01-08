@@ -39,7 +39,7 @@ $langs->load("other");
 $langs->load("bills");
 $langs->load("orders");
 
-// Sécurité accés client
+// Securite acces client
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -49,7 +49,7 @@ if (isset($_GET["error"])) $error=$_GET["error"];
 
 
 /*
- * Action création de l'action
+ * Action creation de l'action
  *
  */
 if ($_POST["action"] == 'add_action')
@@ -163,7 +163,7 @@ if ($_POST["action"] == 'add_action')
         if ($_POST["add_webcal"] == 'on' && $conf->webcal->enabled) $actioncomm->use_webcal=1;
         if ($_POST["add_phenix"] == 'on' && $conf->phenix->enabled) $actioncomm->use_phenix=1;
 
-        // On crée l'action
+        // On crï¿½e l'action
         $idaction=$actioncomm->add($user);
 
         if ($idaction > 0)
@@ -226,7 +226,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 }
 
 /*
- * Action mise à jour de l'action
+ * Action mise ï¿½ jour de l'action
  *
  */
 if ($_POST["action"] == 'update')
@@ -286,7 +286,7 @@ $html = new Form($db);
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Affichage fiche en mode création                                           */
+/* Affichage fiche en mode crï¿½ation                                           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,7 +337,7 @@ if ($_GET["action"] == 'create')
 		}
 		print '</td></tr>';
 
-		// Si la societe est imposée, on propose ces contacts
+		// Si la societe est imposï¿½e, on propose ces contacts
 		if ($_REQUEST["socid"])
 		{
 			$contactid = $_REQUEST["contactid"]?$_REQUEST["contactid"]:'';
@@ -471,7 +471,7 @@ if ($_GET["action"] == 'create')
 		}
 		print '</td></tr>';
 
-		// Si la societe est imposée, on propose ces contacts
+		// Si la societe est imposï¿½e, on propose ces contacts
 		if ($_REQUEST["socid"])
 		{
 			print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
@@ -573,7 +573,7 @@ if ($_GET["id"])
     $act = new ActionComm($db);
     $act->fetch($_GET["id"]);
     $res=$act->societe->fetch($act->societe->id);
-    $res=$act->author->fetch();     // Le paramètre est le login, hors seul l'id est chargé.
+    $res=$act->author->fetch();     // Le paramï¿½tre est le login, hors seul l'id est chargï¿½.
     $res=$act->contact->fetch($act->contact->id);
 
     /*
@@ -654,7 +654,7 @@ if ($_GET["id"])
 		// Etat
         print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percentage" value="'.$act->percentage.'" size="4">%</td></tr>';
 
-		// Objet lié
+		// Objet liï¿½
         if ($act->objet_url)
         {
             print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -741,7 +741,7 @@ if ($_GET["id"])
         print $act->getLibStatut(4);
         print '</td></tr>';
 
-		// Objet lié
+		// Objet liï¿½
         if ($act->objet_url)
         {
             print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -784,14 +784,14 @@ llxFooter('$Date$ - $Revision$');
 
 /**
         \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option synchro calendrier
-        \return     int     Retourne le nombre de lignes ajoutées
+        \return     int     Retourne le nombre de lignes ajoutï¿½es
 */
 function add_row_for_calendar_link()
 {
 	global $conf,$langs,$user;
   $nbtr=0;
 
-  // Lien avec calendrier si module activé
+  // Lien avec calendrier si module activï¿½
   if ($conf->webcal->enabled)
   {
   	if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')
