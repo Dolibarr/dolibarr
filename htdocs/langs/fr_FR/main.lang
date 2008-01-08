@@ -406,6 +406,7 @@ PartialWoman=Partielle
 PartialMan=Partiel
 TotalWoman=Totale
 TotalMan=Total
+YouCanChangeValuesForThisListFromDictionnarySetup=Vous pouvez changer ces valeurs depuis le menu configuration - dictionnaires
 # Week day
 Monday=Lundi
 Tuesday=Mardi
