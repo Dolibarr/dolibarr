@@ -71,7 +71,7 @@ class modExpedition extends DolibarrModules
 
     // Constantes
     $this->const = array();
-	  $this->const[0][0] = "LIVRAISON_ADDON_PDF";
+	$this->const[0][0] = "LIVRAISON_ADDON_PDF";
     $this->const[0][1] = "chaine";
     $this->const[0][2] = "typhon";
     $this->const[0][3] = 'Nom du gestionnaire de génération des commandes en PDF';

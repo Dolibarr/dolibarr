@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +56,8 @@ if ($_POST["action"] == 'add')
 	    {
 			$db->begin();
 
-			// Si la boite n'est pas deja active
-	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, fk_user) values (".$_POST["boxid"].",".$_POST["pos"].", 0)";
+			// Si la boite n'est pas deja active, insert with box_order=''
+	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, box_order, fk_user) values (".$_POST["boxid"].",".$_POST["pos"].", '', 0)";
 			dolibarr_syslog("boxes.php activate box sql=".$sql);
 	        $resql = $db->query($sql);
 
@@ -143,10 +143,11 @@ print $langs->trans("BoxesDesc")."<br>\n";
 
 $actives = array();
 
-$sql  = "SELECT b.rowid, b.box_id, b.position, b.box_order, d.name, d.rowid as boxid";
-$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
-$sql .= " WHERE b.box_id = d.rowid AND fk_user=0";
-$sql .= " ORDER by position, box_order";
+$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order,";
+$sql.= " d.rowid as boxid";
+$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
+$sql.= " WHERE b.box_id = d.rowid AND fk_user=0";
+$sql.= " ORDER by position, box_order";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -164,7 +165,8 @@ if ($resql)
 		array_push($actives,$obj->box_id);
 
 		if ($obj->box_order == '' || $obj->box_order == '0' || $decalage) $decalage++;
-		// On renumérote l'ordre des boites si l'une d'elle est à 0 (Ne doit arriver que sur des anciennes versions)
+		// On renumérote l'ordre des boites si l'une d'elle est à ''
+		// This occurs just after an insert.
 		if ($decalage)
 		{
 			$sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$decalage." WHERE rowid=".$obj->rowid;
@@ -174,7 +176,8 @@ if ($resql)
 
 	if ($decalage)
 	{
-		// Si on a renumerote, on corrige champ box_order (Ne doit arriver que sur des anciennes versions)
+		// Si on a renumerote, on corrige champ box_order
+		// This occurs just after an insert.
 		$sql = "SELECT box_order";
 		$sql.= " FROM ".MAIN_DB_PREFIX."boxes";
 		$sql.= " WHERE length(box_order) <= 2";
@@ -235,7 +238,7 @@ print '<td>'.$langs->trans("SourceFile").'</td>';
 print '<td align="center" width="160">'.$langs->trans("ActivateOn").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT rowid, name, file, note";
+$sql = "SELECT rowid, file, note, tms";
 $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def";
 $resql = $db->query($sql);
 $var=True;
@@ -310,11 +313,11 @@ print '<td align="center" width="80">'.$langs->trans("Disable").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT b.rowid, b.box_id, b.position,";
-$sql.= " d.name, d.file, d.note";
+$sql.= " d.file, d.note, d.tms";
 $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 $sql.= " WHERE b.box_id = d.rowid";
 $sql.= " AND b.fk_user=0";
-$sql.= " ORDER by position, box_order";
+$sql.= " ORDER by position, box_order";	// Note box_order return A01,A03...,B02,B04...
 
 $resql = $db->query($sql);
 

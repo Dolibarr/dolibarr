@@ -76,7 +76,6 @@ class modBookmark extends DolibarrModules
 
     // Boites
     $this->boxes = array();
-    $this->boxes[0][0] = "Mes derniers marque-pages";
     $this->boxes[0][1] = "box_bookmarks.php";
 
     // Permissions

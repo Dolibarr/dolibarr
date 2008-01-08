@@ -21,7 +21,7 @@
 create table llx_boxes_def
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  name        varchar(255) NOT NULL,
   file        varchar(255) NOT NULL,
+  tms         timestamp,
   note        text
 )type=innodb;

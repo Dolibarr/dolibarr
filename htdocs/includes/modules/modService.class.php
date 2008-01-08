@@ -72,7 +72,6 @@ class modService extends DolibarrModules
 
     // Boites
     $this->boxes = array();
-    $this->boxes[0][0] = "Derniers services contractés";
     $this->boxes[0][1] = "box_services_vendus.php";
 
     // Permissions

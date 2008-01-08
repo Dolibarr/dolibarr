@@ -75,8 +75,6 @@ class modBanque extends DolibarrModules
 
 	    // Boites
 	    $this->boxes = array();
-
-	    $this->boxes[0][0] = "Soldes Comptes Bancaires";
 	    $this->boxes[0][1] = "box_comptes.php";
 
 	    // Permissions

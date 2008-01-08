@@ -21,3 +21,7 @@ update llx_const set value='' where name='MAIN_FORCE_SETLOCALE_LC_TIME'     and 
 alter table llx_document_model modify type varchar(20) NOT NULL;
 
 DELETE FROM llx_rights_def WHERE module = 'menudb';
+
+ALTER table llx_boxes_def drop column name;
+ALTER table llx_boxes_def add column tms timestamp;
+

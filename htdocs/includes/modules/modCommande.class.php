@@ -89,7 +89,6 @@ class modCommande extends DolibarrModules
 
     // Boites
     $this->boxes = array();
-    $this->boxes[0][0] = "Commandes";
     $this->boxes[0][1] = "box_commandes.php";
 
     // Permissions

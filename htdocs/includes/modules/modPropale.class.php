@@ -86,7 +86,6 @@ class modPropale extends DolibarrModules
 
     // Boxes
     $this->boxes = array();
-    $this->boxes[0][0] = "Proposition commerciales";
     $this->boxes[0][1] = "box_propales.php";
 
     // Permissions

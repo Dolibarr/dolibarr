@@ -88,11 +88,11 @@ class modWebcalendar extends DolibarrModules
 		$this->boxes = array();			// List of boxes 
 		$r=0;
 		
-		// Add here list of default box name and php file stored in includes/boxes that
-		// contains class to show a box.
+		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
 		// Example:
-		//$this->boxes[$r][0] = "My box";
-        //$this->boxes[$r][1] = "mybox.php";
+        //$this->boxes[$r][1] = "myboxa.php";
+    	//$r++;
+        //$this->boxes[$r][1] = "myboxb.php";
     	//$r++;
 
 		// Permissions

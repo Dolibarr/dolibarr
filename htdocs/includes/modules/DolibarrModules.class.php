@@ -396,7 +396,7 @@ class DolibarrModules
         {
 	        foreach ($this->boxes as $key => $value)
 	        {
-	            $titre = $this->boxes[$key][0];
+	            //$titre = $this->boxes[$key][0];
 	            $file  = $this->boxes[$key][1];
 	            $note  = $this->boxes[$key][2];
 	
@@ -410,10 +410,11 @@ class DolibarrModules
 	                $row = $this->db->fetch_row($result);
 	                if ($row[0] == 0)
 	                {
-	                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (name, file, note)";
-	                    $sql.= " VALUES ('".$titre."','".$file."',";
+	                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file,note)";
+	                    $sql.= " VALUES ('".addslashes($file)."',";
 	                    $sql.= $note?"'".addslashes($note)."'":"null";
 	                    $sql.= ")";
+						//print $sql;
 	                    if (! $this->db->query($sql))
 	                    {
 	                        $err++;
@@ -480,12 +481,12 @@ class DolibarrModules
 	    $sql = "DELETE ".MAIN_DB_PREFIX."boxes";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
 	    $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
-	    $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$file."'";
+	    $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".addslashes($file)."'";
 	    dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
 	    $this->db->query($sql);
 	    
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
-	    $sql.= " WHERE file = '".$file."'";
+	    $sql.= " WHERE file = '".addslashes($file)."'";
 	    dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
 	    if (! $this->db->query($sql))
 	      {
