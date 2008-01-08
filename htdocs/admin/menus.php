@@ -17,14 +17,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/admin/menus.php
         \ingroup    core,menudb
         \brief      Page de configuration des gestionnaires de menu
-        \version    $Revision$
 */
 
 require("./pre.inc.php");

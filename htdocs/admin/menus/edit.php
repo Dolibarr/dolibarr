@@ -23,13 +23,19 @@
 		\file       htdocs/admin/menus/edit.php
 		\ingroup    core,menudb
 		\brief      Edition des menus
-		\version    $Revision$
 */
 
 require("./pre.inc.php");
- 
+
+$langs->load("admin");
+
 if (! $user->admin)
   accessforbidden();
+
+$dirtop = "../../includes/menus/barre_top";
+$dirleft = "../../includes/menus/barre_left";
+
+$mesg=$_GET["mesg"];
 
 $menu_handler_top=$conf->global->MAIN_MENU_BARRETOP;
 $menu_handler_left=$conf->global->MAIN_MENU_BARRELEFT;
@@ -39,6 +45,9 @@ $menu_handler_left=eregi_replace('_backoffice\.php','',$menu_handler_left);
 $menu_handler_left=eregi_replace('_frontoffice\.php','',$menu_handler_left);
 
 $menu_handler=$menu_handler_left;
+
+if ($_REQUEST["menu_handler"]) $menu_handler=$_REQUEST["menu_handler"];
+
 
 
 /*
@@ -260,6 +269,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 /*
  * Affichage page
  */
+$html=new Form($db);
 
 llxHeader();
 
@@ -302,7 +312,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 
 	//Handler
 	print '<tr><td><b>'.$langs->trans('MenuHandler').'</b></td>';
-	print '<td><input type="text" size="30" name="handler" value="'.$menu_handler.'"></td>';
+	print '<td>';
+	print $html->select_menu_families($menu_handler,'menu_handler',$dirleft);
+	//print '<input type="text" size="30" name="handler" value="'.$menu_handler.'">';
+	print '</td>';
 	print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
 	// Type
@@ -345,7 +358,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 
 	// Boutons
 	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print '&nbsp;';
+	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';	
 
 	print '</table>';
@@ -496,7 +509,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print "</tr>\n";
 		
 		
-		// Ajout de contraintes personalisés
+		// Ajout de contraintes personalisees
 		print '<form action="edit.php?action=add_const" method="post">';
 		print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
 		print '<input type="hidden" name="type" value="perso">';
@@ -516,7 +529,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '</form>';
 		
 		
-		// Ajout de contraintes prédéfinis
+		// Ajout de contraintes predefinis
 		print '<form action="edit.php?action=add_const" method="post">';
 		print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
 		print '<input type="hidden" name="type" value="prede">';

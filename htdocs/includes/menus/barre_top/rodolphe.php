@@ -22,20 +22,20 @@
 
 /**
         \file       htdocs/includes/menus/barre_top/default.php
-        \brief      Gestionnaire par défaut du menu du haut
+        \brief      Gestionnaire par dï¿½faut du menu du haut
         \version    $Revision$
         
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entrées de menu à faire apparaitre dans la barre du haut
-        \remarks    doivent être affichées par <a class="tmenu" href="...?mainmenu=...">...</a>
-        \remarks    On peut éventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entrée du menu qui est sélectionnée.
+        \remarks    Toutes les entrï¿½es de menu ï¿½ faire apparaitre dans la barre du haut
+        \remarks    doivent ï¿½tre affichï¿½es par <a class="tmenu" href="...?mainmenu=...">...</a>
+        \remarks    On peut ï¿½ventuellement ajouter l'attribut id="sel" dans la balise <a>
+        \remarks    quand il s'agit de l'entrï¿½e du menu qui est sï¿½lectionnï¿½e.
 */
 
 
 /**
         \class      MenuTop
-	    \brief      Classe permettant la gestion par défaut du menu du haut
+	    \brief      Classe permettant la gestion par dï¿½faut du menu du haut
 */
 
 class MenuTop {
@@ -45,7 +45,7 @@ class MenuTop {
     
     /**
      *    \brief      Constructeur
-     *    \param      db      Handler d'accès base de donnée
+     *    \param      db      Handler d'accï¿½s base de donnï¿½e
      */
     function MenuTop($db)
     {
@@ -63,12 +63,12 @@ class MenuTop {
     
         if (! session_id()) {
             session_name("DOLSESSID_".$dolibarr_main_db_name);
-            session_start();    // En mode authentification PEAR, la session a déjà été ouverte
+            session_start();
         }
     
         $user->getrights("");
     
-        // On récupère mainmenu
+        // On rï¿½cupï¿½re mainmenu
         if (isset($_GET["mainmenu"]))
         {
             // On sauve en session le menu principal choisi
@@ -76,7 +76,7 @@ class MenuTop {
             $_SESSION["mainmenu"]=$mainmenu;
             $_SESSION["leftmenuopened"]="";
         } else {
-            // On va le chercher en session si non défini par le lien
+            // On va le chercher en session si non dï¿½fini par le lien
             $mainmenu=$_SESSION["mainmenu"];
         }
 
@@ -143,7 +143,7 @@ class MenuTop {
 
         }
 
-        // Compta/tréso (sert pour banque, tva, entités à facturer...)
+        // Compta/trï¿½so (sert pour banque, tva, entitï¿½s ï¿½ facturer...)
         if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled
         	|| $conf->commande->enabled || $conf->facture->enabled)
         {
@@ -374,7 +374,27 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/mantis/mantis.php?mainmenu=mantis"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("BugTracker").'</a></td>';
         }
 
-    print '</tr></table>';
+        
+		// Affichage des menus personnalises
+		require_once(DOL_DOCUMENT_ROOT."/admin/menus/module_menudb.php");
+
+        $menuArbo = new MenuDb($this->db,'rodolphe','top');
+ 		$tabMenu = $menuArbo->menutopCharger(0,$_SESSION['mainmenu']);
+        for($i=0;$i<count($tabMenu);$i++)
+        {
+        	if ($tabMenu[$i]['right'] == true)
+        	{
+        		print '<td class="tmenu"><a class="tmenu" href="'.DOL_URL_ROOT.$tabMenu[$i]['url'].'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
+        	}
+        	else
+        	{
+        		print '<td class="tmenu"><font class="tmenudisabled">'.$tabMenu[$i]['titre'].'</font></td>';
+        	}
+      	
+        }
+		
+        
+        print '</tr></table>';
     }
    
 }

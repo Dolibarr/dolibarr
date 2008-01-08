@@ -440,12 +440,10 @@ class MenuTop {
         	{
         		print '<td class="tmenu"><font class="tmenudisabled">'.$tabMenu[$i]['titre'].'</font></td>';
         	}
-      	
         }
 		
         
         print '</tr></table>';
-
     }
 
 }

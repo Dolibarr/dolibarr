@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -66,6 +65,26 @@ class MenuTop {
 	    // ...
 
 	    // ***** END *****
+	    
+	    /*
+		// Code to show personalized menus
+		require_once(DOL_DOCUMENT_ROOT."/admin/menus/module_menudb.php");
+
+        $menuArbo = new MenuDb($this->db,'eldy','top');
+ 		$tabMenu = $menuArbo->menutopCharger(0,$_SESSION['mainmenu']);
+        for($i=0;$i<count($tabMenu);$i++)
+        {
+        	if ($tabMenu[$i]['right'] == true)
+        	{
+        		print '<td class="tmenu"><a class="tmenu" href="'.DOL_URL_ROOT.$tabMenu[$i]['url'].'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
+        	}
+        	else
+        	{
+        		print '<td class="tmenu"><font class="tmenudisabled">'.$tabMenu[$i]['titre'].'</font></td>';
+        	}
+      	
+        }
+        */
 	    
         print '</tr></table>';
     }

@@ -23,9 +23,8 @@
 		\file       htdocs/admin/menus/index.php
         \ingroup    core,menudb
 		\brief      Gestion des menus
-		\version    $Revision$
 */
- 
+
 require("./pre.inc.php");
 
 $langs->load("other");
@@ -39,8 +38,8 @@ $dirleft = "../../includes/menus/barre_left";
 
 $mesg=$_GET["mesg"];
 
-$menu_handler_top=$conf->global->MAIN_MENU_BARRETOP;
-$menu_handler_left=$conf->global->MAIN_MENU_BARRELEFT;
+$menu_handler_top=eregi_replace('\.php','',$conf->global->MAIN_MENU_BARRETOP);
+$menu_handler_left=eregi_replace('\.php','',$conf->global->MAIN_MENU_BARRELEFT);
 $menu_handler_top=eregi_replace('_backoffice\.php','',$menu_handler_top);
 $menu_handler_top=eregi_replace('_frontoffice\.php','',$menu_handler_top);
 $menu_handler_left=eregi_replace('_backoffice\.php','',$menu_handler_left);
@@ -315,7 +314,7 @@ if ($conf->use_javascript_ajax)
 	 * Boutons actions
 	 */
 	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&amp;action=create">'.$langs->trans("NewMenu").'</a>';
+	print '<a class="butAction" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&amp;action=create&amp;menu_handler='.urlencode($menu_handler).'">'.$langs->trans("NewMenu").'</a>';
 	print '</div>';
 }
 else

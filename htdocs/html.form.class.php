@@ -25,13 +25,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/html.form.class.php
         \brief      Fichier de la classe des fonctions prédéfinie de composants html
-        \version    $Revision$
 */
 
 
@@ -609,11 +607,11 @@ class Form
 			{
 				print '	selected="true"';
 			}
-            if ($key == 'rodolphe') print ' disabled="true"';
+            //if ($key == 'rodolphe') print ' disabled="true"';
 			print '>';
 			if ($key == 'all') print $langs->trans("AllMenus");
 			else print $key;
-			if ($key == 'rodolphe') print ' ('.$langs->trans("PersonalizedMenusNotSupported").')';
+			//if ($key == 'rodolphe') print ' ('.$langs->trans("PersonalizedMenusNotSupported").')';
 			print '</option>'."\n";
 		}
 		print '</select>';
