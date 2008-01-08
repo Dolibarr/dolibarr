@@ -136,7 +136,8 @@ function show_actions_todo($conf,$langs,$db,$objsoc)
     {
 		require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 		$actionstatic=new ActionComm($db);
-    	$userstatic=new User($db);
+    $userstatic=new User($db);
+    $contactstatic = new Contact($db);
     	
 		print_titre($langs->trans("ActionsOnCompany"));
 		
@@ -259,10 +260,12 @@ function show_actions_done($conf,$langs,$db,$objsoc)
 	global $bc;
 	
 	if ($conf->agenda->enabled)
-    {
-		require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+  {
+  	require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 		$actionstatic=new ActionComm($db);
-    	$userstatic=new User($db);
+    $userstatic=new User($db);
+    $contactstatic = new Contact($db);
+    $facturestatic=new Facture($db);
     	
     	print '<table class="noborder" width="100%">';
 	    print '<tr class="liste_titre">';

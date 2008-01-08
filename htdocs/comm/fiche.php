@@ -128,7 +128,6 @@ if ($mode == 'search') {
 
 llxHeader('',$langs->trans('CustomerCard'));
 
-$facturestatic=new Facture($db);
 $contactstatic = new Contact($db);
 $userstatic=new User($db);
 
