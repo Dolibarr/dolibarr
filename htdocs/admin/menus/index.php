@@ -326,6 +326,8 @@ else
 
 $db->close();
 
+print '<br>';
+
 llxFooter('$Date$ - $Revision$');
 
 

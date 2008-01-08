@@ -19,3 +19,5 @@ update llx_const set value='' where name='MAIN_FORCE_SETLOCALE_LC_NUMERIC'  and 
 update llx_const set value='' where name='MAIN_FORCE_SETLOCALE_LC_TIME'     and value='MAIN_FORCE_SETLOCALE_LC_TIME';
 
 alter table llx_document_model modify type varchar(20) NOT NULL;
+
+DELETE FROM llx_rights_def WHERE module = 'menudb';
