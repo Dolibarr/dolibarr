@@ -47,5 +47,5 @@ create table llx_propaldet
 --
 -- 1 : frais de port
 -- 2 : ecotaxe
--- 3 : option
+-- 3 : produit/service propose en option
 --

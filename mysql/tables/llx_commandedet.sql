@@ -47,4 +47,5 @@ create table llx_commandedet
 --
 -- 1 : frais de port
 -- 2 : ecotaxe
+-- 3 : produit/service propose en option
 --
