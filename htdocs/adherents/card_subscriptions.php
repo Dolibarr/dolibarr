@@ -23,7 +23,7 @@
 /**
         \file       htdocs/adherents/card_subscriptions.php
         \ingroup    adherent
-        \brief      Onglet d'ajout, edition, suppression des adhésions d'un adhérent
+        \brief      Onglet d'ajout, edition, suppression des adhï¿½sions d'un adhï¿½rent
         \version    $Revision$
 */
 
@@ -240,7 +240,7 @@ if ($errmsg)
 */
 print '<div class="tabsAction">';
 
-// Lien nouvelle cotisation si non brouillon et non résilié
+// Lien nouvelle cotisation si non brouillon et non rï¿½siliï¿½
 if ($user->rights->adherent->cotisation->creer)
 {
 	if ($action != 'addsubscription' && $adh->statut > 0)
@@ -351,7 +351,8 @@ if ($adh->datefin)
 {
 	if ($adh->datefin < time())
 	{
-		print dolibarr_print_date($adh->datefin,'day')." ".img_warning($langs->trans("Late"));
+		print dolibarr_print_date($adh->datefin,'day');
+		if ($adh->statut > 0) print " ".img_warning($langs->trans("Late"));	// Affiche picto retard uniquement si non brouillon et non resilie
 	}
 	else
 	{
@@ -361,7 +362,7 @@ if ($adh->datefin)
 else
 {
 	print $langs->trans("SubscriptionNotReceived");
-	if ($adh->statut > 0) print " ".img_warning($langs->trans("Late"));	// Affiche picto retard uniquement si non brouillon et non résilié
+	if ($adh->statut > 0) print " ".img_warning($langs->trans("Late"));	// Affiche picto retard uniquement si non brouillon et non resilie
 }
 print '</td>';
 print '</tr>';
@@ -437,17 +438,17 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 		print "</td></tr>\n";
 
 		print '<tr><td>'.$langs->trans('Numero');
-		print ' <em>(Numéro chèque ou virement)</em>';	// \todo a traduire
+		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';	// \todo a traduire
 		print '</td>';
 		print '<td><input name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans('CheckTransmitter');
-		print ' <em>(Emetteur du chèque)</em>';	// \todo a traduire
+		print ' <em>('.$langs->trans("ChequeMaker").')</em>';	// \todo a traduire
 		print '</td>';
 		print '<td><input name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans('Bank');
-		print ' <em>(Banque du chèque)</em>';	// \todo a traduire
+		print ' <em>('.$langs->trans("ChequeBank").')</em>';	// \todo a traduire
 		print '</td>';
 		print '<td><input name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
 
