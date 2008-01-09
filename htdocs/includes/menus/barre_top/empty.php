@@ -88,7 +88,7 @@ class MenuTop {
 	    
         print '</tr></table>';
     }
-
+    
 }
 
 ?>

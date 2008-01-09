@@ -51,7 +51,20 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",$_POST["main_menufront_barreleft"]);
 	
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
-	
+
+	// Define list of menu handlers to initialize
+ 	$listofmenuhandler=array();
+	$listofmenuhandler[$_POST["main_menu_barretop"]]=1;
+	$listofmenuhandler[$_POST["main_menufront_barretop"]]=1;
+	$listofmenuhandler[$_POST["main_menu_barreleft"]]=1;
+	$listofmenuhandler[$_POST["main_menufront_barreleft"]]=1;
+	foreach ($listofmenuhandler as $key => $val)
+	{
+		// Run functions defined in a menuhandler_init.php file
+		// \TODO Run init code
+
+	}
+
 	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }

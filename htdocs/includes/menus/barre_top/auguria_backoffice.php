@@ -16,19 +16,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/includes/menus/barre_top/auguria_backoffice.php
-		\brief      Gestionnaire nommé Auguria du menu du haut
+		\brief      Gestionnaire nommï¿½ Auguria du menu du haut
 		\version    $Revision$
 
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entrées de menu à faire apparaitre dans la barre du haut
-        \remarks    doivent être affichées par <a class="tmenu" href="...?mainmenu=...">...</a>
-        \remarks    On peut éventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entrée du menu qui est sélectionnée.
+        \remarks    Toutes les entrï¿½es de menu ï¿½ faire apparaitre dans la barre du haut
+        \remarks    doivent ï¿½tre affichï¿½es par <a class="tmenu" href="...?mainmenu=...">...</a>
+        \remarks    On peut ï¿½ventuellement ajouter l'attribut id="sel" dans la balise <a>
+        \remarks    quand il s'agit de l'entrï¿½e du menu qui est sï¿½lectionnï¿½e.
 */
 
 
@@ -45,7 +44,7 @@ class MenuTop {
     
     /**
      *    \brief      Constructeur
-     *    \param      db      Handler d'accès base de donnée
+     *    \param      db      Handler d'accï¿½s base de donnï¿½e
      */
     function MenuTop($db)
     {
@@ -74,14 +73,14 @@ class MenuTop {
         
         $user->getrights("");
         
-        // On récupère mainmenu
+        // On rï¿½cupï¿½re mainmenu
         if (isset($_GET["mainmenu"])) {
             // On sauve en session le menu principal choisi
             $mainmenu=$_GET["mainmenu"];
             $_SESSION["mainmenu"]=$mainmenu;
             $_SESSION["leftmenuopened"]="";
         } else {
-            // On va le chercher en session si non défini par le lien    
+            // On va le chercher en session si non dï¿½fini par le lien    
             $mainmenu=$_SESSION["mainmenu"];
         }
 
@@ -108,8 +107,7 @@ class MenuTop {
         print '</ul>';
 
     }
-    
- 
-}
 
+    
+}
 ?>

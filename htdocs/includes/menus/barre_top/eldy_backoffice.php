@@ -45,7 +45,7 @@ class MenuTop {
     
     /**
      *    \brief      Constructeur
-     *    \param      db      Handler d'acc�s base de donn�e
+     *    \param      db      Handler d'acces base de donnee
      */
     function MenuTop($db)
     {

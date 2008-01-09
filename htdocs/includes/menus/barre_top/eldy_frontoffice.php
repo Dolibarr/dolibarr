@@ -44,7 +44,7 @@ class MenuTop {
     
     /**
      *    \brief      Constructeur
-     *    \param      db      Handler d'acc�s base de donn�e
+     *    \param      db      Handler d'acces base de donnee
      */
     function MenuTop($db)
     {
@@ -77,7 +77,7 @@ class MenuTop {
             $_SESSION["mainmenu"]=$mainmenu;
             $_SESSION["leftmenuopened"]="";
         } else {
-            // On va le chercher en session si non d�fini par le lien    
+            // On va le chercher en session si non defini par le lien    
             $mainmenu=$_SESSION["mainmenu"];
         }
 
@@ -392,7 +392,7 @@ class MenuTop {
         print '</tr></table>';
 
     }
-
+    
 }
 
 ?>

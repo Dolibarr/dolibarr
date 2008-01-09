@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +17,23 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/includes/menus/barre_top/default.php
         \brief      Gestionnaire par d�faut du menu du haut
-        \version    $Revision$
         
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entr�es de menu � faire apparaitre dans la barre du haut
-        \remarks    doivent �tre affich�es par <a class="tmenu" href="...?mainmenu=...">...</a>
-        \remarks    On peut �ventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entr�e du menu qui est s�lectionn�e.
+        \remarks    Toutes les entrees de menu e faire apparaitre dans la barre du haut
+        \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
+        \remarks    On peut eventuellement ajouter l'attribut id="sel" dans la balise <a>
+        \remarks    quand il s'agit de l'entree du menu qui est selectionnee.
 */
 
 
 /**
         \class      MenuTop
-	    \brief      Classe permettant la gestion par d�faut du menu du haut
+	    \brief      Classe permettant la gestion par defaut du menu du haut
 */
 
 class MenuTop {
@@ -45,7 +43,7 @@ class MenuTop {
     
     /**
      *    \brief      Constructeur
-     *    \param      db      Handler d'acc�s base de donn�e
+     *    \param      db      Handler d'acces base de donnee
      */
     function MenuTop($db)
     {
@@ -68,7 +66,7 @@ class MenuTop {
     
         $user->getrights("");
     
-        // On r�cup�re mainmenu
+        // On recupere mainmenu
         if (isset($_GET["mainmenu"]))
         {
             // On sauve en session le menu principal choisi
@@ -76,7 +74,7 @@ class MenuTop {
             $_SESSION["mainmenu"]=$mainmenu;
             $_SESSION["leftmenuopened"]="";
         } else {
-            // On va le chercher en session si non d�fini par le lien
+            // On va le chercher en session si non defini par le lien
             $mainmenu=$_SESSION["mainmenu"];
         }
 
@@ -143,7 +141,7 @@ class MenuTop {
 
         }
 
-        // Compta/tr�so (sert pour banque, tva, entit�s � facturer...)
+        // Compta/treso (sert pour banque, tva, entites a facturer...)
         if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled
         	|| $conf->commande->enabled || $conf->facture->enabled)
         {
@@ -396,7 +394,7 @@ class MenuTop {
         
         print '</tr></table>';
     }
-   
+    
 }
 
 ?>
