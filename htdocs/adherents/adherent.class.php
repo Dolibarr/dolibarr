@@ -647,6 +647,59 @@ class Adherent extends CommonObject
 
 
 	/**
+			\brief 		Fonction qui met a jour le chp denormalise date fin adhésion
+			\param		user			Utilisateur qui realise la mise a jour
+			\return		int				<0 si KO, >0 si OK
+	*/
+	function update_end_date($user)
+	{
+		global $conf, $langs;
+		
+		$error=0;
+		
+		$this->db->begin();
+
+		// Search for last subscription id and end date
+		$sql = "SELECT rowid, ".$this->db->pdate("datef")." as datef";
+		$sql.= " FROM ".MAIN_DB_PREFIX."cotisation";
+		$sql.= " WHERE fk_adherent='".$this->id."'";
+		$sql.= " ORDER by dateadh DESC";	// Sort by start subscription date
+
+		dolibarr_syslog("Adherent::update_end_date sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj=$this->db->fetch_object($resql);
+			$datefin=$obj->datef;
+		
+			$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+			$sql.= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
+			$sql.= " WHERE rowid = ".$this->id;
+
+			dolibarr_syslog("Adherent::update_end_date sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("Adherent::update_end_date ".$this->error, LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
+		
+	}
+		
+	/**
 			\brief 		Fonction qui supprime l'adherent et les donnees associees
 			\param		rowid		Id de l'adherent a effacer
 			\return		int			<0 si KO, 0=rien a effacer, >0 si OK
@@ -1092,11 +1145,22 @@ class Adherent extends CommonObject
 		
         $this->db->begin();
 
+		if ($datesubend)
+		{
+			$datefin=$datesubend;
+		}
+		else
+		{
+			// If no end date, end date = date + 1 year - 1 day
+			$datefin = dolibarr_time_plus_duree($date,1,'y');
+			$datefin = dolibarr_time_plus_duree($datefin,-1,'d');
+		}
+
 		// Create subscription
 		$cotisation=new Cotisation($this->db);
 		$cotisation->fk_adherent=$this->id;
 		$cotisation->dateh=$date;
-		$cotisation->datef=$datesubend;
+		$cotisation->datef=$datefin;
 		$cotisation->amount=$montant;
 		$cotisation->note=$label;
 
@@ -1104,23 +1168,9 @@ class Adherent extends CommonObject
 		
         if ($rowid > 0)
         {
-			if ($datesubend)
-			{
-				$datefin=$datesubend;
-			}
-			else
-			{
-				// If no end date, end date = date + 1 year - 1 day
-				$datefin = dolibarr_time_plus_duree($date,1,'y');
-	            $datefin = dolibarr_time_plus_duree($datefin,-1,'d');
-			}
-			
-            $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin);
-            $sql.= " WHERE rowid =". $this->id;
-            
-            dolibarr_syslog("Adherent::cotisation update member sql=".$sql);
-            $resql=$this->db->query($sql);
-            if ($resql)
+			// Update denormalized subscription end date
+            $result=$this->update_end_date($user);
+            if ($result > 0)
             {
 		        // Rajout du nouveau cotisant dans les listes qui vont bien
 		        if ($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT && ! $adh->datefin)
@@ -1188,8 +1238,6 @@ class Adherent extends CommonObject
             }
             else
             {
-                $this->error=$this->db->error();
-                dolibarr_syslog("Adherent::cotisation error ".$this->error);
                 $this->db->rollback();
                 return -2;
             }

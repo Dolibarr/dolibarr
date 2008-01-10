@@ -166,6 +166,10 @@ class Cotisation extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
+			$member=new Adherent($this->db);
+			$result=$member->fetch($this->fk_adherent);
+			$result=$member->update_end_date($user);
+
 			$this->db->commit();
 			return 1;
 		}
