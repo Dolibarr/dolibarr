@@ -85,12 +85,11 @@ foreach ($_POST as $key => $val)
 
 
 require_once("master.inc.php");
-
+//stopwithmem();
 
 // Chargement des includes complementaire de presentation
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
-stopwithmem();
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');
 
 // Init session
