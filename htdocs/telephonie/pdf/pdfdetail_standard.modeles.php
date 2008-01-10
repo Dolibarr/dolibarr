@@ -28,6 +28,9 @@
   \version    $Revision$
 */
 
+require_once(FPDF_PATH . "fpdf.php");
+require_once(FPDFI_PATH . "fpdi_protection.php");
+
 class pdfdetail_standard_modeles extends FPDF {
 
   var $client_nom;

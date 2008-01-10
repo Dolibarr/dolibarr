@@ -110,14 +110,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	 * Pour utiliser d'autres versions des librairies externes que les
 	 * versions embarquees dans Dolibarr, definir les constantes adequates:
 	 * Pour FPDF:           FPDF_PATH
-	 * Pour Pear:           PEAR_PATH
 	 * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
 	 * Pour MagpieRss:      MAGPIERSS_PATH
 	 * Pour NuSOAP:         NUSOAP_PATH
 	 * Pour TCPDF:          TCPDF_PATH
 	 */
 	if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
-	if (! defined('PEAR_PATH'))           { define('PEAR_PATH',          DOL_DOCUMENT_ROOT .'/includes/pear/'); }
 	if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
 	if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
 	if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }

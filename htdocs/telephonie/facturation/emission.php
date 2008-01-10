@@ -21,6 +21,7 @@
  */
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/telephonie/facturation/FacturationEmission.class.php';
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php")
 
 if (!$user->rights->telephonie->facture->ecrire) accessforbidden();
 

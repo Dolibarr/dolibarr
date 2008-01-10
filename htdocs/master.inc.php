@@ -113,6 +113,7 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php"))
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 if (! empty($dolibarr_main_db_encrypted_pass)) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
+
 require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 
 $conf = new Conf();
@@ -147,7 +148,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 }
 
 // Chargement des includes principaux de librairies communes
-if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
+if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user.class.php");		// Need 500ko memory
 if (! defined('NOREQUIRETRAN')) require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
 if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
 if (! defined('NOREQUIREDB'))   require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
@@ -204,7 +205,6 @@ if (! defined('NOREQUIRETRAN'))
  * Pour utiliser d'autres versions des librairies externes que les
  * versions embarquées dans Dolibarr, définir les constantes adequates:
  * Pour FPDF:           FPDF_PATH
- * Pour Pear:           PEAR_PATH
  * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
  * Pour MagpieRss:      MAGPIERSS_PATH
  * Pour PHPlot:         PHPLOT_PATH
@@ -215,7 +215,6 @@ if (! defined('NOREQUIRETRAN'))
 // Les path racines
 if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
 if (! defined('FPDFI_PATH'))          { define('FPDFI_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdfi/'); }
-if (! defined('PEAR_PATH'))           { define('PEAR_PATH',          DOL_DOCUMENT_ROOT .'/includes/pear/'); }
 if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
 if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
 if (! defined('JPGRAPH_PATH'))        { define('JPGRAPH_PATH',       DOL_DOCUMENT_ROOT .'/includes/jpgraph/'); }
@@ -225,13 +224,7 @@ if (! defined('FPDF_FONTPATH'))       { define('FPDF_FONTPATH',      FPDF_PATH .
 if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
 if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->externalrss->dir_temp); }
 
-// \todo Ajouter la ligne
-// require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
-// dans le fichier facturation-emission.php du module telephonie afin de pouvoir supprimer la ligne suivante
-if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
-// require_once(FPDF_PATH . "fpdf.php");
-// dans le fichier pdfdetail_standard_modeles du module telephonie afin de pouvoir supprimer la ligne suivante
-if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(FPDFI_PATH . "fpdi_protection.php");
+//stopwithmem();
 
 
 /* 
