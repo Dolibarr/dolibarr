@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,9 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 		{
 			// Modifie valeures
 			$subscription->dateh=dolibarr_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+			$subscription->datef=dolibarr_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
 			$subscription->amount=$_POST["amount"];
+			//print 'datef='.$subscription->datef.' '.$_POST['datesubendday'];
 
 			$result=$subscription->update($user);
 			if ($result >= 0 && ! sizeof($subscription->errors))

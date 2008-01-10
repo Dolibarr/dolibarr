@@ -465,7 +465,7 @@ class Adherent extends CommonObject
 	}
 
 	/**
-			\brief 		Fonction qui met e jour l'adherent (sauf mot de passe)
+			\brief 		Fonction qui met a jour l'adherent (sauf mot de passe)
 			\param		user			Utilisateur qui realise la mise a jour
 			\param		notrigger		1=desactive le trigger UPDATE (quand appele par creation)
 			\param		nosyncuser		Do not synchronize linked user
@@ -731,7 +731,7 @@ class Adherent extends CommonObject
 	 *    \param	 nosyncuser		  Do not synchronize linked user
 	 *    \return    string           If OK return clear password, 0 if no change, < 0 if error
 	 */
-    function password($user, $password='', $isencrypted=0, $notrigger=0, $nosyncuser=0)
+    function setPassword($user, $password='', $isencrypted=0, $notrigger=0, $nosyncuser=0)
     {
         global $conf, $langs;
 
