@@ -351,18 +351,18 @@ class Conf
 		 */
 
 		// System tools
-		if (! $this->global->SYSTEMTOOLS_MYSQLDUMP) $this->global->SYSTEMTOOLS_MYSQLDUMP="mysqldump";
+		if (empty($this->global->SYSTEMTOOLS_MYSQLDUMP)) $this->global->SYSTEMTOOLS_MYSQLDUMP="mysqldump";
 
 		// societe
-		if (! $this->global->SOCIETE_CODECLIENT_ADDON) $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
-		if (! isset($this->global->SOCIETE_CODEFOURNISSEUR_ADDON) || ! $this->global->SOCIETE_CODEFOURNISSEUR_ADDON) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
-		if (! isset($this->global->SOCIETE_CODECOMPTA_ADDON) || ! $this->global->SOCIETE_CODECOMPTA_ADDON) $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
+		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))      $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
+		if (empty($this->global->SOCIETE_CODEFOURNISSEUR_ADDON)) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
+		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))      $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 		// Pour compatibilite ascendante:
 		if (isset($this->global->CODECLIENT_ADDON)) $this->global->SOCIETE_CODECLIENT_ADDON=$this->global->CODECLIENT_ADDON;
 		if (isset($this->global->CODEFOURNISSEUR_ADDON)) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->CODEFOURNISSEUR_ADDON;
 
 		// securite
-		if (! isset($this->global->USER_PASSWORD_GENERATED) || ! $this->global->USER_PASSWORD_GENERATED) $this->global->USER_PASSWORD_GENERATED='standard';
+		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard';
 
 		// conf->use_preview_tabs
 		$this->use_preview_tabs=1;
@@ -383,7 +383,7 @@ class Conf
 		if (isset($this->global->MAIN_POPUP_CALENDAR)) $this->use_popup_calendar=$this->global->MAIN_POPUP_CALENDAR;
 
 		// conf->monnaie
-		if (! $this->global->MAIN_MONNAIE) $this->global->MAIN_MONNAIE='EUR';
+		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
 		$this->monnaie=$this->global->MAIN_MONNAIE;
 
 		// $this->compta->mode = Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
@@ -403,7 +403,7 @@ class Conf
 		}
 
 		// $this->liste_limit = constante de taille maximale des listes
-		if (! $this->global->MAIN_SIZE_LISTE_LIMIT) $this->global->MAIN_SIZE_LISTE_LIMIT=20;
+		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;
 		$this->liste_limit=$this->global->MAIN_SIZE_LISTE_LIMIT;
 
 		// $this->produit->limit_size = constante de taille maximale des select de produit
@@ -411,27 +411,27 @@ class Conf
 		$this->produit->limit_size=$this->global->PRODUIT_LIMIT_SIZE;
 
 		// $this->theme et $this->css
-		if (! $this->global->MAIN_THEME) $this->global->MAIN_THEME="eldy";
+		if (empty($this->global->MAIN_THEME)) $this->global->MAIN_THEME="eldy";
 		$this->theme=$this->global->MAIN_THEME;
 		$this->css  = "theme/".$this->theme."/".$this->theme.".css";
 		
 		// $this->email_from = email pour envoi par dolibarr des mails automatiques
 		$this->email_from = "dolibarr-robot@domain.com";
-		if (isset($conf->global->MAIN_MAIL_EMAIL_FROM) && $conf->global->MAIN_MAIL_EMAIL_FROM)
+		if (! empty($conf->global->MAIN_MAIL_EMAIL_FROM))
 		{
 			$this->email_from = $conf->global->MAIN_MAIL_EMAIL_FROM;
 		}
 		
 		// $this->notification->email_from = email pour envoi par Dolibarr des notifications
 	    $this->notification->email_from=$this->email_from;
-		if (isset($conf->global->NOTIFICATION_EMAIL_FROM) && $conf->global->NOTIFICATION_EMAIL_FROM)
+		if (! empty($conf->global->NOTIFICATION_EMAIL_FROM))
 		{
 		    $this->notification->email_from=$conf->global->NOTIFICATION_EMAIL_FROM;
 		}
 
 		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
 		$this->mailing->email_from=$this->email_from;;
-		if (isset($conf->global->MAILING_EMAIL_FROM) && $conf->global->MAILING_EMAIL_FROM)
+		if (! empty($conf->global->MAILING_EMAIL_FROM))
 		{
 		    $this->mailing->email_from=$conf->global->MAILING_EMAIL_FROM;
 		}
@@ -452,7 +452,7 @@ class Conf
 
 		$this->format_date_short_java="dd/MM/yyyy";
 
-		// Limites decimales
+		// Limites decimales si non definie (peuvent etre egale a 0)
 		if (! isset($this->global->MAIN_MAX_DECIMALS_UNIT))  $this->global->MAIN_MAX_DECIMALS_UNIT=5;
 		if (! isset($this->global->MAIN_MAX_DECIMALS_TOT))   $this->global->MAIN_MAX_DECIMALS_TOT=2;
 		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN)) $this->global->MAIN_MAX_DECIMALS_SHOWN=8;
