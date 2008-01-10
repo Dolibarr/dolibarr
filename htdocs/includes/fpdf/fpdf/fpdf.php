@@ -1932,6 +1932,7 @@ function _out($s)
 				$element = ereg_replace('&rsquo;','\'',$element); //remplace les &rsquo; par un apostrophe
 				$element = ereg_replace('&quot;','"',$element); //remplace les &quot; par une guillemet
 				$element = ereg_replace('&euro;','€',$element); //remplace les &euro; par le signe €
+				$element = ereg_replace('&oelig;','œ',$element); //remplace les &oelig; par le signe œ
 				if (!preg_match($pattern, $element)) {
 					//Text
 					if($this->HREF) {
