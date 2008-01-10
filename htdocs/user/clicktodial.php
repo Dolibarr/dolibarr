@@ -146,7 +146,7 @@ if ($_GET["id"])
 
     if ($user->admin && $_GET["action"] <> 'edit')
     {
-        print '<a class="butAction" href="clicktodial.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+        print '<a class="butAction" href="clicktodial.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
     }
 
     if ($user->admin && $_GET["action"] == 'edit')

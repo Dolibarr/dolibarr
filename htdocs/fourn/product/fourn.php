@@ -206,7 +206,7 @@ if ($_GET["id"])
 	  
 	  if ( $user->rights->produit->creer)
 	    {
-	      print '<a class="butAction" href="fourn.php?action=edit&amp;id='.$product->id.'&amp;id_fourn='.$product->fourn->id.'">'.$langs->trans("Edit").'</a>';
+	      print '<a class="butAction" href="fourn.php?action=edit&amp;id='.$product->id.'&amp;id_fourn='.$product->fourn->id.'">'.$langs->trans("Modify").'</a>';
 	    }
 	}
       

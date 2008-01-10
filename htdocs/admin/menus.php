@@ -198,7 +198,7 @@ print '</div>';
 if (! isset($_GET["action"]) || $_GET["action"] != 'edit')
 {
     print '<div class="tabsAction">';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Edit").'</a>';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
 }
 	

@@ -177,7 +177,7 @@ if ($_GET["id"])
 
     if ($user->rights->commande->creer && $_GET["action"] <> 'edit')
     {
-        print "<a class=\"butAction\" href=\"note.php?id=$commande->id&amp;action=edit\">".$langs->trans('Edit')."</a>";
+        print "<a class=\"butAction\" href=\"note.php?id=$commande->id&amp;action=edit\">".$langs->trans('Modify')."</a>";
     }
 
     print "</div>";

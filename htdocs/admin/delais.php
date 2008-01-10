@@ -292,7 +292,7 @@ else
 
     // Boutons d'action
     print '<div class="tabsAction">';
-    print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Edit").'</a>';
+    print '<a class="butAction" href="delais.php?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
 
 }

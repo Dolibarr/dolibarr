@@ -222,7 +222,7 @@ if ($_GET["action"] == 'create')
 		print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 		print $langs->trans('RefCustomerOrderShort').'</td><td align="left">';
 		print '</td>';
-		if ($_GET['action'] != 'RefCustomerOrder' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+		if ($_GET['action'] != 'RefCustomerOrder' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;id='.$commande->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($user->rights->commande->creer && $_GET['action'] == 'RefCustomerOrder')

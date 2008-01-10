@@ -239,7 +239,7 @@ else
 				
 				if ($user->rights->societe->contact->creer)
     		{
-        	print '<a class="butAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+        	print '<a class="butAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Modify').'</a>';
         }
 
         print "</div>";

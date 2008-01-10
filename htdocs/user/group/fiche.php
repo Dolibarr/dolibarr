@@ -258,7 +258,7 @@ else
     
             if ($caneditperms)
             {
-                print '<a class="butAction" href="fiche.php?id='.$group->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+                print '<a class="butAction" href="fiche.php?id='.$group->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
             }
     
             if ($candisableperms)

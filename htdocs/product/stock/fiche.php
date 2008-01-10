@@ -296,7 +296,7 @@ else
             
             if ($_GET["action"] == '')
             {
-                print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$entrepot->id."\">".$langs->trans("Edit")."</a>";
+                print "<a class=\"butAction\" href=\"fiche.php?action=edit&id=".$entrepot->id."\">".$langs->trans("Modify")."</a>";
             }
             
             print "</div>";

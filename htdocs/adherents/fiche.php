@@ -966,7 +966,7 @@ if ($rowid && $action != 'edit')
     
     if ($user->rights->adherent->creer)
 	{
-		print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Edit")."</a>";
+		print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Modify")."</a>";
     }
 	
     if ($user->rights->adherent->creer)

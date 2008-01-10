@@ -431,7 +431,7 @@ else
 	
 			if ($user->rights->societe->creer)
 			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;idl='.$livraison->lignes[$i]->idl.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&amp;idl='.$livraison->lignes[$i]->idl.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
 			}
 	
 			if ($user->rights->societe->supprimer)

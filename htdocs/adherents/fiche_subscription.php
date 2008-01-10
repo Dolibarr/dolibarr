@@ -327,11 +327,11 @@ if ($rowid && $action != 'edit')
 	{
 		if (! $bankline->rappro)
 		{
-			print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Edit")."</a>";
+			print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Modify")."</a>";
 		}
 		else
 		{
-			print "<a class=\"butActionRefused\" title=\"".$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Edit")."</a>";
+			print "<a class=\"butActionRefused\" title=\"".$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Modify")."</a>";
 		}
 	}
 

@@ -194,7 +194,7 @@ if ($_GET['propalid'])
 			print '<div class="tabsAction">';
 			if ($user->rights->propale->creer && $_GET['action'] <> 'edit')
 			{
-				print '<a class="butAction" href="note.php?propalid='.$propal->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+				print '<a class="butAction" href="note.php?propalid='.$propal->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 			}
 			print '</div>';
 		}

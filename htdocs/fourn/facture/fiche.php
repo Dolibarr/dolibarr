@@ -853,7 +853,7 @@ else
 		{
 			if ($_GET['action'] != 'edit')
 			{
-				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 			}
 		}
 

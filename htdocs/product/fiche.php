@@ -926,9 +926,9 @@ if ($_GET["id"] || $_GET["ref"])
   if ($_GET["action"] == 'edit' && $user->rights->produit->creer)
     {
       if ($product->isservice()) {
-         print_fiche_titre($langs->trans('Edit').' '.$langs->trans('Service').' : '.$product->ref, "");
+         print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Service').' : '.$product->ref, "");
       } else {
-         print_fiche_titre($langs->trans('Edit').' '.$langs->trans('Product').' : '.$product->ref, "");
+         print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Product').' : '.$product->ref, "");
       }
       
       if ($mesg) {
@@ -1071,7 +1071,7 @@ if ($_GET["action"] == '')
 	if ( $user->rights->produit->creer)
 	{
 		if ($product->no_button_edit <> 1)
-		print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+		print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Modify").'</a>';
 
 		if ($product->no_button_copy <> 1)
 		print '<a class="butAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';

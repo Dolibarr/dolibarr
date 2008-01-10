@@ -1356,7 +1356,7 @@ if ($_GET["action"] == '' && $result == 1 && $client_comm->perm_read)
 
   if ( $user->rights->telephonie->ligne_activer && $ligne->statut == -1)
     {
-      print "<a class=\"butAction\" href=\"fiche.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Edit")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Modify")."</a>";
     }
      
   if ( $user->rights->telephonie->ligne->creer && $ligne->statut == -1)

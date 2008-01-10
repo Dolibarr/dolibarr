@@ -392,7 +392,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
      */
     print '<div class="tabsAction">';
 
-    print '<a class="butAction" href="fiche.php?action=edit&rowid='.$don->id.'">'.$langs->trans('Edit').'</a>';
+    print '<a class="butAction" href="fiche.php?action=edit&rowid='.$don->id.'">'.$langs->trans('Modify').'</a>';
 	
     if ($don->statut == 0)
     {

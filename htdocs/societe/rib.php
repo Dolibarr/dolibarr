@@ -187,7 +187,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 
     if ($user->rights->societe->creer)
     {
-        print '<a class="butAction" href="rib.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+        print '<a class="butAction" href="rib.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
     }
 
     print '</div>';

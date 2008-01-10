@@ -122,7 +122,7 @@ if ($id)
 print '<div class="tabsAction">';
 if ($action != 'create')
 {
-  print '<a class="butAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans('Edit').'</a>';
+  print '<a class="butAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
 }
 print '</div>';
 

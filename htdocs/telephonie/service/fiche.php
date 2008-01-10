@@ -235,7 +235,7 @@ if ($_GET["action"] == '' && $service->statut == 0)
 
 if ($_GET["action"] == '')
 {
-  print "<a class=\"butAction\" href=\"fiche.php?action=edit&amp;id=$service->id\">".$langs->trans("Edit")."</a>";
+  print "<a class=\"butAction\" href=\"fiche.php?action=edit&amp;id=$service->id\">".$langs->trans("Modify")."</a>";
 }
 
 

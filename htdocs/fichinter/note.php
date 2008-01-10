@@ -163,7 +163,7 @@ if ($_GET['id'])
 			print '<div class="tabsAction">';
 			if ($user->rights->ficheinter->creer && $_GET['action'] <> 'edit')
 			{
-				print '<a class="butAction" href="note.php?id='.$fichinter->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+				print '<a class="butAction" href="note.php?id='.$fichinter->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 			}
 			print '</div>';
 		}

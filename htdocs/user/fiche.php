@@ -1019,7 +1019,7 @@ else
 
             if ($caneditfield)
             {
-               	print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+               	print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
             }
             elseif ($caneditpassword && ! $fuser->ldap_sid)
             {

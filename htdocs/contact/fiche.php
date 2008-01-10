@@ -612,7 +612,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 
 		if ($user->rights->societe->contact->creer)
 		{
-			print '<a class="butAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+			print '<a class="butAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 		}
 
 		if (! $contact->user_id && $user->rights->user->user->creer && $contact->socid > 0)

@@ -141,7 +141,7 @@ if ($_GET["action"] == '')
 
     if ($user->rights->societe->creer)
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/socnote.php?socid='.$societe->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/socnote.php?socid='.$societe->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
     }
     
     print '</div>';

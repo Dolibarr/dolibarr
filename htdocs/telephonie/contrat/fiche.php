@@ -1097,7 +1097,7 @@ else
 		}
 	      if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
 		{
-		  print "<a class=\"butAction\" href=\"fiche.php?action=edit&amp;id=$contrat->id\">".$langs->trans("Edit")."</a>";
+		  print "<a class=\"butAction\" href=\"fiche.php?action=edit&amp;id=$contrat->id\">".$langs->trans("Modify")."</a>";
 		}
 	      
 	      if ($user->rights->telephonie->ligne->creer && $numlignes == 0 && $contrat->statut <> 6)

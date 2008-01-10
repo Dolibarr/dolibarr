@@ -154,7 +154,7 @@ if ($id)
 
     if ($user->rights->user->user->creer && $action != 'edit')
     {
-        print "<a class=\"butAction\" href=\"note.php?id=$fuser->id&amp;action=edit\">".$langs->trans('Edit')."</a>";
+        print "<a class=\"butAction\" href=\"note.php?id=$fuser->id&amp;action=edit\">".$langs->trans('Modify')."</a>";
     }
 
     print "</div>";

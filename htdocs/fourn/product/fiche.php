@@ -443,7 +443,7 @@ else
 		      print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.$objp->nom.'</a></td>';
 		      print '<td>';
 		      print '<a href="fourn.php?id='.$product->id.'&amp;id_fourn='.$objp->socid.'">';
-		      print img_edit($langs->trans("Edit"));
+		      print img_edit($langs->trans("Modify"));
 		      print '&nbsp;<a href="fourn.php?id='.$product->id.'&amp;id_fourn='.$objp->socid.'">';
 		      print $objp->ref_fourn.'</a></td>';
 
@@ -508,9 +508,9 @@ else
 	    {
 	      
 	      if ($product->isservice()) {
-	         print_fiche_titre($langs->trans('Edit').' '.$langs->trans('Service').' : '.$product->ref, "");
+	         print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Service').' : '.$product->ref, "");
 	      } else {
-	         print_fiche_titre($langs->trans('Edit').' '.$langs->trans('Product').' : '.$product->ref, "");
+	         print_fiche_titre($langs->trans('Modify').' '.$langs->trans('Product').' : '.$product->ref, "");
 	      }
 	      
 	      if ($mesg) {
@@ -576,7 +576,7 @@ else
 		{
 			if ( $user->rights->produit->creer)
 			{
-				print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+				print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Modify").'</a>';
 			}
 		
 			if ($product->isproduct() && $conf->stock->enabled)

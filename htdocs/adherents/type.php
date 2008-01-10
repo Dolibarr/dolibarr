@@ -293,7 +293,7 @@ if ($rowid > 0)
 		// Edit
 		if ($user->rights->adherent->configurer)
 		{
-			print "<a class=\"butAction\" href=\"type.php?action=edit&amp;rowid=".$adht->id."\">".$langs->trans("Edit")."</a>";
+			print "<a class=\"butAction\" href=\"type.php?action=edit&amp;rowid=".$adht->id."\">".$langs->trans("Modify")."</a>";
 		}
 	
 		// Add

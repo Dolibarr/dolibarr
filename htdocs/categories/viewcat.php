@@ -136,7 +136,7 @@ print "<div class='tabsAction'>\n";
 
 if ($user->rights->categorie->creer)
 {
-	print "<a class='butAction' href='edit.php?id=".$c->id."'>".$langs->trans("Edit")."</a>";
+	print "<a class='butAction' href='edit.php?id=".$c->id."'>".$langs->trans("Modify")."</a>";
 }
 
 if ($user->rights->categorie->supprimer)

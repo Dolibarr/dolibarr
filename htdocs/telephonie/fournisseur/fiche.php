@@ -292,7 +292,7 @@ if ($_GET["action"] == '')
   if($user->rights->telephonie->fournisseur->config)
 
     {
-      print '<a class="butAction" href="'.DOL_URL_ROOT.'/telephonie/fournisseur/fiche.php?action=edit&amp;id='.$fourn->id.'">'.$langs->trans("Edit").'</a>';
+      print '<a class="butAction" href="'.DOL_URL_ROOT.'/telephonie/fournisseur/fiche.php?action=edit&amp;id='.$fourn->id.'">'.$langs->trans("Modify").'</a>';
     }
 }
 

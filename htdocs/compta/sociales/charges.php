@@ -409,7 +409,7 @@ if ($chid > 0)
 			// Editer
 			if ($cha->paye == 0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=edit\">".$langs->trans("Edit")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
 			}
 
 			// Emettre paiement

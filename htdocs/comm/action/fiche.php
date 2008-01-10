@@ -769,7 +769,7 @@ if ($_GET["id"])
 
     if ($_GET["action"] != 'edit' && $_GET["action"] != 'delete')
     {
-        print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Edit").'</a>';
+        print '<a class="butAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Modify").'</a>';
 
         print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
     }

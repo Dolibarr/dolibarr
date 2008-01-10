@@ -193,7 +193,7 @@ $form = new Form($db);
 	
 		if ($user->rights->banque->configurer)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$account->id.'">'.$langs->trans("Edit").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$account->id.'">'.$langs->trans("Modify").'</a>';
 		}
 	
 		print '</div>';

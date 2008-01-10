@@ -796,7 +796,7 @@ if ($_GET['propalid'] > 0)
   print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
   print $langs->trans('RefCustomer').'</td><td align="left">';
   print '</td>';
-  if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+  if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
   print '</tr></table>';
   print '</td><td colspan="5">';
   if ($user->rights->propale->creer && $_GET['action'] == 'refclient')
@@ -1593,7 +1593,7 @@ if ($_GET['propalid'] > 0)
 		// Edit
 		if ($propal->statut == 1 && $user->rights->propale->creer)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
 		}
 
 		// Send

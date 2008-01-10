@@ -1923,7 +1923,7 @@ else
 				print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
 				print $langs->trans('RefCustomerOrder').'</td><td align="left">';
 				print '</td>';
-				if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+				if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
 				print '</tr></table>';
 				print '</td><td colspan="5">';
 				if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
@@ -2699,7 +2699,7 @@ else
 					if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
 							&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))
 					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
 					}
 				}
 

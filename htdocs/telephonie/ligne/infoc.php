@@ -208,7 +208,7 @@ if ($_GET["id"] or $_GET["numero"])
       
       if ($_GET["action"] == '')
 	{
-	  print "<a class=\"butAction\" href=\"infoc.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Edit")."</a>";
+	  print "<a class=\"butAction\" href=\"infoc.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Modify")."</a>";
 	}
       
       print "</div>";

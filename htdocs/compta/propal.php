@@ -154,7 +154,7 @@ if ($_GET["propalid"] > 0)
   print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
   print $langs->trans('RefCustomer').'</td><td align="left">';
   print '</td>';
-  if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+  if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
   print '</tr></table>';
   print '</td><td colspan="5">';
   print $propal->ref_client;

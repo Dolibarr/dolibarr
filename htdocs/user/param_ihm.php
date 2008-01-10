@@ -212,11 +212,11 @@ else
     print '<div class="tabsAction">';
     if ($caneditfield  || $user->admin)       // Si utilisateur édité = utilisateur courant ayant les droits de créer ou admin
     {
-        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Edit").'</a>';
+        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Modify").'</a>';
     }
    	else
 	{
-		print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Edit")."</a>";
+		print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
 	}
    
     print '</div>';
