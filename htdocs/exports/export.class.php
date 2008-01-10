@@ -128,14 +128,17 @@ class Export
                             $this->array_export_code[$i]=$module->export_code[$r];
                             // Libellé du dataset export
                             $this->array_export_label[$i]=$module->getDatasetLabel($r);
-                            // Requete sql du dataset
-                            $this->array_export_sql[$i]=$module->export_sql[$r];
                             // Tableau des champ à exporter (clé=champ, valeur=libellé)
                             $this->array_export_fields[$i]=$module->export_fields_array[$r];
                             // Tableau des entites à exporter (clé=champ, valeur=entite)
                             $this->array_export_entities[$i]=$module->export_entities_array[$r];
                             // Tableau des alias à exporter (clé=champ, valeur=alias)
                             $this->array_export_alias[$i]=$module->export_alias_array[$r];
+
+                            // Requete sql du dataset
+                            $this->array_export_sql_start[$i]=$module->export_sql_start[$r];
+                            $this->array_export_sql_end[$i]=$module->export_sql_end[$r];
+                            //$this->array_export_sql[$i]=$module->export_sql[$r];
 
                             dolibarr_syslog("Export chargé pour le module ".$modulename." en index ".$i.", dataset=".$module->export_code[$r].", nbre de champs=".sizeof($module->export_fields_code[$r]));
                             $i++;
@@ -172,9 +175,33 @@ class Export
         require_once($dir.$file);
         $objmodel = new $classname($db);
         
-        // Execute requete export        
-        $sql=$this->array_export_sql[$indice];
-		
+		// Build the sql request
+        $sql=$this->array_export_sql_start[$indice];
+        $i=0;
+		//print_r($array_selected);
+        foreach ($this->array_export_alias[$indice] as $key => $value)
+        {
+			if (! array_key_exists($key, $array_selected)) continue;		// Field not selected
+
+            if ($i > 0) $sql.=', ';
+            else $i++;
+			$newfield=$key.' as '.$value;
+
+			// Cas particulier
+            if ($this->array_export_module[$indice]->id == 'banque')
+			{
+				// Cas special du debit et credit
+				if ($value=='credit' || $value=='debit')
+				{
+					$newfield='IF('.$key.'>0,'.$key.',NULL) as '.$value;
+				}
+			}
+
+			$sql.=$newfield;
+        }
+        $sql.=$this->array_export_sql_end[$indice];
+	
+		// Run the sql
 		dolibarr_syslog("Export::build_file sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)

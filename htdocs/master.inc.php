@@ -110,9 +110,9 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php"))
  */
 
 // on décode le mot de passe de la base si besoin
-require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");	// Need 1.1Mo memory
 if (! empty($dolibarr_main_db_encrypted_pass)) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
-
+//stopwithmem();
 
 require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 
@@ -224,7 +224,6 @@ if (! defined('FPDF_FONTPATH'))       { define('FPDF_FONTPATH',      FPDF_PATH .
 if (! defined('MAGPIE_DIR'))          { define('MAGPIE_DIR',         MAGPIERSS_PATH); }
 if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->externalrss->dir_temp); }
 
-//stopwithmem();
 
 
 /* 
@@ -293,4 +292,5 @@ $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
 
 if ( ! defined('MENTION_NPR') ) define('MENTION_NPR','(npr)');
+
 ?>

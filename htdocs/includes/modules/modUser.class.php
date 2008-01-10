@@ -148,20 +148,12 @@ class modUser extends DolibarrModules
     $r++;
     $this->export_code[$r]=$this->id.'_'.$r;
     $this->export_label[$r]='Liste des utilisateurs Dolibarr et attributs';
+    $this->export_permission[$r]=array(array("user","user","export"));
     $this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.login'=>"Login",'u.name'=>"Lastname",'u.firstname'=>"Firstname",'u.office_phone'=>'Tel','u.office_fax'=>'Fax','u.email'=>'EMail','u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Admin",'u.statut'=>'Status','u.fk_socpeople'=>"IdContact",'u.fk_societe'=>"IdCompany",'u.note'=>"Note",'u.datelastlogin'=>'LastConnexion','u.datepreviouslogin'=>'PreviousConnexion');
     $this->export_entities_array[$r]=array('u.rowid'=>"user",'u.login'=>"user",'u.name'=>"user",'u.firstname'=>"user",'u.office_phone'=>'user','u.office_fax'=>'user','u.email'=>'user','u.datec'=>"user",'u.tms'=>"user",'u.admin'=>"user",'u.statut'=>'user','u.fk_socpeople'=>"contact",'u.fk_societe'=>"company",'u.note'=>"user",'u.datelastlogin'=>'user','u.datepreviouslogin'=>'user');
     $this->export_alias_array[$r]=array('u.rowid'=>"rowid",'u.login'=>"login",'u.name'=>"name",'u.firstname'=>"firstname",'u.office_phone'=>'tel','u.office_fax'=>'fax','u.email'=>'email','u.datec'=>"datecreation",'u.tms'=>"datelastmodification",'u.admin'=>"admin",'u.statut'=>'status','u.fk_socpeople'=>"idcontact",'u.fk_societe'=>"idcompany",'u.note'=>"note",'u.datelastlogin'=>'datelastlogin','u.datepreviouslogin'=>'datepreviouslogin');
-    $this->export_sql[$r]="select ";
-    $i=0;
-    foreach ($this->export_alias_array[$r] as $key => $value)
-    {
-        if ($i > 0) $this->export_sql[$r].=', ';
-        else $i++;
-        $this->export_sql[$r].=$key.' as '.$value;
-    }
-    $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'user as u';
-    $this->export_permission[$r]=array(array("user","user","export"));
-
+    $this->export_sql_start[$r]='SELECT DISTINCT ';
+    $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
   }
 
 

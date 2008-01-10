@@ -32,3 +32,4 @@ FormatedExportDesc2=First step is to choose a predefined dataset, then to choose
 FormatedExportDesc3=When data to export are selected, you can define output file format you want to export your data to.
 Sheet=Sheet
 NoImportableData=No importable data (no module with definitions to allow data imports)
+FileSuccessfullyBuilt=Export file generated

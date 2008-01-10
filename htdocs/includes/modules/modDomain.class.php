@@ -113,10 +113,10 @@ class modDomain extends DolibarrModules
 
         // $this->export_code[$r]          Code unique identifiant l'export (tous modules confondus)
         // $this->export_label[$r]         Libellé par défaut si traduction de clé "ExportXXX" non trouvée (XXX = Code)
+        // $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
         // $this->export_fields_sql[$r]    Liste des champs exportables en codif sql
         // $this->export_fields_name[$r]   Liste des champs exportables en codif traduction
         // $this->export_sql[$r]           Requete sql qui offre les données à l'export
-        // $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
     }
 
     

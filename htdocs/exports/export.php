@@ -137,7 +137,7 @@ if ($action == 'builddoc')
 	}
 	else
 	{
-//	    $mesg='<div class="ok">'.$langs->trans("FileSuccessfulyBuilt").'</div>';
+	    $mesg='<div class="ok">'.$langs->trans("FileSuccessfullyBuilt").'</div>';
     }
 }
 

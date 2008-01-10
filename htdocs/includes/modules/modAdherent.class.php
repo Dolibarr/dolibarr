@@ -179,14 +179,15 @@ class modAdherent extends DolibarrModules
 
         // $this->export_code[$r]          Code unique identifiant l'export (tous modules confondus)
         // $this->export_label[$r]         Libelle par defaut si traduction de cle "ExportXXX" non trouvee (XXX = Code)
+        // $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
         // $this->export_fields_sql[$r]    Liste des champs exportables en codif sql
         // $this->export_fields_name[$r]   Liste des champs exportables en codif traduction
         // $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
-        // $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
 
         $r++;
         $this->export_code[$r]=$this->id.'_'.$r;
         $this->export_label[$r]='Adherents et adhesions';
+        $this->export_permission[$r]=array(array("adherent","export"));
         $this->export_fields_array[$r]=array('a.rowid'=>'Id','a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'MorPhy','a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.naiss'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note'=>"Note",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel','c.dateadh'=>'DateSubscription','c.cotisation'=>'Amount');
 		$this->export_entities_array[$r]=array('a.rowid'=>'member','a.nom'=>"member",'a.prenom'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.adresse'=>"member",'a.cp'=>"member",'a.ville'=>"member",'a.pays'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.naiss'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'member_type','ta.libelle'=>'member_type','c.dateadh'=>'subscription','c.cotisation'=>'subscription');
         $this->export_alias_array[$r]=array('a.rowid'=>'Id','a.nom'=>"lastname",'a.prenom'=>"firstname",'a.login'=>"login",'a.morphy'=>'morphy','a.adresse'=>"address",'a.cp'=>"zip",'a.ville'=>"town",'a.pays'=>"country",'a.phone'=>"phone",'a.phone_perso'=>"phone_perso",'a.phone_mobile'=>"phone_mobile",'a.email'=>"email",'a.naiss'=>"birthday",'a.statut'=>"status",'a.photo'=>'photo','a.note'=>'note','a.datec'=>'datec','a.datevalid'=>'datevalid','a.tms'=>'datem','a.datefin'=>'dateend','ta.rowid'=>'type_id','ta.libelle'=>'type_label','c.dateadh'=>'date_subscription','c.cotisation'=>'amount_subscription');
@@ -202,19 +203,11 @@ class modAdherent extends DolibarrModules
 			$this->export_alias_array[$r][$fieldname]='opt_'.$obj->name;
 		}
 		// Fin complement
-        $this->export_sql[$r]="select distinct ";
-        $i=0;
-        foreach ($this->export_alias_array[$r] as $key => $value)
-        {
-            if ($i > 0) $this->export_sql[$r].=', ';
-            else $i++;
-            $this->export_sql[$r].=$key.' as '.$value;
-        }
-        $this->export_sql[$r].=' from ('.MAIN_DB_PREFIX.'adherent as a, '.MAIN_DB_PREFIX.'adherent_type as ta)';
-        $this->export_sql[$r].=' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_options as ao ON a.rowid = ao.adhid';
-        $this->export_sql[$r].=' LEFT JOIN '.MAIN_DB_PREFIX.'cotisation as c ON c.fk_adherent = a.rowid';
-        $this->export_sql[$r].=' WHERE a.fk_adherent_type = ta.rowid';
-        $this->export_permission[$r]=array(array("adherent","export"));
+        $this->export_sql_start[$r]='SELECT DISTINCT ';
+        $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'adherent as a, '.MAIN_DB_PREFIX.'adherent_type as ta)';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_options as ao ON a.rowid = ao.adhid';
+        $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'cotisation as c ON c.fk_adherent = a.rowid';
+        $this->export_sql_end[$r] .=' WHERE a.fk_adherent_type = ta.rowid';
     }
 
     

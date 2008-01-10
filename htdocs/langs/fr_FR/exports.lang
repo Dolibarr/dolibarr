@@ -32,3 +32,4 @@ FormatedExportDesc2=La première étape est de choisir un des lots de données préd
 FormatedExportDesc3=Une fois les données sélectionnées, il est possible de choisir le format du fichier export généré.
 Sheet=Feuille
 NoImportableData=Pas de type de données importable (aucun module contenant des définitions de données importable n'est actif)
+FileSuccessfullyBuilt=Fichier export généré
