@@ -47,7 +47,8 @@ function commande_prepare_head($commande)
       $h++;
     }
   
-  if (($conf->expedition->enabled || $conf->livraison->enabled) && $user->rights->expedition->lire)
+  if (($conf->expedition->enabled && $user->rights->expedition->lire)
+     || ($conf->livraison->enabled && $user->rights->expedition->livraison->lire))
     {
       $head[$h][0] = DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id;
       if ($conf->expedition->enabled) $text=$langs->trans("Sendings");
