@@ -511,7 +511,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 
 	// Civility
 	print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-	print $form->civilite_name($contact->civilite_id);
+	print $contact->getCivilityLabel();
 	print '</td></tr>';
 
 	print '<tr><td>Poste/Fonction</td><td colspan="3">'.$contact->poste.'</td>';

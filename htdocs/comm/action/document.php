@@ -34,6 +34,7 @@ require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -188,8 +189,8 @@ if ($_GET["id"] > 0)
 	if ($mesg) { print $mesg."<br>"; }
 
 	// Affiche formulaire upload
-	$html=new Form($db);
-	$html->form_attach_new_file('document.php?id='.$act->id);
+   	$formfile=new FormFile($db);
+	$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id);
 	
 	// Affiche liste des documents existant
 	print_titre($langs->trans("AttachedFiles"));

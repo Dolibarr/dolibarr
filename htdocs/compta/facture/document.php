@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
  *
@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -32,6 +31,7 @@
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/invoice.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
 $langs->load('propal');
 $langs->load('compta');
@@ -162,8 +162,8 @@ if ($facid > 0)
 		if ($mesg) { print $mesg."<br>"; }
 
 		// Affiche formulaire upload
-		$html=new Form($db);
-		$html->form_attach_new_file('document.php?facid='.$facture->id);
+       	$formfile=new FormFile($db);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/facture/document.php?facid='.$facture->id);
 		
 		// Affiche liste des documents existant
 		print_titre($langs->trans("AttachedFiles"));

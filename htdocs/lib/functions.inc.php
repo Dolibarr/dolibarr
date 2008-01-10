@@ -28,14 +28,6 @@
 /**
    \file       htdocs/lib/functions.inc.php
    \brief      Ensemble de fonctions de base de dolibarr sous forme d'include
-   \author     Rodolphe Quiedeville
-   \author	    Jean-Louis Bergamo
-   \author	    Laurent Destailleur
-   \author     Sebastien Di Cintio
-   \author     Benoit Mortier
-   \version    $Revision$
-   
-   Ensemble de fonctions de base de dolibarr sous forme d'include
 */
 
 // Pour compatibilité lors de l'upgrade
@@ -3420,6 +3412,17 @@ function dol_htmloutput_errors($mesgstring='',$mesgarray='')
 	}
 
 	return $ret;
+}
+
+
+/**
+ *	\brief		This function output memory used by PHP and exit everything. Used for debugging purpose.
+ */
+function stopwithmem()
+{
+	print memory_get_usage();
+	llxFooter();
+	exit;
 }
 
 ?>

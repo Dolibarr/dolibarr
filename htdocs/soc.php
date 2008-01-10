@@ -794,7 +794,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            $form->id_prof(1,$soc,'idprof1',$soc->siren);
+            $soc->show_input_id_prof(1,'idprof1',$soc->siren);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -803,7 +803,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            $form->id_prof(2,$soc,'idprof2',$soc->siret);
+            $soc->show_input_id_prof(2,'idprof2',$soc->siret);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -814,7 +814,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            $form->id_prof(3,$soc,'idprof3',$soc->ape);
+            $soc->show_input_id_prof(3,'idprof3',$soc->ape);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -823,7 +823,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         if ($idprof!='-')
         {
             print '<td>'.$idprof.'</td><td>';
-            $form->id_prof(4,$soc,'idprof4',$soc->idprof4);
+            $soc->show_input_id_prof(4,'idprof4',$soc->idprof4);
             print '</td>';
         }
         else print '<td>&nbsp;</td><td>&nbsp;</td>';

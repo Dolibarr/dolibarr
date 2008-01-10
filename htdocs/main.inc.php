@@ -29,6 +29,15 @@
    \version    $Revision$   
 */
 
+// Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING est positionnee.
+// A appeler avant tout. Fait l'equivalent de la fonction dol_microtime_float
+$micro_start_time=0;
+if (! empty($_SERVER['DOL_TUNING']))
+{
+    list($usec, $sec) = explode(" ", microtime());
+    $micro_start_time=((float)$usec + (float)$sec);
+}
+
 // Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
 // (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
@@ -77,9 +86,11 @@ foreach ($_POST as $key => $val)
 
 require_once("master.inc.php");
 
+
 // Chargement des includes complementaire de presentation
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
+stopwithmem();
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');
 
 // Init session
@@ -610,11 +621,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0) 
 {
-	global $user, $conf, $langs, $db, $micro_start_time;
-	
-	// Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING
-	// est positionne A appeler avant tout.
-	if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=dol_microtime_float(true);
+	global $user, $conf, $langs, $db;
 	
 	if (! $conf->css)  $conf->css ='/theme/eldy/eldy.css.php';
 
@@ -960,7 +967,7 @@ function llxFooter($foot='',$limitIEbug=1)
     print "\n</div>\n".'<!-- end div class="fiche" -->'."\n";
     print "\n</div>\n".'<!-- end div class="vmenuplusfiche" -->'."\n";
     
-    if (isset($_SERVER['DOL_TUNING']))
+    if (! empty($_SERVER['DOL_TUNING']))
     {
 		$micro_end_time=dol_microtime_float(true);
 		print '<script language="javascript" type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';

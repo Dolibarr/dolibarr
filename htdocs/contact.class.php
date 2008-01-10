@@ -723,6 +723,20 @@ class Contact extends CommonObject
 	}
 
 
+    /**
+     *    \brief      Retourne le libelle de civilite du contact
+     *    \return     string      Nom traduit de la civilité
+     */
+    function getCivilityLabel()
+    {
+        global $langs;
+        $langs->load("dict");
+
+		$code=$this->civilite_id;
+        return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : $code;           
+    }
+
+
 	/**
 	 *    	\brief      Return full name (name+' '+lastname)
 	 *		\param		langs			Lang for output

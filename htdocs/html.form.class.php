@@ -1802,19 +1802,6 @@ class Form
 
 
     /**
-     *    \brief      Retourne le nom traduit de la civilité
-     *    \param      code        Code de la civilité
-     *    \return     string      Nom traduit de la civilité
-     */
-    function civilite_name($code)
-    {
-        global $langs;
-        $langs->load("dict");
-        return $langs->trans("Civility".$code)!="Civility".$code ? $langs->trans("Civility".$code) : $code;           
-    }
-
-
-    /**
      *    \brief      Retourne la liste déroulante des formes juridiques tous pays confondus ou pour un pays donné.
      *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
      *    \param      selected        Code forme juridique a pré-sélectionné
@@ -1917,24 +1904,6 @@ class Form
     }
 
 
-    /**
-     *      \brief      Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
-     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *      \param      soc             Objet societe
-     *      \param      htmlname        Nom de la zone input
-     */
-    function id_prof($idprof,$soc,$htmlname,$selected='')
-    {
-        global $langs;
-        $formlength=16;
-        if ($idprof==1 && $soc->pays_code == 'FR') $formlength=9;
-        if ($idprof==2 && $soc->pays_code == 'FR') $formlength=14;
-        if ($idprof==3 && $soc->pays_code == 'FR') $formlength=4;
-        if ($idprof==4 && $soc->pays_code == 'FR') $formlength=12;
-        print '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
-    }
-
-
   /**
    *    \brief      Retourne le nom traduit ou code+nom d'un pays
    *    \param      id          id du pays
@@ -1967,46 +1936,6 @@ class Form
         }
     }
     
-    
-   /**
-    *    \brief      Retourne le nom traduit ou code+nom d'une devise
-    *    \param      code_iso       Code iso de la devise
-    *    \param      withcode       1=affiche code + nom
-    *    \return     string         Nom traduit de la devise
-    */
-   function currency_name($code_iso,$withcode=0)
-    {
-        global $langs;
-
-        // Si il existe une traduction, on peut renvoyer de suite le libellé
-        if ($langs->trans("Currency".$code_iso)!="Currency".$code_iso)
-        {
-            return $langs->trans("Currency".$code_iso);
-        }
-        
-        // Si pas de traduction, on consulte libellé par défaut en table
-        $sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
-        $sql.= " WHERE code_iso='$code_iso';";
-    
-        if ($this->db->query($sql))
-        {
-            $num = $this->db->num_rows();
-    
-            if ($num)
-            {
-                $obj = $this->db->fetch_object();
-                $label=($obj->label!='-'?$obj->label:'');
-                if ($withcode) return $label==$code_iso?"$code_iso":"$code_iso - $label";
-                else return $label;
-            }
-            else
-            {
-                return $code_iso;
-            }
-    
-        }
-    }
-
 
   /**
    *    \brief  Affiche formulaire de demande de confirmation
@@ -2267,64 +2196,6 @@ class Form
     }
     
         
-    /**
-     *    	\brief      Affiche formulaire ajout fichier
-     *    	\param      url				Url
-     *    	\param      titre			Titre zone
-     *    	\param      addcancel		1=Ajoute un bouton 'Annuler'
-     *		\return		int				<0 si ko, >0 si ok
-     */
-    function form_attach_new_file($url,$titre='',$addcancel=0)
-    {
-    	global $conf,$langs;
-    	
-    	if ($conf->upload != 0)
-      {
-      	print "\n\n<!-- Start form attach new file -->\n";
-      	
-      	if (! $titre) $titre=$langs->trans("AttachANewFile");
-        print_titre($titre);
-
-    		print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-    
-    		print '<table width="100%" class="noborder">';
-        print '<tr><td width="50%" valign="top">';
-    
-    		$max=$conf->upload;							// En Kb
-    		$maxphp=@ini_get('upload_max_filesize');	// En inconnu
-    		if (eregi('m$',$maxphp)) $maxphp=$maxphp*1024;
-    		if (eregi('k$',$maxphp)) $maxphp=$maxphp;
-    		// Now $max and $maxphp are in Kb
-    		if ($maxphp > 0) $max=min($max,$maxphp);
-    		
-    		if ($conf->upload > 0)
-        {
-        	print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
-        }
-        print '<input class="flat" type="file" name="userfile" size="70">';
-        print ' &nbsp; ';
-        print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'">';
-        
-        if ($addcancel)
-        {
-        	print ' &nbsp; ';
-          print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-        }
-        
-        print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb").')';
-        
-        print "</td></tr>";
-        print "</table>";
-
-    		print '</form>';
-    		print '<br>';
-    		
-    		print "\n<!-- End form attach new file -->\n\n";
-    	}
-    
-    	return 1;
-    }
-
     /**
      *    \brief      	Affiche formulaire de selection de la remise fixe
      *    \param      	page        	Page
@@ -2658,59 +2529,6 @@ class Form
 		print '</select>';
     }  
   
-    /**
-     *
-     *
-     *
-     *
-     */
-    function load_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
-    {
-      global $langs,$conf,$mysoc;
-     
-      if (is_object($societe_vendeuse->pays_code))
-	{
-	  $code_pays=$societe_vendeuse->pays_code;
-	}
-      else
-	{
-	  $code_pays=$mysoc->pays_code;	// Pour compatibilite ascendente
-	}
-      
-      // Recherche liste des codes TVA du pays vendeur
-      $sql  = "SELECT t.taux,t.recuperableonly";
-      $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-      $sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
-      $sql .= " AND t.active = 1";
-      $sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
-      
-      $resql=$this->db->query($sql);
-      if ($resql)
-        {
-	  $num = $this->db->num_rows($resql);
-	  for ($i = 0; $i < $num; $i++)
-            {
-	      $obj = $this->db->fetch_object($resql);
-	      $txtva[ $i ] = $obj->taux;
-	      $libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
-            }
-        }
-      
-      // Définition du taux à pré-sélectionner
-      if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
-      // Si taux par defaut n'a pu etre trouvé, on prend dernier.
-      // Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
-      if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
-      
-      $nbdetaux = sizeof($txtva);
-      
-      for ($i = 0 ; $i < $nbdetaux ; $i++)
-        {
-	  $this->tva_taux_value[$i] = $txtva[$i];
-	  $this->tva_taux_libelle[$i] = $libtva[$i];	  
-        }
-    }
-
 
     /**
      *		\brief  Affiche zone de selection de date
@@ -3050,15 +2868,6 @@ class Form
     }
 
 
-    /**
-     *    \brief  Renvoie la chaine de caractère décrivant l'erreur
-     */
-    function error()
-    {
-        return $this->error;
-    }
-
-
   /**
    *    \brief      Selection de oui/non en chaine (renvoie yes/no)
    *    \param      name            Nom du select
@@ -3092,83 +2901,6 @@ class Form
     return $resultyesno;
   }
 	
-  /**
-   *    \brief  Checkbox
-   *
-   */
-  function checkbox($name,$checked=0,$value=1)
-  {
-    if ($checked==1){
-      print "<input type=\"checkbox\" name=\"$name\" value=\"$value\" checked />\n";
-    }else{
-      print "<input type=\"checkbox\" name=\"$name\" value=\"$value\" />\n";
-    }
-  }
-
-
-  /**
-   *    \brief      Affiche la cartouche générique d'un rapport
-   *    \param      nom             Valeur pour nom du rapport
-   *    \param      variante        Lien optionnel de variante du rapport
-   *    \param      period          Periode du reporting
-   *    \param      periodlink      Lien pour changer de période
-   *    \param      description     Description
-   *    \param      builddate       Date génération 
-   *    \param      exportlink      Lien pour export
-   */
-  function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink)
-  {
-    global $langs;
-    
-    print "\n\n<!-- debut cartouche rapport -->\n";
-
-    $h=0;
-   	$head[$h][0] = $_SERVER["PHP_SELF"];
-   	$head[$h][1] = $langs->trans("Report");
-    dolibarr_fiche_head($head, $hselected, $societe->nom);
-    
-    print '<table width="100%" class="border">';
-
-    // Ligne de titre
-    print '<tr>';
-    print '<td valign="top" width="110">'.$langs->trans("ReportName").'</td>';
-    if (! $variante) print '<td colspan="3">';
-    else print '<td>';
-    print $nom;
-    if ($variante) print '</td><td colspan="2">'.$variante;
-    print '</td>';
-    print '</tr>';
-    
-    // Ligne de la periode d'analyse du rapport
-    print '<tr>';
-    print '<td>'.$langs->trans("ReportPeriod").'</td>';
-    if (! $periodlink) print '<td colspan="3">';
-    else print '<td>';
-    print $period;
-    if ($periodlink) print '</td><td colspan="2">'.$periodlink;
-    print '</td>';
-    print '</tr>';
-
-    // Ligne de description
-    print '<tr>';
-    print '<td valign="top">'.$langs->trans("ReportDescription").'</td>';
-    print '<td colspan="3">'.$description.'</td>';
-    print '</tr>';
-
-    // Ligne d'export
-    print '<tr>';
-    print '<td>'.$langs->trans("GeneratedOn").'</td>';
-    if (! $exportlink) print '<td colspan="3">';
-    else print '<td>';
-    print dolibarr_print_date($builddate);
-    if ($exportlink) print '</td><td>'.$langs->trans("Export").'</td><td>'.$exportlink;
-    print '</td></tr>';
-    
-    print '</table>';
-    print '</div>';
-    print "\n<!-- fin cartouche rapport -->\n\n";
-  }
-
     /**
      *      \brief      Affiche la cartouche de la liste des documents d'une propale, facture...
      *      \param      modulepart          propal=propal, facture=facture, ...

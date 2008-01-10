@@ -686,9 +686,9 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 		// on revient en erreur
 		//
 		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/';
-		$null = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
-		$smarty->assign('tva_taux_value', $html->tva_taux_value);
-		$smarty->assign('tva_taux_libelle', $html->tva_taux_libelle);
+		$tvaarray = load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+		$smarty->assign('tva_taux_value', $tvaarray['value']);
+		$smarty->assign('tva_taux_libelle', $tvaarray['label']);
 		$smarty->display($_GET["canvas"].'-create.tpl');
 	}
 }
@@ -1044,9 +1044,9 @@ if ($_GET["id"] || $_GET["ref"])
 	}
       else
 	{
-	  $null = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
-	  $smarty->assign('tva_taux_value', $html->tva_taux_value);
-	  $smarty->assign('tva_taux_libelle', $html->tva_taux_libelle);
+	  $tvaarray = load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+	  $smarty->assign('tva_taux_value', $tvaarray['value']);
+	  $smarty->assign('tva_taux_libelle', $tvaarray['label']);
 	  $smarty->display($product->canvas.'-edit.tpl');
 	}
     }
@@ -1485,4 +1485,60 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
+
+
+/**
+ *		\brief		Load tva_taux_value and tva_taux_libelle array
+ *		\remarks	Ne sert que pour smarty
+ */
+function load_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
+{
+	global $langs,$conf,$mysoc;
+
+	$retarray=array();
+	
+	if (is_object($societe_vendeuse->pays_code))
+	{
+		$code_pays=$societe_vendeuse->pays_code;
+	}
+	else
+	{
+		$code_pays=$mysoc->pays_code;	// Pour compatibilite ascendente
+	}
+
+	// Recherche liste des codes TVA du pays vendeur
+	$sql  = "SELECT t.taux,t.recuperableonly";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
+	$sql .= " AND t.active = 1";
+	$sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+
+	$resql=$this->db->query($sql);
+	if ($resql)
+	{
+		$num = $this->db->num_rows($resql);
+		for ($i = 0; $i < $num; $i++)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$txtva[ $i ] = $obj->taux;
+			$libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
+		}
+	}
+
+	// Définition du taux à pré-sélectionner
+	if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
+	// Si taux par defaut n'a pu etre trouvé, on prend dernier.
+	// Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
+	if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
+
+	$nbdetaux = sizeof($txtva);
+
+	for ($i = 0 ; $i < $nbdetaux ; $i++)
+	{
+		$retarray['value'][$i] = $txtva[$i];
+		$retarray['label'][$i] = $libtva[$i];	  
+	}
+	
+	return $retarray;
+}
 ?>

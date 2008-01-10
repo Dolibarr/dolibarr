@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,10 @@
 */
 
 require("./pre.inc.php");
-require_once("../../tva.class.php");
-require_once("../../chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/report.inc.php");
+
 
 $langs->load("bills");
 
@@ -67,7 +69,7 @@ else {
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
 }
-$html->report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
 // Affiche rapport
 print '<table class="noborder" width="100%">';

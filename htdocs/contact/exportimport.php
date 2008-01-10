@@ -119,7 +119,7 @@ else
 
 // Civility
 print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-print $form->civilite_name($contact->civilite_id);
+print $contact->getCivilityLabel();
 print '</td></tr>';
 
 print '</table>';
