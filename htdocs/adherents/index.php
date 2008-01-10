@@ -53,8 +53,8 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td align=right width="80">'.$langs->trans("MembersStatusToValid").'</td>';
-print '<td align=right width="80">'.$langs->trans("MembersStatusNotPayed").'</td>';
-print '<td align=right width="80">'.$langs->trans("MembersStatusPayed").'</td>';
+print '<td align=right width="80">'.$langs->trans("MenuMembersNotUpToDate").'</td>';
+print '<td align=right width="80">'.$langs->trans("MenuMembersUpToDate").'</td>';
 print '<td align=right width="80">'.$langs->trans("MembersStatusResiliated").'</td>';
 print "</tr>\n";
 
