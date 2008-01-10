@@ -180,7 +180,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	
 	$db->begin();
 	
-	// Si on a selectionn� une propal � copier, on r�alise la copie
+	// Si on a selectionne une propal a copier, on realise la copie
 	if($_POST['createmode']=='copy' && $_POST['copie_propal'])
 	{
 		if ($propal->fetch($_POST['copie_propal']) > 0)
@@ -244,7 +244,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	{
 		$error=0;
 
-		// Insertion contact par defaut si d�fini
+		// Insertion contact par defaut si defini
 		if ($_POST["contactidp"])
 		{
 			$result=$propal->add_contact($_POST["contactidp"],'CUSTOMER','external');
@@ -323,13 +323,13 @@ if ($_POST['action'] == 'send')
             
 			if ($_POST['sendto'])
 			{
-				// Le destinataire a �t� fourni via le champ libre
+				// Le destinataire a ete fourni via le champ libre
 				$sendto = $_POST['sendto'];
 				$sendtoid = 0;
 			}
 			elseif ($_POST['receiver'])
 			{
-				// Le destinataire a �t� fourni via la liste d�roulante
+				// Le destinataire a ete fourni via la liste deroulante
 				if ($_POST['receiver'] < 0)	// Id du tiers
 				{
 					$sendto = $propal->client->email;
@@ -360,15 +360,15 @@ if ($_POST['action'] == 'send')
                 	}
 
                   $actiontypeid=3;
-                  $actionmsg ='Mail envoy� par '.$from.' � '.$sendto.'.<br>';
+                  $actionmsg = $langs->trans('MailSentBy').' '.$from.' '.$langs->trans('To').' '.$sendto.'.<br>';
 
                   if ($message)
                   {
-                    $actionmsg.='Texte utilis� dans le corps du message:<br>';
+                    $actionmsg.=$langs->trans('TextUsedInTheMessageBody').' :<br>';
                     $actionmsg.=$message;
                   }
 
-                  $actionmsg2='Envoi Propal par mail';
+                  $actionmsg2=$langs->trans('SendPropalByMail');
                 }
 
                 $filepath[0] = $file;
@@ -455,8 +455,8 @@ if ($_POST['action'] == 'send')
     else
     {
 		$langs->load("other");
-		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
-		dolibarr_syslog('Impossible de lire les donn�es de la facture. Le fichier facture n\'a peut-�tre pas �t� g�n�r�.');
+		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Proposal")).'</div>';
+		dolibarr_syslog('Impossible de lire les donnees de la facture. Le fichier propal n\'a peut-etre pas ete genere.');
     }
 }
 
@@ -599,7 +599,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 }
 
 /*
- *  Mise � jour d'une ligne dans la propale
+ *  Mise a jour d'une ligne dans la propale
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
@@ -659,7 +659,7 @@ if ($_POST['action'] == 'classin')
   $propal->set_project($user, $_POST['projetidp']);
 }
 
-// Conditions de r�glement
+// Conditions de reglement
 if ($_POST["action"] == 'setconditions')
 {
 	$propal = new Propal($db);
@@ -684,7 +684,7 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->propale->creer)
 	$_GET['propalid']=$_REQUEST['propalid'];
 }
 
-// Mode de r�glement
+// Mode de reglement
 if ($_POST["action"] == 'setmode')
 {
 	$propal = new Propal($db);
@@ -816,7 +816,7 @@ if ($_GET['propalid'] > 0)
   
   $rowspan=8;
   
-  // Soci�t�
+  // Societe
   print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td>';
   print '</tr>';
   
@@ -897,12 +897,13 @@ if ($_GET['propalid'] > 0)
 	print '</tr>';
 
 
-	// date de livraison (conditionn� sur PROPALE_ADD_SHIPPING_DATE car carac �
-	// g�rer par les commandes et non les propal
-	if ($conf->expedition->enabled)
+	// date de livraison (conditionne sur PROPALE_ADD_SHIPPING_DATE car carac a
+	// gerer par les commandes et non les propales
+	if ($conf->expedition->enabled || $conf->livraison->enabled)
 	{
 		if ($conf->global->PROPALE_ADD_SHIPPING_DATE)
 		{
+			$langs->load('deliveries');
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('DeliveryDate');
@@ -950,7 +951,7 @@ if ($_GET['propalid'] > 0)
 		}
 	}
 
-	// Conditions et modes de r�glement
+	// Conditions et modes de reglement
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
@@ -1199,7 +1200,7 @@ if ($_GET['propalid'] > 0)
 					print '<td class="nobordernopadding" nowrap="nowrap" align="left">';
 					if (($objp->info_bits & 2) == 2)
 					{
-						// Ligne remise pr�d�finie, on ne permet pas modif
+						// Ligne remise predefinie, on ne permet pas modif
 					}
 					else
 					{
@@ -1256,7 +1257,7 @@ if ($_GET['propalid'] > 0)
 					print '<td align="center">';
 					if (($objp->info_bits & 2) == 2)
 					{
-						// Ligne remise pr�d�finie, on permet pas modif
+						// Ligne remise predefinie, on permet pas modif
 					}
 					else
 					{
@@ -1331,7 +1332,7 @@ if ($_GET['propalid'] > 0)
 				}
 				if ($_GET["action"] == 'editline')
 				{
-					// �diteur wysiwyg
+					// editeur wysiwyg
 					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 					{
 						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1380,7 +1381,7 @@ if ($_GET['propalid'] > 0)
 				if ($conf->service->enabled)
 				{
 				print "<tr $bc[$var]>";
-				print '<td colspan="5">Si produit de type service � dur�e limit�e: Du ';
+				print '<td colspan="5">Si produit de type service a duree limitee: Du ';
 				print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
 				print ' au ';
 				print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
@@ -1418,7 +1419,7 @@ if ($_GET['propalid'] > 0)
 		print '<td colspan="4">&nbsp;</td>';
 		print "</tr>\n";
 
-		// Ajout produit produits/services personnalis�s
+		// Ajout produit produits/services personnalises
 		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
 		print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 		print '<input type="hidden" name="action" value="addligne">';
@@ -1427,7 +1428,7 @@ if ($_GET['propalid'] > 0)
 
 		print '<tr '.$bc[$var].">\n";
 		print '<td '.$colspan.'>';
-		// �diteur wysiwyg
+		// editeur wysiwyg
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1457,7 +1458,7 @@ if ($_GET['propalid'] > 0)
 
 		print '</form>';
 
-		// Ajout de produits/services pr�d�finis
+		// Ajout de produits/services predefinis
 		if ($conf->produit->enabled)
 		{
 			if ($conf->global->PRODUIT_USE_MARKUP)
@@ -1502,7 +1503,7 @@ if ($_GET['propalid'] > 0)
 			}
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 			
-			// �diteur wysiwyg
+			// editeur wysiwyg
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1531,7 +1532,7 @@ if ($_GET['propalid'] > 0)
 	print "\n";
 
 	/*
-	* Formulaire cloture (sign� ou non)
+	* Formulaire cloture (signe ou non)
 	*/
 	$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
 	$form_close.= '<table class="border" width="100%">';
@@ -1652,7 +1653,7 @@ if ($_GET['propalid'] > 0)
 
 
 	/*
-	* Documents g�n�r�s
+	* Documents generes
 	*/
 	$filename=sanitize_string($propal->ref);
 	$filedir=$conf->propal->dir_output . "/" . sanitize_string($propal->ref);
@@ -1666,7 +1667,7 @@ if ($_GET['propalid'] > 0)
 
 
 	/*
-	* Commandes rattach�es
+	* Commandes rattachees
 	*/
 	if($conf->commande->enabled)
 	{
@@ -1782,7 +1783,7 @@ if ($_GET['propalid'] > 0)
 		$formmail->withdeliveryreceipt=1;
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$propal->ref;
-		// Tableau des param�tres compl�mentaires
+		// Tableau des parametres complementaires
 		$formmail->param['action']='send';
 		$formmail->param['models']='propal_send';
 		$formmail->param['propalid']=$propal->id;
@@ -1935,7 +1936,7 @@ else
                 $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->rowid;
             }
 
-			// Soci�t�
+			// Societe
             print '<td><a href="'.$url.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 
             // Date propale
