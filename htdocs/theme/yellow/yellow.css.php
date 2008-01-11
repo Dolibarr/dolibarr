@@ -104,6 +104,15 @@ select.flat
 	background-image : url(/theme/yellow/img/button_bg.png);
 	background-position : bottom;
 }
+.buttonajax
+{
+	font-family: arial,verdana,helvetica, sans-serif;
+	font-size: 100%;
+	font-weight: normal;
+	border: 1px solid #bbbb99;
+	background-image : url(/theme/yellow/img/button_bg.png);
+	background-position : bottom;
+}
 form
 {
     padding: 0em 0em 0em 0em;

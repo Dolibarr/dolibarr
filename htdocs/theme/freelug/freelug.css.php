@@ -113,7 +113,19 @@ select.flat
 	background-position: bottom;
 	background-repeat: repeat-x;
 }
-
+.buttonajax  {
+	font-size: 11px;
+	font-family: arial,verdana,heletica, sans-serif;
+    padding: 0px 2px 0px 2px;
+    margin: 0px 0px 0px 0px; 
+	border-left: 1px solid #cccccc;
+	border-right: 1px solid #aaaaaa;
+	border-top: 1px solid #dddddd;
+	border-bottom: 1px solid #aaaaaa;
+	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/button_bg.png' ?>);
+	background-position: bottom;
+	background-repeat: repeat-x;
+}
 form
 {
     padding: 0px 0px 0px 0px;

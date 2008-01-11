@@ -103,6 +103,15 @@ select.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
+.buttonajax
+{
+	font-size: 100%;
+	border: 0px;
+	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/button_bg.png' ?>);
+	background-position : bottom;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
 form
 {
     padding: 0em 0em 0em 0em;

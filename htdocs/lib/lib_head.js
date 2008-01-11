@@ -692,7 +692,7 @@ function dialogConfirm(linkurl,message,ok,cancel,objectID) {
 		width:300,
 		okLabel: ok,
 		cancelLabel: cancel,
-		buttonClass: "button",
+		buttonClass: "buttonajax",
 		id: objectID,
 		destroyOnClose: true,
 		cancel:function(win){},
