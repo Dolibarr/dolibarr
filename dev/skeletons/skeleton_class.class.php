@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,23 +21,21 @@
 
 /**
         \file       dev/skeletons/skeleton_class.class.php
-        \ingroup    core
-        \brief      Example for class
+        \ingroup    unknown
+        \brief      This file is an example to create a new class file
         \version    $Revision$
 */
 
-// Put here all includes required by your script
+// Put here all includes required by your class file
 //require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
-
 /**
         \class      Skeleton_class
-        \brief      Class description
+        \brief      Put here description of your class
 */
-
 class Skeleton_class
 {
 	var $db;							// To store db handler
@@ -48,6 +47,7 @@ class Skeleton_class
     var $id;
     var $prop1;
     var $prop2;
+	//...
 
 	
     /**
@@ -73,28 +73,27 @@ class Skeleton_class
 		// Clean parameters
         $this->prop1=trim($this->prop1);
         $this->prop2=trim($this->prop2);
+		//...
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mytable";
-		$sql.= "(rowid, field1)";
-        $sql.= " VALUES (";
-        $sql.= " ".$this->id.",";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mytable(";
+		$sql.= " rowid,"
+		$sql.= " field1,";
+		$sql.= " field2";
+		//...
+        $sql.= ") VALUES (";
+        $sql.= " '".$this->id."',";
         $sql.= " '".$this->prop1."'";
+        $sql.= " '".$this->prop2."'";
+		//...
 		$sql.= ")";
-	   	dolibarr_syslog("Skeleton_class::create sql=".$sql);
 
+	   	dolibarr_syslog("Skeleton_class::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mytable");
     
-            $resql=$this->update($user, 1);
-            if ($resql < 0)
-            {
-                $this->error=$this->db->lasterror();
-                return -2;
-            }
-
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
@@ -106,8 +105,8 @@ class Skeleton_class
         }
         else
         {
-            $this->error=$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::create ".$this->error);
+            $this->error="Error ".$this->db->lasterror();
+            dolibarr_syslog("Skeleton_class::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -125,18 +124,21 @@ class Skeleton_class
 		// Clean parameters
         $this->prop1=trim($this->prop1);
         $this->prop2=trim($this->prop2);
+		//...
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."mytable SET";
         $sql.= " field1='".addslashes($this->field1)."',";
         $sql.= " field2='".addslashes($this->field2)."'";
+		//...
         $sql.= " WHERE rowid=".$this->id;
-        dolibarr_syslog("Skeleton_class::update sql=".$sql,LOG_DEBUG);
-    
+
+        dolibarr_syslog("Skeleton_class::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
-            $this->error=$this->db->lasterror().' sql='.$sql;
+            $this->error="Error ".$this->db->lasterror();
+            dolibarr_syslog("Skeleton_class::update ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -163,11 +165,15 @@ class Skeleton_class
     function fetch($id, $user=0)
     {
     	global $langs;
-        $sql = "SELECT t.rowid, t.field1, t.field2";
+        $sql = "SELECT";
+		$sql.= " t.rowid,";
+		$sql.= " t.field1,";
+		$sql.= " t.field2";
+		//...
         $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
         $sql.= " WHERE c.rowid = ".$id;
     
-    	dolibarr_syslog("Skeleton_class::fetch sql=".$sql);
+    	dolibarr_syslog("Skeleton_class::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -178,6 +184,7 @@ class Skeleton_class
                 $this->id    = $obj->rowid;
                 $this->prop1 = $obj->field1;
                 $this->prop2 = $obj->field2;
+				//...
             }
             $this->db->free($resql);
             
@@ -186,7 +193,7 @@ class Skeleton_class
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::fetch ".$this->error);
+            dolibarr_syslog("Skeleton_class::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -208,7 +215,8 @@ class Skeleton_class
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
-			$this->error=$this->db->lasterror().' sql='.$sql;
+			$this->error="Error ".$this->db->lasterror();
+            dolibarr_syslog("Skeleton_class::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 	
