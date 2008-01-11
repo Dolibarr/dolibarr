@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -25,8 +24,6 @@
 		\brief      Ensemble de fonctions de base pour le module projet
         \ingroup    societe
         \version    $Revision$
-
-		Ensemble de fonctions de base de dolibarr sous forme d'include
 */
 
 function project_prepare_head($objsoc)
@@ -75,4 +72,57 @@ function project_prepare_head($objsoc)
 	return $head;
 }
 
+
+/**
+		\brief      Affiche la liste déroulante des projets d'une société donnée
+		\param      socid       Id société
+		\param      selected    Id projet pré-sélectionné
+		\param      htmlname    Nom de la zone html
+		\return     int         Nbre de projet si ok, <0 si ko
+*/
+function select_projects($socid, $selected='', $htmlname='projectid')
+{
+	global $db;
+
+	// On recherche les projets
+	$sql = 'SELECT p.rowid, p.title FROM ';
+	$sql.= MAIN_DB_PREFIX .'projet as p';
+	$sql.= " WHERE fk_soc='".$socid."'";
+	$sql.= " ORDER BY p.title ASC";
+
+	dolibarr_syslog("project.lib::select_projects sql=".$sql);
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		print '<select class="flat" name="'.$htmlname.'">';
+		print '<option value="0">&nbsp;</option>';
+		$num = $db->num_rows($resql);
+		$i = 0;
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				if (!empty($selected) && $selected == $obj->rowid)
+				{
+					print '<option value="'.$obj->rowid.'" selected="true">'.$obj->title.'</option>';
+				}
+				else
+				{
+					print '<option value="'.$obj->rowid.'">'.$obj->title.'</option>';
+				}
+				$i++;
+			}
+		}
+		print '</select>';
+		$db->free($resql);
+		return $num;
+	}
+	else
+	{
+		dolibarr_print_error($this->db);
+		return -1;
+	}
+}
+  
 ?>

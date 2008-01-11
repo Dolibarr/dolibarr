@@ -36,6 +36,7 @@
 /**
         \class      Form
         \brief      Classe permettant la génération de composants html
+		\remarks	Only common components must be here.
 */
 
 class Form
@@ -48,7 +49,8 @@ class Form
   var $cache_conditions_paiements_code=array();
   var $cache_conditions_paiements_libelle=array();
 
-  var $tva_taux;
+  var $tva_taux_value;
+  var $tva_taux_libelle;
   
   /**
      \brief     Constructeur
@@ -507,170 +509,60 @@ class Form
         print '</select>';
     }
 
-
-    /**
-     *    \brief      Retourne la liste déroulante des menus disponibles (eldy_backoffice, ...)
-     *    \param      selected        Menu pré-sélectionnée
-     *    \param      htmlname        Nom de la zone select
-     *    \param      dirmenu         Repértoire à scanner
-     */
-    function select_menu($selected='',$htmlname,$dirmenu)
-    {
-        global $langs,$conf;
-    
-        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilité
-    
-		$menuarray=array();
-        $handle=opendir($dirmenu);
-        while (($file = readdir($handle))!==false)
-        {
-            if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-            {
-                $filelib=eregi_replace('\.php$','',$file);
-				$prefix='';
-				if (eregi('^eldy',$file)) $prefix='0';			// Recommanded
-				else if (eregi('^auguria',$file)) $prefix='2';	// Other
-				else if (eregi('^default',$file)) $prefix='2';	// Other
-				else if (eregi('^rodolphe',$file)) $prefix='2';	// Other
-				else if (eregi('^empty',$file)) $prefix='2';	// Other
-				else $prefix='1';								// Experimental
-				
-                if ($file == $selected)
-                {
-					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="true">'.$filelib.'</option>';
-                }
-                else
-                {
-                    $menuarray[$prefix.'_'.$file]='<option value="'.$file.'">'.$filelib.'</option>';
-                }
-            }
-        }
-		ksort($menuarray);
-		
-		// Affichage liste deroulante des menus
-        print '<select class="flat" name="'.$htmlname.'">';
-        $oldprefix='';
-		foreach ($menuarray as $key => $val)
-		{
-			$tab=split('_',$key);
-			$newprefix=$tab[0];
-			if ($conf->browser->firefox && $newprefix != $oldprefix)
-			{
-				// Affiche titre
-				print '<option value="-1" disabled="disabled">';
-				if ($newprefix=='0') print '-- '.$langs->trans("VersionRecommanded").' --';
-				if ($newprefix=='1') print '-- '.$langs->trans("VersionExperimental").' --';
-				if ($newprefix=='2') print '-- '.$langs->trans("Other").' --';
-				print '</option>';
-				$oldprefix=$newprefix;
-			}
-			print $val."\n";
-		}
-		print '</select>';
-    }
-
-    /**
-     *    \brief      Retourne la liste déroulante des menus disponibles (eldy)
-     *    \param      selected        Menu pré-sélectionnée
-     *    \param      htmlname        Nom de la zone select
-     *    \param      dirmenu         Repertoire à scanner
-     */
-    function select_menu_families($selected='',$htmlname,$dirmenu)
-    {
-		global $langs,$conf;
-    
-		$menuarray=array();
-        $handle=opendir($dirmenu);
-        while (($file = readdir($handle))!==false)
-        {
-            if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-            {
-                $filelib=eregi_replace('(_backoffice|_frontoffice)?\.php$','',$file);
-				if (eregi('^default',$filelib)) continue;
-				if (eregi('^empty',$filelib)) continue;
-
-				$menuarray[$filelib]=1;
-            }
-			$menuarray['all']=1;
-        }
-		ksort($menuarray);
-
-		// Affichage liste deroulante des menus
-        print '<select class="flat" name="'.$htmlname.'">';
-        $oldprefix='';
-		foreach ($menuarray as $key => $val)
-		{
-			$tab=split('_',$key);
-			$newprefix=$tab[0];
-			print '<option value="'.$key.'"';
-            if ($key == $selected)
-			{
-				print '	selected="true"';
-			}
-            //if ($key == 'rodolphe') print ' disabled="true"';
-			print '>';
-			if ($key == 'all') print $langs->trans("AllMenus");
-			else print $key;
-			//if ($key == 'rodolphe') print ' ('.$langs->trans("PersonalizedMenusNotSupported").')';
-			print '</option>'."\n";
-		}
-		print '</select>';
-    }
-	
 	
 	/**
-   *    \brief      Retourne la liste des types de comptes financiers
-   *    \param      selected        Type pré-sélectionné
-   *    \param      htmlname        Nom champ formulaire
-   */
-  function select_type_comptes_financiers($selected=1,$htmlname='type')
-  {
-    global $langs;
-    $langs->load("banks");
-    
-    $type_available=array(0,1,2);
-    
-    print '<select class="flat" name="'.$htmlname.'">';
-    $num = count($type_available);
-    $i = 0;
-    if ($num)
-      {
-	while ($i < $num)
-	  {
-	    if ($selected == $type_available[$i])
-	      {
-		print '<option value="'.$type_available[$i].'" selected="true">'.$langs->trans("BankType".$type_available[$i]).'</option>';
-	      }
-	    else
-	      {
-		print '<option value="'.$type_available[$i].'">'.$langs->trans("BankType".$type_available[$i]).'</option>';
-	      }
-	    $i++;
-	  }
-      }
-    print '</select>';
-  }
-  
-  
-		/**
-		*    \brief      Retourne la liste des types de comptes financiers
-		*    \param      selected        Type pré-sélectionné
-		*    \param      htmlname        Nom champ formulaire
-		*/
-		function select_type_actions($selected='',$htmlname='actioncode')
+	*    \brief      Retourne la liste des types de comptes financiers
+	*    \param      selected        Type pré-sélectionné
+	*    \param      htmlname        Nom champ formulaire
+	*/
+	function select_type_comptes_financiers($selected=1,$htmlname='type')
+	{
+		global $langs;
+		$langs->load("banks");
+		
+		$type_available=array(0,1,2);
+		
+		print '<select class="flat" name="'.$htmlname.'">';
+		$num = count($type_available);
+		$i = 0;
+		if ($num)
 		{
-			global $langs,$user;
-			
-			require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
-			$caction=new CActionComm($this->db);
-			
-			$arraylist=$caction->liste_array(1,'code');
-			$arraylist[0]='&nbsp;';
-			asort($arraylist);
-			
-			$this->select_array($htmlname, $arraylist, 0);
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+			while ($i < $num)
+			{
+				if ($selected == $type_available[$i])
+				{
+					print '<option value="'.$type_available[$i].'" selected="true">'.$langs->trans("BankType".$type_available[$i]).'</option>';
+				}
+				else
+				{
+					print '<option value="'.$type_available[$i].'">'.$langs->trans("BankType".$type_available[$i]).'</option>';
+				}
+				$i++;
+			}
 		}
+		print '</select>';
+	}
+  
+  
+	/**
+	*    \brief      Retourne la liste des types de comptes financiers
+	*    \param      selected        Type pré-sélectionné
+	*    \param      htmlname        Nom champ formulaire
+	*/
+	function select_type_actions($selected='',$htmlname='actioncode')
+	{
+		global $langs,$user;
+		
+		require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
+		$caction=new CActionComm($this->db);
+		
+		$arraylist=$caction->liste_array(1,'code');
+		$arraylist[0]='&nbsp;';
+		asort($arraylist);
+		
+		$this->select_array($htmlname, $arraylist, 0);
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+	}
 
 
   /**
@@ -939,54 +831,6 @@ class Form
     }
     
     
-  /**
-     \brief      Affiche la liste déroulante des projets d'une société donnée
-     \param      socid       Id société
-     \param      selected    Id projet pré-sélectionné
-     \param      htmlname    Nom de la zone html
-     \return     int         Nbre de projet si ok, <0 si ko
-   */
-  function select_projects($socid, $selected='', $htmlname='projectid')
-  {
-    // On recherche les projets
-    $sql = 'SELECT p.rowid, p.title FROM ';
-    $sql.= MAIN_DB_PREFIX .'projet as p';
-    $sql.= " WHERE fk_soc='".$socid."'";
-    $sql.= " ORDER BY p.title ASC";
-    
-    $resql=$this->db->query($sql);
-    if ($resql)
-      {
-	print '<select class="flat" name="'.$htmlname.'">';
-	print '<option value="0">&nbsp;</option>';
-	$num = $this->db->num_rows($resql);
-	$i = 0;
-	if ($num)
-	  {
-	    while ($i < $num)
-	      {
-		$obj = $this->db->fetch_object($resql);
-		if (!empty($selected) && $selected == $obj->rowid)
-		  {
-		    print '<option value="'.$obj->rowid.'" selected="true">'.$obj->title.'</option>';
-		  }
-		else
-		  {
-		    print '<option value="'.$obj->rowid.'">'.$obj->title.'</option>';
-		  }
-		$i++;
-	      }
-	  }
-	print '</select>';
-	$this->db->free($resql);
-	return $num;
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-	return -1;
-      }
-  }
   /**
      \brief      Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
      \param      selected        Produit pré-sélectionné
@@ -1905,39 +1749,6 @@ class Form
 
 
   /**
-   *    \brief      Retourne le nom traduit ou code+nom d'un pays
-   *    \param      id          id du pays
-   *    \param      withcode    1=affiche code + nom
-   *    \return     string      Nom traduit du pays
-   */
-    function pays_name($id,$withcode=0)
-    {
-        global $langs;
-    
-        $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
-        $sql.= " WHERE rowid=$id;";
-    
-        if ($this->db->query($sql))
-        {
-            $num = $this->db->num_rows();
-    
-            if ($num)
-            {
-                $obj = $this->db->fetch_object();
-                $label=$obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'');
-                if ($withcode) return $label==$obj->code?"$obj->code":"$obj->code - $label";
-                else return $label;
-            }
-            else
-            {
-                return $langs->trans("NotDefined");
-            }
-    
-        }
-    }
-    
-
-  /**
    *    \brief  Affiche formulaire de demande de confirmation
    *    \param  page        	page
    *    \param  title       	title
@@ -2041,14 +1852,16 @@ class Form
     {
         global $langs;
         
-        $langs->load("project");
+		require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
+        
+		$langs->load("project");
         if ($htmlname != "none")
         {
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="action" value="classin">';
             print '<table class="noborder" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_projects($socid,$selected,$htmlname);
+            select_projects($socid,$selected,$htmlname);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -2056,7 +1869,7 @@ class Form
         else
         {
             if ($selected) {
-                $projet = New Project($this->db);
+                $projet = new Project($this->db);
                 $projet->fetch($selected);
                 print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$selected.'">'.$projet->title.'</a>';
             } else {
@@ -2377,7 +2190,7 @@ class Form
 
 
     /**
-     *      \brief      Selection du taux de tva appliqué par vendeur
+     *      \brief      Selection du taux de tva à appliquer
      *      \param      name                Nom champ html
      *      \param      defaulttx           Forçage du taux tva pré-sélectionné. Mettre '' pour aucun forcage.
      *      \param      societe_vendeuse    Objet société vendeuse
@@ -3156,49 +2969,7 @@ class Form
 	}
 
 
-	function show_ldap_content($result,$level,$count,$var,$hide=0)
-	{
-		global $bc, $conf;
-		
-		$count++;
-		if ($count > 1000) return -1;	// To avoid infinite loop
-		if (! is_array($result)) return -1;
-
-		foreach($result as $key => $val)
-		{
-			if ("$key" == "objectclass") continue;
-			if ("$key" == "count") continue;
-			if ("$key" == "dn") continue;
-			
-			if ("$val" == "objectclass") continue;
-			if ("$val" == $lastkey[$level]) continue;
-			
-			$lastkey[$level]=$key;
-			
-			if (is_array($val)) 
-			{
-				$hide=0;
-				if (! is_numeric($key)) 
-				{
-					$var=!$var;
-					print '<tr '.$bc[$var].'><td>';
-					print $key;
-					print '</td><td>';
-					if (strtolower($key) == 'userpassword') $hide=1;
-				}
-				$this->show_ldap_content($val,$level+1,$count,$var,$hide);
-			}
-			else
-			{
-				if ($hide) print eregi_replace('.','*',utf8_decode("$val"));
-				else print utf8_decode($val);
-				print '</td></tr>';
-			}
-		}
-		return 1;
-	}
-	
-	  /**
+	/**
      *    \brief      Retourne la liste des modèles d'export
      *    \param      selected          Id modèle pré-sélectionné
      *    \param      htmlname          Nom de la zone select
@@ -3313,56 +3084,56 @@ class Form
 	}
 	
 
-    /**
-     *    \brief     Retourne la liste des ecotaxes avec tooltip sur le libelle
-     *    \param     selected    code ecotaxes pre-selectionne
-     *    \param     htmlname    nom de la liste deroulante
-     */
-    function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
-    {
-    	global $langs;
-    	
-    	$sql = "SELECT e.rowid, e.code, e.libelle, e.price, e.organization,";
-    	$sql.= " p.libelle as pays";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_pays as p";
-      $sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
-      $sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
-      
-      if ($this->db->query($sql))
-      {
-      	print '<select class="flat" name="'.$htmlname.'">';
-        $num = $this->db->num_rows();
-        $i = 0;
-        print '<option value="-1">&nbsp;</option>'."\n";
-        if ($num)
-        {
-          while ($i < $num)
-          {
-          	$obj = $this->db->fetch_object();
-            if ($selected && $selected == $obj->rowid)
-            {
-            	print '<option value="'.$obj->rowid.'" selected="true">';
-            }
-            else
-            {
-            	print '<option value="'.$obj->rowid.'">';
-            	//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
-            }
-            $selectOptionValue = $obj->code.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
-            print $selectOptionValue;
-            print '</option>';
-            $i++;
-          }
-        }
-        print '</select>';
-        return 0;
-      }
-      else
-      {
-      	dolibarr_print_error($this->db);
-      	return 1;
-      }
-    }
+	/**
+	*    \brief     Retourne la liste des ecotaxes avec tooltip sur le libelle
+	*    \param     selected    code ecotaxes pre-selectionne
+	*    \param     htmlname    nom de la liste deroulante
+	*/
+	function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
+	{
+		global $langs;
+		
+		$sql = "SELECT e.rowid, e.code, e.libelle, e.price, e.organization,";
+		$sql.= " p.libelle as pays";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_pays as p";
+		$sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
+		$sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
+		
+		if ($this->db->query($sql))
+		{
+			print '<select class="flat" name="'.$htmlname.'">';
+			$num = $this->db->num_rows();
+			$i = 0;
+			print '<option value="-1">&nbsp;</option>'."\n";
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object();
+					if ($selected && $selected == $obj->rowid)
+					{
+						print '<option value="'.$obj->rowid.'" selected="true">';
+					}
+					else
+					{
+						print '<option value="'.$obj->rowid.'">';
+						//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
+					}
+					$selectOptionValue = $obj->code.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
+					print $selectOptionValue;
+					print '</option>';
+					$i++;
+				}
+			}
+			print '</select>';
+			return 0;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return 1;
+		}
+	}
 	
 }
 

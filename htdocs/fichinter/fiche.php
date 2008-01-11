@@ -406,8 +406,8 @@ if ($_GET["action"] == 'create')
 
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
 		
-    if ($_GET["socid"]) $numprojet = $societe->has_projects();
-    
+		if ($_GET["socid"]) $numprojet = $societe->has_projects();
+		
 		if (!$numprojet)
 		{
 			print '<table class="nobordernopadding" width="100%">';
@@ -423,19 +423,19 @@ if ($_GET["action"] == 'create')
 		}
 		else
 		{
-			$html->select_projects($societe->id,'','projetidp');
+			select_projects($societe->id,'','projetidp');
 		}
 		print '</td></tr>';
 	}
-	
+
 	// Model
-  print '<tr>';
-  print '<td>'.$langs->trans("DefaultModel").'</td>';
-  print '<td colspan="2">';
-  $model=new ModelePDFFicheinter();
-  $liste=$model->liste_modeles($db);
-  $html->select_array('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
-  print "</td></tr>";
+	print '<tr>';
+	print '<td>'.$langs->trans("DefaultModel").'</td>';
+	print '<td colspan="2">';
+	$model=new ModelePDFFicheinter();
+	$liste=$model->liste_modeles($db);
+	$html->select_array('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
+	print "</td></tr>";
 
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 	print "<td>";

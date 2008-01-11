@@ -492,7 +492,7 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCountry").'</td><td>';
-    print $form->pays_name($conf->global->MAIN_INFO_SOCIETE_PAYS,1);
+    print getCountryLabel($conf->global->MAIN_INFO_SOCIETE_PAYS,1);
     print '</td></tr>';
 
     $var=!$var;

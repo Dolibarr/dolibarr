@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -136,8 +135,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$html=new Form($db);
-			$result=$html->show_ldap_content($records,0,0,true);
+			$result=show_ldap_content($records,0,0,true);
 		}
 	}
 	else

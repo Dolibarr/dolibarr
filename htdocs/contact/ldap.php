@@ -174,8 +174,7 @@ if ($result > 0)
 		}
 		else
 		{
-			$html=new Form($db);
-			$result=$html->show_ldap_content($records,0,0,true);
+			$result=show_ldap_content($records,0,0,true);
 		}
 	}
 	else

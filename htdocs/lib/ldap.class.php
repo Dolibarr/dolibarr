@@ -268,8 +268,17 @@ class Ldap
 			if (! $connected) $this->close();
 		}
 
-		$return=($connected ? $connected : -1);
-		dolibarr_syslog("Ldap::connect_bind return=".$return,LOG_DEBUG);
+		if ($connected)
+		{
+			$return=$connected;
+			dolibarr_syslog("Ldap::connect_bind return=".$return, LOG_DEBUG);
+		}
+		else
+		{
+			$this->error='Failed to connect to LDAP';
+			$return=-1;
+			dolibarr_syslog("Ldap::connect_bind return=".$return, LOG_WARN);
+		}
 		return $return;
 	}
 

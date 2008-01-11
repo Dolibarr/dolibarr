@@ -26,6 +26,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
 $langs->load("admin");
 
@@ -269,7 +270,9 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 /*
  * Affichage page
  */
+
 $html=new Form($db);
+$htmladmin=new FormAdmin($db);
 
 llxHeader();
 
@@ -313,7 +316,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	//Handler
 	print '<tr><td><b>'.$langs->trans('MenuHandler').'</b></td>';
 	print '<td>';
-	print $html->select_menu_families($menu_handler,'menu_handler',$dirleft);
+	print $htmladmin->select_menu_families($menu_handler,'menu_handler',$dirleft);
 	//print '<input type="text" size="30" name="handler" value="'.$menu_handler.'">';
 	print '</td>';
 	print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';

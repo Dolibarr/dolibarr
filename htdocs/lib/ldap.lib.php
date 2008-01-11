@@ -78,4 +78,47 @@ function ldap_prepare_head()
 	return $head;
 }
 
+
+function show_ldap_content($result,$level,$count,$var,$hide=0)
+{
+	global $bc, $conf;
+	
+	$count++;
+	if ($count > 1000) return -1;	// To avoid infinite loop
+	if (! is_array($result)) return -1;
+
+	foreach($result as $key => $val)
+	{
+		if ("$key" == "objectclass") continue;
+		if ("$key" == "count") continue;
+		if ("$key" == "dn") continue;
+		
+		if ("$val" == "objectclass") continue;
+		if ("$val" == $lastkey[$level]) continue;
+		
+		$lastkey[$level]=$key;
+		
+		if (is_array($val)) 
+		{
+			$hide=0;
+			if (! is_numeric($key)) 
+			{
+				$var=!$var;
+				print '<tr '.$bc[$var].'><td>';
+				print $key;
+				print '</td><td>';
+				if (strtolower($key) == 'userpassword') $hide=1;
+			}
+			show_ldap_content($val,$level+1,$count,$var,$hide);
+		}
+		else
+		{
+			if ($hide) print eregi_replace('.','*',utf8_decode("$val"));
+			else print utf8_decode($val);
+			print '</td></tr>';
+		}
+	}
+	return 1;
+}
+
 ?>

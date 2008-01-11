@@ -35,6 +35,7 @@ require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 
 $langs->load('orders');
@@ -836,7 +837,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			if ($conf->projet->enabled)
 			{
 				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-				$numprojet=$html->select_projects($soc->id,$projetid,'projetid');
+				$numprojet=select_projects($soc->id,$projetid,'projetid');
 				if ($numprojet==0)
 				{
 					print ' &nbsp; <a href=../projet/fiche.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';

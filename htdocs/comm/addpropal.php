@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -30,12 +29,12 @@
 */
 
 require("./pre.inc.php");
-
-include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+require_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
 if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
 {
     require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
 }
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 
 $langs->load("propal");
 if ($conf->projet->enabled) $langs->load("projects");
@@ -202,7 +201,7 @@ if ($conf->expedition->enabled)
 	    print '<tr>';
         print '<td valign="top">'.$langs->trans("Project").'</td><td colspan="2">';
 
-        $numprojet=$html->select_projects($soc->id,$projetid,'projetidp');
+        $numprojet=select_projects($soc->id,$projetid,'projetidp');
         if ($numprojet==0)
         {
             print ' &nbsp; <a href="../projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';

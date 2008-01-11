@@ -26,6 +26,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
+
 
 $langs->load("companies");
 $langs->load("products");
@@ -75,6 +77,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 */
 
 $html=new Form($db);
+$htmladmin=new FormAdmin($db);
 
 llxHeader();
 
@@ -123,10 +126,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
     print '<td>';
-    print $html->select_menu($conf->global->MAIN_MENU_BARRETOP,'main_menu_barretop',$dirtop);
+    print $htmladmin->select_menu($conf->global->MAIN_MENU_BARRETOP,'main_menu_barretop',$dirtop);
     print '</td>';
     print '<td>';
-    print $html->select_menu($conf->global->MAIN_MENUFRONT_BARRETOP,'main_menufront_barretop',$dirtop);
+    print $htmladmin->select_menu($conf->global->MAIN_MENUFRONT_BARRETOP,'main_menufront_barretop',$dirtop);
     print '</td>';
     print '</tr>';
 
@@ -134,10 +137,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
     print '<td>';
-    print $html->select_menu($conf->global->MAIN_MENU_BARRELEFT,'main_menu_barreleft',$dirleft);
+    print $htmladmin->select_menu($conf->global->MAIN_MENU_BARRELEFT,'main_menu_barreleft',$dirleft);
     print '</td>';
     print '<td>';
-    print $html->select_menu($conf->global->MAIN_MENUFRONT_BARRELEFT,'main_menufront_barreleft',$dirleft);
+    print $htmladmin->select_menu($conf->global->MAIN_MENUFRONT_BARRELEFT,'main_menufront_barreleft',$dirleft);
     print '</td>';
     print '</tr>';
 

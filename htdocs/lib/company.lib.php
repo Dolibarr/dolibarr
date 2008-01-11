@@ -128,6 +128,43 @@ function societe_prepare_head($objsoc)
   return $head;
 }
 
+
+/**
+*    \brief      Retourne le nom traduit ou code+nom d'un pays
+*    \param      id          id du pays
+*    \param      withcode    1=affiche code + nom
+*    \return     string      Nom traduit du pays
+*/
+function getCountryLabel($id,$withcode=0)
+{
+	global $db,$langs;
+
+	$sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
+	$sql.= " WHERE rowid=".$id;
+
+	dolibarr_syslog("company.lib.php sql=".$sql);
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+		if ($obj)
+		{
+			$label=$obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'');
+			if ($withcode) return $label==$obj->code?"$obj->code":"$obj->code - $label";
+			else return $label;
+		}
+		else
+		{
+			return $langs->trans("NotDefined");
+		}
+		$db->free($resql);
+	}
+}
+
+
+/**
+*    \brief      Show html area with actions to do
+*/
 function show_actions_todo($conf,$langs,$db,$objsoc)
 {
 	global $bc;
@@ -255,6 +292,9 @@ function show_actions_todo($conf,$langs,$db,$objsoc)
     }
 }
 
+/**
+*    \brief      Show html area with actions done
+*/
 function show_actions_done($conf,$langs,$db,$objsoc)
 {
 	global $bc;

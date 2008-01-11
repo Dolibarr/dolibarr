@@ -26,6 +26,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
 $langs->load("other");
 $langs->load("admin");
@@ -187,6 +188,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
  * Affichage page
  */
 $html=new Form($db);
+$htmladmin=new FormAdmin($db);
 
 llxHeader();
 
@@ -231,7 +233,7 @@ if ($_GET["action"] == 'delete')
 print '<form name="newmenu" class="nocellnopadding" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
-print $html->select_menu_families($menu_handler,'menu_handler',$dirleft);
+print $htmladmin->select_menu_families($menu_handler,'menu_handler',$dirleft);
 print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
 print '</form>';
 

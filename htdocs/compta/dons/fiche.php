@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -30,6 +29,7 @@
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 
 $langs->load("companies");
 $langs->load("donations");
@@ -207,7 +207,7 @@ if ($_GET["action"] == 'create')
     {
         // Si module projet actif
         print "<tr><td>".$langs->trans("Project")."</td><td>";
-        $html->select_projects('','','',"projetid");
+        select_projects('','','',"projetid");
         print "</td></tr>\n";
     }
     

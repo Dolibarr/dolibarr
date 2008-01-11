@@ -85,12 +85,12 @@ foreach ($_POST as $key => $val)
 
 
 require_once("master.inc.php");
-//stopwithmem();
 
 // Chargement des includes complementaire de presentation
-if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
-if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
-if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');
+if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");			// Need 11ko memory
+if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");	// Need 800ko memory
+if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');	// Need 20ko memory
+//stopwithmem();
 
 // Init session
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;
@@ -283,7 +283,6 @@ if ($user->admin)
     $user->rights->user->self->creer=1;
     $user->rights->user->self->password=1;
 }
-
 
 /**
  * Overwrite configs global par configs perso
