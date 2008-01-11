@@ -195,6 +195,7 @@ class Form
       if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
       $sql .= " ORDER BY p.code, d.code_departement";
       
+	  dolibarr_syslog("Form::select_departement sql=".$sql);
       $result=$this->db->query($sql);
       if ($result)
 	{
@@ -263,6 +264,7 @@ class Form
     $sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, p.libelle as libelle_pays FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p";
     $sql .= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1 ORDER BY libelle_pays, libelle ASC";
 
+	  dolibarr_syslog("Form::select_region sql=".$sql);
     if ($this->db->query($sql))
       {
 	print '<select class="flat" name="'.$htmlname.'">';
@@ -341,6 +343,7 @@ class Form
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
 		$sql.= " WHERE active = 1";
 
+		dolibarr_syslog("Form::select_methodes_commande sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -390,8 +393,9 @@ class Form
 				$sql.= " AND code = '".$selected."'";
 			}
 		}
-		$sql.= " ORDER BY code ASC;";
+		$sql.= " ORDER BY code ASC";
 
+		dolibarr_syslog("Form::select_pays sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -572,8 +576,9 @@ class Form
 	 *    \param      filter          Criteres optionnels de filtre
 	 */
 	function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0)
-  {
-  	global $conf;
+	{
+		global $conf;
+		
         // On recherche les societes
         $sql = "SELECT s.rowid, s.nom FROM";
         $sql.= " ".MAIN_DB_PREFIX ."societe as s";
@@ -592,7 +597,7 @@ class Form
         }
         $sql.= " ORDER BY nom ASC";
     
-        dolibarr_syslog("Html.form::select_societe sql=".$sql);
+        dolibarr_syslog("Form::select_societes sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -672,6 +677,7 @@ class Form
         if ($filter) $sql.= " AND ".$filter;
         $sql.= " ORDER BY re.description ASC";
     
+		dolibarr_syslog("Form::select_remises sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -734,6 +740,7 @@ class Form
 		if (is_array($exclude) && $excludeContacts) $sql.= " AND s.rowid NOT IN ('".$excludeContacts."')";
 		$sql.= " ORDER BY s.name ASC";
 		
+		dolibarr_syslog("Form::select_contacts sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -799,6 +806,7 @@ class Form
 		if (is_array($exclude) && $excludeUsers) $sql.= " WHERE u.rowid NOT IN ('".$excludeUsers."')";
 		$sql.= " ORDER BY u.name ASC";
 
+		dolibarr_syslog("Form::select_users sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			print '<select class="flat" name="'.$htmlname.'">';
@@ -842,6 +850,7 @@ class Form
   function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
   {
     global $langs,$conf;
+	
     if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
     {
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -901,8 +910,7 @@ class Form
 		$sql.= " ORDER BY p.nbvente DESC";
 		if ($limit) $sql.= " LIMIT $limit";
 		
-		dolibarr_syslog("Form::select_produits_do sql=$sql",LOG_DEBUG);
-
+		dolibarr_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if (! $result) dolibarr_print_error($this->db);
 		
@@ -913,6 +921,8 @@ class Form
 			$sqld.= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_det as d ";
 			$sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
 			$sqld.= " ORDER BY p.nbvente DESC";
+
+			dolibarr_syslog("Form::select_departement sql=".$sql, LOG_DEBUG);
 			$resultd = $this->db->query($sqld);
 			if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
 		}
@@ -964,6 +974,8 @@ class Form
 					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
 					$sql.= "where fk_product='".$objp->rowid."' and price_level=".$price_level;
 					$sql.= " order by date_price DESC limit 1";
+
+					dolibarr_syslog("Form::select_produits_do sql=".$sql);
 					$result2 = $this->db->query($sql);
 					$objp2 = $this->db->fetch_object($result2);
 					if ($objp2)
@@ -1068,8 +1080,7 @@ class Form
 		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
 		$sql.= " ORDER BY pf.ref_fourn DESC";
 
-		dolibarr_syslog("Form::select_produits_fournisseurs sql=".$sql,LOG_DEBUG);
-		
+		dolibarr_syslog("Form::select_produits_fournisseurs_do sql=".$sql,LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -1167,8 +1178,7 @@ class Form
 		$sql.= " AND p.rowid = ".$productid;
 		$sql.= " ORDER BY s.nom, pf.ref_fourn DESC";
 
-		dolibarr_syslog("Form::select_product_fourn_price sql=$sql",LOG_DEBUG);
-		
+		dolibarr_syslog("Form::select_product_fourn_price sql=".$sql,LOG_DEBUG);
 		$result=$this->db->query($sql);
 		
 		if ($result)
@@ -1245,6 +1255,7 @@ class Form
         $sql .= " WHERE a.fk_societe = ".$socid;
         $sql .= " ORDER BY a.label ASC";
     
+		dolibarr_syslog("Form::select_adresse_livraison sql=".$sql);
         if ($this->db->query($sql))
         {
             print '<select class="flat" name="'.$htmlname.'">';
@@ -1288,7 +1299,6 @@ class Form
         if (sizeof($this->cache_conditions_paiements)) return 0;    // Cache déja chargé
 
         dolibarr_syslog('Form::load_cache_conditions_paiements',LOG_DEBUG);
-
         $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
         $sql.= " WHERE active=1";
@@ -1327,7 +1337,6 @@ class Form
         if (sizeof($this->cache_types_paiements)) return 0;    // Cache déja chargé
 
         dolibarr_syslog('Form::load_cache_types_paiements',LOG_DEBUG);
-
         $sql = "SELECT id, code, libelle, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";
@@ -1472,6 +1481,7 @@ class Form
         $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
         $sql .= " WHERE active = 1";
     
+		dolibarr_syslog("Form::select_propal_statut sql=".$sql);
         if ($this->db->query($sql))
         {
             print '<select class="flat" name="propal_statut">';
@@ -1524,6 +1534,8 @@ class Form
         $sql.= " WHERE clos = '".$statut."'";
         if ($filtre) $sql.=" AND ".$filtre;
         $sql.= " ORDER BY rowid";
+
+		dolibarr_syslog("Form::select_comptes sql=".$sql);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -1613,6 +1625,7 @@ class Form
         $sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
         $sql .= " WHERE active = 1";
     
+		dolibarr_syslog("Form::select_civilite sql=".$sql);
         if ($this->db->query($sql))
         {
             print '<select class="flat" name="civilite_id">';
@@ -1666,6 +1679,7 @@ class Form
         if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
         $sql .= " ORDER BY p.code, f.code";
     
+		dolibarr_syslog("Form::select_forme_juridique sql=".$sql);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -1716,39 +1730,6 @@ class Form
         }
     }
   
-
-    /**
-     *    \brief      Retourne le nom traduit de la forme juridique
-     *    \param      code        Code de la forme juridique
-     *    \return     string      Nom traduit du pays
-     */
-    function forme_juridique_name($code)
-    {
-        global $langs;
-    
-        if (! $code) return '';
-        
-        $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
-        $sql.= " WHERE code='$code';";
-    
-        if ($this->db->query($sql))
-        {
-            $num = $this->db->num_rows();
-    
-            if ($num)
-            {
-                $obj = $this->db->fetch_object();
-                $label=($obj->libelle!='-' ? $obj->libelle : '');
-                return $label;
-            }
-            else
-            {
-                return $langs->trans("NotDefined");
-            }
-    
-        }
-    }
-
 
   /**
    *    \brief  Affiche formulaire de demande de confirmation

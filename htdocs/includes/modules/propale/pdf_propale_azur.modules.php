@@ -28,8 +28,9 @@
 		\version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
@@ -966,13 +967,11 @@ class pdf_propale_azur extends ModelePDFPropales
     {
 		global $conf;
 
-        $html=new Form($this->db);
-
         // Premiere ligne d'info réglementaires
         $ligne1="";
         if ($this->emetteur->forme_juridique_code)
         {
-            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($this->emetteur->forme_juridique_code);
+            $ligne1.=($ligne1?" - ":"").getFormeJuridiqueLabel($this->emetteur->forme_juridique_code);
         }
         if ($this->emetteur->capital)
         {

@@ -28,6 +28,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
@@ -284,13 +285,11 @@ class pdf_soleil extends ModelePDFFicheinter
     {
         global $conf;
 
-        $html=new Form($this->db);
-
         // Premiere ligne d'info reglementaires
         $ligne1="";
         if ($this->emetteur->forme_juridique_code)
         {
-            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($this->emetteur->forme_juridique_code);
+            $ligne1.=($ligne1?" - ":"").getFormeJuridiqueLabel($this->emetteur->forme_juridique_code);
         }
         if ($this->emetteur->capital)
         {

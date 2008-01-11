@@ -142,7 +142,7 @@ function getCountryLabel($id,$withcode=0)
 	$sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
 	$sql.= " WHERE rowid=".$id;
 
-	dolibarr_syslog("company.lib.php sql=".$sql);
+	dolibarr_syslog("Company.lib::getCountryLabel sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -158,6 +158,41 @@ function getCountryLabel($id,$withcode=0)
 			return $langs->trans("NotDefined");
 		}
 		$db->free($resql);
+	}
+}
+
+
+/**
+ *    \brief      Retourne le nom traduit de la forme juridique
+ *    \param      code        Code de la forme juridique
+ *    \return     string      Nom traduit du pays
+ */
+function getFormeJuridiqueLabel($code)
+{
+	global $db,$langs;
+
+	if (! $code) return '';
+	
+	$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+	$sql.= " WHERE code='$code'";
+
+	dolibarr_syslog("Company.lib::getFormeJuridiqueLabel sql=".$sql);
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			$obj = $db->fetch_object($resql);
+			$label=($obj->libelle!='-' ? $obj->libelle : '');
+			return $label;
+		}
+		else
+		{
+			return $langs->trans("NotDefined");
+		}
+
 	}
 }
 

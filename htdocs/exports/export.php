@@ -618,11 +618,12 @@ if ($step == 4 && $datatoexport)
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';
     
-    // test d'affichage du tableau excel et csv
-    
+
+    // Test d'affichage du tableau excel et csv
     //print '<table width="100%"><tr><td>';
-    //viewExcelFileContent($conf->export->dir_temp.'/1/export_commande_1.xls',5,3);
-    //viewCsvFileContent($conf->export->dir_temp.'/1/export_commande_1.csv',5);
+    //require_once(DOL_DOCUMENT_ROOT.'/lib/viewfiles.lib.php');
+	//viewExcelFileContent($conf->export->dir_temp.'/1/export_member_1.xls',5,3);
+    //viewCsvFileContent($conf->export->dir_temp.'/1/export_member_1.csv',5);
     //print '</td></tr></table>';
     
 }

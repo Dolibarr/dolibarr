@@ -31,6 +31,7 @@
 
 require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
@@ -792,13 +793,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $langs->load("bills");
         $langs->load("companies");
         
-        $html=new Form($this->db);
-        
         // Premiere ligne d'info réglementaires
         $ligne1="";
         if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
         {
-            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
+            $ligne1.=($ligne1?" - ":"").getFormeJuridiqueLabel($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
         }
         if ($conf->global->MAIN_INFO_CAPITAL)
         {
