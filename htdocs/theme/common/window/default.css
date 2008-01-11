@@ -1,13 +1,13 @@
 .overlay_dialog {
 	background-color: #666666;
-/*	filter:alpha(opacity=60);	*/
+  filter:alpha(opacity=60);
 	-moz-opacity: 0.6;
 	opacity: 0.6;
 }
 
 .overlay___invisible__ {
   background-color: #666666;
-/*	filter:alpha(opacity=0);	*/
+  filter:alpha(opacity=0);
 	-moz-opacity: 0;
 	opacity: 0;
 }
