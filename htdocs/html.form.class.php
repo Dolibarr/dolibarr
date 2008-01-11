@@ -41,17 +41,17 @@
 
 class Form
 {
-  var $db;
-  var $error;
+	var $db;
+	var $error;
     
-  var $cache_types_paiements_code=array();
-  var $cache_types_paiements_libelle=array();
-  var $cache_conditions_paiements_code=array();
-  var $cache_conditions_paiements_libelle=array();
+	// Cache arrays
+	var $cache_types_paiements=array();
+	var $cache_conditions_paiements=array();
 
-  var $tva_taux_value;
-  var $tva_taux_libelle;
-  
+	var $tva_taux_value;
+	var $tva_taux_libelle;
+
+	
   /**
      \brief     Constructeur
      \param     DB      handler d'accès base de donnée
@@ -1285,7 +1285,7 @@ class Form
     {
         global $langs;
 
-        if (sizeof($this->cache_conditions_paiements_code)) return 0;    // Cache déja chargé
+        if (sizeof($this->cache_conditions_paiements)) return 0;    // Cache déja chargé
 
         dolibarr_syslog('Form::load_cache_conditions_paiements',LOG_DEBUG);
 
@@ -1296,7 +1296,7 @@ class Form
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num = $this->db->num_rows($result);
+            $num = $this->db->num_rows($resql);
             $i = 0;
             while ($i < $num)
             {
@@ -1304,8 +1304,8 @@ class Form
 
                 // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                 $libelle=($langs->trans("PaymentConditionShort".$obj->code)!=("PaymentConditionShort".$obj->code)?$langs->trans("PaymentConditionShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
-                $this->cache_conditions_paiements_code[$obj->rowid]=$obj->code;
-                $this->cache_conditions_paiements_libelle[$obj->rowid]=$libelle;
+                $this->cache_conditions_paiements[$obj->rowid]['code'] =$obj->code;
+                $this->cache_conditions_paiements[$obj->rowid]['label']=$libelle;
                 $i++;
             }
             return 1;
@@ -1324,7 +1324,7 @@ class Form
     {
         global $langs;
 
-        if (sizeof($this->cache_types_paiements_code)) return 0;    // Cache déja chargé
+        if (sizeof($this->cache_types_paiements)) return 0;    // Cache déja chargé
 
         dolibarr_syslog('Form::load_cache_types_paiements',LOG_DEBUG);
 
@@ -1335,7 +1335,7 @@ class Form
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $num = $this->db->num_rows($result);
+            $num = $this->db->num_rows($resql);
             $i = 0;
             while ($i < $num)
             {
@@ -1343,9 +1343,9 @@ class Form
 
                 // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                 $libelle=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
-                $this->cache_types_paiements_code[$obj->id]=$obj->code;
-                $this->cache_types_paiements_libelle[$obj->id]=$libelle;
-                $this->cache_types_paiements_type[$obj->id]=$obj->type;
+                $this->cache_types_paiements[$obj->id]['code'] =$obj->code;
+                $this->cache_types_paiements[$obj->id]['label']=$libelle;
+                $this->cache_types_paiements[$obj->id]['type'] =$obj->type;
                 $i++;
             }
             return $num;
@@ -1373,7 +1373,7 @@ class Form
  
         print '<select class="flat" name="'.$htmlname.'">';
 		if ($addempty) print '<option value="0">&nbsp;</option>';
-        foreach($this->cache_conditions_paiements_code as $id => $code)
+        foreach($this->cache_conditions_paiements as $id => $arrayconditions)
         {
             if ($selected == $id)
             {
@@ -1383,12 +1383,57 @@ class Form
             {
                 print '<option value="'.$id.'">';
             }
-            print $this->cache_conditions_paiements_libelle[$id];
+            print $arrayconditions['label'];
             print '</option>';
         }
         print '</select>';
     }
     
+
+    /**
+     *      \brief      Retourne la liste des modes de paiements possibles
+     *      \param      selected        Id du mode de paiement pré-sélectionné
+     *      \param      htmlname        Nom de la zone select
+     *      \param      filtertype      Pour filtre
+     *      \param      format          0=id+libelle, 1=code+code, 2=code+libelle
+     *      \param      empty			1=peut etre vide, 0 sinon
+     */
+    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0)
+    {
+        global $langs;
+		
+		dolibarr_syslog("Form::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
+        
+        $filterarray=array();
+		if ($filtertype == 'CRDT')  	$filterarray=array(0,2);
+		elseif ($filtertype == 'DBIT') 	$filterarray=array(1,2);
+        elseif ($filtertype != '' && $filtertype != '-1') $filterarray=split(',',$filtertype);
+        
+        $this->load_cache_types_paiements();
+
+        print '<select class="flat" name="'.$htmlname.'">';
+		if ($empty) print '<option value="">&nbsp;</option>';
+        foreach($this->cache_types_paiements as $id => $arraytypes)
+        {
+            // On passe si on a demandé de filtrer sur des modes de paiments particuliers
+            if (sizeof($filterarray) && ! in_array($arraytypes['type'],$filterarray)) continue;
+
+            if ($format == 0) print '<option value="'.$id.'"';
+            if ($format == 1) print '<option value="'.$arraytypes['code'].'"';
+            if ($format == 2) print '<option value="'.$arraytypes['code'].'"';
+            // Si selected est text, on compare avec code, sinon avec id
+            if (eregi('[a-z]', $selected) && $selected == $arraytypes['code']) print ' selected="true"';
+            elseif ($selected == $id) print ' selected="true"';
+            print '>';
+            if ($format == 0) $value=$arraytypes['label'];
+            if ($format == 1) $value=$arraytypes['code'];
+            if ($format == 2) $value=$arraytypes['label'];
+            print $value?$value:'&nbsp;';
+            print '</option>';
+        }
+        print '</select>';
+    }
+
     /**
      *      \brief      Selection HT ou TTC
      *      \param      selected        Id pré-sélectionné
@@ -1417,49 +1462,6 @@ class Form
         print '</select>';
     }
     
-    /**
-     *      \brief      Retourne la liste des modes de paiements possibles
-     *      \param      selected        Id du mode de paiement pré-sélectionné
-     *      \param      htmlname        Nom de la zone select
-     *      \param      filtertype      Pour filtre
-     *      \param      format          0=id+libelle, 1=code+code, 2=code+libelle
-     *      \param      empty			1=peut etre vide, 0 sinon
-     */
-    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0)
-    {
-        global $langs;
-		
-		dolibarr_syslog("Form::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
-        
-        $filterarray=array();
-		if ($filtertype == 'CRDT')  	$filterarray=array(0,2);
-		elseif ($filtertype == 'DBIT') 	$filterarray=array(1,2);
-        elseif ($filtertype != '' && $filtertype != '-1') $filterarray=split(',',$filtertype);
-        
-        $this->load_cache_types_paiements();
-
-        print '<select class="flat" name="'.$htmlname.'">';
-		if ($empty) print '<option value="">&nbsp;</option>';
-        foreach($this->cache_types_paiements_code as $id => $code)
-        {
-            // On passe si on a demandé de filtrer sur des modes de paiments particuliers
-            if (sizeof($filterarray) && ! in_array($this->cache_types_paiements_type[$id],$filterarray)) continue;
-
-            if ($format == 0) print '<option value="'.$id.'"';
-            if ($format == 1) print '<option value="'.$code.'"';
-            if ($format == 2) print '<option value="'.$code.'"';
-            // Si selected est text, on compare avec code, sinon avec id
-            if (eregi('[a-z]', $selected) && $selected == $code) print ' selected="true"';
-            elseif ($selected == $id) print ' selected="true"';
-            print '>';
-            if ($format == 0) $value=$this->cache_types_paiements_libelle[$id];
-            if ($format == 1) $value=$code;
-            if ($format == 2) $value=$this->cache_types_paiements_libelle[$id];
-            print $value?$value:'&nbsp;';
-            print '</option>';
-        }
-        print '</select>';
-    }
     /**
      *    \brief      Retourne la liste déroulante des différents états d'une propal.
      *                Les valeurs de la liste sont les id de la table c_propalst
@@ -1904,7 +1906,7 @@ class Form
             if ($selected)
             {
                 $this->load_cache_conditions_paiements();
-                print $this->cache_conditions_paiements_libelle[$selected];
+                print $this->cache_conditions_paiements[$selected]['label'];
             } else {
                 print "&nbsp;";
             }
@@ -1969,7 +1971,7 @@ class Form
             if ($selected)
             {
                 $this->load_cache_types_paiements();
-                print $this->cache_types_paiements_libelle[$selected];
+                print $this->cache_types_paiements[$selected]['label'];
             } else {
                 print "&nbsp;";
             }
@@ -2150,7 +2152,7 @@ class Form
     
         $sql = "SELECT code_iso, label, active FROM ".MAIN_DB_PREFIX."c_currencies";
         $sql .= " WHERE active = 1";
-        $sql .= " ORDER BY code_iso ASC;";
+        $sql .= " ORDER BY code_iso ASC";
     
         if ($this->db->query($sql))
         {
