@@ -22,7 +22,7 @@
 
 require_once DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_workbook.inc.php";
 require_once DOL_DOCUMENT_ROOT."/includes/php_writeexcel/class.writeexcel_worksheet.inc.php";
-require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
+require_once DOL_DOCUMENT_ROOT."/telephonie/dolibarrmail.class.php";
 
 define ('COMMANDETABLEUR_NOEMAIL', -3);
 

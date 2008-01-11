@@ -21,7 +21,7 @@
  */
 
 require "./pre.inc.php";
-require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
+require_once DOL_DOCUMENT_ROOT."/telephonie/dolibarrmail.class.php";
 require_once DOL_DOCUMENT_ROOT.'/telephonie/telephonie.contrat.class.php';
 
 $mesg = '';

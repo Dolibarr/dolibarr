@@ -40,7 +40,7 @@ $limit = $opt['l'];
 $optcontrat = $opt['c'];
 
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
-require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/dolibarrmail.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie.contrat.class.php");

@@ -28,7 +28,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
-require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/dolibarrmail.class.php");
 
 if ($verbose) dolibarr_syslog("retour-traitement");
 

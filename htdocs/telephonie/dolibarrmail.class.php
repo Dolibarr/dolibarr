@@ -25,7 +25,7 @@
  */
 
 /**
-        \file       htdocs/lib/dolibarrmail.class.php
+        \file       htdocs/telephonie/dolibarrmail.class.php
         \brief      Classe permettant d'envoyer des mail avec attachements, reecriture de CMailFile
         \author     Dan Potter.
         \author     Eric Seigne

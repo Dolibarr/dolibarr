@@ -36,7 +36,7 @@ require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once (DOL_DOCUMENT_ROOT."/paiement.class.php");
 require_once (DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/pdfdetail_ibreizh.modules.php");
-require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/dolibarrmail.class.php");
 
 dolibarr_syslog("Debut envoie de mail");
 

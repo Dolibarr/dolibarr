@@ -25,7 +25,7 @@
 require ("../../master.inc.php");
 _log($GLOBALS["argv"][0]." Start", LOG_NOTICE);
 require_once DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php";
-require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/dolibarrmail.class.php");
 
 set_time_limit(0);
 

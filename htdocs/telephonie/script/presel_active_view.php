@@ -23,7 +23,7 @@
  */
 require ("../../master.inc.php");
 require_once DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php";
-require_once DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php";
+require_once DOL_DOCUMENT_ROOT."/telephonie/dolibarrmail.class.php";
 
 $host          = CMD_PRESEL_WEB_HOST;
 $user_login    = CMD_PRESEL_WEB_USER;
