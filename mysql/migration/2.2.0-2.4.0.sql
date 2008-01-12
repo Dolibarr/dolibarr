@@ -32,4 +32,6 @@ alter table llx_menu modify rowid integer AUTO_INCREMENT NOT NULL PRIMARY KEY;
 ALTER TABLE llx_menu_const ADD CONSTRAINT fk_menu_const_fk_menu FOREIGN KEY (fk_menu) REFERENCES llx_menu (rowid);
 
 alter table llx_menu modify user integer NOT NULL default '0';
+alter table llx_menu change `order` position integer NOT NULL;
+alter table llx_menu change `right` perms varchar(255);
 alter table llx_menu add column tms timestamp;

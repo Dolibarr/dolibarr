@@ -45,6 +45,7 @@ UserSetup=Configuration gestion des utilisateurs
 MenuSetup=Administration des menus par base de données
 MenuIdParent=Id du menu parent
 DetailMenuIdParent=Id du menu parent (0 pour un menu du haut)
+DetailPosition=Numéro d'ordre déterminant la position du menu
 MenuLimits=Limites et précision
 PersonalizedMenusNotSupported=Menus personalisés non gérés
 AllMenus=Tous

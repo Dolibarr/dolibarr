@@ -42,14 +42,14 @@ class Menubase
 	var $type;
 	var $mainmenu;
 	var $fk_menu;
-	var $order;
+	var $position;
 	var $url;
 	var $target;
 	var $titre;
 	var $langs;
 	var $level;
 	var $leftmenu;
-	var $right;
+	var $perms;
 	var $user;
 	var $tms;
 
@@ -82,14 +82,14 @@ class Menubase
 		$this->type=trim($this->type);
 		$this->mainmenu=trim($this->mainmenu);
 		$this->fk_menu=trim($this->fk_menu);
-		$this->order=trim($this->order);
+		$this->position=trim($this->position);
 		$this->url=trim($this->url);
 		$this->target=trim($this->target);
 		$this->titre=trim($this->titre);
 		$this->langs=trim($this->langs);
 		$this->level=trim($this->level);
 		$this->leftmenu=trim($this->leftmenu);
-		$this->right=trim($this->right);
+		$this->perms=trim($this->perms);
 		$this->user=trim($this->user);
 
 		// Check parameters
@@ -101,31 +101,29 @@ class Menubase
 		$sql.= "type,";
 		$sql.= "mainmenu,";
 		$sql.= "fk_menu,";
-		$sql.= "order,";
+		$sql.= "position,";
 		$sql.= "url,";
 		$sql.= "target,";
 		$sql.= "titre,";
 		$sql.= "langs,";
 		$sql.= "level,";
 		$sql.= "leftmenu,";
-		$sql.= "right,";
-		$sql.= "user,";
-		$sql.= "tms";
+		$sql.= "perms,";
+		$sql.= "user";
         $sql.= ") VALUES (";
 		$sql.= " '".$this->menu_handler."',";
 		$sql.= " '".$this->type."',";
 		$sql.= " '".$this->mainmenu."',";
 		$sql.= " '".$this->fk_menu."',";
-		$sql.= " '".$this->order."',";
+		$sql.= " '".$this->position."',";
 		$sql.= " '".$this->url."',";
 		$sql.= " '".$this->target."',";
 		$sql.= " '".$this->titre."',";
 		$sql.= " '".$this->langs."',";
 		$sql.= " '".$this->level."',";
 		$sql.= " '".$this->leftmenu."',";
-		$sql.= " '".$this->right."',";
-		$sql.= " '".$this->user."',";
-		$sql.= " ".$this->db->idate($this->tms)."";
+		$sql.= " '".$this->perms."',";
+		$sql.= " '".$this->user."'";
 		$sql.= ")";
 
 	   	dolibarr_syslog("Menu::create sql=".$sql, LOG_DEBUG);
@@ -167,14 +165,14 @@ class Menubase
 		$this->type=trim($this->type);
 		$this->mainmenu=trim($this->mainmenu);
 		$this->fk_menu=trim($this->fk_menu);
-		$this->order=trim($this->order);
+		$this->position=trim($this->position);
 		$this->url=trim($this->url);
 		$this->target=trim($this->target);
 		$this->titre=trim($this->titre);
 		$this->langs=trim($this->langs);
 		$this->level=trim($this->level);
 		$this->leftmenu=trim($this->leftmenu);
-		$this->right=trim($this->right);
+		$this->perms=trim($this->perms);
 		$this->user=trim($this->user);
 
 		// Check parameters
@@ -186,16 +184,15 @@ class Menubase
 		$sql.= " type='".$this->type."',";
 		$sql.= " mainmenu='".addslashes($this->mainmenu)."',";
 		$sql.= " fk_menu='".$this->fk_menu."',";
-		$sql.= " order='".$this->order."',";
+		$sql.= " position='".$this->position."',";
 		$sql.= " url='".addslashes($this->url)."',";
 		$sql.= " target='".addslashes($this->target)."',";
 		$sql.= " titre='".addslashes($this->titre)."',";
 		$sql.= " langs='".addslashes($this->langs)."',";
 		$sql.= " level='".$this->level."',";
 		$sql.= " leftmenu='".addslashes($this->leftmenu)."',";
-		$sql.= " right='".addslashes($this->right)."',";
-		$sql.= " user='".$this->user."',";
-		$sql.= " tms=".$this->db->idate($this->tms)."";
+		$sql.= " perms='".addslashes($this->perms)."',";
+		$sql.= " user='".$this->user."'";
         $sql.= " WHERE rowid=".$this->id;
 
         dolibarr_syslog("Menu::update sql=".$sql, LOG_DEBUG);
@@ -237,14 +234,14 @@ class Menubase
 		$sql.= " t.type,";
 		$sql.= " t.mainmenu,";
 		$sql.= " t.fk_menu,";
-		$sql.= " t.order,";
+		$sql.= " t.position,";
 		$sql.= " t.url,";
 		$sql.= " t.target,";
 		$sql.= " t.titre,";
 		$sql.= " t.langs,";
 		$sql.= " t.level,";
 		$sql.= " t.leftmenu,";
-		$sql.= " t.right,";
+		$sql.= " t.perms,";
 		$sql.= " t.user,";
 		$sql.= " ".$this->db->pdate('t.tms')."";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
@@ -264,14 +261,14 @@ class Menubase
 				$this->type = $obj->type;
 				$this->mainmenu = $obj->mainmenu;
 				$this->fk_menu = $obj->fk_menu;
-				$this->order = $obj->order;
+				$this->position = $obj->position;
 				$this->url = $obj->url;
 				$this->target = $obj->target;
 				$this->titre = $obj->titre;
 				$this->langs = $obj->langs;
 				$this->level = $obj->level;
 				$this->leftmenu = $obj->leftmenu;
-				$this->right = $obj->right;
+				$this->perms = $obj->perms;
 				$this->user = $obj->user;
 				$this->tms = $obj->tms;
             }
@@ -332,14 +329,14 @@ class Menubase
 		$this->type='';
 		$this->mainmenu='';
 		$this->fk_menu='';
-		$this->order='';
+		$this->position='';
 		$this->url='';
 		$this->target='';
 		$this->titre='';
 		$this->langs='';
 		$this->level='';
 		$this->leftmenu='';
-		$this->right='';
+		$this->perms='';
 		$this->user='';
 		$this->tms='';
 	}
@@ -363,12 +360,12 @@ class Menubase
 
 		$data[] = array ($menutop->rowid,-1,$this->mainmenu);
 
-		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.right, m.target, m.mainmenu, m.leftmenu";
+		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.target, m.mainmenu, m.leftmenu";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " WHERE m.menu_handler= '".$this->menu_handler."'";
 		if($type_user == 0) $sql.= " AND m.user <> 1";
 		else $sql.= " AND m.user > 0";
-		$sql.= " ORDER BY m.order, m.rowid";
+		$sql.= " ORDER BY m.position, m.rowid";
 
 		$res = $this->db->query($sql);
 		if ($res)
@@ -513,29 +510,29 @@ class Menubase
 	}
 	
 	
-	function menutopCharger($type_user,$mainmenu)
+	function menutopCharger($type_user, $mainmenu, $menu_handler)
 	{
 		global $langs, $user, $conf;
 		
-		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.right";
+		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.perms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 		$sql.= " WHERE m.type = 'top'"; 
-		$sql.= " AND m.menu_handler= '".$this->menu_handler."'";
+		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
 		if($type_user == 0) $sql.= " AND m.user <> 1";
 		else $sql.= " AND m.user > 0";
-		$sql.= " ORDER BY m.order";
+		$sql.= " ORDER BY m.menu_handler DESC, m.position";
 
-		$result = $this->db->query($sql);
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$numa = $this->db->num_rows();
+			$numa = $this->db->num_rows($resql);
 
 			$a = 0;
 			$b = 0;
 			while ($a < $numa)
 			{
 				// Affichage entete menu
-				$objm = $this->db->fetch_object($result);
+				$objm = $this->db->fetch_object($resql);
 				
 				if ($this->verifConstraint($objm->rowid))
 		        {
@@ -550,9 +547,9 @@ class Menubase
 		        	
 		        	$right = true;
 		        	
-		        	if ($objm->right)
+		        	if ($objm->perms)
 		        	{
-		        		$str = "if(!(".$objm->right.")) \$right = false;";
+		        		$str = "if(!(".$objm->perms.")) \$right = false;";
 		        		eval($str);
 		        	}
 		        	

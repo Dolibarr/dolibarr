@@ -62,14 +62,31 @@ if (isset($_GET["action"]) && $_GET["action"] == 'update')
 {	
 	if (! $_POST['cancel'])
 	{		
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-		$sql.="	SET m.titre = '".$_POST['titre']."', m.leftmenu = '".$_POST['leftmenu']."', m.url = '".$_POST['url']."', m.langs = '".$_POST['langs']."', m.right = '".$_POST['right']."',m.target = '".$_POST['target']."', m.user = ".$_POST['user'];
-		$sql.=" WHERE m.rowid = ".$_POST['menuId'];
-		$resql=$db->query($sql);
-		if ($resql > 0)
+		$menu = new Menubase($db);
+		$result=$menu->fetch($_POST['menuId']);
+		if ($result > 0)
 		{
-			$mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
+			$menu->titre=$_POST['titre'];
+			$menu->leftmenu=$_POST['leftmenu'];
+			$menu->url=$_POST['url'];
+			$menu->langs=$_POST['langs'];
+			$menu->position=$_POST['position'];
+			$menu->perms=$_POST['perms'];
+			$menu->target=$_POST['target'];
+			$menu->user=$_POST['user'];
+			$result=$menu->update($user);
+			if ($result > 0)
+			{
+				$mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
+			}
+			else
+			{
+				$mesg='<div class="error">'.$menu->error.'</div>';
+			}
+		}
+		else
+		{
+			$mesg='<div class="error">'.$menu->error.'</div>';
 		}
 		$_GET["menuId"]=$_POST['menuId'];
 		$_GET["action"]="edit";
@@ -138,14 +155,14 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 	{		
 		$sql = "SELECT max(m.rowid) as maxId FROM ".MAIN_DB_PREFIX."menu as m";
 		$result = $db->query($sql);
-		$lastMenu = $db->fetch_object($result);	
-		$rowid = $lastMenu->maxId + 1;
+		$obj = $db->fetch_object($result);	
+		$rowid = $obj->maxId + 1;
 		
 		// On prend le max de toutes celles qui auront le meme pere fk_menu
-		$sql = "SELECT max(m.order) as maxOrder FROM ".MAIN_DB_PREFIX."menu as m WHERE m.fk_menu = ".$_POST['menuId'];
+		$sql = "SELECT max(m.position) as maxOrder FROM ".MAIN_DB_PREFIX."menu as m WHERE m.fk_menu = ".$_POST['menuId'];
 		$result = $db->query($sql);
-		$lastMenu = $db->fetch_object($result);	
-		if ($lastMenu) $order = $lastMenu->maxOrder + 1;
+		$obj = $db->fetch_object($result);	
+		if ($obj) $position = $obj->maxOrder + 1;
 		else
 		{
 			dolibarr_print_error($db);
@@ -161,8 +178,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 
 	if (! $error)
 	{		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(rowid,menu_handler, type, mainmenu, leftmenu, fk_menu, url, titre, level, langs, `right`, target, user, `order`)";
-		$sql.=" VALUES(".$rowid.",'".$_POST['menu_handler']."','".$_POST['type']."','".$_POST['mainmenu']."','".$_POST['leftmenu']."',".$_POST['menuId'].",'".$_POST['url']."','".$_POST['titre']."','".$_POST['level']."','".$_POST['langs']."','".$_POST['right']."','".$_POST['target']."',".$_POST['user'].",0)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(rowid,menu_handler, type, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms`, target, user, position)";
+		$sql.=" VALUES(".$rowid.",'".$_POST['menu_handler']."','".$_POST['type']."','".$_POST['mainmenu']."','".$_POST['leftmenu']."',".$_POST['menuId'].",'".$_POST['url']."','".$_POST['titre']."','".$_POST['level']."','".$_POST['langs']."','".$_POST['perms']."','".$_POST['target']."',".$_POST['user'].", ".$position.")";
 		
 		dolibarr_syslog("edit: insert menu entry sql=".$sql);
 		$result=$db->query($sql);		
@@ -321,12 +338,21 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	print '<td><input type="text" size="10" name="menuId" value="'.$parent_rowid.'"></td>';
 	print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
 
-	//Handler
+	// Handler
 	print '<tr><td><b>'.$langs->trans('MenuHandler').'</b></td>';
 	print '<td>';
 	print $htmladmin->select_menu_families($menu_handler,'menu_handler',$dirleft);
 	print '</td>';
 	print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
+
+	//User
+	print '<tr><td nowrap="nowrap"><b>'.$langs->trans('MenuForUsers').'</b></td>';
+	print '<td><select class="flat" name="user">';
+	print '<option value="2" selected>'.$langs->trans("AllMenus").'</option>';
+	print '<option value="0">'.$langs->trans('Interne').'</option>';
+	print '<option value="1">'.$langs->trans('Externe').'</option>';
+	print '</select></td>';
+	print '<td>'.$langs->trans('DetailUser').'</td></tr>';
 
 	// Type
 	print '<tr><td><b>'.$langs->trans('Type').'</b></td><td>';
@@ -337,27 +363,26 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	print '</select>';
 	//	print '<input type="text" size="50" name="type" value="'.$type.'">';
 	print '</td><td>'.$langs->trans('DetailType').'</td></tr>';
-	//User
-	print '<tr><td nowrap="nowrap"><b>'.$langs->trans('MenuForUsers').'</b></td>';
-	print '<td><select class="flat" name="user">';
-	print '<option value="2" selected>'.$langs->trans("AllMenus").'</option>';
-	print '<option value="0">'.$langs->trans('Interne').'</option>';
-	print '<option value="1">'.$langs->trans('Externe').'</option>';
-	print '</select></td>';
-	print '<td>'.$langs->trans('DetailUser').'</td></tr>';
+
 	//Titre
 	print '<tr><td><b>'.$langs->trans('Title').'</b></td><td><input type="text" size="30" name="titre" value=""></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+
 	//Langs
 	print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="30" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+
+	//Position
+	print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" size="5" name="position" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
+
 	//URL
 	print '<tr><td><b>'.$langs->trans('URL').'</b></td><td><input type="text" size="60" name="url" value=""></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+
 	//Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
 	print '<option value=""'.($menu->target==""?' selected="true"':'').'>'.$langs->trans('').'</option>';
 	print '<option value="_new"'.($menu->target=="_new"?' selected="true"':'').'>'.$langs->trans('_new').'</option>';
 	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
-	//Right
-	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="right" value=""></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+	//Perms
+	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="perms" value=""></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
 	// Boutons
 	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -395,23 +420,27 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	// Handler
 	print '<tr><td>'.$langs->trans('MenuHandler').'</td><td>'.$menu->menu_handler.'</td><td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
-	// user
+	// Type
+	print '<tr><td>'.$langs->trans('Type').'</td><td>'.$menu->type.'</td><td>'.$langs->trans('DetailType').'</td></tr>';
+
+	// User
 	print '<tr><td nowrap="nowrap">'.$langs->trans('MenuForUsers').'</td><td><select class="flat" name="user">';
 	print '<option value="2"'.($menu->user==2?' selected="true"':'').'>'.$langs->trans("All").'</option>';
 	print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Interne').'</option>';
 	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('Externe').'</option>';
 	print '</select></td><td>'.$langs->trans('DetailUser').'</td></tr>';
 
-	// Type
-	print '<tr><td>'.$langs->trans('Type').'</td><td>'.$menu->type.'</td><td>'.$langs->trans('DetailType').'</td></tr>';
-
 	// Niveau
 	//print '<tr><td>'.$langs->trans('Level').'</td><td>'.$menu->level.'</td><td>'.$langs->trans('DetailLevel').'</td></tr>';
 
 	// Titre
 	print '<tr><td>'.$langs->trans('Title').'</td><td><input type="text" size="30" name="titre" value="'.$menu->titre.'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+
 	// Langs
 	print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="30" name="langs" value="'.$menu->langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+
+	// Position
+	print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" size="5" name="position" value="'.$menu->position.'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
 	// Url
 	print '<tr><td>'.$langs->trans('URL').'</td><td><input type="text" size="60" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
@@ -422,8 +451,8 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<option value="_new"'.($menu->target=="_new"?' selected="true"':'').'>'.$langs->trans('_new').'</option>';
 	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 	
-	// Right
-	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="right" value="'.$menu->right.'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+	// Perms
+	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="perms" value="'.$menu->perms.'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
 	// Bouton			
 	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';

@@ -58,44 +58,44 @@ if ($_REQUEST["menu_handler"]) $menu_handler=$_REQUEST["menu_handler"];
 if (isset($_GET["action"]) && $_GET["action"] == 'up')
 {
 
-	$sql = "SELECT m.rowid, m.order FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql = "SELECT m.rowid, m.position FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
 	$result = $db->query($sql);	
 	
-	$num = $db->num_rows();
+	$num = $db->num_rows($result);
 	$i = 0;
 	
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
 		$precedent['rowid'] = $obj->rowid;
-		$precedent['order'] = $obj->order;
+		$precedent['order'] = $obj->position;
 		$i++;
 	}
 	
 	// Menu top
-	$sql = "SELECT m.rowid, m.order FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.order = ".($precedent['order'] - 1)." AND m.type = 'top'";
+	$sql = "SELECT m.rowid, m.position FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " WHERE m.position = ".($precedent['order'] - 1)." AND m.type = 'top'";
 	$sql.= " AND menu_handler='".$menu_handler_top."'";
 	$result = $db->query($sql);	
 	
-	$num = $db->num_rows();
+	$num = $db->num_rows($result);
 	$i = 0;
 	
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
 		$suivant['rowid'] = $obj->rowid;
-		$suivant['order'] = $obj->order;
+		$suivant['order'] = $obj->position;
 		$i++;
 	}
 	
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " SET m.order = ".$suivant['order'];
+	$sql.= " SET m.position = ".$suivant['order'];
 	$sql.= " WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
 	$db->query($sql);	
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " SET m.order = ".$precedent['order'];
+	$sql.= " SET m.position = ".$precedent['order'];
 	$sql.= " WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
 	$db->query($sql);		
 }
@@ -103,39 +103,39 @@ if (isset($_GET["action"]) && $_GET["action"] == 'up')
 if (isset($_GET["action"]) && $_GET["action"] == 'down')
 {
 
-	$sql = "SELECT m.rowid, m.order FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET["menuId"];
+	$sql = "SELECT m.rowid, m.position FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET["menuId"];
 	$result = $db->query($sql);	
 	
-	$num = $db->num_rows();
+	$num = $db->num_rows($result);
 	$i = 0;
 	
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
 		$precedent['rowid'] = $obj->rowid;
-		$precedent['order'] = $obj->order;
+		$precedent['order'] = $obj->position;
 		$i++;
 	}
 	
-	$sql = "SELECT m.rowid, m.order";
+	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.order = ".($precedent['order'] + 1)." AND type='top'";
+	$sql.= " WHERE m.position = ".($precedent['order'] + 1)." AND type='top'";
 	$result = $db->query($sql);	
 	
-	$num = $db->num_rows();
+	$num = $db->num_rows($result);
 	$i = 0;
 	
 	while($i < $num)
 	{
 		$obj = $db->fetch_object($result);
 		$suivant['rowid'] = $obj->rowid;
-		$suivant['order'] = $obj->order;
+		$suivant['order'] = $obj->position;
 		$i++;
 	}
 	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.order = ".$suivant['order']." WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
+	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.position = ".$suivant['order']." WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
 	$db->query($sql);	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.order = ".$precedent['order']." WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
+	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.position = ".$precedent['order']." WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
 	$db->query($sql);		
 }    
 
@@ -277,7 +277,7 @@ if ($conf->use_javascript_ajax)
 	$sql = "SELECT m.rowid, m.fk_menu, m.titre, m.langs";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE menu_handler='".$menu_handler."'";
-	$sql.= " ORDER BY m.order, m.rowid";
+	$sql.= " ORDER BY m.position, m.rowid";
 	$res  = $db->query($sql);
 
 	if ($res)

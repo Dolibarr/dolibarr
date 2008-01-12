@@ -28,7 +28,7 @@ CREATE TABLE `llx_menu` (
 
 	mainmenu		varchar(100) NOT NULL,				-- Name family/module (home, companies, ...)
 	fk_menu			int(11) NOT NULL,					-- 0 or Id of mother menu line
-	order			tinyint(4) NOT NULL,				-- Order of entry
+	position		integer NOT NULL,				-- Sort order of entry
 
 	url				varchar(255) NOT NULL,				-- Relative (or absolute) url to go
 	target			varchar(100) NULL,					-- Target of Url link
@@ -39,7 +39,7 @@ CREATE TABLE `llx_menu` (
 	level			tinyint(1),							-- Used by auguria menu only. Do not use.
 
 	leftmenu		varchar(100) NULL,					-- Condition to show or hide
-	right			varchar(255),						-- Condition to show enabled or disabled
+	perms			varchar(255),						-- Condition to show enabled or disabled
 	user			integer NOT NULL default '0',	    -- 0 if menu for all users, 1 for external only, 2 for internal only
 	tms				timestamp
 ) type=innodb;
