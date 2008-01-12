@@ -374,9 +374,9 @@ class MenuTop {
 
         
 		// Affichage des menus personnalises
-		require_once(DOL_DOCUMENT_ROOT."/admin/menus/module_menudb.php");
+       	require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
 
-        $menuArbo = new MenuDb($this->db,'rodolphe','top');
+        $menuArbo = new Menubase($this->db,'rodolphe','top');
  		$tabMenu = $menuArbo->menutopCharger(0,$_SESSION['mainmenu']);
         for($i=0;$i<count($tabMenu);$i++)
         {

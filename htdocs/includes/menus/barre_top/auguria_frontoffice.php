@@ -61,7 +61,7 @@ class MenuTop {
      */
     function showmenu()
     {
-       	require_once(DOL_DOCUMENT_ROOT."/admin/menus/module_menudb.php");
+       	require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
        
         global $user,$conf,$langs,$dolibarr_main_db_name;;
         
@@ -85,7 +85,7 @@ class MenuTop {
         }
 
         
-        $menuArbo = new menudb($this->db,'auguria','top');
+        $menuArbo = new Menubase($this->db,'auguria','top');
  		$tabMenu = $menuArbo->menutopCharger(1,$_SESSION['mainmenu']);
         
         print '<ul>';

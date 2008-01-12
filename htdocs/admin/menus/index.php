@@ -21,7 +21,7 @@
 
 /**
 		\file       htdocs/admin/menus/index.php
-        \ingroup    core,menudb
+        \ingroup    core
 		\brief      Gestion des menus
 */
 
@@ -165,9 +165,8 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 	}
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".$_GET['menuId'];
-	$db->query($sql);
-
-	if ($result == 0)
+	$resql=$db->query($sql);
+	if ($resql)
 	{
 		$db->commit();
 

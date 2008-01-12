@@ -254,9 +254,6 @@ class Conf
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
 		$this->droitpret->dir_temp=DOL_DATA_ROOT."/droitpret/temp";
 
-		// Module menuDb
-		$this->menudb->enabled=1;
-		
 		// Module code barre
 		$this->barcode->enabled=defined("MAIN_MODULE_BARCODE")?MAIN_MODULE_BARCODE:0;
 		// Module categorie

@@ -55,14 +55,13 @@ class MenuLeft {
      */
     function MenuLeft($db,&$menu_array)
     {
-        
-        require_once(DOL_DOCUMENT_ROOT."/admin/menus/module_menudb.php");
+      	require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
         
         $this->db=$db;
         $this->menu_array=$menu_array;
         $this->newmenu = new Menu();
         
-        $this->menuArbo = new menudb($this->db,'auguria','left');
+        $this->menuArbo = new Menubase($this->db,'auguria','left');
  		$this->overwritemenufor = $this->menuArbo->listeMainmenu();
 
     }

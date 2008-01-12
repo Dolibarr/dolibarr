@@ -19,3 +19,4 @@ ErrorFailedToCreateDir=Failed to create a directory. Check that Web server user 
 ErrorNoMailDefinedForThisUser=No mail defined for this user
 ErrorFeatureNeedJavascript=This feature need javascript to be activated to work. Change this in setup - display.
 ErrorTopMenuMustHaveAParentWithId0=A menu of type 'Top' can't have a parent menu. Put 0 in parent menu or choose a menu of type 'Left'.
+ErrorLeftMenuMustHaveAParentId=A menu of type 'Left' must have a parent id.

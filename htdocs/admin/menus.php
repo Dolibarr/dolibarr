@@ -21,7 +21,7 @@
 
 /**
         \file       htdocs/admin/menus.php
-        \ingroup    core,menudb
+        \ingroup    core
         \brief      Page de configuration des gestionnaires de menu
 */
 

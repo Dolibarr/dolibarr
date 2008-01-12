@@ -21,7 +21,7 @@
 
 /**
 		\file       htdocs/admin/menus/edit.php
-		\ingroup    core,menudb
+		\ingroup    core
 		\brief      Edition des menus
 */
 
@@ -100,13 +100,13 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 	$error=0;
 	if (! $error && ! $_POST['menu_handler'])
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiest("MenuHandler")).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("MenuHandler")).'</div>';
 		$_GET["action"] = 'create';
 		$error++;
 	}
 	if (! $error && ! $_POST['type'])
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiest("Type")).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")).'</div>';
 		$_GET["action"] = 'create';
 		$error++;
 	}
@@ -125,6 +125,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 	if (! $error && $_POST['menuId'] && $_POST['type'] == 'top')
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorTopMenuMustHaveAParentWithId0").'</div>';
+		$_GET["action"] = 'create';
+		$error++;
+	}
+	if (! $error && ! $_POST['menuId'] && $_POST['type'] == 'left')
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorLeftMenuMustHaveAParentId").'</div>';
 		$_GET["action"] = 'create';
 		$error++;
 	}
