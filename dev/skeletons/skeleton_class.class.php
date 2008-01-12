@@ -23,7 +23,7 @@
         \file       dev/skeletons/skeleton_class.class.php
         \ingroup    unknown
         \brief      This file is an example to create a new class file
-        \version    $Revision$
+		\remarks	Put here some comments
 */
 
 // Put here all includes required by your class file
@@ -75,15 +75,16 @@ class Skeleton_class
         $this->prop2=trim($this->prop2);
 		//...
 
+		// Check parameters
+		// Put here code to add control on parameters values
+		
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mytable(";
-		$sql.= " rowid,"
 		$sql.= " field1,";
 		$sql.= " field2";
 		//...
         $sql.= ") VALUES (";
-        $sql.= " '".$this->id."',";
-        $sql.= " '".$this->prop1."'";
+        $sql.= " '".$this->prop1."',";
         $sql.= " '".$this->prop2."'";
 		//...
 		$sql.= ")";
@@ -125,6 +126,9 @@ class Skeleton_class
         $this->prop1=trim($this->prop1);
         $this->prop2=trim($this->prop2);
 		//...
+
+		// Check parameters
+		// Put here code to add control on parameters values
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."mytable SET";
