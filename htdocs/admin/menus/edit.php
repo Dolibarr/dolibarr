@@ -178,7 +178,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 
 	if (! $error)
 	{		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(rowid,menu_handler, type, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms`, target, user, position)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(rowid,menu_handler, type, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, user, position)";
 		$sql.=" VALUES(".$rowid.",'".$_POST['menu_handler']."','".$_POST['type']."','".$_POST['mainmenu']."','".$_POST['leftmenu']."',".$_POST['menuId'].",'".$_POST['url']."','".$_POST['titre']."','".$_POST['level']."','".$_POST['langs']."','".$_POST['perms']."','".$_POST['target']."',".$_POST['user'].", ".$position.")";
 		
 		dolibarr_syslog("edit: insert menu entry sql=".$sql);
@@ -371,7 +371,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="30" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
 	//Position
-	print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" size="5" name="position" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Position').'</td><td><input type="text" size="5" name="position" value="100"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
 	//URL
 	print '<tr><td><b>'.$langs->trans('URL').'</b></td><td><input type="text" size="60" name="url" value=""></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
@@ -534,9 +534,8 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '  <td><textarea cols="70" name="constraint" rows="1"></textarea></td>';
 		print '<td>';
 		print '<select name="user">';
-    	print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Interne').'</option>';
-    	print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Interne').'</option>';
-    	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('Externe').'</option>';
+    	print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Internal').'</option>';
+    	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('External').'</option>';
     	print '<option value="2"'.($menu->user==2?' selected="true"':'').'>Tous</option>';		
 		print '</td>';
 		print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
@@ -570,8 +569,8 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '</td>';
 		print '<td>';
 		print '<select name="user">';
-    	print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Interne').'</option>';
-    	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('Externe').'</option>';
+    	print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Internal').'</option>';
+    	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('External').'</option>';
     	print '<option value="2"'.($menu->user==2?' selected="true"':'').'>Tous</option>';		
 		print '</td>';
 		print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';

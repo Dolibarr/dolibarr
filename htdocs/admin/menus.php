@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,29 +46,29 @@ $dirleft = "../includes/menus/barre_left";
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
+	$_SESSION["mainmenu"]="home";   // Le gestionnaire de menu a pu changer
+
 	dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"]);
 	dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"]);
 	
 	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRETOP", $_POST["main_menufront_barretop"]);
 	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",$_POST["main_menufront_barreleft"]);
 	
-	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
-
 	// Define list of menu handlers to initialize
  	$listofmenuhandler=array();
-	$listofmenuhandler[$_POST["main_menu_barretop"]]=1;
-	$listofmenuhandler[$_POST["main_menufront_barretop"]]=1;
-	$listofmenuhandler[$_POST["main_menu_barreleft"]]=1;
-	$listofmenuhandler[$_POST["main_menufront_barreleft"]]=1;
+	$listofmenuhandler[eregi_replace('((_back|_front)office)?\.php','',$_POST["main_menu_barretop"])]=1;
+	$listofmenuhandler[eregi_replace('((_back|_front)office)?\.php','',$_POST["main_menufront_barretop"])]=1;
+	$listofmenuhandler[eregi_replace('((_back|_front)office)?\.php','',$_POST["main_menu_barreleft"])]=1;
+	$listofmenuhandler[eregi_replace('((_back|_front)office)?\.php','',$_POST["main_menufront_barreleft"])]=1;
 	foreach ($listofmenuhandler as $key => $val)
 	{
-		// Run functions defined in a menuhandler_init.php file
+		// Load sql ini_menu_handler.sql file
 		// \TODO Run init code
-
+		//print "x".$key;
+		
+		
 	}
 
-	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
-	exit;
 }
 
 

@@ -520,7 +520,7 @@ class Menubase
 		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
 		if($type_user == 0) $sql.= " AND m.user <> 1";
 		else $sql.= " AND m.user > 0";
-		$sql.= " ORDER BY m.menu_handler DESC, m.position";
+		$sql.= " ORDER BY m.position";
 
 		$resql = $this->db->query($sql);
 		if ($resql)

@@ -40,7 +40,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
 	$menuarray=array();
 	
-	if ($conf->left_menu == 'rodolphe')
+	if ($conf->left_menu == 'rodolphe.php')
 	{
 		$langs->load("admin");
 		$langs->load("users");
