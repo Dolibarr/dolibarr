@@ -27,8 +27,8 @@
 */
 
 // Put here all includes required by your class file
+//require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
@@ -36,13 +36,13 @@
         \class      Skeleton_class
         \brief      Put here description of your class
 */
-class Skeleton_class
+class Skeleton_class // extends CommonObject
 {
 	var $db;							// To store db handler
 	var $error;							// To return error code (or message)
 	var $errors=array();				// To return several error codes (or messages)
-	var $element='skeleton';			// Id that identify managed objects
-	var $table_element='skeleton';		// Name of table without prefix where object is stored
+	//var $element='skeleton';			// Id that identify managed objects
+	//var $table_element='skeleton';		// Name of table without prefix where object is stored
     
     var $id;
     var $prop1;
