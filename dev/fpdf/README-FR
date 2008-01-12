@@ -1,3 +1,9 @@
+README (french)
+--------------------------------
+Ce repertoire contient des outils qui permettent de creer vos propres polices qui peuvent etre utilisées*
+pour la generation des PDF par exemple.
+
+
 ## Convertisseur de Polices TrueType pour FPDF ##
 
 cette version de makefont a été modifié pour fonctionner en ligne de commande avec la version cliente de PHP.
