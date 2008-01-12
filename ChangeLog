@@ -3,12 +3,25 @@ English Dolibarr changelog
 
 ***** Changelog for 2.4 compared to 2.2 *****
 
-- Replaced phplot and phplot5 librairies by artichow.
-- Removed cryptograph library replaced by artichow.
+- Removed useless code:
+  Replaced phplot and phplot5 librairies by artichow.
+  Removed cryptograph library replaced by artichow.
+- Login functions are now externalised as modules.
 - Look enhancement in graphics (thanks artichow).
-- Some minor fixes.
 - Add tel and fax on delivery addresses.
-
+- Add a tool to edit personalized menu.
+- Changes for compatibility with PHP6/Mysql6.
+- Add an ical export link in webcalendar module.
+- Reduce memory usage.
+- Now triggers are enabled/disabled according to module they
+  refers to.
+- Fix infinite loop on popup calendar.
+- Change in tanslation to make Dolibarr easier to understand.
+- Add a warning when sending a mail from a user with no email defined.
+- A lot of other minor changes (features, look, fixes)
+For developers:
+- Update code skeletons examples.
+- Add a tool to generate PHP classes mapped to a table.
 
 
 ***** Changelog for 2.2 compared to 2.1 *****
