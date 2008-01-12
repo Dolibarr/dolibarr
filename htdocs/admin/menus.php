@@ -27,6 +27,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 
 $langs->load("companies");
@@ -62,11 +63,15 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	$listofmenuhandler[eregi_replace('((_back|_front)office)?\.php','',$_POST["main_menufront_barreleft"])]=1;
 	foreach ($listofmenuhandler as $key => $val)
 	{
-		// Load sql ini_menu_handler.sql file
-		// \TODO Run init code
 		//print "x".$key;
-		
-		
+
+		// Load sql ini_menu_handler.sql file
+		$dir = DOL_DOCUMENT_ROOT."/includes/menus/";
+		$file='init_menu_'.$key.'.sql';
+		if (file_exists($dir.$file))
+		{
+			$result=run_sql($dir.$file,1);
+		}
 	}
 
 }

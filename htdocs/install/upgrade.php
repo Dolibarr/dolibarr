@@ -27,7 +27,9 @@
 
 include_once("./inc.php");
 if (file_exists($conffile)) include_once($conffile);
-require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
+require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
+require_once($dolibarr_main_document_root."/lib/admin.lib.php");
+
 
 $grant_query='';
 $etape = 2;
@@ -234,105 +236,9 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 			print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
 			
 			$name = substr($file, 0, strlen($file) - 4);
-			$buffer = '';
-			$arraysql = Array();
-			$fp = fopen($dir.$file,"r");
-			if ($fp)
-			{
-				while (!feof ($fp))
-				{
-					$buf = fgets($fp, 4096);
-					
-					// Cas special de lignes autorisees pour certaines versions uniquement
-					if (eregi('^-- V([0-9\.]+)',$buf,$reg))
-					{
-						$versioncommande=split('\.',$reg[1]);
-						//print var_dump($versioncommande);
-						//print var_dump($versionarray);
-						if (sizeof($versioncommande) && sizeof($versionarray)
-								&& versioncompare($versioncommande,$versionarray) <= 0)
-						{
-							// Version qualified, delete SQL comments
-							$buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
-							//print "Ligne $i qualifi�e par version: ".$buf.'<br>';
-						}
-					}
-					
-					// Ajout ligne si non commentaire
-					if (! eregi('^--',$buf)) $buffer .= $buf;
-
-					//          print $buf.'<br>';
-
-					if (eregi(';',$buffer))
-					{
-						// Found new request
-						$arraysql[$i]=trim($buffer);
-						$i++;
-						$buffer='';
-					}
-				}
-				
-				if ($buffer) $arraysql[$i]=trim($buffer);
-				fclose($fp);
-			}
 			
-			// Loop on each request
-			foreach($arraysql as $i=>$sql)
-			{
-				if ($sql)
-				{
-					// Ajout trace sur requete (eventuellement � commenter si beaucoup de requetes)
-					print('<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$sql."'</td></tr>\n");
-					dolibarr_install_syslog("upgrade: ".$langs->transnoentities("Request").' '.($i+1)." sql='".$sql);
-
-					if ($db->query($sql))
-					{
-						// 	          print '<td align="right">OK</td>';
-					}
-					else
-					{
-						$errno=$db->errno();
-						$okerror=array( 'DB_ERROR_TABLE_ALREADY_EXISTS',
-						'DB_ERROR_COLUMN_ALREADY_EXISTS',
-						'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
-						'DB_ERROR_RECORD_ALREADY_EXISTS',
-						'DB_ERROR_NOSUCHTABLE',
-						'DB_ERROR_NOSUCHFIELD',
-						'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
-						'DB_ERROR_CANNOT_CREATE',    		// Qd contrainte deja existante
-						'DB_ERROR_CANT_DROP_PRIMARY_KEY',
-						'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS'
-						);
-						if (in_array($errno,$okerror))
-						{
-							//print '<td align="right">'.$langs->trans("OK").'</td>';
-						}
-						else
-						{
-							print '<tr><td valign="top" colspan="2">';
-							print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$sql."<br>".$db->error()."</font></td>";
-							print '</tr>';
-							dolibarr_install_syslog("upgrade: ".$langs->transnoentities("Request").' '.($i+1)." ".$langs->transnoentities("Error")." ".$db->errno()." ".$sql."<br>".$db->error());
-							$error++;
-						}
-					}
-
-					//                    	print '</tr>';
-				}
-			}
-
-			if ($error == 0)
-			{
-				print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-				print '<td align="right">'.$langs->trans("OK").'</td></tr>';
-				$ok = 1;
-			}
-			else
-			{
-				print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-				print '<td align="right"><font class="error">'.$langs->trans("KO").'</font></td></tr>';
-				$ok = 0;
-			}
+			// Run sql script
+			$ok=run_sql($dir.$file, 0);
 		}
 	}
 
