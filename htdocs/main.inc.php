@@ -832,8 +832,8 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 		$conf->left_menu='eldy_backoffice.php';
 	}
 	require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
-    $menu=new MenuLeft($db,$menu_array);
-    $menu->showmenu();
+    $menuleft=new MenuLeft($db,$menu_array);
+    $menuleft->showmenu();
 
     // Affichage des zones de recherche permanantes
     $addzonerecherche=0;

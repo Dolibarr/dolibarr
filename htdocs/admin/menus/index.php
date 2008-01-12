@@ -41,10 +41,10 @@ $mesg=$_GET["mesg"];
 
 $menu_handler_top=eregi_replace('\.php','',$conf->global->MAIN_MENU_BARRETOP);
 $menu_handler_left=eregi_replace('\.php','',$conf->global->MAIN_MENU_BARRELEFT);
-$menu_handler_top=eregi_replace('_backoffice\.php','',$menu_handler_top);
-$menu_handler_top=eregi_replace('_frontoffice\.php','',$menu_handler_top);
-$menu_handler_left=eregi_replace('_backoffice\.php','',$menu_handler_left);
-$menu_handler_left=eregi_replace('_frontoffice\.php','',$menu_handler_left);
+$menu_handler_top=eregi_replace('_backoffice','',$menu_handler_top);
+$menu_handler_top=eregi_replace('_frontoffice','',$menu_handler_top);
+$menu_handler_left=eregi_replace('_backoffice','',$menu_handler_left);
+$menu_handler_left=eregi_replace('_frontoffice','',$menu_handler_left);
 
 $menu_handler=$menu_handler_left;
 

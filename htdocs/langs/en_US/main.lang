@@ -394,6 +394,7 @@ BackToList=Back to list
 GoBack=Go back
 CanBeModifiedIfOk=Can be modified if valid
 CanBeModifiedIfKo=Can be modified if not valid
+RecordModifiedSuccessfully=Record modified successfully
 AutomaticCode=Automatic code
 NotManaged=Not managed
 FeatureDisabled=Feature disabled

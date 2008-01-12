@@ -396,6 +396,7 @@ BackToList=Retour liste
 GoBack=Retour arrière
 CanBeModifiedIfOk=Peut être modifié si valide
 CanBeModifiedIfKo=Peut être modifié si invalide
+RecordModifiedSuccessfully=Enregistrement modifié avec succès
 AutomaticCode=Création automatique du code
 NotManaged=Non géré
 FeatureDisabled=Fonction désactivée

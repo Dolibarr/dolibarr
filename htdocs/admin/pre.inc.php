@@ -34,43 +34,35 @@ $langs->load("admin");
 
 function llxHeader($head = "", $title="", $help_url='')
 {
-	global $user, $langs;
+	global $conf, $user, $langs;
 
 	top_menu($head);
 
-	$menu = new Menu();
-	$langs->load("admin");
-	$langs->load("users");
-
-	$menu->add(DOL_URL_ROOT."/admin/company.php", $langs->trans("MenuCompanySetup"));
-
-	$menu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
-
-	$menu->add(DOL_URL_ROOT."/admin/menus.php", $langs->trans("Menus"));
-
-	$menu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
-
-	$menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
-
-	$menu->add(DOL_URL_ROOT."/admin/delais.php",$langs->trans("Alerts"));
-
-	$menu->add(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
-
-	$menu->add(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"));
+	$menuarray=array();
 	
-	$menu->add(DOL_URL_ROOT."/admin/limits.php", $langs->trans("Limits"));
-
-	$menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
-
-	$menu->add(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
-
-	$menu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
-
-	$menu->add(DOL_URL_ROOT."/admin/system/", $langs->trans("System"));
+	if ($conf->left_menu == 'rodolphe')
+	{
+		$langs->load("admin");
+		$langs->load("users");
+		$menu = new Menu();
+		$menu->add(DOL_URL_ROOT."/admin/company.php", $langs->trans("MenuCompanySetup"));
+		$menu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
+		$menu->add(DOL_URL_ROOT."/admin/menus.php", $langs->trans("Menus"));
+		$menu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
+		$menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
+		$menu->add(DOL_URL_ROOT."/admin/delais.php",$langs->trans("Alerts"));
+		$menu->add(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
+		$menu->add(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"));
+		$menu->add(DOL_URL_ROOT."/admin/limits.php", $langs->trans("Limits"));
+		$menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
+		$menu->add(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
+		$menu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
+		$menu->add(DOL_URL_ROOT."/admin/system/", $langs->trans("System"));
+		$menu->add(DOL_URL_ROOT."/admin/tools/", $langs->trans("Tools"));
+		$varmenuarray=$menu->liste;
+	}
 	
-	$menu->add(DOL_URL_ROOT."/admin/tools/", $langs->trans("Tools"));
-
-	left_menu($menu->liste, $help_url);
+	left_menu($varmenuarray, $help_url);
 }
 
 ?>

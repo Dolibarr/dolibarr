@@ -159,7 +159,8 @@ class MenuLeft {
             for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++) 
             {
                 $alt++;
-                if ($this->menu_array[$i]['level']==0) {
+                if ($this->menu_array[$i]['level']==0)
+				{
                     if (($alt%2==0))
                     {
                         print '<div class="menu">'."\n";

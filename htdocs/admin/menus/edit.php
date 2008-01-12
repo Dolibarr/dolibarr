@@ -27,6 +27,8 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
+
 
 $langs->load("admin");
 
@@ -47,7 +49,8 @@ $menu_handler_left=eregi_replace('_frontoffice\.php','',$menu_handler_left);
 
 $menu_handler=$menu_handler_left;
 
-if ($_REQUEST["menu_handler"]) $menu_handler=$_REQUEST["menu_handler"];
+if ($_REQUEST["handler_origine"]) $menu_handler=$_REQUEST["handler_origine"];
+if ($_REQUEST["menu_handler"])    $menu_handler=$_REQUEST["menu_handler"];
 
 
 
@@ -57,54 +60,53 @@ if ($_REQUEST["menu_handler"]) $menu_handler=$_REQUEST["menu_handler"];
 
 if (isset($_GET["action"]) && $_GET["action"] == 'update')
 {	
-	if(!$_POST['cancel'])
+	if (! $_POST['cancel'])
 	{		
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
 		$sql.="	SET m.titre = '".$_POST['titre']."', m.leftmenu = '".$_POST['leftmenu']."', m.url = '".$_POST['url']."', m.langs = '".$_POST['langs']."', m.right = '".$_POST['right']."',m.target = '".$_POST['target']."', m.user = ".$_POST['user'];
 		$sql.=" WHERE m.rowid = ".$_POST['menuId'];
-		$db->query($sql);	
+		$resql=$db->query($sql);
+		if ($resql > 0)
+		{
+			$mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
+		}
+		$_GET["menuId"]=$_POST['menuId'];
+		$_GET["action"]="edit";
 	}
 	else
 	{
-		header("location: index.php?menu_handler=".$menu_handler);
+		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
 		exit;
 	}
 	
-	if($_GET['return'])
+	if ($_GET['return'])
 	{
-		header("location: index.php");
+		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
 		exit;
 	}
-	else
-	{
-		header("location: edit.php?action=edit&menuId=".$_POST['menuId']);
-		exit;
-	}
-	
-
 } 
 
 if (isset($_GET["action"]) && $_GET["action"] == 'add')
 {	
 	if ($_POST['cancel'])
 	{
-		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php");
+		header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
 		exit;
 	}
 
 	$langs->load("errors");
 
 	$error=0;
-	if (! $error && ! $_POST['handler'])
+	if (! $error && ! $_POST['menu_handler'])
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",'handler').'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiest("MenuHandler")).'</div>';
 		$_GET["action"] = 'create';
 		$error++;
 	}
 	if (! $error && ! $_POST['type'])
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",'type').'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiest("Type")).'</div>';
 		$_GET["action"] = 'create';
 		$error++;
 	}
@@ -154,7 +156,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 	if (! $error)
 	{		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(rowid,menu_handler, type, mainmenu, leftmenu, fk_menu, url, titre, level, langs, `right`, target, user, `order`)";
-		$sql.=" VALUES(".$rowid.",'".$_POST['handler']."','".$_POST['type']."','".$_POST['mainmenu']."','".$_POST['leftmenu']."',".$_POST['menuId'].",'".$_POST['url']."','".$_POST['titre']."','".$_POST['level']."','".$_POST['langs']."','".$_POST['right']."','".$_POST['target']."',".$_POST['user'].",0)";
+		$sql.=" VALUES(".$rowid.",'".$_POST['menu_handler']."','".$_POST['type']."','".$_POST['mainmenu']."','".$_POST['leftmenu']."',".$_POST['menuId'].",'".$_POST['url']."','".$_POST['titre']."','".$_POST['level']."','".$_POST['langs']."','".$_POST['right']."','".$_POST['target']."',".$_POST['user'].",0)";
 		
 		dolibarr_syslog("edit: insert menu entry sql=".$sql);
 		$result=$db->query($sql);		
@@ -286,7 +288,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	else print '<br>';
 	
 	print '<form action="./edit.php?action=add&menuId='.$_GET['menuId'].'" method="post" name="formmenucreate">';
-	
+
 	print '<table class="border" width="100%">';
 	
 	// Id
@@ -317,7 +319,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	print '<tr><td><b>'.$langs->trans('MenuHandler').'</b></td>';
 	print '<td>';
 	print $htmladmin->select_menu_families($menu_handler,'menu_handler',$dirleft);
-	//print '<input type="text" size="30" name="handler" value="'.$menu_handler.'">';
 	print '</td>';
 	print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
@@ -331,33 +332,26 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	//	print '<input type="text" size="50" name="type" value="'.$type.'">';
 	print '</td><td>'.$langs->trans('DetailType').'</td></tr>';
 	//User
-	print '<tr><td><b>'.$langs->trans('MenuForUsers').'</b></td>';
+	print '<tr><td nowrap="nowrap"><b>'.$langs->trans('MenuForUsers').'</b></td>';
 	print '<td><select class="flat" name="user">';
-	print '<option value="2" selected>'.$langs->trans("All").'</option>';
+	print '<option value="2" selected>'.$langs->trans("AllMenus").'</option>';
 	print '<option value="0">'.$langs->trans('Interne').'</option>';
 	print '<option value="1">'.$langs->trans('Externe').'</option>';
 	print '</select></td>';
 	print '<td>'.$langs->trans('DetailUser').'</td></tr>';
-	//Level
-	print '<input type="hidden" size="50" name="level" value="'.($parent_level + 1).'">';
 	//Titre
-	print '<tr><td><b>'.$langs->trans('Title').'</b></td><td><input type="text" size="50" name="titre" value=""></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
-	//URL
-	print '<tr><td><b>'.$langs->trans('URL').'</b></td><td><input type="text" size="50" name="url" value=""></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+	print '<tr><td><b>'.$langs->trans('Title').'</b></td><td><input type="text" size="30" name="titre" value=""></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 	//Langs
-	print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="50" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+	print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="30" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+	//URL
+	print '<tr><td><b>'.$langs->trans('URL').'</b></td><td><input type="text" size="60" name="url" value=""></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 	//Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
 	print '<option value=""'.($menu->target==""?' selected="true"':'').'>'.$langs->trans('').'</option>';
 	print '<option value="_new"'.($menu->target=="_new"?' selected="true"':'').'>'.$langs->trans('_new').'</option>';
 	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 	//Right
-	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="50" name="right" value=""></td><td>'.$langs->trans('DetailRight').'</td></tr>';
-
-	//Mainmenu = group
-	//print '<tr><td>'.$langs->trans('Group').'</td><td><input type="text" size="50" name="mainmenu" value="'.$mainmenu.'"></td><td>'.$langs->trans('DetailMainmenu').'</td></tr>';
-	//Leftmenu
-	//print '<tr><td>'.$langs->trans('Leftmenu').'</td><td><input type="text" size="50" name="leftmenu" value=""></td><td>'.$langs->trans('DetailLeftmenu').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="right" value=""></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
 	// Boutons
 	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -372,88 +366,71 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
 	print_titre($langs->trans("ModifMenu"),'','setup');
-	
 	print '<br>';
 	
 	print '<form action="./edit.php?action=update" method="post" name="formmenuedit">';
 	
 	print '<table class="border" width="100%">';
 	
-	$sql = "SELECT m.rowid, m.menu_handler, m.type, m.titre, m.mainmenu, m.leftmenu, m.fk_menu, m.url, m.langs, m.level, m.right, m.target, m.user, m.order";
-	$sql.="	FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
-	$result = $db->query($sql);
-	if ($result)
-	{
-		$num = $db->num_rows();
-		$i = 0;
+	$menu = new Menubase($db);
+	$result=$menu->fetch($_GET['menuId']);
 
-		while($i < $num)
-		{
-			$menu = $db->fetch_object($result);
-			
-			// MenuId Parent
-			print '<tr><td>'.$langs->trans('MenuIdParent').'</td>';
-			//$menu_handler
-			//print '<td><input type="text" size="50" name="handler" value="all"></td>';
-			print '<td>'.$menu->fk_menu.'</td>';
-			print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
-			print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
+	// MenuId Parent
+	print '<tr><td>'.$langs->trans('MenuIdParent').'</td>';
+	//$menu_handler
+	//print '<td><input type="text" size="50" name="handler" value="all"></td>';
+	print '<td>'.$menu->fk_menu.'</td>';
+	print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
+	print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
 
-			// Id
-			print '<tr><td>'.$langs->trans('Id').'</td><td>'.$menu->rowid.'</td><td>'.$langs->trans('DetailId').'</td></tr>';
+	// Id
+	print '<tr><td>'.$langs->trans('Id').'</td><td>'.$menu->id.'</td><td>'.$langs->trans('DetailId').'</td></tr>';
 
-			// Handler
-			print '<tr><td>'.$langs->trans('MenuHandler').'</td><td>'.$menu->menu_handler.'</td><td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
+	// Handler
+	print '<tr><td>'.$langs->trans('MenuHandler').'</td><td>'.$menu->menu_handler.'</td><td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
 
-			// user
-			print '<tr><td>'.$langs->trans('MenuForUsers').'</td><td><select class="flat" name="user">';
-			print '<option value="2"'.($menu->user==2?' selected="true"':'').'>'.$langs->trans("All").'</option>';
-        	print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Interne').'</option>';
-        	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('Externe').'</option>';
-        	print '</select></td><td>'.$langs->trans('DetailUser').'</td></tr>';
+	// user
+	print '<tr><td nowrap="nowrap">'.$langs->trans('MenuForUsers').'</td><td><select class="flat" name="user">';
+	print '<option value="2"'.($menu->user==2?' selected="true"':'').'>'.$langs->trans("All").'</option>';
+	print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Interne').'</option>';
+	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('Externe').'</option>';
+	print '</select></td><td>'.$langs->trans('DetailUser').'</td></tr>';
 
-			// Type
-			print '<tr><td>'.$langs->trans('Type').'</td><td>'.$menu->type.'</td><td>'.$langs->trans('DetailType').'</td></tr>';
+	// Type
+	print '<tr><td>'.$langs->trans('Type').'</td><td>'.$menu->type.'</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
-			// Niveau
-			//print '<tr><td>'.$langs->trans('Level').'</td><td>'.$menu->level.'</td><td>'.$langs->trans('DetailLevel').'</td></tr>';
+	// Niveau
+	//print '<tr><td>'.$langs->trans('Level').'</td><td>'.$menu->level.'</td><td>'.$langs->trans('DetailLevel').'</td></tr>';
 
-			// Titre
-			print '<tr><td>'.$langs->trans('Title').'</td><td><input type="text" size="70" name="titre" value="'.$menu->titre.'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
-			// Langs
-			print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="70" name="langs" value="'.$menu->langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+	// Titre
+	print '<tr><td>'.$langs->trans('Title').'</td><td><input type="text" size="30" name="titre" value="'.$menu->titre.'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+	// Langs
+	print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="30" name="langs" value="'.$menu->langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
-			// Url
-			print '<tr><td>'.$langs->trans('URL').'</td><td><input type="text" size="70" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+	// Url
+	print '<tr><td>'.$langs->trans('URL').'</td><td><input type="text" size="60" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
-        	// Target
-			print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
-        	print '<option value=""'.($menu->target==""?' selected="true"':'').'>'.$langs->trans('').'</option>';
-        	print '<option value="_new"'.($menu->target=="_new"?' selected="true"':'').'>'.$langs->trans('_new').'</option>';
-        	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
-			
-			// Right
-			print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="70" name="right" value="'.$menu->right.'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
-
-			// Leftmenu
-			//print '<tr><td>'.$langs->trans('Leftmenu').'</td><td><input type="text" size="70" name="leftmenu" value="'.htmlentities($menu->leftmenu).'"></td><td>'.$langs->trans('DetailLeftmenu').'</td></tr>';
-			// Mainmenu = group
-			//print '<tr><td>'.$langs->trans('Group').'</td><td><input type="text" size="70" name="mainmenu" value="'.$menu->mainmenu.'"></td><td>'.$langs->trans('DetailMainmenu').'</td></tr>';
-
-			// Bouton			
-			print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-			print ' &nbsp; &nbsp; ';
-			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-
-			$i++;
-		}
-	}
+	// Target
+	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
+	print '<option value=""'.($menu->target==""?' selected="true"':'').'>'.$langs->trans('').'</option>';
+	print '<option value="_new"'.($menu->target=="_new"?' selected="true"':'').'>'.$langs->trans('_new').'</option>';
+	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 	
+	// Right
+	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="60" name="right" value="'.$menu->right.'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+
+	// Bouton			
+	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+
 	print '</table>';
 	
 	print '</form>';
 	
 	print '<br>';
+
+	if ($mesg) print $mesg.'<br>';
 	
 	/*
 	* Lignes de contraintes

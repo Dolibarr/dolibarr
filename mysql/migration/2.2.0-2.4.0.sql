@@ -25,3 +25,11 @@ DELETE FROM llx_rights_def WHERE module = 'menudb';
 ALTER table llx_boxes_def drop column name;
 ALTER table llx_boxes_def add column tms timestamp;
 
+-- Rename primary key of llx_menu
+ALTER TABLE llx_menu_const drop foreign key fk_menu_const_fk_menu;
+alter table llx_menu drop primary key;
+alter table llx_menu modify rowid integer AUTO_INCREMENT NOT NULL PRIMARY KEY;
+ALTER TABLE llx_menu_const ADD CONSTRAINT fk_menu_const_fk_menu FOREIGN KEY (fk_menu) REFERENCES llx_menu (rowid);
+
+alter table llx_menu modify user integer NOT NULL default '0';
+alter table llx_menu add column tms timestamp;

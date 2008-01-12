@@ -1,6 +1,5 @@
 <?php
 /* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,41 +19,48 @@
  */
 
 /**
-        \file       dev/skeletons/skeleton_class.class.php
-        \ingroup    unknown
-        \brief      This file is an example to create a new class file
-		\remarks	Put here some comments
+        \file       htdocs/lib/menubase.class.php
+        \ingroup    core
+        \brief      File of class to manage menu entries
+		\remarks	Initialy built by build_class_from_table on 2008-01-12 14:19
 */
-
-// Put here all includes required by your class file
-//require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
 /**
-        \class      Skeleton_class
-        \brief      Put here description of your class
+        \class      Menubase
+        \brief      Class to manage menu entries
 */
-class Skeleton_class // extends CommonObject
+class Menubase
 {
 	var $db;							// To store db handler
 	var $error;							// To return error code (or message)
 	var $errors=array();				// To return several error codes (or messages)
-	//var $element='skeleton';			// Id that identify managed objects
-	//var $table_element='skeleton';		// Name of table without prefix where object is stored
     
     var $id;
-    var $prop1;
-    var $prop2;
-	//...
+    
+	var $menu_handler;
+	var $type;
+	var $mainmenu;
+	var $fk_menu;
+	var $order;
+	var $url;
+	var $target;
+	var $titre;
+	var $langs;
+	var $level;
+	var $leftmenu;
+	var $right;
+	var $user;
+	var $tms;
+
+    
 
 	
     /**
      *      \brief      Constructor
      *      \param      DB      Database handler
      */
-    function Skeleton_class($DB) 
+    function Menubase($DB) 
     {
         $this->db = $DB;
         return 1;
@@ -71,29 +77,62 @@ class Skeleton_class // extends CommonObject
     	global $conf, $langs;
     	
 		// Clean parameters
-        $this->prop1=trim($this->prop1);
-        $this->prop2=trim($this->prop2);
-		//...
+		$this->rowid=trim($this->rowid);
+		$this->menu_handler=trim($this->menu_handler);
+		$this->type=trim($this->type);
+		$this->mainmenu=trim($this->mainmenu);
+		$this->fk_menu=trim($this->fk_menu);
+		$this->order=trim($this->order);
+		$this->url=trim($this->url);
+		$this->target=trim($this->target);
+		$this->titre=trim($this->titre);
+		$this->langs=trim($this->langs);
+		$this->level=trim($this->level);
+		$this->leftmenu=trim($this->leftmenu);
+		$this->right=trim($this->right);
+		$this->user=trim($this->user);
 
 		// Check parameters
 		// Put here code to add control on parameters values
 		
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mytable(";
-		$sql.= " field1,";
-		$sql.= " field2";
-		//...
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
+		$sql.= "menu_handler,";
+		$sql.= "type,";
+		$sql.= "mainmenu,";
+		$sql.= "fk_menu,";
+		$sql.= "order,";
+		$sql.= "url,";
+		$sql.= "target,";
+		$sql.= "titre,";
+		$sql.= "langs,";
+		$sql.= "level,";
+		$sql.= "leftmenu,";
+		$sql.= "right,";
+		$sql.= "user,";
+		$sql.= "tms";
         $sql.= ") VALUES (";
-        $sql.= " '".$this->prop1."',";
-        $sql.= " '".$this->prop2."'";
-		//...
+		$sql.= " '".$this->menu_handler."',";
+		$sql.= " '".$this->type."',";
+		$sql.= " '".$this->mainmenu."',";
+		$sql.= " '".$this->fk_menu."',";
+		$sql.= " '".$this->order."',";
+		$sql.= " '".$this->url."',";
+		$sql.= " '".$this->target."',";
+		$sql.= " '".$this->titre."',";
+		$sql.= " '".$this->langs."',";
+		$sql.= " '".$this->level."',";
+		$sql.= " '".$this->leftmenu."',";
+		$sql.= " '".$this->right."',";
+		$sql.= " '".$this->user."',";
+		$sql.= " ".$this->db->idate($this->tms)."";
 		$sql.= ")";
 
-	   	dolibarr_syslog("Skeleton_class::create sql=".$sql, LOG_DEBUG);
+	   	dolibarr_syslog("Menu::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mytable");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
     
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -107,7 +146,7 @@ class Skeleton_class // extends CommonObject
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::create ".$this->error, LOG_ERR);
+            dolibarr_syslog("Menu::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -123,26 +162,48 @@ class Skeleton_class // extends CommonObject
     	global $conf, $langs;
     	
 		// Clean parameters
-        $this->prop1=trim($this->prop1);
-        $this->prop2=trim($this->prop2);
-		//...
+		$this->rowid=trim($this->rowid);
+		$this->menu_handler=trim($this->menu_handler);
+		$this->type=trim($this->type);
+		$this->mainmenu=trim($this->mainmenu);
+		$this->fk_menu=trim($this->fk_menu);
+		$this->order=trim($this->order);
+		$this->url=trim($this->url);
+		$this->target=trim($this->target);
+		$this->titre=trim($this->titre);
+		$this->langs=trim($this->langs);
+		$this->level=trim($this->level);
+		$this->leftmenu=trim($this->leftmenu);
+		$this->right=trim($this->right);
+		$this->user=trim($this->user);
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."mytable SET";
-        $sql.= " field1='".addslashes($this->field1)."',";
-        $sql.= " field2='".addslashes($this->field2)."'";
-		//...
+        $sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
+		$sql.= " menu_handler='".addslashes($this->menu_handler)."',";
+		$sql.= " type='".$this->type."',";
+		$sql.= " mainmenu='".addslashes($this->mainmenu)."',";
+		$sql.= " fk_menu='".$this->fk_menu."',";
+		$sql.= " order='".$this->order."',";
+		$sql.= " url='".addslashes($this->url)."',";
+		$sql.= " target='".addslashes($this->target)."',";
+		$sql.= " titre='".addslashes($this->titre)."',";
+		$sql.= " langs='".addslashes($this->langs)."',";
+		$sql.= " level='".$this->level."',";
+		$sql.= " leftmenu='".addslashes($this->leftmenu)."',";
+		$sql.= " right='".addslashes($this->right)."',";
+		$sql.= " user='".$this->user."',";
+		$sql.= " tms=".$this->db->idate($this->tms)."";
         $sql.= " WHERE rowid=".$this->id;
 
-        dolibarr_syslog("Skeleton_class::update sql=".$sql, LOG_DEBUG);
+        dolibarr_syslog("Menu::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::update ".$this->error, LOG_ERR);
+            dolibarr_syslog("Menu::update ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -169,15 +230,27 @@ class Skeleton_class // extends CommonObject
     function fetch($id, $user=0)
     {
     	global $langs;
+
         $sql = "SELECT";
 		$sql.= " t.rowid,";
-		$sql.= " t.field1,";
-		$sql.= " t.field2";
-		//...
-        $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
+		$sql.= " t.menu_handler,";
+		$sql.= " t.type,";
+		$sql.= " t.mainmenu,";
+		$sql.= " t.fk_menu,";
+		$sql.= " t.order,";
+		$sql.= " t.url,";
+		$sql.= " t.target,";
+		$sql.= " t.titre,";
+		$sql.= " t.langs,";
+		$sql.= " t.level,";
+		$sql.= " t.leftmenu,";
+		$sql.= " t.right,";
+		$sql.= " t.user,";
+		$sql.= " ".$this->db->pdate('t.tms')."";
+        $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
         $sql.= " WHERE t.rowid = ".$id;
     
-    	dolibarr_syslog("Skeleton_class::fetch sql=".$sql, LOG_DEBUG);
+    	dolibarr_syslog("Menu::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -186,9 +259,21 @@ class Skeleton_class // extends CommonObject
                 $obj = $this->db->fetch_object($resql);
     
                 $this->id    = $obj->rowid;
-                $this->prop1 = $obj->field1;
-                $this->prop2 = $obj->field2;
-				//...
+                
+				$this->menu_handler = $obj->menu_handler;
+				$this->type = $obj->type;
+				$this->mainmenu = $obj->mainmenu;
+				$this->fk_menu = $obj->fk_menu;
+				$this->order = $obj->order;
+				$this->url = $obj->url;
+				$this->target = $obj->target;
+				$this->titre = $obj->titre;
+				$this->langs = $obj->langs;
+				$this->level = $obj->level;
+				$this->leftmenu = $obj->leftmenu;
+				$this->right = $obj->right;
+				$this->user = $obj->user;
+				$this->tms = $obj->tms;
             }
             $this->db->free($resql);
             
@@ -197,7 +282,7 @@ class Skeleton_class // extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::fetch ".$this->error, LOG_ERR);
+            dolibarr_syslog("Menu::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -212,15 +297,15 @@ class Skeleton_class // extends CommonObject
 	{
 		global $conf, $langs;
 	
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mytable";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql.= " WHERE rowid=".$this->id;
 	
-	   	dolibarr_syslog("Skeleton_class::delete sql=".$sql);
+	   	dolibarr_syslog("Menu::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::delete ".$this->error, LOG_ERR);
+            dolibarr_syslog("Menu::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 	
@@ -242,8 +327,21 @@ class Skeleton_class // extends CommonObject
 	function initAsSpecimen()
 	{
 		$this->id=0;
-		$this->prop1='prop1';
-		$this->prop2='prop2';
+		
+		$this->menu_handler='';
+		$this->type='';
+		$this->mainmenu='';
+		$this->fk_menu='';
+		$this->order='';
+		$this->url='';
+		$this->target='';
+		$this->titre='';
+		$this->langs='';
+		$this->level='';
+		$this->leftmenu='';
+		$this->right='';
+		$this->user='';
+		$this->tms='';
 	}
 
 }
