@@ -45,7 +45,6 @@ class modCategorie extends DolibarrModules
 	function modCategorie ($DB)
 	{
 		$this->db = $DB;
-		$this->id = 'categorie';   // Same value xxx than in file modXxx.class.php file
 		$this->numero = 1780;
 	
 		$this->family = "technic";

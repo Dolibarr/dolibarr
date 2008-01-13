@@ -50,7 +50,6 @@ class modAdherent extends DolibarrModules
     function modAdherent($DB)
     {
         $this->db = $DB;
-        $this->id = 'member';   // Same value xxx than in file modXxx.class.php file
         $this->numero = 310 ;
     
         $this->family = "hr";

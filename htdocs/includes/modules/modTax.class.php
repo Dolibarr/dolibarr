@@ -43,14 +43,13 @@ class modTax extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
 	function modTax($DB)
 	{
 		global $conf;
 	
 		$this->db = $DB ;
-		$this->id = 'tax';   // Same value xxx than in file modXxx.class.php file
 		$this->numero = 500 ;
 	
 		$this->family = "financial";
@@ -67,7 +66,7 @@ class modTax extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array();
 	
-		// Dépendances
+		// Dï¿½pendances
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
@@ -76,7 +75,7 @@ class modTax extends DolibarrModules
 		// Constantes
 		$this->const = array();
 	
-		// Répertoires
+		// Rï¿½pertoires
 		$this->dirs = array();
 		$this->dirs[0] = $conf->tax->dir_output;
 		$this->dirs[1] = $conf->tax->dir_temp;
@@ -99,7 +98,7 @@ class modTax extends DolibarrModules
 	
 		$r++;
 		$this->rights[$r][0] = 92;
-		$this->rights[$r][1] = 'Créer modifier les charges';
+		$this->rights[$r][1] = 'Crï¿½er modifier les charges';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';
@@ -128,7 +127,7 @@ class modTax extends DolibarrModules
     
         $r++;
         $this->export_code[$r]=$this->id.'_'.$r;
-        $this->export_label[$r]='Taxes et charges sociales, et leurs règlements';
+        $this->export_label[$r]='Taxes et charges sociales, et leurs rï¿½glements';
         $this->export_permission[$r]=array(array("tax","charges","export"));
         $this->export_fields_array[$r]=array('cc.libelle'=>"Type",'c.libelle'=>"Label",'c.date_ech'=>'DateDue','c.periode'=>'Period','c.amount'=>"AmountExpected","c.paye"=>"Status",'p.datep'=>'DatePayment','p.amount'=>'AmountPayment','p.num_paiement'=>'Numero');
         $this->export_entities_array[$r]=array('cc.libelle'=>"tax_type",'c.libelle'=>'tax','c.date_ech'=>'tax','c.periode'=>'tax','c.amount'=>"tax","c.paye"=>"tax",'p.datep'=>'payment','p.amount'=>'payment','p.num_paiement'=>'payment');
@@ -140,8 +139,8 @@ class modTax extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
 	function init()
 	{
@@ -154,7 +153,7 @@ class modTax extends DolibarrModules
 	}
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
 	function remove()

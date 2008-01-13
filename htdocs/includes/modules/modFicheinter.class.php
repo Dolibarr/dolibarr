@@ -23,7 +23,7 @@
 
 /**
         \defgroup   ficheinter     Module fiche interventions
-        \brief      Module pour gérer la tenue de fiches d'interventions
+        \brief      Module pour gï¿½rer la tenue de fiches d'interventions
 */
 
 /**
@@ -45,12 +45,11 @@ class modFicheinter  extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modFicheinter($DB)
   {
     $this->db = $DB ;
-    $this->id = 'ficheinter';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 70 ;
     
     $this->family = "crm";
@@ -70,7 +69,7 @@ class modFicheinter  extends DolibarrModules
     // Config pages
     $this->config_page_url = array("fichinter.php");
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array("modSociete","modCommercial");
     $this->requiredby = array();
 
@@ -102,7 +101,7 @@ class modFicheinter  extends DolibarrModules
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 62;
-    $this->rights[2][1] = 'Créer/modifier les fiches d\'intervention';
+    $this->rights[2][1] = 'Crï¿½er/modifier les fiches d\'intervention';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'creer';
@@ -117,8 +116,8 @@ class modFicheinter  extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -139,7 +138,7 @@ class modFicheinter  extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

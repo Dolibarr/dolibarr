@@ -50,7 +50,6 @@ class modAgenda extends DolibarrModules
     function modAgenda($DB)
     {
         $this->db = $DB;
-        $this->id = 'agenda';   // Same value xxx than in file modXxx.class.php file
         $this->numero = 2400;
     
         $this->family = "projects";

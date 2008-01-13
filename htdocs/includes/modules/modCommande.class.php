@@ -24,7 +24,7 @@
  */
 
 /**     \defgroup   commande     Module commande
-        \brief      Module pour gérer le suivi des commandes
+        \brief      Module pour gï¿½rer le suivi des commandes
 */
 
 /**
@@ -44,12 +44,11 @@ class modCommande extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modCommande($DB)
   {
     $this->db = $DB ;
-    $this->id = 'commande';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 25 ;
 
     $this->family = "crm";
@@ -67,7 +66,7 @@ class modCommande extends DolibarrModules
     // Config pages
     $this->config_page_url = array("commande.php");
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array("modCommercial");
     $this->requiredby = array();
     $this->conflictwith = array();
@@ -78,13 +77,13 @@ class modCommande extends DolibarrModules
 	$this->const[0][0] = "COMMANDE_ADDON_PDF";
     $this->const[0][1] = "chaine";
     $this->const[0][2] = "einstein";
-    $this->const[0][3] = 'Nom du gestionnaire de génération des commandes en PDF';
+    $this->const[0][3] = 'Nom du gestionnaire de gï¿½nï¿½ration des commandes en PDF';
     $this->const[0][4] = 0;
     
     $this->const[1][0] = "COMMANDE_ADDON";
     $this->const[1][1] = "chaine";
     $this->const[1][2] = "mod_commande_marbre";
-    $this->const[1][3] = 'Nom du gestionnaire de numérotation des commandes';
+    $this->const[1][3] = 'Nom du gestionnaire de numï¿½rotation des commandes';
     $this->const[1][4] = 0;
 
     // Boites
@@ -106,7 +105,7 @@ class modCommande extends DolibarrModules
 
     $r++;
     $this->rights[$r][0] = 82;
-    $this->rights[$r][1] = 'Créer modifier les commandes clients';
+    $this->rights[$r][1] = 'Crï¿½er modifier les commandes clients';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'creer';
@@ -127,7 +126,7 @@ class modCommande extends DolibarrModules
     
     $r++;
     $this->rights[$r][0] = 87;
-    $this->rights[$r][1] = 'Clôturer les commandes clients';
+    $this->rights[$r][1] = 'Clï¿½turer les commandes clients';
     $this->rights[$r][2] = 'd';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'cloturer';
@@ -173,8 +172,8 @@ class modCommande extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -196,7 +195,7 @@ class modCommande extends DolibarrModules
 
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

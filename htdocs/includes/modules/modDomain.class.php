@@ -20,7 +20,7 @@
 
 /**
         \defgroup   domain     Module domain
-        \brief      Module pour gérer une base de noms de domaines
+        \brief      Module pour gï¿½rer une base de noms de domaines
 */
 
 /**
@@ -42,12 +42,11 @@ class modDomain extends DolibarrModules
 
     /**
      *   \brief      Constructeur. Definit les noms, constantes et boites
-     *   \param      DB      handler d'accès base
+     *   \param      DB      handler d'accï¿½s base
      */
     function modDomain($DB)
     {
         $this->db = $DB;
-        $this->id = 'domain';   // Same value xxx than in file modXxx.class.php file
         $this->numero = 1300 ;
     
         $this->family = "other";
@@ -66,7 +65,7 @@ class modDomain extends DolibarrModules
         //-------------
         $this->config_page_url = array();
     
-        // Dépendances
+        // Dï¿½pendances
         //------------
         $this->depends = array();
         $this->requiredby = array();
@@ -112,17 +111,17 @@ class modDomain extends DolibarrModules
         $r=0;
 
         // $this->export_code[$r]          Code unique identifiant l'export (tous modules confondus)
-        // $this->export_label[$r]         Libellé par défaut si traduction de clé "ExportXXX" non trouvée (XXX = Code)
+        // $this->export_label[$r]         Libellï¿½ par dï¿½faut si traduction de clï¿½ "ExportXXX" non trouvï¿½e (XXX = Code)
         // $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
         // $this->export_fields_sql[$r]    Liste des champs exportables en codif sql
         // $this->export_fields_name[$r]   Liste des champs exportables en codif traduction
-        // $this->export_sql[$r]           Requete sql qui offre les données à l'export
+        // $this->export_sql[$r]           Requete sql qui offre les donnï¿½es ï¿½ l'export
     }
 
     
     /**
-     *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-     *               Définit également les répertoires de données à créer pour ce module.
+     *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+     *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
      */
     function init()
     {
@@ -137,7 +136,7 @@ class modDomain extends DolibarrModules
     }
     
     /**
-     *    \brief      Fonction appelée lors de la désactivation d'un module.
+     *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
      *                Supprime de la base les constantes, boites et permissions du module.
      */
     function remove()

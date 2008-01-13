@@ -19,7 +19,7 @@
  */
 
 /**     \defgroup   export      Module export
-        \brief      Module générique pour réaliser des exports de données en base
+        \brief      Module gï¿½nï¿½rique pour rï¿½aliser des exports de donnï¿½es en base
 */
 
 /**
@@ -40,17 +40,16 @@ class modExport extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modExport($DB)
   {
     $this->db = $DB ;
-    $this->id = 'export';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 240;
 
     $this->family = "technic";
     $this->name = "Exports";
-    $this->description = "Outils d'exports de données Dolibarr (via un assistant)";
+    $this->description = "Outils d'exports de donnï¿½es Dolibarr (via un assistant)";
     $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_EXPORT';
     $this->special = 0;
@@ -62,7 +61,7 @@ class modExport extends DolibarrModules
     // Config pages
     $this->config_page_url = array();
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array();
     $this->requiredby = array();
     $this->phpmin = array(4,2,0);
@@ -85,7 +84,7 @@ class modExport extends DolibarrModules
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 1202;
-    $this->rights[2][1] = 'Créer/modifier un export';
+    $this->rights[2][1] = 'Crï¿½er/modifier un export';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'creer';
@@ -93,8 +92,8 @@ class modExport extends DolibarrModules
   }
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -104,7 +103,7 @@ class modExport extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

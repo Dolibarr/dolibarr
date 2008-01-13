@@ -48,7 +48,6 @@ class modBanque extends DolibarrModules
 	function modBanque($DB)
 	{
 	    $this->db = $DB ;
-	    $this->id = 'banque';   // Same value xxx than in file modXxx.class.php file
 	    $this->numero = 85 ;
 
 	    $this->family = "financial";

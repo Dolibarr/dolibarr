@@ -20,7 +20,7 @@
 
 /**
    \defgroup   editeur     Module editeur
-   \brief      Module pour gérer le suivi des editeurs
+   \brief      Module pour gï¿½rer le suivi des editeurs
 */
 
 /**
@@ -42,17 +42,16 @@ class modEditeur extends DolibarrModules
   
   /**
    *   \brief      Constructeur. Definit les noms, constantes et boites
-   *   \param      DB      handler d'accès base
+   *   \param      DB      handler d'accï¿½s base
    */
   function modEditeur($DB)
   {
     $this->db = $DB ;
-    $this->id = 'editeur';
     $this->numero = 49 ;
     
     $this->family = "other";
     $this->name = "Editeur";
-    $this->description = "Gestion des éditeurs";
+    $this->description = "Gestion des ï¿½diteurs";
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
     $this->const_name = 'MAIN_MODULE_EDITEUR';
@@ -65,7 +64,7 @@ class modEditeur extends DolibarrModules
     // Config pages
     $this->config_page_url = array("editeur.php");
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array();
     $this->requiredby = array();
     $this->conflictwith = array();
@@ -94,8 +93,8 @@ class modEditeur extends DolibarrModules
 
 
   /**
-   *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-   *               Définit également les répertoires de données à créer pour ce module.
+   *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+   *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
    */
   function init()
   {
@@ -108,7 +107,7 @@ class modEditeur extends DolibarrModules
   
   
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

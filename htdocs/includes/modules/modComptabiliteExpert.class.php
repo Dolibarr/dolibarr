@@ -51,7 +51,6 @@ class modComptabiliteExpert extends DolibarrModules
     global $conf;
     
     $this->db = $DB ;
-    $this->id = 'comptabiliteexpert';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 130 ;
     
     $this->family = "financial";

@@ -21,7 +21,7 @@
 
 /**
         \defgroup   expedition     Module expedition
-        \brief      Module pour gérer les expeditions de produits
+        \brief      Module pour gï¿½rer les expeditions de produits
 */
 
 /**
@@ -42,17 +42,16 @@ class modExpedition extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modExpedition($DB)
   {
     $this->db = $DB ;
-    $this->id = 'expedition';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 80 ;
 
     $this->family = "crm";
     $this->name = "Expedition";
-    $this->description = "Gestion des expéditions";
+    $this->description = "Gestion des expï¿½ditions";
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
     $this->const_name = 'MAIN_MODULE_EXPEDITION';
@@ -65,7 +64,7 @@ class modExpedition extends DolibarrModules
     // Config pages
     $this->config_page_url = array("confexped.php");
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array();
     $this->requiredby = array();
 
@@ -74,13 +73,13 @@ class modExpedition extends DolibarrModules
 	$this->const[0][0] = "LIVRAISON_ADDON_PDF";
     $this->const[0][1] = "chaine";
     $this->const[0][2] = "typhon";
-    $this->const[0][3] = 'Nom du gestionnaire de génération des commandes en PDF';
+    $this->const[0][3] = 'Nom du gestionnaire de gï¿½nï¿½ration des commandes en PDF';
     $this->const[0][4] = 0;
     
     $this->const[1][0] = "LIVRAISON_ADDON";
     $this->const[1][1] = "chaine";
     $this->const[1][2] = "mod_livraison_jade";
-    $this->const[1][3] = 'Nom du gestionnaire de numérotation des bons de livraison';
+    $this->const[1][3] = 'Nom du gestionnaire de numï¿½rotation des bons de livraison';
     $this->const[1][4] = 0;
     
     // Boxes
@@ -100,7 +99,7 @@ class modExpedition extends DolibarrModules
 
     $r++;
     $this->rights[$r][0] = 102;
-    $this->rights[$r][1] = 'Créer modifier les expeditions';
+    $this->rights[$r][1] = 'Crï¿½er modifier les expeditions';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'creer';
@@ -129,7 +128,7 @@ class modExpedition extends DolibarrModules
 
     $r++;
     $this->rights[$r][0] = 1102;
-    $this->rights[$r][1] = 'Créer modifier les bons de livraison';
+    $this->rights[$r][1] = 'Crï¿½er modifier les bons de livraison';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'livraison';
@@ -155,8 +154,8 @@ class modExpedition extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -172,7 +171,7 @@ class modExpedition extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

@@ -21,7 +21,7 @@
 
 /**
         \defgroup   bookmark    Module Bookmark
-        \brief      Module pour gérer les Bookmarks
+        \brief      Module pour gï¿½rer les Bookmarks
 */
 
 /**
@@ -43,12 +43,11 @@ class modBookmark extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modBookmark($DB)
   {
     $this->db = $DB ;
-    $this->id = 'bookmark';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 330;
 
     $this->family = "technic";
@@ -64,7 +63,7 @@ class modBookmark extends DolibarrModules
     // Dir
     $this->dirs = array();
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array();
     $this->requiredby = array();
 
@@ -86,29 +85,29 @@ class modBookmark extends DolibarrModules
     $r++;
     $this->rights[$r][0] = 331; // id de la permission
     $this->rights[$r][1] = 'Lire les bookmarks'; // libelle de la permission
-    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par dï¿½faut
     $this->rights[$r][4] = 'lire';
 
     $r++;
     $this->rights[$r][0] = 332; // id de la permission
     $this->rights[$r][1] = 'Creer/modifier les bookmarks'; // libelle de la permission
-    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par dï¿½faut
     $this->rights[$r][4] = 'creer';
 
     $r++;
     $this->rights[$r][0] = 333; // id de la permission
     $this->rights[$r][1] = 'Supprimer les bookmarks'; // libelle de la permission
-    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par dï¿½faut
     $this->rights[$r][4] = 'supprimer';
 
   }
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -119,7 +118,7 @@ class modBookmark extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

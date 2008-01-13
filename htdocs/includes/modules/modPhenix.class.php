@@ -47,10 +47,7 @@ class modPhenix extends DolibarrModules
 	{
 		$this->db = $DB;
 		
-		// Id of module (must be unique for all modules)
-		// Use same value here than in file modXxx.class.php
-		$this->id = 'phenix';   	
-		// Another id for module (must be unique).
+		// Id for module (must be unique).
 		// Use here a free id.
 		$this->numero = 420;
 		

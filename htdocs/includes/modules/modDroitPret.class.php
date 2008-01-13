@@ -19,8 +19,8 @@
  */
 
 /**
-        \defgroup   DroitPret     Module prêt
-        \brief      Module pour gérer le suivi des droits de prêts
+        \defgroup   DroitPret     Module prï¿½t
+        \brief      Module pour gï¿½rer le suivi des droits de prï¿½ts
 */
 
 /**
@@ -34,7 +34,7 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
         \class      modDroitPret
-        \brief      Classe de description et activation du module DroitPrêt
+        \brief      Classe de description et activation du module DroitPrï¿½t
 */
 
 class modDroitPret  extends DolibarrModules
@@ -42,17 +42,16 @@ class modDroitPret  extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modDroitPret($DB)
   {
     $this->db = $DB ;
-    $this->id = 'droitpret';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 2200 ;
 
     $this->family = "other";
-    $this->name = "Droit Prêt";
-    $this->description = "Gestion du droit de prêts";
+    $this->name = "Droit Prï¿½t";
+    $this->description = "Gestion du droit de prï¿½ts";
     $this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_DROITPRET';
     $this->special = 2;
@@ -60,7 +59,7 @@ class modDroitPret  extends DolibarrModules
     // Dir
     $this->dirs = array();
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array();
     $this->requiredby = array();
 
@@ -78,13 +77,13 @@ class modDroitPret  extends DolibarrModules
     $this->rights_class = 'droitpret';
 
     $this->rights[1][0] = 2200;
-    $this->rights[1][1] = 'Lire les droits de prêts';
+    $this->rights[1][1] = 'Lire les droits de prï¿½ts';
     $this->rights[1][2] = 'r';
     $this->rights[1][3] = 1;
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 2201;
-    $this->rights[2][1] = 'Créer/modifier les droits de prêts';
+    $this->rights[2][1] = 'Crï¿½er/modifier les droits de prï¿½ts';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'creer';
@@ -94,8 +93,8 @@ class modDroitPret  extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -105,7 +104,7 @@ class modDroitPret  extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

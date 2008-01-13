@@ -21,7 +21,7 @@
 
 /**
 		\defgroup   mailing  Module mailing
-		\brief      Module pour gérer les mailings
+		\brief      Module pour gï¿½rer les mailings
 */
 
 /**
@@ -43,12 +43,11 @@ class modMailing extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modMailing($DB)
   {
     $this->db = $DB ;
-    $this->id = 'mailing';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 22 ;
 
     $this->family = "technic";
@@ -62,7 +61,7 @@ class modMailing extends DolibarrModules
     // Dir
     $this->dirs = array();
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array();
     $this->requiredby = array();
     $this->langfiles = array("mails");
@@ -82,12 +81,12 @@ class modMailing extends DolibarrModules
 
     $this->rights[1][0] = 221; // id de la permission
     $this->rights[1][1] = 'Consulter les mailings'; // libelle de la permission
-    $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[1][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[1][3] = 1; // La permission est-elle une permission par dï¿½faut
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 222;
-    $this->rights[2][1] = 'Créer/modifier les mailings (sujet, destinataires...)';
+    $this->rights[2][1] = 'Crï¿½er/modifier les mailings (sujet, destinataires...)';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'creer';
@@ -108,8 +107,8 @@ class modMailing extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -120,7 +119,7 @@ class modMailing extends DolibarrModules
   }
 
   /**
-    \brief      Fonction appelée lors de la désactivation d'un module.
+    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
     Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

@@ -21,7 +21,7 @@
 
 /**
    \defgroup   stock     Module stock
-   \brief      Module pour gérer la tenue de stocks produits
+   \brief      Module pour gï¿½rer la tenue de stocks produits
 */
 
 /**
@@ -43,12 +43,11 @@ class modStock extends DolibarrModules
 
   /**
    *   \brief      Constructeur. Definit les noms, constantes et boites
-   *   \param      DB      handler d'accès base
+   *   \param      DB      handler d'accï¿½s base
    */
   function modStock($DB)
   {
     $this->db = $DB ;
-    $this->id = 'stock';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 52 ;
     
     $this->family = "products";
@@ -67,7 +66,7 @@ class modStock extends DolibarrModules
 
     $this->config_page_url = array("stock.php");
 
-    // Dépendences
+    // Dï¿½pendences
     $this->depends = array("modProduit");
     $this->requiredby = array();
 
@@ -89,7 +88,7 @@ class modStock extends DolibarrModules
     $this->rights[0][5] = '';
 
     $this->rights[1][0] = 1002;
-    $this->rights[1][1] = 'Créer/Modifier les stocks';
+    $this->rights[1][1] = 'Crï¿½er/Modifier les stocks';
     $this->rights[1][2] = 'w';
     $this->rights[1][3] = 0;
     $this->rights[1][4] = 'creer';
@@ -110,7 +109,7 @@ class modStock extends DolibarrModules
     $this->rights[3][5] = 'lire';
 
     $this->rights[4][0] = 1005;
-    $this->rights[4][1] = 'Créer/modifier mouvements de stocks';
+    $this->rights[4][1] = 'Crï¿½er/modifier mouvements de stocks';
     $this->rights[4][2] = 'w';
     $this->rights[4][3] = 0;
     $this->rights[4][4] = 'mouvement';
@@ -119,8 +118,8 @@ class modStock extends DolibarrModules
   }
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -130,7 +129,7 @@ class modStock extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

@@ -22,7 +22,7 @@
  */
 
 /**     \defgroup   commercial     Module commercial
-        \brief      Module pour gérer les fonctions commerciales
+        \brief      Module pour gï¿½rer les fonctions commerciales
 */
 
 /**
@@ -43,12 +43,11 @@ class modCommercial extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
     function modCommercial($DB)
     {
         $this->db = $DB ;
-        $this->id = 'commercial';   // Same value xxx than in file modXxx.class.php file
         $this->numero = 2 ;
         
         $this->family = "crm";
@@ -65,7 +64,7 @@ class modCommercial extends DolibarrModules
         // Dir
         $this->dirs = array();
         
-        // Dépendances
+        // Dï¿½pendances
         $this->depends = array("modSociete");
         $this->requiredby = array("modPropale","modContrat","modCommande","modFicheinter");
         
@@ -77,7 +76,7 @@ class modCommercial extends DolibarrModules
         $this->boxes[0][0] = "Derniers clients";
         $this->boxes[0][1] = "box_clients.php";
         
-        $this->boxes[1][0] = "Derniers prospects enregistrés";
+        $this->boxes[1][0] = "Derniers prospects enregistrï¿½s";
         $this->boxes[1][1] = "box_prospect.php";
         
         // Permissions
@@ -85,7 +84,7 @@ class modCommercial extends DolibarrModules
         $this->rights_class = 'commercial';
         $r = 1;
         
-        // 261 : Permission générale
+        // 261 : Permission gï¿½nï¿½rale
         $this->rights[$r][0] = 261;
         $this->rights[$r][1] = 'Consulter informations commerciales';
         $this->rights[$r][2] = 'r';
@@ -94,7 +93,7 @@ class modCommercial extends DolibarrModules
         $this->rights[$r][5] = 'lire';
         $r++;
         
-        // 262 : Resteindre l'accès des commerciaux
+        // 262 : Resteindre l'accï¿½s des commerciaux
         $this->rights[$r][0] = 262;
         $this->rights[$r][1] = 'Consulter tous les clients (effectifs pour utilisateurs internes uniquement)';
         $this->rights[$r][2] = 'r';
@@ -105,8 +104,8 @@ class modCommercial extends DolibarrModules
     }
 
     /**
-     *  \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-     *              Définit également les répertoires de données à créer pour ce module.
+     *  \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+     *              Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
      */
     function init()
     {
@@ -119,7 +118,7 @@ class modCommercial extends DolibarrModules
     }
 	
     /**
-     *  \brief      Fonction appelée lors de la désactivation d'un module.
+     *  \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
      *              Supprime de la base les constantes, boites et permissions du module.
      */
     function remove()

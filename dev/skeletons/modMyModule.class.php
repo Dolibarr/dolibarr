@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,50 +19,50 @@
  * $Id$
  */
 
-/**     \defgroup   webcalendar     Module Webcalendar
-        \brief      Module to include Webcalendar GUI into Dolibarr menu and
-                    add Dolibarr events directly inside a Webcalendar database.
+/**     \defgroup   mymodule     Module MyModule
+        \brief      Example of a module descriptor.
+					Suche a file must be copied into htdocs/includes/module directory.
 */
 
 /**
-        \file       htdocs/includes/modules/modWebcalendar.class.php
-        \ingroup    webcalendar
-        \brief      Description and activation file for module Webcalendar
+        \file       htdocs/includes/modules/modMyModule.class.php
+        \ingroup    mymodule
+        \brief      Description and activation file for module MyModule
 */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/**     \class      modWebcalendar
-        \brief      Description and activation class for module Webcalendar
+/**     \class      modMyModule
+        \brief      Description and activation class for module MyModule
 */
 
-class modWebcalendar extends DolibarrModules
+class modMyModule extends DolibarrModules
 {
 
-   /**
+    /**
     *   \brief      Constructor. Define names, constants, directories, boxes, permissions
     *   \param      DB      Database handler
     */
-	function modWebcalendar($DB)
+	function modyModule($DB)
 	{
 		$this->db = $DB;
 		
 		// Id for module (must be unique).
-		// Use here a free id.
-		$this->numero = 410;
+		// Use here a free id (See in Home -> System information -> Dolibarr for list of used module id).
+		$this->numero = 10000;
 		
 		// Family can be 'crm','financial','hr','projects','product','technic','other'
-		// It is used to sort modules in module setup page 
+		// It is used to group modules in module setup page 
 		$this->family = "projects";		
 		// Module title used if translation string 'ModuleXXXName' not found (XXX is id value)
 		$this->name = "Webcalendar";	
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
-		$this->description = "Interfa�age avec le calendrier Webcalendar";
+		$this->description = "Description of module MyModule";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'dolibarr';    
+		$this->version = '1.0';    
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
-		$this->const_name = 'MAIN_MODULE_WEBCALENDAR';
+		$this->const_name = 'MAIN_MODULE_MYMODULE';
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 1;
 		// Name of png file (without png) used for this module

@@ -21,7 +21,7 @@
 
 /**
 		\defgroup   notification	Module notification
-		\brief      Module pour gérer les notifications (par mail ou autre)
+		\brief      Module pour gï¿½rer les notifications (par mail ou autre)
 */
 
 /**
@@ -43,17 +43,16 @@ class modNotification extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modNotification($DB)
   {
     $this->db = $DB ;
-    $this->id = 'notification';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 600;
 
     $this->family = "technic";
     $this->name = "Notifications";
-    $this->description = "Gestion des notifications (par mail) sur évênement Dolibarr";
+    $this->description = "Gestion des notifications (par mail) sur ï¿½vï¿½nement Dolibarr";
     $this->version = 'dolibarr';	// 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_NOTIFICATION';
     $this->special = 1;
@@ -62,7 +61,7 @@ class modNotification extends DolibarrModules
     // Dir
     $this->dirs = array();
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array();
     $this->requiredby = array();
     $this->langfiles = array("mails");
@@ -83,8 +82,8 @@ class modNotification extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -95,7 +94,7 @@ class modNotification extends DolibarrModules
   }
 
   /**
-    \brief      Fonction appelée lors de la désactivation d'un module.
+    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
     Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

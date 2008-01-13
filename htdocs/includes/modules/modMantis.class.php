@@ -47,10 +47,7 @@ class modMantis extends DolibarrModules
 	{
 		$this->db = $DB;
 		
-		// Id of module (must be unique for all modules)
-		// Use same value here than in file modXxx.class.php
-		$this->id = 'mantis';   	
-		// Another id for module (must be unique).
+		// Id for module (must be unique).
 		// Use here a free id.
 		$this->numero = 1200;
 		
@@ -60,7 +57,7 @@ class modMantis extends DolibarrModules
 		// Module title used if translation string 'ModuleXXXName' not found (XXX is id value)
 		$this->name = "Mantis";	
 		// Module descriptoin used translation string 'ModuleXXXDesc' not found (XXX is id value)
-		$this->description = "Interfaçage avec le bug tracking Mantis";
+		$this->description = "Interfaï¿½age avec le bug tracking Mantis";
 		// Possible values for version are: 'experimental' or 'dolibarr' or version
 		$this->version = 'dolibarr';    
 		// Id used in llx_const table to manage module status (enabled/disabled)	

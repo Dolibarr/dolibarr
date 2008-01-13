@@ -22,7 +22,7 @@
  */
 
 /**     \defgroup   oscommerce     Module OSCommerce
-        \brief      Module pour gérer une boutique et interface avec OSCommerce
+        \brief      Module pour gï¿½rer une boutique et interface avec OSCommerce
 */
 
 /**
@@ -44,12 +44,11 @@ class modBoutique extends DolibarrModules
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'accès base
+	 *   \param      DB      handler d'accï¿½s base
 	 */
 	function modBoutique($DB)
 	{
 		$this->db = $DB ;
-		$this->id = 'boutique';   // Same value xxx than in file modXxx.class.php file
 		$this->numero = 800;
 
 		$this->family = "products";
@@ -66,7 +65,7 @@ class modBoutique extends DolibarrModules
 //		$this->config_page_url = array("boutique.php","osc-languages.php");
 		$this->config_page_url = array("boutique.php");
 	
-		// Dépendances
+		// Dï¿½pendances
 		$this->depends = array();
 		$this->requiredby = array();
 	    $this->conflictwith = array("modOSCommerce2");
@@ -84,8 +83,8 @@ class modBoutique extends DolibarrModules
 	}
   
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
 	function init()
 	{
@@ -95,7 +94,7 @@ class modBoutique extends DolibarrModules
 	}
 
 	/**
-	 *    \brief      Fonction appelée lors de la désactivation d'un module.
+	 *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
 	 *                Supprime de la base les constantes, boites et permissions du module.
 	 */
 	function remove()

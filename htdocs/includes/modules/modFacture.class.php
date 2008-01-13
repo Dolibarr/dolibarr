@@ -23,7 +23,7 @@
  */
 
 /**     \defgroup   facture     Module facture
-        \brief      Module pour gérer les factures clients et/ou fournisseurs
+        \brief      Module pour gï¿½rer les factures clients et/ou fournisseurs
 */
 
 
@@ -44,12 +44,11 @@ class modFacture extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
     function modFacture($DB)
     {
         $this->db = $DB ;
-        $this->id = 'invoice';   // Same value xxx than in file modXxx.class.php file
         $this->numero = 30 ;
     
         $this->family = "financial";
@@ -66,7 +65,7 @@ class modFacture extends DolibarrModules
         // Dir
         $this->dirs = array();
     
-        // Dépendances
+        // Dï¿½pendances
         $this->depends = array("modSociete");
         $this->requiredby = array("modComptabilite","modComptabiliteExpert");
         $this->conflictwith = array();
@@ -116,7 +115,7 @@ class modFacture extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 12;
-        $this->rights[$r][1] = 'Créer les factures';
+        $this->rights[$r][1] = 'Crï¿½er les factures';
         $this->rights[$r][2] = 'a';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'creer';
@@ -158,7 +157,7 @@ class modFacture extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 1321;
-        $this->rights[$r][1] = 'Exporter les factures clients, attributs et règlements';
+        $this->rights[$r][1] = 'Exporter les factures clients, attributs et rï¿½glements';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'facture';
@@ -195,8 +194,8 @@ class modFacture extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
     function init()
     {
@@ -217,7 +216,7 @@ class modFacture extends DolibarrModules
     }
 
     /**
-     *    \brief      Fonction appelée lors de la désactivation d'un module.
+     *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
      *                Supprime de la base les constantes, boites et permissions du module.
      */
     function remove()

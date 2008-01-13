@@ -24,7 +24,7 @@
 
 /** 
 		\defgroup   societe     Module societe
-		\brief      Module pour gérer les societes et contacts clients
+		\brief      Module pour gï¿½rer les societes et contacts clients
 */
 
 /**
@@ -46,17 +46,16 @@ class modSociete extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modSociete($DB)
   {
     $this->db = $DB ;
-    $this->id = 'company';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 1 ;
 
     $this->family = "crm";
     $this->name = "Module societe";
-    $this->description = "Gestion des sociétés et contacts";
+    $this->description = "Gestion des sociï¿½tï¿½s et contacts";
 
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
@@ -69,7 +68,7 @@ class modSociete extends DolibarrModules
     // Dir
     $this->dirs = array();
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array();
     $this->requiredby = array("modCommercial","modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");
     $this->langfiles = array("companies");
@@ -81,14 +80,14 @@ class modSociete extends DolibarrModules
     $this->const[$r][0] = "SOCIETE_FISCAL_MONTH_START";
     $this->const[$r][1] = "chaine";
     $this->const[$r][2] = "0";
-    $this->const[$r][3] = "Mettre le numéro du mois du début d\'année fiscale, ex: 9 pour septembre";
+    $this->const[$r][3] = "Mettre le numï¿½ro du mois du dï¿½but d\'annï¿½e fiscale, ex: 9 pour septembre";
     $this->const[$r][4] = 1;
 	$r++;
 	
     $this->const[$r][0] = "MAIN_SEARCHFORM_SOCIETE";
     $this->const[$r][1] = "yesno";
     $this->const[$r][2] = "1";
-    $this->const[$r][3] = "Affichage formulaire de recherche des Sociétés dans la barre de gauche";
+    $this->const[$r][3] = "Affichage formulaire de recherche des Sociï¿½tï¿½s dans la barre de gauche";
     $this->const[$r][4] = 0;
 	$r++;
 
@@ -110,60 +109,60 @@ class modSociete extends DolibarrModules
     $r++;
     $this->rights[$r][0] = 121; // id de la permission
     $this->rights[$r][1] = 'Lire les societes'; // libelle de la permission
-    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[$r][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[$r][3] = 1; // La permission est-elle une permission par dï¿½faut
     $this->rights[$r][4] = 'lire';
 
     $r++;
     $this->rights[$r][0] = 122; // id de la permission
-    $this->rights[$r][1] = 'Créer modifier les societes'; // libelle de la permission
-    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][1] = 'Crï¿½er modifier les societes'; // libelle de la permission
+    $this->rights[$r][2] = 'w'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
     $this->rights[$r][4] = 'creer';
 
     $r++;
     $this->rights[$r][0] = 125; // id de la permission
-    $this->rights[$r][1] = 'Supprimer les sociétés'; // libelle de la permission
-    $this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][1] = 'Supprimer les sociï¿½tï¿½s'; // libelle de la permission
+    $this->rights[$r][2] = 'd'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
     $this->rights[$r][4] = 'supprimer';
 
     $r++;
     $this->rights[$r][0] = 126; // id de la permission
-    $this->rights[$r][1] = 'Exporter les sociétés'; // libelle de la permission
-    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[$r][1] = 'Exporter les sociï¿½tï¿½s'; // libelle de la permission
+    $this->rights[$r][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
     $this->rights[$r][4] = 'export';
     
 	$r++;
 	$this->rights[$r][0] = 281; // id de la permission
 	$this->rights[$r][1] = 'Lire les contacts'; // libelle de la permission
-	$this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-	$this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+	$this->rights[$r][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+	$this->rights[$r][3] = 1; // La permission est-elle une permission par dï¿½faut
 	$this->rights[$r][4] = 'contact';
 	$this->rights[$r][5] = 'lire';
 	
 	$r++;
 	$this->rights[$r][0] = 282; // id de la permission
-	$this->rights[$r][1] = 'Créer modifier les contacts'; // libelle de la permission
-	$this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
-	$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	$this->rights[$r][1] = 'Crï¿½er modifier les contacts'; // libelle de la permission
+	$this->rights[$r][2] = 'w'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+	$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 	$this->rights[$r][4] = 'contact';
 	$this->rights[$r][5] = 'creer';
 	
 	$r++;
 	$this->rights[$r][0] = 283; // id de la permission
 	$this->rights[$r][1] = 'Supprimer les contacts'; // libelle de la permission
-	$this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
-	$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	$this->rights[$r][2] = 'd'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+	$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 	$this->rights[$r][4] = 'contact';
 	$this->rights[$r][5] = 'supprimer';
 
 	$r++;
 	$this->rights[$r][0] = 286; // id de la permission
 	$this->rights[$r][1] = 'Exporter les contacts'; // libelle de la permission
-	$this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
-	$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	$this->rights[$r][2] = 'd'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+	$this->rights[$r][3] = 0; // La permission est-elle une permission par dï¿½faut
 	$this->rights[$r][4] = 'contact';
 	$this->rights[$r][5] = 'export';
 	
@@ -174,7 +173,7 @@ class modSociete extends DolibarrModules
     // Export des liste des societes et attributs
     $r++;
     $this->export_code[$r]=$this->id.'_'.$r;
-    $this->export_label[$r]='Tiers (sociétés/institutions) et attributs';
+    $this->export_label[$r]='Tiers (sociï¿½tï¿½s/institutions) et attributs';
     $this->export_permission[$r]=array(array("societe","export"));
     $this->export_fields_array[$r]=array('s.rowid'=>"Id",'s.nom'=>"Name",'s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note");
     $this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>"company",'s.prefix_comm'=>"company",'s.client'=>"company",'s.fournisseur'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.code_fournisseur'=>"company",'s.address'=>"company",'s.cp'=>"company",'s.ville'=>"company",'p.libelle'=>"company",'p.code'=>"company",'s.tel'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note'=>"company");
@@ -204,8 +203,8 @@ class modSociete extends DolibarrModules
 
   
   /**
-   *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-   *               Définit également les répertoires de données à créer pour ce module.
+   *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+   *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
    */
   function init()
   {
@@ -223,7 +222,7 @@ class modSociete extends DolibarrModules
   }
   
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

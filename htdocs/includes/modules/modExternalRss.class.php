@@ -41,19 +41,18 @@ class modExternalRss extends DolibarrModules
 
 	/**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
 	function modExternalRss($DB)
 	{
 		global $conf;
 	
 		$this->db = $DB ;
-		$this->id = 'externalrss';   // Same value xxx than in file modXxx.class.php file
 		$this->numero = 320;
 	
 		$this->family = "technic";
 		$this->name = "Syndication RSS";
-		$this->description = "Ajout de files d'informations RSS dans les écrans Dolibarr";
+		$this->description = "Ajout de files d'informations RSS dans les ï¿½crans Dolibarr";
 		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_EXTERNALRSS';
 		$this->special = 1;
@@ -65,7 +64,7 @@ class modExternalRss extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array("external_rss.php");
 	
-		// Dépendances
+		// Dï¿½pendances
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->phpmin = array(4,2,0);
@@ -74,13 +73,13 @@ class modExternalRss extends DolibarrModules
 		// Constantes
 		$this->const = array();
 	
-		// Répertoires
+		// Rï¿½pertoires
 		$this->dirs = array();
 		$this->dirs[0] = $conf->externalrss->dir_temp;
 	
 		// Boxes
 		$this->boxes = array();
-		// Les boites sont ajoutées lors de la configuration des flux
+		// Les boites sont ajoutï¿½es lors de la configuration des flux
 	
 		// Permissions
 		$this->rights = array();
@@ -88,8 +87,8 @@ class modExternalRss extends DolibarrModules
 	}
 
 	/**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
 	function init()
 	{
@@ -106,7 +105,7 @@ class modExternalRss extends DolibarrModules
 			{
 				if (eregi('EXTERNAL_RSS_TITLE_([0-9]+)',$obj->name,$reg))
 				{
-					// Definie la boite si on a trouvée une ancienne configuration
+					// Definie la boite si on a trouvï¿½e une ancienne configuration
 					$this->boxes[$reg[1]][0] = "(ExternalRSSInformations)";
 					$this->boxes[$reg[1]][1] = "box_external_rss.php";
 					$this->boxes[$reg[1]][2] = $reg[1]." (".$obj->value.")";
@@ -121,7 +120,7 @@ class modExternalRss extends DolibarrModules
 	}
 
 	/**
-	*    \brief      Fonction appelée lors de la désactivation d'un module.
+	*    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
 	*                Supprime de la base les constantes, boites et permissions du module.
 	*/
 	function remove()

@@ -20,7 +20,7 @@
 
 /**
         \defgroup   deplacement     Module deplacement et notes de frais
-        \brief      Module pour gérer les déplacements et notes de frais
+        \brief      Module pour gï¿½rer les dï¿½placements et notes de frais
 */
 
 /**
@@ -42,17 +42,16 @@ class modDeplacement extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modDeplacement($DB)
   {
     $this->db = $DB ;
-    $this->id = 'deplacement';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 75 ;
 
     $this->family = "financial";
-    $this->name = "Déplacement et frais";                        			// Si traduction Module75Name non trouvée
-    $this->description = "Gestion des notes de frais et déplacements";		// Si traduction Module75Desc non trouvée
+    $this->name = "Dï¿½placement et frais";                        			// Si traduction Module75Name non trouvï¿½e
+    $this->description = "Gestion des notes de frais et dï¿½placements";		// Si traduction Module75Desc non trouvï¿½e
 
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
@@ -67,7 +66,7 @@ class modDeplacement extends DolibarrModules
     // Config pages
     $this->config_page_url = array();
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array();
     $this->requiredby = array();
 
@@ -82,19 +81,19 @@ class modDeplacement extends DolibarrModules
     $this->rights_class = 'deplacement';
 
     $this->rights[1][0] = 170;
-    $this->rights[1][1] = 'Lire les déplacements';
+    $this->rights[1][1] = 'Lire les dï¿½placements';
     $this->rights[1][2] = 'r';
     $this->rights[1][3] = 1;
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 171;
-    $this->rights[2][1] = 'Créer/modifier les déplacements';
+    $this->rights[2][1] = 'Crï¿½er/modifier les dï¿½placements';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'creer';
 
     $this->rights[3][0] = 172;
-    $this->rights[3][1] = 'Supprimer les déplacements';
+    $this->rights[3][1] = 'Supprimer les dï¿½placements';
     $this->rights[3][2] = 'd';
     $this->rights[3][3] = 0;
     $this->rights[3][4] = 'supprimer';
@@ -103,8 +102,8 @@ class modDeplacement extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -117,7 +116,7 @@ class modDeplacement extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

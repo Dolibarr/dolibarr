@@ -19,8 +19,8 @@
  */
 
 /**
-        \defgroup   label         Module étiquettes
-        \brief      Module pour gérer l'impression des étiquettes
+        \defgroup   label         Module ï¿½tiquettes
+        \brief      Module pour gï¿½rer l'impression des ï¿½tiquettes
 */
 
 /**
@@ -42,17 +42,16 @@ class modLabel extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
+    *   \param      DB      handler d'accï¿½s base
     */
   function modLabel($DB)
   {
     $this->db = $DB ;
-    $this->id = 'label';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 60 ;
     
     $this->family = "other";
     $this->name = "Etiquettes";
-    $this->description = "Gestion des étiquettes";
+    $this->description = "Gestion des ï¿½tiquettes";
     $this->version = 'development';		// 'development' or 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_LABEL';
     $this->special = 2;
@@ -61,7 +60,7 @@ class modLabel extends DolibarrModules
     // Dir
     $this->dirs = array();
 
-    // Dépendances
+    // Dï¿½pendances
     $this->depends = array();
 	  $this->requiredby = array();
 	
@@ -79,29 +78,29 @@ class modLabel extends DolibarrModules
     $this->rights_class = 'label';
     
     $this->rights[1][0] = 601; // id de la permission
-    $this->rights[1][1] = 'Lire les étiquettes'; // libelle de la permission
-    $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[1][1] = 'Lire les ï¿½tiquettes'; // libelle de la permission
+    $this->rights[1][2] = 'r'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[1][3] = 1; // La permission est-elle une permission par dï¿½faut
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 602; // id de la permission
-    $this->rights[2][1] = 'Créer/modifier les étiquettes'; // libelle de la permission
-    $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[2][1] = 'Crï¿½er/modifier les ï¿½tiquettes'; // libelle de la permission
+    $this->rights[2][2] = 'w'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[2][3] = 0; // La permission est-elle une permission par dï¿½faut
     $this->rights[2][4] = 'creer';
 
     $this->rights[4][0] = 609; // id de la permission
-    $this->rights[4][1] = 'Supprimer les étiquettes'; // libelle de la permission
-    $this->rights[4][2] = 'd'; // type de la permission (déprécié à ce jour)
-    $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[4][1] = 'Supprimer les ï¿½tiquettes'; // libelle de la permission
+    $this->rights[4][2] = 'd'; // type de la permission (dï¿½prï¿½ciï¿½ ï¿½ ce jour)
+    $this->rights[4][3] = 0; // La permission est-elle une permission par dï¿½faut
     $this->rights[4][4] = 'supprimer';
 
   }
 
 
    /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
+    *   \brief      Fonction appelï¿½e lors de l'activation du module. Insï¿½re en base les constantes, boites, permissions du module.
+    *               Dï¿½finit ï¿½galement les rï¿½pertoires de donnï¿½es ï¿½ crï¿½er pour ce module.
     */
   function init()
   {
@@ -114,7 +113,7 @@ class modLabel extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *    \brief      Fonction appelï¿½e lors de la dï¿½sactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
