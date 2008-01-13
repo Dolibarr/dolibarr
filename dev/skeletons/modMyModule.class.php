@@ -44,7 +44,7 @@ class modMyModule extends DolibarrModules
     *   \brief      Constructor. Define names, constants, directories, boxes, permissions
     *   \param      DB      Database handler
     */
-	function modyModule($DB)
+	function modMyModule($DB)
 	{
 		$this->db = $DB;
 		
@@ -55,13 +55,13 @@ class modMyModule extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','technic','other'
 		// It is used to group modules in module setup page 
 		$this->family = "projects";		
-		// Module title used if translation string 'ModuleXXXName' not found (XXX is id value)
+		// Module title used if translation string 'ModuleXXXName' not found (XXX is value MyModule)
 		$this->name = "Webcalendar";	
-		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
+		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is value MyModule)
 		$this->description = "Description of module MyModule";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = '1.0';    
-		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
+		// Key used in llx_const table to save module status enabled/disabled (XXX is value MyModule)
 		$this->const_name = 'MAIN_MODULE_MYMODULE';
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 1;
