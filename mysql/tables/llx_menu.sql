@@ -24,6 +24,7 @@ CREATE TABLE `llx_menu` (
 	rowid			integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 
 	menu_handler	varchar(16) NOT NULL,				-- Menu handler name
+	module			varchar(64),						-- Module name if record is added by a module
 	type			enum('top','left') NOT NULL,		-- Menu top or left
 
 	mainmenu		varchar(100) NOT NULL,				-- Name family/module (home, companies, ...)
@@ -41,5 +42,6 @@ CREATE TABLE `llx_menu` (
 	leftmenu		varchar(100) NULL,					-- Condition to show or hide
 	perms			varchar(255),						-- Condition to show enabled or disabled
 	user			integer NOT NULL default '0',	    -- 0 if menu for all users, 1 for external only, 2 for internal only
+
 	tms				timestamp
 ) type=innodb;
