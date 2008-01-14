@@ -39,6 +39,7 @@ class Menubase
     var $id;
     
 	var $menu_handler;
+	var $module;
 	var $type;
 	var $mainmenu;
 	var $fk_menu;
@@ -79,6 +80,7 @@ class Menubase
 		// Clean parameters
 		$this->rowid=trim($this->rowid);
 		$this->menu_handler=trim($this->menu_handler);
+		$this->module=trim($this->module);
 		$this->type=trim($this->type);
 		$this->mainmenu=trim($this->mainmenu);
 		$this->fk_menu=trim($this->fk_menu);
@@ -98,6 +100,7 @@ class Menubase
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
 		$sql.= "menu_handler,";
+		$sql.= "module,";
 		$sql.= "type,";
 		$sql.= "mainmenu,";
 		$sql.= "fk_menu,";
@@ -112,6 +115,7 @@ class Menubase
 		$sql.= "user";
         $sql.= ") VALUES (";
 		$sql.= " '".$this->menu_handler."',";
+		$sql.= " '".$this->module."',";
 		$sql.= " '".$this->type."',";
 		$sql.= " '".$this->mainmenu."',";
 		$sql.= " '".$this->fk_menu."',";
@@ -162,6 +166,7 @@ class Menubase
 		// Clean parameters
 		$this->rowid=trim($this->rowid);
 		$this->menu_handler=trim($this->menu_handler);
+		$this->module=trim($this->module);
 		$this->type=trim($this->type);
 		$this->mainmenu=trim($this->mainmenu);
 		$this->fk_menu=trim($this->fk_menu);
@@ -181,6 +186,7 @@ class Menubase
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
 		$sql.= " menu_handler='".addslashes($this->menu_handler)."',";
+		$sql.= " module='".addslashes($this->module)."',";
 		$sql.= " type='".$this->type."',";
 		$sql.= " mainmenu='".addslashes($this->mainmenu)."',";
 		$sql.= " fk_menu='".$this->fk_menu."',";
@@ -231,6 +237,7 @@ class Menubase
         $sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.menu_handler,";
+		$sql.= " t.module,";
 		$sql.= " t.type,";
 		$sql.= " t.mainmenu,";
 		$sql.= " t.fk_menu,";
@@ -258,6 +265,7 @@ class Menubase
                 $this->id    = $obj->rowid;
                 
 				$this->menu_handler = $obj->menu_handler;
+				$this->module = $obj->module;
 				$this->type = $obj->type;
 				$this->mainmenu = $obj->mainmenu;
 				$this->fk_menu = $obj->fk_menu;
@@ -325,14 +333,15 @@ class Menubase
 	{
 		$this->id=0;
 		
-		$this->menu_handler='';
-		$this->type='';
+		$this->menu_handler='all';
+		$this->module='specimen';
+		$this->type='top';
 		$this->mainmenu='';
-		$this->fk_menu='';
+		$this->fk_menu='0';
 		$this->position='';
-		$this->url='';
+		$this->url='http://dummy';
 		$this->target='';
-		$this->titre='';
+		$this->titre='Specimen menu';
 		$this->langs='';
 		$this->level='';
 		$this->leftmenu='';
@@ -407,7 +416,7 @@ class Menubase
 		//ballayage du tableau
 		for ($x = 0; $x < count($tab); $x++) {
 
-			//si un élément a pour père : $pere
+			//si un ï¿½lï¿½ment a pour pï¿½re : $pere
 			if ($tab[$x][1] == $pere) {
 
 				//on affiche le menu

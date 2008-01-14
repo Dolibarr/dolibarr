@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,11 @@
 
 /**
    \class      DolibarrModules
-   \brief      Classe mère des classes de description et activation des modules Dolibarr
+   \brief      Classe mere des classes de description et activation des modules Dolibarr
 */
 class DolibarrModules
 {
-  //! Handler d'accès aux bases
+  //! Database handler
   var $db;
   //! Tableau des boites
   var $boxes;
@@ -50,7 +50,7 @@ class DolibarrModules
 
   /**
    *      \brief      Constructeur
-   *      \param      DB      handler d'accès base
+   *      \param      DB      handler d'acces base
    */
   function DolibarrModules($DB)
   {
@@ -60,8 +60,8 @@ class DolibarrModules
 
 
   /**
-   *      \brief      Fonction d'activation. Insère en base les constantes et boites du module
-   *      \param      array_sql       tableau de requete sql a exécuter à l'activation
+   *      \brief      Fonction d'activation. Insere en base les constantes et boites du module
+   *      \param      array_sql       tableau de requete sql a executer a l'activation
    *      \return     int             1 si ok, 0 si erreur
    */
   function _init($array_sql)
@@ -69,22 +69,25 @@ class DolibarrModules
     global $langs;
     $err='';
     
-    // Insère une entrée dans llx_dolibarr_modules
+    // Insere une entree dans llx_dolibarr_modules
     $err+=$this->_dbactive();
     
-    // Insère la constante d'activation module
+    // Insere la constante d'activation module
     $err+=$this->_active();
     
-    // Insère les boites dans llx_boxes_def
+    // Insere les boites dans llx_boxes_def
     $err+=$this->insert_boxes();
     
-    // Insère les constantes associées au module dans llx_const
+    // Insere les constantes associees au module dans llx_const
     $err+=$this->insert_const();
     
-    // Insère les permissions associées au module actif dans llx_rights_def
+    // Insere les permissions associees au module actif dans llx_rights_def
     $err+=$this->insert_permissions();
     
-    // Créé les répertoires
+    // Insere les constantes associees au module dans llx_const
+    $err+=$this->insert_menus();
+    
+    // Cree les repertoires
     if (is_array($this->dirs))
       {
 	foreach ($this->dirs as $key => $dir)
@@ -101,7 +104,7 @@ class DolibarrModules
 	  }
       }
     
-    // Exécute les requetes sql complémentaires
+    // Execute les requetes sql complementaires
     for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
       {
 	$sql=$array_sql[$i];
@@ -113,7 +116,7 @@ class DolibarrModules
 	  }
       }
     
-    // Créé les documents générables
+    // Cree les documents generables
     if (is_array($this->docs))
       {
 	foreach ($this->docs as $key => $doc)
@@ -138,15 +141,15 @@ class DolibarrModules
   }
   
   /**
-     \brief      Fonction de désactivation. Supprime de la base les constantes et boites du module
-     \param      array_sql       tableau de requete sql a exécuter à la désactivation
+     \brief      Fonction de desactivation. Supprime de la base les constantes et boites du module
+     \param      array_sql       tableau de requete sql a executer a la desactivation
      \return     int             1 si ok, 0 si erreur
   */
   function _remove($array_sql)
   {
     $err = 0;
     
-    // Supprime entrée des modules
+    // Supprime entree des modules
     $err+=$this->_dbunactive();
     
     // Supprime la constante d'activation du module
@@ -161,7 +164,7 @@ class DolibarrModules
     // Supprime les documents generables
     $err+=$this->delete_docs();
 
-    // Exécute les requetes sql complémentaires
+    // Execute les requetes sql complementaires
     for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
       {
 	if (!$this->db->query($array_sql[$i]))
@@ -178,7 +181,7 @@ class DolibarrModules
 
   /**
      \brief      Retourne le nom traduit du module si la traduction existe dans admin.lang,
-     sinon le nom défini par défaut dans le module.
+     sinon le nom defini par defaut dans le module.
      \return     string      Nom du module traduit
   */
   function getName()
@@ -193,7 +196,7 @@ class DolibarrModules
       }
     else
       {
-	// Si traduction du nom du module n'existe pas, on prend définition en dur dans module
+	// Si traduction du nom du module n'existe pas, on prend definition en dur dans module
 	return $this->name;
       }
   }
@@ -201,7 +204,7 @@ class DolibarrModules
   
   /**
      \brief      Retourne la description traduite du module si la traduction existe dans admin.lang,
-     sinon la description définie par défaut dans le module.
+     sinon la description definie par defaut dans le module.
      \return     string      Nom du module traduit
   */
   function getDesc()
@@ -216,7 +219,7 @@ class DolibarrModules
       }
     else
       {
-	// Si traduction de la description du module n'existe pas, on prend définition en dur dans module
+	// Si traduction de la description du module n'existe pas, on prend definition en dur dans module
 	return $this->description;
       }
   }
@@ -224,7 +227,7 @@ class DolibarrModules
   
   /**
      \brief      Retourne la version du module.
-     Pour les modules à l'état 'experimental', retourne la traduction de 'experimental'
+     Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
      Pour les modules 'dolibarr', retourne la version de Dolibarr
      Pour les autres modules, retourne la version du module
      \return     string      Version du module
@@ -290,8 +293,8 @@ class DolibarrModules
     }
     
     /**
-            \brief      Retourne le libellé d'un lot de données exportable
-            \return     string      Libellé du lot de données
+            \brief      Retourne le libelle d'un lot de donnees exportable
+            \return     string      Libelle du lot de donnees
      */
     function getDatasetLabel($r)
     {
@@ -300,19 +303,19 @@ class DolibarrModules
         $langstring="ExportDataset_".$this->export_code[$r];
         if ($langs->trans($langstring) == $langstring)
         {
-            // Traduction non trouvée
+            // Traduction non trouvee
             return $this->export_label[$r];
         }
         else
         {
-            // Traduction trouvée
+            // Traduction trouvee
             return $langs->trans($langstring);
         }
     }
     
     
   /**
-     \brief      Insère ligne module
+     \brief      Insere ligne module
      \return     int         Nombre d'erreurs (0 si ok)
   */
   function _dbactive()
@@ -348,7 +351,7 @@ class DolibarrModules
     
 
     /**
-            \brief      Insère constante d'activation module
+            \brief      Insere constante d'activation module
             \return     int     Nombre d'erreurs (0 si ok)
      */
     function _active()
@@ -385,7 +388,7 @@ class DolibarrModules
 
 
     /**
-            \brief      Insère les boites associées au module dans llx_boxes_def
+            \brief      Insere les boites associees au module dans llx_boxes_def
             \return     int     Nombre d'erreurs (0 si ok)
      */
     function insert_boxes()
@@ -441,7 +444,7 @@ class DolibarrModules
 	{   
 		$err=0;
 
-		// Créé les documents générables
+		// Cree les documents generables
 		if (is_array($this->docs))
 		{
 			foreach ($this->docs as $key => $doc)
@@ -499,7 +502,7 @@ class DolibarrModules
   }
   
     /**
-            \brief      Insère les constantes associées au module dans llx_const
+            \brief      Insere les constantes associees au module dans llx_const
             \return     int     Nombre d'erreurs (0 si ok)
      */
     function insert_const()
@@ -553,7 +556,7 @@ class DolibarrModules
     }
     
     /**
-            \brief      Insère les permissions associées au module dans llx_rights_def
+            \brief      Insere les permissions associees au module dans llx_rights_def
             \return     int     Nombre d'erreurs (0 si ok)
      */
     function insert_permissions()
@@ -638,5 +641,60 @@ class DolibarrModules
         return $err;
     }
 
+    
+    /**
+            \brief      Insere les menus dans llx_menu*
+            \return     int     Nombre d'erreurs (0 si ok)
+     */
+    function insert_menus()
+    {
+		require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
+
+		$err=0;
+		global $user;
+		        
+        foreach ($this->menu as $key => $value)
+        {
+       		$menu = new Menubase($db);
+			$menu->menu_handler='all';	
+			$menu->module=$this->name;	
+			$menu->fk_menu=$this->menu[$key]['fk_menu'];
+			$menu->type=$this->menu[$key]['type'];
+			$menu->titre=$this->menu[$key]['titre'];
+			$menu->leftmenu=$this->menu[$key]['leftmenu'];
+			$menu->url=$this->menu[$key]['url'];
+			$menu->langs=$this->menu[$key]['langs'];
+			$menu->position=$this->menu[$key]['position'];
+			$menu->perms=$this->menu[$key]['perms'];
+			$menu->target=$this->menu[$key]['target'];
+			$menu->user=$this->menu[$key]['user'];
+			$result=$menu->create($user);
+			if ($result <= 0)
+            {
+                $err++;
+            }
+        }
+        
+        return $err;
+    }
+
+
+    /**
+            \brief      Supprime les permissions
+            \return     int     Nombre d'erreurs (0 si ok)
+     */
+    function delete_menus()
+    {
+        $err=0;
+        
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = '".$this->rights_class."';";
+        if (!$this->db->query($sql))
+        {
+            $err++;
+        }
+
+        return $err;
+    }
+        
 }
 ?>
