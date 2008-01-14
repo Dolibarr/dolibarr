@@ -27,7 +27,7 @@
         \remarks    Toutes les entr�es de menu � faire apparaitre dans la barre du haut
         \remarks    doivent �tre affich�es par <a class="tmenu" href="...?mainmenu=...">...</a>
         \remarks    On peut �ventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entr�e du menu qui est s�lectionn�e.
+        \remarks    quand il s'agit de l'entr�e du menu qui est selectionnee.
 */
 
 
@@ -73,29 +73,32 @@ class MenuTop {
         
         $user->getrights("");
         
-        // On r�cup�re mainmenu
-        if (isset($_GET["mainmenu"])) {
-            // On sauve en session le menu principal choisi
-            $mainmenu=$_GET["mainmenu"];
-            $_SESSION["mainmenu"]=$mainmenu;
-            $_SESSION["leftmenuopened"]="";
-        } else {
-            // On va le chercher en session si non d�fini par le lien    
-            $mainmenu=$_SESSION["mainmenu"];
-        }
+
+        // On sauve en session le menu principal choisi
+		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
+		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
+        $_SESSION["leftmenuopened"]="";
 
         
         $menuArbo = new Menubase($this->db,'auguria','top');
  		$tabMenu = $menuArbo->menutopCharger(1,$_SESSION['mainmenu'], 'auguria');
-        
+
         print '<ul>';
         
         for($i=0;$i<count($tabMenu);$i++)
         {
         	if ($tabMenu[$i]['right'] == true)
         	{
-        		
-        		print '<li><a '.$tabMenu[$i]['class'].' href="'.DOL_URL_ROOT.$tabMenu[$i]['url'].'"'.($this->atarget?" target=$tabMenu[$i]['atarget']":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
+				// Define url
+				$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+				if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+				else $url.='&';
+				$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
+				$url.="&idmenu=".$tabMenu[$i]['rowid'];
+				// Define idsel
+				if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
+				else $idsel='';
+        		print '<li><a '.$tabMenu[$i]['class'].' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$tabMenu[$i]['atarget']":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
         	}
         	else
         	{

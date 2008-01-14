@@ -76,7 +76,15 @@ class MenuTop {
         {
         	if ($tabMenu[$i]['right'] == true)
         	{
-        		print '<td class="tmenu"><a class="tmenu" href="'.DOL_URL_ROOT.$tabMenu[$i]['url'].'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
+				$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+				if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+				else $url.='&';
+				$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
+				$url.="&idmenu=".$tabMenu[$i]['rowid'];
+				// Define idsel
+				if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
+				else $idsel='';
+        		print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
         	}
         	else
         	{

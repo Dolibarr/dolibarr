@@ -70,17 +70,12 @@ class MenuTop {
         
         $user->getrights("");
         
-        // On r�cup�re mainmenu
-        if (isset($_GET["mainmenu"])) {
-            // On sauve en session le menu principal choisi
-            $mainmenu=$_GET["mainmenu"];
-            $_SESSION["mainmenu"]=$mainmenu;
-            $_SESSION["leftmenuopened"]="";
-        } else {
-            // On va le chercher en session si non defini par le lien    
-            $mainmenu=$_SESSION["mainmenu"];
-        }
+        // On sauve en session le menu principal choisi
+		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
+		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
+        $_SESSION["leftmenuopened"]="";
 
+		
         print '<table class="tmenu"><tr class="tmenu">';
 
         // Home
@@ -380,7 +375,15 @@ class MenuTop {
         {
         	if ($tabMenu[$i]['right'] == true)
         	{
-        		print '<td class="tmenu"><a class="tmenu" href="'.DOL_URL_ROOT.$tabMenu[$i]['url'].'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
+				$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+				if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+				else $url.='&';
+				$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
+				$url.="&idmenu=".$tabMenu[$i]['rowid'];
+				// Define idsel
+				if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
+				else $idsel='';
+        		print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
         	}
         	else
         	{

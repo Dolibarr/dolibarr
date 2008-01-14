@@ -36,3 +36,8 @@ alter table llx_menu change `order` position integer NOT NULL;
 alter table llx_menu change `right` perms varchar(255);
 alter table llx_menu add column module varchar(64) after menu_handler;
 alter table llx_menu add column tms timestamp;
+
+-- Add a unique key
+update llx_menu set url='/comm/prospect/prospects.php?leftmenu=prospects' where rowid=702 and url='/contact/index.php?leftmenu=prospects&type=p';
+ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, url);
+

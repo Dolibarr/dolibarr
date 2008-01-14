@@ -399,6 +399,7 @@ if (! defined('MAIN_INFO_SOCIETE_PAYS'))
 }
 
 // On charge les fichiers lang principaux
+// TODO Optimisation a faire ici
 $langs->load("main");
 $langs->load("dict");
 

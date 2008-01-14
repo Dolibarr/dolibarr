@@ -95,40 +95,48 @@ class modAgenda extends DolibarrModules
         // $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
         // $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
         // $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
+		// $r++;
         
-        $r++;
         $this->rights[$r][0] = 2401;
         $this->rights[$r][1] = 'Lire les actions liees a son compte';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
         $this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'read';
-        
         $r++;
+       
         $this->rights[$r][0] = 2402;
         $this->rights[$r][1] = 'Creer/modifier/supprimer les actions liees a son compte';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'myactions';
         $this->rights[$r][5] = 'create';
-        
         $r++;
+        
         $this->rights[$r][0] = 2403;
         $this->rights[$r][1] = 'Lire les actions des autres';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'allactions';
         $this->rights[$r][5] = 'read';
-        
         $r++;
+        
         $this->rights[$r][0] = 2405;
         $this->rights[$r][1] = 'Creer/modifier/supprimer les actions pour les autres';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'allactions';
         $this->rights[$r][5] = 'create';
+        $r++;
 
-        // Exports
+        // Menus
+		//------
+		$r=0;
+		
+		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Agenda','mainmenu'=>'agenda','leftmenu'=>'agenda','url'=>'/comm/action/index.php','langs'=>'commercial','position'=>100,'perms'=>'$user->rights->agenda->myactions->read','target'=>'','user'=>0);
+		$r++;
+		
+		// Exports
         //--------
         $r=0;
 

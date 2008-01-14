@@ -77,11 +77,11 @@ class DolibarrModules
     // Insere la constante d'activation module
     $err+=$this->_active();
     
-    // Insere les boites dans llx_boxes_def
-    $err+=$this->insert_boxes();
-    
     // Insere les constantes associees au module dans llx_const
     $err+=$this->insert_const();
+    
+    // Insere les boites dans llx_boxes_def
+    $err+=$this->insert_boxes();
     
     // Insere les permissions associees au module actif dans llx_rights_def
     $err+=$this->insert_permissions();
@@ -157,11 +157,14 @@ class DolibarrModules
     // Supprime la constante d'activation du module
     $err+=$this->_unactive();
     
+    // Supprime les boites de la liste des boites disponibles
+    $err+=$this->delete_boxes();
+    
     // Supprime les droits de la liste des droits disponibles
     $err+=$this->delete_permissions();
     
-    // Supprime les boites de la liste des boites disponibles
-    $err+=$this->delete_boxes();
+    // Supprime les menus apportes par le module
+    $err+=$this->delete_menus();
     
     // Supprime les documents generables
     $err+=$this->delete_docs();
@@ -446,7 +449,7 @@ class DolibarrModules
 	{   
 		$err=0;
 
-		// Cree les documents generables
+		// Supprime les documents generables
 		if (is_array($this->docs))
 		{
 			foreach ($this->docs as $key => $doc)
@@ -658,11 +661,12 @@ class DolibarrModules
 		        
         foreach ($this->menu as $key => $value)
         {
-       		$menu = new Menubase($db);
+       		$menu = new Menubase($this->db);
 			$menu->menu_handler='all';	
 			$menu->module=$this->rights_class;
 			$menu->fk_menu=$this->menu[$key]['fk_menu'];
 			$menu->type=$this->menu[$key]['type'];
+			$menu->mainmenu=$this->menu[$key]['mainmenu'];
 			$menu->titre=$this->menu[$key]['titre'];
 			$menu->leftmenu=$this->menu[$key]['leftmenu'];
 			$menu->url=$this->menu[$key]['url'];
@@ -692,7 +696,10 @@ class DolibarrModules
         
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
         $sql.= " WHERE module = '".addslashes($this->rights_class)."'";
-        if (!$this->db->query($sql))
+        
+		dolibarr_syslog("DolibarrModules::delete_menus sql=".$sql);
+		$resql=$this->db->query($sql);
+		if (! $resql)
         {
             $err++;
         }

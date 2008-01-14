@@ -572,7 +572,9 @@ class Menubase
 		        		$chaine = $langs->trans($objm->titre);
 		        	} 
 		        		
-		        	$tabMenu[$b]['titre'] = $chaine;
+		        	$tabMenu[$b]['rowid'] = $objm->rowid;
+					$tabMenu[$b]['mainmenu'] = $objm->mainmenu;
+					$tabMenu[$b]['titre'] = $chaine;
 		        	$tabMenu[$b]['url'] = $objm->url;
 		        	$tabMenu[$b]['atarget'] = $this->atarget;
 		        	$tabMenu[$b]['class'] = $class;
