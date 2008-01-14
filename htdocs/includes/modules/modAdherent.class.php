@@ -218,9 +218,6 @@ class modAdherent extends DolibarrModules
     {
         global $conf;
         
-        // Permissions
-        $this->remove();
-        
         // Dir
         $this->dirs[0] = $conf->adherent->dir_output;
         $this->dirs[1] = $conf->adherent->dir_output."/photos";
@@ -237,9 +234,9 @@ class modAdherent extends DolibarrModules
      */
     function remove()
     {
-    $sql = array();
+		$sql = array();
     
-    return $this->_remove($sql);
+		return $this->_remove($sql);
     }
 
 }

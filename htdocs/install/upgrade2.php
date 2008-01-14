@@ -33,6 +33,7 @@ require_once($dolibarr_main_document_root . '/propal.class.php');
 require_once($dolibarr_main_document_root . '/contrat/contrat.class.php');
 require_once($dolibarr_main_document_root . '/commande/commande.class.php');
 require_once($dolibarr_main_document_root . '/lib/price.lib.php');
+require_once($dolibarr_main_document_root . '/lib/menubase.class.php');
 
 $grant_query='';
 $etape = 2;
@@ -1440,6 +1441,18 @@ function migrate_delete_old_files($db,$langs,$conf)
 	return $result;
 }
 
+/*
+ * Supprime fichiers obsoletes
+ */
+function migrate_module_menus($db,$langs,$conf)
+{
+	if ($conf->global->MAIN_MODULE_AGENDA)
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modAgenda.class.php');
+		$mod=new modAgenda($db);
+		$mod->init();
+	}
+}
 
 /* A faire egalement: Modif statut paye et fk_facture des factures payés completement
 

@@ -105,29 +105,9 @@ class modWebcalendar extends DolibarrModules
 		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-		$this->rights_class = 'webcal';	// Permission key
-		$this->rights = array();		// Permission array used by this module
-
 		// Main menu entries
 		$this->menus = array();			// List of menus to add
 		$r=0;
-
-		// Example:
-		// $r++;
-		// insert into `llx_menu` (
-		//  menu_handler			'all'				// Menu handler name (all to add with all menu handlers)
-		//  type					'top'				// Menu top or left
-		// `mainmenu`,				'webcal'			// Name family/module (home, companies, ...)
-		// `fk_menu`,				0					// 0 or Id of mother menu line
-		// `order`					10					// Order of entry
-		// `url`,					'/webcal/webcal.php?mainmenu=webcal&amp;leftmenu='	// Relative (or absolute) url to go
-		// `target`,				''					// Target of Url link
-		// `titre`,					'Calendar'			// Key for menu translation 
-		// `langs`,					other				// Lang file to load for translation
-		// `level`,					-1					// deprecated
-		// `leftmenu`,				''					// Condition to compare to $_REQUEST["leftmenu"] to show or hide menu entry
-		// `right`,					''					// Condition to show enabled or disabled menu entry
-		// `user`,					0					// 0 if menu for all users, 1 for external only, 2 for internal only
 
 	}
 

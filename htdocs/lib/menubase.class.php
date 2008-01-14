@@ -518,7 +518,9 @@ class Menubase
 		return $overwritemenufor;
 	}
 	
-	
+	/**
+	*		brief		type_user		0=Internal,1=External,2=All
+	*/
 	function menutopCharger($type_user, $mainmenu, $menu_handler)
 	{
 		global $langs, $user, $conf;
@@ -527,10 +529,11 @@ class Menubase
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 		$sql.= " WHERE m.type = 'top'"; 
 		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
-		if($type_user == 0) $sql.= " AND m.user <> 1";
-		else $sql.= " AND m.user > 0";
+		if ($type_user == 0) $sql.= " AND m.user in (0,2)";
+		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
 		$sql.= " ORDER BY m.position";
 
+		//print "x".$sql;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

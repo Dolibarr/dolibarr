@@ -71,7 +71,7 @@ class MenuTop {
        	require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
 
         $menuArbo = new Menubase($this->db,'eldy','top');
- 		$tabMenu = $menuArbo->menutopCharger(0,$_SESSION['mainmenu'],'');
+ 		$tabMenu = $menuArbo->menutopCharger(2,$_SESSION['mainmenu'],'');
         for($i=0;$i<count($tabMenu);$i++)
         {
         	if ($tabMenu[$i]['right'] == true)

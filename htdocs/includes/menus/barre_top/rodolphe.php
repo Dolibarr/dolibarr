@@ -371,7 +371,7 @@ class MenuTop {
        	require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
 
         $menuArbo = new Menubase($this->db,'rodolphe','top');
- 		$tabMenu = $menuArbo->menutopCharger(1,$_SESSION['mainmenu'],'rodolphe');
+ 		$tabMenu = $menuArbo->menutopCharger(2,$_SESSION['mainmenu'],'rodolphe');
         for($i=0;$i<count($tabMenu);$i++)
         {
         	if ($tabMenu[$i]['right'] == true)

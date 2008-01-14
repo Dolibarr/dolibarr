@@ -63,6 +63,8 @@ class modAgenda extends DolibarrModules
         // Dir
         //----
         $this->dirs = array();
+		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
+        //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
     
         // Config pages
         //-------------
@@ -155,16 +157,6 @@ class modAgenda extends DolibarrModules
      */
     function init()
     {
-        global $conf;
-        
-        // Permissions
-        $this->remove();
-        
-        // Dir
-        $this->dirs[0] = $conf->adherent->dir_output;
-        $this->dirs[1] = $conf->adherent->dir_output."/photos";
-        $this->dirs[2] = $conf->adherent->dir_export;
-        
         $sql = array();
         
         return $this->_init($sql);
@@ -176,9 +168,9 @@ class modAgenda extends DolibarrModules
      */
     function remove()
     {
-    $sql = array();
+		$sql = array();
     
-    return $this->_remove($sql);
+		return $this->_remove($sql);
     }
 
 }

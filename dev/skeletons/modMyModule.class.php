@@ -73,7 +73,9 @@ class modMyModule extends DolibarrModules
 		
 		// Data directories to create when module is enabled
 		$this->dirs = array();
-		
+		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
+        //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
+ 		
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module
 		$this->config_page_url = array("mymodulesetuppage.php");
 		
@@ -114,17 +116,7 @@ class modMyModule extends DolibarrModules
 
 		// Example:
 		// $r++;
-		//  type					'top'				// Menu top or left
-		// `mainmenu`,				'mymodule'			// Name family/module (home, companies, ...)
-		// `fk_menu`,				0					// 0 or Id of mother menu line
-		// `position`				100					// Order of entry
-		// `url`,					'/myurl'	// Relative (or absolute) url to go
-		// `target`,				''					// Target of Url link
-		// `titre`,					'MyMenu'			// Key for menu translation 
-		// `langs`,					'other'				// Lang file to load for translation
-		// `leftmenu`,				''					// Condition to compare to $_REQUEST["leftmenu"] to show or hide menu entry
-		// `right`,					''					// Condition to show enabled or disabled menu entry
-		// `user`,					0					// 0 if menu for all users, 1 for external only, 2 for internal only
+		// $this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Agenda','mainmenu'=>'agenda','leftmenu'=>'agenda','url'=>'/comm/action/index.php','langs'=>'commercial','position'=>100,'perms'=>'$user->rights->agenda->myactions->read','target'=>'','user'=>0);
 
 	}
 
