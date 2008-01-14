@@ -187,12 +187,12 @@ $tabrowid[14]= "";
 $tabrowid[15]= "";
 
 // Condition to show dictionnary in setup page
-$tabcond[1] = $conf->societe->enabled;
+$tabcond[1] = true;
 $tabcond[2] = true;
 $tabcond[3] = true;
 $tabcond[4] = true;
 $tabcond[5] = $conf->societe->enabled;
-$tabcond[6] = true;
+$tabcond[6] = $conf->agenda->enabled;
 $tabcond[7] = $conf->tax->enabled;
 $tabcond[8] = $conf->societe->enabled;
 $tabcond[9] = true;
@@ -638,23 +638,33 @@ else
      */
 
     $var=true;
+	$lastlineisempty=false;
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("Dictionnary").'</td><td>'.$langs->trans("Table").'</td></tr>';
+    print '<tr class="liste_titre">';
+	//print '<td>'.$langs->trans("Module").'</td>';
+	print '<td>'.$langs->trans("Dictionnary").'</td>';
+	print '<td>'.$langs->trans("Table").'</td>';
+	print '</tr>';
 
     foreach ($taborder as $i)
     {
         if ($tabname[$i] && ! $tabcond[$i]) continue;	// If dictionnary and condition not true
         
-        $var=!$var;
         if ($i)
         {
-            $value=$tabname[$i];
+			$var=!$var;
+			$value=$tabname[$i];
             print '<tr '.$bc[$var].'><td width="30%"><a href="dict.php?id='.$i.'">'.$tablib[$i].'</a></td><td>'.$tabname[$i].'</td></tr>';
-
+			$lastlineisempty=false;
         }
         else
         {
-            print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td></tr>';
+			if (! $lastlineisempty)
+			{
+				$var=!$var;
+				print '<tr '.$bc[$var].'><td width="30%">&nbsp;</td><td>&nbsp;</td></tr>';
+				$lastlineisempty=true;
+			}
         }
     }
     print '</table>';
