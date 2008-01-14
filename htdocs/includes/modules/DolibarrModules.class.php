@@ -44,7 +44,9 @@ class DolibarrModules
   var $rights;
   //! Tableau des documents
   var $docs;
-
+  //! Tableau des menus
+  var $menu=array();
+  
   var $dbversion;
 
 
@@ -648,16 +650,17 @@ class DolibarrModules
      */
     function insert_menus()
     {
+		global $user;
+    	
 		require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
 
 		$err=0;
-		global $user;
 		        
         foreach ($this->menu as $key => $value)
         {
        		$menu = new Menubase($db);
 			$menu->menu_handler='all';	
-			$menu->module=$this->name;	
+			$menu->module=$this->rights_class;
 			$menu->fk_menu=$this->menu[$key]['fk_menu'];
 			$menu->type=$this->menu[$key]['type'];
 			$menu->titre=$this->menu[$key]['titre'];
@@ -687,7 +690,8 @@ class DolibarrModules
     {
         $err=0;
         
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = '".$this->rights_class."';";
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
+        $sql.= " WHERE module = '".addslashes($this->rights_class)."'";
         if (!$this->db->query($sql))
         {
             $err++;
