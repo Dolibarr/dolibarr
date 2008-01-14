@@ -783,8 +783,12 @@ function top_menu($head, $title="", $target="")
     // Lien logout
     if (! isset($_SERVER["REMOTE_USER"]) || ! $_SERVER["REMOTE_USER"])
     {
-        $title=$langs->trans("Logout");
-        $title.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"dayhour");
+        $title=$langs->trans("Logout").'<br>';
+        $title.='<br><b>'.$langs->trans("User").'</b>: '.$user->fullname;
+        $title.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
+        $title.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
+        $title.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
+		$title.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"dayhour");
         if ($dolibarr_main_authentication) $title.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$dolibarr_main_authentication;
 
         $text='';
