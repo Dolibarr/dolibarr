@@ -205,11 +205,26 @@ class Expedition extends CommonObject
     
         $sql = "SELECT e.rowid, e.fk_soc as socid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut";
         $sql.= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, e.model_pdf, e.fk_adresse_livraison";
-        if ($conf->commande->enabled) $sql.=", ce.fk_commande as origin_id";
+        if ($conf->commande->enabled)
+        {
+        	$sql.=", ce.fk_commande as origin_id";
+        }
+        else
+        {
+        	$sql.=", pe.fk_propal as origin_id";
+        }
         if ($conf->livraison->enabled) $sql.=", l.rowid as livraison_id";
         $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid";
+        if ($conf->commande->enabled)
+        {
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid";
+        }
+        else
+        {
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."pr_exp as pe ON e.rowid = pe.fk_expedition";
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."propal as p ON pe.fk_propal = p.rowid";
+        }
         if ($conf->livraison->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON e.rowid = l.fk_expedition";
         $sql.= " WHERE e.rowid = ".$id;
 
@@ -232,7 +247,14 @@ class Expedition extends CommonObject
             $this->adresse_livraison_id = $obj->fk_adresse_livraison;
 			      $this->modelpdf             = $obj->model_pdf;
 			      
-			      if ($conf->commande->enabled) $this->origin = "commande";
+			      if ($conf->commande->enabled)
+			      {
+			      	$this->origin = "commande";
+			      }
+			      else
+			      {
+			      	$this->origin = "propal";
+			      }
 			      
             $this->db->free($result);
     
