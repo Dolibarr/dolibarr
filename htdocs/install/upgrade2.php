@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,27 +134,27 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	***************************************************************************************/
 	if (! $error)
 	{
-	
+		
 		$db->begin();
 		
-        // Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
-        // dans la 1ere colonne, la description de l'action a faire
-        // dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
+    // Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
+    // dans la 1ere colonne, la description de l'action a faire
+    // dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
 
 		// Script pour V2 -> V2.1
-        migrate_paiements($db,$langs,$conf);
+    migrate_paiements($db,$langs,$conf);
 
-        migrate_contracts_det($db,$langs,$conf);
+    migrate_contracts_det($db,$langs,$conf);
 
-        migrate_contracts_date1($db,$langs,$conf);
+    migrate_contracts_date1($db,$langs,$conf);
 
-        migrate_contracts_date2($db,$langs,$conf);
+    migrate_contracts_date2($db,$langs,$conf);
 
-        migrate_contracts_date3($db,$langs,$conf);
+    migrate_contracts_date3($db,$langs,$conf);
         
-        migrate_contracts_open($db,$langs,$conf);
+    migrate_contracts_open($db,$langs,$conf);
 
-        migrate_modeles($db,$langs,$conf);
+    migrate_modeles($db,$langs,$conf);
 
 		migrate_price_propal($db,$langs,$conf);
 
@@ -163,7 +164,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
 		migrate_price_contrat($db,$langs,$conf);
 
-        migrate_paiementfourn_facturefourn($db,$langs,$conf);
+    migrate_paiementfourn_facturefourn($db,$langs,$conf);
 
 		// Script pour V2.1 -> V2.2
 		migrate_paiements_orphelins_1($db,$langs,$conf);
@@ -173,11 +174,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		migrate_links_transfert($db,$langs,$conf);
 		
 		migrate_delete_old_files($db,$langs,$conf);
+		
+		// Script pour V2.2 -> V2.4
+		migrate_commande_expedition($db,$langs,$conf);
 
-    	// On commit dans tous les cas.
-    	// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
-    	$db->commit();	
-    	$db->close();
+  	// On commit dans tous les cas.
+  	// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
+  	$db->commit();	
+  	$db->close();
     	
 	}
 
@@ -1452,6 +1456,75 @@ function migrate_module_menus($db,$langs,$conf)
 		$mod=new modAgenda($db);
 		$mod->init();
 	}
+}
+
+/*
+ * Correspondance des expeditions et des commandes clients dans la table llx_co_exp
+ */
+function migrate_commande_expedition($db,$langs,$conf)
+{
+	if ($conf->expedition->enabled)
+	{
+		print '<tr><td colspan="4">';
+		
+		print '<br>';
+		print '<b>'.$langs->trans('MigrationShipmentOrderMatching')."</b><br>\n";
+		
+		$result = $db->DDLDescTable(MAIN_DB_PREFIX."expedition","fk_commande");
+		$obj = $db->fetch_object($result);
+		if ($obj)
+		{
+			$sql = "SELECT e.rowid, e.fk_commande FROM ".MAIN_DB_PREFIX."expedition as e";
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$i = 0;
+				$error = 0;
+        $num = $db->num_rows($resql);
+        
+        if ($num)
+        {
+        	$db->begin();
+        	
+        	while ($i < $num)
+          {
+          	$obj = $db->fetch_object($resql);
+    
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."co_exp (fk_expedition,fk_commande)";
+            $sql.= " VALUES (".$obj->rowid.",".$obj->fk_commande.")";
+            $resql2=$db->query($sql);
+            
+            if (!$resql2)
+            {
+            	$error++;
+            	dolibarr_print_error($db);
+            }
+            print ". ";
+            $i++;
+          }
+          if ($error == 0)
+          {
+          	$db->commit();
+          	$sql = "ALTER TABLE ".MAIN_DB_PREFIX."expedition DROP COLUMN fk_commande";
+          	$db->query($sql);
+          }
+          else
+          {
+          	$db->rollback();
+          }
+        }
+      }
+      else
+      {
+      	dolibarr_print_error($db);
+      }
+    }
+    else
+    {
+    	print $langs->trans('AlreadyDone')."<br>\n";
+    }
+    print '</td></tr>';
+  }
 }
 
 /* A faire egalement: Modif statut paye et fk_facture des factures payés completement

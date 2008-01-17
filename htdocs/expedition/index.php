@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,19 +50,26 @@ print "</form></table><br />\n";
 /*
  * Expeditions à valider
  */
-$sql = "SELECT e.rowid, e.ref, s.nom, s.rowid as socid, c.ref as commande_ref, c.rowid as commande_id";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE e.fk_commande = c.rowid AND c.fk_soc = s.rowid AND e.fk_statut = 0";
+$clause = " WHERE ";
+$sql = "SELECT e.rowid, e.ref";
+$sql.= ", s.nom, s.rowid as socid";
+$sql.= ", c.ref as commande_ref, c.rowid as commande_id";
+$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid"; 
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
+if (!$user->rights->commercial->client->voir && !$socid)
+{
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+	$sql.= $clause." sc.fk_user = " .$user->id;
+	$clause = " AND ";
+}
+$sql.= $clause." e.fk_statut = 0";
 if ($socid)
 {
     $sql .= " AND c.fk_soc = ".$socid;
 }
-if (!$user->rights->commercial->client->voir && !$socid) //restriction
-{
-	  $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-}
+
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -173,39 +180,48 @@ if ( $resql )
 /*
  * Expeditions à valider
  */
-$sql = "SELECT e.rowid, e.ref, s.nom, s.rowid as socid, c.ref as commande_ref, c.rowid as commande_id";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE e.fk_commande = c.rowid AND c.fk_soc = s.rowid AND e.fk_statut = 1";
+$clause = " WHERE ";
+$sql = "SELECT e.rowid, e.ref";
+$sql.= ", s.nom, s.rowid as socid";
+$sql.= ", c.ref as commande_ref, c.rowid as commande_id";
+$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid"; 
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
+if (!$user->rights->commercial->client->voir && !$socid)
+{
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+	$sql.= $clause." sc.fk_user = " .$user->id;
+	$clause = " AND ";
+}
+$sql.= $clause." e.fk_statut = 1";
 if ($socid) $sql .= " AND c.fk_soc = ".$socid;
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql .= " ORDER BY e.date_expedition DESC";
-$sql .= $db->plimit(5, 0);
+$sql.= " ORDER BY e.date_expedition DESC";
+$sql.= $db->plimit(5, 0);
 
 $resql = $db->query($sql);
 if ($resql) 
 {
   $num = $db->num_rows($resql);
   if ($num)
+  {
+  	$i = 0;
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="3">'.$langs->trans("LastSendings",$num).'</td></tr>';
+    $var = True;
+    while ($i < $num)
     {
-      $i = 0;
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="3">'.$langs->trans("LastSendings",$max).'</td></tr>';
-      $var = True;
-      while ($i < $num)
-	{
-	  $var=!$var;
-	  $obj = $db->fetch_object($resql);
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowSending"),"sending").' ';
-	  print $obj->ref.'</a></td>';
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-	  print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->commande_ref.'</a></td></tr>';
-	  $i++;
-	}
-      print "</table><br>";
+    	$var=!$var;
+    	$obj = $db->fetch_object($resql);
+    	print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowSending"),"sending").' ';
+    	print $obj->ref.'</a></td>';
+    	print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+    	print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->commande_ref.'</a></td></tr>';
+    	$i++;
     }
+    print "</table><br>";
+  }
   $db->free($resql);
 }
 

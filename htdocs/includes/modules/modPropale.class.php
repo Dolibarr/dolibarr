@@ -22,7 +22,7 @@
  */
 
 /**     \defgroup   propale     Module propale
-        \brief      Module pour g�rer la tenue de propositions commerciales
+        \brief      Module pour gerer la tenue de propositions commerciales
 */
 
 /**
@@ -43,7 +43,7 @@ class modPropale extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
+    *   \param      DB      handler d'acces base
     */
   function modPropale($DB)
   {
@@ -64,7 +64,7 @@ class modPropale extends DolibarrModules
     // Dir
     $this->dirs = array();
 
-    // D�pendances
+    // Dependances
     $this->depends = array("modSociete","modCommercial");
     $this->config_page_url = array("propale.php");
 
@@ -74,13 +74,13 @@ class modPropale extends DolibarrModules
     $this->const[0][0] = "PROPALE_ADDON_PDF";
     $this->const[0][1] = "chaine";
     $this->const[0][2] = "azur";
-    $this->const[0][3] = 'Nom du gestionnaire de g�n�ration des propales en PDF';
+    $this->const[0][3] = 'Nom du gestionnaire de generation des propales en PDF';
     $this->const[0][4] = 0;
 
     $this->const[1][0] = "PROPALE_ADDON";
     $this->const[1][1] = "chaine";
     $this->const[1][2] = "mod_propale_marbre";
-    $this->const[1][3] = 'Nom du gestionnaire de num�rotation des propales';
+    $this->const[1][3] = 'Nom du gestionnaire de numerotation des propales';
     $this->const[1][4] = 0;
 
     // Boxes
@@ -93,54 +93,54 @@ class modPropale extends DolibarrModules
 
     $this->rights[1][0] = 21; // id de la permission
     $this->rights[1][1] = 'Lire les propositions commerciales'; // libelle de la permission
-    $this->rights[1][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[1][3] = 1; // La permission est-elle une permission par d�faut
+    $this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
+    $this->rights[1][3] = 1; // La permission est-elle une permission par defaut
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 22; // id de la permission
-    $this->rights[2][1] = 'Cr�er/modifier les propositions commerciales'; // libelle de la permission
-    $this->rights[2][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[2][3] = 0; // La permission est-elle une permission par d�faut
+    $this->rights[2][1] = 'Creer/modifier les propositions commerciales'; // libelle de la permission
+    $this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
+    $this->rights[2][3] = 0; // La permission est-elle une permission par defaut
     $this->rights[2][4] = 'creer';
 
     $this->rights[3][0] = 24; // id de la permission
     $this->rights[3][1] = 'Valider les propositions commerciales'; // libelle de la permission
-    $this->rights[3][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[3][3] = 0; // La permission est-elle une permission par d�faut
+    $this->rights[3][2] = 'd'; // type de la permission (deprecie a ce jour)
+    $this->rights[3][3] = 0; // La permission est-elle une permission par defaut
     $this->rights[3][4] = 'valider';
 
     $this->rights[4][0] = 25; // id de la permission
     $this->rights[4][1] = 'Envoyer les propositions commerciales aux clients'; // libelle de la permission
-    $this->rights[4][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[4][3] = 0; // La permission est-elle une permission par d�faut
+    $this->rights[4][2] = 'd'; // type de la permission (deprecie a ce jour)
+    $this->rights[4][3] = 0; // La permission est-elle une permission par defaut
     $this->rights[4][4] = 'envoyer';
 
     $this->rights[5][0] = 26; // id de la permission
-    $this->rights[5][1] = 'Cl�turer les propositions commerciales'; // libelle de la permission
-    $this->rights[5][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[5][3] = 0; // La permission est-elle une permission par d�faut
+    $this->rights[5][1] = 'Cloturer les propositions commerciales'; // libelle de la permission
+    $this->rights[5][2] = 'd'; // type de la permission (deprecie a ce jour)
+    $this->rights[5][3] = 0; // La permission est-elle une permission par defaut
     $this->rights[5][4] = 'cloturer';
 
     $this->rights[6][0] = 27; // id de la permission
     $this->rights[6][1] = 'Supprimer les propositions commerciales'; // libelle de la permission
-    $this->rights[6][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[6][3] = 0; // La permission est-elle une permission par d�faut
+    $this->rights[6][2] = 'd'; // type de la permission (deprecie a ce jour)
+    $this->rights[6][3] = 0; // La permission est-elle une permission par defaut
     $this->rights[6][4] = 'supprimer';
 
   }
 
 
    /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+    *               Definit egalement les repertoires de donnees a creer pour ce module.
     */
   function init()
   {       
     global $conf;
-    // Permissions et valeurs par d�faut
+    // Permissions et valeurs par defaut
     $this->remove();
 
-    // R�pertoires
+    // Repertoires
     $this->dirs[0] = $conf->propal->dir_output;
     $this->dirs[1] = $conf->propal->dir_temp;
 
@@ -154,7 +154,7 @@ class modPropale extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+   *    \brief      Fonction appelee lors de la desactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()

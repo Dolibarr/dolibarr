@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007 Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+/* Copyright (C) 2003      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2006      Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2005-2008 Régis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,8 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
-require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 
 /** 
@@ -40,9 +42,12 @@ class Expedition extends CommonObject
 {
 	var $db;
 	var $id;
+	var $socid;
 	var $brouillon;
 	var $entrepot_id;
 	var $modelpdf;
+	var $origin;
+	var $origin_id;
 
 
 	/**
@@ -50,8 +55,8 @@ class Expedition extends CommonObject
 	*
 	*/
 	function Expedition($DB)
-    {
-    	global $langs;
+  {
+  	global $langs;
 
 		$this->db = $DB;
 		$this->lignes = array();
@@ -61,7 +66,7 @@ class Expedition extends CommonObject
 		$this->statuts[1]  = $langs->trans("Validated");
 		
 		$this->products = array();
-    }
+	}
 
   /**
    *    \brief      Créé expédition en base
@@ -69,115 +74,125 @@ class Expedition extends CommonObject
    *    \return     int         <0 si erreur, id expédition créée si ok
    */
 	function create($user)
+  {
+  	global $conf;
+  	
+  	require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
+    $error = 0;
+    /* On positionne en mode brouillon l'expedition */
+    $this->brouillon = 1;
+    
+    $this->user = $user;
+    
+    $this->db->begin();
+    
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (date_creation, fk_user_author, date_expedition";
+    $sql.= ", fk_soc";
+    $sql.= ")";
+    $sql.= " VALUES (now(), $user->id, ".$this->db->idate($this->date_expedition);
+    $sql.= ", ".$this->socid;
+    $sql.= ")";
+    
+    $resql=$this->db->query($sql);
+    if ($resql)
     {
-        require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
-        $error = 0;
-        /* On positionne en mode brouillon la commande */
-        $this->brouillon = 1;
+    	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expedition");
     
-        $this->user = $user;
-    
-        $this->db->begin();
-    
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (date_creation, fk_user_author, date_expedition, fk_commande";
-        if ($this->entrepot_id) $sql.= ", fk_entrepot";
-        $sql.= ")";
-        $sql.= " VALUES (now(), $user->id, ".$this->db->idate($this->date_expedition).",$this->commande_id";
-        if ($this->entrepot_id) $sql.= ", $this->entrepot_id";
-        $sql.= ")";
-    
-        $resql=$this->db->query($sql);
-        if ($resql)
+      $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+      if ($this->db->query($sql))
+      {    
+        // Insertion des lignes
+        for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expedition");
-    
-            $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
-            if ($this->db->query($sql))
-            {
-    
-                $this->commande = new Commande($this->db);
-                $this->commande->id = $this->commande_id;
-                $this->commande->fetch_lines();
-    
-                // Insertion des lignes
-                for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-                {
-                    if (! $this->create_line(0, $this->lignes[$i]->commande_ligne_id, $this->lignes[$i]->qty))
-                    {
-                        $error++;
-                    }
-                }
-
-                /*
-                 *
-                 */
-                $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->commande_id;
-                if (! $this->db->query($sql))
-                {
-                    $error++;
-                }
+        	if (! $this->create_line($this->lignes[$i]->entrepot_id, $this->lignes[$i]->origin_line_id, $this->lignes[$i]->qty))
+          {
+          	$error++;
+          }
+        }
         
-                if ($error==0)
-                {
-                    $this->db->commit();
-                    return $this->id;
-                }
-                else
-                {
-                    $error++;
-                    $this->error=$this->db->error()." - sql=$sql";
-                    $this->db->rollback();
-                    return -3;
-                }
-            }
-            else
-            {
-                $error++;
-                $this->error=$this->db->error()." - sql=$sql";
-                $this->db->rollback();
-                return -2;
-            }
+        if ($this->id && $this->origin_id)
+        {
+        	if ($conf->commande->enabled)
+        	{
+        		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_exp (fk_expedition, fk_commande) VALUES ('.$this->id.','.$this->origin_id.')';
+        		if (!$this->db->query($sql))
+        		{
+        			$error++;
+        		}
+        		
+        		$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->origin_id;
+        		if (! $this->db->query($sql))
+        		{
+        			$error++;
+        		}
+	    		}
+	    		else
+	    		{
+	    			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'pr_exp (fk_expedition, fk_propal) VALUES ('.$this->id.','.$this->origin_id.')';
+        		if (!$this->db->query($sql))
+        		{
+        			$error++;
+        		}
+        		
+        		//Todo: definir un statut
+        		$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 9 WHERE rowid=".$this->origin_id;
+        		if (! $this->db->query($sql))
+        		{
+        			$error++;
+        		}
+        	}
+	    	}
+        
+        if ($error==0)
+        {
+        	$this->db->commit();
+        	return $this->id;
         }
         else
         {
-            $error++;
-            $this->error=$this->db->error()." - sql=$sql";
-            $this->db->rollback();
-            return -1;
+        	$error++;
+          $this->error=$this->db->error()." - sql=$sql";
+          $this->db->rollback();
+          return -3;
         }
+      }
+      else
+      {
+      	$error++;
+        $this->error=$this->db->error()." - sql=$sql";
+        $this->db->rollback();
+        return -2;
+      }
     }
+    else
+    {
+    	$error++;
+    	$this->error=$this->db->error()." - sql=$sql";
+    	$this->db->rollback();
+    	return -1;
+    }
+  }
 
   /**
    *
    *
    */
-  function create_line($transaction, $commande_ligne_id, $qty)
+  function create_line($entrepot_id, $origin_line_id, $qty)
   {
-    $error = 0;
+  	$error = 0;
 
-    $idprod = 0;
-    $j = 0;
-    while (($j < sizeof($this->commande->lignes)) && idprod == 0)
-      {
-	if ($this->commande->lignes[$j]->id == $commande_ligne_id)
-	  {
-	    $idprod = $this->commande->lignes[$j]->fk_product;
-	  }
-	$j++;
-      }
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (fk_expedition, fk_commande_ligne, qty)";
-    $sql .= " VALUES ($this->id,".$commande_ligne_id.",".$qty.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (fk_expedition, fk_entrepot, fk_origin_line, qty)";
+    $sql .= " VALUES (".$this->id.", ".$entrepot_id.", ".$origin_line_id.", ".$qty.")";
     
     if (! $this->db->query($sql) )
-      {
-	$error++;
-      }
+    {
+    	$error++;
+    }
 
     if ($error == 0 )
-      {
-	return 1;
-      }
+    {
+    	return 1;
+    }
   }
 
 	/** 
@@ -188,16 +203,16 @@ class Expedition extends CommonObject
     {
         global $conf;
     
-        $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot,";
-        $sql.= " ".$this->db->pdate("e.date_expedition")." as date_expedition, e.model_pdf,";
-        $sql.= " c.fk_adresse_livraison";
+        $sql = "SELECT e.rowid, e.fk_soc as socid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut";
+        $sql.= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, e.model_pdf, e.fk_adresse_livraison";
+        if ($conf->commande->enabled) $sql.=", ce.fk_commande as origin_id";
         if ($conf->livraison->enabled) $sql.=", l.rowid as livraison_id";
-        $sql.= " FROM ".MAIN_DB_PREFIX."commande as c,";
-        $sql.= " ".MAIN_DB_PREFIX."expedition as e";
+        $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_exp as ce ON e.rowid = ce.fk_expedition";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON ce.fk_commande = c.rowid";
         if ($conf->livraison->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON e.rowid = l.fk_expedition";
         $sql.= " WHERE e.rowid = ".$id;
-        $sql.= " AND e.fk_commande = c.rowid";
-    
+
         $result = $this->db->query($sql) ;
     
         if ($result)
@@ -208,17 +223,17 @@ class Expedition extends CommonObject
     
             $this->id                   = $obj->rowid;
             $this->ref                  = $obj->ref;
+            $this->socid                = $obj->socid;
             $this->statut               = $obj->fk_statut;
-            $this->commande_id          = $obj->fk_commande;
-            if ($conf->livraison->enabled)
-            {
-            	$this->livraison_id       = $obj->livraison_id;
-            }
+            $this->origin_id            = $obj->origin_id;
+            $this->livraison_id         = $obj->livraison_id;
             $this->user_author_id       = $obj->fk_user_author;
             $this->date                 = $obj->date_expedition;
-            $this->entrepot_id          = $obj->fk_entrepot;
             $this->adresse_livraison_id = $obj->fk_adresse_livraison;
 			      $this->modelpdf             = $obj->model_pdf;
+			      
+			      if ($conf->commande->enabled) $this->origin = "commande";
+			      
             $this->db->free($result);
     
             if ($this->statut == 0) $this->brouillon = 1;
@@ -416,94 +431,93 @@ class Expedition extends CommonObject
    * Ajoute une ligne
    *
    */
-  function addline( $id, $qty )
-    {
-      $num = sizeof($this->lignes);
-      $ligne = new ExpeditionLigne($this->db);
+  function addline( $entrepot_id, $id, $qty )
+  {
+  	$num = sizeof($this->lignes);
+    $ligne = new ExpeditionLigne($this->db);
 
-      $ligne->commande_ligne_id = $id;
-      $ligne->qty = $qty;
+    $ligne->entrepot_id = $entrepot_id;
+    $ligne->origin_line_id = $id;
+    $ligne->qty = $qty;
 
-      $this->lignes[$num] = $ligne;
-    }
+    $this->lignes[$num] = $ligne;
+  }
 
   /** 
    *
    *
    */
   function delete_line($idligne)
-    {
-      if ($this->statut == 0)
-	{
-	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE rowid = $idligne";
-	  
-	  if ($this->db->query($sql) )
+  {
+  	if ($this->statut == 0)
+  	{
+  		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE rowid = $idligne";
+  		
+  		if ($this->db->query($sql) )
 	    {
-	      $this->update_price();
-	      
+	      $this->update_price();  
 	      return 1;
 	    }
-	  else
+	    else
 	    {
 	      return 0;
 	    }
+	  }
 	}
-    }
+	
   /**
    * Supprime la fiche
    *
    */
   function delete()
   {
-    $this->db->begin();
+  	$this->db->begin();
 
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition = $this->id ;";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition = ".$this->id;
     if ( $this->db->query($sql) ) 
-      {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition WHERE rowid = $this->id;";
-	if ( $this->db->query($sql) ) 
-	  {
-	    $this->db->commit();
-	    
-	    // On efface le répertoire de pdf provisoire
-		$expref = sanitize_string($this->ref);
-		if ($conf->expedition->dir_output)
-		{
-				$dir = $conf->expedition->dir_output . "/" . $expref ;
-				$file = $conf->expedition->dir_output . "/" . $expref . "/" . $expref . ".pdf";
-				if (file_exists($file))
-				{
-					if (!dol_delete_file($file))
-					{
-              $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-              return 0;
-           }
-        }
-        if (file_exists($dir))
-        {
-         	if (!dol_delete_dir($dir))
-          {
-            	$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-              return 0;
-          }
-        }
-     }
-	    
-	    return 1;
-	  }
-	else
-	  {
-	    $this->db->rollback();
-	    return -2;
-	  }
-      }
+    {
+    	$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition WHERE rowid = ".$this->id;
+    	if ( $this->db->query($sql) ) 
+    	{
+    		$this->db->commit();
+    		
+    		// On efface le répertoire de pdf provisoire
+    		$expref = sanitize_string($this->ref);
+    		if ($conf->expedition->dir_output)
+    		{
+    			$dir = $conf->expedition->dir_output . "/" . $expref ;
+    			$file = $conf->expedition->dir_output . "/" . $expref . "/" . $expref . ".pdf";
+    			if (file_exists($file))
+    			{
+    				if (!dol_delete_file($file))
+    				{
+    					$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+    					return 0;
+    				}
+    			}
+    			if (file_exists($dir))
+    			{
+    				if (!dol_delete_dir($dir))
+    				{
+    					$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+    					return 0;
+    				}
+    			}
+    		}
+    		return 1;
+    	}
+    	else
+    	{
+    		$this->db->rollback();
+    		return -2;
+    	}
+    }
     else
-      {
-	$this->db->rollback();
-	return -1;
-      }
+    {
+    	$this->db->rollback();
+    	return -1;
+    }
   }
-  
   
   /**
    * Classe la commande
@@ -553,27 +567,29 @@ class Expedition extends CommonObject
 	
 
 	/*
-	* Lit la commande associée
+	* Lit le document associé
 	*
 	*/
-	function fetch_commande()
+	function fetch_object($object)
 	{
-		$this->commande = & new Commande($this->db);
-		$this->commande->fetch($this->commande_id);
+		$class = ucfirst($object);
+		$this->$object = & new $class($this->db);
+		$this->$object->fetch($this->origin_id);
 	}
 
 	
 	function fetch_lines()
 	{
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_commande";
-		$sql.= ", ed.qty as qty_expedie, ed.fk_commande_ligne";
+		//Todo: récupérer les champs du document associé a part
+		
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_asked";
+		$sql.= ", ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref, p.label, p.weight, p.weight_units, p.volume, p.volume_units";
 		$sql.= " FROM (".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed)";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON (p.rowid = cd.fk_product)";
 		$sql.= " WHERE ed.fk_expedition = ".$this->id;
-		$sql.= " AND ed.fk_commande_ligne = cd.rowid";
-	
+		$sql.= " AND ed.fk_origin_line = cd.rowid";	
 	
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -585,13 +601,14 @@ class Expedition extends CommonObject
 				$ligne = new ExpeditionLigne($this->db);
 				$obj = $this->db->fetch_object($resql);
 	
-				$ligne->order_line_id  = $obj->fk_commande_ligne;
+				$ligne->origin_line_id = $obj->fk_origin_line;
+				$ligne->entrepot_id    = $obj->fk_entrepot; 
 				$ligne->fk_product     = $obj->fk_product;
 				$ligne->ref            = $obj->ref;
 				$ligne->libelle        = $obj->label;
 				$ligne->description    = $obj->description;
-				$ligne->qty_commande   = $obj->qty_commande;
-				$ligne->qty_expedie    = $obj->qty_expedie;
+				$ligne->qty_asked      = $obj->qty_asked;
+				$ligne->qty_shipped    = $obj->qty_shipped;
 				$ligne->weight         = $obj->weight;
 				$ligne->weight_units   = $obj->weight_units;
 				$ligne->volume         = $obj->volume;
@@ -734,8 +751,8 @@ class ExpeditionLigne
 	var $qty_expedition;
 	var $fk_product;
 	
-	// From llx_commandedet
-	var $qty_commande;
+	// From llx_commandedet or llx_propaldet
+	var $qty_asking;
 	var $libelle;       // Label produit
 	var $product_desc;  // Description produit
 	var $ref;

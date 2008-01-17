@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,9 +23,8 @@ create table llx_expeditiondet
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_expedition     integer NOT NULL,
-  fk_commande_ligne integer NOT NULL,
-  qty               real,              -- quantité
-
-  key(fk_expedition),
-  key(fk_commande_ligne)
+  fk_origin_line    integer,           -- Correspondance de la ligne avec le document d'origine (propal, commande)
+  fk_entrepot       integer,           -- Entrepot de depart du produit
+  qty               real,              -- Quantity
+  rang              integer  DEFAULT 0
 )type=innodb;

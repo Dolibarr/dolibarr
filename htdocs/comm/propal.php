@@ -73,9 +73,6 @@ $socid = restrictedArea($user, $module, $objectid, $dbtable);
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
 
-$form=new Form($db);
-
-
 
 /******************************************************************************/
 /*                     Actions                                                */
@@ -854,11 +851,11 @@ if ($_GET['propalid'] > 0)
 	print '</td>';
 
 	if ($conf->projet->enabled) $rowspan++;
-	if ($conf->expedition->enabled)
-	  {
-	    if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $rowspan++;
-	    if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS) $rowspan++;
-	  }
+	if ($conf->expedition->enabled || $conf->livraison->enabled)
+	{
+		if ($conf->global->PROPALE_ADD_SHIPPING_DATE || !$conf->commande->enabled) $rowspan++;
+		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS || !$conf->commande->enabled) $rowspan++;
+	}
 	
 	// Notes
 	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
@@ -901,7 +898,7 @@ if ($_GET['propalid'] > 0)
 	// gerer par les commandes et non les propales
 	if ($conf->expedition->enabled || $conf->livraison->enabled)
 	{
-		if ($conf->global->PROPALE_ADD_SHIPPING_DATE)
+		if ($conf->global->PROPALE_ADD_SHIPPING_DATE || !$conf->commande->enabled)
 		{
 			$langs->load('deliveries');
 			print '<tr><td>';
@@ -928,7 +925,7 @@ if ($_GET['propalid'] > 0)
 		}
 
 		// adresse de livraison
-		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
+		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS || !$conf->commande->enabled)
 		{
 			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1014,11 +1011,11 @@ if ($_GET['propalid'] > 0)
 				print '</td><td colspan="3">';
 				if ($_GET['action'] == 'classer')
 				{
-					$form->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'projetidp');
+					$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'projetidp');
 				}
 				else
 				{
-					$form->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'none');
+					$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'none');
 				}
 				print '</td></tr>';
 			}

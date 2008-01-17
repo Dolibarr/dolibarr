@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,19 +24,15 @@ create table llx_expedition
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
   ref                   varchar(30) NOT NULL,
-  fk_commande           integer,
-  date_creation         datetime,              -- date de creation 
-  date_valid            datetime,              -- date de validation
-  date_expedition       date,                  -- date de l'expedition
+  fk_soc                integer     NOT NULL,
+  date_creation         datetime,              -- date de creation
   fk_user_author        integer,               -- createur
+  date_valid            datetime,              -- date de validation
   fk_user_valid         integer,               -- valideur
-  fk_entrepot           integer,
+  date_expedition       date,                  -- date de l'expedition
+  fk_adresse_livraison  integer,               -- adresse de livraison
   fk_expedition_methode integer,
   fk_statut             smallint  DEFAULT 0,
   note                  text,
-  model_pdf             varchar(50),
-
-  UNIQUE INDEX (ref),
-  key(fk_expedition_methode),
-  key(fk_commande)
+  model_pdf             varchar(50)
 )type=innodb;

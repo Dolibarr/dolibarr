@@ -43,11 +43,11 @@ function propal_prepare_head($propal)
 	$head[$h][2] = 'comm';
 	$h++;
 	
-	if (!$conf->commande->enabled && (($conf->expedition->enabled && $user->rights->expedition->lire)
-     || ($conf->livraison->enabled && $user->rights->expedition->livraison->lire)))
+	if ((!$conf->commande->enabled && (($conf->expedition->enabled && $user->rights->expedition->lire)
+     || ($conf->livraison->enabled && $user->rights->expedition->livraison->lire))))
   {
   	$langs->load("sendings");
-  	$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$propal->id;
+  	$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?propalid='.$propal->id;
     if ($conf->expedition->enabled) $text=$langs->trans("Sendings");
     if ($conf->livraison->enabled)  $text.='/'.$langs->trans("Receivings");
     $head[$h][1] = $text;

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -264,25 +265,27 @@ class Entrepot
    */
   function list_array()
   {
-    $liste = array();
+  	$liste = array();
 
-    $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."entrepot WHERE statut = 1";
+    $sql = "SELECT rowid, label";
+    $sql.= " FROM ".MAIN_DB_PREFIX."entrepot";
+    $sql.= " WHERE statut = 1";
 
-      $result = $this->db->query($sql) ;
-      $i = 0;
-      $num = $this->db->num_rows();
-
-      if ( $result )
-	{
-	  while ($i < $num)
+    $result = $this->db->query($sql) ;
+    $i = 0;
+    $num = $this->db->num_rows();
+    
+    if ( $result )
+    {
+    	while ($i < $num)
 	    {
 	      $row = $this->db->fetch_row($i);
 	      $liste[$row[0]] = $row[1];
 	      $i++;
 	    }
-	  $this->db->free();
-	}
-      return $liste;
+	    $this->db->free();
+	  }
+	  return $liste;
   }
 
   /**
@@ -295,31 +298,30 @@ class Entrepot
     $sql = "SELECT sum(ps.reel)";
     $sql .= " FROM llx_product_stock as ps";
     if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-      {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-      }
+    {
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+    }
     $sql .= " WHERE ps.fk_entrepot = ".$this->id;
     if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-      {
-	$sql.= ' AND IFNULL(c.visible,1)=1';
-      }
-    
+    {
+    	$sql.= ' AND IFNULL(c.visible,1)=1';
+    }
+       
     $result = $this->db->query($sql) ;
     
     if ( $result )
-      {
-	$row = $this->db->fetch_row(0);
-	return $row[0];
-        
-	$this->db->free();
-      }
+    {
+    	$row = $this->db->fetch_row(0);
+    	return $row[0];
+    	
+    	$this->db->free();
+    }
     else
-      {
-	return 0;
-      }
+    {
+    	return 0;
+    }
   }
-  
 
 	/**
 	 *    \brief      Retourne le libellé du statut d'un entrepot (ouvert, ferme)

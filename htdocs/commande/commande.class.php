@@ -1207,7 +1207,7 @@ class Commande extends CommonObject
 		
 		$sql = 'SELECT fk_product, sum(ed.qty)';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed, '.MAIN_DB_PREFIX.'expedition as e, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd';
-		$sql.=' WHERE ed.fk_expedition = e.rowid AND ed.fk_commande_ligne = cd .rowid AND cd.fk_commande = c.rowid';
+		$sql.=' WHERE ed.fk_expedition = e.rowid AND ed.fk_origin_line = cd.rowid AND cd.fk_commande = c.rowid';
 		$sql.=' AND cd.fk_commande =' .$this->id;
 		if ($filtre_statut >= 0) $sql.=' AND e.fk_statut = '.$filtre_statut;
 		$sql .= ' GROUP BY fk_product ';
@@ -2401,28 +2401,28 @@ class CommandeLigne
 		if ($result)
 		{
 			$objp = $this->db->fetch_object($result);
-			$this->rowid          = $objp->rowid;
-			$this->fk_propal      = $objp->fk_propal;
-			$this->desc           = $objp->description;
-			$this->qty            = $objp->qty;
-			$this->price          = $objp->price;
-			$this->subprice       = $objp->subprice;
-			$this->tva_tx         = $objp->tva_tx;
-			$this->remise         = $objp->remise;
-			$this->remise_percent = $objp->remise_percent;
+			$this->rowid            = $objp->rowid;
+			$this->fk_commande      = $objp->fk_commande;
+			$this->desc             = $objp->description;
+			$this->qty              = $objp->qty;
+			$this->price            = $objp->price;
+			$this->subprice         = $objp->subprice;
+			$this->tva_tx           = $objp->tva_tx;
+			$this->remise           = $objp->remise;
+			$this->remise_percent   = $objp->remise_percent;
 			$this->fk_remise_except = $objp->fk_remise_except;
-			$this->produit_id     = $objp->fk_product;
-			$this->info_bits      = $objp->info_bits;
-			$this->total_ht       = $objp->total_ht;
-			$this->total_tva      = $objp->total_tva;
-			$this->total_ttc      = $objp->total_ttc;
-			$this->marge_tx       = $objp->marge_tx;
-			$this->marque_tx      = $objp->marque_tx;
-			$this->rang           = $objp->rang;
+			$this->produit_id       = $objp->fk_product;
+			$this->info_bits        = $objp->info_bits;
+			$this->total_ht         = $objp->total_ht;
+			$this->total_tva        = $objp->total_tva;
+			$this->total_ttc        = $objp->total_ttc;
+			$this->marge_tx         = $objp->marge_tx;
+			$this->marque_tx        = $objp->marque_tx;
+			$this->rang             = $objp->rang;
 			
-			$this->ref	       = $objp->product_ref;
-			$this->product_libelle = $objp->product_libelle;
-			$this->product_desc    = $objp->product_desc;
+			$this->ref	            = $objp->product_ref;
+			$this->product_libelle  = $objp->product_libelle;
+			$this->product_desc     = $objp->product_desc;
 			
 			$this->db->free($result);
 		}
