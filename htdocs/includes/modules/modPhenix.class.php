@@ -92,42 +92,15 @@ class modPhenix extends DolibarrModules
     	//$r++;
 
 		// Permissions
-		$this->rights_class = 'webcal';	// Permission key
-		$this->rights = array();		// Permission array used by this module
-		
-		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
-		// Example:
-		// $r++;
-		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
-		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
 		$this->rights_class = 'phenix';	// Permission key
 		$this->rights = array();		// Permission array used by this module
 
-		// Main menu entries
-		$this->menus = array();			// List of menus to add
+        // Menus
+		//------
 		$r=0;
-
-		// Example:
-		// $r++;
-		// insert into `llx_menu` (
-		//  menu_handler			'all'				// Menu handler name (all to add with all menu handlers)
-		//  type					'top'				// Menu top or left
-		// `mainmenu`,				'webcal'			// Name family/module (home, companies, ...)
-		// `fk_menu`,				0					// 0 or Id of mother menu line
-		// `order`					10					// Order of entry
-		// `url`,					'/webcal/webcal.php?mainmenu=webcal&amp;leftmenu='	// Relative (or absolute) url to go
-		// `target`,				''					// Target of Url link
-		// `titre`,					'Calendar'			// Key for menu translation 
-		// `langs`,					other				// Lang file to load for translation
-		// `level`,					-1					// deprecated
-		// `leftmenu`,				''					// Condition to compare to $_REQUEST["leftmenu"] to show or hide menu entry
-		// `right`,					''					// Condition to show enabled or disabled menu entry
-		// `user`,					0					// 0 if menu for all users, 1 for external only, 2 for internal only
-
+		
+		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Calendar','mainmenu'=>'phenix','leftmenu'=>'','url'=>'/phenix/phenix.php','langs'=>'other','position'=>100,'perms'=>'','target'=>'','user'=>0);
+		$r++;
 	}
 
 	/**

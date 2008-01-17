@@ -405,8 +405,8 @@ class DolibarrModules
 	        foreach ($this->boxes as $key => $value)
 	        {
 	            //$titre = $this->boxes[$key][0];
-	            $file  = $this->boxes[$key][1];
-	            $note  = $this->boxes[$key][2];
+	            $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';
+	            $note  = isset($this->boxes[$key][2])?$this->boxes[$key][2]:'';
 	
 	            $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def";
 	            $sql.= " WHERE file ='".$file."'";

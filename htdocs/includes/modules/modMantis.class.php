@@ -86,13 +86,14 @@ class modMantis extends DolibarrModules
 		// Permissions
 		$this->rights_class = 'mantis';	// Permission key
 		$this->rights = array();		// Permission array used by this module
-		// Example
-		// $r++;
-		// $this->rights[$r][0] = 1200; 				// Permission id (must not be already used)
-		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+
+        // Menus
+		//------
+		$r=0;
+		
+		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'BugTracker','mainmenu'=>'mantis','leftmenu'=>'','url'=>'/mantis/mantis.php','langs'=>'other','position'=>100,'perms'=>'','target'=>'','user'=>0);
+		$r++;
+		
 	}
 
 	/**

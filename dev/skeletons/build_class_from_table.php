@@ -175,7 +175,7 @@ $varprop="\n";
 $cleanparam='';
 foreach($property as $key => $prop)
 {
-	if (! $prop['istime'])
+	if ($prop['field'] != 'rowid' && ! $prop['istime'])
 	{
 		$varprop.="\t\t\$this->".$prop['field']."=trim(\$this->".$prop['field'].");";
 		$varprop.="\n";

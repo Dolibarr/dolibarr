@@ -96,19 +96,13 @@ class modWebcalendar extends DolibarrModules
 		$this->rights_class = 'webcal';	// Permission key
 		$this->rights = array();		// Permission array used by this module
 		
-		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
-		// Example:
-		// $r++;
-		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
-		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
-		// Main menu entries
-		$this->menus = array();			// List of menus to add
+        // Menus
+		//------
 		$r=0;
-
+		
+		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Calendar','mainmenu'=>'webcal','leftmenu'=>'','url'=>'/webcal/webcal.php','langs'=>'other','position'=>100,'perms'=>'','target'=>'','user'=>0);
+		$r++;
+		
 	}
 
 	/**

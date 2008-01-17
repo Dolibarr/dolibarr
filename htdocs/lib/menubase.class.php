@@ -78,7 +78,6 @@ class Menubase
     	global $conf, $langs;
     	
 		// Clean parameters
-		$this->rowid=trim($this->rowid);
 		$this->menu_handler=trim($this->menu_handler);
 		$this->module=trim($this->module);
 		$this->type=trim($this->type);

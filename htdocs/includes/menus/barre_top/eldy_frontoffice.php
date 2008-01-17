@@ -307,65 +307,7 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a></td>';
         }
         
-       // Webcal
-        if ($conf->webcal->enabled)
-        {
-            $langs->load("other");
-        
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "webcal")
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            else
-            {
-                $class = 'class="tmenu"';
-            }
-        
-//            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/webcal/webcal.php?mainmenu=webcal&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a></td>';
-        }
 
-        // Phenix
-        if ($conf->phenix->enabled)
-        {
-            $langs->load("other");
-        
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "phenix")
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            else
-            {
-                $class = 'class="tmenu"';
-            }
-        
-//            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/phenix/phenix.php?mainmenu=phenix&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a></td>';
-        }
-
-        // Mantis
-        if ($conf->mantis->enabled)
-        {
-            $langs->load("other");
-
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mantis")
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            elseif (ereg("^".DOL_URL_ROOT.".*\/mantis",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/mantis\/",$_SERVER["PHP_SELF"]))
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            else
-            {
-                $class = 'class="tmenu"';
-            }
-
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/mantis/mantis.php?mainmenu=mantis"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("BugTracker").'</a></td>';
-        }
-       
-        
 		// Affichage des menus personnalises
        	require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
 

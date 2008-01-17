@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,24 +137,25 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		
 		$db->begin();
 		
-    // Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
-    // dans la 1ere colonne, la description de l'action a faire
-    // dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
+		// Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
+		// dans la 1ere colonne, la description de l'action a faire
+		// dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
 
+		
 		// Script pour V2 -> V2.1
-    migrate_paiements($db,$langs,$conf);
+		migrate_paiements($db,$langs,$conf);
 
-    migrate_contracts_det($db,$langs,$conf);
+		migrate_contracts_det($db,$langs,$conf);
 
-    migrate_contracts_date1($db,$langs,$conf);
+		migrate_contracts_date1($db,$langs,$conf);
 
-    migrate_contracts_date2($db,$langs,$conf);
+		migrate_contracts_date2($db,$langs,$conf);
 
-    migrate_contracts_date3($db,$langs,$conf);
+		migrate_contracts_date3($db,$langs,$conf);
         
-    migrate_contracts_open($db,$langs,$conf);
+		migrate_contracts_open($db,$langs,$conf);
 
-    migrate_modeles($db,$langs,$conf);
+		migrate_modeles($db,$langs,$conf);
 
 		migrate_price_propal($db,$langs,$conf);
 
@@ -164,8 +165,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
 		migrate_price_contrat($db,$langs,$conf);
 
-    migrate_paiementfourn_facturefourn($db,$langs,$conf);
+		migrate_paiementfourn_facturefourn($db,$langs,$conf);
 
+		
 		// Script pour V2.1 -> V2.2
 		migrate_paiements_orphelins_1($db,$langs,$conf);
 
@@ -175,14 +177,17 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		
 		migrate_delete_old_files($db,$langs,$conf);
 		
+		
 		// Script pour V2.2 -> V2.4
 		migrate_commande_expedition($db,$langs,$conf);
 
-  	// On commit dans tous les cas.
-  	// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
-  	$db->commit();	
-  	$db->close();
-    	
+		migrate_module_menus($db,$langs,$conf);
+
+		
+    	// On commit dans tous les cas.
+    	// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
+    	$db->commit();	
+    	$db->close();
 	}
 
 	print '</table>';
@@ -1450,10 +1455,28 @@ function migrate_delete_old_files($db,$langs,$conf)
  */
 function migrate_module_menus($db,$langs,$conf)
 {
-	if ($conf->global->MAIN_MODULE_AGENDA)
+	if (! empty($conf->global->MAIN_MODULE_AGENDA))
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modAgenda.class.php');
 		$mod=new modAgenda($db);
+		$mod->init();
+	}
+	if (! empty($conf->global->MAIN_MODULE_PHENIX))
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modPhenix.class.php');
+		$mod=new modPhenix($db);
+		$mod->init();
+	}
+	if (! empty($conf->global->MAIN_MODULE_WEBCALENDAR))
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modWebcalendar.class.php');
+		$mod=new modWebcalendar($db);
+		$mod->init();
+	}
+	if (! empty($conf->global->MAIN_MODULE_MANTIS))
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modMantis.class.php');
+		$mod=new modMantis($db);
 		$mod->init();
 	}
 }
