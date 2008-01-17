@@ -217,7 +217,7 @@ class modFournisseur extends DolibarrModules
         $r=0;
     
         $r++;
-        $this->export_code[$r]=$this->id.'_'.$r;
+        $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='Factures fournisseurs et lignes de facture';
         $this->export_permission[$r]=array(array("fournisseur","facture","export"));
         $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','f.rowid'=>"InvoiceId",'f.facnumber'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.total_tva'=>"TotalVAT",'f.paye'=>"InvoicePayed",'f.fk_statut'=>'InvoiceStatus','f.note'=>"InvoiceNote",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_taux'=>"LineVATRate",'fd.qty'=>"LineQty");
@@ -234,7 +234,7 @@ class modFournisseur extends DolibarrModules
         $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'facture_fourn as f, '.MAIN_DB_PREFIX.'facture_fourn_det as fd, '.MAIN_DB_PREFIX.'societe as s WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
 
         $r++;
-        $this->export_code[$r]=$this->id.'_'.$r;
+        $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='Factures fournisseurs et r�glements';
         $this->export_permission[$r]=array(array("fournisseur","facture","export"));
         $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','f.rowid'=>"InvoiceId",'f.facnumber'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.total_tva'=>"TotalVAT",'f.paye'=>"InvoicePayed",'f.fk_statut'=>'InvoiceStatus','f.note'=>"InvoiceNote",'pf.amount'=>'AmountPayment','p.datep'=>'DatePayment','p.num_paiement'=>'PaymentNumber');

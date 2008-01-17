@@ -158,7 +158,7 @@ class modCommande extends DolibarrModules
         $r=0;
     
         $r++;
-        $this->export_code[$r]=$this->id.'_'.$r;
+        $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='Commandes clients et lignes de commande';
         $this->export_permission[$r]=array(array("commande","commande","export"));
         $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_client'=>"RefClient",'c.fk_soc'=>"IdCompany",'c.date_creation'=>"DateCreation",'c.date_commande'=>"DateOrder",'c.amount_ht'=>"Amount",'c.remise_percent'=>"GlobalDiscount",'c.total_ht'=>"TotalHT",'c.total_ttc'=>"TotalTTC",'c.facture'=>"OrderShortStatusInvoicee",'c.fk_statut'=>'Status','c.note'=>"Note",'c.date_livraison'=>'DeliveryDate','p.ref'=>'RefProduct','p.label'=>'Label','cd.rowid'=>'LineId','cd.description'=>"LineDescription",'cd.total_ht'=>"LineTotalHT",'cd.tva_tx'=>"LineVATRate",'cd.qty'=>"LineQty");

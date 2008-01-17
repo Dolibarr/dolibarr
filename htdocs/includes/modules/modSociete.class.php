@@ -172,7 +172,7 @@ class modSociete extends DolibarrModules
 
     // Export des liste des societes et attributs
     $r++;
-    $this->export_code[$r]=$this->id.'_'.$r;
+    $this->export_code[$r]=$this->rights_class.'_'.$r;
     $this->export_label[$r]='Tiers (soci�t�s/institutions) et attributs';
     $this->export_permission[$r]=array(array("societe","export"));
     $this->export_fields_array[$r]=array('s.rowid'=>"Id",'s.nom'=>"Name",'s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.fournisseur'=>"Supplier",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode",'s.address'=>"Address",'s.cp'=>"Zip",'s.ville'=>"Town",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.tel'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.siret'=>"IdProf1",'s.siren'=>"IdProf2",'s.ape'=>"IdProf3",'s.idprof4'=>"IdProf4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note'=>"Note");
@@ -190,7 +190,7 @@ class modSociete extends DolibarrModules
 
     // Export des liste des contacts et attributs
     $r++;
-    $this->export_code[$r]=$this->id.'_'.$r;
+    $this->export_code[$r]=$this->rights_class.'_'.$r;
     $this->export_label[$r]='Contacts (de tiers) et attributs';
     $this->export_permission[$r]=array(array("societe","contact","export"));
     $this->export_fields_array[$r]=array('c.civilite'=>"CivilityCode",'c.name'=>'Lastname','c.firstname'=>'Firstname','c.datec'=>"DateCreation",'c.tms'=>"DateLastModification",'c.address'=>"Address",'c.cp'=>"Zip",'c.ville'=>"Town",'c.phone'=>"Phone",'c.fax'=>"Fax",'c.email'=>"EMail",'p.libelle'=>"Country",'p.code'=>"CountryCode",'s.rowid'=>"IdCompany",'s.nom'=>"CompanyName",'s.code_client'=>"CustomerCode",'s.code_fournisseur'=>"SupplierCode");

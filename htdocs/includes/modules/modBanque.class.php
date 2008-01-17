@@ -130,7 +130,7 @@ class modBanque extends DolibarrModules
         $r=0;
 
         $r++;
-        $this->export_code[$r]=$this->id.'_'.$r;
+        $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='Ecritures bancaires et relevés';
         $this->export_permission[$r]=array(array("banque","export"));
         $this->export_fields_array[$r]=array('b.rowid'=>'IdTransaction','ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label','b.num_chq'=>'CheckNumber','-b.amount'=>'Debit','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation","but.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","s.code_compta_fournisseur"=>"SupplierAccountancyCode");

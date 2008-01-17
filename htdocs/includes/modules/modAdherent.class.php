@@ -184,7 +184,7 @@ class modAdherent extends DolibarrModules
         // $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
 
         $r++;
-        $this->export_code[$r]=$this->id.'_'.$r;
+        $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='Adherents et adhesions';
         $this->export_permission[$r]=array(array("adherent","export"));
         $this->export_fields_array[$r]=array('a.rowid'=>'Id','a.nom'=>"Lastname",'a.prenom'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'MorPhy','a.adresse'=>"Address",'a.cp'=>"Zip",'a.ville'=>"Town",'a.pays'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.naiss'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note'=>"Note",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'MemberTypeId','ta.libelle'=>'MemberTypeLabel','c.dateadh'=>'DateSubscription','c.cotisation'=>'Amount');

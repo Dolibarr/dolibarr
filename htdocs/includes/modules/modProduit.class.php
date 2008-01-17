@@ -137,7 +137,7 @@ class modProduit extends DolibarrModules
     $r=0;
 
     $r++;
-    $this->export_code[$r]=$this->id.'_'.$r;
+    $this->export_code[$r]=$this->rights_class.'_'.$r;
     $this->export_label[$r]="ProductsOrServices";	// Translation key (used only if key ExportDataset_xxx_z not found)
     $this->export_permission[$r]=array(array("produit","export"));
     $this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification');

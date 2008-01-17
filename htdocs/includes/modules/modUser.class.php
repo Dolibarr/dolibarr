@@ -145,7 +145,7 @@ class modUser extends DolibarrModules
     $r=0;
 
     $r++;
-    $this->export_code[$r]=$this->id.'_'.$r;
+    $this->export_code[$r]=$this->rights_class.'_'.$r;
     $this->export_label[$r]='Liste des utilisateurs Dolibarr et attributs';
     $this->export_permission[$r]=array(array("user","user","export"));
     $this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.login'=>"Login",'u.name'=>"Lastname",'u.firstname'=>"Firstname",'u.office_phone'=>'Tel','u.office_fax'=>'Fax','u.email'=>'EMail','u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Admin",'u.statut'=>'Status','u.fk_socpeople'=>"IdContact",'u.fk_societe'=>"IdCompany",'u.note'=>"Note",'u.datelastlogin'=>'LastConnexion','u.datepreviouslogin'=>'PreviousConnexion');
