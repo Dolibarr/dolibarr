@@ -4,3 +4,4 @@ documents
 *.settings
 *.project
 *.cache
+*.log
