@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -26,6 +25,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
 
 $what=$_REQUEST["what"];
@@ -54,6 +54,7 @@ if ($file && ! $what)
 llxHeader();
 
 $html=new Form($db);
+$formfile = new FormFile($db);
 
 print_fiche_titre($langs->trans("Backup"),'','setup');
 print '<br>';
@@ -212,7 +213,7 @@ if ($what)
 	}
 }
 
-$result=$html->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1);
+$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1);
 
 if ($result == 0)
 {

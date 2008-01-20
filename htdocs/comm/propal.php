@@ -30,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 
@@ -731,6 +732,7 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 llxHeader('',$langs->trans('Proposal'),'Proposition');
 
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 if ($_GET['propalid'] > 0)
 {
@@ -1660,7 +1662,7 @@ if ($_GET['propalid'] > 0)
 
 	$var=true;
 
-	$somethingshown=$html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
+	$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
 
 
 	/*
@@ -1920,7 +1922,7 @@ else
             $filename=sanitize_string($objp->ref);
             $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
             $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
-            $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+            $formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
                 
             print '</td></tr></table>';
 

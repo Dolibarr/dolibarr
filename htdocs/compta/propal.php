@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
@@ -114,6 +115,7 @@ if ( $action == 'delete' )
 llxHeader();
 
 $html = new Form($db);
+$formfile = new FormFile($db);
 $societestatic=new Societe($db);
 $propalstatic=new Propal($db);
 
@@ -496,7 +498,7 @@ if ($_GET["propalid"] > 0)
     
     $var=true;
     
-    $somethingshown=$html->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+    $somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed);
     
 
 	/*
@@ -769,7 +771,7 @@ else
             $filename=sanitize_string($objp->ref);
             $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
             $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
-            $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+            $formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
                     
             print '</td></tr></table>';
       

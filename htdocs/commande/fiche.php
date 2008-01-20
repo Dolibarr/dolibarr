@@ -30,6 +30,7 @@
 */
 
 require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
@@ -713,6 +714,7 @@ if ($_POST['action'] == 'send')
 llxHeader('',$langs->trans('Order'),'Commande');
 
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 /*********************************************************************
 *
@@ -1797,7 +1799,7 @@ else
 			$genallowed=$user->rights->commande->creer;
 			$delallowed=$user->rights->commande->supprimer;
 
-			$somethingshown=$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+			$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
 			/*
 			* Liste des factures

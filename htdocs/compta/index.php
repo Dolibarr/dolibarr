@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
@@ -92,6 +93,7 @@ $facturestatic=new Facture($db);
 $facturesupplierstatic=new FactureFournisseur($db);
 
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 llxHeader("",$langs->trans("AccountancyTreasuryArea"));
 
@@ -563,7 +565,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				$filename=sanitize_string($obj->ref);
 				$filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				$html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 				print '</td></tr></table>';
 				
 				print '</td>';
@@ -658,7 +660,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$filename=sanitize_string($obj->facnumber);
 				$filedir=$conf->facture->dir_output . '/' . sanitize_string($obj->facnumber);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
-				$html->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
+				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
 				print '</td></tr></table>';
 				
 				print '</td>';

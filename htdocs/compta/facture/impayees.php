@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
@@ -52,6 +53,9 @@ if ($user->societe_id > 0)
 
 
 llxHeader('',$langs->trans("BillsCustomersUnpayed"));
+
+$html = new Form($db);
+$formfile = new FormFile($db);
 
 
 /***************************************************************************
@@ -181,7 +185,6 @@ if ($user->rights->facture->lire)
 
 		if ($num > 0)
 		{
-			$html = new Form($db);
 			$var=True;
 			$total_ht=0;
 			$total_ttc=0;
@@ -216,7 +219,7 @@ if ($user->rights->facture->lire)
 				$filename=sanitize_string($objp->facnumber);
 				$filedir=$conf->facture->dir_output . '/' . sanitize_string($objp->facnumber);
 				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
-				$html->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
+				$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
 					
 				print '</td></tr></table>';
 				

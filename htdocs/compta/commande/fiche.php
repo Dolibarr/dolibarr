@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
@@ -61,11 +62,12 @@ if ($_GET["action"] == 'facturee')
 }
 
 
+
 llxHeader('',$langs->trans("OrderCard"),"Commande");
 
 
-
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -453,7 +455,7 @@ if ($_GET["id"] > 0)
 		$genallowed=0;
 		$delallowed=0;
 		
-		$somethingshown=$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+		$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
         /*
         * Liste des factures

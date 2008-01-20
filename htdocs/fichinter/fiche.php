@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
@@ -340,6 +341,7 @@ if ($_GET['action'] == 'down' && $user->rights->ficheinter->creer)
  * Affichage page
  */
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 llxHeader();
 
@@ -464,10 +466,8 @@ if ($_GET["action"] == 'create')
 elseif ($_GET["id"] > 0)
 {
 	/*
-* Affichage en mode visu
-*/
-
-	$html = new Form($db); 
+	* Affichage en mode visu
+	*/
 	$fichinter = new Fichinter($db);
 	$result=$fichinter->fetch($_GET["id"]);
 	if (! $result > 0)
@@ -907,7 +907,7 @@ elseif ($_GET["id"] > 0)
 	$var=true;
 
 	print "<br>\n";
-	$somethingshown=$html->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$ficheinter->modelpdf);
+	$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$ficheinter->modelpdf);
 
 	print "</td><td>";
 	print "&nbsp;</td>";

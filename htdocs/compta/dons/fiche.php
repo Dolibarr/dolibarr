@@ -27,6 +27,7 @@
 */
 
 require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
@@ -171,6 +172,7 @@ if ($_GET['action'] == 'builddoc')
 llxHeader();
 
 $html=new Form($db);
+$formfile = new FormFile($db);
 
 
 /* ************************************************************************** */
@@ -199,8 +201,7 @@ if ($_GET["action"] == 'create')
     print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
 
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-	$form = new Form($db);
-	$form->select_types_paiements('', 'modepaiement', 'CRDT', 0);
+	$html->select_types_paiements('', 'modepaiement', 'CRDT', 0);
     print "</td></tr>\n";
     
     if ($conf->projet->enabled)
@@ -212,7 +213,6 @@ if ($_GET["action"] == 'create')
     }
     
     print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
-    $html=new Form($db);
     print $html->selectyesno("public",1,1);
     print "</td></tr>\n";
     
@@ -292,7 +292,6 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
     }
     
     print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
-    $html=new Form($db);
     print $html->selectyesno("public",1,1);
     print "</td>";
     print "</tr>\n";
@@ -309,8 +308,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
     print "<tr>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-	$form = new Form($db);
-	$form->select_types_paiements('', 'modepaiement', 'CRDT', 0);
+	$html->select_types_paiements('', 'modepaiement', 'CRDT', 0);
     print "</td></tr>\n";
 
     print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$don->getLibStatut(4).'</td></tr>';
@@ -434,7 +432,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	$var=true;
 
 	print '<br>';
-	$html->show_documents('don',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+	$formfile->show_documents('don',$filename,$filedir,$urlsource,$genallowed,$delallowed);
 
     print '</td><td>&nbsp;</td>';
 

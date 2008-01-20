@@ -29,6 +29,7 @@
 */
 
 require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/commande/modules/modules_commandefournisseur.php');
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.product.class.php";
 if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
@@ -412,6 +413,7 @@ llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
 
 $html =	new	Form($db);
+$formfile = new FormFile($db);
 
 /*********************************************************************
  *
@@ -936,7 +938,7 @@ else
 	  $genallowed=($commande->statut == 0 ? $user->rights->fournisseur->commande->creer : 0);
 	  $delallowed=$user->rights->fournisseur->commande->supprimer;
 	
-	  $somethingshown=$html->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+	  $somethingshown=$formfile->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 	
 	
 	  print '</td><td	width="50%"	valign="top">';
@@ -968,14 +970,12 @@ else
 	      /**
 	       * Commander
 	       */
-	      $form =	new	Form($db);
-
 	      print '<br>';
 	      print '<form name="commande" action="fiche.php?id='.$commande->id.'&amp;action=commande" method="post">';
 	      print '<table class="border" width="100%">';
 	      print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 	      print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
-	      print $form->select_date('','','','','',"commande");
+	      print $html->select_date('','','','','',"commande");
 	      print '</td></tr>';
 	
 	      print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
@@ -997,15 +997,13 @@ else
 	      /**
 	       * Receptionner
 	       */
-	      $form =	new	Form($db);
-
 	      print '<br>';
 	      print '<form action="fiche.php?id='.$commande->id.'" method="post">';
 	      print '<input type="hidden"	name="action" value="livraison">';
 	      print '<table class="border" width="100%">';
 	      print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 	      print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-	      print $form->select_date('','','','','',"commande");
+	      print $html->select_date('','','','','',"commande");
 	      print "</td></tr>\n";
 
 	      print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
@@ -1013,7 +1011,7 @@ else
 	      $liv['par']	= $langs->trans("PartialWoman");
 	      $liv['tot']	= $langs->trans("TotalWoman");
 	
-	      print $form->select_array("type",$liv);
+	      print $html->select_array("type",$liv);
 	
 	
 	      print '</td></tr>';

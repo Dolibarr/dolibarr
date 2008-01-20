@@ -27,6 +27,7 @@
 */
  
 require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/exports/export.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
 
@@ -69,6 +70,7 @@ $objexport->load_arrays($user,$datatoexport);
 
 $objmodelexport=new ModeleExports();
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 
 /*
@@ -606,14 +608,13 @@ if ($step == 4 && $datatoexport)
 
     if ($mesg) print $mesg;
 
-    $htmlform=new Form($db);
     print '<table width="100%"><tr><td width="50%">';
 
     if (! is_dir($conf->export->dir_temp)) create_exdir($conf->export->dir_temp);
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1
-    $htmlform->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,'csv','',1);
+    $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,'csv','',1);
     
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';

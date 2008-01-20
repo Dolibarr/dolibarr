@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
 if (!$user->rights->commande->lire) accessforbidden();
 
@@ -51,7 +52,9 @@ if ($user->societe_id > 0)
 
 $langs->load('companies');
 
+
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 llxHeader();
 
@@ -148,7 +151,7 @@ if ($resql)
         $filename=sanitize_string($objp->ref);
         $filedir=$conf->commande->dir_output . '/' . sanitize_string($objp->ref);
         $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
-        $html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+        $formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
         print '</td></tr></table>';
         
         print '</td>';

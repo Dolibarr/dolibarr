@@ -31,7 +31,8 @@
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT ."/expedition/mods/pdf/ModelePdfExpedition.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php");
 if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
@@ -177,6 +178,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 llxHeader('',$langs->trans('Sending'),'Expedition');
 
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 /*********************************************************************
  *
@@ -673,7 +675,7 @@ else
             //$genallowed=1;
             //$delallowed=0;
 
-            $somethingshown=$html->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
+            $somethingshown=$formfile->show_documents('expedition',$expeditionref,$filedir,$urlsource,$genallowed,$delallowed,$expedition->modelpdf);
 			if ($genallowed && ! $somethingshown) $somethingshown=1;
 			
             /*

@@ -28,6 +28,7 @@
 */
  
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/client.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
@@ -85,6 +86,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
  */
 
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 llxHeader();
 
@@ -591,7 +593,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 $filename=sanitize_string($obj->ref);
                 $filedir=$conf->propal->dir_output . '/' . sanitize_string($obj->ref);
                 $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$obj->propalid;
-                $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+                $formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
                 print '</td></tr></table>';
                 
                 print "</td>";
@@ -665,7 +667,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
       $filename=sanitize_string($objp->ref);
       $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
       $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
-      $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+      $formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
       print '</td></tr></table>';
       
       print '</td>';

@@ -31,6 +31,7 @@
 */
 
 require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
@@ -1155,6 +1156,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 llxHeader('',$langs->trans('Bill'),'HelpInvoice');
 
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 
 /*********************************************************************
@@ -2835,7 +2837,7 @@ else
 			$var=true;
 
 			print '<br>';
-			$somethingshown=$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
+			$somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
 
 			/*
 			*   Propales rattachées
@@ -3283,7 +3285,7 @@ else
 					$filename=sanitize_string($objp->facnumber);
 					$filedir=$conf->facture->dir_output . '/' . sanitize_string($objp->facnumber);
 					$urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
-					$html->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
+					$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
 					print '</td>';
 					print '</tr></table>';
 

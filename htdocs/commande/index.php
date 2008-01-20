@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -28,6 +27,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
 
 if (!$user->rights->commande->lire) accessforbidden();
@@ -43,9 +43,10 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+
 $commandestatic=new Commande($db);
 $html = new Form($db);
-
+$formfile = new FormFile($db);
 
 llxHeader("",$langs->trans("Orders"),"Commande");
 
@@ -151,7 +152,7 @@ if ( $db->query($sql) )
 				    $filename=sanitize_string($obj->ref);
 				    $filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
 				    $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				    $html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				    $formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 				    print '</td></tr></table>';
 
             print '</td>';
@@ -213,7 +214,7 @@ if ( $db->query($sql) )
 				    $filename=sanitize_string($obj->ref);
 				    $filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
 				    $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				    $html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				    $formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 				    print '</td></tr></table>';
 				    
 				    print '</td>';
@@ -279,7 +280,7 @@ if ($resql)
 				    $filename=sanitize_string($obj->ref);
 				    $filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
 				    $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				    $html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				    $formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 				    print '</td></tr></table>';
 				    
 				    print '</td>';

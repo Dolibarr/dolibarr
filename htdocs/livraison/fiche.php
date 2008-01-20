@@ -31,6 +31,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 if ($conf->expedition_bon->enabled) require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
@@ -164,6 +165,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 llxHeader('',$langs->trans('Delivery'),'Livraison');
 
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 /*********************************************************************
  *
@@ -568,7 +570,7 @@ else
             //$genallowed=1;
             //$delallowed=0;
     
-            $somethingshown=$html->show_documents('livraison',$livraisonref,$filedir,$urlsource,$genallowed,$delallowed,$livraison->modelpdf);
+            $somethingshown=$formfile->show_documents('livraison',$livraisonref,$filedir,$urlsource,$genallowed,$delallowed,$livraison->modelpdf);
     
             /*
              * Déjà livre

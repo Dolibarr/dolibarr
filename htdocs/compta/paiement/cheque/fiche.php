@@ -27,6 +27,7 @@
 */
 
 require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/remisecheque.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
@@ -138,6 +139,7 @@ if ($_POST['action'] == 'builddoc' && $user->rights->banque)
 llxHeader();
 
 $html = new Form($db);
+$formfile = new FormFile($db);
 
 if ($_GET['action'] == 'new')
 {
@@ -392,10 +394,9 @@ if ($_GET['action'] != 'new')
 {
   if ($remisecheque->statut == 1)
     {
-      //show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0);
       $dir = DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir($remisecheque->number);
       $gen = array('Blochet');
-      $html->show_documents("remisecheque","",$dir,'',$gen,0);
+      $formfile->show_documents("remisecheque","",$dir,'',$gen,0);
     }
 }
 

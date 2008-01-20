@@ -31,6 +31,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
@@ -70,6 +71,8 @@ if ($_POST["action"] == 'confirm_cloture' && $_POST["confirm"] == 'yes')
 }
 
 $html = new Form($db);
+$formfile = new FormFile($db);
+
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -421,7 +424,7 @@ if ($_GET["id"] > 0)
     $genallowed=0;
     $delallowed=0;
     
-    $somethingshown=$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+    $somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
     
     print '</td><td valign="top" width="50%">';
     
