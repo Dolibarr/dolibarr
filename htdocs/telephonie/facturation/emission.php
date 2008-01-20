@@ -16,18 +16,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
+
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/telephonie/facturation/FacturationEmission.class.php';
-require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php")
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
 
-if (!$user->rights->telephonie->facture->ecrire) accessforbidden();
+if (! $user->rights->telephonie->facture->ecrire )
+	accessforbidden();
 
 llxHeader();
 /*
- * Sécurité accés client
+ * Securite acces client
  */
 if ($user->societe_id > 0) 
 {
