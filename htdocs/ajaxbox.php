@@ -15,16 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/ajaxbox.php
         \brief      Fichier de reponse sur evenement Ajax deplacement boxes
-        \version    $Revision$
+        \version    $Id$
 */
+
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+
+// This is to make Dolibarr working with Plesk
+set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require('master.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");

@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/webservices/server.php
-        \brief      Fichier point entrée des WebServices Dolibarr
-        \version    $Revision$
+        \brief      Fichier point entree des WebServices Dolibarr
+        \version    $Id$
 */
+
+// This is to make Dolibarr working with Plesk
+set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
@@ -42,13 +42,13 @@ $server->wsdl->schemaTargetNamespace=$ns;
 // Register methods available for clients
 /*
 $server->register('getVersions',
-array(),								// Tableau parametres entrée
+array(),								// Tableau parametres entrï¿½e
 array('result' => 'xsd:array'),			// Tableau parametres sortie
 $ns);
 */
 
 $server->register('getVersions',
-// Tableau parametres entrée
+// Tableau parametres entrï¿½e
 array(),
 // Tableau parametres sortie
 array('dolibarr'=>'xsd:string','mysql'=>'xsd:string','apache'=>'xsd:string'),

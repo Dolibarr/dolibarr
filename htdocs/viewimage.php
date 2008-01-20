@@ -17,20 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
 		\file       htdocs/viewimage.php
 		\brief      Wrapper permettant l'affichage de fichiers images Dolibarr
         \remarks    L'appel est viewimage.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
-		\version    $Revision$
+		\version    $Id$
 */
-
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
@@ -40,6 +34,9 @@ $type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
 $needmasteronly=false;
 if ($modulepart == 'companylogo') $needmasteronly=true;
 
+// This is to make Dolibarr working with Plesk
+set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+
 // Load master or main
 if ($needmasteronly)
 {
@@ -48,6 +45,10 @@ if ($needmasteronly)
 }
 else
 {
+	if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+	if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+	if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+	
 	// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
 	require("./main.inc.php");
 	// master.inc.php is included in main.inc.php
@@ -67,7 +68,7 @@ $original_file = eregi_replace('\.\.','',$original_file);
 $accessallowed=0;
 if ($modulepart)
 {
-    // On fait une vérification des droits et on définit le répertoire concerné
+    // On fait une vï¿½rification des droits et on dï¿½finit le rï¿½pertoire concernï¿½
 
     // Wrapping pour les photo utilisateurs
     if ($modulepart == 'companylogo')
@@ -279,14 +280,14 @@ if ($modulepart)
 }
 
 // Security:
-// Limite accès si droits non corrects
+// Limite accï¿½s si droits non corrects
 if (! $accessallowed)
 {
     accessforbidden();
 }
 
 // Security:
-// On interdit les remontées de repertoire ainsi que les pipe dans 
+// On interdit les remontï¿½es de repertoire ainsi que les pipe dans 
 // les noms de fichiers.
 if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 {
@@ -335,7 +336,7 @@ else
 		exit;
 	}
 
-	// Les drois sont ok et fichier trouvé
+	// Les drois sont ok et fichier trouvï¿½
 	if ($type)
 	{
 	  header('Content-type: '.$type);

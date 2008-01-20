@@ -17,20 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
    \file       htdocs/document.php
-   \brief      Wrapper permettant le téléchargement de fichier de données Dolibarr
+   \brief      Wrapper to allow download of data files
+   \version    $Id$
    \remarks    L'appel est document.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
-   \version    $Revision$
 */
-
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
@@ -40,6 +34,9 @@ $type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
 $needmasteronly=false;
 if ($modulepart == 'webcal') $needmasteronly=true;
 
+// This is to make Dolibarr working with Plesk
+set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+
 // Load master or main
 if ($needmasteronly)
 {
@@ -48,6 +45,10 @@ if ($needmasteronly)
 }
 else
 {
+	if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+	if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+	if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+	
 	// Pour autre que companylogo, on charge environnement + info issus de logon comme le user
 	require("./main.inc.php");
 	// master.inc.php is included in main.inc.php
@@ -62,7 +63,7 @@ $action = $_GET["action"];
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
 $urlsource = urldecode($_GET["urlsource"]);
-// Défini type (attachment=1 pour forcer popup 'enregistrer sous')
+// Dï¿½fini type (attachment=1 pour forcer popup 'enregistrer sous')
 $type = urldecode($_GET["type"]);
 $attachment = true;
 if (eregi('\.sql$',$original_file))     { $type='text/plain'; $attachment = true; }
@@ -76,7 +77,7 @@ if (eregi('\.tiff$',$original_file)) 	{ $type='image/tiff'; $attachment = true; 
 if (eregi('\.vcs$',$original_file))  	{ $type='text/calendar'; $attachment = true; }
 if (eregi('\.ics$',$original_file))  	{ $type='text/calendar'; $attachment = true; }
 
-// Suppression de la chaine de caractère ../ dans $original_file
+// Suppression de la chaine de caractï¿½re ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
 // find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
@@ -85,7 +86,7 @@ $accessallowed=0;
 $sqlprotectagainstexternals='';
 if ($modulepart)
 {
-    // On fait une vérification des droits et on définit le répertoire concern
+    // On fait une vï¿½rification des droits et on dï¿½finit le rï¿½pertoire concern
 
     // Wrapping pour les factures
     if ($modulepart == 'facture')
@@ -319,17 +320,17 @@ if ($modulepart)
     if ($modulepart == 'export')
     {
         // Aucun test necessaire car on force le rep de doanwload sur
-        // le rep export qui est propre à l'utilisateur
+        // le rep export qui est propre ï¿½ l'utilisateur
         $accessallowed=1;
         $original_file=$conf->export->dir_temp.'/'.$user->id.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
     }
     
-    // Wrapping pour l'éditeur wysiwyg
+    // Wrapping pour l'ï¿½diteur wysiwyg
     if ($modulepart == 'editor')
     {
         // Aucun test necessaire car on force le rep de download sur
-        // le rep export qui est propre à l'utilisateur
+        // le rep export qui est propre ï¿½ l'utilisateur
         $accessallowed=1;
         $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
@@ -371,14 +372,14 @@ if ($user->societe_id > 0)
 }
 
 // Security:
-// Limite accès si droits non corrects
+// Limite accï¿½s si droits non corrects
 if (! $accessallowed)
 {
     accessforbidden();
 }
 
 // Security:
-// On interdit les remontées de repertoire ainsi que les pipe dans 
+// On interdit les remontï¿½es de repertoire ainsi que les pipe dans 
 // les noms de fichiers.
 if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 {
@@ -430,12 +431,12 @@ else
 	}
 	
 	
-	// Les drois sont ok et fichier trouvé, on l'envoie
+	// Les drois sont ok et fichier trouvï¿½, on l'envoie
 	
 	if ($type) header('Content-type: '.$type);
 	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 	
-	// Ajout directives pour résoudre bug IE
+	// Ajout directives pour rï¿½soudre bug IE
 	header('Cache-Control: Public, must-revalidate');
 	header('Pragma: public');
 	 

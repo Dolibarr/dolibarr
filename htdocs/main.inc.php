@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
@@ -19,14 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/main.inc.php
-   \brief      Fichier de formatage generique des ecrans Dolibarr
-   \version    $Revision$   
+	\file       htdocs/main.inc.php
+	\ingroup	core
+	\brief      Fichier de formatage generique des ecrans Dolibarr
+	\version    $Id$   
 */
 
 // Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING est positionnee.
@@ -37,6 +36,7 @@ if (! empty($_SERVER['DOL_TUNING']))
     list($usec, $sec) = explode(" ", microtime());
     $micro_start_time=((float)$usec + (float)$sec);
 }
+
 
 // Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
 // (Sinon il faudrait a chaque POST, conditionner
@@ -83,6 +83,9 @@ foreach ($_POST as $key => $val)
 }
 // Fin filtre des GET et POST
 
+
+// This is to make Dolibarr working with Plesk
+set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("master.inc.php");
 

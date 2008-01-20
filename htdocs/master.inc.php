@@ -21,14 +21,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/master.inc.php
-   \brief      Fichier de preparation de l'environnement Dolibarr
-   \version    $Revision$
+   \brief      Prepare Dolibarr environment
+   \version    $Id$
 */
 
 define('DOL_VERSION','2.4-dev');
