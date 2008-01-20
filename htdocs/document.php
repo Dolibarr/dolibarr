@@ -63,7 +63,7 @@ $action = $_GET["action"];
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
 $urlsource = urldecode($_GET["urlsource"]);
-// D�fini type (attachment=1 pour forcer popup 'enregistrer sous')
+// Define type (attachment=1 to force popup 'save as')
 $type = urldecode($_GET["type"]);
 $attachment = true;
 if (eregi('\.sql$',$original_file))     { $type='text/plain'; $attachment = true; }
@@ -77,16 +77,17 @@ if (eregi('\.tiff$',$original_file)) 	{ $type='image/tiff'; $attachment = true; 
 if (eregi('\.vcs$',$original_file))  	{ $type='text/calendar'; $attachment = true; }
 if (eregi('\.ics$',$original_file))  	{ $type='text/calendar'; $attachment = true; }
 
-// Suppression de la chaine de caract�re ../ dans $original_file
+// Suppression de la chaine de caractere ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
 // find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
 
 $accessallowed=0;
+$encoding='ISO-8859-1';				// By default
 $sqlprotectagainstexternals='';
 if ($modulepart)
 {
-    // On fait une v�rification des droits et on d�finit le r�pertoire concern
+    // On fait une verification des droits et on definit le repertoire concerne
 
     // Wrapping pour les factures
     if ($modulepart == 'facture')
@@ -320,17 +321,17 @@ if ($modulepart)
     if ($modulepart == 'export')
     {
         // Aucun test necessaire car on force le rep de doanwload sur
-        // le rep export qui est propre � l'utilisateur
+        // le rep export qui est propre a l'utilisateur
         $accessallowed=1;
         $original_file=$conf->export->dir_temp.'/'.$user->id.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
     }
     
-    // Wrapping pour l'�diteur wysiwyg
+    // Wrapping pour l'editeur wysiwyg
     if ($modulepart == 'editor')
     {
         // Aucun test necessaire car on force le rep de download sur
-        // le rep export qui est propre � l'utilisateur
+        // le rep export qui est propre a l'utilisateur
         $accessallowed=1;
         $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
@@ -347,10 +348,11 @@ if ($modulepart)
 		$sqlprotectagainstexternals = '';
     }
 
-    // Wrapping pour les factures
+    // Wrapping for webcalexport
     if ($modulepart == 'webcal')
     {
         $accessallowed=1;
+        $encoding='UTF-8';
         $original_file=$conf->webcal->dir_temp.'/'.$original_file;
     }
 }
@@ -372,14 +374,14 @@ if ($user->societe_id > 0)
 }
 
 // Security:
-// Limite acc�s si droits non corrects
+// Limite acces si droits non corrects
 if (! $accessallowed)
 {
     accessforbidden();
 }
 
 // Security:
-// On interdit les remont�es de repertoire ainsi que les pipe dans 
+// On interdit les remontees de repertoire ainsi que les pipe dans 
 // les noms de fichiers.
 if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 {
@@ -431,12 +433,13 @@ else
 	}
 	
 	
-	// Les drois sont ok et fichier trouv�, on l'envoie
+	// Les drois sont ok et fichier trouve, on l'envoie
 	
-	if ($type) header('Content-type: '.$type);
+	if ($encoding)   header('Content-Encoding: '.$encoding);
+	if ($type)       header('Content-Type: '.$type);
 	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
 	
-	// Ajout directives pour r�soudre bug IE
+	// Ajout directives pour resoudre bug IE
 	header('Cache-Control: Public, must-revalidate');
 	header('Pragma: public');
 	 
