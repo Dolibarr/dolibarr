@@ -20,6 +20,7 @@ htdocs/document
 htdocs/documents
 htdocs/lolix
 htdocs/postnuke
+htdocs/rapport
 htdocs/telephonie
 htdocs/voyage
 htdocs/includes/jpgraph2
