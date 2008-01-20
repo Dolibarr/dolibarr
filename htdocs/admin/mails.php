@@ -54,8 +54,6 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     $_POST["MAIN_MAIL_EMAIL_FROM"]);
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",   $_POST["MAIN_DISABLE_ALL_MAILS"]);
 		
-	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
-	
 	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
