@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-        \defgroup   DroitPret     Module pr�t
-        \brief      Module pour g�rer le suivi des droits de pr�ts
+        \defgroup   DroitPret     Module pret
+		\version	$Id$
+        \brief      Module pour gerer le suivi des droits de prets
 */
 
 /**
@@ -42,7 +41,7 @@ class modDroitPret  extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
+    *   \param      DB      handler d'acces base
     */
   function modDroitPret($DB)
   {

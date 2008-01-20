@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       dev/skeletons/skeleton_script.php
-        \ingroup    core
-        \brief      Example for scripts
-        \version    $Revision$
+        \ingroup    unknown
+        \brief      This file is an example for a command line script
+        \version    $Id$
+		\author		Put author name here
+		\remarks	Put here some comments
 */
 
 // Test if batch mode

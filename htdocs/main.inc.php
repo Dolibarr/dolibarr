@@ -215,7 +215,7 @@ else
 	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifies
 	$login=$_SESSION["dol_login"];
 	$resultFetchUser=$user->fetch($login);
-	dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
+	dolibarr_syslog("This is an already logged session. _SESSION['dol_login']=".$login);
 	if ($resultFetchUser <= 0)
 	{
 		// Account has been removed after login
@@ -288,11 +288,11 @@ if ($user->admin)
  * Overwrite configs global par configs perso
  * ------------------------------------------
  */
-if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT) && $user->conf->MAIN_SIZE_LISTE_LIMIT > 0)
+if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	// Can be 0
 {
     $conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;
 }
-if (isset($user->conf->PRODUIT_LIMIT_SIZE))
+if (isset($user->conf->PRODUIT_LIMIT_SIZE))		// Can be 0
 {
     $conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
 }
@@ -384,7 +384,7 @@ if ($user->statut < 1)
 {
   // Si non actif, on delogue le user
   $langs->load("other");
-  dolibarr_syslog ("Authentification ko (en mode Pear Base Dolibarr) car login desactive");
+  dolibarr_syslog ("Authentification ko car login desactive");
   accessforbidden($langs->trans("ErrorLoginDisabled"));
   exit;
 }

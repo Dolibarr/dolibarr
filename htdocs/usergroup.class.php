@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -37,13 +36,13 @@ if ($conf->ldap->enabled) require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php")
 
 class UserGroup
 {
-    var $db;
+    var $db;			// Database handler
 
-    var $id;
-    var $nom;
-    var $note;
-    var $datec;
-    var $datem;
+    var $id;			// Group id
+    var $nom;			// Name of group
+    var $note;			// Note on group
+    var $datec;			// Creation date of group
+    var $datem;			// Modification date of group
 
 
   /**

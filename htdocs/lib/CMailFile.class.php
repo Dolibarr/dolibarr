@@ -18,31 +18,26 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  *
- * $Id$
- *
  * Lots of code inspired from Dan Potter's CMailFile class
- *
  * If chunk_split does not works on your system, change the call to chunk_split
  * to _chunk_split 
  */
 
 /**
-        \file       htdocs/lib/CMailFile.class.php
-        \brief      Classe permettant d'envoyer des mail avec attachements
-        \author     Dan Potter.
-        \author	    Eric Seigne
-        \author	    Laurent Destailleur.
-        \version    $Revision$
+*       \file       htdocs/lib/CMailFile.class.php
+*       \brief      Fichier de la classe permettant d'envoyer des mail avec attachements
+*		\version    $Id$
+*       \author     Dan Potter.
+*       \author	    Eric Seigne
+*       \author	    Laurent Destailleur.
 */
 
 /**
-        \class      CMailFile
-        \brief      Classe d'envoi de mails et pi�ces jointes. Encapsule mail() avec d'�ventuel attachements.
-        \remarks    Usage:
-        \remarks    $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc);
-        \remarks    $mailfile->sendfile();
+*       \class      CMailFile
+*       \brief      Classe d'envoi de mails et pieces jointes. Encapsule mail() avec d'eventuels attachements.
+*       \remarks    Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc);
+*       \remarks           $mailfile->sendfile();
 */
-
 class CMailFile
 {
     var $subject;
@@ -418,7 +413,7 @@ class CMailFile
 
 
 /**
-        \brief      Renvoie une adresse accept�e par le serveur SMTP
+        \brief      Renvoie une adresse acceptee par le serveur SMTP
         \param      adresses		Exemple: 'John Doe <john@doe.com>' ou 'john@doe.com'
         \param		format			0=Auto, 1=emails avec <>, 2=emails sans <>
         \return	    string			Renvoi: Si format 1: '<john@doe.com>' ou 'John Doe <john@doe.com>'
@@ -428,7 +423,7 @@ function getValidAddress($adresses,$format)
 {
 	global $conf;
 	
-	$ret="";
+	$ret='';
 	
 	$arrayaddress=split(',',$adresses);
 

@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-        \defgroup   label         Module �tiquettes
-        \brief      Module pour g�rer l'impression des �tiquettes
+        \defgroup   label         Module Etiquettes
+		\version	$Id$
+        \brief      Module pour gerer les formats d'impression des etiquettes
 */
 
 /**
@@ -42,7 +41,7 @@ class modLabel extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
+    *   \param      DB      handler d'acces base
     */
   function modLabel($DB)
   {
