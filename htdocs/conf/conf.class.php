@@ -154,9 +154,6 @@ class Conf
 		// Module agenda
 		$this->agenda->enabled=defined('MAIN_MODULE_AGENDA')?MAIN_MODULE_AGENDA:0;
 
-		// Module bookmark4u
-		$this->bookmark4u->enabled=defined('MAIN_MODULE_BOOKMARK4U')?MAIN_MODULE_BOOKMARK4U:0;
-		
 		// Module bookmark
 		$this->bookmark->enabled=defined('MAIN_MODULE_BOOKMARK')?MAIN_MODULE_BOOKMARK:0;
 

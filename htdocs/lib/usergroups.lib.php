@@ -63,8 +63,8 @@ function user_prepare_head($user)
     if ($conf->bookmark4u->enabled)
     {
         $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$user->id;
-        $head[$h][1] = $langs->trans("Bookmark4u");
-	    $head[$h][2] = 'bookmark4u';
+        $head[$h][1] = $langs->trans("Other");
+	    $head[$h][2] = 'other';
         $h++;
     }
 

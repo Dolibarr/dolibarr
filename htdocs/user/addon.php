@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -27,33 +26,12 @@
 */
 
 require("./pre.inc.php");
-require_once DOL_DOCUMENT_ROOT."/bookmark4u.class.php";
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 $langs->load("users");
 
 $form = new Form($db);
 
-if ($_GET["action"] == 'create_bk4u_login')
-{
-    $edituser = new User($db, $_GET["id"]);
-    $edituser->fetch($_GET["id"]);
-    
-    $bk4u = new Bookmark4u($db);
-    $bk4u->get_bk4u_uid($fuser);
-    $result=$bk4u->create_account_from_user($edituser);
-    
-    if ($result > 0)
-    {
-        Header("Location: addon.php?id=".$_GET["id"]);
-        exit;
-    }
-    else
-    {
-        dolibarr_print_error($db,$bk4u->error);
-        exit;
-    }
-}
 
 llxHeader("","Addon Utilisateur");
 
@@ -69,16 +47,13 @@ if ($_GET["id"])
     $fuser = new User($db, $_GET["id"]);
     $fuser->fetch();
 
-    $bk4u = new Bookmark4u($db);
-    $bk4u->get_bk4u_uid($fuser);
-
 
 	/*
 	 * Affichage onglets
 	 */
 	$head = user_prepare_head($fuser);
 
-	dolibarr_fiche_head($head, 'bookmark4u', $langs->trans("User"));
+	dolibarr_fiche_head($head, 'other', $langs->trans("User"));
 
 
     /*
@@ -99,24 +74,8 @@ if ($_GET["id"])
     print '<td class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
     print "</tr>\n";
 
-
-    print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Login Bookmark4u").'</td>';
-    print '<td class="valeur">';
-
-    if ($bk4u->uid == 0)
-    {
-        print $langs->trans("NoLogin");
-    }
-    else
-    {
-        $bk4u->get_bk4u_login();
-        print $bk4u->login;
-    }
-
-    print '</td>';
-    print "</tr>\n";
-
-
+	//...
+	
     print "</table>\n";
 
     print "</div>\n";
@@ -130,7 +89,7 @@ if ($_GET["id"])
 
     if ($user->admin)
     {
-        print '<a class="butAction" href="addon.php?id='.$fuser->id.'&amp;action=create_bk4u_login">'.$langs->trans("Créer login Bookmark4u").'</a>';
+//        print '<a class="butAction" href="addon.php?id='.$fuser->id.'&amp;action=create_bk4u_login">'.$langs->trans("Créer login Bookmark4u").'</a>';
     }
 
     print "</div>\n";
