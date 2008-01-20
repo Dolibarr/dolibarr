@@ -20,7 +20,7 @@
  */
 
 /**
-		\file       htdocs/compta/paiement/cheque/resimecheque.class.php
+		\file       htdocs/compta/paiement/cheque/remisecheque.class.php
 		\ingroup    compta
 		\brief      Fichier de la classe des bordereau de remise de cheque
 		\version    $Revision$
@@ -230,9 +230,8 @@ class RemiseCheque extends CommonObject
   /**
      \brief  Supprime la remise en base
      \param  user utilisateur qui effectue l'operation
-     \param  account_id Compte bancaire concerne
    */	 
-  function Delete()
+  function Delete($user='')
   {
     $this->errno = 0;
     $this->db->begin();
@@ -277,10 +276,10 @@ class RemiseCheque extends CommonObject
     
     return $this->errno;
   }
+  
   /**
      \brief  Supprime la remise en base
-     \param  user utilisateur qui effectue l'operation
-     \param  account_id Compte bancaire concerne
+     \param  user 	Utilisateur qui effectue l'operation
    */	 
   function Validate($user)
   {
@@ -389,7 +388,7 @@ class RemiseCheque extends CommonObject
      \brief  	Génère le fichier PDF
      \param 	model 		Nom du modele
      \return 	int			<0 si KO, 0 si OK
-     \todo 		Finir la gestion multi modèle
+     \TODO 		Finir la gestion multi modèle
    */
   function GeneratePdf($model='Blochet')
   {

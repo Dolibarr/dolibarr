@@ -80,8 +80,9 @@ class pdf_huitre extends ModelePDFFactures
 
   /**
    *		\brief      Fonction générant la facture sur le disque
-   *		\param	    fac		Objet facture à générer (ou id si ancienne methode)
-   *		\return	    int     1=ok, 0=ko
+   *		\param	    fac				Objet facture à générer (ou id si ancienne methode)
+   *		\param		outputlangs		Lang object for output language
+   *		\return	    int     		1=ok, 0=ko
    */
   function write_file($fac,$outputlangs='')
   {

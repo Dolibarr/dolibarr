@@ -20,7 +20,7 @@
  */
 
 /**
-        \file       htdocs/includes/menus/barre_top/default.php
+        \file       htdocs/includes/menus/barre_top/rodolphe.php
         \brief      Gestionnaire par d�faut du menu du haut
         
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:

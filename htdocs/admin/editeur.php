@@ -20,7 +20,7 @@
  */
 
 /**
-   \file       htdocs/admin/adherent.php
+   \file       htdocs/admin/editeur.php
    \ingroup    editeur
    \brief      Page d'administration/configuration du module Editeur
    \version    $Revision$

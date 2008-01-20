@@ -263,8 +263,9 @@ class Translate {
      *              Les paramètres de cette méthode peuvent contenir de balises HTML.
      *  \param      key         clé de chaine a traduire
      *  \param      param1      chaine de param1
-     *  \param      param2      chaine de param1
-     *  \param      param3      chaine de param1
+     *  \param      param2      chaine de param2
+     *  \param      param3      chaine de param3
+     *  \param      param4      chaine de param4
      *	\param		maxsize		taille max
      *  \return     string      chaine traduite et codé en HTML
      */

@@ -18,7 +18,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -78,8 +77,9 @@ class pdf_propale_rouge extends ModelePDFPropales
 
 	/**
 	    \brief      Fonction générant la propale sur le disque
-	    \param	    propale		Objet propal
-		\return	    int     	1=ok, 0=ko
+	    \param	    propale			Objet propal
+		\param		outputlangs		Lang object for output language
+		\return	    int     		1=ok, 0=ko
 	*/
 	function write_file($propale,$outputlangs='')
 	{

@@ -197,11 +197,11 @@ class vCard {
 		$this->properties["LABEL;$type;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($label);
 	}
 
-/**
-		\brief mise en forme de l'email
-		\param	address
-*/
-
+	/**
+		\brief 	Mise en forme de l'email
+		\param	address		EMail
+		\param	type		Vcard type
+	*/
 	function setEmail($address,$type="internet,pref") {
 		$this->properties["EMAIL;TYPE=".$type] = $address;
 	}

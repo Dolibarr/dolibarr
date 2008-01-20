@@ -20,7 +20,7 @@
 
 /**
 	    \file       htdocs/includes/menus/barre_top/auguria_backoffice.php
-		\brief      Gestionnaire nomm� Auguria du menu du haut
+		\brief      Gestionnaire nomme Auguria du menu du haut
 		\version    $Revision$
 
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:

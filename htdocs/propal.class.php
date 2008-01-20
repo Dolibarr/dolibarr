@@ -126,7 +126,6 @@ class Propal extends CommonObject
 	 * 	\param     	idproduct       	Id du produit à ajouter
 	 * 	\param     	qty             	Quantité
 	 * 	\param     	remise_percent  	Remise relative effectuée sur le produit
-	 * 	\return    	void
 	 *	\remarks	$this->client doit etre chargé
 	 *	\TODO	Remplacer les appels a cette fonction par generation objet Ligne 
 	 *			inséré dans tableau $this->products
@@ -369,11 +368,11 @@ class Propal extends CommonObject
 
   /**
    *    \brief      Mise à jour d'une ligne de produit
-   *    \param      id              	Id de la ligne
+   *    \param      rowid              	Id de la ligne
    *    \param      pu		        	Prix unitaire (HT ou TTC selon price_base_type)
    *    \param      qty             	Quantité
    *    \param      remise_percent  	Remise effectuée sur le produit
-   *    \param      tva_tx          	Taux de TVA
+   *    \param      txtva	          	Taux de TVA
    *    \param      desc            	Description
    *	\param		price_base_type		HT ou TTC
    *    \return     int             	0 en cas de succès
@@ -1725,8 +1724,8 @@ class Propal extends CommonObject
 
 	/**
 	 *   \brief      Change le mode de réglement
-	 *   \param      mode        Id du nouveau mode
-	 *   \return     int         >0 si ok, <0 si ko
+	 *   \param      mode_reglement     Id du nouveau mode
+	 *   \return     int         		>0 si ok, <0 si ko
 	 */
 	function mode_reglement($mode_reglement_id)
 	{
@@ -2212,7 +2211,7 @@ class Propal extends CommonObject
 		\brief    	Renvoie nom clicable (avec eventuellement le picto)
 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 		\param		option			Sur quoi pointe le lien
-        \param      get_param       Parametres ajouté à l'url
+        \param      get_params		Parametres added to url
 		\return		string			Chaine avec URL
 	*/
 	function getNomUrl($withpicto=0,$option='', $get_params='')

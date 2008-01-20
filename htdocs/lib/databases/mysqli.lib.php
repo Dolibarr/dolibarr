@@ -23,7 +23,7 @@
  */
 
 /**
-        \file       htdocs/lib/mysqli.lib.php
+        \file       htdocs/lib/databases/mysqli.lib.php
         \brief      Fichier de la classe permettant de gérer une base mysql
 */
 

@@ -16,11 +16,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
-/**	    \file       htdocs/includes/menus/barre_left/default.php
+/**	    \file       htdocs/includes/menus/barre_left/rodolphe.php
 		\brief      Gestionnaire par défaut du menu de gauche
 		\version    $Revision$
 

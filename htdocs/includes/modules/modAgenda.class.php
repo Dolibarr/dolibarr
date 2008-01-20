@@ -23,8 +23,8 @@
  */
 
 /**
-        \defgroup   adherent     Module adherents
-        \brief      Module pour gerer les adherents d'une association
+        \defgroup   agenda     Module agenda
+        \brief      Module pour gerer l'agenda et actions
 */
 
 /**

@@ -21,7 +21,7 @@
  */
 
 /**
-	    \file       htdocs/boutique/critiques/fiche.php
+	    \file       htdocs/boutique/critiques/index.php
 		\ingroup    boutique
 		\brief      Page gestion critiques OSCommerce
 		\version    $Revision$

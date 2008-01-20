@@ -21,7 +21,7 @@
  */
 
 /**
-   \file       docs/class/courrier-droit-editeur.class.php
+   \file       htdocs/docs/document.class.php
    \ingroup    editeurs
    \brief      Classe de generation des courriers pour les editeurs
 */

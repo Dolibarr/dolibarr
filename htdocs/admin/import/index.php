@@ -20,7 +20,7 @@
  */
 
 /**
-        \file       htdocs/imports/index.php
+        \file       htdocs/admin/imports/index.php
         \ingroup    core
         \brief      Page accueil de la zone import
         \version    $Revision$

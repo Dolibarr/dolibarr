@@ -181,7 +181,7 @@ class Webcal {
 			\param		type			'event' or 'journal'
 			\param		cachedelay		Do not rebuild file if date older than cachedelay seconds	
 			\param		filename		Force filename
-			\param		filter			Array of filters
+			\param		filters			Array of filters
     		\return     int     		<0 if error, nb of events in new file if ok
     */
 	function build_calfile($format,$type,$cachedelay,$filename,$filters)
