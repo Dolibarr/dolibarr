@@ -250,6 +250,8 @@ class FormFile
 		      }
 		      
 		      $headershown=1;
+		      
+		      $html = new Form($db);
 	  
 	        print '<form action="'.$urlsource.'#builddoc" method="post">';
 	        print '<input type="hidden" name="action" value="builddoc">';
@@ -260,13 +262,13 @@ class FormFile
           print '<tr '.$bc[$var].'>';
           print '<td>'.$langs->trans('Model').'</td>';
           print '<td align="center">';
-          $this->select_array('model',$modellist,$modelselected,0,0,1);
+          $html->select_array('model',$modellist,$modelselected,0,0,1);
           $texte=$langs->trans('Generate');
           print '</td>';
           print '<td align="center">';
           if($conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
           {
-            $this->select_lang($langs->getDefaultLang());
+            $html->select_lang($langs->getDefaultLang());
           }
           else
           {
