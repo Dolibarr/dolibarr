@@ -20,11 +20,10 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
-	    \file       htdocs/includes/modules/societe/modules_societe.php
+	    \file       htdocs/includes/modules/societe/modules_societe.class.php
 		\ingroup    societe
 		\brief      Fichier contenant la classe mère de module de generation societes
 		\version    $Revision$

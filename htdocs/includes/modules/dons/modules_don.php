@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
@@ -18,16 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/includes/modules/dons/modules_don.php
 		\ingroup    don
 		\brief      Fichier contenant la classe mère de generation des dons
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.inc.php');
@@ -40,14 +37,10 @@ require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 	    \class      ModeleDon
 		\brief      Classe mère des modèles de dons
 */
-
 class ModeleDon extends FPDF
 {
     var $error='';
 
-   /** 
-    *       \brief      Renvoi le dernier message d'erreur de création de facture
-    */
     function pdferror()
     {
         return $this->error;
@@ -88,10 +81,9 @@ class ModeleDon extends FPDF
 
 
 /**
-	\class ModeleNumRefDons
-	\brief  Classe mère des modèles de numérotation des références de facture
+	\class 		ModeleNumRefDons
+	\brief  	Classe mère des modèles de numérotation des références des dons
 */
-
 class ModeleNumRefDons
 {
     var $error='';
