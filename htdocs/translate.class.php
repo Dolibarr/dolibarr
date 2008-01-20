@@ -154,11 +154,11 @@ class Translate {
      */
     function Load($domain,$alt=0)
     {
-        if (isset($this->tab_loaded[$domain]) && $this->tab_loaded[$domain]) { return; }    // Le fichier de ce domaine est deja chargé
+        if (! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja chargé
         
         // Repertoire de traduction
         $scandir = $this->dir."/".$this->defaultlang;
-        $file_lang =  $scandir . "/$domain.lang";
+        $file_lang =  $scandir . "/".$domain.".lang";
         $filelangexists=is_file($file_lang);
 
         if ($alt || ! $filelangexists)
@@ -176,49 +176,72 @@ class Translate {
         
         if ($filelangexists)
         {
-			//dolibarr_syslog("Translate::load open file ".$file_lang);
-            if($fp = @fopen($file_lang,"rt"))
-            {
-                $finded = 0;
-                while (($ligne = fgets($fp,4096)) && ($finded == 0))
-                {
-                    if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
-                    {
-                        $tab=split('=',$ligne,2);
-                        $key=trim($tab[0]); $value='';
-                        //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-                        if (! $this->getTransFromTab($key))
-                        {
-	                        if (isset($tab[1])) $value=trim(ereg_replace('\\\n',"\n",$tab[1]));
-							
-							if (eregi('^CHARSET$',$key))
-							{
-								// On est tombe sur une balise qui declare le format du fichier lu
-								$this->charset_inputfile=strtoupper($value);
-								//print 'File '.$file_lang.' has format '.$this->charset_inputfile.'<br>';
-							}
-							else
-							{
-								// On stocke toujours dans le tableau Tab en ISO
-	                        	if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
-	                        	//if ($this->charset_inputfile == 'ISO-8859-1') $value=$value;
+			//dolibarr_syslog("Translate::Load read file ".$file_lang);
 
-								$this->setTransFromTab($key,$value);
-							}
-                        }
-                    }
-                }
-                fclose($fp);
+			// Enable cache of lang file in session (faster but need more memory)
+			// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
+			$enablelangcacheinsession=false;
+			
+			if ($enablelangcacheinsession && isset($_SESSION['lang_'.$domain]))
+			{
+				foreach($_SESSION['lang_'.$domain] as $key => $value)
+				{
+					$this->tab_translate[$key]=$value;
+					$this->tab_loaded[$domain]=1;           // Marque ce fichier comme chargé
+				}
+			}
+			else
+			{
+	            if ($fp = @fopen($file_lang,"rt"))
+	            {
+					if ($enablelangcacheinsession) $tabtranslatedomain=array();	// To save lang in session
+	                $finded = 0;
+	                while (($ligne = fgets($fp,4096)) && ($finded == 0))
+	                {
+	                    if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
+	                    {
+	                        $tab=split('=',$ligne,2);
+	                        $key=trim($tab[0]); $value='';
+	                        //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
+	                        //if (! $this->getTransFromTab($key))
+	                        if (! $this->tab_translate[$key] && isset($tab[1]))
+	                        {
+		                        $value=trim(ereg_replace('\\\n',"\n",$tab[1]));
+								
+								if (eregi('^CHARSET$',$key))
+								{
+									// On est tombe sur une balise qui declare le format du fichier lu
+									$this->charset_inputfile=strtoupper($value);
+									//print 'File '.$file_lang.' has format '.$this->charset_inputfile.'<br>';
+								}
+								else
+								{
+									// On stocke toujours dans le tableau Tab en ISO
+		                        	if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
+		                        	//if ($this->charset_inputfile == 'ISO-8859-1') $value=$value;
 
-                // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
-                if (! $alt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
-                {
-                    dolibarr_syslog("translate::load loading alternate translation file");
-                    $this->load($domain,1);
-                }
+									//$this->setTransFromTab($key,$value);
+									$this->tab_translate[$key]=$value;
+									if ($enablelangcacheinsession) $tabtranslatedomain[$key]=$value;	// To save lang in session
+								}
+	                        }
+	                    }
+	                }
+					fclose($fp);
 
-                $this->tab_loaded[$domain]=1;           // Marque ce fichier comme chargé
-            }
+	                // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
+	                if (! $alt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
+	                {
+	                    dolibarr_syslog("Translate::Load loading alternate translation file");
+	                    $this->load($domain,1);
+	                }
+
+	                $this->tab_loaded[$domain]=1;           // Marque ce fichier comme chargé
+
+					// To save lang in session
+					if ($enablelangcacheinsession && sizeof($tabtranslatedomain)) $_SESSION['lang_'.$domain]=$tabtranslatedomain;
+	            }
+			}
         }
     }
 
