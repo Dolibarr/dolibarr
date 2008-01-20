@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
  
 /**
         \file       htdocs/contrat/fiche.php
         \ingroup    contrat
         \brief      Fiche contrat
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -378,8 +376,9 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 
 llxHeader('',$langs->trans("ContractCard"),"Contrat");
 
-$html = new Form($db);
+$form = new Form($db);
 $contratlignestatic=new ContratLigne($db);
+
 
 /*********************************************************************
  *
@@ -430,71 +429,30 @@ if ($_GET["action"] == 'create')
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			$absolute_discount=$soc->getAvailableDiscounts();
 			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';
     
             // Commercial suivi
             print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</td><td>';
-            print '<select name="commercial_suivi_id">';
-            print '<option value="-1">&nbsp;</option>';
-
-            $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user";
-            $sql.= " ORDER BY name ";
-            $resql=$db->query( $sql);
-            if ($resql)
-            {
-                $num = $db->num_rows($resql);
-                if ( $num > 0 )
-                {
-                    $i = 0;
-                    while ($i < $num)
-                    {
-                        $row = $db->fetch_row($resql);
-                        print '<option value="'.$row[0].'">'.$row[1] . " " . $row[2].'</option>';
-                        $i++;
-                    }
-                }
-                $db->free($resql);
-
-            }
-            print '</select></td></tr>';
+			print $form->select_users('','commercial_suivi_id',1,'');
+            print '</td></tr>';
 
             // Commercial signature
             print '<tr><td width="20%" nowrap>'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</td><td>';
-            print '<select name="commercial_signature_id">';
-            print '<option value="-1">&nbsp;</option>';
-            $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user";
-            $sql.= " ORDER BY name";
-            $resql=$db->query( $sql);
-            if ($resql)
-            {
-                $num = $db->num_rows($resql);
-                if ( $num > 0 )
-                {
-                    $i = 0;
-                    while ($i < $num)
-                    {
-                        $row = $db->fetch_row($resql);
-                        print '<option value="'.$row[0].'">'.$row[1] . " " . $row[2].'</option>';
-                        $i++;
-                    }
-                }
-                $db->free($resql);
-
-            }
-            print '</select></td></tr>';
+			print $form->select_users('','commercial_signature_id',1,'');
+            print '</td></tr>';
 
             print '<tr><td>'.$langs->trans("Date").'</td><td>';
-            $html->select_date('','','','','',"contrat");
+            $form->select_date('','','','','',"contrat");
             print "</td></tr>";
 
             if ($conf->projet->enabled)
             {
                 print '<tr><td>'.$langs->trans("Project").'</td><td>';
                 $proj = new Project($db);
-                $html->select_array("projetid",$proj->liste_array($soc->id),0,1);
+                $form->select_array("projetid",$proj->liste_array($soc->id),0,1);
                 print "</td></tr>";
             }
  
@@ -632,7 +590,7 @@ else
          */
         if ($_GET["action"] == 'delete')
         {
-            $html->form_confirm("fiche.php?id=$id",$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete");
+            $form->form_confirm("fiche.php?id=$id",$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete");
             print '<br>';
         }
 
@@ -642,7 +600,7 @@ else
         if ($_GET["action"] == 'valid')
         {
             //$numfa = contrat_get_num($soc);
-            $html->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid");
+            $form->form_confirm("fiche.php?id=$id",$langs->trans("ValidateAContract"),$langs->trans("ConfirmValidateContract"),"confirm_valid");
             print '<br>';
         }
 
@@ -651,7 +609,7 @@ else
          */
         if ($_GET["action"] == 'close')
         {
-            $html->form_confirm("fiche.php?id=$id",$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close");
+            $form->form_confirm("fiche.php?id=$id",$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close");
             print '<br>';
         }
 
@@ -708,11 +666,11 @@ else
             print '</td><td colspan="3">';
             if ($_GET["action"] == "classer")
             {
-                $html->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_projet,"projetid");
+                $form->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_projet,"projetid");
             }
             else
             {
-                $html->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_projet,"none");
+                $form->form_project("fiche.php?id=$id",$contrat->socid,$contrat->fk_projet,"none");
             }
             print "</td></tr>";
         }
@@ -896,7 +854,7 @@ else
                     }
                     print '<textarea name="eldesc" cols="70" rows="1">'.$objp->description.'</textarea></td>';
                     print '<td align="right">';
-                    print $html->select_tva("eltva_tx",$objp->tva_tx,$mysoc,$contrat->societe);
+                    print $form->select_tva("eltva_tx",$objp->tva_tx,$mysoc,$contrat->societe);
                     print '</td>';
                     print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
@@ -904,23 +862,23 @@ else
                     print '<td align="center" colspan="3" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
-                    // Ligne dates pr�vues
+                    // Ligne dates prevues
                     print "<tr $bc[$var]>";
                     print '<td colspan="5">';
                     print $langs->trans("DateStartPlanned").' ';
-                    $html->select_date($objp->date_debut,"date_start_update",0,0,($objp->date_debut>0?0:1),"update");
+                    $form->select_date($objp->date_debut,"date_start_update",0,0,($objp->date_debut>0?0:1),"update");
                     print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-                    $html->select_date($objp->date_fin,"date_end_update",0,0,($objp->date_fin>0?0:1),"update");
+                    $form->select_date($objp->date_fin,"date_end_update",0,0,($objp->date_fin>0?0:1),"update");
                     if ($objp->statut >= 4)
                     {
                         print '<br>';
                         print $langs->trans("DateStartReal").' ';
-                        $html->select_date($objp->date_debut_reelle,"date_start_real_update",0,0,($objp->date_debut_reelle>0?0:1),"update");
+                        $form->select_date($objp->date_debut_reelle,"date_start_real_update",0,0,($objp->date_debut_reelle>0?0:1),"update");
                         print ' &nbsp; ';
                         if ($objp->statut == 5)
                         {
                             print $langs->trans("DateEndReal").' ';
-                            $html->select_date($objp->date_fin_reelle,"date_end_real_update",0,0,($objp->date_fin_reelle>0?0:1),"update");
+                            $form->select_date($objp->date_fin_reelle,"date_end_real_update",0,0,($objp->date_fin_reelle>0?0:1),"update");
                         }
                     }
                     print '</td>';
@@ -955,7 +913,7 @@ else
 
             $var=false;
 
-            // Service sur produit pr�d�fini
+            // Service sur produit predefini
             print '<form name="addligne" action="fiche.php?id='.$id.'" method="post">';
             print '<input type="hidden" name="action" value="addligne">';
             print '<input type="hidden" name="mode" value="predefined">';
@@ -965,9 +923,9 @@ else
             print '<td colspan="3">';
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES == 1)
-				$html->select_produits('','p_idprod','',$conf->produit->limit_size,$contrat->societe->price_level);
+				$form->select_produits('','p_idprod','',$conf->produit->limit_size,$contrat->societe->price_level);
 			else
-            	$html->select_produits('','p_idprod','',$conf->produit->limit_size);
+            	$form->select_produits('','p_idprod','',$conf->produit->limit_size);
             if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
             print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea>';
             print '</td>';
@@ -980,9 +938,9 @@ else
             print "<tr $bc[$var]>";
             print '<td colspan="8">';
             print $langs->trans("DateStartPlanned").' ';
-            $html->select_date('',"date_start",0,0,1,"addligne");
+            $form->select_date('',"date_start",0,0,1,"addligne");
             print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-            $html->select_date('',"date_end",0,0,1,"addligne");
+            $form->select_date('',"date_end",0,0,1,"addligne");
             print '</td>';
             print '</tr>';
             
@@ -1000,7 +958,7 @@ else
             print '<td><textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
 
             print '<td>';
-            $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,$contrat->societe);
+            $form->select_tva("tva_tx",$conf->defaulttx,$mysoc,$contrat->societe);
             print '</td>';
             print '<td align="right"><input type="text" class="flat" size="4" name="pu" value=""></td>';
             print '<td align="center"><input type="text" class="flat" size="2" name="pqty" value="1"></td>';
@@ -1012,9 +970,9 @@ else
             print "<tr $bc[$var]>";
             print '<td colspan="8">';
             print $langs->trans("DateStartPlanned").' ';
-            $html->select_date('',"date_start_sl",0,0,1,"addligne_sl");
+            $form->select_date('',"date_start_sl",0,0,1,"addligne_sl");
             print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-            $html->select_date('',"date_end_sl",0,0,1,"addligne_sl");
+            $form->select_date('',"date_end_sl",0,0,1,"addligne_sl");
             print '</td>';
             print '</tr>';
             
