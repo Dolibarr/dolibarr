@@ -4,3 +4,4 @@ dolibarr-*.zip
 dolibarr-*.rpm
 dolibarr-*.deb
 makepack-google.conf
+module_google-*.tgz
