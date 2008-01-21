@@ -156,6 +156,45 @@ class FormAdmin
 		print '</select>';
     }
 
+	
+    /**
+     *    \brief      Retourne la liste déroulante des menus disponibles (eldy)
+     *    \param      selected        Menu pré-sélectionnée
+     *    \param      htmlname        Nom de la zone select
+     */
+    function select_timezone($selected='',$htmlname)
+    {
+		global $langs,$conf;
+    
+        print '<select class="flat" name="'.$htmlname.'">';
+		print '<option value="-1">&nbsp;</option>';
+		print '<option value="Pacific/Midway">GMT-11:00</option>';
+		print '<option value="Pacific/Fakaofo">GMT-10:00</option>';
+		print '<option value="America/Anchorage">GMT-09:00</option>';
+		print '<option value="America/Los_Angeles">GMT-08:00</option>';
+		print '<option value="America/Dawson_Creek">GMT-07:00</option>';
+		print '<option value="America/Chicago">GMT-06:00</option>';
+		print '<option value="America/Bogota">GMT-05:00</option>';
+		print '<option value="America/Anguilla">GMT-04:00</option>';
+		print '<option value="America/Araguaina">GMT-03:00</option>';
+		print '<option value="America/Noronha">GMT-02:00</option>';
+		print '<option value="Atlantic/Azores">GMT-01:00</option>';
+		print '<option value="Africa/Abidjan">GMT+00:00</option>';
+		print '<option value="Europe/Paris">GMT+01:00</option>';
+		print '<option value="Europe/Helsinki">GMT+02:00</option>';
+		print '<option value="Europe/Moscow">GMT+03:00</option>';
+		print '<option value="Asia/Dubai">GMT+04:00</option>';
+		print '<option value="Asia/Karachi">GMT+05:00</option>';
+		print '<option value="Indian/Chagos">GMT+06:00</option>';
+		print '<option value="Asia/Jakarta">GMT+07:00</option>';
+		print '<option value="Asia/Hong_Kong">GMT+08:00</option>';
+		print '<option value="Asia/Tokyo">GMT+09:00</option>';
+		print '<option value="Australia/Sydney">GMT+10:00</option>';
+		print '<option value="Pacific/Noumea">GMT+11:00</option>';
+		print '<option value="Pacific/Auckland">GMT+12:00</option>';
+		print '<option value="Pacific/Enderbury">GMT+13:00</option>';
+		print '</select>';
+	}
 }
 
 ?>
