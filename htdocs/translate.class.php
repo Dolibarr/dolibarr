@@ -22,26 +22,25 @@
     	\file       htdocs/translate.class.php
 		\brief      Fichier de la classe de traduction
 		\author	    Laurent Destailleur
-		\version    $Revision$
+		\version    $Id$
 */
 
 
-/** 
+/**
         \class      Translate
-		\brief      Classe permettant de gérer les traductions
+		\brief      Class to manage translations
 */
-
 class Translate {
 
     var $dir;
     var $origlang;					// Langue origine
     var $defaultlang;				// Langue courante en vigueur de l'utilisateur
 
-    var $tab_loaded=array();		// Tableau pour signaler les fichiers deja chargés
+    var $tab_loaded=array();		// Tableau pour signaler les fichiers deja charges
     var $tab_translate=array();		// Tableau des traductions
 
 	var $charset_inputfile='ISO-8859-1';	// Codage du contenu du fichier langue
-	var $charset_output='ISO-8859-1';		// Codage par defaut de la sortie de la méthode trans
+	var $charset_output='ISO-8859-1';		// Codage par defaut de la sortie de la methode trans
 	
 
     /**
@@ -61,9 +60,9 @@ class Translate {
 
 
 	/**
-	 *	\brief		Renvoie la chaine traduite pour une clé donnée.
-	 *				Le tableau des traductions doit avoir été chargé.
-	 *	\param		key			Clé de traduction
+	 *	\brief		Renvoie la chaine traduite pour une clï¿½ donnï¿½e.
+	 *				Le tableau des traductions doit avoir ï¿½tï¿½ chargï¿½.
+	 *	\param		key			Clï¿½ de traduction
 	 *	\return		string		Chaine de traduction
 	 */
 	function getTransFromTab($key)
@@ -79,8 +78,8 @@ class Translate {
 	}
 
 	/**
-	 *	\brief		Positionne la chaine traduite pour une clé donnée.
-	 *	\param		key			Clé de traduction
+	 *	\brief		Positionne la chaine traduite pour une clï¿½ donnï¿½e.
+	 *	\param		key			Clï¿½ de traduction
 	 *	\param		value		Chaine de traduction
 	 */
 	function setTransFromTab($key,$value)
@@ -91,7 +90,7 @@ class Translate {
 
     /**
      *  \brief      Accesseur de this->defaultlang
-     *  \param      srclang     	Langue à utiliser
+     *  \param      srclang     	Langue ï¿½ utiliser
      */
     function setDefaultLang($srclang='fr_FR')
     {
@@ -117,7 +116,7 @@ class Translate {
     
     /**
      *  \brief      Accesseur de this->defaultlang
-     *  \return     string      Langue utilisée
+     *  \return     string      Langue utilisï¿½e
      */
     function getDefaultLang()
     {
@@ -127,7 +126,7 @@ class Translate {
     
     /**
     		\brief      Positionne environnement PHP en fonction du langage
-    		\remarks    Le code langue long (fr_FR, en_US, ...) doit être positionné
+    		\remarks    Le code langue long (fr_FR, en_US, ...) doit ï¿½tre positionnï¿½
     		\return     int             >0 si ok, <0 so ko
     */
     function setPhpLang()
@@ -147,14 +146,14 @@ class Translate {
 
 
     /**
-	 *  \brief      Charge en mémoire le tableau de traduction pour un domaine particulier
-     *              Si le domaine est deja chargé, la fonction ne fait rien
-     *  \param      domain      Nom du domain (fichier lang) à charger
-     *  \param      alt         Utilise le fichier alternatif meme si fichier dans la langue est trouvée
+	 *  \brief      Charge en memoire le tableau de traduction pour un domaine particulier
+     *              Si le domaine est deja charge, la fonction ne fait rien
+     *  \param      domain      Nom du domain (fichier lang) a charger
+     *  \param      alt         Utilise le fichier alternatif meme si fichier dans la langue est trouvee
      */
     function Load($domain,$alt=0)
     {
-        if (! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja chargé
+        if (! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja charge
         
         // Repertoire de traduction
         $scandir = $this->dir."/".$this->defaultlang;
@@ -187,7 +186,7 @@ class Translate {
 				foreach($_SESSION['lang_'.$domain] as $key => $value)
 				{
 					$this->tab_translate[$key]=$value;
-					$this->tab_loaded[$domain]=1;           // Marque ce fichier comme chargé
+					$this->tab_loaded[$domain]=1;           // Marque ce fichier comme chargï¿½
 				}
 			}
 			else
@@ -236,7 +235,7 @@ class Translate {
 	                    $this->load($domain,1);
 	                }
 
-	                $this->tab_loaded[$domain]=1;           // Marque ce fichier comme chargé
+	                $this->tab_loaded[$domain]=1;           // Marque ce fichier comme chargï¿½
 
 					// To save lang in session
 					if ($enablelangcacheinsession && sizeof($tabtranslatedomain)) $_SESSION['lang_'.$domain]=$tabtranslatedomain;
@@ -247,8 +246,8 @@ class Translate {
 
 
     /**     
-     *	\brief      Retourne la liste des domaines chargées en memoire
-     *  \return     array       Tableau des domaines chargées
+     *	\brief      Retourne la liste des domaines chargï¿½es en memoire
+     *  \return     array       Tableau des domaines chargï¿½es
      */
     function list_domainloaded()
     {
@@ -257,17 +256,17 @@ class Translate {
     
     
     /**
-     *  \brief      Retourne la version traduite du texte passé en paramètre en la codant en HTML
+     *  \brief      Retourne la version traduite du texte passï¿½ en paramï¿½tre en la codant en HTML
      *              Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-     *              et si toujours pas trouvé, il est retourné tel quel
-     *              Les paramètres de cette méthode peuvent contenir de balises HTML.
-     *  \param      key         clé de chaine a traduire
+     *              et si toujours pas trouvï¿½, il est retournï¿½ tel quel
+     *              Les paramï¿½tres de cette mï¿½thode peuvent contenir de balises HTML.
+     *  \param      key         clï¿½ de chaine a traduire
      *  \param      param1      chaine de param1
      *  \param      param2      chaine de param2
      *  \param      param3      chaine de param3
      *  \param      param4      chaine de param4
      *	\param		maxsize		taille max
-     *  \return     string      chaine traduite et codé en HTML
+     *  \return     string      chaine traduite et codï¿½ en HTML
      */
     function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
     {
@@ -301,11 +300,11 @@ class Translate {
 
 
     /**
-     *  \brief       Retourne la version traduite du texte passé en paramètre
+     *  \brief       Retourne la version traduite du texte passï¿½ en paramï¿½tre
      *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-     *               et si toujours pas trouvé, il est retourné tel quel.
-     *               Les paramètres de cette méthode ne doivent pas contenir de balises HTML.
-     *  \param       key         clé de chaine a traduire
+     *               et si toujours pas trouvï¿½, il est retournï¿½ tel quel.
+     *               Les paramï¿½tres de cette mï¿½thode ne doivent pas contenir de balises HTML.
+     *  \param       key         clï¿½ de chaine a traduire
      *  \param       param1      chaine de param1
      *  \param       param2      chaine de param1
      *  \param       param3      chaine de param1
@@ -324,7 +323,7 @@ class Translate {
 
 
     /**
-     *  \brief       Retourne la version traduite du texte passé en paramètre complété du code pays
+     *  \brief       Retourne la version traduite du texte passï¿½ en paramï¿½tre complï¿½tï¿½ du code pays
      *  \param       str            chaine a traduire
      *  \param       countrycode    code pays (FR, ...)
      *  \return      string         chaine traduite
@@ -355,7 +354,7 @@ class Translate {
      */
     function get_available_languages($langdir=DOL_DOCUMENT_ROOT)
     {
-        // On parcour le répertoire langs pour détecter les langues disponibles
+        // On parcour le rï¿½pertoire langs pour dï¿½tecter les langues disponibles
         $handle=opendir($langdir ."/langs");
         $langs_available=array();
         while ($file = trim(readdir($handle)))
@@ -369,7 +368,7 @@ class Translate {
     }
     
     /**
-     *  \brief       Expédie le header correct et retourne le début de la page html
+     *  \brief       Expï¿½die le header correct et retourne le dï¿½but de la page html
      *  [en]         Send header and return a string of html start page
      *  \return      string      html header avec charset
      */
@@ -382,18 +381,18 @@ class Translate {
 
    /**
      *  \brief      Renvoi si le fichier $filename existe dans la version de la langue courante ou alternative
-     *  \param      filename        nom du fichier à rechercher
+     *  \param      filename        nom du fichier ï¿½ rechercher
      *  \param      searchalt       cherche aussi dans langue alternative
      *  \return     boolean         true si existe, false sinon
      */
     function file_exists($filename,$searchalt=0)
     {
-        // Test si fichier dans répertoire de la langue
+        // Test si fichier dans rï¿½pertoire de la langue
         $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
         if (is_readable($htmlfile)) return true;
 
         if ($searchalt) {
-            // Test si fichier dans répertoire de la langue alternative
+            // Test si fichier dans rï¿½pertoire de la langue alternative
             if ($this->defaultlang != "en_US") $htmlfilealt = $this->dir."/en_US/".$filename;   
             else $htmlfilealt = $this->dir."/fr_FR/".$filename;
             if (is_readable($htmlfilealt)) return true;
@@ -405,12 +404,12 @@ class Translate {
 
    /**
      *  \brief      Renvoi le fichier $filename dans la version de la langue courante, sinon alternative
-     *  \param      filename        nom du fichier à rechercher
+     *  \param      filename        nom du fichier ï¿½ rechercher
      *  \param      searchalt       cherche aussi dans langue alternative
      */
     function print_file($filename,$searchalt=0)
     {
-        // Test si fichier dans répertoire de la langue
+        // Test si fichier dans rï¿½pertoire de la langue
         $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
         if (is_readable($htmlfile))
         {
@@ -419,7 +418,7 @@ class Translate {
         }
 
         if ($searchalt) {
-            // Test si fichier dans répertoire de la langue alternative
+            // Test si fichier dans rï¿½pertoire de la langue alternative
             if ($this->defaultlang != "en_US") $htmlfilealt = $this->dir."/en_US/".$filename;   
             else $htmlfilealt = $this->dir."/fr_FR/".$filename;
             if (is_readable($htmlfilealt))
