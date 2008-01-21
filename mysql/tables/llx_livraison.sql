@@ -23,22 +23,19 @@ create table llx_livraison
 (
   rowid                 integer AUTO_INCREMENT PRIMARY KEY,
   tms                   timestamp,
-  fk_commande           integer DEFAULT 0,             -- commande auquel est rattache le bon de livraison
+  ref                   varchar(30)  NOT NULL,         -- delivery number
+  ref_client            varchar(30),                   -- customer number
+  fk_soc                integer      NOT NULL,
   fk_expedition         integer,                       -- expedition auquel est rattache le bon de livraison
-  ref                   varchar(30) NOT NULL,          -- delivery number
   date_creation         datetime,                      -- date de creation
   fk_user_author        integer,                       -- createur du bon de livraison
   date_valid            datetime,                      -- date de validation
   fk_user_valid         integer,                       -- valideur du bon de livraison
-  date_livraison 	      date 	  default NULL,          -- date de livraison
+  date_livraison 	      date 	       default NULL,     -- date de livraison
   fk_adresse_livraison  integer,                       -- adresse de livraison
-  fk_statut             smallint  default 0,
-  total_ht              real      default 0,
-  total_ttc             real      default 0,
+  fk_statut             smallint     default 0,
+  total_ht              double(24,8) default 0,
   note                  text,
   note_public           text,
-  model_pdf             varchar(50),
-
-  UNIQUE INDEX (ref),
-  key(fk_commande)
+  model_pdf             varchar(50)
 )type=innodb;

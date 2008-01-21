@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -19,14 +19,6 @@
 -- $Id$
 -- ===================================================================
 
-create table llx_livraisondet
-(
-  rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  fk_livraison      integer, 
-  fk_product        integer,
-  description       text,
-  qty               real,                            -- quantité
-  subprice          double(24,8) DEFAULT 0,          -- prix unitaire
-  total_ht          double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantité
-  rang              integer      DEFAULT 0
-)type=innodb;
+
+ALTER TABLE llx_livraisondet ADD INDEX idx_livraisondet_fk_expedition (fk_livraison);
+ALTER TABLE llx_livraisondet ADD CONSTRAINT fk_livraisondet_fk_livraison FOREIGN KEY (fk_livraison) REFERENCES llx_livraison (rowid);

@@ -62,17 +62,19 @@ create table llx_co_exp
 -- V4 ALTER TABLE llx_expeditiondet DROP INDEX fk_commande_ligne;
 
 alter table llx_expedition add column fk_soc integer NOT NULL after ref;
-alter table llx_expedition add column fk_adresse_livraison integer after date_expedition;
+alter table llx_expedition add column fk_adresse_livraison integer DEFAULT NULL after date_expedition;
 -- V4.1 UPDATE llx_expedition as e SET e.fk_soc = (SELECT c.fk_soc FROM llx_commande AS c WHERE e.fk_commande = c.rowid);
 -- V4.1 UPDATE llx_expedition as e SET e.fk_adresse_livraison = (SELECT c.fk_adresse_livraison FROM llx_commande AS c WHERE e.fk_commande = c.rowid);
 
 ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_soc (fk_soc);
 ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_user_author (fk_user_author);
 ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_adresse_livraison (fk_adresse_livraison);
 ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_expedition_methode (fk_expedition_methode);
 -- V4 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_soc                FOREIGN KEY (fk_soc)                 REFERENCES llx_societe (rowid);
 -- V4 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_user_author        FOREIGN KEY (fk_user_author)         REFERENCES llx_user (rowid);
 -- V4 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_user_valid         FOREIGN KEY (fk_user_valid)          REFERENCES llx_user (rowid);
+-- V4 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_adresse_livraison  FOREIGN KEY (fk_adresse_livraison)   REFERENCES llx_societe_adresse_livraison (rowid);
 -- V4 ALTER TABLE llx_expedition ADD CONSTRAINT fk_expedition_fk_expedition_methode FOREIGN KEY (fk_expedition_methode)  REFERENCES llx_expedition_methode (rowid);
 ALTER TABLE llx_expedition ADD UNIQUE INDEX idx_expedition_uk_ref (ref);
 
@@ -86,3 +88,46 @@ ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_expedition (fk_expe
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_entrepot (fk_entrepot);
 -- V4 ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_expedition FOREIGN KEY (fk_expedition) REFERENCES llx_expedition (rowid);
 -- V4 ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_entrepot   FOREIGN KEY (fk_entrepot)   REFERENCES llx_entrepot (rowid);
+
+-- Modification livraison
+create table llx_co_liv
+(
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande   integer NOT NULL,
+  fk_livraison  integer NOT NULL,
+
+  key(fk_commande),
+  key(fk_livraison)
+)type=innodb;
+
+-- V4 ALTER TABLE llx_livraison DROP INDEX fk_commande;
+-- V4 ALTER TABLE llx_livraison DROP INDEX ref;
+-- V4 ALTER TABLE llx_livraisondet DROP INDEX fk_livraison;
+-- V4 ALTER TABLE llx_livraisondet DROP INDEX fk_commande_ligne;
+ALTER TABLE llx_livraison DROP COLUMN total_ttc;
+
+ALTER TABLE llx_livraison MODIFY total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_livraison MODIFY fk_adresse_livraison integer DEFAULT NULL;
+alter table llx_livraison add column ref_client varchar(30) after ref;
+alter table llx_livraison add column fk_soc integer NOT NULL after ref_client;
+UPDATE llx_livraison SET fk_adresse_livraison = NULL WHERE fk_adresse_livraison = 0;
+-- V4.1 UPDATE llx_livraison as l SET l.fk_soc = (SELECT c.fk_soc FROM llx_commande AS c WHERE l.fk_commande = c.rowid);
+
+ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_soc (fk_soc);
+ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_user_author (fk_user_author);
+ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_livraison ADD INDEX idx_livraison_fk_adresse_livraison (fk_adresse_livraison);
+-- V4 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_soc                FOREIGN KEY (fk_soc)                 REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_user_author        FOREIGN KEY (fk_user_author)         REFERENCES llx_user (rowid);
+-- V4 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_user_valid         FOREIGN KEY (fk_user_valid)          REFERENCES llx_user (rowid);
+-- V4 ALTER TABLE llx_livraison ADD CONSTRAINT fk_livraison_fk_adresse_livraison  FOREIGN KEY (fk_adresse_livraison)   REFERENCES llx_societe_adresse_livraison (rowid);
+ALTER TABLE llx_livraison ADD UNIQUE INDEX idx_expedition_uk_ref (ref);
+
+alter table llx_livraisondet add column fk_product  integer after fk_livraison;
+alter table llx_livraisondet add column description text after fk_product;
+alter table llx_livraisondet add column subprice    double(24,8) DEFAULT 0 after qty;
+alter table llx_livraisondet add column total_ht    double(24,8) DEFAULT 0 after subprice;
+alter table llx_livraisondet add column rang        integer      DEFAULT 0 after total_ht;
+
+ALTER TABLE llx_livraisondet ADD INDEX idx_livraisondet_fk_expedition (fk_livraison);
+-- V4 ALTER TABLE llx_livraisondet ADD CONSTRAINT fk_livraisondet_fk_livraison FOREIGN KEY (fk_livraison) REFERENCES llx_livraison (rowid);

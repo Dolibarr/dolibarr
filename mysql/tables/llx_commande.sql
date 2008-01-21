@@ -50,7 +50,7 @@ create table llx_commande
   facture               tinyint   default 0,
   fk_cond_reglement     integer,                       -- condition de réglement
   fk_mode_reglement     integer,                       -- mode de réglement
-  date_livraison 	    date 	  default NULL,
+  date_livraison 	      date 	  default NULL,
   fk_adresse_livraison  integer,                       -- adresse de livraison
 
   UNIQUE INDEX (ref)

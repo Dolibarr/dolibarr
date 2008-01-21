@@ -43,7 +43,8 @@ class Livraison extends CommonObject
 	var $id;
 
 	var $brouillon;
-	var $commande_id;
+	var $origin;
+	var $origin_id;
 
 
 	/**
@@ -423,7 +424,7 @@ class Livraison extends CommonObject
 		for ($i = 0 ; $i < sizeof($expedition->lignes) ; $i++)
 		{
 			$LivraisonLigne = new LivraisonLigne($this->db);
-			$LivraisonLigne->commande_ligne_id = $expedition->lignes[$i]->order_line_id;
+			$LivraisonLigne->origin_ligne_id   = $expedition->lignes[$i]->origin_line_id;
 			$LivraisonLigne->libelle           = $expedition->lignes[$i]->libelle;
 			$LivraisonLigne->description       = $expedition->lignes[$i]->product_desc;
 			$LivraisonLigne->qty               = $expedition->lignes[$i]->qty_expedie;
@@ -432,7 +433,8 @@ class Livraison extends CommonObject
 			$this->lignes[$i] = $LivraisonLigne;
 		}
 	
-		$this->commande_id          = $expedition->commande_id;
+		$this->origin               = $expedition->origin;
+		$this->origin_id            = $expedition->origin_id;
 		$this->note                 = $expedition->note;
 		$this->projetid             = $expedition->projetidp;
 		$this->date_livraison       = $expedition->date_livraison;

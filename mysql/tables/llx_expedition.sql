@@ -25,12 +25,12 @@ create table llx_expedition
   tms                   timestamp,
   ref                   varchar(30) NOT NULL,
   fk_soc                integer     NOT NULL,
-  date_creation         datetime,              -- date de creation
-  fk_user_author        integer,               -- createur
-  date_valid            datetime,              -- date de validation
-  fk_user_valid         integer,               -- valideur
-  date_expedition       date,                  -- date de l'expedition
-  fk_adresse_livraison  integer,               -- adresse de livraison
+  date_creation         datetime,                -- date de creation
+  fk_user_author        integer,                 -- createur
+  date_valid            datetime,                -- date de validation
+  fk_user_valid         integer,                 -- valideur
+  date_expedition       date,                    -- date de l'expedition
+  fk_adresse_livraison  integer   DEFAULT NULL,  -- adresse de livraison
   fk_expedition_methode integer,
   fk_statut             smallint  DEFAULT 0,
   note                  text,

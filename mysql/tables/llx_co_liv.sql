@@ -19,14 +19,12 @@
 -- $Id$
 -- ===================================================================
 
-create table llx_livraisondet
+create table llx_co_liv
 (
-  rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  fk_livraison      integer, 
-  fk_product        integer,
-  description       text,
-  qty               real,                            -- quantité
-  subprice          double(24,8) DEFAULT 0,          -- prix unitaire
-  total_ht          double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantité
-  rang              integer      DEFAULT 0
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande   integer NOT NULL,
+  fk_livraison  integer NOT NULL,
+
+  key(fk_commande),
+  key(fk_livraison)
 )type=innodb;

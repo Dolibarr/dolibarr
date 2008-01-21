@@ -180,6 +180,10 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		
 		// Script pour V2.2 -> V2.4
 		migrate_commande_expedition($db,$langs,$conf);
+		
+		migrate_commande_livraison($db,$langs,$conf);
+		
+		migrate_detail_livraison($db,$langs,$conf);
 
 		migrate_module_menus($db,$langs,$conf);
 
@@ -1529,6 +1533,196 @@ function migrate_commande_expedition($db,$langs,$conf)
           {
           	$db->commit();
           	$sql = "ALTER TABLE ".MAIN_DB_PREFIX."expedition DROP COLUMN fk_commande";
+          	$db->query($sql);
+          }
+          else
+          {
+          	$db->rollback();
+          }
+        }
+      }
+      else
+      {
+      	dolibarr_print_error($db);
+      }
+    }
+    else
+    {
+    	print $langs->trans('AlreadyDone')."<br>\n";
+    }
+    print '</td></tr>';
+  }
+}
+
+/*
+ * Correspondance des livraisons et des commandes clients dans la table llx_co_liv
+ */
+function migrate_commande_livraison($db,$langs,$conf)
+{
+	if ($conf->livraison->enabled)
+	{
+		print '<tr><td colspan="4">';
+		
+		print '<br>';
+		print '<b>'.$langs->trans('MigrationDeliveryOrderMatching')."</b><br>\n";
+		
+		$result = $db->DDLDescTable(MAIN_DB_PREFIX."livraison","fk_commande");
+		$obj = $db->fetch_object($result);
+		if ($obj)
+		{
+			$sql = "SELECT l.rowid, l.fk_commande";
+			$sql.= ", c.ref_client, c.date_livraison";
+			$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l, ".MAIN_DB_PREFIX."commande as c";
+			$sql.= " WHERE c.rowid = l.fk_commande";
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$i = 0;
+				$error = 0;
+        $num = $db->num_rows($resql);
+        
+        if ($num)
+        {
+        	$db->begin();
+        	
+        	while ($i < $num)
+          {
+          	$obj = $db->fetch_object($resql);
+    
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."co_liv (fk_livraison,fk_commande)";
+            $sql.= " VALUES (".$obj->rowid.",".$obj->fk_commande.")";
+            $resql2=$db->query($sql);
+            
+            if ($resql2)
+            {
+            	$sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
+            	$sqlu.= "ref_client = '".$obj->ref_client."'";
+            	$sqlu.= "date_livraison = '".$obj->date_livraison."'";
+            	$sqlu.= " WHERE rowid = ".$obj->rowid;
+            	$resql3=$db->query($sqlu);
+            	if (!$resql3)
+            	{
+            		$error++;
+            		dolibarr_print_error($db);
+            	}
+            }
+            else
+            {
+            	$error++;
+            	dolibarr_print_error($db);
+            }
+            print ". ";
+            $i++;
+          }
+          if ($error == 0)
+          {
+          	$db->commit();
+          	$sql = "ALTER TABLE ".MAIN_DB_PREFIX."livraison DROP COLUMN fk_commande";
+          	$db->query($sql);
+          }
+          else
+          {
+          	$db->rollback();
+          }
+        }
+      }
+      else
+      {
+      	dolibarr_print_error($db);
+      }
+    }
+    else
+    {
+    	print $langs->trans('AlreadyDone')."<br>\n";
+    }
+    print '</td></tr>';
+  }
+}
+
+/*
+ * Migration des détails commandes dans les détails livraisons
+ */
+function migrate_detail_livraison($db,$langs,$conf)
+{
+	if ($conf->livraison->enabled)
+	{
+		print '<tr><td colspan="4">';
+		
+		print '<br>';
+		print '<b>'.$langs->trans('MigrationDeliveryDetail')."</b><br>\n";
+		
+		$result = $db->DDLDescTable(MAIN_DB_PREFIX."livraisondet","fk_commande_ligne");
+		$obj = $db->fetch_object($result);
+		if ($obj)
+		{
+			$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.subprice, cd.total_ht";
+			$sql.= ", ld.fk_livraison";
+			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
+			$sql.= " WHERE ld.fk_commande_ligne = cd.rowid";
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$i = 0;
+				$error = 0;
+        $num = $db->num_rows($resql);
+        
+        if ($num)
+        {
+        	$db->begin();
+        	
+        	while ($i < $num)
+          {
+          	$obj = $db->fetch_object($resql);
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."livraisondet SET";
+            $sql.= " fk_product=".$obj->fk_product;
+            $sql.= ",description='".$obj->description."'";
+            $sql.= ",subprice='".$obj->subprice."'";
+            $sql.= ",total_ht='".$obj->total_ht."'";
+            $sql.= " WHERE fk_commande_ligne = ".$obj->rowid;
+            $resql2=$db->query($sql);
+            
+            if ($resql2)
+            {
+            	$sql = "SELECT l.total_ht";
+            	$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
+            	$sql.= "WHERE rowid = ".$obj->fk_livraison;
+            	$resql3=$db->query($sql);
+            	
+            	if ($resql3)
+            	{
+            		$obju = $db->fetch_object($resql3);
+            		$total_ht = $obju->total_ht + $obj->total_ht;
+            		
+            		$sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
+            		$sqlu.= " total_ht='".$total_ht."'";
+            		$sqlu.= " WHERE rowid=".$obj->fk_livraison;
+            		$resql4=$db->query($sqlu);
+            		if (!$resql4)
+            		{
+            			$error++;
+            			dolibarr_print_error($db);
+            		}
+            	}
+            	else
+            	{
+            		$error++;
+            		dolibarr_print_error($db);
+            	}
+            }
+            else
+            {
+            	$error++;
+            	dolibarr_print_error($db);
+            }  
+            print ". ";
+            $i++;
+          }
+          
+          if ($error == 0)
+          {
+          	$db->commit();
+          	$sql = "ALTER TABLE ".MAIN_DB_PREFIX."livraisondet DROP COLUMN fk_commande_ligne";
           	$db->query($sql);
           }
           else
