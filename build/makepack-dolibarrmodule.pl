@@ -188,11 +188,19 @@ if ($nboftargetok) {
     	$ret=`rm -fr "$BUILDROOT"`;
     	mkdir "$BUILDROOT";
     	
-    	# TODO Recopier fichier dans fichier conf
-		$file='eee';
+    	# TODO Recopier les fichiers du fichier conf
+		open(IN,"<makepack-".$PROJECT.".conf") || die "can't open conf file makepack-".$PROJECT.".conf";
+	    while(<IN>)
+	    {
+	    	$_ =~ s/\n//;
+	    	$_ =~ /^(.*)\/[^\/]+/;
+	    	print "Create directory $BUILDROOT/$1\n";
+	    	$ret=`mkdir -p "$BUILDROOT/$1"`;
+	    	print "Copy $SOURCE/$_ into $BUILDROOT/$_\n";
+    		$ret=`cp -pr "$SOURCE/$_" "$BUILDROOT/$_"`;
+		}	
+		close IN;
 		
-    	print "Copy $SOURCE into $BUILDROOT\n";
-    	$ret=`cp -pr "$SOURCE/".$file "$BUILDROOT/".$file`;
     }
     
     
@@ -205,16 +213,12 @@ if ($nboftargetok) {
         
     	if ($target eq 'TGZ') {
     		unlink $FILENAMETGZ.tgz;
-#    		unlink $BUILDROOT/$FILENAMETGZ.tgz;
     		print "Compress $BUILDROOT/htdocs into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" htdocs";
+   		    $cmd="tar --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" htdocs";
    		    $ret=`$cmd`;
-#        	$cmd="tar --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" htdocs\n";
-#        	$ret=`$cmd`;
             if ($OS =~ /windows/i) {
         		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
         		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
-#        		$ret=`mv "$BUILDROOT/$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
             }
     		next;
     	}
