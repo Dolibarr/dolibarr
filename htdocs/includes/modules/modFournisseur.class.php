@@ -117,7 +117,7 @@ class modFournisseur extends DolibarrModules
 		
 		$r++;
 		$this->rights[$r][0] = 1183;
-		$this->rights[$r][1] = 'Cr�er une commande fournisseur';
+		$this->rights[$r][1] = 'Creer une commande fournisseur';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'commande';
@@ -149,7 +149,7 @@ class modFournisseur extends DolibarrModules
 		
 		$r++;
 		$this->rights[$r][0] = 1187;
-		$this->rights[$r][1] = 'R�ceptionner les commandes fournisseur';
+		$this->rights[$r][1] = 'Receptionner les commandes fournisseur';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'commande';
@@ -157,7 +157,7 @@ class modFournisseur extends DolibarrModules
 		
 		$r++;
 		$this->rights[$r][0] = 1188;
-		$this->rights[$r][1] = 'Clot�rer les commandes fournisseur';
+		$this->rights[$r][1] = 'Cloturer les commandes fournisseur';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'commande';
@@ -181,7 +181,7 @@ class modFournisseur extends DolibarrModules
 		
 		$r++;
 		$this->rights[$r][0] = 1232;
-		$this->rights[$r][1] = 'Cr�er une facture fournisseur';
+		$this->rights[$r][1] = 'Creer une facture fournisseur';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'facture';
@@ -205,7 +205,7 @@ class modFournisseur extends DolibarrModules
 
 	    $r++;
 	    $this->rights[$r][0] = 1236;
-	    $this->rights[$r][1] = 'Exporter les factures fournisseurs, attributs et r�glements';
+	    $this->rights[$r][1] = 'Exporter les factures fournisseurs, attributs et reglements';
 	    $this->rights[$r][2] = 'r';
 	    $this->rights[$r][3] = 0;
 	    $this->rights[$r][4] = 'facture';

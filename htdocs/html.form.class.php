@@ -85,6 +85,8 @@ class Form
     // Sanitize tooltip
     $htmltext=ereg_replace("'","\'",$htmltext);
     $htmltext=ereg_replace("&#039;","\'",$htmltext);
+    $htmltext=ereg_replace("\r","",$htmltext);
+    $htmltext=ereg_replace("\n","<br>",$htmltext);
     
     if ($conf->use_javascript_ajax && $tooltipon == 4)
     {

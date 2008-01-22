@@ -275,28 +275,26 @@ function formCategory($db,$object,$type,$typeid)
 	}
 	
 	// Formulaire ajout dans une categorie
-	if ($user->rights->societe->creer)
+	print '<br>';
+	print_fiche_titre($title);
+	print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php?'.$nameId.'='.$object->id.'">';
+	print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>';
+	print $langs->trans("ClassifyInCategory").' ';
+	print $html->select_all_categories($typeid).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
+	if ($user->rights->categorie->creer)
 	{
-		print '<br>';
-		print_fiche_titre($title);
-		print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php?'.$nameId.'='.$object->id.'">';
-		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>';
-		print $langs->trans("ClassifyInCategory").' ';
-		print $html->select_all_categories($typeid).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
-		if ($user->rights->categorie->creer)
-		{
-			print '<td align="right">';
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'">'.$langs->trans("NewCat").'</a>';
-			print '</td>';
-		}
-		print '</tr>';
-		print '</table>';
-		print '</form>';
-		print '<br/>';
+		print '<td align="right">';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'">'.$langs->trans("NewCat").'</a>';
+		print '</td>';
 	}
+	print '</tr>';
+	print '</table>';
+	print '</form>';
+	print '<br/>';
 
+	
 	$c = new Categorie($db);
 	$cats = $c->containing($object->id,$type,$typeid);
 
@@ -346,7 +344,11 @@ function formCategory($db,$object,$type,$typeid)
 	}
 	else
 	{
-		print $langs->trans("CompanyHasNoCategory")."<br/>";
+		if ($typeid == 0) $title=$langs->trans("ProductHasNoCategory");
+		if ($typeid == 1) $title=$langs->trans("CompanyHasNoCategory");
+		if ($typeid == 2) $title=$langs->trans("CompanyHasNoCategory");
+		print $title;
+		print "<br/>";
 	}
 }	
 

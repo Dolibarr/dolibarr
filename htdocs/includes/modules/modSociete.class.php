@@ -80,14 +80,14 @@ class modSociete extends DolibarrModules
     $this->const[$r][0] = "SOCIETE_FISCAL_MONTH_START";
     $this->const[$r][1] = "chaine";
     $this->const[$r][2] = "0";
-    $this->const[$r][3] = "Mettre le num�ro du mois du d�but d\'ann�e fiscale, ex: 9 pour septembre";
+    $this->const[$r][3] = "Mettre le numero du mois du debut d\'annee fiscale, ex: 9 pour septembre";
     $this->const[$r][4] = 1;
 	$r++;
 	
     $this->const[$r][0] = "MAIN_SEARCHFORM_SOCIETE";
     $this->const[$r][1] = "yesno";
     $this->const[$r][2] = "1";
-    $this->const[$r][3] = "Affichage formulaire de recherche des Soci�t�s dans la barre de gauche";
+    $this->const[$r][3] = "Affichage formulaire de recherche des Societes dans la barre de gauche";
     $this->const[$r][4] = 0;
 	$r++;
 
@@ -115,21 +115,21 @@ class modSociete extends DolibarrModules
 
     $r++;
     $this->rights[$r][0] = 122; // id de la permission
-    $this->rights[$r][1] = 'Cr�er modifier les societes'; // libelle de la permission
+    $this->rights[$r][1] = 'Creer modifier les societes'; // libelle de la permission
     $this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
     $this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
     $this->rights[$r][4] = 'creer';
 
     $r++;
     $this->rights[$r][0] = 125; // id de la permission
-    $this->rights[$r][1] = 'Supprimer les soci�t�s'; // libelle de la permission
+    $this->rights[$r][1] = 'Supprimer les societes'; // libelle de la permission
     $this->rights[$r][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
     $this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
     $this->rights[$r][4] = 'supprimer';
 
     $r++;
     $this->rights[$r][0] = 126; // id de la permission
-    $this->rights[$r][1] = 'Exporter les soci�t�s'; // libelle de la permission
+    $this->rights[$r][1] = 'Exporter les societes'; // libelle de la permission
     $this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
     $this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
     $this->rights[$r][4] = 'export';
@@ -144,7 +144,7 @@ class modSociete extends DolibarrModules
 	
 	$r++;
 	$this->rights[$r][0] = 282; // id de la permission
-	$this->rights[$r][1] = 'Cr�er modifier les contacts'; // libelle de la permission
+	$this->rights[$r][1] = 'Creer modifier les contacts'; // libelle de la permission
 	$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
 	$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
 	$this->rights[$r][4] = 'contact';

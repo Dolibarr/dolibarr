@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/comm/prospect/fiche.php
         \ingroup    prospect
 		\brief      Page de la fiche prospect
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once("./pre.inc.php");
@@ -146,61 +143,64 @@ if ($socid > 0)
     $tableaushown=0;
 
 
-    $propal_static=new Propal($db);
-
     /*
      * Dernieres propales
      *
      */
-    print '<table class="noborder" width="100%">';
-    $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ";
-    $sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite,";
-    $sql.= " c.label as statut, c.id as statutid";
-    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-    $sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
-    $sql.= " AND s.rowid = ".$societe->id;
-    $sql.= " ORDER BY p.datep DESC";
+    if ($conf->propal->enabled)
+	{
+		$propal_static=new Propal($db);
 
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-		$var=true;
-		$i = 0;
-        $num = $db->num_rows($resql);
-        if ($num > 0)
-        {
-            $tableaushown=1;
-            print '<tr class="liste_titre">';
-            print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
-            print '</tr>';
-        }
+	    print '<table class="noborder" width="100%">';
+	    $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ";
+	    $sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite,";
+	    $sql.= " c.label as statut, c.id as statutid";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+	    $sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
+	    $sql.= " AND s.rowid = ".$societe->id;
+	    $sql.= " ORDER BY p.datep DESC";
 
-        while ($i < $num && $i < $MAXLIST)
-        {
-            $objp = $db->fetch_object($resql);
-            $var=!$var;
-            print "<tr $bc[$var]>";
-            print "<td><a href=\"../propal.php?propalid=$objp->propalid\">";
-            print img_object($langs->trans("ShowPropal"),"propal");
-            print " $objp->ref</a>\n";
-            if ( ($objp->dp < time() - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1 )
-            {
-                print " ".img_warning();
-            }
-            print "</td><td align=\"right\">".dolibarr_print_date($objp->dp,"day")."</td>\n";
-            print "<td align=\"right\">".price($objp->price)."</td>\n";
-            print "<td align=\"right\">".$propal_static->LibStatut($objp->fk_statut,5)."</td></tr>\n";
-            $i++;
-        }
-        $db->free();
-    }
-    else
-    {
-    	dolibarr_print_error($db);
-    }
+	    $resql=$db->query($sql);
+	    if ($resql)
+	    {
+			$var=true;
+			$i = 0;
+	        $num = $db->num_rows($resql);
+	        if ($num > 0)
+	        {
+	            $tableaushown=1;
+	            print '<tr class="liste_titre">';
+	            print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$societe->id.'">'.$langs->trans("AllPropals").' ('.$num.')</a></td></tr></table></td>';
+	            print '</tr>';
+	        }
 
-    print "</table>";
+	        while ($i < $num && $i < $MAXLIST)
+	        {
+	            $objp = $db->fetch_object($resql);
+	            $var=!$var;
+	            print "<tr $bc[$var]>";
+	            print "<td><a href=\"../propal.php?propalid=$objp->propalid\">";
+	            print img_object($langs->trans("ShowPropal"),"propal");
+	            print " $objp->ref</a>\n";
+	            if ( ($objp->dp < time() - $conf->propal->cloture->warning_delay) && $objp->fk_statut == 1 )
+	            {
+	                print " ".img_warning();
+	            }
+	            print "</td><td align=\"right\">".dolibarr_print_date($objp->dp,"day")."</td>\n";
+	            print "<td align=\"right\">".price($objp->price)."</td>\n";
+	            print "<td align=\"right\">".$propal_static->LibStatut($objp->fk_statut,5)."</td></tr>\n";
+	            $i++;
+	        }
+	        $db->free();
+	    }
+	    else
+	    {
+	    	dolibarr_print_error($db);
+	    }
 
+	    print "</table>";
+	}
+	
     print "</td></tr>";
     print "</table>\n</div>\n";
 

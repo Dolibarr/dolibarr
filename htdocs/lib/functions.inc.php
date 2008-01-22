@@ -1346,7 +1346,7 @@ function info_admin($texte,$infoonimgalt=0)
      \brief      Vérifie les droits de l'utilisateur
      \param      user      	  Utilisateur courant
      \param      module        Module a vérifier
-     \param      objectid      ID du document
+     \param      objectid      ID de l'element (optionnel)
      \param      dbtable       Table de la base correspondant au module (optionnel)
      \param      list          Défini si la page sert de liste et donc ne fonctionne pas avec un id
 */

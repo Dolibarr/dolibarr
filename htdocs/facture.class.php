@@ -2918,11 +2918,14 @@ class FactureLigne
 	{
 		global $langs;
 		
-		// Nettoyage parametres
+		dolibarr_syslog("FactureLigne::Insert rang=".$this->rang, LOG_DEBUG);
+
+		// Clean parameters
+		$this->desc=trim($this->desc);
 		if (! $this->subprice) $this->subprice=0;
 		if (! $this->price) $this->price=0;
 		
-		dolibarr_syslog("FactureLigne::Insert rang=".$this->rang, LOG_DEBUG);
+		
 		$this->db->begin();
 
 		$rangtouse=$this->rang;
@@ -3060,7 +3063,11 @@ class FactureLigne
    */
   function update()
   {
-    $this->db->begin();
+	// Clean parameters
+	$this->desc=trim($this->desc);
+	
+	
+	$this->db->begin();
 
     // Mise a jour ligne en base
     $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";

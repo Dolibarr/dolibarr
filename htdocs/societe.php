@@ -16,19 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/societe.php
         \ingroup    societe
 		\brief      Page des societes
-		\version    $Revision$
+		\version    $Id$
 */
  
 require_once("./pre.inc.php");
-
 include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 $langs->load("companies");
@@ -36,11 +33,13 @@ $langs->load("customers");
 $langs->load("suppliers");
 
 // Sécurité d'accès client et commerciaux
+if (! $user->rights->societe->lire && ! $user->rights->fournisseur->lire) accessforbidden();
+
 $socid = restrictedArea($user, 'societe','','',1);
 //print 'socid '.$socid;
+
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
-
 $socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -80,7 +79,11 @@ if ($mode == 'search')
 	$sql.= " OR s.url like '%".addslashes($socname)."%'";
     $sql.= ")";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-
+	if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
+	{
+		if (! $user->rights->fournisseur->lire) $sql.=" AND s.fourn != 1";
+	}
+	
     $result=$db->query($sql);
     if ($result)
     {
@@ -112,12 +115,16 @@ if (isset($_POST["button_removefilter_x"]))
     $search_ville="";
 }
 
+if ($socname)
+{
+  $search_nom=$socname;
+}
+
 // Affiche la confirmation de suppression d'un tiers
 if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted",$_GET['delsoc']).'</div><br>';
 
 /*
  * Mode Liste
- *
  */
 /*
 	REM: Regle sur droits "Voir tous les clients"
@@ -138,21 +145,20 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PR
 $sql.= " WHERE s.fk_stcomm = st.id";
 if ($socid)
 {
-  $sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".$socid;
 }
-
-if ($socname)
+if (strlen($stcomm))
 {
-  $search_nom=$socname;
+	$sql .= " AND s.fk_stcomm=".$stcomm;
 }
 
-if (strlen($stcomm)) {
-  $sql .= " AND s.fk_stcomm=".$stcomm;
-}
-
-if (!$user->rights->commercial->client->voir && !$socid) //restriction
+if (! $user->rights->commercial->client->voir && ! $socid) //restriction
 {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+}
+if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
+{
+	if (! $user->rights->fournisseur->lire) $sql.=" AND s.fournisseur != 1";
 }
 
 if ($search_nom)
@@ -165,12 +171,14 @@ if ($search_nom)
 	$sql.= ")";
 }
 
-if ($search_ville) {
-  $sql .= " AND s.ville LIKE '%".addslashes($search_ville)."%'";
+if ($search_ville)
+{
+	$sql .= " AND s.ville LIKE '%".addslashes($search_ville)."%'";
 }
 
-if ($_POST["search_siren"]) {
-  $sql .= " AND s.siren LIKE '%".$_POST["search_siren"]."%'";
+if ($_POST["search_siren"])
+{
+	$sql .= " AND s.siren LIKE '%".$_POST["search_siren"]."%'";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
