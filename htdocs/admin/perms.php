@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
     	\file       htdocs/admin/perms.php
         \ingroup    core
 		\brief      Page d'administration/configuration des permissions par defaut
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -75,6 +72,8 @@ $head[$h][1] = $langs->trans("Miscellanous");
 $h++;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("Security"));
+
+print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 
 
 print '<table class="noborder" width="100%">';
@@ -136,7 +135,7 @@ if ($result)
 
         if ($old <> $obj->module)
         {
-            // Rupture détectée, on récupère objMod
+            // Rupture dï¿½tectï¿½e, on rï¿½cupï¿½re objMod
             $objMod=$modules[$obj->module];
             $picto=($objMod->picto?$objMod->picto:'generic');
 
