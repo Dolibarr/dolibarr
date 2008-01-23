@@ -1596,8 +1596,8 @@ function migrate_commande_livraison($db,$langs,$conf)
             if ($resql2)
             {
             	$sqlu = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
-            	$sqlu.= "ref_client = '".$obj->ref_client."'";
-            	$sqlu.= "date_livraison = '".$obj->date_livraison."'";
+            	$sqlu.= " ref_client='".$obj->ref_client."'";
+            	$sqlu.= ", date_livraison='".$obj->date_livraison."'";
             	$sqlu.= " WHERE rowid = ".$obj->rowid;
             	$resql3=$db->query($sqlu);
             	if (!$resql3)
@@ -1676,7 +1676,7 @@ function migrate_detail_livraison($db,$langs,$conf)
     
             $sql = "UPDATE ".MAIN_DB_PREFIX."livraisondet SET";
             $sql.= " fk_product=".$obj->fk_product;
-            $sql.= ",description='".$obj->description."'";
+            $sql.= ",description='".addslashes($obj->description)."'";
             $sql.= ",subprice='".$obj->subprice."'";
             $sql.= ",total_ht='".$obj->total_ht."'";
             $sql.= " WHERE fk_commande_ligne = ".$obj->rowid;
@@ -1686,7 +1686,7 @@ function migrate_detail_livraison($db,$langs,$conf)
             {
             	$sql = "SELECT l.total_ht";
             	$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
-            	$sql.= "WHERE rowid = ".$obj->fk_livraison;
+            	$sql.= " WHERE rowid = ".$obj->fk_livraison;
             	$resql3=$db->query($sql);
             	
             	if ($resql3)
