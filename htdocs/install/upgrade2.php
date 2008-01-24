@@ -1684,8 +1684,8 @@ function migrate_detail_livraison($db,$langs,$conf)
             
             if ($resql2)
             {
-            	$sql = "SELECT l.total_ht";
-            	$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
+            	$sql = "SELECT total_ht";
+            	$sql.= " FROM ".MAIN_DB_PREFIX."livraison";
             	$sql.= " WHERE rowid = ".$obj->fk_livraison;
             	$resql3=$db->query($sql);
             	
