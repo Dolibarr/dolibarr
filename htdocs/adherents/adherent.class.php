@@ -18,8 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
@@ -31,7 +29,7 @@
 		\author	    Laurent Destailleur
 		\author     Sebastien Di Cintio
 		\author     Benoit Mortier
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
@@ -491,26 +489,26 @@ class Adherent extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql.= " prenom = ".($this->prenom?"'".addslashes($this->prenom)."'":"null");
-		$sql.= ",nom="     .($this->nom?"'".addslashes($this->nom)."'":"null");
-		$sql.= ",login="   .($this->login?"'".addslashes($this->login)."'":"null");
-		$sql.= ",societe=" .($this->societe?"'".addslashes($this->societe)."'":"null");
-		$sql.= ",adresse=" .($this->adresse?"'".addslashes($this->adresse)."'":"null");
-		$sql.= ",cp="      .($this->cp?"'".addslashes($this->cp)."'":"null");
-		$sql.= ",ville="   .($this->ville?"'".addslashes($this->ville)."'":"null");
-		$sql.= ",pays="    ."'".$this->pays_id."'";
-		$sql.= ",email="   ."'".$this->email."'";
-		$sql.= ",phone="   .($this->phone?"'".addslashes($this->phone)."'":"null");
-		$sql.= ",phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
-		$sql.= ",phone_mobile=" .($this->phone_mobile?"'".addslashes($this->phone_mobile)."'":"null");
-		$sql.= ",note="    .($this->commentaire?"'".addslashes($this->commentaire)."'":"null");
-		$sql.= ",photo="   .($this->photo?"'".$this->photo."'":"null");
-		$sql.= ",public="  ."'".$this->public."'";
-		$sql.= ",statut="  .$this->statut;
-		$sql.= ",fk_adherent_type=".$this->typeid;
-		$sql.= ",morphy="  ."'".$this->morphy."'";
-		$sql.= ",naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
-		if ($this->datefin)   $sql.= ",datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifie que par effacement cotisation
-		if ($this->datevalid) $sql.= ",datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifie que par validation adherent
+		$sql.= ", nom="     .($this->nom?"'".addslashes($this->nom)."'":"null");
+		$sql.= ", login="   .($this->login?"'".addslashes($this->login)."'":"null");
+		$sql.= ", societe=" .($this->societe?"'".addslashes($this->societe)."'":"null");
+		$sql.= ", adresse=" .($this->adresse?"'".addslashes($this->adresse)."'":"null");
+		$sql.= ", cp="      .($this->cp?"'".addslashes($this->cp)."'":"null");
+		$sql.= ", ville="   .($this->ville?"'".addslashes($this->ville)."'":"null");
+		$sql.= ", pays="    ."'".$this->pays_id."'";
+		$sql.= ", email="   ."'".$this->email."'";
+		$sql.= ", phone="   .($this->phone?"'".addslashes($this->phone)."'":"null");
+		$sql.= ", phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
+		$sql.= ", phone_mobile=" .($this->phone_mobile?"'".addslashes($this->phone_mobile)."'":"null");
+		$sql.= ", note="    .($this->commentaire?"'".addslashes($this->commentaire)."'":"null");
+		$sql.= ", photo="   .($this->photo?"'".$this->photo."'":"null");
+		$sql.= ", public="  ."'".$this->public."'";
+		$sql.= ", statut="  .$this->statut;
+		$sql.= ", fk_adherent_type=".$this->typeid;
+		$sql.= ", morphy="  ."'".$this->morphy."'";
+		$sql.= ", naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
+		if ($this->datefin)   $sql.= ", datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifie que par effacement cotisation
+		if ($this->datevalid) $sql.= ", datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifie que par validation adherent
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dolibarr_syslog("Adherent::update sql=".$sql);

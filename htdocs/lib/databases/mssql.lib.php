@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Simon Desee          <simon@dedisoft.com>
  *
@@ -17,21 +17,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/lib/databases/mssql.lib.php
-   \brief      Fichier de la classe permettant de gérer une base mssql
+		\file       	htdocs/lib/databases/mssql.lib.php
+		\brief			Fichier de la classe permettant de gérer une base mssql
+		\version		$Id$
 */
+// Pour compatibilité lors de l'upgrade
+if (! defined('DOL_DOCUMENT_ROOT'))
+{
+	define('DOL_DOCUMENT_ROOT', '../..');
+}
 
 
 /**
-   \class      DoliDb
-   \brief      Classe de gestion de la database de dolibarr
+		\class      DoliDb
+		\brief      Classe de gestion de la database de dolibarr
 */
-
 class DoliDb
 {
   //! Handler de base
@@ -514,7 +517,7 @@ class DoliDb
     function idate($param)
     {
         //return "dbo.from_unixtime(".$param.")";
-        return strftime("%d/%m/%Y %H:%M:%S",$param);
+        return adodb_strftime("%d/%m/%Y %H:%M:%S",$param);
     }
 
 

@@ -18,8 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
@@ -31,6 +29,7 @@
         \file       htdocs/includes/modules/modAdherent.class.php
         \ingroup    adherent
         \brief      Fichier de description et activation du module adherents
+		\version	$Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -130,11 +129,19 @@ class modAdherent extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 72;
-        $this->rights[$r][1] = 'Creer/modifier les adherents';
+        $this->rights[$r][1] = 'Creer/modifier tous les adherents';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'creer';
     
+        $r++;
+        $this->rights[$r][0] = 73;
+        $this->rights[$r][1] = 'Creer/modifier ses propres infos adherents';
+        $this->rights[$r][2] = 'w';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'self';
+        $this->rights[$r][5] = 'creer';
+
         $r++;
         $this->rights[$r][0] = 74;
         $this->rights[$r][1] = 'Supprimer les adherents';

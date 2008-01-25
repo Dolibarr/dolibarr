@@ -560,12 +560,12 @@ function dolibarr_print_date($time,$format='')
         $smin = $reg[5];
         $ssec = $reg[6];
 
-        return strftime($format,dolibarr_mktime($shour,$smin,$ssec,$smonth,$sday,$syear));
+        return adodb_strftime($format,dolibarr_mktime($shour,$smin,$ssec,$smonth,$sday,$syear));
     }
     else
     {
         // Date est un timestamps
-        return strftime($format,$time);
+        return adodb_strftime($format,$time);
     }
 }
 

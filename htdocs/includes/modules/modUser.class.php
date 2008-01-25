@@ -94,7 +94,7 @@ class modUser extends DolibarrModules
 
     $r++;
     $this->rights[$r][0] = 252;
-    $this->rights[$r][1] = 'Cr�er/modifier les autres utilisateurs, les groupes et leurs permissions';
+    $this->rights[$r][1] = 'Creer/modifier les autres utilisateurs, les groupes et leurs permissions';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'user';
@@ -110,7 +110,7 @@ class modUser extends DolibarrModules
 
     $r++;
     $this->rights[$r][0] = 254;
-    $this->rights[$r][1] = 'Supprimer ou d�sactiver les autres utilisateurs';
+    $this->rights[$r][1] = 'Supprimer ou desactiver les autres utilisateurs';
     $this->rights[$r][2] = 'd';
     $this->rights[$r][3] = 0;
     $this->rights[$r][4] = 'user';
@@ -118,7 +118,7 @@ class modUser extends DolibarrModules
 
     $r++;
     $this->rights[$r][0] = 255;
-    $this->rights[$r][1] = 'Cr�er/modifier ses propres infos utilisateur';
+    $this->rights[$r][1] = 'Creer/modifier ses propres infos utilisateur';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 1;
     $this->rights[$r][4] = 'self';

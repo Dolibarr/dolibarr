@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/adherents/fiche.php
         \ingroup    adherent
         \brief      Page d'ajout, edition, suppression d'une fiche adherent
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -109,97 +107,103 @@ if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 	}
 }
 
-if ($user->rights->adherent->creer && $_REQUEST["action"] == 'update' && ! $_POST["cancel"])
+if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
-	$datenaiss='';
-	if (isset($_POST["naissday"]) && $_POST["naissday"]
-		&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
-		&& isset($_POST["naissyear"]) && $_POST["naissyear"])
-	{
-		$datenaiss=dolibarr_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
-	}
-
-	// Charge objet actuel
 	$result=$adh->fetch($_POST["rowid"]);
-	if ($result > 0)
+
+	// If change (allowed on all members) or (allowed on myself and i am edited memeber)
+	if ($user->rights->adherent->creer || ($user->rights->adherent->self->creer && $adh->user_id == $user->id))
 	{
-		// Modifie valeures
-		$adh->prenom      = $_POST["prenom"];
-		$adh->nom         = $_POST["nom"];
-		$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
-		$adh->login       = $_POST["login"];
-		$adh->pass        = $_POST["pass"];
-
-		$adh->societe     = $_POST["societe"];
-		$adh->adresse     = $_POST["adresse"];
-		$adh->cp          = $_POST["cp"];
-		$adh->ville       = $_POST["ville"];
-		$adh->pays_id     = $_POST["pays"];
-
-		$adh->phone       = $_POST["phone"];
-		$adh->phone_perso = $_POST["phone_perso"];
-		$adh->phone_mobile= $_POST["phone_mobile"];
-		$adh->email       = $_POST["email"];
-		$adh->naiss       = $datenaiss;
-
-		$adh->typeid      = $_POST["type"];
-		$adh->commentaire = $_POST["comment"];
-		$adh->morphy      = $_POST["morphy"];
-
-		$adh->amount      = $_POST["amount"];
-
-		// recuperation du statut et public
-		$adh->statut      = $_POST["statut"];
-		$adh->public      = $_POST["public"];
-
-		foreach($_POST as $key => $value)
+		$datenaiss='';
+		if (isset($_POST["naissday"]) && $_POST["naissday"]
+			&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
+			&& isset($_POST["naissyear"]) && $_POST["naissyear"])
 		{
-			if (ereg("^options_",$key))
-			{
-				//escape values from POST, at least with addslashes, to avoid obvious SQL injections
-				//(array_options is directly input in the DB in adherent.class.php::update())
-				$adh->array_options[$key]=addslashes($_POST[$key]);
-			}
+			$datenaiss=dolibarr_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
 		}
+		//print $_POST["naissmonth"].", ".$_POST["naissday"].", ".$_POST["naissyear"]." ".$datenaiss." ".adodb_strftime('%Y-%m-%d %H:%M:%S',$datenaiss);
 
-		$result=$adh->update($user,0);
-		if ($result >= 0 && ! sizeof($adh->errors))
+		// Charge objet actuel
+		if ($result > 0)
 		{
-			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+			// Modifie valeures
+			$adh->prenom      = $_POST["prenom"];
+			$adh->nom         = $_POST["nom"];
+			$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
+			$adh->login       = $_POST["login"];
+			$adh->pass        = $_POST["pass"];
+
+			$adh->societe     = $_POST["societe"];
+			$adh->adresse     = $_POST["adresse"];
+			$adh->cp          = $_POST["cp"];
+			$adh->ville       = $_POST["ville"];
+			$adh->pays_id     = $_POST["pays"];
+
+			$adh->phone       = $_POST["phone"];
+			$adh->phone_perso = $_POST["phone_perso"];
+			$adh->phone_mobile= $_POST["phone_mobile"];
+			$adh->email       = $_POST["email"];
+			$adh->naiss       = $datenaiss;
+
+			$adh->typeid      = $_POST["type"];
+			$adh->commentaire = $_POST["comment"];
+			$adh->morphy      = $_POST["morphy"];
+
+			$adh->amount      = $_POST["amount"];
+
+			// recuperation du statut et public
+			$adh->statut      = $_POST["statut"];
+			$adh->public      = $_POST["public"];
+
+			foreach($_POST as $key => $value)
 			{
-				// If photo is provided
-				if (! is_dir($conf->adherent->dir_output))
+				if (ereg("^options_",$key))
 				{
-					create_exdir($conf->adherent->dir_output);
+					//escape values from POST, at least with addslashes, to avoid obvious SQL injections
+					//(array_options is directly input in the DB in adherent.class.php::update())
+					$adh->array_options[$key]=addslashes($_POST[$key]);
 				}
-				if (is_dir($conf->adherent->dir_output))
+			}
+
+			$result=$adh->update($user,0);
+			if ($result >= 0 && ! sizeof($adh->errors))
+			{
+				if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 				{
-					$newfile=$conf->adherent->dir_output . "/" . $adh->id . ".jpg";
-					if (! doliMoveFileUpload($_FILES['photo']['tmp_name'],$newfile))
+					// If photo is provided
+					if (! is_dir($conf->adherent->dir_output))
 					{
-						$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+						create_exdir($conf->adherent->dir_output);
+					}
+					if (is_dir($conf->adherent->dir_output))
+					{
+						$newfile=$conf->adherent->dir_output . "/" . $adh->id . ".jpg";
+						if (! doliMoveFileUpload($_FILES['photo']['tmp_name'],$newfile))
+						{
+							$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+						}
 					}
 				}
-			}
 
-			Header("Location: fiche.php?rowid=".$adh->id);
-			exit;
-		}
-		else
-		{
-		    if ($adh->error)
-			{
-				$errmsg=$adh->error;
+				Header("Location: fiche.php?rowid=".$adh->id);
+				exit;
 			}
 			else
 			{
-				foreach($adh->errors as $error)
+			    if ($adh->error)
 				{
-					if ($errmsg) $errmsg.='<br>';
-					$errmsg.=$error;
+					$errmsg=$adh->error;
 				}
+				else
+				{
+					foreach($adh->errors as $error)
+					{
+						if ($errmsg) $errmsg.='<br>';
+						$errmsg.=$error;
+					}
+				}
+				$action='';
 			}
-			$action='';
 		}
 	}
 }
@@ -539,6 +543,7 @@ if ($action == 'edit')
 	$adho->fetch_optionals();
 	
 	$adht = new AdherentType($db);
+    $adht->fetch($adh->typeid);
 
 
 	/*
@@ -598,7 +603,15 @@ if ($action == 'edit')
 
 	// Type
 	print '<tr><td>'.$langs->trans("Type").'*</td><td>';
-	$htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
+	if ($user->rights->adherent->creer)	// If $user->rights->adherent->self->creer, we do not allow.
+	{
+		$htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
+	}
+	else
+	{
+		print $adht->getNomUrl(1);
+		print '<input type="hidden" name="type" value="'.$adh->typeid.'">';
+	}
 	print "</td></tr>";
 	
 	// Physique-Moral	
@@ -965,56 +978,77 @@ if ($rowid && $action != 'edit')
      */
     print '<div class="tabsAction">';
     
-    if ($user->rights->adherent->creer)
+    if ($user->rights->adherent->creer || ($user->rights->adherent->self->creer && $adh->user_id == $user->id))
 	{
 		print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Modify")."</a>";
     }
-	
-    if ($user->rights->adherent->creer)
+	else
 	{
-	    // Valider
-	    if ($adh->statut == -1)
-	    {
-	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
-	    }
+		print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Modify")."</font>";
 	}
 	
-    if ($user->rights->adherent->creer)
+	// Valider
+	if ($adh->statut == -1)
 	{
-	    // Reactiver
-	    if ($adh->statut == 0)
-	    {
+		if ($user->rights->adherent->creer)
+		{
+			print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
+		}
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Validate")."</font>";
+		}
+	}
+	
+	// Reactiver
+	if ($adh->statut == 0)
+	{
+		if ($user->rights->adherent->creer)
+		{
 	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Reenable")."</a>\n";
 	    }
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Reenable")."</font>";
+		}
 	}
 	
-    if ($user->rights->adherent->creer)
+	// Envoi fiche par mail
+	if ($adh->statut >= 1 && $adh->email)
 	{
-	    // Envoi fiche par mail
-	    if ($adh->statut >= 1 && $adh->email)
+		if ($user->rights->adherent->creer)
 		{
 	    	print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
 	    }
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("SendCardByMail")."</font>";
+		}
 	}
 		
-    if ($user->rights->adherent->supprimer)
+	// Resilier
+	if ($adh->statut >= 1)
 	{
-		// Resilier
-	    if ($adh->statut >= 1)
-	    {
+		if ($user->rights->adherent->supprimer)
+		{
 	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
 	    }
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Resiliate")."</font>";
+		}
 	}
 	
 	// Barre d'actions
-	if ($user->rights->user->user->creer)
+	if (! $user->societe_id && ! $adh->user_id)
 	{
-		if (! $user->societe_id)
+		if ($user->rights->user->user->creer)
 		{
-			if (! $adh->user_id)
-			{
-				print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
-			}
+			print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+		}
+		else
+		{
+			print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("CreateDolibarrLogin")."</font>";
 		}
 	}
     
@@ -1023,6 +1057,10 @@ if ($rowid && $action != 'edit')
     {
         print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
     }
+	else
+	{
+		print "<font class=\"butActionRefused\" href=\"#\">".$langs->trans("Delete")."</font>";
+	}
         
     // Action SPIP
     if ($conf->global->ADHERENT_USE_SPIP)
