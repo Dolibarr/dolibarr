@@ -435,9 +435,12 @@ class Ldap
 
 
     /**
-     * Checks a username and password - does this by logging on to the
-     * server as a user - specified in the DN. There are several reasons why
-     * this login could fail - these are listed below.
+     * 		\brief		Checks a username and password - does this by logging on to the
+     * 					server as a user - specified in the DN. There are several reasons why
+     * 					this login could fail - these are listed below.
+	 *		\return		uname		Username to check
+	 *		\return		pass		Password to check
+	 *		\return		boolean		true=check pass ok, falses=check pass failed
      */
     function checkPass($uname,$pass)
     {
@@ -450,7 +453,7 @@ class Ldap
         	$domain = eregi_replace(',','.',$domain);
           $checkDn = "$uname@$domain";
         } else {
-        	$checkDn = $this->getUserIdentifier() . "=$uname, " . $this->setDn(true);
+        	$checkDn = $this->getUserIdentifier()."=".$uname.", ".$this->setDn(true);
         }
         // Try and connect...
         $this->result = @ldap_bind( $this->connection,$checkDn,$pass);
@@ -864,81 +867,90 @@ class Ldap
 
 
    /**
-     * 		\brief 	Récupère les attributs de l'utilisateur
-     * 		\param 	$user		Utilisateur ldap à lire
+     * 		\brief 		Récupère les attributs de l'utilisateur
+     * 		\param 		$user		Utilisateur ldap à lire
+	 *		\return		int			>0 if ok, <0 if ko
      */
     function fetch($user)
-    {
-        // Perform the search and get the entry handles
+	{
+		// Perform the search and get the entry handles
 
-        // if the directory is AD, then bind first with the search user first
-        if ($this->serverType == "activedirectory") {
-            $this->bindauth($this->searchUser, $this->searchPassword);
-        }
-        $userIdentifier = $this->getUserIdentifier();
+		// if the directory is AD, then bind first with the search user first
+		if ($this->serverType == "activedirectory") {
+			$this->bindauth($this->searchUser, $this->searchPassword);
+		}
+		$userIdentifier = $this->getUserIdentifier();
 
-        $filter = '('.$this->filter.'('.$userIdentifier.'='.$user.'))';
-        
-        $i = 0;
-        $searchDN = $this->people;
-      
-        $result = '';
-        
-        while ($i <= 2)
-        {
-      	  $this->result = @ldap_search($this->connection, $searchDN, $filter);
-         
-          if ($this->result)
-          {
-          	$result = @ldap_get_entries( $this->connection, $this->result);
-          }
-          else
-          {
-      	    $this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
-            return -1;
-          }
-        
-          if (!$result)
-          {
-        	  // Si pas de résultat on cherche dans le domaine
-        	  $searchDN = $this->domain;
-        	  $i++;
-          }
-          else
-          {
-        	  $i++;
-        	  $i++;
-          }
-        }
+		$filter = '('.$this->filter.'('.$userIdentifier.'='.$user.'))';
+		
+		$i = 0;
+		$searchDN = $this->people;
+		
+		$result = '';
+		
+		while ($i <= 2)
+		{
+			$this->result = @ldap_search($this->connection, $searchDN, $filter);
+			
+			if ($this->result)
+			{
+				$result = @ldap_get_entries($this->connection, $this->result);
+				//var_dump($result);
+			}
+			else
+			{
+				$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+				return -1;
+			}
+			
+			if (!$result)
+			{
+				// Si pas de résultat on cherche dans le domaine
+				$searchDN = $this->domain;
+				$i++;
+			}
+			else
+			{
+				$i++;
+				$i++;
+			}
+		}
 
-        if (! $result)
-        {
-        	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
-        	return -1;
-        }
-        else
-        {
-        	$this->name       = $this->ldap_utf8_decode($result[0][$this->attr_name][0]);
-        	$this->firstname  = $this->ldap_utf8_decode($result[0][$this->attr_firstname][0]);
-        	$this->login      = $this->ldap_utf8_decode($result[0][$userIdentifier][0]);
-        	$this->phone      = $this->ldap_utf8_decode($result[0][$this->attr_phone][0]);
-        	$this->fax        = $this->ldap_utf8_decode($result[0][$this->attr_fax][0]);
-        	$this->mail       = $this->ldap_utf8_decode($result[0][$this->attr_mail][0]);
-        	$this->mobile     = $this->ldap_utf8_decode($result[0][$this->attr_mobile][0]);
+		if (! $result)
+		{
+			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+			return -1;
+		}
+		else
+		{
+			$this->name       = $this->ldap_utf8_decode($result[0][$this->attr_name][0]);
+			$this->firstname  = $this->ldap_utf8_decode($result[0][$this->attr_firstname][0]);
+			$this->login      = $this->ldap_utf8_decode($result[0][$userIdentifier][0]);
+			$this->phone      = $this->ldap_utf8_decode($result[0][$this->attr_phone][0]);
+			$this->fax        = $this->ldap_utf8_decode($result[0][$this->attr_fax][0]);
+			$this->mail       = $this->ldap_utf8_decode($result[0][$this->attr_mail][0]);
+			$this->mobile     = $this->ldap_utf8_decode($result[0][$this->attr_mobile][0]);
 
-        	$this->uacf       = $this->parseUACF($this->ldap_utf8_decode($result[0]["useraccountcontrol"][0]));
-        	$this->pwdlastset = ($result[0]["pwdlastset"][0] != 0)?$this->convert_time($this->ldap_utf8_decode($result[0]["pwdlastset"][0])):0;
-        	if (!$this->name && !$this->login) $this->pwdlastset = -1;
-        	$this->badpwdtime = $this->convert_time($this->ldap_utf8_decode($result[0]["badpasswordtime"][0]));
-        	
-        	// FQDN domain
-        	$domain = eregi_replace('dc=','',$this->domain);
-        	$domain = eregi_replace(',','.',$domain);
-        	$this->domainFQDN = $domain;
+			$this->uacf       = $this->parseUACF($this->ldap_utf8_decode($result[0]["useraccountcontrol"][0]));
+			if (isset($result[0]["pwdlastset"][0]))	// If expiration on password exists
+			{
+				$this->pwdlastset = ($result[0]["pwdlastset"][0] != 0)?$this->convert_time($this->ldap_utf8_decode($result[0]["pwdlastset"][0])):0;
+			}
+			else
+			{
+				$this->pwdlastset = -1;
+			}
+			if (!$this->name && !$this->login) $this->pwdlastset = -1;
+			$this->badpwdtime = $this->convert_time($this->ldap_utf8_decode($result[0]["badpasswordtime"][0]));
+			
+			// FQDN domain
+			$domain = eregi_replace('dc=','',$this->domain);
+			$domain = eregi_replace(',','.',$domain);
+			$this->domainFQDN = $domain;
 
-        	ldap_free_result($this->result);
-        	return 1;
-        }
+			ldap_free_result($this->result);
+			return 1;
+		}
 	}
 	
 

@@ -41,8 +41,6 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 	global $dolibarr_main_auth_ldap_admin_login,$dolibarr_main_auth_ldap_admin_pass;
 	global $dolibarr_main_auth_ldap_debug;
 	
-	dolibarr_syslog("functions_ldap::check_user_password_ldap usertotest=".$usertotest);
-
 	if (! function_exists("ldap_connect"))
 	{
 		dolibarr_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP. LDAP functions are disabled on this PHP");
@@ -73,7 +71,9 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		if ($ldapdebug) print "DEBUG: Logging LDAP steps<br>\n";
 
 		// Debut code pour compatibilite (prend info depuis config en base)
-		// Ne plus utiliser. La config LDAP de connexion doit etre dans le fichier conf.php
+		// Ne plus utiliser.
+		// La config LDAP de connexion doit etre dans le fichier conf.php
+		/*
 		if (! $ldapuserattr && $conf->ldap->enabled)
 		{
 			if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
@@ -92,7 +92,10 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		if (! $ldapdn)         $ldapdn=$conf->global->LDAP_SERVER_DN;
 		if (! $ldapadminlogin) $ldapadminlogin=$conf->global->LDAP_ADMIN_DN;
 		if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
+		*/
 		// Fin code pour compatiblite
+
+		dolibarr_syslog("functions_ldap::check_user_password_ldap usertotest=".$usertotest." admin_login=".$ldapadminlogin);
 		
 		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 		$ldap=new Ldap();
@@ -103,36 +106,45 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		$ldap->searchUser=$ldapadminlogin;
 		$ldap->searchPassword=$ldapadminpass;
 		
-		if ($ldapdebug) dolibarr_syslog("Authentification LDAP --> Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
+		if ($ldapdebug) dolibarr_syslog("functions_ldap::check_user_password_ldap Server:".join(',',$ldap->server).", Port:".$ldap->serverPort.", Protocol:".$ldap->ldapProtocolVersion.", Type:".$ldap->serverType.", Admin:".$ldap->searchUser.", Pass:".$ldap->searchPassword);
 		
-		// Code to get user in LDAP (may differ from Dolibarr user)
-		$result=$ldap->connect_bind();
-		if ($result)
+		$resultCheckUserDN=false;
+
+		// If admin login provided
+		// Code to get user in LDAP from an admin connection (may differ from Dolibarr user)
+		if ($ldapadminlogin)
 		{
-			$resultFetchLdapUser = $ldap->fetch($_POST["username"]);
-			// On stop si le mot de passe ldap doit etre modifie sur le domaine
-			if ($resultFetchLdapUser == 1 && $ldap->pwdlastset == 0)
+			$result=$ldap->connect_bind();
+			if ($result)
 			{
-				dolibarr_syslog('functions_ldap::User '.$login.' must change password next logon');
-				if ($ldapdebug) print "DEBUG: User ".$login." must change password<br>\n";
-				$ldap->close();
-				sleep(1);
-				$langs->load('ldap');
-				$_SESSION["dol_loginmesg"]=$langs->trans("YouMustChangePassNextLogon",$ldap->domainFQDN);
-				return $login;
+				$resultFetchLdapUser = $ldap->fetch($_POST["username"]);
+				// On stop si le mot de passe ldap doit etre modifie sur le domaine
+				if ($resultFetchLdapUser == 1 && $ldap->pwdlastset == 0)
+				{
+					dolibarr_syslog('functions_ldap::check_user_password_ldap '.$_POST["username"].' must change password next logon');
+					if ($ldapdebug) print "DEBUG: User ".$_POST["username"]." must change password<br>\n";
+					$ldap->close();
+					sleep(1);
+					$langs->load('ldap');
+					$_SESSION["dol_loginmesg"]=$langs->trans("YouMustChangePassNextLogon",$_POST["username"],$ldap->domainFQDN);
+					return '';
+				}
+				else
+				{
+					$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest);
+				}
 			}
-			else
-			{
-				$resultCheckUserDN = $ldap->checkPass($usertotest,$passwordtotest);
-			}
+			$ldap->close();
 		}
-		$ldap->close();
 		
-		$ldap->searchUser=$usertotest;
-		if ($resultCheckUserDN) $ldap->searchUser = $ldap->ldapUserDN;
+		// Forge LDAP user and password to test from config setup
+		$ldap->searchUser=$ldapuserattr."=".$usertotest.",".$ldapdn;
 		$ldap->searchPassword=$passwordtotest;
 
-		$result=$ldap->connect_bind();	// Test with this->seachUser and this->searchPassword
+		if ($resultCheckUserDN) $ldap->searchUser = $ldap->ldapUserDN;
+
+		// Test with this->seachUser and this->searchPassword
+		$result=$ldap->connect_bind();	
 		if ($result > 0)
 		{
 			if ($result == 2)
@@ -172,7 +184,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 			}
 			if ($result == 1)
 			{
-				dolibarr_syslog("functions_ldap::check_user_password_ldap Authentification ko bad user/password pour '".$_POST["username"]."'");
+				dolibarr_syslog("functions_ldap::check_user_password_ldap Authentification ko bad user/password for '".$_POST["username"]."'");
 				sleep(1);
 				$langs->load('main');
 				$langs->load('other');
@@ -181,7 +193,7 @@ function check_user_password_ldap($usertotest,$passwordtotest)
 		}
 		else
 		{
-			dolibarr_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP pour '".$_POST["username"]."'");
+			dolibarr_syslog("functions_ldap::check_user_password_ldap Authentification ko failed to connect to LDAP for '".$_POST["username"]."'");
 			sleep(1);
 			$langs->load('main');
 			$langs->load('other');

@@ -202,8 +202,6 @@ print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
 print '<td colspan="2">'.$fuser->prenom.'</td>';
 print "</tr>\n";
 
-print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
-
 print '</table><br>';
 
 print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));

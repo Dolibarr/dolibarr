@@ -1,6 +1,6 @@
 # Dolibarr language file - fr_FR - ldap
 DomainPassword=Mot de passe du domaine
-YouMustChangePassNextLogon=Vous devez modifier votre mot de passe sur le domaine %s
+YouMustChangePassNextLogon=Le mot de passe de <b>%s</b> sur le domaine <b>%s</b> doit etre modifié.
 UserMustChangePassNextLogon=L'utilisateur doit modifier son mot de passe sur le domaine %s
 LdapUacf_NORMAL_ACCOUNT=Compte utilisateur
 LdapUacf_DONT_EXPIRE_PASSWORD=Le mot de passe n'expire jamais
