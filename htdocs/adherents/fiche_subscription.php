@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/adherents/fiche_subscription.php
         \ingroup    adherent
         \brief      Page d'ajout, edition, suppression d'une fiche adhésion
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -152,6 +150,9 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'confirm_d
 
 llxHeader();
 
+$form = new Form($db);
+
+
 
 if ($errmsg)
 {
@@ -181,6 +182,11 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	$head[$h][2] = 'general';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$subscription->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+
 	dolibarr_fiche_head($head, 'general', $langs->trans("Subscription"));
 
 	print "\n";
@@ -190,20 +196,18 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$subscription->fk_bank."\">";
 	print '<table class="border" width="100%">';
 	
-	$htmls = new Form($db);
-
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$subscription->ref.'&nbsp;</td></tr>';
 	
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
-	$htmls->select_date($subscription->dateh,'datesub',1,1,0,'update',1);
+	$form->select_date($subscription->dateh,'datesub',1,1,0,'update',1);
 	print '</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="2">';
-	$htmls->select_date($subscription->datef,'datesubend',0,0,0,'update',1);
+	$form->select_date($subscription->datef,'datesubend',0,0,0,'update',1);
 	print '</td>';
     print '</tr>';
 
@@ -236,8 +240,6 @@ if ($rowid && $action != 'edit')
     $result=$subscription->fetch($rowid);
 	$result=$adh->fetch($subscription->fk_adherent);
 	
-    $html = new Form($db);
-
 	/*
 	 * Affichage onglets
 	 */
@@ -247,6 +249,11 @@ if ($rowid && $action != 'edit')
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
 	$head[$h][1] = $langs->trans("SubscriptionCard");
 	$head[$h][2] = 'general';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$subscription->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
 	$h++;
 
 	dolibarr_fiche_head($head, 'general', $langs->trans("Subscription"));
@@ -260,7 +267,7 @@ if ($rowid && $action != 'edit')
         //$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text=$langs->trans("ConfirmDeleteSubscription");
 		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
-		$html->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion);
+		$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion);
         print '<br>';
     }
 
@@ -270,7 +277,7 @@ if ($rowid && $action != 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="3">';
-	print $html->showrefnav($subscription,'rowid','',1);
+	print $form->showrefnav($subscription,'rowid','',1);
 	print '</td></tr>';
 
     // Member

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file 		htdocs/adherents/cotisation.class.php
         \ingroup    adherent
 		\brief      Fichier de la classe permettant de gèrer les cotisations
-		\version    $Revision$
+		\version    $Id$
 */
 
 
@@ -265,5 +263,38 @@ class Cotisation extends CommonObject
 		$result.=$lien.$this->ref.$lienfin;
 		return $result;
 	}
+	
+	
+    /**
+     *      \brief     Charge les informations d'ordre info dans l'objet cotisation
+     *      \param     id       Id adhesion a charger
+     */
+	function info($id)
+	{
+		$sql = 'SELECT c.rowid, '.$this->db->pdate('c.datec').' as datec,';
+		$sql.= ' '.$this->db->pdate('c.tms').' as datem';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'cotisation as c';
+		$sql.= ' WHERE c.rowid = '.$id;
+		
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+
+				$this->date_creation     = $obj->datec;
+				$this->date_modification = $obj->datem;
+			}
+
+			$this->db->free($result);
+
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}	
 }
 ?>
