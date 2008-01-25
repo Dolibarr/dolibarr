@@ -29,6 +29,7 @@ if (! defined('DOL_DOCUMENT_ROOT'))
 {
 	define('DOL_DOCUMENT_ROOT', '../..');
 }
+include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 
 /**
