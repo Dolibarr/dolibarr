@@ -221,8 +221,8 @@ print '<table cellpadding="2" align="center" width="450">'."\n";
 print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 print '<tr>';
-print '<td align="left" valign="top"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
-print '<td><input id="username" type="text" '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
+print '<td align="left" valign="bottom"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
+print '<td valign="bottom"><input id="username" type="text" '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
 
 $title='';
 $title.=$langs->trans("SessionName").': '.session_name();
