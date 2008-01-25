@@ -203,7 +203,7 @@ class Translate {
 	                        $key=trim($tab[0]); $value='';
 	                        //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
 	                        //if (! $this->getTransFromTab($key))
-	                        if (! $this->tab_translate[$key] && isset($tab[1]))
+	                        if (empty($this->tab_translate[$key]) && isset($tab[1]))
 	                        {
 		                        $value=trim(ereg_replace('\\\n',"\n",$tab[1]));
 								
