@@ -106,6 +106,7 @@ create table llx_co_liv
 -- V4 ALTER TABLE llx_livraisondet DROP INDEX fk_commande_ligne;
 ALTER TABLE llx_livraison DROP COLUMN total_ttc;
 
+ALTER TABLE llx_livraison add column total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_livraison MODIFY total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_livraison MODIFY fk_adresse_livraison integer DEFAULT NULL;
 alter table llx_livraison add column ref_client varchar(30) after ref;
