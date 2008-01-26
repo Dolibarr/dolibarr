@@ -164,7 +164,8 @@ llxHeader();
 $dir = "../includes/modules/commande/";
 $html=new Form($db);
 
-print_fiche_titre($langs->trans("OrdersSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'setup');
 
 print "<br>";
 

@@ -95,7 +95,8 @@ elseif ($_POST["action"] == 'stock_shipment')
  */
 llxHeader('',$langs->trans("StockSetup"));
 
-print_fiche_titre($langs->trans("StockSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("StockSetup"),$linkback,'setup');
 
 $html=new Form($db);
 $var=true;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -19,15 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/admin/expedition.php
         \ingroup    expedition
         \brief      Page d'administration/configuration du module Expedition
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -197,14 +195,19 @@ if ($_GET["action"] == 'setmod')
 /*
  * Affiche page
  */
+$dir = DOL_DOCUMENT_ROOT."/expedition/mods/";
+$html=new Form($db);
+
 
 llxHeader("","");
 
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("Setup"),$linkback,'setup');
+print '<br>';
+
+
 if ($mesg) print $mesg.'<br>';
 
-
-$dir = DOL_DOCUMENT_ROOT."/expedition/mods/";
-$html=new Form($db);
 
 $h = 0;
 
@@ -242,7 +245,8 @@ if ($resql)
     }
 }
 
-print_fiche_titre($langs->trans("SendingMethod"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("SendingMethod"),$linkback,'setup');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

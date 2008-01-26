@@ -192,7 +192,8 @@ llxHeader("","");
 $html=new Form($db);
 
 
-print_fiche_titre($langs->trans("BillsNumberingModule"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("BillsNumberingModule"),$linkback,'setup');
 print '<br>';
 
 $h = 0;

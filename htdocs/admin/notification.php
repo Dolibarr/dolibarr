@@ -57,7 +57,8 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 
 llxHeader();
 
-print_fiche_titre($langs->trans("NotificationSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("NotificationSetup"),$linkback,'setup');
 
 if ($mesg) print '<br>'.$mesg;
 

@@ -139,7 +139,8 @@ $formbarcode=new FormBarCode($db);
 
 llxHeader('',$langs->trans("ProductSetup"));
 
-print_fiche_titre($langs->trans("ProductSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("ProductSetup"),$linkback,'setup');
 
 $html=new Form($db);
 $var=true;

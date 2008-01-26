@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur       <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani          <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/admin/confexped.php
 		\ingroup    produit
 		\brief      Page d'administration/configuration du module Expedition
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -67,11 +64,14 @@ else if ($_GET["action"] == 'disable_delivery')
 /*
  * Affiche page
  */
+$dir = DOL_DOCUMENT_ROOT."/expedition/mods/";
+$html=new Form($db);
 
 llxHeader("","");
 
-$dir = DOL_DOCUMENT_ROOT."/expedition/mods/";
-$html=new Form($db);
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("Setup"),$linkback,'setup');
+print '<br>';
 
 $h = 0;
 

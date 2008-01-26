@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -19,17 +19,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/admin/livraison.php
         \ingroup    livraison
         \brief      Page d'administration/configuration du module Livraison
-        \version    $Revision$
+        \version    $Id$
 */
-
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
 
@@ -141,11 +138,15 @@ if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "LIVRAISON_NUM_
 /*
  * Affiche page
  */
+$dir = DOL_DOCUMENT_ROOT."/livraison/mods/";
+$html=new Form($db);
 
 llxHeader("","");
 
-$dir = DOL_DOCUMENT_ROOT."/livraison/mods/";
-$html=new Form($db);
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("Setup"),$linkback,'setup');
+print '<br>';
+
 
 $h = 0;
 
@@ -172,7 +173,8 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
  *  Module numérotation
  */
 
-print_fiche_titre($langs->trans("DeliveryOrderNumberingModules"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("DeliveryOrderNumberingModules"),$linkback,'setup');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

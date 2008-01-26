@@ -127,7 +127,8 @@ elseif ($_POST["test"])
 
 llxHeader();
 
-print_fiche_titre($langs->trans("OSCommerceSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("OSCommerceSetup"),$linkback,'setup');
 
 
 

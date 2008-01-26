@@ -150,7 +150,8 @@ elseif ($actiontest)
 
 llxHeader();
 
-print_fiche_titre($langs->trans("WebCalSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("WebCalSetup"),$linkback,'setup');
 print '<br>';
 
 

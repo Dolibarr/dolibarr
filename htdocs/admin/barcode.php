@@ -65,7 +65,8 @@ $formbarcode = new FormBarCode($db);
 
 llxHeader('',$langs->trans("BarcodeSetup"),'BarcodeConfiguration');
 
-print_fiche_titre($langs->trans("BarcodeSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("BarcodeSetup"),$linkback,'setup');
 
 // Detect bar codes modules
 $barcodelist=array();

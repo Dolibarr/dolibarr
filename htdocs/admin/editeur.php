@@ -64,7 +64,8 @@ llxHeader();
  * Interface de configuration de certaines variables de la partie editeur
  */
 
-print_fiche_titre($langs->trans("Configuration du module Editeur"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("Configuration du module Editeur"),$linkback,'setup');
 
 print '<form action="editeur.php" method="POST">';
 print '<table class="noborder" width="100%">';

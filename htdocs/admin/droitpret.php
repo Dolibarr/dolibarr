@@ -64,8 +64,8 @@ llxHeader();
  */
 
 
-
-print_fiche_titre($langs->trans("PretSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("PretSetup"),$linkback,'setup');
 print "<br>";
 
 

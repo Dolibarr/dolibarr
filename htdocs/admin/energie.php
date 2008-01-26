@@ -43,10 +43,10 @@ if ($_POST["action"] == 'setvalue' && $user->admin)
 /*
  *
  */
+llxHeader();
 
- llxHeader();
-
-print_fiche_titre($langs->trans("Energy"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("Energy"),$linkback,'setup');
 
 print '<br>';
 print '<form method="post" action="energie.php">';

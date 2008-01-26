@@ -82,7 +82,8 @@ if ($_POST["action"] == 'set')
 
 llxHeader();
 
-print_fiche_titre($langs->trans("SyslogSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("SyslogSetup"),$linkback,'setup');
 print '<br>';
 
 $def = array();

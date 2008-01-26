@@ -69,12 +69,15 @@ if ($_GET['action'] == 'delete')
 	}
 }
 
+
 /*
  * Affichage page
  */
 
 $html=new Form($db);
-print_fiche_titre($langs->trans('ComptaSetup'),'','setup');
+
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans('ComptaSetup'),$linkback,'setup');
 
 
 print '<br>';

@@ -148,7 +148,8 @@ llxHeader();
 $dir=DOL_DOCUMENT_ROOT."/includes/modules/fichinter/";
 $html=new Form($db);
 
-print_fiche_titre($langs->trans("InterventionsSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'setup');
 
 print "<br>";
 

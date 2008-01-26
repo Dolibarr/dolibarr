@@ -150,7 +150,8 @@ llxHeader();
 $dir = "../fourn/commande/modules/pdf/";
 $html=new Form($db);
 
-print_fiche_titre($langs->trans("SuppliersSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
 
 print "<br>";
 

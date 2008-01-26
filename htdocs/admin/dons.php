@@ -122,7 +122,8 @@ $html=new Form($db);
 
 llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 
-print_fiche_titre($langs->trans("DonationsSetup"),'','setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'setup');
 
 
 /*
