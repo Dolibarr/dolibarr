@@ -79,11 +79,13 @@ class MenuTop {
 
         if ($_GET["mainmenu"] == "home" || ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home"))
         {
-            $id="sel";
+            $id="sel"; $_SESSION['idmenu']='';
         }
 
-        if (! ereg("^".DOL_URL_ROOT."\/(adherents|comm|commande|compta|contrat|product|fichinter|fourn|telephonie|energie|boutique|oscommerce_ws|projet)\/",$_SERVER["PHP_SELF"])) {
-            $id="sel";
+        if (! ereg("^".DOL_URL_ROOT."\/(adherents|comm|commande|compta|contrat|product|fichinter|fourn|telephonie|energie|boutique|oscommerce_ws|projet)\/",$_SERVER["PHP_SELF"])
+				&& (! $_SESSION['idmenu'] && ! $_GET["idmenu"]))
+		{
+            $id="sel"; $_SESSION['idmenu']='';
         }
         else {
             $id="";
@@ -98,11 +100,11 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             elseif (ereg("^".DOL_URL_ROOT."\/adherents\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -120,11 +122,12 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
-            elseif (ereg("^".DOL_URL_ROOT."\/(comm|commande|contrat)\/",$_SERVER["PHP_SELF"]))
+            elseif (ereg("^".DOL_URL_ROOT."\/(comm|commande|contrat)\/",$_SERVER["PHP_SELF"])
+				&& (! $_SESSION['idmenu'] && ! $_GET["idmenu"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -146,11 +149,11 @@ class MenuTop {
                 $class="";
                 if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "compta")
                 {
-                    $class='class="tmenu" id="sel"';
+                    $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
                 }
                 elseif (ereg("^".DOL_URL_ROOT."\/compta\/",$_SERVER["PHP_SELF"]))
                 {
-                    $class='class="tmenu" id="sel"';
+                    $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
                 }
                 else
                 {
@@ -169,11 +172,11 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "product")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             if (ereg("^".DOL_URL_ROOT."\/projet\/[^w]",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -192,11 +195,11 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "product")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             elseif (ereg("^".DOL_URL_ROOT."\/product\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -219,11 +222,11 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "suppliers")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             elseif (ereg("^".DOL_URL_ROOT."\/fourn\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -239,7 +242,7 @@ class MenuTop {
             $class="";
             if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -256,7 +259,7 @@ class MenuTop {
             $class="";
             if (ereg("^".DOL_URL_ROOT."\/energie\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -273,7 +276,7 @@ class MenuTop {
             $class="";
             if (ereg("^".DOL_URL_ROOT."\/boutique\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -290,7 +293,7 @@ class MenuTop {
             $class="";
             if (ereg("^".DOL_URL_ROOT."\/oscommerce_ws\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {

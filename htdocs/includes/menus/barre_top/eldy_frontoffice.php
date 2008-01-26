@@ -14,20 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/includes/menus/barre_top/eldy_frontoffice.php
-		\brief      Gestionnaire nomm� eldy du menu du haut
-		\version    $Revision$
+		\brief      Gestionnaire nomme eldy du menu du haut
+		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entr�es de menu � faire apparaitre dans la barre du haut
-        \remarks    doivent �tre affich�es par <a class="tmenu" href="...?mainmenu=...">...</a>
-        \remarks    On peut �ventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entr�e du menu qui est s�lectionn�e.
+        \remarks    Toutes les ente�es de menu a faire apparaitre dans la barre du haut
+        \remarks    doivent etre affice�es par <a class="tmenu" href="...?mainmenu=...">...</a>
+        \remarks    On peut eventuellement ajouter l'attribut id="sel" dans la balise <a>
+        \remarks    quand il s'agit de l'entree du menu qui est selectionnee.
 */
 
 
@@ -82,7 +80,7 @@ class MenuTop {
         $class="";
         if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home")
         {
-            $class='class="tmenu" id="sel"';
+            $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
         }
         else
         {
@@ -101,7 +99,7 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -123,7 +121,7 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -150,7 +148,7 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "suppliers")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -173,7 +171,7 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -195,7 +193,7 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -217,7 +215,7 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -241,7 +239,7 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -262,7 +260,7 @@ class MenuTop {
             $class="";
             if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -279,7 +277,7 @@ class MenuTop {
             $class="";
             if (ereg("^".DOL_URL_ROOT."\/energie\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -297,7 +295,7 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
             {
-                $class='class="tmenu" id="sel"';
+                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
             }
             else
             {
