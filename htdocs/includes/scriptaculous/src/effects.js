@@ -103,7 +103,7 @@ var Effect = {
     }
   },
   DefaultOptions: {
-    duration:   1.0,   // seconds
+    duration:   0.2,   // seconds
     fps:        100,   // 100= assume 66fps max.
     sync:       false, // true for combining
     from:       0.0,
@@ -568,7 +568,7 @@ Effect.Puff = function(element) {
    [ new Effect.Scale(element, 200, 
       { sync: true, scaleFromCenter: true, scaleContent: true, restoreAfterFinish: true }), 
      new Effect.Opacity(element, { sync: true, to: 0.0 } ) ], 
-     Object.extend({ duration: 1.0, 
+     Object.extend({ duration: 0.2, 
       beforeSetupInternal: function(effect) {
         Position.absolutize(effect.effects[0].element)
       },
@@ -614,7 +614,7 @@ Effect.SwitchOff = function(element) {
   element = $(element);
   var oldOpacity = element.getInlineOpacity();
   return new Effect.Appear(element, Object.extend({
-    duration: 0.4,
+    duration: 0.2,
     from: 0,
     transition: Effect.Transitions.flicker,
     afterFinishInternal: function(effect) {
@@ -642,7 +642,7 @@ Effect.DropOut = function(element) {
     [ new Effect.Move(element, {x: 0, y: 100, sync: true }), 
       new Effect.Opacity(element, { sync: true, to: 0.0 }) ],
     Object.extend(
-      { duration: 0.5,
+      { duration: 0.2,
         beforeSetup: function(effect) {
           effect.effects[0].element.makePositioned(); 
         },
@@ -656,7 +656,7 @@ Effect.Shake = function(element) {
   element = $(element);
   var options = Object.extend({
     distance: 20,
-    duration: 0.5
+    duration: 0.2
   }, arguments[1] || {});
   var distance = parseFloat(options.distance);
   var split = parseFloat(options.duration) / 10.0;
@@ -885,7 +885,7 @@ Effect.Pulsate = function(element) {
   var reverser   = function(pos){ return transition(1-Effect.Transitions.pulse(pos, options.pulses)) };
   reverser.bind(transition);
   return new Effect.Opacity(element, 
-    Object.extend(Object.extend({  duration: 2.0, from: 0,
+    Object.extend(Object.extend({  duration: 1.0, from: 0,
       afterFinishInternal: function(effect) { effect.element.setStyle({opacity: oldOpacity}); }
     }, options), {transition: reverser}));
 };
