@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**	    \file       htdocs/admin/clicktodial.php
 		\ingroup    clicktodial
 		\brief      Page d'administration/configuration du module clicktodial
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -68,14 +65,14 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("NewValue").'</td><td>'.$langs->trans("CurrentValue").'</td>';
+print '<td>'.$langs->trans("Value").'</td><td>'.$langs->trans("Desc").'</td>';
 print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("URL").'</td><td>';
-print '<input size="25" type="text" name="url" value="'.$conf->global->CLICKTODIAL_URL.'">';
+print '<input size="32" type="text" name="url" value="'.$conf->global->CLICKTODIAL_URL.'">';
 print '</td><td>';
-print $conf->global->CLICKTODIAL_URL;
+print $langs->trans("ClickToDialUrlDesc");
 print '</td></tr>';
 
 print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
@@ -84,5 +81,4 @@ print '</table></form>';
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

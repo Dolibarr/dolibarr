@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -778,9 +778,11 @@ function dolibarr_print_object_info($object)
 */
 function dolibarr_print_phone($phone,$country="FR")
 {
-    $phone=trim($phone);
-    if (strstr($phone, ' ')) { return $phone; }
-    if (strtoupper($country) == "FR") {
+	$phone=trim($phone);
+    if (! $phone) { return $phone; }
+    
+    if (strtoupper($country) == "FR")
+    {
         // France
         if (strlen($phone) == 10) {
             return substr($phone,0,2)."&nbsp;".substr($phone,2,2)."&nbsp;".substr($phone,4,2)."&nbsp;".substr($phone,6,2)."&nbsp;".substr($phone,8,2);
@@ -803,7 +805,28 @@ function dolibarr_print_phone($phone,$country="FR")
             return substr($phone,0,4)."&nbsp;".substr($phone,4,2)."&nbsp;".substr($phone,6,2)."&nbsp;".substr($phone,8,2)."&nbsp;".substr($phone,10,2);
         }
     }
+
     return $phone;
+}
+
+/**
+ * \brief		Show click to dial link
+ * \param		phone		Phone to call
+ * \param		option		Type of picto
+ * \return		string		Link
+ */
+function dol_phone_link($phone,$option=0)
+{
+	global $conf,$user;
+	
+	$link='';
+	$phone=trim($phone);
+	
+   	$url = $conf->global->CLICKTODIAL_URL;
+   	$url.= "?login=".urlencode($user->clicktodial_login)."&password=".urlencode($user->clicktodial_password);
+   	$url.= "&caller=".urlencode($user->clicktodial_poste)."&called=".urlencode(trim($phone));
+   	$link.='<a href="#" onclick="newpopup(\''.$url.'\',\'\');">'.img_phone("default",0).'</a>';	
+	return $link;
 }
 
 /**
@@ -1148,28 +1171,21 @@ function img_alerte($alt = "default")
 }
 
 /**
-        \brief      Affiche logo téléphone in
+        \brief      Affiche logo téléphone
         \param      alt         Texte sur le alt de l'image
+		\param		option		Choose of logo
         \return     string      Retourne tag img
 */
-function img_phone_in($alt = "default")
+function img_phone($alt = "default",$option=0)
 {
   global $conf,$langs;
-  if ($alt=="default") $alt=$langs->trans("Modify");
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  if ($alt=="default") $alt=$langs->trans("Call");
+  $img='call_out';
+  if ($option == 1) $img='call';
+  $img='object_commercial';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$img.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/**
-        \brief      Affiche logo téléphone out
-        \param      alt         Texte sur le alt de l'image
-        \return     string      Retourne tag img
-*/
-function img_phone_out($alt = "default")
-{
-  global $conf,$langs;
-  if ($alt=="default") $alt=$langs->trans("Modify");
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-}
 
 /**
         \brief      Affiche logo suivant

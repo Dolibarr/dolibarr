@@ -583,6 +583,7 @@ FicheinterNumberingModules=Intervention numbering modules
 TemplatePDFInterventions=Intervention card documents models
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
+ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=phonecalled
 ##### Bookmark4u #####
 Bookmark4uSetup=Bookmark4u module setup
 ##### Interventions #####

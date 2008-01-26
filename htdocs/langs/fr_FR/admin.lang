@@ -582,6 +582,7 @@ FicheinterNumberingModules=Modules de numérotation des fiches interventions
 TemplatePDFInterventions=Modèle de documents des fiches d'interventions
 ##### Clicktodial #####
 ClickToDialSetup=Configuration du module Click To Dial
+ClickToDialUrlDesc=Url appelée lors dun clic sur le picto téléphone.<br>L'url complète appelée sera: URL?login=...&password=...&caller=...&called=telappelé
 ##### Bookmark4u #####
 Bookmark4uSetup=Configuration du module Bookmark4u
 ##### Interventions #####

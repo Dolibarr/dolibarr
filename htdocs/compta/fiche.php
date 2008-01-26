@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
     	\file       htdocs/compta/fiche.php
 		\ingroup    compta
 		\brief      Page de fiche compta
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -425,14 +423,15 @@ if ($socid > 0)
         print $obj->phone;
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
         	print '</a>';
-        print '&nbsp;</td>';
+		if ($obj->phone) print ' '.dol_phone_link($obj->phone);
+        print '</td>';
 	    print '<td>';
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 	    	print '<a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
 	    print $obj->fax;
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 	    	print '</a>';
-	    print '&nbsp;</td>';
+	    print '</td>';
 	    print '<td>';
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 	    	print '<a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">';

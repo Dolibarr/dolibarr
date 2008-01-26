@@ -54,18 +54,30 @@ if (isset($_GET["error"])) $error=$_GET["error"];
  */
 if ($_POST["action"] == 'add_action')
 {
+    if ($_POST["contactid"])
+    {
+        $contact = new Contact($db);
+        $result=$contact->fetch($_POST["contactid"]);
+    }
+	
+    if ($_POST['cancel'])
+	{
+		header("Location: ".DOL_URL_ROOT.'/comm/fiche.php?socid='.$_POST['socid']);
+		exit;	
+	}
+
 	// Nettoyage parametres
 	if ($_POST["aphour"] == -1) $_POST["aphour"]='0';
 	if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
 	if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
 	if ($_POST["admin"] == -1) $_POST["admin"]='0';
-	$datep=@mktime($_POST["aphour"],
+	$datep=dolibarr_mktime($_POST["aphour"],
                    $_POST["apmin"],
                    0,
                    $_POST["apmonth"],
                    $_POST["apday"],
                    $_POST["apyear"]);
-	$datea=@mktime($_POST["adhour"],
+	$datea=dolibarr_mktime($_POST["adhour"],
                    $_POST["admin"],
                    0,
                    $_POST["admonth"],
@@ -74,12 +86,6 @@ if ($_POST["action"] == 'add_action')
 	// Si param incorrects, mktime renvoi false en PHP 5.1, -1 avant
 	if (! ($datep > 0)) $datep='';
 	if (! ($datea > 0)) $datea='';
-
-    if ($_POST["contactid"])
-    {
-        $contact = new Contact($db);
-        $contact->fetch($_POST["contactid"]);
-    }
 
     if (! $_POST["actioncode"])
     {
@@ -286,7 +292,7 @@ $html = new Form($db);
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Affichage fiche en mode cr�ation                                           */
+/* Affichage fiche en mode creation                                           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -402,7 +408,11 @@ if ($_GET["action"] == 'create')
 	    }
 		print '</td></tr>';
 
-		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+		print '<tr><td colspan="2" align="center">';
+		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+		print ' &nbsp; &nbsp; ';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</td></tr>';
 		print '</table>';
 	}
 
@@ -412,27 +422,6 @@ if ($_GET["action"] == 'create')
 	*/
 	else
 	{
-		/*
-		* Click to dial
-		*
-		*/
-		if ($conf->clicktodial->enabled)
-		{
-			$user->fetch_clicktodial();
-
-			if ($_GET["call"] && $user->clicktodial_enabled == 1)
-			{
-
-				print '<Script language=javascript>'."\n";
-
-				$url = CLICKTODIAL_URL ."?login=".$user->clicktodial_login."&password=".$user->clicktodial_password."&caller=".$user->clicktodial_poste ."&called=".$_GET["call"];
-
-				print 'window.open("'.$url.'","clicktodial", "toolbar=no,location=0,directories=0,status=0,menubar=no,scrollbars=1,resizable=1,copyhistory=0,width=400,height=300,top=10,left=10");';
-				print "\n</script>\n";
-			}
-		}
-
-
 		print_titre ($langs->trans("AddAnAction"));
 		print "<br>";
 
@@ -471,7 +460,7 @@ if ($_GET["action"] == 'create')
 		}
 		print '</td></tr>';
 
-		// Si la societe est impos�e, on propose ces contacts
+		// Si la societe est imposee, on propose ces contacts
 		if ($_REQUEST["socid"])
 		{
 			print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
@@ -546,7 +535,11 @@ if ($_GET["action"] == 'create')
 	    }
 		print '</td></tr>';
 
-		print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+		print '<tr><td align="center" colspan="2">';
+		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+		print ' &nbsp; &nbsp; ';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		print '</td></tr>';
 
 		print '</table>';
 

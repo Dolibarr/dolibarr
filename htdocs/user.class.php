@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (c) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
@@ -1338,8 +1338,9 @@ class User extends CommonObject
   function fetch_clicktodial()
     {
 
-      $sql = "SELECT login, pass, poste FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
-      $sql .= " WHERE u.fk_user = ".$this->id;
+      $sql = "SELECT login, pass, poste ";
+      $sql.= " FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
+      $sql.= " WHERE u.fk_user = ".$this->id;
 
       $result = $this->db->query($sql);
 

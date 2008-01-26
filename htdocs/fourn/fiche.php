@@ -111,7 +111,7 @@ if ( $societe->fetch($socid) )
   print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
   print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
   print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">'.$societe->pays.'</td></tr>';
-  print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
+  print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel,$societe->pays_code).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax,$societe->pays_code).'&nbsp;</td></tr>';
   print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
   
   // Assujeti � TVA ou pas
@@ -344,9 +344,11 @@ if ( $societe->fetch($socid) )
 		}
 		print "</td>";
 		print "<td>$obj->poste&nbsp;</td>";
-		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
-		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
+		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->phone.'</a>';
+		if ($obj->phone) print ' '.dol_phone_link($obj->phone);
+		print '</td>';
+		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->fax.'</a></td>';
+		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->email.'</a></td>';
 
 		if ($user->rights->societe->contact->creer)
 		{

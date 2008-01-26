@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,8 +113,8 @@ if ($socid > 0)
     print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$societe->cp." ".$societe->ville.'</td></tr>';
     print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$societe->pays.'</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.$societe->tel.'&nbsp;</td><td>Fax</td><td>'.$societe->fax.'&nbsp;</td></tr>';
-    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
+    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel,$societe->pays_code).'</td><td>Fax</td><td>'.dolibarr_print_phone($societe->fax,$societe->pays_code).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a></td></tr>";
 
     if ($societe->rubrique)
     {
@@ -282,23 +282,21 @@ if ($socid > 0)
             print '</td>';
             print '<td>'.$obj->poste.'&nbsp;</td>';
             
-            print '<td>';
+            // Phone
+			print '<td>';
             if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
             	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
-            print $obj->phone;
-	        if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
-	        {
-	            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&amp;socid='.$societe->id.'&amp;call='.$obj->phone.'">';
-	            print img_phone_out("Appel émis") ;
-	        }
+            print dolibarr_print_phone($obj->phone,'');
             if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 	        	print '</a>';
+			if ($obj->phone) print ' '.dol_phone_link($obj->phone);
 			print '</td>';
-		
-        	print '<td>';
+
+        	// Fax
+			print '<td>';
             if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
         		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
-        	print $obj->fax;
+        	print dolibarr_print_phone($obj->fax);
             if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
         		print '</a>';
         	print '&nbsp;</td>';

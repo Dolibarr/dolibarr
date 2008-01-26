@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.org>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
@@ -28,6 +26,7 @@
         \file       htdocs/includes/modules/modClickToDial.class.php
         \ingroup    clicktodial
         \brief      Fichier de description et activation du module de click to Dial
+		\version	$Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -54,7 +53,7 @@ class modClickToDial extends DolibarrModules
     $this->name = "ClickToDial";
     $this->description = "Gestion du Click To Dial";
 
-    $this->version = 'development';		// 'development' or 'experimental' or 'dolibarr' or version
+    $this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
 
     $this->const_name = 'MAIN_MODULE_CLICKTODIAL';
     $this->special = 1;
@@ -63,17 +62,17 @@ class modClickToDial extends DolibarrModules
     // Dir
     $this->dirs = array();
 
-    // D�pendances
+    // Dependencies
     $this->depends = array();
     $this->requiredby = array();
 
     // Config pages
     $this->config_page_url = array("clicktodial.php");
 
-    // Constantes
+    // Constants
     $this->const = array();
 
-    // Boites
+    // Boxes
     $this->boxes = array();
 
     // Permissions

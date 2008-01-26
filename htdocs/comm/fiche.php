@@ -18,15 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/comm/fiche.php
         \ingroup    commercial
         \brief      Onglet client de la fiche societe
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once("./pre.inc.php");
@@ -184,12 +182,15 @@ if ($socid > 0)
     	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$objsoc->pays.'</td></tr>';
     }
 
+    // Phone
     print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($objsoc->tel,$objsoc->pays_code).'</td>';
-    print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($objsoc->fax,$objsoc->pays_code).'</td></tr>';
+    
+    // Fax
+	print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($objsoc->fax,$objsoc->pays_code).'</td></tr>';
 
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\" target=\"_blank\">".$objsoc->url."</a>&nbsp;</td></tr>";
 
-	// Assujeti � TVA ou pas
+	// Assujeti TVA ou pas
 	print '<tr>';
 	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
 	print yn($objsoc->tva_assuj);
@@ -633,7 +634,7 @@ if ($socid > 0)
     print '<table class="noborder" width="100%">';
 
     print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
-    print '<td>'.$langs->trans("Poste").'</td><td colspan="2">'.$langs->trans("Tel").'</td>';
+    print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
     print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
     print "<td>&nbsp;</td>";
     if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
@@ -666,27 +667,17 @@ if ($socid > 0)
         print $contactstatic->getNomUrl(1);
         print '</td>';
 
-        print '<td>'.$obj->poste.'&nbsp;</td>';
+        print '<td>'.$obj->poste.'</td>';
 
         // Lien click to dial
-        if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
-        {
-            print '<td>';
-            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&amp;socid='.$objsoc->id.'&amp;call='.$obj->phone.'">';
-            print img_phone_out("Appel emis") ;
-            print '</td><td>';
-        }
-        else
-        {
-        	print '<td colspan="2">';
-        }
-        
+       	print '<td>';
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
         	print '<a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
         print dolibarr_print_phone($obj->phone);
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
     	    print '</a>';
-        print '&nbsp;</td>';
+		if ($obj->phone) print ' '.dol_phone_link($obj->phone);
+    	print '</td>';
         print '<td>';
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
        		print '<a href="action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
