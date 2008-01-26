@@ -202,6 +202,41 @@ class FormAdmin
 		}
 		print '</select>';
 	}
+	
+    /**
+     *    \brief      Return colors list selector
+     *    \param      selected        Color pre-selected
+     *    \param      htmlname        Name of html select zone
+     */
+    function select_colors($selected='', $htmlname, $arrayofcolors='', $showcolorbox=1)
+    {
+		global $langs,$conf;
+    
+		if (! is_array($arrayofcolors)) $arrayofcolors=array('29527A','5229A3','A32929','7A367A','B1365F','0D7813');
+
+		//$selected='';
+		if ($selected) print '<table class="nobordernopadding"><tr valign="middle" class="nobordernopadding"><td class="nobordernopadding">';
+        
+		print '<select class="flat" name="'.$htmlname.'">';
+		print '<option value="-1">&nbsp;</option>';
+		foreach ($arrayofcolors as $val)
+		{
+			print '<option value="'.$val.'"';
+			if ($selected == $val) print ' selected="true"';
+			print '>'.$val.'</option>';
+		}
+		print '</select>';
+
+		if ($showcolorbox)
+		{
+			print '</td><td style="padding-left: 4px" nowrap="nowrap">';
+			print '<!-- Box color '.$selected.' -->';
+			print '<table style="border-collapse: collapse; margin:0px; padding: 0px; border: 1px solid #888888; background: #'.$selected.';" width="12" height="10">';
+			print '<tr class="nocellnopadd"><td></td></tr>';
+			print '</table>';
+			print '</td></tr></table>';
+		}
+	}
 }
 
 ?>

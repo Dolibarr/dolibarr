@@ -779,8 +779,8 @@ a.butActionDelete:hover   { font-size: 12px; font-family: helvetica, verdana, ar
 
 .nocellnopadd {
 list-style-type:none;
-margin:0px;
-padding:0px;
+margin: 0px;
+padding: 0px;
 }
 
 .notopnoleft {

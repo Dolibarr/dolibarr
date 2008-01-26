@@ -410,6 +410,7 @@ PartialMan=Partial
 TotalWoman=Total
 TotalMan=Total
 YouCanChangeValuesForThisListFromDictionnarySetup=You can change values for this list from menu setup - dictionnary
+Color=Color
 # Week day
 Monday=Monday
 Tuesday=Tuesday
