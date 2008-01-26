@@ -146,8 +146,9 @@ function loadMonth(base,month,year,ymd)
 		theURL+="&sd="+ymd;
 	}
 
-//	loadXMLDoc(theURL,alertContents,false);	Cree erreur javascript avec IE
-	loadXMLDoc(theURL,null,false);
+	var req=null;
+	
+	req=loadXMLDoc(theURL,null,false);
 	showDP.box.innerHTML=req.responseText;	
 }
 
@@ -256,47 +257,66 @@ function getLeft(theitem){
 	return offsetLeft;
 }
 
+
+// Create XMLHttpRequest object and load url
+// Used by calendar or other ajax processes
+// Return req built or false if error
 function loadXMLDoc(url,readyStateFunction,async) 
 {
-	// branch for native XMLHttpRequest object
-	if (window.XMLHttpRequest) {
+	// req must be defined by caller with
+	// var req = false; 
+ 
+	// branch for native XMLHttpRequest object (Mozilla, Safari...)
+	if (window.XMLHttpRequest)
+	{
 		req = new XMLHttpRequest();
-		if (req.overrideMimeType) {
-      req.overrideMimeType('text/xml');
-    }
-    if (req) {
-    	if(readyStateFunction) req.onreadystatechange = readyStateFunction;
-    	req.open("GET", url, async);
-    	req.send(null);
-    } else {
-    	alert('Cannot create XMLHTTP instance');
-      return false;
-    }
-	// branch for IE/Windows ActiveX version
-	} else if (window.ActiveXObject) {
-		req = new ActiveXObject("Microsoft.XMLHTTP");
-		if (req) {
-			if(readyStateFunction) req.onreadystatechange = readyStateFunction;
-			req.open("GET", url, async);
-			req.send();
-		}	else {
-      alert('Cannot create XMLHTTP instance');
-      return false;
-    }
+		
+//		if (req.overrideMimeType) {
+//      		req.overrideMimeType('text/xml');
+//    	}
 	}
+	// branch for IE/Windows ActiveX version
+	else if (window.ActiveXObject)
+	{
+        try
+        {
+            req = new ActiveXObject("Msxml2.XMLHTTP");
+        }
+        catch (e)
+        {
+            try {
+                req = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (e) {}
+        } 
+	}
+
+	// If XMLHttpRequestObject req is ok, call URL
+	if (! req)
+	{
+    	alert('Cannot create XMLHTTP instance');
+      	return false;
+	}
+
+	if (readyStateFunction) req.onreadystatechange = readyStateFunction;
+	// Exemple of function for readyStateFuncyion:
+	// function ()
+       // {
+       //     if ( (req.readyState == 4) && (req.status == 200) ) {
+       //        if (req.responseText == 1) { newStatus = 'AAA'; }
+       //        if (req.responseText == 0) { newStatus = 'BBB'; }
+       //        if (currentStatus != newStatus) {
+       //            if (newStatus == "AAA") { obj.innerHTML = 'AAA'; }
+       //            else { obj.innerHTML = 'BBB'; }
+       //            currentStatus = newStatus;
+       //        }
+       //    }
+       // }
+	req.open("GET", url, async);
+	req.send(null);
+	return req;
 }
 
-function alertContents(httpRequest)
-{
-	if (httpRequest.readyState == 4) {
-		if (httpRequest.status == 200) {
-			alert(httpRequest.responseText);
-    } else {
-    	alert('There was a problem with the request.');
-    }
-  }
-}
-
+// For Boxes
 function hideSelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
 	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE") > -1) {		
