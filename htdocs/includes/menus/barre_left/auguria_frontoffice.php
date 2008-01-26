@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007      Patrick Raguin  <patrick.raguin@gmail.com>
+ * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/includes/menus/barre_left/auguria_frontoffice.php
 		\brief      Gestionnaire du menu du gauche Auguria
-		\version    $Revision$
+		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
         \remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,

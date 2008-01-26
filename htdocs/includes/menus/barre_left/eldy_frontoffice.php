@@ -872,7 +872,11 @@ class MenuLeft {
 				{
 					if ($this->menu_array[$i]['enabled'])
 					{
-						print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a><br>';
+						print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>';
+						print $this->menu_array[$i]['titre'];
+						print '</a>';
+						// If title is not pure text and contains a table, no carriage return added
+						if (! strstr($this->menu_array[$i]['titre'],'<table')) print '<br>';
 					}
 					else
 					{

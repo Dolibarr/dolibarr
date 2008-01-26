@@ -14,14 +14,12 @@
 * You should have received a copy of the GNU General Public License
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*
-* $Id$
 */
 
 /**
 		\file       htdocs/includes/menus/barre_left/eldy_backoffice.php
 		\brief      Gestionnaire du menu du gauche Eldy
-		\version    $Revision$
+		\version    $Id$
 		
 		\remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
 		\remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,
@@ -902,7 +900,11 @@ class MenuLeft {
 				{
 					if ($this->menu_array[$i]['enabled'])
 					{
-						print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a><br>';
+						print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>';
+						print $this->menu_array[$i]['titre'];
+						print '</a>';
+						// If title is not pure text and contains a table, no carriage return added
+						if (! strstr($this->menu_array[$i]['titre'],'<table')) print '<br>';
 					}
 					else
 					{
