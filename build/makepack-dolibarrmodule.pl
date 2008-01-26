@@ -72,6 +72,14 @@ print "Makepack module version $VERSION\n";
 print "Enter name for your module (mymodule, mywonderfulmondule, ...) : ";
 $PROJECT=<STDIN>;
 chomp($PROJECT);
+if (! -f "makepack-".$PROJECT.".conf")
+{
+    print "Error: can't open conf file makepack-".$PROJECT.".conf\n";
+	print "Check that current directory is 'build' directory\n";
+	print "makepack-dolibarrmodule.pl aborted.\n";
+    sleep 2;
+    exit 2;
+}
 print "Enter value for major version: ";
 $MAJOR=<STDIN>;
 chomp($MAJOR);
@@ -96,51 +104,9 @@ $DESTI="$SOURCE/build";
 
 # Choose package targets
 #-----------------------
-$target="TGZ";    # Les langs sont au format tgz
-if ($target) {
-    $CHOOSEDTARGET{uc($target)}=1;
-}
-else {
-    my $found=0;
-    my $NUM_SCRIPT;
-    while (! $found) {
-    	my $cpt=0;
-    	printf(" %d - %3s    (%s)\n",$cpt,"All","Need ".join(",",values %REQUIREMENTTARGET));
-    	foreach my $target (@LISTETARGET) {
-    		$cpt++;
-    		printf(" %d - %3s    (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
-    	}
-    
-    	# On demande de choisir le fichier à passer
-    	print "Choose one package number or several separated with space: ";
-    	$NUM_SCRIPT=<STDIN>; 
-    	chomp($NUM_SCRIPT);
-    	if ($NUM_SCRIPT =~ s/-//g) {
-    		# Do not do copy	
-    		$copyalreadydone=1;
-    	}
-    	if ($NUM_SCRIPT !~ /^[0-$cpt\s]+$/)
-    	{
-    		print "This is not a valid package number list.\n";
-    		$found = 0;
-    	}
-    	else
-    	{
-    		$found = 1;
-    	}
-    }
-    print "\n";
-    if ($NUM_SCRIPT) {
-    	foreach my $num (split(/\s+/,$NUM_SCRIPT)) {
-    		$CHOOSEDTARGET{$LISTETARGET[$num-1]}=1;
-    	}
-    }
-    else {
-    	foreach my $key (@LISTETARGET) {
-    	    $CHOOSEDTARGET{$key}=1;
-        }
-    }
-}
+$target="TGZ";    # Dolibarr modules are tgz format
+$CHOOSEDTARGET{uc($target)}=1;
+
 
 # Test if requirement is ok
 #--------------------------
@@ -188,11 +154,13 @@ if ($nboftargetok) {
     	$ret=`rm -fr "$BUILDROOT"`;
     	mkdir "$BUILDROOT";
     	
-    	# TODO Recopier les fichiers du fichier conf
-		open(IN,"<makepack-".$PROJECT.".conf") || die "can't open conf file makepack-".$PROJECT.".conf";
+		$result=open(IN,"<makepack-".$PROJECT.".conf");
+		if (! $result) { die "Error: Can't open conf file makepack-".$PROJECT.".conf for reading.\n"; }
 	    while(<IN>)
 	    {
-	    	$_ =~ s/\n//;
+	    	if ($_ =~ /^#/) { next; }	# Do not process comments
+			
+			$_ =~ s/\n//;
 	    	$_ =~ /^(.*)\/[^\/]+/;
 	    	print "Create directory $BUILDROOT/$1\n";
 	    	$ret=`mkdir -p "$BUILDROOT/$1"`;
@@ -235,40 +203,6 @@ if ($nboftargetok) {
     		next;
     	}
     
-    	if ($target eq 'RPM') {                 # Linux only
-    		$BUILDFIC="$FILENAME.spec";
-    		unlink $FILENAMETGZ.tgz;
-    		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
-
-    		print "Move $FILENAMETGZ.tgz to $RPMDIR/SOURCES/$FILENAMETGZ.tgz\n";
-    		$cmd="mv \"$BUILDROOT/$FILENAMETGZ.tgz\" \"$RPMDIR/SOURCES/$FILENAMETGZ.tgz\"";
-            $ret=`$cmd`;
-
-    		print "Copy $SOURCE/make/rpm/${BUILDFIC} to $BUILDROOT\n";
-#    		$ret=`cp -p "$SOURCE/make/rpm/${BUILDFIC}" "$BUILDROOT"`;
-            open (SPECFROM,"<$SOURCE/make/rpm/${BUILDFIC}") || die "Error";
-            open (SPECTO,">$BUILDROOT/$BUILDFIC") || die "Error";
-            while (<SPECFROM>) {
-                $_ =~ s/__VERSION__/$MAJOR.$MINOR.$BUILD/;
-                print SPECTO $_;
-            }
-            close SPECFROM;
-            close SPECTO;
-    
-    		print "Launch RPM build (rpm --clean -ba $BUILDROOT/${BUILDFIC})\n";
-    		$ret=`rpm --clean -ba $BUILDROOT/${BUILDFIC}`;
-    	
-   		    print "Move $RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $DESTI/${FILENAMERPM}.noarch.rpm\n";
-   		    $cmd="mv \"$RPMDIR/RPMS/noarch/${FILENAMERPM}.noarch.rpm\" \"$DESTI/${FILENAMERPM}.noarch.rpm\"";
-    		$ret=`$cmd`;
-    		next;
-    	}
-    	
-    	if ($target eq 'DEB') {
-            print "Automatic build for DEB is not yet supported.\n";
-        }
-        
     	if ($target eq 'EXE') {
     		unlink "$FILENAMEEXE.exe";
     		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
