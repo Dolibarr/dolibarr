@@ -21,13 +21,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/lib/functions.inc.php
-   \brief      Ensemble de fonctions de base de dolibarr sous forme d'include
+   \file		htdocs/lib/functions.inc.php
+   \brief		Ensemble de fonctions de base de dolibarr sous forme d'include
+   \version		$Id$
 */
 
 // Pour compatibilité lors de l'upgrade
@@ -38,51 +37,6 @@ if (! defined('DOL_DOCUMENT_ROOT'))
 
 include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
-
-/**
-   \brief      Renvoi une version en chaine depuis une version en tableau
-   \param	    versionarray        Tableau de version (vermajeur,vermineur,autre)
-   \return     string              Chaine version
-*/
-function versiontostring($versionarray)
-{
-  $string='?';
-  if (isset($versionarray[0])) $string=$versionarray[0];
-  if (isset($versionarray[1])) $string.='.'.$versionarray[1];
-  if (isset($versionarray[2])) $string.='.'.$versionarray[2];
-  return $string;
-}
-
-/**
-   \brief      Compare 2 versions
-   \param      versionarray1       Tableau de version (vermajeur,vermineur,autre)
-   \param      versionarray2       Tableau de version (vermajeur,vermineur,autre)
-   \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
-*/
-function versioncompare($versionarray1,$versionarray2)
-{
-    $ret=0;
-    $i=0;
-    while ($i < max(sizeof($versionarray1),sizeof($versionarray1)))
-    {
-        $operande1=isset($versionarray1[$i])?$versionarray1[$i]:0;
-        $operande2=isset($versionarray2[$i])?$versionarray2[$i]:0;
-        if ($operande1 < $operande2) { $ret = -1; break; }
-        if ($operande1 > $operande2) { $ret =  1; break; }
-        $i++;
-    }
-    return $ret;
-}
-
-
-/**
-   \brief      Renvoie version PHP
-   \return     array               Tableau de version (vermajeur,vermineur,autre)
-*/
-function versionphp()
-{
-  return split('\.',PHP_VERSION);
-}
 
 
 /**

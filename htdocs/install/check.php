@@ -16,23 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/install/check.php
         \ingroup    install
         \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
-        \version    $Revision$
+        \version    $Id$
 */
+include_once("./inc.php");
+require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 
 $err = 0;
 $allowinstall = 0;
 $allowupgrade = 0;
 $checksok = 1;
-
-include_once("./inc.php");
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langs->getDefaultLang());
 $langs->setDefaultLang($setuplang);
@@ -55,14 +53,14 @@ print '<b>'.$langs->trans("MiscellanousChecks")."</b>:<br>\n";
 
 
 // Check PHP version
-if (versioncompare(versionphp(),array(4,1)) < 0)
+if (versioncompare(versionphparray(),array(4,1)) < 0)
 {
     print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.1');
     $checksok=0;
 }
 else
 {
-    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphp());
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphparray());
 }
 print ' (<a href="phpinfo.php" target="_info">'.$langs->trans("MoreInformation").'</a>)';
 print "<br>\n";

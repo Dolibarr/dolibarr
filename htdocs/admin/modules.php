@@ -17,18 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**
    \file       htdocs/admin/modules.php
    \brief      Page de configuration et activation des modules
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $mode=isset($_GET["mode"])?$_GET["mode"]:0;
 $mesg=isset($_GET["mesg"])?urldecode($_GET["mesg"]):"";
@@ -66,44 +64,52 @@ if ($_GET["action"] == 'reset' && $user->admin)
 */
 function Activate($value,$withdeps=1)
 {
-  global $db, $modules, $langs;
+	global $db, $modules, $langs;
 
-  $modName = $value;
-  
-  // Activation du module
-  if ($modName)
-    {
-      $file = $modName . ".class.php";
-      include_once(DOL_DOCUMENT_ROOT."/includes/modules/$file");
-      $objMod = new $modName($db);
-      
-      // Test si version PHP ok
-      $verphp=versionphp();
-      $vermin=$objMod->phpmin;
-      if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
-        {
-	  return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
-        }
-      
-      $objMod->init();
-    }
-  
-  if ($withdeps)
-    {
-      // Activation des modules dont le module dépend
-      for ($i = 0; $i < sizeof($objMod->depends); $i++)
-        {
-	  Activate($objMod->depends[$i]);
-        }
-      
-      // Desactivation des modules qui entrent en conflit
-      for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
+	$modName = $value;
+
+	// Activation du module
+	if ($modName)
 	{
-	  UnActivate($objMod->conflictwith[$i],0);
+		$file = $modName . ".class.php";
+		include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
+		$objMod = new $modName($db);
+		
+		// Test si version PHP ok
+		$verphp=versionphparray();
+		$vermin=$objMod->phpmin;
+		if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
+		{
+			return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
+		}
+		
+		// Test si version Dolibarr ok
+		$verdol=versiondolibarrarray();
+		$vermin=$objMod->need_dolibarr_version;
+		if (is_array($vermin) && versioncompare($verdol,$vermin) < 0)
+		{
+			return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
+		}
+
+		$objMod->init();
 	}
-    }
-  
-  return 0;
+
+	if ($withdeps)
+	{
+		// Activation des modules dont le module dépend
+		for ($i = 0; $i < sizeof($objMod->depends); $i++)
+		{
+			Activate($objMod->depends[$i]);
+		}
+		
+		// Desactivation des modules qui entrent en conflit
+		for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
+		{
+			UnActivate($objMod->conflictwith[$i],0);
+		}
+	}
+
+	return 0;
 }
 
 

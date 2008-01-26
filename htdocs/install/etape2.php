@@ -15,19 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/install/etape2.php
         \brief      Cree les tables, cles primaires, cles etrangeres, index et fonctions en base puis charge les donnees de reference
-        \version    $Revision$
+        \version    $Id$
 */
 
 include("./inc.php");
-require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
-require_once($dolibarr_main_document_root . "/conf/conf.class.php");
+require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
+require_once($dolibarr_main_document_root."/conf/conf.class.php");
+require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 
 $etape = 2;
 $ok = 0;

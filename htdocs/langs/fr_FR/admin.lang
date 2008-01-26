@@ -21,6 +21,7 @@ GUISetup=Affichage
 SetupArea=Espace configuration
 SecuritySetup=Configuration de la sécurité
 ErrorModuleRequirePHPVersion=Erreur, ce module requiert une version %s ou supérieure de PHP
+ErrorModuleRequireDolibarrVersion=Erreur, ce module requiert une version %s ou supérieure de Dolibarr
 ErrorDecimalLargerThanAreForbidden=Erreur, les précisions supérieures à <b>%s</b> ne sont pas supportées.
 DictionnarySetup=Dictionnaires
 DisableJavascript=Désactiver les fonctions Javascript et Ajax

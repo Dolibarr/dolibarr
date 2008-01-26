@@ -1,4 +1,84 @@
 <?php
+/* Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * or see http://www.gnu.org/
+ */
+
+/**
+   \file		htdocs/lib/admin.lib.php
+   \brief		Library of admin functions
+   \version		$Id$
+*/
+
+
+/**
+   \brief      Renvoi une version en chaine depuis une version en tableau
+   \param	   versionarray        Tableau de version (vermajeur,vermineur,autre)
+   \return     string              Chaine version
+*/
+function versiontostring($versionarray)
+{
+  $string='?';
+  if (isset($versionarray[0])) $string=$versionarray[0];
+  if (isset($versionarray[1])) $string.='.'.$versionarray[1];
+  if (isset($versionarray[2])) $string.='.'.$versionarray[2];
+  return $string;
+}
+
+/**
+   \brief      Compare 2 versions
+   \param      versionarray1       Tableau de version (vermajeur,vermineur,autre)
+   \param      versionarray2       Tableau de version (vermajeur,vermineur,autre)
+   \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
+*/
+function versioncompare($versionarray1,$versionarray2)
+{
+    $ret=0;
+    $i=0;
+    while ($i < max(sizeof($versionarray1),sizeof($versionarray1)))
+    {
+        $operande1=isset($versionarray1[$i])?$versionarray1[$i]:0;
+        $operande2=isset($versionarray2[$i])?$versionarray2[$i]:0;
+        if ($operande1 < $operande2) { $ret = -1; break; }
+        if ($operande1 > $operande2) { $ret =  1; break; }
+        $i++;
+    }
+    return $ret;
+}
+
+
+/**
+   \brief      Return version PHP
+   \return     array               Tableau de version (vermajeur,vermineur,autre)
+*/
+function versionphparray()
+{
+  return split('\.',PHP_VERSION);
+}
+
+/**
+   \brief      Return version Dolibarr
+   \return     array               Tableau de version (vermajeur,vermineur,autre)
+*/
+function versiondolibarrarray()
+{
+  return split('\.',DOL_VERSION);
+}
+
 
 /**
 *	\brief		Launch a sql file

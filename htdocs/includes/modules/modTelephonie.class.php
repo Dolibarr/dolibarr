@@ -30,7 +30,8 @@
    \brief      Fichier de description et activation du module de Telephonie
 */
 
-include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
+include_once(DOL_DOCUMENT_ROOT."/includes/modules/DolibarrModules.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 
 /**

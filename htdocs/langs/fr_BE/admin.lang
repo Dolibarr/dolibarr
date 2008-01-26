@@ -14,6 +14,7 @@ GUISetup=Affichage
 SetupArea=Zone de configuration
 SecuritySetup=Configuration de sécurité
 ErrorModuleRequirePHPVersion=Erreur, ce module nécessite PHP version %s ou supérieure
+ErrorModuleRequireDolibarrVersion=Erreur, ce module requiert une version %s ou supérieure de Dolibarr
 DictionnarySetup=Dictionnaires
 DisableJavascript=Désactiver les fonctions JavaScript et Ajax
 UseSearchToSelectProduct=Utiliser un formulaire de recherche pour choisir un produit (plutôt que d'utiliser une liste déroulante)

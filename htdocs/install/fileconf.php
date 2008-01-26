@@ -18,18 +18,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/install/fileconf.php
         \ingroup    install
         \brief      Demande les infos qui constituerons le contenu du fichier conf.php. Ce fichier sera remplie à l'étape suivante
-        \version    $Revision$
+        \version    $Id$
 */
 
 include_once("./inc.php");
+require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 
 $err=0;
 
