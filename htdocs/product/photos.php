@@ -236,13 +236,13 @@ if ($_GET["id"] || $_GET["ref"])
                 	if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
                 	{
                 		$url = $_SERVER["PHP_SELF"].'?id='.$product->id.'&file='.urlencode($pdir.$viewfilename).'&action=confirm_delete&confirm=yes';
-                		print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeletePicture').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
+                		print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeletePicture').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')">';
                 	}
                 	else
                 	{
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
-                  }
-                  print img_delete().'</a>';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+					}
+					print img_delete().'</a>';
                 }
                 if ($nbbyrow) print '</td>';
                 if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';

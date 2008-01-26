@@ -667,14 +667,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
 		print '<link rel="stylesheet" type="text/css" media="print" href="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
 		
-		// Style sheets pour la class Window
-		if (! $disablejs && $conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-		{
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/default.css">'."\n";
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alphacube.css">'."\n";
-			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alert.css">'."\n";
-		}
-		
 		// Definition en alternate style sheet des feuilles de styles les plus maintenues
 		// Les navigateurs qui supportent sont rares. Plus aucun connu.
 		/*
@@ -694,38 +686,24 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 		if (! $disablejs && $conf->use_javascript_ajax)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
-			
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/controls.js"></script>'."\n";
-			// TODO As-ton besoin des ces 2 js ?
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/window/window.js"></script>'."\n";
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/window/tooltip.js"></script>'."\n";
-			
-		}	
 
-		// TODO Voir si on peut pas virer ca
-		if (! $disablejs && $conf->use_javascript_ajax)
-		{
-			// Define tradMonths javascript array
-			$tradTemp=Array($langs->trans("January"),
-			                $langs->trans("February"),
-			                $langs->trans("March"),
-			                $langs->trans("April"),
-			                $langs->trans("May"),
-			                $langs->trans("June"),
-			                $langs->trans("July"),
-			                $langs->trans("August"),
-			                $langs->trans("September"),
-			                $langs->trans("October"),
-			                $langs->trans("November"),
-			                $langs->trans("December")
-			                );
-			print '<script language="javascript" type="text/javascript">';
-			print 'var tradMonths = '.php2js($tradTemp).';';
-			print '</script>'."\n";
-		}
+			// This one is required for all Ajax features
+			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
+			// This one is required fox boxes
+			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
+
+			// Those ones are required only with option "confirm by ajax popup"
+			if ($conf->global->MAIN_CONFIRM_AJAX)
+			{
+				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/default.css">'."\n";
+				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alphacube.css">'."\n";
+				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alert.css">'."\n";
+				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
+				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/controls.js"></script>'."\n";
+				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/window/window.js"></script>'."\n";
+				//print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/window/tooltip.js"></script>'."\n";
+			}
+		}	
 				
 		print "</head>\n";
 	}

@@ -37,23 +37,39 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("../master.inc.php");
 
+$langs->load("main");
+
 
 // URL http://mydolibarr/lib/datepicker.php?mode=test&m=10&y=2038 can be used for tests
+print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
+print '<html><head>';
 if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
 {
-	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
-	print '<html><head>';
 	print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
-	print '</head><body>'."\n";
 }
 else
 {
-	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
-	print '<html><head><title>Calendar</title></head><body>'."\n";
+	print '<title>Calendar</title>';
 }
+// Define tradMonths javascript array
+$tradTemp=array($langs->trans("January"),
+				$langs->trans("February"),
+				$langs->trans("March"),
+				$langs->trans("April"),
+				$langs->trans("May"),
+				$langs->trans("June"),
+				$langs->trans("July"),
+				$langs->trans("August"),
+				$langs->trans("September"),
+				$langs->trans("October"),
+				$langs->trans("November"),
+				$langs->trans("December")
+				);
+print '<script language="javascript" type="text/javascript">';
+print 'var tradMonths = '.php2js($tradTemp).';';
+print '</script>'."\n";
+print '</head><body>'."\n";
 
-
-$langs->load("main");
 
 $qualified=true;
 
@@ -216,4 +232,43 @@ function displayBox($selectedDate,$month,$year){
 </table>
 <?php
 }//end function
+
+
+/*
+ *    \brief      Convertit une variable php en variable javascript
+ *    \param      var      		variable php
+ *    \return     result        variable javascript      	
+ */
+function php2js($var)
+{
+	if (is_array($var))
+	{
+		$array = array();
+		foreach ($var as $a_var)
+		{
+			$array[] = php2js($a_var);
+		}
+		$result = "[" . join(",", $array) . "]";
+		return $result;
+	}
+	else if (is_bool($var))
+	{
+		$result = $var ? "true" : "false";
+		return $result;
+	}
+	else if (is_int($var) || is_integer($var) || is_double($var) || is_float($var))
+	{
+		$result = $var;
+		return $result;
+	}
+	else if (is_string($var))
+	{
+		$result = "\"" . addslashes(stripslashes($var)) . "\"";
+		return $result;
+	}
+	// autres cas: objets, on ne les gére pas
+	$result = FALSE;
+	return $result;
+}
+
 ?>

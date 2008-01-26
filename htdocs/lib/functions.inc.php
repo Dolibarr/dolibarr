@@ -2807,42 +2807,6 @@ function make_substitutions($chaine,$substitutionarray)
 	return $chaine;
 }
 
-/*
- *    \brief      Convertit une variable php en variable javascript
- *    \param      var      			variable php
- *    \return     result        variable javascript      	
- */
- function php2js($var)
- {
- 	if (is_array($var))
- 	{
-    $array = array();
-    foreach ($var as $a_var)
-    {
-    	$array[] = php2js($a_var);
-    }
-    $result = "[" . join(",", $array) . "]";
-    return $result;
-  }
-  else if (is_bool($var))
-  {
-  	$result = $var ? "true" : "false";
-  	return $result;
-  }
-  else if (is_int($var) || is_integer($var) || is_double($var) || is_float($var))
-  {
-  	$result = $var;
-  	return $result;
-  }
-  else if (is_string($var))
-  {
-  	$result = "\"" . addslashes(stripslashes($var)) . "\"";
-  	return $result;
-  }
-  // autres cas: objets, on ne les gére pas
-  $result = FALSE;
-  return $result;
-}
 
 /*
  *    \brief      Formate l'affichage de date de début et de fin

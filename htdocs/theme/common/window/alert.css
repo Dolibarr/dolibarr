@@ -1,8 +1,8 @@
 .overlay_alert {
-	background-color: #ACBCBB;
-  filter:alpha(opacity=60);
-	-moz-opacity: 0.6;
-	opacity: 0.6;
+	background-color: #DDDDDD;
+	filter: alpha(opacity=50); /*Does not respect CSS standard */
+	-moz-opacity: 0.5;
+	opacity: 0.5;
 }
 
 .alert_nw {
