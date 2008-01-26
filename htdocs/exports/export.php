@@ -86,7 +86,7 @@ if ($action=='selectfield')
 if ($action=='unselectfield')
 { 
     unset($array_selected[$_GET["field"]]);
-    // Renumerote champs de array_selected (de 1 à nb_elements)
+    // Renumerote champs de array_selected (de 1 ï¿½ nb_elements)
     asort($array_selected);
     $i=0;
     $array_selected_save=$array_selected;
@@ -104,7 +104,7 @@ if ($action=='downfield' || $action=='upfield')
     $pos=$array_selected[$_GET["field"]];
     if ($action=='downfield') $newpos=$pos+1;
     if ($action=='upfield') $newpos=$pos-1;
-    // Recherche code avec qui switché
+    // Recherche code avec qui switchï¿½
     $newcode="";
     foreach($array_selected as $code=>$value)
     {
@@ -115,7 +115,7 @@ if ($action=='downfield' || $action=='upfield')
         }
     }
     //print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
-    if ($newcode)   // Si newcode trouvé (prtoection contre resoumission de page
+    if ($newcode)   // Si newcode trouvï¿½ (prtoection contre resoumission de page
     {
         $array_selected[$_GET["field"]]=$newpos;
         $array_selected[$newcode]=$pos;
@@ -131,7 +131,7 @@ if ($step == 1 || $action == 'cleanselect')
 
 if ($action == 'builddoc')
 {
-    // Genère le fichier
+    // Genï¿½re le fichier
 	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected);
 	if ($result < 0)
 	{
@@ -293,14 +293,14 @@ if ($step == 2 && $datatoexport)
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de données à exporter
+    // Lot de donnï¿½es ï¿½ exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>'.$objexport->array_export_label[0].'</td></tr>';
     
     print '</table>';
     print '<br>';
     
-    // Liste déroulante des modéles d'export
+    // Liste dï¿½roulante des modï¿½les d'export
     print '<form action="export.php" method="post">';
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="2">';
@@ -350,7 +350,7 @@ if ($step == 2 && $datatoexport)
         print '<td nowrap="nowrap">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
         if ((isset($array_selected[$code]) && $array_selected[$code]) || $modelchoice == 1)
         {
-            // Champ sélectionné
+            // Champ sï¿½lectionnï¿½
             print '<td>&nbsp;</td>';
             print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
@@ -358,7 +358,7 @@ if ($step == 2 && $datatoexport)
         }
         else
         {
-        	// Champ non sélectionné
+        	// Champ non sï¿½lectionnï¿½
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
             print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
             print '<td>&nbsp;</td>';
@@ -425,11 +425,11 @@ if ($step == 3 && $datatoexport)
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de données à exporter
+    // Lot de donnï¿½es ï¿½ exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>'.$objexport->array_export_label[0].'</td></tr>';
 
-    // Nbre champs exportés
+    // Nbre champs exportï¿½s
     print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
     $list='';
     foreach($array_selected as $code=>$value)
@@ -568,11 +568,11 @@ if ($step == 4 && $datatoexport)
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de données à exporter
+    // Lot de donnï¿½es ï¿½ exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>'.$objexport->array_export_label[0].'</td></tr>';
 
-    // Nbre champs exportés
+    // Nbre champs exportï¿½s
     print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
     $list='';
     foreach($array_selected as $code=>$label)
@@ -619,14 +619,17 @@ if ($step == 4 && $datatoexport)
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';
     
-
-    // Test d'affichage du tableau excel et csv
-    //print '<table width="100%"><tr><td>';
-    //require_once(DOL_DOCUMENT_ROOT.'/lib/viewfiles.lib.php');
-	//viewExcelFileContent($conf->export->dir_temp.'/1/export_member_1.xls',5,3);
-    //viewCsvFileContent($conf->export->dir_temp.'/1/export_member_1.csv',5);
-    //print '</td></tr></table>';
-    
+	// If external library PHPEXCELREADER is available
+	// and defined by PHPEXCELREADER constant.
+    if (file_exists(PHPEXCELREADER.'excelreader.php'))
+    {
+    	// Test d'affichage du tableau excel et csv
+    	//print '<table width="100%"><tr><td>';
+	    //require_once(DOL_DOCUMENT_ROOT.'/lib/viewfiles.lib.php');
+		//viewExcelFileContent($conf->export->dir_temp.'/1/export_member_1.xls',5,3);
+	    //viewCsvFileContent($conf->export->dir_temp.'/1/export_member_1.csv',5);
+	    //print '</td></tr></table>';
+    }    
 }
 
    

@@ -16,20 +16,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/lib/excel.lib.php
-   \brief      Ensemble de fonctions de base de dolibarr sous forme d'include
+	\file       htdocs/lib/excel.lib.php
+	\brief      Ensemble de fonctions de base de dolibarr sous forme d'include
+	\version 	$Id$
 */
 
 
-/*
+/**
  *    \brief      Affiche le contenu d'un fichier CSV sous forme de tableau
  *    \param      file_to_include     Fichier CSV a afficher
- *    \param      max_rows            Nombre max de lignes a afficher (0 = illimité)  	
+ *    \param      max_rows            Nombre max de lignes a afficher (0 = illimitï¿½)  	
  */
 function viewCsvFileContent($file_to_include='',$max_rows=0)
 {
@@ -51,18 +50,18 @@ function viewCsvFileContent($file_to_include='',$max_rows=0)
 	print '</table>';
 }
 
-/*
+/**
  *    \brief      Affiche le contenu d'un fichier Excel (avec les feuilles de calcul) sous forme de tableau
  *    \param      file_to_include     Fichier Excel a afficher
- *    \param      max_rows            Nombre max de lignes a afficher (0 = illimité)
- *    \param      max_cols            Nombre max de colonnes a afficher (0 = illimité)  	
+ *    \param      max_rows            Nombre max de lignes a afficher (0 = illimite)
+ *    \param      max_cols            Nombre max de colonnes a afficher (0 = illimite)  	
  */
 function viewExcelFileContent($file_to_include='',$max_rows=0,$max_cols=0)
 {
-	$debug = 0;  //1 for on 0 for off
+	$debug = 0;  	  //1 for on 0 for off
 	$force_nobr = 0;  //Force the info in cells not to wrap unless stated explicitly (newline)
 	
-	require_once(DOL_DOCUMENT_ROOT.'/includes/phpexcelreader/excelreader.php');
+	require_once(PHPEXCELREADER.'excelreader.php');
 	$data = new Spreadsheet_Excel_Reader();
 	$data->setOutputEncoding('CPa25a');
 	$data->read($file_to_include);
