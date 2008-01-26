@@ -41,13 +41,14 @@ require_once("../master.inc.php");
 // URL http://mydolibarr/lib/datepicker.php?mode=test&m=10&y=2038 can be used for tests
 if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
 {
+	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
 	print '<html><head>';
 	print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
 	print '</head><body>'."\n";
 }
 else
 {
-	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
+	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
 	print '<html><head><title>Calendar</title></head><body>'."\n";
 }
 
