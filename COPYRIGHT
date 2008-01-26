@@ -22,7 +22,6 @@ FPDI              1.2      Apache License 2.0        Non GPL3 uniqmt  PDF encryp
 MagPieRss         0.72     GPL 2.0                   Oui              Load RSS
 NuSoap            0.6.5    LGPL 2.1                  Oui              Interfaces with third tools
 PHP_WriteExcel    0.3.0    LGPL 2.1                  Oui              Excel files generation
-PHPExcelReader    2k       PHP License 3.0           Non!             Excel files reader
 Scriptaculous     1.8.0    MIT License               Oui              Extension Ajax
 Prototype         1.6.0    MIT License               Oui              Extension Ajax
 Treemenu          1.1      Perso                     Oui              Tree in HTML pages (like categories)
