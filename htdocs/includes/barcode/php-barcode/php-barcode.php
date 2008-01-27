@@ -428,11 +428,9 @@ function barcode_encode($code,$encoding){
  *    array[bars]     : the bars
  *    array[text]     : text-positioning info
  */
-
-
 function barcode_print($code, $encoding="ANY", $scale = 2 ,$mode = "png" ){
-    $bars=barcode_encode($code,$encoding);
-	dolibarr_syslog("$code $encoding $scale $mode ".join(',',$bars));
+	dolibarr_syslog("$code $encoding $scale $mode");
+	$bars=barcode_encode($code,$encoding);
     if (!$bars) return;
     if (!$mode) $mode="png";
     if (eregi($mode,"^(text|txt|plain)$")) print barcode_outtext($bars['text'],$bars['bars']);
