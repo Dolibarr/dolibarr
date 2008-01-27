@@ -11,10 +11,10 @@ $DIR||='.';
 $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $OPTIONS="";
-$OPTIONS="-d Preprocessor";
+#$OPTIONS="-d Preprocessor";
 
 $CONFFILE="doc/dev/dolibarr-doxygen.conf";
-$CONFFILE="doc/dev/dolibarr-doxygen2.conf";
+#$CONFFILE="doc/dev/dolibarr-doxygen2.conf";
 
 use Cwd;
 my $dir = getcwd;

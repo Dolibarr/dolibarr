@@ -54,9 +54,8 @@ if ($_REQUEST["menu_handler"]) $menu_handler=$_REQUEST["menu_handler"];
 * Actions
 */
 
-if (isset($_GET["action"]) && $_GET["action"] == 'up')
+if (isset($_GET["action"]) && ($_GET["action"] == 'up'))
 {
-
 	$sql = "SELECT m.rowid, m.position FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
 	$result = $db->query($sql);	
