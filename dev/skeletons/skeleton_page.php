@@ -19,7 +19,7 @@
 
 /**
     	\file       dev/skeletons/skeleton_page.php
-		\ingroup    unknown
+		\ingroup    mymodule1 mymodule2
 		\brief      This file is an example of a php page
 		\version    $Id$
 		\author		Put author name here

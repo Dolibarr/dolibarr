@@ -19,7 +19,7 @@
 
 /**
         \file       dev/skeletons/skeleton_class.class.php
-        \ingroup    unknown
+        \ingroup    mymodule1 mymodule2
         \brief      This file is an example for a class file
 		\version    $Id$
 		\author		Put author name here
@@ -39,11 +39,11 @@
 */
 class Skeleton_class // extends CommonObject
 {
-	var $db;							// To store db handler
-	var $error;							// To return error code (or message)
-	var $errors=array();				// To return several error codes (or messages)
-	//var $element='skeleton';			// Id that identify managed objects
-	//var $table_element='skeleton';		// Name of table without prefix where object is stored
+	var $db;							//!< To store db handler
+	var $error;							//!< To return error code (or message)
+	var $errors=array();				//!< To return several error codes (or messages)
+	//var $element='skeleton';			//!< Id that identify managed objects
+	//var $table_element='skeleton';	//!< Name of table without prefix where object is stored
     
     var $id;
     var $prop1;

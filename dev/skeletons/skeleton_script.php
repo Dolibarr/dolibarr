@@ -19,7 +19,7 @@
 
 /**
         \file       dev/skeletons/skeleton_script.php
-        \ingroup    unknown
+		\ingroup    mymodule1 mymodule2
         \brief      This file is an example for a command line script
         \version    $Id$
 		\author		Put author name here
