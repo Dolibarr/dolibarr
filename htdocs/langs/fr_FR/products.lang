@@ -86,6 +86,7 @@ PriceRemoved=Prix supprimé
 BarCode=Code barre
 BarcodeType=Type de code barre
 BarcodeValue=Valeur du code barre
+GenbarcodeLocation=Outil generation code barre en ligne de commande (utilisé par le moteur phpbarcode pour certains type de codes barre)
 SetDefaultBarcodeType=Définissez le type de code barre
 NoteNotVisibleOnBill=Note (non visible sur les factures, propals...)
 CreateCopy=Créer copie

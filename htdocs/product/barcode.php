@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/product/barcode.php
         \ingroup    product
         \brief      Page du code barre
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -60,7 +58,7 @@ if ($_POST['action'] ==	'setbarcode'	&& $user->rights->barcode->creer)
 {
   $product =	new	Product($db);
   $product->fetch($_GET["id"]);
-  $product->barcode = $_POST['barcode']; //Todo: ajout vérification de la validité du code barre en fonction du type
+  $product->barcode = $_POST['barcode']; //Todo: ajout vï¿½rification de la validitï¿½ du code barre en fonction du type
   $result = $product->update_barcode($user);
   Header("Location: barcode.php?id=".$_GET["id"]);
   exit;
@@ -137,14 +135,14 @@ if ($_GET['action'] == 'editbarcodetype')
 }
 else
 {
-	print $product->barcode_type_label?$product->barcode_type_label:'<div class="warning">'.$langs->trans("SetDefaultBarcodeTypeInConfigurationModule").'<div>';
+	print $product->barcode_type_label?$product->barcode_type_label:'<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>';
 }
 print '</td></tr>';
 
-// Barcode	 
+// Barcode value
 print '<tr><td nowrap>';
 print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-print $langs->trans("Barcode");
+print $langs->trans("BarcodeValue");
 print '<td>';
 if (($_GET['action'] != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$product->id.'">'.img_edit($langs->trans('SetBarcode'),1).'</a></td>';
 print '</tr></table>';
