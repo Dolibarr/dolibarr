@@ -262,6 +262,20 @@ else
 print '</tr>';
 print '</form>';
 
+// Faire apparaitre les dates en entier dans la liste des actions
+$var=!$var;
+print "<form method=\"post\" action=\"societe.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"viewfulldateactions\">";
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("ViewFullDateActions").'</td>';
+print '<td width="60" align="right">';
+print $html->selectyesno("activate_viewfulldateactions",$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td>";
+print '</tr>';
+print '</form>';
+
 print '</table>';
 
 $db->close();
