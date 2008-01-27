@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**	
         \file       htdocs/admin/barcode.php
 		\ingroup    barcode
 		\brief      Page d'administration/configuration du module Code barre
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -135,9 +133,9 @@ if ($resql)
 		print $obj->libelle;
 		print "</td><td>\n";
 		print $langs->trans('BarcodeDesc'.$obj->encoding);  
-		//print "L'EAN se compose de 8 caractères, 7 chiffres plus une clé de contrôle.<br>";
-		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
-		//print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
+		//print "L'EAN se compose de 8 caractï¿½res, 7 chiffres plus une clï¿½ de contrï¿½le.<br>";
+		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement auprï¿½s d'organisme tel que GENCOD.<br>";
+		//print "Codes numï¿½riques utilisï¿½s exclusivement ï¿½ l'identification des produits susceptibles d'ï¿½tre vendus au grand public.";
 		print '</td>';
 
 		// Affiche exemple
@@ -201,6 +199,11 @@ if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" align="center">';
 	print '<input type="text" size="40" name="genbarcodelocation" value="'.$conf->global->GENBARCODE_LOCATION.'">';
+	if (! empty($conf->global->GENBARCODE_LOCATION) && ! file_exists($conf->global->GENBARCODE_LOCATION))
+	{
+		$langs->load("errors");
+		print '<br><font class="error">'.$langs->trans("ErrorGenbarCodeNotfound").'</font>';
+	}
 	print '</td>';
 	print '<td width="60" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 	print '</tr>';
@@ -231,9 +234,9 @@ print '</table>';
       print "EAN13";
       print "</td><td>\n";
       
-      print "L'EAN se compose de 13 caractères, 12 chiffres plus une clé de contrôle. Il fonctionne de la même manière que l'UPC, avec lequel il est compatible.<br>";
-      print "L'utilisation des symbologies EAN13 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
-      print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
+      print "L'EAN se compose de 13 caractï¿½res, 12 chiffres plus une clï¿½ de contrï¿½le. Il fonctionne de la mï¿½me maniï¿½re que l'UPC, avec lequel il est compatible.<br>";
+      print "L'utilisation des symbologies EAN13 impose la souscription et l'abonnement auprï¿½s d'organisme tel que GENCOD.<br>";
+      print "Codes numï¿½riques utilisï¿½s exclusivement ï¿½ l'identification des produits susceptibles d'ï¿½tre vendus au grand public.";
       print '</td>';
 
       // Affiche exemple
@@ -249,10 +252,10 @@ print '</table>';
       print '<tr '.$bc[$var].'><td width="100">';
       print "UPC";
       print "</td><td>\n";
-      print "L'UPC est l'équivalent de l'EAN8/13 pour des pays codificateurs autre que l'Europe.<br>";
-      print "Il ne comporte que 11 chiffres plus la clé.<br>";
-      print "C'est en réalité un code EAN13 dont le premier chiffre serait zéro et dont la présentation serait légérement différente.<br>";
-      print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
+      print "L'UPC est l'ï¿½quivalent de l'EAN8/13 pour des pays codificateurs autre que l'Europe.<br>";
+      print "Il ne comporte que 11 chiffres plus la clï¿½.<br>";
+      print "C'est en rï¿½alitï¿½ un code EAN13 dont le premier chiffre serait zï¿½ro et dont la prï¿½sentation serait lï¿½gï¿½rement diffï¿½rente.<br>";
+      print "Codes numï¿½riques utilisï¿½s exclusivement ï¿½ l'identification des produits susceptibles d'ï¿½tre vendus au grand public.";
       print '</td>';
 
       // Affiche exemple
@@ -268,7 +271,7 @@ print '</table>';
       print '<tr '.$bc[$var].'><td width="100">';
       print "ISBN";
       print "</td><td>\n";
-      print "Le code ISBN est un code dédié au milieu de la presse écrite.";
+      print "Le code ISBN est un code dï¿½diï¿½ au milieu de la presse ï¿½crite.";
       print '</td>';
 
       // Affiche exemple
@@ -284,11 +287,11 @@ print '</table>';
       print '<tr '.$bc[$var].'><td width="100">';
       print "Code 39";
       print "</td><td>\n";
-      print "Premier code alpha numérique utilisé massivement dans l'Industrie pour sa capacité d'encodage (chiffres et lettres)<br>";
-      print "ainsi que par son degré de sécurité à l'encodage (clef de contrôle).<br>";
+      print "Premier code alpha numï¿½rique utilisï¿½ massivement dans l'Industrie pour sa capacitï¿½ d'encodage (chiffres et lettres)<br>";
+      print "ainsi que par son degrï¿½ de sï¿½curitï¿½ ï¿½ l'encodage (clef de contrï¿½le).<br>";
       print "Il met a disposition les 10 chiffres, les 26 lettres de l'alphabet et sept symboles.<br>";
-			print "l'astérisque (*) sert de caractère de bornage. La lecture est bidirectionnelle.<br>";
-			print "La longueur est variable mais en général ne dépasse pas 32 caractères.";
+			print "l'astï¿½risque (*) sert de caractï¿½re de bornage. La lecture est bidirectionnelle.<br>";
+			print "La longueur est variable mais en gï¿½nï¿½ral ne dï¿½passe pas 32 caractï¿½res.";
       print '</td>';
 
       // Affiche exemple
@@ -305,11 +308,11 @@ print '</table>';
       print '<tr '.$bc[$var].'><td width="100">';
       print "Code 128";
       print "</td><td>\n";
-      print "Ce code \"dernière génération\" alpha numérique est susceptible d'encoder les 128 caractères de la table ASCII ( chiffres + lettres + symboles ).<br>";
-			print "Le code 128 possède des algorithmes de cryptage sécurisés assez avancés.<br>";
-      print "C'est le plus complet des codes à barres, il propose 3 jeux de 128 caractères.<br>";
+      print "Ce code \"derniï¿½re gï¿½nï¿½ration\" alpha numï¿½rique est susceptible d'encoder les 128 caractï¿½res de la table ASCII ( chiffres + lettres + symboles ).<br>";
+			print "Le code 128 possï¿½de des algorithmes de cryptage sï¿½curisï¿½s assez avancï¿½s.<br>";
+      print "C'est le plus complet des codes ï¿½ barres, il propose 3 jeux de 128 caractï¿½res.<br>";
 			print "La lecture est bidirectionnelle.<br>";
-			print "La longueur est variable mais en général ne dépasse pas 20 caractères.";
+			print "La longueur est variable mais en gï¿½nï¿½ral ne dï¿½passe pas 20 caractï¿½res.";
       print '</td>';
 
       // Affiche exemple

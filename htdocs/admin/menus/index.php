@@ -18,10 +18,10 @@
  */
 
 /**
-		\file       htdocs/admin/menus/index.php
-        \ingroup    core
-		\brief      Page to show personalized menus
-		\version	$Id$
+   \file       htdocs/admin/menus/index.php
+   \ingroup    core
+   \brief      Index page for menu editor
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -221,11 +221,9 @@ if ($_GET["action"] == 'delete')
     
     $html = new Form($db);
     $html->form_confirm("index.php?menu_handler=".$menu_handler."&menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
-    print "<br />\n";
+    print "<br>\n";
 }
 
-//print $html->textwithwarning($langs->trans("FeatureExperimental"),$langs->trans("FeatureExperimental"),-1);
-//print '<br>';
 
 print '<form name="newmenu" class="nocellnopadding" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
@@ -245,9 +243,7 @@ print '</tr>';
 print '<tr>';
 print '<td>';
 
-/*************************
- *      ARBORESCENCE     *       
- *************************/	
+// ARBORESCENCE	
 
 $rangLast = 0;
 $idLast = -1;
