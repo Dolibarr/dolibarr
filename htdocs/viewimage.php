@@ -26,7 +26,7 @@
 		\version    $Id$
 */
 
-$original_file = urldecode($_GET["file"]);
+$original_file = isset($_GET["file"])?urldecode($_GET["file"]):'';
 $modulepart = urldecode($_GET["modulepart"]);
 $type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
 
@@ -68,7 +68,7 @@ $original_file = eregi_replace('\.\.','',$original_file);
 $accessallowed=0;
 if ($modulepart)
 {
-    // On fait une v�rification des droits et on d�finit le r�pertoire concern�
+    // Check permissions and define directory
 
     // Wrapping pour les photo utilisateurs
     if ($modulepart == 'companylogo')
@@ -280,7 +280,7 @@ if ($modulepart)
 }
 
 // Security:
-// Limite acc�s si droits non corrects
+// Limit access if permissions are wrong
 if (! $accessallowed)
 {
     accessforbidden();
