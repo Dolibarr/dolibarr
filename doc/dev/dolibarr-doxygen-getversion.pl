@@ -2,9 +2,10 @@
 #--------------------------------------------------------------------
 # Script recup version d'un source
 #
-# $Id$
+# \version $Id$
 #--------------------------------------------------------------------
 
+# Usage: dolibarr-doxygen-getversion.pl pathtofilefromdolibarrroot
 
 $file=$ARGV[0];
 

@@ -2,8 +2,7 @@
 #--------------------------------------------------------------------
 # Lance la generation de la doc dev doxygen
 #
-# $Id$
-# $Source$
+# \version	$Id$
 #--------------------------------------------------------------------
 
 # Detecte repertoire du script
@@ -11,6 +10,11 @@
 $DIR||='.';
 $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
+$OPTIONS="";
+$OPTIONS="-d Preprocessor";
+
+$CONFFILE="doc/dev/dolibarr-doxygen.conf";
+$CONFFILE="doc/dev/dolibarr-doxygen2.conf";
 
 use Cwd;
 my $dir = getcwd;
@@ -25,7 +29,7 @@ if (! -s "doc/dev/dolibarr-doxygen.conf") {
 }
 
 print "Running doxygen, please wait...\n";
-$result=`doxygen doc/dev/dolibarr-doxygen.conf 2>&1`;
+$result=`doxygen $OPTIONS $CONFFILE 2>&1`;
 
 print $result;
 

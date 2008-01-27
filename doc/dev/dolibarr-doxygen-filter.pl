@@ -2,9 +2,10 @@
 #--------------------------------------------------------------------
 # Script filtrage des sources Dolibarr pour doxygen
 #
-# $Id$
+# \version $Id$
 #--------------------------------------------------------------------
 
+# Usage: dolibarr-doxygen-getversion.pl pathtofilefromdolibarrroot
 
 $file=$ARGV[0];
 
@@ -14,7 +15,7 @@ while (<FILE>)
 	if ($_ =~ /\\version\s/i)
 	{
 		$_ =~ s/\$Id://i;
-		$_ =~ s/Exp \$//i;
+		$_ =~ s/(Exp|)\s\$$//i;
 		$_ =~ s/(\\version\s+)[^\s]+\s/$1/i;
 		$_ =~ s/(\w)\s(\w)/$1_$2/g;
 	}
