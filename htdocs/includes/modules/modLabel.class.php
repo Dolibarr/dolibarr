@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007  Regis Houssin   <regis@dolibarr.fr>
+/* Copyright (C) 2007 Regis Houssin       <regis@dolibarr.fr>
+ * Copyright (C) 2008 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ class modLabel extends DolibarrModules
     
     $this->family = "other";
     $this->name = "Etiquettes";
-    $this->description = "Gestion des �tiquettes";
+    $this->description = "Gestion des etiquettes";
     $this->version = 'development';		// 'development' or 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_LABEL';
     $this->special = 2;
@@ -59,14 +60,14 @@ class modLabel extends DolibarrModules
     // Dir
     $this->dirs = array();
 
-    // D�pendances
+    // Dependancies
     $this->depends = array();
 	  $this->requiredby = array();
 	
 	  // Config pages
     $this->config_page_url = array("label.php");
 	
-    // Constantes
+    // Constants
     $this->const = array();
 
     // Boxes
@@ -77,21 +78,18 @@ class modLabel extends DolibarrModules
     $this->rights_class = 'label';
     
     $this->rights[1][0] = 601; // id de la permission
-    $this->rights[1][1] = 'Lire les �tiquettes'; // libelle de la permission
-    $this->rights[1][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[1][3] = 1; // La permission est-elle une permission par d�faut
+    $this->rights[1][1] = 'Lire les etiquettes'; // libelle de la permission
+    $this->rights[1][3] = 1; // La permission est-elle une permission par defaut
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 602; // id de la permission
-    $this->rights[2][1] = 'Cr�er/modifier les �tiquettes'; // libelle de la permission
-    $this->rights[2][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[2][3] = 0; // La permission est-elle une permission par d�faut
+    $this->rights[2][1] = 'Creer/modifier les etiquettes'; // libelle de la permission
+    $this->rights[2][3] = 0; // La permission est-elle une permission par defaut
     $this->rights[2][4] = 'creer';
 
     $this->rights[4][0] = 609; // id de la permission
-    $this->rights[4][1] = 'Supprimer les �tiquettes'; // libelle de la permission
-    $this->rights[4][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[4][3] = 0; // La permission est-elle une permission par d�faut
+    $this->rights[4][1] = 'Supprimer les etiquettes'; // libelle de la permission
+    $this->rights[4][3] = 0; // La permission est-elle une permission par defaut
     $this->rights[4][4] = 'supprimer';
 
   }
