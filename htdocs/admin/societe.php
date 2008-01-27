@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      ï¿½ric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -78,20 +78,7 @@ if ($_POST["action"] == 'usesearchtoselectcompany')
   }
 }
 
-if ($_POST["action"] == 'viewfulldateactions')
-{
-  if (dolibarr_set_const($db, "COMPANY_VIEW_FULL_DATE_ACTIONS", $_POST["activate_viewfulldateactions"]))
-  {
-  	Header("Location: ".$_SERVER["PHP_SELF"]);
-  	exit;
-  }
-  else
-  {
-  	dolibarr_print_error($db);
-  }
-}
-
-// défini les constantes du modèle tigre
+// define constants for tigre model
 if ($_POST["action"] == 'updateMask')
 {
 	dolibarr_set_const($db, "CODE_TIGRE_MASK_CUSTOMER",$_POST["maskcustomer"]);
@@ -252,7 +239,7 @@ print "  <td>".$langs->trans("Parameters")."</td>\n";
 print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
 print "  <td width=\"80\">&nbsp;</td></tr>\n";
 
-// Utilisation formulaire Ajax sur choix société
+// Utilisation formulaire Ajax sur choix sociï¿½tï¿½
 $var=!$var;
 print "<form method=\"post\" action=\"societe.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectcompany\">";
@@ -272,20 +259,6 @@ else
   print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
   print "</td>";
 }
-print '</tr>';
-print '</form>';
-
-// Faire apparaitre les dates en entier dans la liste des actions
-$var=!$var;
-print "<form method=\"post\" action=\"societe.php\">";
-print "<input type=\"hidden\" name=\"action\" value=\"viewfulldateactions\">";
-print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("ViewFullDateActions").'</td>';
-print '<td width="60" align="right">';
-print $html->selectyesno("activate_viewfulldateactions",$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td>";
 print '</tr>';
 print '</form>';
 
