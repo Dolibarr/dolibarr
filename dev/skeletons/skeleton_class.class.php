@@ -19,7 +19,7 @@
 
 /**
         \file       dev/skeletons/skeleton_class.class.php
-        \ingroup    mymodule1 mymodule2
+        \ingroup    mymodule othermodule1 othermodule2
         \brief      This file is an example for a class file
 		\version    $Id$
 		\author		Put author name here
