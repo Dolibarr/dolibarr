@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/compta/paiement.php
    \ingroup    compta
-   \brief      Page de création d'un paiement
-   \version    $Revision$
+   \brief      Page to create a payment
+   \version    $Id$
 */
 
 include_once('./pre.inc.php');
@@ -62,7 +59,7 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 				$_POST['reyear']);
   $paiement_id = 0;
   
-  // Verifie si des paiements sont supérieurs au montant facture
+  // Verifie si des paiements sont supï¿½rieurs au montant facture
   foreach ($_POST as $key => $value)
   {
   	if (substr($key,0,7) == 'amount_')
@@ -76,15 +73,15 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
   		if ($amounts[$cursorfacid] && $amounts[$cursorfacid] > $amountsresttopay[$cursorfacid])
 	    {
 	      $addwarning=1;
-	      $formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' Attention, le montant de paiement pour une ou plusieurs facture est supérieur au reste à payer.';
-	      $formquestion['text'].='<br>Corriger votre saisie, sinon, confirmer et penser à créer un avoir du trop perçu lors de la fermeture de chacune des factures surpayées.';
+	      $formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' Attention, le montant de paiement pour une ou plusieurs facture est superieur au reste a payer.';
+	      $formquestion['text'].='<br>Corriger votre saisie, sinon, confirmer et penser a creer un avoir du trop percu lors de la fermeture de chacune des factures surpayees.';
 	    }
 	    
 	    $formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
 	  }
 	}
   
-  // Effectue les vérifications des parametres
+  // Effectue les verifications des parametres
   if ($_POST['paiementid'] <= 0)
   {
   	$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
@@ -160,11 +157,11 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 	      															$_POST['chqbank']);
 	      
 	      // Mise a jour fk_bank dans llx_paiement.
-	      // On connait ainsi le paiement qui a généré l'écriture bancaire
+	      // On connait ainsi le paiement qui a gï¿½nï¿½rï¿½ l'ï¿½criture bancaire
 	      if ($bank_line_id > 0)
 	      {
 	      	$paiement->update_fk_bank($bank_line_id);
-	      	// Mise a jour liens (pour chaque facture concernées par le paiement)
+	      	// Mise a jour liens (pour chaque facture concernï¿½es par le paiement)
 	      	foreach ($paiement->amounts as $key => $value)
 	      	{
 	      		$facid = $key;
@@ -208,7 +205,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
   }
 }
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -302,22 +299,22 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print "</tr>\n";
 
 		print '<tr><td>'.$langs->trans('Numero');
-		print ' <em>(Numéro chèque ou virement)</em>';	// \todo a traduire
+		print ' <em>(Numï¿½ro chï¿½que ou virement)</em>';	// \todo a traduire
 		print '</td>';
 		print '<td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans('CheckTransmitter');
-		print ' <em>(Emetteur du chèque)</em>';	// \todo a traduire
+		print ' <em>(Emetteur du chï¿½que)</em>';	// \todo a traduire
 		print '</td>';
 		print '<td><input name="chqemetteur" size="30" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans('Bank');
-		print ' <em>(Banque du chèque)</em>';	// \todo a traduire
+		print ' <em>(Banque du chï¿½que)</em>';	// \todo a traduire
 		print '</td>';
 		print '<td><input name="chqbank" size="30" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
 
 		/*
-		 * Liste factures impayées
+		 * Liste factures impayï¿½es
 		 */
 		$sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.type, ';
 		$sql.= $db->pdate('f.datef').' as df, ';
@@ -326,7 +323,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		$sql.= ' WHERE f.fk_soc = '.$facture->socid;
 		$sql.= ' AND f.paye = 0';
-		$sql.= ' AND f.fk_statut = 1'; // Statut=0 => non validée, Statut=2 => annulée
+		$sql.= ' AND f.fk_statut = 1'; // Statut=0 => non validï¿½e, Statut=2 => annulï¿½e
 		if ($facture->type != 2)
 		{
 			$sql .= ' AND type in (0,1)';	// Facture standard ou de remplacement
