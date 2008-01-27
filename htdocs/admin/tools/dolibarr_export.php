@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file 		htdocs/admin/tools/dolibarr_export.php
+		\ingroup	core
 		\brief      Page export de la base
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -182,10 +181,10 @@ function show_checked_option() {
 
 
 <fieldset id="mysql_options">
-    <legend>Parametres de l'export MySQL</legend>
+    <legend><?php echo $langs->trans("MySqlExportParameters"); ?></legend>
 
     <div class="formelementrow">
-        Chemin complet de la commande mysqldump:<br />
+        <?php echo $langs->trans("FullPathToMysqldumpCommand"); ?><br />
         <input type="text" name="mysqldump" size="80"
             value="<?php echo $conf->global->SYSTEMTOOLS_MYSQLDUMP ?>" />
     </div>
@@ -195,7 +194,7 @@ function show_checked_option() {
             id="checkbox_use_transaction"
              />
         <label for="checkbox_use_transaction">
-            Utiliser le mode transactionnel</label>
+            <?php echo $langs->trans("UseTransactionnalMode"); ?></label>
 
     </div>
 
@@ -204,10 +203,10 @@ function show_checked_option() {
             id="checkbox_disable_fk" checked="true"
              />
         <label for="checkbox_disable_fk">
-            Ordre de désactivation des clés étrangères à l'import</label>
+            <?php echo $langs->trans("CommandsToDisableForeignKeysForImport"); ?></label>
     </div>
     <label for="select_sql_compat">
-        Compatibilité de l'exportation:</label>
+        <?php echo $langs->trans("ExportCompatibility"); ?></label>
 
     <select name="sql_compat" id="select_sql_compat">
         <option value="NONE" selected="selected">NONE</option>
@@ -221,13 +220,11 @@ function show_checked_option() {
 <option value="POSTGRESQL">POSTGRESQL</option>
     </select>
     <fieldset>
-        <legend>Options d'exportation</legend>
+        <legend><?php echo $langs->trans("ExportOptions"); ?></legend>
         <input type="checkbox" name="drop_database" value="yes"
             id="checkbox_drop_database"
              />
-        <label for="checkbox_drop_database">
-
-            Ajouter DROP DATABASE</label>
+        <label for="checkbox_drop_database"><?php echo $langs->trans("AddDropDatabase"); ?></label>
     </fieldset>
     <fieldset>
         <legend>
@@ -243,8 +240,7 @@ function show_checked_option() {
 
         <input type="checkbox" name="drop" value="1" id="checkbox_dump_drop"
              />
-        <label for="checkbox_dump_drop">
-            Inclure des énoncés "DROP TABLE"</label><br />
+        <label for="checkbox_dump_drop"><?php echo $langs->trans("AddDropTable"); ?></label><br />
 
     </fieldset>
     <fieldset>
@@ -256,26 +252,26 @@ function show_checked_option() {
                         return false;
                     else return true;" />
             <label for="checkbox_sql_data">
-                Données</label>
+                <?php echo $langs->trans("Datas"); ?></label>
         </legend>
         <input type="checkbox" name="showcolumns" value="yes"
             id="checkbox_dump_showcolumns"
              />
         <label for="checkbox_dump_showcolumns">
-            Nomme les colonnes</label><br />
+            <?php echo $langs->trans("NameColumn"); ?></label><br />
 
         <input type="checkbox" name="extended_ins" value="yes"
             id="checkbox_dump_extended_ins"
              />
         <label for="checkbox_dump_extended_ins">
-            Insertions étendues</label><br />
+            <?php echo $langs->trans("ExtendedInsert"); ?></label><br />
 
         <input type="checkbox" name="delayed" value="yes"
             id="checkbox_dump_delayed"
              />
 
         <label for="checkbox_dump_delayed">
-            Insertions avec délais (DELAYED)</label><br />
+            <?php echo $langs->trans("DelayedInsert"); ?></label><br />
 
         <input type="checkbox" name="sql_ignore" value="yes"
             id="checkbox_dump_ignore"
@@ -287,7 +283,7 @@ function show_checked_option() {
             id="checkbox_hexforbinary"
              checked="checked" />
         <label for="checkbox_hexforbinary">
-            Encoder les champs binaires en hexadécimal</label><br />
+            <?php echo $langs->trans("EncodeBinariesInHexa"); ?></label><br />
 
     </fieldset>
 </fieldset>
@@ -335,7 +331,7 @@ function show_checked_option() {
             </td>
         </tr>
         <tr><td><label for="latex_structure_label">
-                    Clé de l'étiquette</label></td>
+                    Clï¿½ de l'ï¿½tiquette</label></td>
             <td><input type="text" name="latex_structure_label" size="30"
                     value="tab:__TABLE__-structure"
                     id="latex_structure_label" />
@@ -354,7 +350,7 @@ function show_checked_option() {
                         return false;
                     else return true;" />
             <label for="checkbox_latex_data">
-                Données</label>
+                Donnï¿½es</label>
 
         </legend>
         <input type="checkbox" name="latex_showcolumns" value="yes"
@@ -380,7 +376,7 @@ function show_checked_option() {
         </tr>
         <tr><td><label for="latex_data_label">
 
-                    Clé de l'étiquette</label></td>
+                    Clï¿½ de l'ï¿½tiquette</label></td>
             <td><input type="text" name="latex_data_label" size="30"
                     value="tab:__TABLE__-data"
                     id="latex_data_label" />
@@ -407,14 +403,14 @@ function show_checked_option() {
     <table>
 
     <tr><td><label for="export_separator">
-                Champs terminés par</label></td>
+                Champs terminï¿½s par</label></td>
         <td><input type="text" name="export_separator" size="2"
                 id="export_separator"
                 value=";" />
         </td>
     </tr>
     <tr><td><label for="enclosed">
-                Champs entourés par</label></td>
+                Champs entourï¿½s par</label></td>
         <td><input type="text" name="enclosed" size="2"
                 id="enclosed"
                 value="&quot;" />
@@ -422,7 +418,7 @@ function show_checked_option() {
         </td>
     </tr>
     <tr><td><label for="escaped">
-                Caractère spécial</label></td>
+                Caractï¿½re spï¿½cial</label></td>
         <td><input type="text" name="escaped" size="2"
                 id="escaped"
                 value="\" />
@@ -430,7 +426,7 @@ function show_checked_option() {
     </tr>
     <tr><td><label for="add_character">
 
-                Lignes terminées par</label></td>
+                Lignes terminï¿½es par</label></td>
         <td><input type="text" name="add_character" size="2"
                 id="add_character"
                 value="\r\n" />
@@ -449,7 +445,7 @@ function show_checked_option() {
         id="checkbox_dump_showcsvnames"
           />
     <label for="checkbox_dump_showcsvnames">
-        Afficher les noms de champ en première ligne</label>
+        Afficher les noms de champ en premiï¿½re ligne</label>
 </fieldset>
 -->
 
@@ -492,9 +488,9 @@ function show_checked_option() {
 
 
 <fieldset>
-    
+
     <label for="filename_template">
-        Nom du fichier à générer</label> :
+        <?php echo $langs->trans("FileNameToGenerate"); ?></label> :
     <input type="text" name="filename_template" size="60" id="filename_template"
      value="<?php
 $file='mysqldump_'.$dolibarr_main_db_name.'_'.strftime("%Y%m%d%H%M").'.sql';
@@ -523,12 +519,12 @@ foreach($compression as $key => $val)
 	{
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"';
 		print ' onclick="document.getElementById(\'checkbox_dump_asfile\').checked = true;" checked="checked" />';
-		print ' <label for="radio_compression_none">'.$val['label'].'</label>';
+		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 	}
 	else
 	{
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled="true">';
-		print ' <label for="radio_compression_none">'.$val['label'].'</label>';
+		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
 		print ' ('.$langs->trans("NotAvailable").')';
 	}	
 	print ' &nbsp; &nbsp; ';

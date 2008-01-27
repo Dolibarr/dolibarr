@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file 		htdocs/admin/tools/export.php
 		\brief      Page export de la base
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -164,6 +162,7 @@ if ($what == 'mysql')
 	}
 	else
 	{
+		$langs->load("errors");
 		dolibarr_syslog("Failed to open file $outputfile",LOG_ERR);
 		$errormsg=$langs->trans("ErrorFailedToWriteInDir");
 	}
