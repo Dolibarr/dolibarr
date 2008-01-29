@@ -304,6 +304,7 @@ class Facture extends CommonObject
 					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 					$interface=new Interfaces($this->db);
 					$result=$interface->run_triggers('BILL_CREATE',$this,$user,$langs,$conf);
+                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 
 					$this->db->commit();
@@ -780,6 +781,7 @@ class Facture extends CommonObject
 							include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 							$interface=new Interfaces($this->db);
 							$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
+							if ($result < 0) { $error++; $this->errors=$interface->errors; }
 							// Fin appel triggers
 							
 							$this->db->commit();
@@ -916,6 +918,7 @@ class Facture extends CommonObject
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
 
@@ -947,6 +950,7 @@ class Facture extends CommonObject
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('BILL_UNPAYED',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
 
@@ -991,6 +995,7 @@ class Facture extends CommonObject
 				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 				
 				$this->db->commit();
@@ -1202,6 +1207,7 @@ class Facture extends CommonObject
 				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 
 				$this->db->commit();
@@ -1573,6 +1579,7 @@ class Facture extends CommonObject
     	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
     	$interface=new Interfaces($this->db);
     	$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
+        if ($result < 0) { $error++; $this->errors=$interface->errors; }
     	// Fin appel triggers
     	
     	$this->db->commit();
@@ -3040,6 +3047,7 @@ class FactureLigne
 				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
 			

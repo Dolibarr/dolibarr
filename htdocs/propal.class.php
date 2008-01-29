@@ -585,6 +585,7 @@ class Propal extends CommonObject
 	                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	                    $interface=new Interfaces($this->db);
 	                    $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
+						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	                    // Fin appel triggers
 	
 	                    $this->db->commit();
@@ -999,6 +1000,7 @@ class Propal extends CommonObject
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('PROPAL_VALIDATE',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // Fin appel triggers
 
                 $this->db->commit();
@@ -1298,6 +1300,7 @@ class Propal extends CommonObject
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('PROPAL_CLOSE_SIGNED',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // Fin appel triggers
             }
             else
@@ -1308,6 +1311,7 @@ class Propal extends CommonObject
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('PROPAL_CLOSE_REFUSED',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // Fin appel triggers
             }
 
@@ -2001,6 +2005,7 @@ class Propal extends CommonObject
 	                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	                    $interface=new Interfaces($this->db);
 	                    $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
+						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	                    // Fin appel triggers
 	
 	                    $this->db->commit();

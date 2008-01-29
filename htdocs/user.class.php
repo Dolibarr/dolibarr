@@ -587,39 +587,39 @@ class User extends CommonObject
      *      \brief      Change statut d'un utilisateur
      *      \return     int     <0 si ko, >0 si ok
      */
-    function setstatus($statut)
-    {
-      $error=0;
-      
-      $this->db->begin();
-      
-      // Desactive utilisateur
-      $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-      $sql.= " SET statut = ".$statut;
-      $sql.= " WHERE rowid = ".$this->id;
-      $result = $this->db->query($sql);
-      
-      if ($result)
-        {
-	  // Appel des triggers
-	  include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	  $interface=new Interfaces($this->db);
-	  $result=$interface->run_triggers('USER_DISABLE',$this,$user,$lang,$conf);
-	  if ($result < 0) $error++;
-	  // Fin appel triggers
-        }
-      
-      if ($error)
-        {
-	  $this->db->rollback();
-	  return -$error;
-        }
-      else
-        {
-	  $this->db->commit();
-	  return 1;
-        }
-    }
+	function setstatus($statut)
+	{
+		$error=0;
+		
+		$this->db->begin();
+		
+		// Desactive utilisateur
+		$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+		$sql.= " SET statut = ".$statut;
+		$sql.= " WHERE rowid = ".$this->id;
+		$result = $this->db->query($sql);
+		
+		if ($result)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('USER_DISABLE',$this,$user,$lang,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
+		
+		if ($error)
+		{
+			$this->db->rollback();
+			return -$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
   
   
   /**
@@ -660,7 +660,7 @@ class User extends CommonObject
 	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	    $interface=new Interfaces($this->db);
 	    $result=$interface->run_triggers('USER_DELETE',$this,$user,$lang,$conf);
-	    if ($result < 0) $error++;
+        if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	    // Fin appel triggers
 	
 	    $this->db->commit();
@@ -748,7 +748,7 @@ class User extends CommonObject
 						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 						$interface = new Interfaces($this->db);
 						$result = $interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
-						if ($result < 0) $error++;
+						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 						// Fin appel triggers
 					}
 					

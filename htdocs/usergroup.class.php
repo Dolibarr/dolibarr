@@ -367,7 +367,7 @@ class UserGroup
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('USER_DELETE',$this,$user,$lang,$conf);
-			if ($result < 0) $error++;
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 	
 			$this->db->commit();
@@ -404,7 +404,7 @@ class UserGroup
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('GROUP_CREATE',$this,$user,$lang,$conf);
-			if ($result < 0) $error++;
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 	
 			return $this->id;
@@ -444,7 +444,7 @@ class UserGroup
                     include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('GROUP_MODIFY',$this,$user,$lang,$conf);
-                    if ($result < 0) $error++;
+                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
                     // Fin appel triggers
 				}
 				

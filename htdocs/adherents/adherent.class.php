@@ -402,7 +402,7 @@ class Adherent extends CommonObject
 		            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		            $interface=new Interfaces($this->db);
 		            $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
-	                if ($result < 0) $this->errors=$interface->errors;
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		            // Fin appel triggers
 				}
 				
@@ -734,7 +734,7 @@ class Adherent extends CommonObject
 				        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 				        $interface=new Interfaces($this->db);
 				        $result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
-						if ($result < 0) $this->errors=$interface->errors;
+						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				        // Fin appel triggers
 
 						$this->db->commit();
@@ -1228,7 +1228,7 @@ class Adherent extends CommonObject
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('MEMBER_SUBSCRIPTION',$this,$user,$langs,$conf);
-                if ($result < 0) $this->errors=$interface->errors;
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // Fin appel triggers
 
                	$this->db->commit();
@@ -1274,7 +1274,7 @@ class Adherent extends CommonObject
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('MEMBER_VALIDATE',$this,$user,$langs,$conf);
-            if ($result < 0) $this->errors=$interface->errors;
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
 			$this->db->commit();
@@ -1316,7 +1316,7 @@ class Adherent extends CommonObject
 	        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	        $interface=new Interfaces($this->db);
 	        $result=$interface->run_triggers('MEMBER_RESILIATE',$this,$user,$langs,$conf);
-            if ($result < 0) $this->errors=$interface->errors;
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	        // Fin appel triggers
 
 			$this->db->commit();

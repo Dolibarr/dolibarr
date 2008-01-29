@@ -235,6 +235,7 @@ class CommandeFournisseur extends Commande
 	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	    $interface=new Interfaces($this->db);
 	    $result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+        if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	    // Fin appel triggers
 
 	    dolibarr_syslog("CommandeFournisseur::valid Success");
@@ -282,6 +283,7 @@ class CommandeFournisseur extends Commande
 	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	    $interface=new Interfaces($this->db);
 	    $result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+        if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	    // Fin appel triggers
 
 	    return 1;
@@ -470,6 +472,7 @@ class CommandeFournisseur extends Commande
 	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	    $interface=new Interfaces($this->db);
 	    $result=$interface->run_triggers('ORDER_SUPPLIER_APPROVE',$this,$user,$langs,$conf);
+        if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	    // Fin appel triggers
 
 	    $subject = "Votre commande ".$this->ref." a été approuvée";
@@ -620,6 +623,7 @@ class CommandeFournisseur extends Commande
 	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	    $interface=new Interfaces($this->db);
 	    $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
+        if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	    // Fin appel triggers
 
 	    dolibarr_syslog("CommandeFournisseur::Create : Success");
@@ -956,6 +960,7 @@ class CommandeFournisseur extends Commande
 	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	$interface=new Interfaces($this->db);
 	$result=$interface->run_triggers('ORDER_SUPPLIER_DELETE',$this,$user,$langs,$conf);
+    if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	// Fin appel triggers
 
 	dolibarr_syslog("CommandeFournisseur::delete : Success");

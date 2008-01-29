@@ -140,6 +140,7 @@ class ActionComm
 	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
 	            $result=$interface->run_triggers('ACTION_CREATE',$this,$author,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            // Fin appel triggers
 			}
 			

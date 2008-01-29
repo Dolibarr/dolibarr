@@ -96,7 +96,7 @@ class InterfaceDemo
      *      \param      user        Objet user
      *      \param      lang        Objet lang
      *      \param      conf        Objet conf
-     *      \return     int         <0 si ko, 0 si aucune action faite, >0 si ok
+     *      \return     int         <0 if fatal error, 0 si nothing done, >0 if ok
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
     {

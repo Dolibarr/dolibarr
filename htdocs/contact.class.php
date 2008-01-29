@@ -119,7 +119,7 @@ class Contact extends CommonObject
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('CONTACT_CREATE',$this,$user,$langs,$conf);
-			if ($result < 0) $error++;
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
 
             return $this->id;
@@ -194,7 +194,7 @@ class Contact extends CommonObject
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('CONTACT_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) $error++;
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
     	}
 
@@ -605,7 +605,7 @@ class Contact extends CommonObject
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) $error++;
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
 		

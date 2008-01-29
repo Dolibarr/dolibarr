@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/lib/menubase.class.php
         \ingroup    core
+		\version	$Id$
         \brief      File of class to manage menu entries
 		\remarks	Initialy built by build_class_from_table on 2008-01-12 14:19
 */
@@ -135,13 +134,6 @@ class Menubase
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."menu");
     
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-			if ($result < 0) $this->errors=$interface->errors;
-            // Fin appel triggers
-
             return $this->id;
         }
         else
@@ -208,16 +200,6 @@ class Menubase
             dolibarr_syslog("Menu::update ".$this->error, LOG_ERR);
             return -1;
         }
-
-		if (! $notrigger)
-		{
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) $this->errors=$interface->errors;
-            // Fin appel triggers
-    	}
 
         return 1;
     }
@@ -313,13 +295,6 @@ class Menubase
 			return -1;
 		}
 	
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		if ($result < 0) $this->errors=$interface->errors;
-        // Fin appel triggers
-
 		return 1;
 	}
 

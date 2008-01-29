@@ -100,7 +100,7 @@ class Skeleton_class // extends CommonObject
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-			if ($result < 0) $this->errors=$interface->errors;
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
 
             return $this->id;
@@ -153,7 +153,7 @@ class Skeleton_class // extends CommonObject
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) $this->errors=$interface->errors;
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
     	}
 
@@ -229,7 +229,7 @@ class Skeleton_class // extends CommonObject
         include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
         $interface=new Interfaces($this->db);
         $result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		if ($result < 0) $this->errors=$interface->errors;
+        if ($result < 0) { $error++; $this->errors=$interface->errors; }
         // Fin appel triggers
 
 		return 1;

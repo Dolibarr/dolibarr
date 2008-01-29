@@ -115,6 +115,7 @@ class Contrat extends CommonObject
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
     
 			$this->db->commit();
@@ -155,6 +156,7 @@ class Contrat extends CommonObject
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('CONTRACT_SERVICE_CLOSE',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
     
             return 1;
@@ -189,6 +191,7 @@ class Contrat extends CommonObject
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('CONTRACT_CLOSE',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
 
             return 1;
@@ -220,6 +223,7 @@ class Contrat extends CommonObject
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('CONTRACT_VALIDATE',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
         
             return 1;
@@ -252,6 +256,7 @@ class Contrat extends CommonObject
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('CONTRACT_CANCEL',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
         
             return 1;
@@ -504,7 +509,7 @@ class Contrat extends CommonObject
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('CONTRACT_CREATE',$this,$user,$langs,$conf);
-                if ($result < 0) $error++;
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
                 // Fin appel triggers
         
                 if (! $error)
@@ -624,6 +629,7 @@ class Contrat extends CommonObject
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('CONTRACT_DELETE',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 	
 			$this->db->commit();

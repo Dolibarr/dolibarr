@@ -178,7 +178,7 @@ class Paiement
 		            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		            $interface=new Interfaces($this->db);
 		            $result=$interface->run_triggers('PAYMENT_CUSTOMER_CREATE',$this,$user,$lang,$conf);
-		            if ($result < 0) $error++;
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		            // Fin appel triggers
 				}
 			}

@@ -295,6 +295,7 @@ class Commande extends CommonObject
 	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	    $interface=new Interfaces($this->db);
 	    $result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
+        if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	    // Fin appel triggers
 	    
 	    $this->db->commit();
@@ -582,6 +583,7 @@ class Commande extends CommonObject
 		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		$interface=new Interfaces($this->db);
 		$result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
+        if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		// Fin appel triggers
 		
 		$this->db->commit();
@@ -1984,6 +1986,7 @@ class Commande extends CommonObject
 	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	$interface=new Interfaces($this->db);
 	$result=$interface->run_triggers('ORDER_DELETE',$this,$user,$langs,$conf);
+    if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	// Fin appel triggers
 	
 	$this->db->commit();
@@ -2450,6 +2453,7 @@ class CommandeLigne
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('LINEORDER_DELETE',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
 			return 1;
@@ -2542,6 +2546,7 @@ class CommandeLigne
 				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('LINEORDER_INSERT',$this,$user,$langs,$conf);
+                if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
 			
