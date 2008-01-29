@@ -83,7 +83,7 @@ function versiondolibarrarray()
 /**
 *	\brief		Launch a sql file
 *	\param		sqlfile		Full path to sql file
-*	\return		int			<0 if ko, >0 if ok
+*	\return		int			<=0 if KO, >0 if OK
 */
 function run_sql($sqlfile,$silent=1)
 {

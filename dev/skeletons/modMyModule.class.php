@@ -130,6 +130,8 @@ class modMyModule extends DolibarrModules
   	{
     	$sql = array();
     
+		$result=$this->load_tables();
+	
     	return $this->_init($sql);
   	}
 
@@ -145,6 +147,53 @@ class modMyModule extends DolibarrModules
     	return $this->_remove($sql);
   	}
 
+	
+	/**
+	*		\brief		Create tables and keys (called by this->init)
+	*		\return		int		<=0 if KO, >0 if OK
+	*/
+	function load_tables()
+	{
+		include_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
+
+		global $db;
+		
+		$ok = 1;
+		if ($ok)
+		{
+			$dir = DOL_DOCUMENT_ROOT.'/mysql/tables/mymodule/';
+			$ok = 0;
+
+			// Run llx_mytable.sql files
+			$handle=opendir($dir);
+			while (($file = readdir($handle))!==false)
+			{
+				if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) <> '.key.sql')
+				{
+					$result=run_sql($file,1);
+				}
+			}
+			closedir($handle);
+
+			// Run llx_mytable.key.sql files
+			$handle=opendir($dir);
+			while (($file = readdir($handle))!==false)
+			{
+				if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) == '.key.sql')
+				{
+					$result=run_sql($file,1);
+				}
+			}
+			closedir($handle);
+
+			if ($error == 0)
+			{
+				$ok = 1;
+			}
+		}
+		
+		return $ok;
+	}
 }
 
 ?>

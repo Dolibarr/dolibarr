@@ -313,62 +313,62 @@ class modTelephonie extends DolibarrModules
     * A faire avant les fichiers *.key.sql
     *
     ***************************************************************************************/
-    $ok = 1;
-    if ($ok)
-    {
-      $dir = DOL_DOCUMENT_ROOT.'/telephonie/sql/';
+	$ok = 1;
+	if ($ok)
+	{
+		$dir = DOL_DOCUMENT_ROOT.'/telephonie/sql/';
 
-      $ok = 0;
-      $handle=opendir($dir);
-      $table_exists = 0;
-      while (($file = readdir($handle))!==false)
-        {
-	  if (substr($file, strlen($file) - 4) == '.sql' && substr($file,0,4) == 'llx_' && substr($file, -8) <> '.key.sql')
-            {
-	      $name = substr($file, 0, strlen($file) - 4);
-	      $buffer = '';
-	      $fp = fopen($dir.$file,"r");
-	      if ($fp)
-                {
-		  while (!feof ($fp))
-                    {
-		      $buf = fgets($fp, 4096);
-		      if (substr($buf, 0, 2) <> '--')
-                        {
-			  $buffer .= $buf;
-                        }
-                    }
-		  fclose($fp);
-                }
-	      
-	      //print "<tr><td>Creation de la table $name/td>";
-	      $requestnb++;
-	      if (@$this->db->query($buffer))
-                {
-		  //print "<td>OK requete ==== $buffer</td></tr>";
-                }
-	      else
-                {
-		  if ($this->db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS')
-                    {
-		      //print "<td>Deje existante</td></tr>";
-		      $table_exists = 1;
-                    }
-		  else
-                    {
-		      $error++;
-                    }
-                }
-            }
-	  
-        }
-        closedir($handle);
+		$ok = 0;
+		$handle=opendir($dir);
+		$table_exists = 0;
+		while (($file = readdir($handle))!==false)
+		{
+			if (substr($file, strlen($file) - 4) == '.sql' && substr($file,0,4) == 'llx_' && substr($file, -8) <> '.key.sql')
+			{
+				$name = substr($file, 0, strlen($file) - 4);
+				$buffer = '';
+				$fp = fopen($dir.$file,"r");
+				if ($fp)
+				{
+					while (!feof ($fp))
+					{
+						$buf = fgets($fp, 4096);
+						if (substr($buf, 0, 2) <> '--')
+						{
+							$buffer .= $buf;
+						}
+					}
+					fclose($fp);
+				}
+				
+				//print "<tr><td>Creation de la table $name/td>";
+				$requestnb++;
+				if (@$this->db->query($buffer))
+				{
+					//print "<td>OK requete ==== $buffer</td></tr>";
+				}
+				else
+				{
+					if ($this->db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS')
+					{
+						//print "<td>Deje existante</td></tr>";
+						$table_exists = 1;
+					}
+					else
+					{
+						$error++;
+					}
+				}
+			}
+			
+		}
+		closedir($handle);
 
-        if ($error == 0)
-        {
-	  $ok = 1;
-        }
-    }
+		if ($error == 0)
+		{
+			$ok = 1;
+		}
+	}
 
     
     /***************************************************************************************
