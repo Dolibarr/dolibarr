@@ -36,8 +36,6 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 $langs->load("products");
 $langs->load("bills");
 
-$user->getrights('produit');
-
 if (!$user->rights->produit->lire)
 accessforbidden();
 

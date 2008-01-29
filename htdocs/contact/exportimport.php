@@ -30,8 +30,6 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 
-$user->getrights('commercial');
-
 $langs->load("companies");
 
 // Protection quand utilisateur externe

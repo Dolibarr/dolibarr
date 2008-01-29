@@ -32,7 +32,6 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
-$user->getrights('facture');
 if (!$user->rights->facture->lire)
   accessforbidden();
 

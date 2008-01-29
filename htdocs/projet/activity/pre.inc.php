@@ -34,8 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/task.class.php");
 $langs->load("projects");
 $langs->load("companies");
 
-$user->getrights('projet');
-
 function llxHeader($head = "", $title="", $help_url='')
 {
   global $langs;

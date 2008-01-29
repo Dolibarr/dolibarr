@@ -29,8 +29,6 @@
 
 require("../../main.inc.php");
 
-$user->getrights('commande');
-
 $langs->load("orders");
 
 

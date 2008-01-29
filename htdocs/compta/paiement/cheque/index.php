@@ -32,8 +32,6 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $langs->load("banks");
 
-$user->getrights("banque");
-
 // Sécurité accés client
 if (! $user->rights->banque)
   accessforbidden();

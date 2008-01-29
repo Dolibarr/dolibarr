@@ -31,9 +31,6 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
-$user->getrights('facture');
-$user->getrights('banque');
-
 if (!$user->rights->facture->lire)
 accessforbidden();
 

@@ -35,9 +35,6 @@ require("osc_categories.class.php");
 $langs->load("companies");
 $langs->load("other");
 
-// Load permissions
-//$user->getrights("commercial");
-//if (!$user->rights->categorie->lire) accessforbidden();
 
 // Get parameters
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';

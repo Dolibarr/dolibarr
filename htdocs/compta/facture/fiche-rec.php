@@ -32,8 +32,6 @@ require_once("./facture-rec.class.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
-$user->getrights('facture');
-
 if (!$user->rights->facture->lire)
   accessforbidden();
 

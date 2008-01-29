@@ -34,8 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
 $langs->load("members");
 
-$user->getrights('adherent');
-
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 
 

@@ -31,8 +31,6 @@
 require("../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
-$user->getrights('commande');
-
 $langs->load("orders");
 
 

@@ -415,8 +415,6 @@ if ($_GET["action"] == 'create')
 			print '<table class="nobordernopadding" width="100%">';
 			print '<tr><td width="130">'.$langs->trans("NoProject").'</td>';
 
-			$user->getrights("projet");
-
 			if ($user->rights->projet->creer)
 			{
 				print '<td><a href='.DOL_URL_ROOT.'/projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans("Add").'</a></td>';

@@ -34,8 +34,6 @@ require('./pre.inc.php');
 
 require(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
 
-$user->getrights('facture');
-$user->getrights('fournisseur');
 
 $langs->load('bills');
 $langs->load('banks');

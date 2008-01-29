@@ -38,8 +38,6 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 $langs->load("products");
 $langs->load("bills");
 
-$user->getrights('produit');
-
 $mesg = '';
 
 if (!$user->rights->produit->lire) accessforbidden();

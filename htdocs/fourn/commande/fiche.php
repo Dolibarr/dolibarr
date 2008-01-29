@@ -43,8 +43,6 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
-$user->getrights("fournisseur");
-
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
 $comclientid = isset($_GET["comid"])?$_GET["comid"]:'';

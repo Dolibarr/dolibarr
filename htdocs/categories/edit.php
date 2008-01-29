@@ -30,8 +30,6 @@
 
 require "./pre.inc.php";
 
-$user->getrights();
-
 if (!$user->rights->categorie->lire)
   accessforbidden();
 

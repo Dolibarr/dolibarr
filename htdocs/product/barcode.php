@@ -33,8 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 $langs->load("products");
 $langs->load("bills");
 
-$user->getrights('barcode');
-
 if (!$user->rights->barcode->lire)
 accessforbidden();
 

@@ -28,8 +28,6 @@
 
 require("./pre.inc.php");
 
-$user->getrights();
-
 if (! $user->rights->user->user->lire && ! $user->admin) accessforbidden();
 
 $langs->load("users");

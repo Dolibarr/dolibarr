@@ -32,9 +32,6 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
-$user->getrights('facture');
-$user->getrights('banque');
-
 if (!$user->rights->facture->lire)
 accessforbidden();
 

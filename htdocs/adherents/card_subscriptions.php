@@ -41,8 +41,6 @@ $langs->load("members");
 $langs->load("users");
 $langs->load("mails");
 
-$user->getrights('adherent');
-
 $adh = new Adherent($db);
 $adho = new AdherentOptions($db);
 $adht = new AdherentType($db);

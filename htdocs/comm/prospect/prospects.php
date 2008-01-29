@@ -32,8 +32,6 @@ require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
 
 $langs->load("propal");
 
-$user->getrights();
-
 // Sécurité accés client
 $socid=0;
 if ($user->societe_id > 0) 

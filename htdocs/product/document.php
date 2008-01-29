@@ -37,8 +37,6 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 $langs->load("other");
 $langs->load("products");
 
-$user->getrights('produit');
-
 if (!$user->rights->produit->lire)
 	accessforbidden();
 

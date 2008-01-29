@@ -21,8 +21,6 @@
  */
 require("./pre.inc.php");
 
-$user->getrights('propale');
-
 if ($user->societe_id > 0)
 {
   $socid = $user->societe_id;

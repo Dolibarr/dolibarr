@@ -24,7 +24,6 @@
 */
 
 require ("../../main.inc.php");
-$user->getrights();
 
 function llxHeader($head = "")
 {

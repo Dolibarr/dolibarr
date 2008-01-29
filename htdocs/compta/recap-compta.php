@@ -42,8 +42,6 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-$user->getrights('facture');
-
 /*
  *
  * Mode fiche

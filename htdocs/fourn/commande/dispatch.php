@@ -42,8 +42,6 @@ $langs->load('deliveries');
 $langs->load('products');
 $langs->load('stocks');
 
-$user->getrights("fournisseur");
-
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
 // Sécurité	accés client

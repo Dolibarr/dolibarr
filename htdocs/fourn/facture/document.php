@@ -37,7 +37,6 @@ $langs->load('bills');
 $langs->load('other');
 $langs->load("companies");
 
-$user->getrights('fournisseur');
 
 if (!$user->rights->fournisseur->facture->lire)
 	accessforbidden();

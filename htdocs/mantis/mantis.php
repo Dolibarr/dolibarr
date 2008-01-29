@@ -29,8 +29,6 @@ require("./pre.inc.php");
 
 if (empty($conf->global->PHPMANTIS_URL))
 {
-	$user->getrights();
-	
 	llxHeader();
 	print '<div class="error">Module Mantis was not configured properly.</div>';
 	llxFooter('$Date$ - $Revision$');

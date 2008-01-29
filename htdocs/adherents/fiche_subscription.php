@@ -34,8 +34,6 @@ $langs->load("bills");
 $langs->load("members");
 $langs->load("users");
 
-$user->getrights('adherent');
-
 $adh = new Adherent($db);
 $subscription = new Cotisation($db);
 $errmsg='';

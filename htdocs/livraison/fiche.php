@@ -40,7 +40,6 @@ $langs->load("sendings");
 $langs->load("bills");
 $langs->load('deliveries');
 
-$user->getrights('expedition');
 if (!$user->rights->expedition->livraison->lire)
   accessforbidden();
 

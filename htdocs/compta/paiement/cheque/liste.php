@@ -32,9 +32,6 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $langs->load("bills");
 
-$user->getrights("facture");
-$user->getrights("adherent");
-
 // Sécurité accés client
 if (! $user->rights->facture->lire && ! $user->rights->adherent->cotisation->lire)
   accessforbidden();

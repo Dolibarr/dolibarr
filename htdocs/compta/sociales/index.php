@@ -31,10 +31,6 @@ require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 
 
-$user->getrights('facture');
-$user->getrights('compta');
-$user->getrights('tax');
-
 if (!$user->admin && ! $user->rights->tax->charges->lire)
   accessforbidden();
 

@@ -31,15 +31,10 @@ require("../main.inc.php");
 
 $langs->load("products");
 
-$user->getrights('produit');
-$user->getrights('propale');
-$user->getrights('facture');
 
 function llxHeader($head = "", $urlp = "", $title="")
 {
 	global $user, $conf, $langs;
-
-	$user->getrights("produit");
 
 	top_menu($head, $title);
 

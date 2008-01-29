@@ -14,21 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file 		htdocs/webcal/pre.inc.php
 		\ingroup    webcalendar
 		\brief      Fichier de gestion du menu gauche du module webcalendar
-		\version    $Revision$
+		\version    $Id$
 */
-
 require ("../main.inc.php");
 
-$user->getrights('webcal');
 
 function llxHeader($head = "", $title="", $help_url='')
 {
@@ -37,9 +32,7 @@ function llxHeader($head = "", $title="", $help_url='')
 	top_menu($head, $title);
 	
 	$menu = new Menu();
-	
-	
-	
+		
 	left_menu($menu->liste, $help_url);
 }
 ?>

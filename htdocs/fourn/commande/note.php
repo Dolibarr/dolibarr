@@ -34,8 +34,6 @@ $langs->load("suppliers");
 $langs->load("companies");
 $langs->load('stocks');
 
-$user->getrights('fournisseur');
-
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
 

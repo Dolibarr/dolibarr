@@ -34,8 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 $langs->load("suppliers");
 $langs->load("products");
 
-$user->getrights("produit");
-
 
 function llxHeader($head = "", $title="", $help_url='',$addons='')
 {

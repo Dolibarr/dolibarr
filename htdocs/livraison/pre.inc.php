@@ -29,15 +29,12 @@
 */
 
 require("../main.inc.php");
-
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
 
 $langs->load("orders");
 $langs->load("sendings");
 
-$user->getrights('commande');
-$user->getrights('expedition');
 
 function llxHeader($head = "", $title="", $help_url='')
 {

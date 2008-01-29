@@ -37,9 +37,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 $langs->load("companies");
 $langs->load("users");
 
-$user->getrights("societe");
-$user->getrights("commercial");
-
 
 $error = array();
 $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];

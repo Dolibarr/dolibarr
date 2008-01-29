@@ -33,7 +33,6 @@ require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT."/categories/categorie.class.php";
 
 $langs->load("categories");
-$user->getrights("categorie");
 
 function llxHeader ($head = "", $urlp = "", $title="")
 {

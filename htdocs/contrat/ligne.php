@@ -39,8 +39,6 @@ $langs->load("orders");
 $langs->load("companies");
 $langs->load("bills");
 
-$user->getrights('contrat');
-
 if (!$user->rights->contrat->lire)
 accessforbidden();
 

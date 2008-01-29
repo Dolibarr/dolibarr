@@ -31,8 +31,6 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 $langs->load("banks");
 
-$user->getrights('banque');
-
 function llxHeader($head = "")
 {
 	global $db, $user, $conf, $langs;

@@ -17,13 +17,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
-
-$user->getrights('compta');
 
 if (!$user->rights->banque->lire) accessforbidden();
 

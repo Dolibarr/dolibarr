@@ -31,8 +31,6 @@ require_once(DOL_DOCUMENT_ROOT."/admin/import/dolibarrimport.class.php");
 
 $langs->load("exports");
 
-$user->getrights();
-
 if (! $user->societe_id == 0)
   accessforbidden();
 

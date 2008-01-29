@@ -32,9 +32,6 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 
-$user->getrights('commande');
-$user->getrights('expedition');
-
 if (!$user->rights->commande->lire)
 	accessforbidden();
 

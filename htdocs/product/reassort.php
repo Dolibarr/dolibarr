@@ -34,8 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 $langs->load("products");
 $langs->load("stocks");
 
-$user->getrights('produit');
-
 if (!$user->rights->produit->lire)
   accessforbidden();
 

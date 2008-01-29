@@ -888,7 +888,6 @@ class Form
 	function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeysearch='')
 	{
 		global $langs,$conf,$user;
-		$user->getrights("categorie");
 		
 		$sql = "SELECT ";
 		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)

@@ -38,7 +38,6 @@ $langs->load("products");
 $langs->load("orders");
 $langs->load("bills");
 
-$user->getrights('produit');
 $mesg = '';
 
 if (! $user->rights->produit->lire || ! $product->type == 0 || ! $conf->stock->enabled)

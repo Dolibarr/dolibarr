@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 /** 
@@ -27,10 +25,8 @@
         \brief      Fichier de gestion du menu gauche de l'espace commercial
         \version    $Revision$
 */
-
 require("../main.inc.php");
 
-$user->getrights();
 
 function llxHeader($head = "", $title = "")
 {

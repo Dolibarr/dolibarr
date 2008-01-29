@@ -39,9 +39,6 @@ $langs->load("products");
 $langs->load("suppliers");
 $langs->load("bills");
 
-$user->getrights('produit');
-$user->getrights('propale');
-$user->getrights('facture');
 $mesg = '';
 
 if (! $user->rights->produit->lire) accessforbidden();

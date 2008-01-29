@@ -31,7 +31,6 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/order.lib.php');
 
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
 
-$user->getrights('commande');
 if (!$user->rights->commande->lire)
   accessforbidden();
 

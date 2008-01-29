@@ -38,8 +38,6 @@ $langs->load("orders");
 $langs->load("commercial");
 
 
-$user->getrights('projet');
-
 function llxHeader($head = "", $title="", $help_url='')
 {
   global $langs;

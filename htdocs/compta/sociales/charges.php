@@ -31,10 +31,6 @@ require(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 $langs->load("compta");
 $langs->load("bills");
 
-// Protection
-$user->getrights('compta');
-$user->getrights('tax');
-
 if (!$user->admin && !$user->rights->tax->charges)
   accessforbidden();
 

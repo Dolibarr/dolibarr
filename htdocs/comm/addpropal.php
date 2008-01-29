@@ -42,11 +42,6 @@ $langs->load("companies");
 $langs->load("bills");
 $langs->load("orders");
 
-$user->getrights('propale');
-$user->getrights('fichinter');
-$user->getrights('commande');
-$user->getrights('projet');
-
 
 
 llxHeader();

@@ -33,9 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 
 $langs->load("banks");
 
-$user->getrights('compta');
-$user->getrights('banque');
-
 if (!$user->rights->banque->lire)
   accessforbidden();
 

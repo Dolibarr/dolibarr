@@ -1329,9 +1329,6 @@ function info_admin($texte,$infoonimgalt=0)
  		$modulename = 'societe';
  		$list = 1;
  	}
- 		
- 	$user->getrights($modulename);
- 	$user->getrights('commercial');
  	
  	$socid = 0;
  	$nocreate = 0; 

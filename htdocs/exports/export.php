@@ -33,8 +33,6 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
 
 $langs->load("exports");
 
-$user->getrights();
-
 if (! $user->societe_id == 0)
   accessforbidden();
 

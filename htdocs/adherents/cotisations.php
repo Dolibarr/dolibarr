@@ -33,9 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
-$user->getrights('adherent');
-$user->getrights('banque');
-
 $langs->load("members");
 
 $sortorder=$_GET["sortorder"];

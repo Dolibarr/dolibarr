@@ -80,8 +80,6 @@ class MenuLeft {
             session_start();    // En mode authentification PEAR, la session a déjà été ouverte
         }
 
-        $user->getrights("");
-        
         // On récupère mainmenu et leftmenu qui définissent le menu à afficher
         if (isset($_GET["mainmenu"])) {
             // On sauve en session le menu principal choisi

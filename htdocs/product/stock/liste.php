@@ -30,8 +30,6 @@
 require("./pre.inc.php");
 require_once("./entrepot.class.php");
 
-$user->getrights();
-
 $langs->load("stocks");
 
 if (!$user->rights->stock->lire)

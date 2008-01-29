@@ -16,12 +16,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 require("./pre.inc.php");
-
-$user->getrights('propale');
 
 if ($user->societe_id > 0)
 {

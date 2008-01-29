@@ -30,8 +30,6 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
-$user->getrights('commercial');
-
 $langs->load("users");
 $langs->load("admin");
 $langs->load("companies");

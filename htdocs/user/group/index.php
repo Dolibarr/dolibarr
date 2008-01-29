@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
  
 /**
@@ -28,7 +27,6 @@
 
 require("./pre.inc.php");
 
-$user->getrights();
 
 if (! $user->rights->user->user->lire && ! $user->admin) accessforbidden();
 

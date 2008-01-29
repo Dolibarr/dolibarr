@@ -25,9 +25,8 @@
    \brief      File to manage left menu for home page
    \version    $Id$
 */
-
 require ("./main.inc.php");
-$user->getrights();
+
 
 function llxHeader($head = "")
 {

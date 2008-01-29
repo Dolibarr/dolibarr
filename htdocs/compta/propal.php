@@ -50,8 +50,6 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.datep";
 if ($page == -1) { $page = 0 ; }
 
-// S�curit� acc�s client
-$user->getrights('facture');
 $module='propale';
 if (! empty($_GET["socid"]))
 {

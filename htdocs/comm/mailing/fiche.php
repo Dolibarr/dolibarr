@@ -31,8 +31,6 @@ require("./pre.inc.php");
 
 $langs->load("mails");
 
-$user->getrights("mailing");
-
 if (! $user->rights->mailing->lire || $user->societe_id > 0)
   accessforbidden();
 

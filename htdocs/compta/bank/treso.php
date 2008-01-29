@@ -34,8 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 $langs->load("banks");
 $langs->load("bills");
 
-$user->getrights('banque');
-
 if (!$user->admin && !$user->rights->banque)
   accessforbidden();
 

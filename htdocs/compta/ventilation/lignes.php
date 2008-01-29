@@ -34,9 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 $langs->load("bills");
 $langs->load("compta");
 
-$user->getrights('facture');
-$user->getrights('banque');
-
 if (!$user->rights->facture->lire) accessforbidden();
 if (!$user->rights->compta->ventilation->creer) accessforbidden();
 

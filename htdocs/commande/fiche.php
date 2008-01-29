@@ -47,9 +47,6 @@ $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
 
-$user->getrights('commande');
-$user->getrights('expedition');
-
 if (!$user->rights->commande->lire) accessforbidden();
 
 

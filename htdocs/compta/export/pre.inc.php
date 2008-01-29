@@ -28,7 +28,6 @@
 */
 
 require("../../main.inc.php");
-$user->getrights('');
 
 function llxHeader($head = "", $title="", $help_url='')
 {

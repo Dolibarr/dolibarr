@@ -33,7 +33,6 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
 
-$user->getrights('facture');
 if (!$user->rights->facture->lire)
   accessforbidden();
 

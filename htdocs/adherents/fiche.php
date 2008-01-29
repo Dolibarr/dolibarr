@@ -39,8 +39,6 @@ $langs->load("bills");
 $langs->load("members");
 $langs->load("users");
 
-$user->getrights('adherent');
-
 // Defini si peux creer un utilisateur ou gerer groupe sur un utilisateur
 $canadduser=$user->rights->adherent->creer;
 // Defini si peux lire/modifier info user ou mot de passe

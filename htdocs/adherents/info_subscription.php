@@ -34,7 +34,6 @@ $langs->load("bills");
 $langs->load("members");
 $langs->load("users");
 
-$user->getrights('adherent');
 if (!$user->rights->adherent->lire)
 	accessforbidden();
 

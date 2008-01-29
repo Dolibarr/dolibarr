@@ -32,7 +32,6 @@ require("../../chargesociales.class.php");
 /*
  *
  */
-$user->getrights('compta');
 if (!$user->rights->compta->resultat->lire)
   accessforbidden();
 

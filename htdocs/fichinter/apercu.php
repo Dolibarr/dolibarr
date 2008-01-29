@@ -31,8 +31,6 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 
-$user->getrights('ficheinter');
-
 if (!$user->rights->ficheinter->lire)
 	accessforbidden();
 

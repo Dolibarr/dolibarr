@@ -32,8 +32,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 
 $langs->load("banks");
 
-$user->getrights('banque');
-
 if (!$user->admin && !$user->rights->banque)
   accessforbidden();
 

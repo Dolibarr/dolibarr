@@ -35,12 +35,6 @@ $langs->load('companies');
 $langs->load('projects');
 $langs->load('propal');
 
-$user->getrights('propale');
-$user->getrights('fichinter');
-$user->getrights('commande');
-$user->getrights('projet');
-$user->getrights("commercial");
-
 $socid = isset($_GET["id"])?$_GET["id"]:$_GET["socid"];		// Fonctionne si on passe id ou socid
 if ($socid == '') accessforbidden();
 

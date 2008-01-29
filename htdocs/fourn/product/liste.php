@@ -33,8 +33,6 @@ require("./pre.inc.php");
 $langs->load("products");
 $langs->load("suppliers");
 
-$user->getrights('produit');
-
 if (!$user->rights->produit->lire) accessforbidden();
 
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];

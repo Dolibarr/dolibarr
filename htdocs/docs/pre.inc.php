@@ -16,17 +16,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/pre.inc.php
    \brief      Fichier gestionnaire du menu de gauche de l'accueil
-   \version    $Revision$
+   \version    $Source$
 */
-
 require ("../main.inc.php");
-$user->getrights('document');
+
 
 function llxHeader($head = "")
 {

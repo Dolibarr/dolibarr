@@ -25,27 +25,21 @@
 		\author		Put author name here
 		\remarks	Put here some comments
 */
-
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
 
-// Load traductions files
+// Load traductions files requiredby by page
 $langs->load("companies");
 $langs->load("other");
 
-// Load permissions
-$user->getrights("commercial");
-
 // Get parameters
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$myparam = isset($_GET["myparam"])?$_GET["myparam"]:'';
 
-// Protection quand utilisateur externe
+// Protection if external user
 if ($user->societe_id > 0)
 {
-    $action = '';
-    $socid = $user->societe_id;
+	//accessforbidden();
 }
-if ($socid == '') accessforbidden();
 
 
 
@@ -81,9 +75,9 @@ if ($_REQUEST["action"] == 'add')
 * Put here all code to build page
 ****************************************************/
 
-llxHeader();
+llxHeader('MyPageName');
 
-$html=new Form($db);
+$form=new Form($db);
 
 
 // Put here content of your page

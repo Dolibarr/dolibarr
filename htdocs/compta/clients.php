@@ -28,8 +28,6 @@
  
 require_once("./pre.inc.php");
 
-$user->getrights("societe");
-
 if (! $user->rights->societe->lire)
   accessforbidden();
 

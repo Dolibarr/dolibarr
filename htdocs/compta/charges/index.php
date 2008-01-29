@@ -30,9 +30,6 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/tva.class.php");
 
-$user->getrights('compta');
-$user->getrights('tax');
-
 if (!$user->admin && !$user->rights->tax->charges->lire)
   accessforbidden();
 

@@ -37,8 +37,6 @@ $langs->load('propal');
 $langs->load('compta');
 $langs->load('other');
 
-$user->getrights('facture');
-
 if (!$user->rights->facture->lire)
   accessforbidden();
 

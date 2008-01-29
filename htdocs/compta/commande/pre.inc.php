@@ -31,14 +31,10 @@ require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
 $langs->load("orders");
 
-$user->getrights('commande');
-
 
 function llxHeader($head = "", $title="", $help_url='')
 {
     global $user, $conf, $langs;
-
-    $user->getrights('banque');
 
     top_menu($head, $title);
 

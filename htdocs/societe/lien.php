@@ -29,15 +29,10 @@
  
 require("./pre.inc.php");
 
-$user->getrights();
-
 $langs->load("companies");
 $langs->load("customers");
 $langs->load("suppliers");
 $langs->load("banks");
-
-$user->getrights('societe');
-$user->getrights('commercial');
 
 if ( !$user->rights->societe->creer)
   accessforbidden();

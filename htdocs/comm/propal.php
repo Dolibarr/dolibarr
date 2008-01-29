@@ -34,8 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 
-$user->getrights('propale');
-
 $langs->load('companies');
 $langs->load('propal');
 $langs->load('compta');

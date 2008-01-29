@@ -32,8 +32,6 @@ require("./pre.inc.php");
 
 $langs->load("propal");
 
-$user->getrights('propale');
-
 
 if ($user->societe_id > 0)
 {

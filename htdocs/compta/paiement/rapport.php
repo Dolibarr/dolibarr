@@ -29,8 +29,6 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/rapport/pdf_paiement.class.php");
 
-$user->getrights("facture");
-
 // Sécurité accés
 if (! $user->rights->facture->lire)
   accessforbidden();

@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -25,15 +24,12 @@
 		\brief      Fichier de gestion du menu gauche du module projet
 		\version    $Revision$
 */
-
 require ("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/task.class.php");
 
 $langs->load("projects");
 $langs->load("companies");
-
-$user->getrights('projet');
 
 function llxHeader($head = "", $title="", $help_url='')
 {

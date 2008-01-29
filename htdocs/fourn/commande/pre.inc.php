@@ -31,7 +31,6 @@ require("../../main.inc.php");
 $langs->load("orders");
 $langs->load("suppliers");
 $langs->load("companies");
-$user->getrights('fournisseur');
 
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");

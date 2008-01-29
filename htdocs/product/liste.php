@@ -33,9 +33,6 @@ if ($conf->categorie->enabled) require_once(DOL_DOCUMENT_ROOT."/categories/categ
 
 $langs->load("products");
 
-$user->getrights('produit');
-if ($conf->categorie->enabled) $user->getrights('categorie');
-
 if (!$user->rights->produit->lire)
   accessforbidden();
 

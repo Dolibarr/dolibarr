@@ -31,9 +31,6 @@ require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
 $langs->load("contracts");
 
-$user->getrights('contrat');
-$user->getrights('commercial');
-
 if (!$user->rights->contrat->lire)
   accessforbidden();
 

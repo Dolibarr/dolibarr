@@ -31,11 +31,6 @@ require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
-$user->getrights('propale');
-$user->getrights('commande');
-$user->getrights('projet');
-
-
 $langs->load("companies");
 $langs->load("orders");
 $langs->load("bills");

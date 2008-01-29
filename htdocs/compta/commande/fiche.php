@@ -38,8 +38,6 @@ $langs->load("companies");
 $langs->load("bills");
 $langs->load('deliveries');
 
-$user->getrights('commande');
-
 if (! $user->rights->commande->lire) accessforbidden();
 
 // Sécurité accès client

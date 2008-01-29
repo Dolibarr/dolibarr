@@ -31,8 +31,6 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
-$user->getrights('commercial');
-
 $langs->load("companies");
 $langs->load("ldap");
 

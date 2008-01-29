@@ -35,8 +35,6 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
 if ($conf->tax->enabled) require_once(DOL_DOCUMENT_ROOT.'/chargesociales.class.php');
 
-$user->getrights(); // On a besoin des permissions sur plusieurs modules
-
 // L'espace compta/tréso doit toujours etre actif car c'est un espace partagé
 // par de nombreux modules (banque, facture, commande à facturer, etc...) indépendemment
 // de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction

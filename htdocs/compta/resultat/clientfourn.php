@@ -33,8 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/report.inc.php");
 
 $langs->load("bills");
 
-$user->getrights('compta');
-$user->getrights('facture');
 if (!$user->rights->facture->lire)
   accessforbidden();
 

@@ -34,7 +34,6 @@ function llxHeader($head = "", $urlp = "")
 {
     global $user, $conf, $langs;
     
-    $user->getrights();
     $langs->load("companies");
     $langs->load("commercial");
     

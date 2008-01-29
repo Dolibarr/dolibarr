@@ -29,8 +29,6 @@
 
 require("./pre.inc.php");
 
-$user->getrights("facture");
-
 $langs->load("bills");
 
 // Sécurité accés client

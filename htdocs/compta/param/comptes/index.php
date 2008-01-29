@@ -29,8 +29,6 @@
 
 require("./pre.inc.php");
 
-$user->getrights('banque');
-
 $langs->load("compta");
 $langs->load("bills");
 

@@ -31,8 +31,6 @@ require("./pre.inc.php");
 $langs->load("banks");
 $langs->load("bills");
 
-$user->getrights('compta');
-
 if (! $user->rights->banque->consolidate) accessforbidden();
 
 

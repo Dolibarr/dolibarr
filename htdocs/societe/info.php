@@ -33,8 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 $langs->load("companies");
 $langs->load("other");
 
-$user->getrights('commercial');
-
 // Sécurité accés client
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($socid == '') accessforbidden();

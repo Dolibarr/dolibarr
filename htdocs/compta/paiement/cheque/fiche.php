@@ -32,8 +32,6 @@ require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/remisecheque.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
-$user->getrights('banque');
-
 $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');

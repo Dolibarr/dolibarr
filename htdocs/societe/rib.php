@@ -34,9 +34,6 @@ require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
 $langs->load("companies");
 $langs->load("banks");
 
-$user->getrights('societe');
-$user->getrights('commercial');
-
 if ( !$user->rights->societe->creer)
   accessforbidden();
 

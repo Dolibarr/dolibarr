@@ -29,8 +29,6 @@
 
 require("./pre.inc.php");
 
-$user->getrights();
-
 $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");

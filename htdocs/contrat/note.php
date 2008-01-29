@@ -32,9 +32,6 @@ if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.cl
 
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
 
-$user->getrights('contrat');
-$user->getrights('commercial');
-
 if (!$user->rights->contrat->lire)
   accessforbidden();
 

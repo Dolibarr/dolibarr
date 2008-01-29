@@ -71,8 +71,6 @@ class MenuTop {
             session_start();
         }
         
-        $user->getrights("");
-
 		
         // On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];

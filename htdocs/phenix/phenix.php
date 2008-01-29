@@ -14,23 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**	    \file       htdocs/phenix/phenix.php
         \ingroup    phenix
 		\brief      Page générant 2 frames, une pour le menu Dolibarr, l'autre pour l'affichage du calendrier
 		\author	    Laurent Destailleur
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
 
 if (empty($conf->global->PHPPHENIX_URL))
 {
-	$user->getrights();
-	
 	llxHeader();
 	print '<div class="error">Module Phenix was not configured properly.</div>';
 	llxFooter('$Date$ - $Revision$');

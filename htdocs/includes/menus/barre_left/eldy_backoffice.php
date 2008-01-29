@@ -66,8 +66,6 @@ class MenuLeft {
 			session_start();
 		}
 
-		$user->getrights("");
-
 		// On récupère mainmenu et leftmenu qui définissent le menu à afficher
 		if (isset($_GET["mainmenu"]))
 		{
@@ -779,8 +777,6 @@ class MenuLeft {
 
 				if ($conf->adherent->enabled)
 				{
-					$user->getrights("adherent");
-
 					$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?leftmenu=members&amp;action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
 					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members",$langs->trans("List"),1,$user->rights->adherent->lire);

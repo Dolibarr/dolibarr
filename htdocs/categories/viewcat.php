@@ -37,7 +37,6 @@ if ($_REQUEST['id'] == "")
 $type=$_GET['type'];
 
 // Securite
-$user->getrights('categorie');
 if (! $user->rights->categorie->lire)
 {
 	accessforbidden();

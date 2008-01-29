@@ -401,19 +401,22 @@ if (! defined('MAIN_INFO_SOCIETE_PAYS'))
   define('MAIN_INFO_SOCIETE_PAYS','1');
 }
 
+// If install not finished, we start again.
+if (defined("MAIN_NOT_INSTALLED"))
+{
+	Header("Location: ".DOL_URL_ROOT."/install/index.php");
+	exit;
+}
+
+
 // On charge les fichiers lang principaux
 // TODO Optimisation a faire ici
 $langs->load("main");
 $langs->load("dict");
 
-/*
- *
- */
-if (defined("MAIN_NOT_INSTALLED"))
-{
-  Header("Location: ".DOL_URL_ROOT."/install/index.php");
-  exit;
-}
+// On charge les fichiers lang principaux
+$user->getrights();
+
 
 // Constantes utilise pour definir le nombre de lignes des textarea
 if (! eregi("firefox",$_SERVER["HTTP_USER_AGENT"]))

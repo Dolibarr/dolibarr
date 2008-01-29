@@ -44,10 +44,8 @@
         \brief      Recherche de la ville correspondant au code postal saisi. 1er tour on cherche dans la table societé, si on a deux clients dans la même ville c'est direct. Si jamais ça ne donne rien alors on lance la recherche dans la table des codes postaux.
         \version    $Revision$
 */
-
 require("pre.inc.php");
 
-$user->getrights('societe');
 $langs->load("companies");
 
 

@@ -33,8 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 $langs->load("members");
 $langs->load("companies");
 
-$user->getrights('adherent');
-
 
 /*
  * Affiche liste

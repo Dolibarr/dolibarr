@@ -29,7 +29,6 @@
 */
 
 require("./pre.inc.php");
-$user->getrights('produit');
 
 $langs->load("products");
 

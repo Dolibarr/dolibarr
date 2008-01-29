@@ -35,8 +35,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 if ($conf->adherent->enabled) require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
-$user->getrights('user');
-
 // Defini si peux creer un utilisateur ou gerer groupe sur un utilisateur
 $canadduser=($user->admin || $user->rights->user->user->creer);
 // Defini si peux lire/modifier permisssions

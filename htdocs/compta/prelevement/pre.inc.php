@@ -33,8 +33,6 @@ $langs->load("banks");
 $langs->load("withdrawals");
 $langs->load("bills");
 
-$user->getrights("prelevement");
-
 
 function llxHeader($head = "", $title="", $help_url='')
 {

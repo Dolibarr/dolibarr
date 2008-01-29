@@ -16,11 +16,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
-/*!
+/**
    \file       htdocs/compta/ventilation/fournisseur/lignes.php
    \ingroup    facture
    \brief      Page de detail des lignes de ventilation d'une facture
@@ -29,8 +27,6 @@
 
 require("./pre.inc.php");
 
-$user->getrights('facture');
-$user->getrights('banque');
 $langs->load("bills");
 
 if (!$user->rights->facture->lire) accessforbidden();

@@ -34,8 +34,6 @@ require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 if ($conf->banque->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
-$user->getrights('facture');
-
 $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');

@@ -29,7 +29,6 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
-$user->getrights('');
 
 // Simule le menu par défaut sur Home
 if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";

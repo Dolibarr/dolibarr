@@ -29,8 +29,6 @@ require("./pre.inc.php");
 
 if (empty($conf->global->PHPWEBCALENDAR_URL))
 {
-	$user->getrights();
-	
 	llxHeader();
 	print '<div class="error">Module Webcalendar was not configured properly.</div>';
 	llxFooter('$Date$ - $Revision$');

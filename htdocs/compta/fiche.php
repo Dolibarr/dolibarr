@@ -33,8 +33,6 @@ $langs->load("companies");
 if ($conf->facture->enabled) $langs->load("bills");
 if ($conf->projet->enabled)  $langs->load("projects");
 
-$user->getrights("commercial");
-
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($socid == '') accessforbidden();
 

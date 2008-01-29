@@ -32,7 +32,6 @@ require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/order.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
-$user->getrights('commande');
 if (!$user->rights->commande->lire)
   accessforbidden();
 

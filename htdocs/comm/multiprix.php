@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -31,10 +30,6 @@
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-
-$user->getrights('propale');
-$user->getrights('commande');
-$user->getrights('projet');
 
 
 $langs->load("orders");
