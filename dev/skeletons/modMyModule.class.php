@@ -113,11 +113,11 @@ class modMyModule extends DolibarrModules
 
 		// Main menu entries
 		$this->menus = array();			// List of menus to add
-		$r=0;
+		$r=1;
 
 		// Example:
-		// $r++;
 		// $this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Agenda','mainmenu'=>'agenda','leftmenu'=>'agenda','url'=>'/comm/action/index.php','langs'=>'commercial','position'=>100,'perms'=>'$user->rights->agenda->myactions->read','target'=>'','user'=>0);
+		// $r++;
 
 	}
 

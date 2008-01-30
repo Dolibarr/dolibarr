@@ -61,87 +61,103 @@ class DolibarrModules
   }
 
 
-  /**
-   *      \brief      Fonction d'activation. Insere en base les constantes et boites du module
-   *      \param      array_sql       tableau de requete sql a executer a l'activation
-   *      \return     int             1 si ok, 0 si erreur
-   */
-  function _init($array_sql)
-  {
-    global $langs;
-    $err='';
-    
-    // Insere une entree dans llx_dolibarr_modules
-    $err+=$this->_dbactive();
-    
-    // Insere la constante d'activation module
-    $err+=$this->_active();
-    
-    // Insere les constantes associees au module dans llx_const
-    $err+=$this->insert_const();
-    
-    // Insere les boites dans llx_boxes_def
-    $err+=$this->insert_boxes();
-    
-    // Insere les permissions associees au module actif dans llx_rights_def
-    $err+=$this->insert_permissions();
-    
-    // Insere les constantes associees au module dans llx_const
-    $err+=$this->insert_menus();
-    
-    // Cree les repertoires
-    if (is_array($this->dirs))
-      {
-	foreach ($this->dirs as $key => $dir)
-	  {
-	    if ($dir && ! file_exists($dir))
-	      {
-		if (create_exdir($dir) < 0)
-		  {
-		    $this->error = $langs->trans("ErrorCanNotCreateDir",$dir);
-		    dolibarr_syslog("DolibarrModules::_init error");
-		    dolibarr_syslog("ErrorCanNotCreateDir $dir");
-		  }
-	      }
-	  }
-      }
-    
-    // Execute les requetes sql complementaires
-    for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
-      {
-	$sql=$array_sql[$i];
-	$result=$this->db->query($sql);
-	if (! $result)
-	  {
-	    dolibarr_syslog("DolibarrModules.class::init Error sql=".$sql." - ".$this->db->error());
-	    $err++;
-	  }
-      }
-    
-    // Cree les documents generables
-    if (is_array($this->docs))
-      {
-	foreach ($this->docs as $key => $doc)
-	  {
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_generator (rowid,name,classfile,class) VALUES ";
-	    $sql .= "(".$doc[0].",'".addslashes($doc[1])."','".$doc[2]."','".$doc[3]."');";
-	    
-	    $result=$this->db->query($sql);
-	    if (! $result)
-	      {
-		dolibarr_syslog("DolibarrModules.class::init Error sql=".$sql." - ".$this->db->error());
-		$err++;
-	      }
-	    
-	  }
-      }
-    
-    
-    // Renvoi valeur de retour
-    if ($err > 0) return 0;
-    return 1;
-  }
-  
+	/**
+	 *      \brief      Fonction d'activation. Insere en base les constantes et boites du module
+	 *      \param      array_sql       Tableau de requete sql a executer a l'activation
+	 *      \return     int             1 si ok, 0 si erreur
+	 */
+	function _init($array_sql)
+	{
+		global $langs;
+		$err=0;
+	
+		$this->db->begin();
+		
+		// Insere une entree dans llx_dolibarr_modules
+		if (! $err) $err+=$this->_dbactive();
+	
+		// Insere la constante d'activation module
+		if (! $err) $err+=$this->_active();
+	
+		// Insere les constantes associees au module dans llx_const
+		if (! $err) $err+=$this->insert_const();
+	
+		// Insere les boites dans llx_boxes_def
+		if (! $err) $err+=$this->insert_boxes();
+	
+		// Insere les permissions associees au module actif dans llx_rights_def
+		if (! $err) $err+=$this->insert_permissions();
+	
+		// Insere les constantes associees au module dans llx_const
+		if (! $err) $err+=$this->insert_menus();
+	
+		// Execute les requetes sql complementaires
+		for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+		{
+			if (! $err) 
+			{
+				$sql=$array_sql[$i];
+				
+				$result=$this->db->query($sql);
+				if (! $result)
+				{
+					$this->error=$this->db->error();
+			   		dolibarr_syslog("DolibarrModules::_init Error sql=".$sql." - ".$this->error, LOG_ERR);
+			   		$err++;
+				}
+			}
+		}
+	
+		// Cree les documents generables
+		if (is_array($this->docs))
+		{
+			foreach ($this->docs as $key => $doc)
+			{
+				if (! $err) 
+				{
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_generator (rowid,name,classfile,class) VALUES ";
+					$sql .= "(".$doc[0].",'".addslashes($doc[1])."','".$doc[2]."','".$doc[3]."');";
+					
+					$result=$this->db->query($sql);
+					if (! $result)
+					{
+						$this->error=$this->db->error();
+						dolibarr_syslog("DolibarrModules::_init Error sql=".$sql." - ".$this->error, LOG_ERR);
+						$err++;
+					}
+				}
+			}
+		}
+	
+		// Cree les repertoires
+		if (is_array($this->dirs))
+		{
+			foreach ($this->dirs as $key => $dir)
+			{
+				if ($dir && ! file_exists($dir))
+				{
+					if (create_exdir($dir) < 0)
+					{
+						$this->error = $langs->trans("ErrorCanNotCreateDir",$dir);
+						dolibarr_syslog("DolibarrModules::_init ".$this->error, LOG_ERR);
+					}
+				}
+			}
+		}
+		
+		// Renvoi valeur de retour
+		if (! $err)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return 0;
+		}
+	}
+
   /**
      \brief      Fonction de desactivation. Supprime de la base les constantes et boites du module
      \param      array_sql       tableau de requete sql a executer a la desactivation
@@ -659,12 +675,30 @@ class DolibarrModules
 
 		$err=0;
 		        
+		$this->db->begin();
+		
         foreach ($this->menu as $key => $value)
         {
        		$menu = new Menubase($this->db);
 			$menu->menu_handler='all';	
 			$menu->module=$this->rights_class;
-			$menu->fk_menu=$this->menu[$key]['fk_menu'];
+			if ($this->menu[$key]['fk_menu'])
+			{
+				$numparent=$this->menu[$key]['fk_menu'];
+				if (isset($this->menu[$numparent]['rowid']))
+				{
+					$menu->fk_menu=$this->menu[$numparent]['rowid'];
+				}
+				else
+				{
+					$this->error="BadDefinitionOfMenuArrayInModuleDescriptor";
+					$err++;
+				}
+			}
+			else
+			{
+				$menu->fk_menu=0;
+			}
 			$menu->type=$this->menu[$key]['type'];
 			$menu->mainmenu=$this->menu[$key]['mainmenu'];
 			$menu->titre=$this->menu[$key]['titre'];
@@ -675,13 +709,31 @@ class DolibarrModules
 			$menu->perms=$this->menu[$key]['perms'];
 			$menu->target=$this->menu[$key]['target'];
 			$menu->user=$this->menu[$key]['user'];
-			$result=$menu->create($user);
-			if ($result <= 0)
-            {
-                $err++;
-            }
+			if (! $err)
+			{
+				$result=$menu->create($user);
+				if ($result > 0)
+            	{
+            		$this->menu[$key]['rowid']=$result;	
+            	}
+            	else
+            	{
+					$this->error=$menu->error;
+            		$err++;
+            	}
+			}
         }
         
+        if (! $err)
+        {
+        	$this->db->commit();
+        }
+        else
+        {
+        	dolibarr_syslog("DolibarrModules::insert_menus ".$this->error, LOG_ERR);
+        	$this->db->rollback();
+        }
+
         return $err;
     }
 

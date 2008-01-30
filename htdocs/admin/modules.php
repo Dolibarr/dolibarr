@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,9 +58,10 @@ if ($_GET["action"] == 'reset' && $user->admin)
 }
 
 /**
-   \brief      Active un module
-   \param      value       Nom du module a activer
-   \param      withdeps    Active/désactive aussi les dépendances
+   	\brief      Enable a module
+   	\param      value       Nom du module a activer
+   	\param      withdeps    Active/desactive aussi les dependances
+	\return		string		Error message or '';
 */
 function Activate($value,$withdeps=1)
 {
@@ -68,6 +69,8 @@ function Activate($value,$withdeps=1)
 
 	$modName = $value;
 
+	$ret='';
+	
 	// Activation du module
 	if ($modName)
 	{
@@ -91,12 +94,13 @@ function Activate($value,$withdeps=1)
 			return $langs->trans("ErrorModuleRequireDolibarrVersion",versiontostring($vermin));
 		}
 
-		$objMod->init();
+		$result=$objMod->init();
+		if ($result <= 0) $ret=$objMod->error;
 	}
 
 	if ($withdeps)
 	{
-		// Activation des modules dont le module dépend
+		// Activation des modules dont le module depend
 		for ($i = 0; $i < sizeof($objMod->depends); $i++)
 		{
 			Activate($objMod->depends[$i]);
@@ -109,40 +113,42 @@ function Activate($value,$withdeps=1)
 		}
 	}
 
-	return 0;
+	return $ret;
 }
 
 
 /**
-   \brief      Désactive un module
-   \param      value               Nom du module a désactiver
-   \param      requiredby          1=Desactive aussi modules dépendants
+   \brief      Disable a module
+   \param      value               Nom du module a desactiver
+   \param      requiredby          1=Desactive aussi modules dependants
 */
 function UnActivate($value,$requiredby=1)
 {
-  global $db, $modules;
-  
-  $modName = $value;
-  
-  // Desactivation du module
-  if ($modName)
-    {
-      $file = $modName . ".class.php";
-      include_once(DOL_DOCUMENT_ROOT."/includes/modules/$file");
-      $objMod = new $modName($db);
-      $objMod->remove();
-    }
-  
-  // Desactivation des modules qui dependent de lui
-  if ($requiredby)
-    {
-      for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
-        {
-	  UnActivate($objMod->requiredby[$i]);
-        }
-    }
-  
-  return 0;
+	global $db, $modules;
+
+	$modName = $value;
+
+	$ret='';
+
+	// Desactivation du module
+	if ($modName)
+	{
+		$file = $modName . ".class.php";
+		include_once(DOL_DOCUMENT_ROOT."/includes/modules/$file");
+		$objMod = new $modName($db);
+		$result=$objMod->remove();
+	}
+
+	// Desactivation des modules qui dependent de lui
+	if ($requiredby)
+	{
+		for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
+		{
+	  		UnActivate($objMod->requiredby[$i]);
+		}
+	}
+
+	return $ret;
 }
 
 
@@ -158,7 +164,7 @@ print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
 // Recherche les modules
 $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
 
-// Charge tableaux modules, nom, numero, orders depuis répertoire dir
+// Charge tableaux modules, nom, numero, orders depuis rï¿½pertoire dir
 $handle=opendir($dir);
 $filename = array();
 $modules = array();
