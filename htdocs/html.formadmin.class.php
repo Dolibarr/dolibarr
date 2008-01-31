@@ -19,14 +19,14 @@
 
 /**
         \file       htdocs/html.formadmin.class.php
-        \brief      Fichier de la classe des fonctions prédéfinie de composants html pour les pages admin
+        \brief      Fichier de la classe des fonctions prï¿½dï¿½finie de composants html pour les pages admin
 		\version	$Id$
 */
 
 
 /**
         \class      FormAdmin
-        \brief      Classe permettant la génération de composants html pour les pages admin
+        \brief      Classe permettant la gï¿½nï¿½ration de composants html pour les pages admin
 */
 class FormAdmin
 {
@@ -36,7 +36,7 @@ class FormAdmin
 
 	/**
 		\brief     Constructeur
-		\param     DB      handler d'accès base de donnée
+		\param     DB      handler d'accï¿½s base de donnï¿½e
 	*/
 	function FormAdmin($DB)
 	{
@@ -46,16 +46,16 @@ class FormAdmin
 	}
   
 	/**
-     *    \brief      Retourne la liste déroulante des menus disponibles (eldy_backoffice, ...)
-     *    \param      selected        Menu pré-sélectionnée
+     *    \brief      Retourne la liste dï¿½roulante des menus disponibles (eldy_backoffice, ...)
+     *    \param      selected        Menu prï¿½-sï¿½lectionnï¿½e
      *    \param      htmlname        Nom de la zone select
-     *    \param      dirmenu         Repértoire à scanner
+     *    \param      dirmenu         Repï¿½rtoire ï¿½ scanner
      */
     function select_menu($selected='',$htmlname,$dirmenu)
     {
         global $langs,$conf;
     
-        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilité
+        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilitï¿½
     
 		$menuarray=array();
         $handle=opendir($dirmenu);
@@ -107,10 +107,10 @@ class FormAdmin
     }
 
     /**
-     *    \brief      Retourne la liste déroulante des menus disponibles (eldy)
-     *    \param      selected        Menu pré-sélectionnée
+     *    \brief      Retourne la liste dï¿½roulante des menus disponibles (eldy)
+     *    \param      selected        Menu prï¿½-sï¿½lectionnï¿½e
      *    \param      htmlname        Nom de la zone select
-     *    \param      dirmenu         Repertoire à scanner
+     *    \param      dirmenu         Repertoire ï¿½ scanner
      */
     function select_menu_families($selected='',$htmlname,$dirmenu)
     {
@@ -156,8 +156,8 @@ class FormAdmin
 
 	
     /**
-     *    \brief      Retourne la liste déroulante des menus disponibles (eldy)
-     *    \param      selected        Menu pré-sélectionnée
+     *    \brief      Retourne la liste dï¿½roulante des menus disponibles (eldy)
+     *    \param      selected        Menu prï¿½-sï¿½lectionnï¿½e
      *    \param      htmlname        Nom de la zone select
      */
     function select_timezone($selected='',$htmlname)
@@ -215,7 +215,7 @@ class FormAdmin
 		if (! is_array($arrayofcolors)) $arrayofcolors=array('29527A','5229A3','A32929','7A367A','B1365F','0D7813');
 
 		//$selected='';
-		if ($selected) print '<table class="nobordernopadding"><tr valign="middle" class="nobordernopadding"><td class="nobordernopadding">';
+		if ($showcolorbox) print '<table class="nobordernopadding"><tr valign="middle" class="nobordernopadding"><td class="nobordernopadding">';
         
 		print '<select class="flat" name="'.$htmlname.'">';
 		print '<option value="-1">&nbsp;</option>';
