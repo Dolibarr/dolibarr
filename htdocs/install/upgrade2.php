@@ -1738,6 +1738,13 @@ function migrate_detail_livraison($db,$langs,$conf)
     }
     else
     {
+    	$result = $db->DDLDescTable(MAIN_DB_PREFIX."livraisondet","fk_origin_line");
+    	$obj = $db->fetch_object($result);
+    	if (!$obj)
+    	{
+    		$sql = "ALTER TABLE ".MAIN_DB_PREFIX."livraisondet ADD COLUMN fk_origin_line integer after fk_livraison";
+    		$db->query($sql);
+    	}
     	print $langs->trans('AlreadyDone')."<br>\n";
     }
     print '</td></tr>';
