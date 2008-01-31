@@ -234,39 +234,69 @@ class Livraison extends CommonObject
 		$sql.= " WHERE l.rowid = ".$id;
 	
 		$result = $this->db->query($sql) ;
-		if ( $result )
+		if ($result)
 		{
-			$obj = $this->db->fetch_object($result);
-	
-			$this->id                   = $obj->rowid;
-			$this->date_creation        = $obj->date_creation;
-			$this->date_valid           = $obj->date_valid;
-			$this->ref                  = $obj->ref;
-			$this->ref_client           = $obj->ref_client;
-			$this->socid                = $obj->fk_soc;
-			$this->statut               = $obj->fk_statut;
-			$this->origin_id            = $obj->origin_id;
-			$this->expedition_id        = $obj->fk_expedition;
-			$this->user_author_id       = $obj->fk_user_author;
-			$this->user_valid_id        = $obj->fk_user_valid;
-			$this->date_livraison       = $obj->date_livraison;
-			$this->adresse_livraison_id = $obj->fk_adresse_livraison;
-			$this->note                 = $obj->note;
-			$this->note_public          = $obj->note_public;
-			$this->modelpdf             = $obj->model_pdf;
-			$this->db->free();
-	
-			if ($this->statut == 0) $this->brouillon = 1;
-	
-			$file = $conf->livraison->dir_output . "/" .get_exdir($livraison->id,2) . "/" . $this->id.".pdf";
-			$this->pdf_filename = $file;
-			
-			$this->fetch_lignes();
-	
-			return 1;
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				
+				$this->id                   = $obj->rowid;
+				$this->date_creation        = $obj->date_creation;
+				$this->date_valid           = $obj->date_valid;
+				$this->ref                  = $obj->ref;
+				$this->ref_client           = $obj->ref_client;
+				$this->socid                = $obj->fk_soc;
+				$this->statut               = $obj->fk_statut;
+				$this->origin_id            = $obj->origin_id;
+				$this->expedition_id        = $obj->fk_expedition;
+				$this->user_author_id       = $obj->fk_user_author;
+				$this->user_valid_id        = $obj->fk_user_valid;
+				$this->date_livraison       = $obj->date_livraison;
+				$this->adresse_livraison_id = $obj->fk_adresse_livraison;
+				$this->note                 = $obj->note;
+				$this->note_public          = $obj->note_public;
+				$this->modelpdf             = $obj->model_pdf;
+				
+				$this->db->free($result);
+				
+				if ($this->origin_id)
+				{
+					if ($conf->commande->enabled)
+					{
+						$this->origin = "commande";
+					}
+					else
+					{
+						$this->origin = "propal";
+					}
+			  }
+			  
+			  if ($this->statut == 0) $this->brouillon = 1;
+			  
+			  $file = $conf->livraison->dir_output . "/" .get_exdir($livraison->id,2) . "/" . $this->id.".pdf";
+			  $this->pdf_filename = $file;
+			  
+			  /*
+			   * Lignes
+			   */
+			  $result=$this->fetch_lignes();
+			  if ($result < 0)
+			  {
+			  	return -3;
+			  }
+			  
+			  return 1;
+			}
+			else
+			{
+				$this->error='Delivery with id '.$rowid.' not found sql='.$sql;
+				dolibarr_syslog('Livraison::Fetch Error '.$this->error);
+				return -2;
+			}
 		}
 		else
 		{
+			dolibarr_syslog('Livraison::Fetch Error '.$this->error);
 			$this->error=$this->db->error();
 			return -1;
 		}
