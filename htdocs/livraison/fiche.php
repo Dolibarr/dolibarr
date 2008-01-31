@@ -361,7 +361,13 @@ else
   {
   	$livraison = new Livraison($db);
     $result = $livraison->fetch($_GET["id"]);
-    
+  
+    if ($livraison->origin_id)
+    {
+    	$object = $livraison->origin;
+    	$livraison->fetch_object();
+    }
+
     if ( $livraison->id > 0)
     {
     	$soc = new Societe($db);
@@ -389,7 +395,7 @@ else
       if ($_GET["action"] == 'delete')
       {
       	$expedition_id = $_GET["expid"];
-      	$html->form_confirm("fiche.php?id=$livraison->id&amp;expid=$expedition_id","Supprimer le bon de livraison","Etes-vous sûr de vouloir supprimer ce bon de livraison ?","confirm_delete");
+      	$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id.'&amp;expid='.$expedition_id,'Supprimer le bon de livraison','Etes-vous sûr de vouloir supprimer ce bon de livraison ?','confirm_delete');
       	print '<br>';
       }
       
@@ -399,7 +405,7 @@ else
        */
       if ($_GET["action"] == 'valid')
       {
-      	$html->form_confirm("fiche.php?id=$livraison->id","Valider le bon de livraison","Etes-vous sûr de vouloir valider ce bon de livraison ?","confirm_valid");
+      	$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id,'Valider le bon de livraison','Etes-vous sûr de vouloir valider ce bon de livraison ?','confirm_valid');
       	print '<br>';
       }
       
@@ -419,12 +425,21 @@ else
       print "</tr>";
     
       // Document origine
-      print '<tr><td>'.$langs->trans("RefOrder").'</td>';
-      print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref."</a></td>\n";
-      print '</tr>';
+      if ($conf->commande->enabled)
+      {
+      	print '<tr><td>'.$langs->trans("RefOrder").'</td>';
+      	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$livraison->$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$livraison->$object->ref."</a></td>\n";
+      	print '</tr>';
+      }
+      else
+      {
+      	print '<tr><td>'.$langs->trans("RefProposal").'</td>';
+      	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$livraison->$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$livraison->$object->ref."</a></td>\n";
+      	print '</tr>';
+      }
     
-      // Commande liée
-      print '<tr><td>'.$langs->trans("RefCustomerOrderShort").'</td>';
+      // Ref client
+      print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
       print '<td colspan="3">'.$livraison->ref_client."</a></td>\n";
       print '</tr>';
       

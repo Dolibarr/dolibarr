@@ -31,6 +31,8 @@
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 
 /**
@@ -583,15 +585,17 @@ class Livraison extends CommonObject
 		}
 	}
 	
-	
+
 	/*
-	* Lit la commande associée
+	* Lit le document associé
 	*
 	*/
-	function fetch_commande()
+	function fetch_object()
 	{
-		$this->commande =& new Commande($this->db);
-		$this->commande->fetch($this->commande_id);
+		$object = $this->origin;
+		$class = ucfirst($this->origin);
+		$this->$object = & new $class($this->db);
+		$this->$object->fetch($this->origin_id);
 	}
 	
 	/**

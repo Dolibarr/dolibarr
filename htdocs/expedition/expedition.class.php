@@ -592,8 +592,9 @@ class Expedition extends CommonObject
 	* Lit le document associé
 	*
 	*/
-	function fetch_object($object)
+	function fetch_object()
 	{
+		$object = $this->origin;
 		$class = ucfirst($object);
 		$this->$object = & new $class($this->db);
 		$this->$object->fetch($this->origin_id);

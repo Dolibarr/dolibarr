@@ -194,7 +194,7 @@ if ($_GET["action"] == 'create')
 		print $mesg.'<br>';
 	}
 
-  $class            = ucfirst($origin);
+  $class = ucfirst($origin);
 
 	$object = new $class($db);
 	$object->loadExpeditions();
@@ -439,8 +439,8 @@ else
 
     if ($expedition->id > 0)
     {
-    	$object = New Commande($db);
-      $object->fetch($expedition->origin_id);
+    	$object = $expedition->origin;
+    	$expedition->fetch_object();
 
       $soc = new Societe($db);
       $soc->fetch($expedition->socid);
@@ -466,7 +466,7 @@ else
             */
             if ($_GET["action"] == 'delete')
             {
-                $html->form_confirm("fiche.php?id=$expedition->id",$langs->trans("DeleteSending"),"Etes-vous sûr de vouloir supprimer cette expedition ?","confirm_delete");
+                $html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('DeleteSending'),'Etes-vous sûr de vouloir supprimer cette expedition ?','confirm_delete');
                 print '<br>';
             }
 
@@ -476,7 +476,7 @@ else
             */
             if ($_GET["action"] == 'valid')
             {
-                $html->form_confirm("fiche.php?id=$expedition->id",$langs->trans("ValidateSending"),"Etes-vous sûr de vouloir valider cette expédition ?","confirm_valid");
+                $html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('ValidateSending'),'Etes-vous sûr de vouloir valider cette expédition ?','confirm_valid');
                 print '<br>';
             }
             /*
@@ -485,7 +485,7 @@ else
             */
             if ($_GET["action"] == 'annuler')
             {
-                $html->form_confirm("fiche.php?id=$expedition->id",$langs->trans("CancelSending"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
+                $html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('CancelSending'),'Etes-vous sûr de vouloir annuler cette commande ?','confirm_cancel');
                 print '<br>';
             }
             
@@ -517,12 +517,12 @@ else
             if ($conf->commande->enabled)
             {
             	print $langs->trans("RefOrder").'</td>';
-            	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$object->ref;
+            	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$expedition->$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$expedition->$object->ref;
             }
             else
             {
             	print $langs->trans("RefProposal").'</td>';
-            	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$object->ref;
+            	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$expedition->$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$expedition->$object->ref;
             }
             print "</a></td>\n";
             print '</tr>';
