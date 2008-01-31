@@ -1722,7 +1722,7 @@ function migrate_detail_livraison($db,$langs,$conf)
           if ($error == 0)
           {
           	$db->commit();
-          	$sql = "ALTER TABLE ".MAIN_DB_PREFIX."livraisondet DROP COLUMN fk_commande_ligne";
+          	$sql = "ALTER TABLE ".MAIN_DB_PREFIX."livraisondet CHANGE fk_commande_ligne fk_origin_line integer";
           	$db->query($sql);
           }
           else
