@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -211,12 +211,27 @@ class Livraison extends CommonObject
 	{
 		global $conf;
 	
-		$sql = "SELECT l.rowid, l.date_creation, l.date_valid, l.ref, l.fk_user_author,";
-		$sql .=" l.fk_statut, l.fk_commande, l.fk_expedition, l.fk_user_valid, l.note, l.note_public";
-		$sql .= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, l.fk_adresse_livraison, l.model_pdf";
-		$sql .= ", c.fk_soc";
-		$sql .= " FROM ".MAIN_DB_PREFIX."livraison as l, ".MAIN_DB_PREFIX."commande as c";
-		$sql .= " WHERE l.rowid = ".$id." AND c.rowid = l.fk_commande";
+		$sql = "SELECT l.rowid, l.fk_soc, l.date_creation, l.date_valid, l.ref, l.ref_client, l.fk_user_author,";
+		$sql.=" l.total_ht, l.fk_statut, l.fk_expedition, l.fk_user_valid, l.note, l.note_public";
+		$sql.= ", ".$this->db->pdate("l.date_livraison")." as date_livraison, l.fk_adresse_livraison, l.model_pdf";
+		if ($conf->commande->enabled)
+		{
+			$sql.= ", cl.fk_commande as origin_id";
+		}
+		else
+		{
+			$sql.= ", pl.fk_propal as origin_id";
+		}
+		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
+		if ($conf->commande->enabled)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_liv as cl ON cl.fk_livraison = l.rowid";
+		}
+		else
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."pr_liv as pl ON pl.fk_livraison = l.rowid";
+		}
+		$sql.= " WHERE l.rowid = ".$id;
 	
 		$result = $this->db->query($sql) ;
 		if ( $result )
@@ -227,9 +242,10 @@ class Livraison extends CommonObject
 			$this->date_creation        = $obj->date_creation;
 			$this->date_valid           = $obj->date_valid;
 			$this->ref                  = $obj->ref;
-			$this->socid               = $obj->fk_soc;
+			$this->ref_client           = $obj->ref_client;
+			$this->socid                = $obj->fk_soc;
 			$this->statut               = $obj->fk_statut;
-			$this->commande_id          = $obj->fk_commande;
+			$this->origin_id            = $obj->origin_id;
 			$this->expedition_id        = $obj->fk_expedition;
 			$this->user_author_id       = $obj->fk_user_author;
 			$this->user_valid_id        = $obj->fk_user_valid;
@@ -561,19 +577,23 @@ class Livraison extends CommonObject
 		$this->adresse = $adresse;
 	}
 	
-	
+	/**
+	*
+	*
+	*/
 	function fetch_lignes()
 	{
 		$this->lignes = array();
 	
-		$sql = "SELECT p.label, c.description, c.qty as qtycom, l.qty as qtyliv";
-		$sql .= ", c.fk_product, c.price, p.ref";
+		$sql = "SELECT p.label, p.ref";
+		$sql.= ", l.description, l.fk_product, l.subprice, l.total_ht, l.qty as qtyliv";
+		//$sql.= ", c.qty as qtycom";
 		$sql .= " FROM ".MAIN_DB_PREFIX."livraisondet as l";
-		$sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
+		//$sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
 		$sql .= " , ".MAIN_DB_PREFIX."product as p";	
 		$sql .= " WHERE l.fk_livraison = ".$this->id;
-		$sql .= " AND l.fk_commande_ligne = c.rowid";
-		$sql .= " AND c.fk_product = p.rowid";
+		//$sql .= " AND l.fk_commande_ligne = c.rowid";
+		$sql .= " AND l.fk_product = p.rowid";
 	
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -587,11 +607,11 @@ class Livraison extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 	
 				$ligne->fk_product     = $obj->fk_product;
-				$ligne->qty_commande   = $obj->qtycom;
-				$ligne->qty_livre      = $obj->qtyliv;
+				$ligne->qty_asked      = $obj->qtycom;
+				$ligne->qty_delivered  = $obj->qtyliv;
 				$ligne->ref            = $obj->ref;
-				$ligne->label          = stripslashes($obj->label);
-				$ligne->description    = stripslashes($obj->description);
+				$ligne->label          = stripslashes(nl2br($obj->label));
+				$ligne->description    = stripslashes(nl2br($obj->description));
 				$ligne->price          = $obj->price;
 	
 				$this->lignes[$i] = $ligne;

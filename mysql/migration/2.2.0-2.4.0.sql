@@ -133,4 +133,24 @@ alter table llx_livraisondet add column rang        integer      DEFAULT 0 after
 ALTER TABLE llx_livraisondet ADD INDEX idx_livraisondet_fk_expedition (fk_livraison);
 -- V4 ALTER TABLE llx_livraisondet ADD CONSTRAINT fk_livraisondet_fk_livraison FOREIGN KEY (fk_livraison) REFERENCES llx_livraison (rowid);
 
+create table llx_pr_exp
+(
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  fk_propal     integer NOT NULL,
+  fk_expedition integer NOT NULL,
+
+  key(fk_propal),
+  key(fk_expedition)
+)type=innodb;
+
+create table llx_pr_liv
+(
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  fk_propal     integer NOT NULL,
+  fk_livraison  integer NOT NULL,
+
+  key(fk_propal),
+  key(fk_livraison)
+)type=innodb;
+
 ALTER TABLE llx_paiement modify fk_bank integer NOT NULL DEFAULT 0;

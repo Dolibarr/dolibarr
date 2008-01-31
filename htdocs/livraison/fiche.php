@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon TOSSER  <simon@kornog-computing.com>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -439,12 +440,12 @@ else
             // Date
             print '<tr><td>'.$langs->trans("Date").'</td>';
             print '<td colspan="3">'.dolibarr_print_date($livraison->date_creation,'dayhourtext')."</td>\n";
-    		print '</tr>';
+            print '</tr>';
     		
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td>';
             print '<td colspan="3">'.$livraison->getLibStatut(4)."</td>\n";
-   			print '</tr>';
+            print '</tr>';
 
             if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
             {
@@ -461,60 +462,46 @@ else
             /*
              * Lignes produits
              */
-            echo '<br><table class="noborder" width="100%">';
-    
-            $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande,";
-            $sql .= " ld.qty as qty_livre";
-            $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."livraisondet as ld";
-            $sql .= " WHERE ld.fk_livraison = ".$livraison->id." AND cd.rowid = ld.fk_commande_ligne ";
-    
-            $resql = $db->query($sql);
-    
-            if ($resql)
+            print '<br><table class="noborder" width="100%">';
+            
+            $num_prod = sizeof($livraison->lignes);
+            
+            if ($num_prod)
             {
-                $num_prod = $db->num_rows($resql);
-                $i = 0;
-    
-                print '<tr class="liste_titre">';
-                print '<td>'.$langs->trans("Products").'</td>';
+            	$i = 0;
+            	
+            	print '<tr class="liste_titre">';
+            	print '<td>'.$langs->trans("Products").'</td>';
             	print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
             	print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
-                print "</tr>\n";
-    
-                $var=true;
-                while ($i < $num_prod)
+            	print "</tr>\n";
+            	
+            	$var=true;
+            	while ($i < $num_prod)
+              {
+              	$var=!$var;
+                print "<tr $bc[$var]>";
+                if ($livraison->lignes[$i]->fk_product > 0)
                 {
-                    $objp = $db->fetch_object($resql);
-    
-                    $var=!$var;
-                    print "<tr $bc[$var]>";
-                    if ($objp->fk_product > 0)
-                    {
-                        $product = new Product($db);
-                        $product->fetch($objp->fk_product);
-    
-                        print '<td>';
-                        print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-                        if ($objp->description) print '<br>'.nl2br($objp->description);
-                        print '</td>';
-                    }
-                    else
-                    {
-                        print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
-                    }
-                    print '<td align="center">'.$objp->qty_commande.'</td>';
-                    print '<td align="center">'.$objp->qty_livre.'</td>';
-    
-                    print "</tr>";
-    
-                    $i++;
-                    $var=!$var;
+                	$product = new Product($db);
+                	$product->fetch($livraison->lignes[$i]->fk_product);
+                	
+                	print '<td>';
+                  print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$livraison->lignes[$i]->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+                  if ($livraison->lignes[$i]->description) print '<br>'.$livraison->lignes[$i]->description;
+                  print '</td>';
                 }
-                $db->free($resql);
-            }
-            else
-            {
-                dolibarr_print_error($db);
+                else
+                {
+                	print "<td>".$livraison->lignes[$i]->description."</td>\n";
+                }
+                print '<td align="center">'.$livraison->lignes[$i]->qty_asked.'</td>';
+                print '<td align="center">'.$livraison->lignes[$i]->qty_delivered.'</td>';
+    
+                print "</tr>";
+    
+                $i++;
+              }
             }
     
             print "</table>\n";
