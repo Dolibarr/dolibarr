@@ -15,17 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/install/index.php
         \ingroup    install
-        \brief      Affichage page sélectin langue si premiere install. Si reinstall, passe directement à la page check.php
-        \version    $Revision$
+        \brief      Affichage page selectin langue si premiere install.
+					 Si reinstall, passe directement a la page check.php
+        \version    $Id$
 */
-
 include_once("./inc.php");
 include_once("../html.form.class.php");
 
@@ -59,7 +57,7 @@ print '</td>';
 print '</tr></table></center>';
 
 
-// Si pas d'erreur, on affiche le bouton pour passer à l'étape suivante
+// Si pas d'erreur, on affiche le bouton pour passer ï¿½ l'ï¿½tape suivante
 if ($err == 0) pFooter(0);
 
 ?>

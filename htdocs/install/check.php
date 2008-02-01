@@ -25,7 +25,6 @@
         \version    $Id$
 */
 include_once("./inc.php");
-require_once($dolibarr_main_document_root."/lib/admin.lib.php");
 
 $err = 0;
 $allowinstall = 0;

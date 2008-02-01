@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  *
@@ -23,12 +23,11 @@
 /**
         \file       htdocs/install/fileconf.php
         \ingroup    install
-        \brief      Demande les infos qui constituerons le contenu du fichier conf.php. Ce fichier sera remplie à l'étape suivante
+        \brief      Demande les infos qui constituerons le contenu du fichier conf.php. Ce fichier sera remplie ï¿½ l'ï¿½tape suivante
         \version    $Id$
 */
-
 include_once("./inc.php");
-require_once($dolibarr_main_document_root."/lib/admin.lib.php");
+
 
 $err=0;
 
@@ -101,7 +100,7 @@ print $langs->trans("Examples").":<br>";
 <?php 
 if(! isset($dolibarr_main_data_root) || strlen($dolibarr_main_data_root) == 0)
 {
-    // Si le répertoire documents non défini, on en propose un par défaut
+    // Si le rï¿½pertoire documents non dï¿½fini, on en propose un par dï¿½faut
     $dolibarr_main_data_root=ereg_replace("/htdocs$","",$dolibarr_main_document_root);
     $dolibarr_main_data_root.="/documents";
 }
@@ -127,19 +126,19 @@ if (isset($main_url) && $main_url)
   $dolibarr_main_url_root=$main_url;
 if (! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
-	# Si défini (Ex: Apache sous Linux)
+	# Si dï¿½fini (Ex: Apache sous Linux)
 	if (isset($_SERVER["SCRIPT_URI"])) {
 		$dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
 	}
-	# Si défini (Ex: Apache sous Caudium)
+	# Si dï¿½fini (Ex: Apache sous Caudium)
 	elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
 		$dolibarr_main_url_root=$_SERVER["SERVER_URL"].$_SERVER["DOCUMENT_URI"];
 	}
-	# Si SCRIPT_URI, SERVER_URL, DOCUMENT_URI non défini (Ex: Apache 2.0.44 pour Windows)
+	# Si SCRIPT_URI, SERVER_URL, DOCUMENT_URI non dï¿½fini (Ex: Apache 2.0.44 pour Windows)
 	else {										
 		$dolibarr_main_url_root="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"];
 	}
-	# Nettoyage de l'URL proposée
+	# Nettoyage de l'URL proposï¿½e
 //	$dolibarr_main_url_root = substr($dolibarr_main_url_root,0,strlen($dolibarr_main_url_root)-12);
 	$dolibarr_main_url_root = ereg_replace('\/fileconf\.php$','',$dolibarr_main_url_root);	# Supprime le /fileconf.php
 	$dolibarr_main_url_root = ereg_replace('\/$','',$dolibarr_main_url_root);				# Supprime le /

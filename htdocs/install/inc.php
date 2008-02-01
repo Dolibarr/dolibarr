@@ -28,6 +28,7 @@
 
 require_once('../translate.class.php');
 require_once('../lib/functions.inc.php');
+require_once('../lib/admin.lib.php');
 
 // DOL_DOCUMENT_ROOT has been defined in function.inc.php to '..'
 
