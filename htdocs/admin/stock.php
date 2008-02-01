@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -26,6 +25,7 @@
     \version    $Revision$
 */
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 $langs->load("stocks");
@@ -39,7 +39,7 @@ if (!$user->admin)
 if ($_POST["action"] == 'stock_userstock')
 {
   dolibarr_set_const($db, "STOCK_USERSTOCK", $_POST["stock_userstock"]);
-  //On désactive l'autocréation si l'option "stock personnel" est désactivée
+  //On dï¿½sactive l'autocrï¿½ation si l'option "stock personnel" est dï¿½sactivï¿½e
   if ($_POST["stock_userstock"] == 0)
   {
   	dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", 0);
@@ -56,7 +56,7 @@ elseif ($_POST["action"] == 'stock_userstock_autocreate')
 elseif ($_POST["action"] == 'stock_bill')
 {
   dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", $_POST["stock_bill"]);
-  //Si activée on désactive la décrémentation du stock à la validation de commande et/ou à l'expédition
+  //Si activï¿½e on dï¿½sactive la dï¿½crï¿½mentation du stock ï¿½ la validation de commande et/ou ï¿½ l'expï¿½dition
   if ($_POST["stock_bill"] == 1)
   {
   	if ($conf->commande->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", 0);
@@ -68,7 +68,7 @@ elseif ($_POST["action"] == 'stock_bill')
 elseif ($_POST["action"] == 'stock_validateorder')
 {
   dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", $_POST["stock_validateorder"]);
-  //Si activée on désactive la décrémentation du stock à la facturation et/ou à l'expédition
+  //Si activï¿½e on dï¿½sactive la dï¿½crï¿½mentation du stock ï¿½ la facturation et/ou ï¿½ l'expï¿½dition
   if ($_POST["stock_validateorder"] == 1)
   {
   	if ($conf->facture->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", 0);
@@ -80,7 +80,7 @@ elseif ($_POST["action"] == 'stock_validateorder')
 elseif ($_POST["action"] == 'stock_shipment')
 {
   dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", $_POST["stock_shipment"]);
-  //Si activée on désactive la décrémentation du stock à la facturation et/ou à la validation de commande
+  //Si activï¿½e on dï¿½sactive la dï¿½crï¿½mentation du stock ï¿½ la facturation et/ou ï¿½ la validation de commande
   if ($_POST["stock_shipment"] == 1)
   {
   	if ($conf->facture->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", 0);

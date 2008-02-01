@@ -27,6 +27,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 
@@ -46,8 +47,8 @@ if ($_GET["action"] == "set")
  *
  *
  */
-llxHeader('','Téléphonie - Configuration');
-print_titre("Configuration du module de Téléphonie");
+llxHeader('','Tï¿½lï¿½phonie - Configuration');
+print_titre("Configuration du module de Tï¿½lï¿½phonie");
 
 print "<br>";
 

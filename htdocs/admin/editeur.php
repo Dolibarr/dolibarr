@@ -27,6 +27,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 
@@ -34,7 +35,7 @@ if (!$user->admin)
   accessforbidden();
 
 
-// Action activation d'un sous module du module adhérent
+// Action activation d'un sous module du module adhï¿½rent
 if ($_POST["action"] == 'set')
 {
 	$name = "EDITEUR_LIVRE_FORMAT_".time();
@@ -45,7 +46,7 @@ if ($_POST["action"] == 'set')
 	}
 }
 
-// Action désactivation d'un sous module du module adhérent
+// Action dï¿½sactivation d'un sous module du module adhï¿½rent
 if ($_GET["action"] == 'unset')
 {
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name LIKE 'EDITEUR_LIVRE_FORMAT_%'";
@@ -83,7 +84,7 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>Formats définits</td>';
+print '<td>Formats dï¿½finits</td>';
 print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 $var=true;

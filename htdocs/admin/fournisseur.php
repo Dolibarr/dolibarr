@@ -30,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
 
@@ -122,7 +123,7 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activé
+    // \todo Verifier si module numerotation choisi peut etre activï¿½
     // par appel methode canBeActivated
 
 	dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$_GET["value"]);
@@ -134,7 +135,7 @@ if ($_POST["action"] == 'addcat')
   $fourn->CreateCategory($user,$_POST["cat"]);
 }
 
-// défini les constantes du modèle orchidee
+// dï¿½fini les constantes du modï¿½le orchidee
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_MATRICE",$_POST["matrice"]);
 if ($_POST["action"] == 'updatePrefixCommande') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_PREFIX",$_POST["prefixcommande"]);
 if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_DELTA",$_POST["offset"]);
@@ -283,7 +284,7 @@ while (($file = readdir($handle))!==false)
       print $module->description;
       print "</td>\n";
       
-      // Activé
+      // Activï¿½
       if (in_array($name, $def))
 	{
 	  print "<td align=\"center\">\n";

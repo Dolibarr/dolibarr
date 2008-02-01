@@ -21,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -32,6 +31,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
 $langs->load("admin");
@@ -119,7 +119,7 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-  // \todo Verifier si module numerotation choisi peut etre activé
+  // \todo Verifier si module numerotation choisi peut etre activï¿½
   // par appel methode canBeActivated
   
   dolibarr_set_const($db, "COMMANDE_ADDON",$_GET["value"]);
@@ -148,7 +148,7 @@ if ($_POST["action"] == 'set_use_customer_contact_as_recipient')
   exit;
 }
 
-// défini les constantes du modèle saphir
+// dï¿½fini les constantes du modï¿½le saphir
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "COMMANDE_NUM_MATRICE",$_POST["matrice"]);
 if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "COMMANDE_NUM_PREFIX",$_POST["prefix"]);
 if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "COMMANDE_NUM_DELTA",$_POST["offset"]);
@@ -298,7 +298,7 @@ while (($file = readdir($handle))!==false)
 		print $module->description;
 		print "</td>\n";
 		
-		// Activé
+		// Activï¿½
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";
@@ -368,7 +368,7 @@ print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 $var=true;
 
-// Valider la commande après cloture de la propale
+// Valider la commande aprï¿½s cloture de la propale
 // permet de na pas passer par l'option commande provisoire
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

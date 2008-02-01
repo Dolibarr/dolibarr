@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/phenix/phenix.class.php');
 
 
@@ -94,7 +95,7 @@ elseif ($actiontest)
     
     if ($phenix->localdb->connected == 1 && $phenix->localdb->database_selected == 1)
     {
-    	// Vérifie si bonne base
+    	// Vï¿½rifie si bonne base
       /*
       $sql="SELECT cal_value FROM webcal_config WHERE cal_setting='application_name'";
       $resql=$phenix->localdb->query($sql);

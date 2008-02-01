@@ -32,6 +32,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 $langs->load("admin");
@@ -172,13 +173,13 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activé
+    // \todo Verifier si module numerotation choisi peut etre activï¿½
     // par appel methode canBeActivated
 
 	dolibarr_set_const($db, "PROPALE_ADDON",$_GET["value"]);
 }
 
-// défini les constantes du modèle saphir
+// dï¿½fini les constantes du modï¿½le saphir
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "PROPALE_NUM_MATRICE",$_POST["matrice"]);
 if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "PROPALE_NUM_PREFIX",$_POST["prefix"]);
 if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "PROPALE_NUM_DELTA",$_POST["offset"]);
@@ -200,7 +201,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
 
 /*
- *  Module numérotation
+ *  Module numï¿½rotation
  */
 print "<br>";
 print_titre($langs->trans("ProposalsNumberingModules"));
@@ -331,7 +332,7 @@ while (($file = readdir($handle))!==false)
 		print $module->description;
 		print '</td>';
 
-		// Activé
+		// Activï¿½
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";

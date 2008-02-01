@@ -23,11 +23,12 @@
 /**
 	    \file       htdocs/admin/comptaexpert.php
         \ingroup    comptaexpert
-        \brief      Page de configuration du module comptabilité expert
+        \brief      Page de configuration du module comptabilitï¿½ expert
 		\version    $Revision$
 */
 
 require('./pre.inc.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load('admin');
 $langs->load('compta');
@@ -84,7 +85,7 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 
-// Cas du paramètre COMPTA_MODE
+// Cas du paramï¿½tre COMPTA_MODE
 print '<form action="compta.php" method="post">';
 print '<input type="hidden" name="action" value="setcomptamode">';
 print '<tr class="liste_titre">';
@@ -101,7 +102,7 @@ print "</table>\n";
 
 print "<br>\n";
 
-// Cas des autres paramètres COMPTA_*
+// Cas des autres paramï¿½tres COMPTA_*
 /*
 $sql ="SELECT rowid, name, value, type, note";
 $sql.=" FROM llx_const";

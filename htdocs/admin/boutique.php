@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -30,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 $langs->load("oscommerce");
@@ -85,7 +85,7 @@ elseif ($_POST["test"])
     
     if ($oscommercedb->connected == 1 && $oscommercedb->database_selected == 1)
     {
-        // Vérifie si bonne base par requete sur une table OSCommerce
+        // Vï¿½rifie si bonne base par requete sur une table OSCommerce
         $sql ="SELECT configuration_value";
         $sql.=" FROM configuration";
         $sql.=" WHERE configuration_key='STORE_NAME'";

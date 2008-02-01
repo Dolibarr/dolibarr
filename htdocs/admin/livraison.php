@@ -28,6 +28,7 @@
         \version    $Id$
 */
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
 
 $langs->load("admin");
@@ -121,13 +122,13 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activé
+    // \todo Verifier si module numerotation choisi peut etre activï¿½
     // par appel methode canBeActivated
 
 	dolibarr_set_const($db, "LIVRAISON_ADDON",$_GET["value"]);
 }
 
-// défini les constantes du modèle saphir
+// dï¿½fini les constantes du modï¿½le saphir
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "LIVRAISON_NUM_MATRICE",$_POST["matrice"]);
 if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "LIVRAISON_NUM_PREFIX",$_POST["prefix"]);
 if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "LIVRAISON_NUM_DELTA",$_POST["offset"]);
@@ -170,7 +171,7 @@ $h++;
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
- *  Module numérotation
+ *  Module numï¿½rotation
  */
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';

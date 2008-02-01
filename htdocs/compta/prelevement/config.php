@@ -15,19 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/compta/prelevement/config.php
         \ingroup    prelevement
         \brief      Page configuration des prelevements
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+
 
 if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
@@ -87,7 +86,7 @@ if ($user->rights->prelevement->bons->configurer)
 print '<td width="30%">Valeur Actuelle</td>';
 print "</tr>\n";
 
-print '<tr class="pair"><td>Numéro National Emetteur</td>';
+print '<tr class="pair"><td>Numï¿½ro National Emetteur</td>';
 if ($user->rights->prelevement->bons->configurer)
 {
   print '<td align="left">';
@@ -123,7 +122,7 @@ if ($user->rights->prelevement->bons->configurer)
 }
 print '<td>'.PRELEVEMENT_CODE_GUICHET.'</td></tr>';
 
-print '<tr class="pair"><td>Numéro compte</td>';
+print '<tr class="pair"><td>Numï¿½ro compte</td>';
 if ($user->rights->prelevement->bons->configurer)
 {
   print '<td align="left">';
@@ -132,7 +131,7 @@ if ($user->rights->prelevement->bons->configurer)
 }
 print '<td>'.PRELEVEMENT_NUMERO_COMPTE.'</td></tr>';
   
-print '<tr class="impair"><td>Utilisateur responsable des prélèvements</td>';
+print '<tr class="impair"><td>Utilisateur responsable des prï¿½lï¿½vements</td>';
 if ($user->rights->prelevement->bons->configurer)
 {
   print '<td align="left">';
@@ -228,7 +227,7 @@ if ($user->rights->prelevement->bons->configurer)
   
   print '<option value="tr">Transmission du bon</option>';
   print '<option value="em">Emission du bon</option>';
-  print '<option value="cr">Crédit du bon</option>'; 
+  print '<option value="cr">Crï¿½dit du bon</option>'; 
   print '</select></td>';
   
   print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';

@@ -26,6 +26,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("companies");
 $langs->load("products");
@@ -197,7 +198,7 @@ else
 			  print '<br>';
 			  print_titre($langs->trans("TestMailing"));
 			  
-			  // Créé l'objet formulaire mail
+			  // Crï¿½ï¿½ l'objet formulaire mail
 			  include_once("../html.formmail.class.php");
 			  $formmail = new FormMail($db);	    
 			  $formmail->fromname = $conf->global->MAIN_MAIL_EMAIL_FROM;
@@ -215,7 +216,7 @@ else
 			  $formmail->withcancel=1;
 			  // Tableau des substitutions
 			  $formmail->substit=$substitutionarrayfortest;
-			  // Tableau des paramètres complémentaires du post
+			  // Tableau des paramï¿½tres complï¿½mentaires du post
 			  $formmail->param["action"]="send";
 			  $formmail->param["models"]="body";
 			  $formmail->param["mailid"]=$mil->id;

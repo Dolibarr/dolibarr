@@ -27,6 +27,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("admin");
@@ -79,7 +80,7 @@ print "</tr>\n";
 $var=true;
 $form = new Form($db);
 
-// Catégorie
+// Catï¿½gorie
 $var=!$var;
 print '<form action="droitpret.php" method="POST">';
 print '<input type="hidden" name="action" value="update">';

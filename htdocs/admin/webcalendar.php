@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      ï¿½ric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
@@ -18,18 +18,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/admin/webcalendar.php
         \ingroup    webcalendar
         \brief      Page de configuration du module webcalendar
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/webcal/webcal.class.php');
 
 
@@ -95,7 +94,7 @@ elseif ($actiontest)
     
     if ($webcal->localdb->connected == 1 && $webcal->localdb->database_selected == 1)
     {
-        // Vérifie si bonne base
+        // Vï¿½rifie si bonne base
         $sql="SELECT cal_value FROM webcal_config WHERE cal_setting='application_name'";
         $resql=$webcal->localdb->query($sql);
         if ($resql) {

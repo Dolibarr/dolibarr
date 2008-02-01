@@ -31,6 +31,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
@@ -255,7 +256,7 @@ if (function_exists("ldap_connect"))
 
 	if ($_GET["action"] == 'test')
 	{
-		$ldap = new Ldap();	// Les parametres sont passés et récupérés via $conf
+		$ldap = new Ldap();	// Les parametres sont passï¿½s et rï¿½cupï¿½rï¿½s via $conf
 
 		$result = $ldap->connect_bind();
 		if ($result)

@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/expedition/expedition.class.php');
 
 $langs->load("admin");
@@ -184,7 +185,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activé
+    // \todo Verifier si module numerotation choisi peut etre activï¿½
     // par appel methode canBeActivated
 
 	dolibarr_set_const($db, "EXPEDITION_ADDON",$_GET["module"]);
@@ -229,7 +230,7 @@ if ($conf->global->MAIN_SUBMODULE_LIVRAISON)
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
-// Méthode de livraison
+// Mï¿½thode de livraison
 $mods=array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE statut = 1";
 $resql = $db->query($sql);

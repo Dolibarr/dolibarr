@@ -22,11 +22,12 @@
 /**
 	    \file       htdocs/admin/security_other.php
         \ingroup    setup
-        \brief      Page de configuration du module sécurité autre
+        \brief      Page de configuration du module sï¿½curitï¿½ autre
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("users");
 $langs->load("admin");
@@ -188,10 +189,11 @@ print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("UseAvToScanUploadedFiles");
 if($conf->global->MAIN_USE_AVSCAN == 1)
 {
+	print ' : ';
 	// Clamav
 	if (function_exists("cl_scanfile"))
 	{
-		print ' : '.cl_info();
+		print cl_info();
 	}
 }
 print '</td>';

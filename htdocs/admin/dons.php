@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**	
@@ -26,7 +25,8 @@
 		\version    $Revision$
 */
 require("./pre.inc.php");
-require(DOL_DOCUMENT_ROOT."/don.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 
 $langs->load("admin");
 $langs->load("donations");
@@ -187,7 +187,7 @@ while (($file = readdir($handle))!==false)
         print $module->description;
         print '</td>';
 
-		// Activé
+		// Activï¿½
 		if (in_array($name, $def))
 		{
 	        print "<td align=\"center\">\n";

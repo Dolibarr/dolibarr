@@ -30,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
 $langs->load("admin");
@@ -259,7 +260,7 @@ print "</td>";
 print '</tr>';
 print '</form>';
 
-// Utilisation de l'écotaxe
+// Utilisation de l'ï¿½cotaxe
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"useecotaxe\">";

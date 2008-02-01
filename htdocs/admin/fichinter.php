@@ -31,6 +31,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/fichinter/fichinter.class.php');
 
 $langs->load("admin");
@@ -101,8 +102,8 @@ if ($_GET["action"] == 'setdoc')
 	
     if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF",$_GET["value"]))
     {
-        // La constante qui a été lue en avant du nouveau set
-        // on passe donc par une variable pour avoir un affichage cohérent
+        // La constante qui a ï¿½tï¿½ lue en avant du nouveau set
+        // on passe donc par une variable pour avoir un affichage cohï¿½rent
         $conf->global->FICHEINTER_ADDON_PDF = $_GET["value"];
     }
 
@@ -125,13 +126,13 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activé
+    // \todo Verifier si module numerotation choisi peut etre activï¿½
     // par appel methode canBeActivated
 
 	dolibarr_set_const($db, "FICHEINTER_ADDON",$_GET["value"]);
 }
 
-// défini les constantes du modèle arctic
+// dï¿½fini les constantes du modï¿½le arctic
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FICHEINTER_NUM_MATRICE",$_POST["matrice"]);
 if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "FICHEINTER_NUM_PREFIX",$_POST["prefix"]);
 if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "FICHEINTER_NUM_DELTA",$_POST["offset"]);
@@ -282,7 +283,7 @@ while (($file = readdir($handle))!==false)
       print $module->description;
       print '</td>';
 
-		// Activé
+		// Activï¿½
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";

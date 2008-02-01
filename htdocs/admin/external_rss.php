@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+/* Copyright (C) 2003      ï¿½ric Seigne          <erics@rycks.com>
  * Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -30,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 include_once(MAGPIERSS_PATH."rss_fetch.inc");
 
 
@@ -69,7 +70,7 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 
 		if ($_POST["modify"])
 		{
-			// Supprime boite box_external_rss de définition des boites
+			// Supprime boite box_external_rss de dï¿½finition des boites
 	        $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$boxlabel."'";
 	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
@@ -83,7 +84,7 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 		}
 		else
 		{
-			// Ajoute boite box_external_rss dans définition des boites
+			// Ajoute boite box_external_rss dans dï¿½finition des boites
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (name, file, note)";
 			$sql.= " VALUES ('".$boxlabel."','box_external_rss.php','".addslashes($_POST["norss"].' ('.$_POST[$external_rss_title]).")')";
 	        if (! $db->query($sql))
@@ -116,7 +117,7 @@ if ($_POST["delete"])
     {
         $db->begin();
 
-		// Supprime boite box_external_rss de définition des boites
+		// Supprime boite box_external_rss de dï¿½finition des boites
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes_def";
         $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
         
@@ -247,7 +248,7 @@ if ($resql)
 		print "<form name=\"externalrssconfig\" action=\"external_rss.php\" method=\"post\">";
 		
 		print "<tr class=\"liste_titre\">";
-		print "<td colspan=\"2\">Syndication du flux numéro " . ($i+1) . "</td>";
+		print "<td colspan=\"2\">Syndication du flux numï¿½ro " . ($i+1) . "</td>";
 		print "</tr>";
 
 		$var=!$var;

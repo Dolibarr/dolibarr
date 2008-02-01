@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 
 $langs->load("admin");
@@ -124,7 +125,7 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activé
+    // \todo Verifier si module numerotation choisi peut etre activï¿½
     // par appel methode canBeActivated
 
 	dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"]);
@@ -172,7 +173,7 @@ if ($_GET["action"] == 'delete')
   }
 }
 
-// défini les constantes du modèle pluton
+// dï¿½fini les constantes du modï¿½le pluton
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FACTURE_NUM_MATRICE",$_POST["matrice"]);
 if ($_POST["action"] == 'updatePrefixFacture') dolibarr_set_const($db, "FACTURE_NUM_PREFIX",$_POST["prefixfacture"]);
 if ($_POST["action"] == 'updatePrefixAvoir') dolibarr_set_const($db, "AVOIR_NUM_PREFIX",$_POST["prefixavoir"]);
@@ -206,7 +207,7 @@ $h++;
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
- *  Module numérotation
+ *  Module numï¿½rotation
  */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -229,7 +230,7 @@ while (($file = readdir($handle))!==false)
         $filebis = $file."/".$file.".modules.php";
 		if (is_readable($dir.$filebis))
 		{
-	        // Chargement de la classe de numérotation
+	        // Chargement de la classe de numï¿½rotation
 	        require_once($dir.$filebis);
 	        $classname = "mod_facture_".$file;
 	        $module = new $classname($db);
@@ -350,7 +351,7 @@ while (($file = readdir($handle))!==false)
         print $module->description;
         print '</td>';
 
-		// Activé
+		// Activï¿½
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";
@@ -412,7 +413,7 @@ print '</table>';
 
 
 /*
- *  Modes de règlement
+ *  Modes de rï¿½glement
  *
  */
 print '<br>';
@@ -470,7 +471,7 @@ else
 print "</td></tr>";
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print "<td>Proposer paiement par chèque à l'ordre et adresse de</td>";
+print "<td>Proposer paiement par chï¿½que ï¿½ l'ordre et adresse de</td>";
 print "<td>";
 print '<select name="chq">';
 print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
@@ -528,7 +529,7 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-// Active facture récurrentes
+// Active facture rï¿½currentes
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="set_disable_repeatable">';
@@ -541,7 +542,7 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-// Active la possibilité d'éditer/supprimer une facture validée sans paiement
+// Active la possibilitï¿½ d'ï¿½diter/supprimer une facture validï¿½e sans paiement
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="set_enable_editdelete">';

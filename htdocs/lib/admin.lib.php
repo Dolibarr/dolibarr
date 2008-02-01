@@ -200,4 +200,104 @@ function run_sql($sqlfile,$silent=1)
 
 	return $ok;
 }
+
+
+/**
+	\brief		Effacement d'une constante dans la base de données
+	\sa			dolibarr_get_const, dolibarr_sel_const
+	\param	    db          Handler d'accés base
+	\param	    name		Nom ou rowid de la constante
+	\return     int         <0 si ko, >0 si ok
+*/
+function dolibarr_del_const($db, $name)
+{
+	global $conf;
+	
+	$sql = "DELETE FROM llx_const";
+	$sql.=" WHERE name='".addslashes($name)."' or rowid='".addslashes($name)."'";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$conf->global->$name='';
+		return 1;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+/**
+		\brief      Récupére une constante depuis la base de données.
+		\sa			dolibarr_del_const, dolibarr_set_const
+		\param	    db          Handler d'accés base
+		\param	    name		Nom de la constante
+		\return     string      Valeur de la constante
+*/
+function dolibarr_get_const($db, $name)
+{
+    $value='';
+
+    $sql ="SELECT value";
+    $sql.=" FROM llx_const";
+    $sql.=" WHERE name = '".addslashes($name)."'";
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj=$db->fetch_object($resql);
+        $value=$obj->value;
+    }
+    return $value;
+}
+
+
+/**
+   \brief      	Insertion d'une constante dans la base de données.
+   \sa			dolibarr_del_const, dolibarr_get_const
+   \param	    db          Handler d'accés base
+   \param	    name		Nom de la constante
+   \param	    value		Valeur de la constante
+   \param	    type		Type de constante (chaine par défaut)
+   \param	    visible	    La constante est elle visible (0 par défaut)
+   \param	    note		Explication de la constante
+   \return     int         <0 si ko, >0 si ok
+*/
+function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
+{
+    global $conf;
+
+    if (! $name)
+    {
+    	dolibarr_print_error("Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
+    	exit;
+    }
+
+    $db->begin();
+    
+    //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
+    $sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."';";
+    $resql=$db->query($sql);
+
+    if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
+    {
+	    $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
+	    $sql.= " VALUES ('".$name."','".addslashes($value)."','".$type."',".$visible.",'".addslashes($note)."')";
+	    $resql=$db->query($sql);
+    }
+
+    if ($resql)
+    {
+        $db->commit();
+        $conf->global->$name=$value;
+        return 1;
+    }
+    else
+    {
+        $db->rollback();
+        return -1;
+    }
+}
+
+
+
 ?>

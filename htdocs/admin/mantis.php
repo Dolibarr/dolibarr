@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      ï¿½ric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
@@ -30,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT.'/mantis/mantis.class.php');
 
 
@@ -88,7 +89,7 @@ elseif ($actiontest)
     
     if ($mantis->localdb->connected == 1 && $mantis->localdb->database_selected == 1)
     {
-        // Vérifie si bonne base
+        // Vï¿½rifie si bonne base
         $sql="SELECT value FROM mantis_config_table WHERE config_id='database_version'";
         $resql=$mantis->localdb->query($sql);
         if ($resql) {

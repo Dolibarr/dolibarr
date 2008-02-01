@@ -27,6 +27,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 
@@ -54,8 +55,8 @@ if ($_GET["action"] == "switch")
  *
  *
  */
-llxHeader('','Téléphonie - Configuration');
-print_titre("Configuration du module de Téléphonie");
+llxHeader('','Tï¿½lï¿½phonie - Configuration');
+print_titre("Configuration du module de Tï¿½lï¿½phonie");
 
 print "<br>";
 
@@ -123,7 +124,7 @@ print '<input type="hidden" name="nom4" value="TELEPHONIE_GROUPE_COMMERCIAUX_ID"
 /* ***************************************** */
 
 
-print '<tr class="pair"><td>Fournisseur par défaut</td><td>';
+print '<tr class="pair"><td>Fournisseur par dï¿½faut</td><td>';
 $ff = array();
 $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
 $resql = $db->query($sql);
@@ -141,7 +142,7 @@ print '</td><td><input type="submit" value="'.$langs->trans('Update').'">';
 print '</td><td>TELEPHONIE_FOURNISSEUR_DEFAUT_ID</td></tr>';
 print '<input type="hidden" name="nom2" value="TELEPHONIE_FOURNISSEUR_DEFAUT_ID">';
 
-print '<tr class="pair"><td>Grille vente par défaut</td>';
+print '<tr class="pair"><td>Grille vente par dï¿½faut</td>';
 
 $gg = array();
 $gg[0] = "Aucune grille definie";
