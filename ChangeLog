@@ -18,8 +18,8 @@ For users:
 - Fix infinite loop on popup calendar.
 - Change in tanslation to make Dolibarr easier to understand.
 - Add a warning when sending a mail from a user with no email defined.
-- A lot of other minor changes (features, look, fixes)
 - Added clicktodial module.
+- Other minor changes (features, look, fixes)
 
 For developers:
 - Update code skeletons examples.
