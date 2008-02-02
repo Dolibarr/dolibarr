@@ -1,10 +1,10 @@
-// Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
 // Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
 //
 // Script javascript mis en en-tete de pages (dans section head)
 //
 // \file       htdocs/lib/lib_head.js
-// \brief      Fichier qui inclue les fonctions javascript d'en-tete (inclue si option use_javascript active)
+// \brief      File that include javascript functions (included if option use_javascript activated)
 // \version    $Revision$
 
 
