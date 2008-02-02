@@ -746,7 +746,7 @@ llxFooter('$Date$ - $Revision$');
 */
 function currency_name($code_iso,$withcode=0)
 {
-	global $langs;
+	global $langs,$db;
 
 	// Si il existe une traduction, on peut renvoyer de suite le libellé
 	if ($langs->trans("Currency".$code_iso)!="Currency".$code_iso)
@@ -754,19 +754,20 @@ function currency_name($code_iso,$withcode=0)
 		return $langs->trans("Currency".$code_iso);
 	}
 	
-	// Si pas de traduction, on consulte libellé par défaut en table
+	// Si pas de traduction, on consulte le libellé par défaut en table
 	$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
-	$sql.= " WHERE code_iso='$code_iso';";
+	$sql.= " WHERE code_iso='".$code_iso."'";
 
-	if ($this->db->query($sql))
+	$resql=$db->query($sql);
+	if ($resql)
 	{
-		$num = $this->db->num_rows();
+		$num = $db->num_rows($resql);
 
 		if ($num)
 		{
-			$obj = $this->db->fetch_object();
+			$obj = $db->fetch_object($resql);
 			$label=($obj->label!='-'?$obj->label:'');
-			if ($withcode) return $label==$code_iso?"$code_iso":"$code_iso - $label";
+			if ($withcode) return ($label==$code_iso)?"$code_iso":"$code_iso - $label";
 			else return $label;
 		}
 		else
