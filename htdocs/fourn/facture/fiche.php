@@ -18,15 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	\file       htdocs/fourn/facture/fiche.php
 	\ingroup    facture, fournisseur
-	\brief      Page des la fiche facture fournisseur
-	\version    $Revision$
+	\brief      Page for supplier invoice card
+	\version    $Id$
 */
 
 require_once('./pre.inc.php');
@@ -126,16 +124,10 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 {
 	if ($_POST['facnumber'])
 	{
-		$datefacture = mktime(12,0,0,
+		$datefacture = dolibarr_mktime(12,0,0,
 			$_POST['remonth'],
 			$_POST['reday'],
 			$_POST['reyear']);
-
-		$tva = 0;
-		$amo = price2num($_POST['amount']);
-		$tva = (price2num($_POST['tva_tx']) * $amo) / 100 ;
-		$remise = 0;
-		$total = $tva + $amo;
 
 		$db->begin();
 
@@ -143,10 +135,10 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 		$facfou = new FactureFournisseur($db);
 
 		$facfou->ref           = $_POST['facnumber'];
-		$facfou->socid        = $_POST['socid'];
+		$facfou->socid         = $_POST['socid'];
 		$facfou->libelle       = $_POST['libelle'];
 		$facfou->date          = $datefacture;
-		$facfou->date_echeance = mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
+		$facfou->date_echeance = dolibarr_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
 		$facfou->note          = $_POST['note'];
 
 		$facid = $facfou->create($user);
@@ -182,6 +174,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 				$db->rollback();
 				$mesg='<div class="error">'.$facfou->error.'</div>';
 				$_GET['action']='create';
+				$_GET['socid']=$_POST['socid'];
 			}
 			else
 			{
@@ -195,12 +188,14 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 			$db->rollback();
 			$mesg='<div class="error">'.$facfou->error.'</div>';
 			$_GET['action']='create';
+			$_GET['socid']=$_POST['socid'];
 		}
 	}
 	else
 	{
 		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
 		$_GET['action']='create';
+		$_GET['socid']=$_POST['socid'];
 	}
 }
 
