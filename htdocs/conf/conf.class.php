@@ -133,7 +133,7 @@ class Conf
 		/*
 		 * Charge l'objet de traduction et positionne langage courant global
 		 */
-		if (! $this->global->MAIN_LANG_DEFAULT) $this->global->MAIN_LANG_DEFAULT="fr_FR";
+		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="fr_FR";
 
 		/*
 		 * Autres parametres globaux de configurations
