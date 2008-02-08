@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -504,29 +504,33 @@ if ($_GET["id"] > 0)
         
         
         /*
-         * 	Liste des expéditions
+         * 	Liste des expéditions/livraisons
          */
-        $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
-        $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
-        $sql .= ",".$db->pdate("e.date_expedition")." as date_expedition";
-        if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
-        $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
-        $sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
-        if ($conf->livraison->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid";
-        $sql .= " WHERE cd.fk_commande = ".$commande->id;
-        $sql .= " AND cd.rowid = ed.fk_commande_ligne";
-        $sql .= " AND ed.fk_expedition = e.rowid";
-        $sql .= " ORDER BY cd.fk_product";
-
-        $resql = $db->query($sql);
-        if ($resql)
+        if ($conf->expedition->enabled && ($conf->expedition_bon->enabled || $conf->livraison->enabled))
         {
-            $num = $db->num_rows($resql);
-	        $i = 0;
-
-            if ($num)
-            {
-                if ($somethingshown) print '<br>';
+        	print '<br>';
+        	
+        	$sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_asked";
+        	$sql .= ", ed.qty as qty_shipped, e.ref, ed.fk_expedition as expedition_id";
+        	$sql .= ", ".$db->pdate("e.date_expedition")." as date_expedition";
+        	if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
+        	$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+        	$sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
+        	if ($conf->livraison->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid";
+        	$sql .= " WHERE cd.fk_commande = ".$commande->id;
+        	$sql .= " AND cd.rowid = ed.fk_origin_line";
+        	$sql .= " AND ed.fk_expedition = e.rowid";
+        	$sql .= " ORDER BY cd.fk_product";
+        	
+        	$resql = $db->query($sql);
+        	if ($resql)
+        	{
+        		$num = $db->num_rows($resql);
+        		$i = 0;
+        		
+        		if ($num)
+        		{
+        			if ($somethingshown) print '<br>';
                 
                 print_titre($langs->trans("SendingsAndReceivingForSameOrder"));
                 print '<table class="liste" width="100%">';
@@ -534,7 +538,7 @@ if ($_GET["id"] > 0)
                 print '<td>'.$langs->trans("Product").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="center">'.$langs->trans("DateSending").'</td>';
-                if ($conf->expedition->enabled)
+                if ($conf->expedition_bon->enabled)
                 {
                 	print '<td>'.$langs->trans("SendingSheet").'</td>';
                 }
@@ -565,9 +569,9 @@ if ($_GET["id"] > 0)
                     {
                         print "<td>".nl2br($objp->description)."</td>\n";
                     }
-                    print '<td align="center">'.$objp->qty_livre.'</td>';
+                    print '<td align="center">'.$objp->qty_shipped.'</td>';
                     print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
-                    if ($conf->expedition->enabled)
+                    if ($conf->expedition_bon->enabled)
                     {
 	                    print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
                     }
@@ -575,7 +579,7 @@ if ($_GET["id"] > 0)
                     {
                     	if ($objp->livraison_id)
                     	{
-                    		print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
+                    		print '<td align="left"><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
                     	}
                     	else
                     	{
@@ -595,6 +599,7 @@ if ($_GET["id"] > 0)
         {
             dolibarr_print_error($db);
         }
+      }
         
     }
     else

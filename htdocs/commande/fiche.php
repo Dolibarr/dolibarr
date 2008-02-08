@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,7 +50,7 @@ $langs->load('products');
 if (!$user->rights->commande->lire) accessforbidden();
 
 
-// S�curit� acc�s client
+// Securite acces client
 $socid=0;
 if ($user->societe_id > 0)
 {
@@ -67,7 +67,7 @@ if ($user->societe_id >0 && isset($_GET["id"]) && $_GET["id"]>0)
 
 
 
-// R�cup�ration de l'id de projet
+// Recuperation de l'id de projet
 $projetid = 0;
 if ($_GET["projetid"])
 {
@@ -145,7 +145,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
   $commande->note                 = $_POST['note'];
   $commande->source               = $_POST['source_id'];
   $commande->projetid             = $_POST['projetid'];
-  //$commande->remise_absolue       = $_POST['remise_absolue']; //la remise �tait appliqu�e sur les lignes et sur le total
+  //$commande->remise_absolue       = $_POST['remise_absolue']; //la remise etait appliquee sur les lignes et sur le total
   //$commande->remise_percent       = $_POST['remise_percent'];
   $commande->ref_client           = $_POST['ref_client'];
   $commande->modelpdf             = $_POST['model'];
@@ -171,7 +171,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 
   if ($commande_id > 0)
     {
-      // Insertion contact par defaut si d�fini
+      // Insertion contact par defaut si defini
       if ($_POST["contactidp"])
 	{
 	  $result=$commande->add_contact($_POST["contactidp"],'CUSTOMER','external');
@@ -191,7 +191,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
       $action = '';
     }
 
-  // Fin cr�ation facture, on l'affiche
+  // Fin creation facture, on l'affiche
   if ($commande_id > 0 && ! $error)
     {
       $db->commit();
@@ -391,7 +391,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 }
 
 /*
- *  Mise � jour d'une ligne dans la commande
+ *  Mise a jour d'une ligne dans la commande
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
@@ -421,12 +421,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
       exit;
     }
   
-  $_GET['id']=$_POST['id'];   // Pour r�affichage de la fiche en cours d'�dition
+  $_GET['id']=$_POST['id'];   // Pour reaffichage de la fiche en cours d'edition
 }
 
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
-  Header('Location: fiche.php?id='.$_POST['id']);   // Pour r�affichage de la fiche en cours d'�dition
+  Header('Location: fiche.php?id='.$_POST['id']);   // Pour reaffichage de la fiche en cours d'edition
   exit;
 }
 
@@ -509,10 +509,10 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
   /*
    * Generation de la commande
-   * d�finit dans /includes/modules/commande/modules_commande.php
+   * definit dans /includes/modules/commande/modules_commande.php
    */
 
-  // Sauvegarde le dernier mod�le choisi pour g�n�rer un document
+  // Sauvegarde le dernier modele choisi pour generer un document
   $commande = new Commande($db, 0, $_REQUEST['id']);
   $commande->fetch($_REQUEST['id']);
   if ($_REQUEST['model'])
@@ -571,13 +571,13 @@ if ($_POST['action'] == 'send')
 
 	  if ($_POST['sendto'])
 	    {
-	      // Le destinataire a �t� fourni via le champ libre
+	      // Le destinataire a ete fourni via le champ libre
 	      $sendto = $_POST['sendto'];
 	      $sendtoid = 0;
 	    }
 	  elseif ($_POST['receiver'])
 	    {
-	      // Le destinataire a �t� fourni via la liste d�roulante
+	      // Le destinataire a ete fourni via la liste deroulante
 	      if ($_POST['receiver'] < 0)	// Id du tiers
 		{
 		  $sendto = $commande->client->email;
@@ -608,15 +608,15 @@ if ($_POST['action'] == 'send')
 		    }
 
 		  $actiontypeid=8;
-		  $actionmsg ='Mail envoy� par '.$from.' � '.$sendto.'.<br>';
+		  $actionmsg = $langs->trans('MailSentBy').' '.$from.' '.$langs->trans('To').' '.$sendto.'.<br>';
 
 		  if ($message)
 		    {
-		      $actionmsg.='Texte utilis� dans le corps du message:<br>';
+		      $actionmsg.=$langs->trans('TextUsedInTheMessageBody').' :<br>';
 		      $actionmsg.=$message;
 		    }
 
-		  $actionmsg2='Envoi commande par mail';
+		  $actionmsg2=$langs->trans('SendOrderByMail');
 		}
 
 	      $filepath[0] = $file;
@@ -704,7 +704,7 @@ if ($_POST['action'] == 'send')
     {
       $langs->load("other");
       $mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
-      dolibarr_syslog('Impossible de lire les donn�es de la facture. Le fichier facture n\'a peut-�tre pas �t� g�n�r�.');
+      dolibarr_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
     }
 }
 
@@ -822,12 +822,12 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 			print '</td></tr>';
 			
-			// Conditions de r�glement
+			// Conditions de reglement
 			print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 			$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
 			print '</td></tr>';
 			
-			// Mode de r�glement
+			// Mode de reglement
 			print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 			$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 			print '</td></tr>';
@@ -877,7 +877,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
 				{
 					/*
-		* Services/produits pr�d�finis
+		* Services/produits predefinis
 		*/
 					$NBLINES=8;
 					
@@ -1022,7 +1022,7 @@ else
 	   */
 	  if ($_GET['action'] == 'validate')
 	  {
-	  	// on v�rifie si la facture est en num�rotation provisoire
+	  	// on verifie si la facture est en numerotation provisoire
 	    $ref = substr($commande->ref, 1, 4);
 	    if ($ref == 'PROV')
 	    {
@@ -1102,7 +1102,7 @@ else
 	  print '</tr>';
 	  
 
-	  // Soci�t�
+	  // Societe
 	  print '<tr><td>'.$langs->trans('Company').'</td>';
 	  print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 	  print '</tr>';
@@ -1200,7 +1200,7 @@ else
 				print '</td></tr>';
 			}
 
-			// Conditions et modes de r�glement
+			// Conditions et modes de reglement
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShort');
@@ -1219,7 +1219,7 @@ else
 			}
 			print '</td>';
 			
-			//Note public lorsque le module expedition n'est pas activ�
+			//Note public lorsque le module expedition n'est pas active
 			if (!$conf->projet->enabled) $nbrow--;
 			if (!$conf->expedition->enabled)
 			{
@@ -1348,7 +1348,7 @@ else
 							$text.= ' - '.$objp->product;
 							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':$objp->description);
 							print $html->textwithtooltip($text,$description,3,'','',$i);
-							// Todo: voir si on insert ou pas en option les dates de d�but et de fin de service
+							// Todo: voir si on insert ou pas en option les dates de debut et de fin de service
 							//print_date_range($objp->date_start,$objp->date_end);
 							if ($conf->global->PRODUIT_DESC_IN_FORM)
 							{
@@ -1413,7 +1413,7 @@ else
 							print '<td align="center">';
 							if (($objp->info_bits & 2) == 2)
 							{
-								// Ligne remise pr�d�finie, on permet pas modif
+								// Ligne remise predefinie, on ne permet pas modif
 							}
 							else
 							{
@@ -1485,7 +1485,7 @@ else
 							print ' - '.nl2br($objp->product);
 							print '<br>';
 						}
-						// �diteur wysiwyg
+						// editeur wysiwyg
 						if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 						{
 							require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1550,7 +1550,7 @@ else
 				print '<td colspan="4">&nbsp;</td>';
 				print '</tr>';
 
-				// Ajout produit produits/services personnalis�s
+				// Ajout produit produits/services personnalises
 				print '<form action="fiche.php?id='.$id.'#add" method="post">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
@@ -1558,7 +1558,7 @@ else
 				$var=true;
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				// �diteur wysiwyg
+				// editeur wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1584,7 +1584,7 @@ else
 
 				print '</form>';
 
-				// Ajout de produits/services pr�d�finis
+				// Ajout de produits/services predefinis
 				if ($conf->produit->enabled)
 				{
 					print '<tr class="liste_titre">';
@@ -1622,7 +1622,7 @@ else
 				
 				  if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 
-			  	// �diteur wysiwyg
+			  	// editeur wysiwyg
 			  	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 			  	{
 			  		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1659,7 +1659,7 @@ else
 					print '<a class="butAction" ';
 					if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 					{
-						// on v�rifie si la commande est en num�rotation provisoire
+						// on verifie si la commande est en numerotation provisoire
 						$ref = substr($commande->ref, 1, 4);
 						if ($ref == 'PROV')
 						{
@@ -1785,7 +1785,7 @@ else
 			print '<a name="builddoc"></a>'; // ancre
 
 			/*
-			* Documents g�n�r�s
+			* Documents generes
 			*
 			*/
 			$comref = sanitize_string($commande->ref);
@@ -1930,7 +1930,7 @@ else
 					$liste[$key]=$value;
 				}
 
-				// Cr�� l'objet formulaire mail
+				// Cree l'objet formulaire mail
 				include_once('../html.formmail.class.php');
 				$formmail = new FormMail($db);
 				$formmail->fromtype = 'user';
@@ -1946,7 +1946,7 @@ else
 				$formmail->withdeliveryreceipt=1;
 				// Tableau des substitutions
 				$formmail->substit['__ORDERREF__']=$commande->ref;
-				// Tableau des param�tres compl�mentaires
+				// Tableau des parametres complementaires
 				$formmail->param['action']='send';
 				$formmail->param['models']='order_send';
 				$formmail->param['orderid']=$commande->id;
@@ -1959,7 +1959,7 @@ else
 		}
 		else
 		{
-			// Commande non trouv�e
+			// Commande non trouvee
 			dolibarr_print_error($db);
 		}
 	}
