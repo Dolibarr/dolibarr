@@ -510,7 +510,7 @@ if ($_GET["id"] > 0)
         {
         	print '<br>';
         	
-        	$sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_asked";
+        	$sql = "SELECT cd.fk_product, cd.rowid, cd.qty as qty_asked";
         	$sql .= ", ed.qty as qty_shipped, e.ref, ed.fk_expedition as expedition_id";
         	$sql .= ", ".$db->pdate("e.date_expedition")." as date_expedition";
         	if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
@@ -562,7 +562,6 @@ if ($_GET["id"] > 0)
             	      
             	      print '<td>';
             	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-            	      if ($objp->description) print '<br>'.nl2br($objp->description);
             	      print '</td>';
                     }
                     else
