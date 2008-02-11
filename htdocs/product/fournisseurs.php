@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/product/fournisseurs.php
    \ingroup    product
    \brief      Page de l'onglet fournisseur de produits
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -50,10 +47,11 @@ if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT &&
 	$_POST['id_fourn'] = $_POST['id_fourn_id'];
 }
 
+
 /*
  * Actions
  */
- 
+
 if ($_GET["action"] == 'remove_pf')
 {
     $product = new ProductFournisseur($db);
@@ -81,16 +79,26 @@ if ($_GET["action"] == 'remove_pf')
 
 if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-
 	$product = new ProductFournisseur($db);
 	$result=$product->fetch($_REQUEST["id"]);
-	if ($result)
+	if ($result > 0)
 	{
 		$db->begin();
 		
 		$error=0;
+		if (! $_POST["ref_fourn"])
+		{
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
+		}
+		if ($_POST["id_fourn"] <= 0)
+		{
+			//print "eee".$_POST["id_fourn"];
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Supplier")).'</div>';
+		}
 		
-		if ($_POST["ref_fourn"])
+		if (! $error)
 		{
 			$ret=$product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]);
 			if ($ret < 0)
@@ -103,7 +111,10 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 			{
 				if ($_POST["price"] >= 0)
 				{
-					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user);
+					$supplier=new Fournisseur($db);
+					$result=$supplier->fetch($_POST["id_fourn"]);
+					
+					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user, $_POST["price_base_type"], $supplier);
 					if ($ret < 0)
 					{
 						$error++;
@@ -126,12 +137,6 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 				$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
 			}			
 		}
-		else
-		{
-			$error++;
-			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
-		}
-
 		
 		if (! $error)
 		{
@@ -220,7 +225,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 
 			// Formulaire ajout prix
-			if ($_GET["action"] == 'add_price' && $user->rights->produit->creer)
+			if (($_GET["action"] == 'add_price' || $_POST["action"] == 'updateprice') && $user->rights->produit->creer)
 			{
 				$langs->load("suppliers");
 				
@@ -234,33 +239,39 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<form action="fournisseurs.php?id='.$product->id.'" method="post">';
 				print '<input type="hidden" name="action" value="updateprice">';
 				
+				print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="3">';
 				if ($_GET["rowid"])
 				{
+					$supplier=new Fournisseur($db); 
+					$supplier->fetch($_GET["socid"]);
+					print $supplier->getNomUrl(1);
 					print '<input type="hidden" name="id_fourn" value="'.$_GET["socid"].'">';
 					print '<input type="hidden" name="ref_fourn" value="'.$product->fourn_ref.'">';
 					print '<input type="hidden" name="ref_fourn_price_id" value="'.$_GET["rowid"].'">';
 				}
 				else
 				{
-					print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="5">';
 					$html=new Form($db);
-					$html->select_societes('','id_fourn','fournisseur=1');
-					print '</td></tr>';
+					$html->select_societes($_POST["id_fourn"],'id_fourn','fournisseur=1',1);
 				}
+				print '</td></tr>';
 				
-				print '<tr><td>'.$langs->trans("SupplierRef").'</td><td>';
+				print '<tr><td>'.$langs->trans("SupplierRef").'</td><td colspan="3">';
 				if ($_GET["rowid"])
 				{
 					print $product->fourn_ref;
 				}
 				else
 				{
-					print '<input class="flat" name="ref_fourn" size="12" value="'.$product->ref_fourn.'">';
+					print '<input class="flat" name="ref_fourn" size="12" value="'.($_POST["ref_fourn"]?$_POST["ref_fourn"]:$product->ref_fourn).'">';
 				}
 				print '</td>';
+				print '</tr>';
+				
+				print '<tr>';
 				print '<td>'.$langs->trans("QtyMin").'</td>';
-				$quantity = $_GET["qty"] ? $_GET["qty"] : "1";
 				print '<td>';
+				$quantity = $_REQUEST["qty"] ? $_REQUEST["qty"] : "1";
 				if ($_GET["rowid"])
 				{
 					print '<input type="hidden" name="qty" value="'.$product->fourn_qty.'">';
@@ -271,12 +282,17 @@ if ($_GET["id"] || $_GET["ref"])
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
 				print '</td>';
-				print '<td>'.$langs->trans("PriceQtyHT").'</td>';
-				print '<td><input class="flat" name="price" size="8" value="'.price($product->fourn_price).'"></td></tr>';
+				print '<td>'.$langs->trans("PriceQtyMin").'</td>';
+				print '<td><input class="flat" name="price" size="8" value="'.($_POST["price"]?$_POST["price"]:price($product->fourn_price)).'">';
+				print '&nbsp;';
+				print $html->select_PriceBaseType(($_POST["price_base_type"]?$_POST["price_base_type"]:$product->price_base_type), "price_base_type");
+				print '</td>';
+				print '</tr>';
 				
-				print '<tr><td colspan="6" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
+				print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
 				print '&nbsp; &nbsp;';
 				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+
 				print '</form>';
 				print '</table>';
 			}    
@@ -313,7 +329,7 @@ if ($_GET["id"] || $_GET["ref"])
 				print $langs->trans("Suppliers").'</td>';
 				print '<td>'.$langs->trans("SupplierRef").'</td>';
 				print '<td align="center">'.$langs->trans("QtyMin").'</td>';
-				print '<td align="right">'.$langs->trans("PriceQtyHT").'</td>';
+				print '<td align="right">'.$langs->trans("PriceQtyMinHT").'</td>';
 				print '<td align="right">'.$langs->trans("UnitPriceHT").'</td>';
 				print '<td>&nbsp;</td>';
 				print '</tr>';

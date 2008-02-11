@@ -143,14 +143,18 @@ class ProductFournisseur extends Product
 
 	/**
 	*    \brief  Modifie le prix d'achat pour un fournisseur
-	*    \param  id_fourn        	Id du fournisseur
-	*    \param  qty             	Quantite pour lequel le prix est valide
-	*    \param  buyprice        	Prix d'achat pour la quantité
+	*    \param  qty             	Quantite min pour lequel le prix est valide
+	*    \param  buyprice        	Prix d'achat pour la quantité min
 	*    \param  user            	Objet user de l'utilisateur qui modifie
 	*    \param  price_base_type	HT or TTC
+	*    \param  fourn				Supplier
 	*/
-	function update_buyprice($qty, $buyprice, $user, $price_base_type='HT')
+	function update_buyprice($qty, $buyprice, $user, $price_base_type='HT', $fourn)
 	{
+		global $mysoc;
+		
+		$buyprice=price2num($buyprice);
+		
 		$error=0;
 		$this->db->begin();
 		
@@ -167,16 +171,21 @@ class ProductFournisseur extends Product
 		
 		if ($this->db->query($sql))
 		{
-			$unitBuyPrice = (price2num($buyprice)/$qty);
+			if ($price_base_type == 'TTC')
+			{
+				$ttx = get_default_tva($fourn,$mysoc,($this->tva_tx?$this->tva_tx:0));
+				$buyprice = $buyprice/(1+($ttx/100));
+			}
+			$unitBuyPrice = price2num($buyprice/$qty,'MU');
 
 			// Ajoute prix courant du fournisseur pour cette quantité
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price";
-			$sql .= " SET datec = now()";
-			$sql .= " ,fk_product_fournisseur = ".$this->product_fourn_id;
-			$sql .= " ,fk_user = ".$user->id;
-			$sql .= " ,price = ".price2num($buyprice);
-			$sql .= " ,quantity = ".$qty;
-			$sql .= " ,unitprice = ".price2num($unitBuyPrice,'MU');
+			$sql.= " SET datec = now()";
+			$sql.= " ,fk_product_fournisseur = ".$this->product_fourn_id;
+			$sql.= " ,fk_user = ".$user->id;
+			$sql.= " ,price = ".price2num($buyprice);
+			$sql.= " ,quantity = ".$qty;
+			$sql.= " ,unitprice = ".$unitBuyPrice;
 
 			dolibarr_syslog("ProductFournisseur::update_buyprice sql=".$sql);
 			if (! $this->db->query($sql))
@@ -184,7 +193,8 @@ class ProductFournisseur extends Product
 				$error++;
 			}
 
-			if (! $error) {
+			if (! $error)
+			{
 				// Ajoute modif dans table log
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log ";
 				$sql .= " SET datec = now()";
