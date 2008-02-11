@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/comm/action/fiche.php
         \ingroup    commercial
         \brief      Page de la fiche action
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once("./pre.inc.php");
@@ -157,7 +155,20 @@ if ($_POST["action"] == 'add_action')
         	$actioncomm->percentage = isset($_POST["percentage"])?$_POST["percentage"]:0;
 	    }
         $actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
-        $actioncomm->user = $user;
+
+		$usertodo=new User($db,$_POST["affectedto"]);
+        if ($_POST["affectedto"])
+		{
+			$usertodo->fetch();
+		}
+		$actioncomm->usertodo = $usertodo;
+		$userdone=new User($db,$_POST["doneby"]);
+        if ($_POST["doneby"])
+		{
+			$userdone->fetch();
+		}
+		$actioncomm->userdone = $userdone;
+		
         $actioncomm->note = trim($_POST["note"]);
         if (isset($_POST["contactid"]))    $actioncomm->contact = $contact;
         if (isset($_REQUEST["socid"]) && $_REQUEST["socid"] > 0)
@@ -232,7 +243,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 }
 
 /*
- * Action mise � jour de l'action
+ * Action mise a jour de l'action
  *
  */
 if ($_POST["action"] == 'update')
@@ -263,13 +274,29 @@ if ($_POST["action"] == 'update')
 		//print $actioncomm->datep;
         $actioncomm->label       = $_POST["label"];
         $actioncomm->percentage  = $_POST["percentage"];
+        $actioncomm->priority    = $_POST["priority"];
         $actioncomm->contact->id = $_POST["contactid"];
         $actioncomm->note        = $_POST["note"];
 		if ($actioncomm->type_code == 'AC_RDV' && $actioncomm->percentage == 100 && ! $actioncomm->date)
 		{
 			$actioncomm->date = $actioncomm->datep;
 		}
-        $result=$actioncomm->update();
+
+		// Users
+		$usertodo=new User($db,$_POST["affectedto"]);
+        if ($_POST["affectedto"])
+		{
+			$usertodo->fetch();
+		}
+		$actioncomm->usertodo = $usertodo;
+		$userdone=new User($db,$_POST["doneby"]);
+        if ($_POST["doneby"])
+		{
+			$userdone->fetch();
+		}
+		$actioncomm->userdone = $userdone;
+
+        $result=$actioncomm->update($user);
     }
 
     if ($result < 0)
@@ -343,7 +370,7 @@ if ($_GET["action"] == 'create')
 		}
 		print '</td></tr>';
 
-		// Si la societe est impos�e, on propose ces contacts
+		// Si la societe est imposee, on propose ces contacts
 		if ($_REQUEST["socid"])
 		{
 			$contactid = $_REQUEST["contactid"]?$_REQUEST["contactid"]:'';
@@ -354,12 +381,12 @@ if ($_GET["action"] == 'create')
 
 		// Affecte a
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td>';
-		print $langs->trans("FeatureNotYetSupported");
+		$html->select_users($_REQUEST["affectedto"],'affectedto',1);
 		print '</td></tr>';
 
 		// Realise par
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-		print $langs->trans("FeatureNotYetSupported");
+		$html->select_users($_REQUEST["doneby"],'doneby',1);
 		print '</td></tr>';
 
 		// Date planification
@@ -430,7 +457,7 @@ if ($_GET["action"] == 'create')
 		print '<table class="border" width="100%">';
 
 		// Type d'action actifs
-		print '<tr><td>'.$langs->trans("Type").'</td><td>';
+		print '<tr><td><b>'.$langs->trans("Type").'*</b></td><td>';
 		if ($_GET["actioncode"])
 		{
 			print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
@@ -470,12 +497,12 @@ if ($_GET["action"] == 'create')
 
 		// Affecte a
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td>';
-		print $langs->trans("FeatureNotYetSupported");
+		$html->select_users($_REQUEST["affectedto"],'affectedto',1);
 		print '</td></tr>';
 
 		// Realise par
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-		print $langs->trans("FeatureNotYetSupported");
+		$html->select_users($_REQUEST["doneby"],'doneby',1);
 		print '</td></tr>';
 
 		// Avancement
@@ -566,7 +593,12 @@ if ($_GET["id"])
     $act = new ActionComm($db);
     $act->fetch($_GET["id"]);
     $res=$act->societe->fetch($act->societe->id);
-    $res=$act->author->fetch();     // Le param�tre est le login, hors seul l'id est charg�.
+
+    if ($act->author->id)   $res=$act->author->fetch();     // Le parametre est le login, hors seul l'id est charge.
+    if ($act->usermod->id)  $res=$act->usermod->fetch();    
+    if ($act->usertodo->id) $res=$act->usertodo->fetch();   
+    if ($act->userdone->id) $res=$act->userdone->fetch();
+
     $res=$act->contact->fetch($act->contact->id);
 
     /*
@@ -619,17 +651,17 @@ if ($_GET["id"])
 
 		// Priorite
 		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-		print $langs->trans("FeatureNotYetSupported");
+		print '<input type="text" name="priority" value="'.$act->priority.'" size="5">';
 		print '</td></tr>';
 
 		// Affecte a
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
-		print $langs->trans("FeatureNotYetSupported");
+		$html->select_users($act->usertodo->id,'affectedto',1);
 		print '</td></tr>';
 
 		// Realise par
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		print $langs->trans("FeatureNotYetSupported");
+		$html->select_users($act->userdone->id,'doneby',1);
 		print '</td></tr>';
 
 		// Date planification
@@ -707,17 +739,17 @@ if ($_GET["id"])
 
 		// Priorite
 		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-		print $langs->trans("FeatureNotYetSupported");
+		print $act->priority;
 		print '</td></tr>';
 
 		// Affecte a
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
-		print $langs->trans("FeatureNotYetSupported");
+		if ($act->usertodo->id) print $act->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
 		// Realise par
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		print $langs->trans("FeatureNotYetSupported");
+		if ($act->userdone->id) print $act->userdone->getNomUrl(1);
 		print '</td></tr>';
 
         // Date planification

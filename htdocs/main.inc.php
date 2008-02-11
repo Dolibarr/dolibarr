@@ -619,12 +619,15 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 
 /**
- *  \brief      Affiche en-tete HTML
- *  \param      head    	Lignes d'en-tete head optionnelles
- *  \param      title   	Titre page web
- *	\param		disablejs	N'affiche pas les liens vers les js (Ex: qd fonction utilisee par sous formulaire Ajax)	
+ *  \brief      Show HTML header
+ *  \param      head    	Optionnal head lines
+ *  \param      title   	Web page title
+ *	\param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)	
+ *	\param		disablehead	Do not output head section
+ *	\param		arrayofjs	Array of js files to add in header
+ *	\param		arrayofcss	Array of css files to add in header
  */
-function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0) 
+function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='') 
 {
 	global $user, $conf, $langs, $db;
 	
@@ -666,9 +669,16 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 		}
 		print "\n";
 
-		// Affiche style sheets et link
+		// Output style sheets
 		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
 		print '<link rel="stylesheet" type="text/css" media="print" href="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
+		if (is_array($arrayofcss))
+		{
+			foreach($arrayofcss as $cssfile)
+			{
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$cssfile.'">'."\n";
+			}
+		}
 		
 		// Definition en alternate style sheet des feuilles de styles les plus maintenues
 		// Les navigateurs qui supportent sont rares. Plus aucun connu.
@@ -682,6 +692,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 		print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
+		// Output javascript links
 		if (! $disablejs && $conf->use_javascript_ajax)
 		{
 			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
@@ -707,6 +718,13 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 				//print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/window/tooltip.js"></script>'."\n";
 			}
 		}	
+		if (is_array($arrayofjs))
+		{
+			foreach($arrayofjs as $jsfile)
+			{
+				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/'.$jsfile.'"></script>'."\n";
+			}
+		}
 				
 		print "</head>\n";
 	}
@@ -774,13 +792,15 @@ function top_menu($head, $title="", $target="")
     if (! isset($_SERVER["REMOTE_USER"]) || ! $_SERVER["REMOTE_USER"])
     {
         $title=$langs->trans("Logout").'<br>';
-        $title.='<br><b>'.$langs->trans("User").'</b>: '.$user->fullname;
+        $title.='<br><u>'.$langs->trans("User").'</u>';
+		$title.='<br><b>'.$langs->trans("Name").'</b>: '.$user->fullname;
         $title.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
         $title.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
         $title.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
+        $title.='<br>';
+        $title.='<br><u>'.$langs->trans("Connection").'</u>';
 		$title.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"dayhour");
 		$title.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dolibarr_print_date($user->datepreviouslogin,"dayhour");
-
         if ($dolibarr_main_authentication) $title.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$dolibarr_main_authentication;
 
         $text='';

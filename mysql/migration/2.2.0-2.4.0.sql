@@ -172,8 +172,8 @@ ALTER TABLE llx_element_element
 ALTER TABLE llx_element_element ADD INDEX idx_element_element_targetid (targetid);
 
 
-ALTER  TABLE llx_actioncomm add column fk_user_create integer;
-ALTER  TABLE llx_actioncomm add column fk_user_mod integer;
+ALTER  TABLE llx_actioncomm add column fk_user_mod integer after fk_user_author;
+ALTER  TABLE llx_actioncomm add column fk_user_done integer after fk_user_action;
 
 
 create table llx_events

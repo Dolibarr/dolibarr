@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -24,7 +24,7 @@
         \file       htdocs/actioncomm.class.php
         \ingroup    commercial
         \brief      Fichier de la classe des actions commerciales
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT.'/cactioncomm.class.php');
@@ -45,19 +45,26 @@ class ActionComm
 	
     var $id;
     var $label;
+
     var $datec;			// Date creation enregistrement (datec)
     var $datem;			// Date modif enregistrement (tms)
+    var $author;		// User that create action
+    var $usermod;		// User that modified action
+
     var $datep;			// Date action planifie debut (datep)
     var $datef;			// Date action planifie fin
     var $date;			// Date action realise completement (datea)
     var $priority;
-    var $user;
-    var $author;
+
+    var $usertodo;		// User that must do action
+    var $userdone;	 	// User that did action
+	
     var $societe;
     var $contact;
     var $note;
     var $percentage;
     
+	
     /**
      *      \brief      Constructeur
      *      \param      db      Handler d'accès base de donnée
@@ -67,6 +74,9 @@ class ActionComm
         $this->db = $db;
         $this->societe = new Societe($db);
         $this->author = new User($db);
+        $this->usermod = new User($db);
+        $this->usertodo = new User($db);
+        $this->userdone = new User($db);
         if (class_exists("Contact"))
         {
             $this->contact = new Contact($db);
@@ -115,14 +125,21 @@ class ActionComm
         $sql.= "(datec,";
         if ($this->datep) $sql.= "datep,";
         if ($this->date) $sql.= "datea,";
-        $sql.= "fk_action,fk_soc,note,fk_contact,fk_user_author,fk_user_action,label,percent,priority,";
+        $sql.= "fk_action,fk_soc,note,fk_contact,";
+		$sql.= "fk_user_author,";
+		$sql.= "fk_user_action,";
+		$sql.= "fk_user_done,";
+		$sql.= "label,percent,priority,";
         $sql.= "fk_facture,propalrowid,fk_commande)";
         $sql.= " VALUES (now(),";
         if ($this->datep) $sql.= "'".$this->db->idate($this->datep)."',";
         if ($this->date) $sql.= "'".$this->db->idate($this->date)."',";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id?$this->contact->id:"null").",";
-        $sql.= "'$author->id', '".$this->user->id ."', '".addslashes($this->label)."','".$this->percentage."','".$this->priority."',";
+        $sql.= "'".$author->id."',";
+		$sql.= ($this->usertodo->id?"'".$this->usertodo->id."'":"null").",";
+		$sql.= ($this->userdone->id?"'".$this->userdone->id."'":"null").",";
+		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."',";
         $sql.= ($this->facid?$this->facid:"null").",";
         $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
         $sql.= ($this->orderrowid?$this->orderrowid:"null");
@@ -168,12 +185,16 @@ class ActionComm
 		$sql.= " ".$this->db->pdate("a.datep")." as datep,";
 		$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
 		$sql.= " a.note, a.label, a.fk_action as type_id,";
-		$sql.= " fk_soc, fk_user_author, fk_contact, fk_facture, a.percent as percentage, a.fk_commande,";
+		$sql.= " a.fk_soc,";
+		$sql.= " a.fk_user_author, a.fk_user_mod,";
+		$sql.= " a.fk_user_action, a.fk_user_done,";
+		$sql.= " a.fk_contact, a.fk_facture, a.percent as percentage, a.fk_commande,";
+		$sql.= " a.priority,";
 		$sql.= " c.id as type_id, c.code as type_code, c.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
 	
-		dolibarr_syslog("ActionComm.class::fetch sql=".$sql);
+		dolibarr_syslog("ActionComm::fetch sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -196,7 +217,13 @@ class ActionComm
 				$this->note =$obj->note;
 				$this->percentage =$obj->percentage;
 				$this->societe->id = $obj->fk_soc;
-				$this->author->id = $obj->fk_user_author;
+				$this->author->id  = $obj->fk_user_author;
+				$this->usermod->id  = $obj->fk_user_mod;
+
+				$this->usertodo->id  = $obj->fk_user_action;
+				$this->userdone->id  = $obj->fk_user_done;
+				$this->priority = $obj->priority;
+
 				$this->contact->id = $obj->fk_contact;
 				$this->fk_facture = $obj->fk_facture;
 				if ($this->fk_facture)
@@ -253,7 +280,7 @@ class ActionComm
  	 *					Si percentage = 100, on met a jour date 100%
  	 *    \return     	int     <0 si ko, >0 si ok
 	 */
-    function update()
+    function update($user)
     {
         $this->label=trim($this->label);
         $this->note=trim($this->note);
@@ -266,8 +293,13 @@ class ActionComm
         $sql.= ", datea = ".($this->date ? "'".$this->db->idate($this->date)."'" : 'null');
         if ($this->note) 		$sql.= ", note = '".addslashes($this->note)."'";
         if ($this->contact->id) $sql.= ", fk_contact =". $this->contact->id;
+        $sql.= ", priority = '".$this->priority."'";
+        $sql.= ", fk_user_mod = '".$user->id."'";
+		$sql.= ", fk_user_action='".$this->usertodo->id."'";
+		$sql.= ", fk_user_done='".$this->userdone->id."'";
         $sql.= " WHERE id=".$this->id;
     
+		dolibarr_syslog("ActionComm::update sql=".$sql);
         if ($this->db->query($sql))
         {
             return 1;
@@ -323,10 +355,12 @@ class ActionComm
 	{
 		$sql = 'SELECT a.id, '.$this->db->pdate('a.datec').' as datec,';
 		$sql.= ' '.$this->db->pdate('tms').' as datem,';
-		$sql.= ' fk_user_author';
+		$sql.= ' fk_user_author,';
+		$sql.= ' fk_user_mod';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 		$sql.= ' WHERE a.id = '.$id;
 
+		dolibarr_syslog("ActionComm::info sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -339,6 +373,12 @@ class ActionComm
 					$cuser = new User($this->db, $obj->fk_user_author);
 					$cuser->fetch();
 					$this->user_creation     = $cuser;
+				}
+				if ($obj->fk_user_mod)
+				{
+					$muser = new User($this->db, $obj->fk_user_mod);
+					$muser->fetch();
+					$this->user_modification = $muser;
 				}
 
 				$this->date_creation     = $obj->datec;
