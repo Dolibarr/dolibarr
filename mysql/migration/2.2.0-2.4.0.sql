@@ -179,11 +179,11 @@ ALTER  TABLE llx_actioncomm add column fk_user_done integer after fk_user_action
 create table llx_events
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
-  tms            timestamp,            -- date creation/modification
-  fk_action      integer,              -- action type
-  dateevent      datetime,             -- date event
-  label          varchar(50) NOT NULL, -- label of action
-  description    text NOT NULL         -- full description of action
+  tms            timestamp,
+  fk_action      integer,
+  dateevent      datetime,
+  label          varchar(50) NOT NULL,
+  description    text NOT NULL
 ) type=innodb;
 
 ALTER TABLE llx_events ADD INDEX idx_events_dateevent (dateevent);
