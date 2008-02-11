@@ -186,4 +186,6 @@ create table llx_events
   description    text NOT NULL         -- full description of action
 ) type=innodb;
 
+ALTER TABLE llx_events ADD INDEX idx_events_dateevent (dateevent);
+
 
