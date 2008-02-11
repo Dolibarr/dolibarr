@@ -170,3 +170,8 @@ ALTER TABLE llx_element_element
 	ADD UNIQUE INDEX idx_element_element_idx1 (sourceid, sourcetype, targetid, targettype);
 
 ALTER TABLE llx_element_element ADD INDEX idx_element_element_targetid (targetid);
+
+
+ALTER  TABLE llx_actioncomm add column fk_user_create integer;
+ALTER  TABLE llx_actioncomm add column fk_user_mod integer;
+

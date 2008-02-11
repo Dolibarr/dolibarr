@@ -24,14 +24,18 @@
 create table llx_actioncomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
-  datec          datetime,             -- date creation
   datep          datetime,             -- date debut planifiee
   datep2         datetime,             -- date fin planifiee si action non ponctuelle
   datea          datetime,             -- date debut realisation
   datea2         datetime,             -- date fin realisation si action non ponctuelle
-  tms            timestamp,            -- date modif
+
   fk_action      integer,              -- type de l'action
   label          varchar(50) NOT NULL, -- libelle de l'action
+
+  datec          datetime,             -- date creation
+  tms            timestamp,            -- date modif
+  fk_user_create integer,              -- id user qui a cree l'action
+  fk_user_mod    integer,              -- id dernier user qui a modifier l'action
 
   fk_project     integer,
   fk_soc         integer,
@@ -39,7 +43,7 @@ create table llx_actioncomm
   fk_parent      integer NOT NULL default 0,
 
   fk_user_action integer,              -- id de la personne qui doit effectuer l'action
-  fk_user_author integer,              -- id de la personne qui a effectuer l'action
+  fk_user_author integer,              -- id de la personne qui a effectue l'action
   priority       smallint,
   punctual       smallint NOT NULL default 1,
   percent        smallint NOT NULL default 0,
