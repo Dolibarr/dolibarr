@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/comm/action/index.php
         \ingroup    commercial
 		\brief      Page accueil des actions commerciales
-		\version    $Revision$
+		\version    $Id$
 */
  
 require_once("./pre.inc.php");
@@ -34,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
 $langs->load("companies");
+$langs->load("agenda");
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
@@ -66,14 +64,17 @@ llxHeader();
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id,".$db->pdate("a.datep")." as dp, ".$db->pdate("a.datea")." as da, a.fk_contact, a.note, a.label, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle,";
-$sql.= " u.login, u.rowid as userid,";
+$sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
+$sql.= " ud.login as logindone, ud.rowid as useriddone,";
 $sql.= " sp.name, sp.firstname";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u,";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s,";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sp ON a.fk_contact = sp.rowid";
-$sql.= " WHERE a.fk_soc = s.rowid AND c.id = a.fk_action AND a.fk_user_author = u.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
+$sql.= " WHERE a.fk_soc = s.rowid AND c.id = a.fk_action";
 if ($_GET["type"])
 {
   $sql .= " AND c.id = ".$_GET["type"];
@@ -92,7 +93,7 @@ if (!$user->rights->commercial->client->voir && !$socid) //restriction
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
-$sql .= " ORDER BY $sortfield $sortorder";
+$sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit( $limit + 1, $offset);
 
 dolibarr_syslog("comm/action/index.php sql=".$sql);
@@ -106,7 +107,7 @@ if ($resql)
     $title="DoneAndToDoActions";
     if ($status == 'done') $title="DoneActions";
     if ($status == 'todo') $title="ToDoActions";
-	$param="&status=$status";
+	$param="&status=".$status;
 
     if ($socid)
     {
@@ -128,7 +129,8 @@ if ($resql)
     print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("AffectedTo"),$_SERVER["PHP_SELF"],"ut.login",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 	
@@ -187,8 +189,29 @@ if ($resql)
         }
         print '</td>';
 
-        // Auteur
-        print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+        // User to do
+        print '<td align="left">';
+		if ($obj->useridtodo)
+		{
+			$userstatic=new User($db,$obj->useridtodo);
+			$userstatic->id=$obj->useridtodo;
+			$userstatic->login=$obj->logintodo;
+			print $userstatic->getLoginUrl(1);
+		}
+		else print '&nbsp;';
+		print '</td>';
+
+        // User did
+        print '<td align="left">';
+		if ($obj->useriddone)
+		{
+			$userstatic=new User($db,$obj->useriddone);
+			$userstatic->id=$obj->useriddone;
+			$userstatic->login=$obj->logindone;
+			print $userstatic->getLoginUrl(1);
+		}
+		else print '&nbsp;';
+		print '</td>';
 
         // Status/Percent
         print '<td align="right" nowrap="nowrap">'.$actionstatic->LibStatut($obj->percent,5).'</td>';
