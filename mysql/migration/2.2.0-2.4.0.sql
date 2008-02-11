@@ -154,3 +154,19 @@ create table llx_pr_liv
 )type=innodb;
 
 ALTER TABLE llx_paiement modify fk_bank integer NOT NULL DEFAULT 0;
+
+
+create table llx_element_element
+(
+  rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
+  sourceid			integer NOT NULL,
+  sourcetype		varchar(12) NOT NULL,
+  targetid			integer NOT NULL,
+  targettype		varchar(12) NOT NULL
+) type=innodb;
+
+
+ALTER TABLE llx_element_element 
+	ADD UNIQUE INDEX idx_element_element_idx1 (sourceid, sourcetype, targetid, targettype);
+
+ALTER TABLE llx_element_element ADD INDEX idx_element_element_targetid (targetid);
