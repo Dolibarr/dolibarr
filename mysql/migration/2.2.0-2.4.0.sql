@@ -175,3 +175,15 @@ ALTER TABLE llx_element_element ADD INDEX idx_element_element_targetid (targetid
 ALTER  TABLE llx_actioncomm add column fk_user_create integer;
 ALTER  TABLE llx_actioncomm add column fk_user_mod integer;
 
+
+create table llx_events
+(
+  id             integer AUTO_INCREMENT PRIMARY KEY,
+  tms            timestamp,            -- date creation/modification
+  fk_action      integer,              -- action type
+  dateevent      datetime,             -- date event
+  label          varchar(50) NOT NULL, -- label of action
+  description    text NOT NULL         -- full description of action
+) type=innodb;
+
+
