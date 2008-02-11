@@ -176,6 +176,14 @@ ModuleFamilyExperimental=Experimental modules
 ModuleFamilyFinancial=Financial Modules (Accountancy/Treasury)
 MenuHandlers=Menu handlers
 MenuAdmin=Menu editor
+ThisIsProcessToFollow=This is setup to process:
+StepNb=Step %s
+DownloadPackageFromWebSite=Download package from web site %s.
+UnpackPackageInDolibarrRoot=Unpack package file into Dolibarr root directory <b>%s</b>
+SetupIsReadyForUse=Install is finished and Dolibarr is ready for use with new component.
+CurrentVersion=Dolibarr current version
+CallUpdatePage=Go on page that update database structure and datas %s.
+LastStableVersion=Last stable version
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users and groups management

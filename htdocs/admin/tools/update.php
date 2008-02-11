@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file 		htdocs/admin/tools/update.php
 		\brief      Page de mise a jour online de dolibarr
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -36,6 +33,12 @@ if (! $user->admin)
 
 if ($_GET["msg"]) $message='<div class="error">'.$_GET["msg"].'</div>';
 
+
+$urldolibarr='http://dolibarr.org/component/option,com_docman/task,cat_view/gid,62/Itemid,36/';
+$urldolibarrmodules='http://dolibarr.org/component/option,com_docman/task,cat_view/gid,65/Itemid,36/';
+$urldolibarrthemes='http://dolibarr.org/';
+$dolibarrroot=eregi_replace('[\\\/]+$','',DOL_DOCUMENT_ROOT);
+$dolibarrroot=eregi_replace('[^\\\/]+$','',$dolibarrroot);
 
 
 /*
@@ -57,17 +60,35 @@ llxHeader();
 print_fiche_titre($langs->trans("Upgrade"),'','setup');
 print '<br>';
 
-print $langs->trans("Version").' : <b>'.DOL_VERSION.'</b><br>';
+print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
+print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("FeatureNotYetAvailable").'</b><br>';
 print '<br>';
 
 print $langs->trans("Upgrade").'<br>';
-print $langs->trans("FeatureNotYetAvailable");
+print '<hr>';
+print $langs->trans("ThisIsProcessToFollow").'<br>';
+print '<b>'.$langs->trans("StepNb",1).'</b>: ';
+$fullurl='<a href="'.$urldolibarr.'" target="_blank">'.$urldolibarr.'</a>';
+print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
+print '<b>'.$langs->trans("StepNb",2).'</b>: ';
+print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
+print '<b>'.$langs->trans("StepNb",3).'</b>: ';
+$fullurl='<a href="'.DOL_URL_ROOT.'/install'.'" target="_blank">'.DOL_URL_ROOT.'/install'.'</a>';
+print $langs->trans("CallUpdatePage",$fullurl).'<br>';
 
 print '<br>';
 print '<br>';
 
 print $langs->trans("AddExtensionThemeModuleOrOther").'<br>';
-print $langs->trans("FeatureNotYetAvailable");
+print '<hr>';
+print $langs->trans("ThisIsProcessToFollow").'<br>';
+print '<b>'.$langs->trans("StepNb",1).'</b>: ';
+$fullurl='<a href="'.$urldolibarrmodules.'" target="_blank">'.$urldolibarrmodules.'</a>';
+print $langs->trans("DownloadPackageFromWebSite",$fullurl).'<br>';
+print '<b>'.$langs->trans("StepNb",2).'</b>: ';
+print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
+print '<b>'.$langs->trans("StepNb",3).'</b>: ';
+print $langs->trans("SetupIsReadyForUse").'<br>';
 
 print '</form>';
 

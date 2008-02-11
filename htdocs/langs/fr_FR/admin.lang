@@ -175,6 +175,14 @@ ModuleFamilyExperimental=Modules expérimentaux (ne pas utiliser en production)
 ModuleFamilyFinancial=Modules financiers (Compta/trésorerie)
 MenuHandlers=Gestionnaires menu
 MenuAdmin=Edition menu
+ThisIsProcessToFollow=Voici la procédure à suivre:
+StepNb=Etape %s
+DownloadPackageFromWebSite=Télécharger le package depuis le site %s.
+UnpackPackageInDolibarrRoot=Décompresser le package dans le répertoire racine de Dolibarr <b>%s</b>
+SetupIsReadyForUse=L'installation est terminée et Dolibarr est prêt à être utilisé avec le nouveau composant.
+CurrentVersion=Version en cours de Dolibarr
+CallUpdatePage=Appeler la page de mise a jour de la structure et données de la base %s.
+LastStableVersion=Dernière version stable
 # Modules
 Module0Name=Utilisateurs & groupes
 Module0Desc=Gestion des utilisateurs et groupes
