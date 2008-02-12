@@ -352,7 +352,7 @@ class Contrat extends CommonObject
         $sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
         $sql.= " ORDER by d.rowid ASC";
         
-        dolibarr_syslog("Contrat.class.php::fetch_lignes sql=".$sql);
+        dolibarr_syslog("Contrat::fetch_lignes sql=".$sql);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -384,7 +384,7 @@ class Contrat extends CommonObject
                 $ligne->date_fin_prevue   = $objp->date_fin_validite;
                 $ligne->date_fin_reel     = $objp->date_cloture;
         
-                $this->lignes[$i]      = $ligne;
+                $this->lignes[]        = $ligne;
                 //dolibarr_syslog("1 ".$ligne->desc);
                 //dolibarr_syslog("2 ".$ligne->product_desc);
                 $i++;
@@ -414,12 +414,12 @@ class Contrat extends CommonObject
             while ($j < $num)
             {
                 $objp                  = $this->db->fetch_object($result);
-                $ligne                 = new ContratLigne();
-                $ligne->id 			= $objp->rowid;
+                $ligne                 = new ContratLigne($this->db);
+                $ligne->id 			   = $objp->rowid;
                 $ligne->libelle        = stripslashes($objp->description);
                 $ligne->desc           = stripslashes($objp->description);
                 $ligne->qty            = $objp->qty;
-                $ligne->statut 		 = $objp->statut;
+                $ligne->statut 		   = $objp->statut;
                 $ligne->ref            = $objp->ref;
                 $ligne->tva_tx         = $objp->tva_tx;
                 $ligne->subprice       = $objp->subprice;
@@ -432,7 +432,7 @@ class Contrat extends CommonObject
                 $ligne->date_fin_prevue   = $objp->date_fin_validite;
                 $ligne->date_fin_reel     = $objp->date_cloture;
         
-                $this->lignes[$i]      = $ligne;
+                $this->lignes[]        = $ligne;
                 $i++;
                 $j++;
             }

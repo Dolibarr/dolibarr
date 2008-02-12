@@ -135,3 +135,4 @@ RecordedProducts=Products recorded
 RecordedProductsAndServices=Products/services recorded
 GenerateThumb=Generate thumb
 ProductCanvasAbility=Use special "canvas" addons
+ServiceNb=Service #%s

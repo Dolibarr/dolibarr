@@ -692,6 +692,9 @@ a.tabimage {
     white-space: nowrap;
 }
 
+td.tab {
+    background: #dee7ec;
+}
 
 /* ============================================================================== */
 /* Boutons actions                                                                */

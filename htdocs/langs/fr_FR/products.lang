@@ -135,3 +135,4 @@ RecordedProducts=Produits en vente
 RecordedProductsAndServices=Produits/services en vente
 GenerateThumb=Générer la vignette
 ProductCanvasAbility=Utiliser les extensions speciales "canvas"
+ServiceNb=Service no %s
