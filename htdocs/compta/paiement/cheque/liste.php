@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
  
 /**
    \file       htdocs/compta/paiement/cheque/liste.php
     \ingroup    compta
      \brief      Page liste des bordereau de remise de cheque
-      \version    $Revision$
+      \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -32,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $langs->load("bills");
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if (! $user->rights->facture->lire && ! $user->rights->adherent->cotisation->lire)
   accessforbidden();
 
@@ -65,15 +63,15 @@ llxHeader('',$langs->trans("ChequesReceipts"));
 $sql = "SELECT bc.rowid, bc.number as ref, ".$db->pdate("bc.date_bordereau") ." as dp,";
 $sql.= " bc.nbcheque, bc.amount, bc.statut,";
 $sql.= " ba.rowid as bid, ba.label";
-$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
-$sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
+$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE bc.fk_bank_account = ba.rowid";
 if ($_GET["search_montant"])
 {
-  $sql .=" AND p.amount=".price2num($_GET["search_montant"]);
+  $sql.=" AND bc.amount=".price2num($_GET["search_montant"]);
 }
-$sql .= " ORDER BY $sortfield $sortorder";
-$sql .= $db->plimit( $limit+1 ,$offset);
+$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->plimit( $limit+1 ,$offset);
 //print "$sql";
 
 $resql = $db->query($sql);
