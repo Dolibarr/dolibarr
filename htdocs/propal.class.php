@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -19,8 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
@@ -29,7 +27,7 @@
 		\author     Rodolphe Qiedeville
 		\author	    Eric Seigne
 		\author	    Laurent Destailleur
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
@@ -50,7 +48,7 @@ class Propal extends CommonObject
 	var $id;
 
 	var $socid;		// Id client
-	var $client;		// Objet societe client (à charger par fetch_client)
+	var $client;		// Objet societe client (ï¿½ charger par fetch_client)
 
 	var $contactid;
 	var $projetidp;
@@ -91,8 +89,8 @@ class Propal extends CommonObject
 
     /**
      *		\brief      Constructeur
-     *      \param      DB          Handler d'accès base
-     *      \param      socid		Id de la société
+     *      \param      DB          Handler d'accï¿½s base
+     *      \param      socid		Id de la sociï¿½tï¿½
      *      \param      propalid    Id de la propal
      */
     function Propal($DB, $socid="", $propalid=0)
@@ -123,12 +121,12 @@ class Propal extends CommonObject
 
 	/**
 	 * 	\brief     	Ajoute une ligne dans tableau products
-	 * 	\param     	idproduct       	Id du produit à ajouter
-	 * 	\param     	qty             	Quantité
-	 * 	\param     	remise_percent  	Remise relative effectuée sur le produit
-	 *	\remarks	$this->client doit etre chargé
+	 * 	\param     	idproduct       	Id du produit ï¿½ ajouter
+	 * 	\param     	qty             	Quantitï¿½
+	 * 	\param     	remise_percent  	Remise relative effectuï¿½e sur le produit
+	 *	\remarks	$this->client doit etre chargï¿½
 	 *	\TODO	Remplacer les appels a cette fonction par generation objet Ligne 
-	 *			inséré dans tableau $this->products
+	 *			insï¿½rï¿½ dans tableau $this->products
 	 */
     function add_product($idproduct, $qty, $remise_percent=0)
 	{
@@ -136,7 +134,7 @@ class Propal extends CommonObject
 	
 		if (! $qty) $qty = 1;
 	
-		dolibarr_syslog("Propal.class::add_product $idproduct, $qty, $remise_percent");
+		dolibarr_syslog("Propal::add_product $idproduct, $qty, $remise_percent");
 		if ($idproduct > 0)
 		{
 			$prod=new Product($this->db);
@@ -201,7 +199,7 @@ class Propal extends CommonObject
 			$propalligne->tva_tx=$remise->tva_tx;
 			$propalligne->subprice=-$remise->amount_ht;
 			$propalligne->price=-$remise->amount_ht;
-			$propalligne->fk_product=0;					// Id produit prédéfini
+			$propalligne->fk_product=0;					// Id produit prï¿½dï¿½fini
 			$propalligne->qty=1;
 			$propalligne->remise=0;
 			$propalligne->remise_percent=0;
@@ -246,16 +244,16 @@ class Propal extends CommonObject
 	 * 		\param    	propalid        	Id de la propale
 	 * 		\param    	desc            	Description de la ligne
 	 * 		\param    	pu_ht              	Prix unitaire
-	 * 		\param    	qty             	Quantité
-	 * 		\param    	txtva           	Taux de tva forcé, sinon -1
-	 *		\param    	fk_product      	Id du produit/service predéfini
+	 * 		\param    	qty             	Quantitï¿½
+	 * 		\param    	txtva           	Taux de tva forcï¿½, sinon -1
+	 *		\param    	fk_product      	Id du produit/service predï¿½fini
 	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
 	 * 		\param    	price_base_type		HT or TTC
      * 		\param    	pu_ttc             	Prix unitaire TTC
      *    	\return    	int             	>0 si ok, <0 si ko
      *    	\see       	add_product
-	 * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
-	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
+	 * 		\remarks	Les parametres sont deja censï¿½ etre juste et avec valeurs finales a l'appel
+	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete dï¿½fini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
  	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
@@ -270,7 +268,7 @@ class Propal extends CommonObject
       {
       	$this->db->begin();
 	
-      	// Nettoyage paramètres
+      	// Nettoyage paramï¿½tres
       	$remise_percent=price2num($remise_percent);
       	$qty=price2num($qty);
       	if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
@@ -367,15 +365,15 @@ class Propal extends CommonObject
 
 
   /**
-   *    \brief      Mise à jour d'une ligne de produit
+   *    \brief      Mise ï¿½ jour d'une ligne de produit
    *    \param      rowid              	Id de la ligne
    *    \param      pu		        	Prix unitaire (HT ou TTC selon price_base_type)
-   *    \param      qty             	Quantité
-   *    \param      remise_percent  	Remise effectuée sur le produit
+   *    \param      qty             	Quantitï¿½
+   *    \param      remise_percent  	Remise effectuï¿½e sur le produit
    *    \param      txtva	          	Taux de TVA
    *    \param      desc            	Description
    *	\param		price_base_type		HT ou TTC
-   *    \return     int             	0 en cas de succès
+   *    \return     int             	0 en cas de succï¿½s
    */
     function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $desc='', $price_base_type='HT')
     {
@@ -388,7 +386,7 @@ class Propal extends CommonObject
       {
       	$this->db->begin();
       	
-      	// Nettoyage paramètres
+      	// Nettoyage paramï¿½tres
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
@@ -451,13 +449,13 @@ class Propal extends CommonObject
         {
         	$this->error=$this->db->error();
         	$this->db->rollback();
-        	dolibarr_syslog("Propal.class::UpdateLine Erreur sql=$sql, error=".$this->error);
+        	dolibarr_syslog("Propal::UpdateLine Erreur sql=$sql, error=".$this->error);
         	return -1;
         }
       }
       else
       {
-      	dolibarr_syslog("Propal.class::UpdateLigne Erreur -2 Propal en mode incompatible pour cette action");
+      	dolibarr_syslog("Propal::UpdateLigne Erreur -2 Propal en mode incompatible pour cette action");
       	return -2;
       }
     }
@@ -465,7 +463,7 @@ class Propal extends CommonObject
 
     /**
      *      \brief      Supprime une ligne de detail
-     *      \param      idligne     Id de la ligne detail à supprimer
+     *      \param      idligne     Id de la ligne detail ï¿½ supprimer
      *      \return     int         >0 si ok, <0 si ko
      */
     function delete_product($idligne)
@@ -493,22 +491,22 @@ class Propal extends CommonObject
 
 
     /**
-     *      \brief      Crée une propal
+     *      \brief      Crï¿½e une propal
      *      \return     int     <0 si ko, >=0 si ok
      */
     function create($user='')
     {
     	global $langs,$conf,$mysoc;
     	
-    	// on vérifie si la ref n'est pas utilisée
+    	// on vï¿½rifie si la ref n'est pas utilisï¿½e
 		  $soc = new Societe($this->db);
 	    $soc->fetch($this->socid);
 	    $this->verifyNumRef($soc);
 
-      // Nettoyage/définition paramètres
+      // Nettoyage/dï¿½finition paramï¿½tres
       $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
-		  dolibarr_syslog("Propal.class::create ref=".$this->ref);
+		  dolibarr_syslog("Propal::create ref=".$this->ref);
 
       $this->db->begin();
 
@@ -577,7 +575,7 @@ class Propal extends CommonObject
 
 	            if ($resql)
 	            {
-   					// Mise a jour infos dénormalisés
+   					// Mise a jour infos dï¿½normalisï¿½s
 	                $resql=$this->update_price();
 	                if ($resql)
 	                {
@@ -589,13 +587,13 @@ class Propal extends CommonObject
 	                    // Fin appel triggers
 	
 	                    $this->db->commit();
-			            dolibarr_syslog("Propal.class::Create done id=".$this->id);
+			            dolibarr_syslog("Propal::ass::Create done id=".$this->id);
 	                    return $this->id;
 	                }
 	                else
 	                {
 	                    $this->error=$this->db->error();
-	                    dolibarr_syslog("Propal.class::Create -2 ".$this->error);
+	                    dolibarr_syslog("Propal::Create -2 ".$this->error);
 	                    $this->db->rollback();
 	                    return -2;
 	                }
@@ -605,18 +603,18 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dolibarr_syslog("Propal.class::Create -1 ".$this->error);
+            dolibarr_syslog("Propal::Create -1 ".$this->error);
             $this->db->rollback();
             return -1;
         }
 
 		$this->db->commit();
-        dolibarr_syslog("Propal.class::Create done id=".$this->id);
+        dolibarr_syslog("Propal::Create done id=".$this->id);
         return $this->id;
     }
 
     /**
-     *    \brief      Mets à jour le prix total de la proposition
+     *    \brief      Mets ï¿½ jour le prix total de la proposition
      *    \return     int     <0 si ko, >0 si ok
      */
     function update_price()
@@ -689,7 +687,7 @@ class Propal extends CommonObject
 
 
 	/**
-	 *      \brief      Stocke un numéro de rang pour toutes les lignes de
+	 *      \brief      Stocke un numï¿½ro de rang pour toutes les lignes de
 	 *                  detail d'une propale qui n'en ont pas.
 	 */
 	function line_order()
@@ -813,9 +811,9 @@ class Propal extends CommonObject
 	}
 
     /**
-     *    	\brief      Recupère de la base les caractéristiques d'une propale
-     *    	\param      rowid       id de la propal à récupérer
-     *		\return		int			<0 si ko, 0 si non trouvé, >0 si ok
+     *    	\brief      Recupï¿½re de la base les caractï¿½ristiques d'une propale
+     *    	\param      rowid       id de la propal ï¿½ rï¿½cupï¿½rer
+     *		\return		int			<0 si ko, 0 si non trouvï¿½, >0 si ok
      */
     function fetch($rowid)
     {
@@ -902,7 +900,7 @@ class Propal extends CommonObject
                 $this->db->free($resql);
 
                 /*
-                 * Lignes propales liées à un produit ou non
+                 * Lignes propales liï¿½es ï¿½ un produit ou non
                  */
                 $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
                 $sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_ttc, d.marge_tx, d.marque_tx, d.special_code, d.rang,";
@@ -1016,7 +1014,7 @@ class Propal extends CommonObject
 
 
     /**
-     *      \brief      Définit la date de fin de validité
+     *      \brief      Dï¿½finit la date de fin de validitï¿½
      *      \param      user        		Objet utilisateur qui modifie
      *      \param      date_fin_validite	Date fin
      *      \return     int         		<0 si ko, >0 si ok
@@ -1035,14 +1033,14 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dolibarr_syslog("Propal.class::set_echeance Erreur SQL");
+                dolibarr_syslog("Propal::set_echeance Erreur SQL");
                 return -1;
             }
         }
     }
 
     /**
-     *      \brief      Définit une date de livraison
+     *      \brief      Dï¿½finit une date de livraison
      *      \param      user        		Objet utilisateur qui modifie
      *      \param      date_livraison      date de livraison
      *      \return     int         		<0 si ko, >0 si ok
@@ -1063,14 +1061,14 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dolibarr_syslog("Propal.class::set_date_livraison Erreur SQL");
+                dolibarr_syslog("Propal::set_date_livraison Erreur SQL");
                 return -1;
             }
         }
     }
 
     /**
-     *      \brief      Définit une adresse de livraison
+     *      \brief      Dï¿½finit une adresse de livraison
      *      \param      user        		Objet utilisateur qui modifie
      *      \param      adresse_livraison      Adresse de livraison
      *      \return     int         		<0 si ko, >0 si ok
@@ -1090,7 +1088,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dolibarr_syslog("Propal.class::set_adresse_livraison Erreur SQL");
+                dolibarr_syslog("Propal::set_adresse_livraison Erreur SQL");
                 return -1;
             }
         }
@@ -1129,7 +1127,7 @@ class Propal extends CommonObject
 	}
 
     /**
-     *      \brief      Définit une remise globale relative sur la proposition
+     *      \brief      Dï¿½finit une remise globale relative sur la proposition
      *      \param      user        Objet utilisateur qui modifie
      *      \param      remise      Montant remise
      *      \return     int         <0 si ko, >0 si ok
@@ -1154,7 +1152,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dolibarr_syslog("Propal.class::set_remise_percent Error sql=$sql");
+                dolibarr_syslog("Propal::set_remise_percent Error sql=$sql");
                 return -1;
             }
         }
@@ -1162,7 +1160,7 @@ class Propal extends CommonObject
 
 
     /**
-     *      \brief      Définit une remise globale absolue sur la proposition
+     *      \brief      Dï¿½finit une remise globale absolue sur la proposition
      *      \param      user        Objet utilisateur qui modifie
      *      \param      remise      Montant remise
      *      \return     int         <0 si ko, >0 si ok
@@ -1188,7 +1186,7 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dolibarr_syslog("Propal.class::set_remise_absolue Error sql=$sql");
+                dolibarr_syslog("Propal::set_remise_absolue Error sql=$sql");
                 return -1;
             }
         }
@@ -1203,7 +1201,7 @@ class Propal extends CommonObject
 	{
 		if ($user->rights->propale->creer)
 		{
-			//verif que le projet et la société concordent
+			//verif que le projet et la sociï¿½tï¿½ concordent
 			$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc ='.$this->socid.' AND p.rowid='.$project_id;
 			$sqlres = $this->db->query($sql);
 			if ($sqlres)
@@ -1220,7 +1218,7 @@ class Propal extends CommonObject
 			else
 			{
 	
-				dolibarr_syslog("Propal.class::set_project Erreur SQL");
+				dolibarr_syslog("Propal::set_project Erreur SQL");
 			}
 		}
 	}
@@ -1274,14 +1272,14 @@ class Propal extends CommonObject
         {
             if ($statut == 2)
             {
-                // Propale signée
+                // Propale signï¿½e
                 include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
                 $result=$this->create_commande($user);
 
                 if ($result >= 0)
                 {
-                    // Classe la société rattachée comme client
+                    // Classe la sociï¿½tï¿½ rattachï¿½e comme client
                     $soc=new Societe($this->db);
                     $soc->id = $this->socid;
                     $result=$soc->set_as_client();
@@ -1327,7 +1325,7 @@ class Propal extends CommonObject
     }
 
  /**
-	 *        \brief      Classe la propale comme facturée
+	 *        \brief      Classe la propale comme facturï¿½e
 	 *        \return     int     <0 si ko, >0 si ok
 	 */
 	function classer_facturee()
@@ -1346,7 +1344,7 @@ class Propal extends CommonObject
 
 
     /**
-     *      \brief      Crée une commande à partir de la proposition commerciale
+     *      \brief      Crï¿½e une commande ï¿½ partir de la proposition commerciale
      *      \param      user        Utilisateur
      *      \return     int         <0 si ko, >=0 si ok
      */
@@ -1358,7 +1356,7 @@ class Propal extends CommonObject
         {
             if ($this->statut == 2)
             {
-                // Propale signée
+                // Propale signï¿½e
                 include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
                 $commande = new Commande($this->db);
                 $result=$commande->create_from_propale($user, $this->id);
@@ -1400,10 +1398,10 @@ class Propal extends CommonObject
 
 
   /**
-   *    \brief      Renvoi la liste des propal (éventuellement filtrée sur un user) dans un tableau
+   *    \brief      Renvoi la liste des propal (ï¿½ventuellement filtrï¿½e sur un user) dans un tableau
    *    \param      brouillon       0=non brouillon, 1=brouillon
    *    \param      user            Objet user de filtre
-   *    \return     int             -1 si erreur, tableau résultat si ok
+   *    \return     int             -1 si erreur, tableau rï¿½sultat si ok
    */
 
     function liste_array ($brouillon=0, $user='')
@@ -1455,7 +1453,7 @@ class Propal extends CommonObject
     }
 
     /**
-     *    \brief        Renvoie un tableau contenant les numéros de commandes associées
+     *    \brief        Renvoie un tableau contenant les numï¿½ros de commandes associï¿½es
      *    \remarks      Fonction plus light que associated_orders
      *    \sa           loadOrders
      */
@@ -1489,7 +1487,7 @@ class Propal extends CommonObject
     }
 
     /**
-     *		\brief      Charge tableau contenant les commandes associées
+     *		\brief      Charge tableau contenant les commandes associï¿½es
      *  	\remarks    Fonction plus lourde que getOrderArrayList
 	 *		\return		int 				<0 si ko, >0 si ok
      *		\sa         getOrdersArrayList
@@ -1533,7 +1531,7 @@ class Propal extends CommonObject
     }
 
     /**
-     *    	\brief      Renvoie un tableau contenant les numéros de factures associées
+     *    	\brief      Renvoie un tableau contenant les numï¿½ros de factures associï¿½es
      *		\return		array		Tableau des id de factures
      */
     function getInvoiceArrayList ()
@@ -1542,7 +1540,7 @@ class Propal extends CommonObject
 	}
 
     /**
-     *    	\brief      Renvoie un tableau contenant les id et ref des factures associées
+     *    	\brief      Renvoie un tableau contenant les id et ref des factures associï¿½es
      *		\param		id			Id propal
      *		\return		array		Tableau des id de factures
      */
@@ -1602,7 +1600,7 @@ class Propal extends CommonObject
 			if ( $this->db->query($sql) )
 			{
 	
-				// On efface le répertoire du pdf
+				// On efface le rï¿½pertoire du pdf
 				$propalref = sanitize_string($this->ref);
 				if ($conf->propal->dir_output)
 				{
@@ -1643,7 +1641,7 @@ class Propal extends CommonObject
 	}
 
 	/**
- 	 *    \brief      Mets à jour les commentaires privés
+ 	 *    \brief      Mets ï¿½ jour les commentaires privï¿½s
 	 *    \param      note        	Commentaire
 	 *    \return     int         	<0 si ko, >0 si ok
 	 */
@@ -1653,7 +1651,7 @@ class Propal extends CommonObject
 		$sql.= " SET note = '".addslashes($note)."'";
 		$sql.= " WHERE rowid =". $this->id;
 
-		dolibarr_syslog("Propal.class::update_note $sql");
+		dolibarr_syslog("Propal::update_note $sql");
 
 		if ($this->db->query($sql))
 		{
@@ -1668,7 +1666,7 @@ class Propal extends CommonObject
 	}
 
 	/**
- 	 *    \brief      Mets à jour les commentaires publiques
+ 	 *    \brief      Mets ï¿½ jour les commentaires publiques
 	 *    \param      note_public	Commentaire
 	 *    \return     int         	<0 si ko, >0 si ok
 	 */
@@ -1678,7 +1676,7 @@ class Propal extends CommonObject
 		$sql.= " SET note_public = '".addslashes($note_public)."'";
 		$sql.= " WHERE rowid =". $this->id;
 
-		dolibarr_syslog("Propal.class::update_note_public $sql");
+		dolibarr_syslog("Propal::update_note_public $sql");
 
 		if ($this->db->query($sql))
 		{
@@ -1693,8 +1691,8 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *   \brief      Change les conditions de réglement de la facture
-	 *   \param      cond_reglement_id      Id de la nouvelle condition de réglement
+	 *   \brief      Change les conditions de rï¿½glement de la facture
+	 *   \param      cond_reglement_id      Id de la nouvelle condition de rï¿½glement
 	 *   \return     int                    >0 si ok, <0 si ko
 	 */
 	function cond_reglement($cond_reglement_id)
@@ -1727,7 +1725,7 @@ class Propal extends CommonObject
 
 
 	/**
-	 *   \brief      Change le mode de réglement
+	 *   \brief      Change le mode de rï¿½glement
 	 *   \param      mode_reglement     Id du nouveau mode
 	 *   \return     int         		>0 si ok, <0 si ko
 	 */
@@ -1817,9 +1815,9 @@ class Propal extends CommonObject
 
 
 	/**
-	 *    	\brief      Retourne le libellé du statut d'une propale (brouillon, validée, ...)
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string		Libellé
+	 *    	\brief      Retourne le libellï¿½ du statut d'une propale (brouillon, validï¿½e, ...)
+	 *    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string		Libellï¿½
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -1827,10 +1825,10 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\brief      Renvoi le libellï¿½ d'un statut donnï¿½
 	 *    	\param      statut		id statut
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string		Libellé
+	 *    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string		Libellï¿½
  	 */
     function LibStatut($statut,$mode=1)
     {
@@ -1883,7 +1881,7 @@ class Propal extends CommonObject
     /**
      *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
      *      \param      user        Objet user
-     *      \param      mode        "opened" pour propal à fermer, "signed" pour propale à facturer
+     *      \param      mode        "opened" pour propal ï¿½ fermer, "signed" pour propale ï¿½ facturer
      *      \return     int         <0 si ko, >0 si ok
      */
     function load_board($user,$mode)
@@ -1914,7 +1912,7 @@ class Propal extends CommonObject
                 {
                 	if ($mode == 'opened') $this->nbtodolate++;
                 	if ($mode == 'signed') $this->nbtodolate++;
-                	// \todo Definir règle des propales à facturer en retard
+                	// \todo Definir rï¿½gle des propales ï¿½ facturer en retard
                 	// if ($mode == 'signed' && ! sizeof($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
                 }
             }
@@ -1929,7 +1927,7 @@ class Propal extends CommonObject
 
 
 	/**
-     *    \brief     Insert en base un objet propal complétement définie par ses données membres (resultant d'une copie par exemple).
+     *    \brief     Insert en base un objet propal complï¿½tement dï¿½finie par ses donnï¿½es membres (resultant d'une copie par exemple).
      *    \return    int                 l'id du nouvel objet propal en base si ok, <0 si ko
      *    \see       create
      */
@@ -1939,12 +1937,12 @@ class Propal extends CommonObject
 		
 		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 		
-		// on vérifie si la ref n'est pas utilisée
+		// on vï¿½rifie si la ref n'est pas utilisï¿½e
 		$soc = new Societe($this->db);
 	  $soc->fetch($this->socid);
 	  $this->verifyNumRef($soc);
 
-		dolibarr_syslog("Propal.class::create_from ref=".$this->ref);
+		dolibarr_syslog("Propal::create_from ref=".$this->ref);
 
     $this->db->begin();
 
@@ -1979,7 +1977,7 @@ class Propal extends CommonObject
 					$resql = $this->addline(
 						$this->id,
 						$ligne->desc,
-						$ligne->subprice, //récupérer le prix non remisé
+						$ligne->subprice, //rï¿½cupï¿½rer le prix non remisï¿½
 						$ligne->qty,
 						$ligne->tva_tx,
 						$ligne->fk_product,
@@ -1997,7 +1995,7 @@ class Propal extends CommonObject
 
 	            if ($resql)
 	            {
-   					// Mise a jour infos dénormalisés
+   					// Mise a jour infos dï¿½normalisï¿½s
 	                $resql=$this->update_price();
 	                if ($resql)
 	                {
@@ -2009,13 +2007,13 @@ class Propal extends CommonObject
 	                    // Fin appel triggers
 	
 	                    $this->db->commit();
-			            dolibarr_syslog("Propal.class::Create_from done id=".$this->id);
+			            dolibarr_syslog("Propal::Create_from done id=".$this->id);
 	                    return $this->id;
 	                }
 	                else
 	                {
 	                    $this->error=$this->db->error();
-	                    dolibarr_syslog("Propal.class::Create_from -2 ".$this->error);
+	                    dolibarr_syslog("Propal::Create_from -2 ".$this->error);
 	                    $this->db->rollback();
 	                    return -2;
 	                }
@@ -2025,26 +2023,26 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dolibarr_syslog("Propal.class::Create_from -1 ".$this->error);
+            dolibarr_syslog("Propal::Create_from -1 ".$this->error);
             $this->db->rollback();
             return -1;
         }
 
 		$this->db->commit();
-        dolibarr_syslog("Propal.class::Create_from done id=".$this->id);
+        dolibarr_syslog("Propal::Create_from done id=".$this->id);
         return $this->id;
 	}
 
 
 	/**
-	 *		\brief		Initialise la propale avec valeurs fictives aléatoire
-	 *					Sert à générer une facture pour l'aperu des modèles ou demo
+	 *		\brief		Initialise la propale avec valeurs fictives alï¿½atoire
+	 *					Sert ï¿½ gï¿½nï¿½rer une facture pour l'aperu des modï¿½les ou demo
 	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de société socids
+		// Charge tableau des id de sociï¿½tï¿½ socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
 		$resql = $this->db->query($sql);
@@ -2077,7 +2075,7 @@ class Propal extends CommonObject
 			}
 		}
 
-		// Initialise paramètres
+		// Initialise paramï¿½tres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
@@ -2149,7 +2147,7 @@ class Propal extends CommonObject
 	}
 	
  /**
-   *      \brief      Vérifie si la ref n'est pas déjà utilisée
+   *      \brief      Vï¿½rifie si la ref n'est pas dï¿½jï¿½ utilisï¿½e
    *      \param	    soc  		            objet societe
    */
   function verifyNumRef($soc)
@@ -2170,8 +2168,8 @@ class Propal extends CommonObject
   	
 	
  /**
-   *      \brief      Renvoie la référence de propale suivante non utilisée en fonction du module
-   *                  de numérotation actif défini dans PROPALE_ADDON
+   *      \brief      Renvoie la rï¿½fï¿½rence de propale suivante non utilisï¿½e en fonction du module
+   *                  de numï¿½rotation actif dï¿½fini dans PROPALE_ADDON
    *      \param	    soc  		            objet societe
    *      \return     string              reference libre pour la propale
    */
@@ -2186,7 +2184,7 @@ class Propal extends CommonObject
     {
     	$file = PROPALE_ADDON.".php";
 
-	    // Chargement de la classe de numérotation
+	    // Chargement de la classe de numï¿½rotation
 	    $classname = PROPALE_ADDON;
 	    require_once($dir.$file);
 
@@ -2259,7 +2257,7 @@ class PropaleLigne
 	var $rowid;
 	var $fk_propal;
 	var $desc;          // Description ligne
-	var $fk_product;		// Id produit prédéfini
+	var $fk_product;		// Id produit prï¿½dï¿½fini
 
 	var $qty;
 	var $tva_tx;
@@ -2280,9 +2278,9 @@ class PropaleLigne
 						// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 						// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 	
-	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
-	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
-	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
+	var $total_ht;			// Total HT  de la ligne toute quantitï¿½ et incluant la remise ligne
+	var $total_tva;			// Total TVA  de la ligne toute quantitï¿½ et incluant la remise ligne
+	var $total_ttc;			// Total TTC de la ligne toute quantitï¿½ et incluant la remise ligne
 
 	// Ne plus utiliser
 	var $remise;
@@ -2296,7 +2294,7 @@ class PropaleLigne
 
 	/**
 	 *      \brief     Constructeur d'objets ligne de propal
-	 *      \param     DB      handler d'accès base de donnée
+	 *      \param     DB      handler d'accï¿½s base de donnï¿½e
 	 */
 	function PropaleLigne($DB)
 	{
@@ -2304,7 +2302,7 @@ class PropaleLigne
 	}
 
 	/**
-	 *      \brief     Recupére l'objet ligne de propal
+	 *      \brief     Recupï¿½re l'objet ligne de propal
 	 *      \param     rowid           id de la ligne de propal
 	 */
 	function fetch($rowid)
@@ -2353,7 +2351,7 @@ class PropaleLigne
 	}
 	
 	/**
-	 *      \brief     	Insère l'objet ligne de propal en base
+	 *      \brief     	Insert object line propal in database
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
 	function insert()
@@ -2364,11 +2362,12 @@ class PropaleLigne
 		// Nettoyage parameteres
 		if (! $this->remise) $this->remise=0;
 		if (! $this->remise_percent) $this->remise_percent=0;
+		if (! $this->info_bits) $this->info_bits=0;
 		
 		$rangtouse=$this->rang;
 		if ($rangtouse == -1)
 		{
-			// Récupère rang max de la propale dans $rangmax
+			// Rï¿½cupï¿½re rang max de la propale dans $rangmax
 			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'propaldet';
 			$sql.= ' WHERE fk_propal ='.$this->fk_propal;
 			$resql = $this->db->query($sql);
@@ -2480,7 +2479,7 @@ class PropaleLigne
 
 	/**
 	 *      \brief     	Mise a jour en base des champs total_xxx de ligne
-	 *		\remarks	Utilisé par migration
+	 *		\remarks	Utilisï¿½ par migration
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
 	function update_total()
