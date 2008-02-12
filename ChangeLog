@@ -19,6 +19,8 @@ For users:
 - Change in tanslation to make Dolibarr easier to understand.
 - Add a warning when sending a mail from a user with no email defined.
 - Added clicktodial module.
+- French NAF code can accept 5 chars.
+- Supplier prices can be input with or without taxe.
 - Other minor changes (features, look, fixes)
 
 For developers:

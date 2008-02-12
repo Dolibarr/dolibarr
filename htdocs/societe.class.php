@@ -1925,7 +1925,7 @@ class Societe
 		{
 			if ($idprof==1) $formlength=9;
 			if ($idprof==2) $formlength=14;
-			if ($idprof==3) $formlength=4;
+			if ($idprof==3) $formlength=5;		// 4 chiffres et 1 lettre depuis janvier
 			if ($idprof==4) $formlength=12;
 		}
 		$selected='';
