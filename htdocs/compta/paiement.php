@@ -299,22 +299,22 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print "</tr>\n";
 
 		print '<tr><td>'.$langs->trans('Numero');
-		print ' <em>(Num�ro ch�que ou virement)</em>';	// \todo a traduire
+		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '</td>';
 		print '<td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans('CheckTransmitter');
-		print ' <em>(Emetteur du ch�que)</em>';	// \todo a traduire
+		print ' <em>('.$langs->trans("ChequeMaker").')</em>';
 		print '</td>';
 		print '<td><input name="chqemetteur" size="30" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans('Bank');
-		print ' <em>(Banque du ch�que)</em>';	// \todo a traduire
+		print ' <em>('.$langs->trans("ChequeBank").')</em>';
 		print '</td>';
 		print '<td><input name="chqbank" size="30" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
 
 		/*
-		 * Liste factures impay�es
+		 * Liste factures impayees
 		 */
 		$sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.type, ';
 		$sql.= $db->pdate('f.datef').' as df, ';
