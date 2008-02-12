@@ -1213,6 +1213,7 @@ if ($_GET['action'] == 'create')
 		$mode_reglement_id = $soc->mod_reglement;
 		$remise_percent = $soc->remise_client;
 		$remise_absolue = 0;
+		$dateinvoice=$contrat->date_contrat;
 	}
 	else
 	{
@@ -1221,6 +1222,7 @@ if ($_GET['action'] == 'create')
 		$mode_reglement_id = $soc->mode_reglement;
 		$remise_percent = $soc->remise_client;
 		$remise_absolue = 0;
+		$dateinvoice=mktime();
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
 
@@ -1353,7 +1355,7 @@ if ($_GET['action'] == 'create')
 
 	// Date facture
 	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">';
-	$html->select_date('','','','','',"add");
+	$html->select_date($dateinvoice,'','','','',"add");
 	print '</td></tr>';
 
 	// Conditions de règlement

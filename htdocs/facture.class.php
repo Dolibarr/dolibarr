@@ -2273,42 +2273,42 @@ class Facture extends CommonObject
    *       		Si facture brouillon et provisoire -> oui
    *   \return    int         <0 si ko, 0=non, 1=oui
    */
-  function is_erasable()
-  {
-    global $conf;
+	function is_erasable()
+	{
+		global $conf;
 
-    // on vérifie si la facture est en numérotation provisoire
-    $facref = substr($this->ref, 1, 4);
+		// on vérifie si la facture est en numérotation provisoire
+		$facref = substr($this->ref, 1, 4);
 
-    // Si facture non brouillon et non provisoire
-    if ($facref != 'PROV' && ! $conf->comptaexpert->enabled && $conf->global->FACTURE_ENABLE_EDITDELETE)
-      {
-	// On ne peut supprimer que la dernière facture validée
-	// pour ne pas avoir de trou dans la numérotation
-	$sql = "SELECT MAX(facnumber)";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+		// Si facture non brouillon et non provisoire
+		if ($facref != 'PROV' && $conf->global->FACTURE_ENABLE_EDITDELETE)
+		{
+			// On ne peut supprimer que la dernière facture validée
+			// pour ne pas avoir de trou dans la numérotation
+			$sql = "SELECT MAX(facnumber)";
+			$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 
-	$resql=$this->db->query($sql);
-	if ($resql)
-	  {
-	    $maxfacnumber = $this->db->fetch_row($resql);
-	  }
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$maxfacnumber = $this->db->fetch_row($resql);
+			}
 
-	$ventilExportCompta = $this->getVentilExportCompta();
+			$ventilExportCompta = $this->getVentilExportCompta();
 
-	// Si derniere facture et si non ventilée, on peut supprimer
-	if ($maxfacnumber[0] == $this->ref && $ventilExportCompta == 0)
-	  {
-	    return 1;
-	  }
-      }
-    else if ($this->statut == 0 && $facref == 'PROV') // Si facture brouillon et provisoire
-      {
-	return 1;
-      }
+			// Si derniere facture et si non ventilée, on peut supprimer
+			if ($maxfacnumber[0] == $this->ref && $ventilExportCompta == 0)
+			{
+				return 1;
+			}
+		}
+		else if ($this->statut == 0 && $facref == 'PROV') // Si facture brouillon et provisoire
+		{
+			return 1;
+		}
 
-    return 0;
-  }
+		return 0;
+	}
 
 
   /**

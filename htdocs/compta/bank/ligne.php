@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
  
 /**
    \file       htdocs/compta/bank/ligne.php
    \ingroup    compta
-   \brief      Page �dition d'une �criture bancaire
-   \version    $Revision$
+   \brief      Page edition d'une ecriture bancaire
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -35,6 +33,7 @@ if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate)
 
 $langs->load("banks");
 $langs->load("bills");
+$langs->load("categories");
 if ($conf->adherent->enabled) $langs->load("members");
 
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
@@ -218,7 +217,7 @@ if ($result)
       // Confirmations
       if ($_GET["action"] == 'delete_categ')
         {
-	  $html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,"Supprimer dans la cat�gorie","Etes-vous s�r de vouloir supprimer le classement dans la cat�gorie ?","confirm_delete_categ");
+	  $html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,$langs->trans("RemoveFromCategory"),$langs->trans("RemoveFromCategoryConfirm"),"confirm_delete_categ");
 	  print '<br>';
         }
       
@@ -233,7 +232,7 @@ if ($result)
       
       $links=$acct->get_url($rowid);
       
-      // Tableau sur 4 colonne si d�ja rapproch�, sinon sur 5 colonnes
+      // Tableau sur 4 colonne si deja rapproche, sinon sur 5 colonnes
       
       // Author
       print '<tr><td width="20%">'.$langs->trans("Author")."</td>";

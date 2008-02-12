@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/contrat/contrat.class.php
         \ingroup    contrat
 		\brief      Fichier de la classe des contrats
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
@@ -36,7 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/price.lib.php");
         \class      Contrat
 		\brief      Classe permettant la gestion des contrats
 */
-
 class Contrat extends CommonObject
 {
     var $db;
@@ -54,7 +50,10 @@ class Contrat extends CommonObject
     var $user_cloture;
     var $date_creation;
     var $date_validation;
+
+    var $date_contrat;
     var $date_cloture;
+
     var $commercial_signature_id;
     var $commercial_suivi_id;
 
