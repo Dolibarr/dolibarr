@@ -802,7 +802,7 @@ else
 						print '<td>&nbsp;</td>';
 					}
 					// Icon update et delete (statut contrat 0=brouillon,1=valid�,2=ferm�)
-					print '<td align="center" nowrap>';
+					print '<td align="right" nowrap="nowrap">';
 					if ($contrat->statut != 2  && $user->rights->contrat->creer)
 					{
 						print '<a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
@@ -898,7 +898,14 @@ else
 			{
 				dolibarr_print_error($db);
 			}
-
+			
+			if ($contrat->statut > 0)
+			{
+				print '<tr '.$bc[false].'>';
+				print '<td colspan="6"><hr></td>';
+				print "</tr>\n";
+			}
+			
 			print "</table>";
 
 
@@ -911,7 +918,7 @@ else
 				$dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",strftime("%A %d %B %Y", $dateactstart)),"confirm_active");
-				//print '<br />';
+				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
 			/*
@@ -923,7 +930,7 @@ else
 				$dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("CloseService"),$langs->trans("ConfirmCloseService",strftime("%A %d %B %Y", $dateactend)),"confirm_closeline");
-				//print '<br />';
+				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}		
 			
 			// Area with activation info
@@ -931,14 +938,21 @@ else
 			{
 				print '<table class="noborder" width="100%">';
 
-				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans("Activation").'</td>';
-				print '<td width="30">&nbsp;</td>';
-				print "</tr>\n";
-
 				print '<tr '.$bc[false].'>';
-				print '<td>'.$langs->trans("Status").': '.$contrat->lignes[$cursorline-1]->getLibStatut(4).'</td>';
-				print '<td width="30">&nbsp;</td>';
+				print '<td>'.$langs->trans("ServiceStatus").': '.$contrat->lignes[$cursorline-1]->getLibStatut(4).'</td>';
+				print '<td width="30" align="right">';
+				if ($user->societe_id == 0)
+				{
+					if ($contrat->statut > 0 && $_REQUEST["action"] != 'activateline' && $_REQUEST["action"] != 'unactivateline')
+					{
+						$action='activateline';
+						if ($objp->statut == 4) $action='unactivateline';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$contrat->lignes[$cursorline-1]->id.'&amp;action='.$action.'">';
+						print img_edit();
+						print '</a>';
+					}
+				}
+				print '</td>';
 				print "</tr>\n";
 
 				print '<tr '.$bc[false].'>';
@@ -967,17 +981,8 @@ else
 
 				// Statut
 				print '<td align="center">';
-				if ($user->societe_id == 0)
-				{
-					if ($contrat->statut > 0 && $_REQUEST["action"] != 'activateline' && $_REQUEST["action"] != 'unactivateline')
-					{
-						$action='activateline';
-						if ($objp->statut == 4) $action='unactivateline';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$contrat->id.'&amp;ligne='.$contrat->lignes[$cursorline-1]->id.'&amp;action='.$action.'">';
-						print img_edit();
-						print '</a>';
-					}
-				}
+				print '&nbsp;';
+				print '</td>';
 				print '</tr>';
 				print '</table>';
 			}

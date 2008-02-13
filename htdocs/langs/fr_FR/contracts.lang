@@ -28,7 +28,7 @@ AddContract=Créer contrat
 SearchAContract=Rechercher un contrat
 DeleteAContract=Supprimer un contract
 CloseAContract=Cloturer un contract
-ConfirmDeleteAContract=Etes-vous sûr de vouloir supprimer ce contrat ?
+ConfirmDeleteAContract=Etes-vous sûr de vouloir supprimer ce contrat et tous ses services ?
 ConfirmValidateContract=Etes-vous sûr de vouloir valider ce contrat ?
 ConfirmCloseContract=Etes-vous sûr de vouloir cloturer ce contrat ?
 ConfirmCloseService=Etes-vous sûr de vouloir fermer ce service à la date du <b>%s</b> ?
@@ -64,6 +64,7 @@ CloseService=Fermer service
 ServicesNomberShort=%s service(s)
 RunningServices=Services actifs
 BoardRunningServices=Services actifs expirés
+ServiceStatus=Statut du service
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
 TypeContact_contrat_internal_SALESREPFOLL=Commercial suivi du contrat
