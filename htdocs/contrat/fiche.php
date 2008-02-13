@@ -998,9 +998,11 @@ else
 				//print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("Status").'</td></tr>';
 
 				// Definie date debut et fin par defaut
+				$dateactstart = $objp->date_debut;
 				if ($_POST["remonth"]) $dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				elseif (! $dateactstart) $dateactstart = time();
 
+				$dateactend = $objp->date_fin;
 				if ($_POST["endmonth"]) $dateactend = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
 				elseif (! $dateactend)
 				{
