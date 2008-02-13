@@ -841,7 +841,7 @@ class pdf_oursin extends ModelePDFFactures
     }
 
     $pdf->SetXY(-15,-15);
-    $pdf->MultiCell(10, 3, $pdf->PageNo().'/{nb}', 0, 'R');
+    $pdf->MultiCell(11, 3, $pdf->PageNo().'/{nb}', 0, 'R');
   }
 
 }

@@ -993,7 +993,7 @@ class pdf_einstein extends ModelePDFCommandes
         }
 
         $pdf->SetXY(-20,-$posy);
-        $pdf->MultiCell(10, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+        $pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
     }
 
 }

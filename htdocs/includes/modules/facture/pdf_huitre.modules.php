@@ -656,7 +656,7 @@ class pdf_huitre extends ModelePDFFactures
     }
 
     $pdf->SetXY(-10,-10);
-    $pdf->MultiCell(10, 3, $pdf->PageNo().'/{nb}', 0, 'R');
+    $pdf->MultiCell(11, 3, $pdf->PageNo().'/{nb}', 0, 'R');
 
   }
 
