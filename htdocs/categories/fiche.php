@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -37,15 +37,15 @@ if (isset ($_REQUEST['choix']))
 	$nbcats = $_REQUEST['choix'];
 }
 else
-{ // par défault, une nouvelle catégorie sera dans une seule catégorie mère
+{ // par dï¿½fault, une nouvelle catï¿½gorie sera dans une seule catï¿½gorie mï¿½re
 	$nbcats = 1;
 }
 
 if ($_REQUEST['origin'])
 {
-	if($_GET['type'] == 0)$idProdOrigin = $_REQUEST['origin'];
-	if($_GET['type'] == 1)$idSupplierOrigin = $_REQUEST['origin'];
-	if($_GET['type'] == 2)$idCompanyOrigin = $_REQUEST['origin'];
+	if ($_GET['type'] == 0) $idProdOrigin = $_REQUEST['origin'];
+	if ($_GET['type'] == 1) $idSupplierOrigin = $_REQUEST['origin'];
+	if ($_GET['type'] == 2) $idCompanyOrigin = $_REQUEST['origin'];
 	
 }
 
@@ -56,17 +56,22 @@ if ($_REQUEST['origin'])
 
 if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 {
-	// Action ajout d'une catégorie
+	// Action ajout d'une catï¿½gorie
 	if ($_POST["cancel"])
 	{
 		if ($idProdOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin);
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&type='.$_GET["type"]);
 			exit;
 		}
-		if ($idSupplierOrigin || $idCompanyOrigin)
+		if ($idCompanyOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin);
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'&type='.$_GET["type"]);
+			exit;
+		}
+		if ($idSupplierOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&type='.$_GET["type"]);
 			exit;
 		}
 	}
@@ -104,7 +109,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 
 if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 {
-	// Action confirmation de création de la catégorie
+	// Action confirmation de creation categorie
 	if ($_GET["action"] == 'confirmed')
 	{
 		if ($idProdOrigin)
@@ -112,16 +117,19 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idSupplierOrigin || $idCompanyOrigin)
+		if ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else
+		if ($idSupplierOrigin)
 		{
-			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$_POST["type"]);
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+
+		header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$_POST["type"]);
+		exit;
 	}
 }
 
@@ -133,7 +141,7 @@ $html = new Form($db);
 if ($user->rights->categorie->creer)
 {
 	/*
-	 * Fiche en mode création
+	 * Fiche en mode creation
 	 */
 	if ($_GET["action"] == 'create' || $_POST["addcat"] == 'addcat')
 	{
@@ -146,10 +154,12 @@ if ($user->rights->categorie->creer)
 		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$_GET['type'].'" method="post">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
-		print '<input type="hidden" name="type" value='.$_GET['type'].'>';
+		//print '<input type="hidden" name="id" value="'.$_GET['id'].'">';			Mis dans origin
+		//print '<input type="hidden" name="socid" value="'.$_GET['socid'].'">';	Mis dans origin
+		print '<input type="hidden" name="type" value="'.$_GET['type'].'">';
 		if ($_REQUEST['origin'])
 		{
-			print '<input type="hidden" name="origin" value='.$_REQUEST['origin'].'>';
+			print '<input type="hidden" name="origin" value="'.$_REQUEST['origin'].'">';
 		}
 		print '<input type="hidden" name="nom" value="'.$nom.'">';
 

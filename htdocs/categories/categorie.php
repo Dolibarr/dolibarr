@@ -49,7 +49,7 @@ else
 	accessforbidden();
 }
 
-// Sécurité d'accès client et commerciaux
+// Sï¿½curitï¿½ d'accï¿½s client et commerciaux
 $objectid = restrictedArea($user, $type, $objectid);
 
 
@@ -58,7 +58,7 @@ $objectid = restrictedArea($user, $type, $objectid);
 *	Actions
 */
 
-//Suppression d'un objet d'une catégorie
+//Suppression d'un objet d'une catï¿½gorie
 if ($_REQUEST["removecat"])
 {
 	if ($_REQUEST["socid"] && $user->rights->societe->creer)
@@ -77,7 +77,7 @@ if ($_REQUEST["removecat"])
 	$result=$cat->del_type($object,$type);
 }
 
-//Ajoute d'un objet dans une catégorie
+//Ajoute d'un objet dans une catï¿½gorie
 if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 {
 	if ($_REQUEST["socid"] && $user->rights->societe->creer)
@@ -172,7 +172,7 @@ if ($_GET["socid"])
 
 	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$soc->url\" target=\"_blank\">".$soc->url."</a>&nbsp;</td></tr>";
 
-	// Assujeti à TVA ou pas
+	// Assujeti ï¿½ TVA ou pas
 	print '<tr>';
 	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
 	print yn($soc->tva_assuj);
@@ -316,8 +316,11 @@ function formCategory($db,$object,$type,$typeid)
 
 				// Lien supprimer
 				print '<td align="right">';
-				$module = ($type=='fournisseur'?'societe':$type);
-				if ($user->rights->$module->creer)
+				$permission=0;
+				if ($type == 'fournisseur') $permission=$user->rights->societe->creer;
+				if ($type == 'societe')     $permission=$user->rights->societe->creer;
+				if ($type == 'product')     $permission=$user->rights->produit->creer;
+				if ($permission)
 				{
 					print "<a href= '".DOL_URL_ROOT."/categories/categorie.php?".$nameId."=".$object->id."&amp;typeid=".$typeid."&amp;removecat=".$cat->id."'>";
 					print img_delete($langs->trans("DeleteFromCat")).' ';
