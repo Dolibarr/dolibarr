@@ -325,10 +325,10 @@ class Categorie
 	}
 
 	/**
-	* Ajout d'un objet à la catégorie
-	* retour :  1 : OK
-	*          -1 : erreur SQL
-	*          -2 : id non renseign
+	* 	\brief			Link an object to the category
+	*	\param			obj		Object to link to category
+	* 	\param			type	Type of category
+	* 	\return			int		1 : OK, -1 : erreur SQL, -2 : id non renseign, -3 : Already linked
 	*/
 	function add_type($obj,$type)
 	{
@@ -346,7 +346,15 @@ class Categorie
 		}
 		else
 		{
-			$this->error=$this->db->error().' sql='.$sql;
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$this->error=$this->db->lasterrno();
+				return -3;
+			}
+			else
+			{
+				$this->error=$this->db->error().' sql='.$sql;
+			}
 			return -1;
 		}
 	}

@@ -49,7 +49,7 @@ else
 	accessforbidden();
 }
 
-// S�curit� d'acc�s client et commerciaux
+// Securite d'acces client et commerciaux
 $objectid = restrictedArea($user, $type, $objectid);
 
 
@@ -58,7 +58,7 @@ $objectid = restrictedArea($user, $type, $objectid);
 *	Actions
 */
 
-//Suppression d'un objet d'une cat�gorie
+//Suppression d'un objet d'une categorie
 if ($_REQUEST["removecat"])
 {
 	if ($_REQUEST["socid"] && $user->rights->societe->creer)
@@ -77,7 +77,7 @@ if ($_REQUEST["removecat"])
 	$result=$cat->del_type($object,$type);
 }
 
-//Ajoute d'un objet dans une cat�gorie
+//Ajoute d'un objet dans une categorie
 if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 {
 	if ($_REQUEST["socid"] && $user->rights->societe->creer)
@@ -101,7 +101,8 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("Error").' '.$cat->error.'</div>';	
+		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') $mesg='<div class="warning">'.$langs->trans("ObjectAlreadyLinkedToCategory").'</div>';
+		else $mesg='<div class="error">'.$langs->trans("Error").' '.$cat->error.'</div>';	
 	}
 	
 }
