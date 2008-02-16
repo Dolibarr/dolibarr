@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,14 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/admin/company.php
-   \brief      Page d'accueil de l'espace administration/configuration
-   \version    $Revision$
+		\file       htdocs/admin/company.php
+		\ingroup    company
+		\brief      Page d'accueil de l'espace administration/configuration
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -676,7 +675,7 @@ else
     print '</table>';
 	print '</form>';
 	
-	  /*
+	/*
      *  Début d'année fiscale
      */
     print '<br>';
@@ -688,7 +687,8 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FiscalMonthStart").'</td><td>';
-    print monthArrayOrSelected($conf->global->SOCIETE_FISCAL_MONTH_START) . '</td></tr>';
+    $monthstart=! emptpy($conf->global->SOCIETE_FISCAL_MONTH_START)? $conf->global->SOCIETE_FISCAL_MONTH_START : 1;
+	print monthArrayOrSelected($monthstart) . '</td></tr>';
     
     print "</table>";
 

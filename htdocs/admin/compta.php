@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/admin/compta.php
         \ingroup    comptabilite
         \brief      Page de configuration du module comptabilit�
-		\version    $Revision$
+		\version    $Id$
 */
 
 require('./pre.inc.php');
@@ -83,7 +81,7 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 
-// Cas du param�tre COMPTA_MODE
+// Cas du parametre COMPTA_MODE
 print '<form action="compta.php" method="post">';
 print '<input type="hidden" name="action" value="setcomptamode">';
 print '<tr class="liste_titre">';
@@ -100,7 +98,7 @@ print "</table>\n";
 
 print "<br>\n";
 
-// Cas des autres param�tres COMPTA_*
+// Cas des autres parametres COMPTA_*
 $sql ="SELECT rowid, name, value, type, note";
 $sql.=" FROM llx_const";
 $sql.=" WHERE name like 'COMPTA_%' and name not in ('COMPTA_MODE')";
@@ -130,8 +128,13 @@ if ($result)
 		print '<input type="hidden" name="constname" value="'.$obj->name.'">';
 
 		print '<tr '.$bc[$var].' class="value">';
-		print '<td>'.stripslashes(nl2br($obj->note))."</td>\n";
-
+		
+		// Param
+		print '<td>'.stripslashes(nl2br($obj->note));
+		print $obj->name;
+		print "</td>\n";
+		
+		// Value
 		print '<td>';
 		if ($obj->type == 'yesno')
 		{
