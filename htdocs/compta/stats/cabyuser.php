@@ -15,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file        htdocs/compta/stats/cabyuser.php
         \brief       Page reporting CA par utilisateur
-        \version     $Revision$
+        \version     $Id$
 */
 
 require("./pre.inc.php");
@@ -31,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/report.inc.php");
 
 $year=$_GET["year"];
 if (! $year) { $year = strftime("%Y", time()); }
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 

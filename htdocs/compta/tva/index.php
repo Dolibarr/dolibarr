@@ -24,7 +24,7 @@
 
 /**
 	    \file       htdocs/compta/tva/index.php
-        \ingroup    compta
+        \ingroup    tax
 		\brief      Page des societes
 		\version    $Revision$
 */

@@ -17,18 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
 	    \file       htdocs/compta/tva/quadri.php
-        \ingroup    compta
+        \ingroup    tax
 		\brief      Trimestrial page
-		\version    $Revision$
-		@todo deal with recurrent invoices as well
+		\version    $Id$
+		\todo 		Deal with recurrent invoices as well
 */
 
 require("./pre.inc.php");

@@ -33,6 +33,7 @@ $langs->load("companies");
 
 $year=$_GET["year"];
 if (! $year) { $year = strftime("%Y", time()); }
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 

@@ -89,7 +89,18 @@ print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description'
 print '<td><input class="button" type="submit" value="'.$langs->trans('Modify').'"></td>';
 print "</tr>\n";
 print '<tr '.$bc[false].'><td width="200"><input type="radio" name="compta_mode" value="RECETTES-DEPENSES"'.($compta_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
-print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'))."</td></tr>\n";
+print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
+// Write info on way to count VAT
+print "<br>\n";
+if ($conf->global->MAIN_MODULE_COMPTABILITE)
+{
+	print nl2br($langs->trans('OptionModeTrueInfoModuleComptabilite'));
+}
+else
+{
+//	print nl2br($langs->trans('OptionModeTrueInfoExpert'));
+}
+print "</td></tr>\n";
 print '<tr '.$bc[true].'><td width="200"><input type="radio" name="compta_mode" value="CREANCES-DETTES"'.($compta_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
 print '</form>';
@@ -170,5 +181,4 @@ $db->close();
 
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

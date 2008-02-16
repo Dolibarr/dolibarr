@@ -47,8 +47,10 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+
 
 llxHeader();
 $html=new Form($db);

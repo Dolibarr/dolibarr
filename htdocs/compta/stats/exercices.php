@@ -15,33 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
+
+/**
+        \file        htdocs/compta/stats/exercices.php
+        \brief       Page ???
+        \version     $Id$
+*/
+ 
 require("./pre.inc.php");
 require("./lib.inc.php");
 
-/*
- *
- */
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
+$modecompta = $conf->compta->mode;
+if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
-llxHeader();
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $socid = $user->societe_id;
 }
 
-$mode='recettes';
-if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
 
 
-print_titre("Comparatif CA année en cours avec année précédente (".$langs->trans("Currency".$conf->monnaie)." HT, ".$mode.")");
+llxHeader();
+
+print_titre("Comparatif CA année en cours avec année précédente (".$langs->trans("Currency".$conf->monnaie)." HT, ".$modecompta.")");
 print "<br>\n";
 
 
@@ -256,5 +255,5 @@ ppt($db, $cyear, $socid);
 $db->close();
 
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ r&eacute;vision $Revision$');
 ?>

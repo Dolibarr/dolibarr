@@ -18,16 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file       htdocs/fourn/fournisseur.facture.class.php
 		\ingroup    fournisseur,facture
 		\brief      Fichier de la classe des factures fournisseurs
-		\version    $Revision$
+		\version    $Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -43,8 +40,15 @@ class FactureFournisseur extends Facture
 	var $id;
 	var $db;
 	var $socid;
+
+	//! 0=brouillon,
+	//! 1=validée,
+	//! TODO Ce statut doit etre 2 et non 1 classée payée partiellement (close_code='discount_vat','badcustomer') ou complètement (close_code=null),
+	//! TODO Ce statut doit etre 2 et non 1 classée abandonnée et aucun paiement n'a eu lieu (close_code='badcustomer','abandon' ou 'replaced')
 	var $statut;
+	//! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
 	var $paye;
+	
 	var $author;
 	var $libelle;
 	var $date;

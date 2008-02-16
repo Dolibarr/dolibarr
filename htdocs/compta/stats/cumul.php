@@ -15,33 +15,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
 	    \file       htdocs/compta/stats/cumul.php
 		\brief      Page reporting compta chiffre affaire cumulé
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
 
-
-llxHeader();
-
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $socid = $user->societe_id;
 }
 
-$mode='recettes';
-if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
+$modecompta = $conf->compta->mode;
+if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+
+
+
+llxHeader();
+
 
 print_titre("Chiffre d'affaire cumulé (".$langs->trans("Currency".$conf->monnaie)." HT)");
 
@@ -50,7 +47,7 @@ print '<table width="100%"><tr><td valign="top">';
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE f.fk_statut in (1,2)";
-if ($conf->compta->mode != 'CREANCES-DETTES')
+if ($modecompta != 'CREANCES-DETTES')
 { 
   $sql .= " AND f.paye = 1";
 }
@@ -67,7 +64,7 @@ print '</td><td valign="top">';
 $sql = "SELECT sum(f.total) as amount, year(f.datef) as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE f.fk_statut in (1,2)";
-if ($conf->compta->mode != 'CREANCES-DETTES') { 
+if ($modecompta != 'CREANCES-DETTES') { 
 	$sql .= " AND f.paye = 1";
 }
 if ($socid)

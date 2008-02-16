@@ -687,7 +687,7 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FiscalMonthStart").'</td><td>';
-    $monthstart=! emptpy($conf->global->SOCIETE_FISCAL_MONTH_START)? $conf->global->SOCIETE_FISCAL_MONTH_START : 1;
+    $monthstart=(! empty($conf->global->SOCIETE_FISCAL_MONTH_START)) ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1;
 	print monthArrayOrSelected($monthstart) . '</td></tr>';
     
     print "</table>";

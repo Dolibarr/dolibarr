@@ -380,15 +380,16 @@ class Conf
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
 		$this->monnaie=$this->global->MAIN_MONNAIE;
 
-		// $this->compta->mode = Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
-		$this->compta->mode = 'RECETTES-DEPENSES';  // Par defaut
-		if (defined('COMPTA_MODE') && COMPTA_MODE) {
+		// $this->compta->mode = Option du module Comptabilite (simple ou expert):
+		// Defini le mode de calcul des etats comptables (CA,...)
+		$this->compta->mode = 'RECETTES-DEPENSES';  // By default
+		if (isset($this->global->COMPTA_MODE)) {
 			// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
-		    $this->compta->mode = COMPTA_MODE;
+		    $this->compta->mode = $this->global->COMPTA_MODE;
 		}
 
 		// $this->defaulttx
-		if (defined('FACTURE_TVAOPTION') && FACTURE_TVAOPTION == 'franchise')
+		if (isset($this->global->FACTURE_TVAOPTION) && $this->global->FACTURE_TVAOPTION == 'franchise')
 		{
 			$this->defaulttx='0';		// Taux par defaut des factures clients
 		}
@@ -454,7 +455,7 @@ class Conf
 		
 		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de desactiver la fonction TVA
 		 * (pour particuliers ou liberaux en franchise)
-		 * En attendant, valeur forcee a 1
+		 * En attendant, valeur forcee a 1 car toujours interessant a avoir meme ceux qui veulent pas.
 		 */
 		$this->compta->tva=1;
 

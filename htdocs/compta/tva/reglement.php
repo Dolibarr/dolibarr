@@ -21,6 +21,7 @@
 
 /**
 	    \file       htdocs/compta/tva/reglement.php
+        \ingroup    tax
 		\brief      Liste des règlements de TVA effectués
 		\version    $Revision$
 */
