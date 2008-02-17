@@ -190,5 +190,12 @@ ALTER TABLE llx_events ADD INDEX idx_events_dateevent (dateevent);
 
 ALTER TABLE llx_c_forme_juridique ADD isvatexempted	tinyint DEFAULT 0  NOT NULL after libelle;
 
-ALTER TABLE llx_facturedet        ADD product_type	  integer      DEFAULT 0 after total_ttc;
-ALTER TABLE llx_facture_fourn_det ADD product_type	  integer      DEFAULT 0 after total_ttc;
+ALTER TABLE llx_facturedet        ADD product_type	  integer      DEFAULT NULL after total_ttc;
+ALTER TABLE llx_facture_fourn_det ADD product_type	  integer      DEFAULT NULL after total_ttc;
+
+-- V4.1 update llx_facturedet        set product_type = 0 where fk_product in (select rowid from llx_product where fk_product_type = 0);
+-- V4.1 update llx_facture_fourn_det set product_type = 0 where fk_product in (select rowid from llx_product where fk_product_type = 0);
+-- V4.1 update llx_facturedet        set product_type = 1 where fk_product in (select rowid from llx_product where fk_product_type = 1);
+-- V4.1 update llx_facture_fourn_det set product_type = 1 where fk_product in (select rowid from llx_product where fk_product_type = 1);
+-- V4.1 update llx_facturedet        set product_type = 1 where product_type is null;
+-- V4.1 update llx_facture_fourn_det set product_type = 1 where product_type is null;
