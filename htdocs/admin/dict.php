@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/admin/dict.php
 		\ingroup    setup
 		\brief      Page d'administration des dictionnaires de données
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -594,7 +592,7 @@ if ($_GET["id"])
 						          if ($showfield) print '<td>'.$valuetoshow.'</td>';
 					        }
 
-                  print '<td align="center">';
+                  print '<td align="center" nowrap="nowrap">';
                   // Est-ce une entrée du dictionnaire qui peut etre désactivée ?
                   $iserasable=1;  // Oui par defaut
                   if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || eregi('unknown',$obj->code))) $iserasable=0;
