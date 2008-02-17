@@ -188,4 +188,6 @@ create table llx_events
 
 ALTER TABLE llx_events ADD INDEX idx_events_dateevent (dateevent);
 
+ALTER TABLE llx_c_forme_juridique ADD isvatexempted	tinyint DEFAULT 0  NOT NULL after libelle;
+
 

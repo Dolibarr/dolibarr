@@ -23,13 +23,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/html.form.class.php
         \brief      Fichier de la classe des fonctions prédéfinie de composants html
+		\version	$Id$
 */
 
 
@@ -370,7 +369,7 @@ class Form
   
   	/**
 	 *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
-	 *    \param     selected         Id ou code pays pré-sélectionné
+	 *    \param     selected         Id ou Code pays ou Libelle pays pré-sélectionné
 	 *    \param     htmlname         Nom de la liste deroulante
 	 *    \param     htmloption       Options html sur le select
 	 *    \todo      trier liste sur noms après traduction plutot que avant
@@ -441,32 +440,33 @@ class Form
 			{
 				print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
 				$num = $this->db->num_rows($resql);
-			  $i = 0;
-			  if ($num)
-			  {
-				  $foundselected=false;
-				  while ($i < $num)
-				  {
-					  $obj = $this->db->fetch_object($resql);
-					  if ($selected && $selected != '-1' && ($selected == $obj->rowid || $selected == $obj->code))
-					  {
-						  $foundselected=true;
-						  print '<option value="'.$obj->rowid.'" selected="true">';
-					  }
-					  else
-					  {
-						  print '<option value="'.$obj->rowid.'">';
-					  }
-					  // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-					  if ($obj->code) { print $obj->code . ' - '; }
-					  print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
-					  print '</option>';
-					  $i++;
-				  }
-			  }
-			  print '</select>';
-			  return 0;
-			 }
+				$i = 0;
+				if ($num)
+				{
+					$foundselected=false;
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($resql);
+						if ($selected && $selected != '-1' &&
+								($selected == $obj->rowid || $selected == $obj->code || $selected == $obj->libelle) )
+						{
+							$foundselected=true;
+							print '<option value="'.$obj->rowid.'" selected="true">';
+						}
+						else
+						{
+							print '<option value="'.$obj->rowid.'">';
+						}
+						// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+						if ($obj->code) { print $obj->code . ' - '; }
+						print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
+						print '</option>';
+						$i++;
+					}
+				}
+				print '</select>';
+				return 0;
+			}
 		 }
 		 else
 		 {

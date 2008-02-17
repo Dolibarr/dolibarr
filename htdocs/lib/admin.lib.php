@@ -215,6 +215,8 @@ function dolibarr_del_const($db, $name)
 	
 	$sql = "DELETE FROM llx_const";
 	$sql.=" WHERE name='".addslashes($name)."' or rowid='".addslashes($name)."'";
+
+    dolibarr_syslog("admin.lib::dolibarr_del_const sql=".$sql);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -241,6 +243,8 @@ function dolibarr_get_const($db, $name)
     $sql ="SELECT value";
     $sql.=" FROM llx_const";
     $sql.=" WHERE name = '".addslashes($name)."'";
+
+    dolibarr_syslog("admin.lib::dolibarr_get_const sql=".$sql);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -260,13 +264,13 @@ function dolibarr_get_const($db, $name)
    \param	    type		Type de constante (chaine par défaut)
    \param	    visible	    La constante est elle visible (0 par défaut)
    \param	    note		Explication de la constante
-   \return     int         <0 si ko, >0 si ok
+   \return     	int         <0 si ko, >0 si ok
 */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
     global $conf;
 
-    if (! $name)
+    if (empty($name))
     {
     	dolibarr_print_error("Error: Call to function dolibarr_set_const with wrong parameters", LOG_ERR);
     	exit;
@@ -276,12 +280,15 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     
     //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
     $sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."';";
-    $resql=$db->query($sql);
+    dolibarr_syslog("admin.lib::dolibarr_set_const sql=".$sql);
+	$resql=$db->query($sql);
 
     if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
     {
 	    $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
 	    $sql.= " VALUES ('".$name."','".addslashes($value)."','".$type."',".$visible.",'".addslashes($note)."')";
+
+		dolibarr_syslog("admin.lib::dolibarr_set_const sql=".$sql);
 	    $resql=$db->query($sql);
     }
 
@@ -297,7 +304,5 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
         return -1;
     }
 }
-
-
 
 ?>

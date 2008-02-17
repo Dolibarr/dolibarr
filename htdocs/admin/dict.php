@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -521,11 +521,12 @@ if ($_GET["id"])
         {
             // Ligne de titre
             print '<tr class="liste_titre">';
-            foreach ($fieldlist as $field => $value) {
+            foreach ($fieldlist as $field => $value)
+			{
                 // Determine le nom du champ par rapport aux noms possibles
                 // dans les dictionnaires de données
                 $showfield=1;							  	// Par defaut
-				        $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+				$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
                 if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
                 if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
                 if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
@@ -571,52 +572,52 @@ if ($_GET["id"])
                 	print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
                 }
                 else
-                {                	
-                	foreach ($fieldlist as $field => $value)
-                	{
-                		$showfield=1;
-                		$valuetoshow=$obj->$fieldlist[$field];
+				{                	
+					foreach ($fieldlist as $field => $value)
+					{
+						$showfield=1;
+						$valuetoshow=$obj->$fieldlist[$field];
 
-	                    if ($valuetoshow=='all') {
-	                    	$valuetoshow=$langs->trans('All');
-	                    }
-	                    if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm') {
-	                      $valuetoshow=yn($valuetoshow);
-	                    }
-	                    if ($fieldlist[$field]=='price') {
-	                      $valuetoshow=price($valuetoshow);
-	                    }
-	                    if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') {
-	                      $showfield=0;
-	                    }
-						          if ($showfield) print '<td>'.$valuetoshow.'</td>';
-					        }
+						if ($valuetoshow=='all') {
+							$valuetoshow=$langs->trans('All');
+						}
+						if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm') {
+							$valuetoshow=yn($valuetoshow);
+						}
+						if ($fieldlist[$field]=='price') {
+							$valuetoshow=price($valuetoshow);
+						}
+						if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') {
+							$showfield=0;
+						}
+						if ($showfield) print '<td>'.$valuetoshow.'</td>';
+					}
 
-                  print '<td align="center" nowrap="nowrap">';
-                  // Est-ce une entrée du dictionnaire qui peut etre désactivée ?
-                  $iserasable=1;  // Oui par defaut
-                  if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || eregi('unknown',$obj->code))) $iserasable=0;
-                  if ($obj->type && $obj->type == 'system') $iserasable=0;
+					print '<td align="center" nowrap="nowrap">';
+					// Est-ce une entrée du dictionnaire qui peut etre désactivée ?
+					$iserasable=1;  // Oui par defaut
+					if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || eregi('unknown',$obj->code))) $iserasable=0;
+					if ($obj->type && $obj->type == 'system') $iserasable=0;
 
-                  if ($iserasable) {
-                  	print '<a href="'."dict.php".'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-                  } else {
-                  	print $langs->trans("AlwaysActive");
-                  }
-                  print "</td>";
-				  
-                  if ($iserasable) {
-                  	print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=modify#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
-                  } else {
-                    print '<td>&nbsp;</td>';   
-                  }
-                  if ($iserasable) {
-                    print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete">'.img_delete().'</a></td>';
-                  } else {
-                    print '<td>&nbsp;</td>';   
-                  }
-                  print "</tr>\n";
-                }
+					if ($iserasable) {
+						print '<a href="'."dict.php".'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+					} else {
+						print $langs->trans("AlwaysActive");
+					}
+					print "</td>";
+					
+					if ($iserasable) {
+						print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=modify#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
+					} else {
+						print '<td>&nbsp;</td>';   
+					}
+					if ($iserasable) {
+						print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete">'.img_delete().'</a></td>';
+					} else {
+						print '<td>&nbsp;</td>';   
+					}
+					print "</tr>\n";
+				}
                 $i++;
               }
           }
@@ -680,91 +681,92 @@ llxFooter('$Date$ - $Revision$');
 function fieldList($fieldlist,$obj='')
 {
 	global $conf,$langs,$db;
-	global $region_id,$pays_id;
+	global $region_id;
 
 	$html = new Form($db);
 
 	foreach ($fieldlist as $field => $value)
-  {
-  	if ($fieldlist[$field] == 'pays') {
-  		print '<td>';
-      $html->select_pays($pays_id,'pays');
-      print '</td>';
-    }
-    elseif ($fieldlist[$field] == 'pays_id') {
-    	$pays_id = $obj->$fieldlist[$field]?$obj->$fieldlist[$field]:0;
-    	print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$pays_id.'">';
-    }
-    elseif ($fieldlist[$field] == 'region') {
-    	print '<td>';
-      $html->select_region($region_id,'region');
-      print '</td>';
-    }
-    elseif ($fieldlist[$field] == 'region_id') {
-    	$region_id = $obj->$fieldlist[$field]?$obj->$fieldlist[$field]:0;
-    	print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$region_id.'">';
-    }
-    elseif ($fieldlist[$field] == 'lang') {
-    	print '<td>';
-      $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'lang');
-      print '</td>';
-    }
-    // Le type de l'element (pour les type de contact).'
-    elseif ($fieldlist[$field] == 'element')
-    {
-    	$langs->load("orders");
-      $langs->load("contracts");
-      $langs->load("project");
-      $langs->load("propal");
-      $langs->load("bills");
-      print '<td>';
-      $elementList = array("commande"=>$langs->trans("Order"),
-                           "contrat"=>$langs->trans("Contract"),
-                           "projet"=>$langs->trans("Project"),
-                           "propal"=>$langs->trans("Propal"),
-                           "facture"=>$langs->trans("Bill"));
-      $html->select_array('element', $elementList,$obj->$fieldlist[$field]);
-      print '</td>';
-    }
-    // La source de l'element (pour les type de contact).'
-    elseif ($fieldlist[$field] == 'source')
-    {
-    	print '<td>';
-      $elementList = array("internal"=>$langs->trans("Internal"),
-                           "external"=>$langs->trans("External"));
-      $html->select_array('source', $elementList,$obj->$fieldlist[$field]);
-      print '</td>';
-    }
-    elseif ($fieldlist[$field] == 'type' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX."c_actioncomm")
-    {
-    	print '<td>';
-      print 'user<input type="hidden" name="type" value="user">';
-      print '</td>';
-    }
-    elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm') {
-    	print '<td>';
-      print $html->selectyesno($fieldlist[$field],$obj->$fieldlist[$field],1);
-      print '</td>';
-    }
-    elseif ($fieldlist[$field] == 'nbjour' || $fieldlist[$field] == 'decalage' || $fieldlist[$field] == 'taux') {
-    	print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" size="3" name="'.$fieldlist[$field].'"></td>';
-    }
-    elseif ($fieldlist[$field] == 'price') {
-    	print '<td><input type="text" class="flat" value="'.price($obj->$fieldlist[$field]).'" size="8" name="'.$fieldlist[$field].'"></td>';
-    }
-    elseif ($fieldlist[$field] == 'code') {
-    	print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" size="10" name="'.$fieldlist[$field].'"></td>';
-    }
-    elseif ($fieldlist[$field]=='unit') {
-	    print '<td>';
-	    $html->select_array('unit',array('mm','cm','point','inch'),$obj->$fieldlist[$field],0,0,1);
-	    print '</td>';
-	  }
-    else
-    {
-    	print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" name="'.$fieldlist[$field].'" ></td>';
-    }
-  }
+	{
+		if ($fieldlist[$field] == 'pays') {
+			//var_dump($obj);
+			print '<td>';
+			$html->select_pays($obj->pays,'pays');
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'pays_id') {
+			$pays_id = (! empty($obj->$fieldlist[$field])) ? $obj->$fieldlist[$field] : 0;
+			print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$pays_id.'">';
+		}
+		elseif ($fieldlist[$field] == 'region') {
+			print '<td>';
+			$html->select_region($region_id,'region');
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'region_id') {
+			$region_id = $obj->$fieldlist[$field]?$obj->$fieldlist[$field]:0;
+			print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$region_id.'">';
+		}
+		elseif ($fieldlist[$field] == 'lang') {
+			print '<td>';
+			$html->select_lang($conf->global->MAIN_LANG_DEFAULT,'lang');
+			print '</td>';
+		}
+		// Le type de l'element (pour les type de contact).'
+		elseif ($fieldlist[$field] == 'element')
+		{
+			$langs->load("orders");
+			$langs->load("contracts");
+			$langs->load("project");
+			$langs->load("propal");
+			$langs->load("bills");
+			print '<td>';
+			$elementList = array("commande"=>$langs->trans("Order"),
+			"contrat"=>$langs->trans("Contract"),
+			"projet"=>$langs->trans("Project"),
+			"propal"=>$langs->trans("Propal"),
+			"facture"=>$langs->trans("Bill"));
+			$html->select_array('element', $elementList,$obj->$fieldlist[$field]);
+			print '</td>';
+		}
+		// La source de l'element (pour les type de contact).'
+		elseif ($fieldlist[$field] == 'source')
+		{
+			print '<td>';
+			$elementList = array("internal"=>$langs->trans("Internal"),
+			"external"=>$langs->trans("External"));
+			$html->select_array('source', $elementList,$obj->$fieldlist[$field]);
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'type' && $tabname[$_GET["id"]] == MAIN_DB_PREFIX."c_actioncomm")
+		{
+			print '<td>';
+			print 'user<input type="hidden" name="type" value="user">';
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm') {
+			print '<td>';
+			print $html->selectyesno($fieldlist[$field],$obj->$fieldlist[$field],1);
+			print '</td>';
+		}
+		elseif ($fieldlist[$field] == 'nbjour' || $fieldlist[$field] == 'decalage' || $fieldlist[$field] == 'taux') {
+			print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" size="3" name="'.$fieldlist[$field].'"></td>';
+		}
+		elseif ($fieldlist[$field] == 'price') {
+			print '<td><input type="text" class="flat" value="'.price($obj->$fieldlist[$field]).'" size="8" name="'.$fieldlist[$field].'"></td>';
+		}
+		elseif ($fieldlist[$field] == 'code') {
+			print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" size="10" name="'.$fieldlist[$field].'"></td>';
+		}
+		elseif ($fieldlist[$field]=='unit') {
+			print '<td>';
+			$html->select_array('unit',array('mm','cm','point','inch'),$obj->$fieldlist[$field],0,0,1);
+			print '</td>';
+		}
+		else
+		{
+			print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" name="'.$fieldlist[$field].'" ></td>';
+		}
+	}
 }
 
 ?>
