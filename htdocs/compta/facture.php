@@ -2753,11 +2753,18 @@ else
 				{
 					if ($facidnext)
 					{
-						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</span>';
+						print '<font class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</font>';
 					}
 					else
 					{
-						print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+						if ($resteapayer == 0)
+						{
+							print '<font class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</font>';
+						}
+						else
+						{
+							print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+						}
 					}
 				}
 

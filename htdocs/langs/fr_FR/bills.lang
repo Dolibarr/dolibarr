@@ -76,6 +76,7 @@ DoPaymentBack=Émettre remboursement
 ConvertToReduc=Convertir en réduction future
 EnterPaymentReceivedFromCustomer=Saisie d'un réglement reçu du client
 EnterPaymentDueToCustomer=Réaliser réglement d'avoirs dus au client
+DisabledBecauseRemainderToPayIsZero=Désactiver car reste à payer est nul
 VAT=TVA
 VATRate=Taux TVA
 Amount=Montant
