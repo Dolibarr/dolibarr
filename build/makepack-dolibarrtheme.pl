@@ -79,12 +79,18 @@ print "Enter name of theme to package: ";
 $PROJECT=<STDIN>;
 chomp($PROJECT);
 # \todo Autodetect version
-print "Enter value for major version: ";
-$MAJOR=<STDIN>;
-chomp($MAJOR);
-print "Enter value for minor version: ";
-$MINOR=<STDIN>;
-chomp($MINOR);
+# Ask and set version $MAJOR and $MINOR
+print "Enter value for version: ";
+$PROJVERSION=<STDIN>;
+chomp($PROJVERSION);
+($MAJOR,$MINOR)=split(/\./,$PROJVERSION,2);
+if ($MINOR eq '')
+{
+	print "Enter value for minor version: ";
+	$MINOR=<STDIN>;
+	chomp($MINOR);
+}
+
 
 $FILENAME="$PROJECT";
 $FILENAMETGZ="theme_$PROJECT-$MAJOR.$MINOR";

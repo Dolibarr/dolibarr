@@ -80,12 +80,17 @@ if (! -f "makepack-".$PROJECT.".conf")
     sleep 2;
     exit 2;
 }
-print "Enter value for major version: ";
-$MAJOR=<STDIN>;
-chomp($MAJOR);
-print "Enter value for minor version: ";
-$MINOR=<STDIN>;
-chomp($MINOR);
+# Ask and set version $MAJOR and $MINOR
+print "Enter value for version: ";
+$PROJVERSION=<STDIN>;
+chomp($PROJVERSION);
+($MAJOR,$MINOR)=split(/\./,$PROJVERSION,2);
+if ($MINOR eq '')
+{
+	print "Enter value for minor version: ";
+	$MINOR=<STDIN>;
+	chomp($MINOR);
+}
 
 $FILENAME="$PROJECT";
 $FILENAMETGZ="module_$PROJECT-$MAJOR.$MINOR";
@@ -169,6 +174,15 @@ if ($nboftargetok) {
 		}	
 		close IN;
 		
+		@timearray=localtime(time());
+		$fulldate=($timearray[5]+1900).'-'.($timearray[4]+1).'-'.$timearray[3].' '.$timearray[2].':'.$timearray[1];
+		$versionfile=open(VF,">$BUILDROOT/build/version-".$PROJECT.".txt");
+
+		print "Create version file $BUILDROOT/build/version-".$PROJECT.".txt with date ".$fulldate."\n";
+		$ret=`mkdir -p "$BUILDROOT/build"`;
+		print VF "Version: ".$MAJOR.".".$MINOR."\n";
+		print VF "Build  : ".$fulldate."\n";
+		close VF;
     }
     
     
@@ -198,7 +212,7 @@ if ($nboftargetok) {
             #print "cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*\n";
             #$ret=`cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
     		$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-		print "Move $FILENAMEZIP.zip to $DESTI\n";
+			print "Move $FILENAMEZIP.zip to $DESTI\n";
     		rename("$BUILDROOT/$FILENAMEZIP.zip","$DESTI/$FILENAMEZIP.zip");
     		next;
     	}
@@ -223,7 +237,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
     if ($CHOOSEDTARGET{$target} < 0) {
         print "Package $target not built (bad requirement).\n";
     } else {
-        print "Package $target built succeessfully in $DESTI\n";
+        print "Package $target built successfully in $DESTI\n";
     }
 }
 
