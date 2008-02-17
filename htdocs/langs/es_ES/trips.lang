@@ -1,0 +1,12 @@
+# Dolibarr language file - es_ES - trips
+Trip=Desplazamiento
+Trips=Desplazamientos
+TripsAndExpenses=Desplazamientos y gastos
+TripCard=Ficha desplazamiento
+AddTrip=Añadir desplazamiento
+ListOfTrips=Listado de desplazamientos
+NewTrip=Nuevo desplazamiento
+CompanyVisited=Empresa/institución visitada
+Kilometers=Kilometros
+DeleteTrip=Eliminar desplazamiento
+ConfirmDeleteTrip=¿Está seguro de querer eliminar este desplazamiento?

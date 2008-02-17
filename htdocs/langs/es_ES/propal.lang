@@ -1,0 +1,100 @@
+# Dolibarr language file - es_ES - propal
+Proposals=Presupuestos
+Proposal=Presupuesto
+ProposalsDraft=Presupuestos borrador
+ProposalDraft=Presupuesto borrador
+Prop=Presup.
+CommercialProposal=Presupuesto
+CommercialProposals=Presupuestos
+ProposalsOpened=Presupuestos abiertos
+ProposalContact=Contacto presupuesto
+NewProp=Nuevo presupuesto
+NewProposal=Nuevo presupuesto
+NewPropal=Nuevo presupuesto
+Prospect=Cliente potencial
+ProspectList=Listado de clientes potenciales
+DeleteProp=Eliminar presupuesto
+ValidateProp=Validar presupuesto
+AddProp=Crear presupuesto
+ConfirmDeleteProp=¿Está seguro de querer eliminar este presupuesto?
+ConfirmValidateProp=¿Está seguro de querer validar este presupuesto?
+LastPropals=Los %s últimos presupuestos
+LastClosedProposals=Los %s últimos presupuestos cerrados
+AllPropals=Todos los presupuestos
+LastProposals=Ultimos presupuestos
+SearchAProposal=Buscar un presupuesto
+ProposalsStatistics=Estadísticas de presupuestos
+NumberOfProposalsByMonth=Número por mes
+NbOfProposals=Número presupuestos
+ShowPropal=Ver presupuesto
+PropalsDraft=Borrador
+PropalsOpened=Abiertos
+PropalsNotBilled=No facturados
+PropalStatusDraft=Borrador (a validar)
+PropalStatusValidated=Validado (presupuesto abierto)
+PropalStatusOpened=Validado (presupuesto abierto)
+PropalStatusClosed=Cerrado
+PropalStatusSigned=Firmado (a facturar)
+PropalStatusNotSigned=No firmado (cerrado)
+PropalStatusBilled=Facturado
+PropalStatusDraftShort=Borrador
+PropalStatusValidatedShort=Validado
+PropalStatusOpenedShort=Abierto
+PropalStatusClosedShort=Cerrado
+PropalStatusSignedShort=Firmado
+PropalStatusNotSignedShort=No firmado
+PropalStatusBilledShort=Facturado
+PropalsToClose=Presupuestos a cerrar
+PropalsToBill=Presupuestos firmados a facturar
+ListOfProposals=Listado de presupuestos
+ActionsOnPropal=Acciones sobre el presupuesto
+NoOpenedPropals=Sin presupuestos abiertos
+NoOtherOpenedPropals=Ningún otro presupuesto abierto
+RefProposal=Ref. presupuesto
+SendPropalByMail=Enviar presupuesto por e-mail
+Documents=Documentos
+FileNotUploaded=No se ha subido el archivo
+FileUploaded=El archivo se ha subido correctamente
+AssociatedDocuments=Documentos asociados al presupuesto :
+ErrorCantOpenDir=Imposible abrir la carpeta
+DateEndPropal=Fecha fin validez
+DateEndPropalShort=Fecha fin
+ValidityDuration=Duración de validez
+CloseAs=Cerrar al estatuto
+ClassifyBilled=Clasificar facturado
+BuildBill=Crear factura
+RelatedBill=Factura asociada
+RelatedBills=Facturas asociadas
+ErrorPropalNotFound=Presupuesto %s inexistente
+Estimate=Presupuesto:
+EstimateShort=Presupuesto
+OtherPropals=Otros presupuestos
+DateDelivery=Fecha de envío
+SetDateLivraison=Definir la fecha de envío
+CopyPropalFrom=Crear presupuesto por copia de uno existente
+CreateEmptyPropal=Crear presupuesto desde la listado de productos predefinidos
+DefaultProposalDurationValidity=Plazo de validez por defecto (en días)
+UseCustomerContactAsPropalRecipientIfExist=Utilizar dirección contacto de seguimiento de cliente definido en vez de la dirección del tercero como destinatario de los presupuestos
+
+# azur PDF Model
+
+PDFAzurDescription=Modelo de presupuestos completo (logo...)
+
+# NumRef Modules
+
+DefinedAndHasThisValue=Definido y valido
+IsNotDefined=No está definido
+
+# Emeraude
+
+EmeraudeNumRefModelDesc1=Devuelve el número bajo el formato PRYYNNNNN donde YY es el año y NNNNN el número de incremento que empieza por 1
+EmeraudeNumRefModelDesc2=El año se incrementa en 1 y el número de incremento se vuelve a poner a cero al  inicio de ejercicio.
+EmeraudeNumRefModelDesc3=Definir el mes de inico de ejercicio configuración -> empresa, p.ej.: septiembre.
+EmeraudeNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 un presupuesto referenciado como PR0800001
+
+# Rubis
+
+RubisNumRefModelDesc1=Devuelve el número bajo el formato PRYYNNNNN donde YY es el año y NNNNN el número de incremento que comienza en 1
+RubisNumRefModelDesc2=El año se incrementa de 1 SIN volvar a cero al inicio del ejercicio.
+RubisNumRefModelDesc3=Definir el mes de inico de ejercicio configuración -> empresa, p.ej.: septiembre.
+RubisNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 un presupuesto con referencia PR0800345

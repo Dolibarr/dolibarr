@@ -1,0 +1,18 @@
+# Dolibarr language file - es_ES - errors
+ErrorDuplicateTrigger=Un archvio trigger de nombre '<b>%s</b>' está cargado. Elimine el dobre de la carpeta '<b>%s</b>'.
+ErrorFailToDeleteFile=Error al eliminar el archivo '<b>%s</b>'.
+ErrorThisContactIsAlreadyDefinedAsThisType=Este contacto ya está definido como contacto para este tipo.
+ErrorCashAccountAcceptsOnlyCashMoney=Esta cuenta bancaria es de tipo caja y solo acepta el método de pago de tipo <b>especie</b>.
+ErrorFromToAccountsMustDiffers=La cuenta origen y destino deben ser diferentes.
+ErrorBadThirdPartyName=Nombre de tercero incorrecto
+ErrorBadCustomerCodeSyntax=La sintaxis del código cliente es incorrecta
+ErrorCustomerCodeRequired=Código cliente obligatorio
+ErrorCustomerCodeAlreadyUsed=Código de cliente ya utilizado
+ErrorPrefixRequired=Prefijo obligatorio
+ErrorBadSupplierCodeSyntax=LA sintaxis del código proveedor es incorrecta
+ErrorSupplierCodeRequired=Código proveedor obligatorio
+ErrorSupplierCodeAlreadyUsed=Código de proveedor ya utilizado
+ErrorBadParameters=Parámetros incorrectos
+UserCannotBeDelete=El usuario no puede ser eliminado. Quizá esé asociado a elementos de Dolibarr.
+ErrorFieldsRequired=No se indicaron algunos campos obligatorios
+ErrorFailedToCreateDir=Error en la creación de una carpeta. Compruebe que el usuario del servidor Web tiene derechos de escritura en las carpetas de documentos de Dolibarr. Si el  parámetro <b>safe_mode</b> está activo en este PHP, Compruebe que los archivos php dolibarr pertenecen al usuario del servidor Web.

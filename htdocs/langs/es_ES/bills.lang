@@ -1,0 +1,606 @@
+# Dolibarr language file - es_ES - bills
+
+Bill=Factura
+Bills=Facturas
+BillsCustomers=Facturas a clientes
+BillsSuppliers=Facturas de proveedores
+BillsCustomersUnpayed=Facturas a clientes pendientes de cobro
+BillsCustomersUnpayedForCompany=Facturas a clientes pendientes de cobro de %s
+BillsSuppliersUnpayed=Facturas de proveedores pendientes de pago
+BillsUnpayed=Pendientes de pago
+BillsStatistics=Estadísticas facturas
+InvoiceStandard=Factura estandard
+InvoiceStandardAsk=Factura estandard
+InvoiceStandardDesc=Este tipo de factura es la factura tradicional. Tambien se la conoce como <b>factura de débito</b> (del verbo deber).
+InvoiceReplacement=Factura rectificativa
+InvoiceReplacementAsk=Factura rectificativa de la factura
+InvoiceReplacementDesc=La <b>factura rectificativa</b> sirve para cancelar y para sustituir una factura existente sobre la que aún no hay pagos.<br><br>Nota: Sólo una factura sin ningún pago puede rectificarse. Si esta última no está cerrada, pasará automáticamente al estado'abandonada'.
+InvoiceAvoir=Abono
+InvoiceAvoirAsk=Abono para corregir la factura
+InvoiceAvoirDesc=El <b>abono</b> es una factura negativa destinada a compensar un importe de factura que difiere del importe realmente pagado (por haber pagado de más o por devolución de productos, por ejemplo).<br><br>Nota: Tenga en cuenta que la factura original a corregir debe haber sido cerrada (' pagada' o ' pagada parcialmente ') para poder realizar el abono.'
+ReplaceInvoice=Rectificar la factura %s
+ReplacementInvoice=Rectificación factura
+ReplacedByInvoice=Rectificada por la factura %s
+ReplacementByInvoice=Rectificada por factura
+CorrectInvoice=Corrección factura %s
+CorrectionInvoice=Corrección
+NoReplacableInvoice=Sin facturas rectificables
+NoInvoiceToCorrect=Sin facturas a corregir
+InvoiceHasAvoir=Corregida por uno o más abonos
+CardBill=Ficha factura
+PredefinedInvoices=Factura predefinida
+Invoice=Factura
+Invoices=Facturas
+InvoiceLine=Línea de factura
+InvoiceCustomer=Factura a cliente
+CustomerInvoice=Facuta a clientes
+CustomersInvoices=Facturas a clientes
+SupplierInvoice=Factura de proveedor
+SuppliersInvoices=Facturas de proveedores
+SupplierBill=Factura de proveedor
+SupplierBills=Facturas de proveedores
+BillContacts=Contactos factura
+Payment=Pago
+PaymentBack=Reembolso
+Payments=Pagos
+PaymentsBack=Reembolsos
+DatePayment=Fecha de pago
+DeletePayment=Eliminar el pago
+ConfirmDeletePayment=¿Está seguro de querer eliminar este pago?
+ConfirmConvertToReduc=¿Quiere convertir este abono en una reducción futura?<br>El importe de este abono se almacenará para este cliente. Podrá utilizarse para reducir el importe de una próxima factura del cliente.
+ReceivedPayments=Pagos recibidos
+ReceivedCustomersPayments=Pagos recibidos de cliente
+ReceivedCustomersPaymentsToValid=Pagos recibidos de cliente a validar
+PaymentsReportsForYear=Informes de pagos de %s
+PaymentsReports=Informes de pagos
+PaymentsAlreadyDone=Pagos efectuados
+PaymentMode=Forma de pago
+PaymentConditions=Condiciones de pago
+PaymentConditionsShort=Condiciones pago
+PaymentAmount=Importe pago
+ValidatePayment=Validar este pago
+PaymentHigherThanReminderToPay=Pago superior al resto a pagar
+ClassifyPayed=Clasificar 'Pagado'
+ClassifyPayedPartially=Clasificar 'Pagado parcialmente'
+ClassifyCanceled=Clasificar 'Abandonado'
+ClassifyClosed=Clasificar 'Cerrado'
+CreateBill=Crear factura
+AddBill=Crear factura o abono
+DeleteBill=Eliminar factura
+SearchACustomerInvoice=Buscar una factura a cliente
+SearchASupplierInvoice=Buscar una factura de proveedor
+CancelBill=Anular una factura
+SendByMail=Enviar
+SendRemindByMail=Enviar recordatorio
+DoPayment=Emitir pago
+DoPaymentBack=Emitir reembolso
+ConvertToReduc=Convertir en reducción futura
+EnterPaymentReceivedFromCustomer=Añadir pago recibido de cliente
+EnterPaymentDueToCustomer=Realizar pago de abonos al cliente
+VAT=IVA
+VATRate=Tasa IVA
+Amount=Importe
+PriceBase=Precio base
+TotalTTCToYourCredit=Total a crédito
+BillStatus=Estado de la factura
+BillStatusDraft=Borrador (a validar)
+BillStatusPayed=Pagada
+BillStatusPayedBackOrConverted=Reembolsada o convertida en reducción
+BillStatusCanceled=Abandonada
+BillStatusValidated=Validada (a pagar)
+BillStatusStarted=Pagada parcialmente
+BillStatusNotPayed=Pendiente de pago
+BillStatusClosedUnpayed=Cerrada (impagada)
+BillStatusClosedPayedPartially=Pagada (parcialmente)
+BillShortStatusDraft=Borrador
+BillShortStatusPayed=Pagada
+BillShortStatusPayedBackOrConverted=Procesada
+BillShortStatusCanceled=Abandonada
+BillShortStatusValidated=Validada
+BillShortStatusStarted=Empezada
+BillShortStatusNotPayed=Pendiente de cobro
+BillShortStatusClosedUnpayed=Cerrada
+BillShortStatusClosedPayedPartially=Pagada
+PaymentStatusToValidShort=A validar
+ErrorVATIntraNotConfigured=Número de IVA intracomunitario aún no configurado
+ErrorNoPaiementModeConfigured=No hay definido modo de pago por defecto. Corregir desde el módulo factura
+ErrorCreateBankAccount=Crear una cuenta bancaria y despues en la configuración del módulo factura definir los modos de pago
+ErrorBillNotFound=Factura %s inexistente
+ErrorInvoiceAlreadyReplaced=Error, quiere validar una factura que rectifica la factura %s. Pero esta última ya está rectificada por la factura %s.
+ErrorDiscountAlreadyUsed=Error, la remesa está ya asignada
+ErrorInvoiceAvoirMustBeNegative=Error, una factura de tipo Abono debe tener un importe negativo
+ErrorInvoiceOfThisTypeMustBePositive=Error, una factura de este tipo debe tener un importe positivo
+ErrorCantCancelIfReplacementInvoiceNotValidated=Error, no es posible cancelar una factura que ha sido sustituida por otra que se encuentra en el estado 'borrador '.
+BillFrom=Emisor
+BillTo=Enviar a
+ActionsOnBill=Acciones sobre la factura
+NewBill=Nueva factura
+Prélèvements=
+Prélèvements=Domiciliaciones
+LastBills=Las %s últimas facturas
+LastCustomersBills=Las %s últimas facturas a clientes
+LastSuppliersBills=Las %s últimas facturas de proveedores
+AllBills=Todas las facturas
+OtherBills=Otras facturas
+DraftBills=Facturas borrador
+CustomersDraftInvoices=Facturas a clientes borrador
+SuppliersDraftInvoices=Facturas de proveedores borrador
+Unpayed=Impagados
+ConfirmDeleteBill=¿Está seguro de querer eliminar esta factura?
+ConfirmValidateBill=¿Está seguro de querer validar esta factura con la referencia <b>%s</b> ?
+ConfirmClassifyPayedBill=¿Esta seguro de querer clasificar la factura <b>%s</b> como pagada?
+ConfirmCancelBill=¿Está seguro de querer anular la factura <b>%s</b> ?
+ConfirmCancelBillQuestion=¿Por qué razón quiere abandonar la factura?
+ConfirmClassifyPayedPartially=¿Está seguro de querer clasificar la factura <b>%s</b> como pagada?
+ConfirmClassifyPayedPartiallyQuestion=Esta factura no ha sido totalmente pagada. ¿Por qué quiere clasificarla como pagada?
+ConfirmClassifyPayedPartiallyReasonAvoir=El resto a pagar <b>(%s %s)</b> se ha regularizado (ya que artículo se ha devulto, olvidado entregar, descuento no definido...)  mediante un abono
+ConfirmClassifyPayedPartiallyReasonDiscountNoVat=El resto a pagar <b>(%s %s)</b> es un descuento acordado después de la factua. Acepto perder el IVA de este descuento
+ConfirmClassifyPayedPartiallyReasonDiscountVat=El resto a pagar<b>(%s %s)</b> es un descuento
+ConfirmClassifyPayedPartiallyReasonBadCustomer=Cliente moroso
+ConfirmClassifyPayedPartiallyReasonProductReturned=Productos devueltos en parte
+ConfirmClassifyPayedPartiallyReasonOther=Por otra razón
+ConfirmClassifyPayedPartiallyReasonDiscountNoVatDesc=Esta elección es posible si su factura se proveyera de la mención adecuada. (Ejemplo: "descuento neto de impuestos")
+ConfirmClassifyPayedPartiallyReasonDiscountVatDesc=Esta elección es posible si su factura se proveyera de la mención adecuada. (Ejemplo: mención por la que se define el descuento o de la clase "solamente el impuesto que corresponde al precio efectivamente pagado causa derecho a deducción")
+ConfirmClassifyPayedPartiallyReasonAvoirDesc=Esta elección es la elección que debe tomarse si las otras no son aplicables
+ConfirmClassifyPayedPartiallyReasonBadCustomerDesc=Un <b>cliente moroso</b> es un cliente que no quiere regularizar su deuda.
+ConfirmClassifyPayedPartiallyReasonProductReturnedDesc=Esta elección es posible si el caso de pago incompleto es a raíz de una devolución de parte de los productos
+ConfirmClassifyPayedPartiallyReasonOtherDesc=Esta elección será posible, por ejemplo, en los casos siguiente:<br>-pago parcial ya que una partida de productos se ha devuleto.<br>- reclamado por no entregar productos de la factura <br>En todos los casos, la reclamación debe regularizarse mediante un abono
+ConfirmClassifyAbandonReasonOther=Otro
+ConfirmClassifyAbandonReasonOtherDesc=Esta elección será para cualquier otro caso. Por ejemplo a raíz de la intención de crear una factura rectificativa.
+ConfirmCustomerPayment=¿Confirma el proceso  de este pago de <b>%s</b> %s ?
+ValidateBill=Validar factura
+NumberOfBills=Nº de facturas
+NumberOfBillsByMonth=Nº de facturas por més
+ShowBill=Ver factura
+ShowInvoice=Ver factura
+ShowInvoiceReplace=Ver factura rectificativa
+ShowInvoiceAvoir=Ver abono
+ShowPayment=Ver pago
+File=Fichero
+AlreadyPayed=Ya pagado
+Abandoned=Abandonada
+RemainderToPay=Queda por pagar
+RemainderToTake=Queda por cobrar
+AmountExpected=Importe reclamado
+ExcessReceived=Recibido en exceso
+EscompteOffered=Descuento (Pronto pago)
+CreateDraft=Crear borrador
+SendBillRef=Enviar factura %s
+SendReminderBillRef=Recordar factura %s
+StandingOrders=Domiciliaciones
+StandingOrder=Domiciliación
+NoDraftBills=Ninguna factura borrador
+NoOtherDraftBills=Ninguna otra factura borrador
+RefBill=Ref. factura
+ToBill=A facturar
+RemainderToBill=Queda por facturar
+SendBillByMail=Enviar la factura por E-Mail
+SendReminderBillByMail=Enviar un recordatorio por E-Mail
+RelatedCommercialProposals=Presupuestos asociados
+MenuToValid=A validar
+DateMaxPayment=Fecha límite de pago
+DateEcheance=Fecha vencimiento
+DateInvoice=Fecha facturación
+NoInvoice=Ninguna factura
+ClassifyBill=Clasificar la factura
+NoSupplierBillsUnpayed=Ninguna factura de proveedor impagada
+SupplierBillsToPay=Facturas de proveedores a pagar
+CustomerBillsUnpayed=Facturas a clientes impagadas
+DispenseMontantLettres=Las facturas redactadas por métodos mecanográficos se eximen del envío en cartas
+NonPercuRecuperable=No percibido recuperable
+SetConditions=Definir condiciones de pago
+SetMode=Definir modo de pago
+Billed=Facturado
+RepeatableInvoice=Factura recurrente
+RepeatableInvoices=Facturas recurrentes
+Repeatable=Recurrente
+ChangeIntoRepeatableInvoice=Modificar en recurrente
+CreateRepeatableInvoice=Crear factura recurrente
+CreateFromRepeatableInvoice=Crear despues factura recurrente
+CustomersInvoicesAndInvoiceLines=Facturas a clientes y líneas de facturas
+CustomersInvoicesAndPayments=Facturas a clientes y pagos
+ExportDataset_invoice_1=Facturas a clientes y líneas de factura
+ExportDataset_invoice_2=Facturas a clientes y pagos
+ProformaBill=Factura proforma:
+Reduction=Reducción
+ReductionShort=Reduc.
+Reductions=Reducciones
+ReductionsShort=Reduc.
+Discount=Descuento
+Discounts=Descuentos
+ShowDiscount=Ver el abono
+RelativeDiscount=Descuento relativo
+GlobalDiscount=Descuento fijo
+CreditNote=Abono
+CreditNotes=Abonos
+DiscountFromCreditNote=Descuento resultante del abono %s
+NewGlobalDiscount=Nuevo descuento fijo
+NoteReason=Nota/Motivo
+ReasonDiscount=Motivo
+AddGlobalDiscount=Añadir descuento fijo
+DiscountOfferedBy=Acordado por
+DiscountStillRemaining=Descuentos fijos pendientes
+DiscountAlreadyCounted=Descuentos fijos ya aplicados
+BillAddress=Dirección de facturación
+HelpEscompte=Un <b>descuento</b> es un descuento acordado sobre una factura dada, a un cliente que realizó su pago mucho antes del vencimiento.
+HelpAbandonBadCustomer=Este importe se abandonó (cliente juzgado como moroso) y se considera como una pérdida excepcional.
+HelpAbandonOther=Este importe se abandonó este importe ya que se trataba de un error de facturación (mala introducción de datos, factura sustituida por otra).
+InvoiceId=Id factura
+InvoiceRef=Ref. factura
+InvoiceDateCreation=Fecha creación factura
+InvoiceStatus=Estado factura
+InvoiceNote=Nota factura
+InvoicePayed=Factura pagada
+PaymentNumber=Número de pago
+RemoveDiscount=Eliminar descuento
+
+# PaymentConditions
+
+
+
+
+
+
+
+
+
+PaymentConditionShortRECEP=A la recepción
+PaymentConditionRECEP=A la recepción de la factura
+PaymentConditionShort30D=30 días
+PaymentCondition30D=Pago a 30 días
+PaymentConditionShort30DENDMONTH=30 días fin de mes
+PaymentCondition30DENDMONTH=Pago a los 30 días a fin de mes
+PaymentConditionShort60D=60 días
+PaymentCondition60D=Pago a los 60 días
+PaymentConditionShort60DENDMONTH=60 días a fin de mes
+PaymentCondition60DENDMONTH=Pago a los 60 días a fin de mes
+# PaymentType
+
+
+
+
+
+
+
+
+
+PaymentTypeVIR=Transferencia bancaria
+PaymentTypeShortVIR=Transferencia
+PaymentTypePRE=Domiciliación bancaria
+PaymentTypeShortPRE=Domiciliación
+PaymentTypeLIQ=Especies
+PaymentTypeShortLIQ=Especies
+PaymentTypeCB=Tarjeta
+PaymentTypeShortCB=Tarjeta
+PaymentTypeCHQ=Cheque
+PaymentTypeShortCHQ=Cheque
+PaymentTypeTIP=TIP
+PaymentTypeShortTIP=TIP
+PaymentTypeVAD=Pago On Line
+PaymentTypeShortVAD=Pago On Line
+PaymentTypeTRA=Letra de cambio
+PaymentTypeShortTRA=Letra
+BankDetails=Datos bancarios
+BankCode=Código banco
+DeskCode=Código sucursal
+BankAccountNumber=Número cuenta
+BankAccountNumberKey=Llave RIB
+Residence=Domiciliación
+IbanPrefix=Prefijo IBAN
+IBAN=IBAN
+BIC=BIC
+ExtraInfos=Informaciones complementarias
+RegulatedOn=Pagar el
+ChequeNumber=Cheque nº
+ChequeOrTransferNumber=Cheque/Transferencia nº
+WithDiscountTotalHT=Base después dtos.
+WithDiscountAmountHT=Importe base despues dtos
+NetToBePaid=Neto a pagar
+PhoneNumber=Tel.
+FullPhoneNumber=Teléfono
+TeleFax=Fax
+PrettyLittleSentence=Acepto el pago mediante cheques a mi nombre de las sumas debidas, en mi calidad de miembro de una empresa autorizada por la Administración Fiscal.
+IntracommunityVATNumber=Número de IVA intracomunitario
+PaymentByChequeOrderedTo=Pago mediante cheque nominativo a %s enviado a
+PaymentByChequeOrderedToShort=Pago mediante cheque nominativo a
+SendTo=enviado a
+PaymentByTransferOnThisBankAccount=Pago mediante trasferencia sobre la cuenta bancaria siguiente
+VATIsNotUsedForInvoice=* IVA no aplicabl  art-293B del CGI
+LawApplicationPart1=Por aplicación de la ley 80.335 de 12/05/80
+LawApplicationPart2=las mercancías permanecen en propiedad de
+LawApplicationPart3=vendedor hasta el completo cobro de
+LawApplicationPart4=sus precios
+VATDischarged=IVA pagado sobre los débitos.
+LimitedLiabilityCompanyCapital=SRL con capital de
+UseDiscount=Aplicar descuento
+UseCreditNoteInInvoicePayment=Reducir el pago con este abono
+MenuChequeDeposits=Ingreso de cheques
+MenuCheques=Gestión cheques
+MenuChequesReceipts=Fichas
+NewChequeDeposit=Nuevo deposito
+ChequesReceipts=Ficha emisión de cheques
+ChequesArea=Area emisión de cheques
+ChequeDeposits=Depósito de cheques
+Cheques=Cheques
+CreditNoteConvertedIntoDiscount=Este abono se convirtió en %s
+UsBillingContactAsIncoiveRecipientIfExist=Utilizar la dirección del contacto de cliente de facturación de la factura en vez de lla dirección del tercero como destinatario de las facturas
+
+# oursin PDF model
+
+
+
+
+
+
+
+
+
+Of=de
+
+# bernique PDF model
+
+
+
+
+
+
+
+
+
+PDFBerniqueDescription=Modelo para las facturas con varios tipos de IVA, incluido también el número de IVA Intracomunitario
+
+# bigorneau PDF Model
+
+
+
+
+
+
+
+
+
+PDFBigorneauDescription=Modelo de factura sin informaciones de pago
+
+# bulot PDF Model
+
+
+
+
+
+
+
+
+
+PDFBulotDescription=Modelo de factura con descuentos e información de pago
+
+# crabe PDF Model
+
+
+
+
+
+
+
+
+
+PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar, logotipo...)
+
+# huitre PDF Model
+
+
+
+
+
+
+
+
+
+PDFHuitreDescription=Modelo de factura con descuento e información de pago
+
+# oursin PDF Model
+
+
+
+
+
+
+
+
+
+PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas, nombre del proyecto, referencias de presupuesto, logotipo...)
+
+# tourteau PDF Model
+
+
+
+
+
+
+
+
+
+PDFTourteauDescription=Modelo de factura sin descuento
+
+
+
+
+# NumRef Modules
+
+
+
+
+
+
+
+
+
+DefinedAndHasThisValue=Definida y válida
+IsNotDefined=No está definida
+
+# deneb
+
+
+
+
+
+
+
+
+
+DenebNumRefModelDesc1=Devuelve el número de factura en formato, PREF-31-12-2004-01, donde PREF es el prefijo comercial de la empresa,  seguido de la fecha (aquí el 31 de diciembre de 2004) y de un contador.
+DenebNumRefModelDesc2=Si se define la constante FACTURE_DENEB_DELTA, se aplica un offset sobre el contador
+
+# janus
+
+
+
+
+
+
+
+
+
+JanusNumRefModelDesc1=Devuelve el número de factura bajo el formato F50201 para la 1º factura de febrero de 2005
+
+# jupiter
+
+
+
+
+
+
+
+
+
+JupiterNumRefModelDesc1=Sistema de numeración mensual bajo el formato F20030715, que corresponde a la 15ª factura del mes de julio de 2003
+
+# lune
+
+
+
+
+
+
+
+
+
+LuneNumRefModelDesc1=Sistema de numeración mensual bajo el formato F0501015, que corresponde a la 15ª factura del mes de enero de 2005
+
+# mars
+
+
+
+
+
+
+
+
+
+MarsNumRefModelDesc1=Número de factura bajo el formato, PREF-10-2004-005, que corresponde a la 5ª factura de octubre de 2004 y donde PREF es el prefijo de la empresa.
+MarsNumRefModelDesc2=El número final se formatea con 3 o más cifras.
+MarsNumRefModelDesc3=Si se define la constante FACTURE_MARS_DELTA, se aplica un offset sobre el contador
+
+# mercure
+
+
+
+
+
+
+
+
+
+MercureNumRefModelDesc1=Devuelve un número de factura personalizado según la máscara definida.
+MercureMaskCodes=Puede indicar qualquier tipo de máscara de numeración. En esta máscara, puede utilizar:<br><b>{000000}</b> corresponde a un númo que será incrementado en cafa factura. Indique la longuitud del contador en 0. El contador será completado por ceros a la izquierda hasta completar la longuitud de la máscara.<br><b>{000000+000}</b> igual que el anterior, pero el offset corresponde a la parte derecha del +.<br><b>{dd}</b> día de la factura (01 à 31).<br><b>{mm}</b> día de la factura (01 à 12).<br><b>{yy}</b> o {yyyy} año de 2 o 4 cifras de la factura.<br><b>{pre}</b> Prefijo del tercero.<br>Se dejará cualquier otro carácter de la máscara sin cambios.<br>No se permiten espacios.<br><br><u>Ejemplo: la factura 99 del tercero SFR con fecha de 31/01/2007:</u><br><b>ABC-{yy}{mm}-{000000}</b> dará <b>ABC-0701-000099</b><br><b>{0000}-{pre}/{dd}/INV</b> dará <b>0099-SFR/31/INV</b><br>
+
+# neptune
+
+
+
+
+
+
+
+
+
+NeptuneNumRefModelDesc1=Devuelve el número de factura bajo una forma del prefijo FA seguida del año con 2 cifras y de un contador simple de 4 cifras.
+NeptuneNumRefModelDesc2=Si se define la constante FACTURE_NEPTUNE_DELTA, se aplica un offset sobre el contador
+
+# orion
+
+
+
+
+
+
+
+
+
+OrionNumRefModelDesc1=Devuelve el número bajo la forma FAYYNNNNN donde YY es el año y NNNNN el número de incremento que comienza en 1.
+OrionNumRefModelDesc2=El año se incrementa en 1 SIN permanecer a cero al principio de ejercicio anual.
+OrionNumRefModelDesc3=Definir el mes de inicio de ejercicio en configuración -> empresa, p.ej.: septiembre.
+OrionNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 una factura numerada FA0800354.
+
+# terre
+
+
+
+
+
+
+
+
+
+TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
+TerreNumRefModelError=Una factura que comienza por # $$syymm existe en base y es incompatible con esta numeración. Eliminela o renombrela para activar este módulo.
+
+# titan
+
+
+
+
+
+
+
+
+
+TitanNumRefModelDesc1=Devuelve el número bajo el formato FAYYNNNNN donde YY es el año y NNNNN el número de incremento que comienza en 1.
+TitanNumRefModelDesc2=El año se incrementa de 1 y el número de incremento se vuelve a poner a cero al principio de año de ejercicio.
+TitanNumRefModelDesc3=Definir el mes de inicio de ejercicio en configuración ->empresa, p.ej.: septiembre.
+TitanNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 una factura numerada FA0800001.
+
+# uranus
+
+
+
+
+
+
+
+
+
+UranusNumRefModelDesc1=Devuelve el número de factura bajo una forma numérica simple, prefijado por el año sobre una única cifra
+
+# venus
+
+
+
+
+
+
+
+
+
+VenusNumRefModelDesc1=Devuelve el número de factura bajo la el formato FA-PREF-030202, donde PREF es el prefijo comercial de la empresa,  seguido de la fecha sobre un formato de 6 dígitos con Año, Mes y Día
+
+# pluton
+
+
+
+
+
+
+
+
+
+PlutonNumRefModelDesc1=Devuelve un número de factura personalizado según una máscara que debe definirse.

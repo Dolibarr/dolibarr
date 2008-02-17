@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net> 
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 	    \file       htdocs/install/licence.php
         \ingroup    install
 		\brief      Page affichage license
-		\version    $Source$
+		\version    $Id$
 */
 
 include_once("./inc.php");
@@ -31,19 +31,22 @@ $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
 
-dolibarr_install_syslog("licence: Entering licence.php page");
+dolibarr_install_syslog("Licence: Entering licence.php page");
 
 
 pHeader($langs->trans("License"),"fileconf");
 
-print '<center>'."\n";
 //print '<pre style="align: center; font-size: 12px">';
-print '<textarea readonly="1" rows="26" cols="80">';
-$langs->print_file("html/gpl.txt",1);
+$result=$langs->print_file("html/gpl.html",1);
+if (! $result)
+{
+	print '<center>'."\n";
+	print '<textarea readonly="1" rows="26" cols="80">';
+	$langs->print_file("html/gpl.txt",1);
+	print '</textarea>';
+	print '</center>'."\n";
+}
 //print '</pre>';
-print '</textarea>';
-print '</center>'."\n";
 
 pFooter(0,$setuplang);
-
 ?>

@@ -254,6 +254,7 @@ CivilityMTRE=Master
 
 ##### Currencies #####
 Currencyeuros=Euros
+CurrencyAUD=Dollar AU
 CurrencyCHF=Swiss Francs
 CurrencyEUR=Euros
 CurrencyFRF=French Francs

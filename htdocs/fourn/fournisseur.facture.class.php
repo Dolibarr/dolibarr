@@ -640,7 +640,7 @@ class FactureFournisseur extends Facture
 
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
+     *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		\param		option			Sur quoi pointe le lien
 	 *		\return		string			Chaine avec URL
 	 */

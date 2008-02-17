@@ -1,0 +1,90 @@
+# Dolibarr language file - es_ES - mails
+Mailing=Mailing
+EMailing=Mailing
+Mailings=Mailings
+EMailings=Mailings
+MailCard=Ficha mailing
+MailTargets=Destinatarios
+MailRecipients=Dsetinatarios
+MailRecipient=Destinatario
+MailTitle=Titulo
+MailFrom=Remitente
+MailErrorsTo=Errores a
+MailReply=Responder a
+MailTo=Destinatario(s)
+MailCC=Copia a
+MailTopic=Asunto del e-mail
+MailText=Mensaje
+MailFile=Adjuntar un archivo
+MailMessage=Mensaje del e-mail
+ListOfEMailings=Listado de mailings
+NewMailing=Nuevo mailing
+EditMailing=Editar mailing
+DeleteMailing=Eliminar mailing
+DeleteAMailing=Eliminar un mailing
+PreviewMailing=Previsualizar un mailing
+PrepareMailing=Preparar mailing
+CreateMailing=Crear mailing
+MailingDesc=Esta página le permite enviar e-mails a un grupo de personas.
+MailingResult=Resultado del envío de e-mails
+TestMailing=Probar mailing
+ValidMailing=Validar mailing
+ApproveMailing=Aprobar mailing
+MailingStatusDraft=Borrador
+MailingStatusValidated=Validado
+MailingStatusApproved=Aprovado
+MailingStatusSent=Enviado
+MailingStatusSentPartialy=Enviado parcialmente
+MailingStatusSentCompletely=Enviado completamente
+MailingStatusError=Error
+MailingStatusNotSent=No enviado
+MailSuccessfulySent=E-mail enviado correctamente (de %s a %s)
+ErrorMailRecipientIsEmpty=La dirección del destinatario está vacía
+WarningNoEMailsAdded=Ningún nuevo e-mail a añadir a la lista destinatarios.
+ConfirmValidMailing=¿Confirma la validación del mailing?
+ConfirmDeleteMailing=¿Confirma la eliminación del mailing?
+NbOfRecipients=Número de destinatarios
+NbOfUniqueEMails=Nº de e-mails únicos
+NbOfEMails=Nº de E-mails
+TotalNbOfDistinctRecipients=Número de destinatarios únicos
+NoTargetYet=Ningún destinatario definido
+AddRecipients=Añadir destinatarios
+RemoveRecipient=Eliminar destinatario
+CommonSubstitutions=Substituciones comunes
+YouCanAddYourOwnPredefindedListHere=Puede añadir su propio módulo de selección/importación de e-mails. Para ello vea el fichero htdocs/includes/modules/mailings/README.
+EMailTestSubstitutionReplacedByGenericValues=En modo prueba, las variables de sustitución son sustituidas por valores genéricos
+
+# Libelle des modules de liste de destinataires mailing
+
+MailingModuleDescContactCompanies=Contactos de terceros (clientes potenciales, clientes, proveedores...)
+MailingModuleDescDolibarrUsers=Usuarios de Dolibarr que tienen e-mail
+MailingModuleDescFundationMembers=Miembros que tienen e-mail
+
+
+RecipientSelectionModules=Módulos de selección de los destinatarios
+MailSelectedRecipients=Destinatarios seleccionados
+MailingArea=Area mailings
+LastMailings=Los %s últimos mailings
+TargetsStatistics=Estadísticas destinatarios
+NbOfCompaniesContacts=Contactos únicos de empresas
+MailNoChangePossible=Destinatarios de un mailing validado no modificables
+SearchAMailing=Buscar un mailing
+SendMailing=Enviar mailing
+SendMail=Enviar e-mail
+SentBy=Enviado por
+MailingNeedCommand=Por razones de seguridad, el envío de un mailing en masa puede realizarse en línea de comandos. Pida a su administrador que lance el comando siguiente para para enviar la correspondencia a a todos los destinatarios:
+TargetsReset=Vaciar lista
+ToClearAllRecipientsClickHere=Para vaciar la lista de los destinatarios de este mailing, haga click en el botón
+ToAddRecipientsChooseHere=Para añadir destinatarios, escoja los que figuran en las listas a continuación
+NbOfEMailingsReceived=Mailings en masa recibidos
+IdRecord=ID registro
+DeliveryReceipt=Acuso de recibo
+
+# Module Notifications
+
+Notifications=Notificaciones
+NoNotificationsWillBeSent=Ninguna notificación por e-mail está prevista para este evento y empresa
+ANotificationsWillBeSent=1 notificación va a ser enviada por e-mail
+SomeNotificationsWillBeSent=%s notificaciones van a ser enviadas por e-mail
+AddNewNotification=Activar una nueva solicitud de notificación
+ListOfActiveNotifications=Lista de las solicitudes de notificaciones activas

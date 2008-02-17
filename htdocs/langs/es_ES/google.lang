@@ -1,0 +1,5 @@
+# Dolibarr language file - es_ES - google
+
+GoogleSetup=Configuración integración con Google tools
+GoogleSetupHelp=Ayuda a definir los parámetros que se encuentran con la URL de configuración de google %s 
+GoogleAgendaNb=Agenda nº %s 

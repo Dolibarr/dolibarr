@@ -406,10 +406,11 @@ class Translate {
      *  \brief      Renvoi le fichier $filename dans la version de la langue courante, sinon alternative
      *  \param      filename        nom du fichier � rechercher
      *  \param      searchalt       cherche aussi dans langue alternative
+	 *	\return		boolean
      */
     function print_file($filename,$searchalt=0)
     {
-        // Test si fichier dans r�pertoire de la langue
+        // Test si fichier dans repertoire de la langue
         $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
         if (is_readable($htmlfile))
         {
@@ -418,7 +419,7 @@ class Translate {
         }
 
         if ($searchalt) {
-            // Test si fichier dans r�pertoire de la langue alternative
+            // Test si fichier dans repertoire de la langue alternative
             if ($this->defaultlang != "en_US") $htmlfilealt = $this->dir."/en_US/".$filename;   
             else $htmlfilealt = $this->dir."/fr_FR/".$filename;
             if (is_readable($htmlfilealt))

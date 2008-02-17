@@ -29,11 +29,16 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
 
 $langs->load("bills");
 $langs->load("compta");
 $langs->load("companies");
+$langs->load("products");
 
 $year=$_GET["year"];
 if ($year == 0 )
@@ -58,6 +63,9 @@ if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 llxHeader();
 
 $company_static=new Societe($db);
+$invoice_customer=new Facture($db);
+$invoice_supplier=new FactureFournisseur($db);
+$product_static=new Product($db);
 
 print_fiche_titre($langs->trans("VAT"),"");
 
@@ -65,17 +73,28 @@ print_fiche_titre($langs->trans("VAT"),"");
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom=$langs->trans("ReportByQuarter");
-    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+    //$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
     $period=$year_start;
     $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("VATReportDesc");
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
+	
+	$elementcust=$langs->trans("CustomersInvoices");
+	$productcust=$langs->trans("ProductOrService");
+	$amountcust=$langs->trans("AmountHT");
+	$vatcust=$langs->trans("VATReceived");
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("VATToPay").')';
+	$elementsup=$langs->trans("SuppliersInvoices");
+	$productsup=$langs->trans("ProductOrService");
+	$amountsup=$langs->trans("AmountHT");
+	$vatsup=$langs->trans("VATPayed");
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("VATToCollect").')';
 }
 else {
     $nom=$langs->trans("ReportByQuarter");
-    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+    //$nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
     $period=$year_start;
     $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("VATReportDesc");
@@ -83,6 +102,17 @@ else {
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
+
+	$elementcust=$langs->trans("CustomersInvoices");
+	$productcust=$langs->trans("ProductOrService");
+	$amountcust=$langs->trans("AmountHT");
+	$vatcust=$langs->trans("VATReceived");
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("VATToPay").')';
+	$elementsup=$langs->trans("SuppliersInvoices");
+	$productsup=$langs->trans("ProductOrService");
+	$amountsup=$langs->trans("AmountHT");
+	$vatsup=$langs->trans("VATPayed");
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("VATToCollect").')';
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
@@ -100,9 +130,9 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 	$subtot_coll_vat = 0;
 	$subtot_paye_total = 0;
 	$subtot_paye_vat = 0;
-	$var=true;
-	$x_coll = tva_coll($db, $y, $q);
-	$x_paye = tva_paye($db, $y, $q);
+	
+	$x_coll = vat_received_by_quarter($db, $y, $q);
+	$x_paye = vat_payed_by_quarter($db, $y, $q);
 	
 	if (! is_array($x_coll))
 	{
@@ -120,11 +150,17 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 		$x_both[$my_coll_rate]['paye']['vat'] = 0;
 		$x_both[$my_coll_rate]['coll']['links'] = '';
 		$x_both[$my_coll_rate]['coll']['detail'] = array();
-		foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy){
+		foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy)
+		{
+			$invoice_customer->id=$x_coll[$my_coll_rate]['facid'][$id];
+			$invoice_customer->ref=$x_coll[$my_coll_rate]['facnum'][$id];
 			$x_both[$my_coll_rate]['coll']['detail'][] = array(
 				'id'=>$x_coll[$my_coll_rate]['facid'][$id],
 				'descr'=>$x_coll[$my_coll_rate]['descr'][$id],
-				'link'=>'<a href="../facture.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$langs->trans("Invoice").' '.$x_coll[$my_coll_rate]['facnum'][$id].'">'.$x_coll[$my_coll_rate]['facnum'][$id].'</a> ',
+				'pid'=>$x_coll[$my_coll_rate]['pid'][$id],
+				'pref'=>$x_coll[$my_coll_rate]['pref'][$id],
+				'ptype'=>$x_coll[$my_coll_rate]['ptype'][$id],
+				'link'=>$invoice_customer->getNomUrl(1),
 				'totalht'=>$x_coll[$my_coll_rate]['totalht_list'][$id],
 				'vat'=>$x_coll[$my_coll_rate]['vat_list'][$id]);				
 			//$x_both[$my_coll_rate]['coll']['links'] .= '<a href="../facture.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
@@ -140,11 +176,18 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 		}
 		$x_both[$my_paye_rate]['paye']['links'] = '';
 		$x_both[$my_paye_rate]['paye']['detail'] = array();
-		foreach($x_paye[$my_paye_rate]['facid'] as $id=>$dummy){
+
+		foreach($x_paye[$my_paye_rate]['facid'] as $id=>$dummy)
+		{
+			$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
+			$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
 			$x_both[$my_paye_rate]['paye']['detail'][] = array(
 				'id'=>$x_paye[$my_paye_rate]['facid'][$id],
 				'descr'=>$x_paye[$my_paye_rate]['descr'][$id],
-				'link'=>'<a href="../../fourn/facture/fiche.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$langs->trans("Invoice").' '.$x_paye[$my_paye_rate]['facnum'][$id].'">'.$x_paye[$my_paye_rate]['facnum'][$id].'</a> ',
+				'pid'=>$x_paye[$my_paye_rate]['pid'][$id],
+				'pref'=>$x_coll[$my_coll_rate]['pref'][$id],
+				'ptype'=>$x_coll[$my_coll_rate]['ptype'][$id],
+				'link'=>$invoice_supplier->getNomUrl(1),
 				'totalht'=>$x_paye[$my_paye_rate]['totalht_list'][$id],
 				'vat'=>$x_paye[$my_paye_rate]['vat_list'][$id]);				
 			//$x_both[$my_paye_rate]['paye']['links'] .= '<a href="../../fourn/facture/fiche.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$x_paye[$my_paye_rate]['facnum'][$id].'">..'.substr($x_paye[$my_paye_rate]['facnum'][$id],-2).'</a> ';
@@ -160,26 +203,36 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 	$x_paye_sum = 0;
 	$x_paye_ht = 0;
 	
-	print '<tr><td colspan="4">'.$langs->trans("Quadri")." $q (".strftime("%b %Y",dolibarr_mktime(0,0,0,(($q-1)*3)+1,1,$y)).' - '.strftime("%b %Y",mktime(0,0,0,($q*3),1,$y)).')</td></tr>';
+	print '<tr><td colspan="4">'.$langs->trans("Quadri")." $q (".strftime("%b %Y",dolibarr_mktime(12,0,0,(($q-1)*3)+1,1,$y)).' - '.strftime("%b %Y",dolibarr_mktime(12,0,0,($q*3),1,$y)).')</td></tr>';
 	
 	print '<tr class="liste_titre">';
-	print '<td align="left">'.$langs->trans("CustomersInvoices").'</td>';
-	print '<td align="left"> '.$langs->trans("Description").'</td>';
-	print '<td align="right">'.$langs->trans("Income").'</td>';
-	print '<td align="right">'.$langs->trans("VATToPay").'</td>';
+	print '<td align="left">'.$elementcust.'</td>';
+	print '<td align="left">'.$productcust.'</td>';
+	print '<td align="right">'.$amountcust.'</td>';
+	print '<td align="right">'.$vatcust.'</td>';
 	print '</tr>';
-	//foreach($x_both as $rate => $both){
-	foreach(array_keys($x_coll) as $rate){
-		$var=!$var;
-		if(is_array($x_both[$rate]['coll']['detail'])){
+	$var=true;
+	foreach(array_keys($x_coll) as $rate)
+	{
+		if (is_array($x_both[$rate]['coll']['detail']))
+		{
 			print "<tr>";
-			print '<td class="tax_rate">'.$langs->trans("Rate").': '.$rate.'%</td><td colspan="3"></td>';
+			print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="3"></td>';
 			print '</tr>'."\n";
-			foreach($x_both[$rate]['coll']['detail'] as $index=>$fields){
+			foreach($x_both[$rate]['coll']['detail'] as $index => $fields)
+			{
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap align="left">'.$fields['link'].'</td>';
-				print '<td align="left">'.$fields['descr'].'</td>';
+				print '<td align="left">';
+				if ($fields['pid']) {
+					$product_static->id=$fields['pid'];
+					$product_static->ref=$fields['pref'];
+					$product_static->fk_product_type=$fields['ptype'];
+					print $product_static->getNomUrl(1);
+					if ($fields['descr']) print ' - ';
+				}
+				print dolibarr_trunc($fields['descr'],24).'</td>';
 				print '<td nowrap align="right">'.price($fields['totalht']).'</td>';
 				print '<td nowrap align="right">'.price($fields['vat']).'</td>';
 				print '</tr>';
@@ -199,23 +252,26 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 	//print table headers for this quadri - expenses now
 	//imprime les en-tete de tables pour ce quadri - maintenant les dépenses
 	print '<tr class="liste_titre">';
-	print '<td align="left">'.$langs->trans("SuppliersInvoices").'</td>';
-	print '<td align="left">'.$langs->trans("Description").'</td>';
-	print '<td align="right">'.$langs->trans("Outcome").'</td>';
-	print '<td align="right">'.$langs->trans("VATToCollect").'</td>';
+	print '<td align="left">'.$elementsup.'</td>';
+	print '<td align="left">'.$productsup.'</td>';
+	print '<td align="right">'.$amountsup.'</td>';
+	print '<td align="right">'.$vatsup.'</td>';
 	print '</tr>'."\n";
-	foreach(array_keys($x_paye) as $rate){
-		$var=!$var;
+	$var=true;
+	foreach(array_keys($x_paye) as $rate)
+	{
 		if(is_array($x_both[$rate]['paye']['detail']))
 		{
 			print "<tr>";
-			print '<td class="tax_rate">'.$langs->trans("Rate").': '.$rate.'%</td><td colspan="3"></td>';
+			print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="3"></td>';
 			print '</tr>'."\n";
 			foreach($x_both[$rate]['paye']['detail'] as $index=>$fields){
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap align="left">'.$fields['link'].'</td>';
-				print '<td align="left">'.$fields['descr'].'</td>';
+				print '<td align="left">';
+				print $fields['pid'];
+				print $fields['descr'].'</td>';
 				print '<td nowrap align="right">'.price($fields['totalht']).'</td>';
 				print '<td nowrap align="right">'.price($fields['vat']).'</td>';
 				print '</tr>';
@@ -257,195 +313,4 @@ echo '</table>';
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
-
-/**
- * Gets VAT to collect for the given month of the given year
- * 
- * The function gets the VAT in split results, as the VAT declaration asks
- * to report the amounts for different VAT rates as different lines.
- * This function also accounts recurrent invoices 
- * @param		object		Database handler object
- * @param		integer		Year
- * @param		integer		Year quarter (1-4)
- */
-function tva_coll($db,$y,$q)
-{
-	global $conf, $modecompta;
-	
-    // Define sql request
-	$sql='';
-	if ($modecompta == "CREANCES-DETTES")
-    {
-        // If vat payed on due invoices (non draft)
-        $sql = "SELECT d.rowid, d.fk_facture as facid, f.facnumber as facnum, d.tva_taux as rate, d.total_ht as totalht, d.total_tva as amount, d.description as descr";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
-        $sql.= " ".MAIN_DB_PREFIX."facturedet as d" ;
-        $sql.= " WHERE ";
-        $sql.= " f.fk_statut in (1,2)";	// Validated or payed (partially or completely)
-        $sql.= " AND f.rowid = d.fk_facture";
-        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-        $sql.= " ORDER BY rate, facid, d.rowid";
-    }
-    else
-    {
-        // If vat payed on payments
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
-		{
-	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
-	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-	        // detail part tva et part ht).
-		}
-		if ($conf->global->MAIN_MODULE_COMPTABILITE)
-		{		
-	        // Tva sur factures payés (should be on payment)
-	        $sql = "SELECT d.rowid, d.fk_facture as facid, f.facnumber as facnum, d.tva_taux as rate, d.total_ht as totalht, d.total_tva as amount, d.description as descr";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
-	        $sql.= " ".MAIN_DB_PREFIX."facturedet as d" ;
-	        $sql.= " WHERE ";
-			$sql.= " f.fk_statut in (2)";	// Payed (partially or completely)
-	        $sql.= " AND f.rowid = d.fk_facture";
-	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-	        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-	        $sql.= " ORDER BY d.rowid, rate, facid";
-		}
-    }
-
-	if ($sql)
-	{
-		dolibarr_syslog("Client::tva_coll sql=".$sql);
-	    $resql = $db->query($sql);
-	    if ($resql)
-	    {
-	    	$list = array();
-	    	$rate = -1;
-	    	while($assoc = $db->fetch_array($resql))
-	    	{
-	    		if($assoc['rate'] != $rate){ //new rate
-	    			$list[$assoc['rate']]['totalht'] = $assoc['totalht'];
-	    			$list[$assoc['rate']]['vat'] = $assoc['amount'];
-	    		}else{
-	    			$list[$assoc['rate']]['totalht'] += $assoc['totalht'];
-	    			$list[$assoc['rate']]['vat'] += $assoc['amount'];
-	    		}
-				$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-				$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];    			
-				$list[$assoc['rate']]['descr'][] = $assoc['descr'];    			
-				$list[$assoc['rate']]['totalht_list'][] = $assoc['totalht']; 			
-				$list[$assoc['rate']]['vat_list'][] = $assoc['amount']; 			
-	    		$rate = $assoc['rate'];
-	    	}
-			return $list;
-	    }
-	    else
-	    {
-	        dolibarr_print_error($db);
-			return -2;
-	    }
-	}
-	else
-	{
-			return -1;
-	}
-}
-
-
-/**
- * Gets VAT to pay for the given month of the given year
- * 
- * The function gets the VAT in split results, as the VAT declaration asks
- * to report the amounts for different VAT rates as different lines. 
- * @param		object		Database handler object
- * @param		integer		Year
- * @param		integer		Year quarter (1-4)
- */
-function tva_paye($db, $y,$q)
-{
-	global $conf, $modecompta;
-
-    // Define sql request
-   	$sql='';
-	if ($modecompta == "CREANCES-DETTES")
-    {
-        // Si on paye la tva sur les factures dues (non brouillon)
-        $sql = "SELECT d.rowid, d.fk_facture_fourn as facid, f.facnumber as facnum, d.tva_taux as rate, d.total_ht as totalht, d.tva as amount, d.description as descr ";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ";
-        $sql.= " ".MAIN_DB_PREFIX."facture_fourn_det as d " ;
-        $sql.= " WHERE ";
-        $sql.= " f.fk_statut in (1,2)";	// Validated or payed (partially or completely)
-        $sql.= " AND f.rowid = d.fk_facture_fourn ";
-        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-        $sql.= " ORDER BY d.rowid, rate, facid ";
-    }
-    else
-    {
-        // Si on paye la tva sur les payments
-
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
-		{
-	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
-	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-	        // detail part tva et part ht).
-		}
-		if ($conf->global->MAIN_MODULE_COMPTABILITE)
-		{
-	        // Tva sur factures payés
-	        $sql = "SELECT d.rowid, d.fk_facture_fourn as facid, f.facnumber as facnum, d.tva_taux as rate, d.total_ht as totalht, d.tva as amount, d.description as descr ";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ";
-	        $sql.= " ".MAIN_DB_PREFIX."facture_fourn_det as d " ;
-	        $sql.= " WHERE ";
-	        //$sql.= " f.fk_statut in (1,2)";	// Validated or payed (partially or completely)
-	        $sql.= " f.paye in (1)";		// Payed (completely)
-	        $sql.= " AND f.rowid = d.fk_facture_fourn ";
-	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-	        $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-	        $sql.= " ORDER BY d.rowid, rate, facid ";
-		}
-	}
-
-	if ($sql)
-	{
-		dolibarr_syslog("Client::tva_paye sql=".$sql);
-	    $resql = $db->query($sql);
-	    if ($resql)
-	    {
-			$list = array();
-	    	$rate = -1;
-	    	while($assoc = $db->fetch_array($resql))
-	    	{
-	    		if($assoc['rate'] != $rate){ //new rate
-	    			$list[$assoc['rate']]['totalht'] = $assoc['totalht'];
-	    			$list[$assoc['rate']]['vat'] = $assoc['amount'];
-	    		}else{
-	    			$list[$assoc['rate']]['totalht'] += $assoc['totalht'];
-	    			$list[$assoc['rate']]['vat'] += $assoc['amount'];
-	    		}
-				$list[$assoc['rate']]['facid'][] = $assoc['facid'];
-				$list[$assoc['rate']]['facnum'][] = $assoc['facnum'];    			
-				$list[$assoc['rate']]['descr'][] = $assoc['descr'];  
-				$list[$assoc['rate']]['totalht_list'][] = $assoc['totalht']; 			
-				$list[$assoc['rate']]['vat_list'][] = $assoc['amount']; 			
-	    		$rate = $assoc['rate'];
-	    	}
-			return $list;
-
-	    }
-	    else
-	    {
-	        dolibarr_print_error($db);
-			return -2;
-	    }
-	}
-	else
-	{
-		return -1;
-	}		
-}
-
 ?>

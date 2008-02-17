@@ -1,0 +1,27 @@
+# Dolibarr language file - es_ES - projects
+Project=Proyecto
+Projects=Proyectos
+Myprojects=Mis proyectos
+ProjectsArea=Area proyectos
+NewProject=Nuevo proyecto
+AddProject=Crear proyecto
+DeleteAProject=Eliminar un proyecto
+OfficerProject=Responsable del proyecto
+ConfirmDeleteAProject=¿Está seguro de querer eliminar este proyecto?
+LastProjects=Los %s últimos proyectos
+AllProjects=Todos los proyectos
+ShowProject=Añadir proyecto
+SetProject=Definir proyecto
+NoProject=Ningún proyecto definido
+NbOpenTasks=Nº Tareas abiertas
+Mytasks=Mis tareas
+Tasks=Tareas
+Task=Tarea
+NewTask=Nueva tarea
+AddDuration=Indicar duración
+Activity=Actividad
+MyActivity=Mi actividad
+DurationEffective=Duración efectiva
+ListProposalsAssociatedProject=Listado de presupuestos asociados al proyecto
+ListOrdersAssociatedProject=Listado de pedidos asociados al proyecto
+ListInvoicesAssociatedProject=Listado de facturas asociadas al proyecto

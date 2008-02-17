@@ -682,7 +682,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'57','Socié
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'58','Entreprise Unipersonnelle à Responsabilité Limitée (EURL)');
                                                                      
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'61','Caisse d\'épargne et de prévoyance');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Groupement d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Groupement d\'intérêt économique (GIE)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'63','Société coopérative agricole');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'64','Société non commerciale d\'assurances');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'65','Société civile');
@@ -732,21 +732,39 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '609', 'Fo
 -- Pour le Royaume Uni
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '700', 'Sole Trader');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '701', 'Partnership');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '702', 'Private Limited Company by shares - (LTD)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '702', 'Private Limited Company by shares (LTD)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '703', 'Public Limited Company');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '704', 'Workers Cooperative');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '705', 'Limited Liability Partnership');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '706', 'Franchise');
 
 -- Pour la Tunisie (Formes les plus utilisées)
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1000','Société à responsabilité limitée SARL');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1001','Société en Nom Collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1002','Société en Commandite Simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1000','Société à responsabilité limitée (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1001','Société en Nom Collectif (SNC)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1002','Société en Commandite Simple (SCS)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1003','société en participation');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1004','Société Anonyme SA');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','Société Unipersonnelle à Responsabilité Limitée SUARL');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d\'intérêt économique GEI');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1004','Société Anonyme (SA)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','Société Unipersonnelle à Responsabilité Limitée (SUARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d\'intérêt économique (GEI)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de sociétés');
+
+-- Spain
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('401', 4, 'Empresario Individual', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('402', 4, 'Comunidad de Bienes', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('403', 4, 'Sociedad Civil', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('404', 4, 'Sociedad Colectiva', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('405', 4, 'Sociedad Limitada', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('406', 4, 'Sociedad Anonima', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('407', 4, 'Sociedad Comandataria por Acciones', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('408', 4, 'Sociedad Comandataria Simple', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('409', 4, 'Sociedad Laboral', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('410', 4, 'Sociedad Cooperativa', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('411', 4, 'Sociedad de Garantía Recíproca', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('412', 4, 'Entidad de Capital-Riesgo', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('413', 4, 'Agrupación de Interes Económico', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('414', 4, 'Sociedad de Invarsión Mobiliaria', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('415', 4, 'Agrupación sin Animo de Lucro', 1);
+
 
 --
 -- Types paiement
@@ -772,6 +790,7 @@ insert into llx_c_paiement (id,code,libelle,type,active) values (11,'PRO', 'Prof
 --
 
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
+
 -- Regions de France (id pays=1)
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 101, 1,   1,'97105',3,'Guadeloupe');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 102, 1,   2,'97209',3,'Martinique');
@@ -834,6 +853,27 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 -- Regions d'Australie (id pays=28)
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (2801,28,2801,     '',0,'Australia');
 
+-- Regions spain (id pays=4)
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (401,  4, '', 1, 'Andalucia', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (402,  4, '', 2, 'Aragón', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (403,  4, '', 3, 'Castilla y León', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (404,  4, '', 4, 'Castilla la Mancha', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (405,  4, '', 5, 'Canarias', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (406,  4, '', 6, 'Cataluña', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (407,  4, '', 7, 'Comunidad de Ceuta', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (408,  4, '', 8, 'Comunidad Foral de Navarra', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (409,  4, '', 9, 'Comunidad de Melilla', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (410,  4, '', 10, 'Cantabria', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (411,  4, '', 11, 'Comunidad Valenciana', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (412,  4, '', 12, 'Extemadura', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (413,  4, '', 13, 'Galicia', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (414,  4, '', 14, 'Islas Baleares', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (415,  4, '', 15, 'La Rioja', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (416,  4, '', 16, 'Comunidad de Madrid', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (417,  4, '', 17, 'Región de Murcia', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (418,  4, '', 18, 'Principado de Asturias', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (419,  4, '', 19, 'Pais Vasco', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (420,  4, '', 20, 'Otros', 1);
 
 
 --
@@ -841,6 +881,7 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 --
 
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,'0','0',0,'-','-');
+
 -- Departements de France
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'AIN','Ain');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (22,'02','02408',5,'AISNE','Aisne');
@@ -965,6 +1006,62 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801,'TAS','',1,'','Tasmania');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801, 'WA','',1,'','Western Australia');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801, 'NT','',1,'','Northern Territory');
+
+-- Provinces Spain
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('01', 419, '', 19, 'PAIS VASCO', 'País Vasco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('02', 404, '', 4, 'ALBACETE', 'Albacete', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('03', 411, '', 11, 'ALICANTE', 'Alicante', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('04', 401, '', 1, 'ALMERIA', 'Almería', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('05', 403, '', 3, 'AVILA', 'Avila', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('06', 412, '', 12, 'BADAJOZ', 'Badajoz', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('07', 414, '', 14, 'ISLAS BALEARES', 'Islas Baleares', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('08', 406, '', 6, 'BARCELONA', 'Barcelona', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('09', 403, '', 8, 'BURGOS', 'Burgos', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('10', 412, '', 12, 'CACERES', 'Cáceres', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('11', 401, '', 1, 'CADIz', 'Cádiz', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('12', 411, '', 11, 'CASTELLON', 'Castellón', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('13', 404, '', 4, 'CIUDAD REAL', 'Ciudad Real', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('14', 401, '', 1, 'CORDOBA', 'Córdoba', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('15', 413, '', 13, 'LA CORUÑA', 'La Coruña', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('16', 404, '', 4, 'CUENCA', 'Cuenca', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('17', 406, '', 6, 'GERONA', 'Gerona', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('18', 401, '', 1, 'GRANADA', 'Granada', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('19', 404, '', 4, 'GUADALAJARA', 'Guadalajara', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('20', 419, '', 19, 'GUIPUZCOA', 'Guipúzcoa', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('21', 401, '', 1, 'HUELVA', 'Huelva', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('22', 402, '', 2, 'HUESCA', 'Huesca', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('23', 401, '', 1, 'JAEN', 'Jaén', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('24', 403, '', 3, 'LEON', 'León', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('25', 406, '', 6, 'LERIDA', 'Lérida', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('26', 415, '', 15, 'LA RIOJA', 'La Rioja', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('27', 413, '', 13, 'LUGO', 'Lugo', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('28', 416, '', 16, 'MADRID', 'Madrid', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('29', 401, '', 1, 'MALAGA', 'Málaga', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('30', 417, '', 17, 'MURCIA', 'Murcia', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('31', 408, '', 8, 'NAVARRA', 'Navarra', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('32', 413, '', 13, 'ORENSE', 'Orense', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('33', 418, '', 18, 'ASTURIAS', 'Asturias', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('34', 403, '', 3, 'PALENCIA', 'Palencia', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('35', 405, '', 5, 'LAS PALMAS', 'Las Palmas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('36', 413, '', 13, 'PONTEVEDRA', 'Pontevedra', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('37', 403, '', 3, 'SALAMANCA', 'Salamanca', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('38', 405, '', 5, 'STA. CRUZ DE TENERIFE', 'Sta. Cruz de Tenerife', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('39', 410, '', 10, 'CANTABRIA', 'Cantabria', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('40', 403, '', 3, 'SEGOVIA', 'Segovia', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('41', 401, '', 1, 'SEVILLA', 'Sevilla', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('42', 403, '', 3, 'SORIA', 'Soria', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('43', 406, '', 6, 'TARRAGONA', 'Tarragona', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('44', 402, '', 2, 'TERUEL', 'Teruel', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('45', 404, '', 5, 'TOLEDO', 'Toledo', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('46', 411, '', 11, 'VALENCIA', 'Valencia', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('47', 403, '', 3, 'VALLADOLID', 'Valladolid', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('48', 419, '', 19, 'VIZCAYA', 'Vizcaya', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('49', 403, '', 3, 'ZAMORA', 'Zamora', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('50', 402, '', 1, 'ZARAGOZA', 'Zaragoza', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('51', 407, '', 7, 'CEUTA', 'Ceuta', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('52', 409, '', 9, 'MELILLA', 'Melilla', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('53', 420, '', 20, 'OTROS', 'Otros', 1);
+
 
 
 --

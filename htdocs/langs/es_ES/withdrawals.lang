@@ -1,0 +1,18 @@
+# Dolibarr language file - es_ES - withdrawals
+StandingOrdersArea=Area domiciliaciones
+CustomersStandingOrdersArea=Area domiciliaciones de clientes
+StandingOrders=Domiciliaciones
+StandingOrder=Domiciliación
+NewStandingOrder=Nueva domiciliación
+Withdrawals=Reintegros
+Withdrawal=Reintegro
+WithdrawalsReceipts=Ordenes domiciliadas
+WithdrawalReceipt=Orden domiciliación
+WithdrawalReceiptShort=Orden
+LastWithdrawalReceipts=Las %s últimas órdenes de proceso
+WithdrawedBills=Facturas domiciliadas
+WithdrawalsLines=Lineas de domiciliacion
+RequestStandingOrderToTreat=Pedidos de domiciliaciones a tratar
+RequestStandingOrderTreated=Pedidos de domiciliaciones procesados
+CustomersStandingOrders=Domiciliaciones de clientes
+CustomerStandingOrder=Domiciliación cliente

@@ -1,0 +1,133 @@
+# Dolibarr language file - es_ES - orders
+OrdersArea=Area pedidos
+OrderCard=Ficha pedido
+Order=Pedido
+Orders=Pedidos
+OrderFollow=Seguimiento
+OrderContact=Contacos pedido
+OrderDate=Fecha pedido
+NewOrder=Nuevo pedido
+ToOrder=Realizar pedido
+MakeOrder=Realizar pedido
+SupplierOrder=Pedido a proveedor
+SuppliersOrders=Pedidos a proveedor
+SuppliersOrdersRunning=Pedidos a proveedor en curso
+CustomerOrder=Pedido de cliente
+CustomersOrders=Pedidos de cliente
+CustomersOrdersRunning=Pedidos de cliente en curso
+OrdersToValid=Pedidos a validar
+OrdersToBill=Pedidos a facturar
+OrdersInProcess=Pedidos en proceso
+OrdersToProcess=Pedidos a procesar
+StatusOrderCanceledShort=Anulado
+StatusOrderDraftShort=Borrador
+StatusOrderValidatedShort=Validado
+StatusOrderOnProcessShort=En curso
+StatusOrderProcessedShort=Procesado
+StatusOrderToBillShort=A facturar
+StatusOrderApprovedShort=Aprovado
+StatusOrderRefusedShort=Rechazado
+StatusOrderReceivedPartiallyShort=Recibido parcialmente
+StatusOrderReceivedAllShort=Recibido
+StatusOrderCanceled=Anulado
+StatusOrderDraft=Borrador (a validar)
+StatusOrderValidated=Validado
+StatusOrderOnProcess=En proceso
+StatusOrderProcessed=Procesado
+StatusOrderToBill=A facturar
+StatusOrderApproved=Aprobado
+StatusOrderRefused=Rechazado
+StatusOrderReceivedPartially=Recibido parcialmente
+StatusOrderReceivedAll=Recibido
+DraftOrWaitingApproved=Borrador o aprobado aún no controlado
+DraftOrWaitingShipped=Borrador o validado aún no expedido
+SearchOrder=Buscar un pedido
+MenuOrdersToBill=Pedidos a facturar
+Sending=Envío
+Sendings=Envíos
+ShipProduct=Enviar producto
+VAT=IVA
+Discount=Descuento
+CreateOrder=Crear pedido
+RefuseOrder=Rechazar el pedido
+ApproveOrder=Aceptar el pedido
+ValidateOrder=Validar el pedido
+DeleteOrder=Eliminar el pedido
+CancelOrder=Anular el pedido
+AddOrder=Crear pedido
+AddToMyOrders=añadir a mis pedidos
+AddToOtherOrders=Añadir a otros pedidos
+ShowOrder=Mostrar pedido
+NoOpenedOrders=Níngun pedido borrador
+NoOtherOpenedOrders=Ningún otro pedido borrador
+OtherOrders=Otros pedidos
+LastOrders=Los %s últimos pedidos
+LastModifiedOrders=Los %s últimos pedidos modificados
+LastClosedOrders=Los %s últimos pedidos cerrados
+AllOrders=Todos los pedidos
+NbOfOrders=Número de pedidos
+OrdersStatistics=Estadísticas de pedidos
+NumberOfOrdersByMonth=Número de pedidos por mes
+ListOfOrders=Listado de pedidos
+CloseOrder=Cerrar pedido
+ConfirmCloseOrder=¿Está seguro de querer cerrar este pedidi? Una vez cerrado, deberá facturarse
+ConfirmCloseOrderIfSending=¿Está seguro de querer cerrar este pedido? No debe cerrar un pedido  que aún no tiene sus productos enviados
+ConfirmDeleteOrder=¿Está seguro de querer eliminar este pedido?
+ConfirmValidateOrder=¿Está seguro de querer validar este pedido bajo la referencia <b>%s</b> ?
+ConfirmCancelOrder=¿Está seguro de querer anular este pedido?
+ConfirmMakeOrder=¿Está seguro de querer confirmar este pedido en fecha de<b>%s</b> ?
+GenerateBill=Facturar
+ClassifyBilled=Clasificar "Facturado"
+ComptaCard=Ficha contable
+DraftOrders=Pedidos borrador
+RelatedOrders=Pedidos adjuntos
+OnProcessOrders=Pedidos en proceso
+RefOrder=Ref. pedido
+RefCustomerOrder=Ref. pedido cliente
+CustomerOrder=Pedido de cliente
+RefCustomerOrderShort=Ref. ped. cliente
+SendOrderByMail=Enviar pedido por e-mail
+ActionsOnOrder=Acciones sobre el pedido
+NoArticleOfTypeProduct=No hay artículos de tipo 'producto' y por lo tanto enviables en este pedido
+OrderMode=Método de pedido
+AuthorRequest=Autor/Solicitante
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON no definida
+Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON no definida
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Error en la carga del archivo módulo '%s'
+Error_FailedToLoad_COMMANDE_ADDON_File=Error en la carga dle archivo módulo '%s'
+UseCustomerContactAsOrderRecipientIfExist=Utilizar dirección del contacto del cliente de seguimiento cliente si está definido en vez del tercero como destinatario de los pedidos
+
+# Sources
+
+OrderSource0=Presupuesto
+OrderSource1=Internet
+OrderSource2=Campaña por correo
+OrderSource3=Campaña telefónica
+OrderSource4=Campaña por fax
+OrderSource5=Comercial
+OrderSource6=Revistas
+QtyOrdered=Cant. pedida
+AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del pedido
+
+# einstein PDF Model
+
+PDFEinsteinDescription=Modelo de presupuesto completo (logo...)
+
+# NumRef Modules
+
+DefinedAndHasThisValue=Definido y válido
+IsNotDefined=No está definido
+
+# Emeraude
+
+EmeraudeNumRefModelDesc1=Devuelve el número bajo el formato CYYNNNNN donde YY es el año y NNNNN el número de incremento que comienza en 1
+EmeraudeNumRefModelDesc2=El año se incrementa en 1 y el número de incremento se vuelve a poner a cero al principio del ejercicio.
+EmeraudeNumRefModelDesc3=Defina el mes de inico de ejercicio en configuración ->empresa, p.ej.: septiembre.
+EmeraudeNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 un pedido nombrado C0800001
+
+# Rubis
+
+RubisNumRefModelDesc1=Devuelve el número bajo el formato CYYNNNNN donde YY es el año y NNNNN el número de incremento que comienza en 1
+RubisNumRefModelDesc2=El año se incrementa de 1 SIN volver a cero al inicio de ejercicio.
+RubisNumRefModelDesc3=Defina el mes de incio de ejercicio en configuración ->empresa, p.ej.: septiembre.
+RubisNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 un pedido nombrado C0800345

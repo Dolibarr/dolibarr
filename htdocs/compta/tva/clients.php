@@ -21,17 +21,20 @@
 
 /**
 	    \file       htdocs/compta/tva/clients.php
-        \ingroup    compta
+        \ingroup    tax
 		\brief      Page des societes
 		\version    $Id$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/tva.class.php");
 
+$langs->load("bills");
 $langs->load("compta");
 $langs->load("companies");
+$langs->load("products");
 
 $year=$_GET["year"];
 if ($year == 0 or $year!=intval(strval($year)))
@@ -77,17 +80,28 @@ $fsearch.='</form>';
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom=$langs->trans("ReportByCustomers");
-    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+    //$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
     $period=$year_start;
     $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("VATReportDesc");
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
+	
+	$elementcust=$langs->trans("CustomersInvoices");
+	$productcust=$langs->trans("Description");
+	$amountcust=$langs->trans("AmountHT");
+	$vatcust=$langs->trans("VATReceived");
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("VATToPay").')';
+	$elementsup=$langs->trans("SuppliersInvoices");
+	$productsup=$langs->trans("Description");
+	$amountsup=$langs->trans("AmountHT");
+	$vatsup=$langs->trans("VATPayed");
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("VATToCollect").')';
 }
 else {
     $nom=$langs->trans("ReportByCustomers");
-    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+    //$nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
     $period=$year_start;
     $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("VATReportDesc");
@@ -95,6 +109,17 @@ else {
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
+	
+	$elementcust=$langs->trans("CustomersInvoices");
+	$productcust=$langs->trans("Description");
+	$amountcust=$langs->trans("AmountHT");
+	$vatcust=$langs->trans("VATReceived");
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("VATToPay").')';
+	$elementsup=$langs->trans("SuppliersInvoices");
+	$productsup=$langs->trans("Description");
+	$amountsup=$langs->trans("AmountHT");
+	$vatsup=$langs->trans("VATPayed");
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("VATToCollect").')';
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
@@ -102,18 +127,18 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 // VAT Received
 
 print "<br>";
-print_fiche_titre($langs->trans("VATReceived"));
+print_fiche_titre($vatcust);
 
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print '<td align="left">'.$langs->trans("Num")."</td>";
-print '<td align="left">'.$langs->trans("Company")."</td>";
+print '<td align="left">'.$langs->trans("Customer")."</td>";
 print "<td>".$langs->trans("VATIntra")."</td>";
 print "<td align=\"right\">".$langs->trans("SalesTurnover")." ".$langs->trans("HT")."</td>";
-print "<td align=\"right\">".$langs->trans("VATReceived")."</td>";
+print "<td align=\"right\">".$vatcust."</td>";
 print "</tr>\n";
 
-$coll_list = tva_coll($db,$year_current);
+$coll_list = vat_received_by_customer($db,$year_current);
 if (is_array($coll_list))
 {
 	$var=true;
@@ -167,20 +192,20 @@ print '</table>';
 // VAT Payed
 
 print "<br>";
-print_fiche_titre($langs->trans("VATPayed"));
+print_fiche_titre($vatsup);
 
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print '<td align="left">'.$langs->trans("Num")."</td>";
-print '<td align="left">'.$langs->trans("Company")."</td>";
+print '<td align="left">'.$langs->trans("Supplier")."</td>";
 print "<td>".$langs->trans("VATIntra")."</td>";
 print "<td align=\"right\">".$langs->trans("Outcome")." ".$langs->trans("HT")."</td>";
-print "<td align=\"right\">".$langs->trans("VATPayed")."</td>";
+print "<td align=\"right\">".$vatsup."</td>";
 print "</tr>\n";
 
 $company_static=new Societe($db);
 
-$coll_list = tva_paye($db,$year_current);
+$coll_list = vat_payed_by_supplier($db,$year_current);
 if (is_array($coll_list))
 {
 	$var=true;
@@ -234,161 +259,4 @@ print '</table>';
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
-
-/**
- * 	\brief		Look for collectable VAT clients in the chosen year
- *	\param		db			Database handle
- *	\param		y			Year
- *	\return		array		Liste of third parties
- */
-function tva_coll($db,$y)
-{
-	global $conf, $modecompta;
-	
-    // Define sql request
-	$sql='';
-	if ($modecompta == "CREANCES-DETTES")
-    {
-        // If vat payed on due invoices (non draft)
-        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
-		$sql.= " sum(f.total) as amount, sum(f.tva) as tva,";
-		$sql.= " s.tva_assuj as assuj, s.rowid as socid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE ";
-        $sql.= " f.fk_statut in (1,2)";	// Validated or payed (partially or completely)
-        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-        $sql.= " AND s.rowid = f.fk_soc";
-        $sql.= " GROUP BY s.rowid";
-    }
-    else
-    {
-        // If vat payed on payments
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
-		{
-	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
-	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-	        // detail part tva et part ht).
-		}
-		if ($conf->global->MAIN_MODULE_COMPTABILITE)
-		{
-	        // Tva sur factures payés (should be on payment)
-	        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
-			$sql.= " sum(f.total) as amount, sum(f.tva) as tva,";
-			$sql.= " s.tva_assuj as assuj, s.rowid as socid";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-	        $sql.= " WHERE ";
-			$sql.= " f.fk_statut in (2)";	// Payed (partially or completely)
-			$sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-			$sql.= " AND s.rowid = f.fk_soc";
-			$sql.= " GROUP BY s.rowid";
-		}
-    }
-
-	if ($sql)
-	{
-		dolibarr_syslog("Client::tva_coll sql=".$sql);
-	    $resql = $db->query($sql);
-	    if ($resql)
-	    {
-	    	$list = array();
-	    	while($assoc = $db->fetch_array($resql))
-			{
-	        	$list[] = $assoc;
-	    	}
-			$db->free();
-	    	return $list;
-	    }
-	    else
-	    {
-	        dolibarr_print_error($db);
-			return -2;
-	    }
-	}
-	else
-	{
-			return -1;
-	}
-}
-
-
-/**
- * 	Get payable VAT
- *	@param		resource	Database handle
- *	@param		int			Year
- */
-function tva_paye($db, $y)
-{
-	global $conf, $modecompta;
-
-    // Define sql request
-   	$sql='';
-	if ($modecompta == "CREANCES-DETTES")
-    {
-        // Si on paye la tva sur les factures dues (non brouillon)
-        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
-		$sql.= " sum(f.total_ht) as amount, sum(f.total_tva) as tva,";
-		$sql.= " s.tva_assuj as assuj, s.rowid as socid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE ";
-        $sql.= " f.fk_statut in (1,2)";	// Validated or payed (partially or completely)
-        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-        $sql.= " AND s.rowid = f.fk_soc ";
-        $sql.= " GROUP BY s.rowid";
-    }
-    else
-    {
-        // Si on paye la tva sur les payments
-
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
-		{
-	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
-	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-	        // detail part tva et part ht).
-		}
-		if ($conf->global->MAIN_MODULE_COMPTABILITE)
-		{
-	        // Tva sur factures payés
-	        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
-			$sql.= " sum(f.total_ht) as amount, sum(f.total_tva) as tva,";
-			$sql.= " s.tva_assuj as assuj, s.rowid as socid";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
-	        $sql.= " WHERE ";
-	        //$sql.= " f.fk_statut in (2)";	// Payed (partially or completely)
-	        $sql.= " f.paye in (1)";		// Payed (completely)
-	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-	        $sql.= " AND s.rowid = f.fk_soc ";
-	        $sql.= " GROUP BY s.rowid";
-		}
-    }
-
-	if ($sql)
-	{
-		dolibarr_syslog("Client::tva_paye sql=".$sql);
-	    $resql = $db->query($sql);
-	    if ($resql)
-	    {
-	    	$list = array();
-	    	while($assoc = $db->fetch_array($resql))
-			{
-	        	$list[] = $assoc;
-	    	}
-	    	return $list;
-	    }
-	    else
-	    {
-	        dolibarr_print_error($db);
-			return -2;
-		}
-	}
-	else
-	{
-		return -1;
-	}
-}
-
 ?>

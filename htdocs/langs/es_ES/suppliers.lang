@@ -1,0 +1,24 @@
+# Dolibarr language file - es_ES - suppliers
+Suppliers=Proveedores
+Supplier=Proveedor
+AddSupplier=Añadir proveedor
+SupplierRemoved=Proveedor eliminado
+SuppliersInvoice=Factura proveedor
+SuppliersInvoices=Facturas proveedores
+NewSupplier=Nuevo proveedor
+History=Histórico
+ListOfSuppliers=Listado de proveedores
+ShowSupplier=Mostrar proveedor
+OrderDate=Data pedido
+BuyingPrice=Precio de compra
+AddSupplierPrice=Añadir precio de proveedor
+ChangeSupplierPrice=Modificar precio de proveedor
+ErrorQtyTooLowForThisSupplier=Cantidad insuficiente para este proveedor
+ErrorSupplierCountryIsNotDefined=El país de este proveedor no está definido, corrígalo en su ficha
+ProductHasAlreadyReferenceInThisSupplier=Este producto ya tiene una referencia en este proveedor
+NoRecordedSuppliers=Sin proveedores registrados
+SupplierPayment=Pago a proveedor
+SuppliersArea=Area proveedores
+RefSupplierShort=Ref. proveedor
+ExportDataset_fournisseur_1=Facturas de proveedores y lineas de factura
+ExportDataset_fournisseur_2=Facturas proveedores y pagos

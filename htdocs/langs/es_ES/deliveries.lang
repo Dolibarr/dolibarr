@@ -1,0 +1,9 @@
+# Dolibarr language file - es_ES - deliveries
+Delivery=Envío
+Deliveries=Envíos
+DeliveryCard=Ficha envío
+DeliveryOrder=Orden de envío
+DeliveryOrders=Ordenes de envío
+DeliveryDate=Fecha de envío
+CreateDeliveryOrder=Generar orden de entrega
+QtyDelivered=Cant. enviada
