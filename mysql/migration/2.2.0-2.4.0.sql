@@ -190,4 +190,5 @@ ALTER TABLE llx_events ADD INDEX idx_events_dateevent (dateevent);
 
 ALTER TABLE llx_c_forme_juridique ADD isvatexempted	tinyint DEFAULT 0  NOT NULL after libelle;
 
-
+ALTER TABLE llx_facturedet        ADD product_type	  integer      DEFAULT 0 after total_ttc;
+ALTER TABLE llx_facture_fourn_det ADD product_type	  integer      DEFAULT 0 after total_ttc;

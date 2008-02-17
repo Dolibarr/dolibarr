@@ -36,6 +36,7 @@ create table llx_facturedet
   total_ht            real,	             	           -- Total HT de la ligne toute quantité et incluant remise ligne et globale
   total_tva           real,	             	           -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
   total_ttc           real,	             	           -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  product_type		  integer      DEFAULT 0,
   date_start          datetime,          	           -- date debut si service
   date_end            datetime,                      -- date fin si service
   info_bits		        integer    DEFAULT 0, 	       -- TVA NPR ou non

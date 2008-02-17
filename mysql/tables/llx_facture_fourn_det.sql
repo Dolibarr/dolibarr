@@ -30,6 +30,6 @@ create table llx_facture_fourn_det
   tva_taux          double(24,8) DEFAULT 0,
   total_ht          double(24,8) DEFAULT 0,
   tva               double(24,8) DEFAULT 0,
-  total_ttc         double(24,8) DEFAULT 0
-
+  total_ttc         double(24,8) DEFAULT 0,
+  product_type		integer      DEFAULT 0
 )type=innodb;
