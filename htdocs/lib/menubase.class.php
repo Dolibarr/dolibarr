@@ -421,6 +421,7 @@ class Menubase
 	{
 		global $user, $conf, $user;
 
+		include_once(DOL_DOCUMENT_ROOT.'/lib/admin.lib.php');	// Because later some eval try to run dynamic call to dolibarr_get_const
 		$constraint = true;
 
 		$sql = "SELECT c.rowid, c.action, mc.user";
@@ -431,12 +432,12 @@ class Menubase
 		if ($result) 
 		{
 			//echo $sql;
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($result);
 			$i = 0;
 			while (($i < $num) && $constraint == true) 
 			{
 				$obj = $this->db->fetch_object($result);
-				$strconstraint = "if(!(" . $obj->action . ")) { \$constraint = false;}";
+				$strconstraint = "if(!(" . $obj->action . ")) { \$constraint = false; }";
 
 				eval ($strconstraint);
 				$i++;
