@@ -164,8 +164,9 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 *    \brief      Recupére l'objet facture et ses lignes de factures
-	 *    \param      rowid       id de la facture a récupérer
+	 *    	\brief      Recupére l'objet facture et ses lignes de factures
+	 *    	\param      rowid       id de la facture a récupérer
+	 *		\return     int         >0 si ok, <0 si ko
 	 */
 	function fetch($rowid)
 	{
@@ -213,54 +214,14 @@ class FactureFournisseur extends Facture
 				/*
 				* Lignes
 				*/
-				$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.tva_taux, f.tva';
-				$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type';
-				$sql.= ', p.ref, p.label as label, p.description as product_desc';
-				//$sql.= ', pf.ref_fourn';
-				$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
-				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
-				//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON f.fk_product = pf.fk_product';
-				$sql.= ' WHERE fk_facture_fourn='.$this->id;
-
-				dolibarr_syslog("FactureFourn::Fetch search lines sql=".$sql, LOG_DEBUG);
-				$resql_rows = $this->db->query($sql);
-				if ($resql_rows)
+				$result=$this->fetch_lines();
+				if ($result < 0)
 				{
-					$num_rows = $this->db->num_rows($resql_rows);
-					if ($num_rows)
-					{
-						$i = 0;
-						while ($i < $num_rows)
-						{
-							$obj = $this->db->fetch_object($resql_rows);
-							$this->lignes[$i]->rowid            = $obj->rowid;
-							$this->lignes[$i]->description      = $obj->description;
-							$this->lignes[$i]->ref              = $obj->ref;             // Reference interne du produit
-							//$this->lignes[$i]->ref_fourn        = $obj->ref_fourn;       // Reference fournisseur du produit
-							$this->lignes[$i]->libelle          = $obj->label;           // Label du produit
-							$this->lignes[$i]->product_desc     = $obj->product_desc;    // Description du produit
-							$this->lignes[$i]->pu_ht            = $obj->pu_ht;
-							$this->lignes[$i]->pu_ttc           = $obj->pu_ttc;
-							$this->lignes[$i]->tva_taux         = $obj->tva_taux;
-							$this->lignes[$i]->qty              = $obj->qty;
-							$this->lignes[$i]->tva              = $obj->tva;
-							$this->lignes[$i]->total_ht         = $obj->total_ht;
-							$this->lignes[$i]->total_tva        = $obj->total_tva;
-							$this->lignes[$i]->total_ttc        = $obj->total_ttc;
-							$this->lignes[$i]->fk_product       = $obj->fk_product;
-							$this->lignes[$i]->product_type     = $obj->product_type;
-							$i++;
-						}
-					}
-					$this->db->free($resql_rows);
-				}
-				else
-				{
-					dolibarr_syslog('FactureFournisseur::Fetch rowid='.$rowid.', Erreur dans fetch des lignes');
 					$this->error=$this->db->error();
-					dolibarr_print_error($this->db);
+					dolibarr_syslog('Facture::Fetch Error '.$this->error);
 					return -3;
 				}
+				return 1;
 			}
 			else
 			{
@@ -277,9 +238,66 @@ class FactureFournisseur extends Facture
 			dolibarr_print_error($this->db);
 			return -1;
 		}
-		return 1;
 	}
 
+	
+	/**
+		\brief      Recupére les lignes de factures dans this->lignes
+		\return     int         1 si ok, < 0 si erreur
+	*/
+	function fetch_lines()
+	{
+		$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.tva_taux, f.tva';
+		$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type';
+		$sql.= ', p.ref, p.label as label, p.description as product_desc';
+		//$sql.= ', pf.ref_fourn';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
+		//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON f.fk_product = pf.fk_product';
+		$sql.= ' WHERE fk_facture_fourn='.$this->id;
+
+		dolibarr_syslog("FactureFourn::fetch_lines sql=".$sql, LOG_DEBUG);
+		$resql_rows = $this->db->query($sql);
+		if ($resql_rows)
+		{
+			$num_rows = $this->db->num_rows($resql_rows);
+			if ($num_rows)
+			{
+				$i = 0;
+				while ($i < $num_rows)
+				{
+					$obj = $this->db->fetch_object($resql_rows);
+					$this->lignes[$i]->rowid            = $obj->rowid;
+					$this->lignes[$i]->description      = $obj->description;
+					$this->lignes[$i]->ref              = $obj->ref;             // Reference interne du produit
+					//$this->lignes[$i]->ref_fourn        = $obj->ref_fourn;       // Reference fournisseur du produit
+					$this->lignes[$i]->libelle          = $obj->label;           // Label du produit
+					$this->lignes[$i]->product_desc     = $obj->product_desc;    // Description du produit
+					$this->lignes[$i]->pu_ht            = $obj->pu_ht;
+					$this->lignes[$i]->pu_ttc           = $obj->pu_ttc;
+					$this->lignes[$i]->tva_taux         = $obj->tva_taux;
+					$this->lignes[$i]->qty              = $obj->qty;
+					$this->lignes[$i]->tva              = $obj->tva;
+					$this->lignes[$i]->total_ht         = $obj->total_ht;
+					$this->lignes[$i]->total_tva        = $obj->total_tva;
+					$this->lignes[$i]->total_ttc        = $obj->total_ttc;
+					$this->lignes[$i]->fk_product       = $obj->fk_product;
+					$this->lignes[$i]->product_type     = $obj->product_type;
+					$i++;
+				}
+			}
+			$this->db->free($resql_rows);
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog('FactureFournisseur::fetch_lines: Error '.$this->error,LOG_ERR);
+			return -3;
+		}
+	}
+	
+	
 	/**
 	 * \brief     Recupére l'objet fournisseur lié à la facture
 	 *
@@ -297,24 +315,33 @@ class FactureFournisseur extends Facture
 	 */
 	function delete($rowid)
 	{
+		$this->db->begin();
+		
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
+		dolibarr_syslog("FactureFournisseur sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid.' AND fk_statut = 0;';
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid.' AND fk_statut = 0';
+				dolibarr_syslog("FactureFournisseur sql=".$sql);
 				$resql2 = $this->db->query($sql);
 				if ($resql2)
 				{
+					$this->db->commit();
 					return 1;
 				}
 				else
 				{
-					dolibarr_print_error($this->db);
+					$this->db->rollback();
+					$this->error=$this->db->lasterror();
+					dolibarr_syslog("FactureFournisseur::delete ".$this->error);
 				}
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("FactureFournisseur::delete ".$this->error);
 		}
 	}
 

@@ -498,8 +498,8 @@ class Facture extends CommonObject
 				if ($this->statut == 0)	$this->brouillon = 1;
 
 				/*
-			* Lignes
-			*/
+				* Lignes
+				*/
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -586,7 +586,7 @@ class Facture extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog('Facture::fetch_lines: Error '.$this->error);
+			dolibarr_syslog('Facture::fetch_lines: Error '.$this->error,LOG_ERR);
 			return -3;
 		}
 	}
