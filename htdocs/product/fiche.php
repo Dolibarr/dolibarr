@@ -1348,7 +1348,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
     {
 
 
-      print '<tr class="liste_titre"><td width="50%" valign="top">';
+      print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
       print $langs->trans("AddToMyBills").'</td>';
 
       if ($user->rights->commercial->client->voir)
