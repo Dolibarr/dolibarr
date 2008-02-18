@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      �ric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
     	\file       htdocs/admin/societe.php
-		\ingroup    propale
+		\ingroup    company
 		\brief      Page d'administration/configuration du module Societe
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -42,7 +40,7 @@ if (!$user->admin)
  */
 if ($_GET["action"] == 'setcodeclient')
 {
-	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$_GET["value"]))
+	if (dolibarr_set_const($db, "SOCIETE_CODECLIENT_ADDON",$_GET["value"]) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -55,7 +53,7 @@ if ($_GET["action"] == 'setcodeclient')
 
 if ($_GET["action"] == 'setcodecompta')
 {
-	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON",$_GET["value"]))
+	if (dolibarr_set_const($db, "SOCIETE_CODECOMPTA_ADDON",$_GET["value"]) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
