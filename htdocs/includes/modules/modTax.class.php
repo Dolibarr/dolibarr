@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -17,18 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   tax		Module taxes
-        \brief      Module pour inclure des fonctions de saisies des taxes et charges sociales
+        \brief      Module pour inclure des fonctions de saisies des taxes (tva) et charges sociales
 */
 
 /**
         \file       htdocs/includes/modules/modTax.class.php
-        \ingroup    comptabilite
+        \ingroup    tax
         \brief      Fichier de description et activation du module Taxe
+		\version	$Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -64,7 +63,7 @@ class modTax extends DolibarrModules
         $this->picto='bill';
 	
 		// Config pages
-		$this->config_page_url = array();
+		$this->config_page_url = array("taxes.php");
 	
 		// D�pendances
 		$this->depends = array();

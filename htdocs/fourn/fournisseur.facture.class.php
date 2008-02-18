@@ -214,7 +214,7 @@ class FactureFournisseur extends Facture
 				* Lignes
 				*/
 				$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.tva_taux, f.tva';
-				$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product';
+				$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product, f.product_type';
 				$sql.= ', p.ref, p.label as label, p.description as product_desc';
 				//$sql.= ', pf.ref_fourn';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
@@ -248,6 +248,7 @@ class FactureFournisseur extends Facture
 							$this->lignes[$i]->total_tva        = $obj->total_tva;
 							$this->lignes[$i]->total_ttc        = $obj->total_ttc;
 							$this->lignes[$i]->fk_product       = $obj->fk_product;
+							$this->lignes[$i]->product_type     = $obj->product_type;
 							$i++;
 						}
 					}
@@ -388,7 +389,7 @@ class FactureFournisseur extends Facture
 		// Nettoyage paramètres
 		if ($txtva == '') $txtva=0;
 		$txtva=price2num($txtva);
-
+	
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 		$sql .= ' VALUES ('.$this->id.');';
@@ -453,7 +454,14 @@ class FactureFournisseur extends Facture
 		$pu_ht  = $tabprice[3];
 		$pu_tva = $tabprice[4];
 		$pu_ttc = $tabprice[5];
-
+		$product_type = 0;
+		if ($idproduct)
+		{
+			$product=new Product($this->db);
+			$result=$product->fetch($idproduct);
+			$product_type=$product->type;
+		}
+		
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn_det ';
 		$sql.= 'SET ';
 		$sql.= 'description =\''.addslashes($label).'\'';
@@ -466,6 +474,7 @@ class FactureFournisseur extends Facture
 		$sql.= ', total_ttc='.price2num($total_ttc);
 		if ($idproduct) $sql.= ', fk_product='.$idproduct;
 		else $sql.= ', fk_product=null';
+		$sql.= ', product_type='.$product_type;
 		$sql.= ' WHERE rowid = '.$id;
 
 		dolibarr_syslog("Fournisseur.facture::updateline sql=".$sql);

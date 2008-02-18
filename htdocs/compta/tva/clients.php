@@ -53,9 +53,9 @@ if($min == 0 or $min!=floatval(strval($min))){
 	//keep min
 }
 
-// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->compta->mode;
-if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+// Define modetax (0 or 1)
+$modetax = $conf->global->TAX_MODE;
+if ($_GET["modetax"]) $modetax=$_GET["modetax"];
 
 
 
@@ -77,13 +77,14 @@ $fsearch.='  <input type="submit" class="button" name="submit" value="'.$langs->
 $fsearch.='</form>';
 
 // Affiche en-tête du rapport
-if ($modecompta=="CREANCES-DETTES")
+if ($modetax==1)	// Caluclate on invoice for goods and services
 {
-    $nom=$langs->trans("ReportByCustomers");
-    //$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+    $nom=$langs->trans("VATReportByCustomersInDueDebtMode");
+    $nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
     $period=$year_start;
-    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
-    $description=$langs->trans("VATReportDesc");
+    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
+    $description=$langs->trans("RulesVATDue");
+    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -99,13 +100,14 @@ if ($modecompta=="CREANCES-DETTES")
 	$vatsup=$langs->trans("VATPayed");
 	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("VATToCollect").')';
 }
-else {
-    $nom=$langs->trans("ReportByCustomers");
-    //$nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+if ($modetax==0) 	// Invoice for goods, payment for services
+{
+    $nom=$langs->trans("VATReportByCustomersInInputOutputMode");
+    $nom.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=1">','</a>').')';
     $period=$year_start;
-    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
-    $description=$langs->trans("VATReportDesc");
-    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.img_warning().' '.$langs->trans('OptionModeTrueInfoModuleComptabilite');
+    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
+    $description=$langs->trans("RulesVATIn");
+    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -138,7 +140,7 @@ print "<td align=\"right\">".$langs->trans("SalesTurnover")." ".$langs->trans("H
 print "<td align=\"right\">".$vatcust."</td>";
 print "</tr>\n";
 
-$coll_list = vat_received_by_customer($db,$year_current);
+$coll_list = vat_received_by_customer($db,$year_current,$modetax);
 if (is_array($coll_list))
 {
 	$var=true;
@@ -183,7 +185,7 @@ if (is_array($coll_list))
 else
 {
 	print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-	print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
+	//print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
 }
 
 print '</table>';
@@ -205,7 +207,7 @@ print "</tr>\n";
 
 $company_static=new Societe($db);
 
-$coll_list = vat_payed_by_supplier($db,$year_current);
+$coll_list = vat_payed_by_supplier($db,$year_current,$modetax);
 if (is_array($coll_list))
 {
 	$var=true;
@@ -250,7 +252,7 @@ if (is_array($coll_list))
 else
 {
 	print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-	print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
+	//print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
 }
 
 print '</table>';

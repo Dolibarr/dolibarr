@@ -2041,7 +2041,7 @@ else
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql.= ' WHERE pf.fk_facture = '.$fac->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
 			$sql.= ' ORDER BY dp, tms';
-			
+
 			$result = $db->query($sql);
 			if ($result)
 			{
@@ -2305,7 +2305,7 @@ else
 			/*
 			* Lignes de factures
 			*/
-			$sql = 'SELECT l.fk_product, l.description, l.qty, l.rowid, l.tva_taux,';
+			$sql = 'SELECT l.fk_product, l.product_type, l.description, l.qty, l.rowid, l.tva_taux,';
 			$sql.= ' l.fk_remise_except,';
 			$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
 			$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
@@ -2376,6 +2376,7 @@ else
 						{
 							print '<td>';
 							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+							
 							if (($objp->info_bits & 2) == 2)
 							{
 								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$fac->socid.'">';
@@ -2397,7 +2398,9 @@ else
 							}
 							else
 							{
-								print nl2br($objp->description);
+								if ($objp->product_type==1) $text = img_object($langs->trans('Service'),'service');
+								else $text = img_object($langs->trans('Product'),'product');
+								print $text.' '.nl2br($objp->description);
 								print_date_range($objp->date_start,$objp->date_end);
 							}
 							print "</td>\n";

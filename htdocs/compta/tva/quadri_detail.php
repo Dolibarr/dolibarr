@@ -50,9 +50,9 @@ if ($year == 0 )
   $year_start = $year;
 }
 
-// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->compta->mode;
-if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
+// Define modetax (0 or 1)
+$modetax = $conf->global->TAX_MODE;
+if ($_GET["modetax"]) $modetax=$_GET["modetax"];
 
 
 
@@ -70,13 +70,14 @@ $product_static=new Product($db);
 print_fiche_titre($langs->trans("VAT"),"");
 
 // Affiche en-tête du rapport
-if ($modecompta=="CREANCES-DETTES")
+if ($modetax==1)	// Caluclate on invoice for goods and services
 {
-    $nom=$langs->trans("ReportByQuarter");
-    //$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+    $nom=$langs->trans("VATReportByQuartersInDueDebtMode");
+    $nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
     $period=$year_start;
-    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
-    $description=$langs->trans("VATReportDesc");
+    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
+    $description=$langs->trans("RulesVATDue");
+    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -92,13 +93,14 @@ if ($modecompta=="CREANCES-DETTES")
 	$vatsup=$langs->trans("VATPayed");
 	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("VATToCollect").')';
 }
-else {
-    $nom=$langs->trans("ReportByQuarter");
-    //$nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+if ($modetax==0) 	// Invoice for goods, payment for services
+{
+    $nom=$langs->trans("VATReportByQuartersInInputOutputMode");
+    $nom.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=1">','</a>').')';
     $period=$year_start;
-    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
-    $description=$langs->trans("VATReportDesc");
-    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.img_warning().' '.$langs->trans('OptionModeTrueInfoModuleComptabilite');
+    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
+    $description=$langs->trans("RulesVATIn");
+    if ($conf->global->MAIN_MODULE_COMPTABILITE) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	$description.=$fsearch;
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -131,21 +133,22 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 	$subtot_paye_total = 0;
 	$subtot_paye_vat = 0;
 	
-	$x_coll = vat_received_by_quarter($db, $y, $q);
-	$x_paye = vat_payed_by_quarter($db, $y, $q);
+	$x_coll = vat_by_quarter($db, $y, $q, $modetax, 'sell');
+	$x_paye = vat_by_quarter($db, $y, $q, $modetax, 'buy');
 	
-	if (! is_array($x_coll))
+	if (! is_array($x_coll) || ! is_array($x_paye))
 	{
 		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-		print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
+		//print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
 		break;
 	}
 	
 	$x_both = array();
 	//now, from these two arrays, get another array with one rate per line
-	foreach(array_keys($x_coll) as $my_coll_rate){
+	foreach(array_keys($x_coll) as $my_coll_rate)
+	{
 		$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
-		$x_both[$my_coll_rate]['coll']['vat'] = $x_coll[$my_coll_rate]['vat'];
+		$x_both[$my_coll_rate]['coll']['vat']     = $x_coll[$my_coll_rate]['vat'];
 		$x_both[$my_coll_rate]['paye']['totalht'] = 0;
 		$x_both[$my_coll_rate]['paye']['vat'] = 0;
 		$x_both[$my_coll_rate]['coll']['links'] = '';
@@ -155,14 +158,19 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 			$invoice_customer->id=$x_coll[$my_coll_rate]['facid'][$id];
 			$invoice_customer->ref=$x_coll[$my_coll_rate]['facnum'][$id];
 			$x_both[$my_coll_rate]['coll']['detail'][] = array(
-				'id'=>$x_coll[$my_coll_rate]['facid'][$id],
-				'descr'=>$x_coll[$my_coll_rate]['descr'][$id],
-				'pid'=>$x_coll[$my_coll_rate]['pid'][$id],
-				'pref'=>$x_coll[$my_coll_rate]['pref'][$id],
-				'ptype'=>$x_coll[$my_coll_rate]['ptype'][$id],
-				'link'=>$invoice_customer->getNomUrl(1),
-				'totalht'=>$x_coll[$my_coll_rate]['totalht_list'][$id],
-				'vat'=>$x_coll[$my_coll_rate]['vat_list'][$id]);				
+				'id'        =>$x_coll[$my_coll_rate]['facid'][$id],
+				'descr'     =>$x_coll[$my_coll_rate]['descr'][$id],
+				'pid'       =>$x_coll[$my_coll_rate]['pid'][$id],
+				'pref'      =>$x_coll[$my_coll_rate]['pref'][$id],
+				'ptype'     =>$x_coll[$my_coll_rate]['ptype'][$id],
+				'payment_id'=>$x_coll[$my_coll_rate]['payment_id'][$id],
+				'payment_amount'=>$x_coll[$my_coll_rate]['payment_amount'][$id],
+				'ftotal_ttc'=>$x_coll[$my_coll_rate]['ftotal_ttc'][$id],
+				'dtotal_ttc'=>$x_coll[$my_coll_rate]['dtotal_ttc'][$id],
+				'dtype'     =>$x_coll[$my_coll_rate]['dtype'][$id],
+				'totalht'   =>$x_coll[$my_coll_rate]['totalht_list'][$id],
+				'vat'       =>$x_coll[$my_coll_rate]['vat_list'][$id],
+				'link'      =>$invoice_customer->getNomUrl(1));
 			//$x_both[$my_coll_rate]['coll']['links'] .= '<a href="../facture.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
 		}
 	}
@@ -182,14 +190,19 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 			$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
 			$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
 			$x_both[$my_paye_rate]['paye']['detail'][] = array(
-				'id'=>$x_paye[$my_paye_rate]['facid'][$id],
-				'descr'=>$x_paye[$my_paye_rate]['descr'][$id],
-				'pid'=>$x_paye[$my_paye_rate]['pid'][$id],
-				'pref'=>$x_coll[$my_coll_rate]['pref'][$id],
-				'ptype'=>$x_coll[$my_coll_rate]['ptype'][$id],
-				'link'=>$invoice_supplier->getNomUrl(1),
-				'totalht'=>$x_paye[$my_paye_rate]['totalht_list'][$id],
-				'vat'=>$x_paye[$my_paye_rate]['vat_list'][$id]);				
+				'id'        =>$x_paye[$my_paye_rate]['facid'][$id],
+				'descr'     =>$x_paye[$my_paye_rate]['descr'][$id],
+				'pid'       =>$x_paye[$my_paye_rate]['pid'][$id],
+				'pref'      =>$x_paye[$my_paye_rate]['pref'][$id],
+				'ptype'     =>$x_paye[$my_paye_rate]['ptype'][$id],
+				'payment_id'=>$x_paye[$my_paye_rate]['payment_id'][$id],
+				'payment_amount'=>$x_paye[$my_paye_rate]['payment_amount'][$id],
+				'ftotal_ttc'=>$x_paye[$my_paye_rate]['ftotal_ttc'][$id],
+				'dtotal_ttc'=>$x_paye[$my_paye_rate]['dtotal_ttc'][$id],
+				'dtype'     =>$x_paye[$my_paye_rate]['dtype'][$id],
+				'totalht'   =>$x_paye[$my_paye_rate]['totalht_list'][$id],
+				'vat'       =>$x_paye[$my_paye_rate]['vat_list'][$id],
+				'link'      =>$invoice_supplier->getNomUrl(1));
 			//$x_both[$my_paye_rate]['paye']['links'] .= '<a href="../../fourn/facture/fiche.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$x_paye[$my_paye_rate]['facnum'][$id].'">..'.substr($x_paye[$my_paye_rate]['facnum'][$id],-2).'</a> ';
 		}
 	}
@@ -202,13 +215,21 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 	$x_coll_ht = 0;
 	$x_paye_sum = 0;
 	$x_paye_ht = 0;
+
+	$span=3;
+	if ($modetax == 0) $span+=2;
 	
-	print '<tr><td colspan="4">'.$langs->trans("Quadri")." $q (".strftime("%b %Y",dolibarr_mktime(12,0,0,(($q-1)*3)+1,1,$y)).' - '.strftime("%b %Y",dolibarr_mktime(12,0,0,($q*3),1,$y)).')</td></tr>';
+	print '<tr><td colspan="'.($span+1).'">'.$langs->trans("Quadri")." $q (".strftime("%b %Y",dolibarr_mktime(12,0,0,(($q-1)*3)+1,1,$y)).' - '.strftime("%b %Y",dolibarr_mktime(12,0,0,($q*3),1,$y)).')</td></tr>';
 	
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementcust.'</td>';
 	print '<td align="left">'.$productcust.'</td>';
-	print '<td align="right">'.$amountcust.'</td>';
+	if ($modetax == 0) 
+	{
+		print '<td align="right">'.$amountcust.'</td>';
+		print '<td align="right">'.$langs->trans("Payment").' (% of invoice)</td>';
+	}
+	print '<td align="right">'.$langs->trans("AmountHTVATRealReceived").'</td>';
 	print '<td align="right">'.$vatcust.'</td>';
 	print '</tr>';
 	$var=true;
@@ -217,7 +238,7 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 		if (is_array($x_both[$rate]['coll']['detail']))
 		{
 			print "<tr>";
-			print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="3"></td>';
+			print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.$span.'"></td>';
 			print '</tr>'."\n";
 			foreach($x_both[$rate]['coll']['detail'] as $index => $fields)
 			{
@@ -225,36 +246,88 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap align="left">'.$fields['link'].'</td>';
 				print '<td align="left">';
-				if ($fields['pid']) {
+				if ($fields['pid'])
+				{
 					$product_static->id=$fields['pid'];
 					$product_static->ref=$fields['pref'];
 					$product_static->fk_product_type=$fields['ptype'];
 					print $product_static->getNomUrl(1);
 					if ($fields['descr']) print ' - ';
 				}
+				else
+				{
+					if ($fields['dtype']==1) $text = img_object($langs->trans('Service'),'service');
+					else $text = img_object($langs->trans('Product'),'product');
+					print $text.' ';
+				}
 				print dolibarr_trunc($fields['descr'],24).'</td>';
-				print '<td nowrap align="right">'.price($fields['totalht']).'</td>';
-				print '<td nowrap align="right">'.price($fields['vat']).'</td>';
+				// Amount line
+				if ($modetax == 0)
+				{
+					print '<td nowrap align="right">';
+					print price($fields['totalht']);
+					if ($fields['ftotal_ttc'])
+					{
+						//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
+						$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
+						//print ' ('.round($ratiolineinvoice*100,2).'%)';
+					}
+					print '</td>';
+				}
+				// Payment
+				$ratiopaymentinvoice=1;
+				if ($modetax == 0)
+				{
+					if ($fields['payment_amount'] && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
+					print '<td nowrap align="right">';
+					print $fields['payment_amount'];
+					if ($fields['payment_amount'] && $ratiopaymentinvoice) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
+					print '</td>';
+				}
+				print '<td nowrap align="right">';
+				$temp_ht=$fields['totalht'];
+				if ($ratiopaymentinvoice) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
+				print price(price2num($temp_ht,'MT'));
+				print '</td>';
+				// VAT
+				print '<td nowrap align="right">';
+				$temp_vat=$fields['vat']*$ratiopaymentinvoice;
+				print price(price2num($temp_vat,'MT'));
+				//print price($fields['vat']);
+				print '</td>';
 				print '</tr>';
+				
+				$subtot_coll_total += $temp_ht;
+				$subtot_coll_vat   += $temp_vat;
+				$x_coll_sum        += $temp_vat;
 			}
 		}
-		$x_coll_sum += $x_both[$rate]['coll']['vat'];
-		$subtot_coll_total 	+= $x_both[$rate]['coll']['totalht'];
-		$subtot_coll_vat 	+= $x_both[$rate]['coll']['vat'];
 	}
-	print '<tr class="liste_total">' .
-			'<td></td>' .
-			'<td align="right">'.$langs->trans("Total").':</td>' .
-			'<td nowrap align="right">'.price($subtot_coll_total).'</td>' .
-			'<td nowrap align="right">'.price($subtot_coll_vat).'</td>' .
-			'</tr>' ;
+	
+	print '<tr class="liste_total">';
+	print '<td></td>';
+	print '<td align="right">'.$langs->trans("Total").':</td>';
+	if ($modetax == 0)
+	{
+		print '<td nowrap align="right">&nbsp;</td>';
+		print '<td align="right">&nbsp;</td>';
+	}
+	print '<td align="right">'.price(price2num($subtot_coll_total,'MT')).'</td>';
+	print '<td nowrap align="right">'.price(price2num($subtot_coll_vat,'MT')).'</td>';
+	print '</tr>';
 
+	
 	//print table headers for this quadri - expenses now
 	//imprime les en-tete de tables pour ce quadri - maintenant les dépenses
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$elementsup.'</td>';
 	print '<td align="left">'.$productsup.'</td>';
-	print '<td align="right">'.$amountsup.'</td>';
+	if ($modetax == 0) 
+	{
+		print '<td align="right">'.$amountsup.'</td>';
+		print '<td align="right">'.$langs->trans("Payment").' (% of invoice)</td>';
+	}
+	print '<td align="right">'.$langs->trans("AmountHTVATRealPayed").'</td>';
 	print '<td align="right">'.$vatsup.'</td>';
 	print '</tr>'."\n";
 	$var=true;
@@ -263,46 +336,97 @@ for ($q = 1 ; $q <= 4 ; $q++ )
 		if(is_array($x_both[$rate]['paye']['detail']))
 		{
 			print "<tr>";
-			print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="3"></td>';
+			print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.$span.'"></td>';
 			print '</tr>'."\n";
-			foreach($x_both[$rate]['paye']['detail'] as $index=>$fields){
+			foreach($x_both[$rate]['paye']['detail'] as $index=>$fields)
+			{
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td nowrap align="left">'.$fields['link'].'</td>';
 				print '<td align="left">';
-				print $fields['pid'];
-				print $fields['descr'].'</td>';
-				print '<td nowrap align="right">'.price($fields['totalht']).'</td>';
-				print '<td nowrap align="right">'.price($fields['vat']).'</td>';
+				if ($fields['pid'])
+				{
+					$product_static->id=$fields['pid'];
+					$product_static->ref=$fields['pref'];
+					$product_static->fk_product_type=$fields['ptype'];
+					print $product_static->getNomUrl(1);
+					if ($fields['descr']) print ' - ';
+				}
+				else
+				{
+					if ($fields['dtype']==1) $text = img_object($langs->trans('Service'),'service');
+					else $text = img_object($langs->trans('Product'),'product');
+					print $text.' ';
+				}
+				print dolibarr_trunc($fields['descr'],24).'</td>';
+				// Amount line
+				if ($modetax == 0)
+				{
+					print '<td nowrap align="right">';
+					print price($fields['totalht']);
+					if ($fields['ftotal_ttc'])
+					{
+						//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
+						$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
+						//print ' ('.round($ratiolineinvoice*100,2).'%)';
+					}
+					print '</td>';
+				}
+				// Payment
+				$ratiopaymentinvoice=1;
+				if ($modetax == 0)
+				{
+					if ($fields['payment_amount'] && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
+					print '<td nowrap align="right">';
+					print $fields['payment_amount'];
+					if ($fields['payment_amount'] && $ratiopaymentinvoice) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
+					print '</td>';
+				}
+				print '<td nowrap align="right">';
+				$temp_ht=$fields['totalht'];
+				if ($ratiopaymentinvoice) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
+				print price(price2num($temp_ht,'MT'));
+				print '</td>';
+				// VAT
+				print '<td nowrap align="right">';
+				$temp_vat=$fields['vat']*$ratiopaymentinvoice;
+				print price(price2num($temp_vat,'MT'));
+				//print price($fields['vat']);
+				print '</td>';
 				print '</tr>';
+				
+				$subtot_paye_total += $temp_ht;
+				$subtot_paye_vat   += $temp_vat;
+				$x_paye_sum        += $temp_vat;
 			}
 		}
-		$x_paye_sum += $x_both[$rate]['paye']['vat'];
-		$subtot_paye_total 	+= $x_both[$rate]['paye']['totalht'];
-		$subtot_paye_vat 	+= $x_both[$rate]['paye']['vat'];
 	}		
-	print '<tr class="liste_total">' .
-			'<td></td>' .
-			'<td align="right">'.$langs->trans("Total").':</td>' .
-			'<td nowrap align="right">'.price($subtot_paye_total).'</td>' .
-			'<td nowrap align="right">'.price($subtot_paye_vat).'</td>' .
-		  '</tr>';
+
+	print '<tr class="liste_total">';
+	print '<td></td>';
+	print '<td align="right">'.$langs->trans("Total").':</td>';
+	if ($modetax == 0)
+	{
+		print '<td nowrap align="right">&nbsp;</td>';
+		print '<td align="right">&nbsp;</td>';
+	}
+	print '<td align="right">'.price(price2num($subtot_paye_total,'MT')).'</td>';
+	print '<td nowrap align="right">'.price(price2num($subtot_paye_vat,'MT')).'</td>';
+	print '</tr>';
 
 	print '<tr>';
-	print '<td colspan="3"></td><td align="right">'.$langs->trans("TotalToPay").' - '.$langs->trans("Quadri").$q.'</td>';
+	print '<td colspan="'.$span.'"></td><td align="right">'.$langs->trans("TotalToPay").', '.$langs->trans("Quadri").$q.'</td>';
 	print '</tr>'."\n";
 
 	$diff = $x_coll_sum - $x_paye_sum;
 	//$total = $total + $diff;
 	//$subtotal = $subtotal + $diff;
-
 	print "<tr>";
-	print '<td colspan="3"></td>';
-	//print '<td nowrap align="right"><b>'.price($total).'</b></td>' .
-	print '<td nowrap align="right"><b>'.price($diff)."</b></td>\n";
+	print '<td colspan="'.$span.'"></td>';
+	print '<td nowrap align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
 	print "</tr>\n";
 
-	print '</tr><tr><td colspan="4">&nbsp;</td></tr>'."\n";
+	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>'."\n";
 
 	$i++;
 }

@@ -861,3 +861,10 @@ DeleteMenu=Effacer entrée de menu
 ConfirmDeleteMenu=Etes-vous sur de vouloir supprimer l'entrée de menu <b>%s</b> ?
 DeleteLine=Suppression de ligne
 ConfirmDeleteLine=Êtes-vous sûr de vouloir effacer cette ligne ?
+##### Tax #####
+TaxSetup=Configuration du module Taxes, charges sociales et dividendes
+OptionVatMode=Option d'exigibilité de TVA
+OptionVATDefault=Standard
+OptionVATDebitOption=Option services sur debit
+OptionVatDefaultDesc=L'exigibilité de la TVA est:<br>- sur livraison pour les biens<br>- sur paiement pour les services
+OptionVatDebitOptionDesc=L'exigibilité de la TVA est:<br>- sur livraison pour les biens<br>- sur facturation (débit) pour les services

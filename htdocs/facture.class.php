@@ -1383,6 +1383,13 @@ class Facture extends CommonObject
 				$remise = round(($pu * $remise_percent / 100),2);
 				$price = ($pu - $remise);
 			}
+			$product_type=0;
+			if ($fk_product)
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($fk_product);
+				$product_type=$product->type;
+			}
 
 			// Insertion ligne
 			$ligne=new FactureLigne($this->db);
@@ -1392,6 +1399,7 @@ class Facture extends CommonObject
 			$ligne->qty=$qty;
 			$ligne->tva_tx=$txtva;
 			$ligne->fk_product=$fk_product;
+			$ligne->product_type=$product_type;
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$pu_ht;
 			$ligne->date_start=$date_start;
@@ -2815,7 +2823,8 @@ class FactureLigne
   //! Description ligne
   var $desc;           
   var $fk_product;	// Id produit prédéfini
-
+  var $product_type = 0;	// Type 0 = product, 1 = Service
+  
   var $qty;			// Quantité (exemple 2)
   var $tva_tx;		// Taux tva produit/service (exemple 19.6)
   var $subprice;      	// P.U. HT (exemple 100)
@@ -2864,7 +2873,7 @@ class FactureLigne
    */
   function fetch($rowid)
   {
-    $sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_product, fd.description, fd.price, fd.qty, fd.tva_taux,';
+    $sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_product, fd.product_type, fd.description, fd.price, fd.qty, fd.tva_taux,';
     $sql.= ' fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
     $sql.= ' '.$this->db->pdate('fd.date_start').' as date_start,'.$this->db->pdate('fd.date_end').' as date_end,';
     $sql.= ' fd.info_bits, fd.total_ht, fd.total_tva, fd.total_ttc, fd.rang,';
@@ -2887,6 +2896,7 @@ class FactureLigne
 	$this->fk_remise_except = $objp->fk_remise_except;
 	$this->produit_id     = $objp->fk_product;	// Ne plus utiliser
 	$this->fk_product     = $objp->fk_product;
+	$this->produc_type    = $objp->product_type;
 	$this->date_start     = $objp->date_start;
 	$this->date_end       = $objp->date_end;
 	$this->info_bits      = $objp->info_bits;
@@ -2956,7 +2966,7 @@ class FactureLigne
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' (fk_facture, description, qty, tva_taux,';
-		$sql.= ' fk_product, remise_percent, subprice, price, remise, fk_remise_except,';
+		$sql.= ' fk_product, product_type, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql.= ' date_start, date_end, fk_code_ventilation, fk_export_compta, ';
 		$sql.= ' rang,';
 		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
@@ -2966,6 +2976,7 @@ class FactureLigne
 		$sql.= " ".price2num($this->tva_tx).",";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
 		else { $sql.='null,'; }
+		$sql.= " ".$this->product_type.",";
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " ".price2num($this->subprice).",";
 		$sql.= " ".price2num($this->price).",";
