@@ -93,12 +93,12 @@ if ($modetax==1)	// Caluclate on invoice for goods and services
 	$productcust=$langs->trans("Description");
 	$amountcust=$langs->trans("AmountHT");
 	$vatcust=$langs->trans("VATReceived");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("VATToPay").')';
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("ToPay").')';
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
 	$vatsup=$langs->trans("VATPayed");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("VATToCollect").')';
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
@@ -116,12 +116,12 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$productcust=$langs->trans("Description");
 	$amountcust=$langs->trans("AmountHT");
 	$vatcust=$langs->trans("VATReceived");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("VATToPay").')';
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("ToPay").')';
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
 	$vatsup=$langs->trans("VATPayed");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("VATToCollect").')';
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("TogetBack").')';
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 

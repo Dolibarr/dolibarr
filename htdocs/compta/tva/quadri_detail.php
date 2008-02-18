@@ -97,12 +97,12 @@ if ($modetax==1)	// Caluclate on invoice for goods and services
 	$productcust=$langs->trans("ProductOrService");
 	$amountcust=$langs->trans("AmountHT");
 	$vatcust=$langs->trans("VATReceived");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("VATToPay").')';
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("ToPay").')';
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("ProductOrService");
 	$amountsup=$langs->trans("AmountHT");
 	$vatsup=$langs->trans("VATPayed");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("VATToCollect").')';
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
@@ -126,12 +126,12 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$productcust=$langs->trans("ProductOrService");
 	$amountcust=$langs->trans("AmountHT");
 	$vatcust=$langs->trans("VATReceived");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("VATToPay").')';
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatcust.=' ('.$langs->trans("ToPay").')';
 	$elementsup=$langs->trans("SuppliersInvoices");
 	$productsup=$langs->trans("ProductOrService");
 	$amountsup=$langs->trans("AmountHT");
 	$vatsup=$langs->trans("VATPayed");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("VATToCollect").')';
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 
@@ -141,14 +141,11 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 echo '<table class="noborder" width="100%">';
 
 $y = $year_current;
-
-$total = 0;  $subtotal = 0;
+$total = 0;
+$subtotal = 0;
 $i=0;
-$subtot_coll_total = 0;
-$subtot_coll_vat = 0;
-$subtot_paye_total = 0;
-$subtot_paye_vat = 0;
 
+// Load arrays of datas
 $x_coll = vat_by_quarter($db, $y, $q, $modetax, 'sell');
 $x_paye = vat_by_quarter($db, $y, $q, $modetax, 'buy');
 
@@ -243,13 +240,16 @@ print '<td align="left">'.$productcust.'</td>';
 if ($modetax == 0) 
 {
 	print '<td align="right">'.$amountcust.'</td>';
-	print '<td align="right">'.$langs->trans("Payment").' (% of invoice)</td>';
+	print '<td align="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
 }
 print '<td align="right">'.$langs->trans("AmountHTVATRealReceived").'</td>';
 print '<td align="right">'.$vatcust.'</td>';
 print '</tr>';
 foreach(array_keys($x_coll) as $rate)
 {
+	$subtot_coll_total_ht = 0;
+	$subtot_coll_vat = 0;
+
 	if (is_array($x_both[$rate]['coll']['detail']))
 	{
 		$var=true;
@@ -260,7 +260,9 @@ foreach(array_keys($x_coll) as $rate)
 		{
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
+			// Ref
 			print '<td nowrap align="left">'.$fields['link'].'</td>';
+			//Description
 			print '<td align="left">';
 			if ($fields['pid'])
 			{
@@ -276,7 +278,7 @@ foreach(array_keys($x_coll) as $rate)
 				else $text = img_object($langs->trans('Product'),'product');
 				print $text.' ';
 			}
-			print dolibarr_trunc($fields['descr'],24).'</td>';
+			print dolibarr_trunc($fields['descr'],16).'</td>';
 			// Amount line
 			if ($modetax == 0)
 			{
@@ -318,9 +320,9 @@ foreach(array_keys($x_coll) as $rate)
 			print '</td>';
 			print '</tr>';
 			
-			$subtot_coll_total += $temp_ht;
-			$subtot_coll_vat   += $temp_vat;
-			$x_coll_sum        += $temp_vat;
+			$subtot_coll_total_ht += $temp_ht;
+			$subtot_coll_vat      += $temp_vat;
+			$x_coll_sum           += $temp_vat;
 		}
 	}
 	print '<tr class="liste_total">';
@@ -331,7 +333,7 @@ foreach(array_keys($x_coll) as $rate)
 		print '<td nowrap align="right">&nbsp;</td>';
 		print '<td align="right">&nbsp;</td>';
 	}
-	print '<td align="right">'.price(price2num($subtot_coll_total,'MT')).'</td>';
+	print '<td align="right">'.price(price2num($subtot_coll_total_ht,'MT')).'</td>';
 	print '<td nowrap align="right">'.price(price2num($subtot_coll_vat,'MT')).'</td>';
 	print '</tr>';
 }
@@ -354,6 +356,9 @@ print '<td align="right">'.$vatsup.'</td>';
 print '</tr>'."\n";
 foreach(array_keys($x_paye) as $rate)
 {
+	$subtot_paye_total_ht = 0;
+	$subtot_paye_vat = 0;
+
 	if(is_array($x_both[$rate]['paye']['detail']))
 	{
 		$var=true;
@@ -422,9 +427,9 @@ foreach(array_keys($x_paye) as $rate)
 			print '</td>';
 			print '</tr>';
 			
-			$subtot_paye_total += $temp_ht;
-			$subtot_paye_vat   += $temp_vat;
-			$x_paye_sum        += $temp_vat;
+			$subtot_paye_total_ht += $temp_ht;
+			$subtot_paye_vat      += $temp_vat;
+			$x_paye_sum           += $temp_vat;
 		}
 	}
 	
@@ -436,18 +441,18 @@ foreach(array_keys($x_paye) as $rate)
 		print '<td nowrap align="right">&nbsp;</td>';
 		print '<td align="right">&nbsp;</td>';
 	}
-	print '<td align="right">'.price(price2num($subtot_paye_total,'MT')).'</td>';
+	print '<td align="right">'.price(price2num($subtot_paye_total_ht,'MT')).'</td>';
 	print '<td nowrap align="right">'.price(price2num($subtot_paye_vat,'MT')).'</td>';
 	print '</tr>';
 }		
 
+print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
+
 print '<tr>';
-print '<td colspan="'.$span.'"></td><td align="right">'.$langs->trans("TotalToPay").', '.$langs->trans("Quadri").$q.'</td>';
+print '<td colspan="'.$span.'"></td><td align="right">'.$langs->trans("TotalToPay").', '.$langs->trans("Quadri").' '.$q.':</td>';
 print '</tr>'."\n";
 
 $diff = $x_coll_sum - $x_paye_sum;
-//$total = $total + $diff;
-//$subtotal = $subtotal + $diff;
 print "<tr>";
 print '<td colspan="'.$span.'"></td>';
 print '<td nowrap align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
