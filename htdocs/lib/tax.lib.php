@@ -30,11 +30,29 @@
  *	\param		db			Database handle
  *	\param		y			Year
  *	\param		modetax		0 or 1 (option vat on debit)
+ *	\param		direction	'sell' or 'buy'
  *	\return		array		List of customers third parties with vat
  */
-function vat_received_by_customer($db, $y, $modetax)
+function vat_by_thirdparty($db, $y, $modetax, $direction)
 {
 	global $conf;
+
+   	$list=array();
+
+	if ($direction == 'sell') 
+	{
+		$invoicetable='facture';
+		$invoicedettable='facturedet';
+		$fk_facture='fk_facture';
+		$total_tva='total_tva';
+	}
+	if ($direction == 'buy') 
+	{
+		$invoicetable='facture_fourn';
+		$invoicedettable='facture_fourn_det';
+		$fk_facture='fk_facture_fourn';
+		$total_tva='tva';
+	}
 
     // Define sql request
 	$sql='';
@@ -52,13 +70,13 @@ function vat_received_by_customer($db, $y, $modetax)
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
 	        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
-			$sql.= " sum(fd.total_ht) as amount, sum(fd.total_tva) as tva,";
+			$sql.= " sum(fd.total_ht) as amount, sum(fd.".$total_tva.") as tva,";
 			$sql.= " s.tva_assuj as assuj, s.rowid as socid";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."societe as s";
+	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicedettable." as fd, ".MAIN_DB_PREFIX."societe as s";
 	        $sql.= " WHERE ";
 	        $sql.= " f.fk_statut in (1,2)";	// Validated or payed (partially or completely)
 	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.fk_facture";
+	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
 	        $sql.= " GROUP BY s.rowid";
 		}
     }
@@ -77,13 +95,13 @@ function vat_received_by_customer($db, $y, $modetax)
 		{
 	        // Tva sur factures payés (should be on payment)
 /*	        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
-			$sql.= " sum(fd.total_ht) as amount, sum(fd.total_tva) as tva,";
+			$sql.= " sum(fd.total_ht) as amount, sum(".$total_tva.") as tva,";
 			$sql.= " s.tva_assuj as assuj, s.rowid as socid";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."societe as s";
+	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f, ".MAIN_DB_PREFIX.$invoicetable." as fd, ".MAIN_DB_PREFIX."societe as s";
 	        $sql.= " WHERE ";
 			$sql.= " f.fk_statut in (2)";	// Payed (partially or completely)
 			$sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.fk_facture";
+	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
 			$sql.= " GROUP BY s.rowid";
 */
 		}
@@ -91,16 +109,15 @@ function vat_received_by_customer($db, $y, $modetax)
 
 	if ($sql)
 	{
-		dolibarr_syslog("Client::tva_coll sql=".$sql);
+		dolibarr_syslog("Client::vat_by_customer sql=".$sql);
 	    $resql = $db->query($sql);
 	    if ($resql)
 	    {
-	    	$list = array();
 	    	while($assoc = $db->fetch_array($resql))
 			{
 	        	$list[] = $assoc;
 	    	}
-			$db->free();
+			$db->free($resql);
 	    	return $list;
 	    }
 	    else
@@ -114,99 +131,6 @@ function vat_received_by_customer($db, $y, $modetax)
 			return -1;
 	}
 }
-
-
-/**
- * 	\brief		Get payable VAT
- *	\param		resource	Database handle
- *	\param		y			Year
- *	\param		modetax		0 or 1 (option vat on debit)
- *	\return		array		List of suppliers third parties with vat
- */
-function vat_payed_by_supplier($db, $y, $modetax)
-{
-	global $conf;
-
-    // Define sql request
-   	$sql='';
-	if ($modetax == 1)
-    {
-        // If vat payed on due invoices (non draft)
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
-		{
-	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
-	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-	        // detail part tva et part ht).
-		}
-		if ($conf->global->MAIN_MODULE_COMPTABILITE)
-		{
-	        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
-			$sql.= " sum(fd.total_ht) as amount, sum(fd.tva) as tva,";
-			$sql.= " s.tva_assuj as assuj, s.rowid as socid";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."facture_fourn_det as fd, ".MAIN_DB_PREFIX."societe as s";
-	        $sql.= " WHERE ";
-	        $sql.= " f.fk_statut in (1,2)";	// Validated or payed (partially or completely)
-	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.fk_facture_fourn";
-	        $sql.= " GROUP BY s.rowid";
-		}
-    }
-    else
-    {
-        // Si on paye la tva sur les payments
-
-		if ($conf->global->MAIN_MODULE_COMPTABILITEEXPERT)
-		{
-	        // \todo a ce jour on se sait pas la compter car le montant tva d'un payment
-	        // n'est pas stocké dans la table des payments.
-	        // Seul le module compta expert peut résoudre ce problème.
-	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
-	        // detail part tva et part ht).
-		}
-		if ($conf->global->MAIN_MODULE_COMPTABILITE)
-		{
-	        // Tva sur factures payés
-/*	        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra,";
-			$sql.= " sum(fd.total_ht) as amount, sum(fd.tva) as tva,";
-			$sql.= " s.tva_assuj as assuj, s.rowid as socid";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."facture_fourn_det as fd, ".MAIN_DB_PREFIX."societe as s";
-	        $sql.= " WHERE ";
-	        //$sql.= " f.fk_statut in (2)";	// Payed (partially or completely)
-	        $sql.= " f.paye in (1)";		// Payed (completely)
-	        $sql.= " AND f.datef >= '".$y."0101000000' AND f.datef <= '".$y."1231235959'";
-	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.fk_facture_fourn";
-	        $sql.= " GROUP BY s.rowid";
-*/
-		}
-    }
-
-	if ($sql)
-	{
-		dolibarr_syslog("Client::tva_paye sql=".$sql);
-	    $resql = $db->query($sql);
-	    if ($resql)
-	    {
-	    	$list = array();
-	    	while($assoc = $db->fetch_array($resql))
-			{
-	        	$list[] = $assoc;
-	    	}
-	    	return $list;
-	    }
-	    else
-	    {
-	        dolibarr_print_error($db);
-			return -2;
-		}
-	}
-	else
-	{
-		return -1;
-	}
-}
-
 
 
 /**
@@ -232,14 +156,22 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		$invoicetable='facture';
 		$invoicedettable='facturedet';
 		$fk_facture='fk_facture';
+		$fk_facture2='fk_facture';
+		$fk_payment='fk_paiement';
 		$total_tva='total_tva';
+		$paymenttable='paiement';
+		$paymentfacturetable='paiement_facture';
 	}
 	if ($direction == 'buy') 
 	{
 		$invoicetable='facture_fourn';
 		$invoicedettable='facture_fourn_det';
 		$fk_facture='fk_facture_fourn';
+		$fk_facture2='fk_facturefourn';
+		$fk_payment='fk_paiementfourn';
 		$total_tva='tva';
+		$paymenttable='paiementfourn';
+		$paymentfacturetable='paiementfourn_facturefourn';
 	}
 	
     // CAS DES BIENS
@@ -405,17 +337,17 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.tva_taux as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
 			$sql.= " f.facnumber as facnum, f.total_ttc as ftotal_ttc,";
 			$sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
-			$sql.= " pf.fk_paiement as payment_id, pf.amount as payment_amount";
+			$sql.= " pf.".$fk_payment." as payment_id, pf.amount as payment_amount";
 	        $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
-	        $sql.= " ".MAIN_DB_PREFIX."paiement_facture as pf,";
-	        $sql.= " ".MAIN_DB_PREFIX."paiement as pa,";
+	        $sql.= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
+	        $sql.= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
 	        $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
 	        $sql.= " WHERE ";
 			$sql.= " f.fk_statut in (1,2)";	// Payed (partially or completely)
 	        $sql.= " AND f.rowid = d.".$fk_facture;;
-	        $sql.= " AND pf.fk_facture = f.rowid";
-	        $sql.= " AND pa.rowid = pa.fk_paiement";
+	        $sql.= " AND pf.".$fk_facture2." = f.rowid";
+	        $sql.= " AND pa.rowid = pf.".$fk_payment;
 	        $sql.= " AND pa.datep >= '".$y."0101000000' AND pa.datep <= '".$y."1231235959'";
 	        $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
 	        $sql.= " AND d.product_type = 1";		// Limit to services

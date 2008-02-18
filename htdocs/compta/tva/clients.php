@@ -67,7 +67,7 @@ llxHeader();
 
 $company_static=new Societe($db);
 
-print_fiche_titre($langs->trans("VAT"),"");
+//print_fiche_titre($langs->trans("VAT"),"");
 
 $fsearch='<form method="get" action="clients.php?year='.$year.'">';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
@@ -140,7 +140,7 @@ print "<td align=\"right\">".$langs->trans("SalesTurnover")." ".$langs->trans("H
 print "<td align=\"right\">".$vatcust."</td>";
 print "</tr>\n";
 
-$coll_list = vat_received_by_customer($db,$year_current,$modetax);
+$coll_list = vat_by_thirdparty($db,$year_current,$modetax,'sell');
 if (is_array($coll_list))
 {
 	$var=true;
@@ -207,7 +207,7 @@ print "</tr>\n";
 
 $company_static=new Societe($db);
 
-$coll_list = vat_payed_by_supplier($db,$year_current,$modetax);
+$coll_list = vat_by_thirdparty($db,$year_current,$modetax,'buy');
 if (is_array($coll_list))
 {
 	$var=true;

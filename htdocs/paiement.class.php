@@ -410,7 +410,7 @@ class Paiement
 
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		\param		option			Sur quoi pointe le lien
 	 *		\return		string			Chaine avec URL
 	 */
@@ -423,8 +423,9 @@ class Paiement
 		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$this->rowid.'">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"),'payment').$lienfin.' ');
-		$result.=$lien.$this->rowid.$lienfin;
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"),'payment').$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->rowid.$lienfin;
 		return $result;
 	}
 	

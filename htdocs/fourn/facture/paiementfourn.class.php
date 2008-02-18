@@ -16,17 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file       htdocs/fourn/facture/paiementfourn.class.php
 		\ingroup    fournisseur, facture
-		\brief      Page de cr�ation de paiement factures fournisseurs
-        \remarks	Cette classe est presque identique � paiement.class.php
-		\version    $Revision$
+		\brief      Classe paiement fournisseur
+        \remarks	Cette classe est presque identique a paiement.class.php
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
@@ -454,6 +451,28 @@ class PaiementFourn
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
 		}
 		return $langs->trans('Unknown');
+	}
+	
+	
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *		\param		option			Sur quoi pointe le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+		
+		$result='';
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$this->rowid.'">';
+		$lienfin='</a>';
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"),'payment').$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->rowid.$lienfin;
+		return $result;
 	}
 }
 ?>

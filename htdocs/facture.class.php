@@ -404,7 +404,7 @@ class Facture extends CommonObject
 		
     if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
     if ($withpicto && $withpicto != 2) $result.=' ';
-    $result.=$lien.$this->ref.$lienfin;
+    if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
     return $result;
   }
 	
