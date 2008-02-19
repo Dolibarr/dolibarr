@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \defgroup   editeur     Module editeur
-   \brief      Module pour g�rer le suivi des editeurs
+   \defgroup   	editeur     Module editeur
+   \brief      	Module pour gerer le suivi des editeurs
+   \version		$Id$
 */
 
 /**
@@ -56,7 +55,7 @@ class modEditeur extends DolibarrModules
     $this->version = $this->revision[1];
     $this->const_name = 'MAIN_MODULE_EDITEUR';
     $this->special = 3;
-    //$this->picto='editeur';
+    $this->picto='book';
 
     // Dir
     $this->dirs = array();

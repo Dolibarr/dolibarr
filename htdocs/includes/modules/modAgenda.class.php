@@ -18,13 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \defgroup   agenda     Module agenda
         \brief      Module pour gerer l'agenda et actions
+		\brief		$Id$
 */
 
 /**
@@ -45,13 +44,13 @@ class modAgenda extends DolibarrModules
 
     /**
      *   \brief      Constructeur. Definit les noms, constantes et boites
-     *   \param      DB      handler d'acc�s base
+     *   \param      DB      handler d'acces base
      */
     function modAgenda($DB)
     {
         $this->db = $DB;
         $this->numero = 2400;
-    
+
         $this->family = "projects";
         $this->name = "Agenda";
         $this->description = "Gestion de l'agenda et des actions";

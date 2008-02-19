@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   webcalendar     Module Webcalendar
         \brief      Module to include Webcalendar GUI into Dolibarr menu and
                     add Dolibarr events directly inside a Webcalendar database.
+		\version	$Id$
 */
 
 /**
@@ -58,7 +57,7 @@ class modWebcalendar extends DolibarrModules
 		// Module title used if translation string 'ModuleXXXName' not found (XXX is id value)
 		$this->name = "Webcalendar";	
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
-		$this->description = "Interfa�age avec le calendrier Webcalendar";
+		$this->description = "Interfacage avec le calendrier Webcalendar";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';    
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)

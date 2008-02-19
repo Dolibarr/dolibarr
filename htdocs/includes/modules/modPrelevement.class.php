@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \defgroup   prelevement     Module prelevement
-   \brief      Module de gestion des pr�l�vements bancaires
+   \defgroup   	prelevement     Module prelevement
+   \brief      	Module de gestion des prelevements bancaires
+   \version		$Id$
 */
 
 /**
@@ -60,7 +59,8 @@ class modPrelevement extends DolibarrModules
 	
 		$this->const_name = 'MAIN_MODULE_PRELEVEMENT';
 		$this->special = 0;
-	
+		// Name of png file (without png) used for this module
+		$this->picto='payment';
 		// Dir
 		$this->dirs = array();
 		$this->data_directory = $conf->prelevement->dir_output . "/bon";

@@ -14,19 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \defgroup   document     Module document
-   \brief      Module pour g�rer le suivi des documents
+   \defgroup   	document     Module de generation de documents
+   \brief      	Module pour gerer des generations de documents
+   \version		$Id$
 */
 
 /**
    \file       htdocs/includes/modules/modDocument.class.php
    \ingroup    document
-   \brief      Fichier de description et activation du module Document
+   \brief      Fichier de description et activation du module Generation document
 */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -49,14 +48,14 @@ class modDocument extends DolibarrModules
     $this->db = $DB ;
     $this->numero = 51 ;
     
-    $this->family = "other";
+    $this->family = "ecm";
     $this->name = "Document";
     $this->description = "Gestion des documents";
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
     $this->const_name = 'MAIN_MODULE_DOCUMENT';
     $this->special = 2;
-    //$this->picto='document';
+    $this->picto='generic';
 
     // Dir
     $this->dirs = array();
