@@ -1531,6 +1531,7 @@ class Adherent extends CommonObject
 
 		if (! function_exists("curl_init"))
 		{
+			$langs->load("errors");
 			$this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
 			return -1;	
 		}
