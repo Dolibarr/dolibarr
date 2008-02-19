@@ -751,7 +751,7 @@ function top_menu($head, $title="", $target="")
      * Si la constante MAIN_NEED_UPDATE est definie (par le script de migration sql en general), c'est que
      * les donnees ont besoin d'un remaniement. Il faut passer le update.php
      */
-    if (isset($conf->global->MAIN_NEED_UPDATE) && $conf->global->MAIN_NEED_UPDATE)
+    if (! empty($conf->global->MAIN_NEED_UPDATE))
     {
         $langs->load("admin");
         print '<div class="fiche">'."\n";

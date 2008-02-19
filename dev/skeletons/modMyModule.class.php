@@ -53,7 +53,7 @@ class modMyModule extends DolibarrModules
 		// Key text used to identify module (for permission, menus, etc...)
 		$this->rights_class = 'mymodule';
 		
-		// Family can be 'crm','financial','hr','projects','product','technic','other'
+		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
 		// It is used to group modules in module setup page 
 		$this->family = "projects";		
 		// Module title used if translation string 'ModuleXXXName' not found (XXX is value MyModule)

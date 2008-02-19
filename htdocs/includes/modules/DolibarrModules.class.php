@@ -200,70 +200,70 @@ class DolibarrModules
   }
   
 
-  /**
-     \brief      Retourne le nom traduit du module si la traduction existe dans admin.lang,
-     sinon le nom defini par defaut dans le module.
-     \return     string      Nom du module traduit
-  */
-  function getName()
-  {
-    global $langs;
-    $langs->load("admin");
-    
-    if ($langs->trans("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
-      {
-	// Si traduction du nom du module existe
-	return $langs->trans("Module".$this->numero."Name");
-      }
-    else
-      {
-	// Si traduction du nom du module n'existe pas, on prend definition en dur dans module
-	return $this->name;
-      }
-  }
+	/**
+		\brief      Retourne le nom traduit du module si la traduction existe dans admin.lang,
+					sinon le nom defini par defaut dans le module.
+		\return     string      Nom du module traduit
+	*/
+	function getName()
+	{
+		global $langs;
+		$langs->load("admin");
+		
+		if ($langs->trans("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
+		{
+			// Si traduction du nom du module existe
+			return $langs->trans("Module".$this->numero."Name");
+		}
+		else
+		{
+			// Si traduction du nom du module n'existe pas, on prend definition en dur dans module
+			return $this->name;
+		}
+	}
   
   
-  /**
-     \brief      Retourne la description traduite du module si la traduction existe dans admin.lang,
-     sinon la description definie par defaut dans le module.
-     \return     string      Nom du module traduit
-  */
-  function getDesc()
-  {
-    global $langs;
-    $langs->load("admin");
-    
-    if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
-      {
-	// Si traduction de la description du module existe
-	return $langs->trans("Module".$this->numero."Desc");
-      }
-    else
-      {
-	// Si traduction de la description du module n'existe pas, on prend definition en dur dans module
-	return $this->description;
-      }
-  }
+	/**
+		\brief      Retourne la description traduite du module si la traduction existe dans admin.lang,
+		sinon la description definie par defaut dans le module.
+		\return     string      Nom du module traduit
+	*/
+	function getDesc()
+	{
+		global $langs;
+		$langs->load("admin");
+		
+		if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
+		{
+			// Si traduction de la description du module existe
+			return $langs->trans("Module".$this->numero."Desc");
+		}
+		else
+		{
+			// Si traduction de la description du module n'existe pas, on prend definition en dur dans module
+			return $this->description;
+		}
+	}
   
   
-  /**
-     \brief      Retourne la version du module.
-     Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
-     Pour les modules 'dolibarr', retourne la version de Dolibarr
-     Pour les autres modules, retourne la version du module
-     \return     string      Version du module
-  */
-  function getVersion()
-  {
-    global $langs;
-    $langs->load("admin");
-    
-    if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-    elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
-    elseif ($this->version == 'dolibarr') return DOL_VERSION;
-    elseif ($this->version) return $this->version;
-    else return $langs->trans("VersionUnknown");
-  }
+	/**
+		\brief      Retourne la version du module.
+		Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
+		Pour les modules 'dolibarr', retourne la version de Dolibarr
+		Pour les autres modules, retourne la version du module
+		\return     string      Version du module
+	*/
+	function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+		
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return $langs->trans("VersionUnknown");
+	}
   
 
     /**
@@ -279,7 +279,6 @@ class DolibarrModules
         $sql .= " WHERE numero=".$this->numero." AND active = 1";
 
         $resql = $this->db->query($sql);
-
         if ($resql)
         {
             $num = $this->db->num_rows($resql);
@@ -293,7 +292,6 @@ class DolibarrModules
 
             $this->db->free($resql);
         }
-        
         
         if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
         elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");

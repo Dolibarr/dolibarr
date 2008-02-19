@@ -708,7 +708,6 @@ class MenuLeft {
 
 				if ($conf->mailing->enabled)
 				{
-					$langs->load("admin");
 					$langs->load("mails");
 					/*
 					$newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"), 0, $user->rights->mailing->lire);

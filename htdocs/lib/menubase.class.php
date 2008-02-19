@@ -523,7 +523,15 @@ class Menubase
 				
 				if ($this->verifConstraint($objm->rowid))
 		        {
-		            $langs->load($objm->langs);
+					$title=$objm->titre;
+					if (! eregi('\(dotnoloadlang\)$',$title))
+					{
+						if (! empty($objm->langs)) $langs->load($objm->langs);
+					}
+					else
+					{
+						$title=eregi_replace('\(dotnoloadlang\)$','',$title);
+					}
 		        
 		            $class="";
 		            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == $objm->mainmenu)
@@ -540,14 +548,14 @@ class Menubase
 		        		eval($str);
 		        	}
 		        	
-		        	if(eregi("/",$objm->titre))
+		        	if(eregi("/",$title))
 		        	{
-		        		$tab_titre = explode("/",$objm->titre);
+		        		$tab_titre = explode("/",$title);
 		        		$chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
 		        	}
 		        	else
 		        	{
-		        		$chaine = $langs->trans($objm->titre);
+		        		$chaine = $langs->trans($title);
 		        	} 
 		        		
 		        	$tabMenu[$b]['rowid'] = $objm->rowid;

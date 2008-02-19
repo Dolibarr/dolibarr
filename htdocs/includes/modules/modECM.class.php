@@ -101,7 +101,7 @@ class modECM extends DolibarrModules
 		
 		$this->menu[$r]=array('fk_menu'=>0,
 							  'type'=>'top',
-							  'titre'=>'ECM',
+							  'titre'=>'MenuECM(dotnoloadlang)',
 							  'mainmenu'=>'ecm',
 							  'leftmenu'=>'',
 							  'url'=>'/ecm/index.php',

@@ -294,9 +294,10 @@ $familylib=array(
 'products'=>$langs->trans("ModuleFamilyProducts"),
 'hr'=>$langs->trans("ModuleFamilyHr"),
 'projects'=>$langs->trans("ModuleFamilyProjects"),
-'other'=>$langs->trans("ModuleFamilyOther"),
-'technic'=>$langs->trans("ModuleFamilyTechnic"),
 'financial'=>$langs->trans("ModuleFamilyFinancial"),
+'ecm'=>$langs->trans("ModuleFamilyECM"),
+'technic'=>$langs->trans("ModuleFamilyTechnic"),
+'other'=>$langs->trans("ModuleFamilyOther")
 );
 foreach ($orders as $key => $value)
 {

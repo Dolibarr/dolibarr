@@ -1,7 +1,7 @@
 <?php
 /* ***************************************************************************
  * Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
- * Copyright (C) 2004-2005 Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Destailleur Laurent <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 /**
     	\file       htdocs/translate.class.php
 		\brief      Fichier de la classe de traduction
+		\author	    Eric Seigne
 		\author	    Laurent Destailleur
 		\version    $Id$
 */
@@ -153,7 +154,15 @@ class Translate {
      */
     function Load($domain,$alt=0)
     {
-        if (! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja charge
+		// Check parameters
+		if (empty($domain))
+		{
+			dolibarr_syslog("Tranlsate::Load ErrorWrongParameters",LOG_WARNING);
+			return;
+		}
+		
+		// Check cache
+		if (! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja charge
         
         // Repertoire de traduction
         $scandir = $this->dir."/".$this->defaultlang;
@@ -168,15 +177,15 @@ class Translate {
             elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $this->dir."/en_US";
            	else $scandiralt = $this->dir."/en_US";
 
-            $file_lang = $scandiralt . "/$domain.lang";
+            $file_lang = $scandiralt . "/".$domain.".lang";
             $filelangexists=is_file($file_lang);
             $alt=1;
         }
         
+		dolibarr_syslog("Translate::Load read file ".$file_lang);
+		
         if ($filelangexists)
         {
-			//dolibarr_syslog("Translate::Load read file ".$file_lang);
-
 			// Enable cache of lang file in session (faster but need more memory)
 			// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 			$enablelangcacheinsession=false;

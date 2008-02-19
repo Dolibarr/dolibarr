@@ -320,7 +320,7 @@ class MenuTop {
         // Members
         if ($conf->adherent->enabled)
         {
-            $langs->load("members");
+            // $langs->load("members"); Added in main file to increase
         
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
@@ -353,7 +353,9 @@ class MenuTop {
 				// Define idsel
 				if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $idsel='id="sel" ';
 				else $idsel='';
-				print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
+				print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>';
+				print $tabMenu[$i]['titre'];
+				print '</a></td>';
         	}
         	else
         	{

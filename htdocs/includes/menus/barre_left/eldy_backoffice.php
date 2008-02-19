@@ -116,7 +116,7 @@ class MenuLeft {
 			{
 				$langs->load("users");
 
-				if($user->admin)
+				if ($user->admin)
 				{
 					$langs->load("admin");
 
@@ -707,7 +707,6 @@ class MenuLeft {
 			{
 				if ($conf->projet->enabled)
 				{
-					$langs->load("admin");
 					$langs->load("projects");
 					$newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/clients.php?leftmenu=projects", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
@@ -730,7 +729,6 @@ class MenuLeft {
 
 				if ($conf->mailing->enabled)
 				{
-					$langs->load("admin");
 					$langs->load("mails");
 
 					$newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"), 0, $user->rights->mailing->lire);

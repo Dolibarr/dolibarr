@@ -338,7 +338,9 @@ class Conf
 		$this->fckeditor->dir_output=DOL_DATA_ROOT."/fckeditor";
 		// Module etiquette
 		$this->label->enabled=defined("MAIN_MODULE_LABEL")?MAIN_MODULE_LABEL:0;
-
+		// Module ECM
+		$this->ecm->enabled=defined("MAIN_MODULE_ECM")?MAIN_MODULE_ECM:0;
+		$this->ecm->dir_output=DOL_DATA_ROOT."/ecm";
 
 		/*
 		 * Modification de quelques variable de conf en fonction des Constantes

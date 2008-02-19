@@ -288,7 +288,7 @@ class MenuTop {
 		// Members
         if ($conf->adherent->enabled)
         {
-            $langs->load("members");
+            // $langs->load("members"); Added in main file to increase
         
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")

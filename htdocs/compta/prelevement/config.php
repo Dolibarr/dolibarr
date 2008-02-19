@@ -31,7 +31,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
 
-$langs->load("admin");
 
 if ($_GET["action"] == "set" && $user->rights->prelevement->bons->configurer)
 {

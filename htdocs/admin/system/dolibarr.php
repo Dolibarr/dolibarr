@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,15 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/admin/system/dolibarr.php
    \brief      Fichier page info systemes Dolibarr
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -93,6 +90,8 @@ $db->begin();
 $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
 $handle=opendir($dir);
 $modules = array();
+$modules_names = array();
+$modules_files = array();
 while (($file = readdir($handle))!==false)
 {
     if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, strlen($file) - 10) == '.class.php')
@@ -101,12 +100,12 @@ while (($file = readdir($handle))!==false)
 
         if ($modName)
         {
-            include_once("../../includes/modules/$file");
+            include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
             $objMod = new $modName($db);
 
             $modules[$objMod->numero]=$objMod;
             $modules_names[$objMod->numero]=$objMod->name;
-
+			$modules_files[$objMod->numero]=$file;
             $picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
         }
     }
@@ -127,7 +126,10 @@ foreach($sortorder as $numero=>$name)
     $idperms="";
     $var=!$var;
     // Module
-    print "<tr $bc[$var]><td width=\"300\" nowrap=\"nowrap\">".img_object("",$picto[$numero]).' '.$modules[$numero]->getName()."</td>";
+    print "<tr $bc[$var]><td width=\"300\" nowrap=\"nowrap\">";
+	$alt=$name.' - '.$modules_files[$numero];
+	print img_object($alt,$picto[$numero]).' '.$modules[$numero]->getName();
+	print "</td>";
     // Version
     print '<td>'.$modules[$numero]->getVersion().'</td>';
     // Id
