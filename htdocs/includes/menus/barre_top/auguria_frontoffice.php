@@ -14,20 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/includes/menus/barre_top/auguria_backoffice.php
 		\brief      Gestionnaire nomme Auguria du menu du haut
-		\version    $Revision$
+		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entr�es de menu � faire apparaitre dans la barre du haut
-        \remarks    doivent �tre affich�es par <a class="tmenu" href="...?mainmenu=...">...</a>
-        \remarks    On peut �ventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entr�e du menu qui est selectionnee.
+        \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
+        \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
+        \remarks    On peut eventuellement ajouter l'attribut id="sel" dans la balise <a>
+        \remarks    quand il s'agit de l'entree du menu qui est selectionnee.
 */
 
 
@@ -83,7 +81,7 @@ class MenuTop {
 
         print '<ul>';
         
-        for($i=0;$i<count($tabMenu);$i++)
+        for($i=0; $i<count($tabMenu); $i++)
         {
         	if ($tabMenu[$i]['right'] == true)
         	{

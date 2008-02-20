@@ -154,10 +154,12 @@ class Translate {
      */
     function Load($domain,$alt=0)
     {
+    	// dolibarr_syslog("Translate::Load domain=".$domain." alt=".$alt);
+    	
 		// Check parameters
 		if (empty($domain))
 		{
-			dolibarr_syslog("Tranlsate::Load ErrorWrongParameters",LOG_WARNING);
+			dolibarr_syslog("Translate::Load ErrorWrongParameters",LOG_WARNING);
 			return;
 		}
 		
@@ -182,8 +184,6 @@ class Translate {
             $alt=1;
         }
         
-		dolibarr_syslog("Translate::Load read file ".$file_lang);
-		
         if ($filelangexists)
         {
 			// Enable cache of lang file in session (faster but need more memory)
@@ -195,7 +195,7 @@ class Translate {
 				foreach($_SESSION['lang_'.$domain] as $key => $value)
 				{
 					$this->tab_translate[$key]=$value;
-					$this->tab_loaded[$domain]=1;           // Marque ce fichier comme charg�
+					$this->tab_loaded[$domain]=3;           // Marque ce fichier comme charge depuis cache session
 				}
 			}
 			else
@@ -240,16 +240,20 @@ class Translate {
 	                // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
 	                if (! $alt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
 	                {
-	                    dolibarr_syslog("Translate::Load loading alternate translation file");
+	                    dolibarr_syslog("Translate::Load loading alternate translation file", LOG_DEBUG);
 	                    $this->load($domain,1);
 	                }
 
-	                $this->tab_loaded[$domain]=1;           // Marque ce fichier comme charg�
+	                $this->tab_loaded[$domain]=1;           // Marque ce fichier comme charge
 
 					// To save lang in session
 					if ($enablelangcacheinsession && sizeof($tabtranslatedomain)) $_SESSION['lang_'.$domain]=$tabtranslatedomain;
 	            }
 			}
+        }
+        else
+        {
+	        $this->tab_loaded[$domain]=2;           // Marque ce fichier comme charge non trouve
         }
     }
 

@@ -327,8 +327,7 @@ class Menubase
 	
 	function menuCharger($mainmenu, $newmenu, $type_user, $leftmenu) 
 	{
-
-		global $langs,$user, $conf;
+		global $langs, $user, $conf;
 
 		$this->mainmenu = $mainmenu;
 		$this->newmenu = $newmenu;
@@ -353,11 +352,12 @@ class Menubase
 		$res = $this->db->query($sql);
 		if ($res)
 		{
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($res);
 
 			$i = 1;
-			while ($menu = $this->db->fetch_array($res)) {
-				$langs->load($menu['langs']);
+			while ($menu = $this->db->fetch_array($res))
+			{
+				if (! empty($menu['langs'])) $langs->load($menu['langs']);
 				$titre = $langs->trans($menu['titre']);
 				$rights = $this->verifRights($menu['right']);
 				$data[] = array (
@@ -390,7 +390,7 @@ class Menubase
 		//ballayage du tableau
 		for ($x = 0; $x < count($tab); $x++) {
 
-			//si un �l�ment a pour p�re : $pere
+			//si un element a pour pere : $pere
 			if ($tab[$x][1] == $pere) {
 
 				//on affiche le menu
@@ -518,11 +518,28 @@ class Menubase
 			$b = 0;
 			while ($a < $numa)
 			{
-				// Affichage entete menu
+				// Init tabMenu array
 				$objm = $this->db->fetch_object($resql);
 				
 				if ($this->verifConstraint($objm->rowid))
 		        {
+					// Define class
+		            $class="";
+		            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == $objm->mainmenu)
+		            {
+		                $class='id="sel"';
+		            }
+		            $chaine="";
+
+		            // Define $right
+		        	$right = true;
+		        	if ($objm->perms)
+		        	{
+		        		$str = "if(!(".$objm->perms.")) \$right = false;";
+		        		eval($str);
+		        	}
+		        	
+					// Define $chaine
 					$title=$objm->titre;
 					if (! eregi('\(dotnoloadlang\)$',$title))
 					{
@@ -532,23 +549,8 @@ class Menubase
 					{
 						$title=eregi_replace('\(dotnoloadlang\)$','',$title);
 					}
-		        
-		            $class="";
-		            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == $objm->mainmenu)
-		            {
-		                $class='id="sel"';
-		            }
-		            $chaine="";
-		        	
-		        	$right = true;
-		        	
-		        	if ($objm->perms)
-		        	{
-		        		$str = "if(!(".$objm->perms.")) \$right = false;";
-		        		eval($str);
-		        	}
-		        	
-		        	if(eregi("/",$title))
+
+ 		        	if (eregi("/",$title))
 		        	{
 		        		$tab_titre = explode("/",$title);
 		        		$chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
@@ -557,10 +559,10 @@ class Menubase
 		        	{
 		        		$chaine = $langs->trans($title);
 		        	} 
-		        		
+						
 		        	$tabMenu[$b]['rowid'] = $objm->rowid;
 					$tabMenu[$b]['mainmenu'] = $objm->mainmenu;
-					$tabMenu[$b]['titre'] = $chaine;
+					$tabMenu[$b]['titre'] = $chaine;	// Title
 		        	$tabMenu[$b]['url'] = $objm->url;
 		        	$tabMenu[$b]['atarget'] = $this->atarget;
 		        	$tabMenu[$b]['class'] = $class;

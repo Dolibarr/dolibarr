@@ -48,7 +48,7 @@ llxHeader();
 
 $html=new Form($db);
 
-// Affiche en-tête de rapport
+// Affiche en-tï¿½te de rapport
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom=$langs->trans("AnnualByCompaniesDueDebtMode");
@@ -92,7 +92,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 } else {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-     * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
+     * vieilles versions, ils n'ï¿½taient pas liï¿½s via paiement_facture. On les ajoute plus loin)
      */
 	$sql = "SELECT s.nom as nom, s.rowid as socid, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
@@ -129,7 +129,7 @@ if ($result) {
     dolibarr_print_error($db);
 }
 
-// On ajoute les paiements clients anciennes version, non liés par paiement_facture
+// On ajoute les paiements clients anciennes version, non liï¿½s par paiement_facture
 if ($modecompta != 'CREANCES-DETTES')
 { 
     $sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
@@ -151,7 +151,7 @@ if ($modecompta != 'CREANCES-DETTES')
                 $var=!$var;
                     
                 print "<tr $bc[$var]><td>&nbsp;</td>";
-                print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (anciens paiements liés à aucune facture)\n";
+                print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (anciens paiements liï¿½s ï¿½ aucune facture)\n";
                 
                 if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
                 print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
@@ -265,7 +265,7 @@ $subtotal_ttc = 0;
 
 if ($modecompta == 'CREANCES-DETTES')
 {
-    // TVA à payer
+    // TVA ï¿½ payer
     $amount=0;
     $sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -301,7 +301,7 @@ if ($modecompta == 'CREANCES-DETTES')
     print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
 
-    // TVA à récupérer
+    // TVA ï¿½ rï¿½cupï¿½rer
     $amount=0;
     $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -341,7 +341,7 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 else
 {
-    // TVA réellement déjà payée
+    // TVA rï¿½ellement dï¿½jï¿½ payï¿½e
     $amount=0;
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
@@ -379,7 +379,7 @@ else
     print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
 
-    // TVA récupérée
+    // TVA rï¿½cupï¿½rï¿½e
     $amount=0;
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
@@ -424,10 +424,10 @@ print '</tr>';
 
 
 /*
- * Charges sociales non déductibles
+ * Charges sociales non deductibles
  */
 
-print '<tr><td colspan="4">Prestations/Charges NON déductibles</td></tr>';
+print '<tr><td colspan="4">Prestations/Charges NON deductibles</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES') {
     $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
@@ -487,10 +487,10 @@ print '</tr>';
 
 
 /*
- * Charges sociales déductibles
+ * Charges sociales deductibles
  */
 
-print '<tr><td colspan="4">Prestations/Charges déductibles</td></tr>';
+print '<tr><td colspan="4">Prestations/Charges deductibles</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES') {
     $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";

@@ -309,7 +309,7 @@ class MenuTop {
 
         $menuArbo = new Menubase($this->db,'eldy','top');
  		$tabMenu = $menuArbo->menutopCharger(1,$_SESSION['mainmenu'],'eldy');
-        for($i=0;$i<count($tabMenu);$i++)
+        for($i=0; $i<count($tabMenu); $i++)
         {
         	if ($tabMenu[$i]['right'] == true)
         	{

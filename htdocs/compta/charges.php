@@ -51,7 +51,7 @@ if ($action == 'del_bookmark') {
 
 llxHeader();
 
-print_titre("Charges");
+print_titre($langs->trans("Charges"));
 
 print '<table width="100%">';
 

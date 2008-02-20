@@ -39,7 +39,7 @@ else {
 }
 
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0) 
 {
@@ -55,7 +55,7 @@ llxHeader();
 
 $html=new Form($db);
 
-// Affiche en-tête du rapport
+// Affiche en-tï¿½te du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom=$langs->trans("AnnualSummaryDueDebtMode");
@@ -90,7 +90,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 } else {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-     * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
+     * vieilles versions, ils n'ï¿½taient pas liï¿½s via paiement_facture. On les ajoute plus loin)
      */
 	$sql  = "SELECT sum(pf.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
@@ -118,7 +118,7 @@ else {
 	dolibarr_print_error($db);	
 }
 
-// On ajoute les paiements clients anciennes version, non liés par paiement_facture
+// On ajoute les paiements clients anciennes version, non liï¿½s par paiement_facture
 if ($modecompta != 'CREANCES-DETTES') { 
     $sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
@@ -228,7 +228,7 @@ for ($mois = 1 ; $mois <= 12 ; $mois++)
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($modecompta == 'CREANCES-DETTES') {
-    // TVA à payer
+    // TVA ï¿½ payer
     $sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
     $sql .= " WHERE f.fk_statut in (1,2)";
@@ -251,7 +251,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     } else {
         dolibarr_print_error($db);
     }
-    // TVA à récupérer
+    // TVA ï¿½ rï¿½cupï¿½rer
     $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
     $sql .= " WHERE f.fk_statut in (1,2)";
@@ -276,7 +276,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     }
 }
 else {
-    // TVA réellement déja payée
+    // TVA rï¿½ellement dï¿½ja payï¿½e
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
     $sql .= " WHERE amount > 0";
@@ -305,7 +305,7 @@ else {
     } else {
         dolibarr_print_error($db);
     }
-    // TVA récupérée
+    // TVA rï¿½cupï¿½rï¿½e
     $sql = "SELECT sum(t.amount) as amount, date_format(t.datev,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
     $sql .= " WHERE amount < 0";
@@ -347,7 +347,7 @@ for ($mois = 1 ; $mois <= 12 ; $mois++)
 */
 
 /*
- * Charges sociales non déductibles
+ * Charges sociales non deductibles
  */
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
@@ -407,7 +407,7 @@ for ($mois = 1 ; $mois <= 12 ; $mois++)
 */
 
 /*
- * Charges sociales déductibles
+ * Charges sociales deductibles
  */
 $subtotal_ht = 0;
 $subtotal_ttc = 0;

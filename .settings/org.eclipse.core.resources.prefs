@@ -1,4 +1,4 @@
-#Sat Jan 26 10:43:38 GMT 2008
+#Tue Feb 19 23:17:47 GMT 2008
 eclipse.preferences.version=1
 encoding//dev/skeletons/modMyModule.class.php=ISO-8859-1
 encoding//htdocs/about.php=ISO-8859-1
@@ -34,7 +34,6 @@ encoding//htdocs/compta/facture/stats/month.php=ISO-8859-1
 encoding//htdocs/compta/index.php=ISO-8859-1
 encoding//htdocs/conf/conf.class.php=ISO-8859-1
 encoding//htdocs/contrat/fiche.php=ISO-8859-1
-encoding//htdocs/contrat/ligne.php=ISO-8859-1
 encoding//htdocs/dolgraph.class.php=ISO-8859-1
 encoding//htdocs/expedition/expedition.class.php=ISO-8859-1
 encoding//htdocs/expedition/stats/month.php=ISO-8859-1
@@ -71,6 +70,7 @@ encoding//htdocs/lib/product.lib.php=ISO-8859-1
 encoding//htdocs/main.inc.php=ISO-8859-1
 encoding//htdocs/master.inc.php=ISO-8859-1
 encoding//htdocs/paiement.class.php=ISO-8859-1
+encoding//htdocs/product/fiche.php=ISO-8859-1
 encoding//htdocs/product/reassort.php=ISO-8859-1
 encoding//htdocs/product/stats/fiche.php=ISO-8859-1
 encoding//htdocs/projet/tasks/fiche.php=ISO-8859-1
