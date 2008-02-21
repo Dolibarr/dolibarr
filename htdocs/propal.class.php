@@ -296,7 +296,7 @@ class Propal extends CommonObject
 			  // qty, pu, remise_percent et txtva
 			  // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
 			  // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			  $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
+			  $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $info_bits);
 			  $total_ht  = $tabprice[0];
 			  $total_tva = $tabprice[1];
 			  $total_ttc = $tabprice[2];
@@ -375,11 +375,11 @@ class Propal extends CommonObject
    *	\param		price_base_type		HT ou TTC
    *    \return     int             	0 en cas de succ�s
    */
-    function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $desc='', $price_base_type='HT')
+    function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $desc='', $price_base_type='HT', $info_bits=0)
     {
     	global $conf;
     	
-    	dolibarr_syslog("Propal::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type");
+    	dolibarr_syslog("Propal::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
     	include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
     	
     	if ($this->statut == 0)
@@ -405,7 +405,7 @@ class Propal extends CommonObject
         // qty, pu, remise_percent et txtva
         // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
         // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-        $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
+        $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $info_bits);
         $total_ht  = $tabprice[0];
         $total_tva = $tabprice[1];
         $total_ttc = $tabprice[2];

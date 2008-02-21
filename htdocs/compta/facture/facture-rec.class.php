@@ -358,7 +358,7 @@ class FactureRec extends Facture
 	/**
 	 *		\brief		Ajoute une ligne de facture
 	 */
-	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0, $price_base_type='HT')
+	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0, $price_base_type='HT', $info_bits=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 		
@@ -376,7 +376,7 @@ class FactureRec extends Facture
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];

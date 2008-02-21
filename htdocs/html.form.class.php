@@ -2176,22 +2176,29 @@ class Form
     /**
      *      \brief      Selection du taux de tva à appliquer
      *      \param      name                Nom champ html
-     *      \param      defaulttx           Forçage du taux tva pré-sélectionné. Mettre '' pour aucun forcage.
+     *      \param      selectedrate        Forçage du taux tva pré-sélectionné. Mettre '' pour aucun forcage.
      *      \param      societe_vendeuse    Objet société vendeuse
      *      \param      societe_acheteuse   Objet société acheteuse
      *      \param      taux_produit        Taux par defaut du produit vendu
+     *      \param      info_bits           Miscellanous information on line
      *      \remarks    Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.
      *                  Si (vendeur et acheteur dans Communauté européenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
      *                  Si (vendeur et acheteur dans Communauté européenne) et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
      *                  Sinon la TVA proposée par défaut=0. Fin de règle.
      */
-    function select_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
+    function select_tva($name='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='', $info_bits=0)
 	{
 		global $langs,$conf,$mysoc;
 
 		$txtva=array();
 		$libtva=array();
+		$nprtva=array();
+
+		// Define defaultnpr and defaultttx
+		$defaultnpr=($info_bits & 0x01);
+		$defaultnpr=(eregi('\*',$selectedrate) ? 1 : $defaultnpr);
+		$defaulttx=eregi_replace('\*','',$selectedrate);
 
 		//print $societe_vendeuse."-".$societe_acheteuse;
 		if (is_object($societe_vendeuse) && ! $societe_vendeuse->pays_code)
@@ -2232,8 +2239,9 @@ class Form
 				for ($i = 0; $i < $num; $i++)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$txtva[$i] = $obj->taux;
-					$libtva[$i] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
+					$txtva[$i]  = $obj->taux;
+					$libtva[$i] = $obj->taux.'%';
+					$nprtva[$i] = $obj->recuperableonly;
 				}
 			}
 			else
@@ -2250,6 +2258,7 @@ class Form
 		if ($defaulttx < 0 || strlen($defaulttx) == 0)
 		{
 			$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
+			$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$taux_produit);
 		}
 		// Si taux par defaut n'a pu etre déterminé, on prend dernier de la liste.
 		// Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
@@ -2267,16 +2276,21 @@ class Form
 			
 			for ($i = 0 ; $i < $nbdetaux ; $i++)
 			{
-				print '<option value="'.$txtva[$i].'"';
-				if ($txtva[$i] == $defaulttx)
+				//print "xxxxx".$txtva[$i]."-".$nprtva[$i];
+				print '<option value="'.$txtva[$i];
+				print $nprtva[$i] ? '*': '';
+				print '"';
+				if ($txtva[$i] == $defaulttx && $nprtva[$i] == $defaultnpr)
 				{
 					print ' selected="true"';
 				}
-				print '>'.vatrate($libtva[$i]).'</option>';
+				print '>'.vatrate($libtva[$i]);
+				print $nprtva[$i] ? ' *': '';
+				print '</option>';
 				
 				$this->tva_taux_value[$i] = $txtva[$i];
 				$this->tva_taux_libelle[$i] = $libtva[$i];
-				
+				$this->tva_taux_npr[$i] = $nprtva[$i];
 			}
 			print '</select>';
 		}

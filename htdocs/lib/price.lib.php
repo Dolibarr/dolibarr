@@ -35,15 +35,16 @@
 		\param 	txtva						Taux tva
 		\param 	remise_percent_global		0
 		\param	price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
+		\param	info_bits					Miscellanous informations on line
 		\return result[0,1,2,3,4,5]			(total_ht, total_tva, total_ttc, pu_ht, pu_tva, pu_ttc)
 */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_percent_global=0, $price_base_type='HT')
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_percent_global=0, $price_base_type='HT', $info_bits=0)
 {
 	global $conf;
 	
 	$result=array();
 
-	//dolibarr_syslog("price.lib::calcul_price_total $qty, $pu, $remise_percent_ligne, $txtva, $price_base_type");
+	//dolibarr_syslog("price.lib::calcul_price_total $qty, $pu, $remise_percent_ligne, $txtva, $price_base_type $info_bits");
 	if ($price_base_type == 'HT')
 	{
 		// On travaille par defaut en partant du prix HT

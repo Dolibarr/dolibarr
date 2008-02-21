@@ -670,7 +670,7 @@ class Contrat extends CommonObject
 		$pu = price2num($pu,'MU');
 		$txtva = price2num($txtva,'MU');
 		
-        dolibarr_syslog("Contrat::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type");
+        dolibarr_syslog("Contrat::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $info_bits");
 
         if ($this->statut == 0)
         {
@@ -693,7 +693,7 @@ class Contrat extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];

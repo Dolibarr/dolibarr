@@ -458,9 +458,10 @@ class FactureFournisseur extends Facture
 	 * \param     qty           	Quantité
 	 * \param     idproduct			Id produit
 	 * \param	  price_base_type	HT ou TTC
+	 * \param	  info_bits			Miscellanous informations of line
 	 * \return    int           	<0 si ko, >0 si ok
 	 */
-	function updateline($id, $label, $pu, $tauxtva, $qty=1, $idproduct=0, $price_base_type='HT')
+	function updateline($id, $label, $pu, $tauxtva, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0)
 	{
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
@@ -474,7 +475,7 @@ class FactureFournisseur extends Facture
 		// qty, pu, remise_percent et txtva
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		$tabprice = calcul_price_total($qty, $pu, 0, $tauxtva, 0, $price_base_type);
+		$tabprice = calcul_price_total($qty, $pu, 0, $tauxtva, 0, $price_base_type, $info_bits);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];

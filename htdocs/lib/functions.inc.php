@@ -1894,6 +1894,26 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 
 
 /**
+   \brief      	Fonction qui renvoie si tva doit etre tva percue récupérable
+   \remarks    	Si vendeur non assujeti a TVA, TVA par défaut=0. Fin de régle.
+				Si le (pays vendeur = pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de régle.
+				Si (vendeur et acheteur dans Communauté européenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par défaut=0 (La TVA doit étre payé par acheteur au centre d'impots de son pays et non au vendeur). Fin de régle.
+				Si (vendeur et acheteur dans Communauté européenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par défaut=TVA du produit vendu. Fin de régle.
+				Si (vendeur et acheteur dans Communauté européenne) et (acheteur = entreprise avec num TVA) intra alors TVA par défaut=0. Fin de régle.
+				Sinon TVA proposée par défaut=0. Fin de régle.
+   \param      	societe_vendeuse    	Objet société vendeuse
+   \param      	societe_acheteuse   	Objet société acheteuse
+   \param      	taux_produit        	Taux par defaut du produit vendu
+   \return     	float               	0 or 1
+ */
+function get_default_npr($societe_vendeuse, $societe_acheteuse, $taux_produit)
+{
+
+	return 0;
+}
+
+
+/**
 		\brief  Renvoie oui ou non dans la langue choisie
 		\param	yesno			Variable pour test si oui ou non
 		\param	case			1=Yes/No, 0=yes/no

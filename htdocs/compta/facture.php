@@ -798,7 +798,8 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             $prod->fetch($_POST['idprod']);
 
             $tva_tx = get_default_tva($mysoc,$fac->client,$prod->tva_tx);
-
+			$tva_npr = get_default_npr($mysoc,$fac->client,$prod->tva_tx);
+			
             // On defini prix unitaire
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
             {
@@ -834,9 +835,13 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
         else
         {
 	        $pu_ht=$_POST['pu'];
-	        $tva_tx=$_POST['tva_tx'];
+	        $tva_tx=eregi_replace('\*','',$_POST['tva_tx']);
+			$tva_npr=eregi('\*',$_POST['tva_tx'])?1:0;
 	        $desc=$_POST['dp_desc'];
         }
+		
+		$info_bit=0;
+		if ($tva_npr) $info_bit |= 0x01;
 
 		// Insere ligne
 		$result = $fac->addline(
@@ -850,7 +855,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 				$date_start,
 				$date_end,
 				0,
-				'',
+				$info_bit,
 				'',
 				$price_base_type,
 				$pu_ttc
@@ -888,6 +893,14 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$date_end=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
 	}
 
+	// Define info_bits
+	$info_bits=0;
+	if (eregi('\*',$_POST['tva_tx'])) $info_bits |= 0x01;
+
+	// Define vat_rate
+	$vat_rate=$_POST['tva_tx'];
+	$vat_rate=eregi_replace('\*','',$vat_rate);
+
 	$result = $fac->updateline($_POST['rowid'],
 		$_POST['desc'],
 		$_POST['price'],
@@ -895,7 +908,9 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$_POST['remise_percent'],
 		$date_start,
 		$date_end,
-		$_POST['tva_tx']
+		$vat_rate,
+		'HT',
+		$info_bits
 		);
 
 	if ($_REQUEST['lang_id'])
@@ -2405,7 +2420,7 @@ else
 							}
 							print "</td>\n";
 						}
-						print '<td align="right">'.vatrate($objp->tva_taux).'%</td>';
+						print '<td align="right">'.vatrate($objp->tva_taux).'%'.($objp->info_bits & 1?' *':'').'</td>';
 						print '<td align="right">'.price($objp->subprice)."</td>\n";
 						print '<td align="right">';
 						if (($objp->info_bits & 2) != 2)
@@ -2507,10 +2522,7 @@ else
 						}
 						print '</td>';
 						print '<td align="right">';
-						if(! $soc->tva_assuj)
-							print '<input type="hidden" name="tva_tx" value="0">0%';
-						else
-							print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc);
+						print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc,'',$objp->info_bits);
 						print '</td>';
 						print '<td align="right"><input size="6" type="text" class="flat" name="price" value="'.price($objp->subprice,0,'',0).'"></td>';
 						print '<td align="right">';
@@ -2591,10 +2603,8 @@ else
 				}
 				print '</td>';
 				print '<td align="right">';
-				if (! $soc->tva_assuj)
-					print '<input type="hidden" name="tva_tx" value="0">0%';
-				else
-					$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
+
+				$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
 				print '<td align="right"><input type="text" name="qty" value="'.($fac->type==2?'-1':'1').'" size="2"></td>';

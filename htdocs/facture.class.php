@@ -46,57 +46,58 @@ class Facture extends CommonObject
 	var $element='facture';
     var $table_element='facture';
 
-  var $table;
-  var $tabledetail;	
-  var $id;
-  //! Id client
-  var $socid;
-  //! Objet societe client (à charger par fetch_client)
-  var $client;	
-  var $number;
-  var $author;
-  var $date;
-  var $ref;
-  var $ref_client;
-  //! 0=Facture normale, 1=Facture remplacement, 2=Facture avoir, 3=Facture récurrente
-  var $type;
-  var $amount;
-  var $remise;
-  var $tva;
-  var $total;
-  var $note;
-  var $note_public;
-  //! 0=brouillon,
-  //! 1=validée,
-  //! 2=classée payée partiellement (close_code='discount_vat','badcustomer') ou complètement (close_code=null),
-  //! 3=classée abandonnée et aucun paiement n'a eu lieu (close_code='badcustomer','abandon' ou 'replaced')
-  var $statut;
-  //! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
-  var $paye;
-  //! id facture source si facture de remplacement ou avoir
-  var $fk_facture_source;
-  //! Fermeture apres paiement partiel: discount_vat, bad_customer, abandon
-  //! Fermeture alors que aucun paiement: replaced (si remplacé), abandon
-  var $close_code;	
-  //! Commentaire si mis a paye sans paiement complet
-  var $close_note;
-  var $propalid;
-  var $projetid;
-  var $date_lim_reglement;
-  var $cond_reglement_id;
-  var $cond_reglement_code;
-  var $mode_reglement_id;
-  var $mode_reglement_code;
-  var $modelpdf;
-  var $products=array();
-  var $lignes=array();	
-  //! Pour board
-  var $nbtodo;
-  var $nbtodolate;
-  var $specimen;
-  //! Numero d'erreur de 512 à 1023
-  var $errno = 0;
-  /**
+	var $table;
+	var $tabledetail;	
+	var $id;
+	//! Id client
+	var $socid;
+	//! Objet societe client (à charger par fetch_client)
+	var $client;	
+	var $number;
+	var $author;
+	var $date;
+	var $ref;
+	var $ref_client;
+	//! 0=Facture normale, 1=Facture remplacement, 2=Facture avoir, 3=Facture récurrente
+	var $type;
+	var $amount;
+	var $remise;
+	var $tva;
+	var $total;
+	var $note;
+	var $note_public;
+	//! 0=brouillon,
+	//! 1=validée,
+	//! 2=classée payée partiellement (close_code='discount_vat','badcustomer') ou complètement (close_code=null),
+	//! 3=classée abandonnée et aucun paiement n'a eu lieu (close_code='badcustomer','abandon' ou 'replaced')
+	var $statut;
+	//! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
+	var $paye;
+	//! id facture source si facture de remplacement ou avoir
+	var $fk_facture_source;
+	//! Fermeture apres paiement partiel: discount_vat, bad_customer, abandon
+	//! Fermeture alors que aucun paiement: replaced (si remplacé), abandon
+	var $close_code;	
+	//! Commentaire si mis a paye sans paiement complet
+	var $close_note;
+	var $propalid;
+	var $projetid;
+	var $date_lim_reglement;
+	var $cond_reglement_id;
+	var $cond_reglement_code;
+	var $mode_reglement_id;
+	var $mode_reglement_code;
+	var $modelpdf;
+	var $products=array();
+	var $lignes=array();	
+	//! Pour board
+	var $nbtodo;
+	var $nbtodolate;
+	var $specimen;
+	//! Numero d'erreur de 512 à 1023
+	var $errno = 0;
+	
+	/**
      \brief  Constructeur de la classe
      \param  DB         handler accès base de données
      \param  socid		id societe ('' par defaut)
@@ -1337,7 +1338,7 @@ class Facture extends CommonObject
    *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
    *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
    */
-	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
+	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
 	{
 		dolibarr_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -1369,7 +1370,7 @@ class Facture extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1443,97 +1444,100 @@ class Facture extends CommonObject
 		}
 	}
 
-  /**
-   *      \brief     Mets à jour une ligne de facture
-   *      \param     rowid            Id de la ligne de facture
-   *      \param     desc             Description de la ligne
-   *      \param     pu               Prix unitaire (HT ou TTC selon price_base_type)
-   *      \param     qty              Quantité
-   *      \param     remise_percent   Pourcentage de remise de la ligne
-   *      \param     date_start       Date de debut de validité du service
-   *      \param     date_end         Date de fin de validité du service
-   *      \param     tva_tx           Taux TVA
-   * 	  \param	 price_base_type  HT ou TTC
-   *      \return    int              < 0 si erreur, > 0 si ok
-   */
-  function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $price_base_type='HT')
-  {
-    dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva", LOG_DEBUG);
-    include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+	/**
+	*      \brief     Mets à jour une ligne de facture
+	*      \param     rowid            Id de la ligne de facture
+	*      \param     desc             Description de la ligne
+	*      \param     pu               Prix unitaire (HT ou TTC selon price_base_type)
+	*      \param     qty              Quantité
+	*      \param     remise_percent   Pourcentage de remise de la ligne
+	*      \param     date_start       Date de debut de validité du service
+	*      \param     date_end         Date de fin de validité du service
+	*      \param     tva_tx           Taux TVA
+	* 	   \param     price_base_type  HT ou TTC
+	* 	   \param     info_bits        Miscellanous informations
+	*      \return    int              < 0 si erreur, > 0 si ok
+	*/
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $price_base_type='HT', $info_bits=0)
+	{
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
-    if ($this->brouillon)
-      {
-	$this->db->begin();
+		dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $price_base_type, $info_bits", LOG_DEBUG);
 
-	// Nettoyage paramètres
-	$remise_percent=price2num($remise_percent);
-	$qty=price2num($qty);
-	if (! $qty) $qty=1;
-	$pu = price2num($pu);
-	$txtva=price2num($txtva);
+		if ($this->brouillon)
+		{
+			$this->db->begin();
 
-	// Calcul du total TTC et de la TVA pour la ligne a partir de
-	// qty, pu, remise_percent et txtva
-	// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-	// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-	$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
-		$total_ht  = $tabprice[0];
-		$total_tva = $tabprice[1];
-		$total_ttc = $tabprice[2];
-		$pu_ht  = $tabprice[3];
-		$pu_tva = $tabprice[4];
-		$pu_ttc = $tabprice[5];
+			// Nettoyage paramètres
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			if (! $qty) $qty=1;
+			$pu = price2num($pu);
+			$txtva=price2num($txtva);
 
-	// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-	$price = $pu;
-	$remise = 0;
-	if ($remise_percent > 0)
-	  {
-	    $remise = round(($pu * $remise_percent / 100),2);
-	    $price = ($pu - $remise);
-	  }
-	$price    = price2num($price);
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $info_bits);
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
+			$pu_ht  = $tabprice[3];
+			$pu_tva = $tabprice[4];
+			$pu_ttc = $tabprice[5];
 
-	// Mise a jour ligne en base
-	$ligne=new FactureLigne($this->db);
-	$ligne->rowid=$rowid;
-	$ligne->fetch($rowid);
+			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
+			$price = $pu;
+			$remise = 0;
+			if ($remise_percent > 0)
+			{
+				$remise = round(($pu * $remise_percent / 100),2);
+				$price = ($pu - $remise);
+			}
+			$price    = price2num($price);
 
-	$ligne->desc=$desc;
-	$ligne->qty=$qty;
-	$ligne->tva_tx=$txtva;
-	$ligne->remise_percent=$remise_percent;
-	$ligne->subprice=$pu;
-	$ligne->date_start=$date_start;
-	$ligne->date_end=$date_end;
-	$ligne->total_ht=$total_ht;
-	$ligne->total_tva=$total_tva;
-	$ligne->total_ttc=$total_ttc;
+			// Mise a jour ligne en base
+			$ligne=new FactureLigne($this->db);
+			$ligne->rowid=$rowid;
+			$ligne->fetch($rowid);
 
-	// A ne plus utiliser
-	$ligne->price=$price;
-	$ligne->remise=$remise;
+			$ligne->desc=$desc;
+			$ligne->qty=$qty;
+			$ligne->tva_tx=$txtva;
+			$ligne->remise_percent=$remise_percent;
+			$ligne->subprice=$pu;
+			$ligne->date_start=$date_start;
+			$ligne->date_end=$date_end;
+			$ligne->total_ht=$total_ht;
+			$ligne->total_tva=$total_tva;
+			$ligne->total_ttc=$total_ttc;
+			$ligne->info_bits=$info_bits;
+			
+			// A ne plus utiliser
+			$ligne->price=$price;
+			$ligne->remise=$remise;
 
-	$result=$ligne->update();
-	if ($result > 0)
-	  {
-	    // Mise a jour info denormalisees au niveau facture
-	    $this->update_price($this->id);
-	    $this->db->commit();
-	    return $result;
-	  }
-	else
-	  {
-	    $this->db->rollback();
-	    return -1;
-	  }
-      }
-    else
-      {
-	$this->error="Facture::UpdateLine Invoice statut makes operation forbidden";
-	return -2;
-      }
-  }
+			$result=$ligne->update();
+			if ($result > 0)
+			{
+				// Mise a jour info denormalisees au niveau facture
+				$this->update_price($this->id);
+				$this->db->commit();
+				return $result;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error="Facture::UpdateLine Invoice statut makes operation forbidden";
+			return -2;
+		}
+	}
 
 	/**
 	*	\brief		Supprime une ligne facture de la base
@@ -3108,7 +3112,7 @@ class FactureLigne
     $sql.= ",total_ttc=".price2num($this->total_ttc)."";
     $sql.= " WHERE rowid = ".$this->rowid;
 
-    dolibarr_syslog("FactureLigne::update sql=$sql");
+    dolibarr_syslog("FactureLigne::update sql=".$sql);
 
     $resql=$this->db->query($sql);
     if ($resql)
@@ -3119,7 +3123,7 @@ class FactureLigne
     else
       {
 	$this->error=$this->db->error();
-	dolibarr_syslog("FactureLigne::update Error ".$this->error);
+	dolibarr_syslog("FactureLigne::update Error ".$this->error, LOG_ERR);
 	$this->db->rollback();
 	return -2;
       }
