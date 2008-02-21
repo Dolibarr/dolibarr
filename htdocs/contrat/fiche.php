@@ -1169,7 +1169,7 @@ else
         {
             print '<div class="tabsAction">';
 
-            if (($contrat->statut == 0 || $conf->global->CONTRAT_EDITWHENVALIDATED) && $num)
+            if (($contrat->statut == 0 || $conf->global->CONTRAT_EDITWHENVALIDATED) && $nbofservices)
             {
                 print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
             }
