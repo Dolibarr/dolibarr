@@ -1227,77 +1227,83 @@ function info_admin($texte,$infoonimgalt=0)
      \param      dbtable       Table de la base correspondant au module (optionnel)
      \param      list          Défini si la page sert de liste et donc ne fonctionne pas avec un id
 */
- function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list=0)
- {
- 	global $db;
- 	
- 	if (!$modulename)
- 	{
- 		$modulename = 'societe';
- 		$list = 1;
- 	}
- 	
- 	$socid = 0;
- 	$nocreate = 0; 
- 	
- 	//si dbtable non défini, méme nom que le module
- 	if (!$dbtablename) $dbtablename = $modulename;
+function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list=0)
+{
+	global $db;
+	
+	// Clean parameters
+	if (!$modulename)
+	{
+		$modulename = 'societe';
+		$list = 1;
+	}
+	
+	$objectid = 0;
+	$socid = 0;
+	$nocreate = 0; 
+	
+	// Check permission from module
+	if (! $user->rights->$modulename->lire)
+	{
+		accessforbidden();
+	}
+	else if (!$user->rights->$modulename->creer)
+	{
+		$nocreate = 1;
+		if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
+		{
+			accessforbidden();
+		}
+	}
+	
+	// Check permission from company affiliation
+	if ($user->societe_id > 0)
+	{
+		$_GET["action"] = '';
+		$_POST["action"] = '';
+		$socid = $user->societe_id;
+		if (!$objectid) $objectid = $socid;
+		if ($modulename == 'societe' && $socid <> $objectid) accessforbidden();
+	}
 
- 	if (!$user->rights->$modulename->lire)
- 	{
- 		accessforbidden();
- 	}
- 	else if (!$user->rights->$modulename->creer)
- 	{
- 		$nocreate = 1;
- 		if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
- 		{
- 			accessforbidden();
- 		}
- 	}
- 	
- 	if ($user->societe_id > 0)
- 	{
-    $_GET["action"] = '';
-	  $_POST["action"] = '';
-    $socid = $user->societe_id;
-    if (!$objectid) $objectid = $socid;
-    if ($modulename == 'societe' && $socid <> $objectid) accessforbidden();
-  }
-
-  if ($objectid)
-  {
-  	if ($modulename == 'societe' && !$user->rights->commercial->client->voir && !$socid > 0)
-  	{
-  		$sql = "SELECT sc.fk_soc";
-      $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-      $sql .= " WHERE sc.fk_soc = ".$objectid." AND sc.fk_user = ".$user->id;
-    }
-    else if (!$user->rights->commercial->client->voir || $socid > 0)
-    {
-  	  $sql = "SELECT sc.fk_soc, dbt.fk_soc";
-  	  $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-  	  $sql .= " WHERE dbt.rowid = ".$objectid;
-      if (!$user->rights->commercial->client->voir && !$socid > 0)
-      {
-    	  $sql .= " AND sc.fk_soc = dbt.fk_soc AND sc.fk_user = ".$user->id;
-      }
-      if ($socid > 0) $sql .= " AND dbt.fk_soc = ".$socid;
-    }
-//print $sql;
-    if ($sql && $db->query($sql))
-    {
-      if ($db->num_rows() == 0)
-      {
-      	accessforbidden();
-      }
-    }
-  }
-  else if ((!$objectid && $list==0) && $nocreate == 1)
-  {
-  	accessforbidden();
-  }
-  return $objectid;
+	if ($objectid)
+	{
+		if ($modulename == 'societe' && ! $user->rights->commercial->client->voir && ! $socid > 0)
+		{
+			$sql = "SELECT sc.fk_soc";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= " WHERE sc.fk_soc = ".$objectid." AND sc.fk_user = ".$user->id;
+		}
+		else if (! $user->rights->commercial->client->voir || $socid > 0)
+		{
+			// Si dbtable non défini, méme nom que le module
+			if (!$dbtablename) $dbtablename = $modulename;
+			
+			$sql = "SELECT sc.fk_soc, dbt.fk_soc";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+			$sql .= " WHERE dbt.rowid = ".$objectid;
+			if (!$user->rights->commercial->client->voir && !$socid > 0)
+			{
+				$sql .= " AND sc.fk_soc = dbt.fk_soc AND sc.fk_user = ".$user->id;
+			}
+			if ($socid > 0) $sql .= " AND dbt.fk_soc = ".$socid;
+		}
+		//print $sql;
+		if ($sql)
+		{
+			$resql=$db->query($sql);
+			if ($resql && $db->num_rows($resql) == 0)
+			{
+				accessforbidden();
+			}
+		}
+	}
+	else if ((!$objectid && $list==0) && $nocreate == 1)
+	{
+		accessforbidden();
+	}
+	
+	return $objectid;
 }
 
 

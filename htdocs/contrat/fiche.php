@@ -36,37 +36,8 @@ $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
 
-
-if (! $user->rights->contrat->lire)
-accessforbidden();
-
-// Securite acces client et commerciaux
-$contratid = isset($_GET["id"])?$_GET["id"]:'';
-
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if ($contratid && !$user->rights->commercial->client->voir)
-{
-        $sql = "SELECT sc.fk_soc, c.fk_soc";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."contrat as c";
-        $sql .= " WHERE c.rowid = ".$contratid;
-        if (!$user->rights->commercial->client->voir && !$user->societe_id > 0)
-        {
-        	$sql .= " AND sc.fk_soc = c.fk_soc AND sc.fk_user = ".$user->id;
-        }
-        if ($user->societe_id > 0) $sql .= " AND c.fk_soc = ".$socid;
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
-}
-
+// Security check
+restrictedArea($user,'contrat',$contratid,'contrat');
 
 
 
@@ -112,14 +83,14 @@ if ($_POST["mode"]=='predefined')
 {
 	$date_start='';
 	$date_end='';
-  if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
-  {
-    $date_start=dolibarr_mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
-  }
-  if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
-  {
-    $date_end=dolibarr_mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
-  }
+	if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
+	{
+		$date_start=dolibarr_mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
+	}
+	if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
+	{
+		$date_end=dolibarr_mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
+	}
 }
 
 // Si ajout champ produit libre
@@ -127,14 +98,14 @@ if ($_POST["mode"]=='libre')
 {
 	$date_start_sl='';
 	$date_end_sl='';
-  if ($_POST["date_start_slmonth"] && $_POST["date_start_slday"] && $_POST["date_start_slyear"])
-  {
-    $date_start_sl=dolibarr_mktime(12, 0 , 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
-  }
-  if ($_POST["date_end_slmonth"] && $_POST["date_end_slday"] && $_POST["date_end_slyear"])
-  {
-    $date_end_sl=dolibarr_mktime(12, 0 , 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
-  }
+	if ($_POST["date_start_slmonth"] && $_POST["date_start_slday"] && $_POST["date_start_slyear"])
+	{
+		$date_start_sl=dolibarr_mktime(12, 0 , 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
+	}
+	if ($_POST["date_end_slmonth"] && $_POST["date_end_slday"] && $_POST["date_end_slyear"])
+	{
+		$date_end_sl=dolibarr_mktime(12, 0 , 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
+	}
 }
 
 // Param si updateligne
@@ -237,7 +208,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 			}
 			if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
 			{
-				$date_end=dolibarr_mktime(12,0,0,$_POST['date_endmonth'],$_POST['date_endday'],$_POST['date_endmonth']);
+				$date_end=dolibarr_mktime(12,0,0,$_POST['date_endmonth'],$_POST['date_endday'],$_POST['date_endyear']);
 			}
 		}
 
@@ -1114,7 +1085,7 @@ else
 			$var=false;
 
 			// Service sur produit predefini
-			print '<form name="addligne" action="fiche.php?id='.$id.'" method="post">';
+			print '<form name="addligne" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
 			print '<input type="hidden" name="action" value="addligne">';
 			print '<input type="hidden" name="mode" value="predefined">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
@@ -1149,7 +1120,7 @@ else
 			$var=!$var;
 			
 			// Service libre
-			print '<form name="addligne_sl" action="fiche.php?id='.$id.'" method="post">';
+			print '<form name="addligne_sl" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
 			print '<input type="hidden" name="action" value="addligne">';
 			print '<input type="hidden" name="mode" value="libre">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
@@ -1198,7 +1169,7 @@ else
         {
             print '<div class="tabsAction">';
 
-            if ($contrat->statut == 0 && $num)
+            if (($contrat->statut == 0 || $conf->global->CONTRAT_EDITWHENVALIDATED) && $num)
             {
                 print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
             }
