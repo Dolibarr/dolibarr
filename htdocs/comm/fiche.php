@@ -44,7 +44,7 @@ if ($conf->fichinter->enabled) $langs->load("interventions");
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
 // Securite d'acces client et commerciaux
-$socid = restrictedArea($user, 'societe', $socid);
+$result = restrictedArea($user, 'societe', $socid);
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
