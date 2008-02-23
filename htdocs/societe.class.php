@@ -119,6 +119,7 @@ class Societe
     $this->forme_juridique_code  = 0;
     $this->prefixCustomerIsRequired = 0;
     $this->prefixSupplierIsRequired = 0;
+    $this->tva_assuj = 1;
 
     return 1;
   }
