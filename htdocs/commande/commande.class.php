@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
  
 /**
    \file       htdocs/commande/commande.class.php
    \ingroup    commande
    \brief      Fichier des classes de commandes
-   \version    $Revision$
+   \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
@@ -34,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
  
 /**
    \class      Commande
-   \brief      Classe de gestion de commande
+   \brief      Class to manage orders
 */
 class Commande extends CommonObject
 {
@@ -104,7 +102,7 @@ class Commande extends CommonObject
   */
   function create_from_propale($user, $propale_id)
   {
-    dolibarr_syslog("Commande.class.php::create_from_propale propale_id=$propale_id");
+    dolibarr_syslog("Commande.class::create_from_propale propale_id=$propale_id");
     
     $propal = new Propal($this->db);
     $propal->fetch($propale_id);
@@ -476,13 +474,13 @@ class Commande extends CommonObject
     // Nettoyage parametres
     $this->brouillon = 1;		// On positionne en mode brouillon la commande
     
-    dolibarr_syslog("Commande.class.php::create");
+    dolibarr_syslog("Commande.class::create");
     
     // Vérification paramètres
     if ($this->source < 0)
     {
     	$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
-	    dolibarr_syslog("Commande.class.php::create ".$this->error, LOG_ERR);
+	    dolibarr_syslog("Commande.class::create ".$this->error, LOG_ERR);
 	    return -1;
     }
     if (! $remise) $remise=0;
@@ -493,7 +491,7 @@ class Commande extends CommonObject
     if ($result < 0)
     {
     	$this->error="Failed to fetch company";
-	    dolibarr_syslog("Commande.class.php::create ".$this->error, LOG_ERR);
+	    dolibarr_syslog("Commande.class::create ".$this->error, LOG_ERR);
 	    return -2;
     }
     
@@ -509,13 +507,12 @@ class Commande extends CommonObject
     $sql.= " '".addslashes($this->note)."', ";
     $sql.= " '".addslashes($this->note_public)."', ";
     $sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."',";
-    $sql.= " '".($this->date_livraison?$this->db->idate($this->date_livraison):'')."',";
+    $sql.= " ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null").",";
     $sql.= " '".$this->adresse_livraison_id."',";
     $sql.= " '".$this->remise_absolue."',";
     $sql.= " '".$this->remise_percent."')";
     
-    dolibarr_syslog("Commande.class.php::create sql=".$sql);
-    
+    dolibarr_syslog("Commande::create sql=".$sql);
     $resql=$this->db->query($sql);
     if ($resql)
       {
@@ -2389,8 +2386,8 @@ class CommandeLigne
 	}
 
 	/**
-	*  \brief     Recupére l'objet ligne de commande
-	*  \param     rowid           id de la ligne de commande
+	*  \brief     Load line order
+	*  \param     rowid           id line order
 	*/
 	function fetch($rowid)
 	{

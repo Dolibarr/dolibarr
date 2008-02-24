@@ -527,7 +527,9 @@ class CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " WHERE ".$fieldid." > '".addslashes($this->ref)."'";
 		if (isset($filter)) $sql.=" AND ".$filter;
+		// Rem: Bug in some mysql version: SELECT rowid FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
 
+		//print $sql;
 		$result = $this->db->query($sql) ;
 		if (! $result)
 		{
