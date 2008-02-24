@@ -153,7 +153,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 
 	if ($_REQUEST['model'])
 	{
-		$expedition->set_pdf_model($user, $_REQUEST['model']);
+		$expedition->setDocModel($user, $_REQUEST['model']);
 	}
 
 	if ($_REQUEST['lang_id'])

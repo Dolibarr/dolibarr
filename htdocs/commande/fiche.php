@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -63,14 +63,13 @@ if ($user->societe_id >0 && isset($_GET["id"]) && $_GET["id"]>0)
    }
 }
 
-
-
 // Recuperation de l'id de projet
 $projetid = 0;
 if ($_GET["projetid"])
 {
-  $projetid = $_GET["projetid"];
+	$projetid = $_GET["projetid"];
 }
+
 
 /******************************************************************************/
 /*                     Actions                                                */
@@ -503,37 +502,38 @@ if ($_GET['action'] == 'down' && $user->rights->commande->creer)
   exit;
 }
 
-if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
+if ($_REQUEST['action'] == 'builddoc')	// In get or post
 {
-  /*
-   * Generation de la commande
-   * definit dans /includes/modules/commande/modules_commande.php
-   */
+	/*
+	* Generate order document
+	* define into /includes/modules/commande/modules_commande.php
+	*/
 
-  // Sauvegarde le dernier modele choisi pour generer un document
-  $commande = new Commande($db, 0, $_REQUEST['id']);
-  $commande->fetch($_REQUEST['id']);
-  if ($_REQUEST['model'])
-    {
-      $commande->set_pdf_model($user, $_REQUEST['model']);
-    }
+	// Sauvegarde le dernier modele choisi pour generer un document
+	$commande = new Commande($db, 0, $_REQUEST['id']);
+	$commande->fetch($_REQUEST['id']);
+	if ($_REQUEST['model'])
+	{
+		$commande->setDocModel($user, $_REQUEST['model']);
+	}
 
-  if ($_REQUEST['lang_id'])
-    {
-      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-      $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-    }
-  $result=commande_pdf_create($db, $commande->id,$commande->modelpdf,$outputlangs);
-  if ($result <= 0)
-    {
-      dolibarr_print_error($db,$result);
-      exit;
-    }
-  else
-    {
-      Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#builddoc');
-      exit;
-    }
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+
+	$result=commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	if ($result <= 0)
+	{
+		dolibarr_print_error($db,$result);
+		exit;
+	}
+	else
+	{
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#builddoc');
+		exit;
+	}
 }
 
 // Efface les fichiers

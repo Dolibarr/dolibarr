@@ -149,47 +149,54 @@ class Commande extends CommonObject
   }
 
 
-  /**
-   *      \brief      Renvoie la référence de commande suivante non utilisée en fonction du module
-   *                  de numérotation actif défini dans COMMANDE_ADDON
-   *      \param	    soc  		            objet societe
-   *      \return     string                  reference libre pour la commande
-   */
-  function getNextNumRef($soc)
-  {
-    global $db, $langs, $conf;
-    $langs->load("order");
+	/**
+	*      \brief      Renvoie la référence de commande suivante non utilisée en fonction du module
+	*                  de numérotation actif défini dans COMMANDE_ADDON
+	*      \param	    soc  		            objet societe
+	*      \return     string                  reference libre pour la commande
+	*/
+	function getNextNumRef($soc)
+	{
+		global $db, $langs, $conf;
+		$langs->load("order");
 
-    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande";
+		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande";
 
-    if (defined("COMMANDE_ADDON") && COMMANDE_ADDON)
-      {
-	$file = COMMANDE_ADDON.".php";
+		if (! empty($conf->global->COMMANDE_ADDON))
+		{
+			$file = $conf->global->COMMANDE_ADDON.".php";
 
-            // Chargement de la classe de numérotation
-            $classname = $conf->global->COMMANDE_ADDON;
-            require_once($dir.'/'.$file);
+			// Chargement de la classe de numérotation
+			$classname = $conf->global->COMMANDE_ADDON;
+			$result=include_once($dir.'/'.$file);
+			if ($result)
+			{
+				$obj = new $classname();
+				$numref = "";
+				$numref = $obj->getNextValue($soc,$this);
 
-            $obj = new $classname();
-            $numref = "";
-            $numref = $obj->getNextValue($soc,$this);
-
-            if ( $numref != "")
-            {
-	      return $numref;
-            }
-            else
-            {
-	      dolibarr_print_error($db,"Commande::getNextNumRef ".$obj->error);
-	      return "";
-            }
-        }
-        else
-        {
-            print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_NotDefined");
-            return "";
-        }
-    }
+				if ( $numref != "")
+				{
+					return $numref;
+				}
+				else
+				{
+					dolibarr_print_error($db,"Commande::getNextNumRef ".$obj->error);
+					return "";
+				}
+			}
+			else
+			{
+				print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_NotDefined");
+				return "";
+			}
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_COMMANDE_ADDON_NotDefined");
+			return "";
+		}
+	}
     
     
   /**
@@ -1086,31 +1093,6 @@ class Commande extends CommonObject
   }
 	
 	
-  /**
-   *		\brief		Positionne modele derniere generation
-   *		\param		user		Objet use qui modifie
-   *		\param		modelpdf	Nom du modele
-   */
-  function set_pdf_model($user, $modelpdf)
-  {
-    if ($user->rights->commande->creer)
-      {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET model_pdf = '$modelpdf'";
-	$sql.= " WHERE rowid = ".$this->id;
-	
-	if ($this->db->query($sql) )
-	  {
-	    $this->modelpdf=$modelpdf;
-	    return 1;
-	  }
-	else
-	  {
-	    dolibarr_print_error($this->db);
-	    return 0;
-	  }
-      }
-  }
-		
   /**
    *      \brief      Reinitialise le tableau lignes
    *		\param		only_product	Ne renvoie que ligne liées à des produits physiques prédéfinis

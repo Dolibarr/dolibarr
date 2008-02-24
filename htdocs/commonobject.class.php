@@ -593,6 +593,40 @@ class CommonObject
 		}
 	}
 
+	
+	/**
+	*		\brief		Set last model used by doc generator
+	*		\param		user		User object that make change
+	*		\param		modelpdf	Modele name
+	*		\return		int			<0 if KO, >0 if OK
+	*/
+	function setDocModel($user, $modelpdf)
+	{
+		if (! $this->table_element)
+		{
+			dolibarr_syslog("CommonObject::setDocModel was called on objet with property table_element not defined");
+			return -1;
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " SET model_pdf = '".$modelpdf."'";
+		$sql.= " WHERE rowid = ".$this->id;
+		// if ($this->element == 'facture') $sql.= " AND fk_statut < 2";
+		// if ($this->element == 'propal')  $sql.= " AND fk_statut = 0";
+
+		dolibarr_syslog("CommonObject::setDocModel sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->modelpdf=$modelpdf;
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return 0;
+		}
+	}
 }
 
 ?>

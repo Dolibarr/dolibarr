@@ -1194,32 +1194,6 @@ class Propal extends CommonObject
     }
 
 
-	/**
-	 *		\brief		Positionne modele derniere generation
-	 *		\param		user		Objet use qui modifie
-	 *		\param		modelpdf	Nom du modele
-	 */
-	function set_pdf_model($user, $modelpdf)
-	{
-		if ($user->rights->propale->creer)
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-			$sql.= " SET model_pdf = '".$modelpdf."'";
-			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-
-			if ($this->db->query($sql))
-			{
-				$this->modelpdf=$modelpdf;
-				return 1;
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				return 0;
-			}
-		}
-	}
-
     /**
      *      \brief      Cloture de la proposition commerciale
      *      \param      user        Utilisateur qui cloture

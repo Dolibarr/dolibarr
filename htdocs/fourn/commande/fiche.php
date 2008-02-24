@@ -342,7 +342,7 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
   $commande->fetch($_REQUEST['id']);
   if ($_REQUEST['model'])
   {
-    $commande->set_pdf_model($user,	$_REQUEST['model']);
+    $commande->setDocModel($user, $_REQUEST['model']);
   }
 
   if ($_REQUEST['lang_id'])

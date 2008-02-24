@@ -286,32 +286,6 @@ class Fichinter extends CommonObject
         }
     }
 
-	/**
-	*		\brief		Positionne modele derniere generation
-	*		\param		user		Objet use qui modifie
-	*		\param		modelpdf	Nom du modele
-	*/
-	function set_pdf_model($user, $modelpdf)
-	{
-		if ($user->rights->facture->creer)
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET model_pdf = '$modelpdf'";
-			$sql .= " WHERE rowid = ".$this->id;
-
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$this->modelpdf=$modelpdf;
-				return 1;
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				return 0;
-			}
-		}
-	}
-	
  /**
    *      \brief      Verifie si la ref n'est pas deja utilisee
    *      \param	    soc  		            objet societe

@@ -1134,7 +1134,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 
 	if ($_REQUEST['model'])
 	{
-		$fac->set_pdf_model($user, $_REQUEST['model']);
+		$fac->setDocModel($user, $_REQUEST['model']);
 	}
 
 	if ($_REQUEST['lang_id'])

@@ -543,32 +543,6 @@ class Expedition extends CommonObject
   }
   
 
-	/**
-	 *		\brief		Positionne modele derniere generation
-	 *		\param		user		Objet use qui modifie
-	 *		\param		modelpdf	Nom du modele
-	 */
-	function set_pdf_model($user, $modelpdf)
-	{
-		if ($user->rights->expedition->creer)
-		{
-			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET model_pdf = '$modelpdf'";
-			$sql.= " WHERE rowid = ".$this->id;
-	
-			if ($this->db->query($sql) )
-			{
-				$this->modelpdf=$modelpdf;
-				return 1;
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				return 0;
-			}
-		}
-	}
-	
-
 	/*
 	* Lit le document associé
 	*

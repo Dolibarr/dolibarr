@@ -624,7 +624,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
     $propal->fetch($_GET['propalid']);
     if ($_REQUEST['model'])
     {
-    	$propal->set_pdf_model($user, $_REQUEST['model']);
+    	$propal->setDocModel($user, $_REQUEST['model']);
     }
     
 	if ($_REQUEST['lang_id'])
