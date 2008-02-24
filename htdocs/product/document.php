@@ -18,15 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
  
 /**
         \file       htdocs/product/document.php
         \ingroup    product
         \brief      Page des documents joints sur les produits
-        \version    $Revision$
+        \version    $Id$
 */
 
 require('./pre.inc.php');
@@ -51,6 +49,7 @@ if ($_GET['id'] || $_GET["ref"])
     $prodref = sanitize_string($product->ref);
     $upload_dir = $conf->produit->dir_output.'/'.$prodref;
 }
+$modulepart='produit';
 
 
 /*
@@ -99,7 +98,8 @@ if ($product->id)
 	if ($action=='delete')
 	{
 		$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
-		dol_delete_file($file);
+		$result=dol_delete_file($file);
+		//if ($result >= 0) $mesg=$langs->trans("FileWasRemoced");
 	}
 
 	$head=product_prepare_head($product, $user);
@@ -204,7 +204,7 @@ if ($product->id)
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=produit&file='.$prodref.'/'.urlencode($file).'">'.$file.'</a>';
+				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.$prodref.'/'.urlencode($file).'">'.$file.'</a>';
 				print "</td>\n";
 				print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
 				print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir.'/'.$file),'dayhour').'</td>';

@@ -1,17 +1,33 @@
 <?php
 /* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
 /**
-    	\file       htdoc/google/index.php
-		\ingroup    google
-		\brief      Main google area page
+    	\file       htdoc/ecm/docmine.php
+		\ingroup    ecm
+		\brief      Main page for a section
 		\version    $Id$
 		\author		Laurent Destailleur
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
+
 
 // Load traductions files
 $langs->load("ecm");
@@ -31,10 +47,24 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
-$section=$_GET["section"];
-if (! $section) $section='misc';
-$upload_dir = $conf->ecm->dir_output.'/'.$section;
+$section=$_REQUEST["section"];
+if (! $section)
+{
+	dolibarr_print_error('',"ErrorSectionParamNotDefined");
+	exit;
+}
 
+$ecmdir = new ECMDirectory($db);
+if (! empty($_REQUEST["section"]))
+{
+	$result=$ecmdir->fetch($_REQUEST["section"]);
+	if (! $result > 0)
+	{
+		dolibarr_print_error($db,$ecmdir->error);
+		exit;
+	}
+}
+$upload_dir = $conf->ecm->dir_output.'/'.$ecmdir->label;
 
 
 /*******************************************************************
@@ -92,12 +122,17 @@ llxHeader();
 
 $form=new Form($db);
 
-print_fiche_titre($langs->trans("DocsMine"));
-print "<br>";
+print_fiche_titre($langs->trans("ECMManualOrg"));
+
+$ecmdir->ref=$ecmdir->label;
+print $langs->trans("ECMSection").': ';
+print img_picto('','object_dir').' ';
+print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php">'.$langs->trans("ECMRoot").'</a>';
+print ' -> <b>'.$ecmdir->getNomUrl(1).'</b>';
+print "<br><br>";
+
 
 //$head = societe_prepare_head($societe);
-
-
 //dolibarr_fiche_head($head, 'document', $societe->nom);
 
 
@@ -106,7 +141,7 @@ print "<br>";
 */
 if ($_GET['action'] == 'delete_file')
 {
-	$form->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 	print '<br>';
 }
 
@@ -161,7 +196,7 @@ if ($mesg) { print $mesg."<br>"; }
 
 // Affiche formulaire upload
 $formfile=new FormFile($db);
-$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/docmine.php');
+$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/docmine.php','',0,$section);
 
 // Affiche liste des documents existant
 print_titre($langs->trans("AttachedFiles"));
@@ -221,64 +256,12 @@ foreach($filearray as $key => $file)
 		print '<td align="right">'.$file->size.' '.$langs->trans("bytes").'</td>';
 		print '<td align="center">'.dolibarr_print_date($file->date,"dayhour").'</td>';
 		print '<td align="center">';
-		echo '<a href="'.$url.'?socid='.$socid.'&amp;action=delete_file&urlfile='.urlencode($file->name).'">'.img_delete().'</a>';
+		echo '<a href="'.$url.'?section='.$_REQUEST["section"].'&amp;action=delete_file&urlfile='.urlencode($file->name).'">'.img_delete().'</a>';
 		print "</td></tr>\n";
 	}
 }
 print "</table>";
 // Fin de zone Ajax
-
-
-print "<br><br>";
-
-// Courriers
-// Les courriers sont des documents speciaux generes par des scripts
-// situes dans scripts/courrier.
-// Voir Rodo
-if ($conf->global->MAIN_MODULE_EDITEUR)
-{
-	$filearray=array();	
-	$errorlevel=error_reporting();
-	error_reporting(0);
-	$handle=opendir($courrier_dir);
-	error_reporting($errorlevel);
-	if ($handle)
-	{
-		$i=0;
-		while (($file = readdir($handle))!==false)
-		{
-			if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-			{
-				$filearray[$i]=$file;
-				$i++;
-			}
-		}
-		closedir($handle);
-	}       	       
-
-	print '<table width="100%" class="noborder">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Courriers").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td></tr>';
-
-	$var=true;
-	foreach($filearray as $key => $file)
-	{
-		if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-		{
-			$var=!$var;
-			print "<tr $bc[$var]><td>";
-			$loc = "courrier/".get_exdir($socid);
-			echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($loc.'/'.$file).'">'.$file.'</a>';
-			print "</td>\n";
-
-			print '<td align="right">'.filesize($courrier_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
-			print '<td align="center">'.dolibarr_print_date(filemtime($courrier_dir."/".$file),"dayhour").'</td>';
-			print "</tr>\n";
-		}
-	}
-	print "</table>";
-}
-
-
 
 
 // End of page

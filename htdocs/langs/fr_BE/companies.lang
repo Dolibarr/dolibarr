@@ -166,7 +166,6 @@ BillingContact=Contact de facturation
 TotalSizeOfAttachedFiles=Taille totale des fichiers attachés
 NbOfAttachedFiles=Nombre de fichiers attachés
 AttachANewFile=Attacher un nouveau fichier
-FileWasRemoved=Fichiers supprimés
 NoRIB=Aucun RIB défini
 NoParentCompany=Aucune
 ExportImport=Import/Export

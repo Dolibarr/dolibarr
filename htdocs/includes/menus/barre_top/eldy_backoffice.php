@@ -139,6 +139,7 @@ class MenuTop {
         }
 
         // Suppliers
+/*
         if ($conf->fournisseur->enabled)
         {
             $langs->load("suppliers");
@@ -158,7 +159,8 @@ class MenuTop {
             else
             		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Suppliers").'</font></td>';
         }
-        
+*/
+
         // Commercial
         if ($conf->commercial->enabled)
         {

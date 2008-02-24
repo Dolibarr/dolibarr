@@ -281,17 +281,40 @@ if ($modulepart)
 		$sqlprotectagainstexternals = '';
     }
 
+    // Wrapping pour les produits et services
+    if ($modulepart == 'contract')
+    {
+        $user->getrights('contrat');
+        if ($user->rights->contrat->lire || eregi('^specimen',$original_file))	// Ce droit n'existe pas encore
+        {
+			$accessallowed=1;
+        }
+        $original_file=$conf->contrat->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = '';
+    }
+
     // Wrapping pour les documents generaux
     if ($modulepart == 'ged')
     {
         $user->getrights('document');
-        if ($user->rights->document->lire )
+        if ($user->rights->document->lire)
         {
-	  $accessallowed=1;
+			$accessallowed=1;
         }
         $original_file= DOL_DATA_ROOT.'/ged/'.$original_file;
     }
 
+    // Wrapping pour les documents generaux
+    if ($modulepart == 'ecm')
+    {
+        $user->getrights('ecm');
+        if ($user->rights->ecm->lire)
+        {
+			$accessallowed=1;
+        }
+        $original_file= DOL_DATA_ROOT.'/ecm/'.$original_file;
+    }
+	
     // Wrapping pour les dons
     if ($modulepart == 'don')
     {

@@ -3,9 +3,9 @@
  */
 
 /**
-    	\file       htdoc/google/index.php
-		\ingroup    google
-		\brief      Main google area page
+    	\file       htdoc/ecm/docother.php
+		\ingroup    ecm
+		\brief      Main ecm page
 		\version    $Id$
 		\author		Laurent Destailleur
 */
@@ -92,7 +92,7 @@ llxHeader();
 
 $form=new Form($db);
 
-print_fiche_titre($langs->trans("Documents"));
+print_fiche_titre($langs->trans("ECMAutoOrg"));
 
 //$head = societe_prepare_head($societe);
 

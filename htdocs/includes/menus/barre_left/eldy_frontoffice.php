@@ -14,14 +14,12 @@
 * You should have received a copy of the GNU General Public License
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*
-* $Id$
 */
 
 /**
 		\file       htdocs/includes/menus/barre_left/eldy_frontoffice.php
 		\brief      Gestionnaire du menu du gauche Eldy
-		\version    $Revision$
+		\version    $Id$
 		
 		\remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
 		\remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,
@@ -198,21 +196,23 @@ class MenuLeft {
 
 				if ($conf->societe->enabled && $conf->fournisseur->enabled)
 				{
-					$newmenu->add(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("Suppliers"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
+					$newmenu->add(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("Suppliers"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 
 					// Sécurité accés client
 					if ($user->societe_id == 0)
 					{
 						$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
 					}
-					$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 2, $user->rights->societe->contact->lire && $user->rights->fournisseur->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("List"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire && $user->rights->societe->contact->lire);
+			    	$newmenu->add_submenu(DOL_URL_ROOT."/fourn/stats.php",$langs->trans("Statistics"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 				}
 
 				// Prospects
 			    if ($conf->societe->enabled)
 			    {
 					$langs->load("commercial");
-					$newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("Prospects"), 1, $user->rights->societe->lire);
+					$newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("Prospects"), 2, $user->rights->societe->lire);
 
 					$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
 					$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=p", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
@@ -242,6 +242,17 @@ class MenuLeft {
 			{
 				$langs->load("companies");
 
+				// Actions
+				/*
+				if ($conf->agenda->enabled)
+				{
+					$newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions", $langs->trans("Agenda"), 0, $user->rights->agenda->myactions->read);
+					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=actions", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
+					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;status=todo", $langs->trans("MenuToDoActions"), 1, $user->rights->agenda->myactions->read);
+					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;time=today", $langs->trans("Today"), 1, $user->rights->agenda->myactions->read);
+					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=actions", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
+				}
+				*/
 				// Prospects
 				/*
 				$newmenu->add(DOL_URL_ROOT."/comm/prospect/index.php?leftmenu=prospects", $langs->trans("Prospects"), 0, $user->rights->societe->lire);
@@ -271,17 +282,6 @@ class MenuLeft {
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/fiche.php?leftmenu=contacts&amp;action=create", $langs->trans("NewContact"), 1, $user->rights->societe->contact->creer);
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("List"), 1, $user->rights->societe->contact->lire);
 				*/
-				// Actions
-				/*
-				if ($conf->agenda->enabled)
-				{
-					$newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions", $langs->trans("Agenda"), 0, $user->rights->agenda->myactions->read);
-					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=actions", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
-					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;status=todo", $langs->trans("MenuToDoActions"), 1, $user->rights->agenda->myactions->read);
-					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;time=today", $langs->trans("Today"), 1, $user->rights->agenda->myactions->read);
-					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=actions", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
-				}
-				*/
 				// Propal
 				if ($conf->propal->enabled)
 				{
@@ -295,11 +295,11 @@ class MenuLeft {
 					if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"), 1, $user->rights->propale->lire);
 				}
 
-				// Commandes
+				// Customers orders
 				if ($conf->commande->enabled )
 				{
 					$langs->load("orders");
-					$newmenu->add(DOL_URL_ROOT."/commande/index.php?leftmenu=orders", $langs->trans("Orders"), 0 ,$user->rights->commande->lire);
+					$newmenu->add(DOL_URL_ROOT."/commande/index.php?leftmenu=orders", $langs->trans("CustomersOrders"), 0 ,$user->rights->commande->lire);
 					if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
 					if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders", $langs->trans("List"), 1, $user->rights->commande->creer);
 					if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders&viewstatut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->commande->lire);
@@ -311,11 +311,13 @@ class MenuLeft {
 					if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1 ,$user->rights->commande->lire);
 				}
 
-				// Expeditions
-				if ($conf->expedition->enabled) {
-					$newmenu->add(DOL_URL_ROOT."/expedition/index.php?leftmenu=sendings", $langs->trans("Sendings"), 0, $user->rights->expedition->lire);
-					if ($leftmenu=="sendings") $newmenu->add_submenu(DOL_URL_ROOT."/expedition/liste.php?leftmenu=sendings", $langs->trans("List"), 1 ,$user->rights->expedition->lire);
-					if ($leftmenu=="sendings") $newmenu->add_submenu(DOL_URL_ROOT."/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1 ,$user->rights->expedition->lire);
+				// Suppliers orders
+				if ($conf->fournisseur->enabled)
+				{
+					$langs->load("orders");
+					$newmenu->add(DOL_URL_ROOT."/fourn/commande/index.php?leftmenu=orders_suppliers",$langs->trans("SuppliersOrders"), 0, $user->rights->fournisseur->commande->lire);
+					if ($leftmenu=="orders_suppliers") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=orders_suppliers", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
+					if ($leftmenu=="orders_suppliers") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php?leftmenu=orders_suppliers", $langs->trans("List"), 1, $user->rights->fournisseur->commande->lire);
 				}
 
 				// Contrat
@@ -560,6 +562,7 @@ class MenuLeft {
 			*/
 			if ($mainmenu == 'products')
 			{
+				// Products
 				if ($conf->produit->enabled)
 				{
 					$newmenu->add(DOL_URL_ROOT."/product/index.php?leftmenu=product&amp;type=0", $langs->trans("Products"), 0, $user->rights->produit->lire);
@@ -574,6 +577,7 @@ class MenuLeft {
 					}
 				}
 
+				// Services
 				if ($conf->service->enabled)
 				{
 					$newmenu->add(DOL_URL_ROOT."/product/index.php?leftmenu=service&amp;type=1", $langs->trans("Services"), 0, $user->rights->produit->lire);
@@ -584,12 +588,26 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/product/liste.php?leftmenu=service&amp;type=1", $langs->trans("List"), 1, $user->rights->produit->lire);
 				}
 
+				// Categories
+				if ($conf->categorie->enabled)
+				{
+					$langs->load("categories");
+					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=0", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
+					if ($user->societe_id == 0)
+					{
+						$newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=0", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+					}
+					//if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
+				}
+
+				// Statistics
 				$newmenu->add(DOL_URL_ROOT."/product/stats/index.php?leftmenu=stats", $langs->trans("Statistics"), 0, $user->rights->produit->lire);
 				if ($conf->propal->enabled)
 				{
 					$newmenu->add_submenu(DOL_URL_ROOT."/product/popuprop.php?leftmenu=stats", $langs->trans("Popularity"), 1, $user->rights->propale->lire);
 				}
 
+				// Stocks
 				if ($conf->stock->enabled)
 				{
 					$langs->load("stocks");
@@ -600,15 +618,13 @@ class MenuLeft {
 					if ($leftmenu=="stock") $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"), 1, $user->rights->stock->mouvement->lire);
 				}
 
-				if ($conf->categorie->enabled)
+				// Expeditions
+				if ($conf->expedition->enabled) 
 				{
-					$langs->load("categories");
-					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=0", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
-					if ($user->societe_id == 0)
-					{
-						if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=0", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
-					}
-					//if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
+					$langs->load("sendings");
+					$newmenu->add(DOL_URL_ROOT."/expedition/index.php?leftmenu=sendings", $langs->trans("Sendings"), 0, $user->rights->expedition->lire);
+					if ($leftmenu=="sendings") $newmenu->add_submenu(DOL_URL_ROOT."/expedition/liste.php?leftmenu=sendings", $langs->trans("List"), 1 ,$user->rights->expedition->lire);
+					if ($leftmenu=="sendings") $newmenu->add_submenu(DOL_URL_ROOT."/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1 ,$user->rights->expedition->lire);
 				}
 
 			}
@@ -619,7 +635,6 @@ class MenuLeft {
 			*/
 			if ($mainmenu == 'suppliers')
 			{
-
 				$langs->load("suppliers");
 
 				if ($conf->societe->enabled && $conf->fournisseur->enabled)
@@ -658,7 +673,6 @@ class MenuLeft {
 				}
 
 			}
-
 
 			/*
 			* Menu AGENDA

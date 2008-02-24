@@ -14,13 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/html.formfile.class.php
         \brief      Fichier de la classe des fonctions prédéfinie de composants html fichiers
+		\version	$Id$
 */
 
 
@@ -51,9 +50,10 @@ class FormFile
 	*    	\param      url				Url
 	*    	\param      titre			Titre zone
 	*    	\param      addcancel		1=Ajoute un bouton 'Annuler'
+	*		\param		sectionid		If upload must be done inside a particular ECM section
 	*		\return		int				<0 si ko, >0 si ok
 	*/
-	function form_attach_new_file($url,$titre='',$addcancel=0)
+	function form_attach_new_file($url,$titre='',$addcancel=0, $sectionid=0)
 	{
 		global $conf,$langs;
 		
@@ -65,6 +65,7 @@ class FormFile
 			print_titre($titre);
 
 			print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+			print '<input type="hidden" name="section" value="'.$sectionid.'">';
 			
 			print '<table width="100%" class="noborder">';
 			print '<tr><td width="50%" valign="top">';

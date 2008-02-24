@@ -206,7 +206,6 @@ ProspectsByStatus=Prospects par état
 BillingContact=Contact facturation
 NbOfAttachedFiles=Nombre de fichiers joints
 AttachANewFile=Joindre un nouveau fichier
-FileWasRemoved=Le fichier a été supprimé
 NoRIB=Aucun RIB défini
 NoParentCompany=Aucune
 ExportImport=Import-Export

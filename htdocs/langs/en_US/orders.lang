@@ -1,5 +1,6 @@
 # Dolibarr language file - en_US - orders
-OrdersArea=Orders area
+OrdersArea=Customers orders area
+SuppliersOrdersArea=Suppliers orders area
 OrderCard=Order card
 Order=Order
 Orders=Orders

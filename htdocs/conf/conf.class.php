@@ -257,6 +257,7 @@ class Conf
 		$this->categorie->enabled=defined("MAIN_MODULE_CATEGORIE")?MAIN_MODULE_CATEGORIE:0;
 		// Module contrat
 		$this->contrat->enabled=defined("MAIN_MODULE_CONTRAT")?MAIN_MODULE_CONTRAT:0;
+		$this->contrat->dir_output=DOL_DATA_ROOT."/contracts";
 		// Module projet
 		$this->projet->enabled=defined("MAIN_MODULE_PROJET")?MAIN_MODULE_PROJET:0;
 		// Module oscommerce 1

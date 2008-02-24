@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       dev/skeletons/build_class_from_table.php
         \ingroup    core
         \brief      Create a complete class file from a table in database
-        \version    $Revision$
+        \version    $Id$
 */
 
 // Test if batch mode
@@ -127,7 +125,9 @@ $skeletonfile='skeleton_class.class.php';
 $sourcecontent=file_get_contents($skeletonfile);
 if (! $sourcecontent)
 {
-	print "Error: Failed to read skeleton sample '".$sourcecontent."'\n";
+	print "\n";
+	print "Error: Failed to read skeleton sample '".$skeletonfile."'\n";
+	print "Try to run script from skeletons directory.\n";
 	exit;
 }
 
@@ -311,6 +311,7 @@ if ($fp)
 {
 	fputs($fp, $targetcontent);
 	fclose($fp);
+	print "\n";
 	print "File '".$outfile."' has been built in current directory.\n";
 	return 1;
 }

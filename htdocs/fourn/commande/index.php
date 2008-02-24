@@ -15,10 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
@@ -31,7 +27,12 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
-llxHeader('',"Commandes Fournisseurs");
+
+/*
+* 	View
+*/
+
+llxHeader('',$langs->trans("SuppliersOrdersArea"));
 
 // Sécurité accés client
 if ($user->societe_id > 0) 
@@ -42,10 +43,10 @@ if ($user->societe_id > 0)
 
 $commande = new CommandeFournisseur($db);
 
-print_barre_liste($langs->trans("SuppliersOrders"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
+print_barre_liste($langs->trans("SuppliersOrdersArea"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
 
-print '<table class="noborder" width="100%">';
-print '<tr valign="top"><td width="30%">';
+print '<table class="notopnoleftnoright" width="100%">';
+print '<tr valign="top"><td class="notopnoleft" width="30%">';
 
 $sql = "SELECT count(cf.rowid), fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
@@ -84,13 +85,11 @@ else
 {
   dolibarr_print_error($db);
 }
-/*
- *
- */
-print '</td><td width="70%" valign="top">';
-/*
- *
- */
+
+
+print '</td><td width="70%" valign="top" class="notopnoleft">';
+
+
 $sql = "SELECT u.name, u.firstname";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql .= " , ".MAIN_DB_PREFIX."user_rights as ur";

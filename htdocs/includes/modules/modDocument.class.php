@@ -55,7 +55,7 @@ class modDocument extends DolibarrModules
     $this->version = $this->revision[1];
     $this->const_name = 'MAIN_MODULE_DOCUMENT';
     $this->special = 2;
-    $this->picto='generic';
+    $this->picto='dir';
 
     // Dir
     $this->dirs = array();

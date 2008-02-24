@@ -1,5 +1,6 @@
 # Dolibarr language file - fr_FR - orders
-OrdersArea=Espace commandes
+OrdersArea=Espace commandes clients
+SuppliersOrdersArea=Espace commandes fournisseurs
 OrderCard=Fiche commande
 Order=Commande
 Orders=Commandes

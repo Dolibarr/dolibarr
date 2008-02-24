@@ -3,20 +3,26 @@
  */
 
 /**
-    	\file       htdoc/google/index.php
-		\ingroup    google
-		\brief      Main google area page
+    	\file       htdoc/ecm/index.php
+		\ingroup    ecm
+		\brief      Main page for ECM section area
 		\version    $Id$
 		\author		Laurent Destailleur
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
 
 // Load traductions files
 $langs->load("ecm");
 $langs->load("companies");
 $langs->load("other");
+$langs->load("users");
+$langs->load("orders");
+$langs->load("propal");
+$langs->load("bills");
+$langs->load("contracts");
 
 // Load permissions
 $user->getrights('ecm');
@@ -24,17 +30,29 @@ $user->getrights('ecm');
 // Get parameters
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
-// Permissions
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
-}
-
 $section=$_GET["section"];
 if (! $section) $section='misc';
 $upload_dir = $conf->ecm->dir_output.'/'.$section;
 
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+ 
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="label";
+
+$ecmdir = new ECMDirectory($db);
+if (! empty($_GET["section"]))
+{
+	$result=$ecmdir->fetch($_GET["section"]);
+	if (! $result > 0)
+	{
+		dolibarr_print_error($db,$ecmdir->error);
+		exit;
+	}
+}
 
 
 /*******************************************************************
@@ -43,41 +61,33 @@ $upload_dir = $conf->ecm->dir_output.'/'.$section;
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 
-// Envoie fichier
-if ( $_POST["sendit"] && $conf->upload != 0)
+// Action ajout d'un produit ou service
+if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
 {
-  if (! is_dir($upload_dir)) create_exdir($upload_dir);
-  
-  if (is_dir($upload_dir))
-  {
-  	$result = doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']);
-  	if ($result == 1)
-    {
-    	$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-    	//print_r($_FILES);
-    }
-    else if (!$result)
-    {
-    	// Echec transfert (fichier d?passant la limite ?)
-    	$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-    	// print_r($_FILES);
-    }
-    else
-    {
-    	// Fichier infect? par un virus
-    	$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith",$result).'</div>';
-    }
-  }
+	$ecmdir->ref                = $_POST["ref"];
+	$ecmdir->label              = $_POST["label"];
+	$ecmdir->description        = $_POST["desc"];
+
+	$id = $ecmdir->create($user);
+
+	if ($id > 0)
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">Error '.$langs->trans($ecmdir->error).'</div>';
+		$_GET["action"] = "create";
+	}
 }
 
 // Suppression fichier
-if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
+if ($_POST['action'] == 'confirm_deletesection' && $_POST['confirm'] == 'yes')
 {
-  $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
-  dol_delete_file($file);
-  $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+	$result=$ecmdir->delete($user);
+	$mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
 }
-
 
 
 
@@ -91,10 +101,58 @@ if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 llxHeader();
 
 $form=new Form($db);
+$ecmdirstatic = new ECMDirectory($db);
+$userstatic = new User($db);
 
-print_fiche_titre($langs->trans("ECMArea"));
+if (! $_GET["action"] || $_GET["action"] == 'delete_section')
+{
+	//***********************
+	// List
+	//***********************
+	print_fiche_titre($langs->trans("ECMArea"));
 
+	print $langs->trans("ECMAreaDesc")."<br>";
+	print $langs->trans("ECMAreaDesc2")."<br>";
+	print "<br>\n";
 
+	print '<table class="notopnoleftnoright" width="100%"><tr><td width="50%" valign="top">';
+
+	//print_fiche_titre($langs->trans("ECMManualOrg"));
+
+	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/todo.php">';
+	print '<table class="noborder" width="100%">';
+	print "<tr class=\"liste_titre\">";
+	print '<td colspan="3">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
+	print "<tr $bc[0]><td>".$langs->trans("Title").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>';
+	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print "<tr $bc[0]><td>".$langs->trans("Keyword").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+	print '</tr>';
+	print "</table></form><br>";
+	//print $langs->trans("ECMManualOrgDesc");
+		
+	print '</td><td width="50%" valign="top">';
+
+	//print_fiche_titre($langs->trans("ECMAutoOrg"));
+
+	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/todo.php">';
+	print '<table class="noborder" width="100%">';
+	print "<tr class=\"liste_titre\">";
+	print '<td colspan="3">'.$langs->trans("ECMSearchByEntity").'</td></tr>';
+
+	$buthtml='<td rowspan="5"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+	$butshown=0;
+
+	if ($conf->societe->enabled)  { print "<tr $bc[0]><td>".$langs->trans("ThirdParty").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown=1; }
+	if ($conf->contrat->enabled)  { print "<tr $bc[0]><td>".$langs->trans("Contrat").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown=1; }
+	if ($conf->propal->enabled)   { print "<tr $bc[0]><td>".$langs->trans("Proposal").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown=1; }
+	if ($conf->commande->enabled) { print "<tr $bc[0]><td>".$langs->trans("Order").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown=1; }
+	if ($conf->facture->enabled)  { print "<tr $bc[0]><td>".$langs->trans("Invoice").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown=1; }
+	print "</table></form><br>";
+	//print $langs->trans("ECMAutoOrgDesc");
+		
+	print '</td></tr>';
+	print '</table>';
+}
 
 
 // End of page

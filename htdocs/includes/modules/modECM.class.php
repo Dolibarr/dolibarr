@@ -64,7 +64,7 @@ class modECM extends DolibarrModules
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 2;
 		// Name of png file (without png) used for this module
-		$this->picto='generic';
+		$this->picto='dir';
 		
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -94,6 +94,28 @@ class modECM extends DolibarrModules
 		// Permissions
 		$this->rights_class = 'ecm';	// Permission key
 		$this->rights = array();		// Permission array used by this module
+
+		$r++;
+		$this->rights[$r][0] = 2500;
+		$this->rights[$r][1] = 'Consulter les documents';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'read';
+
+		$r++;
+		$this->rights[$r][0] = 2501;
+		$this->rights[$r][1] = 'Soumettre des documents';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'create';
+
+		$r++;
+		$this->rights[$r][0] = 2515;
+		$this->rights[$r][1] = 'Administrer les rubriques de documents';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 1;
+		$this->rights[$r][4] = 'setup';
+
 		
         // Menus
 		//------
