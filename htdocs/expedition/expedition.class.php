@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/expedition/expedition.class.php
         \ingroup    expedition
         \brief      Fichier de la classe de gestion des expeditions
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
@@ -41,6 +38,10 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande
 class Expedition extends CommonObject
 {
 	var $db;
+	var $error;
+	var $element="expedition";
+	var $table_element="expedition";
+
 	var $id;
 	var $socid;
 	var $brouillon;
@@ -55,8 +56,8 @@ class Expedition extends CommonObject
 	*
 	*/
 	function Expedition($DB)
-  {
-  	global $langs;
+	{
+		global $langs;
 
 		$this->db = $DB;
 		$this->lignes = array();
@@ -541,26 +542,6 @@ class Expedition extends CommonObject
     }
   }
   
-  /**
-   * Classe la commande
-   *
-   *
-   */
-  function classin($cat_id)
-    {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_projet = $cat_id";
-      $sql .= " WHERE rowid = $this->id;";
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;
-	}
-      else
-	{
-	  print $this->db->error() . ' in ' . $sql;
-	}
-    }
-
 
 	/**
 	 *		\brief		Positionne modele derniere generation

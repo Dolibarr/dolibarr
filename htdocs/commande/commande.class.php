@@ -36,8 +36,10 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 */
 class Commande extends CommonObject
 {
-  var $db ;
+  var $db;
+  var $error;
   var $element='commande';
+  var $table_element='commande';
   
   var $id ;
   
@@ -1997,26 +1999,6 @@ class Commande extends CommonObject
       }
   }
   
-  /**
-   *        \brief      Classer la commande dans un projet
-   *        \param      cat_id      Id du projet
-   */
-  function classin($cat_id)
-  {
-    $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET fk_projet = $cat_id";
-    $sql .= " WHERE rowid = $this->id;";
-    
-		if ($this->db->query($sql) )
-		{
-			return 1;
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}
-	}
-
 	
     /**
      *      \brief          Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord

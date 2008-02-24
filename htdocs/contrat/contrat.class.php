@@ -36,7 +36,9 @@ require_once(DOL_DOCUMENT_ROOT."/lib/price.lib.php");
 class Contrat extends CommonObject
 {
     var $db;
+	var $error;
 	var $element='contrat';
+	var $table_element='contrat';
     
     var $id;
     var $ref;
@@ -906,29 +908,6 @@ class Contrat extends CommonObject
         }
     }
     
-
-    /**
-     *      \brief     Classe le contrat dans un projet
-     *      \param     projid       Id du projet dans lequel classer le contrat
-     */
-    function classin($projid)
-    {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat";
-        if ($projid) $sql.= " SET fk_projet = $projid";
-        else $sql.= " SET fk_projet = NULL";
-        $sql.= " WHERE rowid = ".$this->id;
-
-        if ($this->db->query($sql))
-        {
-            return 1;
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-            return -1;
-        }
-    }
-
 
 	/**
  	 *    \brief      Mets à jour les commentaires privés

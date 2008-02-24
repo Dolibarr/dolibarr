@@ -18,15 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/commande/fiche.php
    \ingroup    commande
    \brief      Fiche commande client
-   \version    $Revision$
+   \version    $Id$
 */
 
 require('./pre.inc.php');
@@ -121,11 +119,11 @@ if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes
 }
 
 // Categorisation dans projet
-if ($_POST['action'] == 'classin' && $user->rights->commande->creer)
+if ($_POST['action'] == 'classin')
 {
   $commande = new Commande($db);
   $commande->fetch($_GET['id']);
-  $commande->classin($_POST['projetid']);
+  $commande->setProject($_POST['projetid']);
 }
 
 // Ajout commande
@@ -707,6 +705,11 @@ if ($_POST['action'] == 'send')
       dolibarr_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
     }
 }
+
+
+/*
+*	View
+*/
 
 llxHeader('',$langs->trans('Order'),'Commande');
 

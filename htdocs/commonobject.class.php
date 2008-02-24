@@ -562,6 +562,37 @@ class CommonObject
    	 return $contactAlreadySelected;
    	}
 
+	
+	/**
+	*	\brief     	Link ekement with a project
+	*	\param     	projid		Project id to link element to
+	*	\return		int			<0 if KO, >0 if OK
+	*/
+	function setProject($projid)
+	{
+		if (! $this->table_element)
+		{
+			dolibarr_syslog("CommonObject::setProject was called on objet with property table_element not defined");
+			return -1;
+		}
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+		if ($projid) $sql.= ' SET fk_projet = '.$projid;
+		else $sql.= ' SET fk_projet = NULL';
+		$sql.= ' WHERE rowid = '.$this->id;
+		
+		dolibarr_syslog("CommonObject::set_project sql=".$sql);
+		if ($this->db->query($sql))
+		{
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+	}
+
 }
 
 ?>

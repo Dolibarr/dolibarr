@@ -40,7 +40,9 @@ class FactureFournisseur extends Facture
 	var $id;
 	var $db;
 	var $socid;
-
+	var $element='facture_fourn';
+	var $table_element='facture_fourn';
+	
 	//! 0=brouillon,
 	//! 1=validée,
 	//! TODO Ce statut doit etre 2 et non 1 classée payée partiellement (close_code='discount_vat','badcustomer') ou complètement (close_code=null),

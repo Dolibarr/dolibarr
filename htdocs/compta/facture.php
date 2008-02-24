@@ -171,7 +171,7 @@ if ($_POST['action'] == 'classin')
 {
 	$facture = new Facture($db);
 	$facture->fetch($_GET['facid']);
-	$facture->classin($_POST['projetid']);
+	$facture->setProject($_POST['projetid']);
 }
 
 if ($_POST['action'] == 'setmode')
@@ -231,13 +231,6 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 			$mesg='<div class="error">'.$discount->error.'</div>';
 		}
 	}
-}
-
-if ($_POST['action'] == 'classin')
-{
-	$facture = new Facture($db);
-	$facture->fetch($_GET['facid']);
-	$facture->classin($_POST['projetid']);
 }
 
 if ($_POST['action'] == 'set_ref_client')

@@ -69,12 +69,12 @@ $mesg='';
  * Actions
  */
 
-// Categorisation dans projet
-if ($_POST['action'] ==	'classin' && $user->rights->fournisseur->commande->creer)
+// Set project
+if ($_POST['action'] ==	'classin')
 {
   $commande	= new CommandeFournisseur($db);
   $commande->fetch($_GET["id"]);
-  $commande->classin($_POST["projetid"]);
+  $commande->setProject($_POST["projetid"]);
 }
 
 if ($_REQUEST['action'] ==	'setremisepercent' && $user->rights->fournisseur->commande->creer)
@@ -601,10 +601,33 @@ else
 	  print '<td colspan="3" width="50%">';
 	  print "&nbsp;</td></tr>";
 	
-	  // Ligne de	3 colonnes
+		// Projet
+		if ($conf->projet->enabled)
+		{
+			$langs->load('projects');
+			print '<tr><td height="10">';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('Project');
+			print '</td>';
+			if ($_GET['action'] != 'classer' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="2">';
+			if ($_GET['action'] == 'classer')
+			{
+				$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'projetid');
+			}
+			else
+			{
+				$html->form_project($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->socid, $commande->projet_id, 'none');
+			}
+			print '</td></tr>';
+		}
+
+			// Ligne de	3 colonnes
 	  print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 	  print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
 	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td	colspan="3">&nbsp;</td></tr>';
+
 	  print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
 	  print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td	colspan="3">&nbsp;</td></tr>';
 	
@@ -941,23 +964,6 @@ else
 	
 	  print '</td><td	width="50%"	valign="top">';
 	
-	  /*
-	   *
-	   *
-	   */
-	  if ($_GET["action"]	== 'classer')
-	    {
-	      print '<form method="post" action="fiche.php?id='.$commande->id.'">';
-	      print '<input type="hidden"	name="action" value="classin">';
-	      print '<table class="border">';
-	      print '<tr><td>'.$langs->trans("Project").'</td><td>';
-	
-	      $proj =	new	Project($db);
-	      $html->select_array("projetid",$proj->liste_array($commande->socid));
-
-	      print "</td></tr>";
-	      print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Send").'"></td></tr></table></form>';
-	    }
 	
 	  /*
 	   *

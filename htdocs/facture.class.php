@@ -678,27 +678,6 @@ class Facture extends CommonObject
 	}
 
 
-  /**
-   *      \brief     Classe la facture dans un projet
-   *      \param     projid       Id du projet dans lequel classer la facture
-   */
-  function classin($projid)
-  {
-    $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-    if ($projid) $sql.= ' SET fk_projet = '.$projid;
-    else $sql.= ' SET fk_projet = NULL';
-    $sql.= ' WHERE rowid = '.$this->id;
-    if ($this->db->query($sql))
-      {
-	return 1;
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-	return -1;
-      }
-  }
-
   function set_ref_client($ref_client)
   {
     $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
@@ -828,66 +807,66 @@ class Facture extends CommonObject
 	}
 
 
-  /**
-     \brief      Renvoi une date limite de reglement de facture en fonction des
-     conditions de reglements de la facture et date de facturation
-     \param      cond_reglement_id   Condition de reglement à utiliser, 0=Condition actuelle de la facture
-     \return     date                Date limite de réglement si ok, <0 si ko
-   */
-  function calculate_date_lim_reglement($cond_reglement_id=0)
-  {
-    if (! $cond_reglement_id)
-      $cond_reglement_id=$this->cond_reglement_id;
-    $sqltemp = 'SELECT c.fdm,c.nbjour,c.decalage';
-    $sqltemp.= ' FROM '.MAIN_DB_PREFIX.'cond_reglement as c';
-    $sqltemp.= ' WHERE c.rowid='.$cond_reglement_id;
-    $resqltemp=$this->db->query($sqltemp);
-    if ($resqltemp)
-      {
-	if ($this->db->num_rows($resqltemp))
-	  {
-	    $obj = $this->db->fetch_object($resqltemp);
-	    $cdr_nbjour = $obj->nbjour;
-	    $cdr_fdm = $obj->fdm;
-	    $cdr_decalage = $obj->decalage;
-	  }
-      }
-    else
-      {
-	$this->error=$this->db->error();
-	return -1;
-      }
-    $this->db->free($resqltemp);
+	/**
+		\brief      Renvoi une date limite de reglement de facture en fonction des
+		conditions de reglements de la facture et date de facturation
+		\param      cond_reglement_id   Condition de reglement à utiliser, 0=Condition actuelle de la facture
+		\return     date                Date limite de réglement si ok, <0 si ko
+	*/
+	function calculate_date_lim_reglement($cond_reglement_id=0)
+	{
+		if (! $cond_reglement_id)
+		$cond_reglement_id=$this->cond_reglement_id;
+		$sqltemp = 'SELECT c.fdm,c.nbjour,c.decalage';
+		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'cond_reglement as c';
+		$sqltemp.= ' WHERE c.rowid='.$cond_reglement_id;
+		$resqltemp=$this->db->query($sqltemp);
+		if ($resqltemp)
+		{
+			if ($this->db->num_rows($resqltemp))
+			{
+				$obj = $this->db->fetch_object($resqltemp);
+				$cdr_nbjour = $obj->nbjour;
+				$cdr_fdm = $obj->fdm;
+				$cdr_decalage = $obj->decalage;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+		$this->db->free($resqltemp);
 
-    /* Definition de la date limite */
+		/* Definition de la date limite */
 
-    // 1 : ajout du nombre de jours
-    $datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
+		// 1 : ajout du nombre de jours
+		$datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
 
-    // 2 : application de la règle "fin de mois"
-    if ($cdr_fdm)
-      {
-	$mois=date('m', $datelim);
-	$annee=date('Y', $datelim);
-	if ($mois == 12)
-	  {
-	    $mois = 1;
-	    $annee += 1;
-	  }
-	else
-	  {
-	    $mois += 1;
-	  }
-	// On se déplace au début du mois suivant, et on retire un jour
-	$datelim=mktime(12,0,0,$mois,1,$annee);
-	$datelim -= (3600 * 24);
-      }
+		// 2 : application de la règle "fin de mois"
+		if ($cdr_fdm)
+		{
+			$mois=date('m', $datelim);
+			$annee=date('Y', $datelim);
+			if ($mois == 12)
+			{
+				$mois = 1;
+				$annee += 1;
+			}
+			else
+			{
+				$mois += 1;
+			}
+			// On se déplace au début du mois suivant, et on retire un jour
+			$datelim=dolibarr_mktime(12,0,0,$mois,1,$annee);
+			$datelim -= (3600 * 24);
+		}
 
-    // 3 : application du décalage
-    $datelim += ( $cdr_decalage * 3600 * 24);
+		// 3 : application du décalage
+		$datelim += ( $cdr_decalage * 3600 * 24);
 
-    return $datelim;
-  }
+		return $datelim;
+	}
 
 	/**
 	*      \brief      Tag la facture comme payée complètement (close_code non renseigné) ou partiellement (close_code renseigné) + appel trigger BILL_PAYED
@@ -1764,41 +1743,17 @@ class Facture extends CommonObject
   }
 
 
-  /**
-   * 		\brief     Renvoie la liste des sommes de tva
-   */
-  function getSumTva()
-  {
-    $tvs=array();
-
-    $sql = 'SELECT amount, tva_tx FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture = '.$this->id;
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $tvs[$row[1]] = $row[0];
-	    $i++;
-	  }
-	return $tvs;
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-	return -1;
-      }
-  }
-
 	/**
 	* 	\brief     	Renvoie la sommes des paiements deja effectués
 	*	\return		Montant deja versé, <0 si ko
 	*/
 	function getSommePaiement()
 	{
+		$table='paiement_facture';
+		if ($element == 'facture_fourn') $table='paiementfourn_facturefourn';
+
 		$sql = 'SELECT sum(amount) as amount';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql.= ' WHERE fk_facture = '.$this->id;
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1919,9 +1874,10 @@ class Facture extends CommonObject
 
 
 	/**
-	*    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	*    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
-	*    \return     string        Libelle
+	*	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+	*	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	*	\param		alreadypayed	0=Not payment already done, 1=Some payments already done
+	*	\return     string        	Libelle
 	*/
 	function getLibStatut($mode=0,$alreadypayed=-1)
 	{

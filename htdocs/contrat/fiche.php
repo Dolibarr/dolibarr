@@ -169,7 +169,7 @@ if ($_POST["action"] == 'classin')
 {
     $contrat = new Contrat($db);
     $contrat->fetch($_GET["id"]);
-    $contrat->classin($_POST["projetid"]);
+    $contrat->setProject($_POST["projetid"]);
 }
 
 if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
@@ -1067,7 +1067,7 @@ else
 		/*
 		 * Ajouter une ligne produit/service
 		 */
-		if ($user->rights->contrat->creer && $contrat->statut == 0)
+		if ($user->rights->contrat->creer && ($contrat->statut == 0  || $conf->global->CONTRAT_EDITWHENVALIDATED))
 		{
 			print '<br>';
 			print '<table class="noborder" width="100%">';	// Array with (n*2)+1 lines
@@ -1169,7 +1169,7 @@ else
         {
             print '<div class="tabsAction">';
 
-            if (($contrat->statut == 0 || $conf->global->CONTRAT_EDITWHENVALIDATED) && $nbofservices)
+            if ($contrat->statut == 0 && $nbofservices)
             {
                 print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
             }

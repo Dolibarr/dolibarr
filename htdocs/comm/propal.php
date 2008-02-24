@@ -647,9 +647,9 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 
 if ($_POST['action'] == 'classin')
 {
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
-  $propal->set_project($user, $_POST['projetidp']);
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
+	$propal->setProject($_POST['projetidp']);
 }
 
 // Conditions de reglement

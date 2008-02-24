@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/fourn/fournisseur.commande.class.php
    \ingroup    fournisseur,commande
    \brief      Fichier des classes des commandes fournisseurs
-   \version    $Revision$
+   \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -39,6 +37,10 @@ require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 class CommandeFournisseur extends Commande
 {
   var $db ;
+  var $error;
+  var $element='order_supplier';
+  var $table_element='commande_fournisseur';
+  
   var $id ;
   var $brouillon;
 

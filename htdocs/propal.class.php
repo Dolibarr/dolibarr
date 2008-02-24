@@ -43,7 +43,9 @@ require_once(DOL_DOCUMENT_ROOT ."/contact.class.php");
 class Propal extends CommonObject
 {
 	var $db;
+	var $error;
 	var $element='propal';
+	var $table_element='propal';
 
 	var $id;
 
@@ -84,7 +86,6 @@ class Propal extends CommonObject
 	var $nbtodolate;
 
 	var $specimen;
-	var $error;
 
 
     /**
@@ -1191,37 +1192,6 @@ class Propal extends CommonObject
             }
         }
     }
-
-	/*
-     *
-     *
-     *
-     */
-	function set_project($user, $project_id)
-	{
-		if ($user->rights->propale->creer)
-		{
-			//verif que le projet et la soci�t� concordent
-			$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc ='.$this->socid.' AND p.rowid='.$project_id;
-			$sqlres = $this->db->query($sql);
-			if ($sqlres)
-			{
-				$numprojet = $this->db->num_rows($sqlres);
-				if ($numprojet > 0)
-				{
-					$this->projetidp=$project_id;
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal SET fk_projet = '.$project_id;
-					$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
-					$this->db->query($sql);
-				}
-			}
-			else
-			{
-	
-				dolibarr_syslog("Propal::set_project Erreur SQL");
-			}
-		}
-	}
 
 
 	/**
