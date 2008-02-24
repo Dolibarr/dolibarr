@@ -19,14 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/comm/propal.php
-   \ingroup    propale
-   \brief      Page liste des propales (vision commercial)
+   \file       	htdocs/comm/propal.php
+   \ingroup    	propale
+   \brief      	Page liste des propales (vision commercial)
+   \version		$Id$
 */
 
 require("./pre.inc.php");
@@ -51,7 +50,7 @@ if (isset($_GET["msg"])) { $mesg=urldecode($_GET["mesg"]); }
 $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
 
-// Sécurité accés client
+// Security check
 $module='propale';
 if (isset($_GET["socid"]))
 {
@@ -65,9 +64,7 @@ else if (isset($_GET["propalid"]) &&  $_GET["propalid"] > 0)
 	$module='propale';
 	$dbtable='propal';
 }
-
-// Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, $module, $objectid, $dbtable);
+$result = restrictedArea($user, $module, $objectid, $dbtable);
 
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;

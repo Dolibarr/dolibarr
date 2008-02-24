@@ -43,7 +43,7 @@ if ($conf->fichinter->enabled) $langs->load("interventions");
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
-// Securite d'acces client et commerciaux
+// Security check
 $result = restrictedArea($user, 'societe', $socid);
 
 $sortorder=$_GET["sortorder"];

@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/fichinter/fiche.php
    \brief      Fichier fiche intervention
    \ingroup    ficheinter
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -41,18 +39,19 @@ if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/mod
 $langs->load("companies");
 $langs->load("interventions");
 
-
+// Get parameters
 $fichinterid = isset($_GET["id"])?$_GET["id"]:'';
-
-// Securite d'acces client et commerciaux
-$socid = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
-
 //Recupere le resultat de la recherche Ajax
 //Todo: voir pour le supprimer par la suite
 if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && $_POST['socid_id'])
 {
 	$_POST['socid'] = $_POST['socid_id'];
 }
+
+// Security check
+$result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
+
+
 
 /*
  * Traitements des actions

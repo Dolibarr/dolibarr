@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /** 
         \file       htdocs/comm/propal/aideremise.php
         \ingroup    propale
         \brief      Page de simulation des remises
+		\version	$Id$
 */
 
 require("./pre.inc.php");
@@ -32,8 +29,8 @@ include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 $propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
-// Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'propale', $propalid, 'propal');
+// Security cehck
+$result = restrictedArea($user, 'propale', $propalid, 'propal');
 
 
 /******************************************************************************/
@@ -42,11 +39,13 @@ $socid = restrictedArea($user, 'propale', $propalid, 'propal');
 
 
 
-llxHeader();
 
 /******************************************************************************/
-/*                   Fin des  Actions                                         */
+/*	View                                                                      */
 /******************************************************************************/
+
+llxHeader();
+
 /*
  *
  * Mode fiche

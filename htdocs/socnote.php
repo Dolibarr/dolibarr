@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**	 
     \file       htdocs/socnote.php
     \brief      Fichier onglet notes liées à la société
     \ingroup    societe
-    \version    $Revision$
+    \version    $Id$
 */
  
 require("./pre.inc.php");
@@ -38,8 +35,8 @@ $langs->load("companies");
 // Protection quand utilisateur externe
 $socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
 
-// Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'societe', $socid);
+// Security check
+$result = restrictedArea($user, 'societe', $socid);
 
 if ($_POST["action"] == 'add')
 {

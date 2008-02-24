@@ -18,15 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/soc.php
    \ingroup    societe
    \brief      Onglet societe d'une societe
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("pre.inc.php");
@@ -38,7 +36,7 @@ $langs->load("bills");
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
-// Sécurité d'accès client et commerciaux
+// Security check
 $result = restrictedArea($user, 'societe', $socid);
 
 // Initialisation de l'objet Societe

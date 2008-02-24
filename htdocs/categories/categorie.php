@@ -49,8 +49,8 @@ else
 	accessforbidden();
 }
 
-// Securite d'acces client et commerciaux
-$objectid = restrictedArea($user, $type, $objectid);
+// Security check
+$result = restrictedArea($user, $type, $objectid);
 
 
 

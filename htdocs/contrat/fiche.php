@@ -37,7 +37,7 @@ $langs->load("bills");
 $langs->load("products");
 
 // Security check
-restrictedArea($user,'contrat',$contratid,'contrat');
+$result=restrictedArea($user,'contrat',$contratid,'contrat');
 
 
 

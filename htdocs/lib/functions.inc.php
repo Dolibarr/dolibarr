@@ -1232,7 +1232,7 @@ function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list
 	global $db;
 	
 	// Clean parameters
-	if (!$modulename)
+	if (! $modulename)
 	{
 		$modulename = 'societe';
 		$list = 1;
@@ -1240,20 +1240,25 @@ function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list
 	
 	$objectid = 0;
 	$socid = 0;
-	$nocreate = 0; 
 	
-	// Check permission from module
-	if (! $user->rights->$modulename->lire)
+	// Check read permission from module
+	$readok=1;
+	if ($modulename == 'societe')
 	{
-		accessforbidden();
+		if (! $user->rights->societe->lire && ! $user->rights->fournisseur->lire) $readok=0;
 	}
-	else if (!$user->rights->$modulename->creer)
+	else
 	{
-		$nocreate = 1;
-		if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
-		{
-			accessforbidden();
-		}
+		if (! $user->rights->$modulename->lire) $readok=0;
+	}
+	if (! $readok) accessforbidden();
+
+	// Check write permission from module
+	$createok=1;
+	if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
+	{
+		if (! $user->rights->$modulename->creer) $createok=0;
+		if (! $createok) accessforbidden();
 	}
 	
 	// Check permission from company affiliation
@@ -1298,7 +1303,8 @@ function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list
 			}
 		}
 	}
-	else if ((!$objectid && $list==0) && $nocreate == 1)
+	// If access to create or modify
+	if (! $objectid && ! $list && ! $createok)
 	{
 		accessforbidden();
 	}

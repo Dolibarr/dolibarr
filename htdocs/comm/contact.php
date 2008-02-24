@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/comm/contact.php
         \ingroup    commercial
         \brief      Liste des contacts
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -44,11 +41,15 @@ $offset = $limit * $page ;
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 $type=$_GET["type"];
 
-// Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'societe');
+// Security check
+$result = restrictedArea($user, 'societe');
+
+
+/*
+*	View
+*/
 
 llxHeader('','Contacts');
-
 
 if ($type == "c")
 {

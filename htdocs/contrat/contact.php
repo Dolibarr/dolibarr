@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/contrat/contact.php
         \ingroup    contrat
         \brief      Onglet de gestion des contacts des contrats
-        \version    $Revision$
+        \version    $Id$
 */
 
 require ("./pre.inc.php");
@@ -38,8 +35,9 @@ $langs->load("companies");
 
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 
-// Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'contrat', $contratid);
+// Security check
+$result = restrictedArea($user, 'contrat', $contratid);
+
 
 /*
  * Ajout d'un nouveau contact

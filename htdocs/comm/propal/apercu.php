@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file		htdocs/comm/propal/apercu.php
 		\ingroup	propal
 		\brief		Page de l'onglet aperçu d'une propal
-		\version	$Revision$
+		\version	$Id$
 */
 
 require("./pre.inc.php");
@@ -41,8 +39,13 @@ $langs->load('compta');
 
 $propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
-// Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'propale', $propalid, 'propal');
+// Security check
+$result = restrictedArea($user, 'propale', $propalid, 'propal');
+
+
+/*
+* View
+*/
 
 llxHeader();
 

@@ -32,11 +32,8 @@ $langs->load("companies");
 $langs->load("customers");
 $langs->load("suppliers");
 
-// Sécurité d'accès client et commerciaux
-if (! $user->rights->societe->lire && ! $user->rights->fournisseur->lire) accessforbidden();
-
-$socid = restrictedArea($user, 'societe','','',1);
-//print 'socid '.$socid;
+// Security check
+$result = restrictedArea($user, 'societe','','',1);
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];

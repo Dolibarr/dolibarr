@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/comm/propal/note.php
         \ingroup    propale
         \brief      Fiche d'information sur une proposition commerciale
-        \version    $Revision$
+        \version    $Id$
 */
 
 require('./pre.inc.php');
@@ -39,8 +36,10 @@ $langs->load('bills');
 
 $propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
-// Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'propale', $propalid, 'propal');
+// Security check
+$result = restrictedArea($user, 'propale', $propalid, 'propal');
+
+
 
 /******************************************************************************/
 /*                     Actions                                                */

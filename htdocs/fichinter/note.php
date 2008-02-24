@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/fichinter/note.php
         \ingroup    fichinter
         \brief      Fiche d'information sur une fiche d'intervention
-        \version    $Revision$
+        \version    $Id$
 */
 
 require('./pre.inc.php');
@@ -34,8 +31,9 @@ $langs->load('companies');
 
 $fichinterid = isset($_GET["id"])?$_GET["id"]:'';
 
-// Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
+// Security check
+$result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
+
 
 /******************************************************************************/
 /*                     Actions                                                */

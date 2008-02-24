@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     
         \file       htdocs/comm/propal/document.php
         \ingroup    propale
         \brief      Page de gestion des documents attachées à une proposition commerciale
-        \version    $Revision$
+        \version    $Id$
 */
 
 require('./pre.inc.php');
@@ -40,8 +38,8 @@ $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action'
 
 $propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
-// Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'propale', $propalid, 'propal');
+// Security check
+$result = restrictedArea($user, 'propale', $propalid, 'propal');
 
 
 /*
