@@ -937,8 +937,9 @@ if ($_GET['action'] == 'up' && $user->rights->facture->creer)
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-  facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET["facid"].'#'.$_GET['rowid']);
+	exit;
 }
 
 if ($_GET['action'] == 'down' && $user->rights->facture->creer)
@@ -951,8 +952,9 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-  facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET["facid"].'#'.$_GET['rowid']);
+	exit;
 }
 
 /*

@@ -40,6 +40,8 @@ class Commande extends CommonObject
   var $error;
   var $element='commande';
   var $table_element='commande';
+  var $table_element_line = 'commandedet';
+  var $fk_element = 'fk_commande';
   
   var $id ;
   
@@ -789,129 +791,6 @@ class Commande extends CommonObject
       }
   }
   
-  /**
-   *      \brief      Stocke un numéro de rang pour toutes les lignes de
-   *                  detail d'une commande qui n'en ont pas.
-   */
-  function line_order()
-  {
-    $sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.'commandedet';
-    $sql .= ' WHERE fk_commande='.$this->id;
-    $sql .= ' AND rang = 0';
-    $resql = $this->db->query($sql);
-    if ($resql)
-      {
-	$row = $this->db->fetch_row($resql);
-	$nl = $row[0];
-      }
-    if ($nl > 0)
-      {
-	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'commandedet';
-	$sql .= ' WHERE fk_commande='.$this->id;
-	$sql .= ' ORDER BY rang ASC, rowid ASC';
-	$resql = $this->db->query($sql);
-	if ($resql)
-	  {
-	    $num = $this->db->num_rows($resql);
-	    $i = 0;
-	    while ($i < $num)
-	      {
-		$row = $this->db->fetch_row($resql);
-		$li[$i] = $row[0];
-		$i++;
-	      }
-	  }
-	for ($i = 0 ; $i < sizeof($li) ; $i++)
-	  {
-	    $sql = 'UPDATE '.MAIN_DB_PREFIX.'commandedet SET rang = '.($i+1);
-	    $sql .= ' WHERE rowid = '.$li[$i];
-	    if (!$this->db->query($sql) )
-	      {
-		dolibarr_syslog($this->db->error());
-	      }
-	  }
-      }
-  }
-  
-  function line_up($rowid)
-  {
-    $this->line_order();
-    
-    /* Lecture du rang de la ligne */
-    $sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.'commandedet';
-    $sql .= ' WHERE rowid ='.$rowid;
-    $resql = $this->db->query($sql);
-    if ($resql)
-      {
-	$row = $this->db->fetch_row($resql);
-	$rang = $row[0];
-      }
-    
-    if ($rang > 1 )
-      {
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commandedet SET rang = '.$rang ;
-	$sql .= ' WHERE fk_commande  = '.$this->id;
-	$sql .= ' AND rang = '.($rang - 1);
-	if ($this->db->query($sql) )
-	  {
-	    $sql = 'UPDATE '.MAIN_DB_PREFIX.'commandedet SET rang  = '.($rang - 1);
-	    $sql .= ' WHERE rowid = '.$rowid;
-	    if (! $this->db->query($sql) )
-	      {
-		dolibarr_print_error($this->db);
-	      }
-	  }
-	else
-	  {
-	    dolibarr_print_error($this->db);
-	  }
-      }
-  }
-  
-  function line_down($rowid)
-  {
-    $this->line_order();
-    
-    /* Lecture du rang de la ligne */
-    $sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.'commandedet';
-    $sql .= ' WHERE rowid ='.$rowid;
-    $resql = $this->db->query($sql);
-    if ($resql)
-      {
-	$row = $this->db->fetch_row($resql);
-	$rang = $row[0];
-      }
-    
-    /* Lecture du rang max de la facture */
-    $sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'commandedet';
-    $sql .= ' WHERE fk_commande ='.$this->id;
-    $resql = $this->db->query($sql);
-    if ($resql)
-      {
-	$row = $this->db->fetch_row($resql);
-	$max = $row[0];
-      }
-    
-    if ($rang < $max )
-      {
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commandedet SET rang = '.$rang;
-	$sql .= ' WHERE fk_commande  = '.$this->id;
-	$sql .= ' AND rang = '.($rang+1);
-	if ($this->db->query($sql) )
-	  {
-	    $sql = 'UPDATE '.MAIN_DB_PREFIX.'commandedet SET rang = '.($rang+1);
-	    $sql .= ' WHERE rowid = '.$rowid;
-	    if (! $this->db->query($sql) )
-	      {
-		dolibarr_print_error($this->db);
-	      }
-	  }
-	else
-	  {
-	    dolibarr_print_error($this->db);
-	  }
-      }
-  }
   
   /**
    *    \brief      Recupère de la base les caractéristiques d'une commande

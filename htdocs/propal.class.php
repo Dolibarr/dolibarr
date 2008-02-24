@@ -46,11 +46,13 @@ class Propal extends CommonObject
 	var $error;
 	var $element='propal';
 	var $table_element='propal';
+	var $fk_element='fk_propal';
+	var $table_element_line='propaldet';
 
 	var $id;
 
 	var $socid;		// Id client
-	var $client;		// Objet societe client (� charger par fetch_client)
+	var $client;		// Objet societe client (a charger par fetch_client)
 
 	var $contactid;
 	var $projetidp;
@@ -686,130 +688,6 @@ class Propal extends CommonObject
 		}		
 	}
 
-
-	/**
-	 *      \brief      Stocke un num�ro de rang pour toutes les lignes de
-	 *                  detail d'une propale qui n'en ont pas.
-	 */
-	function line_order()
-	{
-		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.'propaldet';
-		$sql .= ' WHERE fk_propal='.$this->id;
-		$sql .= ' AND rang = 0';
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$row = $this->db->fetch_row($resql);
-			$nl = $row[0];
-		}
-		if ($nl > 0)
-		{
-			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'propaldet';
-			$sql .= ' WHERE fk_propal='.$this->id;
-			$sql .= ' ORDER BY rang ASC, rowid ASC';
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$num = $this->db->num_rows($resql);
-				$i = 0;
-				while ($i < $num)
-				{
-					$row = $this->db->fetch_row($resql);
-					$li[$i] = $row[0];
-					$i++;
-				}
-			}
-			for ($i = 0 ; $i < sizeof($li) ; $i++)
-			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'propaldet SET rang = '.($i+1);
-				$sql .= ' WHERE rowid = '.$li[$i];
-				if (!$this->db->query($sql) )
-				{
-					dolibarr_syslog($this->db->error());
-				}
-			}
-		}
-	}
-
-	function line_up($rowid)
-	{
-		$this->line_order();
-
-		/* Lecture du rang de la ligne */
-		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.'propaldet';
-		$sql .= ' WHERE rowid ='.$rowid;
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$row = $this->db->fetch_row($resql);
-			$rang = $row[0];
-		}
-
-		if ($rang > 1 )
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propaldet SET rang = '.$rang ;
-			$sql .= ' WHERE fk_propal  = '.$this->id;
-			$sql .= ' AND rang = '.($rang - 1);
-			if ($this->db->query($sql) )
-			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'propaldet SET rang  = '.($rang - 1);
-				$sql .= ' WHERE rowid = '.$rowid;
-				if (! $this->db->query($sql) )
-				{
-					dolibarr_print_error($this->db);
-				}
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-			}
-		}
-	}
-
-	function line_down($rowid)
-	{
-		$this->line_order();
-
-		/* Lecture du rang de la ligne */
-		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.'propaldet';
-		$sql .= ' WHERE rowid ='.$rowid;
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$row = $this->db->fetch_row($resql);
-			$rang = $row[0];
-		}
-
-		/* Lecture du rang max de la propale */
-		$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'propaldet';
-		$sql .= ' WHERE fk_propal ='.$this->id;
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$row = $this->db->fetch_row($resql);
-			$max = $row[0];
-		}
-
-		if ($rang < $max )
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'propaldet SET rang = '.$rang;
-			$sql .= ' WHERE fk_propal  = '.$this->id;
-			$sql .= ' AND rang = '.($rang+1);
-			if ($this->db->query($sql) )
-			{
-				$sql = 'UPDATE '.MAIN_DB_PREFIX.'propaldet SET rang = '.($rang+1);
-				$sql .= ' WHERE rowid = '.$rowid;
-				if (! $this->db->query($sql) )
-				{
-					dolibarr_print_error($this->db);
-				}
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-			}
-		}
-	}
 
     /**
      *    	\brief      Recup�re de la base les caract�ristiques d'une propale
