@@ -52,7 +52,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->propale->creer)
 
 	$db->begin();
 	
-	$res=$propal->update_note_public($_POST["note_public"]);
+	$res=$propal->update_note_public($_POST["note_public"],$user);
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$propal->error.'</div>';
@@ -71,7 +71,7 @@ if ($_POST['action'] == 'update' && $user->rights->propale->creer)
 
 	$db->begin();
 
-	$res=$propal->update_note($_POST["note"]);
+	$res=$propal->update_note($_POST["note"],$user);
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$propal->error.'</div>';

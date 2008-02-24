@@ -326,17 +326,17 @@ class CommonObject
         return $result;
     }
 
-    /** 	
+    /**
     *		\brief      Charge le contact d'id $id dans this->contact
     *		\param      contactid          Id du contact
 	*		\return		int			<0 if KO, >0 if OK
     */
-    function fetch_contact($contactid) 	
-    { 	
+    function fetch_contact($contactid)
+    {
 		require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-		$contact = new Contact($this->db); 	
-		$result=$contact->fetch($contactid); 	
-		$this->contact = $contact; 	
+		$contact = new Contact($this->db);
+		$result=$contact->fetch($contactid);
+		$this->contact = $contact;
 		return $result;
     }
 
@@ -364,19 +364,19 @@ class CommonObject
 		return $result;
     }
 
-	/** 	
+	/**
     *		\brief      Charge le user d'id userid dans this->user
     *		\param      userid 		Id du contact
 	*		\return		int			<0 if KO, >0 if OK
     */
-    function fetch_user($userid) 	
-    {	
-		$user = new User($this->db, $userid); 	
+    function fetch_user($userid)
+    {
+		$user = new User($this->db, $userid);
 		$result=$user->fetch();
-		$this->user = $user; 	
+		$this->user = $user;
 		return $result;
     }
-    
+
 	/**
 	*		\brief      Charge l'adresse de livraison d'id $this->adresse_livraison_id dans this->deliveryaddress
 	*		\param      userid 		Id du contact
@@ -389,7 +389,7 @@ class CommonObject
 		$this->deliveryaddress = $address;
 		return $result;
 	}
-  
+
 /**
   *    \brief      Retourne la liste déroulante des sociétés
   *    \param      object          Fetch du document
@@ -400,7 +400,7 @@ class CommonObject
  function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany')
  {
 	 global $conf, $langs;
-	 
+
 	 // On recherche les societes
 	 $sql = "SELECT s.rowid, s.nom FROM";
 	 $sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -476,9 +476,9 @@ class CommonObject
 	   }
    }
 
- 
+
 /**
- * 
+ *
  */
  function selectTypeContact($object, $defValue, $htmlname = 'type', $source)
  {
@@ -521,7 +521,7 @@ class CommonObject
 		$row = $this->db->fetch_row($result);
 		$this->ref_previous = $row[0];
 
-		
+
 		$sql = "SELECT MIN(".$fieldid.")";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " WHERE ".$fieldid." > '".addslashes($this->ref)."'";
@@ -537,11 +537,11 @@ class CommonObject
 		}
 		$row = $this->db->fetch_row($result);
 		$this->ref_next = $row[0];
-		
+
 		return 1;
 	}
-	
-	
+
+
   /**
    *      \brief      On récupère les id de liste_contact
    *      \param      source      Source du contact external (llx_socpeople) ou internal (llx_user)
@@ -561,7 +561,7 @@ class CommonObject
    	 return $contactAlreadySelected;
    	}
 
-	
+
 	/**
 	*	\brief     	Link ekement with a project
 	*	\param     	projid		Project id to link element to
@@ -579,7 +579,7 @@ class CommonObject
 		if ($projid) $sql.= ' SET fk_projet = '.$projid;
 		else $sql.= ' SET fk_projet = NULL';
 		$sql.= ' WHERE rowid = '.$this->id;
-		
+
 		dolibarr_syslog("CommonObject::set_project sql=".$sql);
 		if ($this->db->query($sql))
 		{
@@ -592,7 +592,7 @@ class CommonObject
 		}
 	}
 
-	
+
 	/**
 	*		\brief		Set last model used by doc generator
 	*		\param		user		User object that make change
@@ -626,8 +626,8 @@ class CommonObject
 			return 0;
 		}
 	}
-	
-	
+
+
 	/**
 	*      \brief      Stocke un numéro de rang pour toutes les lignes de
 	*                  detail d'une facture qui n'en ont pas.
@@ -761,7 +761,68 @@ class CommonObject
 				dolibarr_print_error($this->db);
 			}
 		}
-	}	
+	}
+
+	/**
+	*    \brief      Update private note of element
+	*    \param      note			New value for note
+	*    \return     int         	<0 if KO, >0 if OK
+	*/
+	function update_note($note)
+	{
+		if (! $this->table_element)
+		{
+			dolibarr_syslog("CommonObject::update_note was called on objet with property table_element not defined",LOG_ERR);
+			return -1;
+		}
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " SET note = '".addslashes($note)."'";
+		$sql.= " WHERE rowid =". $this->id;
+
+		dolibarr_syslog("CommonObject::update_note sql=".$sql);
+		if ($this->db->query($sql))
+		{
+			$this->note = $note;
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+	*    \brief      Update public note of element
+	*    \param      note_public	New value for note
+	*    \return     int         	<0 if KO, >0 if OK
+	*/
+	function update_note_public($note_public)
+	{
+		if (! $this->table_element)
+		{
+			dolibarr_syslog("CommonObject::update_note_public was called on objet with property table_element not defined",LOG_ERR);
+			return -1;
+		}
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " SET note_public = '".addslashes($note_public)."'";
+		$sql.= " WHERE rowid =". $this->id;
+
+		dolibarr_syslog("CommonObject::update_note_public sql=".$sql);
+		if ($this->db->query($sql))
+		{
+			$this->note_public = $note_public;
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
 }
 
 ?>

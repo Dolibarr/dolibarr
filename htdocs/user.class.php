@@ -1074,43 +1074,14 @@ class User extends CommonObject
             return -1;
         }
 
-   }
-
-	/**
-			\brief 		Fonction qui met a jour le commentaire d'un utilisateur
-			\param		note			Note
-			\param		user			Utilisateur qui realise la mise a jour
-			\return		int				<0 si KO, >0 si OK
-	*/
-	function update_note($note,$user)
-	{
-		$this->db->begin();
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-		$sql.= " note='".addslashes($note)."'";
-		$sql.= " WHERE rowid = ".$this->id;
-
-		dolibarr_syslog("User::update_note sql=$sql");
-		$result = $this->db->query($sql);
-		if (! $result)
-		{
-			$this->error=$this->db->error();
-			$this->db->rollback();
-			return -1;
-		}
-		
-		$this->note = $note;
-		
-		$this->db->commit();
-		return 1;
 	}
 
-  /**
-   *    \brief      Mise e jour en base de la date de deniere connexion d'un utilisateur
-   *				Fonction appelee lors d'une nouvelle connexion
-   *    \return     <0 si echec, >=0 si ok
-   */
-  function update_last_login_date()
+	/**
+	*    \brief      Mise e jour en base de la date de deniere connexion d'un utilisateur
+	*				Fonction appelee lors d'une nouvelle connexion
+	*    \return     <0 si echec, >=0 si ok
+	*/
+	function update_last_login_date()
     {
         dolibarr_syslog ("Mise a jour date derniere connexion pour user->id=".$this->id);
 

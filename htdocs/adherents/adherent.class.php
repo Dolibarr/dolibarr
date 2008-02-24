@@ -434,35 +434,6 @@ class Adherent extends CommonObject
 
 
 	/**
-			\brief 		Fonction qui met e jour le commentaire d'un adherent
-			\param		note			Note
-			\param		user			Utilisateur qui realise la mise a jour
-			\return		int				<0 si KO, >0 si OK
-	*/
-	function update_note($note,$user)
-	{
-		$this->db->begin();
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql.= " note='".addslashes($note)."'";
-		$sql.= " WHERE rowid = ".$this->id;
-
-		dolibarr_syslog("Adherent::update_note sql=$sql");
-		$result = $this->db->query($sql);
-		if (! $result)
-		{
-			$this->error=$this->db->error();
-			$this->db->rollback();
-			return -1;
-		}
-		
-		$this->commentaire = $note;
-		
-		$this->db->commit();
-		return 1;
-	}
-
-	/**
 			\brief 		Fonction qui met a jour l'adherent (sauf mot de passe)
 			\param		user			Utilisateur qui realise la mise a jour
 			\param		notrigger		1=desactive le trigger UPDATE (quand appele par creation)

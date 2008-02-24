@@ -108,8 +108,6 @@ class Facture extends CommonObject
   function Facture($DB, $socid='', $facid='')
   {
     $this->db = $DB;
-    $this->table = 'facture';
-    $this->tabledetail = 'facturedet';
 
     $this->id = $facid;
     $this->socid = $socid;
@@ -2018,54 +2016,6 @@ class Facture extends CommonObject
       {
 	print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_NotDefined");
 	return "";
-      }
-  }
-
-  /**
-   *    \brief      Mets à jour les commentaires privés
-   *    \param      note        	Commentaire
-   *    \return     int         	<0 si ko, >0 si ok
-   */
-  function update_note($note)
-  {
-    $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table;
-    $sql.= " SET note = '".addslashes($note)."'";
-    $sql.= " WHERE rowid =". $this->id;
-
-    dolibarr_syslog("Facture.class::update_note sql=$sql");
-    if ($this->db->query($sql))
-      {
-	$this->note = $note;
-	return 1;
-      }
-    else
-      {
-	$this->error=$this->db->error();
-	return -1;
-      }
-  }
-
-  /**
-   *    \brief      Mets à jour les commentaires publiques
-   *    \param      note_public	Commentaire
-   *    \return     int         	<0 si ko, >0 si ok
-   */
-  function update_note_public($note_public)
-  {
-    $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table;
-    $sql.= " SET note_public = '".addslashes($note_public)."'";
-    $sql.= " WHERE rowid =". $this->id;
-
-    dolibarr_syslog("Facture.class::update_note_public sql=$sql");
-    if ($this->db->query($sql))
-      {
-	$this->note_public = $note_public;
-	return 1;
-      }
-    else
-      {
-	$this->error=$this->db->error();
-	return -1;
       }
   }
 

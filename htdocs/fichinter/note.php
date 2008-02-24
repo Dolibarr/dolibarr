@@ -46,7 +46,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->ficheinter->creer)
 
 	$db->begin();
 	
-	$res=$fichinter->update_note($_POST["note_public"],'note_public');
+	$res=$fichinter->update_note_public($_POST["note_public"],$user);
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$fichinter->error.'</div>';
@@ -65,7 +65,7 @@ if ($_POST['action'] == 'update' && $user->rights->ficheinter->creer)
 
 	$db->begin();
 
-	$res=$fichinter->update_note($_POST["note_private"],'note_private');
+	$res=$fichinter->update_note($_POST["note_private"],$user);
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$fichinter->error.'</div>';

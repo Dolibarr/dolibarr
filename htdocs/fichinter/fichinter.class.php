@@ -353,38 +353,12 @@ class Fichinter extends CommonObject
      }
   }
   
-  /**
- 	 *    \brief      Mets a jour les commentaires publiques et prives
-	 *    \param      note	Commentaire
-	 *    \param      type  Type de note
-	 *    \return     int         	<0 si ko, >0 si ok
-	 */
-	function update_note($note,$type)
-	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter';
-		$sql.= " SET ".$type." = '".addslashes($note)."'";
-		$sql.= " WHERE rowid =". $this->id;
-
-		dolibarr_syslog("Fichinter::update_note type=".$type." sql=".$sql);
-
-		if ($this->db->query($sql))
-		{
-			$this->$type = $type;
-			return 1;
-		}
-		else
-		{
-      $this->error=$this->db->error();
-			return -1;
-		}
-	}
-	
 	/**
-   *      \brief      Information sur l'objet fiche intervention
-   *      \param      id      id de la fiche d'intervention
-   */
-  function info($id)
-  {
+	*      \brief      Information sur l'objet fiche intervention
+	*      \param      id      id de la fiche d'intervention
+	*/
+	function info($id)
+	{
     $sql = "SELECT f.rowid, ";
     $sql.= $this->db->pdate("f.datec")." as datec, ".$this->db->pdate("f.date_valid")." as datev";
     $sql.= ", f.fk_user_author, f.fk_user_valid";

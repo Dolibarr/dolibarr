@@ -1462,55 +1462,6 @@ class Propal extends CommonObject
 		}
 	}
 
-	/**
- 	 *    \brief      Mets � jour les commentaires priv�s
-	 *    \param      note        	Commentaire
-	 *    \return     int         	<0 si ko, >0 si ok
-	 */
-	function update_note($note)
-	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-		$sql.= " SET note = '".addslashes($note)."'";
-		$sql.= " WHERE rowid =". $this->id;
-
-		dolibarr_syslog("Propal::update_note $sql");
-
-		if ($this->db->query($sql))
-		{
-			$this->note = $note;
-			return 1;
-		}
-		else
-		{
-            $this->error=$this->db->error();
-			return -1;
-		}
-	}
-
-	/**
- 	 *    \brief      Mets � jour les commentaires publiques
-	 *    \param      note_public	Commentaire
-	 *    \return     int         	<0 si ko, >0 si ok
-	 */
-	function update_note_public($note_public)
-	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'propal';
-		$sql.= " SET note_public = '".addslashes($note_public)."'";
-		$sql.= " WHERE rowid =". $this->id;
-
-		dolibarr_syslog("Propal::update_note_public $sql");
-
-		if ($this->db->query($sql))
-		{
-			$this->note_public = $note_public;
-			return 1;
-		}
-		else
-		{
-            $this->error=$this->db->error();
-			return -1;
-		}
-	}
 
 	/**
 	 *   \brief      Change les conditions de r�glement de la facture
