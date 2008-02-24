@@ -2794,14 +2794,14 @@ class Form
 
     /**
      *    \brief      Affiche tableau avec ref et bouton navigation pour un objet metier
-     *    \param      object		Objet a afficher
+     *    \param      object		Object to show
      *    \param      paramid   	Nom du parametre a utiliser pour nommer id dans liens URL
      *    \param      morehtml  	Code html supplementaire a afficher avant barre nav
 	 *	  \param	  shownav	  	Show Condition
      *    \param      fieldid   	Nom du champ a utiliser pour select next et previous
      *	  \return     string    	Portion HTML avec ref + boutons nav
      */
-	function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid')
+	function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref')
 	{
 		$ret='';
 
@@ -2809,11 +2809,13 @@ class Form
         $previous_ref = $object->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).'">'.img_previous().'</a>':'';
         $next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).'">'.img_next().'</a>':'';
 
+		//print "xx".$previous_ref."x".$next_ref;
 		if ($previous_ref || $next_ref || $morehtml) {
 			$ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
 		}
-		//$ret.=$object->getNomUrl(0);
-		$ret.=$object->ref;
+		
+		$ret.=$object->$fieldref;
+		
 		if ($morehtml) {
 			$ret.='</td><td class="nobordernopadding" align="right">'.$morehtml;
 		}

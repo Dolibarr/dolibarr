@@ -16,14 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/fourn/fiche.php
         \ingroup    fournisseur, facture
         \brief      Page de fiche fournisseur
+		\version	$Id$
 */
 
 require('./pre.inc.php');
@@ -84,7 +83,7 @@ if ( $societe->fetch($socid) )
    */
   $head = societe_prepare_head($societe);
   
-  dolibarr_fiche_head($head, 'supplier', $societe->nom);
+  dolibarr_fiche_head($head, 'supplier', $langs->trans("ThirdParty"));
   
   
   print '<table width="100%" class="notopnoleftnoright">';

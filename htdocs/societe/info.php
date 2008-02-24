@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/societe/info.php
         \ingroup    societe
 		\brief      Page des informations d'une societe
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -55,13 +52,12 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
         }
 }
 
-llxHeader();
-
 
 /*
- * Visualisation de la fiche
- *
- */
+*	View
+*/
+
+llxHeader();
 
 $soc = new Societe($db);
 $soc->id = $socid;
@@ -73,7 +69,7 @@ $soc->info($socid);
  */
 $head = societe_prepare_head($soc);
 
-dolibarr_fiche_head($head, 'info', $soc->nom);
+dolibarr_fiche_head($head, 'info', $langs->trans("ThirdParty"));
 
 
 

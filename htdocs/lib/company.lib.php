@@ -17,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
    \file       htdocs/lib/company.lib.php
    \brief      Ensemble de fonctions de base pour le module societe
    \ingroup    societe
-   \version    $Revision$
-   
-   Ensemble de fonctions de base de dolibarr sous forme d'include
+   \version    $Id$
 */
 
 function societe_prepare_head($objsoc)
@@ -37,7 +33,7 @@ function societe_prepare_head($objsoc)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
-	$head[$h][1] = $langs->trans("Company");
+	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'company';
 	$h++;
 

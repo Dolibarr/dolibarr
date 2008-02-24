@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
@@ -25,20 +22,22 @@
         \ingroup    adherent
 		\brief      Fichier de la classe gérant les types d'adhérents
 		\author     Rodolphe Quiedeville
-		\version    $Revision$
+		\version    $Id$
 */
+
+require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
+
 
 /**
         \class      AdherentType
 		\brief      Classe gérant les types d'adhérents
 */
-
-
-class AdherentType
+class AdherentType extends CommonObject
 {
   var $error;
   var $errors=array();
   var $db;
+  var $table_element = 'adherent_type';
 
   var $id;
   var $libelle;
@@ -182,6 +181,7 @@ class AdherentType
 				$obj = $this->db->fetch_object($resql);
 		
 				$this->id             = $obj->rowid;
+				$this->ref            = $obj->rowid;
 				$this->libelle        = $obj->libelle;
 				$this->statut         = $obj->statut;
 				$this->cotisation     = $obj->cotisation;

@@ -84,9 +84,10 @@ if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
   $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
 }
 
+
 /*
- * Affichage liste
- */
+* View
+*/
 
 llxHeader();
 
@@ -102,7 +103,7 @@ if ($socid > 0)
 		
 		$html=new Form($db);
 		
-		dolibarr_fiche_head($head, 'document', $societe->nom);
+		dolibarr_fiche_head($head, 'document', $langs->trans("ThirdParty"));
 		
 		/*
 	   * Confirmation de la suppression d'une ligne produit

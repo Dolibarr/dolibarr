@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/fourn/fiche.php
         \ingroup    fournisseur, facture
         \brief      Page de fiche fournisseur
-        \version    $Revision$
+        \version    $Id$
 */
 
 require('./pre.inc.php');
@@ -84,8 +82,9 @@ if ( $societe->fetch($socid) )
    */
   $head = societe_prepare_head($societe);
 
-  dolibarr_fiche_head($head, 'supplierstat', $societe->nom);
+  dolibarr_fiche_head($head, 'supplierstat', $langs->trans("ThirdParty"));
 
+  
   print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
 

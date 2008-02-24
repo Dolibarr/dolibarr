@@ -107,6 +107,11 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 	
 }
 
+
+/*
+*	View
+*/
+
 $html = new Form($db);
 
 /*
@@ -124,7 +129,7 @@ if ($_GET["socid"])
 	 */
 	 $soc = new Societe($db);
 	 $result = $soc->fetch($_GET["socid"]);
-	 llxHeader("","",$langs->trans("CardCompany".$soc->type));
+	 llxHeader("","",$langs->trans("Category"));
 	
 	
 	/*
@@ -132,7 +137,7 @@ if ($_GET["socid"])
 	*/
 	$head = societe_prepare_head($soc);
 
-	dolibarr_fiche_head($head, 'category', $soc->nom);
+	dolibarr_fiche_head($head, 'category', $langs->trans("ThirdParty"));
 
 	print '<table class="border" width="100%">';
 	

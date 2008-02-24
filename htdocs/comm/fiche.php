@@ -148,7 +148,7 @@ if ($socid > 0)
 
 	$head = societe_prepare_head($objsoc);
 
-    dolibarr_fiche_head($head, 'customer', $objsoc->nom);
+    dolibarr_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
 
 
     /*

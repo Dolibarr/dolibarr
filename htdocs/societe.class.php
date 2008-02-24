@@ -19,28 +19,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/societe.class.php
         \ingroup    societe
         \brief      Fichier de la classe des societes
-        \version    $Revision$
+        \version    $Id$
 */
+
+require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 
 
 /**
         \class 		Societe
         \brief 		Classe permettant la gestion des societes
 */
-class Societe
+class Societe extends CommonObject
 {
 	var $db;
 	var $error;
 	var $errors=array();
-
+    var $table_element = 'societe';
+	
 	var $id;
 	var $nom;
 	var $nom_particulier;
@@ -484,15 +485,16 @@ class Societe
     }
 
     /**
-     *    \brief      Charge depuis la base l'objet societe
-     *    \param      socid       Id de la soci�t� � charger en m�moire
-     *    \param      user        Objet de l'utilisateur
+     *    \brief      Load a third party from database into memory
+     *    \param      socid       Id third party to load
+     *    \param      user        User object
      *    \return     int         >0 si ok, <0 si ko
      */
     function fetch($socid, $user=0)
     {
 		global $langs;
 		global $conf;
+		
 		/* Lecture des permissions */
 		if ($user <> 0)
 		{
@@ -545,6 +547,7 @@ class Societe
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
+				$this->ref = $obj->rowid;
 
 				$this->date_update = $obj->date_update;
 

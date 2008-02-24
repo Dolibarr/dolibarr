@@ -113,7 +113,7 @@ if ($socid > 0)
 	 */
 	$head = societe_prepare_head($societe);
 
-	dolibarr_fiche_head($head, 'compta', $societe->nom);
+	dolibarr_fiche_head($head, 'compta', $langs->trans("ThirdParty"));
 
 
     print '<table width="100%" class="notopnoleftnoright">';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/commonobject.class.php
         \ingroup    core
         \brief      Fichier de la classe mere des classes metiers (facture, contrat, propal, commande, etc...)
-        \version    $Revision$
+        \version    $Id$
 */
 
 
@@ -513,6 +511,8 @@ class CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " WHERE ".$fieldid." < '".addslashes($this->ref)."'";
 		if (isset($filter)) $sql.=" AND ".$filter;
+
+		//print $sql;
 		$result = $this->db->query($sql) ;
 		if (! $result)
 		{
@@ -521,11 +521,13 @@ class CommonObject
 		}
 		$row = $this->db->fetch_row($result);
 		$this->ref_previous = $row[0];
+
 		
 		$sql = "SELECT MIN(".$fieldid.")";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " WHERE ".$fieldid." > '".addslashes($this->ref)."'";
 		if (isset($filter)) $sql.=" AND ".$filter;
+
 		$result = $this->db->query($sql) ;
 		if (! $result)
 		{

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -212,10 +212,10 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
   }
 }
 
-/**
- *
- *
- */
+
+/*
+*	View
+*/
 
 llxHeader();
 
@@ -899,7 +899,7 @@ else
 
 	$head = societe_prepare_head($soc);
     
-    dolibarr_fiche_head($head, 'company', $soc->nom);
+    dolibarr_fiche_head($head, 'company', $langs->trans("ThirdParty"));
 
 
     // Confirmation de la suppression de la facture
@@ -921,7 +921,11 @@ else
 	print '<form name="formsoc" method="post">';
 	print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$soc->nom.'</td></tr>';
+    //
+	print '<tr><td width="20%">'.$langs->trans('Name').'</td>';
+	print '<td colspan="3">';
+	print $form->showrefnav($soc,'socid','',1,'rowid','nom');
+	print '</td></tr>';
 
     print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
 

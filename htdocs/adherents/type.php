@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/adherents/type.php
         \ingroup    adherent
 		\brief      Page de configuration des types d'adhérents
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -111,6 +108,8 @@ if ($user->rights->adherent->configurer && $_GET["action"] == 'commentaire')
 
 llxHeader();
 
+$form=new Form($db);
+
 /* ************************************************************************** */
 /*                                                                            */
 /* Liste des types d'adhérents                                                */
@@ -149,7 +148,7 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
           $objp = $db->fetch_object($result);
           $var=!$var;
           print "<tr $bc[$var]>";
-          print '<td><a href="type.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShwoType"),'group').' '.$objp->rowid.'</a></td>';
+          print '<td><a href="type.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a></td>';
           print '<td>'.$objp->libelle.'</td>';
           print '<td align="center">'.yn($objp->cotisation).'</td>';
           print '<td align="center">'.yn($objp->vote).'</td>';
@@ -261,8 +260,14 @@ if ($rowid > 0)
 
         print '<table class="border" width="100%">';
         
-        print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td>'.$adht->id.'</td></tr>';  
-        print '<tr><td width="15%">'.$langs->trans("Label").'</td><td>'.$adht->libelle.'</td></tr>';  
+        // Ref
+		print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
+		print '<td>';
+		print $form->showrefnav($adht,'rowid');
+		print '</td></tr>';  
+		
+        // Label
+		print '<tr><td width="15%">'.$langs->trans("Label").'</td><td>'.$adht->libelle.'</td></tr>';  
         
         print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
         print yn($adht->cotisation);
