@@ -855,7 +855,7 @@ class Adherent extends CommonObject
 	*/
 	function fetch_login($login)
 	{
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login' LIMIT 1";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login'";
 	
 		$result=$this->db->query( $sql);
 	
