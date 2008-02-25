@@ -334,11 +334,15 @@ if ($_GET["action"] == 'deleteline' && $user->rights->contrat->creer)
     $contrat->fetch($_GET["id"]);
     $result = $contrat->delete_line($_GET["lineid"]);
 
-    if ($result == 0)
+    if ($result >= 0)
     {
         Header("Location: fiche.php?id=".$contrat->id);
         exit;
     }
+	else
+	{
+		$mesg=$contrat->error;
+	}
 }
 
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes' && $user->rights->contrat->creer)
@@ -357,7 +361,7 @@ if ($_POST["action"] == 'confirm_close' && $_POST["confirm"] == 'yes' && $user->
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
-    if ($user->rights->contrat->supprimer )
+    if ($user->rights->contrat->supprimer)
     {
         $contrat = new Contrat($db);
         $contrat->id = $_GET["id"];
@@ -783,7 +787,8 @@ else
 					else {
 						print '&nbsp;';
 					}
-					if ($contrat->statut == 0  && $user->rights->contrat->creer)
+					if ( ($contrat->statut == 0 || ($contrat->statut == 1 && $conf->global->CONTRAT_EDITWHENVALIDATED))
+						&& $user->rights->contrat->creer)
 					{
 						print '&nbsp;';
 						print '<a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
@@ -1067,7 +1072,8 @@ else
 		/*
 		 * Ajouter une ligne produit/service
 		 */
-		if ($user->rights->contrat->creer && ($contrat->statut == 0  || $conf->global->CONTRAT_EDITWHENVALIDATED))
+		if ($user->rights->contrat->creer &&
+			($contrat->statut == 0 || ($contrat->statut == 1  && $conf->global->CONTRAT_EDITWHENVALIDATED)) )
 		{
 			print '<br>';
 			print '<table class="noborder" width="100%">';	// Array with (n*2)+1 lines

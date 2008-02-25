@@ -661,8 +661,7 @@ class Contrat extends CommonObject
      */
     function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start, $date_end, $price_base_type='HT')
     {
-        global $langs;
-		global $conf;
+        global $langs, $conf;
         
 		// Nettoyage parametres
 		if (! $txtva) $txtva=0;
@@ -674,7 +673,7 @@ class Contrat extends CommonObject
 		
         dolibarr_syslog("Contrat::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $info_bits");
 
-        if ($this->statut == 0)
+        if ($this->statut == 0 || ($this->statut == 1 && $conf->global->CONTRAT_EDITWHENVALIDATED))
         {
             if ($fk_product > 0)
             {
@@ -743,6 +742,7 @@ class Contrat extends CommonObject
         }
         else
         {
+			dolibarr_syslog("Contrat::addline ErrorTryToAddLineOnValidatedContract", LOG_ERR);
             return -2;
         }
     }
@@ -826,20 +826,24 @@ class Contrat extends CommonObject
     }
     
     /**
-     *      \brief      Supprime une ligne de detail
-     *      \param      idligne     Id de la ligne detail à supprimer
-     *      \return     int         >0 si ok, <0 si ko
+     *      \brief      Delete a contract line
+     *      \param      idline		Id of line to delete
+     *      \return     int         >0 if OK, <0 if KO
      */
-    function delete_line($idligne)
+    function delete_line($idline)
     {
-        if ($this->statut == 0)
+		global $conf;
+		
+        if ($contrat->statut == 0 ||
+			($contrat->statut == 1 && $conf->global->CONTRAT_EDITWHENVALIDATED) )
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet WHERE rowid =".$idligne;
-        
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
+			$sql.= " WHERE rowid =".$idline;
+
+			dolibarr_syslog("Contrat::delete_line sql=".$sql);
             if ($this->db->query($sql) )
             {
                 $this->update_price();
-        
                 return 1;
             }
             else
