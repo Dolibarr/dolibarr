@@ -40,7 +40,7 @@ $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
 
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
-$result = restrictedArea($user, 'contact', $contactid,'',0);
+$result = restrictedArea($user, 'contact', $contactid,'socpeople',0);
 
 
 /*

@@ -1220,30 +1220,20 @@ function info_admin($texte,$infoonimgalt=0)
 
 
 /**
-     \brief      Vérifie les droits de l'utilisateur
-     \param      user      	  	Utilisateur courant
+     \brief      Check permissions of a user to show a page and an object.
+     \param      user      	  	User to check
      \param      feature		Feature to check (in most cases, it's module name)
-     \param      objectid      	ID de l'element (optionnel)
-     \param      dbtable       	Table de la base correspondant au module (optionnel)
-     \param      list          	Défini si la page sert de liste et donc ne fonctionne pas avec un id
+     \param      objectid      	Object ID if we want to chack permission on on object (optionnal)
+     \param      dbtable       	Table name where object is stored. Not used if objectid is null (optionnel)
 */
-function restrictedArea($user, $feature, $objectid='', $dbtablename='', $list=0)
+function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='')
 {
 	global $db;
-	
-	// Clean parameters
-	if (! $feature)
-	{
-		$feature = 'societe';
-		$list = 1;
-	}
-	
-	$objectid = 0;
-	$socid = 0;
 	
 	//print "$user->id, $feature, $objectid, $dbtablename, $list ".$user->rights->societe->contact->lire;
 	
 	// Check read permission from module
+	// TODO Replace "feature" param by permission for reading
 	$readok=1;
 	if ($feature == 'societe')
 	{
@@ -1269,6 +1259,7 @@ function restrictedArea($user, $feature, $objectid='', $dbtablename='', $list=0)
 	//print "Read access is ok";
 
 	// Check write permission from module
+	// TODO Add after "feature" a param for permission for writing
 	$createok=1;
 	if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 	{
@@ -1296,55 +1287,65 @@ function restrictedArea($user, $feature, $objectid='', $dbtablename='', $list=0)
 		//print "Write access is ok";
 	}
 	
-	// Check permission from company affiliation
-	if ($user->societe_id > 0)
-	{
-		$_GET["action"] = '';
-		$_POST["action"] = '';
-		$socid = $user->societe_id;
-		if (!$objectid) $objectid = $socid;
-		if ($feature == 'societe' && $socid <> $objectid) accessforbidden();
-	}
-
+	// If we have a particular object to check permissions on
 	if ($objectid)
 	{
-		if ($feature == 'societe' && ! $user->rights->commercial->client->voir && ! $socid > 0)
+		$sql='';
+		// Check permission for external users
+		if ($user->societe_id > 0)
 		{
-			$sql = "SELECT sc.fk_soc";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql .= " WHERE sc.fk_soc = ".$objectid." AND sc.fk_user = ".$user->id;
-		}
-		else if (! $user->rights->commercial->client->voir || $socid > 0)
-		{
-			// Si dbtable non défini, méme nom que le module
-			if (!$dbtablename) $dbtablename = $feature;
-			
-			$sql = "SELECT sc.fk_soc, dbt.fk_soc";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-			$sql .= " WHERE dbt.rowid = ".$objectid;
-			if (!$user->rights->commercial->client->voir && !$socid > 0)
+			if ($feature == 'societe')
 			{
-				$sql .= " AND sc.fk_soc = dbt.fk_soc AND sc.fk_user = ".$user->id;
+				if ($user->societe_id <> $objectid) accessforbidden();
 			}
-			if ($socid > 0) $sql .= " AND dbt.fk_soc = ".$socid;
+			else
+			{
+				if (!$dbtablename) $dbtablename = $feature;	// Si dbtable non défini, meme nom que le module
+					
+				$sql = "SELECT dbt.fk_soc";
+				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql.= " WHERE dbt.rowid = ".$objectid;
+				$sql.= " AND dbt.fk_soc = ".$user->societe_id;
+			}
 		}
+		// Check permission for internal users that are restricted on their objects
+		else if (! $user->rights->commercial->client->voir)
+		{
+			if ($feature == 'societe')
+			{
+				$sql = "SELECT sc.fk_soc";
+				$sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+				$sql.= " WHERE sc.fk_soc = ".$objectid." AND sc.fk_user = ".$user->id;
+			}
+			else
+			{
+				if (!$dbtablename) $dbtablename = $feature;	// Si dbtable non défini, meme nom que le module
+				
+				$sql = "SELECT sc.fk_soc";
+				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.fk_soc";
+				$sql.= " WHERE dbt.rowid = ".$objectid;
+				$sql.= " AND IFNULL(sc.fk_user, ".$user->id.") = ".$user->id;
+			}
+		}
+		
 		//print $sql;
 		if ($sql)
 		{
 			$resql=$db->query($sql);
-			if ($resql && $db->num_rows($resql) == 0)
+			if ($resql)
 			{
+				if ($db->num_rows($resql) == 0)	accessforbidden();
+			}
+			else
+			{
+				dolibarr_syslog("Functions.inc.php::restrictedArea sql=".$sql, LOG_ERROR);
 				accessforbidden();
 			}
 		}
 	}
-	// If access to create or modify
-	if (! $objectid && ! $list && ! $createok)
-	{
-		accessforbidden();
-	}
 	
-	return $objectid;
+	return 1;
 }
 
 
