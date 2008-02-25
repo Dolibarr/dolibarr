@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/contrat/services.php
         \ingroup    contrat
 		\brief      Page liste des contrats en service
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -65,7 +62,6 @@ $staticcontratligne=new ContratLigne($db);
  */
 llxHeader();
 
-
 $sql = "SELECT s.rowid as socid, s.nom, c.rowid as cid,";
 $sql.= " cd.rowid, cd.description, cd.statut, p.rowid as pid, p.label as label,";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
@@ -75,11 +71,11 @@ $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin_validite,";
 $sql.= " ".$db->pdate("cd.date_cloture")." as date_cloture";
 $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s,";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."contratdet as cd";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-$sql.= " WHERE c.statut > 0";
-$sql.= " AND c.rowid = cd.fk_contrat";
+$sql.= " WHERE";
+$sql.= " c.rowid = cd.fk_contrat";
 $sql.= " AND c.fk_soc = s.rowid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($mode == "0") $sql.= " AND cd.statut = 0";
@@ -93,6 +89,8 @@ if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
 
+//print $sql;
+dolibarr_syslog("contrat/services.php sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {

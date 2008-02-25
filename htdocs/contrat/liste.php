@@ -49,7 +49,7 @@ if (! $sortorder) $sortorder="DESC";
 
 // Security check
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
-$result = restrictedArea($user, 'contrat',$contratid,'',1);
+$result = restrictedArea($user, 'contrat', $contratid,'',1);
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
@@ -68,8 +68,9 @@ $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.d
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 $sql.= " c.rowid as cid, c.ref, c.datec, c.statut, s.nom, s.rowid as socid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+$sql.= " ".MAIN_DB_PREFIX."contrat as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 $sql.= " WHERE c.fk_soc = s.rowid ";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -106,10 +107,10 @@ if ($resql)
     print '<form method="POST" action="liste.php">';
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
-    print '<input type="text" class="flat" size="3" name="search_contract" value="'.stripslashes($search_contract).'">';
+    print '<input type="text" class="flat" size="3" name="search_contract" value="'.$search_contract.'">';
     print '</td>';
     print '<td class="liste_titre" valign="right">';
-    print '<input type="text" class="flat" size="24" name="search_nom" value="'.stripslashes($search_nom).'">';
+    print '<input type="text" class="flat" size="24" name="search_nom" value="'.$search_nom.'">';
     print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';

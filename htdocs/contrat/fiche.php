@@ -1177,7 +1177,8 @@ else
 
             if ($contrat->statut == 0 && $nbofservices)
             {
-                print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+                if ($user->rights->facture->creer ) print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+				else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a>';
             }
 
             if ($contrat->statut > 0 && $user->rights->facture->creer)

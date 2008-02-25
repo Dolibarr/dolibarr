@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \defgroup   contrat     Module contrat
-        \brief      Module pour g�rer la tenue de contrat de services
+        \brief      Module pour gerer la tenue de contrat de services
+		\version	$Id$
 */
 
 /**
@@ -85,7 +84,7 @@ class modContrat extends DolibarrModules
         $this->rights[1][4] = 'lire';
 
         $this->rights[2][0] = 162;
-        $this->rights[2][1] = 'Cr�er / modifier les contrats';
+        $this->rights[2][1] = 'Creer / modifier les contrats';
         $this->rights[2][2] = 'w';
         $this->rights[2][3] = 0;
         $this->rights[2][4] = 'creer';
@@ -97,7 +96,7 @@ class modContrat extends DolibarrModules
         $this->rights[3][4] = 'activer';
 
         $this->rights[4][0] = 164;
-        $this->rights[4][1] = 'D�sactiver un service d\'un contrat';
+        $this->rights[4][1] = 'Desactiver un service d\'un contrat';
         $this->rights[4][2] = 'w';
         $this->rights[4][3] = 0;
         $this->rights[4][4] = 'desactiver';
