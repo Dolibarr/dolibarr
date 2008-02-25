@@ -572,32 +572,31 @@ class Form
 
 
   /**
-	 *    \brief      Retourne la liste déroulante des sociétés
-	 *    \param      selected        Societe pré-sélectionnée
-	 *    \param      htmlname        Nom champ formulaire
-	 *    \param      filter          Criteres optionnels de filtre
+	 *    	\brief      Output html form to select a third party
+	 *    	\param      selected        Societe pré-sélectionnée
+	 *    	\param      htmlname        Nom champ formulaire
+	 *    	\param      filter          Criteres optionnels de filtre
+	 *		\param		showempty		Add an empty field
 	 */
 	function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0)
 	{
-		global $conf;
+		global $conf,$user;
 		
         // On recherche les societes
-        $sql = "SELECT s.rowid, s.nom FROM";
-        $sql.= " ".MAIN_DB_PREFIX ."societe as s";
-        if ($filter) $sql.= " WHERE ".$filter;
+        $sql = "SELECT s.rowid, s.nom";
+        $sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
+		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql.= " WHERE 1=1";
+		if ($filter) $sql.= " AND ".$filter;
         if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
         {
-        	if ($filter)
-        	{
-        		$sql.= " AND";
-        	}
-        	else
-        	{
-        		$sql.= " WHERE";
-        	}
-        	$sql.= " rowid = ".$selected;
+        	$sql.= " AND rowid = ".$selected;
         }
-        $sql.= " ORDER BY nom ASC";
+        if (!$user->rights->commercial->client->voir && !$user->societe_id) //restriction
+		{
+			$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		}
+		$sql.= " ORDER BY nom ASC";
     
         dolibarr_syslog("Form::select_societes sql=".$sql);
         $resql=$this->db->query($sql);

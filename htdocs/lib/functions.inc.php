@@ -1221,44 +1221,79 @@ function info_admin($texte,$infoonimgalt=0)
 
 /**
      \brief      Vérifie les droits de l'utilisateur
-     \param      user      	  Utilisateur courant
-     \param      module        Module a vérifier
-     \param      objectid      ID de l'element (optionnel)
-     \param      dbtable       Table de la base correspondant au module (optionnel)
-     \param      list          Défini si la page sert de liste et donc ne fonctionne pas avec un id
+     \param      user      	  	Utilisateur courant
+     \param      feature		Feature to check (in most cases, it's module name)
+     \param      objectid      	ID de l'element (optionnel)
+     \param      dbtable       	Table de la base correspondant au module (optionnel)
+     \param      list          	Défini si la page sert de liste et donc ne fonctionne pas avec un id
 */
-function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list=0)
+function restrictedArea($user, $feature, $objectid='', $dbtablename='', $list=0)
 {
 	global $db;
 	
 	// Clean parameters
-	if (! $modulename)
+	if (! $feature)
 	{
-		$modulename = 'societe';
+		$feature = 'societe';
 		$list = 1;
 	}
 	
 	$objectid = 0;
 	$socid = 0;
 	
+	//print "$user->id, $feature, $objectid, $dbtablename, $list ".$user->rights->societe->contact->lire;
+	
 	// Check read permission from module
 	$readok=1;
-	if ($modulename == 'societe')
+	if ($feature == 'societe')
 	{
 		if (! $user->rights->societe->lire && ! $user->rights->fournisseur->lire) $readok=0;
 	}
+	else if ($feature == 'contact')
+	{
+		if (! $user->rights->societe->contact->lire) $readok=0;
+	}
+	else if ($feature == 'prelevement')
+	{
+		if (! $user->rights->prelevement->bons->lire) $readok=0;
+	}
+	else if ($feature == 'commande_fournisseur')
+	{
+		if (! $user->rights->fournisseur->commande->lire) $readok=0;
+	}
 	else
 	{
-		if (! $user->rights->$modulename->lire) $readok=0;
+		if (! $user->rights->$feature->lire) $readok=0;
 	}
 	if (! $readok) accessforbidden();
+	//print "Read access is ok";
 
 	// Check write permission from module
 	$createok=1;
 	if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 	{
-		if (! $user->rights->$modulename->creer) $createok=0;
+		if ($feature == 'societe')
+		{
+			if (! $user->rights->societe->creer && ! $user->rights->fournisseur->creer) $createok=0;
+		}
+		else if ($feature == 'contact')
+		{
+			if (! $user->rights->societe->contact->creer) $createok=0;
+		}
+		else if ($feature == 'prelevement')
+		{
+			if (! $user->rights->prelevement->bons->creer) $createok=0;
+		}
+		else if ($feature == 'commande_fournisseur')
+		{
+			if (! $user->rights->fournisseur->commande->creer) $createok=0;
+		}
+		else
+		{
+			if (! $user->rights->$feature->creer) $createok=0;
+		}
 		if (! $createok) accessforbidden();
+		//print "Write access is ok";
 	}
 	
 	// Check permission from company affiliation
@@ -1268,12 +1303,12 @@ function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list
 		$_POST["action"] = '';
 		$socid = $user->societe_id;
 		if (!$objectid) $objectid = $socid;
-		if ($modulename == 'societe' && $socid <> $objectid) accessforbidden();
+		if ($feature == 'societe' && $socid <> $objectid) accessforbidden();
 	}
 
 	if ($objectid)
 	{
-		if ($modulename == 'societe' && ! $user->rights->commercial->client->voir && ! $socid > 0)
+		if ($feature == 'societe' && ! $user->rights->commercial->client->voir && ! $socid > 0)
 		{
 			$sql = "SELECT sc.fk_soc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1282,7 +1317,7 @@ function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list
 		else if (! $user->rights->commercial->client->voir || $socid > 0)
 		{
 			// Si dbtable non défini, méme nom que le module
-			if (!$dbtablename) $dbtablename = $modulename;
+			if (!$dbtablename) $dbtablename = $feature;
 			
 			$sql = "SELECT sc.fk_soc, dbt.fk_soc";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX.$dbtablename." as dbt";

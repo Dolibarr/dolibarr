@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/contact/perso.php
         \ingroup    societe
         \brief      Onglet informations personnelles d'un contact
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -32,59 +30,14 @@ require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 
 $langs->load("companies");
 
-// Protection quand utilisateur externe
+// Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
-
-$socid=0;
-if ($user->societe_id > 0)
-{
-    $socid = $user->societe_id;
-}
-
-
-// Protection restriction commercial
-if ($contactid && ! $user->rights->commercial->client->voir)
-{
-    $sql = "SELECT sc.fk_soc, sp.fk_soc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
-    $sql .= " WHERE sp.rowid = ".$contactid;
-    if (! $user->rights->commercial->client->voir && ! $socid)
-    {
-    	$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
-    }
-    if ($socid) $sql .= " AND sp.fk_soc = ".$socid;
-
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-    	if ($db->num_rows() == 0) accessforbidden();
-    }
-    else
-    {
-    	dolibarr_print_error($db);
-    }
-}
-
-if ($_POST["action"] == 'update')
-{
-    $contact = new Contact($db);
-    $contact->id = $_POST["contactid"];
-
-    if ($_POST["birthdayyear"] && $_POST["birthdaymonth"] && $_POST["birthdayday"])
-    {
- 		$contact->birthday = dolibarr_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
-    }
-
-    $contact->birthday_alert = $_POST["birthday_alert"];
-
-    $result = $contact->update_perso($_POST["contactid"], $user);
-}
+$result = restrictedArea($user, 'contact',$contactid,'',1);
 
 
 /*
- *
- *
- */
+*	View
+*/
 
 llxHeader();
 

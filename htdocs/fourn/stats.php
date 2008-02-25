@@ -33,10 +33,6 @@ $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");
 
-if (!$user->rights->societe->lire)
-  accessforbidden();
-
-
 $page = isset($_GET["page"])?$_GET["page"]:'';
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:'';
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:'';
@@ -44,13 +40,9 @@ $socname = isset($_GET["socname"])?$_GET["socname"]:'';
 $search_nom = isset($_GET["search_nom"])?$_GET["search_nom"]:'';
 $search_ville = isset($_GET["search_ville"])?$_GET["search_ville"]:'';
 
-// Sécurité accés client
-$socid='';
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$result = restrictedArea($user, 'societe',$socid,'',1);
 
 if ($page == -1) { $page = 0 ; }
 

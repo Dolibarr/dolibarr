@@ -15,18 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/societe/commerciaux.php
         \ingroup    societe
         \brief      Page d'affectations des commerciaux aux societes
-        \version    $Revision$
+        \version    $Id$
 */
  
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -34,32 +33,14 @@ $langs->load("customers");
 $langs->load("suppliers");
 $langs->load("banks");
 
-if ( !$user->rights->societe->creer)
-  accessforbidden();
-
+// Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if (!$socid) accessforbidden();
+$result = restrictedArea($user, 'societe','','',1);
 
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid)
-{
-        $sql = "SELECT sc.rowid";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id;
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
-}
+/*
+*	Actions
+*/
 
 if($_GET["socid"] && $_GET["commid"])
 {
@@ -88,42 +69,31 @@ if($_GET["socid"] && $_GET["delcommid"])
       $soc->del_commercial($user, $_GET["delcommid"]);
 
       Header("Location: commerciaux.php?socid=".$soc->id);
+	  exit;
     }
   else
     {
       Header("Location: commerciaux.php?socid=".$_GET["socid"]);
+	  exit;
     }
 }
 
 
+/*
+*	View
+*/
+
 llxHeader();
 
-if($_GET["socid"])
+if ($_GET["socid"])
 {
     $soc = new Societe($db);
     $soc->id = $_GET["socid"];
-    $soc->fetch($_GET["socid"]);
+    $result=$soc->fetch($_GET["socid"]);
     
-    $h=0;
-    
-    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("Company");
-    $h++;
-    
-    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("BankAccount")." $account->number";
-    $h++;
-    
-    $head[$h][0] = 'lien.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("Links");
-    $h++;
-    
-    $head[$h][0] = 'commerciaux.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("SalesRepresentative");
-    $hselected=$h;
-    $h++;
-    
-    dolibarr_fiche_head($head, $hselected, $soc->nom);
+    $head=societe_prepare_head2($soc);
+	
+    dolibarr_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"));
     
     /*
     * Fiche société en mode visu
@@ -185,7 +155,7 @@ if($_GET["socid"])
           {
             print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
             print img_object($langs->trans("ShowUser"),"user").' ';
-            print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
+            print $obj->firstname." " .$obj->name."\n";
             print '</a>&nbsp;';
             print '<a href="commerciaux.php?socid='.$_GET["socid"].'&amp;delcommid='.$obj->rowid.'">';
             print img_delete();

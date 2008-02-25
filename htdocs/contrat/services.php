@@ -51,12 +51,10 @@ $search_service=isset($_GET["search_service"])?$_GET["search_service"]:$_POST["s
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 $socid=$_GET["socid"];
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+// Security check
+$contratid = isset($_GET["id"])?$_GET["id"]:'';
+$result = restrictedArea($user, 'contrat',$contratid,'',1);
+
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);

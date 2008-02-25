@@ -249,7 +249,7 @@ if ($result)
             {
                 // On affiche ligne pour modifier droits
                 print '<tr '. $bc[$var].'>';
-                print '<td>'.img_object('',$picto).' '.$objMod->getName();
+                print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
                 print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';    
                 print '<td align="center" nowrap>';
                 print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fuser->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";

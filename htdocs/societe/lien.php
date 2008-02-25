@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,55 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/societe/lien.php
         \ingroup    societe
-        \brief      Page des societes
-        \version    $Revision$
+        \brief      Page of links to other third parties
+        \version    $Id$
 */
  
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("companies");
 $langs->load("customers");
 $langs->load("suppliers");
 $langs->load("banks");
 
-if ( !$user->rights->societe->creer)
-  accessforbidden();
-  
+// Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if (!$socid) accessforbidden();
-
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid)
-{
-        $sql = "SELECT sc.rowid";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id;
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
-}
+$result = restrictedArea($user, 'societe','','',1);
 
 
 /*
- * Actions
- */
+* Actions
+*/
 
 // Positionne companie parente
 if($_GET["socid"] && $_GET["select"])
@@ -117,27 +93,9 @@ if($_GET["socid"])
     $soc->id = $_GET["socid"];
     $soc->fetch($_GET["socid"]);
     
-    $h=0;
+    $head=societe_prepare_head2($soc);
     
-    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("Company");
-    $h++;
-    
-    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("BankAccount")." $account->number";
-    $h++;
-    
-    $head[$h][0] = 'lien.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("Links");
-    $hselected=$h;
-    $h++;
-    
-    $head[$h][0] = 'commerciaux.php?socid='.$soc->id;
-    $head[$h][1] = $langs->trans("SalesRepresentative");
-    $h++;
-        
-    
-    dolibarr_fiche_head($head, $hselected, $soc->nom);
+    dolibarr_fiche_head($head, 'links', $langs->trans("ThirdParty"));
     
     /*
      * Fiche société en mode visu

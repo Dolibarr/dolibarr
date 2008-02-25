@@ -38,11 +38,11 @@ if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
 $type=$_GET["type"];
 
 // Security check
-$result = restrictedArea($user, 'societe');
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$result = restrictedArea($user, 'societe',$socid,'',1);
 
 
 /*

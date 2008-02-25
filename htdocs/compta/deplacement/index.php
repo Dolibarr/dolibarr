@@ -17,14 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/compta/deplacement/index.php
 		\brief      Page liste des déplacements
+		\version	$Id$
 */
 
 require("./pre.inc.php");
@@ -33,6 +31,9 @@ require("../../tva.class.php");
 $langs->load("companies");
 $langs->load("users");
 $langs->load("trips");
+
+// Security check
+$result = restrictedArea($user, 'deplacement','','',1);
 
 
 llxHeader();

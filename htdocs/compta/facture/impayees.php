@@ -32,21 +32,11 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
-if (!$user->rights->facture->lire)
-accessforbidden();
-
 $langs->load("bills");
 
-
-
-if ($_GET["socid"]) { $socid=$_GET["socid"]; }
-
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+// Security check
+$facid = isset($_GET["facid"])?$_GET["facid"]:'';
+$result = restrictedArea($user, 'facture',$facid,'',1);
 
 
 llxHeader('',$langs->trans("BillsCustomersUnpayed"));

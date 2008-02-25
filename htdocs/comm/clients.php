@@ -27,7 +27,8 @@
 require("./pre.inc.php");
 
 // Security check
-$result = restrictedArea($user, 'societe','','',1);
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$result = restrictedArea($user, 'societe',$socid,'',1);
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];

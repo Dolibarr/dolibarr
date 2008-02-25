@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/compta/paiement/cheque/fiche.php
    \ingroup    facture
    \brief      Onglet paiement cheque
-   \version    $Revision$
+   \version    $Id$
 */
 
 require('./pre.inc.php');
@@ -35,6 +33,9 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');
+
+// Security check
+$result = restrictedArea($user, 'banque', '','',0);
 
 $mesg='';
 

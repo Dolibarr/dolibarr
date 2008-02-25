@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,21 +15,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/compta/deplacement/fiche.php
 		\brief      Page fiche d'un déplacement
+		\version	$Id$
 */
 
 require("./pre.inc.php");
 
 $langs->load("trips");
 
+// Security check
 $id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+$result = restrictedArea($user, 'deplacement', $id,'',1);
 
 
 $mesg = '';
@@ -38,7 +38,7 @@ $mesg = '';
 /*
  * Actions
  */
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->deplacement->supprimer)
 {
 	$deplacement = new Deplacement($db);
 	$deplacement->delete($_GET["id"]);
@@ -46,53 +46,69 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 	exit;
 }
 
-if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 {
-	$deplacement = new Deplacement($db);
-
-	$deplacement->date = mktime(12, 1 , 1,
-					$_POST["remonth"],
-					$_POST["reday"],
-					$_POST["reyear"]);
-
-	$deplacement->km = $_POST["km"];
-	$deplacement->socid = $_POST["socid"];
-	$deplacement->userid = $user->id; //$_POST["km"];
-	$id = $deplacement->create($user);
-
-	if ($id > 0)
+	if (! $_POST["cancel"])
 	{
-		Header ( "Location: fiche.php?id=".$id);
-		exit;
+	 	$deplacement = new Deplacement($db);
+
+		$deplacement->date = dolibarr_mktime(12, 0, 0,
+						$_POST["remonth"],
+						$_POST["reday"],
+						$_POST["reyear"]);
+
+		$deplacement->km = $_POST["km"];
+		$deplacement->socid = $_POST["socid"];
+		$deplacement->userid = $user->id; //$_POST["km"];
+		$id = $deplacement->create($user);
+
+		if ($id > 0)
+		{
+			Header ( "Location: fiche.php?id=".$id);
+			exit;
+		}
+		else
+		{
+			dolibarr_print_error($db,$deplacement->error);
+		}
 	}
 	else
 	{
-		dolibarr_print_error($db,$deplacement->error);
+		Header ( "Location: index.php");
+		exit;
 	}
 }
 
-if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($_POST["action"] == 'update' && $user->rights->deplacement->creer)
 {
-	$deplacement = new Deplacement($db);
-	$result = $deplacement->fetch($_POST["id"]);
-	
-	$deplacement->date = mktime(12, 1 , 1,
-				$_POST["remonth"],
-				$_POST["reday"],
-				$_POST["reyear"]);
-	
-	$deplacement->km     = $_POST["km"];
-	
-	$result = $deplacement->update($user);
-	
-	if ($result > 0)
+	if (!  $_POST["cancel"])
 	{
-		Header ( "Location: fiche.php?id=".$_POST["id"]);
-		exit;
+		$deplacement = new Deplacement($db);
+		$result = $deplacement->fetch($_POST["id"]);
+		
+		$deplacement->date = dolibarr_mktime(12, 0 , 0,
+					$_POST["remonth"],
+					$_POST["reday"],
+					$_POST["reyear"]);
+		
+		$deplacement->km     = $_POST["km"];
+		
+		$result = $deplacement->update($user);
+		
+		if ($result > 0)
+		{
+			Header ( "Location: fiche.php?id=".$_POST["id"]);
+			exit;
+		}
+		else
+		{
+			print $mesg=$langs->trans("ErrorUnknown");
+		}
 	}
 	else
 	{
-		print $mesg=$langs->trans("ErrorUnknown");
+		Header ( "Location: index.php");
+		exit;
 	}
 }
 

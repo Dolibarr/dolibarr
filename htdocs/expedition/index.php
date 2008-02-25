@@ -16,21 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/expedition/index.php
         \ingroup    expedition
         \brief      Page accueil du module expedition
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
 
 $langs->load("sendings");
+
+
+/*
+*	View
+*/
 
 llxHeader('',$langs->trans("Sendings"),'ch-expedition.html',$form_search);
 

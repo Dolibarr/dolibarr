@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/contact/ldap.php
         \ingroup    ldap
         \brief      Page fiche LDAP contact
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -35,43 +33,14 @@ $langs->load("companies");
 $langs->load("ldap");
 $langs->load("admin");
 
-// Protection quand utilisateur externe
+// Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
-
-$socid=0;
-if ($user->societe_id > 0)
-{
-    $socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if ($contactid && ! $user->rights->commercial->client->voir)
-{
-    $sql = "SELECT sc.fk_soc, sp.fk_soc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
-    $sql .= " WHERE sp.rowid = ".$contactid;
-    if (! $user->rights->commercial->client->voir && ! $socid)
-    {
-    	$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
-    }
-    if ($socid) $sql .= " AND sp.fk_soc = ".$socid;
-
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-    	if ($db->num_rows() == 0) accessforbidden();
-    }
-    else
-    {
-    	dolibarr_print_error($db);
-    }
-}
+$result = restrictedArea($user, 'contact',$contactid,'',1);
 
 
 /*
- *
- *
- */
+*	View
+*/
 
 llxHeader();
 

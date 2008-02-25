@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -17,12 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   commercial     Module commercial
-        \brief      Module pour g�rer les fonctions commerciales
+        \brief      Module pour gerer les fonctions commerciales
+		\version	$Id$
 */
 
 /**
@@ -84,7 +83,7 @@ class modCommercial extends DolibarrModules
         $this->rights_class = 'commercial';
         $r = 1;
         
-        // 261 : Permission g�n�rale
+        // 261 : Permission generale
         $this->rights[$r][0] = 261;
         $this->rights[$r][1] = 'Consulter informations commerciales';
         $this->rights[$r][2] = 'r';
@@ -93,9 +92,9 @@ class modCommercial extends DolibarrModules
         $this->rights[$r][5] = 'lire';
         $r++;
         
-        // 262 : Resteindre l'acc�s des commerciaux
+        // 262 : Resteindre l'acces des commerciaux
         $this->rights[$r][0] = 262;
-        $this->rights[$r][1] = 'Consulter tous les clients (effectifs pour utilisateurs internes uniquement)';
+        $this->rights[$r][1] = 'Consulter tous les tiers par utilisateurs internes (sinon uniquement si contact commercial). Non effectif pour utilisateurs externes (tjs limités à eux-meme).';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
         $this->rights[$r][4] = 'client';

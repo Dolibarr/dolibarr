@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/societe/notify/fiche.php
         \ingroup    societe, notification
 		\brief      Onglet notifications pour une societe
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("pre.inc.php");
@@ -34,33 +31,19 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 $langs->load("companies");
 $langs->load("mails");
 
-// Sécurité accés client
+// Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($socid == '') accessforbidden();
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
-{
-        $sql = "SELECT sc.fk_soc, s.client";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id." AND s.client = 1";
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
-}
+$result = restrictedArea($user, 'societe','','',1);
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="c.name";
 
+
+/*
+*	View
+*/
 
 llxHeader();
 

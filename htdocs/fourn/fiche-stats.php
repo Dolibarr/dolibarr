@@ -36,37 +36,19 @@ $langs->load('orders');
 $langs->load('companies');
 $langs->load('commercial');
 
-// Sécurité accés client
+// Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
-if (! $socid) accessforbidden();
-
+$result = restrictedArea($user, 'societe',$socid,'',1);
 
 
 /*
  *  Actions
  */
  
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
-{
-  $sql = "SELECT sc.rowid";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-  $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_soc = s.rowid AND sc.fk_user = ".$user->id." AND s.fournisseur = 1";
-  
-  if ( $db->query($sql) )
-    {
-      if ( $db->num_rows() == 0) accessforbidden();
-    }
-}
 
 
 /*
- * Mode fiche
+ * View
  */  
 $societe = new Fournisseur($db);
 

@@ -41,10 +41,9 @@ $langs->load("bills");
 $langs->load("contracts");
 if ($conf->fichinter->enabled) $langs->load("interventions");
 
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
-
 // Security check
-$result = restrictedArea($user, 'societe', $socid);
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$result = restrictedArea($user, 'societe',$socid,'',1);
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];

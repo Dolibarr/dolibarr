@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -17,13 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-        \defgroup   ficheinter     Module fiche interventions
-        \brief      Module pour g�rer la tenue de fiches d'interventions
+        \defgroup   ficheinter     Module intervention cards
+        \brief      Module to manage intervention cards
+		\version	$Id$
 */
 
 /**
@@ -101,7 +100,7 @@ class modFicheinter  extends DolibarrModules
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 62;
-    $this->rights[2][1] = 'Cr�er/modifier les fiches d\'intervention';
+    $this->rights[2][1] = 'Creer/modifier les fiches d\'intervention';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'creer';

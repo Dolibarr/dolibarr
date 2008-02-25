@@ -38,14 +38,9 @@ $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 
-// Sécurité accés client
-$socid='';
-if ($_GET["socid"]) { $socid=$_GET["socid"]; }
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+// Security check
+$contratid = isset($_GET["id"])?$_GET["id"]:'';
+$result = restrictedArea($user, 'contrat',$contratid,'',1);
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);

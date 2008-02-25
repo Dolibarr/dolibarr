@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,19 +27,16 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
+// Security check
+$orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+$result = restrictedArea($user, 'commande_fournisseur', $orderid,'',1);
+
 
 /*
 * 	View
 */
 
 llxHeader('',$langs->trans("SuppliersOrdersArea"));
-
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
 
 $commande = new CommandeFournisseur($db);
 
@@ -49,9 +46,14 @@ print '<table class="notopnoleftnoright" width="100%">';
 print '<tr valign="top"><td class="notopnoleft" width="30%">';
 
 $sql = "SELECT count(cf.rowid), fk_statut";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
-$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cf.fk_soc = s.rowid ";
+if (!$user->rights->commercial->client->voir && !$socid) //restriction
+{
+  $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+}
 $sql.= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);

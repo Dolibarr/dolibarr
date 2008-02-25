@@ -42,13 +42,10 @@ if (! $sortorder) $sortorder="DESC";
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
 
-// Sécurité accés client
-$socid = $_GET["socid"];
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
-}
+// Security check
+$orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+$result = restrictedArea($user, 'commande',$orderid,'',1);
+
 
 $langs->load('companies');
 

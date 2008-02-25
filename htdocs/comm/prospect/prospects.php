@@ -32,13 +32,9 @@ require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
 
 $langs->load("propal");
 
-// Sécurité accés client
-$socid=0;
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$result = restrictedArea($user, 'societe',$socid,'',1);
 
 $socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
 $stcomm=isset($_GET["stcomm"])?$_GET["stcomm"]:$_POST["stcomm"];

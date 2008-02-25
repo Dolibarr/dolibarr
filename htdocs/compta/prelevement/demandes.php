@@ -30,15 +30,12 @@
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 
-if (!$user->rights->prelevement->bons->lire)
-  accessforbidden();
-
 $langs->load("widthdrawals");
 
-if ($user->societe_id > 0)
-{
-  $socid = $user->societe_id;
-}
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$result = restrictedArea($user, 'prelevement','','',1);
+
 
 llxHeader();
 

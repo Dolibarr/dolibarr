@@ -29,16 +29,12 @@
 
 require("./pre.inc.php");
 
-if (!$user->rights->expedition->lire) accessforbidden();
-
 $langs->load('companies');
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+// Security check
+$expeditionid = isset($_GET["id"])?$_GET["id"]:'';
+$result = restrictedArea($user, 'expedition',$expeditionid,'',1);
+
 
 $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:"";
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:"";

@@ -32,16 +32,11 @@ require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 
 $langs->load("withdrawals");
 
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$result = restrictedArea($user, 'prelevement','','',1);
 
-if (!$user->rights->prelevement->bons->lire)
-  accessforbidden();
 
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
-}
 
 
 /*

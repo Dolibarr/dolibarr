@@ -36,32 +36,10 @@ if (!$user->rights->contrat->lire)
 $langs->load("companies");
 $langs->load("contracts");
 
-// Sécurité accès client et commerciaux
-$contratid = isset($_GET["id"])?$_GET["id"]:'';
+// Security check
+$contactid = isset($_GET["id"])?$_GET["id"]:'';
+$result = restrictedArea($user, 'contact',$contactid,'',1);
 
-if ($user->societe_id > 0) 
-{
-  unset($_GET["action"]);
-  $socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if ($contratid && (!$user->rights->commercial->client->voir || $user->societe_id > 0))
-{
-        $sql = "SELECT sc.fk_soc, c.fk_soc";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."contrat as c";
-        $sql .= " WHERE c.rowid = ".$contratid;
-        if (!$user->rights->commercial->client->voir && !$user->societe_id > 0)
-        {
-        	$sql .= " AND sc.fk_soc = c.fk_soc AND sc.fk_user = ".$user->id;
-        }
-        if ($user->societe_id > 0) $sql .= " AND c.fk_soc = ".$socid;
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
-}
 
 $contrat = new Contrat($db);
 $contrat->fetch($_GET["id"]);

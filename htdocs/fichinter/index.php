@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
      	\file       htdocs/fichinter/index.php
 		\brief      Page accueil espace fiches interventions
 		\ingroup    ficheinter
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -40,11 +37,9 @@ $sortfield=$_GET["sortfield"]?$_GET["sortfield"]:$_POST["sortfield"];
 $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
 $page=$_GET["page"]?$_GET["page"]:$_POST["page"];
 
-// Securité
-if ($user->societe_id > 0)
-{
-  $socid = $user->societe_id ;
-}
+// Security check
+$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
+$result = restrictedArea($user, 'ficheinter', $fichinterid,'',1);
 
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datei";
@@ -55,6 +50,9 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+/*
+*	View
+*/
 
 llxHeader();
 

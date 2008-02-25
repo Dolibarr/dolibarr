@@ -33,16 +33,10 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $langs->load("bills");
 
-// Sécurité accés client
-if (! $user->rights->facture->lire)
-  accessforbidden();
+// Security check
+$facid = isset($_GET["facid"])?$_GET["facid"]:'';
+$result = restrictedArea($user, 'facture',$facid,'',1);
 
-$socid=0;
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
 
 $paymentstatic=new Paiement($db);
 $accountstatic=new Account($db);
@@ -50,8 +44,9 @@ $companystatic=new Societe($db);
 
 
 /*
- * Affichage
- */
+* 	View
+*/
+
 llxHeader('',$langs->trans("ListPayment"));
 
 $page=$_GET["page"];

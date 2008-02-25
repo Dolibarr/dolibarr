@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
  *
@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/commande/liste.php
         \ingroup    commande
         \brief      Page liste des commandes
-        \version    $Revision$
+        \version    $Id$
 */
 
 
@@ -35,9 +33,6 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 $langs->load('orders');
 $langs->load('companies');
 
-if (!$user->rights->commande->lire)
-	accessforbidden();
-
 $year=isset($_GET["year"])?$_GET["year"]:$_POST["year"];
 $month=isset($_GET["month"])?$_GET["month"]:$_POST["month"];
 $sref=isset($_GET['sref'])?$_GET['sref']:$_POST['sref'];
@@ -45,13 +40,9 @@ $sref_client=isset($_GET['sref_client'])?$_GET['sref_client']:(isset($_POST['sre
 $snom=isset($_GET['snom'])?$_GET['snom']:$_POST['snom'];
 $sall=isset($_GET['sall'])?$_GET['sall']:$_POST['sall'];
 
-// Sécurité accés client
-$socid = $_GET['socid'];
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+// Security check
+$orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+$result = restrictedArea($user, 'commande', $orderid,'',1);
 
 
 /*

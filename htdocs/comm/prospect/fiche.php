@@ -35,28 +35,9 @@ $langs->load('companies');
 $langs->load('projects');
 $langs->load('propal');
 
-$socid = isset($_GET["id"])?$_GET["id"]:$_GET["socid"];		// Fonctionne si on passe id ou socid
-if ($socid == '') accessforbidden();
-
-// Protection quand utilisateur externe
-if ($user->societe_id > 0)
-{
-    $socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
-{
-        $sql = "SELECT sc.rowid";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_soc = s.rowid AND sc.fk_user = ".$user->id." AND s.client = 2";
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
-}
-
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$result = restrictedArea($user, 'societe',$socid,'',1);
 
 
 /*

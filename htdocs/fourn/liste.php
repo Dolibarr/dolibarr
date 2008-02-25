@@ -33,9 +33,6 @@ $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");
 
-if (!$user->rights->societe->lire)
-  accessforbidden();
-
 $page = isset($_GET["page"])?$_GET["page"]:'';
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:'';
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:'';
@@ -47,21 +44,23 @@ $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");
 
-llxHeader();
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$result = restrictedArea($user, 'societe',$socid,'',1);
 
-// Sécurité accés client
-$socid='';
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
 
 if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
+
+
+/*
+*	View
+*/
+
+llxHeader();
 
 /*
  * Mode Liste

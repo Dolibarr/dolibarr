@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
  
 /**
 		\file       htdocs/compta/paiement/cheque/index.php
 		\ingroup    compta
 		\brief      Page liste des bordereau de remise de cheque
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -32,16 +30,9 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $langs->load("banks");
 
-// Sécurité accés client
-if (! $user->rights->banque)
-  accessforbidden();
+// Security check
+$result = restrictedArea($user, 'banque', '','',1);
 
-$socid=0;
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
 
 $checkdepositstatic=new RemiseCheque($db);
 $accountstatic=new Account($db);

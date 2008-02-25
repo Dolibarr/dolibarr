@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/contact/index.php
         \ingroup    societe
 		\brief      Page liste des contacts
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -33,17 +31,9 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 $langs->load("companies");
 $langs->load("suppliers");
 
-
-// S�curit� acc�s client
-$socid='';
-if ($_GET["socid"]) { $socid=$_GET["socid"]; }
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
-
-
+// Security check
+$contactid = isset($_GET["id"])?$_GET["id"]:'';
+$result = restrictedArea($user, 'contact', $contactid,'',1);
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_prenom=isset($_GET["search_prenom"])?$_GET["search_prenom"]:$_POST["search_prenom"];
@@ -107,20 +97,17 @@ llxHeader();
 $sql = "SELECT s.rowid as socid, s.nom, ";
 $sql.= " p.rowid as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax,";
 $sql.= " ".$db->pdate("p.tms")." as tms";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= MAIN_DB_PREFIX."societe_commerciaux as sc,";
-$sql.= " ".MAIN_DB_PREFIX."socpeople as p";
+$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= " WHERE 1=1 ";
-
+if (!$user->rights->commercial->client->voir && !$socid) //restriction
+{
+	$sql .= " AND IFNULL(sc.fk_user, ".$user->id.") = " .$user->id;
+}
 if ($_GET["userid"])    // statut commercial
 {
     $sql .= " AND p.fk_user_creat=".$_GET["userid"];
-}
-if (!$user->rights->commercial->client->voir && !$socid) //restriction
-{
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 if ($search_nom)        // filtre sur le nom
 {

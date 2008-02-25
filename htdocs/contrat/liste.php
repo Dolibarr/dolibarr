@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/contrat/liste.php
         \ingroup    contrat
         \brief      Page liste des contrats
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -50,12 +47,9 @@ $socid=$_GET["socid"];
 if (! $sortfield) $sortfield="c.rowid";
 if (! $sortorder) $sortorder="DESC";
 
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
-}
+// Security check
+$contratid = isset($_GET["id"])?$_GET["id"]:'';
+$result = restrictedArea($user, 'contrat',$contratid,'',1);
 
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);

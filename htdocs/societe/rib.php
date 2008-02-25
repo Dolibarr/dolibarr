@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,57 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/societe/rib.php
         \ingroup    societe
 		\brief      Onglet rib de societe
-		\version    $Revision$
+		\version    $Id$
 */
  
 require("./pre.inc.php");
-require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once DOL_DOCUMENT_ROOT."/companybankaccount.class.php";
 
 $langs->load("companies");
 $langs->load("banks");
 
-if ( !$user->rights->societe->creer)
-  accessforbidden();
-
+// Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if (!$socid) accessforbidden();
-
-
-// Sécurité accès client
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid)
-{
-        $sql = "SELECT sc.rowid";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id;
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
-}
-
-
-llxHeader();
+$result = restrictedArea($user, 'societe','','',1);
 
 $soc = new Societe($db);
 $soc->id = $_GET["socid"];
 $soc->fetch($_GET["socid"]);
+
+
+/*
+*	Actions
+*/
 
 if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 {
@@ -101,28 +78,13 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 
 
 /*
- * Affichage onglets
- */
-$h = 0;
+*	View
+*/
+llxHeader();
 
-$head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
-$head[$h][1] = $langs->trans("Company");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$soc->id;
-$head[$h][1] = $langs->trans("BankAccount")." $account->number";
-$hselected=$h;
-$h++;
-
-$head[$h][0] = 'lien.php?socid='.$soc->id;
-$head[$h][1] = $langs->trans("Links");
-$h++;
-
-$head[$h][0] = 'commerciaux.php?socid='.$soc->id;
-$head[$h][1] = $langs->trans("SalesRepresentative");
-$h++;
+$head=societe_prepare_head2($soc);
     
-dolibarr_fiche_head($head, $hselected, $soc->nom);
+dolibarr_fiche_head($head, 'rib', $langs->trans("ThirdParty"));
 
 $account = new CompanyBankAccount($db, $soc->id);
 $account->fetch();

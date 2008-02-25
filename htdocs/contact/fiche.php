@@ -35,36 +35,17 @@ require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 $langs->load("companies");
 $langs->load("users");
 
-
 $error = array();
 $socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
 
-// Protection quand utilisateur externe
+// Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
+$result = restrictedArea($user, 'contact', $contactid,'',0);
 
-if ($user->societe_id > 0)
-{
-    $socid = $user->societe_id;
-}
 
-// Protection restriction commercial
-if ($contactid && !$user->rights->commercial->client->voir)
-{
-	$sql = "SELECT sc.fk_soc, sp.fk_soc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
-	$sql .= " WHERE sp.rowid = ".$contactid;
-	if (!$user->rights->commercial->client->voir && !$user->societe_id > 0)
-	{
-		$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
-	}
-	if ($user->societe_id > 0) $sql .= " AND sp.fk_soc = ".$socid;
-
-	if ( $db->query($sql) )
-	{
-		if ( $db->num_rows() == 0) accessforbidden();
-	}
-}
-
+/*
+*	Actions
+*/
 
 // Creation utilisateur depuis contact
 if ($user->rights->user->user->creer)

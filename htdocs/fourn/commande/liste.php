@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /** 
     \file       htdocs/fourn/commande/liste.php
     \ingroup    fournisseur
     \brief      Liste des commandes fournisseurs
-    \version    $Revision$
+    \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -36,24 +33,22 @@ $socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
+// Security check
+$orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+$result = restrictedArea($user, 'commande_fournisseur', $orderid,'',1);
+
+
+/*
+*	View
+*/
+
 $title = $langs->trans("SuppliersOrders");
-
-if (!$user->rights->fournisseur->commande->lire) accessforbidden();
-
-// Sécurité accés client/fournisseur
-if ($user->societe_id > 0) $socid = $user->societe_id;
-
-
 if ($socid > 0)
 {
   $fourn = new Fournisseur($db);
   $fourn->fetch($socid);
   $title .= ' (<a href="liste.php">'.$fourn->nom.'</a>)';
 }
-
-/*
- * Affichage
- */
 
 llxHeader('',$title);
 
@@ -71,10 +66,14 @@ $offset = $conf->liste_limit * $page ;
 
 $sql = "SELECT s.rowid as socid, s.nom, ".$db->pdate("cf.date_commande")." as dc,";
 $sql .= " cf.rowid,cf.ref, cf.fk_statut";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
-$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE cf.fk_soc = s.rowid ";
-
+if (!$user->rights->commercial->client->voir && !$socid) //restriction
+{
+  $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+}
 if ($socid)
 {
     $sql .= " AND s.rowid = ".$socid;

@@ -30,16 +30,8 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $langs->load("bills");
 
-// S�curit� acc�s client
-if (! $user->rights->facture->lire && ! $user->rights->adherent->cotisation->lire)
-  accessforbidden();
-
-$socid=0;
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+// Security check
+$result = restrictedArea($user, 'banque', '','',1);
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
