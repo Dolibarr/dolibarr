@@ -42,6 +42,7 @@ if ($_GET["id"]) { $projetid=$_GET["id"]; }
 if ($projetid == '') accessforbidden();
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projetid);
 
 

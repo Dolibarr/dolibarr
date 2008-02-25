@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		  <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,20 +36,17 @@ $mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
 
 if ($_REQUEST["socid"])
 {
-	if ($_REQUEST["typeid"] == 1) $type = 'fournisseur';
-	if ($_REQUEST["typeid"] == 2) $type = 'societe';
+	if ($_REQUEST["typeid"] == 1) { $type = 'fournisseur'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
+	if ($_REQUEST["typeid"] == 2) { $type = 'societe'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
 	$objectid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 }
 else if ($_REQUEST["id"] || $_REQUEST["ref"])
 {
 	$type = 'produit';
 }
-else
-{
-	accessforbidden();
-}
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $type, $objectid);
 
 

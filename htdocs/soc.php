@@ -34,9 +34,9 @@ $langs->load("companies");
 $langs->load("commercial");
 $langs->load("bills");
 
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
-
 // Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid);
 
 // Initialisation de l'objet Societe

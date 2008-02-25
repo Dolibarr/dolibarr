@@ -37,6 +37,7 @@ if ($_GET["id"]) { $projetid=$_GET["id"]; }
 if ($projetid == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projetid);
 
 

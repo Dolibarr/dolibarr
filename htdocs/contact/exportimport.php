@@ -34,6 +34,7 @@ $langs->load("companies");
 
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact',$contactid,'',1);
 
 

@@ -33,6 +33,7 @@ $langs->load("customers");
 $langs->load("suppliers");
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','',1);
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];

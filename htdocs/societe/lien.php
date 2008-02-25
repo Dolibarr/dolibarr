@@ -34,6 +34,7 @@ $langs->load("banks");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','',1);
 
 

@@ -34,13 +34,14 @@ $langs->load('other');
 
 $mesg = "";
 
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 // Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid);
 
 /*

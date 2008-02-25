@@ -36,6 +36,7 @@ $langs->load("companies");
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat', $contratid);
 
 

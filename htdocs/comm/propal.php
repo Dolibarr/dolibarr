@@ -64,6 +64,7 @@ else if (isset($_GET["propalid"]) &&  $_GET["propalid"] > 0)
 	$module='propale';
 	$dbtable='propal';
 }
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 // Nombre de ligne pour choix de produit/service predefinis

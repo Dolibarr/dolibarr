@@ -32,10 +32,9 @@ $action = isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 $langs->load("companies");
 
-// Protection quand utilisateur externe
-$socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
-
 // Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid);
 
 if ($_POST["action"] == 'add')

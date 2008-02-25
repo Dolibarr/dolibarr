@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 // Security check
 $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $orderid,'',1);
 
 

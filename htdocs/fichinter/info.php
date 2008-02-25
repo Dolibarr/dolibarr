@@ -32,6 +32,7 @@ $langs->load('companies');
 $fichinterid = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
 

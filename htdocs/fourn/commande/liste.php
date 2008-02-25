@@ -35,6 +35,7 @@ $sortfield = $_GET["sortfield"];
 
 // Security check
 $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande_fournisseur', $orderid,'',1);
 
 

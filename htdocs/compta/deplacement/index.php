@@ -33,6 +33,7 @@ $langs->load("users");
 $langs->load("trips");
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement','','',1);
 
 

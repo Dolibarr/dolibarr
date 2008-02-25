@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 $langs->load("banks");
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'banque', '','',1);
 
 

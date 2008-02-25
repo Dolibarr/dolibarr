@@ -49,6 +49,7 @@ if (! $sortorder) $sortorder="DESC";
 
 // Security check
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat', $contratid,'',1);
 
 $staticcontrat=new Contrat($db);

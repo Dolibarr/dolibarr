@@ -64,6 +64,7 @@ else if (! empty($_GET["propalid"]))
 }
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 

@@ -34,6 +34,7 @@ $langs->load("propal");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'',1);
 
 $socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];

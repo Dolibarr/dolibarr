@@ -42,6 +42,7 @@ $sall=isset($_GET['sall'])?$_GET['sall']:$_POST['sall'];
 
 // Security check
 $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande', $orderid,'',1);
 
 

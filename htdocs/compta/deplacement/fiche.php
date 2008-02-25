@@ -29,6 +29,7 @@ $langs->load("trips");
 
 // Security check
 $id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'deplacement', $id,'',1);
 
 

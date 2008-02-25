@@ -39,6 +39,7 @@ $page=$_GET["page"]?$_GET["page"]:$_POST["page"];
 
 // Security check
 $fichinterid = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $fichinterid,'',1);
 
 if (! $sortorder) $sortorder="DESC";

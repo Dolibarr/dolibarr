@@ -39,6 +39,7 @@ $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action'
 $propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'propale', $propalid, 'propal');
 
 

@@ -44,6 +44,7 @@ $offset = $limit * $_GET["page"] ;
 
 // Security check
 $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande',$orderid,'',1);
 
 

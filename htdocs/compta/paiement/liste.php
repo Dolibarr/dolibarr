@@ -35,6 +35,7 @@ $langs->load("bills");
 
 // Security check
 $facid = isset($_GET["facid"])?$_GET["facid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture',$facid,'',1);
 
 

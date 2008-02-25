@@ -42,6 +42,7 @@ $search_ville = isset($_GET["search_ville"])?$_GET["search_ville"]:'';
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'',1);
 
 if ($page == -1) { $page = 0 ; }

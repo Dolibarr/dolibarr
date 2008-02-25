@@ -37,6 +37,7 @@ $langs->load("companies");
 $propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'propale', $propalid, 'propal');
 
 

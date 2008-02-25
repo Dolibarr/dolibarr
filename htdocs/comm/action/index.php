@@ -40,6 +40,7 @@ $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'',1);
 
 if ($page == -1) { $page = 0 ; }

@@ -30,6 +30,7 @@ include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 $propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
 // Security cehck
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'propale', $propalid, 'propal');
 
 

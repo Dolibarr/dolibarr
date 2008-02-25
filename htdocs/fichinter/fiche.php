@@ -49,6 +49,7 @@ if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT &&
 }
 
 // Security check
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
 
