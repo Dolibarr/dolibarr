@@ -857,13 +857,13 @@ class Adherent extends CommonObject
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login'";
 	
-		$result=$this->db->query( $sql);
+		$resql=$this->db->query( $sql);
 	
-		if ($result)
+		if ($resql)
 		{
-			if ($this->db->num_rows())
+			if ($this->db->num_rows($resql))
 			{
-				$obj = $this->db->fetch_object($result);
+				$obj = $this->db->fetch_object($resql);
 				$this->fetch($obj->rowid);
 			}
 		}
