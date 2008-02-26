@@ -113,7 +113,14 @@ class MenuTop {
         }
 
         // Commercial
-        if ($conf->commercial->enabled && $user->rights->commercial->main->lire)
+        /*$showcommercial=0;
+        if ($conf->societe->enabled)   $showcommercial=1;
+        if ($conf->propal->enabled)    $showcommercial=1;
+        if ($conf->commande->enabled)  $showcommercial=1;
+        if ($conf->contrat->enabled)   $showcommercial=1;
+        if ($conf->fichinter->enabled) $showcommercial=1;
+        if ($showcommercial)*/
+		if ($conf->commercial->enabled)
         {
             $langs->load("commercial");
 
@@ -133,7 +140,6 @@ class MenuTop {
             }
 
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
-
         }
 
         // Compta/treso (sert pour banque, tva, entites a facturer...)

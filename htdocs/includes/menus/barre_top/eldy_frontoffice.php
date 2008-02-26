@@ -161,24 +161,28 @@ class MenuTop {
         }
 */        
         // Commercial
-        if ($conf->commercial->enabled)
+        /*$showcommercial=0;
+        if ($conf->societe->enabled)   $showcommercial=1;
+        if ($conf->propal->enabled)    $showcommercial=1;
+        if ($conf->commande->enabled)  $showcommercial=1;
+        if ($conf->contrat->enabled)   $showcommercial=1;
+        if ($conf->fichinter->enabled) $showcommercial=1;
+        if ($showcommercial)*/
+		if ($conf->commercial->enabled)
         {
-            $langs->load("commercial");
-        
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
-            {
-                $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
-            }
-            else
-            {
-                $class = 'class="tmenu"';
-            }
-        
-           if ($user->rights->commercial->main->lire)
-            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
-            else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Commercial").'</font></td>';
+	        $langs->load("commercial");
+	    
+	        $class="";
+	        if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
+	        {
+	            $class='class="tmenu" id="sel"'; $_SESSION['idmenu']='';
+	        }
+	        else
+	        {
+	            $class = 'class="tmenu"';
+	        }
+
+        	print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
         }
 
         // Financial

@@ -72,11 +72,6 @@ class modCommercial extends DolibarrModules
         
         // Boxes
         $this->boxes = array();
-        $this->boxes[0][0] = "Derniers clients";
-        $this->boxes[0][1] = "box_clients.php";
-        
-        $this->boxes[1][0] = "Derniers prospects enregistr�s";
-        $this->boxes[1][1] = "box_prospect.php";
         
         // Permissions
         $this->rights = array();
@@ -85,20 +80,11 @@ class modCommercial extends DolibarrModules
         
         // 261 : Permission generale
         $this->rights[$r][0] = 261;
-        $this->rights[$r][1] = 'Consulter informations commerciales';
+        $this->rights[$r][1] = 'Consulter menu commercial';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
         $this->rights[$r][4] = 'main';
         $this->rights[$r][5] = 'lire';
-        $r++;
-        
-        // 262 : Resteindre l'acces des commerciaux
-        $this->rights[$r][0] = 262;
-        $this->rights[$r][1] = 'Consulter tous les tiers par utilisateurs internes (sinon uniquement si contact commercial). Non effectif pour utilisateurs externes (tjs limités à eux-meme).';
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 1;
-        $this->rights[$r][4] = 'client';
-        $this->rights[$r][5] = 'voir';
         $r++;
     }
 
