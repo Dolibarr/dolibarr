@@ -1189,7 +1189,7 @@ else
             }
 
             $numclos=$contrat->array_detail(5); // Tableau des lignes au statut clos
-            if ($contrat->statut == 1 && $num == sizeof($numclos))
+            if ($contrat->statut == 1 && $nbofservices == sizeof($numclos))
             {
                 print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=close">'.$langs->trans("Close").'</a>';
             }
