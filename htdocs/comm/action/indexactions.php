@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,15 +17,21 @@
  */
 
 /**
-	    \file       htdocs/comm/action/index.php
+	    \file       htdocs/comm/action/indexactions.php
         \ingroup    agenda
-		\brief      Page accueil des rapports des actions
+		\brief      Actions area
 		\version    $Id$
 */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/client.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
+
+$langs->load("companies");
+$langs->load("commercial");
+$langs->load("agenda");
 
 $page = $_GET["page"];
 $sortfield=$_GET["sortfield"];
@@ -71,8 +75,30 @@ if ($action=='delete_action')
 
 llxHeader();
 
-print $langs->trans("FeatureNotYetAvailable");
+print_fiche_titre($langs->trans("ActionsArea"));
 
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
+
+// Search actions
+$var=false;
+print '<table class="noborder" width="100%">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/comm/action/listactions.php">';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAnAction").'</td></tr>';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("Keyword").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print '</tr>';
+print "</form></table><br>\n";
+
+
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+
+show_array_actions_to_do(0);
+
+show_array_last_actions_done(5);
+
+print '</td></tr></table>';
 
 $db->close();
 

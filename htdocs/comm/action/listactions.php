@@ -1,0 +1,233 @@
+<?php
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/**
+	    \file       htdocs/comm/action/listactions.php
+        \ingroup    agenda
+		\brief      Page liste des actions commerciales
+		\version    $Id$
+*/
+ 
+require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+
+$langs->load("companies");
+$langs->load("agenda");
+
+$socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'societe',$socid,'',1);
+
+if ($page == -1) { $page = 0 ; }
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="a.datep";
+
+$status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
+
+
+llxHeader();
+
+/*
+ *  Affichage liste des actions
+ *
+ */
+
+$sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
+$sql.= " a.id,".$db->pdate("a.datep")." as dp, ".$db->pdate("a.datea")." as da, a.fk_contact, a.note, a.label, a.percent as percent,";
+$sql.= " c.code as acode, c.libelle,";
+$sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
+$sql.= " ud.login as logindone, ud.rowid as useriddone,";
+$sql.= " sp.name, sp.firstname";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s,";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+$sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
+$sql.= " WHERE a.fk_soc = s.rowid AND c.id = a.fk_action";
+if ($_GET["type"])
+{
+  $sql .= " AND c.id = ".$_GET["type"];
+}
+if ($_GET["time"] == "today")
+{
+  $sql .= " AND date_format(a.datep, '%d%m%Y') = ".strftime("%d%m%Y",time());
+}
+if ($socid) 
+{
+  $sql .= " AND s.rowid = ".$socid;
+}
+if (!$user->rights->commercial->client->voir && !$socid) //restriction
+{
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+}
+if ($status == 'done') { $sql.= " AND a.percent = 100"; }
+if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
+$sql .= " ORDER BY ".$sortfield." ".$sortorder;
+$sql .= $db->plimit( $limit + 1, $offset);
+
+dolibarr_syslog("comm/action/index.php sql=".$sql);
+$resql=$db->query($sql);
+if ($resql)
+{
+    $actionstatic=new ActionComm($db);
+    $societestatic=new Societe($db);
+    
+    $num = $db->num_rows($resql);
+    $title="DoneAndToDoActions";
+    if ($status == 'done') $title="DoneActions";
+    if ($status == 'todo') $title="ToDoActions";
+	$param="&status=".$status;
+
+    if ($socid)
+    {
+        $societe = new Societe($db);
+        $societe->fetch($socid);
+
+        print_barre_liste($langs->trans($title."For",$societe->nom), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
+    }
+    else
+    {
+        print_barre_liste($langs->trans($title), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
+    }
+    $i = 0;
+    print "<table class=\"noborder\" width=\"100%\">";
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DatePlanShort"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateRealShort"),$_SERVER["PHP_SELF"],"a.datea",$param,'','',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("AffectedTo"),$_SERVER["PHP_SELF"],"ut.login",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
+    print "</tr>\n";
+	
+    $contactstatic = new Contact($db);
+
+    $var=true;
+    while ($i < min($num,$limit))
+    {
+        $obj = $db->fetch_object($resql);
+
+        $var=!$var;
+
+        print "<tr $bc[$var]>";
+
+        // Action (type)
+        print '<td>';
+		$actionstatic->id=$obj->id;
+		$actionstatic->code=$obj->acode;
+		$actionstatic->libelle=$obj->libelle;
+		print $actionstatic->getNomUrl(1,12);
+        print '</td>';
+
+       	print '<td align="left" nowrap="nowrap">';
+		print dolibarr_print_date($obj->dp,"dayhour");
+		print '</td>';
+
+		print '<td align="left" nowrap="nowrap">';
+		print dolibarr_print_date($obj->da,"dayhour");
+		print '</td>';
+
+        // Titre
+        print '<td>';
+       	print $obj->label;
+        print '</td>';
+
+        // Société
+        print '<td>';
+        $societestatic->id=$obj->socid;
+		$societestatic->client=$obj->client;
+		$societestatic->nom=$obj->societe;
+        print $societestatic->getNomUrl(1,'',16);
+		print '</td>';
+
+        // Contact
+        print '<td>';
+        if ($obj->fk_contact > 0)
+        {
+			$contactstatic->name=$obj->name;
+			$contactstatic->firstname=$obj->firstname;
+			$contactstatic->id=$obj->fk_contact;
+            print $contactstatic->getNomUrl(1,'',16);
+        }
+        else
+        {
+            print "&nbsp;";
+        }
+        print '</td>';
+
+        // User to do
+        print '<td align="left">';
+		if ($obj->useridtodo)
+		{
+			$userstatic=new User($db,$obj->useridtodo);
+			$userstatic->id=$obj->useridtodo;
+			$userstatic->login=$obj->logintodo;
+			print $userstatic->getLoginUrl(1);
+		}
+		else print '&nbsp;';
+		print '</td>';
+
+        // User did
+        print '<td align="left">';
+		if ($obj->useriddone)
+		{
+			$userstatic=new User($db,$obj->useriddone);
+			$userstatic->id=$obj->useriddone;
+			$userstatic->login=$obj->logindone;
+			print $userstatic->getLoginUrl(1);
+		}
+		else print '&nbsp;';
+		print '</td>';
+
+        // Status/Percent
+        print '<td align="right" nowrap="nowrap">'.$actionstatic->LibStatut($obj->percent,5).'</td>';
+
+        print "</tr>\n";
+        $i++;
+    }
+    print "</table>";
+    $db->free($resql);
+
+}
+else
+{
+    dolibarr_print_error($db);
+}
+
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+?>

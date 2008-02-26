@@ -1,7 +1,10 @@
 # Dolibarr language file - en_US - agenda
+ActionsArea=Actions area
 Agenda=Agenda
 Agendas=Agendas
 Calendar=Calendar
 Calendars=Calendars
 AffectedTo=Affected to
 DoneBy=Done by
+Events=Events
+SearchAnAction=Search an action

@@ -264,11 +264,15 @@ class MenuLeft {
 				// Actions
 				if ($conf->agenda->enabled)
 				{
-					$newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions", $langs->trans("Agenda"), 0, $user->rights->agenda->myactions->read);
-					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=actions", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
-					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;status=todo", $langs->trans("MenuToDoActions"), 1, $user->rights->agenda->myactions->read);
-					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=actions&amp;time=today", $langs->trans("Today"), 1, $user->rights->agenda->myactions->read);
-					if ($leftmenu=="actions") $newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=actions", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
+					$langs->load("agenda");
+					
+					// Actions
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/indexactions.php?leftmenu=agenda", $langs->trans("Actions"), 0, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=agenda", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda", $langs->trans("List"), 1, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=todo", $langs->trans("MenuToDoActions"),2, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;time=today", $langs->trans("Today"), 2, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=agenda", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
 				}
 
 				// Prospects
@@ -710,11 +714,21 @@ class MenuLeft {
 				// Actions
 				if ($conf->agenda->enabled)
 				{
-					$newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=agenda", $langs->trans("Agenda"), 0, $user->rights->agenda->myactions->read);
+					$langs->load("agenda");
+					
+					// Calendar
+					$newmenu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=agenda", $langs->trans("Calendar"), 0, $user->rights->agenda->myactions->read);
+
+					// Actions
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/indexactions.php?leftmenu=agenda", $langs->trans("Actions"), 0, $user->rights->agenda->myactions->read);
 					$newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=agenda", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
-					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=agenda&amp;status=todo", $langs->trans("MenuToDoActions"), 1, $user->rights->agenda->myactions->read);
-					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?leftmenu=agenda&amp;time=today", $langs->trans("Today"), 1, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda", $langs->trans("List"), 1, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=todo", $langs->trans("MenuToDoActions"),2, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;time=today", $langs->trans("Today"), 2, $user->rights->agenda->myactions->read);
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=agenda", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
+
+					// Events
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listevents.php?leftmenu=agenda", $langs->trans("Events"), 0, $user->rights->agenda->myactions->read);
 				}
 			}	
 			

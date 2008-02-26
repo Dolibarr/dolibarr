@@ -21,8 +21,8 @@
 
 /**
         \file       htdocs/comm/action/fiche.php
-        \ingroup    commercial
-        \brief      Page de la fiche action
+        \ingroup    agenda
+        \brief      Page for action card
         \version    $Id$
 */
 
@@ -258,13 +258,13 @@ if ($_POST["action"] == 'update')
         $actioncomm = new Actioncomm($db);
         $actioncomm->fetch($_POST["id"]);
 
-    	$actioncomm->datep = @mktime($_POST["aphour"],
+    	$actioncomm->datep = dolibarr_mktime($_POST["aphour"],
                                    $_POST["apmin"],
                                    0,
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
-    	$actioncomm->date = @mktime($_POST["adhour"],
+    	$actioncomm->date = dolibarr_mktime($_POST["adhour"],
                                    $_POST["admin"],
                                    0,
                                    $_POST["admonth"],
@@ -306,8 +306,15 @@ if ($_POST["action"] == 'update')
     }
     else
     {
-    	Header("Location: ".$_POST["from"]);
-    	exit;
+		if (! empty($_POST["from"]))
+		{
+			header("Location: ".$_POST["from"]);
+			exit;
+		}
+		else
+		{
+			$_GET["id"]=$_REQUEST["id"];
+		}
     }
 }
 
@@ -334,7 +341,7 @@ if ($_GET["action"] == 'create')
 	}
 
 	print '<form name="action" action="fiche.php" method="post">';
-    print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
+    if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
 	print '<input type="hidden" name="action" value="add_action">';
 
 	/*
@@ -591,13 +598,13 @@ if ($_GET["id"])
     }
 
     $act = new ActionComm($db);
-    $act->fetch($_GET["id"]);
-    $res=$act->societe->fetch($act->societe->id);
-
-    if ($act->author->id)   $res=$act->author->fetch();     // Le parametre est le login, hors seul l'id est charge.
-    if ($act->usermod->id)  $res=$act->usermod->fetch();    
-    if ($act->usertodo->id) $res=$act->usertodo->fetch();   
-    if ($act->userdone->id) $res=$act->userdone->fetch();
+    $result=$act->fetch($_GET["id"]);
+	//print $result."ee".$act->userdone->id."ee";
+    $result=$act->societe->fetch($act->societe->id);
+    if ($act->author->id > 0)   $res=$act->author->fetch();     // Le parametre est le login, hors seul l'id est charge.
+    if ($act->usermod->id > 0)  $res=$act->usermod->fetch();    
+    if ($act->usertodo->id > 0) $res=$act->usertodo->fetch();   
+    if ($act->userdone->id > 0) $res=$act->userdone->fetch();
 
     $res=$act->contact->fetch($act->contact->id);
 
@@ -635,8 +642,8 @@ if ($_GET["id"])
         // Fiche action en mode edition
         print '<form action="fiche.php" method="post">';
         print '<input type="hidden" name="action" value="update">';
-        print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
-        print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
+        print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
+        if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
 
         print '<table class="border" width="100%">';
         print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
@@ -749,6 +756,7 @@ if ($_GET["id"])
 
 		// Realise par
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
+		print $act->userdone->id;
 		if ($act->userdone->id) print $act->userdone->getNomUrl(1);
 		print '</td></tr>';
 

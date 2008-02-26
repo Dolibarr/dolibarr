@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/comm/action/pre.inc.php
-		\brief      Fichier gestionnaire du menu de gauche de la zone actions
-		\version    $Revision$
+		\ingroup	agenda
+		\brief      Left menu handler for acions area
+		\version    $Id$
 */
 
 require("../../main.inc.php");
@@ -39,11 +37,24 @@ function llxHeader($head = "", $urlp = "")
     
     
     $langs->load("commercial");
-    $menu->add(DOL_URL_ROOT."/comm/action/", $langs->trans("Actions"));
-    
-    $menu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?time=today", $langs->trans("Today"));
-    $menu->add_submenu(DOL_URL_ROOT."/comm/action/index.php?status=todo", $langs->trans("MenuToDoActions"), 1);
-    $menu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php", $langs->trans("Reportings"));
+
+
+	$langs->load("agenda");
+	
+	// Calendar
+	$menu->add(DOL_URL_ROOT."/comm/action/index.php?leftmenu=agenda", $langs->trans("Calendar"), 0, $user->rights->agenda->myactions->read);
+
+	// Actions
+	$menu->add_submenu(DOL_URL_ROOT."/comm/action/indexactions.php?leftmenu=agenda", $langs->trans("Actions"), 0, $user->rights->agenda->myactions->read);
+	$menu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=agenda", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
+	$menu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda", $langs->trans("List"), 1, $user->rights->agenda->myactions->read);
+	$menu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=todo", $langs->trans("MenuToDoActions"),2, $user->rights->agenda->myactions->read);
+	$menu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;time=today", $langs->trans("Today"), 2, $user->rights->agenda->myactions->read);
+	$menu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=agenda", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
+
+	// Events
+	$menu->add_submenu(DOL_URL_ROOT."/comm/action/listevents.php?leftmenu=agenda", $langs->trans("Events"), 0, $user->rights->agenda->myactions->read);
+
     
     if ($conf->societe->enabled) {
         $langs->load("companies");
@@ -60,11 +71,6 @@ function llxHeader($head = "", $urlp = "")
     if ($conf->propal->enabled) {
         $langs->load("propal");
         $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
-    }
-    
-    if ($conf->projet->enabled) {
-        $langs->load("projects");
-        $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
     }
     
     left_menu($menu->liste);

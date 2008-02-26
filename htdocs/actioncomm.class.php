@@ -282,10 +282,18 @@ class ActionComm
 	 */
     function update($user)
     {
-        $this->label=trim($this->label);
+        // Clean parameters
+		$this->label=trim($this->label);
         $this->note=trim($this->note);
         if ($this->percentage > 100) $this->percentage = 100;
     
+		// Check parameters
+		if ($this->percentage == 0 && $this->userdone->id > 0)
+		{
+			$this->error="ErrorCantSaveADoneUserWithZeroPercentage";
+			return -1;
+		}
+		
         $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
         $sql.= " SET percent='".$this->percentage."'";
         if ($this->label) 		$sql.= ", label = '".addslashes($this->label)."'";
@@ -295,8 +303,8 @@ class ActionComm
         if ($this->contact->id) $sql.= ", fk_contact =". $this->contact->id;
         $sql.= ", priority = '".$this->priority."'";
         $sql.= ", fk_user_mod = '".$user->id."'";
-		$sql.= ", fk_user_action='".$this->usertodo->id."'";
-		$sql.= ", fk_user_done='".$this->userdone->id."'";
+		$sql.= ", fk_user_action=".($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null");
+		$sql.= ", fk_user_done=".($this->userdone->id > 0?"'".$this->userdone->id."'":"null");
         $sql.= " WHERE id=".$this->id;
     
 		dolibarr_syslog("ActionComm::update sql=".$sql);
@@ -307,6 +315,7 @@ class ActionComm
         else
         {
         	$this->error=$this->db->error();
+			dolibarr_syslog("ActionComm::update ".$this->error,LOG_ERR);
         	return -1;
     	}
     }
