@@ -17,21 +17,19 @@
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_modAgenda_Eventsynchro.class.php
-        \ingroup    agenda
+        \file       htdocs/includes/triggers/interface_all_Logevents.class.php
+        \ingroup    core
         \brief      Trigger file for 
 		\version	$Id$
 */
 
-include_once(DOL_DOCUMENT_ROOT.'/agenda/events.class.php');
-
 
 /**
-        \class      InterfaceEventsynchro
+        \class      InterfaceLogevents
         \brief      Classe des fonctions triggers des actions agenda
 */
 
-class InterfaceEventsynchro
+class InterfaceLogevents
 {
     var $db;
     var $error;
@@ -45,13 +43,13 @@ class InterfaceEventsynchro
      *   \brief      Constructeur.
      *   \param      DB      Handler d'acces base
      */
-    function InterfaceEventsynchro($DB)
+    function InterfaceLogevents($DB)
     {
         $this->db = $DB ;
     
         $this->name = "Eventsynchro";
-        $this->family = "agenda";
-        $this->description = "Les triggers de ce composant permettent d'inserer un evenement dans le calendrier event pour chaque grand evenement Dolibarr.";
+        $this->family = "core";
+        $this->description = "Les triggers de ce composant permettent de logguer les evenements Dolibarr (modification status des objets).";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     }
 
@@ -94,18 +92,18 @@ class InterfaceEventsynchro
      *      \param      action      Code de l'evenement
      *      \param      object      Objet concerne
      *      \param      user        Objet user
-     *      \param      lang        Objet lang
+     *      \param      langs       Objet langs
      *      \param      conf        Objet conf
      *      \return     int         <0 si ko, 0 si aucune action faite, >0 si ok
      */
     function run_trigger($action,$object,$user,$langs,$conf)
     {
-        // Mettre ici le code a executer en reaction de l'action
-        // Les donnees de l'action sont stockees dans $object
+        if (! empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0;	// Log events is disabled (hidden features)
 
-        if (! $conf->agenda->enabled) return 0;     // Module non actif
-        if (! $object->use_agenda) return 0;        // Option syncro agenda non active
-
+		$key='MAIN_LOGEVENTS_'.$action;
+		//dolibarr_syslog("xxxxxxxxxxx".$key);
+		if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
+		
         // Actions
         if ($action == 'ACTION_CREATE')
         {
@@ -373,10 +371,13 @@ class InterfaceEventsynchro
         // Ajoute entree dans webcal
         if ($this->date)
         {
-            $event->date=$this->date;
-            $event->duree=$this->duree;
-            $event->texte=$this->texte;
-            $event->desc=$this->desc;
+			include_once(DOL_DOCUMENT_ROOT.'/core/events.class.php');
+			
+			$event=new Events($this->db);
+            $event->type=$action;
+            $event->dateevent=$this->date;
+            $event->label=$this->texte;
+            $event->description=$this->desc;
 
             $result=$event->create($user);
             if ($result > 0)

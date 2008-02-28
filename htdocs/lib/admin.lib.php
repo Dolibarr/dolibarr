@@ -305,4 +305,41 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     }
 }
 
+
+/**
+   \file       htdocs/lib/company.lib.php
+   \brief      Ensemble de fonctions de base pour le module societe
+   \ingroup    societe
+   \version    $Id$
+*/
+
+function security_prepare_head()
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
+	$head[$h][1] = $langs->trans("DefaultRights");
+	$head[$h][2] = 'default';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
+	$head[$h][1] = $langs->trans("Passwords");
+	$head[$h][2] = 'passwords';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
+	$head[$h][1] = $langs->trans("Miscellanous");
+	$head[$h][2] = 'misc';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/events.php";
+	$head[$h][1] = $langs->trans("Audit");
+	$head[$h][2] = 'audit';
+	$h++;
+	
+	return $head;
+}
+
 ?>

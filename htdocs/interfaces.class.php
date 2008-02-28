@@ -55,7 +55,7 @@ class Interfaces
 	*   \param      conf        Objet conf
 	*   \return     int         Nb triggers ayant agit si pas d'erreurs, -Nb en erreur sinon.
 	*/
-	function run_triggers($action,$object,$user,$lang,$conf)
+	function run_triggers($action,$object,$user,$langs,$conf)
 	{
 		$handle=opendir($this->dir);
 		$modules = array();
@@ -102,7 +102,7 @@ class Interfaces
 				{
 					$modules[$i] = $modName;
 					//dolibarr_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
-					$result=$objMod->run_trigger($action,$object,$user,$lang,$conf);
+					$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
 					if ($result > 0)
 					{
 						// Action OK

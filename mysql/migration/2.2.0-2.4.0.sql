@@ -175,16 +175,18 @@ ALTER TABLE llx_element_element ADD INDEX idx_element_element_targetid (targetid
 ALTER  TABLE llx_actioncomm add column fk_user_mod integer after fk_user_author;
 ALTER  TABLE llx_actioncomm add column fk_user_done integer after fk_user_action;
 
-
+drop table if exists llx_events;
 create table llx_events
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
-  tms            timestamp,
-  fk_action      integer,
-  dateevent      datetime,
-  label          varchar(50) NOT NULL,
-  description    text NOT NULL
+  tms            timestamp,            -- date creation/modification
+  type			 varchar(32) NOT NULL, -- action type
+  dateevent      datetime,             -- date event
+  fk_user        integer,              -- id user
+  label          varchar(50) NOT NULL, -- label of action
+  description    text NOT NULL         -- full description of action
 ) type=innodb;
+
 
 ALTER TABLE llx_events ADD INDEX idx_events_dateevent (dateevent);
 

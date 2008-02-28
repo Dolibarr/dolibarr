@@ -25,8 +25,9 @@ create table llx_events
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
   tms            timestamp,            -- date creation/modification
-  fk_action      integer,              -- action type
+  type			 varchar(32) NOT NULL, -- action type
   dateevent      datetime,             -- date event
+  fk_user        integer,              -- id user
   label          varchar(50) NOT NULL, -- label of action
   description    text NOT NULL         -- full description of action
 ) type=innodb;

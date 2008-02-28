@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/admin/security_other.php
-        \ingroup    setup
+        \ingroup    core
         \brief      Page de configuration du module s�curit� autre
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -91,22 +88,9 @@ print $langs->trans("MiscellanousDesc")."<br>\n";
 print "<br>\n";
 
 
-$h = 0;
+$head=security_prepare_head();
 
-$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
-$head[$h][1] = $langs->trans("DefaultRights");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
-$head[$h][1] = $langs->trans("Passwords");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
-$head[$h][1] = $langs->trans("Miscellanous");
-$hselected=$h;
-$h++;
-
-dolibarr_fiche_head($head, $hselected, $langs->trans("Security"));
+dolibarr_fiche_head($head, 'misc', $langs->trans("Security"));
 
 
 $var=false;

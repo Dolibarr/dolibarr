@@ -112,12 +112,14 @@ class PaiementFourn
 	}
 
 	/**
-	 *    \brief      Cr�ation du paiement en base
-	 *    \param      user        object utilisateur qui cr�e
-	 *    \return     int         id du paiement cr�e, < 0 si erreur
+	 *    \brief      Creta payment in database
+	 *    \param      user        Object of creating user
+	 *    \return     int         id of created payment, < 0 if error
 	 */
 	function create($user)
 	{
+		global $langs,$conf;
+		
 		$error = 0;
 
 		// Nettoyage parametres
@@ -169,7 +171,7 @@ class PaiementFourn
 		            // Appel des triggers
 		            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		            $interface=new Interfaces($this->db);
-		            $result=$interface->run_triggers('PAYMENT_SUPPLIER_CREATE',$this,$user,$lang,$conf);
+		            $result=$interface->run_triggers('PAYMENT_SUPPLIER_CREATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		            // Fin appel triggers
 				}

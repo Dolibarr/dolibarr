@@ -17,8 +17,8 @@
  */
 
 /**
-        \file       agenda/events.class.php
-        \ingroup    agenda
+        \file       core/events.class.php
+        \ingroup    core
         \brief      Events class file.
 		\version    $Id$
 		\author		Laurent Destailleur
@@ -47,7 +47,7 @@ class Events // extends CommonObject
     var $id;
     
 	var $tms;
-	var $fk_action;
+	var $type;
 	var $dateevent;
 	var $label;
 	var $description;
@@ -91,9 +91,9 @@ class Events // extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
 		
 		$sql.= "id,";
-		$sql.= "tms,";
-		$sql.= "fk_action,";
+		$sql.= "type,";
 		$sql.= "dateevent,";
+		$sql.= "fk_user,";
 		$sql.= "label,";
 		$sql.= "description";
 
@@ -101,9 +101,9 @@ class Events // extends CommonObject
         $sql.= ") VALUES (";
         
 		$sql.= " '".$this->id."',";
-		$sql.= " ".$this->db->idate($this->tms).",";
-		$sql.= " '".$this->fk_action."',";
+		$sql.= " '".$this->type."',";
 		$sql.= " ".$this->db->idate($this->dateevent).",";
+		$sql.= " '".$user->id."',";
 		$sql.= " '".$this->label."',";
 		$sql.= " '".$this->description."'";
 
@@ -139,7 +139,7 @@ class Events // extends CommonObject
 		// Clean parameters
         
 		$this->id=trim($this->id);
-		$this->fk_action=trim($this->fk_action);
+		$this->type=trim($this->type);
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 
@@ -152,8 +152,7 @@ class Events // extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
         
 		$sql.= " id='".$this->id."',";
-		$sql.= " tms=".$this->db->idate($this->tms).",";
-		$sql.= " fk_action='".$this->fk_action."',";
+		$sql.= " type='".$this->type."',";
 		$sql.= " dateevent=".$this->db->idate($this->dateevent).",";
 		$sql.= " label='".addslashes($this->label)."',";
 		$sql.= " description='".addslashes($this->description)."'";
@@ -188,7 +187,7 @@ class Events // extends CommonObject
 		
 		$sql.= " t.id,";
 		$sql.= " ".$this->db->pdate('t.tms').",";
-		$sql.= " t.fk_action,";
+		$sql.= " t.type,";
 		$sql.= " ".$this->db->pdate('t.dateevent').",";
 		$sql.= " t.label,";
 		$sql.= " t.description";
@@ -209,7 +208,7 @@ class Events // extends CommonObject
                 
 				$this->id = $obj->id;
 				$this->tms = $obj->tms;
-				$this->fk_action = $obj->fk_action;
+				$this->type = $obj->type;
 				$this->dateevent = $obj->dateevent;
 				$this->label = $obj->label;
 				$this->description = $obj->description;
@@ -262,14 +261,11 @@ class Events // extends CommonObject
 	{
 		$this->id=0;
 		
-		$this->id='';
-		$this->tms='';
-		$this->fk_action='';
-		$this->dateevent='';
-		$this->label='';
-		$this->description='';
-
-		
+		$this->tms=time();
+		$this->type='';
+		$this->dateevent=time();
+		$this->label='Speciment event';
+		$this->description='This is a specimen event';
 	}
 
 }

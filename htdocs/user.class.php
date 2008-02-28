@@ -604,7 +604,7 @@ class User extends CommonObject
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('USER_DISABLE',$this,$user,$lang,$conf);
+			$result=$interface->run_triggers('USER_DISABLE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
@@ -659,7 +659,7 @@ class User extends CommonObject
     	// Appel des triggers
 	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	    $interface=new Interfaces($this->db);
-	    $result=$interface->run_triggers('USER_DELETE',$this,$user,$lang,$conf);
+	    $result=$interface->run_triggers('USER_DELETE',$this,$user,$langs,$conf);
         if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	    // Fin appel triggers
 	
@@ -747,7 +747,7 @@ class User extends CommonObject
 						// Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 						$interface = new Interfaces($this->db);
-						$result = $interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
+						$result = $interface->run_triggers('USER_CREATE',$this,$user,$langs,$conf);
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 						// Fin appel triggers
 					}
@@ -1048,7 +1048,7 @@ class User extends CommonObject
                     // Appel des triggers
                     include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                     $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('USER_MODIFY',$this,$user,$lang,$conf);
+                    $result=$interface->run_triggers('USER_MODIFY',$this,$user,$langs,$conf);
                     if ($result < 0) { $error++; $this->errors=$interface->errors; }
                     // Fin appel triggers
                 }

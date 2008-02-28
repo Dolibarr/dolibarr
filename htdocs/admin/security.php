@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/admin/security.php
         \ingroup    setup
         \brief      Page de configuration du module sécurité
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -163,22 +161,9 @@ print $langs->trans("GeneratedPasswordDesc")."<br>\n";
 print "<br>\n";
 
 
-$h = 0;
+$head=security_prepare_head();
 
-$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
-$head[$h][1] = $langs->trans("DefaultRights");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/security.php";
-$head[$h][1] = $langs->trans("Passwords");
-$hselected=$h;
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/security_other.php";
-$head[$h][1] = $langs->trans("Miscellanous");
-$h++;
-
-dolibarr_fiche_head($head, $hselected, $langs->trans("Security"));
+dolibarr_fiche_head($head, 'passwords', $langs->trans("Security"));
 
 
 $var=false;
