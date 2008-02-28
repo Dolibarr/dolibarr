@@ -23,7 +23,7 @@
 
 create table llx_events
 (
-  id             integer AUTO_INCREMENT PRIMARY KEY,
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
   tms            timestamp,            -- date creation/modification
   type			 varchar(32) NOT NULL, -- action type
   dateevent      datetime,             -- date event

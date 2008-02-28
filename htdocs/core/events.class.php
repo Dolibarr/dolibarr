@@ -90,7 +90,6 @@ class Events // extends CommonObject
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
 		
-		$sql.= "id,";
 		$sql.= "type,";
 		$sql.= "dateevent,";
 		$sql.= "fk_user,";
@@ -100,7 +99,6 @@ class Events // extends CommonObject
 		
         $sql.= ") VALUES (";
         
-		$sql.= " '".$this->id."',";
 		$sql.= " '".$this->type."',";
 		$sql.= " ".$this->db->idate($this->dateevent).",";
 		$sql.= " '".$user->id."',";
@@ -151,12 +149,10 @@ class Events // extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."events SET";
         
-		$sql.= " id='".$this->id."',";
 		$sql.= " type='".$this->type."',";
 		$sql.= " dateevent=".$this->db->idate($this->dateevent).",";
 		$sql.= " label='".addslashes($this->label)."',";
 		$sql.= " description='".addslashes($this->description)."'";
-
         
         $sql.= " WHERE rowid=".$this->id;
 
@@ -185,7 +181,6 @@ class Events // extends CommonObject
         $sql = "SELECT";
 		$sql.= " t.rowid,";
 		
-		$sql.= " t.id,";
 		$sql.= " ".$this->db->pdate('t.tms').",";
 		$sql.= " t.type,";
 		$sql.= " ".$this->db->pdate('t.dateevent').",";
@@ -206,7 +201,6 @@ class Events // extends CommonObject
     
                 $this->id    = $obj->rowid;
                 
-				$this->id = $obj->id;
 				$this->tms = $obj->tms;
 				$this->type = $obj->type;
 				$this->dateevent = $obj->dateevent;

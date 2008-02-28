@@ -178,7 +178,7 @@ ALTER  TABLE llx_actioncomm add column fk_user_done integer after fk_user_action
 drop table if exists llx_events;
 create table llx_events
 (
-  id             integer AUTO_INCREMENT PRIMARY KEY,
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
   tms            timestamp,            -- date creation/modification
   type			 varchar(32) NOT NULL, -- action type
   dateevent      datetime,             -- date event

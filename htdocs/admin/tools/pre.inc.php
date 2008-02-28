@@ -14,15 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file 		htdocs/admin/tools/pre.inc.php
 		\brief      Fichier gestionnaire menu page outils
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("../../main.inc.php");
@@ -41,7 +38,9 @@ function llxHeader($head = "", $urlp = "")
     $menu->add(DOL_URL_ROOT."/admin/tools/index.php", "SystemTools");
     $menu->add_submenu(DOL_URL_ROOT."/admin/tools/dolibarr_export.php", $langs->trans("Backup"));
     $menu->add_submenu(DOL_URL_ROOT."/admin/tools/dolibarr_import.php", $langs->trans("Restore"));
+	$menu->add_submenu(DOL_URL_ROOT."/admin/tools/update.php", $langs->trans("Upgrade"));
     $menu->add_submenu(DOL_URL_ROOT."/admin/tools/purge.php", $langs->trans("Purge"));
+    $menu->add_submenu(DOL_URL_ROOT."/admin/tools/listevents.php", $langs->trans("Audit"));
     
     left_menu($menu->liste);
 }
