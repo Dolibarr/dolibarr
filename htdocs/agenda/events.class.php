@@ -19,10 +19,10 @@
 /**
         \file       agenda/events.class.php
         \ingroup    agenda
-        \brief      Events class file
+        \brief      Events class file.
 		\version    $Id$
 		\author		Laurent Destailleur
-		\remarks	Initialy built by build_class_from_table on 2008-02-28 17:25
+		\remarks	An event is when status of an object change.
 */
 
 // Put here all includes required by your class file
@@ -46,7 +46,6 @@ class Events // extends CommonObject
     
     var $id;
     
-	var $id;
 	var $tms;
 	var $fk_action;
 	var $dateevent;

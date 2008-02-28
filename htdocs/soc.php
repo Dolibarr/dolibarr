@@ -62,6 +62,8 @@ if ($_POST["getsuppliercode"])
 if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
     && ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
 {
+	$error=0;
+
 	if ($_REQUEST["private"] == 1)
 	{
 		$soc->nom                   = $_POST["nom"].' '.$_POST["prenom"];
@@ -111,87 +113,97 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
 	
 	$soc->commercial_id         = $_POST["commercial_id"];
-	
-	// On vérifie si un tiers devient client ou fournisseur pour l'obtention d'un code automatiqe
-	if ($soc->client && $soc->code_client == -1)
-	{
-		$soc->code_client = -1;
-	}
-	else if ($_POST['code_auto'])
-	{
-		$soc->code_client = '';
-	}
-	
-	if ($soc->fournisseur && $soc->code_fournisseur == -1)
-	{
-		$soc->code_fournisseur = -1;
-	}
-	else if ($_POST['code_auto'])
-	{
-		$soc->code_fournisseur = '';
-	}
 
-	if ($_POST["action"] == 'add')
+	
+	if ($soc->fournisseur && ! $conf->fournisseur->enabled)
 	{
-		$result = $soc->create($user);
-		
-		if ($result >= 0)
+		$error = 1;
+		$soc->error = $langs->trans("ErrorSupplierModuleNotEnabled");
+		$_GET["action"]= "create";	
+	}
+	
+	if (! $error)
+	{
+		// On vérifie si un tiers devient client ou fournisseur pour l'obtention d'un code automatiqe
+		if ($soc->client && $soc->code_client == -1)
 		{
-			if (  $soc->client == 1 )
+			$soc->code_client = -1;
+		}
+		else if ($_POST['code_auto'])
+		{
+			$soc->code_client = '';
+		}
+		
+		if ($soc->fournisseur && $soc->code_fournisseur == -1)
+		{
+			$soc->code_fournisseur = -1;
+		}
+		else if ($_POST['code_auto'])
+		{
+			$soc->code_fournisseur = '';
+		}
+
+		if ($_POST["action"] == 'add')
+		{
+			$result = $soc->create($user);
+			
+			if ($result >= 0)
 			{
-				Header("Location: comm/fiche.php?socid=".$soc->id);
-				return;
-			}
-			else
-			{
-				if (  $soc->fournisseur == 1 )
+				if (  $soc->client == 1 )
 				{
-					Header("Location: fourn/fiche.php?socid=".$soc->id);
+					Header("Location: comm/fiche.php?socid=".$soc->id);
 					return;
 				}
 				else
 				{
-					Header("Location: soc.php?socid=".$soc->id);
-					return;
+					if (  $soc->fournisseur == 1 )
+					{
+						Header("Location: fourn/fiche.php?socid=".$soc->id);
+						return;
+					}
+					else
+					{
+						Header("Location: soc.php?socid=".$soc->id);
+						return;
+					}
 				}
+				exit;
 			}
-			exit;
+			else
+			{
+				$langs->load("errors");
+				$mesg=$langs->trans($soc->error);
+				$_GET["action"]='create';
+			}
 		}
-		else
-		{
-			$langs->load("errors");
-			$mesg=$langs->trans($soc->error);
-			$_GET["action"]='create';
-		}
-	}
 
-	if ($_POST["action"] == 'update')
-	{
-		if ($_POST["cancel"])
+		if ($_POST["action"] == 'update')
 		{
-			Header("Location: soc.php?socid=".$socid);
-			exit;
-		}
-		
-		$oldsoc=new Societe($db);
-		$result=$oldsoc->fetch($socid);
-		
-		$result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
-		if ($result >= 0)
-		{
-			Header("Location: soc.php?socid=".$socid);
-			exit;
-		}
-		else
-		{
-			$soc->id = $socid;
-			$reload = 0;
+			if ($_POST["cancel"])
+			{
+				Header("Location: soc.php?socid=".$socid);
+				exit;
+			}
 			
-			$mesg = $soc->error;
-			$_GET["action"]= "edit";
+			$oldsoc=new Societe($db);
+			$result=$oldsoc->fetch($socid);
+			
+			$result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
+			if ($result >= 0)
+			{
+				Header("Location: soc.php?socid=".$socid);
+				exit;
+			}
+			else
+			{
+				$soc->id = $socid;
+				$reload = 0;
+				
+				$mesg = $soc->error;
+				$_GET["action"]= "edit";
+			}
 		}
 	}
-
 }
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)

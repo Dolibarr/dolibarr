@@ -75,6 +75,7 @@ class Commande extends CommonObject
   var $nbtodo;
   var $nbtodolate;
   
+  
   /**
    *        \brief      Constructeur
    *        \param      DB      Handler d'accès base
@@ -87,18 +88,12 @@ class Commande extends CommonObject
     $this->socid = $socid;
     $this->id = $commandeid;
     
-    $this->sources[0] = $langs->trans('OrderSource0');
-    $this->sources[1] = $langs->trans('OrderSource1');
-    $this->sources[2] = $langs->trans('OrderSource2');
-    $this->sources[3] = $langs->trans('OrderSource3');
-    $this->sources[4] = $langs->trans('OrderSource4');
-    $this->sources[5] = $langs->trans('OrderSource5');
-    
     $this->remise = 0;
     $this->remise_percent = 0;
     
     $this->products = array();
   }
+  
   
   /**     \brief      Créé la commande depuis une propale existante
 	  \param      user            Utilisateur qui crée
@@ -1855,7 +1850,21 @@ class Commande extends CommonObject
 		}
 	}
 
-
+	/**
+	 *    	\brief      Return source label of order
+	 *    	\return     string      Label
+	 */
+	function getLabelSource()
+	{
+		global $langs;
+		
+		$label=$langs->trans('OrderSource'.$this->source);
+		// \TODO Si libelle non trouve, on va chercher en base dans dictionnaire
+		
+		
+		return $label;
+	}
+	
 	/**
 	 *    	\brief      Retourne le libellé du statut de la commande
 	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto

@@ -24,7 +24,7 @@
 /**
    \file       htdocs/compta/facture.php
    \ingroup    facture
-   \brief      Page de création d'une facture
+   \brief      Page de création/visu facture
    \version    $Id$
 */
 
@@ -2964,51 +2964,51 @@ else
 
 			/*
 			* Liste des actions propres à la facture
+			* Action 9 and 10 are implicits actions. Do not protect this section according
+			* to agenda module permissions.
 			*/
-    		if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-    		{
-				$sql = 'SELECT a.id, '.$db->pdate('a.datea').' as da, a.label, a.note,';
-				$sql.= ' u.login';
-				$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u';
-				$sql.= ' WHERE a.fk_user_author = u.rowid';
-				$sql.= ' AND a.fk_action in (9,10)';
-				$sql.= ' AND a.fk_soc = '.$fac->socid ;
-				$sql.= ' AND a.fk_facture = '.$fac->id;
-	
-				$resql = $db->query($sql);
-				if ($resql)
+			$sql = 'SELECT a.id, '.$db->pdate('a.datea').' as da, a.label, a.note,';
+			$sql.= ' u.login';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u';
+			$sql.= ' WHERE a.fk_user_author = u.rowid';
+			$sql.= ' AND a.fk_action in (9,10)';
+			$sql.= ' AND a.fk_soc = '.$fac->socid ;
+			$sql.= ' AND a.fk_facture = '.$fac->id;
+
+			dolibarr_syslog("compta/facture.php sql=".$sql);
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$num = $db->num_rows($resql);
+				if ($num)
 				{
-					$num = $db->num_rows($resql);
-					if ($num)
+					print '<br>';
+					print_titre($langs->trans('ActionsOnBill'));
+
+					$i = 0; $total = 0;
+					print '<table class="border" width="100%">';
+					print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
+					print "\n";
+
+					$var=True;
+					while ($i < $num)
 					{
-						print '<br>';
-						print_titre($langs->trans('ActionsOnBill'));
-	
-						$i = 0; $total = 0;
-						print '<table class="border" width="100%">';
-						print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
-						print "\n";
-	
-						$var=True;
-						while ($i < $num)
-						{
-							$objp = $db->fetch_object($resql);
-							$var=!$var;
-							print '<tr '.$bc[$var].'>';
-							print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-							print '<td>'.dolibarr_print_date($objp->da,'day').'</td>';
-							print '<td>'.$objp->label.'</td>';
-							print '<td>'.$objp->login.'</td>';
-							print '</tr>';
-							$i++;
-						}
-						print '</table>';
+						$objp = $db->fetch_object($resql);
+						$var=!$var;
+						print '<tr '.$bc[$var].'>';
+						print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
+						print '<td>'.dolibarr_print_date($objp->da,'day').'</td>';
+						print '<td>'.$objp->label.'</td>';
+						print '<td>'.$objp->login.'</td>';
+						print '</tr>';
+						$i++;
 					}
+					print '</table>';
 				}
-				else
-				{
-					dolibarr_print_error($db);
-				}
+			}
+			else
+			{
+				dolibarr_print_error($db);
 			}
 			print '</td></tr></table>';
 

@@ -320,6 +320,8 @@ class Form
 	    global $conf,$langs;
         print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
 		if ($addempty) print '<option value="-1" selected="true">&nbsp;</option>';
+		
+		// \TODO Aller cherches les sources dans dictionnaire
 		print '<option value="0"'.($selected=='0'?' selected="true"':'').'>'.$langs->trans('OrderSource0').'</option>';
 		print '<option value="1"'.($selected=='1'?' selected="true"':'').'>'.$langs->trans('OrderSource1').'</option>';
 		print '<option value="2"'.($selected=='2'?' selected="true"':'').'>'.$langs->trans('OrderSource2').'</option>';
@@ -327,6 +329,7 @@ class Form
 		print '<option value="4"'.($selected=='4'?' selected="true"':'').'>'.$langs->trans('OrderSource4').'</option>';
 		print '<option value="5"'.($selected=='5'?' selected="true"':'').'>'.$langs->trans('OrderSource5').'</option>';
 		print '<option value="6"'.($selected=='6'?' selected="true"':'').'>'.$langs->trans('OrderSource6').'</option>';
+		
 		print '</select>';
 	}
 	

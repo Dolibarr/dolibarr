@@ -109,7 +109,7 @@ if ($_GET["id"] > 0) {
 		        // Ref
 		        print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
 		        print '<td colspan="2">'.$commande->ref.'</td>';
-		        print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
+		        print '<td width="50%">'.$langs->trans("Source").' : '.$commande->getLabelSource();
 		        if ($commande->source == 0)
 		        {
 		            // Propale

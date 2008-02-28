@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005	     Eric	Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005	   Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
@@ -17,15 +17,13 @@
  * You should have received	a copy of the GNU General Public License
  * along with this program;	if not,	write to the Free Software
  * Foundation, Inc., 59	Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file		htdocs/fourn/commande/fiche.php
    \ingroup		commande
    \brief		Fiche commande
-   \version		$Revision$
+   \version		$Id$
 */
 
 require('./pre.inc.php');
@@ -275,14 +273,29 @@ if ($_POST['action'] ==	'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 
 if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->receptionner)
 {
-  $commande =	new	CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
+	$commande =	new	CommandeFournisseur($db);
+	$commande->fetch($_GET["id"]);
 
-  $date_liv =	mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+	if ($_POST["type"])
+	{
+		$date_liv = dolibarr_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
-  $result	= $commande->Livraison($user, $date_liv, $_POST["type"]);
-  Header("Location: fiche.php?id=".$_GET["id"]);
-  exit;
+		$result	= $commande->Livraison($user, $date_liv, $_POST["type"]);
+		if ($result > 0)
+		{
+			Header("Location: fiche.php?id=".$_GET["id"]);
+			exit;
+		}
+		else
+		{
+			dolibarr_print_error($db,$commande->error);
+			exit;
+		}
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Delivery")).'</div>';
+	}
 }
 
 
@@ -897,7 +910,7 @@ else
 	  /**
 	   * Boutons actions
 	   */
-	  if ($user->societe_id == 0 && $commande->statut	< 3	&& $_GET['action'] <> 'editline')
+	  if ($user->societe_id == 0 && $commande->statut < 3 && $_GET['action'] <> 'editline')
 	    {
 	      print '<div	class="tabsAction">';
 	
@@ -924,8 +937,8 @@ else
 		    }
 	
 		}
-	
-	      if ($commande->statut == 2)
+
+		if ($commande->statut == 2)
 		{
 		  if ($user->rights->fournisseur->commande->annuler)
 		    {
@@ -969,7 +982,7 @@ else
 	   *
 	   *
 	   */
-	  if ( $user->rights->fournisseur->commande->commander &&	$commande->statut == 2)
+	  if ( $user->rights->fournisseur->commande->commander && $commande->statut == 2)
 	    {
 	      /**
 	       * Commander
@@ -1012,8 +1025,11 @@ else
 
 	      print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
 	      $liv = array();
-	      $liv['par']	= $langs->trans("PartialWoman");
+	      $liv['']	    = '&nbsp;';
 	      $liv['tot']	= $langs->trans("TotalWoman");
+	      $liv['par']	= $langs->trans("PartialWoman");
+	      $liv['nev']	= $langs->trans("NeverReceived");
+	      $liv['can']	= $langs->trans("Canceled");
 	
 	      print $html->select_array("type",$liv);
 	

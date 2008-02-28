@@ -1006,57 +1006,63 @@ class CommandeFournisseur extends Commande
       }
   }
 
-  /**
-   * Livraison
-   *
-   *
-   */
-  function Livraison($user, $date, $type)
-  {
-    dolibarr_syslog("CommandeFournisseur::Livraison");
-    $result = 0;
-    if ($user->rights->fournisseur->commande->receptionner && $date < time())
-      {
-	if ($type == 'par')
-	  {
-	    $statut = 4;
-	  }
-
-	if ($type == 'tot')
-	  {
-	    $statut = 5;
-	  }
-
-	if ($statut == 4 or $statut == 5)
-	  {
-	    $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-	    $sql .= " SET fk_statut = ".$statut;
-	    $sql .= " WHERE rowid = ".$this->id;
-	    $sql .= " AND (fk_statut = 3 OR fk_statut = 4) ;";
-	      
-	    if ($this->db->query($sql) )
-	      {
+	/**
+	* 	\bref		Set a delivery in database for this supplier order
+	*	\param		user		User that input data
+	*	\param		date		Date of reception
+	*	\param		type		Type of receipt
+	*/
+	function Livraison($user, $date, $type)
+	{
 		$result = 0;
-		$this->log($user, $statut, $date);
-	      }
-	    else
-	      {
-		dolibarr_syslog("CommandeFournisseur::Livraison Error -1");
-		$result = -1;
-	      }	  
-	  }
-	else
-	  {
-	    dolibarr_syslog("CommandeFournisseur::Livraison Error -2");
-	    $result = -2;
-	  }	
-      }
-    else
-      {
-	dolibarr_syslog("CommandeFournisseur::Livraison Not Authorized");
-      }
-    return $result ;
-  }
+
+		dolibarr_syslog("CommandeFournisseur::Livraison");
+
+		if ($user->rights->fournisseur->commande->receptionner && $date < time())
+		{
+			if ($type == 'tot')	$statut = 5;
+			if ($type == 'par') $statut = 4;
+			if ($type == 'nev') $statut = 6;
+			if ($type == 'can') $statut = 6;
+
+			if ($statut == 4 or $statut == 5 or $statut == 6)
+			{
+				$this->db->begin();
+				
+				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+				$sql.= " SET fk_statut = ".$statut;
+				$sql.= " WHERE rowid = ".$this->id;
+				$sql.= " AND (fk_statut = 3 OR fk_statut = 4)";
+			
+				dolibarr_syslog("CommandeFournisseur::Livraison sql=".$sql);
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$result = 0;
+					$result=$this->log($user, $statut, $date);
+					
+					$this->db->commit();
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->lasterror();
+					dolibarr_syslog("CommandeFournisseur::Livraison Error ".$this->error, LOG_ERR);
+					$result = -1;
+				}	  
+			}
+			else
+			{
+				dolibarr_syslog("CommandeFournisseur::Livraison Error -2", LOG_ERR);
+				$result = -2;
+			}	
+		}
+		else
+		{
+			dolibarr_syslog("CommandeFournisseur::Livraison Not Authorized");
+		}
+		return $result ;
+	}
 
   /**     \brief      Créé la commande depuis une propale existante
 	  \param      user            Utilisateur qui crée

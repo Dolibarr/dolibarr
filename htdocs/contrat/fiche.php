@@ -1178,14 +1178,15 @@ else
 
             if ($contrat->statut == 0 && $nbofservices)
             {
-                if ($user->rights->facture->creer ) print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+                if ($user->rights->contrat->creer) print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 				else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a>';
             }
 
-            if ($contrat->statut > 0 && $user->rights->facture->creer)
+            if ($contrat->statut > 0)
             {
                 $langs->load("bills");
-                print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;contratid='.$contrat->id.'&amp;socid='.$contrat->societe->id.'">'.$langs->trans("CreateBill").'</a>';
+				if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;contratid='.$contrat->id.'&amp;socid='.$contrat->societe->id.'">'.$langs->trans("CreateBill").'</a>';
+				else print '<a class="butAction" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
             }
 
             $numclos=$contrat->array_detail(5); // Tableau des lignes au statut clos
