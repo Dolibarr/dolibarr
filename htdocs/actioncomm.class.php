@@ -2,9 +2,6 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -52,8 +49,9 @@ class ActionComm
     var $usermod;		// User that modified action
 
     var $datep;			// Date action planifie debut (datep)
-    var $datef;			// Date action planifie fin
-    var $date;			// Date action realise completement (datea)
+    var $datef;			// Date action planifie fin (datep2)
+    var $date;			// Date action realise debut (datea)
+    var $dateend; 		// Date action realise fin (datea2)
     var $priority;
 
     var $usertodo;		// User that must do action
@@ -125,7 +123,8 @@ class ActionComm
         $sql.= "(datec,";
         if ($this->datep) $sql.= "datep,";
         if ($this->date) $sql.= "datea,";
-        $sql.= "fk_action,fk_soc,note,fk_contact,";
+        $sql.= "fk_action,fk_soc,note,";
+		$sql.= "fk_contact,";
 		$sql.= "fk_user_author,";
 		$sql.= "fk_user_action,";
 		$sql.= "fk_user_done,";
@@ -135,10 +134,10 @@ class ActionComm
         if ($this->datep) $sql.= "'".$this->db->idate($this->datep)."',";
         if ($this->date) $sql.= "'".$this->db->idate($this->date)."',";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
-        $sql.= ($this->contact->id?$this->contact->id:"null").",";
+        $sql.= ($this->contact->id > 0?"'".$this->contact->id."'":"null").",";
         $sql.= "'".$author->id."',";
-		$sql.= ($this->usertodo->id?"'".$this->usertodo->id."'":"null").",";
-		$sql.= ($this->userdone->id?"'".$this->userdone->id."'":"null").",";
+		$sql.= ($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
+		$sql.= ($this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
 		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."',";
         $sql.= ($this->facid?$this->facid:"null").",";
         $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
@@ -296,15 +295,15 @@ class ActionComm
 		
         $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
         $sql.= " SET percent='".$this->percentage."'";
-        if ($this->label) 		$sql.= ", label = '".addslashes($this->label)."'";
+        $sql.= ", label = ".($this->label ? "'".addslashes($this->label)."'":"null");
         $sql.= ", datep = ".($this->datep ? "'".$this->db->idate($this->datep)."'" : 'null');
         $sql.= ", datea = ".($this->date ? "'".$this->db->idate($this->date)."'" : 'null');
-        if ($this->note) 		$sql.= ", note = '".addslashes($this->note)."'";
-        if ($this->contact->id) $sql.= ", fk_contact =". $this->contact->id;
+        $sql.= ", note = ".($this->note ? "'".addslashes($this->note)."'":"null");
+        $sql.= ", fk_contact =". ($this->contact->id > 0 ? "'".$this->contact->id."'":"null");
         $sql.= ", priority = '".$this->priority."'";
         $sql.= ", fk_user_mod = '".$user->id."'";
-		$sql.= ", fk_user_action=".($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null");
-		$sql.= ", fk_user_done=".($this->userdone->id > 0?"'".$this->userdone->id."'":"null");
+		$sql.= ", fk_user_action=".($this->usertodo->id > 0 ? "'".$this->usertodo->id."'":"null");
+		$sql.= ", fk_user_done=".($this->userdone->id > 0 ? "'".$this->userdone->id."'":"null");
         $sql.= " WHERE id=".$this->id;
     
 		dolibarr_syslog("ActionComm::update sql=".$sql);

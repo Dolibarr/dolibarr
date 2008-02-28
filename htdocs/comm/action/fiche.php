@@ -683,10 +683,10 @@ if ($_GET["id"])
 		print '</td></tr>';
 
 
-		// Etat
+		// Status
         print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percentage" value="'.$act->percentage.'" size="4">%</td></tr>';
 
-		// Objet li�
+		// Object linked
         if ($act->objet_url)
         {
             print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -751,13 +751,12 @@ if ($_GET["id"])
 
 		// Affecte a
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
-		if ($act->usertodo->id) print $act->usertodo->getNomUrl(1);
+		if ($act->usertodo->id > 0) print $act->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
 		// Realise par
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td colspan="3">';
-		print $act->userdone->id;
-		if ($act->userdone->id) print $act->userdone->getNomUrl(1);
+		if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
 		print '</td></tr>';
 
         // Date planification
