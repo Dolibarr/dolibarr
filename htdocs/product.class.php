@@ -23,7 +23,7 @@
 /**
    \file       htdocs/product.class.php
    \ingroup    produit
-   \brief      Fichier de la classe des produits prédéfinis
+   \brief      Fichier de la classe des produits prï¿½dï¿½finis
    \version    $Id$
 */
 
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 
 /**
    \class      Product
-   \brief      Classe permettant la gestion des produits prédéfinis
+   \brief      Classe permettant la gestion des produits prï¿½dï¿½finis
 */
 class Product extends CommonObject
 {
@@ -43,7 +43,7 @@ class Product extends CommonObject
 
 	//! Identifiant unique
   var $id ;
-  //! Référence
+  //! Rï¿½fï¿½rence
   var $ref;
   var $libelle;
   var $description;
@@ -70,7 +70,7 @@ class Product extends CommonObject
   // Statut indique si le produit est en vente '1' ou non '0'
   var $status;
   
-  //! Unités de mesure
+  //! Unitï¿½s de mesure
   var $new_weight;
   var $weight;
   var $weight_units;
@@ -108,7 +108,7 @@ class Product extends CommonObject
   
   /**
    *    \brief      Constructeur de la classe
-   *    \param      DB          Handler accès base de données
+   *    \param      DB          Handler accï¿½s base de donnï¿½es
    *    \param      id          Id produit (0 par defaut)
    */
   function Product($DB, $id=0)
@@ -125,7 +125,7 @@ class Product extends CommonObject
     if ($id>0) $this->fetch($id);
   }
   /**
-   *    \brief      Vérifie que la référence et libellé du produit est non null
+   *    \brief      Vï¿½rifie que la rï¿½fï¿½rence et libellï¿½ du produit est non null
    *    \return     int         1 si ok, 0 sinon
    */
   function check()
@@ -151,7 +151,7 @@ class Product extends CommonObject
   }
 
   /**
-     \brief    Insère le produit en base
+     \brief    Insï¿½re le produit en base
      \param    user        Utilisateur qui effectue l'insertion
      \return   int     id du produit ou numero d'erreur < 0
    */
@@ -317,7 +317,7 @@ class Product extends CommonObject
 
   
 	/**
-		\brief      Mise à jour du produit en base
+		\brief      Mise ï¿½ jour du produit en base
 		\param      id          id du produit
 		\param      user        utilisateur qui effectue l'insertion
 		\return     int         1 si ok, -1 si ref deja existante, -2 autre erreur
@@ -384,7 +384,7 @@ class Product extends CommonObject
 	}
 
   /**
-   *    \brief      Vérification de l'utilisation du produit en base
+   *    \brief      Vï¿½rification de l'utilisation du produit en base
    *    \param      id          id du produit
    */
   function verif_prod_use($id)
@@ -460,46 +460,48 @@ class Product extends CommonObject
   }
 
 
-  /**
-   *    \brief      Suppression du produit en base si pas utilisé
-   *    \param      id          id du produit
-   */
-  function delete($id)
-  {
-    global $conf,$user;
+	/**
+	 *  \brief      Delete a product from database (if not used)
+	 *	\param      id          Product id
+	 * 	\return		int			< 0 if KO, >= 0 if OK
+	 */
+	function delete($id)
+	{
+		global $conf,$user;
+	
+		if ($user->rights->produit->supprimer)
+		{
+			$prod_use = $this->verif_prod_use($id);
+			if ($prod_use == 0)
+			{
+				$sqla = "DELETE from ".MAIN_DB_PREFIX."product";
+				$sqla.= " WHERE rowid = ".$id;
+				$resulta = $this->db->query($sqla);
+	
+				$sqlb = "DELETE from ".MAIN_DB_PREFIX."product_price";
+				$sqlb.= " WHERE fk_product = ".$id;
+				$resultb = $this->db->query($sqlb);
+	
+				$sqlc = "DELETE from ".MAIN_DB_PREFIX."product_det";
+				$sqlc.= " WHERE fk_product = ".$id;
+				$resultc = $this->db->query($sqlc);
+	
+				$sqld = "DELETE from ".MAIN_DB_PREFIX."categorie_product";
+				$sqld.= " WHERE fk_product = ".$id;
+				$resultd = $this->db->query($sqld);
+	
+				return 0;
+			}
+			else
+			{
+				$this->error .= "Impossible de supprimer le produit.\n";
+				return -1;
+			}
+		}
+	}
 
-    if ($user->rights->produit->supprimer)
-      {
-	      $prod_use = $this->verif_prod_use($id);
-	      if ($prod_use == 0)
-        {
-	        $sqla = "DELETE from ".MAIN_DB_PREFIX."product ";
-	        $sqla.= " WHERE rowid = ".$id;
-	        $resulta = $this->db->query($sqla);
-	        
-	        $sqlb = "DELETE from ".MAIN_DB_PREFIX."product_price ";
-	        $sqlb.= " WHERE fk_product = ".$id;
-	        $resultb = $this->db->query($sqlb);
-	        
-	        if ($conf->global->MAIN_MULTILANGS)
-	        {
-	        	$sqlc = "DELETE from ".MAIN_DB_PREFIX."product_det ";
-	          $sqlc.= " WHERE fk_product = ".$id;
-	          $resultc = $this->db->query($sqlc);
-	        }
-	        
-	        return 0;
-        }
-	      else
-        {
-          $this->error .= "Impossible de supprimer le produit.\n";
-          return -1;
-        }
-      }
-  }
-
   /**
-   *		\brief   update ou crée les traductions des infos produits
+   *		\brief   update ou crï¿½e les traductions des infos produits
    */
   function setMultiLangs()
   {
@@ -612,7 +614,7 @@ class Product extends CommonObject
 	*/
 	function _log_price($user)
 	{
-		// MultiPrix : si activé, on gère tout ici, même le prix standard
+		// MultiPrix : si activï¿½, on gï¿½re tout ici, mï¿½me le prix standard
 		global $conf;
 
 		if ($conf->global->PRODUIT_MULTIPRICES)
@@ -684,11 +686,11 @@ class Product extends CommonObject
 
 
 	/**
-	*    \brief		Lit le prix pratiqué par un fournisseur
+	*    \brief		Lit le prix pratiquï¿½ par un fournisseur
 	*				On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref)
 	*    \param     prodfournprice      Id du tarif = rowid table product_fournisseur_price
-	*    \param     qty                 Quantité du produit
-	*    \return    int 				<0 si ko, 0 si ok mais rien trouvé, id_product si ok et trouvé
+	*    \param     qty                 Quantitï¿½ du produit
+	*    \return    int 				<0 si ko, 0 si ok mais rien trouvï¿½, id_product si ok et trouvï¿½
 	*/
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
@@ -741,7 +743,7 @@ class Product extends CommonObject
 					}
 					else
 					{
-						return -1;	// Ce produit existe chez ce fournisseur mais qté insuffisante
+						return -1;	// Ce produit existe chez ce fournisseur mais qtï¿½ insuffisante
 					}
 				}
 				else
@@ -762,7 +764,7 @@ class Product extends CommonObject
 
 	/**
 		\brief  	Modifie le prix d'un produit/service
-		\param  	id          	Id du produit/service à modifier
+		\param  	id          	Id du produit/service ï¿½ modifier
 		\param  	newprice		Nouveau prix
 		\param  	newpricebase	HT ou TTC
 		\param  	user        	Objet utilisateur qui modifie le prix
@@ -788,7 +790,7 @@ class Product extends CommonObject
 				$price_ttc = price2num($price_ttc,'MU');
 			}
 			
-			// Ne pas mettre de quote sur le numériques decimaux.
+			// Ne pas mettre de quote sur le numï¿½riques decimaux.
 			// Ceci provoque des sotckage avec arrondis en base au lieu des valeurs exactes.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 			$sql .= " SET price=".$price."";
@@ -827,9 +829,9 @@ class Product extends CommonObject
 
 
   /**
-   *      \brief      Charge le produit/service en mémoire
-   *      \param      id      Id du produit/service à charger
-   *      \param      ref     Ref du produit/service à charger
+   *      \brief      Charge le produit/service en mï¿½moire
+   *      \param      id      Id du produit/service ï¿½ charger
+   *      \param      ref     Ref du produit/service ï¿½ charger
    *      \return     int     <0 si ko, >0 si ok
    */
   function fetch($id='',$ref='')
@@ -1035,7 +1037,7 @@ class Product extends CommonObject
   
   /**
    *    \brief    Charge tableau des stats commande client pour le produit/service
-   *    \param    socid       	Id societe pour filtrer sur une société
+   *    \param    socid       	Id societe pour filtrer sur une sociï¿½tï¿½
    *    \param    filtrestatut    Id statut pour filtrer sur un statut
    *    \return   array       	Tableau des stats
    */
@@ -1079,7 +1081,7 @@ class Product extends CommonObject
   
   /**
    *    \brief    Charge tableau des stats commande fournisseur pour le produit/service
-   *    \param    socid       	Id societe pour filtrer sur une société
+   *    \param    socid       	Id societe pour filtrer sur une sociï¿½tï¿½
    *    \param    filtrestatut    Id des statuts pour filtrer sur des statuts
    *    \return   array       	Tableau des stats
    */
@@ -1241,8 +1243,8 @@ class Product extends CommonObject
   }
 
   /**
-   *    \brief    Renvoie tableau des stats pour une requete donnée
-   *    \param    sql         Requete a exécuter
+   *    \brief    Renvoie tableau des stats pour une requete donnï¿½e
+   *    \param    sql         Requete a exï¿½cuter
    *    \return   array       Tableau de stats, -1 si ko
    */
   function _get_stats($sql)
@@ -1393,8 +1395,8 @@ class Product extends CommonObject
 
   /**
    *    \brief      Lie un produit associe au produit/service
-   *    \param      id_pere    Id du produit auquel sera lié le produit à lier
-   *    \param      id_fils    Id du produit à lier
+   *    \param      id_pere    Id du produit auquel sera liï¿½ le produit ï¿½ lier
+   *    \param      id_fils    Id du produit ï¿½ lier
    *    \return     int        < 0 si erreur, > 0 si ok
    */
   function add_sousproduit($id_pere, $id_fils,$qty)
@@ -1448,8 +1450,8 @@ class Product extends CommonObject
 
   /**
    *    \brief      retire le lien entre un sousproduit et un produit/service
-   *    \param      id_pere    Id du produit auquel ne sera plus lié le produit li
-   *    \param      id_fils  Id du produit à ne plus li
+   *    \param      id_pere    Id du produit auquel ne sera plus liï¿½ le produit li
+   *    \param      id_fils  Id du produit ï¿½ ne plus li
    *    \return     int         < 0 si erreur, > 0 si ok
    */
   function del_sousproduit($id_pere, $id_fils)
@@ -1467,8 +1469,8 @@ class Product extends CommonObject
 
   /**
    *    \brief      retire le lien entre un sousproduit et un produit/service
-   *    \param      id_pere    Id du produit auquel ne sera plus lié le produit li
-   *    \param      id_fils  Id du produit à ne plus li
+   *    \param      id_pere    Id du produit auquel ne sera plus liï¿½ le produit li
+   *    \param      id_fils  Id du produit ï¿½ ne plus li
    *    \return     int         < 0 si erreur, > 0 si ok
    */
   function is_sousproduit($id_pere, $id_fils)
@@ -1530,7 +1532,7 @@ class Product extends CommonObject
 
   /**
    *    \brief      Lie un sous produit au produit/service
-   *    \param      id_sub     Id du produit à lier
+   *    \param      id_sub     Id du produit ï¿½ lier
    *    \return     int        < 0 si erreur, > 0 si ok
    */
   function add_subproduct($id_sub)
@@ -1664,7 +1666,7 @@ class Product extends CommonObject
 
   /**
    *    \brief  Supprime un tarif fournisseur
-   *    \param  user        utilisateur qui défait le lien
+   *    \param  user        utilisateur qui dï¿½fait le lien
    *    \param  id_fourn    id du fournisseur
    *    \param  qty         quantit
    *    \return int         < 0 si erreur, > 0 si ok
@@ -1747,7 +1749,7 @@ class Product extends CommonObject
     return 1;
   }
   /**
-   *   \brief fonction récursive uniquement utilisée par get_arbo_each_prod, recompose l'arborescence des sousproduits
+   *   \brief fonction rï¿½cursive uniquement utilisï¿½e par get_arbo_each_prod, recompose l'arborescence des sousproduits
    *   \return void
    */
   function fetch_prod_arbo($prod,$compl_path="")
@@ -1756,7 +1758,7 @@ class Product extends CommonObject
     $this->pere_encours;
     foreach($prod as $nom_pere => $desc_pere)
       {
-	// on est dans une sous-catégorie
+	// on est dans une sous-catï¿½gorie
 	if(is_array($desc_pere))
 	  $this->res[]= array($compl_path.stripslashes($nom_pere)." (".$desc_pere[1].")",$desc_pere[0]);
 	else if($nom_pere != "0" && $nom_pere != "1")
@@ -1768,7 +1770,7 @@ class Product extends CommonObject
       }
   }
   /**
-   *   \brief fonction récursive uniquement utilisée par get_each_prod, ajoute chaque sousproduits dans le tableau res
+   *   \brief fonction rï¿½cursive uniquement utilisï¿½e par get_each_prod, ajoute chaque sousproduits dans le tableau res
    *   \return void
    */
   function fetch_prods($prod)
@@ -1776,7 +1778,7 @@ class Product extends CommonObject
     $this->res;
     foreach($prod as $nom_pere => $desc_pere)
       {
-	// on est dans une sous-catégorie
+	// on est dans une sous-catï¿½gorie
 	if(is_array($desc_pere))
 	  $this->res[]= array($desc_pere[1],$desc_pere[0]);
 	if(sizeof($desc_pere) >1)
@@ -1786,7 +1788,7 @@ class Product extends CommonObject
       }
   }
   /**
-   *   \brief reconstruit l'arborescence des catégorie sous la forme d'un tableau
+   *   \brief reconstruit l'arborescence des catï¿½gorie sous la forme d'un tableau
    *   \return array $this->res
    */
   function get_arbo_each_prod()
@@ -1825,7 +1827,7 @@ class Product extends CommonObject
   }
 
   /**
-   *   \brief Retourne les catégories pères
+   *   \brief Retourne les catï¿½gories pï¿½res
    *   \return array prod
    */
   function get_pere()
@@ -1853,7 +1855,7 @@ class Product extends CommonObject
   }
 
   /**
-   *  \brief Retourne les fils de la catégorie structurés pour l'arbo
+   *  \brief Retourne les fils de la catï¿½gorie structurï¿½s pour l'arbo
    *   \return     array        prod
    */
   function get_fils_arbo ($id_pere)
@@ -1881,7 +1883,7 @@ class Product extends CommonObject
       }
   }
   /**
-   * \brief compose l'arborescence des sousproduits, id, nom et quantité sous la forme d'un tableau associatif
+   * \brief compose l'arborescence des sousproduits, id, nom et quantitï¿½ sous la forme d'un tableau associatif
    *    \return    void
    */
   function get_sousproduits_arbo ()
@@ -1893,7 +1895,7 @@ class Product extends CommonObject
 	foreach($this -> get_fils_arbo($v[0]) as $kf=>$vf)
 	  $peres[$k][$kf] = $vf;
       }
-    // on concatène tout ça
+    // on concatï¿½ne tout ï¿½a
     foreach($peres as $k=>$v)
       {
 	$this -> sousprods[$k]=$v;
@@ -1924,8 +1926,8 @@ class Product extends CommonObject
   }
 	
   /**
-   *    	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-   *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+   *    	\brief      Retourne le libellï¿½ du statut d'une facture (brouillon, validï¿½e, abandonnï¿½e, payï¿½e)
+   *    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
    *    	\return     string		Libelle
    */
   function getLibStatut($mode=0)
@@ -1934,10 +1936,10 @@ class Product extends CommonObject
   }
 
   /**
-   *    	\brief      Renvoi le libellé d'un statut donne
+   *    	\brief      Renvoi le libellï¿½ d'un statut donne
    *    	\param      status      Statut
-   *		\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-   *    	\return     string      Libellé du statut
+   *		\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+   *    	\return     string      Libellï¿½ du statut
    */
   function LibStatut($status,$mode=0)
   {
@@ -1977,7 +1979,7 @@ class Product extends CommonObject
   }
 
   /**
-   *    \brief  Entre un nombre de piece du produit en stock dans un entrepôt
+   *    \brief  Entre un nombre de piece du produit en stock dans un entrepï¿½t
    *    \param  id_entrepot     id de l'entrepot
    *    \param  nbpiece         nombre de pieces
    */
@@ -2000,7 +2002,7 @@ class Product extends CommonObject
 
 
   /**
-   *    \brief  Ajuste le stock d'un entrepôt pour le produit à une valeure donnée
+   *    \brief  Ajuste le stock d'un entrepï¿½t pour le produit ï¿½ une valeure donnï¿½e
    *    \param  user            utilisateur qui demande l'ajustement
    *    \param  id_entrepot     id de l'entrepot
    *    \param  nbpiece         nombre de pieces
@@ -2035,7 +2037,7 @@ class Product extends CommonObject
   }
 
   /**
-   *    \brief  Augmente ou réduit la valeur de stock pour le produit
+   *    \brief  Augmente ou rï¿½duit la valeur de stock pour le produit
    *    \param  user            utilisateur qui demande l'ajustement
    *    \param  id_entrepot     id de l'entrepot
    *    \param  nbpiece         nombre de pieces
@@ -2079,7 +2081,7 @@ class Product extends CommonObject
   }
   
   /**
-   *    \brief  Augmente ou réduit le nombre de piece en commande a expedier
+   *    \brief  Augmente ou rï¿½duit le nombre de piece en commande a expedier
    *    \param  nbpiece         nombre de pieces
    *    \param  mouvement       0 = ajout, 1 = suppression
    *    \return     int             < 0 si erreur, > 0 si ok
@@ -2170,11 +2172,11 @@ class Product extends CommonObject
 
 
   /**
-   *    \brief      Déplace fichier uploadé sous le nom $files dans le répertoire sdir
-   *    \param      sdir        Répertoire destination finale
-   *    \param      $file       Nom du fichier uploadé
-   *    \param      maxWidth    Largeur maximum que dois faire la miniature (160 par défaut)
-   *    \param      maxHeight   Hauteur maximum que dois faire la miniature (120 par défaut)
+   *    \brief      Dï¿½place fichier uploadï¿½ sous le nom $files dans le rï¿½pertoire sdir
+   *    \param      sdir        Rï¿½pertoire destination finale
+   *    \param      $file       Nom du fichier uploadï¿½
+   *    \param      maxWidth    Largeur maximum que dois faire la miniature (160 par dï¿½faut)
+   *    \param      maxHeight   Hauteur maximum que dois faire la miniature (120 par dï¿½faut)
    */
   function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
   {
@@ -2191,23 +2193,23 @@ class Product extends CommonObject
     {
     	$originImage = $dir . $file['name'];
     	
-    	// Crée fichier en taille origine
+    	// Crï¿½e fichier en taille origine
     	doliMoveFileUpload($file['tmp_name'], $originImage);
 
     	if (file_exists($originImage))
     	{
-    		// Crée fichier en taille vignette
+    		// Crï¿½e fichier en taille vignette
     		$this->add_thumb($originImage,$maxWidth,$maxHeight);
     	}
     }
   }
   
   /**
-   *    \brief      Génère la vignette
-   *    \param      sdir           Répertoire destination finale
+   *    \brief      Gï¿½nï¿½re la vignette
+   *    \param      sdir           Rï¿½pertoire destination finale
    *    \param      file           Chemin du fichier d'origine
-   *    \param      maxWidth       Largeur maximum que dois faire la miniature (160 par défaut)
-   *    \param      maxHeight      Hauteur maximum que dois faire la miniature (120 par défaut)
+   *    \param      maxWidth       Largeur maximum que dois faire la miniature (160 par dï¿½faut)
+   *    \param      maxHeight      Hauteur maximum que dois faire la miniature (120 par dï¿½faut)
    */
   function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
   {
@@ -2218,8 +2220,8 @@ class Product extends CommonObject
   }
 
   /**
-   *    \brief      Déplace fichier récupéré sur internet (utilisé pour interface avec OSC)
-   *    \param      sdir        Répertoire destination finale
+   *    \brief      Dï¿½place fichier rï¿½cupï¿½rï¿½ sur internet (utilisï¿½ pour interface avec OSC)
+   *    \param      sdir        Rï¿½pertoire destination finale
    *    \param      $files      url de l'image
    *		Jean Heimburger		juin 2007
    */
@@ -2236,10 +2238,10 @@ class Product extends CommonObject
   
     if (file_exists($dir))
     {
-	// Crée fichier en taille vignette
+	// Crï¿½e fichier en taille vignette
 	// \todo A faire
       
-	// Crée fichier en taille origine
+	// Crï¿½e fichier en taille origine
 			$content = file_get_contents($files);
 			
 			$nom = basename($files);
@@ -2251,8 +2253,8 @@ class Product extends CommonObject
   }
 
   /**
-   *    \brief      Affiche la première photo du produit
-   *    \param      sdir        Répertoire à scanner
+   *    \brief      Affiche la premiï¿½re photo du produit
+   *    \param      sdir        Rï¿½pertoire ï¿½ scanner
    *    \return     boolean     true si photo dispo, false sinon
    */
   function is_photo_available($sdir)
@@ -2276,11 +2278,11 @@ class Product extends CommonObject
 
   /**
    *    \brief      Affiche toutes les photos du produit (nbmax maximum)
-   *    \param      sdir        Répertoire à scanner
+   *    \param      sdir        Rï¿½pertoire ï¿½ scanner
    *    \param      size        0=taille origine, 1 taille vignette
    *    \param      nbmax       Nombre maximum de photos (0=pas de max)
    *    \param      nbbyrow     Nombre vignettes par ligne (si mode vignette)
-   *    \return     int         Nombre de photos affichées
+   *    \return     int         Nombre de photos affichï¿½es
    */
   function show_photos($sdir,$size=0,$nbmax=0,$nbbyrow=5)
   {
@@ -2360,7 +2362,7 @@ class Product extends CommonObject
 
   /**
    *    \brief      Retourne tableau de toutes les photos du produit
-   *    \param      dir         Répertoire à scanner
+   *    \param      dir         Rï¿½pertoire ï¿½ scanner
    *    \param      nbmax       Nombre maximum de photos (0=pas de max)
    *    \return     array       Tableau de photos
    */
@@ -2433,12 +2435,12 @@ class Product extends CommonObject
 	}
 	
 	/**
-   *    \brief      Récupère la taille de l'image
+   *    \brief      Rï¿½cupï¿½re la taille de l'image
    *    \param      file        Chemin de l'image
    */
   function get_image_size($file)
   {
-  	$infoImg = getimagesize($file); // Récupération des infos de l'image
+  	$infoImg = getimagesize($file); // Rï¿½cupï¿½ration des infos de l'image
   	$this->imgWidth = $infoImg[0]; // Largeur de l'image
   	$this->imgHeight = $infoImg[1]; // Hauteur de l'image
   }
@@ -2483,7 +2485,7 @@ class Product extends CommonObject
   }
   
  /**
-   *    \brief      Mise à jour du code barre
+   *    \brief      Mise ï¿½ jour du code barre
    *    \param      user        Utilisateur qui fait la modification
    */
   function update_barcode($user)
@@ -2506,7 +2508,7 @@ class Product extends CommonObject
 	}
 	
 /**
-   *    \brief      Mise à jour du type de code barre
+   *    \brief      Mise ï¿½ jour du type de code barre
    *    \param      user        Utilisateur qui fait la modification
    */
   function update_barcode_type($user)
