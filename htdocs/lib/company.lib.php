@@ -77,14 +77,14 @@ function societe_prepare_head($objsoc)
 	}
 	if ($user->societe_id == 0)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
+		$head[$h][0] = DOL_URL_ROOT.'/societe/socnote.php?socid='.$objsoc->id;
 		$head[$h][1] = $langs->trans("Note");
 		$head[$h][2] = 'note';
 		$h++;
 	}
 	if ($user->societe_id == 0)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
+		$head[$h][0] = DOL_URL_ROOT.'/societe/docsoc.php?socid='.$objsoc->id;
 		$head[$h][1] = $langs->trans("Documents");
 		$head[$h][2] = 'document';
 		$h++;
