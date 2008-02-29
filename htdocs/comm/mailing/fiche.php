@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@uers.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,19 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/comm/mailing/fiche.php
         \ingroup    mailing
         \brief      Fiche mailing, onglet général
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
 $langs->load("mails");
 
@@ -52,13 +50,186 @@ $substitutionarrayfortest=array(
 
 
 // Action envoi mailing pour tous
-if ($_GET["action"] == 'sendall')
+if ($_POST["action"] == 'sendallconfirmed')
 {
-    // Pour des raisons de sécurité, on ne permet pas cette fonction via l'IHM,
-    // on affiche donc juste un message
-    $message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-    $message.='<br><textarea cols="50" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
-    $_GET["action"]='';
+    if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
+	{
+		// Pour des raisons de sécurité, on ne permet pas cette fonction via l'IHM,
+	    // on affiche donc juste un message
+	    $message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
+	    $message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
+	    $message.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
+	    $_GET["action"]='';
+	}
+	else
+	{
+	    $id=$_GET['id'];
+
+		$error = 0;
+
+		// On récupére données du mail
+		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body";
+		$sql .= " , m.email_from, m.email_replyto, m.email_errorsto";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
+		$sql .= " WHERE m.statut >= 1";
+		$sql .= " AND m.rowid= ".$id;
+		$sql .= " LIMIT 1";
+
+		$resql=$db->query($sql);
+		if ($resql) 
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+
+			if ($num == 1)
+			{
+				$obj = $db->fetch_object($resql);
+
+				dolibarr_syslog("mailing-send: mailing ".$id);
+
+				$id       = $obj->rowid;
+				$subject  = $obj->sujet;
+				$message  = $obj->body;
+				$from     = $obj->email_from;
+				$errorsto = $obj->email_errorsto;
+
+				// Le message est-il en html
+				$msgishtml=0;	// Non par defaut
+				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
+				if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
+				
+				$i++;
+			}
+		}
+
+		$nbok=0; $nbko=0;
+
+		// On choisit les mails non déjà envoyés pour ce mailing (statut=0)
+		// ou envoyés en erreur (statut=-1)
+		$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+		$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+		    $num = $db->num_rows($resql);
+
+		    if ($num) 
+		    {
+		        dolibarr_syslog("mailing-send: target number = $num");
+		        // Positionne date debut envoi
+		        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
+		        $resql2=$db->query($sql);
+		        if (! $resql2)
+		        {
+		            dolibarr_print_error($db);
+		        }
+		    
+		        // Boucle sur chaque adresse et envoie le mail
+		        $i = 0;
+				
+		        while ($i < $num && $i < $conf->global->MAILING_LIMIT_SENDBYWEB)
+		        {
+		            
+		            $res=1;
+					
+		            $obj = $db->fetch_object($resql);
+
+		            // sendto en RFC2822
+		            $sendto = $obj->prenom." ".$obj->nom." <".$obj->email.">";
+
+					// Pratique les substitutions sur le sujet et message
+					$substitutionarray=array(	
+						'__ID__' => $obj->rowid,
+						'__EMAIL__' => $obj->email,
+						'__LASTNAME__' => $obj->nom,
+						'__FIRSTNAME__' => $obj->prenom
+					);
+
+					$substitutionisok=true;
+					$subject2=make_substitutions($subject,$substitutionarray);
+					$message2=make_substitutions($message,$substitutionarray);
+					
+		            // Fabrication du mail
+		            $mail = new CMailFile($subject2, $sendto, $from, $message2, 
+		            						array(), array(), array(),
+		            						'', '', 0, $msgishtml);
+		            $mail->errors_to = $errorsto;
+					
+		            						
+					if ($mail->error)
+					{
+						$res=0;
+					}
+					if (! $substitutionisok)
+					{
+						$mail->error='Some substitution failed';
+						$res=0;
+					}
+
+		            // Envoi du mail
+					if ($res)
+					{
+		    			$res=$mail->sendfile();
+					}
+					
+		            if ($res)
+		            {
+		                // Mail envoye avec succes
+		                $nbok++;
+		    
+				        dolibarr_syslog("mailing-send: ok for #".$i.' - '.$mail->error);
+
+		                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+						$sql.=" SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
+		                $resql2=$db->query($sql);
+		                if (! $resql2)
+		                {
+		                    dolibarr_print_error($db);   
+		                }
+		            }
+		            else
+		            {
+		                // Mail en echec
+		                $nbko++;
+		    
+				        dolibarr_syslog("mailing-send: error for #".$i.' - '.$mail->error);
+
+		                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+						$sql.=" SET statut=-1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
+		                $resql2=$db->query($sql);
+		                if (! $resql2)
+		                {
+		                    dolibarr_print_error($db);   
+		                }
+		            }
+		    
+		            $i++;
+		        }
+		    }
+
+		    // Loop finished, set global statut of mail
+		    $statut=2;	// By default status with error
+		    if (! $nbko) $statut=3;
+
+		    $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
+		    dolibarr_syslog("mailing-send: update global status sql=".$sql);
+		    $resql2=$db->query($sql);
+		    if (! $resql2)
+		    {
+		        dolibarr_print_error($db);
+		    }
+		}
+		else
+		{
+		    dolibarr_syslog($db->error());
+		    dolibarr_print_error($db);
+		}
+		$message='';
+		$_GET["action"] = '';	
+
+	}
 }
 
 // Action envoi test mailing
@@ -248,7 +419,7 @@ if ($_GET["action"] == 'create')
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->mailing->email_from.'"></td></tr>';
+    print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td><input class="flat" name="from" size="40" value="'.$conf->global->MAILING_EMAIL_FROM.'"></td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value=""></td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value=""></td></tr>';
     print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
@@ -320,6 +491,24 @@ else
              * Mailing en mode visu
              *
              */
+			if ($_GET["action"] == 'sendall')
+			{
+			    if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
+				{
+					// Pour des raisons de sécurité, on ne permet pas cette fonction via l'IHM,
+				    // on affiche donc juste un message
+				    $message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
+				    $message.='<br><textarea cols="50" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
+				    $message.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
+				    $_GET["action"]='';
+				}
+				else
+				{
+					$text=$langs->trans('ConfirmSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+					$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$_REQUEST['id'],$langs->trans('SendMailing'),$text,'sendallconfirmed');
+					print '<br />';
+				}
+			}
 
             print '<table class="border" width="100%">';
 
@@ -365,6 +554,14 @@ else
 
             print "</div>";
 
+		    if ($_GET["action"] == 'sendall')
+			{
+				// Pour des raisons de sécurité, on ne permet pas cette fonction via l'IHM,
+				// on affiche donc juste un message
+				$message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
+				$message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
+			}
+			
             if ($message) print "$message<br>";
 
             /*
@@ -388,7 +585,7 @@ else
                     print '<a class="butAction" href="fiche.php?action=valide&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
                 }
 
-                if ($mil->statut == 1 && $mil->nbemail > 0 && $user->rights->mailing->valider)
+                if (($mil->statut == 1 || $mil->statut == 2) && $mil->nbemail > 0 && $user->rights->mailing->valider)
                 {
                     print '<a class="butAction" href="fiche.php?action=sendall&amp;id='.$mil->id.'">'.$langs->trans("SendMailing").'</a>';
                 }
@@ -414,7 +611,7 @@ else
                       $formmail->withsubstit=1;
                       $formmail->withfrom=0;
                       $formmail->withto=$user->email?$user->email:1;
-                      $formmail->withcc=0;
+                      $formmail->withtocc=0;
                       $formmail->withtopic=0;
                       $formmail->withtopicreadonly=1;
                       $formmail->withfile=0;

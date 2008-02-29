@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/html.formmail.class.php
         \brief      Fichier de la classe permettant la génération du formulaire html d'envoi de mail unitaire
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
@@ -79,6 +77,7 @@ class FormMail
 		$this->withfrom=1;
 		$this->withto=1;
 		$this->withtocc=1;
+		$this->withtoccc=0;
 		$this->witherrorsto=0;
 		$this->withtopic=1;
 		$this->withfile=0;
@@ -219,7 +218,7 @@ class FormMail
 		}
 	
 		// CC
-		if ($this->withcc)
+		if ($this->withtocc || is_array($this->withtocc))
 		{
 			print '<tr><td width="180">'.$langs->trans("MailCC").'</td><td>';
 			if ($this->withtoccreadonly)
@@ -238,6 +237,26 @@ class FormMail
 			print "</td></tr>\n";
 		}
 
+		// CC
+		if ($this->withtoccc || is_array($this->withtoccc))
+		{
+			print '<tr><td width="180">'.$langs->trans("MailCCC").'</td><td>';
+			if ($this->withtocccreadonly)
+			{
+				print (! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"";
+			}
+			else
+			{
+				print "<input size=\"30\" name=\"sendtocc\" value=\"".((! is_array($this->withtoccc) && ! is_numeric($this->withtoccc))?$this->withtoccc:"")."\">";
+				if (is_array($this->withtoccc))
+				{
+					print " ".$langs->trans("or")." ";
+					$form->select_array("receiverccc",$this->withtoccc);
+				}
+			}
+			print "</td></tr>\n";
+		}
+		
 		// Accusé réception
 		if ($this->withdeliveryreceipt)
 		{

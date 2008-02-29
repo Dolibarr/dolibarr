@@ -52,7 +52,9 @@ class ActionComm
     var $datef;			// Date action planifie fin (datep2)
     var $date;			// Date action realise debut (datea)
     var $dateend; 		// Date action realise fin (datea2)
-    var $priority;
+    var $durationp = -1;
+    var $durationa = -1;
+	var $priority;
 
     var $usertodo;		// User that must do action
     var $userdone;	 	// User that did action
@@ -90,12 +92,12 @@ class ActionComm
     function add($author,$notrigger=0)
     {
         global $langs,$conf;
-    
-        if (! $this->percentage)  $this->percentage = 0;
-        if (! $this->priority) $this->priority = 0;
-        
-		$this->db->begin();
 
+        // Clean parameters
+		if (! $this->percentage) $this->percentage = 0;
+        if (! $this->priority)   $this->priority = 0;
+        if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
+		$now=time();
 		if (! $this->type_id && $this->type_code)
 		{
 			# Get id from code
@@ -108,21 +110,30 @@ class ActionComm
 			else
 			{
 				$this->error=$cactioncomm->error;
-				$this->db->rollback();
 				return -1;
 			}
 		}
-		
+		if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
+		if ($this->date  && $this->dateend) $this->durationa=($this->dateend - $this->date);
+
+		// Check parameters
 		if (! $this->type_id)
 		{
 			$this->error="ErrorWrongParameters";
 			return -1;
 		}
 		
+		
+		$this->db->begin();
+
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
-        if ($this->datep) $sql.= "datep,";
-        if ($this->date) $sql.= "datea,";
+        $sql.= "datep,";
+        $sql.= "datep2,";
+        $sql.= "datea,";
+        $sql.= "datea2,";
+        $sql.= "durationp,";
+        $sql.= "durationa,";
         $sql.= "fk_action,fk_soc,note,";
 		$sql.= "fk_contact,";
 		$sql.= "fk_user_author,";
@@ -130,9 +141,14 @@ class ActionComm
 		$sql.= "fk_user_done,";
 		$sql.= "label,percent,priority,";
         $sql.= "fk_facture,propalrowid,fk_commande)";
-        $sql.= " VALUES (now(),";
-        if ($this->datep) $sql.= "'".$this->db->idate($this->datep)."',";
-        if ($this->date) $sql.= "'".$this->db->idate($this->date)."',";
+        $sql.= " VALUES (";
+        $sql.= "'".$this->db->idate($now)."',";
+        $sql.= ($this->datep?"'".$this->db->idate($this->datep)."'":"null").",";
+        $sql.= ($this->datef?"'".$this->db->idate($this->datef)."'":"null").",";
+        $sql.= ($this->date?"'".$this->db->idate($this->date)."'":"null").",";
+        $sql.= ($this->dateend?"'".$this->db->idate($this->dateend)."'":"null").",";
+        $sql.= ($this->durationp >= 0?"'".$this->durationp."'":"null").",";
+        $sql.= ($this->durationa >= 0?"'".$this->durationa."'":"null").",";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id > 0?"'".$this->contact->id."'":"null").",";
         $sql.= "'".$author->id."',";

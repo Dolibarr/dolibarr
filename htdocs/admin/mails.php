@@ -207,7 +207,7 @@ else
 			  $formmail->withfrom=1;
 			  $formmail->witherrorsto=1;
 			  $formmail->withto=$user->email?$user->email:1;
-			  $formmail->withcc=0;
+			  $formmail->withtocc=1;
 			  $formmail->withtopic=$langs->trans("Test");
 			  $formmail->withtopicreadonly=0;
 			  $formmail->withfile=1;

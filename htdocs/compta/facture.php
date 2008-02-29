@@ -3055,7 +3055,8 @@ else
 				$formmail->frommail = $user->email;
 				$formmail->withfrom=1;
 				$formmail->withto=$liste;
-				$formmail->withcc=1;
+				$formmail->withtocc=1;
+				$formmail->withtoccc=$conf->global->FACTURE_EMAIL_USECCC;
 				$formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
 				$formmail->withfile=1;
 				$formmail->withbody=1;
@@ -3111,7 +3112,7 @@ else
 				$formmail->frommail = $user->email;
 				$formmail->withfrom=1;
 				$formmail->withto=$liste;
-				$formmail->withcc=1;
+				$formmail->withtocc=1;
 				$formmail->withtopic=$langs->trans('SendReminderBillRef','__FACREF__');
 				$formmail->withfile=1;
 				$formmail->withbody=1;

@@ -1771,7 +1771,7 @@ if ($_GET['propalid'] > 0)
 		$formmail->frommail = $user->email;
 		$formmail->withfrom=1;
 		$formmail->withto=$liste;
-		$formmail->withcc=1;
+		$formmail->withtocc=1;
 		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
 		$formmail->withfile=1;
 		$formmail->withbody=1;

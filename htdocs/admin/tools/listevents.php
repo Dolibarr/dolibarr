@@ -28,6 +28,13 @@ require_once("./pre.inc.php");
 if (! $user->admin)
   accessforbidden();
 
+// Sécurité accés client
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
 $langs->load("companies");
 
 $page=$_GET["page"];
@@ -42,27 +49,22 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-llxHeader();
-
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
-
 
 /*
- * Mode Liste
- *
- */
+*	View
+*/
+
+llxHeader();
+
+$userstatic=new User($db);
 
 $sql = "SELECT e.rowid, e.type, ".$db->pdate("e.dateevent")." as dateevent,";
-$sql.= " e.fk_user, e.label, e.description";
+$sql.= " e.fk_user, e.label, e.description,";
+$sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
-
-$sql .= " ORDER BY $sortfield $sortorder";
-$sql .= $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
+$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -76,7 +78,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"e.type","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"e.fk_user","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"u.login","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"e.label","","",'align="left"',$sortfield,$sortorder);
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
@@ -116,7 +118,9 @@ if ($result)
 		print "<tr $bc[$var]>";
 		print '<td align="left" nowrap="nowrap">'.dolibarr_print_date($obj->dateevent,'dayhour').'</td>';
 		print '<td>'.$obj->type.'</td>';
-		print '<td>'.$obj->fk_user.'</td>';
+		$userstatic->id=$obj->fk_user;
+		$userstatic->login=$obj->login;
+		print '<td>'.$userstatic->getLoginUrl(1).'</td>';
 		print '<td>'.$obj->label.'</td>';
 //		print '<td>'.$obj->description.'</td>';
 		print '<td>&nbsp;</td>';
