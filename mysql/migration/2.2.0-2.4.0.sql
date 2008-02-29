@@ -179,12 +179,13 @@ drop table if exists llx_events;
 create table llx_events
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  tms            timestamp,            -- date creation/modification
-  type			 varchar(32) NOT NULL, -- action type
-  dateevent      datetime,             -- date event
-  fk_user        integer,              -- id user
-  label          varchar(50) NOT NULL, -- label of action
-  description    text NOT NULL         -- full description of action
+  tms            timestamp,            
+  type			 varchar(32)  NOT NULL, 
+  dateevent      datetime,             
+  fk_user        integer,              
+  label          varchar(50)  NOT NULL, 
+  description    varchar(200) NOT NULL,        
+  fk_object      integer               
 ) type=innodb;
 
 

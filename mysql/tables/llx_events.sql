@@ -24,12 +24,13 @@
 create table llx_events
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  tms            timestamp,            -- date creation/modification
-  type			 varchar(32) NOT NULL, -- action type
-  dateevent      datetime,             -- date event
-  fk_user        integer,              -- id user
-  label          varchar(50) NOT NULL, -- label of action
-  description    text NOT NULL         -- full description of action
+  tms            timestamp,             -- date creation/modification
+  type			 varchar(32)  NOT NULL, -- action type
+  dateevent      datetime,              -- date event
+  fk_user        integer,               -- id user
+  label          varchar(50)  NOT NULL, -- label of action
+  description    varchar(200) NOT NULL, -- full description of action
+  fk_object      integer                -- id of related object
 ) type=innodb;
 
 
