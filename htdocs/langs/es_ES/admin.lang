@@ -1,4 +1,7 @@
 # Dolibarr language file - es_ES - admin
+
+
+
 Version=Version
 VersionExperimental=Experimental
 VersionDevelopment=Desarrollo
@@ -9,6 +12,7 @@ HTMLCharset=Charset de las páginas HTML
 DBStoringCharset=Charset base de datos para almacenamiento de datos
 DBSortingCharset=Charset base de datos para clasificar los datos
 WarningModuleNotActive=Módulo <b>%s</b> no activo
+WarningOnlyPermissionOfActivatedModules=Atención, solamente los permisos relacionados con los módulos activados se indican aquí. Puede activar los otros módulos en la página Configuración - Módulos
 DolibarrSetup=Instalación de Dolibarr
 DolibarrUser=Usuario Dolibarr
 InternalUser=Usuario interno
@@ -16,14 +20,14 @@ ExternalUser=Usuario externo
 InternalUsers=Usuarios internos
 ExternalUsers=Usuarios externos
 GlobalSetup=General
-GUISetup=Visualización
+GUISetup=Entorno
 SetupArea=Area configuración
 SecuritySetup=Configuración de la seguridad
 ErrorModuleRequirePHPVersion=Error, este módulo requiere una versión %s o superior de PHP
+ErrorModuleRequireDolibarrVersion=Error, este módulo requiere una versión %s o superior de Dolibarr
 ErrorDecimalLargerThanAreForbidden=Error, las precisiones superiores a <b>%s</b> no están soportadas.
 DictionnarySetup=Diccionarios
 DisableJavascript=Desactivar las funciones Javascript
-DisableAjax=Desactivar las funciones Ajax
 ConfirmAjax=Utilizar los popups de confirmación Ajax
 UseSearchToSelectCompany=Utilizar un formulario de búsqueda para buscar terceros (en vez de lista desplegable)
 ViewFullDateActions=Ver las fechas de las acciones en su totalidad en la ficha de tercero
@@ -44,10 +48,16 @@ UseAvToScanUploadedFiles=Utilización de un antivirus para escanear los ficheros 
 ComptaSetup=Configuración del módulo Contabilidad
 UserSetup=Configuración gestión de los usuarios
 MenuSetup=Administración de los menús por base de datos
+MenuIdParent=Id del menú padre
+DetailMenuIdParent=ID del menú padre (0 para un menú superior)
+DetailPosition=Número de orden para la posición del menú
 MenuLimits=Límites y precisión
+PersonalizedMenusNotSupported=Menús personalizados no generados
+AllMenus=Todos
 NotConfigured=No configurado
 Setup=Configuración
 Activation=Activación
+Active=Activo
 SetupShort=Config
 OtherOptions=Otras opciones
 OtherSetup=Varios
@@ -71,6 +81,8 @@ PositionByDefault=Posición por defecto
 Position=Orden
 MenusDesc=Los gestores de menú definen el contenido de las 2 barras de menús (la barra horizontal y la barra vertical). Es posible asignar gestores diferentes según el usuario sea interno o externo.
 MenusEditorDesc=El editor de menús permite definir entradas personalizadas en los menús. Debe utilizarse con prudencia so pena de poer a Dolibarr en una situación inestable siendo necesaria una reinstalación para encontrar un menú coherente.
+MenuForUsers=Menú para los usuarios
+LangFile=Archivo .langs
 System=sistema
 SystemInfo=Info Sistema
 SystemTools=Utilidades Sistema
@@ -97,6 +109,20 @@ ImportMethod=Método de importación
 ToBuildBackupFileClickHere=Para crear una copia, haga click <a href="%s">aquí</a>.
 ImportMySqlDesc=Para importar una copia, hay que utilizar el comando mysql en linea siguiente:
 ImportMySqlCommand=%s %s < miarchivobackup.sql
+FileNameToGenerate=Nombre del archivo a generar
+CommandsToDisableForeignKeysForImport=Comando para desactivar las claves excluyentes a la importación
+ExportCompatibility=Compatibilidad del archivo de exportación generado
+MySqlExportParameters=Parámetros de la exportación MySql
+UseTransactionnalMode=Utilizar el modo transaccional
+FullPathToMysqldumpCommand=Ruta completa del comando mysqldump
+ExportOptions=Opciones de exportación
+AddDropDatabase=Añadir órdenes DROP DATABASE
+AddDropTable=Añadir órdenes DROP TABLE
+Datas=Datos
+NameColumn=Nombre las columnas
+ExtendedInsert=Instrucciones INSERT extendidas
+DelayedInsert=Inserciones con retraso
+EncodeBinariesInHexa=Codificar los campos binarios en hexacesimal
 Yes=Si
 No=No
 AutoDetectLang=Autodetección (navegador)
@@ -150,9 +176,21 @@ ModuleFamilyOther=Otro
 ModuleFamilyTechnic=Módulos herramientas o Sistema
 ModuleFamilyExperimental=Módulos experimentales (no utilizar en producción)
 ModuleFamilyFinancial=Módulos financieros (Contabilidad/tesorería)
+ModuleFamilyECM=GED
 MenuHandlers=Gestores menú
 MenuAdmin=Editor menú
+ThisIsProcessToFollow=He aquí el procedimiento a seguir:
+StepNb=Paso %s
+DownloadPackageFromWebSite=Descargar el paquete desde el sitio %s.
+UnpackPackageInDolibarrRoot=Descomprimir el paquete en la carpeta raiz de Dolibarr <b>%s</b>
+SetupIsReadyForUse=La instalación ha finalizado y Dolibarr está disponible con el nuevo componente.
+CurrentVersion=Versión actual de Dolibarr
+CallUpdatePage=Llamar a la página de actualización de la estructura y datos de la base de datos %s.
+LastStableVersion=Última versión estable
 # Modules
+
+
+
 
 
 
@@ -260,6 +298,10 @@ Module2200Name=Derecho de préstamos
 Module2200Desc=Gestión de los derechos de préstamos
 Module2300Name=Menus
 Module2300Desc=Administración de los menús por base de datos
+Module2400Name=Agenda
+Module2400Desc=Gestión de la agenda y de las acciones
+Module2500Name=Gestión Electrónica de Documentos
+Module2500Desc=Permite administrar una base de documentos
 Permission11=Consultar facturas
 Permission12=Crear facturas
 Permission13=Modificar facturas
@@ -318,6 +360,7 @@ Permission116=Captar transferencias entre cuentas
 Permission121=Consultar empresas
 Permission122=Crear/modificar empresas
 Permission125=Eliminar empresas
+Permission126=Exportar las empresas
 Permission151=Consultar domiciliaciones
 Permission152=Configurar domiciliaciones
 Permission153=Consultar domiciliaciones
@@ -359,6 +402,7 @@ Permission262=Consultar todas las empresas (Solamente usuarios internos. Los ext
 Permission281=Consultar contactos
 Permission282=Crear/modificar contactos
 Permission283=Eliminar contactos
+Permission286=Exportar los contactos
 Permission300=Consultar códigos de barra
 Permission301=Crear/modificar códigos de barra
 Permission302=Eliminar código de barra
@@ -396,6 +440,8 @@ DictionnaryPaymentModes=Modos de pago
 DictionnaryTypeContact=Tipos de contactos
 DictionnaryEcotaxe=Baremos CEcoParticipación (DEEE)
 DictionnaryPaperFormat=Formatos papel
+SetupSaved=Configuración guardada
+BackToModuleList=Devolver lista de módulos
 VATReceivedOnly=Impuestos especiales no facturables
 VATManagement=Gestión IVA
 VATIsUsedDesc=El tipo de IVA propuesto por defecto en las creaciones de presupuestos, facturas, pedidos, etc. Responde a la siguiente regla:<br>Si el vendedor no está sujeto a IVA, IVA por defecto=0. Final de regla.<br>Si el país del vendedor = país del comprador entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y el bien vendido = nuevo medio de transportes (auto, barco, avión), IVA por defecto=0 (el IVA debe ser pagado por comprador a la hacienda pública de su país y no al vendedor). Final de regla<br>Si vendedor y comprador residen en la Comunidad Europea y comprador = particular o empresa sin NIF intracomunitario entonces IVA por defecto=IVA del producto vendido. Final de regla.<br>Si vendedor y comprador residen en la Comunidad Europea y comprador = empresa con NIF intracomunitario entonces IVA por defecto=0. Final de regla.<br>Si no, IVA propuesto por defecto=0. Final de regla.<br>
@@ -499,7 +545,11 @@ SystemAreaForAdminOnly=Esta área solo es accesible a los usuarios de tipo admini
 CompanyFundationDesc=Editar en esta página toda la información conocida sobre la empresa o asociación a administrar
 DisplayDesc=Puede encontrar aquí todos los parámetros relacionados con la apariencia de Dolibarr
 TriggersAvailable=Triggers disponibles
-TriggersDesc=Los triggers son archivos que,, une vez depositados en la carpeta <b>htdocs/includes/triggers</b>, modifican el comportamiento del workflow de Dolibarr. Realizan acciones suplementarias, desencadenadas por los eventos Dolibarr (creación de empresa, validación factura, cierre contrato, etc).
+TriggersDesc=Los triggers son archivos que, une vez depositados en la carpeta <b>htdocs/includes/triggers</b>, modifican el comportamiento del workflow de Dolibarr. Realizan acciones suplementarias, desencadenadas por los eventos Dolibarr (creación de empresa, validación factura, cierre contrato, etc).
+TriggerDisabledByName=Triggers de este archivo desactivador por el sufijo <b>-NORUN</b> en el nombre del archivo.
+TriggerDisabledAsModuleDisabled=Triggers de este archivo desactivados ya que el módulo <b>%s</b> no está activado.
+TriggerAlwaysActive=Triggers de este archivo siempre activos, ya que los módulos Dolibarr relacionados están activados
+TriggerActiveAsModuleActive=Triggers de este archivo activos ya que el módulo <b>%s</b> está activado
 GeneratedPasswordDesc=Indique aquí que norma quiere utilizar para generar las contraseñas cuando quiera generar una nueva contraseña
 DictionnaryDesc=Indique aquí los datos de referencia. Puede completar/modificar los datos predefinidos con los suyos
 ConstDesc=Cualquier otro parámetro no editable en las páginas anteriores
@@ -533,6 +583,9 @@ ParameterActiveForNextInputOnly=Parámetro efectivo solamente a partir de las pró
 
 
 
+
+
+
 UserGroupSetup=Configuración módulo usuarios y grupos
 GeneratePassword=Proponer una contraseña generada
 RuleForGeneratedPasswords=Norma para la generación de las contraseñas propuestas
@@ -540,6 +593,9 @@ DoNotSuggest=No proponer
 EncryptedPasswordInDatabase=Permitir encriptación de las contraseñas en la base de datos
 DisableForgetPasswordLinkOnLogonPage=No mostrar el vínculo "Contraseña olvidada" en la página de login
 ##### Company setup #####
+
+
+
 
 
 
@@ -591,6 +647,9 @@ NotificationsDesc=La función de las notificaciones permite enviar automáticament
 
 
 
+
+
+
 WebCalSetup=Configuración de enlace con el calendario Webcalendar
 WebCalSyncro=Integrar los eventos Dolibarr en WebCalendar
 WebCalAllways=Siempre, sin consultar
@@ -612,7 +671,12 @@ WebCalAddEventOnStatusPropal=Añadir evento en el calendario en el cambio de esta
 WebCalAddEventOnStatusContract=Añadir evento en el calendario en el cambio de estado de los contratos
 WebCalAddEventOnStatusBill=Añadir evento en el calendario en el cambio de estado de las facturas
 WebCalAddEventOnStatusMember=Añadir evento en el calendario en el cambio de estado de los miembros
+WebCalUrlForVCalExport=Un vínculo de exportación del calendario en formato <b>%s</b> estará disponible en la url: %s
+WebCalCheckWebcalSetup=La configuración del módulo Webcal puede ser incorrecta
 ##### Invoices #####
+
+
+
 
 
 
@@ -668,6 +732,9 @@ EnableEditDeleteValidInvoice=Activar la posibilidad de editar/eliminar una factu
 
 
 
+
+
+
 PropalSetup=Configuración del módulo Presupuestos
 CreateForm=Creación formulario
 NumberOfProductLines=Numero de líneas de productos
@@ -682,26 +749,48 @@ AddShippingDateAbility=Posibilidad de determinar una fecha de entrega
 AddDeliveryAddressAbility=Posibilidad de seleccionar una dirección de envío
 UseOptionLineIfNoQuantity=Una línea de producto/servicio que tiene una cantidad nula se considera como una opción
 ##### Orders #####
+
+
+
 OrdersSetup=Configuración del módulo pedidos
 OrdersNumberingModules=Módulos de numeración de los pedidos
 OrdersModelModule=Modelos de documentos de pedidos
 HideTreadedOrders=Ocultar los pedidos procesados o anulados del listado
 ValidOrderAfterPropalClosed=Validar el pedido después del cierre del presupuesto, permite no pasar por el pedido provisional
 ##### Fiche inter #####
+
+
+
 FicheinterNumberingModules=Módulos de numeración de las fichas de intervención
 TemplatePDFInterventions=Modelo de documentos de las fichas de intervención
 ##### Clicktodial #####
+
+
+
 ClickToDialSetup=Configuración del módulo Click To Dial
+ClickToDialUrlDesc=Url de llamada haciendo click en el icono teléfono. <br>La 'url completa llamada será: URL?login=...&password=...&caller=...&called=telellamada
 ##### Bookmark4u #####
+
+
+
 Bookmark4uSetup=Configuración del módulo Bookmark4u
 ##### Interventions #####
+
+
+
 InterventionsSetup=Configuración del módulo intervenciones
 ##### Members #####
+
+
+
 MembersSetup=Configuración del módulo Asociaciones
 MemberMainOptions=Opciones principales
 AddSubscriptionIntoAccount=Registrar cotizaciones en cuenta bancaria o caja del módulo bancario
 AdherentMailRequired=E-Mail obligatorio para crear un miembro nuevo
 ##### LDAP setup #####
+
+
+
 LDAPSetup=Configuracón del módulo LDAP
 LDAPGlobalParameters=Parámetros globales
 LDAPUsersSynchro=Usuarios
@@ -783,7 +872,7 @@ LDAPFilterConnection=Filtro de búsqueda
 LDAPFilterConnectionExample=Ejemplo : &(objectClass=inetOrgPerson)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Ejemplo : samaccountname
-LDAPFieldFullname=Prenombre Nombre
+LDAPFieldFullname=Nombre completo
 LDAPFieldFullnameExample=Ejemplo : cn
 LDAPFieldPassword=Contraseña
 LDAPFieldPasswordNotCrypted=Contraseña no encriptada
@@ -793,7 +882,7 @@ LDAPFieldCommonName=Nombre comun
 LDAPFieldCommonNameExample=Ejemplo : cn
 LDAPFieldName=Nombre
 LDAPFieldNameExample=Ejemplo : sn
-LDAPFieldFirstName=Prenombre
+LDAPFieldFirstName=Nombre
 LDAPFieldFirstNameExample=Ejemplo : givenname
 LDAPFieldMail=E-Mail
 LDAPFieldMailExample=Ejemplo : mail
@@ -832,17 +921,26 @@ LDAPDescMembers=Esta página permite definir el nombre de los atributos del árbol
 LDAPDescValues=Los valores de ejemplos se adaptan a <b>OpenLDAP</b> con los schemas cargados: <b>core.schema, cosine.schema, inetorgperson.schema</b>). Si usted utiliza los a valores sugeridos y OpenLDAP, modifique su fichero de configuración LDAP <b>slapd.conf</b> para tener todos estos schemas activos.
 ForANonAnonymousAccess=Para un acceso autentificado
 ##### Products #####
+
+
+
 ProductSetup=Configuración del módulo Productos
 NumberOfProductShowInSelect=Nº de productos max en las listas (0=sin límite)
 ConfirmDeleteProductLineAbility=Confirmación de eliminación de una línea de producido en los formularios
 ModifyProductDescAbility=Personalización de las descripciones de los productos en los formularios
-ViewProductDescInFormAbility=Visualización de las descripciones de los productos en lso formularios
+ViewProductDescInFormAbility=Visualización de las descripciones de los productos en los formularios
 UseSearchToSelectProduct=Utilizar un formulario de búsqueda para la selección de un producto (en vez de la lista desplegable)
 UseEcoTaxeAbility=Asumir ecotasa (DEEE)
 SetDefaultBarcodeType=tipo códigos de barra utiliazdos por defecto para los productos
 ##### Suppliers #####
+
+
+
 SuppliersSetup=Configuración del módulo proveedores
 ##### Syslog #####
+
+
+
 SyslogSetup=Configuración del módulo Syslog
 SyslogOutput=Salida del log
 SyslogSyslog=Syslog
@@ -852,8 +950,14 @@ SyslogSimpleFile=Archivo
 SyslogFilename=Nombre y ruta del archivo
 ErrorUnknownSyslogConstant=La constante %s no es una constante syslog conocida
 ##### Donations #####
+
+
+
 DonationsSetup=Configuración del módulo subvenciones
 ##### Barcode #####
+
+
+
 BarcodeSetup=Configuración de los códigos de barra
 PaperFormatModule=Módulos de formatos de impresión
 BarcodeEncodeModule=Módulos de codificación de los códigos de barra
@@ -869,26 +973,47 @@ BarcodeDescC39=Códigos de barra tipo C39
 BarcodeDescC128=Códigos de barra tipo C128
 ##### Prelevements #####
 
+
+
+
 WithdrawalsSetup=Configuración del módulo domiciliaciones
 ##### ExternalRSS #####
+
+
+
 ExternalRSSSetup=Configuración de las importaciones del flujo RSS
 NewRSS=Sindicación de un nuevo flujo RSS
 ##### Mailing #####
 
+
+
+
 MailingSetup=Configuración del módulo E-Mailing
 MailingEMailFrom=E-Mail emisor (From) de los mailis enviados por E-Mailing
 ##### Notification #####
+
+
+
 NotificationSetup=Configuración del módulo notificaciones
 NotificationEMailFrom=E-Mail emisor (From) de los mails enviados a traves de notificaciones
 ##### Sendings #####
+
+
+
 SendingsSetup=Configuración del módulos envíos
 SendingsReceiptModel=Modelo de la ficha de expedición
 SendingsAbility=Portes pagados por el cliente
 ##### Deliveries #####
+
+
+
 DeliveryOrderNumberingModules=Módulo de numeración de los envios a clientes
 DeliveryOrderModel=Modelo de orden de envío
 DeliveriesOrderAbility=Portes pagados por el cliente
 ##### FCKeditor #####
+
+
+
 ActivateFCKeditor=Activar FCKeditor para :
 FCKeditorForUsers=Creación/edición WYSIWIG de la descripción y notas de los usuarios
 FCKeditorForCompany=Creación/edición WYSIWIG de la descripción y notas de los terceros
@@ -898,11 +1023,17 @@ FCKeditorForProductDetails=Creación/edición WYSIWIG de las líneas de detalle de 
 FCKeditorForProductDetailsPerso=Creación/edición WYSIWIG de las líneas de detalle en los productos personalizadas (en pedidos, presupuestos, facturas, etc.)
 FCKeditorForMailing=Creación/edición WYSIWIG de los E-Mails
 ##### OSCommerce 1 #####
+
+
+
 OSCommerceErrorConnectOkButWrongDatabase=La conexión se ha establecido, pero la base de datos no parece de OSCommerce.
 OSCommerceTestOk=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' es correcta.
 OSCommerceTestKo1=La conexión al servidor '%s' sobre la base '%s' por el usuario '%s' no se pudo efectuar.
 OSCommerceTestKo2=La conexión al servidor '%s' por el usuario '%s' ha fallado.
 ##### Mantis #####
+
+
+
 MantisSetup=Configuración del enlace con el sitema de seguimiento Mantis
 MantisURL=Dirección (URL) de acceso a Mantis
 MantisServer=Servidor de la base de datos Mantis
@@ -914,13 +1045,22 @@ MantisTestKo1=La conexión al servidor '%s' es correcta pero la base de datos' %s
 MantisTestKo2=La conexión al servidor '%s' por el usuario '%s' a fallado.
 MantisErrorConnectOkButWrongDatabase=La conexión es correcta pero la base de datos no parece ser una base de datos Mantis.
 ##### Stock #####
+
+
+
 StockSetup=configuración del módulo Stock
 UserWarehouse=Utilizar los stocks personales de usuarios
 ##### DroitPret #####
+
+
+
 PretSetup=Configuración del módulo derecho de préstamo
 catActive=Categoría para la cual se activa el derecho de préstamo
 mailDroitPret=Dirección correo electrónico a la cual se envían las declaraciones
 ##### Menu #####
+
+
+
 MenuDeleted=Menu eliminado
 TreeMenu=Estructura de los menús
 TreeMenuPersonalized=Menus personalizados
@@ -928,8 +1068,10 @@ NewMenu=Nuevo menú
 MenuConf=Configuración de los menus
 Menu=Selección de los menus
 MenuHandler=Gestor de menús
+MenuModule=Módulo origen
 DetailId=Identidicador del menú
 DetailMenuHandler=Nombre del gestor de menús (o "all" para todos)
+DetailMenuModule=Nombre del módulo si la entrada del menú es resultante de un módulo
 DetailType=Tipo de menú (superior o izquierdp)
 DetailTitre=Etiqueta de menú
 DetailMainmenu=Grupo al cual pertenece (obsoleto)
@@ -945,3 +1087,9 @@ DeleteMenu=Eliminar entrada de menú
 ConfirmDeleteMenu=Está seguro de querer eliminar la entrada de menú <b>%s</b> ?
 DeleteLine=Eliminación de línea
 ConfirmDeleteLine=Está seguro de querer eliminar esta línea?
+TaxSetup=Configuración del módulo Impuestos, cargas sociales y dividendos
+OptionVatMode=Opción de carga de IVA
+OptionVATDefault=Estandard
+OptionVATDebitOption=Opción servicios a débito
+OptionVatDefaultDesc=La carga del IVA es: <br>-en el envío de los bienes <br>-sobre el pago por los servicios
+OptionVatDebitOptionDesc=La carga del IVA es: <br>-en el envío de los bienes <br>-sobre la facturación de los servicios

@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - deliveries
+
 Delivery=Envío
 Deliveries=Envíos
 DeliveryCard=Ficha envío
@@ -7,3 +8,4 @@ DeliveryOrders=Ordenes de envío
 DeliveryDate=Fecha de envío
 CreateDeliveryOrder=Generar orden de entrega
 QtyDelivered=Cant. enviada
+SetDeliveryDate=Indicar la fecha de envío

@@ -1,5 +1,9 @@
 # Dolibarr language file - es_ES - bills
 
+
+
+
+
 Bill=Factura
 Bills=Facturas
 BillsCustomers=Facturas a clientes
@@ -77,6 +81,7 @@ DoPaymentBack=Emitir reembolso
 ConvertToReduc=Convertir en reducción futura
 EnterPaymentReceivedFromCustomer=Añadir pago recibido de cliente
 EnterPaymentDueToCustomer=Realizar pago de abonos al cliente
+DisabledBecauseRemainderToPayIsZero=Desactivar ya que el resto a pagar es 0
 VAT=IVA
 VATRate=Tasa IVA
 Amount=Importe
@@ -90,7 +95,7 @@ BillStatusCanceled=Abandonada
 BillStatusValidated=Validada (a pagar)
 BillStatusStarted=Pagada parcialmente
 BillStatusNotPayed=Pendiente de pago
-BillStatusClosedUnpayed=Cerrada (impagada)
+BillStatusClosedUnpayed=Cerrada (pendiente de pago)
 BillStatusClosedPayedPartially=Pagada (parcialmente)
 BillShortStatusDraft=Borrador
 BillShortStatusPayed=Pagada
@@ -115,7 +120,7 @@ BillFrom=Emisor
 BillTo=Enviar a
 ActionsOnBill=Acciones sobre la factura
 NewBill=Nueva factura
-Prélèvements=
+Prélèvements=Domiciliación
 Prélèvements=Domiciliaciones
 LastBills=Las %s últimas facturas
 LastCustomersBills=Las %s últimas facturas a clientes
@@ -125,7 +130,7 @@ OtherBills=Otras facturas
 DraftBills=Facturas borrador
 CustomersDraftInvoices=Facturas a clientes borrador
 SuppliersDraftInvoices=Facturas de proveedores borrador
-Unpayed=Impagados
+Unpayed=Pendientes
 ConfirmDeleteBill=¿Está seguro de querer eliminar esta factura?
 ConfirmValidateBill=¿Está seguro de querer validar esta factura con la referencia <b>%s</b> ?
 ConfirmClassifyPayedBill=¿Esta seguro de querer clasificar la factura <b>%s</b> como pagada?
@@ -183,9 +188,9 @@ DateEcheance=Fecha vencimiento
 DateInvoice=Fecha facturación
 NoInvoice=Ninguna factura
 ClassifyBill=Clasificar la factura
-NoSupplierBillsUnpayed=Ninguna factura de proveedor impagada
+NoSupplierBillsUnpayed=Ninguna factura de proveedor pendiente de pago
 SupplierBillsToPay=Facturas de proveedores a pagar
-CustomerBillsUnpayed=Facturas a clientes impagadas
+CustomerBillsUnpayed=Facturas a clientes pendientes de cobro
 DispenseMontantLettres=Las facturas redactadas por métodos mecanográficos se eximen del envío en cartas
 NonPercuRecuperable=No percibido recuperable
 SetConditions=Definir condiciones de pago
@@ -203,9 +208,9 @@ ExportDataset_invoice_1=Facturas a clientes y líneas de factura
 ExportDataset_invoice_2=Facturas a clientes y pagos
 ProformaBill=Factura proforma:
 Reduction=Reducción
-ReductionShort=Reduc.
-Reductions=Reducciones
-ReductionsShort=Reduc.
+ReductionShort=Dto.
+Reductions=Descuentos
+ReductionsShort=Dto.
 Discount=Descuento
 Discounts=Descuentos
 ShowDiscount=Ver el abono
@@ -244,6 +249,10 @@ RemoveDiscount=Eliminar descuento
 
 
 
+
+
+
+
 PaymentConditionShortRECEP=A la recepción
 PaymentConditionRECEP=A la recepción de la factura
 PaymentConditionShort30D=30 días
@@ -264,6 +273,10 @@ PaymentCondition60DENDMONTH=Pago a los 60 días a fin de mes
 
 
 
+
+
+
+
 PaymentTypeVIR=Transferencia bancaria
 PaymentTypeShortVIR=Transferencia
 PaymentTypePRE=Domiciliación bancaria
@@ -274,8 +287,8 @@ PaymentTypeCB=Tarjeta
 PaymentTypeShortCB=Tarjeta
 PaymentTypeCHQ=Cheque
 PaymentTypeShortCHQ=Cheque
-PaymentTypeTIP=TIP
-PaymentTypeShortTIP=TIP
+PaymentTypeTIP=Efectivo
+PaymentTypeShortTIP=Efectivo
 PaymentTypeVAD=Pago On Line
 PaymentTypeShortVAD=Pago On Line
 PaymentTypeTRA=Letra de cambio
@@ -293,6 +306,8 @@ ExtraInfos=Informaciones complementarias
 RegulatedOn=Pagar el
 ChequeNumber=Cheque nº
 ChequeOrTransferNumber=Cheque/Transferencia nº
+ChequeMaker=Emisor del cheque
+ChequeBank=Banco del cheque
 WithDiscountTotalHT=Base después dtos.
 WithDiscountAmountHT=Importe base despues dtos
 NetToBePaid=Neto a pagar
@@ -335,9 +350,17 @@ UsBillingContactAsIncoiveRecipientIfExist=Utilizar la dirección del contacto de 
 
 
 
+
+
+
+
 Of=de
 
 # bernique PDF model
+
+
+
+
 
 
 
@@ -359,9 +382,17 @@ PDFBerniqueDescription=Modelo para las facturas con varios tipos de IVA, incluid
 
 
 
+
+
+
+
 PDFBigorneauDescription=Modelo de factura sin informaciones de pago
 
 # bulot PDF Model
+
+
+
+
 
 
 
@@ -383,9 +414,17 @@ PDFBulotDescription=Modelo de factura con descuentos e información de pago
 
 
 
+
+
+
+
 PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar, logotipo...)
 
 # huitre PDF Model
+
+
+
+
 
 
 
@@ -407,9 +446,17 @@ PDFHuitreDescription=Modelo de factura con descuento e información de pago
 
 
 
+
+
+
+
 PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas, nombre del proyecto, referencias de presupuesto, logotipo...)
 
 # tourteau PDF Model
+
+
+
+
 
 
 
@@ -434,10 +481,18 @@ PDFTourteauDescription=Modelo de factura sin descuento
 
 
 
+
+
+
+
 DefinedAndHasThisValue=Definida y válida
 IsNotDefined=No está definida
 
 # deneb
+
+
+
+
 
 
 
@@ -460,9 +515,17 @@ DenebNumRefModelDesc2=Si se define la constante FACTURE_DENEB_DELTA, se aplica u
 
 
 
+
+
+
+
 JanusNumRefModelDesc1=Devuelve el número de factura bajo el formato F50201 para la 1º factura de febrero de 2005
 
 # jupiter
+
+
+
+
 
 
 
@@ -484,9 +547,17 @@ JupiterNumRefModelDesc1=Sistema de numeración mensual bajo el formato F20030715,
 
 
 
+
+
+
+
 LuneNumRefModelDesc1=Sistema de numeración mensual bajo el formato F0501015, que corresponde a la 15ª factura del mes de enero de 2005
 
 # mars
+
+
+
+
 
 
 
@@ -510,6 +581,10 @@ MarsNumRefModelDesc3=Si se define la constante FACTURE_MARS_DELTA, se aplica un 
 
 
 
+
+
+
+
 MercureNumRefModelDesc1=Devuelve un número de factura personalizado según la máscara definida.
 MercureMaskCodes=Puede indicar qualquier tipo de máscara de numeración. En esta máscara, puede utilizar:<br><b>{000000}</b> corresponde a un númo que será incrementado en cafa factura. Indique la longuitud del contador en 0. El contador será completado por ceros a la izquierda hasta completar la longuitud de la máscara.<br><b>{000000+000}</b> igual que el anterior, pero el offset corresponde a la parte derecha del +.<br><b>{dd}</b> día de la factura (01 à 31).<br><b>{mm}</b> día de la factura (01 à 12).<br><b>{yy}</b> o {yyyy} año de 2 o 4 cifras de la factura.<br><b>{pre}</b> Prefijo del tercero.<br>Se dejará cualquier otro carácter de la máscara sin cambios.<br>No se permiten espacios.<br><br><u>Ejemplo: la factura 99 del tercero SFR con fecha de 31/01/2007:</u><br><b>ABC-{yy}{mm}-{000000}</b> dará <b>ABC-0701-000099</b><br><b>{0000}-{pre}/{dd}/INV</b> dará <b>0099-SFR/31/INV</b><br>
 
@@ -523,10 +598,18 @@ MercureMaskCodes=Puede indicar qualquier tipo de máscara de numeración. En esta 
 
 
 
+
+
+
+
 NeptuneNumRefModelDesc1=Devuelve el número de factura bajo una forma del prefijo FA seguida del año con 2 cifras y de un contador simple de 4 cifras.
 NeptuneNumRefModelDesc2=Si se define la constante FACTURE_NEPTUNE_DELTA, se aplica un offset sobre el contador
 
 # orion
+
+
+
+
 
 
 
@@ -551,10 +634,18 @@ OrionNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 una f
 
 
 
+
+
+
+
 TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
 TerreNumRefModelError=Una factura que comienza por # $$syymm existe en base y es incompatible con esta numeración. Eliminela o renombrela para activar este módulo.
 
 # titan
+
+
+
+
 
 
 
@@ -579,6 +670,10 @@ TitanNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 una f
 
 
 
+
+
+
+
 UranusNumRefModelDesc1=Devuelve el número de factura bajo una forma numérica simple, prefijado por el año sobre una única cifra
 
 # venus
@@ -591,9 +686,17 @@ UranusNumRefModelDesc1=Devuelve el número de factura bajo una forma numérica sim
 
 
 
+
+
+
+
 VenusNumRefModelDesc1=Devuelve el número de factura bajo la el formato FA-PREF-030202, donde PREF es el prefijo comercial de la empresa,  seguido de la fecha sobre un formato de 6 dígitos con Año, Mes y Día
 
 # pluton
+
+
+
+
 
 
 

@@ -1,4 +1,6 @@
 # Dolibarr language file - es_ES - errors
+
+
 ErrorDuplicateTrigger=Un archvio trigger de nombre '<b>%s</b>' está cargado. Elimine el dobre de la carpeta '<b>%s</b>'.
 ErrorFailToDeleteFile=Error al eliminar el archivo '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=Este contacto ya está definido como contacto para este tipo.
@@ -13,6 +15,13 @@ ErrorBadSupplierCodeSyntax=LA sintaxis del código proveedor es incorrecta
 ErrorSupplierCodeRequired=Código proveedor obligatorio
 ErrorSupplierCodeAlreadyUsed=Código de proveedor ya utilizado
 ErrorBadParameters=Parámetros incorrectos
+ErrorFailedToWriteInDir=Imposible escribir en la carpeta %s
 UserCannotBeDelete=El usuario no puede ser eliminado. Quizá esé asociado a elementos de Dolibarr.
 ErrorFieldsRequired=No se indicaron algunos campos obligatorios
 ErrorFailedToCreateDir=Error en la creación de una carpeta. Compruebe que el usuario del servidor Web tiene derechos de escritura en las carpetas de documentos de Dolibarr. Si el  parámetro <b>safe_mode</b> está activo en este PHP, Compruebe que los archivos php dolibarr pertenecen al usuario del servidor Web.
+ErrorNoMailDefinedForThisUser=E-Mail no definido para este usuario
+ErrorFeatureNeedJavascript=Esta funcionalidad precisa de javascript activo para funcionar. Modifique en configuración->entorno.
+ErrorTopMenuMustHaveAParentWithId0=Un menú del tipo 'Superior' no puede tener un menú padre. Ponga 0 en el ID padre o busque un menu del tipo 'Izquierdo'
+ErrorLeftMenuMustHaveAParentId=Un menú del tipo 'Izquierdo' debe de tener un ID de padre
+ErrorGenbarCodeNotfound=Archivo no encontrado (ruta incorrecta, permisos incorrectos o acceso prohibido por el parámetro openbasedir)
+ErrorFunctionNotAvailableInPHP=La función  <b>%s</b> es requerida por esta funcionalidad, pero no se encuetra disponible en esta versión/instalación de PHP.

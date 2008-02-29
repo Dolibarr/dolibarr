@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - other
+
 ErrorPasswordDiffers=Las contraseñas no son identicas, vuelva a introducirlas
 ErrorForbidden=Acceso no autorizado.<br>Intenta acceder a una página, zona o función sin estar en una sesión autentificada o que no se autoriza para su cuenta de usuario.
 ErrorForbidden2=Los permisos para este usuario pueden ser asignados por el administrador Dolibarr mediante el menú %s-> %s.
@@ -60,8 +61,10 @@ ValidatedBy=Validado por %s
 CanceledBy=Anulado por %s
 ClosedBy=Cerrado por %s
 FileWasRemoved=El archivo se ha eliminado
+DirWasRemoved=La carpeta se ha eliminado
 FeatureNotYetAvailable=Funcionalidad aún no disponible en esta versión
 FeatureExperimental=Funcionalidad experimental. No es estable en esta versión
+FeatureDevelopment=Funcionalidad en desarrollo. No estable en esta versión
 FeaturesSupported=Funcionalidades soportadas
 Width=Largo
 Height=Ancho
@@ -86,9 +89,11 @@ EnablePhpAVModuleDesc=Debe instalar un módulo PHP compatible con su antivirus. (
 
 
 
+
 LoginWebcal=Login Webcalendar
-AddCalendarEntry=Añadir entrada en el calendario
 ErrorWebcalLoginNotDefined=El login Webcalendar asociado a su usuario Dolibarr <b>%s</b> no está definido
+ErrorPhenixLoginNotDefined=El login Phenix asociado a su cuenta Dolibarrr <b>%s</b>  no está definido
+AddCalendarEntry=Añadir entrada en el calendario
 NewCompanyToDolibarr=Empresa %s insertada en Dolibarr
 ContractValidatedInDolibarr=Contrato %s validado en Dolibarr
 ContractCanceledInDolibarr=Contrato %s anulado en Dolibarr
@@ -106,6 +111,7 @@ MemberValidatedInDolibarr=Miembro %s validado en Dolibarr
 MemberResiliatedInDolibarr=Miembro %s dado de baja en Dolibarr
 MemberDeletedInDolibarr=Miembro %s eliminado de Dolibarr
 ##### Export #####
+
 
 
 

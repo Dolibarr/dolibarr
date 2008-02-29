@@ -1,4 +1,6 @@
 # Dolibarr language file - es_ES - products
+
+
 ProductServiceCard=Ficha producto/servicio
 Products=Productos
 Services=Servicios
@@ -84,6 +86,10 @@ PrimaryWay=Ruta Primaria:
 DeleteFromCat=Eliminar de la categoría
 PriceRemoved=Precio eliminado
 BarCode=Código de barra
+BarcodeType=Tipo de código de barras
+BarcodeValue=Valor del código de barras
+GenbarcodeLocation=Herramienta generación código de barra en línea de pedido (utilizado por el motor phpbar para determinados tipos de códigos barra)
+SetDefaultBarcodeType=Defina el tipo de código de barras
 NoteNotVisibleOnBill=Nota (no visible en las facturar, presupuestos, etc.)
 CreateCopy=Crear cópia
 ServiceLimitedDuration=Si el servicio es de duración limitada :
@@ -120,11 +126,15 @@ Restock=Reponer
 ProductSpecial=Especial
 QtyMin=Cantidad mínima
 PriceQty=Precio para la cantidad
-PriceQtyHT=Precio base para la cantidad
+PriceQtyMin=Precio cantidad min.
+PriceQtyHT=Precio para la cantidad total
+PriceQtyMinHT=Precio cantidad min total
 PriceQtyTTC=Precio total para la cantidad
+PriceQtyMinTTC=Precio cantidad min. total
 NoPriceDefinedForThisSupplier=Ningún precio/cant. definido para este proveedor/producto
 NoSupplierPriceDefinedForThisProduct=Ningún precio/cant. proveedor definida para este producto
 RecordedProducts=Productos en venta
 RecordedProductsAndServices=Productos/servicios en venta
 GenerateThumb=Generar la etiqueta
 ProductCanvasAbility=Usar las extensiones especiales "canvas"
+ServiceNb=Servicio no %s

@@ -1,4 +1,8 @@
 # Dolibarr language file - es_ES - compta
+
+
+
+
 Accountancy=Contabilidad
 AccountancyCard=Ficha contable
 Treasury=Tesorería
@@ -24,10 +28,13 @@ Withdrawl=Domiciliación
 Withdrawls=Domiciliaciones
 VAT=IVA
 VATToPay=IVA a pagar
+VATReceived=IVA repercutido
 VATToCollect=IVA a recuperar
 VATSummary=Resumen IVA
 VATPayed=IVA Pagado
 VATCollected=IVA recuperado
+ToPay=A pagar
+ToGetBack=A recuperar
 TaxAndDividendsArea=Area impuestos, cargas sociales y dividendos
 SocialContribution=Carga social
 SocialContributions=Cargas sociales
@@ -49,6 +56,7 @@ NewVATPayment=Nuevo pago de IVA
 VATPayment=Pago IVA
 VATPayments=Pagos IVA
 TotalToPay=Total a pagar
+TotalVATReceived=Total IVA percibido
 CustomerAccountancyCode=Código contable cliente
 SupplierAccountancyCode=Código contable proveedor
 AlreadyPayed=Ya pagado
@@ -84,3 +92,15 @@ RulesResultDue=- Los importes mostrados son importes totales<br>- Incluye las fa
 RulesResultInOut=- Los importes mostrados son importes totales<br>- Incluye los pagos realizados para las facturas, cargas e IVA.<br>- Se basa en la fecha de pago de las mismas.<br>
 RulesCADue=- Incluye las facturas a clientes,  estén pagadas o no.<br>- Se base en la fecha de validación de las mismas.<br>
 RulesCAIn=- Incluye los pagos efectuados de las facturas a clientes.<br>- Se basa en la fecha de pago de las mismas<br>
+VATReportByCustomersInInputOutputMode=Informe por cliente del IVA repercutido y pagado (IVA pagado)
+VATReportByCustomersInDueDebtMode=Informe por cliente del IVA repercutido y pagado (IVA debido)
+VATReportByQuartersInInputOutputMode=Informe por trimestre del IVA repercutido y pagado (IVA pagado)
+VATReportByQuartersInDueDebtMode=Informe por trimestre del IVA repercutido y pagado (IVA debido)
+SeeVATReportInInputOutputMode=Ver el informe  <b>%sIVA pagado%s</b> para un modo de cálculo estandard
+SeeVATReportInDueDebtMode=Ver el informe  <b>%sIVA debido%s</b> para un modo de cálculo con la opción sobre lo debido
+RulesVATIn=- Para los servicios, el informe incluye el IVA de los pagos efectivamente recibidos o emitidos basándose en la fecha del pago.<br>- Para los bienes materiales, incluye el IVA de las facturas basándose en la fecha de validación de la factura.
+RulesVATDue=- Para los servicios, el informe incluye el IVA de las facturas debidas, pagadas o no basándose en la fecha de validación de estas facturas.<br>- Para los bienes materiales, incluye el IVA de las facturas basándose en la fecha de validación de la factura.
+OptionVatInfoModuleComptabilite=Nota: Para los bienes materiales, sería necesario utilizar la fecha de entrega para para ser más justo.
+AmountHTVATRealReceived=Total repercutido
+AmountHTVATRealPayed=Total pagado
+PercentOfInvoice=%%/factura

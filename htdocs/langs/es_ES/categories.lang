@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - categories
+
 Category=Categoría
 Categorie=Categoría
 categories=Categoría(s)
@@ -58,6 +59,8 @@ ContentsNotVisibleByAllShort=Contenido no visible por todos
 CategoriesTree=Árbol de categorías
 DeleteCategory=Eliminar categoría
 ConfirmDeleteCategory=¿Está seguro de querer eliminar esta categoría?
+RemoveFromCategory=Eliminar vínculo con categoría
+RemoveFromCategoryConfirm=¿Está seguro de querer eliminar el vínculo entre la transacción y la categoría?
 NoCategoriesDefined=Ninguna categoría definida
 SuppliersCategoryShort=Categoría proveedores
 CustomersCategoryShort=Categoría clientes

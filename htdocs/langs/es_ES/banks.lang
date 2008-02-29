@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - banks
+
 Bank=Banco
 Banks=Bancos
 MenuBankCash=Bancos/Cajas
@@ -24,6 +25,7 @@ BalanceMinimalDesired=Saldo mínimo deseado
 InitialBankBalance=Saldo inicial
 EndBankBalance=Saldo final
 CurrentBalance=Saldo actual
+ShowAllTimeBalance=Mostar balance desde principio
 Reconciliation=Conciliación
 RIB=CCC
 IBAN=Identificador IBAN

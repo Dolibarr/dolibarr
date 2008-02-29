@@ -1,4 +1,6 @@
 # Dolibarr language file - es_ES - soc
+
+
 ErrorBadEMail=e-mail %s no correcto
 ErrorCompanyNameAlreadyExists=El nombre de la emprea %s ya existe. Indique otro.
 ErrorPrefixAlreadyExists=El prefijo %s ya existe. Indique otro.
@@ -40,8 +42,8 @@ ParentCompany=Casa madre
 CivilityCode=Código cortesía
 RegisteredOffice=Domicilio social
 Name=Nombre
-Lastname=Nombre
-Firstname=Nombre de pila
+Lastname=Apellidos
+Firstname=Nombre
 PostOrFunction=Puesto/función
 UserTitle=Título cortesía
 Surname=Pseudonimo
@@ -68,6 +70,8 @@ CustomerCodeModel=Modelo de código cliente
 SupplierCodeModel=Modelo de código proveedor
 Gencod=Código de barra
 ##### Professionnal ID #####
+
+
 
 ProfId1=ID profesional 1
 ProfId2=ID profesional 2
@@ -129,7 +133,6 @@ Supplier=Proveedor
 CompanyList=Listado de empresas
 AddContact=Crear contacto
 Contact=Contacto
-Contacts=Contactos
 NoContactDefined=Ningun contacto definido para este tercero
 DefaultContact=Contacto por defecto
 AddCompany=Crear empresa
@@ -184,7 +187,7 @@ VATIntraManualCheck=Puede también realizar una verificación manual en la web eur
 ErrorVATCheckMS_UNAVAILABLE=Comprobación imposible. El servicio de comprobación no es prestado por el país país miembro (%s).
 NorProspectNorCustomer=Ni cliente, ni cliente potencial
 JuridicalStatus=Forma jurídica
-Staff=Efectivo
+Staff=Empleados
 TE_STARTUP=Pequeña
 TE_GROUP=Gran empresa
 TE_MEDIUM=PYME
@@ -242,6 +245,8 @@ FiscalYearInformation=Información del año fiscal
 FiscalMonthStart=Mes de inicio de ejercicio
 
 # Tigre
+
+
 
 TigreNumRefModelDesc1=Devuelve un código cliente/proveedor personalizable según una máscara que debe definirse.
 TigreMaskCodes=Puede escoger una máscara de numeración. En esta máscara, pueden utilizarse las siguientes balizas :<br><b>{000000}</b> corresponde a un úmero que se incrementara en cada código  cliente/proveedor.Incluir tantos ceros como longuitud desee para la cuenta. La cuenta será completada por ceros a la izquiera.<br><b>{dd}</b> día de la creación del código cliente/proveedor (01 a 31).<br><b>{mm}</b> mes de  la creación del código cliente/proveedor (01 à 12).<br><b>{yy}</b> et/ou {yyyy} año, de 2 o 4 cifras, de  la creación del código cliente/proveedor.<br><b>{pre}</b> prefijo de tercero.<br>Todo otro caracter de la máscara se dejará sin cambios.<br>Puede utilizar los caracteres siguientes como separador: slash, antislash y guión<br>Diferenciar los elementos utilizados con una combinación <b>|</b> (altgr+6).<br>Los espacios no están permitidos.<br><br><u>Ejemplo de código cliente/proveedor simple</u><br><b>CC|{00000}</b> devolverá <b>CC00001</b><br><b>CF|-|{00000}</b> devolverá <b>CF-00001</b><br><br><u>Ejemplo sobre del 99º código a cliente/proveedor hecho el 31/01/2007:</u><br><b>ABC|-|{yy}|{mm}|-|{000000}</b> devolverá <b>ABC-0701-000099</b><br><b>{0000}|-|{pre}|/|{dd}|/|INV</b> devolverá <b>0099-SFR/31/INV</b><br>

@@ -1,5 +1,8 @@
 # Dolibarr language file - es_ES - orders
-OrdersArea=Area pedidos
+
+
+OrdersArea=Area pedidos de clientes
+SuppliersOrdersArea=Area pedidos a proveedores
 OrderCard=Ficha pedido
 Order=Pedido
 Orders=Pedidos
@@ -12,7 +15,7 @@ MakeOrder=Realizar pedido
 SupplierOrder=Pedido a proveedor
 SuppliersOrders=Pedidos a proveedor
 SuppliersOrdersRunning=Pedidos a proveedor en curso
-CustomerOrder=Pedido de cliente
+CustomerOrder=Pedido cliente
 CustomersOrders=Pedidos de cliente
 CustomersOrdersRunning=Pedidos de cliente en curso
 OrdersToValid=Pedidos a validar
@@ -84,7 +87,7 @@ RelatedOrders=Pedidos adjuntos
 OnProcessOrders=Pedidos en proceso
 RefOrder=Ref. pedido
 RefCustomerOrder=Ref. pedido cliente
-CustomerOrder=Pedido de cliente
+CustomerOrder=Pedido cliente
 RefCustomerOrderShort=Ref. ped. cliente
 SendOrderByMail=Enviar pedido por e-mail
 ActionsOnOrder=Acciones sobre el pedido
@@ -99,6 +102,8 @@ UseCustomerContactAsOrderRecipientIfExist=Utilizar dirección del contacto del cl
 
 # Sources
 
+
+
 OrderSource0=Presupuesto
 OrderSource1=Internet
 OrderSource2=Campaña por correo
@@ -111,14 +116,20 @@ AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del p
 
 # einstein PDF Model
 
+
+
 PDFEinsteinDescription=Modelo de presupuesto completo (logo...)
 
 # NumRef Modules
+
+
 
 DefinedAndHasThisValue=Definido y válido
 IsNotDefined=No está definido
 
 # Emeraude
+
+
 
 EmeraudeNumRefModelDesc1=Devuelve el número bajo el formato CYYNNNNN donde YY es el año y NNNNN el número de incremento que comienza en 1
 EmeraudeNumRefModelDesc2=El año se incrementa en 1 y el número de incremento se vuelve a poner a cero al principio del ejercicio.
@@ -126,6 +137,8 @@ EmeraudeNumRefModelDesc3=Defina el mes de inico de ejercicio en configuración ->
 EmeraudeNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 un pedido nombrado C0800001
 
 # Rubis
+
+
 
 RubisNumRefModelDesc1=Devuelve el número bajo el formato CYYNNNNN donde YY es el año y NNNNN el número de incremento que comienza en 1
 RubisNumRefModelDesc2=El año se incrementa de 1 SIN volver a cero al inicio de ejercicio.

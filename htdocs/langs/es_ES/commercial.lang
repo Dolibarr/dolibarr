@@ -1,12 +1,13 @@
 # Dolibarr language file - es_ES - commercial
+
 Commercial=Comercial
 CommercialArea=Area comercial
 CommercialCard=Ficha comercial
+CustomerArea=Area clientes
 Customer=Cliente
 Customers=Cliente
 Prospect=Cliente potencial
 Prospects=Clientes potenciales
-Actions=Acciones
 DeleteAction=Eliminar una acción
 NewAction=Nueva acción
 AddAction=Crear acción

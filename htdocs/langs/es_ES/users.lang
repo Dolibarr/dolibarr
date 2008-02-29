@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - users
+
 UserCard=Ficha usuario
 ContactCard=Ficha contacto
 GroupCard=Ficha grupo
@@ -47,8 +48,8 @@ Administrator=Administrador
 DefaultRights=Permisos por defecto
 DefaultRightsDesc=Defina aquí los permisos por defecto, es decir: los permisos que se asignarán automáticamente a un nuevo usuario en el momento de su creación.
 DolibarrUsers=Usuarios Dolibarr
-LastName=Nombre
-FirstName=Prenombre
+LastName=Apellidos
+FirstName=Nombre
 ListOfGroups=Listado de grupos
 NewGroup=Nuevo grupo
 CreateGroup=Crear el grupo
@@ -83,3 +84,5 @@ DomainUser=Usuario de dominio
 Reactivate=Reactivar
 CreateInternalUserDesc=Esta pantalla permite crear un usuario interno de su empresa/institución. Para crear a un usuario externo (cliente, proveedor...) utilice el botón ' crear a usuario Dolibarr ' que se encuentra en la ficha contacto del tercero en cuestión.
 InternalExternalDesc=Un usuario <b>interno</b> es un usuario que pertenece a su empresa/institución.<br>Un usuario <b>externo</b> es un usuario cliente, proveedor u otro.<br><br>En los 2 casos, los permisos de usuarios definen los derechos de acceso, pero el usuario externo puede además tener  un gestor de menús diferente al usuario interno (véase Inicio - Configuración - Visualización)
+PermissionInheritedFromAGroup=El permiso se concede ya que lo hereda de un grupo al cual pertenece el usuario.
+IdPhoneCaller=ID llamante (telefóno)

@@ -1,4 +1,8 @@
 # Dolibarr language file - es_ES - main
+
+
+
+
 CHARSET=ISO-8859-1
 DatabaseConnection=Conexión a la base de datos
 SeparatorDecimal=,
@@ -37,6 +41,7 @@ ErrorFailedToSaveFile=Error, el registro del archivo falló.
 ErrorOnlyPngJpgSupported=Error, solamente se soportan los formatos de imagen jpg y png.
 ErrorImageFormatNotSupported=Su PHP no soporta las funciones de conversión de este formato de imagen.
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr está configurado en modo de autentificación <b>%s</b> en el fichero de configuración <b>conf.php</b>.<br> Eso significa que la base de datos de las contraseñas es externa a Dolibarr, por eso toda modificación de este campo puede resultar sin efecto alguno.
+Administrator=Administrador
 Undefined=No definido
 PasswordForgotten=¿Olvidó su contraseña?
 SeeAbove=Mencionar anteriormente
@@ -58,9 +63,9 @@ NotePublic=Nota (pública)
 NotePrivate=Nota (privada)
 PrecisionUnitIsLimitedToXDecimals=Dolibarr está configurado para limitar la precisión de los precios unitarios a <b>%s</b> decimales.
 DoTest=Probar
-yes=si
-Yes=Si
-no=No
+yes=sí
+Yes=Sí
+no=no
 No=no
 All=Todo
 Home=Inicio
@@ -126,7 +131,7 @@ CurrentNote=Nota actual
 Title=Título
 Label=Etiqueta
 RefOrLabel=Ref. o etiqueta
-Info=Seguimiento
+Info=Log
 Family=Familia
 Description=Descripción
 Designation=Designación
@@ -189,6 +194,8 @@ Today=Hoy
 Yesterday=Ayer
 Tomorrow=Mañana
 Quadri=Trimistre
+MonthOfDay=Mes del día
+HourShort=H
 Rate=Tipo
 Bytes=Octetos
 Cut=Cortar
@@ -268,6 +275,7 @@ Category=Categorúia
 By=Por
 From=De
 to=a
+To=A
 and=y
 or=o
 Other=Otro
@@ -361,13 +369,13 @@ BuildDoc=Generar el doc
 RebuildDoc=Regenerar el doc
 Entity=Entidad
 Entities=Entidades
-EventLogs=Seguimiento
-CustomerPreview=Vista previa cliente
-SupplierPreview=Vista previa proveedor
-AccountancyPreview=Vista previa cuenta
-ShowCustomerPreview=Ver vista previa cliente
-ShowSupplierPreview=Ver vista previa proveedor
-ShowAccountancyPreview=Ver vista previa cuenta
+EventLogs=Log
+CustomerPreview=Historial cliente
+SupplierPreview=Historial proveedor
+AccountancyPreview=Historial contable
+ShowCustomerPreview=Ver historial cliente
+ShowSupplierPreview=Ver historial proveedor
+ShowAccountancyPreview=Ver historial contable
 RefCustomer=Ref. client
 Currency=Divisa
 InfoAdmin=Información para los administradores
@@ -381,6 +389,8 @@ CloseWindow=Cerrar ventana
 Question=Pregunta
 Response=Respuesta
 Priority=Prioridad
+MailSentBy=Mail enviado por
+TextUsedInTheMessageBody=Texto utilizado en el cuerpo del mensaje
 SendAcknowledgementByMail=Envio rec. por e-mail
 NoEMail=Sin e-mail
 Owner=Propietario
@@ -388,20 +398,27 @@ DetectedVersion=Versión detectada
 FollowingConstantsWillBeSubstituted=Las siguientes constantes serán substituidas por su valor correspondiente.
 Refresh=Refrescar
 BackToList=Devolver listado
+GoBack=Volver atrás
 CanBeModifiedIfOk=Puede modificarse si es valido
 CanBeModifiedIfKo=Puede modificarse si no es valido
+RecordModifiedSuccessfully=Registro modificado con éxito
 AutomaticCode=Creación automática de código
 NotManaged=No generado
 FeatureDisabled=Función desactivada
 MoveBox=Desplazar la caja %s
 Offered=Oferta
 NotEnoughPermissions=No tiene permisos para esta acción
+SessionName=Nombre sesión
+Method=Método
+Receive=Recepción
+PartialWoman=Parcial
+PartialMan=Parcial
+TotalWoman=Total
+TotalMan=Total
+YouCanChangeValuesForThisListFromDictionnarySetup=Puede cambiar estos valores en el menú configuración->diccionarios
+Color=Color
+MenuECM=Documentos
 # Week day
-
-
-
-
-
 Monday=Lunes
 Tuesday=Martes
 Wednesday=Miercoles

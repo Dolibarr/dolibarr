@@ -1,4 +1,6 @@
 # Dolibarr language file - es_ES - contracts
+
+
 ContractsArea=Area contratos
 ListOfContracts=Listado de contratos
 LastContracts=Los %s últimos contratos
@@ -64,7 +66,10 @@ CloseService=Finalizar servicio
 ServicesNomberShort=%s servicio(s)
 RunningServices=Servicios activos
 BoardRunningServices=Servicios activos expirados
+ServiceStatus=Estado del servicio
 ##### Types de contacts #####
+
+
 
 TypeContact_contrat_internal_SALESREPSIGN=Comercial firmante del contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimiento del contrato

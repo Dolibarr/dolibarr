@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - exports
+
 ExportsArea=Area exportación
 ImportArea=Area importación
 NewExport=Nueva exportación
@@ -32,3 +33,4 @@ FormatedExportDesc2=El primer paso consiste en elegir uno de los conjuntos de da
 FormatedExportDesc3=Una vez seleccionados los datos, es posible elegir el formato del archivo de exportación generado.
 Sheet=Hoja
 NoImportableData=No hay tipo de datos importable (no hay ningún módulo con definiciones de datos importable activado)
+FileSuccessfullyBuilt=Archivo de exportación generado
