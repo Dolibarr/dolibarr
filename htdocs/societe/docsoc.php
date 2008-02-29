@@ -19,8 +19,8 @@
  */
 
 /**
-   \file       htdocs/docsoc.php
-   \brief      Fichier onglet documents li�s � la soci�t�
+   \file       htdocs/societe/docsoc.php
+   \brief      Tab for documents linked to third party
    \ingroup    societe
    \version    $Id$
 */
@@ -166,7 +166,7 @@ if ($socid > 0)
 		
 		// Affiche formulaire upload
        	$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/docsoc.php?socid='.$socid);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/societe/docsoc.php?socid='.$socid);
 		
 		// Affiche liste des documents existant
 		print_titre($langs->trans("AttachedFiles"));

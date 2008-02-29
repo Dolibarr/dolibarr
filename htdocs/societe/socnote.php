@@ -19,8 +19,8 @@
  */
  
 /**	 
-    \file       htdocs/socnote.php
-    \brief      Fichier onglet notes liées à la société
+    \file       htdocs/societe/socnote.php
+    \brief      Tab for notes on third party
     \ingroup    societe
     \version    $Id$
 */
@@ -66,7 +66,7 @@ if ($socid > 0)
 	dolibarr_fiche_head($head, 'note', $langs->trans("ThirdParty"));
 	
 	
-	print "<form method=\"post\" action=\"socnote.php\">";
+	print "<form method=\"post\" action=\"".DOL_URL_ROOT."/societe/socnote.php\">";
 	
 	print '<table class="border" width="100%">';
 
