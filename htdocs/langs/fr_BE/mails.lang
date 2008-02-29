@@ -11,6 +11,7 @@ MailFrom=Expéditeur
 MailReply=Répondre à
 MailTo=Destinataires
 MailCC=Copie à
+MailCCC=Copie cachée à
 MailTopic=Sujet de l'e-mail
 MailText=Message
 MailFile=Attacher un fichier
