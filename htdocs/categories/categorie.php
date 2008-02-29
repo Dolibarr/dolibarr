@@ -39,6 +39,7 @@ if ($_REQUEST["socid"])
 	if ($_REQUEST["typeid"] == 1) { $type = 'fournisseur'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
 	if ($_REQUEST["typeid"] == 2) { $type = 'societe'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
 	$objectid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
+	$type = 'societe';
 }
 else if ($_REQUEST["id"] || $_REQUEST["ref"])
 {

@@ -1251,7 +1251,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='')
 	{
 		if (! $user->rights->fournisseur->commande->lire) $readok=0;
 	}
-	else
+	else if (! empty($features))
 	{
 		if (! $user->rights->$feature->lire) $readok=0;
 	}
