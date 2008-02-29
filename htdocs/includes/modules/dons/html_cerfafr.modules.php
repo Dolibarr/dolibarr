@@ -15,31 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-			\file       htdocs/includes/dons/html_cerfafr.modules.php
+			\file       htdocs/includes/modules/dons/html_cerfafr.modules.php
 			\ingroup    don
 			\brief      Formulaire de don
-			\version    $Revision$
+			\version    $Id$
 */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/dons/modules_don.php");
-require_once(DOL_DOCUMENT_ROOT."/projetdon.class.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 
 
 /**
 	    \class      html_cerfafr
-		\brief      Classe permettant de générer les propales au modèle Azur
+		\brief      Classe permettant de gï¿½nï¿½rer les propales au modï¿½le Azur
 */
 class html_cerfafr extends ModeleDon
 {
     /**
 			\brief      Constructeur
-    		\param	    db		Handler accès base de donnée
+    		\param	    db		Handler accï¿½s base de donnï¿½e
     */
 
     function html_cerfafr($db)
@@ -48,7 +44,7 @@ class html_cerfafr extends ModeleDon
 
         $this->db = $db;
         $this->name = "cerfafr";
-        $this->description = "Modèle de reçu de dons";
+        $this->description = "Modele de recu de dons";
 
         // Dimension page pour format A4
         $this->type = 'html';
@@ -56,8 +52,8 @@ class html_cerfafr extends ModeleDon
 
 
     /**
-    	    \brief      Renvoi dernière erreur
-            \return     string      Dernière erreur
+    	    \brief      Renvoi derniï¿½re erreur
+            \return     string      Derniï¿½re erreur
     */
     function pdferror() 
     {
@@ -66,8 +62,8 @@ class html_cerfafr extends ModeleDon
 
 
     /**
-    		\brief      Fonction générant le recu sur le disque
-    		\param	    id	        Id du recu à générer
+    		\brief      Fonction gï¿½nï¿½rant le recu sur le disque
+    		\param	    id	        Id du recu ï¿½ gï¿½nï¿½rer
     		\return	    int         >0 si ok, <0 si ko
     */
     function write_file($don)
@@ -77,7 +73,7 @@ class html_cerfafr extends ModeleDon
         
         if ($conf->don->dir_output)
         {
-			// Définition de l'objet $don (pour compatibilite ascendante)
+			// Dï¿½finition de l'objet $don (pour compatibilite ascendante)
         	if (! is_object($don))
         	{
 	            $id = $don;
@@ -85,7 +81,7 @@ class html_cerfafr extends ModeleDon
 	            $ret=$don->fetch($id);
 			}
 
-			// Définition de $dir et $file
+			// Dï¿½finition de $dir et $file
 			if ($don->specimen)
 			{
 				$dir = $conf->don->dir_output;

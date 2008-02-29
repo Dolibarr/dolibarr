@@ -28,7 +28,6 @@
 */
 
 require("../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/projetdon.class.php");
 
 $langs->load("donations");
 $langs->load("propal");
