@@ -23,7 +23,7 @@
 if ($conf->don->onlinepayment)
 {
 
-  require("../../cyberpaiement.class.php");
+  require(DOL_DOCUMENT_ROOT."../../cyberpaiement.class.php");
 
   $cyberp = new Cyberpaiement($conf);
 

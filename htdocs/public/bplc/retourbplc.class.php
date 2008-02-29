@@ -16,13 +16,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  *
  * Classe de gestion du retour RSTS du systeme de paiement en ligne
  * CyberPaiement (TM) de la Banque Populaire de Lorraine
  *
- * Certaine fonction de cette classe existe de base dans PHP4 mais ont été
- * ré-écrites ici pour le support de PHP3
+ * Certaine fonction de cette classe existe de base dans PHP4 mais ont ï¿½tï¿½
+ * rï¿½-ï¿½crites ici pour le support de PHP3
  */
 
 class Retourbplc
@@ -44,7 +43,7 @@ class Retourbplc
   var $ref_commande;
 	
   /*
-   *   Initialisation des valeurs par défaut
+   *   Initialisation des valeurs par dï¿½faut
    */
 	 
   function Retourbplc($db) 
@@ -53,7 +52,7 @@ class Retourbplc
   }
 	
   /**
-   * \brief  Insertion dans la base de donnée de la transaction
+   * \brief  Insertion dans la base de donnï¿½e de la transaction
    *
    */
 	 
@@ -95,7 +94,7 @@ class Retourbplc
   }
 	
   /**
-   * \brief  Verification de la validitée de la clé
+   * \brief  Verification de la validitï¿½e de la clï¿½
    *
    */
 	 
@@ -219,35 +218,35 @@ class Retourbplc
   {
     if ($N0 >= 0 && $N0 <= 6)
       {
-	/* clé = 2 premiers de N0 . C5 . 2 derniers de N0 */
+	/* clï¿½ = 2 premiers de N0 . C5 . 2 derniers de N0 */
 
 	$cle = substr($N1,0,2) . $C5 . substr($N1,2,2);
 
       }
     elseif ($N0 >= 7 && $N0 <= 14)
       {
-	/* clé = 4 premiers de N0 . C5 */
+	/* clï¿½ = 4 premiers de N0 . C5 */
 
 	$cle = substr($N1,0,4) . $C5;
 
       }
     elseif ($N0 >= 15 && $N0 <= 21)
       {
-	/* clé = premier de N1 . C5 . 3 derniers de N1 */
+	/* clï¿½ = premier de N1 . C5 . 3 derniers de N1 */
 
 	$cle = substr($N1,0,1) . $C5 . substr($N1,1,3);
 
       }
     elseif ($N0 >= 22 && $N0 <= 29)
       {
-	/* clé = C5 . 4 derniers de N1 */
+	/* clï¿½ = C5 . 4 derniers de N1 */
 
 	$cle = $C5 . substr($N1,0,4);
 
       }
     elseif ($N0 >= 30 && $N0 <= 36)
       {
-	/* clé = 3 premiers de N1 . C5 . dernier de N1 */
+	/* clï¿½ = 3 premiers de N1 . C5 . dernier de N1 */
 
 	$cle = substr($N1,0,3) . $C5 . substr($N1,1,1);
 

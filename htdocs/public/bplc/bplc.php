@@ -16,19 +16,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 /*
- * Gestion du retour du système de Cyberpaiement
- * Cette page est appellée par le serveur de la BPLC lors de l'utilisation
- * su système RSTS
+ * Gestion du retour du systï¿½me de Cyberpaiement
+ * Cette page est appellï¿½e par le serveur de la BPLC lors de l'utilisation
+ * su systï¿½me RSTS
  *
  */
 
 require("../../conf/conf.class.php");
-require("../../retourbplc.class.php");
+require("./retourbplc.class.php");
 require("../../don.class.php");
 
 $conf = new Conf();
@@ -38,7 +36,7 @@ $conf->db->name = $dolibarr_main_db_name;
 $conf->db->user = $dolibarr_main_db_user;
 $conf->db->pass = $dolibarr_main_db_pass;
 
-// Si type non défini (pour compatibilité avec ancienne install), on
+// Si type non dï¿½fini (pour compatibilitï¿½ avec ancienne install), on
 // travail avec mysql
 if (! $conf->db->type) { $conf->db->type = 'mysql'; }
 
