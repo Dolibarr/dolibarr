@@ -13,6 +13,7 @@ MailErrorsTo=Errors to
 MailReply=Reply to
 MailTo=Receiver(s)
 MailCC=Copy to
+MailCCC=Cached copy to
 MailTopic=EMail topic
 MailText=Message
 MailFile=Attach a file
