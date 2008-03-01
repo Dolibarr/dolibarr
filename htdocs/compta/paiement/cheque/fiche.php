@@ -36,7 +36,7 @@ $langs->load('companies');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'banque', '','',0);
+$result = restrictedArea($user, 'banque', '','');
 
 $mesg='';
 

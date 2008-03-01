@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 // Security check
 $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande_fournisseur', $orderid,'',1);
+$result = restrictedArea($user, 'commande_fournisseur', $orderid,'');
 
 
 /*
@@ -47,11 +47,11 @@ print '<table class="notopnoleftnoright" width="100%">';
 print '<tr valign="top"><td class="notopnoleft" width="30%">';
 
 $sql = "SELECT count(cf.rowid), fk_statut";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE cf.fk_soc = s.rowid ";
-if (!$user->rights->commercial->client->voir && !$socid) //restriction
+if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
   $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }

@@ -563,7 +563,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 
 		print '</tr>';
 		
-		if ($user->rights->commercial->client->voir)
+		if ($user->rights->societe->client->voir)
 		{
 			//Affecter un commercial
 			print '<tr>';

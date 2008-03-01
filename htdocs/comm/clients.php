@@ -29,7 +29,7 @@ require("./pre.inc.php");
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'',1);
+$result = restrictedArea($user, 'societe',$socid,'');
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
@@ -46,14 +46,14 @@ $search_code=isset($_GET["search_code"])?$_GET["search_code"]:$_POST["search_cod
 
 
 $sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea, st.libelle as stcomm, s.prefix_comm, s.code_client";
-if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
 
 if ($socid)           $sql .= " AND s.rowid = ".$socid;
 if ($user->societe_id) $sql .= " AND s.rowid = " .$user->societe_id;
-if (!$user->rights->commercial->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ($search_nom)   $sql .= " AND s.nom like '%".addslashes(strtolower($search_nom))."%'";
 if ($search_ville) $sql .= " AND s.ville like '%".addslashes(strtolower($search_ville))."%'";

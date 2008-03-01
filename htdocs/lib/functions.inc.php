@@ -1223,7 +1223,7 @@ function info_admin($texte,$infoonimgalt=0)
      \brief      Check permissions of a user to show a page and an object.
      \param      user      	  	User to check
      \param      feature		Feature to check (in most cases, it's module name)
-     \param      objectid      	Object ID if we want to chack permission on on object (optionnal)
+     \param      objectid      	Object ID if we want to check permission on on object (optionnal)
      \param      dbtable       	Table name where object is stored. Not used if objectid is null (optionnel)
 */
 function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='')
@@ -1309,7 +1309,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='')
 			}
 		}
 		// Check permission for internal users that are restricted on their objects
-		else if (! $user->rights->commercial->client->voir)
+		else if (! $user->rights->societe->client->voir)
 		{
 			if ($feature == 'societe')
 			{

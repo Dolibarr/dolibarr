@@ -44,7 +44,7 @@ if ($conf->fichinter->enabled) $langs->load("interventions");
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'',1);
+$result = restrictedArea($user, 'societe',$socid,'');
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
@@ -100,11 +100,11 @@ if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
 if ($mode == 'search') {
     if ($mode-search == 'soc') {
         $sql = "SELECT s.rowid";
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     }
 
     if ( $db->query($sql) ) {

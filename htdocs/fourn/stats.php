@@ -43,7 +43,7 @@ $search_ville = isset($_GET["search_ville"])?$_GET["search_ville"]:'';
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'',1);
+$result = restrictedArea($user, 'societe',$socid,'');
 
 if ($page == -1) { $page = 0 ; }
 
@@ -64,13 +64,13 @@ llxHeader();
 
 $sql = "SELECT s.rowid as socid, s.nom, s.ville, ca.ca_genere as ca, ca.year";
 $sql.= " , s.code_fournisseur, s.code_compta_fournisseur";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."fournisseur_ca as ca";
 if ($_GET["cat"]) $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cf";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1 AND s.rowid = ca.fk_societe";
 if ($_GET["cat"]) $sql .= " AND cf.fk_societe = s.rowid AND cf.fk_categorie = '".$_GET["cat"]."'";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
 if ($socname) {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";

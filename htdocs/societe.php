@@ -34,7 +34,7 @@ $langs->load("suppliers");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe','','',1);
+$result = restrictedArea($user, 'societe','','');
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
@@ -67,16 +67,16 @@ if ($mode == 'search')
     $_POST["search_nom"]=$socname;
 
     $sql = "SELECT s.rowid";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE (";
     $sql.= "s.nom like '%".addslashes($socname)."%'";
 	$sql.= " OR s.code_client LIKE '%".addslashes($socname)."%'";
 	$sql.= " OR s.email like '%".addslashes($socname)."%'";
 	$sql.= " OR s.url like '%".addslashes($socname)."%'";
     $sql.= ")";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
 	{
 		if (! $user->rights->fournisseur->lire) $sql.=" AND s.fourn != 1";
@@ -136,10 +136,10 @@ $title=$langs->trans("ListOfThirdParties");
 
 $sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
 $sql.= ", st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.siren";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id";
 if ($socid)
 {
@@ -150,7 +150,7 @@ if (strlen($stcomm))
 	$sql .= " AND s.fk_stcomm=".$stcomm;
 }
 
-if (! $user->rights->commercial->client->voir && ! $socid) //restriction
+if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }

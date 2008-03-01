@@ -67,7 +67,7 @@ class Prospect extends Societe
 
         $sql = "SELECT count(s.rowid) as nb, s.client";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        if (!$user->rights->commercial->client->voir && !$user->societe_id)
+        if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
         	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
         	$sql.= " WHERE sc.fk_user = " .$user->id;

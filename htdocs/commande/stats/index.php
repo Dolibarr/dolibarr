@@ -65,7 +65,7 @@ if (! file_exists($dir))
     }
 }
 
-if (!$user->rights->commercial->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->societe_id)
 {
 	$filename = $conf->commande->dir_temp.'/nbcommande2year-'.$user->id.'-'.$year.'.png';
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$user->id.'-'.$year.'.png';

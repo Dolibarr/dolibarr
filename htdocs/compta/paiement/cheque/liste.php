@@ -32,7 +32,7 @@ $langs->load("bills");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'banque', '','',1);
+$result = restrictedArea($user, 'banque', '','');
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];

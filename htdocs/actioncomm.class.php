@@ -347,12 +347,12 @@ class ActionComm
         
         $this->nbtodo=$this->nbtodolate=0;
         $sql = "SELECT a.id,".$this->db->pdate("a.datea")." as da";
-        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
-        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE a.percent < 100";
         if ($user->societe_id) $sql.=" AND a.fk_soc = ".$user->societe_id;
-        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND a.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND a.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         $resql=$this->db->query($sql);
         if ($resql)
         {

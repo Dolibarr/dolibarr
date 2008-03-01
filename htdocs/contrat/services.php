@@ -51,7 +51,7 @@ $socid=$_GET["socid"];
 // Security check
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contrat',$contratid,'',1);
+$result = restrictedArea($user, 'contrat',$contratid,'');
 
 
 $staticcontrat=new Contrat($db);
@@ -65,20 +65,20 @@ llxHeader();
 
 $sql = "SELECT s.rowid as socid, s.nom, c.rowid as cid,";
 $sql.= " cd.rowid, cd.description, cd.statut, p.rowid as pid, p.label as label,";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_ouverture_prevue,";
 $sql.= " ".$db->pdate("cd.date_ouverture")." as date_ouverture,";
 $sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin_validite,";
 $sql.= " ".$db->pdate("cd.date_cloture")." as date_cloture";
 $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s,";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."contratdet as cd";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 $sql.= " WHERE";
 $sql.= " c.rowid = cd.fk_contrat";
 $sql.= " AND c.fk_soc = s.rowid";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";

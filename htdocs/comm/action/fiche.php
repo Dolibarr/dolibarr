@@ -28,6 +28,7 @@
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
@@ -661,6 +662,11 @@ if ($_GET["id"])
 		print '<input type="text" name="priority" value="'.$act->priority.'" size="5">';
 		print '</td></tr>';
 
+		// Input by
+		print '<tr><td nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
+		print $act->author->getNomUrl(1);
+		print '</td></tr>';
+
 		// Affecte a
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		$html->select_users($act->usertodo->id,'affectedto',1);
@@ -747,6 +753,11 @@ if ($_GET["id"])
 		// Priorite
 		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
 		print $act->priority;
+		print '</td></tr>';
+
+		// Input by
+		print '<tr><td nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
+		print $act->author->getNomUrl(1);
 		print '</td></tr>';
 
 		// Affecte a

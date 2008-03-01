@@ -192,7 +192,7 @@ class Fournisseur extends Societe
 
         $sql = "SELECT count(s.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        if (!$user->rights->commercial->client->voir && !$user->societe_id)
+        if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
         	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
         	$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -255,11 +255,11 @@ class Fournisseur extends Societe
     $arr = array();
 
     $sql = "SELECT s.rowid, s.nom";
-    if (!$this->user->rights->commercial->client->voir && !$this->user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+    if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    if (!$this->user->rights->commercial->client->voir && !$this->user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE s.fournisseur = 1";
-    if (!$this->user->rights->commercial->client->voir && !$this->user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$this->user->id;
+    if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$this->user->id;
 
     $resql=$this->db->query($sql);
 

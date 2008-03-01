@@ -1008,9 +1008,9 @@ class Product extends CommonObject
     $sql = "SELECT COUNT(DISTINCT pr.fk_soc) as nb_customers, COUNT(DISTINCT pr.rowid) as nb,";
     $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
     $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as pr";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE pr.rowid = pd.fk_propal AND pd.fk_product = ".$this->id;
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND pr.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND pr.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     //$sql.= " AND pr.fk_statut != 0";
     if ($socid > 0)
       {
@@ -1049,9 +1049,9 @@ class Product extends CommonObject
     $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
     $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
     $sql.= " ".MAIN_DB_PREFIX."commande as c";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE c.rowid = cd.fk_commande AND cd.fk_product = ".$this->id;
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid > 0)
       {
 	$sql.= " AND c.fk_soc = ".$socid;
@@ -1093,9 +1093,9 @@ class Product extends CommonObject
     $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
     $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as c";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE c.rowid = cd.fk_commande AND cd.fk_product = ".$this->id;
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid > 0)
       {
 	$sql.= " AND c.fk_soc = ".$socid;
@@ -1136,9 +1136,9 @@ class Product extends CommonObject
     $sql.= " COUNT(cd.rowid) as nb_rows, SUM(cd.qty) as qty";
     $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd,";
     $sql.= " ".MAIN_DB_PREFIX."contrat as c";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE c.rowid = cd.fk_contrat AND cd.fk_product = ".$this->id;
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     //$sql.= " AND c.statut != 0";
     if ($socid > 0)
       {
@@ -1176,9 +1176,9 @@ class Product extends CommonObject
     $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
     $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as pd,";
     $sql.= " ".MAIN_DB_PREFIX."facture as f";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE f.rowid = pd.fk_facture AND pd.fk_product = ".$this->id;
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     //$sql.= " AND f.fk_statut != 0";
     if ($socid > 0)
       {
@@ -1216,9 +1216,9 @@ class Product extends CommonObject
     $sql.= " COUNT(pd.rowid) as nb_rows, SUM(pd.qty) as qty";
     $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as pd,";
     $sql.= " ".MAIN_DB_PREFIX."facture_fourn as f";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE f.rowid = pd.fk_facture_fourn AND pd.fk_product = ".$this->id;
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     //$sql.= " AND f.fk_statut != 0";
     if ($socid > 0)
       {
@@ -1308,9 +1308,9 @@ class Product extends CommonObject
 
     $sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
     $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE f.rowid = d.fk_facture and d.fk_product =".$this->id;
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid > 0)
       {
 	$sql .= " AND f.fk_soc = $socid";
@@ -1333,9 +1333,9 @@ class Product extends CommonObject
 
     $sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
     $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn_det as d, ".MAIN_DB_PREFIX."facture_fourn as f";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE f.rowid = d.fk_facture_fourn and d.fk_product =".$this->id;
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid > 0)
       {
 	$sql .= " AND f.fk_soc = $socid";
@@ -1358,9 +1358,9 @@ class Product extends CommonObject
 
     $sql = "SELECT sum(d.qty), date_format(p.datep, '%Y%m') ";
     $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE p.rowid = d.fk_propal and d.fk_product =".$this->id;
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid > 0)
       {
 	$sql .= " AND p.fk_soc = $socid";
@@ -1381,9 +1381,9 @@ class Product extends CommonObject
 
     $sql = "SELECT sum(d.qty), date_format(p.date_commande, '%Y%m') ";
     $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as d, ".MAIN_DB_PREFIX."commande as p";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE p.rowid = d.fk_commande and d.fk_product =".$this->id;
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid > 0)
       {
 	$sql .= " AND p.fk_soc = $socid";

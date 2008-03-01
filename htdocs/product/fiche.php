@@ -1128,7 +1128,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
       print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
       print $langs->trans("AddToMyProposals") . '</td>';
 
-      if ($user->rights->commercial->client->voir)
+      if ($user->rights->societe->client->voir)
 	{
 	  print '<td width="50%" valign="top" class="liste_titre">';
 	  print $langs->trans("AddToOtherProposals").'</td>';
@@ -1191,7 +1191,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
       print '</td>';
 
-      if ($user->rights->commercial->client->voir)
+      if ($user->rights->societe->client->voir)
 	{
 	  // Liste de "Other propals"
 	  print '<td width="50%" valign="top">';
@@ -1242,7 +1242,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
       print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
       print $langs->trans("AddToMyOrders").'</td>';
 
-      if ($user->rights->commercial->client->voir)
+      if ($user->rights->societe->client->voir)
 	{
 	  print '<td width="50%" valign="top" class="liste_titre">';
 	  print $langs->trans("AddToOtherOrders").'</td>';
@@ -1305,7 +1305,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
       print '</td>';
 
-      if ($user->rights->commercial->client->voir)
+      if ($user->rights->societe->client->voir)
 	{
 	  // Liste de "Other orders"
 	  print '<td width="50%" valign="top">';
@@ -1351,7 +1351,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
       print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
       print $langs->trans("AddToMyBills").'</td>';
 
-      if ($user->rights->commercial->client->voir)
+      if ($user->rights->societe->client->voir)
 	{
 	  print '<td width="50%" valign="top" class="liste_titre">';
 	  print $langs->trans("AddToOtherBills").'</td>';
@@ -1416,7 +1416,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
       print '</td>';
 
-      if ($user->rights->commercial->client->voir)
+      if ($user->rights->societe->client->voir)
 	{
 	  print '<td width="50%" valign="top">';
 

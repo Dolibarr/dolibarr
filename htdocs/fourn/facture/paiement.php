@@ -204,12 +204,12 @@ if ($action == 'create' || $action == 'add_paiement')
 	$facture->fetch($facid);
 
 	$sql = 'SELECT s.nom, s.rowid as socid, f.amount, f.total_ttc as total, f.facnumber';
-	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
-	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= ' WHERE f.fk_soc = s.rowid';
 	$sql .= ' AND f.rowid = '.$facid;
-	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -361,16 +361,16 @@ if (! $_GET['action'] && ! $_POST['action'])
 	$sql.= ' s.rowid as socid, s.nom,';
 	$sql.= ' c.libelle as paiement_type, p.num_paiement,';
 	$sql.= ' ba.rowid as bid, ba.label';
-	if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user ";
+	if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
-	if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn ';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-	if (!$user->rights->commercial->client->voir) $sql .= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->societe->client->voir) $sql .= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)
 	{
 		$sql .= ' WHERE f.fk_soc = '.$socid;

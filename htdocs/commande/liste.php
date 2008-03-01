@@ -43,7 +43,7 @@ $sall=isset($_GET['sall'])?$_GET['sall']:$_POST['sall'];
 // Security check
 $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'commande', $orderid,'',1);
+$result = restrictedArea($user, 'commande', $orderid,'');
 
 
 /*
@@ -68,11 +68,11 @@ $offset = $limit * $_GET['page'] ;
 
 $sql = 'SELECT s.nom, s.rowid as socid, c.rowid, c.ref, c.total_ht, c.ref_client,';
 $sql.= ' '.$db->pdate('c.date_commande').' as date_commande, c.fk_statut, c.facture as facturee';
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ' WHERE c.fk_soc = s.rowid';
-if (!$user->rights->commercial->client->voir && !$socid) //restriction
+if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
   $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }

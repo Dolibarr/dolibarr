@@ -33,6 +33,10 @@ require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 $langs->load("companies");
 $langs->load("agenda");
 
+$filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:'';
+$filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:'';
+$filterd = isset($_REQUEST["userdone"])?$_REQUEST["userdone"]:'';
+
 $socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -41,7 +45,9 @@ $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'',1);
+$result = restrictedArea($user, 'societe', $socid,'');
+
+if (! $user->rights->agenda->actions->read) $filter="mine";
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
@@ -62,14 +68,16 @@ llxHeader();
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id,".$db->pdate("a.datep")." as dp, ".$db->pdate("a.datea")." as da, a.fk_contact, a.note, a.label, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle,";
+$sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
 $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
 $sql.= " ud.login as logindone, ud.rowid as useriddone,";
 $sql.= " sp.name, sp.firstname";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s,";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON a.fk_user_author = ua.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
 $sql.= " WHERE a.fk_soc = s.rowid AND c.id = a.fk_action";
@@ -85,7 +93,7 @@ if ($socid)
 {
   $sql .= " AND s.rowid = ".$socid;
 }
-if (!$user->rights->commercial->client->voir && !$socid) //restriction
+if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
@@ -118,7 +126,31 @@ if ($resql)
     {
         print_barre_liste($langs->trans($title), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
     }
-    $i = 0;
+    
+	print '<br>';
+	print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<table class="border" width="100%"><tr>';
+	print '<td>';
+	print $langs->trans("Filter");
+	print '</td>';
+	print '<td><input type="checkbox" name="userasked" '.($filtera?'checked="true"':'').'> ';
+	print $langs->trans("MyActionsAsked");
+	print '</td>';
+	print '<td><input type="checkbox" name="usertodo" '.($filtert?'checked="true"':'').'> ';
+	print $langs->trans("MyActionsToDo");
+	print '</td>';
+	print '<td><input type="checkbox" name="userdone" '.($filterd?'checked="true"':'').'> ';
+	print $langs->trans("MyActionsDone");
+	print '</td>';
+	print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("ToFilter").'">';
+	print '</td>';
+	print '</tr></table>';
+	print '</form><br>';
+
+
+	
+	
+	$i = 0;
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield,$sortorder);
@@ -127,6 +159,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ActionUserAsk"),$_SERVER["PHP_SELF"],"ua.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("AffectedTo"),$_SERVER["PHP_SELF"],"ut.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
@@ -148,20 +181,20 @@ if ($resql)
 		$actionstatic->id=$obj->id;
 		$actionstatic->code=$obj->acode;
 		$actionstatic->libelle=$obj->libelle;
-		print $actionstatic->getNomUrl(1,12);
+		print $actionstatic->getNomUrl(1,4);
         print '</td>';
 
        	print '<td align="left" nowrap="nowrap">';
-		print dolibarr_print_date($obj->dp,"dayhour");
+		print dolibarr_print_date($obj->dp,"day");
 		print '</td>';
 
 		print '<td align="left" nowrap="nowrap">';
-		print dolibarr_print_date($obj->da,"dayhour");
+		print dolibarr_print_date($obj->da,"day");
 		print '</td>';
 
         // Titre
         print '<td>';
-       	print $obj->label;
+       	print dolibarr_trunc($obj->label,16);
         print '</td>';
 
         // Société
@@ -186,6 +219,18 @@ if ($resql)
             print "&nbsp;";
         }
         print '</td>';
+
+        // User author
+        print '<td align="left">';
+		if ($obj->useridauthor)
+		{
+			$userstatic=new User($db,$obj->useridauthor);
+			$userstatic->id=$obj->useridauthor;
+			$userstatic->login=$obj->loginauthor;
+			print $userstatic->getLoginUrl(1);
+		}
+		else print '&nbsp;';
+		print '</td>';
 
         // User to do
         print '<td align="left">';

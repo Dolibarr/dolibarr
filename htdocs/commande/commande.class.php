@@ -1825,7 +1825,7 @@ class Commande extends CommonObject
 		
 		$sql = 'SELECT c.rowid,'.$this->db->pdate('c.date_creation').' as datec';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
-		if (!$user->rights->commercial->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
 			$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -2118,7 +2118,7 @@ class Commande extends CommonObject
 
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande as co";
-		if (!$user->rights->commercial->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";

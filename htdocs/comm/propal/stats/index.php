@@ -46,7 +46,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 
 create_exdir($conf->propal->dir_temp);
 
-if (!$user->rights->commercial->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->societe_id)
 {
 	$filename = $conf->propal->dir_temp.'/nbpropale2year-'.$user->id.'-'.$year.'.png';
 	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$user->id.'-'.$year.'.png';
@@ -82,11 +82,11 @@ if (! $mesg)
 }
 
 $sql = "SELECT count(*) as nb, date_format(p.datep,'%Y') as dm, sum(p.total) as total_ttc";
-if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
-if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE fk_statut > 0";
-if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 if($user->societe_id)
 {
    $sql .= " AND p.fk_soc = ".$user->societe_id;

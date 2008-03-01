@@ -56,9 +56,9 @@ class CommandeStats extends Stats
     	  
         $sql = "SELECT date_format(c.date_commande,'%m') as dm, count(*) nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
-        if (!$user->rights->commercial->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql .= " WHERE date_format(c.date_commande,'%Y') = $year AND c.fk_statut > 0";
-        if (!$user->rights->commercial->client->voir && !$this->socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->societe->client->voir && !$this->socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         if ($this->socid)
         {
             $sql .= " AND c.fk_soc = ".$this->socid;
@@ -80,9 +80,9 @@ class CommandeStats extends Stats
   	
     $sql = "SELECT date_format(c.date_commande,'%Y') as dm, count(*), sum(c.total_ht)";
     $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
-    if (!$user->rights->commercial->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE c.fk_statut > 0";
-    if (!$user->rights->commercial->client->voir && !$this->socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$this->socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($this->socid)
     {
 	    $sql .= " AND c.fk_soc = ".$this->socid;
@@ -103,9 +103,9 @@ class CommandeStats extends Stats
   	
     $sql = "SELECT date_format(c.date_commande,'%m') as dm, sum(c.total_ht)";
     $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
-    if (!$user->rights->commercial->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE date_format(c.date_commande,'%Y') = $year AND c.fk_statut > 0";
-    if (!$user->rights->commercial->client->voir && !$this->socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$this->socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($this->socid)
     {
 	    $sql .= " AND c.fk_soc = ".$this->socid;
@@ -126,9 +126,9 @@ class CommandeStats extends Stats
   	
     $sql = "SELECT date_format(c.date_commande,'%m') as dm, avg(c.total_ht)";
     $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
-    if (!$user->rights->commercial->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE date_format(c.date_commande,'%Y') = $year AND c.fk_statut > 0";
-    if (!$user->rights->commercial->client->voir && !$this->socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->societe->client->voir && !$this->socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($this->socid)
     {
 	    $sql .= " AND c.fk_soc = ".$this->socid;

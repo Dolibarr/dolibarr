@@ -34,7 +34,7 @@ $langs->load("suppliers");
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'contact', $contactid,'',1);
+$result = restrictedArea($user, 'contact', $contactid,'');
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_prenom=isset($_GET["search_prenom"])?$_GET["search_prenom"]:$_POST["search_prenom"];
@@ -100,9 +100,9 @@ $sql.= " p.rowid as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile,
 $sql.= " ".$db->pdate("p.tms")." as tms";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= " WHERE 1=1 ";
-if (!$user->rights->commercial->client->voir && !$socid) //restriction
+if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND IFNULL(sc.fk_user, ".$user->id.") = " .$user->id;
 }

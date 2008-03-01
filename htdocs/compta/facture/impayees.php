@@ -37,7 +37,7 @@ $langs->load("bills");
 // Security check
 $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'facture',$facid,'',1);
+$result = restrictedArea($user, 'facture',$facid,'');
 
 
 llxHeader('',$langs->trans("BillsCustomersUnpayed"));
@@ -67,14 +67,14 @@ if ($user->rights->facture->lire)
 	$sql.= ", ".$db->pdate("f.datef")." as df, ".$db->pdate("f.date_lim_reglement")." as datelimite";
 	$sql.= ", f.paye as paye, f.rowid as facid, f.fk_statut";
 	$sql.= ", sum(pf.amount) as am";
-	if (! $user->rights->commercial->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->commercial->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= ",".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 	$sql.= " WHERE f.fk_soc = s.rowid";
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";
-	if (! $user->rights->commercial->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 
 	if ($_GET["filtre"])

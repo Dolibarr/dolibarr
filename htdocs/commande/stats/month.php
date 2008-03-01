@@ -63,7 +63,7 @@ $data = $stats->getNbByMonth($year);
 create_exdir($conf->commande->dir_temp);
 
 
-if (!$user->rights->commercial->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->societe_id)
 {
 	$filename = $conf->commande->dir_temp.'/commande-'.$user->id.'-'.$year.'.png';
   $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commande-'.$user->id.'-'.$year.'.png';
@@ -98,7 +98,7 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(ucfirst(substr(strftime("%b",dolibarr_mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
-if (!$user->rights->commercial->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->societe_id)
 {
 	$filename_amount = $conf->commande->dir_temp.'/commandeamount-'.$user->id.'-'.$year.'.png';
 	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeamount-'.$user->id.'-'.$year.'.png';
@@ -132,7 +132,7 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(ucfirst(substr(strftime("%b",dolibarr_mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
-if (!$user->rights->commercial->client->voir || $user->societe_id)
+if (!$user->rights->societe->client->voir || $user->societe_id)
 {
 	$filename_avg = $conf->commande->dir_temp.'/commandeaverage-'.$user->id.'-'.$year.'.png';
 	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeaverage-'.$user->id.'-'.$year.'.png';

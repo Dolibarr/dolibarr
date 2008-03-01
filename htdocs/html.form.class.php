@@ -588,14 +588,14 @@ class Form
         // On recherche les societes
         $sql = "SELECT s.rowid, s.nom";
         $sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
-		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE 1=1";
 		if ($filter) $sql.= " AND ".$filter;
         if ($selected && $conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
         {
         	$sql.= " AND rowid = ".$selected;
         }
-        if (!$user->rights->commercial->client->voir && !$user->societe_id) //restriction
+        if (!$user->rights->societe->client->voir && !$user->societe_id) //restriction
 		{
 			$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		}

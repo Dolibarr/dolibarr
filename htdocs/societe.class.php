@@ -161,7 +161,7 @@ class Societe extends CommonObject
                 $ret = $this->update($this->id,$user,0,1,1);
                 
                 // si un commercial cr�e un client il lui est affect� automatiquement
-                if (!$user->rights->commercial->client->voir)
+                if (!$user->rights->societe->client->voir)
                 {
                 	$this->add_commercial($user, $user->id);
                 }

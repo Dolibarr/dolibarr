@@ -32,7 +32,7 @@ $langs->load('companies');
 // Security check
 $expeditionid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'expedition',$expeditionid,'',1);
+$result = restrictedArea($user, 'expedition',$expeditionid,'');
 
 
 $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:"";
@@ -70,7 +70,7 @@ else
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."propal as ori ON pe.fk_commande = ori.rowid";
 }
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (!$user->rights->commercial->client->voir && !$socid)
+if (!$user->rights->societe->client->voir && !$socid)
 {
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 	$sql.= $clause." sc.fk_user = " .$user->id;

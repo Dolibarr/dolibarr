@@ -124,12 +124,12 @@ if ($_GET["id"] || $_GET["ref"])
 
         $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, c.rowid, ";
         $sql.= " ".$db->pdate("c.datec")." as date, c.statut as statut, c.rowid as contratid";
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as d";
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		    $sql.= " WHERE c.fk_soc = s.rowid";
         $sql.= " AND d.fk_contrat = c.rowid AND d.fk_product =".$product->id;
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         if ($socid)
         {
             $sql .= " AND c.fk_soc = $socid";

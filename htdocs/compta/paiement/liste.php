@@ -36,7 +36,7 @@ $langs->load("bills");
 // Security check
 $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'facture',$facid,'',1);
+$result = restrictedArea($user, 'facture',$facid,'');
 
 
 $paymentstatic=new Paiement($db);
@@ -71,12 +71,12 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.row
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-if (!$user->rights->commercial->client->voir && !$socid)
+if (!$user->rights->societe->client->voir && !$socid)
 {
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 }
 $sql.= " WHERE p.fk_paiement = c.id";
-if (!$user->rights->commercial->client->voir && !$socid)
+if (!$user->rights->societe->client->voir && !$socid)
 {
 	$sql.= " AND sc.fk_user = " .$user->id;
 }

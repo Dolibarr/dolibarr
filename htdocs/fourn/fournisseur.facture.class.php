@@ -651,12 +651,12 @@ class FactureFournisseur extends Facture
 
 		$this->nbtodo=$this->nbtodolate=0;
 		$sql = 'SELECT ff.rowid,'.$this->db->pdate('ff.date_lim_reglement').' as datefin';
-		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
-		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= ' WHERE ff.paye=0 AND ff.fk_statut > 0';
 		if ($user->societe_id) $sql.=' AND ff.fk_soc = '.$user->societe_id;
-		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND ff.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

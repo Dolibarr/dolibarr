@@ -32,7 +32,7 @@ $langs->load("banks");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'banque', '','',1);
+$result = restrictedArea($user, 'banque', '','');
 
 
 $checkdepositstatic=new RemiseCheque($db);

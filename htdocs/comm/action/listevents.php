@@ -38,7 +38,7 @@ $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe',$socid,'',1);
+$result = restrictedArea($user, 'societe',$socid,'');
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
@@ -164,7 +164,7 @@ if ($resql)
        	print $obj->label;
         print '</td>';
 
-        // Sociï¿½tï¿½
+        // Société
         print '<td>';
         $societestatic->id=$obj->socid;
 		$societestatic->client=$obj->client;

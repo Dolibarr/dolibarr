@@ -1812,13 +1812,13 @@ else
 
   $sql = 'SELECT s.nom, s.rowid, s.client, ';
   $sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
-  if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+  if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
-  if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+  if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
   $sql.= ' WHERE p.fk_soc = s.rowid';
 
-  if (!$user->rights->commercial->client->voir && !$socid) //restriction
+  if (!$user->rights->societe->client->voir && !$socid) //restriction
     {
 	    $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     }

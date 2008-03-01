@@ -3163,14 +3163,14 @@ else
 		$sql.= ' f.paye as paye, f.fk_statut,';
 		$sql.= ' s.nom, s.rowid as socid';
 		if (! $sall) $sql.= ' ,sum(pf.amount) as am';
-		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= ', '.MAIN_DB_PREFIX.'facture as f';
 		if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_facture = f.rowid';
 		$sql.= ' WHERE f.fk_soc = s.rowid';
-		if (!$user->rights->commercial->client->voir && !$socid) //restriction
+		if (!$user->rights->societe->client->voir && !$socid) //restriction
     {
 	    $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     }

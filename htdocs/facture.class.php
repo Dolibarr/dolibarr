@@ -2405,7 +2405,7 @@ class Facture extends CommonObject
     
     $sql = 'SELECT f.rowid,'.$this->db->pdate('f.date_lim_reglement').' as datefin';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-    if (!$user->rights->commercial->client->voir && !$user->societe_id)
+    if (!$user->rights->societe->client->voir && !$user->societe_id)
     {
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
     	$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -2543,7 +2543,7 @@ class Facture extends CommonObject
 
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-		if (!$user->rights->commercial->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";

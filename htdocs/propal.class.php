@@ -1666,7 +1666,7 @@ class Propal extends CommonObject
         
         $sql ="SELECT p.rowid, p.ref, ".$this->db->pdate("p.datec")." as datec,".$this->db->pdate("p.fin_validite")." as datefin";
         $sql.=" FROM ".MAIN_DB_PREFIX."propal as p";
-        if (!$user->rights->commercial->client->voir && !$user->societe_id)
+        if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
         	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
         	$sql.= " WHERE sc.fk_user = " .$user->id;
@@ -1896,7 +1896,7 @@ class Propal extends CommonObject
 
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
-		if (!$user->rights->commercial->client->voir && !$user->societe_id)
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";

@@ -40,7 +40,7 @@ $page=$_GET["page"]?$_GET["page"]:$_POST["page"];
 // Security check
 $fichinterid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'ficheinter', $fichinterid,'',1);
+$result = restrictedArea($user, 'ficheinter', $fichinterid,'');
 
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datei";
@@ -59,11 +59,11 @@ llxHeader();
 
 
 $sql = "SELECT s.nom,s.rowid as socid, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.description, f.duree";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE f.fk_soc = s.rowid ";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid > 0)
 {
 	$sql .= " AND s.rowid = " . $socid;
