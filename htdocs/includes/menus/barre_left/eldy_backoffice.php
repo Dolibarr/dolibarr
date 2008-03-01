@@ -269,7 +269,7 @@ class MenuLeft {
 					
 					// Actions
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/indexactions.php?leftmenu=agenda", $langs->trans("Actions"), 0, $user->rights->agenda->myactions->read);
-					$newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=agenda", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/fiche.php?leftmenu=agenda&amp;action=create", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda", $langs->trans("List"), 1, $user->rights->agenda->myactions->read);
 					//$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=todo&amp;filter=mine", $langs->trans("MenuToDoMyActions"),2, $user->rights->agenda->myactions->read);
 					//$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=done&amp;filter=mine", $langs->trans("MenuDoneMyActions"),2, $user->rights->agenda->myactions->read);
@@ -725,7 +725,7 @@ class MenuLeft {
 
 					// Actions
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/indexactions.php?leftmenu=agenda", $langs->trans("Actions"), 0, $user->rights->agenda->myactions->read);
-					$newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=agenda", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/fiche.php?leftmenu=agenda&amp;action=create", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda", $langs->trans("List"), 1, $user->rights->agenda->myactions->read);
 					//$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=todo&amp;filter=mine", $langs->trans("MenuToDoMyActions"),2, $user->rights->agenda->myactions->read);
 					//$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=done&amp;filter=mine", $langs->trans("MenuDoneMyActions"),2, $user->rights->agenda->myactions->read);
@@ -735,7 +735,7 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=agenda", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
 
 					// Events
-					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listevents.php?leftmenu=agenda", $langs->trans("Events"), 0, $user->rights->agenda->myactions->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listevents.php?leftmenu=agenda", $langs->trans("Events"), 0, $user->rights->agenda->events->read);
 				}
 			}	
 			

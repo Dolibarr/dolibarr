@@ -44,188 +44,92 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="a.datep";
+if (! $sortfield) $sortfield="e.dateevent";
 
 $status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 
 
 llxHeader();
 
+$userstatic=new User($db);
 
-print $langs->trans("FeatureNotYetAvailable");
+$sql = "SELECT e.rowid, e.type, ".$db->pdate("e.dateevent")." as dateevent,";
+$sql.= " e.fk_user, e.label, e.description,";
+$sql.= " u.login";
+$sql.= " FROM ".MAIN_DB_PREFIX."events as e";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
+$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
+
+$result = $db->query($sql);
+if ($result)
+{
+	$num = $db->num_rows($result);
+	$i = 0;
+
+	print_barre_liste($langs->trans("ListOfEvents"), $page, "listevents.php","",$sortfield,$sortorder,'',$num);
+
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"e.type","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"u.login","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"e.label","","",'align="left"',$sortfield,$sortorder);
+	print '<td>&nbsp;</td>';
+	print "</tr>\n";
 
 /*
- *  Affichage liste des actions
- *
- */
-/*
-$sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
-$sql.= " a.id,".$db->pdate("a.datep")." as dp, ".$db->pdate("a.datea")." as da, a.fk_contact, a.note, a.label, a.percent as percent,";
-$sql.= " c.code as acode, c.libelle,";
-$sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
-$sql.= " ud.login as logindone, ud.rowid as useriddone,";
-$sql.= " sp.name, sp.firstname";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s,";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
-$sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
-$sql.= " WHERE a.fk_soc = s.rowid AND c.id = a.fk_action";
-if ($_GET["type"])
-{
-  $sql .= " AND c.id = ".$_GET["type"];
-}
-if ($_GET["time"] == "today")
-{
-  $sql .= " AND date_format(a.datep, '%d%m%Y') = ".strftime("%d%m%Y",time());
-}
-if ($socid) 
-{
-  $sql .= " AND s.rowid = ".$socid;
-}
-if (!$user->rights->societe->client->voir && !$socid) //restriction
-{
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-}
-if ($status == 'done') { $sql.= " AND a.percent = 100"; }
-if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
-$sql .= " ORDER BY ".$sortfield." ".$sortorder;
-$sql .= $db->plimit( $limit + 1, $offset);
+	// Lignes des champs de filtre
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<tr class="liste_titre">';
 
-dolibarr_syslog("comm/action/index.php sql=".$sql);
-$resql=$db->query($sql);
-if ($resql)
-{
-    $actionstatic=new ActionComm($db);
-    $societestatic=new Societe($db);
-    
-    $num = $db->num_rows($resql);
-    $title="DoneAndToDoActions";
-    if ($status == 'done') $title="DoneActions";
-    if ($status == 'todo') $title="ToDoActions";
-	$param="&status=".$status;
+	print '<td class="liste_titre">&nbsp;</td>';
 
-    if ($socid)
-    {
-        $societe = new Societe($db);
-        $societe->fetch($socid);
+	print '<td class="liste_titre">&nbsp;</td>';
 
-        print_barre_liste($langs->trans($title."For",$societe->nom), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
-    }
-    else
-    {
-        print_barre_liste($langs->trans($title), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
-    }
-    $i = 0;
-    print "<table class=\"noborder\" width=\"100%\">";
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DatePlanShort"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateRealShort"),$_SERVER["PHP_SELF"],"a.datea",$param,'','',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("AffectedTo"),$_SERVER["PHP_SELF"],"ut.login",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
-    print "</tr>\n";
+	print '<td align="left" class="liste_titre">';
+	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_user"].'">';
+	print '</td>';
+
+	print '<td align="left" class="liste_titre">';
+	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_label"].'">';
+	print '</td>';
+
+	print '<td align="right" class="liste_titre">';
+	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+	print '</td>';
 	
-    $contactstatic = new Contact($db);
+	print "</tr>\n";
+	print '</form>';
+*/
+	$var=True;
 
-    $var=true;
-    while ($i < min($num,$limit))
-    {
-        $obj = $db->fetch_object($resql);
+	while ($i < min($num,$conf->liste_limit))
+	{
+		$obj = $db->fetch_object();
+		
+		$var=!$var;
 
-        $var=!$var;
-
-        print "<tr $bc[$var]>";
-
-        // Action (type)
-        print '<td>';
-		$actionstatic->id=$obj->id;
-		$actionstatic->code=$obj->acode;
-		$actionstatic->libelle=$obj->libelle;
-		print $actionstatic->getNomUrl(1,12);
-        print '</td>';
-
-       	print '<td align="left" nowrap="nowrap">';
-		print dolibarr_print_date($obj->dp,"dayhour");
-		print '</td>';
-
-		print '<td align="left" nowrap="nowrap">';
-		print dolibarr_print_date($obj->da,"dayhour");
-		print '</td>';
-
-        // Titre
-        print '<td>';
-       	print $obj->label;
-        print '</td>';
-
-        // Société
-        print '<td>';
-        $societestatic->id=$obj->socid;
-		$societestatic->client=$obj->client;
-		$societestatic->nom=$obj->societe;
-        print $societestatic->getNomUrl(1,'',16);
-		print '</td>';
-
-        // Contact
-        print '<td>';
-        if ($obj->fk_contact > 0)
-        {
-			$contactstatic->name=$obj->name;
-			$contactstatic->firstname=$obj->firstname;
-			$contactstatic->id=$obj->fk_contact;
-            print $contactstatic->getNomUrl(1,'',16);
-        }
-        else
-        {
-            print "&nbsp;";
-        }
-        print '</td>';
-
-        // User to do
-        print '<td align="left">';
-		if ($obj->useridtodo)
-		{
-			$userstatic=new User($db,$obj->useridtodo);
-			$userstatic->id=$obj->useridtodo;
-			$userstatic->login=$obj->logintodo;
-			print $userstatic->getLoginUrl(1);
-		}
-		else print '&nbsp;';
-		print '</td>';
-
-        // User did
-        print '<td align="left">';
-		if ($obj->useriddone)
-		{
-			$userstatic=new User($db,$obj->useriddone);
-			$userstatic->id=$obj->useriddone;
-			$userstatic->login=$obj->logindone;
-			print $userstatic->getLoginUrl(1);
-		}
-		else print '&nbsp;';
-		print '</td>';
-
-        // Status/Percent
-        print '<td align="right" nowrap="nowrap">'.$actionstatic->LibStatut($obj->percent,5).'</td>';
-
-        print "</tr>\n";
-        $i++;
-    }
-    print "</table>";
-    $db->free($resql);
-
+		print "<tr $bc[$var]>";
+		print '<td align="left" nowrap="nowrap">'.dolibarr_print_date($obj->dateevent,'dayhour').'</td>';
+		print '<td>'.$obj->type.'</td>';
+		$userstatic->id=$obj->fk_user;
+		$userstatic->login=$obj->login;
+		print '<td>'.$userstatic->getLoginUrl(1).'</td>';
+		print '<td>'.$obj->label.'</td>';
+//		print '<td>'.$obj->description.'</td>';
+		print '<td>&nbsp;</td>';
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table>";
+	$db->free();
 }
 else
 {
-    dolibarr_print_error($db);
+  dolibarr_print_error($db);
 }
-*/
+
 
 $db->close();
 

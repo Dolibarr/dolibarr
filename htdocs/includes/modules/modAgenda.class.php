@@ -99,7 +99,7 @@ class modAgenda extends DolibarrModules
 		// $r++;
         
         $this->rights[$r][0] = 2401;
-        $this->rights[$r][1] = 'Lire les actions liees a son compte';
+        $this->rights[$r][1] = 'Read actions/tasks linked to his account';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 1;
         $this->rights[$r][4] = 'myactions';
@@ -107,7 +107,7 @@ class modAgenda extends DolibarrModules
         $r++;
        
         $this->rights[$r][0] = 2402;
-        $this->rights[$r][1] = 'Creer/modifier/supprimer les actions liees a son compte';
+        $this->rights[$r][1] = 'Create/modify/delete actions/tasks linked to his account';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'myactions';
@@ -115,7 +115,7 @@ class modAgenda extends DolibarrModules
         $r++;
         
         $this->rights[$r][0] = 2403;
-        $this->rights[$r][1] = 'Lire les actions des autres';
+        $this->rights[$r][1] = 'Read actions/tasks of others';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'allactions';
@@ -123,11 +123,19 @@ class modAgenda extends DolibarrModules
         $r++;
         
         $this->rights[$r][0] = 2405;
-        $this->rights[$r][1] = 'Creer/modifier/supprimer les actions pour les autres';
+        $this->rights[$r][1] = 'Create/modify/delete actions/tasks of others';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'allactions';
         $this->rights[$r][5] = 'create';
+        $r++;
+
+        $this->rights[$r][0] = 2410;
+        $this->rights[$r][1] = 'Read Dolibarr audit events';
+        $this->rights[$r][2] = 'r';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'events';
+        $this->rights[$r][5] = 'read';
         $r++;
 
         // Menus

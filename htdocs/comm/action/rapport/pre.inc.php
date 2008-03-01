@@ -43,14 +43,15 @@ function llxHeader($head = "", $urlp = "")
 
 	// Actions
 	$menu->add_submenu(DOL_URL_ROOT."/comm/action/indexactions.php?leftmenu=agenda", $langs->trans("Actions"), 0, $user->rights->agenda->myactions->read);
-	$menu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=agenda", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
+	$menu->add_submenu(DOL_URL_ROOT."/comm/action/fiche.php?leftmenu=agenda&amp;action=create", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
 	$menu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda", $langs->trans("List"), 1, $user->rights->agenda->myactions->read);
 	$menu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=todo", $langs->trans("MenuToDoActions"),2, $user->rights->agenda->myactions->read);
+	$menu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=done", $langs->trans("MenuDoneActions"),2, $user->rights->agenda->myactions->read);
 	$menu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;time=today", $langs->trans("Today"), 2, $user->rights->agenda->myactions->read);
 	$menu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=agenda", $langs->trans("Reportings"), 1, $user->rights->agenda->myactions->read);
 
 	// Events
-	$menu->add_submenu(DOL_URL_ROOT."/comm/action/listevents.php?leftmenu=agenda", $langs->trans("Events"), 0, $user->rights->agenda->myactions->read);
+	$menu->add_submenu(DOL_URL_ROOT."/comm/action/listevents.php?leftmenu=agenda", $langs->trans("Events"), 0, $user->rights->agenda->events->read);
 
     
     if ($conf->societe->enabled) {

@@ -47,8 +47,15 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid,'');
 
-if (! $user->rights->agenda->actions->read) $filter="mine";
-
+$canedit=1;
+if (! $user->rights->agenda->myactions->read) access_forbidden();
+if (! $user->rights->agenda->allactions->read) 
+{
+	$canedit=0;
+	$filtera="on";
+	$filtert="on";
+	$filterd="on";
+}
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -99,6 +106,14 @@ if (!$user->rights->societe->client->voir && !$socid) //restriction
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
+if ($filtera || $filtert || $filterd) 
+{
+	$sql.= " AND (";
+	if ($filtera) $sql.= " a.fk_user_author = ".$user->id;
+	if ($filtert) $sql.= ($filtera?" OR ":"")." a.fk_user_action = ".$user->id;
+	if ($filterd) $sql.= ($filtera||$filtert?" OR ":"")." a.fk_user_done = ".$user->id;
+	$sql.= ")";
+}
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit( $limit + 1, $offset);
 
@@ -133,16 +148,17 @@ if ($resql)
 	print '<td>';
 	print $langs->trans("Filter");
 	print '</td>';
-	print '<td><input type="checkbox" name="userasked" '.($filtera?'checked="true"':'').'> ';
+	print '<td><input type="checkbox" name="userasked" '.($canedit?'':'disabled="true" ').($filtera?'checked="true"':'').'> ';
 	print $langs->trans("MyActionsAsked");
 	print '</td>';
-	print '<td><input type="checkbox" name="usertodo" '.($filtert?'checked="true"':'').'> ';
+	print '<td><input type="checkbox" name="usertodo" '.($canedit?'':'disabled="true" ').($filtert?'checked="true"':'').'> ';
 	print $langs->trans("MyActionsToDo");
 	print '</td>';
-	print '<td><input type="checkbox" name="userdone" '.($filterd?'checked="true"':'').'> ';
+	print '<td><input type="checkbox" name="userdone" '.($canedit?'':'disabled="true" ').($filterd?'checked="true"':'').'> ';
 	print $langs->trans("MyActionsDone");
 	print '</td>';
-	print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("ToFilter").'">';
+	print '<td align="center">';
+	print '<input type="submit" class="button" value="'.$langs->trans("ToFilter").'" '.($canedit?'':'disabled="true"') .'>';
 	print '</td>';
 	print '</tr></table>';
 	print '</form><br>';

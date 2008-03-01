@@ -61,7 +61,8 @@ if ($_POST["action"] == 'add_action')
 	
     if ($_POST['cancel'])
 	{
-		header("Location: ".DOL_URL_ROOT.'/comm/fiche.php?socid='.$_POST['socid']);
+		if ($_POST['socid'] > 0) header("Location: ".DOL_URL_ROOT.'/comm/fiche.php?socid='.$_POST['socid']);
+		else header("Location: ".DOL_URL_ROOT.'/comm/action/indexactions.php');
 		exit;	
 	}
 
