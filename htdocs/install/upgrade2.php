@@ -1483,6 +1483,12 @@ function migrate_module_menus($db,$langs,$conf)
 		$mod=new modMantis($db);
 		$mod->init();
 	}
+	if (! empty($conf->global->MAIN_MODULE_SOCIETE))
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/includes/modules/modSociete.class.php');
+		$mod=new modSociete($db);
+		$mod->init();
+	}	
 }
 
 /*
