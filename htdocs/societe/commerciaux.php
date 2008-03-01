@@ -97,7 +97,7 @@ if ($_GET["socid"])
     dolibarr_fiche_head($head, 'salesrepresentative', $langs->trans("ThirdParty"));
     
     /*
-    * Fiche société en mode visu
+    * Fiche sociï¿½tï¿½ en mode visu
     */
     
     print '<table class="border" width="100%">';
@@ -144,7 +144,7 @@ if ($_GET["socid"])
         {
         	$obj = $db->fetch_object($resql);
         	
-          if (!$user->rights->commercial->client->voir)
+          if (!$user->rights->societe->client->voir)
           {
           	print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
             print img_object($langs->trans("ShowUser"),"user").' ';
@@ -179,8 +179,7 @@ if ($_GET["socid"])
     print "</div>\n";
     
     
-    
-    if ($user->rights->societe->creer && $user->rights->commercial->client->voir)
+    if ($user->rights->societe->creer && $user->rights->societe->client->voir)
     {
         /*
         * Liste

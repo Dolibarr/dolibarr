@@ -1148,7 +1148,7 @@ class Societe extends CommonObject
 		}
 		elseif($this->client == 2)
 		{
-			$lien= '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$this->id.'">';
+			$lien= '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$this->id.'">';
 			$lienfin='</a>';
 		}
 		else

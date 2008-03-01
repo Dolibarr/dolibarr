@@ -51,13 +51,14 @@ create table llx_societe
   tva_intra          varchar(20),                         -- tva
   capital            real,                                -- capital de la société
   description        text,                                --
-  fk_stcomm          tinyint        DEFAULT 0,            -- commercial statut
+  fk_stcomm          smallint       DEFAULT 0,            -- commercial statut
   note               text,                                --
   services           tinyint        DEFAULT 0,            --
   prefix_comm        varchar(5),                          -- prefix commercial
   client             tinyint        DEFAULT 0,            -- client 0/1/2
   fournisseur        tinyint        DEFAULT 0,            -- fournisseur 0/1
   supplier_account   varchar(32),                         -- compte client chez un fournisseur
+  fk_prospectlevel   varchar(12),                         -- prospect level (in llx_c_prospectlevel)
   customer_bad       tinyint        DEFAULT 0,            -- mauvais payeur 0/1
   customer_rate      real           DEFAULT 0,            -- taux fiabilié client (0 à 1)
   supplier_rate      real           DEFAULT 0,            -- taux fiabilié fournisseur (0 à 1)

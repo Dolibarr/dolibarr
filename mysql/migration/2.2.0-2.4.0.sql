@@ -202,3 +202,19 @@ ALTER TABLE llx_facture_fourn_det ADD product_type	  integer      DEFAULT NULL a
 -- V4.1 update llx_facture_fourn_det set product_type = 1 where fk_product in (select rowid from llx_product where fk_product_type = 1);
 -- V4.1 update llx_facturedet        set product_type = 1 where product_type is null;
 -- V4.1 update llx_facture_fourn_det set product_type = 1 where product_type is null;
+
+create table llx_c_prospectlevel
+(
+  code            varchar(12) PRIMARY KEY,
+  label           varchar(30),
+  sortorder       smallint,
+  active          smallint    DEFAULT 1 NOT NULL
+) type=innodb;
+
+insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_UNKOWN',    'Unknown',  1);
+insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_LOW',       'Low',      2);
+insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_MEDIUM',    'Medium',   3);
+insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_HIGH',      'Eleve',    4);
+
+
+alter table llx_societe add column fk_prospectlevel varchar(12) after fournisseur;

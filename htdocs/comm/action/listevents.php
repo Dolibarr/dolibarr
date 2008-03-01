@@ -65,9 +65,9 @@ $sql.= " c.code as acode, c.libelle,";
 $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
 $sql.= " ud.login as logindone, ud.rowid as useriddone,";
 $sql.= " sp.name, sp.firstname";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s,";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
@@ -85,7 +85,7 @@ if ($socid)
 {
   $sql .= " AND s.rowid = ".$socid;
 }
-if (!$user->rights->commercial->client->voir && !$socid) //restriction
+if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
@@ -164,7 +164,7 @@ if ($resql)
        	print $obj->label;
         print '</td>';
 
-        // Société
+        // Sociï¿½tï¿½
         print '<td>';
         $societestatic->id=$obj->socid;
 		$societestatic->client=$obj->client;

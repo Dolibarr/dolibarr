@@ -1359,3 +1359,14 @@ INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active)
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (7, 'A4', 'Format A4', '210', '297', 'mm', 1);
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (8, 'A5', 'Format A5', '148', '210', 'mm', 1);
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (9, 'A6', 'Format A6', '105', '148', 'mm', 1);
+
+
+--
+-- Prospect level
+--
+
+delete from llx_c_prospectlevel;
+insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_UNKOWN',    'Unknown',  1);
+insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_LOW',       'Low',      2);
+insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_MEDIUM',    'Medium',   3);
+insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_HIGH',      'Eleve',    4);

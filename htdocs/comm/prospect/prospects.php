@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +55,8 @@ $pagenext = $page + 1;
 if ($_GET["action"] == 'cstc')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
-  $sql .= " WHERE rowid = ".$_GET["pid"];
-  $db->query($sql);
+  $sql .= " WHERE rowid = ".$_GET["socid"];
+  $result=$db->query($sql);
 }
 
 
@@ -64,14 +64,15 @@ if ($_GET["action"] == 'cstc')
  * Affichage liste
  */
 
-$sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.fk_stcomm ";
-$sql .= ", d.nom as departement";
+$sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,";
+$sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
+$sql.= " d.nom as departement";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
-$sql .= " WHERE s.fk_stcomm = st.id AND s.client = 2";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
+$sql.= " WHERE s.fk_stcomm = st.id AND s.client = 2";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (isset($stcomm))
@@ -132,6 +133,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","","","align=\"center\"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","","","align=\"center\"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","","","align=\"center\"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","","","align=\"center\"",$sortfield,$sortorder);
     print '<td class="liste_titre" colspan="4">&nbsp;</td>';
     print "</tr>\n";
@@ -152,7 +154,8 @@ if ($resql)
     $var=true;
 
     $prospectstatic=new Prospect($db);
-
+    $prospectstatic->client=2;
+    
     while ($i < min($num,$conf->liste_limit))
     {
         $obj = $db->fetch_object($resql);
@@ -160,25 +163,31 @@ if ($resql)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->rowid.'">';
-        print img_object($langs->trans("ShowProspect"),"company");
-        print ' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+        print '<td>';
+        $prospectstatic->id=$obj->rowid;
+        $prospectstatic->nom=$obj->nom;
+        print $prospectstatic->getNomUrl(1);
+        print '</td>';
         print "<td>".$obj->ville."&nbsp;</td>";
         print "<td align=\"center\">$obj->departement</td>";
-        // Date création
+        // Creation date
         print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
+        // Level
+        print "<td align=\"center\">";
+        print $prospectstatic->LibLevel($obj->fk_prospectlevel);
+        print "</td>";
         // Statut
         print "<td align=\"center\">";
         print $prospectstatic->LibStatut($obj->fk_stcomm,2);
         print "</td>";
-
+        
         $sts = array(-1,0,1,2,3);
         print '<td align="right" nowrap>';
         foreach ($sts as $key => $value)
         {
             if ($value <> $obj->fk_stcomm)
             {
-                print '<a href="prospects.php?pid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$urladd.'">';
+                print '<a href="prospects.php?socid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$urladd.'">';
                 print img_action(0,$value);
                 print '</a>&nbsp;';
             }

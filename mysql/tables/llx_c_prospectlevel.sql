@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 -- $Id$
 -- ===================================================================
 
+create table llx_c_prospectlevel
+(
+  code            varchar(12) PRIMARY KEY,
+  label           varchar(30),
+  sortorder       smallint,
+  active          smallint    DEFAULT 1 NOT NULL
+) type=innodb;
 
-ALTER TABLE llx_societe ADD UNIQUE uk_societe_prefix_comm(prefix_comm);
-ALTER TABLE llx_societe ADD UNIQUE uk_societe_code_client(code_client);
-
-ALTER TABLE llx_societe ADD INDEX idx_societe_user_creat(fk_user_creat);
-ALTER TABLE llx_societe ADD INDEX idx_societe_user_modif(fk_user_modif);
-
---ALTER TABLE llx_societe ADD FOREIGN KEY fk_prospectlevel llx_c_prospectlevel(code);

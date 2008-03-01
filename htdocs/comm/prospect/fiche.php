@@ -48,7 +48,7 @@ $result = restrictedArea($user, 'societe',$socid,'',1);
 if ($_GET["action"] == 'cstc')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["stcomm"];
-  $sql .= " WHERE rowid = ".$_GET["id"];
+  $sql .= " WHERE rowid = ".$_GET["socid"];
   $db->query($sql);
 }
 
@@ -77,7 +77,7 @@ if ($socid > 0)
 	 */
 	$head = societe_prepare_head($societe);
 
-	dolibarr_fiche_head($head, 'prospect', $societe->nom);
+	dolibarr_fiche_head($head, 'prospect', $langs->trans("ThirdParty"));
 
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">';
@@ -99,14 +99,30 @@ if ($socid > 0)
 
     print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';
 
-	// Status
+    // Level
+//	print '<tr><td>'.$langs->trans('ProspectLevel').'</td><td colspan="3">'.$societe->getLibLevel().'</td></tr>';
+    print '<tr><td>';
+    print '<table width="100%" class="nobordernopadding"><tr><td>';
+    print $langs->trans('ProspectLevel');
+    print '<td><td align="right">';
+    if ($user->rights->societe->creer)
+        print '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id.'">'.img_edit().'</a>';
+    else
+        print '&nbsp;';
+    print '</td></tr></table>';
+    print '</td>';
+    print '<td colspan="3">';
+    print $societe->getLibLevel();
+    print '</td></tr>';
+	
+    // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$societe->getLibStatut(4).'</td>';
     print '<td>';
-    if ($societe->stcomm_id != -1) print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">'.img_action(0,-1).'</a>';
-    if ($societe->stcomm_id !=  0) print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=0&amp;action=cstc">'.img_action(0,0).'</a>';
-    if ($societe->stcomm_id !=  1) print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=1&amp;action=cstc">'.img_action(0,1).'</a>';
-    if ($societe->stcomm_id !=  2) print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=2&amp;action=cstc">'.img_action(0,2).'</a>';
-    if ($societe->stcomm_id !=  3) print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=3&amp;action=cstc">'.img_action(0,3).'</a>';
+    if ($societe->stcomm_id != -1) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">'.img_action(0,-1).'</a>';
+    if ($societe->stcomm_id !=  0) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=0&amp;action=cstc">'.img_action(0,0).'</a>';
+    if ($societe->stcomm_id !=  1) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=1&amp;action=cstc">'.img_action(0,1).'</a>';
+    if ($societe->stcomm_id !=  2) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=2&amp;action=cstc">'.img_action(0,2).'</a>';
+    if ($societe->stcomm_id !=  3) print '<a href="fiche.php?socid='.$societe->id.'&amp;stcomm=3&amp;action=cstc">'.img_action(0,3).'</a>';
     print '</td></tr>';
     print '</table>';
 

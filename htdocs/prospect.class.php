@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
     	\file       htdocs/prospect.class.php
 		\ingroup    societe
 		\brief      Fichier de la classe des prospects
-		\version    $Revision$
+		\version    $Id$
 */
 
 
@@ -43,7 +40,7 @@ class Prospect extends Societe
     
     /**
      *    \brief  Constructeur de la classe
-     *    \param  DB     handler accès base de données
+     *    \param  DB     handler accï¿½s base de donnï¿½es
      *    \param  id     id societe (0 par defaut)
      */
     function Prospect($DB, $id=0)
@@ -98,8 +95,8 @@ class Prospect extends Societe
 
     
 	/**
-	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \brief      Retourne le libellï¿½ du statut d'une facture (brouillon, validï¿½e, abandonnï¿½e, payï¿½e)
+	 *    \param      mode          0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -108,10 +105,10 @@ class Prospect extends Societe
 	}
 
 	/**
-	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string        	Libellé du statut
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string        	Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -146,5 +143,31 @@ class Prospect extends Societe
 		return "Error, mode/status not found";
 	}
 
+	/**
+	 *	\brief      Renvoi le libelle du niveau
+	 *  \return     string        Libelle
+	 */
+	function getLibLevel()
+	{
+		return $this->LibLevel($this->fk_prospectlevel);
+	}
+	
+	/**
+	 *    	\brief      Renvoi le libelle du niveau
+	 *    	\param      fk_prospectlevel   	Prospect level
+	 *    	\return     string        		Libelle du niveau
+	 */
+	function LibLevel($fk_prospectlevel)
+	{
+		global $langs;
+
+		$lib=$langs->trans("ProspectLevel".$fk_prospectlevel);
+		// If lib not found in language file, we get label from cache/databse
+		if ($lib == $langs->trans("ProspectLevel".$fk_prospectlevel)) 
+		{
+			$lib=$langs->getLabelFromKey($this->db,$fk_prospectlevel,'c_prospectlevel','code','label');
+		}
+		return $lib;
+	}
 }
 ?>

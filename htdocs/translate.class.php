@@ -39,8 +39,10 @@ class Translate {
 
     var $tab_loaded=array();		// Tableau pour signaler les fichiers deja charges
     var $tab_translate=array();		// Tableau des traductions
-
-	var $charset_inputfile='ISO-8859-1';	// Codage du contenu du fichier langue
+	
+    var $cache_labels=array();		// Cache for labels
+	
+    var $charset_inputfile='ISO-8859-1';	// Codage du contenu du fichier langue
 	var $charset_output='ISO-8859-1';		// Codage par defaut de la sortie de la methode trans
 	
 
@@ -445,6 +447,42 @@ class Translate {
         return false;
     }
 
+    /**
+     *      \brief      Return a label for a key. Store key-label in a cache.
+     * 		\param		db			Database handler
+     * 		\param		key			Key to get label
+     * 		\param		tablename	Table name
+     * 		\param		fieldkey	Field for key
+     * 		\param		fieldlabel	Field for label	
+     *      \return     string		Label
+     */
+    function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
+    {
+    	// Check in cache
+        if (! empty($this->cache_labels[$tablename][$key]))
+        {
+        	return $this->cache_labels[$tablename][$key];    // Found in cache
+        }
+
+        $sql = "SELECT ".$fieldlabel." as label";
+        $sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
+        $sql.= " WHERE ".$fieldkey." = '".$key."'";
+
+        dolibarr_syslog('Translate::getLabelFromKey ',LOG_DEBUG);
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $obj = $db->fetch_object($resql);
+            $this->cache_labels[$tablename][$key]=$obj->label;
+            return $this->cache_labels[$tablename][$key];
+        }
+        else
+        {
+            dolibarr_print_error($db);
+            return -1;
+        }
+    }
+    
 }
 
 ?>

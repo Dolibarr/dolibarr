@@ -46,7 +46,7 @@ function societe_prepare_head($objsoc)
 	}
 	if ($objsoc->client==2)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$objsoc->id;
+		$head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objsoc->id;
 		$head[$h][1] = $langs->trans("Prospect");
 		$head[$h][2] = 'prospect';
 		$h++;
