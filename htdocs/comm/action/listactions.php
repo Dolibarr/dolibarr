@@ -233,6 +233,12 @@ if ($resql)
 
        	print '<td align="left" nowrap="nowrap">';
 		print dolibarr_print_date($obj->dp,"day");
+		$late=0;
+		if ($obj->percent == 0 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
+		if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && date("U",$obj->dp) < time()) $late=1;
+		if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && date("U",$obj->dp2) < time()) $late=1;
+		if ($obj->percent > 0 && $obj->percent < 100 && ! $obj->dp2 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
+		if ($late) print img_warning($langs->trans("Late"));
 		print '</td>';
 
 		print '<td align="left" nowrap="nowrap">';

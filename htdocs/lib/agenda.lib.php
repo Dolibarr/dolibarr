@@ -86,11 +86,13 @@ function show_array_actions_to_do($max=5)
 	            print '<td>'.$customerstatic->getNomUrl(1,'',16).'</td>';
 
 				// Date
-				print '<td width="100">'.dolibarr_print_date($obj->dp).'&nbsp;';
-				if (date("U",$obj->dp) < time())
-				{
-					print img_warning($langs->trans("Late"));
-				}
+				print '<td width="100" alig="right">'.dolibarr_print_date($obj->dp,'day').'&nbsp;';
+				$late=0;
+				if ($obj->percent == 0 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
+				if ($obj->percent == 0 && ! $obj->dp && $obj->dp2 && date("U",$obj->dp) < time()) $late=1;
+				if ($obj->percent > 0 && $obj->percent < 100 && $obj->dp2 && date("U",$obj->dp2) < time()) $late=1;
+				if ($obj->percent > 0 && $obj->percent < 100 && ! $obj->dp2 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
+				if ($late) print img_warning($langs->trans("Late"));
 				print "</td>";	
 
 				// Statut
