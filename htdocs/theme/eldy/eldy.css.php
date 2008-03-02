@@ -405,63 +405,6 @@ a.help:active       { font-size:11px; font-family: helvetica, verdana, arial, sa
 a.help:hover        { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 
 
-
-/* Pour menu gauche auguria */
-
-font.menu_titre_disabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; margin: 1em 1em 1em 1em; }
-
-a.menu_titre:link         { font-size:11px; text-align:left; font-weight: bold; color: #000000; margin: 1em 1em 1em 1em; }
-a.menu_titre:visited      { font-size:11px; text-align:left; font-weight: bold; color: #000000; margin: 1em 1em 1em 1em; }
-a.menu_titre:active       { font-size:11px; text-align:left; font-weight: bold; color: #000000; margin: 1em 1em 1em 1em; }
-a.menu_titre:hover        { font-size:11px; text-align:left; font-weight: bold; color: #000000; margin: 1em 1em 1em 1em; }
-
-div.menu
-{
-	margin: 0px;
-	border-spacing: 0px;
-	padding: 0px;
-	width: 165px;
-    border: 0px solid #68ACCF;
-}
-
-
-div.menu_titre {
-	background: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/bg-titre-rubrique.png' ?>);
-	padding: 0px;
-	padding-top:7px;
-	padding-left:0px;
-	margin-top: 8px;
-	margin: 0px;
-	height: 21px;
-    text-align: left;
-    font-size : 12px;
-    color : #FFFFFF;
-    font-weight: bold;
-}
-
-div.menu_contenu {
-	background: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/bg-rubrique.png' ?>);
-	margin: 0px;
-	padding: 1px;
-
-	padding-right: 6px;
-    font-size : 11px;
-    font-weight:normal;
-    color : #000000;
-    text-align: left;
-}
-
-div.menu_fin {
-	background: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/bg-bas-rubrique.png' ?>);
-	margin: 0px;
-	padding: 0px;	
-	height:6px;
-    width:165px;
-    background-repeat:no-repeat;
-}
-
-
-
 div.blockvmenupair
 {
     width:160px;

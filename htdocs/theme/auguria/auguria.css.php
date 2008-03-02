@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file       htdocs/theme/auguria/auguria.css.php
 		\brief      Fichier de style CSS du theme Auguria
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("../../conf/conf.php");
@@ -356,11 +354,11 @@ img.login
 /* Barre de gauche                                                                */
 /* ============================================================================== */
 
-a.vmenu:link        { font-size:11px; text-align:left; font-weight: bold; color:#000000}
-a.vmenu:visited     { font-size:11px; text-align:left; font-weight: bold; color:#000000}
-a.vmenu:active      { font-size:11px; text-align:left; font-weight: bold; color:#000000}
-a.vmenu:hover       { font-size:11px; text-align:left; font-weight: bold; color:#000000}
-font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; }
+a.vmenu:link        { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
+a.vmenu:visited     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
+a.vmenu:active      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
+a.vmenu:hover       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
+font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; margin: 1em 1em 1em 1em; }
 
 a.vsmenu:link       { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
 a.vsmenu:visited    { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
@@ -374,17 +372,15 @@ a.help:active       { font-size: 10px; font-weight: bold; background: #FFFFFF; b
 a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
-/* Pour menu gauche Auguria */
-
-.menu_titre	a		{font-size:11px; text-align:left; font-weight: bold; color:#FFFFFF}
-font.menu_titre_disabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; margin: 1em 1em 1em 1em; }
-
-a.menu_titre:link       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-a.menu_titre:visited    { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-a.menu_titre:active     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-a.menu_titre:hover      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-
-div.menu
+div.blockvmenuimpair
+{
+	margin: 0px;
+	border-spacing: 0px;
+	padding: 0px;
+	width: 166px;
+    border : 0px solid #68ACCF;	
+}
+div.blockvmenupair
 {
 	margin: 0px;
 	border-spacing: 0px;
@@ -393,6 +389,27 @@ div.menu
     border : 0px solid #68ACCF;	
 }
 
+div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
+{
+	display: block;
+	color: #000000;
+	text-align:left;
+	text-decoration: none;
+	padding: 4px;
+	margin: 0px;
+	background: #FFFFFF;
+	margin-bottom: -12px;
+}
+
+div.help
+{
+    margin-left:5px;
+    margin-top:15px;
+    text-align: center;
+}
+
+
+/* Pour menu gauche Auguria */
 
 div.menu_titre {
 	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-titre-rubrique.png' ?>);
@@ -429,48 +446,6 @@ div.menu_fin {
     background-repeat:no-repeat;
 }
 
-
-
-div.blockvmenuimpair a.vmenu, div.blockvmenupair a.vmenu
-{
-	display: block;
-	color: #FFFFFF;
-	text-align:left;
-	text-decoration: none;
-	padding: 4px;
-	margin: 0px;
-	margin-bottom: -10px;
-	background: #FFFFFF;
-    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/tmenu.jpg' ?>);
-    background-position:top;
-    background-repeat:repeat-x;
-}
-
-div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
-{
-	display: block;
-	color: #000000;
-	text-align:left;
-	text-decoration: none;
-	padding: 4px;
-	margin: 0px;
-	background: #FFFFFF;
-	    margin-bottom: -12px;
-}
-
-div.blockvmenuimpair form .button, div.blockvmenupair form .button
-{
-	margin: 0px;
-	background: #6aabd1;
-	color: #FFFFFF;
-}
-
-div.help
-{
-    margin-left:5px;
-    margin-top:15px;
-    text-align: center;
-}
 
 td.barre {
 	border-right: 1px solid #000000;

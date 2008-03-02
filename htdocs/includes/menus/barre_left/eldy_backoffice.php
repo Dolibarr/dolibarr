@@ -262,25 +262,6 @@ class MenuLeft {
 			{
 				$langs->load("companies");
 
-				// Actions
-				if ($conf->agenda->enabled)
-				{
-					$langs->load("agenda");
-					
-					// Actions
-					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/indexactions.php?leftmenu=agenda", $langs->trans("Actions"), 0, $user->rights->agenda->myactions->read);
-					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/fiche.php?leftmenu=agenda&amp;action=create", $langs->trans("NewAction"), 1, $user->rights->agenda->myactions->read);
-					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda", $langs->trans("List"), 1, $user->rights->agenda->myactions->read);
-					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=todo&amp;filter=mine", $langs->trans("MenuToDoMyActions"),2, $user->rights->agenda->myactions->read);
-					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=done&amp;filter=mine", $langs->trans("MenuDoneMyActions"),2, $user->rights->agenda->myactions->read);
-					if ($user->rights->agenda->allactions->read)
-					{
-						$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=todo", $langs->trans("MenuToDoActions"),2, $user->rights->agenda->allactions->read);
-						$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/listactions.php?leftmenu=agenda&amp;status=done", $langs->trans("MenuDoneActions"),2, $user->rights->agenda->allactions->read);
-					}
-					$newmenu->add_submenu(DOL_URL_ROOT."/comm/action/rapport/index.php?leftmenu=agenda", $langs->trans("Reportings"), 1, $user->rights->agenda->allactions->read);
-				}
-
 				// Prospects
 				$newmenu->add(DOL_URL_ROOT."/comm/prospect/index.php?leftmenu=prospects", $langs->trans("Prospects"), 0, $user->rights->societe->lire);
 
@@ -894,6 +875,7 @@ class MenuLeft {
 		}
 		else
 		{
+			$contenu = 0;
 			for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++)
 			{
 				$alt++;
@@ -910,41 +892,48 @@ class MenuLeft {
 				}
 
 				// Place tabulation
+				$tabstring='';
 				$tabul=($this->menu_array[$i]['level'] - 1);
 				if ($tabul > 0)
 				{
 					for ($j=0; $j < $tabul; $j++)
 					{
-						print '&nbsp; &nbsp; ';
+						$tabstring.='&nbsp; &nbsp; ';
 					}
 				}
-
+				
 				// Menu niveau 0
 				if ($this->menu_array[$i]['level'] == 0)
 				{
+					if ($contenu == 1) print '<div class="menu_fin"></div>';
 					if ($this->menu_array[$i]['enabled'])
 					{
-						print '<a class="vmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a><br>';
+						print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>';
 					}
 					else
 					{
-						print '<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+						print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font></div>';
 					}
 				}
 				// Menu niveau > 0
 				if ($this->menu_array[$i]['level'] > 0)
 				{
+					if ($this->menu_array[$i]['level']==1) $contenu = 1;
 					if ($this->menu_array[$i]['enabled'])
 					{
-						print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>';
+						print '<div class="menu_contenu">';
+						print $tabstring.'<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>';
 						print $this->menu_array[$i]['titre'];
 						print '</a>';
 						// If title is not pure text and contains a table, no carriage return added
 						if (! strstr($this->menu_array[$i]['titre'],'<table')) print '<br>';
+						print '</div>';
 					}
 					else
 					{
-						print '<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+						print '<div class="menu_contenu">';
+						print $tabstring.'<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+						print '</div>';
 					}
 				}
 
@@ -954,6 +943,8 @@ class MenuLeft {
 					print "</div>\n";
 				}
 			}
+            if ($contenu == 1) print '<div class="menu_fin"></div>';
+			
 		}
 	}
 

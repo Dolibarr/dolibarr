@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -297,11 +297,11 @@ show_array_last_actions_done($max);
  */
 if ($user->rights->societe->lire)
 {
-    $sql = "SELECT s.rowid,s.nom,".$db->pdate("datec")." as datec";
+    $sql = "SELECT s.rowid,s.nom,s.client,".$db->pdate("datec")." as datec";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql.= " WHERE s.client = 1";
+    $sql.= " WHERE s.client in (1,2)";
     if ($socid)
     {
         $sql .= " AND s.rowid = $socid";
@@ -323,7 +323,7 @@ if ($user->rights->societe->lire)
             
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre">';
-            print '<td colspan="2">'.$langs->trans("BoxTitleLastCustomers",$max).'</td></tr>';
+            print '<td colspan="3">'.$langs->trans("BoxTitleLastCustomersOrProspects",$max).'</td></tr>';
             
             $i = 0;
             $var=false;
@@ -331,7 +331,13 @@ if ($user->rights->societe->lire)
             {
                 $objp = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
-                print "<td nowrap><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
+                print "<td nowrap>";
+				if ($objp->client == 1) print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
+				if ($objp->client == 2) print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$objp->rowid."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
+                print '<td align="right" nowrap>';
+				if ($objp->client == 1) print $langs->trans("Customer");
+				if ($objp->client == 2) print $langs->trans("Prospect");
+				print "</td>";
                 print '<td align="right" nowrap>'.dolibarr_print_date($objp->datec,'day')."</td>";
                 print '</tr>';
                 $i++;
