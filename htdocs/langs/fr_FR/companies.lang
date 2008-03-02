@@ -144,6 +144,7 @@ SupplierCodeDesc=Code fournisseur unique pour chaque fournisseur
 RequiredIfCustomer=Requis si tiers est un client ou prospect
 RequiredIfSupplier=Requis si tiers est un fournisseur
 ValidityControledByModule=Validité controlée par le module
+ThisIsModuleRules=Voici les règles de ce module
 LastProspect=Dernier prospect
 ProspectToContact=Prospect à contacter
 CompanyDeleted=La société "%s" a été supprimée de la base.

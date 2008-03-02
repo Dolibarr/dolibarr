@@ -125,6 +125,8 @@ class ModeleThirdPartyCode
 		if ($type == 0)  $s.=$langs->trans("CustomerCodeDesc").'<br>';
 		if ($type == 1)  $s.=$langs->trans("SupplierCodeDesc").'<br>';
 		if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+		$s.='<br>';
+		$s.='<u>'.$langs->trans("ThisIsModuleRules").'</u>:<br>';
 		if ($type == 0)  $s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$this->code_null).'</b><br>';
 		if ($type == 1)  $s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$this->code_null).'</b><br>';
 		if ($type == -1) $s.=$langs->trans("Required").': <b>'.yn(!$this->code_null).'</b><br>';

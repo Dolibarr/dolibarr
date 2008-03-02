@@ -144,6 +144,7 @@ SupplierCodeDesc=Supplier code, unique for all suppliers
 RequiredIfCustomer=Required if third party is a customer or prospect
 RequiredIfSupplier=Required if third party is a supplier
 ValidityControledByModule=Validity controled by module
+ThisIsModuleRules=This is rules for this module
 LastProspect=Last
 ProspectToContact=Prospect to contact
 CompanyDeleted=Company "%s" deleted from database.
