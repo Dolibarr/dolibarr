@@ -565,6 +565,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 }
 
 
+
 /**
 		\brief  	Returns formated date
 		\param		fmt				Format (Exemple: 'Y-m-d H:i:s')
@@ -1753,11 +1754,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 }
 
 /**
-   \brief  Fonction servant a afficher les fleches de navigation dans les pages de listes
-   \param	page			numéro de la page
-   \param	file			lien
-   \param	options         autres parametres d'url a propager dans les liens ("" par defaut)
-   \param	nextpage	    faut-il une page suivante
+   \brief  	Fonction servant a afficher les fleches de navigation dans les pages de listes
+   \param	page			Numéro de la page
+   \param	file			Lien
+   \param	options         Autres parametres d'url a propager dans les liens ("" par defaut)
+   \param	nextpage	    Faut-il une page suivante
 */
 function print_fleche_navigation($page,$file,$options='',$nextpage)
 {

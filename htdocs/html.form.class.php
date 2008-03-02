@@ -790,13 +790,14 @@ class Form
     
     
     /**
-     *    \brief      Retourne la liste déroulante des utilisateurs
-     *    \param      selected        Id contact pré-sélectionné
-     *    \param      htmlname        Nom champ formulaire
-     *    \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-     *    \param      exclude         Liste des id utilisateurs à exclure
+     *	\brief      Retourne la liste déroulante des utilisateurs
+     *  \param      selected        Id user preselected
+     *  \param      htmlname        Field name in form
+     *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *	\param		disabled		If select list must be disabled
+     *  \param      exclude         Liste des id utilisateurs à exclure
      */
-    function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='')
+    function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0)
     {
 		// Permettre l'exclusion d'utilisateurs
 		if (is_array($exclude))
@@ -813,7 +814,7 @@ class Form
 		dolibarr_syslog("Form::select_users sql=".$sql);
 		if ($this->db->query($sql))
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
+			print '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="true"':'').'>';
 			if ($show_empty) print '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
 			$num = $this->db->num_rows();
 			$i = 0;

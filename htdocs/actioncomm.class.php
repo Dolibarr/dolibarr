@@ -94,9 +94,17 @@ class ActionComm
         global $langs,$conf;
 
         // Clean parameters
+		$this->label=trim($this->label);
+        $this->note=trim($this->note);
 		if (! $this->percentage) $this->percentage = 0;
         if (! $this->priority)   $this->priority = 0;
+        if ($this->percentage > 100) $this->percentage = 100;
         if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
+		if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
+		if ($this->date  && $this->dateend) $this->durationa=($this->dateend - $this->date);
+		if ($this->datep && $this->datef && $this->datep > $this->datef) $this->datef=$this->datep;
+		if ($this->date  && $this->dateend && $this->date > $this->dateend) $this->dateend=$this->date;
+
 		$now=time();
 		if (! $this->type_id && $this->type_code)
 		{
@@ -113,8 +121,6 @@ class ActionComm
 				return -1;
 			}
 		}
-		if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
-		if ($this->date  && $this->dateend) $this->durationa=($this->dateend - $this->date);
 
 		// Check parameters
 		if (! $this->type_id)
@@ -300,8 +306,15 @@ class ActionComm
         // Clean parameters
 		$this->label=trim($this->label);
         $this->note=trim($this->note);
+		if (! $this->percentage) $this->percentage = 0;
+        if (! $this->priority)   $this->priority = 0;
         if ($this->percentage > 100) $this->percentage = 100;
-    
+        if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
+		if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
+		if ($this->date  && $this->dateend) $this->durationa=($this->dateend - $this->date);
+		if ($this->datep && $this->datef && $this->datep > $this->datef) $this->datef=$this->datep;
+		if ($this->date  && $this->dateend && $this->date > $this->dateend) $this->dateend=$this->date;
+		
 		// Check parameters
 		if ($this->percentage == 0 && $this->userdone->id > 0)
 		{
@@ -313,7 +326,9 @@ class ActionComm
         $sql.= " SET percent='".$this->percentage."'";
         $sql.= ", label = ".($this->label ? "'".addslashes($this->label)."'":"null");
         $sql.= ", datep = ".($this->datep ? "'".$this->db->idate($this->datep)."'" : 'null');
+        $sql.= ", datep2 = ".($this->datef ? "'".$this->db->idate($this->datef)."'" : 'null');
         $sql.= ", datea = ".($this->date ? "'".$this->db->idate($this->date)."'" : 'null');
+        $sql.= ", datea2 = ".($this->dateend ? "'".$this->db->idate($this->dateend)."'" : 'null');
         $sql.= ", note = ".($this->note ? "'".addslashes($this->note)."'":"null");
         $sql.= ", fk_contact =". ($this->contact->id > 0 ? "'".$this->contact->id."'":"null");
         $sql.= ", priority = '".$this->priority."'";

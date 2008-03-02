@@ -82,6 +82,7 @@ print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 // Search actions
+/*
 $var=false;
 print '<table class="noborder" width="100%">';
 print '<form method="post" action="'.DOL_URL_ROOT.'/comm/action/listactions.php">';
@@ -90,13 +91,40 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("Keyword").':</td><td><input type="text" class="flat" name="sf_ref" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print '</tr>';
 print "</form></table><br>\n";
+*/
+
+$var=true;
+print '<form method="post" action="'.DOL_URL_ROOT.'/comm/action/listactions.php">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Calendar").'</td></tr>';
+// All my actions
+$var=!$var;
+print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/comm/action/index.php?filtera='.$user->id.'&amp;filtert='.$user->id.'&amp;filterd='.$user->id.'">';
+print img_picto('','object_calendar').' '.$langs->trans("AllMyActions").'</a></td></tr>';
+// Actions i asked
+$var=!$var;
+print '<tr '.$bc[$var].'><td> &nbsp; &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/comm/action/index.php?filtera='.$user->id.'">';
+print img_picto('','object_calendar').' '.$langs->trans("MyActionsAsked").'</a></td></tr>';
+// Actions affected to me
+$var=!$var;
+print '<tr '.$bc[$var].'><td> &nbsp; &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/comm/action/index.php?filtert='.$user->id.'">';
+print img_picto('','object_calendar').' '.$langs->trans("MyActionsToDo").'</a></td></tr>';
+// Actions done by me
+$var=!$var;
+print '<tr '.$bc[$var].'><td> &nbsp; &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/comm/action/index.php?filterd='.$user->id.'">';
+print img_picto('','object_calendar').' '.$langs->trans("MyActionsDone").'</a></td></tr>';
+// All actions of everybody
+$var=!$var;
+print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/comm/action/index.php">';
+print img_picto('','object_calendar').' '.$langs->trans("AllActions").'</a></td></tr>';
+print "</table></form><br>\n";
 
 
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
-show_array_actions_to_do(0);
+if ($conf->agenda->enabled) show_array_actions_to_do(10);
 
-show_array_last_actions_done(5);
+if ($conf->agenda->enabled) show_array_last_actions_done(10);
 
 print '</td></tr></table>';
 

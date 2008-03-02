@@ -1,5 +1,6 @@
 # Dolibarr language file - fr_FR - agenda
-ActionsArea=Espaces actions
+Actions=Actions/Taches
+ActionsArea=Espace actions/taches
 Agenda=Agenda
 Agendas=Agendas
 Calendar=Calendrier
@@ -7,7 +8,14 @@ Calendars=Calendriers
 AffectedTo=Affecté à
 DoneBy=Réalisé par
 Events=Evênements
-SearchAnAction=Rechercher une action
-MenuDoneActions=Actions terminées
+SearchAnAction=Rechercher une action/tache
+MenuToDoActions=Les actions incomplètes
+MenuDoneActions=Les actions terminées
+MenuToDoMyActions=Mes actions incomplètes
+MenuDoneMyActions=Mes actions terminées
 ListOfEvents=Liste des évènements Dolibarr
-
+ActionsAskedBy=Actions enregistrées par
+ActionsToDoBy=Actions affectées à
+ActionsDoneBy=Actions réalisées par
+AllMyActions=Toutes mes actions/taches
+AllActions=Toutes les actions/taches

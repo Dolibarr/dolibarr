@@ -67,7 +67,7 @@ class modAgenda extends DolibarrModules
     
         // Config pages
         //-------------
-        $this->config_page_url = array();
+        $this->config_page_url = array("agenda.php");
     
         // Dependances
         //------------
@@ -128,14 +128,6 @@ class modAgenda extends DolibarrModules
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'allactions';
         $this->rights[$r][5] = 'create';
-        $r++;
-
-        $this->rights[$r][0] = 2410;
-        $this->rights[$r][1] = 'Read Dolibarr audit events';
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'events';
-        $this->rights[$r][5] = 'read';
         $r++;
 
         // Menus

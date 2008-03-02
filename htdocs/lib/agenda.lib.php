@@ -28,11 +28,14 @@
    \brief      	Show actions to do array
    \param		max		Max nb of records
 */
-function show_array_actions_to_do($max)
+function show_array_actions_to_do($max=5)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 	
-	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, a.fk_user_author,";
+	include_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
+	include_once(DOL_DOCUMENT_ROOT.'/client.class.php');
+
+	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, a.fk_user_author, a.percent,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.nom as sname, s.rowid, s.client";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -45,6 +48,7 @@ function show_array_actions_to_do($max)
 	    $sql .= " AND s.rowid = ".$socid;
 	}
 	$sql .= " ORDER BY a.datep DESC, a.id DESC";
+	$sql .= $db->plimit($max, 0);
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -53,11 +57,13 @@ function show_array_actions_to_do($max)
 	    if ($num > 0)
 	    {
 	        print '<table class="noborder" width="100%">';
-	        print '<tr class="liste_titre"><td colspan="9">'.$langs->trans("ActionsToDo").'</td></tr>';
+	        print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastActionsToDo",$max).'</td>';
+			print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=todo">'.$langs->trans("FullList").'</a>';
+			print '</tr>';
 	        $var = true;
 	        $i = 0;
 
-		      $staticaction=new ActionComm($db);
+		    $staticaction=new ActionComm($db);
 	        $customerstatic=new Client($db);
 
 	        while ($i < $num)
@@ -94,8 +100,6 @@ function show_array_actions_to_do($max)
 				
 	            $i++;
 	        }
-	        // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
-	        // TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
 	        print "</table><br>";
 	    }
 	    $db->free($resql);
@@ -111,11 +115,11 @@ function show_array_actions_to_do($max)
    \brief      	Show last actions array
    \param		max		Max nb of records
 */
-function show_array_last_actions_done($max)
+function show_array_last_actions_done($max=5)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 	
-	$sql = "SELECT a.id, a.percent, ".$db->pdate("a.datea")." as da, a.fk_user_author,";
+	$sql = "SELECT a.id, a.percent, ".$db->pdate("a.datea")." as da, ".$db->pdate("a.datea2")." as da2, a.fk_user_author, a.label,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -130,7 +134,7 @@ function show_array_last_actions_done($max)
 	{
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	}
-	$sql .= " ORDER BY a.datea DESC";
+	$sql .= " ORDER BY a.datea2 DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$resql=$db->query($sql);
@@ -139,7 +143,9 @@ function show_array_last_actions_done($max)
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastDoneTasks",$max).'</td></tr>';
+		print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastDoneTasks",$max).'</td>';
+		print '<td colspan="2" align="right"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?status=done">'.$langs->trans("FullList").'</a>';
+		print '</tr>';
 		$var = true;
 		$i = 0;
 
@@ -152,11 +158,13 @@ function show_array_last_actions_done($max)
 			$var=!$var;
 
 			print "<tr $bc[$var]>";
-			print "<td><a href=\"".DOL_URL_ROOT."/comm/action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task");
-			$transcode=$langs->trans("Action".$obj->code);
-			$libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-			print $libelle;
-			print '</a></td>';
+			
+			$staticaction->code=$obj->code;
+			$staticaction->libelle=$obj->libelle;
+			$staticaction->id=$obj->id;
+			print '<td>'.$staticaction->getNomUrl(1,12).'</td>';
+
+            print '<td>'.dolibarr_trunc($obj->label,24).'</td>';
 
 			$customerstatic->id=$obj->rowid;
 			$customerstatic->nom=$obj->sname;
@@ -164,7 +172,7 @@ function show_array_last_actions_done($max)
 			print '<td>'.$customerstatic->getNomUrl(1,'',24).'</td>';
 
 			// Date
-			print '<td width="100" align="right">'.dolibarr_print_date($obj->da,'day');
+			print '<td width="100" align="right">'.dolibarr_print_date($obj->da2,'day');
 			print "</td>";	
 
 			// Statut

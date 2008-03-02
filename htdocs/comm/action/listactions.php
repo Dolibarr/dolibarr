@@ -42,6 +42,8 @@ $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
+$status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
+
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
@@ -49,23 +51,33 @@ $result = restrictedArea($user, 'societe', $socid,'');
 
 $canedit=1;
 if (! $user->rights->agenda->myactions->read) access_forbidden();
-if (! $user->rights->agenda->allactions->read) 
+if (! $user->rights->agenda->allactions->read) $canedit=0;
+if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')
 {
-	$canedit=0;
-	$filtera="on";
-	$filtert="on";
-	$filterd="on";
+	$filtera=$user->id;
+	$filtert=$user->id;
+	$filterd=$user->id;
 }
+
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="a.datep";
-
-$status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
+if (! $sortorder)
+{ 
+	$sortorder="ASC";
+	if ($status == 'todo') $sortorder="DESC";
+	if ($status == 'done') $sortorder="DESC";
+}
+if (! $sortfield) 
+{
+	$sortfield="a.percent";
+	if ($status == 'todo') $sortfield="a.datep";
+	if ($status == 'done') $sortfield="a.datea2";
+}
 
 
 llxHeader();
+$form=new Form($db);
 
 /*
  *  Affichage liste des actions
@@ -73,7 +85,9 @@ llxHeader();
  */
 
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
-$sql.= " a.id,".$db->pdate("a.datep")." as dp, ".$db->pdate("a.datea")." as da, a.fk_contact, a.note, a.label, a.percent as percent,";
+$sql.= " a.id, ".$db->pdate("a.datep")." as dp, ".$db->pdate("a.datep2")." as dp2,";
+$sql.= " ".$db->pdate("a.datea")." as da, ".$db->pdate("a.datea2")." as da2,";
+$sql.= " a.fk_contact, a.note, a.label, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle,";
 $sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
 $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
@@ -92,7 +106,7 @@ if ($_GET["type"])
 {
   $sql .= " AND c.id = ".$_GET["type"];
 }
-if ($_GET["time"] == "today")
+if ($_REQUEST["time"] == "today")
 {
   $sql .= " AND date_format(a.datep, '%d%m%Y') = ".strftime("%d%m%Y",time());
 }
@@ -106,12 +120,12 @@ if (!$user->rights->societe->client->voir && !$socid) //restriction
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
-if ($filtera || $filtert || $filterd) 
+if ($filtera > 0 || $filtert > 0 || $filterd > 0) 
 {
 	$sql.= " AND (";
-	if ($filtera) $sql.= " a.fk_user_author = ".$user->id;
-	if ($filtert) $sql.= ($filtera?" OR ":"")." a.fk_user_action = ".$user->id;
-	if ($filterd) $sql.= ($filtera||$filtert?" OR ":"")." a.fk_user_done = ".$user->id;
+	if ($filtera > 0) $sql.= " a.fk_user_author = ".$filtera;
+	if ($filtert > 0) $sql.= ($filtera>0?" OR ":"")." a.fk_user_action = ".$filtert;
+	if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
 	$sql.= ")";
 }
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
@@ -142,28 +156,45 @@ if ($resql)
         print_barre_liste($langs->trans($title), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
     }
     
-	print '<br>';
-	print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<table class="border" width="100%"><tr>';
-	print '<td>';
-	print $langs->trans("Filter");
-	print '</td>';
-	print '<td><input type="checkbox" name="userasked" '.($canedit?'':'disabled="true" ').($filtera?'checked="true"':'').'> ';
-	print $langs->trans("MyActionsAsked");
-	print '</td>';
-	print '<td><input type="checkbox" name="usertodo" '.($canedit?'':'disabled="true" ').($filtert?'checked="true"':'').'> ';
-	print $langs->trans("MyActionsToDo");
-	print '</td>';
-	print '<td><input type="checkbox" name="userdone" '.($canedit?'':'disabled="true" ').($filterd?'checked="true"':'').'> ';
-	print $langs->trans("MyActionsDone");
-	print '</td>';
-	print '<td align="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("ToFilter").'" '.($canedit?'':'disabled="true"') .'>';
-	print '</td>';
-	print '</tr></table>';
-	print '</form><br>';
+	//print '<br>';
+	
+	if ($canedit)
+	{
+		print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		print '<input type="hidden" name="status" value="'.$status.'">';
+		print '<input type="hidden" name="time" value="'.$_REQUEST["time"].'">';
+		print '<table class="border" width="100%">';
+		print '<tr>';
+		print '<td>';
+		//print '<input type="checkbox" name="userasked" '.($canedit?'':'disabled="true" ').($filtera?'checked="true"':'').'> ';
+		print $langs->trans("ActionsAskedBy");
+		print '</td><td>';
+		print $form->select_users($filtera,'userasked',1,'',!$canedit);
+		print '</td>';
+		print '<td rowspan="3" align="center" valign="middle">';
+		print '<input type="submit" class="button" value="'.$langs->trans("Search").'" '.($canedit?'':'disabled="true"') .'>';
+		print '</td>';
+		print '</tr>';
 
+		print '<tr>';
+		print '<td>';
+		//print '<input type="checkbox" name="usertodo" '.($canedit?'':'disabled="true" ').($filtert?'checked="true"':'').'> ';
+		print $langs->trans("ActionsToDoBy");
+		print '</td><td>';
+		print $form->select_users($filtert,'usertodo',1,'',!$canedit);
+		print '</td></tr>';
+		
+		print '<tr>';
+		print '<td>';
+		//print '<input type="checkbox" name="userdone" '.($canedit?'':'disabled="true" ').($filterd?'checked="true"':'').'> ';
+		print $langs->trans("ActionsDoneBy");
+		print '</td><td>';
+		print $form->select_users($filterd,'userdone',1,'',!$canedit);
+		print '</td></tr>';
 
+		print '</table>';
+		print '</form><br>';
+	}
 	
 	
 	$i = 0;
@@ -171,7 +202,7 @@ if ($resql)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DatePlanShort"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateRealShort"),$_SERVER["PHP_SELF"],"a.datea",$param,'','',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateRealShort"),$_SERVER["PHP_SELF"],"a.datea2",$param,'','',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
@@ -205,7 +236,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td align="left" nowrap="nowrap">';
-		print dolibarr_print_date($obj->da,"day");
+		print dolibarr_print_date($obj->da2,"day");
 		print '</td>';
 
         // Titre

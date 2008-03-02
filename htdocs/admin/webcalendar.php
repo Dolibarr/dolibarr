@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      �ric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
@@ -203,15 +203,21 @@ print '<td>';
 print '&nbsp;</td>';
 print "</tr>";
 
+print "<tr class=\"impair\">";
+print "<td>".$langs->trans("PasswordTogetVCalExport")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"PHPWEBCALENDAR_PASSWORD_VCALEXPORT\" value=\"". ($_POST["PHPWEBCALENDAR_PASSWORD_VCALEXPORT"]?$_POST["PHPWEBCALENDAR_PASSWORD_VCALEXPORT"]:$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT) . "\" size=\"40\"></td>";
+print "<td>&nbsp;</td>";
+print "</tr>";
+
 print "</table>";
 print "<br>";
 
 $var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
-print "<td colspan=\"2\">".$langs->trans("WebCalSyncro")."</td>";
+print "<td colspan=\"3\">".$langs->trans("WebCalSyncro")."</td>";
 print "</tr>";
-if ($conf->societe->enabled)
+if ($conf->agenda->enabled)
 {
     $var=!$var;
     print '<tr '.$bc[$var].'>';
@@ -305,10 +311,10 @@ print "<br>";
 // Show message
 $message='';
 $urlwithouturlroot=eregi_replace(DOL_URL_ROOT.'$','',$dolibarr_main_url_root);
-$urlvcal='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal'.'</a>';
+$urlvcal='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey=..." target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey=...'.'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
 $message.='<br>';
-$urlical='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event'.'</a>';
+$urlical='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event&exportkey=..." target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event&exportkey=...'.'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'ical',$urlical);
 print info_admin($message);
 

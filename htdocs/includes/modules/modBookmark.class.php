@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \defgroup   bookmark    Module Bookmark
         \brief      Module pour g�rer les Bookmarks
+		\version	$Id$
 */
 
 /**
@@ -50,14 +49,14 @@ class modBookmark extends DolibarrModules
     $this->db = $DB ;
     $this->numero = 330;
 
-    $this->family = "technic";
+    $this->family = "other";
     $this->name = "Bookmarks";
     $this->description = "Gestion des Bookmarks";
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
     $this->const_name = 'MAIN_MODULE_BOOKMARK';
-    $this->special = 0;
+    $this->special = 2;
     $this->picto='bookmark';
 
     // Dir

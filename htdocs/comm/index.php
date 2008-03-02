@@ -283,7 +283,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  * Actions to do
  *
  */
-show_array_actions_to_do(0);
+show_array_actions_to_do(10);
 
 
 /*

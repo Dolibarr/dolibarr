@@ -16,19 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/comm/prospect/index.php
         \ingroup    commercial
 		\brief      Page accueil de la zone prospection
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 
 $langs->load("propal");
 
@@ -160,57 +158,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
  */
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
-if ($conf->agenda->enabled)
-{
-	$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, a.fk_user_author, a.percent,";
-	$sql.= " c.code, c.libelle,";
-	$sql.= " s.nom as sname, s.rowid";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE c.id = a.fk_action AND a.percent < 100 AND s.rowid = a.fk_soc AND a.fk_user_action = ".$user->id;
-	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	$sql .= " ORDER BY a.datea DESC";
-	
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		if ($num > 0)
-		{
-			$var=true;
-	
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td colspan="4">'.$langs->trans("ActionsToDo").'</td>';
-			print "</tr>\n";
-	
-			$i = 0;
-			while ($i < $num )
-			{
-				$obj = $db->fetch_object($resql);
-				$var=!$var;
-	
-				print "<tr $bc[$var]><td>".dolibarr_print_date($obj->da)."</td>";
-	
-				// Action
-				$transcode=$langs->trans("Action".$obj->code);
-				$libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id."\">".img_object($langs->trans("ShowAction"),"task").' '.$libelle.'</a></td>';
-	
-				// Tiers
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->sname.'</a></td>';
-				$i++;
-			}
-			print "</table><br>";
-		}
-		$db->free($resql);
-	}
-	else
-	{
-	  dolibarr_print_error($db);
-	}
-}
+if ($conf->agenda->enabled) show_array_actions_to_do(10);
 
 /*
  * Dernieres propales ouvertes
