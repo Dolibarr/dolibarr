@@ -173,7 +173,7 @@ class MenuLeft {
 				{
 					for ($j=0; $j < $tabul; $j++)
 					{
-						$tabstring.='&nbsp; &nbsp; ';
+						$tabstring.='&nbsp; &nbsp;';
 					}
 				}
 				

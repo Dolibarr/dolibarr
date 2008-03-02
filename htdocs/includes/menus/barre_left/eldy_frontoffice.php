@@ -701,7 +701,7 @@ class MenuLeft {
 					$langs->load("admin");
 					$langs->load("projects");
 					$newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/comm/clients.php?leftmenu=projects", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
+					$newmenu->add_submenu(DOL_URL_ROOT."/projet/fiche.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
 					$newmenu->add_submenu(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire);
 
 					$newmenu->add(DOL_URL_ROOT."/projet/tasks/", $langs->trans("Tasks"), 0, $user->rights->projet->lire);

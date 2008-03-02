@@ -48,12 +48,11 @@ $result = restrictedArea($user, 'projet', $projetid);
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
 	$pro = new Project($db);
-	$pro->socid           = $_GET["socid"];
+	$pro->socid           = $_POST["socid"];
 	$pro->ref             = $_POST["ref"];
 	$pro->title           = $_POST["title"];
 	$pro->user_resp_id    = $_POST["officer_project"];
 	$result = $pro->create($user);
-
 	if ($result > 0)
 	{
 		Header("Location:fiche.php?id=".$pro->id);
@@ -110,6 +109,10 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
 }
 
 
+/*
+*	View
+*/
+
 llxHeader("",$langs->trans("Project"),"Projet");
 
 $html = new Form($db);
@@ -120,8 +123,8 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   if ($mesg) print $mesg;
   
-  print '<form action="fiche.php?socid='.$_GET["socid"].'" method="post">';
-
+  print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	if ($_REQUEST["socid"]) print '<input type="hidden" value="'.$_REQUEST["socid"].'">';
   print '<table class="border" width="100%">';
   print '<input type="hidden" name="action" value="add">';
 
@@ -133,9 +136,16 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   // Client
   print '<tr><td>'.$langs->trans("Company").'</td><td>';
-  $societe = new Societe($db);
-  $societe->fetch($_GET["socid"]); 
-  print $societe->getNomUrl(1);
+/*  if ($_GET["socid"])
+  {
+	  $societe = new Societe($db);
+	  $societe->fetch($_GET["socid"]); 
+	  print $societe->getNomUrl(1);
+  }
+  else
+  { */
+		print $html->select_societes($_REQUEST["socid"],'socid','',1);
+//  }
   print '</td></tr>';
 
   // Auteur du projet
@@ -179,13 +189,15 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="8" name="ref" value="'.$projet->ref.'"></td></tr>';
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td><input size="8" name="ref" value="'.$projet->ref.'"></td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="title" value="'.$projet->title.'"></td></tr>';
 
 		// Client
-		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+		print $projet->societe->getNomUrl(1);
+		print '</td></tr>';
 		
 		// Responsable du projet
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
@@ -201,9 +213,12 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 		$projet->fetch_user($projet->user_resp_id);
 		
 		print '<table class="border" width="100%">';
-		print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
-		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+		if ($projet->societe->id) print $projet->societe->getNomUrl(1);
+		else print'&nbsp;';
+		print '</td></tr>';
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>'.$projet->user->fullname.'</td></tr>';
 		print '</table>';
 	}

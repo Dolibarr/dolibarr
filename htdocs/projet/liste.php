@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /** 
         \file       htdocs/projet/liste.php
         \ingroup    projet
         \brief      Page liste des projets
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -69,12 +66,15 @@ $pagenext = $page + 1;
 
 llxHeader();
 
+$staticsoc=new Societe($db);
+
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do";
 $sql .= ", s.nom, s.rowid as socid, s.client";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
+$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE p.fk_soc = s.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = p.fk_soc";
+$sql .= " WHERE 1 = 1 ";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 { 
@@ -133,10 +133,21 @@ if ($resql)
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$objp->projectid\">".img_object($langs->trans("ShowProject"),"project")." ".$objp->ref."</a></td>\n";
       print "<td><a href=\"fiche.php?id=$objp->projectid\">".$objp->title."</a></td>\n";
-      print '<td>';
-      print img_object($langs->trans("ShowCompany"),"company");
       
-      print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->socid.'">'.$objp->nom.'</a></td>';
+	  // Company
+	  print '<td>';
+	  if ($objp->socid)
+	  {
+		  $staticsoc->id=$objp->socid;
+		  $staticsoc->nom=$objp->nom;
+		  print $staticsoc->getNomUrl(1);
+		 }
+		 else
+		 { 
+		 print '&nbsp;';
+		}
+	print '</td>';
+	  
       print '<td>&nbsp;</td>';
       print "</tr>\n";
       

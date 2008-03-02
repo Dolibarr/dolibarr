@@ -21,7 +21,7 @@
 create table llx_projet
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  fk_soc           integer  NOT NULL,
+  fk_soc           integer,
   fk_statut        smallint NOT NULL,
   tms              timestamp,
   dateo            date,         -- date d'ouverture du projet

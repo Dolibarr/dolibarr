@@ -222,3 +222,6 @@ alter table llx_societe add column fk_prospectlevel varchar(12) after fournisseu
 update llx_actioncomm set datea = datep where datea is null and percent = 100;
 update llx_actioncomm set datea2 = datea where datea2 is null and percent = 100;
 
+
+alter table llx_projet modify fk_soc           integer;
+

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file       htdocs/project.class.php
 		\ingroup    projet
 		\brief      Fichier de la classe de gestion des projets
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
@@ -61,9 +59,11 @@ class Project extends CommonObject
 	{
 		if (trim($this->ref))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, dateo) ";
-			$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."'";
-			$sql.= ", ".$this->socid.", ".$user->id.", ".$this->user_resp_id.", now()) ;";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, dateo)";
+			$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."',";
+			$sql.= " ".($this->socid > 0?$this->socid:"null").",";
+			$sql.= " ".$user->id.",";
+			$sql.= " ".$this->user_resp_id.", now())";
 
 			if ($this->db->query($sql) )
 			{
