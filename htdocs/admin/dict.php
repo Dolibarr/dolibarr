@@ -46,7 +46,7 @@ $active = 1;
 // Mettre ici tous les caractéristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(9,0,4,3,2,0,1,8,0,5,11,0,6,0,10,12,13,0,14,0,7,0,15);
+$taborder=array(9,0,4,3,2,0,1,8,16,0,5,11,0,6,0,10,12,13,0,14,0,7,0,15);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -64,6 +64,7 @@ $tabname[12]= MAIN_DB_PREFIX."cond_reglement";
 $tabname[13]= MAIN_DB_PREFIX."c_paiement";
 $tabname[14]= MAIN_DB_PREFIX."c_ecotaxe";
 $tabname[15]= MAIN_DB_PREFIX."c_paper_format";
+$tabname[16]= MAIN_DB_PREFIX."c_prospectlevel";
 
 // Libellé des dictionnaires
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
@@ -81,6 +82,7 @@ $tablib[12]= $langs->trans("DictionnaryPaymentConditions");
 $tablib[13]= $langs->trans("DictionnaryPaymentModes");
 $tablib[14]= $langs->trans("DictionnaryEcotaxe");
 $tablib[15]= $langs->trans("DictionnaryPaperFormat");
+$tablib[16]= $langs->trans("DictionnaryProspectLevel");
 
 // Requete pour extraction des données des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
@@ -98,6 +100,7 @@ $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_fac
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as pays_id, p.libelle as pays, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_pays as p WHERE e.fk_pays=p.rowid and p.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
+$tabsql[16]= "SELECT code, label as libelle, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays, code ASC";
@@ -115,6 +118,7 @@ $tabsqlsort[12]="sortorder ASC, code ASC";
 $tabsqlsort[13]="code ASC";
 $tabsqlsort[14]="pays, e.organization ASC, code ASC";
 $tabsqlsort[15]="rowid ASC";
+$tabsqlsort[16]="sortorder ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -132,6 +136,7 @@ $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfield[13]= "code,libelle,type";
 $tabfield[14]= "code,libelle,price,organization,pays_id,pays";
 $tabfield[15]= "code,libelle,width,height,unit";
+$tabfield[16]= "code,libelle";
 
 // Nom des champs d'édition pour modification du dictionnaire
 $tabfieldvalue[1] = "code,libelle,pays";
@@ -149,6 +154,7 @@ $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldvalue[13]= "code,libelle,type";
 $tabfieldvalue[14]= "code,libelle,price,organization,pays";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
+$tabfieldvalue[16]= "code,libelle";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -166,6 +172,7 @@ $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldinsert[13]= "code,libelle,type";
 $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
+$tabfieldinsert[16]= "code,label";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
@@ -183,6 +190,7 @@ $tabrowid[12]= "rowid";
 $tabrowid[13]= "id";
 $tabrowid[14]= "";
 $tabrowid[15]= "";
+$tabrowid[16]= "code";
 
 // Condition to show dictionnary in setup page
 $tabcond[1] = true;
@@ -200,6 +208,7 @@ $tabcond[12]= $conf->facture->enabled||$conf->fournisseur->enabled;
 $tabcond[13]= $conf->facture->enabled||$conf->fournisseur->enabled;
 $tabcond[14]= $conf->produit->enabled&&$conf->global->PRODUIT_USE_ECOTAXE;
 $tabcond[15]= true;
+$tabcond[16]= $conf->societe->enabled;
 
 $msg='';
 

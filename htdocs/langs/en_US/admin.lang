@@ -406,6 +406,7 @@ Permission2405=Create/modify/delete actions/tasks of others
 Permission2410=Read Dolibarr audit events
 DictionnaryCompanyType=Company types
 DictionnaryCompanyJuridicalType=Juridical kinds of company
+DictionnaryProspectLevel=Prospect potential level
 DictionnaryCanton=Cantons
 DictionnaryRegion=Regions
 DictionnaryCountry=Countries

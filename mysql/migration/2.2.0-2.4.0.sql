@@ -214,7 +214,7 @@ create table llx_c_prospectlevel
 insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_UNKOWN',    'Unknown',  1);
 insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_LOW',       'Low',      2);
 insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_MEDIUM',    'Medium',   3);
-insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_HIGH',      'Eleve',    4);
+insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_HIGH',      'High',     4);
 
 
 alter table llx_societe add column fk_prospectlevel varchar(12) after fournisseur;

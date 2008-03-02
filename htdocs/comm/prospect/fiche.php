@@ -51,6 +51,17 @@ if ($_GET["action"] == 'cstc')
   $sql .= " WHERE rowid = ".$_GET["socid"];
   $db->query($sql);
 }
+// set prospect level
+if ($_POST["action"] == 'setprospectlevel' && $user->rights->societe->creer)
+{
+    
+	$societe = new Societe($db, $_GET["socid"]);
+    $societe->fk_prospectlevel=$_POST['prospect_level_id'];
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_prospectlevel='".$_POST['prospect_level_id'];
+	$sql.= "' WHERE rowid='".$_GET["socid"]."'";
+    $result = $db->query($sql);
+    if (! $result) dolibarr_print_error($result);
+}
 
 
 /*********************************************************************************
@@ -60,6 +71,7 @@ if ($_GET["action"] == 'cstc')
  *********************************************************************************/  
 
 llxHeader();
+$form=new Form($db);
 
 if ($socid > 0)
 {
@@ -99,21 +111,25 @@ if ($socid > 0)
 
     print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$societe->forme_juridique.'</td></tr>';
 
-    // Level
-//	print '<tr><td>'.$langs->trans('ProspectLevel').'</td><td colspan="3">'.$societe->getLibLevel().'</td></tr>';
-    print '<tr><td>';
-    print '<table width="100%" class="nobordernopadding"><tr><td>';
-    print $langs->trans('ProspectLevel');
-    print '<td><td align="right">';
-    if ($user->rights->societe->creer)
-        print '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id.'">'.img_edit().'</a>';
-    else
-        print '&nbsp;';
-    print '</td></tr></table>';
-    print '</td>';
-    print '<td colspan="3">';
-    print $societe->getLibLevel();
-    print '</td></tr>';
+	// Level
+	print '<tr><td nowrap>';
+	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print $langs->trans('ProspectLevelShort');
+	print '<td>';
+	if (($_GET['action'] != 'editlevel') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$societe->id.'">'.img_edit($langs->trans('SetLevel'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($_GET['action'] == 'editlevel')
+	{
+		$form->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$societe->id,$societe->fk_prospectlevel,'prospect_level_id',1);
+	}
+	else
+	{
+		print $societe->getLibLevel();
+		//$html->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
+	}
+	print "</td>";
+	print '</tr>';
 	
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$societe->getLibStatut(4).'</td>';

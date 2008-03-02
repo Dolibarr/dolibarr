@@ -495,9 +495,10 @@ class Societe extends CommonObject
 		global $langs;
 		global $conf;
 		
-		/* Lecture des permissions */
-		if ($user <> 0)
+		// Init data for telephonie module
+		if ($this->telephonie->enabled && $user && $user->id)
 		{
+			/* Lecture des permissions */
 			$sql = "SELECT p.pread, p.pwrite, p.pperms";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_perms as p";
 			$sql .= " WHERE p.fk_user = '".$user->id."'";
@@ -514,19 +515,20 @@ class Societe extends CommonObject
 			}
 		}
 
-		$sql = 'SELECT s.rowid, s.nom, s.address,'.$this->db->pdate('s.datec').' as dc, prefix_comm';
-		// multiprix
-		if($conf->global->PRODUIT_MULTIPRICES == 1)
-			$sql .= ', s.price_level';
+		$sql = 'SELECT s.rowid, s.nom, s.address,'.$this->db->pdate('s.datec').' as dc, s.prefix_comm';
+		if ($conf->global->PRODUIT_MULTIPRICES == 1)	$sql .= ', s.price_level';
 		$sql .= ','. $this->db->pdate('s.tms').' as date_update';
-		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, client, fournisseur';
+		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, s.client, s.fournisseur';
 		$sql .= ', s.siren, s.siret, s.ape, s.idprof4';
 		$sql .= ', s.capital, s.tva_intra, s.rubrique';
 		$sql .= ', s.fk_typent as typent_id';
-		$sql .= ', s.fk_effectif as effectif_id, e.libelle as effectif';
-		$sql .= ', s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique';
+		$sql .= ', s.fk_effectif as effectif_id';
+		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.code_client, s.code_compta, s.code_fournisseur, s.parent';
 		$sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
+		$sql .= ', s.fk_prospectlevel';
+		$sql .= ', fj.libelle as forme_juridique';
+		$sql .= ', e.libelle as effectif';
 		$sql .= ', p.code as pays_code, p.libelle as pays';
 		$sql .= ', d.code_departement as departement_code, d.nom as departement';
 		$sql .= ', st.libelle as stcomm';
@@ -602,6 +604,8 @@ class Societe extends CommonObject
 
 				$this->forme_juridique_code= $obj->forme_juridique_code;
 				$this->forme_juridique     = $obj->forme_juridique_code?$obj->forme_juridique:'';
+
+				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
 				$this->prefix_comm = $obj->prefix_comm;
 

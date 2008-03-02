@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin      	<regis@dolibarr.fr>
  * Copyright (C) 2006 	   Jean Heimburger    	<jean@tiaris.info>
  *
@@ -18,15 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/conf/conf.class.php
-   \brief      Fichier de la classe de stockage de la config courante
-   \remarks	La config est stockee dans le fichier conf/conf.php
-   \version    $Revision$
+   \file       	htdocs/conf/conf.class.php
+   \brief      	Fichier de la classe de stockage de la config courante
+   \remarks		La config est stockee dans le fichier conf/conf.php
+   \version    	$Id$
 */
 
 
