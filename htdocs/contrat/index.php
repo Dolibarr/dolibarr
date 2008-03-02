@@ -15,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
@@ -78,7 +76,7 @@ if ($conf->contrat->enabled)
 	print "<br>";
 }
 
-// Légende
+// Legend
 $var=false;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ServicesLegend").'</td></tr>';
@@ -250,7 +248,7 @@ if ( $db->query($sql) )
         if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
         else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_soc.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
-        print '<td nowrap="nowrap" align="right"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
+        print '<td nowrap="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
         print $staticcontratligne->LibStatut($obj->statut,5);
         print '</a></td>';
         print "</tr>\n";
