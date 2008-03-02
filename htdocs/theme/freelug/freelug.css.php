@@ -15,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- * 
- * $Id$
  */
 
 /**
 		\file       htdocs/theme/freelug/freelug.css.php
 		\brief      Fichier de style CSS du theme Freelug
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("../../conf/conf.php");
@@ -43,14 +41,16 @@ if (! isset($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_
 /* ============================================================================== */
 
 body {
-	margin: 0px;
 	background-color: #F8F8F8;
 	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/background.png' ?>);
 	text-decoration: none ;
 	color: #101010;
 	font-size: 12px;
 	font-family: helvetica, verdana, arial, sans-serif;
-
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+    margin-left: 0;
 }
 
 a:link    { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
@@ -146,17 +146,17 @@ div.vmenuplusfiche
     display: block;
     margin-right: 6px;
     margin-left: 1px;
-    margin-top: 4px;
+    margin-top: 2px;
     
 }
 
 div.vmenu
 {
     float: left;
-    margin-right: 2px;
+    margin-right: 0px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 160px;
+    width: 174px;
 }
 
 div.fiche
@@ -167,7 +167,7 @@ div.fiche
 ?>
     display: block;
 	margin-left: 2px;
-	margin-right: 4px;
+	margin-right: 2px;
     width:auto;
 }
 
@@ -194,6 +194,15 @@ div.tmenu
     background: #dddddd; 
     color: #000000; 
     text-decoration: none;
+}
+div.tmenu  .tmenudisabled
+{
+	color: #757575;
+	font-size: 12px;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top:3px;
+	cursor: not-allowed;
 }
 
 table.tmenu
@@ -637,23 +646,6 @@ td.border {
             border-bottom: 1px solid #000000;
             border-left: 1px solid #000000;
             }
-
-div.menus { 
-            background: #eeeedd; 
-            color: #bbbb88;
-            font-size: 0.95em;
-            border-top:    1px dashed #ccccb3;
-            border-right:  1px dashed #ccccb3;
-            border-bottom: 1px dashed #ccccb3;
-            border-left:   1px dashed #ccccb3;
-            }
-
-
-a.leftmenu { 
-             font-weight: bold; 
-             color: #202020;
-             }
-
 
 
 /*

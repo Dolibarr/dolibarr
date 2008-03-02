@@ -153,7 +153,7 @@ div.fiche
     display: block;
     margin-top: 8px;
     margin-left: 180px;
-	margin-right: 4px;
+	margin-right: 2px;
     width:auto;
 }
 
@@ -377,7 +377,7 @@ div.blockvmenuimpair
 	margin: 0px;
 	border-spacing: 0px;
 	padding: 0px;
-	width: 166px;
+/*	width: 166px;*/
     border : 0px solid #68ACCF;	
 }
 div.blockvmenupair
@@ -385,7 +385,7 @@ div.blockvmenupair
 	margin: 0px;
 	border-spacing: 0px;
 	padding: 0px;
-	width: 166px;
+/*	width: 166px; */
     border : 0px solid #68ACCF;	
 }
 
