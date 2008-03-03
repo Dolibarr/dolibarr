@@ -195,9 +195,11 @@ print $langs->trans("GoToSetupArea");
 print '</a>';
 
 
+// Clear cache files
+clearstatcache();
+
+
 dolibarr_install_syslog("Dolibarr install/setup finished", LOG_INFO);
 
-
 pFooter(1,$setuplang);
-
 ?>
