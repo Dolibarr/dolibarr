@@ -103,7 +103,7 @@ class Account extends CommonObject
      *      \param      line_id     Id ecriture bancaire
      *      \param      url_id      Id parametre url
      *      \param      url         Url
-     *      \param      label       Libellé du lien
+     *      \param      label       Libellï¿½ du lien
      *      \param      type        Type de lien (payment, company, member, ...)
      *      \return     int         <0 si ko, id line si ok
      */
@@ -127,7 +127,7 @@ class Account extends CommonObject
 
     /**
      *      \brief      Renvoi tableau des liens
-     *      \param      line_id         Id ligne écriture
+     *      \param      line_id         Id ligne ï¿½criture
      *      \retuen     array           Tableau des liens
      */
     function get_url($line_id)
@@ -146,7 +146,7 @@ class Account extends CommonObject
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($result);
-                // Anciens liens (pour compatibilité)
+                // Anciens liens (pour compatibilitï¿½)
                 $lines[$i][0] = $obj->url;
                 $lines[$i][1] = $obj->url_id;
                 $lines[$i][2] = $obj->label;
@@ -164,16 +164,16 @@ class Account extends CommonObject
 
 	/**
 		\brief     	Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
-		\param		$date			Date TMS opération
+		\param		$date			Date TMS opï¿½ration
 		\param		$oper			1,2,3,4...
 		\param		$label			Descripton
 		\param		$amount			Montant
 		\param		$num_chq		Numero cheque ou virement
 		\param		$categorie		Categorie optionnelle
-		\param		$user			Utilisateur qui crée
+		\param		$user			Utilisateur qui crï¿½e
 		\param		$emetteur		Nom emetteur
 		\param		$banque			Banque emettrice
-		\return		int				Rowid de l'entrée ajoutée, <0 si erreur
+		\return		int				Rowid de l'entrï¿½e ajoutï¿½e, <0 si erreur
 	*/
 	function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user, $emetteur='',$banque='')
 	{
@@ -279,7 +279,7 @@ class Account extends CommonObject
         require_once DOL_DOCUMENT_ROOT.'/lib/bank.lib.php';
 
         if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
-            $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
+            $this->error="Le controle de la cle indique que les informations de votre compte bancaire sont incorrectes.";
             return 0;
         }
 
@@ -290,14 +290,14 @@ class Account extends CommonObject
         }
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (";
-        $sql.= "datec, ref, label, account_number, currency_code,";
-        $sql.= "min_allowed, min_desired,";
+        $sql.= "datec, ref, label, account_number, currency_code, ";
+        $sql.= "rappro, min_allowed, min_desired, ";
         $sql.= "comment";
         $sql.= ") values (";
-        $sql.= "now(),'" . addslashes($this->ref) . "', '" . addslashes($this->label) . "',";
-        $sql.= "'".addslashes($this->account_number) . "','".$this->currency_code."',";
-        $sql.= "min_allowed=".price2num($this->min_allowed).",min_desired=".price2num($this->min_desired).",";
-        $sql.= "comment='".addslashes($this->comment)."'";
+        $sql.= "now(),'" . addslashes($this->ref) . "', '" . addslashes($this->label) . "', ";
+        $sql.= "'".addslashes($this->account_number) . "', '".$this->currency_code."', ";
+        $sql.= $this->rappro.", ".price2num($this->min_allowed).", ".price2num($this->min_desired).", ";
+        $sql.= "'".addslashes($this->comment)."'";
         $sql.= ")";
 
 		dolibarr_syslog("Account::create sql=".$sql);
@@ -400,7 +400,7 @@ class Account extends CommonObject
 
         // Verification parametres
         if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
-            $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
+            $this->error="Le contrï¿½le de la clï¿½ indique que les informations de votre compte bancaire sont incorrectes.";
             return 0;
         }
 
@@ -441,8 +441,8 @@ class Account extends CommonObject
     
     /*
      *      \brief      Charge un compte en memoire depuis la base
-     *      \param      id      Id du compte à récupérer
-     *      \param      ref     Ref du compte à récupérer
+     *      \param      id      Id du compte ï¿½ rï¿½cupï¿½rer
+     *      \param      ref     Ref du compte ï¿½ rï¿½cupï¿½rer
      */
     function fetch($id,$ref='')
     {
@@ -527,8 +527,8 @@ class Account extends CommonObject
 
 
 	/**
-	 *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \brief      Retourne le libellï¿½ du statut d'une facture (brouillon, validï¿½e, abandonnï¿½e, payï¿½e)
+	 *    \param      mode          0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -537,10 +537,10 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\brief      Renvoi le libellï¿½ d'un statut donnï¿½
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string        	Libellé du statut
+	 *    	\param      mode          	0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string        	Libellï¿½ du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -582,7 +582,7 @@ class Account extends CommonObject
 	
 	/*
      *    \brief      Renvoi si un compte peut etre supprimer ou non (sans mouvements)
-     *    \return     boolean     vrai si peut etre supprimé, faux sinon
+     *    \return     boolean     vrai si peut etre supprimï¿½, faux sinon
      */
     function can_be_deleted()
     {
@@ -779,7 +779,7 @@ class AccountLine
 
     /**
      *      \brief      Charge en memoire depuis la base, une ecriture sur le compte
-     *      \param      id      Id de la ligne écriture à récupérer
+     *      \param      id      Id de la ligne ï¿½criture ï¿½ rï¿½cupï¿½rer
 	 *		\return		int		<0 if KO, >0 if OK
      */
     function fetch($rowid)
@@ -839,7 +839,7 @@ class AccountLine
         
 		if ($this->rappro)
 		{
-			// Protection pour eviter tout suppression d'une ligne consolidée
+			// Protection pour eviter tout suppression d'une ligne consolidï¿½e
 			$this->error="DeleteNotPossibleLineIsConsolidated";
 			return -1;
 		}
@@ -940,7 +940,7 @@ class AccountLine
 				}
 
 				$this->date_creation     = $obj->datec;
-				//$this->date_rappro       = $obj->daterappro;    // \todo pas encore gérée
+				//$this->date_rappro       = $obj->daterappro;    // \todo pas encore gï¿½rï¿½e
 			}
 			$this->db->free($result);
 		}

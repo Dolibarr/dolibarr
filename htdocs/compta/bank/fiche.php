@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/compta/bank/fiche.php
         \ingroup    banque
-		\brief      Fiche création compte bancaire
-		\version    $Revision$
+		\brief      Fiche creation compte bancaire
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -48,7 +46,7 @@ if ($_POST["action"] == 'add')
     $account->label         = trim($_POST["label"]);
     $account->courant       = $_POST["type"];
     $account->clos          = $_POST["clos"];
-    $account->rappro        = $_POST["norappro"]?1:0;
+    $account->rappro        = (isset($_POST["norappro"]) && $_POST["norappro"])?0:1;
     $account->url           = $_POST["url"];
     
     $account->account_number  = trim($_POST["account_number"]);
@@ -90,7 +88,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->label           = trim($_POST["label"]);
     $account->courant         = $_POST["type"];
     $account->clos            = $_POST["clos"];
-    $account->rappro          = (isset($_POST["norappro"]) && $_POST["norappro"]=='on')?0:1;
+    $account->rappro          = (isset($_POST["norappro"]) && $_POST["norappro"])?0:1;
     $account->url             = trim($_POST["url"]);
 
     $account->bank            = trim($_POST["bank"]);
@@ -150,7 +148,7 @@ $form = new Form($db);
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Affichage page en mode création                                            */
+/* Affichage page en mode crï¿½ation                                            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +215,7 @@ if ($_GET["action"] == 'create')
 	// Comment
 	print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 	print '<td colspan="3">';
-   // éditeur wysiwyg
+   // ï¿½diteur wysiwyg
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -456,7 +454,7 @@ else
 		// Comment
 		print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">';
-	   // éditeur wysiwyg
+	   // ï¿½diteur wysiwyg
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
