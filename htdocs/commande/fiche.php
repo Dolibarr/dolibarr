@@ -1531,6 +1531,8 @@ else
 					$i++;
 				}
 				$db->free($resql);
+				
+				$numlines=$num;
 			}
 			else
 			{
@@ -1657,7 +1659,7 @@ else
 				print '<div class="tabsAction">';
 
 				// Valid
-				if ($commande->statut == 0 && $commande->total_ttc > 0 && $user->rights->commande->valider)
+				if ($commande->statut == 0 && $numlines > 0 && $user->rights->commande->valider)
 				{
 					print '<a class="butAction" ';
 					if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
