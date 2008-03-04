@@ -70,7 +70,6 @@ janus
 jupiter
 lune
 mars
-mercure
 pluton
 saturne
 venus
