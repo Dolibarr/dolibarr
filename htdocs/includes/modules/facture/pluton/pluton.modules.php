@@ -26,7 +26,7 @@
 /**
 	\file       htdocs/includes/modules/facture/pluton/pluton.modules.php
 	\ingroup    facture
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Pluton
+	\brief      Fichier contenant la classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de facture Pluton
 	\version    $Revision$
 */
 
@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 
 /**
 	\class      mod_facture_pluton
-	\brief      Classe du modèle de numérotation de référence de facture Pluton
+	\brief      Classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de facture Pluton
 */
 class mod_facture_pluton extends ModeleNumRefFactures
 {
@@ -51,7 +51,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
 	var $searchLastWithPreviousYear;
 	var $error = '';
 
-    /**     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numï¿½rotation
      *      \return     string      Texte descripif
      */
 	function info()
@@ -65,8 +65,8 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte = $langs->trans('PlutonNumRefModelDesc1')."<br>\n";
       $texte.= '<table class="nobordernopadding" width="100%">';
       
-      // Paramétrage de la matrice
-      $texte.= '<tr><td>Matrice de disposition des objets (prefix,mois,année,compteur...)</td>';
+      // Paramï¿½trage de la matrice
+      $texte.= '<tr><td>Matrice de disposition des objets (prefix,mois,annï¿½e,compteur...)</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="updateMatrice">';
       $texte.= '<td align="right"><input type="text" class="flat" size="30" name="matrice" value="'.$conf->global->FACTURE_NUM_MATRICE.'"></td>';
@@ -74,8 +74,8 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("MatriceInvoiceDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
-      // Paramétrage du prefix des factures
-      $texte.= '<tr><td>Préfix des factures</td>';
+      // Paramï¿½trage du prefix des factures
+      $texte.= '<tr><td>Prï¿½fix des factures</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="updatePrefixFacture">';
       $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixfacture" value="'.$conf->global->FACTURE_NUM_PREFIX.'"></td>';
@@ -83,8 +83,8 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("PrefixInvoiceDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
-      // Paramétrage du prefix des avoirs
-      $texte.= '<tr><td>Préfix des avoirs</td>';
+      // Paramï¿½trage du prefix des avoirs
+      $texte.= '<tr><td>Prï¿½fix des avoirs</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="updatePrefixAvoir">';
       $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixavoir" value="'.$conf->global->AVOIR_NUM_PREFIX.'"></td>';
@@ -92,7 +92,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("PrefixCreditNoteDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
-      // On détermine un offset sur le compteur des factures
+      // On dï¿½termine un offset sur le compteur des factures
       $texte.= '<tr><td>Appliquer un offset sur le compteur des factures</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setOffsetInvoice">';
@@ -101,7 +101,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("OffsetDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
-      // On détermine un offset sur le compteur des avoirs
+      // On dï¿½termine un offset sur le compteur des avoirs
       $texte.= '<tr><td>Appliquer un offset sur le compteur des avoirs</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setOffsetCreditNote">';
@@ -110,8 +110,8 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("OffsetDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
    
-      // On défini si le compteur se remet à zero en debut d'année
-      $texte.= '<tr><td>Le compteur se remet à zéro en début d\'année</td>';
+      // On dï¿½fini si le compteur se remet ï¿½ zero en debut d'annï¿½e
+      $texte.= '<tr><td>Le compteur se remet ï¿½ zï¿½ro en dï¿½but d\'annï¿½e</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setNumRestart">';
       $texte.= '<td align="right">';
@@ -120,8 +120,8 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("NumRestartDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
-      // On défini si le compteur des avoirs s'incrémente avec les factures
-      $texte.= '<tr><td>La numérotation des avoirs s\'incrémente avec les factures</td>';
+      // On dï¿½fini si le compteur des avoirs s'incrï¿½mente avec les factures
+      $texte.= '<tr><td>La numï¿½rotation des avoirs s\'incrï¿½mente avec les factures</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setNumWithInvoice">';
       $texte.= '<td align="right">';
@@ -130,8 +130,8 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("CreditNoteNumWithInvoiceDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
-      // On affiche le debut d'année fiscale
-      $texte.= '<tr><td colspan="3">Début d\'année fiscale : '.monthArrayOrSelected($conf->global->SOCIETE_FISCAL_MONTH_START).'</td>';
+      // On affiche le debut d'annï¿½e fiscale
+      $texte.= '<tr><td colspan="3">Dï¿½but d\'annï¿½e fiscale : '.monthArrayOrSelected($conf->global->SOCIETE_FISCAL_MONTH_START).'</td>';
       $texte.= '</tr>';
       
       $texte.= '</table><br>';
@@ -139,7 +139,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
       return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numï¿½rotation
      *      \return     string      Example
      */
     function getExample()
@@ -152,11 +152,11 @@ class mod_facture_pluton extends ModeleNumRefFactures
         
       if ($buildResult == 1)
       {
-      	// On récupère le nombre de chiffres du compteur
+      	// On rï¿½cupï¿½re le nombre de chiffres du compteur
     	  $arg = '%0'.$this->numbitcounter.'s';
         $num = sprintf($arg,$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA:1);
       
-        //On construit le numéro à partir de la matrice
+        //On construit le numï¿½ro ï¿½ partir de la matrice
       	foreach($this->numMatrice as $objetMatrice)
         {
         	if ($objetMatrice == '-') $numExample .= $objetMatrice;
@@ -173,8 +173,8 @@ class mod_facture_pluton extends ModeleNumRefFactures
       return $numExample;
     }
 
-	/**		\brief      Renvoi prochaine valeur attribuée
-	*      	\param      objsoc      Objet société
+	/**		\brief      Renvoi prochaine valeur attribuï¿½e
+	*      	\param      objsoc      Objet sociï¿½tï¿½
 	*      	\param      facture		Objet facture
 	*      	\return     string      Valeur
 	*/
@@ -187,7 +187,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
         if ($buildResult == 1)
         {
 
-        // On récupère la valeur max (réponse immédiate car champ indéxé)
+        // On rï¿½cupï¿½re la valeur max (rï¿½ponse immï¿½diate car champ indï¿½xï¿½)
         $posindice  = $this->numbitcounter;
         $searchyy='';
         $sql = "SELECT MAX(facnumber)";
@@ -209,8 +209,8 @@ class mod_facture_pluton extends ModeleNumRefFactures
         
         if ($conf->global->FACTURE_NUM_DELTA || $conf->global->AVOIR_NUM_DELTA)
         {
-        	//on vérifie si il y a une année précédente
-          //pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
+        	//on vï¿½rifie si il y a une annï¿½e prï¿½cï¿½dente
+          //pour ï¿½viter que le delta soit appliquï¿½ de nouveau sur la nouvelle annï¿½e
           $previousyy='';
           $sql = "SELECT MAX(facnumber)";
           $sql.= " FROM ".MAIN_DB_PREFIX."facture";
@@ -223,10 +223,10 @@ class mod_facture_pluton extends ModeleNumRefFactures
           }
         }
 
-        // Si au moins un champ respectant le modèle a été trouvée
+        // Si au moins un champ respectant le modï¿½le a ï¿½tï¿½ trouvï¿½e
         if (eregi('^'.$this->searchLastWithNoYear.'',$searchyy))
         {
-            // Recherche rapide car restreint par un like sur champ indexé
+            // Recherche rapide car restreint par un like sur champ indexï¿½
             $sql = "SELECT MAX(0+SUBSTRING(facnumber,-".$posindice."))";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE facnumber REGEXP '^".$searchyy."'";
@@ -278,8 +278,8 @@ class mod_facture_pluton extends ModeleNumRefFactures
   }
     
   
-    /**     \brief      Renvoie la référence de commande suivante non utilisée
-     *      \param      objsoc      Objet société
+    /**     \brief      Renvoie la rï¿½fï¿½rence de commande suivante non utilisï¿½e
+     *      \param      objsoc      Objet sociï¿½tï¿½
      *      \param      facture		Objet facture
      *      \return     string      Texte descripif
      */
@@ -288,9 +288,10 @@ class mod_facture_pluton extends ModeleNumRefFactures
         return $this->getNextValue($objsoc,$facture);
     }
     
- /**		\brief      Construction de la matrice de numérotation
-	*     \param      objsoc      Objet société
-	*     \return     string      Valeur
+ 	/**	
+ 	* 	\brief      Construction de la matrice de numrotation
+	*	\param      objsoc      Objet societe
+	*   \return     string      Valeur
 	*/
     function buildMatrice($objsoc=0,$facture='')
     {
@@ -308,10 +309,10 @@ class mod_facture_pluton extends ModeleNumRefFactures
         	$resultatMatrice = Array();
         	
         	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: FA pour facture, AV pour avoir), COM : prefix du client
-        	$matriceYear     = "[A]{2,4}"; // l'année est sur 2 ou 4 chiffres
+        	$matriceYear     = "[A]{2,4}"; // l'annï¿½e est sur 2 ou 4 chiffres
         	$matriceMonth    = "[M]{2}"; // le mois est sur 2 chiffres
         	$matriceCounter  = "[C]{1,}"; //le compteur a un nombre de chiffres libre
-        	$matriceTiret    = "[-]{1}"; // on recherche si il y a des tirets de séparation
+        	$matriceTiret    = "[-]{1}"; // on recherche si il y a des tirets de sï¿½paration
         	
         	$matriceSearch   = Array('prefix'=>$matricePrefix,
         	                         'year'=>$matriceYear,
@@ -319,13 +320,13 @@ class mod_facture_pluton extends ModeleNumRefFactures
         	                         'counter'=>$matriceCounter
         	                         );
         	
-        	// on détermine l'emplacement des tirets
+        	// on dï¿½termine l'emplacement des tirets
         	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->matrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
         	
         	$j = 0;
         	$k = 0;
         	
-        	// on détermine les objets de la matrice
+        	// on dï¿½termine les objets de la matrice
         	for ($i = 0; $i < count($resultTiret); $i++)
         	{
         		foreach($resultTiret[$i] as $idResultTiret => $valueResultTiret)
@@ -345,7 +346,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
         			$resultCount = eregi(''.$valueMatrice.'',$valueResultTiret,$resultatMatrice);
         			if ($resultCount)
         			{
-        				// On récupère le préfix utilisé
+        				// On rï¿½cupï¿½re le prï¿½fix utilisï¿½
         				if ($idMatrice == 'prefix')
         				{
         					if ($resultatMatrice[0] == 'COM')
@@ -366,7 +367,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
         					}
         					else if ($resultatMatrice[0] == 'PREF')
         				  {
-        				  	// Les avoirs peuvent suivre la numérotation des factures
+        				  	// Les avoirs peuvent suivre la numï¿½rotation des factures
         				  	if (!$conf->global->AVOIR_NUM_WITH_INVOICE && $facture->type == 2)
         					  {
         						  $thisPrefix = $this->prefixcreditnote;
@@ -385,9 +386,9 @@ class mod_facture_pluton extends ModeleNumRefFactures
         				}
         				else if ($idMatrice == 'year')
         				{
-        					// On récupère le nombre de chiffres pour l'année
+        					// On rï¿½cupï¿½re le nombre de chiffres pour l'annï¿½e
         					$numbityear = $resultCount;
-        					// On défini le mois du début d'année fiscale
+        					// On dï¿½fini le mois du dï¿½but d'annï¿½e fiscale
         					$current_month = date("n");
         					
         					if (is_object($facture) && $facture->date)
@@ -399,7 +400,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
         	          $create_month = $current_month;
                   }
 
-                  // On change d'année fiscal si besoin
+                  // On change d'annï¿½e fiscal si besoin
                   if($conf->global->SOCIETE_FISCAL_MONTH_START > 1 && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
                   {
         	          $this->yy = substr(strftime("%Y",mktime(0,0,0,date("m"),date("d"),date("Y")+1)),$numbityear);
@@ -420,7 +421,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
         				}
         				else if ($idMatrice == 'month')
         				{
-        					// On récupère le mois si besoin
+        					// On rï¿½cupï¿½re le mois si besoin
         					$this->mm = strftime("%m",time());
         					$this->numMatrice[$k] = '$mm';
         					$this->searchLast .= '[0-9][0-9]';
@@ -430,7 +431,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
         				}
         				else if ($idMatrice == 'counter')
         				{
-        					// On récupère le nombre de chiffres pour le compteur
+        					// On rï¿½cupï¿½re le nombre de chiffres pour le compteur
         					$this->numbitcounter = $resultCount;
         					$this->numMatrice[$k] = '$num';
         					$k++;

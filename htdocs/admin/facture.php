@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/admin/facture.php
 		\ingroup    facture
 		\brief      Page d'administration/configuration du module Facture
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -47,6 +45,16 @@ $dir = DOL_DOCUMENT_ROOT."/includes/modules/facture/";
 /*
  * Actions
  */
+if ($_POST["action"] == 'updateMask')
+{
+	$maskconstinvoice=$_POST['maskconstinvoice'];
+	$maskconstcredit=$_POST['maskconstcredit'];
+	$maskinvoice=$_POST['maskinvoice'];
+	$maskcredit=$_POST['maskcredit'];
+	if ($maskconstinvoice) dolibarr_set_const($db,$maskconstinvoice,$maskinvoice);
+	if ($maskconstcredit)  dolibarr_set_const($db,$maskconstcredit,$maskcredit);
+}
+
 if ($_GET["action"] == 'specimen')
 {
 	$modele=$_GET["module"];
