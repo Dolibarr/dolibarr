@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,37 +16,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
      	\file       htdocs/four/commande/modules/mod_commande_fournisseur_muguet.php
 		\ingroup    commande
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de commande fournisseur Muguet
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/modules_commandefournisseur.php");
 
+
 /**	    \class      mod_commande_fournisseur_muguet
 		\brief      Classe du modèle de numérotation de référence de commande fournisseur Muguet
 */
-
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
+	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+	var $error = '';
+	var $nom = 'Muguet';
 	var $prefix='CF';
-    var $error='';
     
-	/*
-	 *   \brief      Constructeur
-   	 */
-  	function mod_commande_fournisseur_muguet()
-    {
-    	$this->nom = "Muguet";
-    }
-
     
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif

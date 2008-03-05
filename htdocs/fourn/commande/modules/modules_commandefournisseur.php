@@ -18,10 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
@@ -29,7 +25,7 @@
                 \ingroup    commande
                 \brief      Fichier contenant la classe mère de generation des commandes fournisseurs en PDF
                             et la classe mère de numérotation des commandes fournisseurs
-                \version    $Revision$
+                \version    $Id$
 */
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
@@ -133,6 +129,19 @@ class ModeleNumRefSuppliersOrders
         return $langs->trans("NotAvailable");
     }
     
+	/**     \brief      Renvoi version du module numerotation
+	*      	\return     string      Valeur
+	*/
+	function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		if ($this->version == 'dolibarr') return DOL_VERSION;
+		return $langs->trans("NotAvailable");
+	}
 }
 
 

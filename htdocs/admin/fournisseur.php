@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin           <regis@dolibarr.fr>
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
@@ -18,15 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/admin/fournisseur.php
    \ingroup    fournisseur
    \brief      Page d'administration-configuration du module Fournisseur
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -42,9 +40,18 @@ $langs->load("orders");
 if (!$user->admin)
   accessforbidden();
 
+
 /*
  * Actions
  */
+ 
+if ($_POST["action"] == 'updateMask')
+{
+	$maskconstorder=$_POST['maskconstorder'];
+	$maskorder=$_POST['maskorder'];
+	if ($maskconstorder)  dolibarr_set_const($db,$maskconstorder,$maskorder);
+}
+ 
 if ($_GET["action"] == 'specimen')
 {
   $modele=$_GET["module"];
@@ -185,6 +192,10 @@ if ($handle)
 
             $module = new $file;
 
+			// Show modules according to features level
+		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
             $var=!$var;
             print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
             print $module->info();
@@ -206,16 +217,27 @@ if ($handle)
             
             $commande=new CommandeFournisseur($db);
 	    
-	    // Info
-	    $htmltooltip='';
-	    $nextval=$module->getNextValue($mysoc,$commande);
-	    if ($nextval != $langs->trans("NotAvailable"))
-	    {
-	    	$htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
-	    }
-	    print '<td align="center">';
-	    print $html->textwithhelp('',$htmltooltip,1,0);
-	    print '</td>';
+			// Info
+			$htmltooltip='';
+			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
+			$facture->type=0;
+	        $nextval=$module->getNextValue($mysoc,$propale);
+			if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+			{
+				$htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: ';
+		        if ($nextval)
+				{
+					$htmltooltip.=$nextval.'<br>';
+				}
+				else
+				{
+					$htmltooltip.=$langs->trans($module->error).'<br>';
+				}
+			}
+
+		    print '<td align="center">';
+		    print $html->textwithhelp('',$htmltooltip,1,0);
+		    print '</td>';
 	    
             print '</tr>';
         }

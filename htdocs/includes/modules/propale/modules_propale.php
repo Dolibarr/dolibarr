@@ -16,9 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
@@ -26,7 +23,7 @@
 		\ingroup    propale
 		\brief      Fichier contenant la classe mère de generation des propales en PDF
 	                et la classe mère de numérotation des propales
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.inc.php');
@@ -143,7 +140,7 @@ class ModeleNumRefPropales
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
 		return $langs->trans("NotAvailable");
-	}	
+	}
 }
 
 
