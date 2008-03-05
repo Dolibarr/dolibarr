@@ -43,6 +43,14 @@ if (!$user->admin) accessforbidden();
 /*
  * Actions
  */
+ 
+if ($_POST["action"] == 'updateMask')
+{
+	$maskconstdelivery=$_POST['maskconstdelivery'];
+	$maskdelivery=$_POST['maskdelivery'];
+	if ($maskconstdelivery)  dolibarr_set_const($db,$maskconstdelivery,$maskdelivery);
+}
+
 if ($_GET["action"] == 'specimen')
 {
 	$modele=$_GET["module"];
@@ -171,11 +179,8 @@ $h++;
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
- *  Module num�rotation
+ *  Module numerotation
  */
-
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("DeliveryOrderNumberingModules"),$linkback,'setup');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -204,6 +209,10 @@ if ($handle)
 
 			$module = new $file;
 
+			// Show modules according to features level
+		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
 			$var=!$var;
 			print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 			print $module->info();
@@ -227,11 +236,22 @@ if ($handle)
 			
 			// Info
 			$htmltooltip='';
-			$nextval=$module->getNextValue($mysoc,$livraison);
-			if ($nextval != $langs->trans("NotAvailable"))
+			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
+			$facture->type=0;
+	        $nextval=$module->getNextValue($mysoc,$propale);
+			if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 			{
-				$htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+				$htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: ';
+		        if ($nextval)
+				{
+					$htmltooltip.=$nextval.'<br>';
+				}
+				else
+				{
+					$htmltooltip.=$langs->trans($module->error).'<br>';
+				}
 			}
+
 			print '<td align="center">';
 			print $html->textwithhelp('',$htmltooltip,1,0);
 			print '</td>';

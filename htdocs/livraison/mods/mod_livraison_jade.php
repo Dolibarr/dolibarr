@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,17 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
- *
  */
 
 /** 
     \file       htdocs/includes/modules/commande/mod_livraison_jade.php
     \ingroup    livraison
     \brief      Fichier contenant la classe du modèle de numérotation de référence de bon de livraison Jade
-    \version    $Revision$
+    \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/modules_livraison.php");
@@ -39,22 +36,18 @@ require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/modules_livraison.php");
 
 class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 {
-
-  /**   \brief      Constructeur
-   */
-  function mod_livraison_jade()
-  {
-    $this->nom = "Jade";
-  }
+	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+	var $error = '';
+	var $nom = "Jade";
 
 
-  /**     \brief      Renvoi la description du modele de numérotation
-   *      \return     string      Texte descripif
-   */
-  function info()
-  {
-    return "Renvoie le numéro sous la forme numérique BLYY00001, BLYY00002, BLYY00003, ... où YY représente l'année. Le numéro d'incrément qui suit l'année n'est PAS remis à zéro en début d'année.";
-  }
+	/**     \brief      Renvoi la description du modele de numérotation
+	*      \return     string      Texte descripif
+	*/
+	function info()
+	{
+		return "Renvoie le numéro sous la forme numérique BLYY00001, BLYY00002, BLYY00003, ... où YY représente l'année. Le numéro d'incrément qui suit l'année n'est PAS remis à zéro en début d'année.";
+	}
   
       /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Example

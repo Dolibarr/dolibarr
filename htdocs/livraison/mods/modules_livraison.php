@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
  *
@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
@@ -28,7 +25,7 @@
             \ingroup    expedition
             \brief      Fichier contenant la classe mère de generation de bon de livraison en PDF
                             et la classe mère de numérotation des bons de livraisons
-            \version    $Revision$
+            \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.inc.php');

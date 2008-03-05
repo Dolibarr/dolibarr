@@ -246,9 +246,6 @@ if ($resql)
     }
 }
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("SendingMethod"),$linkback,'setup');
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td>';
