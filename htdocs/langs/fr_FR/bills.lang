@@ -340,53 +340,24 @@ PDFTourteauDescription=Modèle de facture sans remise
 DefinedAndHasThisValue=Définie et vaut
 IsNotDefined=N'est pas définie
 
-# deneb
-DenebNumRefModelDesc1=Renvoie le numéro de facture sous la forme, PREF-31-12-2004-01, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 31 décembre 2004) et d'un compteur.
-DenebNumRefModelDesc2=Si la constante FACTURE_DENEB_DELTA est définie, un offset est appliqué sur le compteur
-
-# janus
-JanusNumRefModelDesc1=Renvoie le numéro de facture sous une forme spéciale F50201 pour la 1ere facture de février 2005
-
-# jupiter
-JupiterNumRefModelDesc1=Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003
-
-# lune
-LuneNumRefModelDesc1=Système de numérotation mensuel sous la forme F0501015, qui correspond à la 15ème facture du mois de Janvier 2005
-
-# mars
-MarsNumRefModelDesc1=Numéro de facture sous la forme, PREF-10-2004-005, qui correspond à la 5ème facture d'octobre 2004 et où PREF est le préfix de la société.
-MarsNumRefModelDesc2=Le nombre final est formaté sur 3 chiffres ou plus.
-MarsNumRefModelDesc3=Si la constante FACTURE_MARS_DELTA est définie, un offset est appliqué sur le compteur
-
 # mercure
 MercureNumRefModelDesc1=Renvoie un numéro de facture personalisable selon un masque à définir.
-MercureMaskCodes=Vous pouvez saisir tout masque de numérotation. Dans ce masque, les balises suivantes peuvent etre utilisées:<br><b>{000000}</b> correspond a un numéro qui sera incrémenté à chaque facture. Mettre autant de zéro que la longueur désirée du compteur. Le compteur sera complété par des 0 à gauche afin d'avoir autant de zéro que dans le masque.<br><b>{000000+000}</b> idem précédemment mais un offset correpondant au nombre à droite du + est appliqué.<br><b>{dd}</b> jour de la facture (01 à 31).<br><b>{mm}</b> jour de la facture (01 à 12).<br><b>{yy}</b> ou {yyyy} annee sur 2 ou 4 chiffres de la facture.<br>Tout autre caractère dans le masque sera laissé inchangé.<br>Les espaces ne sont pas permis.<br><br><u>Exemple sur la 99eme facture du tiers LaCompanie faite le 31/01/2007:</u><br><b>ABC-{yy}{mm}-{000000}</b> donnera <b>ABC-0701-000099</b><br><b>{0000}-XXX/{dd}/YYY</b> donnera <b>0099-XXX/31/YYY</b><br>
+MercureMaskCodes=Vous pouvez saisir tout masque de numérotation. Dans ce masque, les balises suivantes peuvent etre utilisées:<br><b>{000000}</b> correspond a un numéro qui sera incrémenté à chaque facture. Mettre autant de zéro que la longueur désirée du compteur. Le compteur sera complété par des 0 à gauche afin d'avoir autant de zéro que dans le masque.<br><b>{000000+000}</b> idem précédemment mais un offset correpondant au nombre à droite du + est appliqué dès la premiere facture.<br><b>{000000@x}</b> idem précédemment mais le compteur est remis à zero le xeme mois de l'année (x entre 1 et 12). Si cette option est utilisée, la balise {yy} est aussi obligatoire ainsi que {mm} si x vaut 2 ou plus <br><b>{dd}</b> jour de la facture (01 à 31).<br><b>{mm}</b> jour de la facture (01 à 12).<br><b>{yy}</b> ou <b>{yyyy}</b> ou <b>{y}</b> annee sur 2 ou 4 chiffres de la facture.<br>Tout autre caractère dans le masque sera laissé inchangé.<br>Les espaces ne sont pas permis.<br><br><u>Exemple sur la 99eme facture du tiers LaCompanie faite le 31/03/2007:</u><br><b>ABC{yy}{mm}-{000000}</b> donnera <b>ABC0703-000099</b><br><b>{0000+100}-XXX/{dd}/YYY</b> donnera <b>0199-XXX/31/YYY</b><br>
+# terre
+TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et %syymm-nnnn pour les avoirs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
+TerreNumRefModelError=Une facture commençant par $syymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.
 
-# neptune
-NeptuneNumRefModelDesc1=Renvoie le numéro de facture sous une forme du préfix FA suivi de l'année sur 2 chiffres et d'un compteur simple sur 4 chiffres.
-NeptuneNumRefModelDesc2=Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur
+# Deprecated
 
 # orion
 OrionNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
 OrionNumRefModelDesc2=L'année s'incrémente de 1 SANS remise à zero en début d'année d'exercice.
 OrionNumRefModelDesc3=Définir le mois de début d'exercice dans configuration->société, ex: septembre.
 OrionNumRefModelDesc4=Dans cet exemple nous aurons au 1er septembre 2007 une facture nommée FA0800354.
-
-# terre
-TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et %syymm-nnnn pour les avoirs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
-TerreNumRefModelError=Une facture commençant par $syymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.
-
 # titan
 TitanNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
 TitanNumRefModelDesc2=L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.
 TitanNumRefModelDesc3=Définir le mois de début d'exercice dans configuration->société, ex: septembre.
 TitanNumRefModelDesc4=Dans cet exemple nous aurons au 1er septembre 2007 une facture nommée FA0800001.
-
-# uranus
-UranusNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, préfixé par l'année sur un seul chiffre
-
-# venus
-VenusNumRefModelDesc1=Renvoie le numéro de facture sous la forme, FA-PREF-030202, où PREF est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour
-
 # pluton
 PlutonNumRefModelDesc1=Renvoie un numéro de facture personalisable selon un masque à définir.

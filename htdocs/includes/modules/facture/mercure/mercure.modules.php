@@ -118,7 +118,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		
 		if (! $mask) 
 		{
-			$this->error='ErrorFormatNotDefined';
+			$this->error='NotConfigured';
 			return 0;
 		}
 
@@ -128,7 +128,8 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$maskcounter=$reg[1];
 		$maskraz=-1;
 		$maskoffset=0;
-
+		if (strlen($maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
+	
 		$maskwithonlyymcode=$mask;
 		$maskwithonlyymcode=eregi_replace('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$maskcounter,$maskwithonlyymcode);
 		$maskwithonlyymcode=eregi_replace('\{dd\}','dd',$maskwithonlyymcode);
@@ -148,6 +149,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		if (! empty($reg[3]) && eregi('^@',$reg[3])) $maskraz=eregi_replace('^@','',$reg[3]);
 		if ($maskraz >= 0)
 		{
+			if ($maskraz > 12) return 'ErrorBadMask';
 			if ($maskraz > 1 && ! eregi('^(.*)\{(y+)\}\{(m+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
 			if ($maskraz <= 1 && ! eregi('^(.*)\{(y+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
 			//print "x".$maskwithonlyymcode." ".$maskraz;
@@ -165,8 +167,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 			$sqlwhere.='SUBSTRING(facnumber, '.(strlen($reg[1])+1).', '.strlen($reg[2]).') >= '.$yearcomp;
 			if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
 			{
-				$sqlwhere.=' AND ';
-				$sqlwhere.='SUBSTRING(facnumber, '.(strlen($reg[1])+strlen($reg[2])+1).', '.strlen($reg[3]).') >= '.$monthcomp;
+				$sqlwhere.=' AND SUBSTRING(facnumber, '.(strlen($reg[1])+strlen($reg[2])+1).', '.strlen($reg[3]).') >= '.$monthcomp;
 			}
 		}
 		//print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";

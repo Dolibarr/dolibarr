@@ -17,24 +17,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
 	\file       htdocs/includes/modules/facture/pluton/pluton.modules.php
 	\ingroup    facture
 	\brief      Fichier contenant la classe du mod�le de num�rotation de r�f�rence de facture Pluton
-	\version    $Revision$
+	\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
 /**
 	\class      mod_facture_pluton
-	\brief      Classe du mod�le de num�rotation de r�f�rence de facture Pluton
+	\brief      Classe du mod�le de numerotation de reference de facture Pluton
 */
 class mod_facture_pluton extends ModeleNumRefFactures
 {
@@ -134,7 +130,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte.= '<tr><td colspan="3">D�but d\'ann�e fiscale : '.monthArrayOrSelected($conf->global->SOCIETE_FISCAL_MONTH_START).'</td>';
       $texte.= '</tr>';
       
-      $texte.= '</table><br>';
+      $texte.= '</table>';
 
       return $texte;
     }

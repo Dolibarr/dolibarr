@@ -34,6 +34,7 @@ UsePopupCalendar=Utiliser les popups pour la saisie des dates
 UsePreviewTabs=Afficher les onglets "Aperçu"
 ShowPreview=Afficher aperçu
 ThemeCurrentlyActive=Theme actuellement actif
+Mask=Masque
 NextValue=Prochaine valeur
 NextValueForInvoices=Prochaine valeur (factures)
 NextValueForCreditNotes=Prochaine valeur (avoirs)

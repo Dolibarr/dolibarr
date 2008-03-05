@@ -215,7 +215,7 @@ $h++;
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 /*
- *  Module num�rotation
+ *  Module numerotation
  */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -272,21 +272,38 @@ while (($file = readdir($handle))!==false)
 
 			$facture=new Facture($db);
 
-			// Info
+			// Example for standard invoice
 			$htmltooltip='';
 			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
 			$facture->type=0;
 	        $nextval=$module->getNextValue($mysoc,$facture);
-	        if ($nextval != $langs->trans("NotAvailable"))
-	        {
-	            $htmltooltip.='<b>'.$langs->trans("NextValueForInvoices").'</b>: '.$nextval.'<br>';
-	        }
+			if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+			{
+				$htmltooltip.='<b>'.$langs->trans("NextValueForInvoices").'</b>: ';
+		        if ($nextval)
+				{
+					$htmltooltip.=$nextval.'<br>';
+				}
+				else
+				{
+					$htmltooltip.=$langs->trans($module->error).'<br>';
+				}
+			}
+			// Example for credit invoice
 			$facture->type=2;
 	        $nextval=$module->getNextValue($mysoc,$facture);
-	        if ($nextval != $langs->trans("NotAvailable"))
-	        {
-	            $htmltooltip.='<b>'.$langs->trans("NextValueForCreditNotes").'</b>: '.$nextval;
-	        }
+			if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+			{
+				$htmltooltip.='<b>'.$langs->trans("NextValueForCreditNotes").'</b>: ';
+				if ($nextval)
+				{
+					$htmltooltip.=$nextval;
+				}
+				else
+				{
+					$htmltooltip.=$langs->trans($module->error);
+				}
+			}
 	    	print '<td align="center">';
 	    	print $html->textwithhelp('',$htmltooltip,1,0);
 	    	print '</td>';

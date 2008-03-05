@@ -341,53 +341,24 @@ PDFTourteauDescription=Invoice model Tourteau
 DefinedAndHasThisValue=Defined and value to
 IsNotDefined=undefined
 
-# deneb
-DenebNumRefModelDesc1=Return the invoice number under the format, PREF-31-12-2004-01 where PREF is the prefix of the company followed by the date (here 31 December 2004) and a counter. 
-DenebNumRefModelDesc2=If the constant FACTURE_DENEB_DELTA is defined, an offset is applied on the counter
-
-# janus
-JanusNumRefModelDesc1=Return the invoice number under a special format F50201 for the first invoice of February 2005
-
-# jupiter
-JupiterNumRefModelDesc1=Monthly numbering system under the format F20030715, which correspond to the 15th invoice for the month of July 2003.
-
-# lune
-LuneNumRefModelDesc1=Monthly numbering system under the format F0501015, which correspond to the 15th invoice for the month January 2005
-
-# mars
-MarsNumRefModelDesc1=Invoice number under the format PREF-10-2004-005, which correspond to the 5th invoice for the month of October 2004 where PREF is the prefix of the company.
-MarsNumRefModelDesc2=The final number is formatted over 3 number or more. 
-MarsNumRefModelDesc3=If the constant FACTURE_MARS_DELTA is defined, an offset is applied on the counter
-
 # mercure
 MercureNumRefModelDesc1=Return a customizable invoice number according to a defined mask. 
-MercureMaskCodes=You may enter all mask of numbering.  In this mask, the following tags could be used:<br><b>{000000}</b> correspond to a number which will be incremented on each invoice.  Enter as many zeros as the desired length of the counter. The counter will be completed by zeros at the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as previous but a corresponding offset to the number to the right of + is applied. <br><b>{dd}</b> invoice day (01 à 31).<br><b>{mm}</b> invoice month (01 à 12).<br><b>{yy}</b> or {yyyy} year over 2 or 4 numbers of the invoice.<br>All other characters in the mask will remain intact.<br>Spaces are not allowed.<br><br><u>Example on the 99th invoice of the third party TheCompany done 31/01/2007:</u><br><b>ABC-{yy}{mm}-{000000}</b> will give <b>ABC-0701-000099</b><br><b>{0000}-ZZZ/{dd}/XXX</b> will give <b>0099-ZZZ/31/XXX</b><br>
+MercureMaskCodes=You may enter all mask of numbering.  In this mask, the following tags could be used:<br><b>{000000}</b> correspond to a number which will be incremented on each invoice. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros at the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as previous but a corresponding offset to the number to the right of + is applied beginning by first invoice. <br><b>{000000@x}</b> same as previous but counter is reset to zero when month x is reached (x between 1 and 12). If this option is used, tag {yy} is required and also {mm} if x is 2 or higher. <br><b>{dd}</b> invoice day (01 à 31).<br><b>{mm}</b> invoice month (01 à 12).<br><b>{yy}</b> or <b>{yyyy}</b> or <b>{y}</b> year over 2 or 4 numbers of the invoice.<br>All other characters in the mask will remain intact.<br>Spaces are not allowed.<br><br><u>Example on the 99th invoice of the third party TheCompany done 31/01/2007:</u><br><b>ABC{yy}{mm}-{000000}</b> will give <b>ABC0701-000099</b><br><b>{0000+100}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br>
+# terre
+TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
 
-# neptune
-NeptuneNumRefModelDesc1=Return the invoice number under the format of the prefix FA followed by the year over 2 numbers and a simple counter over 4 numbers. 
-NeptuneNumRefModelDesc2=If the constant FACTURE_NEPTUNE_DELTA is defined, an offset is applied on the counter
+# Deprecated
 
 # orion
 OrionNumRefModelDesc1=Return the number under the format FAYYNNNNN where YY is the year and NNNNN the increment number starting at 1.
 OrionNumRefModelDesc2=The year is increased by 1 WITHOUT an initialisation to zero at the start of the fiscal year.
 OrionNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
 OrionNumRefModelDesc4=In this example, we shall have on the 1st of September 2006 an invoice named FA700354.
-
-# terre
-TerreNumRefModelDesc1=Return numero with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
-TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
-
 # titan
 TitanNumRefModelDesc1=Return the number with format FAYYNNNNN where YY is the year and NNNNN is the increment number starting from 1.
 TitanNumRefModelDesc2=The year is incremented by 1 and the increment number is initialized to zero at the start of the fiscal year. 
 TitanNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
 TitanNumRefModelDesc4=In this example, we shall have on the 1st September 2006 an invoice named FA0700001
-
-# uranus
-UranusNumRefModelDesc1=Return the invoice number under a simple numerical format, prefixed by the year with one number
-
-# venus
-VenusNumRefModelDesc1=Return the invoice number under the format FA-PREF-030202, where PREF is the prefix of the company and is follwed by 6 digits for the year, month and day. 
-
 # pluton
 PlutonNumRefModelDesc1=Return a customizable invoice number according to a defined mask.
