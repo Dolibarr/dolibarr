@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
      	\file       htdocs/includes/modules/commande/mod_commande_marbre.php
 		\ingroup    commande
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de commande Marbre
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
@@ -36,17 +33,11 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php
 
 class mod_commande_marbre extends ModeleNumRefCommandes
 {
+	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='CO';
     var $error='';
-    
-	/*
-	 *   \brief      Constructeur
-   	 */
-  	function mod_commande_marbre()
-    {
-    	$this->nom = "Marbre";
-    }
-
+    var $nom='Marbre';
+	
     
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
@@ -92,10 +83,12 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         return true;
     }
 
-    /**     \brief      Renvoi prochaine valeur attribuée
-     *      \return     string      Valeur
-     */
-    function getNextValue()
+	/**		\brief      Return next value
+	*      	\param      objsoc      Objet third party
+	*		\param		commande	Object order
+	*      	\return     string      Value if OK, 0 if KO
+	*/
+    function getNextValue($objsoc=0,$commande)
     {
         global $db;
 

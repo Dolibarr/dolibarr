@@ -51,7 +51,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		  
 		$form = new Form($db);
     	
-		$texte = $langs->trans('SaphirNumRefModelDesc1')."<br>\n";
+		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstpropal" value="PROPALE_SAPHIR_MASK">';
@@ -89,10 +89,10 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 	/**		\brief      Return next value
 	*      	\param      objsoc      Object third party
-	*      	\param      facture		Object invoice
+	*      	\param      propal		Object proposal
 	*      	\return     string      Value if OK, 0 if KO
 	*/
-	function getNextValue($objsoc,$facture)
+	function getNextValue($objsoc,$propal)
 	{
 		global $db,$conf;
 
@@ -163,14 +163,12 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		// Get counter in database
 		$counter=0;
 		$sql = "SELECT MAX(".$sqlstring.") as val";
-		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
-		$sql.= " WHERE facnumber not like '(%'";
-		if ($facture->type == 2) $sql.= " AND type = 2";
-		else $sql.=" AND type != 2";
+		$sql.= " FROM ".MAIN_DB_PREFIX."propal";
+		$sql.= " WHERE ref not like '(%'";
 		if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 		
 		//print $sql;
-		dolibarr_syslog("mod_facture_mercure::getNextValue sql=".$sql, LOG_DEBUG);
+		dolibarr_syslog("mod_propale_saphir::getNextValue sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{

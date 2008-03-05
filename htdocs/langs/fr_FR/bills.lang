@@ -340,10 +340,6 @@ PDFTourteauDescription=Modèle de facture sans remise
 DefinedAndHasThisValue=Définie et vaut
 IsNotDefined=N'est pas définie
 
-# mercure
-MercureNumRefModelDesc1=Renvoie un numéro de facture personalisable selon un masque à définir.
-MercureMaskCodes=Vous pouvez saisir tout masque de numérotation. Dans ce masque, les balises suivantes peuvent etre utilisées:<br><b>{000000}</b> correspond a un numéro qui sera incrémenté à chaque facture. Mettre autant de zéro que la longueur désirée du compteur. Le compteur sera complété par des 0 à gauche afin d'avoir autant de zéro que dans le masque.<br><b>{000000+000}</b> idem précédemment mais un offset correpondant au nombre à droite du + est appliqué dès la premiere facture.<br><b>{000000@x}</b> idem précédemment mais le compteur est remis à zero le xeme mois de l'année (x entre 1 et 12). Si cette option est utilisée, la balise {yy} est aussi obligatoire ainsi que {mm} si x vaut 2 ou plus <br><b>{dd}</b> jour de la facture (01 à 31).<br><b>{mm}</b> jour de la facture (01 à 12).<br><b>{yy}</b> ou <b>{yyyy}</b> ou <b>{y}</b> annee sur 2 ou 4 chiffres de la facture.<br>Tout autre caractère dans le masque sera laissé inchangé.<br>Les espaces ne sont pas permis.<br><br><u>Exemple sur la 99eme facture du tiers LaCompanie faite le 31/03/2007:</u><br><b>ABC{yy}{mm}-{000000}</b> donnera <b>ABC0703-000099</b><br><b>{0000+100}-XXX/{dd}/YYY</b> donnera <b>0199-XXX/31/YYY</b><br>
-# terre
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et %syymm-nnnn pour les avoirs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
 TerreNumRefModelError=Une facture commençant par $syymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.
 

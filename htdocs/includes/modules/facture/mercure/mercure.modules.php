@@ -36,18 +36,9 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 class mod_facture_mercure extends ModeleNumRefFactures
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefixinvoice;
-	var $prefixcreditnote;
-	var $matrice;
-	var $numMatrice = Array();
-	var $yy;
-	var $mm;
-	var $numbitcounter;
-	var $searchLast;
-	var $searchLastWithNoYear;
-	var $searchLastWithPreviousYear;
 	var $error = '';
 
+	
     /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
@@ -59,7 +50,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		
 		$form = new Form($db);
 		
-		$texte = $langs->trans('MercureNumRefModelDesc1')."<br>\n";
+		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
 		$texte.= '<input type="hidden" name="maskconstinvoice" value="FACTURE_MERCURE_MASK_INVOICE">';
@@ -67,18 +58,16 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$texte.= '<table class="nobordernopadding" width="100%">';
 		
 		// Parametrage du prefix des factures
-		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").')</td>';
-		//      $texte.= '<td align="right"><input type="text" class="flat" size="24" name="prefixfacture" value="'.$conf->global->FACTURE_NUM_PREFIX.'"></td>';
-		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">',$langs->trans("MercureMaskCodes"),1,1).'</td>';
+		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">',$langs->trans("GenericMaskCodes",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice")),1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
 		$texte.= '</tr>';
 		
 		// Parametrage du prefix des avoirs
-		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").')</td>';
-		//$texte.= '<td align="right"><input type="text" class="flat" size="24" name="prefixavoir" value="'.$conf->global->AVOIR_NUM_PREFIX.'"></td>';
-		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$langs->trans("MercureMaskCodes"),1,1).'</td>';
+		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$langs->trans("MercureMaskCodes",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice")),1,1).'</td>';
 		$texte.= '</tr>';
 		
 		$texte.= '</table>';
@@ -94,7 +83,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
     {
     	global $conf,$langs,$mysoc;
     	
-    	$numExample = $this->getNextValue($mysoc,$facture);
+    	$numExample = $this->getNextValue($mysoc,$facturespecimen);
         
 		if (! $numExample)
 		{
@@ -230,5 +219,4 @@ class mod_facture_mercure extends ModeleNumRefFactures
     }
     
 }    
-
 ?>

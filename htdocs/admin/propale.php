@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -19,16 +19,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/admin/propale.php
 		\ingroup    propale
 		\brief      Page d'administration/configuration du module Propale
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -47,6 +44,13 @@ if (!$user->admin)
 /*
  * Actions
  */
+
+if ($_POST["action"] == 'updateMask')
+{
+	$maskconstpropal=$_POST['maskconstpropal'];
+	$maskpropal=$_POST['maskpropal'];
+	if ($maskconstpropal)  dolibarr_set_const($db,$maskconstpropal,$maskpropal);
+}
 
 if ($_GET["action"] == 'specimen')
 {
@@ -231,6 +235,10 @@ if ($handle)
 
             $module = new $file;
 
+			// Show modules according to features level
+		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
             $var=!$var;
             print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
             print $module->info();
@@ -254,12 +262,22 @@ if ($handle)
 			     
 			// Info
 			$htmltooltip='';
-	        $htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
-			$nextval=$module->getNextValue($mysoc,$propale);
-	        if ($nextval != $langs->trans("NotAvailable"))
-	        {
-	            $htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
-	        }
+			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
+			$facture->type=0;
+	        $nextval=$module->getNextValue($mysoc,$propale);
+			if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+			{
+				$htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: ';
+		        if ($nextval)
+				{
+					$htmltooltip.=$nextval.'<br>';
+				}
+				else
+				{
+					$htmltooltip.=$langs->trans($module->error).'<br>';
+				}
+			}
+
 	    	print '<td align="center">';
 	    	print $html->textwithhelp('',$htmltooltip,1,0);
 	    	print '</td>';

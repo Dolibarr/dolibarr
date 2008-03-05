@@ -186,6 +186,9 @@ SetupIsReadyForUse=Install is finished and Dolibarr is ready for use with new co
 CurrentVersion=Dolibarr current version
 CallUpdatePage=Go on page that update database structure and datas %s.
 LastStableVersion=Last stable version
+GenericMaskCodes=You may enter all mask of numbering.  In this mask, the following tags could be used:<br><b>{000000}</b> correspond to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros at the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as previous but a corresponding offset to the number to the right of + is applied beginning by first %s. <br><b>{000000@x}</b> same as previous but counter is reset to zero when month x is reached (x between 1 and 12). If this option is used, tag {yy} is required and also {mm} if x is 2 or higher. <br><b>{dd}</b> invoice day (01 à 31).<br><b>{mm}</b> invoice month (01 à 12).<br><b>{yy}</b> or <b>{yyyy}</b> or <b>{y}</b> year over 2 or 4 numbers of the invoice.<br>All other characters in the mask will remain intact.<br>Spaces are not allowed.<br><br><u>Example on the 99th %s of the third party TheCompany done 31/01/2007:</u><br><b>ABC{yy}{mm}-{000000}</b> will give <b>ABC0701-000099</b><br><b>{0000+100}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br>
+GenericNumRefModelDesc=Return a customizable number according to a defined mask. 
+
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users and groups management
