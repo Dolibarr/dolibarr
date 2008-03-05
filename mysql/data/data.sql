@@ -73,6 +73,8 @@ insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_COMP
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_CONTACT','1','yesno',0,'Show form for quick contact search');
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_PRODUCT','1','yesno',0,'Show form for quick product search');
 
+insert into llx_const(name,value,type,visible,note) values('SYSLOG_LEVEL','6','chaine',0,'Level of debug info to show');
+
 
 --
 -- IHM
