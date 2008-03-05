@@ -21,6 +21,8 @@ For users:
 - Added clicktodial module.
 - French NAF code can accept 5 chars.
 - Supplier prices can be input with or without taxe.
+- New generic numbering modules to offer more solutions for generating
+  automatic id.
 - Other minor changes (features, look, fixes)
 
 For developers:

@@ -54,12 +54,12 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstpropal" value="COMMANDE_SAPHIR_MASK">';
+		$texte.= '<input type="hidden" name="maskconstorder" value="COMMANDE_SAPHIR_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 		
 		// Parametrage du prefix des factures
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskpropal" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">',$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"),$langs->transnoentities("Order")),1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskorder" value="'.$conf->global->COMMANDE_SAPHIR_MASK.'">',$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"),$langs->transnoentities("Order")),1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
@@ -147,17 +147,17 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 			if (strlen($reg[2]) == 1) $yearcomp=substr(date("y"),2,1)+$yearoffset;
 			
 			$sqlwhere='';
-			$sqlwhere.='SUBSTRING(facnumber, '.(strlen($reg[1])+1).', '.strlen($reg[2]).') >= '.$yearcomp;
+			$sqlwhere.='SUBSTRING(ref, '.(strlen($reg[1])+1).', '.strlen($reg[2]).') >= '.$yearcomp;
 			if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
 			{
-				$sqlwhere.=' AND SUBSTRING(facnumber, '.(strlen($reg[1])+strlen($reg[2])+1).', '.strlen($reg[3]).') >= '.$monthcomp;
+				$sqlwhere.=' AND SUBSTRING(ref, '.(strlen($reg[1])+strlen($reg[2])+1).', '.strlen($reg[3]).') >= '.$monthcomp;
 			}
 		}
 		//print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 		
 		$posnumstart=strpos($maskwithnocode,$maskcounter);	// Pos of counter in final string (from 0 to ...)
 		if ($posnumstart < 0) return 'ErrorBadMask';
-		$sqlstring='SUBSTRING(facnumber, '.($posnumstart+1).', '.strlen($maskcounter).')';
+		$sqlstring='SUBSTRING(ref, '.($posnumstart+1).', '.strlen($maskcounter).')';
 		//print "x".$sqlstring;
 		
 		// Get counter in database
