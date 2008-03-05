@@ -28,13 +28,14 @@
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
+
 /**
-	\class      mod_facture_pluton
-	\brief      Classe du mod�le de num�rotation de r�f�rence de facture Mercure
+	\class      mod_facture_mercure
+	\brief      Classe du modele de numerotation de reference de facture Mercure
 */
 class mod_facture_mercure extends ModeleNumRefFactures
 {
-	var $version='experimental';		// 'development', 'experimental', 'dolibarr'
+	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefixinvoice;
 	var $prefixcreditnote;
 	var $matrice;
@@ -52,37 +53,38 @@ class mod_facture_mercure extends ModeleNumRefFactures
      */
 	function info()
     {
-    	global $conf,$langs;
+		global $conf,$langs;
 
-		  $langs->load("bills");
-		  
-		  $form = new Form($db);
-    	
-      $texte = $langs->trans('MercureNumRefModelDesc1')."<br>\n";
-      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="updateMask">';
-      $texte.= '<input type="hidden" name="maskconstinvoice" value="FACTURE_MERCURE_MASK_INVOICE">';
-      $texte.= '<input type="hidden" name="maskconstcredit" value="FACTURE_MERCURE_MASK_CREDIT">';
-      $texte.= '<table class="nobordernopadding" width="100%">';
-      
-      // Parametrage du prefix des factures
-      $texte.= '<tr><td>'.$langs->trans("InvoiceStandard").'</td>';
-//      $texte.= '<td align="right"><input type="text" class="flat" size="24" name="prefixfacture" value="'.$conf->global->FACTURE_NUM_PREFIX.'"></td>';
-      $texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">',$langs->trans("MercureMaskCodes"),1,1).'</td>';
-      $texte.= '</tr>';
-      
-      // Parametrage du prefix des avoirs
-      $texte.= '<tr><td>'.$langs->trans("InvoiceAvoir").'</td>';
-      //$texte.= '<td align="right"><input type="text" class="flat" size="24" name="prefixavoir" value="'.$conf->global->AVOIR_NUM_PREFIX.'"></td>';
-      $texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$langs->trans("MercureMaskCodes"),1,1).'</td>';
-      $texte.= '</tr>';
-     
-      $texte.= '<tr><td>&nbsp;</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td></tr>';
+		$langs->load("bills");
+		
+		$form = new Form($db);
+		
+		$texte = $langs->trans('MercureNumRefModelDesc1')."<br>\n";
+		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte.= '<input type="hidden" name="action" value="updateMask">';
+		$texte.= '<input type="hidden" name="maskconstinvoice" value="FACTURE_MERCURE_MASK_INVOICE">';
+		$texte.= '<input type="hidden" name="maskconstcredit" value="FACTURE_MERCURE_MASK_CREDIT">';
+		$texte.= '<table class="nobordernopadding" width="100%">';
+		
+		// Parametrage du prefix des factures
+		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").')</td>';
+		//      $texte.= '<td align="right"><input type="text" class="flat" size="24" name="prefixfacture" value="'.$conf->global->FACTURE_NUM_PREFIX.'"></td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->FACTURE_MERCURE_MASK_INVOICE.'">',$langs->trans("MercureMaskCodes"),1,1).'</td>';
 
-      $texte.= '</table>';
-      $texte.= '</form>';
+		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
-      return $texte;
+		$texte.= '</tr>';
+		
+		// Parametrage du prefix des avoirs
+		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").')</td>';
+		//$texte.= '<td align="right"><input type="text" class="flat" size="24" name="prefixavoir" value="'.$conf->global->AVOIR_NUM_PREFIX.'"></td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$langs->trans("MercureMaskCodes"),1,1).'</td>';
+		$texte.= '</tr>';
+		
+		$texte.= '</table>';
+		$texte.= '</form>';
+
+		return $texte;
     }
 
     /**     \brief      Renvoi un exemple de numerotation
@@ -101,10 +103,10 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		return $numExample;
     }
 
-	/**		\brief      Renvoi prochaine valeur attribuee
-	*      	\param      objsoc      Objet societe
-	*      	\param      facture		Objet facture
-	*      	\return     string      Valeur
+	/**		\brief      Return next value
+	*      	\param      objsoc      Object third party
+	*      	\param      facture		Object invoice
+	*      	\return     string      Value if OK, 0 if KO
 	*/
 	function getNextValue($objsoc,$facture)
 	{
@@ -114,43 +116,86 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		if ($facture->type == 2) $mask=$conf->global->FACTURE_MERCURE_MASK_CREDIT;
 		else $mask=$conf->global->FACTURE_MERCURE_MASK_INVOICE;
 		
-		if (! $mask) return 'Error format not defined';
+		if (! $mask) 
+		{
+			$this->error='ErrorFormatNotDefined';
+			return 0;
+		}
 
-		// Replace all code that ar not {0...0}
-		$newmask=$mask;
-		$newmask=str_ireplace('{yyyy}','yyyy',$newmask);
-		$newmask=str_ireplace('{yy}','yy',$newmask);
-		$newmask=str_ireplace('{mm}','mm',$newmask);
-		$newmask=str_ireplace('{dd}','dd',$newmask);
-		//print "newmask=".$newmask;
+		// Extract value for mask counter, mask raz and mask offset
+		if (! eregi('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$mask,$reg)) return 'ErrorBadMask';
+		$masktri=$reg[1].$reg[2].$reg[3];
+		$maskcounter=$reg[1];
+		$maskraz=-1;
+		$maskoffset=0;
+
+		$maskwithonlyymcode=$mask;
+		$maskwithonlyymcode=eregi_replace('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$maskcounter,$maskwithonlyymcode);
+		$maskwithonlyymcode=eregi_replace('\{dd\}','dd',$maskwithonlyymcode);
+		$maskwithnocode=$maskwithonlyymcode;
+		$maskwithnocode=eregi_replace('\{yyyy\}','yyyy',$maskwithnocode);
+		$maskwithnocode=eregi_replace('\{yy\}','yy',$maskwithnocode);
+		$maskwithnocode=eregi_replace('\{y\}','y',$maskwithnocode);
+		$maskwithnocode=eregi_replace('\{mm\}','mm',$maskwithnocode);
+		//print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
+
+		// If an offset is asked
+		if (! empty($reg[2]) && eregi('^\+',$reg[2])) $maskoffset=eregi_replace('^\+','',$reg[2]);
+		if (! empty($reg[3]) && eregi('^\+',$reg[3])) $maskoffset=eregi_replace('^\+','',$reg[3]);
+
+		// If a restore to zero after a month is asked we check if there is already a value for this year.
+		if (! empty($reg[2]) && eregi('^@',$reg[2]))  $maskraz=eregi_replace('^@','',$reg[2]);
+		if (! empty($reg[3]) && eregi('^@',$reg[3])) $maskraz=eregi_replace('^@','',$reg[3]);
+		if ($maskraz >= 0)
+		{
+			if ($maskraz > 1 && ! eregi('^(.*)\{(y+)\}\{(m+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+			if ($maskraz <= 1 && ! eregi('^(.*)\{(y+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
+			//print "x".$maskwithonlyymcode." ".$maskraz;
+
+			// Define $yearcomp and $monthcomp (that will be use de filter request to search max number)
+			$monthcomp=$maskraz;
+			$yearoffset=0;
+			$yearcomp=0;
+			if (date("m") < $maskraz) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
+			if (strlen($reg[2]) == 4) $yearcomp=sprintf("%04d",date("Y")+$yearoffset);
+			if (strlen($reg[2]) == 2) $yearcomp=sprintf("%02d",date("y")+$yearoffset);
+			if (strlen($reg[2]) == 1) $yearcomp=substr(date("y"),2,1)+$yearoffset;
+			
+			$sqlwhere='';
+			$sqlwhere.='SUBSTRING(facnumber, '.(strlen($reg[1])+1).', '.strlen($reg[2]).') >= '.$yearcomp;
+			if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
+			{
+				$sqlwhere.=' AND ';
+				$sqlwhere.='SUBSTRING(facnumber, '.(strlen($reg[1])+strlen($reg[2])+1).', '.strlen($reg[3]).') >= '.$monthcomp;
+			}
+		}
+		//print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
 		
-		$posnumstart=strpos($newmask,'{0');		// Pos of {
-		$posnumend  =strpos($newmask,'0}')+1;	// Pos of }
-		
-		if ($posnumstart <= 0 || $posnumend <= 1) return 'Error in format';
-		
-		$sqlstring='SUBSTRING(facnumber, '.($posnumstart+1).', '.($posnumend-$posnumstart-1).')';
+		$posnumstart=strpos($maskwithnocode,$maskcounter);	// Pos of counter in final string (from 0 to ...)
+		if ($posnumstart < 0) return 'ErrorBadMask';
+		$sqlstring='SUBSTRING(facnumber, '.($posnumstart+1).', '.strlen($maskcounter).')';
 		//print "x".$sqlstring;
 		
+		// Get counter in database
 		$counter=0;
-		
 		$sql = "SELECT MAX(".$sqlstring.") as val";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber not like '(%'";
 		if ($facture->type == 2) $sql.= " AND type = 2";
 		else $sql.=" AND type != 2";
+		if ($sqlwhere) $sql.=' AND '.$sqlwhere;
+		
 		//print $sql;
+		dolibarr_syslog("mod_facture_mercure::getNextValue sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 			$counter = $obj->val;
 		}
-		if (eregi('[^0-9]',$counter)) $counter=0;
+		else dolibarr_print_error($db);
+		if (empty($counter) || eregi('[^0-9]',$counter)) $counter=$maskoffset;
 		$counter++;
-		
-		$sizeofnum=$posnumend-$posnumstart;
-		//print $counter."-".$sizeofnum."-".$posnumstart."-".$posnumend;
 		
 		// Build numFinal
 		$numFinal = $mask;
@@ -158,14 +203,15 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		// We replace special codes
 		$numFinal = str_ireplace('{yyyy}',date("Y"),$numFinal);
 		$numFinal = str_ireplace('{yy}',date("y"),$numFinal);
+		$numFinal = str_ireplace('{y}' ,substr(date("y"),2,1),$numFinal);
 		$numFinal = str_ireplace('{mm}',date("m"),$numFinal);
 		$numFinal = str_ireplace('{dd}',date("d"),$numFinal);
 
 		// Now we replace the counter
-		$nummask='{'.str_pad('',$sizeofnum-1,"0").'}';
-		$numcount=str_pad($counter,$sizeofnum-1,"0",STR_PAD_LEFT);
-		//print 'x'.$nummask.'-'.$sizeofnum.'y';
-		$numFinal = str_ireplace($nummask,$numcount,$numFinal);
+		$maskbefore='{'.$masktri.'}';
+		$maskafter=str_pad($counter,strlen($maskcounter),"0",STR_PAD_LEFT);
+		//print 'x'.$maskbefore.'-'.$maskafter.'y';
+		$numFinal = str_ireplace($maskbefore,$maskafter,$numFinal);
 		
 		dolibarr_syslog("mod_facture_mercure::getNextValue return ".$numFinal);
 		return  $numFinal;
