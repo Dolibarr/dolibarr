@@ -17,20 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
 	\file       htdocs/includes/modules/propale/mod_propale_saphir.php
 	\ingroup    propale
 	\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Saphir
-	\version    $Revision$
+	\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
+
 
 /**
 	\class      mod_propale_saphir
@@ -38,82 +35,40 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php")
 */
 class mod_propale_saphir extends ModeleNumRefPropales
 {
-	var $prefix;
-	var $matrice;
-	var $numMatrice = Array();
-	var $yy;
-	var $mm;
-	var $numbitcounter;
-	var $searchLast;
-  var $searchLastWithNoYear;
-  var $searchLastWithPreviousYear;
+	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $error = '';
+	var $nom = 'Saphir';
 	
-	/**   \brief      Constructeur
-   */
-  function mod_propale_saphir()
-  {
-    $this->nom = "Saphir";
-  }
 
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
-function info()
+	function info()
     {
     	global $conf,$langs;
 
-		  $langs->load("bills");
+		$langs->load("bills");
 		  
-		  $form = new Form($db);
+		$form = new Form($db);
     	
-      $texte = $langs->trans('SaphirNumRefModelDesc1')."<br>\n";
-      $texte.= '<table class="nobordernopadding" width="100%">';
-      
-      // Paramétrage de la matrice
-      $texte.= '<tr><td>Matrice de disposition des objets (prefix,mois,année,compteur...)</td>';
-      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="updateMatrice">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="matrice" value="'.$conf->global->PROPALE_NUM_MATRICE.'"></td>';
-      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("MatriceProposalDesc"),1,1).'</td>';
-      $texte.= '</tr></form>';
-      
-      // Paramétrage du prefix des commandes
-      $texte.= '<tr><td>Préfix des propositions commerciales</td>';
-      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="updatePrefix">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefix" value="'.$conf->global->PROPALE_NUM_PREFIX.'"></td>';
-      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("PrefixProposalDesc"),1,1).'</td>';
-      $texte.= '</tr></form>';
-      
-      // On détermine un offset sur le compteur
-      $texte.= '<tr><td>Appliquer un offset sur le compteur</td>';
-      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="setOffset">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->PROPALE_NUM_DELTA.'"></td>';
-      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("OffsetDesc"),1,1).'</td>';
-      $texte.= '</tr></form>';
-   
-      // On défini si le compteur se remet à zero en debut d'année
-      $texte.= '<tr><td>Le compteur se remet à zéro en début d\'année</td>';
-      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="setNumRestart">';
-      $texte.= '<td align="right">';
-      $texte.= $form->selectyesno('numrestart',$conf->global->PROPALE_NUM_RESTART_BEGIN_YEAR,1);
-      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("NumRestartDesc"),1,1).'</td>';
-      $texte.= '</tr></form>';
-      
-      // On affiche le debut d'année fiscale
-      $texte.= '<tr><td>Début d\'année fiscale : '.monthArrayOrSelected($conf->global->SOCIETE_FISCAL_MONTH_START).'</td>';
-      $texte.= '</tr>';
-      
-      $texte.= '</table><br>';
+		$texte = $langs->trans('SaphirNumRefModelDesc1')."<br>\n";
+		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte.= '<input type="hidden" name="action" value="updateMask">';
+		$texte.= '<input type="hidden" name="maskconstpropal" value="PROPALE_SAPHIR_MASK">';
+		$texte.= '<table class="nobordernopadding" width="100%">';
+		
+		// Parametrage du prefix des factures
+		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskpropal" value="'.$conf->global->PROPALE_SAPHIR_MASK.'">',$langs->trans("GenericMaskCodes",$langs->transnoentities("Proposal"),$langs->transnoentities("Proposal"),$langs->transnoentities("Proposal")),1,1).'</td>';
 
-      return $texte;
+		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+
+		$texte.= '</tr>';
+		
+		$texte.= '</table>';
+		$texte.= '</form>';
+
+		return $texte;
     }
 
     /**     \brief      Renvoi un exemple de numérotation
@@ -121,268 +76,130 @@ function info()
      */
     function getExample()
     {
-    	global $conf,$langs;
+     	global $conf,$langs,$mysoc;
     	
-    	$numExample = '';
-      
-      $buildResult = $this->buildMatrice();
+    	$numExample = $this->getNextValue($mysoc,$propalspecimen);
         
-      if ($buildResult == 1)
-      {
-      	// On récupère le nombre de chiffres du compteur
-    	  $arg = '%0'.$this->numbitcounter.'s';
-        $num = sprintf($arg,$conf->global->PROPALE_NUM_DELTA?$conf->global->PROPALE_NUM_DELTA:1);
-      
-        //On construit le numéro à partir de la matrice
-      	foreach($this->numMatrice as $objetMatrice)
-        {
-        	if ($objetMatrice == '-') $numExample .= $objetMatrice;
-        	if ($objetMatrice == '$prefix') $numExample .= $this->prefix;
-        	if ($objetMatrice == '$yy') $numExample .= $this->yy;
-        	if ($objetMatrice == '$mm') $numExample .= $this->mm;
-        	if ($objetMatrice == '$num') $numExample .= $num;
-        }
-      }
-      else
-      {
-      	$numExample = $langs->trans('NotConfigured');
-      }
-      return $numExample;
+		if (! $numExample)
+		{
+			$numExample = $langs->trans('NotConfigured');
+		}
+		return $numExample;
     }
 
-	/**		\brief      Renvoi prochaine valeur attribuée
-	*      	\param      objsoc      Objet société
-	*      	\param      propale		  Objet propale
-	*      	\return     string      Valeur
+	/**		\brief      Return next value
+	*      	\param      objsoc      Object third party
+	*      	\param      facture		Object invoice
+	*      	\return     string      Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc=0,$propale='')
-    {
-        global $db,$conf;
-        
-        $buildResult = $this->buildMatrice($objsoc,$propale);
-        
-        if ($buildResult == 1)
-        {
+	function getNextValue($objsoc,$facture)
+	{
+		global $db,$conf;
 
-        // On récupère la valeur max (réponse immédiate car champ indéxé)
-        $posindice  = $this->numbitcounter;
-        $searchyy='';
-        $sql = "SELECT MAX(ref)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
-        if ($conf->global->PROPALE_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE ref REGEXP '^".$this->searchLast."'";
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $row = $db->fetch_row($resql);
-            if ($row) $searchyy = substr($row[0],0,-$posindice);
-        }
+		// On défini critere recherche compteur
+		$mask=$conf->global->PROPALE_SAPHIR_MASK;
+		
+		if (! $mask) 
+		{
+			$this->error='NotConfigured';
+			return 0;
+		}
 
-        if ($conf->global->PROPALE_NUM_DELTA != '')
-        {
-        	//on vérifie si il y a une année précédente
-        	//pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
-        	$previousyy='';
-        	$sql = "SELECT MAX(ref)";
-        	$sql.= " FROM ".MAIN_DB_PREFIX."propal";
-        	$sql.= " WHERE ref REGEXP '^".$this->searchLastWithPreviousYear."'";
-        	$resql=$db->query($sql);
-        	if ($resql)
-        	{
-        		$row = $db->fetch_row($resql);
-        		if ($row) $previousyy = substr($row[0],0,-$posindice);
-        	}
-        }
-        	
-        // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('^'.$this->searchLastWithNoYear.'',$searchyy))
-        {
-            // Recherche rapide car restreint par un like sur champ indexé
-            $sql = "SELECT MAX(0+SUBSTRING(ref,-".$posindice."))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."propal";
-            $sql.= " WHERE ref REGEXP '^".$searchyy."'";
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $row = $db->fetch_row($resql);
-                $max = $row[0];
-            }
-        }
-        else if ($conf->global->PROPALE_NUM_DELTA != '' && !eregi('^'.$this->searchLastWithPreviousYear.'',$previousyy))
-        {
-        	// on applique le delta une seule fois
-        	$max=$conf->global->PROPALE_NUM_DELTA?$conf->global->PROPALE_NUM_DELTA-1:0;
-        }
-        else
-        {
-        	$max=0;
-        }
-    	  
-    	  // On applique le nombre de chiffres du compteur
-        $arg = '%0'.$this->numbitcounter.'s';
-        $num = sprintf($arg,$max+1);
-        $numFinal = '';
-        
-        foreach($this->numMatrice as $objetMatrice)
-        {
-        	if ($objetMatrice == '-') $numFinal .= $objetMatrice;
-        	if ($objetMatrice == '$prefix') $numFinal .= $this->prefix;
-        	if ($objetMatrice == '$yy') $numFinal .= $this->yy;
-        	if ($objetMatrice == '$mm') $numFinal .= $this->mm;
-        	if ($objetMatrice == '$num') $numFinal .= $num;
-        } 
-        
-        dolibarr_syslog("mod_propale_saphir::getNextValue return ".$numFinal);
-        return  $numFinal;
-    }
-  }
-  
-   /**		\brief      Construction de la matrice de numérotation
-	*     \param      objsoc      Objet société
-	*     \return     string      Valeur
-	*/
-    function buildMatrice($objsoc=0,$propale='')
-    {
-        global $conf;
-        
-        $this->prefix  = $conf->global->PROPALE_NUM_PREFIX;
-        $this->matrice = $conf->global->PROPALE_NUM_MATRICE;
-        $this->searchLast = '';
-        $this->searchLastWithNoYear = '';
-        $this->searchLastWithPreviousYear = '';
-        
-        if ($this->matrice != '')
-        {
-        	$resultatMatrice = Array();
-        	
-        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: PR pour propale), COM : prefix du client
-        	$matriceYear     = "[A]{2,4}"; // l'année est sur 2 ou 4 chiffres
-        	$matriceMonth    = "[M]{2}"; // le mois est sur 2 chiffres
-        	$matriceCounter  = "[C]{1,}"; //le compteur a un nombre de chiffres libre
-        	$matriceTiret    = "[-]{1}"; // on recherche si il y a des tirets de séparation
-        	
-        	$matriceSearch   = Array('prefix'=>$matricePrefix,
-        	                         'year'=>$matriceYear,
-        	                         'month'=>$matriceMonth,
-        	                         'counter'=>$matriceCounter
-        	                         );
-        	
-        	// on détermine l'emplacement des tirets
-        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->matrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
-        	
-        	$j = 0;
-        	$k = 0;
-        	
-        	// on détermine les objets de la matrice
-        	for ($i = 0; $i < count($resultTiret); $i++)
-        	{
-        		foreach($resultTiret[$i] as $idResultTiret => $valueResultTiret)
-        		{
-        			// Ajout des tirets
-        		  if ($j != $resultTiret[$i][1])
-        		  {
-        		  	$this->numMatrice[$k] = '-';
-        		  	$this->searchLast .= '-';
-        		  	$this->searchLastWithNoYear .= '-';
-        		  	$this->searchLastWithPreviousYear .= '-';
-        		  	$j = $resultTiret[$i][1];
-        		  	$k++;
-        		  }
-        			foreach($matriceSearch as $idMatrice => $valueMatrice)
-        			{
-        			$resultCount = eregi(''.$valueMatrice.'',$valueResultTiret,$resultatMatrice);
-        			if ($resultCount)
-        			{
-        				// On récupère le préfix utilisé
-        				if ($idMatrice == 'prefix')
-        				{
-        					if ($resultatMatrice[0] == 'COM')
-        					{
-        						if ($objsoc->prefix_comm)
-        						{
-        							$this->prefix = $objsoc->prefix_comm;
-        						}
-        						else
-        					  {
-        						  $this->prefix = 'COM';
-        					  }
-        					  $this->numMatrice[$k] = '$prefix';
-        					  $this->searchLast .= $this->prefix;
-        					  $this->searchLastWithNoYear .= $this->prefix;
-        					  $this->searchLastWithPreviousYear .= $this->prefix;
-        					  $k++;
-        					}
-        					else if ($resultatMatrice[0] == 'PREF')
-        				  {
-        					  $this->numMatrice[$k] = '$prefix';
-        					  $this->searchLast .= $this->prefix;
-        					  $this->searchLastWithNoYear .= $this->prefix;
-        					  $this->searchLastWithPreviousYear .= $this->prefix;
-        					  $k++;
-        					}
-        				}
-        				else if ($idMatrice == 'year')
-        				{
-        					// On récupère le nombre de chiffres pour l'année
-        					$numbityear = $resultCount;
-        					// On défini le mois du début d'année fiscale
-        					$current_month = date("n");
-        					
-        					if (is_object($propale) && $propale->date)
-                  {
-        	          $create_month = strftime("%m",$propale->date);
-                  }
-                  else
-                  {
-        	          $create_month = $current_month;
-                  }
+		// Extract value for mask counter, mask raz and mask offset
+		if (! eregi('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$mask,$reg)) return 'ErrorBadMask';
+		$masktri=$reg[1].$reg[2].$reg[3];
+		$maskcounter=$reg[1];
+		$maskraz=-1;
+		$maskoffset=0;
+		if (strlen($maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
+	
+		$maskwithonlyymcode=$mask;
+		$maskwithonlyymcode=eregi_replace('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$maskcounter,$maskwithonlyymcode);
+		$maskwithonlyymcode=eregi_replace('\{dd\}','dd',$maskwithonlyymcode);
+		$maskwithnocode=$maskwithonlyymcode;
+		$maskwithnocode=eregi_replace('\{yyyy\}','yyyy',$maskwithnocode);
+		$maskwithnocode=eregi_replace('\{yy\}','yy',$maskwithnocode);
+		$maskwithnocode=eregi_replace('\{y\}','y',$maskwithnocode);
+		$maskwithnocode=eregi_replace('\{mm\}','mm',$maskwithnocode);
+		//print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
 
-                  // On change d'année fiscal si besoin
-                  if($conf->global->SOCIETE_FISCAL_MONTH_START > 1 && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
-                  {
-        	          $this->yy = substr(strftime("%Y",dolibarr_mktime(0,0,0,date("m"),date("d"),date("Y")+1)),$numbityear);
-                  }
-                  else
-                  {
-        	          $this->yy = substr(strftime("%Y",time()),$numbityear);
-                  }
-        					$this->numMatrice[$k] = '$yy';
-        					$this->searchLast .= $this->yy;
-        					for ($l = 1; $l <= $numbityear; $l++)
-        					{
-        						$this->searchLastWithNoYear .= '[0-9]';
-        					}
-        					$previousYear = substr(strftime("%Y",mktime(0,0,0,date("m"),date("d"),date("Y")-1)),$numbityear);
-        					$this->searchLastWithPreviousYear .= $previousYear;
-        					$k++;
-        				}
-        				else if ($idMatrice == 'month')
-        				{
-        					// On récupère le mois si besoin
-        					$this->mm = strftime("%m",time());
-        					$this->numMatrice[$k] = '$mm';
-        					$this->searchLast .= '[0-9][0-9]';
-        					$this->searchLastWithNoYear .= '[0-9][0-9]';
-        					$this->searchLastWithPreviousYear .= '[0-9][0-9]';
-        					$k++;
-        				}
-        				else if ($idMatrice == 'counter')
-        				{
-        					// On récupère le nombre de chiffres pour le compteur
-        					$this->numbitcounter = $resultCount;
-        					$this->numMatrice[$k] = '$num';
-        					$k++;
-        				}
-        			}
-        		}
-        	}
-        }
-        return 1;
-      }
-      else
-      {
-      	return -3;
-      }
-    }
+		// If an offset is asked
+		if (! empty($reg[2]) && eregi('^\+',$reg[2])) $maskoffset=eregi_replace('^\+','',$reg[2]);
+		if (! empty($reg[3]) && eregi('^\+',$reg[3])) $maskoffset=eregi_replace('^\+','',$reg[3]);
+
+		// If a restore to zero after a month is asked we check if there is already a value for this year.
+		if (! empty($reg[2]) && eregi('^@',$reg[2]))  $maskraz=eregi_replace('^@','',$reg[2]);
+		if (! empty($reg[3]) && eregi('^@',$reg[3])) $maskraz=eregi_replace('^@','',$reg[3]);
+		if ($maskraz >= 0)
+		{
+			if ($maskraz > 12) return 'ErrorBadMask';
+			if ($maskraz > 1 && ! eregi('^(.*)\{(y+)\}\{(m+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+			if ($maskraz <= 1 && ! eregi('^(.*)\{(y+)\}',$maskwithonlyymcode,$reg)) return 'ErrorCantUseRazIfNoYearInMask';
+			//print "x".$maskwithonlyymcode." ".$maskraz;
+
+			// Define $yearcomp and $monthcomp (that will be use de filter request to search max number)
+			$monthcomp=$maskraz;
+			$yearoffset=0;
+			$yearcomp=0;
+			if (date("m") < $maskraz) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
+			if (strlen($reg[2]) == 4) $yearcomp=sprintf("%04d",date("Y")+$yearoffset);
+			if (strlen($reg[2]) == 2) $yearcomp=sprintf("%02d",date("y")+$yearoffset);
+			if (strlen($reg[2]) == 1) $yearcomp=substr(date("y"),2,1)+$yearoffset;
+			
+			$sqlwhere='';
+			$sqlwhere.='SUBSTRING(facnumber, '.(strlen($reg[1])+1).', '.strlen($reg[2]).') >= '.$yearcomp;
+			if ($monthcomp > 1)	// Test useless if monthcomp = 1 (or 0 is same as 1)
+			{
+				$sqlwhere.=' AND SUBSTRING(facnumber, '.(strlen($reg[1])+strlen($reg[2])+1).', '.strlen($reg[3]).') >= '.$monthcomp;
+			}
+		}
+		//print "masktri=".$masktri." maskcounter=".$maskcounter." maskraz=".$maskraz." maskoffset=".$maskoffset."<br>\n";
+		
+		$posnumstart=strpos($maskwithnocode,$maskcounter);	// Pos of counter in final string (from 0 to ...)
+		if ($posnumstart < 0) return 'ErrorBadMask';
+		$sqlstring='SUBSTRING(facnumber, '.($posnumstart+1).', '.strlen($maskcounter).')';
+		//print "x".$sqlstring;
+		
+		// Get counter in database
+		$counter=0;
+		$sql = "SELECT MAX(".$sqlstring.") as val";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql.= " WHERE facnumber not like '(%'";
+		if ($facture->type == 2) $sql.= " AND type = 2";
+		else $sql.=" AND type != 2";
+		if ($sqlwhere) $sql.=' AND '.$sqlwhere;
+		
+		//print $sql;
+		dolibarr_syslog("mod_facture_mercure::getNextValue sql=".$sql, LOG_DEBUG);
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			$counter = $obj->val;
+		}
+		else dolibarr_print_error($db);
+		if (empty($counter) || eregi('[^0-9]',$counter)) $counter=$maskoffset;
+		$counter++;
+		
+		// Build numFinal
+		$numFinal = $mask;
+		
+		// We replace special codes
+		$numFinal = str_ireplace('{yyyy}',date("Y"),$numFinal);
+		$numFinal = str_ireplace('{yy}',date("y"),$numFinal);
+		$numFinal = str_ireplace('{y}' ,substr(date("y"),2,1),$numFinal);
+		$numFinal = str_ireplace('{mm}',date("m"),$numFinal);
+		$numFinal = str_ireplace('{dd}',date("d"),$numFinal);
+
+		// Now we replace the counter
+		$maskbefore='{'.$masktri.'}';
+		$maskafter=str_pad($counter,strlen($maskcounter),"0",STR_PAD_LEFT);
+		//print 'x'.$maskbefore.'-'.$maskafter.'y';
+		$numFinal = str_ireplace($maskbefore,$maskafter,$numFinal);
+		
+		dolibarr_syslog("mod_propale_saphir::getNextValue return ".$numFinal);
+		return  $numFinal;
+	}
+
 }    
-
 ?>

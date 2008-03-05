@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
      	\file       htdocs/includes/modules/propale/mod_propale_marbre.php
 		\ingroup    propale
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Marbre
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
@@ -37,16 +34,12 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php")
 
 class mod_propale_marbre extends ModeleNumRefPropales
 {
+	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='PR';
     var $error='';
-    
-    /**   \brief      Constructeur
-     */
-    function mod_propale_marbre()
-    {
-      $this->nom = "Marbre";
-    }
-    
+	var $nom = "Marbre";
+	
+
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
