@@ -225,3 +225,4 @@ update llx_actioncomm set datea2 = datea where datea2 is null and percent = 100;
 
 alter table llx_projet modify fk_soc           integer;
 
+update llx_rights_def set module='societe' where module='commercial' and perms='client' and subperms='voir';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/product/stock/valo.php
     \ingroup    stock
      \brief      Page de valorisation des stocks
-      \version    $Revision$
+      \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -47,13 +45,17 @@ if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
+$year = strftime("%Y",time());
 
+  
 /*
- *	Affichage valorisation par entrepot
+ *	View
  */
+
+// Affichage valorisation par entrepot
 $sql  = "SELECT e.rowid as ref, e.label, e.statut, e.lieu, e.valo_pmp as valo";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-$sql .= " WHERE 1=1 ";
+$sql .= " WHERE 1=1";
 if ($sref)
 {
   $sql .= " AND e.ref like '%".$sref."%'";
@@ -63,7 +65,7 @@ if ($sall)
   $sql .= " AND (e.label like '%".addslashes($sall)."%' OR e.description like '%".addslashes($sall)."%' OR e.lieu like '%".addslashes($sall)."%' OR e.address like '%".addslashes($sall)."%' OR e.ville like '%".addslashes($sall)."%')";
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit($limit + 1 ,$offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $result = $db->query($sql) ;
 if ($result)
@@ -115,13 +117,17 @@ if ($result)
 
   print '<br />';
 
-  $year = strftime("%Y",time());
-  $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$year.'.png';
-  print '<img src="'.$url.'" alt="Valorisation du stock année '.($year).'">';
+	$file='entrepot-'.$year.'.png';
+	if (file_exists(DOL_DATA_ROOT.'/graph/entrepot/'.$file))
+	{
+		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
+		print '<img src="'.$url.'" alt="Valorisation du stock année '.($year).'">';
+	}
 
-  if (file_exists(DOL_DATA_ROOT.'/graph/entrepot/entrepot-'.($year-1).'.png'))
+	$file='entrepot-'.($year-1).'.png';
+	if (file_exists(DOL_DATA_ROOT.'/graph/entrepot/'.$file))
     {
-      $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.($year-1).'.png';
+      $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
       print '<br /><img src="'.$url.'" alt="Valorisation du stock année '.($year-1).'">';
     }
 

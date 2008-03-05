@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       scripts/cron/stock-graph.php
         \ingroup    stock
         \brief      Créé le graph de valorisation du stock
+		\version	$Id$
 */
 
 // Test si mode CLI
@@ -41,7 +39,6 @@ $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
-
 
 $error=0;
 $verbose = 0;
@@ -61,20 +58,12 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
       $verbose = 3;
     }
 }
-/*
- *
- */
+
+
 $dir = DOL_DATA_ROOT."/graph/entrepot";
-if (!is_dir($dir) )
-{
-  if (! @mkdir($dir,0755))
-    {
-      die ("Can't create $dir\n");
-    }
-}
-/*
- *
- */
+$result=create_exdir($dir);
+
+
 $sql  = "SELECT distinct(fk_entrepot)";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot_valorisation";
 
@@ -93,6 +82,7 @@ else
 {
   dolibarr_print_error($db,$sql);
 }
+
 /*
  *
  */
@@ -106,7 +96,7 @@ for ($i = 0 ; $i < strftime('%j',$now) ; $i++)
       $values[$key][$i] = 0;
     }
   $values[0][$i] = 0;
-  $legends[$i] = strftime('%b',mktime(12,12,12,1,1,2006) + ($i * 3600 * 24));
+  $legends[$i] = strftime('%b',dolibarr_mktime(12,0,0,1,1,2006) + ($i * 3600 * 24));
 }
 
 /*
@@ -164,7 +154,7 @@ for ($i = $max_day + 1 ; $i < ($day + 1) ; $i++)
 
 
 
-require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
+require_once(DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php");
 
 foreach ($entrepots as $key => $ent)
 {
@@ -190,6 +180,13 @@ if ($total[$key] > 0)
 if ($verbose)
   print "$file\n";
 
+  
+/**	\brief	Build graph
+*	\param	file		File
+*	\param	title		Title
+*	\param	values		Value
+*	\param	legends		Legend
+*/
 function graph_datas($file, $title, $values, $legends)
 {
 

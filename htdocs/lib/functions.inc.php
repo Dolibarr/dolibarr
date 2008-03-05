@@ -30,12 +30,8 @@
 */
 
 // Pour compatibilité lors de l'upgrade
-if (! defined('DOL_DOCUMENT_ROOT'))
-{
-	define('DOL_DOCUMENT_ROOT', '..');
-}
-
-include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
+if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '..');
+if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 
 

@@ -23,6 +23,7 @@ BoxTitleLastRssInfos=Les %s dernières infos de %s
 BoxTitleLastProducts=Les %s derniers produits/services enregistrés
 BoxTitleLastCustomerOrders=Les %s dernières commandes clients modifiées
 BoxTitleLastSuppliers=Les %s derniers fournisseurs enregistrés
+BoxTitleLastCustomers=Les %s derniers clients enregistrés
 BoxTitleLastCustomersOrProspects=Les %s derniers clients ou prospects enregistrés
 BoxTitleLastPropals=Les %s dernières propositions enregistrés
 BoxTitleLastCustomerBills=Les %s dernières factures clients enregistrées
