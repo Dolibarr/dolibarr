@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file       htdocs/fourn/facture/impayees.php
 		\ingroup    facture
 		\brief      Page de liste des factures fournisseurs impayées
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -69,7 +67,7 @@ if ($user->rights->fournisseur->facture->lire)
 	$offset = $limit * $page ;
 
 	$sql = "SELECT s.nom, s.rowid as socid,";
-	$sql.= " f.facnumber,f.total_ht,f.total_ttc,";
+	$sql.= " f.rowid as ref, f.facnumber, f.total_ht, f.total_ttc,";
 	$sql.= $db->pdate("f.datef")." as df, ".$db->pdate("f.date_lim_reglement")." as datelimite, ";
 	$sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
 	$sql.= " ,sum(pf.amount) as am";
@@ -95,7 +93,11 @@ if ($user->rights->fournisseur->facture->lire)
 
 	if ($_GET["search_ref"])
 	{
-		$sql .= " AND f.facnumber like '%".$_GET["search_ref"]."%'";
+		$sql .= " AND f.rowid like '%".$_GET["search_ref"]."%'";
+	}
+	if ($_GET["search_ref_supplier"])
+	{
+		$sql .= " AND f.facnumber like '%".$_GET["search_ref_supplier"]."%'";
 	}
 
 	if ($_GET["search_societe"])
@@ -144,7 +146,8 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre">';
 
-		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=$socid","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.rowid","","&amp;socid=$socid","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=$socid","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=$socid",'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","","&amp;socid=$socid",'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socid=$socid","",$sortfield,$sortorder);
@@ -158,15 +161,17 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<form method="get" action="impayees.php">';
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre" valign="right">';
-		print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
+		print '<input class="flat" size="8" type="text" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
+		print '<td class="liste_titre" valign="right">';
+		print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$_GET["search_ref_supplier"].'"></td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
+		print '<input class="flat" type="text" size="6" name="search_societe" value="'.$_GET["search_societe"].'">';
 		print '</td><td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+		print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
 		print '</td><td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+		print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
 		print '</td><td class="liste_titre" colspan="2" align="right">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 		print '</td>';
@@ -194,9 +199,11 @@ if ($user->rights->fournisseur->facture->lire)
 				$class = "impayee";
 
 				print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill")."</a> ";
-				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->ref.'</a>';
 				if ($objp->datelimite < (time() - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 				print "</td>\n";
+
+				print "<td nowrap>".dolibarr_trunc($objp->facnumber,12)."</td>\n";
 
 				print "<td nowrap align=\"center\">".dolibarr_print_date($objp->df)."</td>\n";
 				print "<td nowrap align=\"center\">".dolibarr_print_date($objp->datelimite)."</td>\n";
@@ -221,7 +228,7 @@ if ($user->rights->fournisseur->facture->lire)
 			}
 
 			print '<tr class="liste_total">';
-			print "<td colspan=\"4\" align=\"left\">".$langs->trans("Total").": </td>";
+			print "<td colspan=\"5\" align=\"left\">".$langs->trans("Total").": </td>";
 			print "<td align=\"right\"><b>".price($total_ht)."</b></td>";
 			print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 			print "<td align=\"right\"><b>".price($total_payed)."</b></td>";

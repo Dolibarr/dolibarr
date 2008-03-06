@@ -200,7 +200,8 @@ if ($action == 'create' || $action == 'add_paiement')
 	$facture = new FactureFournisseur($db);
 	$facture->fetch($facid);
 
-	$sql = 'SELECT s.nom, s.rowid as socid, f.amount, f.total_ttc as total, f.facnumber';
+	$sql = 'SELECT s.nom, s.rowid as socid,';
+	$sql.= ' f.rowid as ref, f.facnumber, f.amount, f.total_ttc as total';
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -357,8 +358,8 @@ if (! $_GET['action'] && ! $_POST['action'])
 	if (! $sortorder) $sortorder='DESC';
 	if (! $sortfield) $sortfield='p.datep';
 
-	$sql = 'SELECT p.rowid, '.$db->pdate('p.datep').' as dp, p.amount as pamount,';
-	$sql.= ' f.amount, f.facnumber, f.rowid as facid,';
+	$sql = 'SELECT p.rowid, p.rowid as pid, '.$db->pdate('p.datep').' as dp, p.amount as pamount,';
+	$sql.= ' f.rowid as facid, f.rowid as ref, f.facnumber, f.amount,';
 	$sql.= ' s.rowid as socid, s.nom,';
 	$sql.= ' c.libelle as paiement_type, p.num_paiement,';
 	$sql.= ' ba.rowid as bid, ba.label';
@@ -389,7 +390,8 @@ if (! $_GET['action'] && ! $_POST['action'])
 		print_barre_liste($langs->trans('Payments'), $page, 'paiement.php','',$sortfield,$sortorder,'',$num);
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans('Ref'),'paiement.php','rowid','','','',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('RefPayment'),'paiement.php','rowid','','','',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Invoice'),'paiement.php','facnumber','','','',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('ThirdParty'),'paiement.php','s.nom','','','',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','','','',$sortfield,$sortorder);
@@ -404,9 +406,12 @@ if (! $_GET['action'] && ! $_POST['action'])
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			
-			// Ref
-			print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->rowid.'</a></td>';
+			// Ref payment
+			print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->pid.'</a></td>';
 			
+			// Ref invoice
+			print '<td nowrap="nowrap">'.dolibarr_trunc($objp->facnumber,12).'</td>';
+
 			// Date
 			print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($objp->dp,'day')."</td>\n";
 
