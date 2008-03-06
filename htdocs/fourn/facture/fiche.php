@@ -852,7 +852,7 @@ else
 
 		print '<div class="tabsAction">';
 
-		if ($fac->statut == 0 && $user->societe_id == 0)
+		if ($fac->statut <= 1 && $user->rights->fournisseur->facture->creer)
 		{
 			if ($_GET['action'] != 'edit')
 			{
