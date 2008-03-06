@@ -90,6 +90,15 @@ if ($search_ville)
 {
   $sql .= " AND s.ville LIKE '%".$search_ville."%'";
 }
+
+// Count total nb of records
+$nbtotalofrecords = 0;
+if (empty($conf->global->DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -100,7 +109,7 @@ if ($resql)
 
   $uadd = "&amp;cat=".$_GET["cat"];
   
-  print_barre_liste($langs->trans("ListOfSuppliers"), $page, "liste.php", $uadd, $sortfield, $sortorder, '', $num);
+  print_barre_liste($langs->trans("ListOfSuppliers"), $page, "liste.php", $uadd, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
   print '<form action="liste.php?cat='.$_GET["cat"].'" method="GET">';
   print '<table class="liste" width="100%">';

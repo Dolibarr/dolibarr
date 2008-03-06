@@ -45,6 +45,13 @@ $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_
 $search_code=isset($_GET["search_code"])?$_GET["search_code"]:$_POST["search_code"];
 
 
+/*
+ * view
+ */
+ 
+llxHeader();
+
+
 $sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea, st.libelle as stcomm, s.prefix_comm, s.code_client";
 if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -69,13 +76,15 @@ if ($socname)
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
+// Count total nb of records
+$nbtotalofrecords = 0;
+if (empty($conf->global->DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
 
-/*
- * Affichage liste
- */
- 
-llxHeader();
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -84,7 +93,7 @@ if ($result)
   
   $param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
 
-  print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
+  print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
   
   $i = 0;
   

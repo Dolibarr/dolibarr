@@ -1743,7 +1743,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			{
 				if($cpt==$page)
 				{
-					$pagelist.= "&nbsp;".($page+1);	
+					$pagelist.= "&nbsp;<u>".($page+1).'</u>';
 				}
 				else
 				{

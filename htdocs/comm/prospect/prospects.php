@@ -102,7 +102,15 @@ if ($socname)
     $sortorder = "ASC";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder, s.nom ASC ";
+// Count total nb of records
+$nbtotalofrecords = 0;
+if (empty($conf->global->DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+$sql .= " ORDER BY $sortfield $sortorder, s.nom ASC";
 $sql .= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -123,7 +131,7 @@ if ($resql)
 
     if (isset($stcomm)) $urladd.="&amp;stcomm=".$stcomm;
 
-    print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"],$urladd,$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"],$urladd,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
     $i = 0;
 
@@ -198,7 +206,7 @@ if ($resql)
         $i++;
     }
     
-    if ($num > $conf->liste_limit) print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"],$urladd,$sortfield,$sortorder,'',$num);
+    if ($num > $conf->liste_limit || $page > 0) print_barre_liste('', $page, $_SERVER["PHP_SELF"],$urladd,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
     
     print "</table>";
     $db->free($resql);
