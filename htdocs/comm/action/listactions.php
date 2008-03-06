@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -131,7 +131,7 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit( $limit + 1, $offset);
 
-dolibarr_syslog("comm/action/index.php sql=".$sql);
+dolibarr_syslog("comm/action/listactions.php sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -149,11 +149,11 @@ if ($resql)
         $societe = new Societe($db);
         $societe->fetch($socid);
 
-        print_barre_liste($langs->trans($title."For",$societe->nom), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
+        print_barre_liste($langs->trans($title."For",$societe->nom), $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,'',$num);
     }
     else
     {
-        print_barre_liste($langs->trans($title), $page, "index.php",$param,$sortfield,$sortorder,'',$num);
+        print_barre_liste($langs->trans($title), $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,'',$num);
     }
     
 	//print '<br>';
@@ -247,7 +247,7 @@ if ($resql)
 
         // Titre
         print '<td>';
-       	print dolibarr_trunc($obj->label,16);
+       	print dolibarr_trunc($obj->label,12);
         print '</td>';
 
         // Société
@@ -255,7 +255,7 @@ if ($resql)
         $societestatic->id=$obj->socid;
 		$societestatic->client=$obj->client;
 		$societestatic->nom=$obj->societe;
-        print $societestatic->getNomUrl(1,'',16);
+        print $societestatic->getNomUrl(1,'',8);
 		print '</td>';
 
         // Contact
@@ -265,7 +265,7 @@ if ($resql)
 			$contactstatic->name=$obj->name;
 			$contactstatic->firstname=$obj->firstname;
 			$contactstatic->id=$obj->fk_contact;
-            print $contactstatic->getNomUrl(1,'',16);
+            print $contactstatic->getNomUrl(1,'',8);
         }
         else
         {

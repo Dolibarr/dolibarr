@@ -1521,7 +1521,7 @@ function doliMoveFileUpload($src_file, $dest_file)
 
 
 /**
-		\brief      Affichage de la ligne de titre d'un tabelau
+		\brief      Show title line of an array
 		\param	    name        libelle champ
 		\param	    file        url pour clic sur tri
 		\param	    field       champ de tri
