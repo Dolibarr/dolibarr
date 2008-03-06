@@ -47,6 +47,7 @@ DatePayment=Date paiement
 DeletePayment=Supprimer le paiement
 ConfirmDeletePayment=Etes vous sur de vouloir supprimer ce paiement ?
 ConfirmConvertToReduc=Voulez-vous convertir cet avoir en réduction future ?<br>Le montant de cet avoir sera alors stocké en réduction fixe en attente pour le client. Cette dernière pourra être utilisée pour réduire le montant d'une facture en cours ou prochaine de ce client.
+SupplierPayments=Réglements fournisseurs
 ReceivedPayments=Réglements reçus
 ReceivedCustomersPayments=Réglements reçus du client
 ReceivedCustomersPaymentsToValid=Réglements clients reçus à valider

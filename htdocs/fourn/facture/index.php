@@ -155,7 +155,7 @@ if ($resql)
     print '<form method="get" action="index.php">';
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),"index.php","rowid","&amp;socid=$socid","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Ref"),"index.php","fac.rowid","&amp;socid=$socid","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("RefSupplier"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","&amp;socid=$socid","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socid=$socid","","",$sortfield,$sortorder);
@@ -169,14 +169,14 @@ if ($resql)
 
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
+    print '<input class="flat" size="8" type="text" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
     print '</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" size="10" type="text" name="search_ref_supplier" value="'.$_REQUEST["search_ref_supplier"].'">';
+    print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$_REQUEST["search_ref_supplier"].'">';
     print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
+    print '<input class="flat" size="16" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
     print '</td>';
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" name="search_societe" value="'.$_GET["search_societe"].'" size="12">';
@@ -189,7 +189,8 @@ if ($resql)
     print '</td>';
     print "</tr>\n";
 
-    $facturestatic = new FactureFournisseur($db);
+    $facturestatic=new FactureFournisseur($db);
+	$supplierstatic=new Fournisseur($db);
 
     $var=true;
     $total=0;
@@ -203,11 +204,14 @@ if ($resql)
         print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->facid.'" title="'.$obj->ref.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->ref."</a>";
         if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance < (time() - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
         print "</td>\n";
-        print '<td nowrap>'.dolibarr_trunc($obj->facnumber,12)."</td>";
-        print '<td align="center" nowrap="1">'.dolibarr_print_date($obj->datef).'</td>';
+        print '<td nowrap>'.dolibarr_trunc($obj->facnumber,10)."</td>";
+        print '<td align="center" nowrap="1">'.dolibarr_print_date($obj->datef,'day').'</td>';
         print '<td>'.dolibarr_trunc($obj->libelle,36).'</td>';
         print '<td>';
-        print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
+        $supplierstatic->id=$obj->socid;
+		$supplierstatic->nom=$obj->nom;
+		print $supplierstatic->getNomUrl(1,'',12);
+		//print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
         print '<td align="right">'.price($obj->total_ht).'</td>';
         print '<td align="right">'.price($obj->total_ttc).'</td>';
         $total+=$obj->total_ht;

@@ -48,6 +48,7 @@ DatePayment=Payment date
 DeletePayment=Delete payment
 ConfirmDeletePayment=Are you sure you want to delete this payment ?
 ConfirmConvertToReduc=Do you want to convert this credit note into absolute discount ?<br>The amount of this credit note will so be saved among all discounts and could be used as a discount for a current or a future invoice for this customer.
+SupplierPayments=Suppliers payments
 ReceivedPayments=Received payments
 ReceivedCustomersPayments=Payments received from customers
 ReceivedCustomersPaymentsToValid=Received customers payments to validate

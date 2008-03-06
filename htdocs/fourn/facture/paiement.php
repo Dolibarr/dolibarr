@@ -387,7 +387,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 		$i = 0;
 		$var=True;
 
-		print_barre_liste($langs->trans('Payments'), $page, 'paiement.php','',$sortfield,$sortorder,'',$num);
+		print_barre_liste($langs->trans('SupplierPayments'), $page, 'paiement.php','',$sortfield,$sortorder,'',$num);
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('RefPayment'),'paiement.php','rowid','','','',$sortfield,$sortorder);
