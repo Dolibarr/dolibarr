@@ -1699,16 +1699,17 @@ function dol_avscan_file($file)
 
 /**
 		\brief  Fonction print_barre_liste
-		\param	titre			titre de la page
-		\param	page			numéro de la page
-		\param	file			lien
-		\param	options         parametres complementaires lien ('' par defaut)
-		\param	sortfield       champ de tri ('' par defaut)
-		\param	sortorder       ordre de tri ('' par defaut)
-		\param	center          chaine du centre ('' par defaut)
-		\param	num             nombre d'élément total
+		\param	titre				Titre de la page
+		\param	page				numéro de la page
+		\param	file				lien
+		\param	options         	parametres complementaires lien ('' par defaut)
+		\param	sortfield       	champ de tri ('' par defaut)
+		\param	sortorder       	ordre de tri ('' par defaut)
+		\param	center          	chaine du centre ('' par defaut)
+		\param	num					number of records found by select with limit+1
+		\param	totalnboflines		Total number of records/lines for all pages (if known)
 */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0)
 {
     global $conf,$langs;
 
@@ -1723,10 +1724,42 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
     print '<table width="100%" border="0" class="notopnoleftnoright">';
 
-    if ($page > 0 || $num > $conf->liste_limit)
+	$pagelist = '';
+
+	if ($page > 0 || $num > $conf->liste_limit)
     {
-        print '<tr><td class="notopnoleftnoright"><div class="titre">'.$titre.($titre?' - ':'').$langs->trans('page').' '.($page+1);
-        print '</div></td>';
+		if ($totalnboflines)
+		{
+			print '<tr><td class="notopnoleftnoright">';
+			print '<div class="titre">'.$titre.'</div>';
+			print '</td>';
+			
+			$nbpages=ceil($totalnboflines/$conf->liste_limit);
+			$cpt=($page-10);
+			if ($cpt<0) { $cpt=0; }
+			$pagelist.=$langs->trans('Page');
+			if ($cpt>=1) { $pagelist.=' <a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1 ... </a>';}
+			do
+			{
+				if($cpt==$page)
+				{
+					$pagelist.= "&nbsp;".($page+1);	
+				}
+				else
+				{
+					$pagelist.= ' <a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a>';
+				}
+				$cpt++;
+			} while ($cpt < $nbpages && $cpt<=$page+10);
+			if ($cpt<$nbpages) { $pagelist.= ' <a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'"> ... '.$nbpages.'</a>'; }
+		}
+		else 
+		{
+			print '<tr><td class="notopnoleftnoright">';
+			print '<div class="titre">'.$titre.'</div>';
+			$pagelist.= $langs->trans('Page').' '.($page+1);
+			print '</td>';
+		}
     }
     else
     {
@@ -1740,34 +1773,35 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
     print '<td align="right">';
 
-    if ($sortfield) $options .= "&amp;sortfield=$sortfield";
-    if ($sortorder) $options .= "&amp;sortorder=$sortorder";
+    if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
+    if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
 
     // Affichage des fleches de navigation
-    print_fleche_navigation($page,$file,$options,$nextpage);
+    print_fleche_navigation($page,$file,$options,$nextpage,$pagelist);
 
     print '</td></tr></table>';
 }
 
 /**
    \brief  	Fonction servant a afficher les fleches de navigation dans les pages de listes
-   \param	page			Numéro de la page
-   \param	file			Lien
-   \param	options         Autres parametres d'url a propager dans les liens ("" par defaut)
-   \param	nextpage	    Faut-il une page suivante
+   \param	page				Numéro de la page
+   \param	file				Lien
+   \param	options         	Autres parametres d'url a propager dans les liens ("" par defaut)
+   \param	nextpage	    	Faut-il une page suivante
+   \param	betweenarraows		HTML Content to show between arrows
 */
-function print_fleche_navigation($page,$file,$options='',$nextpage)
+function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrows='')
 {
-  global $conf, $langs;
-  if ($page > 0)
-    {
-      print '<a href="'.$file.'?page='.($page-1).$options.'">'.img_previous($langs->trans("Previous")).'</a>';
-    }
-
-  if ($nextpage > 0)
-    {
-      print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
-    }
+	global $conf, $langs;
+	if ($page > 0)
+	{
+		print '<a href="'.$file.'?page='.($page-1).$options.'">'.img_previous($langs->trans("Previous")).'</a>';
+	}
+	if ($betweenarrows) print ($page > 0?' ':'').$betweenarrows.($nextpage>0?' ':'');
+	if ($nextpage > 0)
+	{
+		print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
+	}
 }
 
 
