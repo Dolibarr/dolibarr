@@ -9,6 +9,8 @@
 
 delete from llx_menu_const where fk_menu in (select rowid from llx_menu where menu_handler='auguria');
 delete from llx_menu where menu_handler='auguria';
+delete from llx_menu_constraint;
+delete from llx_menu_const;
 
 -- 
 -- table `llx_menu`
@@ -200,10 +202,10 @@ insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`,
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2705, 'accountancy', '$leftmenu=="ca"', 2703, '/compta/stats/cabyuser.php?leftmenu=ca', 'ByUsers', 2, 'main', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->comptarapport->lire', '', 0, 1);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2800, 'products', '', 3, '/product/index.php?leftmenu=product&type=0', 'Products', 0, 'products', '$user->rights->produit->lire', '', 2, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2801, 'products', '', 2800, '/product/fiche.php?leftmenu=product&action=create&type=0', 'NewProduct', 1, 'products', '$user->rights->produit->creer', '', 2, 0);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2802, 'products', '', 2800, '/product/liste.php?leftmenu=product&type=0', 'List', 1, 'products', '$user->rights->produit->lire', '', 2, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2802, 'products', '', 2800, '/product/liste.php?leftmenu=product&type=0', 'ProductList', 1, 'products', '$user->rights->produit->lire', '', 2, 1);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2803, 'products', '', 2800, '/product/reassort.php?type=0', 'Stocks', 1, 'products', '$user->rights->stock->lire', '', 2, 4);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2804, 'products', '', 2800, '/product/fiche.php?leftmenu=product&action=create&type=0&canvas=livre', 'Nouveau livre', 1, 'products', '$user->rights->produit->creer', '', 2, 2);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2805, 'products', '', 2800, '/product/liste.php?leftmenu=product&type=0&canvas=livre', 'Livre', 1, 'products', '$user->rights->produit->lire', '', 2, 3);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2804, 'products', '', 2800, '/product/fiche.php?leftmenu=product&action=create&type=0&canvas=livre', 'NewBook', 1, 'products', '$user->rights->produit->creer', '', 2, 2);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2805, 'products', '', 2800, '/product/liste.php?leftmenu=product&type=0&canvas=livre', 'BookList', 1, 'products', '$user->rights->produit->lire', '', 2, 3);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2900, 'products', '', 3, '/product/index.php?leftmenu=service&type=1', 'Services', 0, 'products', '$user->rights->produit->lire', '', 2, 1);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2901, 'products', '', 2900, '/product/fiche.php?leftmenu=service&action=create&type=1', 'NewService', 1, 'products', '$user->rights->produit->creer', '', 2, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2902, 'products', '', 2900, '/product/liste.php?leftmenu=service&type=1', 'List', 1, 'products', '$user->rights->produit->lire', '', 2, 1);
@@ -317,7 +319,6 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (39, '$conf->oscomm
 insert into `llx_menu_constraint` (`rowid`, `action`) values (40, '$conf->webcal->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (41, '$conf->mantis->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (42, '(dolibarr_get_const($this->db,"PRODUIT_SPECIAL_LIVRE")) && (dolibarr_get_const($this->db,"PRODUCT_CANVAS_ABILITY"))');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (43, '!((dolibarr_get_const($this->db,"PRODUIT_SPECIAL_LIVRE")) && (dolibarr_get_const($this->db,"PRODUCT_CANVAS_ABILITY")))');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (44, '$conf->droitpret->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (45, '$conf->menudb->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (46, '$conf->energie->enabled');
