@@ -67,7 +67,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		
 		// Parametrage du prefix des avoirs
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
-		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$langs->trans("MercureMaskCodes",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice")),1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcredit" value="'.$conf->global->FACTURE_MERCURE_MASK_CREDIT.'">',$langs->trans("GenericMaskCodes",$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice"),$langs->transnoentities("Invoice")),1,1).'</td>';
 		$texte.= '</tr>';
 		
 		$texte.= '</table>';
