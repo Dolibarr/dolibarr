@@ -78,7 +78,7 @@ if (! $sortfield) $sortfield="s.nom";
 
 // Count total nb of records
 $nbtotalofrecords = 0;
-if (empty($conf->global->DISABLE_FULL_SCANLIST))
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);

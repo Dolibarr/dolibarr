@@ -1734,24 +1734,35 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			print '<div class="titre">'.$titre.'</div>';
 			print '</td>';
 			
+			$maxnbofpage=10;
+			
 			$nbpages=ceil($totalnboflines/$conf->liste_limit);
-			$cpt=($page-10);
-			if ($cpt<0) { $cpt=0; }
+			$cpt=($page-$maxnbofpage);
+			if ($cpt < 0) { $cpt=0; }
 			$pagelist.=$langs->trans('Page');
-			if ($cpt>=1) { $pagelist.=' <a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1 ... </a>';}
+			if ($cpt>=1)
+			{
+				$pagelist.=' <a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a>';
+				if ($cpt >= 2) $pagelist.=' ...';
+			}
 			do
 			{
 				if($cpt==$page)
 				{
-					$pagelist.= "&nbsp;<u>".($page+1).'</u>';
+					$pagelist.= ' <u>'.($page+1).'</u>';
 				}
 				else
 				{
 					$pagelist.= ' <a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a>';
 				}
 				$cpt++;
-			} while ($cpt < $nbpages && $cpt<=$page+10);
-			if ($cpt<$nbpages) { $pagelist.= ' <a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'"> ... '.$nbpages.'</a>'; }
+			}
+			while ($cpt < $nbpages && $cpt<=$page+$maxnbofpage);
+			if ($cpt<$nbpages)
+			{ 
+				if ($cpt<$nbpages-1) $pagelist.= ' ...';
+				$pagelist.= ' <a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a>';
+			}
 		}
 		else 
 		{

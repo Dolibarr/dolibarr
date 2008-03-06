@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -179,6 +179,14 @@ if ($_POST["search_siren"])
 	$sql .= " AND s.siren LIKE '%".$_POST["search_siren"]."%'";
 }
 
+// Count total nb of records
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
@@ -189,7 +197,7 @@ if ($result)
 
   $params = "&amp;socname=$socname";
 
-  print_barre_liste($title, $page, "societe.php",$params,$sortfield,$sortorder,'',$num);
+  print_barre_liste($title, $page, "societe.php",$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
     
   // Lignes des titres
   print '<table class="liste" width="100%">';
