@@ -319,7 +319,7 @@ if ($action == 'create' || $action == 'add_paiement')
 					{
 						// Print total
 						print '<tr class="liste_total">';
-						print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').':</td>';
+						print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
 						print '<td align="right"><b>'.price($total_ttc).'</b></td>';
 						print '<td align="right"><b>'.price($totalrecu).'</b></td>';
 						print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';

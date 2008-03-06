@@ -1725,11 +1725,18 @@ class Facture extends CommonObject
 	function getSommePaiement()
 	{
 		$table='paiement_facture';
-		if ($element == 'facture_fourn') $table='paiementfourn_facturefourn';
+		$field='fk_facture';
+		if ($this->element == 'facture_fourn')
+		{
+			$table='paiementfourn_facturefourn';
+			$field='fk_facturefourn';
+		}
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
-		$sql.= ' WHERE fk_facture = '.$this->id;
+		$sql.= ' WHERE '.$field.' = '.$this->id;
+
+		dolibarr_syslog("Facture::getSommePaiement sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

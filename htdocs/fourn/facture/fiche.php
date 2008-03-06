@@ -849,10 +849,9 @@ else
 		/*
 		 * Boutons actions
 		 */
-
 		print '<div class="tabsAction">';
 
-		if ($fac->statut <= 1 && $user->rights->fournisseur->facture->creer)
+		if ($fac->statut <= 1 && $fac->getSommePaiement() <= 0 && $user->rights->fournisseur->facture->creer)
 		{
 			if ($_GET['action'] != 'edit')
 			{
