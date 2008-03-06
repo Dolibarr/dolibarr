@@ -552,7 +552,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 
 	if ($mesg) print "$mesg\n";
 
-	if (! $conf->global->PRODUCT_CANVAS_ABILITY && ! $_GET["canvas"])
+	if (! $conf->global->PRODUCT_CANVAS_ABILITY || !$_GET["canvas"])
 	{
 		print '<form action="fiche.php" method="post">';
 		print '<input type="hidden" name="action" value="add">';
@@ -686,7 +686,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 		// on revient en erreur
 		//
 		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/';
-		$tvaarray = load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+		$tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'');
 		$smarty->assign('tva_taux_value', $tvaarray['value']);
 		$smarty->assign('tva_taux_libelle', $tvaarray['label']);
 		$smarty->display($_GET["canvas"].'-create.tpl');
@@ -1044,7 +1044,7 @@ if ($_GET["id"] || $_GET["ref"])
 	}
       else
 	{
-	  $tvaarray = load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+	  $tvaarray = load_tva($db,"tva_tx",$conf->defaulttx,$mysoc,'','');
 	  $smarty->assign('tva_taux_value', $tvaarray['value']);
 	  $smarty->assign('tva_taux_libelle', $tvaarray['label']);
 	  $smarty->display($product->canvas.'-edit.tpl');
@@ -1491,7 +1491,7 @@ llxFooter('$Date$ - $Revision$');
  *		\brief		Load tva_taux_value and tva_taux_libelle array
  *		\remarks	Ne sert que pour smarty
  */
-function load_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
+function load_tva($db,$name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
 {
 	global $langs,$conf,$mysoc;
 
@@ -1513,13 +1513,13 @@ function load_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe
 	$sql .= " AND t.active = 1";
 	$sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
 
-	$resql=$this->db->query($sql);
+	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$num = $this->db->num_rows($resql);
+		$num = $db->num_rows($resql);
 		for ($i = 0; $i < $num; $i++)
 		{
-			$obj = $this->db->fetch_object($resql);
+			$obj = $db->fetch_object($resql);
 			$txtva[ $i ] = $obj->taux;
 			$libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
 		}
