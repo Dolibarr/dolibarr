@@ -190,9 +190,11 @@ class FactureFournisseur extends Facture
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id            = $rowid;
+				$this->ref           = $this->id;
+				$this->ref_supplier  = $obj->facnumber;
+
 				$this->datep         = $obj->df;
 				$this->date_echeance = $obj->de;
-				$this->ref           = $obj->facnumber;
 				$this->libelle       = $obj->libelle;
 
 				$this->remise        = $obj->remise;

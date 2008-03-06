@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
@@ -18,16 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/fourn/facture/paiement.php
         \ingroup    fournisseur,facture
         \brief      Paiements des factures fournisseurs
-        \version    $Revision$
+        \version    $Id$
 */
 
 
@@ -244,7 +241,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			print '</td>';
 			print '<td rowspan="3" valign="top">';
 			print '<textarea name="comment" wrap="soft" cols="40" rows="4">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
-			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"><br><em>Numéro du chèque / virement</em></td></tr>';
+			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
 			if ($conf->banque->enabled)
 			{
 				print '<tr><td>'.$langs->trans('Account').'</td><td>';
@@ -258,7 +255,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			/*
 			 * Autres factures impayées
 			 */
-			$sql = 'SELECT f.rowid as facid,f.facnumber,f.total_ttc,'.$db->pdate('f.datef').' as df';
+			$sql = 'SELECT f.rowid as facid,f.rowid as ref,f.facnumber,f.total_ttc,'.$db->pdate('f.datef').' as df';
 			$sql .= ', sum(pf.amount) as am';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
@@ -274,9 +271,12 @@ if ($action == 'create' || $action == 'add_paiement')
 				{
 					$i = 0;
 					print '<tr><td colspan="3">';
+					print $langs->trans('Invoices').'<br>';
 					print '<table class="noborder" width="100%">';
 					print '<tr class="liste_titre">';
-					print '<td>'.$langs->trans('Bill').'</td><td align="center">'.$langs->trans('Date').'</td>';
+					print '<td>'.$langs->trans('Ref').'</td>';
+					print '<td>'.$langs->trans('RefSupplier').'</td>';
+					print '<td align="center">'.$langs->trans('Date').'</td>';
 					print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
 					print '<td align="right">'.$langs->trans('AlreadyPayed').'</td>';
 					print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
@@ -291,8 +291,9 @@ if ($action == 'create' || $action == 'add_paiement')
 						$objp = $db->fetch_object($resql);
 						$var=!$var;
 						print '<tr '.$bc[$var].'>';
-						print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->facnumber;
+						print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->ref;
 						print '</a></td>';
+						print '<td>'.$objp->facnumber.'</td>';
 						if ($objp->df > 0 )
 						{
 							print '<td align="center">';

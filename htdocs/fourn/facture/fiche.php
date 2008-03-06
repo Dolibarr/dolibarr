@@ -193,7 +193,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
+		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')).'</div>';
 		$_GET['action']='create';
 		$_GET['socid']=$_POST['socid'];
 	}
@@ -347,9 +347,9 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 	print '<td width="50%">'.$langs->trans('NotePublic').'</td></tr>';
 
 	if($_GET['action'] == 'copy'){
-		print '<tr><td>'.$langs->trans('Ref').'</td><td><input name="facnumber" value="'.$fac_ori->ref.'" type="text"></td>';
+		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="facnumber" value="'.$fac_ori->ref.'" type="text"></td>';
 	}else{
-		print '<tr><td>'.$langs->trans('Ref').'</td><td><input name="facnumber" type="text"></td>';
+		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="facnumber" type="text"></td>';
 	}
 
 	print '<td width="50%" rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td></tr>';
@@ -362,7 +362,7 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" type="text"></td></tr>';
 	}
 
-	print '<tr><td>'.$langs->trans('Date').'</td><td>';
+	print '<tr><td>'.$langs->trans('DateInvoice').'</td><td>';
 	$html->select_date('','','','','',"add");
 	print '</td></tr>';
 
@@ -446,7 +446,10 @@ else
 			print '</tr>';
 
 			print '<tr><td valign="top">'.$langs->trans('Ref').'</td><td valign="top">';
-			print '<input name="facnumber" type="text" value="'.$fac->ref.'"></td>';
+			print $fac->ref.'</td>';
+
+			print '<tr><td valign="top">'.$langs->trans('RefSupplier').'</td><td valign="top">';
+			print '<input name="facnumber" type="text" value="'.$fac->ref_supplier.'"></td>';
 
 			$rownb=9;
 			print '<td rowspan="'.$rownb.'" valign="top">';
@@ -566,6 +569,10 @@ else
 
             // Ref
             print '<tr><td nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">'.$fac->ref.'</td>';
+            print "</tr>\n";
+
+            // Ref supplier
+            print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$fac->ref_supplier.'</td>';
             print "</tr>\n";
 
             // Societe

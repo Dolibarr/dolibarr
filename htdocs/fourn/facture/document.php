@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     
         \file       htdocs/fourn/facture/document.php
         \ingroup    facture, fournisseur
         \brief      Page de gestion des documents attachées à une facture fournisseur
-        \version    $Revision$
+        \version    $Id$
 */
 
 require('./pre.inc.php');
@@ -146,7 +144,12 @@ if ($facid > 0)
         print '<table class="border"width="100%">';
 
 		// Ref
-        print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$facture->ref.'</td></tr>';
+		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">'.$facture->ref.'</td>';
+		print "</tr>\n";
+
+		// Ref supplier
+		print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$facture->ref_supplier.'</td>';
+		print "</tr>\n";
 
         // Société
         print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$facture->fournisseur->getNomUrl(1).'</td></tr>';

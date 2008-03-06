@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/fourn/facture/note.php
         \ingroup    facture
         \brief      Fiche de notes sur une facture fournisseur
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -108,7 +105,12 @@ if ($_GET["facid"])
     print '<table class="border" width="100%">';
 
 	// Ref
-    print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fac->ref.'</td></tr>';
+	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">'.$fac->ref.'</td>';
+	print "</tr>\n";
+
+	// Ref supplier
+	print '<tr><td nowrap="nowrap">'.$langs->trans("RefSupplier").'</td><td colspan="3">'.$fac->ref_supplier.'</td>';
+	print "</tr>\n";
 
     // Société
     print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$fac->fournisseur->getNomUrl(1).'</td></tr>';

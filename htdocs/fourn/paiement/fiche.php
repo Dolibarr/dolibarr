@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
@@ -26,7 +23,7 @@
 		\ingroup    facture, fournisseur
 		\brief      Onglet paiement d'un paiement fournisseur
 		\remarks	Fichier presque identique a compta/paiement/fiche.php
-		\version    $Revision$
+		\version    $Id$
 */
 
 
@@ -136,7 +133,8 @@ if ($mesg) print $mesg.'<br>';
 
 print '<table class="border" width="100%">';
 
-print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
+print '<tr>';
+print '<td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
 if ($conf->banque->enabled)
 {
     if ($paiement->bank_account)
@@ -171,7 +169,7 @@ print '</table>';
  *	Liste des factures
  */
 $allow_delete = 1 ;
-$sql = 'SELECT f.facnumber, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.rowid as socid';
+$sql = 'SELECT f.rowid as ref, f.facnumber as ref_supplier, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.rowid as socid';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 $sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
 $sql .= ' AND pf.fk_paiementfourn = '.$paiement->id;
@@ -182,9 +180,11 @@ if ($resql)
 
 	$i = 0;
 	$total = 0;
-	print '<br><table class="noborder" width="100%">';
+	print '<br>'.$langs->trans("Invoices").'<br>';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('Bill').'</td>';
+	print '<td>'.$langs->trans('Ref').'</td>';
+	print '<td>'.$langs->trans('RefSupplier').'</td>';
 	print '<td align="center">'.$langs->trans('Status').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
 	print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
@@ -202,8 +202,9 @@ if ($resql)
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
-			print $objp->facnumber;
+			print $objp->ref;
 			print "</a></td>\n";
+			print '<td>'.$objp->ref_supplier."</td>\n";
 			print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
 			print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 			print '<td align="right">'.price($objp->amount).'</td>';

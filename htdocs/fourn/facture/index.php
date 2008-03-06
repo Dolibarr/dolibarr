@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/fourn/facture/index.php
         \ingroup    fournisseur,facture
         \brief      Lsite des factures fournisseurs
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -90,8 +87,8 @@ if ($_POST["mode"] == 'search')
 llxHeader();
 
 $sql = "SELECT s.rowid as socid, s.nom, ";
-$sql.= " ".$db->pdate("fac.datef")." as datef, ".$db->pdate("fac.date_lim_reglement")." as date_echeance,";
-$sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, fac.rowid as facid, fac.facnumber";
+$sql.= " fac.rowid as ref, fac.rowid as facid, fac.facnumber, ".$db->pdate("fac.datef")." as datef, ".$db->pdate("fac.date_lim_reglement")." as date_echeance,";
+$sql.= " fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -113,7 +110,11 @@ if ($_GET["filtre"])
 
 if ($_REQUEST["search_ref"])
   {
-    $sql .= " AND fac.facnumber like '%".addslashes($_REQUEST["search_ref"])."%'";
+    $sql .= " AND fac.rowid like '%".addslashes($_REQUEST["search_ref"])."%'";
+  }
+if ($_REQUEST["search_ref_supplier"])
+  {
+    $sql .= " AND fac.facnumber like '%".addslashes($_REQUEST["search_ref_supplier"])."%'";
   }
 
 if ($_GET["search_libelle"])
@@ -154,7 +155,8 @@ if ($resql)
     print '<form method="get" action="index.php">';
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Ref"),"index.php","rowid","&amp;socid=$socid","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("RefSupplier"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","&amp;socid=$socid","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socid=$socid","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","&amp;socid=$socid","","",$sortfield,$sortorder);
@@ -168,7 +170,11 @@ if ($resql)
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
-    print '</td><td class="liste_titre">&nbsp;</td>';
+    print '</td>';
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" size="10" type="text" name="search_ref_supplier" value="'.$_REQUEST["search_ref_supplier"].'">';
+    print '</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
     print '</td>';
@@ -194,9 +200,10 @@ if ($resql)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->facid.'" title="'.$obj->facnumber.'">'.img_object($langs->trans("ShowBill"),"bill").' '.dolibarr_trunc($obj->facnumber,12)."</a>";
+        print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->facid.'" title="'.$obj->ref.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->ref."</a>";
         if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance < (time() - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
         print "</td>\n";
+        print '<td nowrap>'.dolibarr_trunc($obj->facnumber,12)."</td>";
         print '<td align="center" nowrap="1">'.dolibarr_print_date($obj->datef).'</td>';
         print '<td>'.dolibarr_trunc($obj->libelle,36).'</td>';
         print '<td>';
@@ -219,7 +226,7 @@ if ($resql)
         {
 		  // Print total
 		  print '<tr class="liste_total">';
-		  print '<td class="liste_total" colspan="4" align="left">'.$langs->trans("Total").'</td>';
+		  print '<td class="liste_total" colspan="5" align="left">'.$langs->trans("Total").'</td>';
 		  print '<td class="liste_total" align="right">'.price($total).'</td>';
 		  print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
 		  print '<td class="liste_total" align="center">&nbsp;</td>';
