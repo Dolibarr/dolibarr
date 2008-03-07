@@ -99,7 +99,11 @@ if ($socid > 0)
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."</td></tr>";
 
     print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$societe->cp." ".$societe->ville.'</td></tr>';
-    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$societe->pays.'</td></tr>';
+
+	// Country
+	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
+	if ($societe->isInEEC()) print $form->textwithhelp($societe->pays,$langs->trans("CountryIsInEEC"),1,0);
+	print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel,$societe->pays_code).'</td><td>Fax</td><td>'.dolibarr_print_phone($societe->fax,$societe->pays_code).'</td></tr>';
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a></td></tr>";

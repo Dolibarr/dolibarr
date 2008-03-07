@@ -23,6 +23,7 @@ IdContact=Contact Id
 Company=Company
 CompanyName=Company name
 Companies=Companies
+CountryIsInEEC=Country is inside European Economic Community
 ThirdParty=Third party
 ThirdParties=Third parties
 ThirdPartyAll=Third parties (all)

@@ -23,6 +23,7 @@ IdContact=Id contact
 Company=Société
 CompanyName=Raison sociale
 Companies=Sociétés
+CountryIsInEEC=Pays de la Communauté Economique Européenne
 ThirdParty=Tiers
 ThirdParties=Tiers
 ThirdPartyAll=Tiers (tous)

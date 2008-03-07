@@ -962,8 +962,10 @@ else
     print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";
     print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$soc->ville."</td></tr>";
 
-    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td>';
-    print '</td></tr>';
+	// Country
+	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
+	if ($soc->isInEEC()) print $form->textwithhelp($soc->pays,$langs->trans("CountryIsInEEC"),1,0);
+	print '</td></tr>';
 
     print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$soc->departement.'</td>';
 

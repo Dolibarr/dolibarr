@@ -129,6 +129,8 @@ llxHeader('',$langs->trans('CustomerCard'));
 $contactstatic = new Contact($db);
 $userstatic=new User($db);
 
+$form = new Form($db);
+
 if ($socid > 0)
 {
     // On recupere les donnees societes par l'objet
@@ -178,9 +180,11 @@ if ($socid > 0)
 
     print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$objsoc->cp."</td>";
     print '<td>'.$langs->trans('Town').'</td><td>'.$objsoc->ville."</td></tr>";
-    if ($objsoc->pays) {
-    	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$objsoc->pays.'</td></tr>';
-    }
+
+	// Country
+	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
+	if ($objsoc->isInEEC()) print $form->textwithhelp($objsoc->pays,$langs->trans("CountryIsInEEC"),1,0);
+	print '</td></tr>';
 
     // Phone
     print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($objsoc->tel,$objsoc->pays_code).'</td>';
