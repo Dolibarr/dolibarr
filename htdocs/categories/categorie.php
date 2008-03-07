@@ -39,7 +39,6 @@ if ($_REQUEST["socid"])
 	if ($_REQUEST["typeid"] == 1) { $type = 'fournisseur'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
 	if ($_REQUEST["typeid"] == 2) { $type = 'societe'; $socid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:''; }
 	$objectid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
-	$type = 'societe';
 }
 else if ($_REQUEST["id"] || $_REQUEST["ref"])
 {
@@ -91,11 +90,13 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 		$type = 'product';
 	}
 	
-	$cat = new Categorie($db,$_REQUEST["catMere"]);
+	$cat = new Categorie($db);
+	$result=$cat->fetch($_REQUEST["catMere"]);
+
 	$result=$cat->add_type($object,$type);
 	if ($result >= 0)
 	{
-		$mesg='<div class="ok">'.$langs->trans("WasAddedSuccessfully").'</div>';	
+		$mesg='<div class="ok">'.$langs->trans("WasAddedSuccessfully",$cat->label).'</div>';	
 	}
 	else
 	{
