@@ -662,7 +662,7 @@ class CommandeFournisseur extends Commande
 	*/
 	function addline($desc, $pu, $qty, $txtva, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT')
 	{
-		global $langs;
+		global $langs,$mysoc;
 		
 		// Clean parameters
 		$qty  = price2num($qty);
@@ -670,7 +670,7 @@ class CommandeFournisseur extends Commande
 		$desc = trim($desc);
 		$remise_percent = price2num($remise_percent);
 		
-		dolibarr_syslog("Fournisseur.Commande.class::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
+		dolibarr_syslog("Fournisseur.Commande::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
 
 		if ($qty < 1 && ! $fk_product)
 		{
@@ -691,7 +691,6 @@ class CommandeFournisseur extends Commande
 					if ($result > 0)
 					{
 						$label = $prod->libelle;
-						$txtva = $prod->tva_tx;
 						$pu    = $prod->fourn_pu;
 						$ref   = $prod->ref_fourn;
 					}
@@ -699,14 +698,14 @@ class CommandeFournisseur extends Commande
 					{
 						$this->error="Aucun tarif trouvé pour cette quantité. Quantité saisie insuffisante ?";
 						$this->db->rollback();
-						dolibarr_syslog("Fournisseur.commande.class::addline result=".$result." - ".$this->error);
+						dolibarr_syslog("Fournisseur.commande::addline result=".$result." - ".$this->error);
 						return -1;
 					}
 					if ($result < -1)
 					{
 						$this->error=$prod->error;
 						$this->db->rollback();
-						dolibarr_syslog("Fournisseur.commande.class::addline result=".$result." - ".$this->error);
+						dolibarr_syslog("Fournisseur.commande::addline result=".$result." - ".$this->error);
 						return -1;
 					}
 				}
@@ -736,7 +735,7 @@ class CommandeFournisseur extends Commande
 			if ($fk_product) { $sql.= $fk_product.","; }
 			else { $sql.= "null,"; }
 			$sql.= price2num($price,'MU').", '$qty', $txtva, $remise_percent,'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."') ;";
-			dolibarr_syslog('Fournisseur.commande.class::addline sql='.$sql);
+			dolibarr_syslog('Fournisseur.commande::addline sql='.$sql);
 			$resql=$this->db->query($sql);
 			//print $sql;
 			if ($resql)
@@ -756,10 +755,7 @@ class CommandeFournisseur extends Commande
 	
 	
   /**
-   * Dispatch un element de la commande dans un stock
-   *
-   *
-   *
+   * 	\brief	Dispatch un element de la commande dans un stock
    */
   function DispatchProducts($user, $products, $qtys, $entrepots)
   {

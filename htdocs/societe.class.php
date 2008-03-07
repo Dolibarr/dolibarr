@@ -126,7 +126,7 @@ class Societe extends CommonObject
   }
 
   /**
-   *    \brief      Cr�e la societe en base
+   *    \brief      Cree la societe en base
    *    \param      user        Objet utilisateur qui demande la cr�ation
    *    \return     int         0 si ok, < 0 si erreur
    */
@@ -160,12 +160,12 @@ class Societe extends CommonObject
 
                 $ret = $this->update($this->id,$user,0,1,1);
                 
-                // si un commercial cr�e un client il lui est affect� automatiquement
+                // si un commercial cree un client il lui est affecte automatiquement
                 if (!$user->rights->societe->client->voir)
                 {
                 	$this->add_commercial($user, $user->id);
                 }
-                // Ajout du commercial affect�
+                // Ajout du commercial affecte
                 else if ($this->commercial_id != '' && $this->commercial_id != -1)
                 {
                 	$this->add_commercial($user, $this->commercial_id);
@@ -1795,7 +1795,7 @@ class Societe extends CommonObject
         }
     }
 
-   /*
+	/**
     *       \brief     Charge les informations d'ordre info dans l'objet societe
     *       \param     id     id de la societe a charger
     */
@@ -1840,19 +1840,50 @@ class Societe extends CommonObject
         }
     }
 
-   /*
+	/**
     *       \brief     Renvoi si pays appartient � CEE
     *       \param     boolean		true = pays dans CEE, false= pays hors CEE
     */
     function isInEEC()
     {
-      // \todo liste code pays � compl�ter
-      $country_code_in_EEC=array('BE','FR','LU','GB','IT');	
-      //print "dd".$this->pays_code;
-      return in_array($this->pays_code,$country_code_in_EEC);
+		// List of all country codes that are in europe for european vat rules
+		$country_code_in_EEC=array(
+			'AT',	// Austria
+			'BE',	// Belgium
+			'BG',	// Bulgaria
+			'CY',	// Cyprus
+			'CZ',	// Czech republic
+			'DK',	// Danemark
+			'EE',	// Estonia
+			'FI',	// Finland
+			'FR',	// France
+			'DE',	// Germany
+			'GB',	// Royaume-uni
+			'GR',	// Greece
+			'NL',	// Holland
+			'HU',	// Hungary
+			'IE',	// Ireland
+			'IT',	// Italy
+			'LV',	// Latvia
+			'LT',	// Lithuania
+			'LU',	// Luxembourg
+			'MT',	// Malta
+			'NO',	// Norway
+			'PL',	// Poland
+			'PT',	// Portugal
+			'RO',	// Romania
+			'SK',	// Slovakia
+			'SI',	// Slovenia
+			'ES',	// Spain
+			'SE',	// Sweden
+			'CH',	// Switzerland 		
+		);	
+		//print "dd".$this->pays_code;
+		return in_array($this->pays_code,$country_code_in_EEC);
     }
-   /*
-    *  \brief     Charge la liste des categories fournisseurs
+	
+	/**
+    *  	\brief     Charge la liste des categories fournisseurs
     *   \return    0 in success, <> 0 in error
     */
     function LoadSupplierCateg()
@@ -1876,6 +1907,7 @@ class Societe extends CommonObject
 	  return -1;
 	}
     }
+	
   /*
    *  \brief     Charge la liste des categories fournisseurs
    *   \return    0 in success, <> 0 in error

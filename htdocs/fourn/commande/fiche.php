@@ -99,8 +99,9 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
     }
 
     $soc = new Societe($db,	$commande->socid);
-    $soc->fetch($commande->socid);
-    
+    $result=$soc->fetch($commande->socid);
+    //print $result;
+	
     // Ecrase $pu par celui	du produit
     // Ecrase $desc	par	celui du produit
     // Ecrase $txtva  par celui du produit
@@ -116,17 +117,18 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
     	
     	$desc = $prod->description;
     	$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
-			$desc.= $_POST['np_desc'];
+		$desc.= $_POST['np_desc'];
 
-    	$tva_tx	= get_default_tva($soc,$mysoc,$prod->tva_tx);
-	  }
-	  else
-	  {
-	  	$pu=$_POST['pu'];
-	    $tva_tx=$_POST['tva_tx'];
-	    $desc=$_POST['dp_desc'];
-	  }
-
+    	$tva_tx	= get_default_tva($soc,$mysoc,$prod->tva_tx,$prodfournprice->product_id);
+	}
+	else
+	{
+		$pu=$_POST['pu'];
+		$tva_tx=$_POST['tva_tx'];
+		$desc=$_POST['dp_desc'];
+	}
+	//print "xx".$tva_tx; exit;
+	
     $result=$commande->addline(
 				 $desc,
 				 $pu,
