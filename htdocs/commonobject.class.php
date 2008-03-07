@@ -823,6 +823,79 @@ class CommonObject
 		}
 	}
 
+	/**
+    *	 \brief     	Update total_ht, total_ttc and total_vat for an object (sum of lines)
+    *	 \return		int			<0 si ko, >0 si ok
+	*/
+	function update_price()
+	{
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		
+		$err=0;
+
+		// List lines to sum
+		$fieldtva='total_tva';
+		if ($this->element == 'facture_fourn') $fieldtva='tva';
+
+		$sql = 'SELECT qty, total_ht, '.$fieldtva.' as total_tva, total_ttc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
+		$sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
+
+		dolibarr_syslog("CommonObject::update_price sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->total_ht  = 0;
+			$this->total_tva = 0;
+			$this->total_ttc = 0;
+			
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$this->total_ht       += $obj->total_ht;
+				$this->total_tva      += ($obj->total_ttc - $obj->total_ht);
+				$this->total_ttc      += $obj->total_ttc;
+
+				$i++;
+			}
+
+			$this->db->free($resql);
+
+			// Now update field total_ht, total_ttc and tva
+			$fieldht='total_ht';
+			if ($this->element == 'facture') $fieldht='total';
+			$fieldtva='tva';
+			if ($this->element == 'facture_fourn') $fieldtva='total_tva';
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
+			$sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
+			$sql .= " ".$fieldtva."='".price2num($this->total_tva)."',";
+			$sql .= " total_ttc='".price2num($this->total_ttc)."'";
+			$sql .= ' WHERE rowid = '.$this->id;
+
+			dolibarr_syslog("CommonObject::update_price sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("CommonObject::update_price error=".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("CommonObject::update_price error=".$this->error,LOG_ERR);
+			return -1;
+		}
+	}	
 }
 
 ?>

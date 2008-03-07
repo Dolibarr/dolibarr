@@ -633,28 +633,28 @@ class Commande extends CommonObject
 		dolibarr_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 		
+		// Clean parameters
+		$remise_percent=price2num($remise_percent);
+		$qty=price2num($qty);
+		if (! $qty) $qty=1;
+		if (! $info_bits) $info_bits=0;
+		$pu_ht=price2num($pu_ht);
+		$pu_ttc=price2num($pu_ttc);
+		$txtva = price2num($txtva);
+		if ($price_base_type=='HT')
+		{
+			$pu=$pu_ht;
+		}
+		else
+		{
+			$pu=$pu_ttc;
+		}
+		$desc=trim($desc);
+		
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
 			
-			// Nettoyage param�tres
-			$remise_percent=price2num($remise_percent);
-			$qty=price2num($qty);
-			if (! $qty) $qty=1;
-			if (! $info_bits) $info_bits=0;
-			$pu_ht=price2num($pu_ht);
-			$pu_ttc=price2num($pu_ttc);
-			$txtva = price2num($txtva);
-			
-			if ($price_base_type=='HT')
-			{
-				$pu=$pu_ht;
-			}
-			else
-			{
-				$pu=$pu_ttc;
-			}
-
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
@@ -699,6 +699,7 @@ class Commande extends CommonObject
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la commande meme
+				$this->id=$commandeid;	// \TODO A virer
 				$result=$this->update_price($commandeid);
 				if ($result > 0)
 				{
@@ -940,7 +941,7 @@ class Commande extends CommonObject
     	$result=$comligne->insert();
     	if ($result > 0)
     	{
-    		$result=$this->update_price($this->id);
+    		$result=$this->update_price();
     		if ($result > 0)
     		{
     			$this->db->commit();
@@ -1273,7 +1274,7 @@ class Commande extends CommonObject
 	if ($this->db->query($sql))
 	  {
 	    $this->remise_percent = $remise;
-	    $this->update_price($this->id);
+	    $this->update_price();
 	    return 1;
 	  }
 	else
@@ -1308,7 +1309,7 @@ class Commande extends CommonObject
 	if ($this->db->query($sql))
 	  {
 	    $this->remise_absolue = $remise;
-	    $this->update_price($this->id);
+	    $this->update_price();
 	    return 1;
 	  }
 	else
@@ -1318,73 +1319,6 @@ class Commande extends CommonObject
 	  }
       }
   }
-
-  /**
-   *    \brief      Mets � jour le prix total de la commnde
-   *    \return     int     <0 si ko, >0 si ok
-   */
-	function update_price()
-	{
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		
-		$tvas=array();
-		$err=0;
-
-		// Liste des lignes factures a sommer
-		$sql = "SELECT price, qty, tva_tx, total_ht, total_tva, total_ttc";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
-		$sql.= " WHERE fk_commande = ".$this->id;
-		
-		dolibarr_syslog("Commande::update_price sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$this->total_ht  = 0;
-			$this->total_tva = 0;
-			$this->total_ttc = 0;
-			$num = $this->db->num_rows($result);
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($result);
-				
-				$this->total_ht    += $obj->total_ht;
-				$this->total_tva   += ($obj->total_ttc - $obj->total_ht);
-				$this->total_ttc   += $obj->total_ttc;
-				
-				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
-				$i++;
-			}
-			
-			$this->db->free($result);
-
-			// Met a jour indicateurs
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET";
-			$sql .= " total_ht='". price2num($this->total_ht)."',";
-			$sql .= " tva='".      price2num($this->total_tva)."',";
-			$sql .= " total_ttc='".price2num($this->total_ttc)."'";
-			$sql .=" WHERE rowid = ".$this->id;
-
-			dolibarr_syslog("Facture::update_price sql=".$sql);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				return 1;
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				dolibarr_syslog("Commande::update_price error=".$this->error,LOG_ERR);
-				return -1;
-			}
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			dolibarr_syslog("Commande::update_price error=".$this->error,LOG_ERR);
-			return -1;
-		}
-	}
 
 	
 	/**
@@ -1704,7 +1638,7 @@ class Commande extends CommonObject
 	if ($result > 0)
 	  {
 	    // Mise a jour info denormalisees au niveau facture
-	    $this->update_price($this->id);
+	    $this->update_price();
 
 	    if ($LigneOld->qty <> $qty && $LigneOld->produit_id)
 	      {
@@ -2189,7 +2123,7 @@ class CommandeLigne
 	*/
 	function CommandeLigne($DB)
 	{
-		$this->db= $DB ;
+		$this->db= $DB;
 	}
 
 	/**

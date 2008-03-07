@@ -42,6 +42,8 @@ class FactureFournisseur extends Facture
 	var $socid;
 	var $element='facture_fourn';
 	var $table_element='facture_fourn';
+	var $table_element_line='facture_fourn_det';
+	var $fk_element='fk_facture_fourn';
 	
 	//! 0=brouillon,
 	//! 1=validée,
@@ -136,7 +138,7 @@ class FactureFournisseur extends Facture
 				}
 			}
 			// Mise à jour prix
-			if ($this->update_price($this->id) > 0)
+			if ($this->update_price() > 0)
 			{
 				$this->db->commit();
 				return $this->id;
@@ -514,7 +516,7 @@ class FactureFournisseur extends Facture
 		if ($resql)
 		{
 			// Mise a jour prix total facture
-			return $this->update_price($this->id);
+			return $this->update_price();
 		}
 		else
 		{
@@ -539,64 +541,8 @@ class FactureFournisseur extends Facture
 			dolibarr_print_error($this->db);
 		}
 		// Mise a jour prix facture
-		$this->update_price($this->id);
+		$this->update_price();
 		return 1;
-	}
-
-	/**
-	 *    \brief      Mise à jour des sommes de la facture
-	 *    \param      facid       id de la facture a modifier
-	 *    \return     int         <0 si ko, >0 si ok
-	 */
-	function update_price($facid)
-	{
-		global $conf;
-		
-		$total_ht  = 0;
-		$total_tva = 0;
-		$total_ttc = 0;
-
-		$sql = 'SELECT sum(total_ht), sum(tva), sum(total_ttc) FROM '.MAIN_DB_PREFIX.'facture_fourn_det';
-		$sql .= ' WHERE fk_facture_fourn = '.$facid.';';
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			if ($num)
-			{
-				$row = $this->db->fetch_row();
-				$total_ht  = $row[0];
-				$total_tva = $row[1];
-				$total_ttc = $row[2];
-			}
-			$this->db->free($resql);
-
-			$total_ht  = $total_ht  != '' ? $total_ht  : 0;
-			$total_tva = $total_tva != '' ? $total_tva : 0;
-			$total_ttc = $total_ttc != '' ? $total_ttc : 0;
-
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET';
-			$sql .= ' total_ht = '. price2num($total_ht,'MT');
-			$sql .= ',total_tva = '.price2num($total_tva,'MT');
-			$sql .= ',total_ttc = '.price2num($total_ttc,'MT');
-			$sql .= ' WHERE rowid = '.$facid.';';
-			dolibarr_syslog("Fournisseur.facture::update_price sql=".$sql);
-			$resql2 = $this->db->query($sql);
-			if ($resql2)
-			{
-				return 1;
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				return -2;
-			}
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-			return -1;
-		}
 	}
 
 

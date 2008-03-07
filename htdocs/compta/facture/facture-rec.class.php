@@ -39,8 +39,11 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 class FactureRec extends Facture
 {
 	var $db ;
-	var $element='facture';
-
+	var $element='facturerec';
+	var $table_element='facture_rec';
+	var $table_element_line='facturedet_rec';
+	var $fk_element='fk_facture';
+	
 	var $id ;
 
 	var $socid;		// Id client
@@ -402,7 +405,8 @@ class FactureRec extends Facture
 	
 			if ( $this->db->query( $sql) )
 			{
-				$this->update_price($facid);
+				$this->id=$facid;	// \TODO A virer
+				$this->update_price();
 				return 1;
 			}
 			else
@@ -413,63 +417,6 @@ class FactureRec extends Facture
 		}
 	}
 	
-		/**
-	 *		\brief     	Mise à jour des sommes de la facture et calculs denormalises
-	 * 		\param     	facid      	id de la facture a modifier
-	 *		\return		int			<0 si ko, >0 si ok
-	 */
-	function update_price($facid)
-	{
-		$tvas=array();
-		$err=0;
-
-        // Liste des lignes factures a sommer (Ne plus utiliser price)
-		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price,';
-		$sql.= ' total_ht, total_tva, total_ttc';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec';
-		$sql.= ' WHERE fk_facture = '.$facid;
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$this->total_ht  = 0;
-			$this->total_tva = 0;
-			$this->total_ttc = 0;
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($resql);
-
-				$this->total_ht       += $obj->total_ht;
-				$this->total_tva      += ($obj->total_ttc - $obj->total_ht);
-				$this->total_ttc      += $obj->total_ttc;
-
-				// Ne plus utiliser amount, ni remise
-				$this->amount_ht      += ($obj->price * $obj->qty);
-				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
-				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
-				$i++;
-			}
-
-			$this->db->free($resql);
-
-			// Met a jour indicateurs sur facture
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_rec ';
-			$sql .= "SET amount ='".price2num($this->amount_ht)."'";
-			$sql .= ", remise='".   price2num($this->total_remise)."'";
-			$sql .= ", total='".    price2num($this->total_ht)."'";
-			$sql .= ", tva='".      price2num($this->total_tva)."'";
-			$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
-			$sql .= ' WHERE rowid = '.$facid;
-			$resql=$this->db->query($sql);
-
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-		}
-	}
 	
 	/**
 	 *		\brief		Rend la facture automatique

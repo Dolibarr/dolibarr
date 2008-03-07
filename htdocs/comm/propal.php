@@ -119,7 +119,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
     {
         $propal = new Propal($db);
         $propal->fetch($_GET['propalid']);
-        $result=$propal->update_price($_GET['propalid']);
+        $result=$propal->update_price();
 		if ($_REQUEST['lang_id'])
 		{
 			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);

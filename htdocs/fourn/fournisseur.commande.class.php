@@ -40,6 +40,8 @@ class CommandeFournisseur extends Commande
   var $error;
   var $element='order_supplier';
   var $table_element='commande_fournisseur';
+  var $table_element_line = 'commande_fournisseurdet';
+  var $fk_element = 'fk_commande';
   
   var $id ;
   var $brouillon;
@@ -135,7 +137,7 @@ class CommandeFournisseur extends Commande
 				{
 					$objp                  = $this->db->fetch_object($result);
 					
-					$ligne                 = new CommandeFournisseurLigne();
+					$ligne                 = new CommandeFournisseurLigne($this->db);
 					
 					$ligne->desc                = $objp->description;  // Description ligne
 					$ligne->qty                 = $objp->qty;
@@ -660,17 +662,30 @@ class CommandeFournisseur extends Commande
 	*      \param      price_base_type	HT or TTC
 	*      \param      int             	<0 si ko, >0 si ok
 	*/
-	function addline($desc, $pu, $qty, $txtva, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT')
+	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0)
 	{
 		global $langs,$mysoc;
 		
-		// Clean parameters
-		$qty  = price2num($qty);
-		$pu   = price2num($pu);
-		$desc = trim($desc);
-		$remise_percent = price2num($remise_percent);
-		
 		dolibarr_syslog("Fournisseur.Commande::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+
+		// Clean parameters
+		$remise_percent=price2num($remise_percent);
+		$qty=price2num($qty);
+		if (! $qty) $qty=1;
+		if (! $info_bits) $info_bits=0;
+		$pu_ht=price2num($pu_ht);
+		$pu_ttc=price2num($pu_ttc);
+		$txtva = price2num($txtva);
+		if ($price_base_type=='HT')
+		{
+			$pu=$pu_ht;
+		}
+		else
+		{
+			$pu=$pu_ttc;
+		}
+		$desc=trim($desc);
 
 		if ($qty < 1 && ! $fk_product)
 		{
@@ -678,7 +693,7 @@ class CommandeFournisseur extends Commande
 			return -1;
 		}
 		
-		if ($this->brouillon)
+		if ($this->statut == 0)
 		{
 			$this->db->begin();
 			
@@ -716,9 +731,19 @@ class CommandeFournisseur extends Commande
 				}
 			}
 			
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $info_bits);
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
+
 			$subprice = price2num($pu,'MU');
-			
-			// Champ obsolete
+
+			// \TODO A virer
+			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
 			$price = $subprice;
 			if ($remise_percent > 0)
@@ -730,11 +755,17 @@ class CommandeFournisseur extends Commande
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
 			$sql.= " (fk_commande,label, description,";
 			$sql.= " fk_product,";
-			$sql.= " price, qty, tva_tx, remise_percent, subprice, remise, ref)";
+			$sql.= " price, qty, tva_tx, remise_percent, subprice, remise, ref,";
+			$sql.= " total_ht, total_tva, total_ttc";
+			$sql.= ")";
 			$sql.= " VALUES (".$this->id.", '" . addslashes($label) . "','" . addslashes($desc) . "',";
 			if ($fk_product) { $sql.= $fk_product.","; }
 			else { $sql.= "null,"; }
-			$sql.= price2num($price,'MU').", '$qty', $txtva, $remise_percent,'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."') ;";
+			$sql.= price2num($price,'MU').", '$qty', $txtva, $remise_percent,'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."',";
+			$sql.= "'".price2num($total_ht)."',";
+			$sql.= "'".price2num($total_tva)."',";
+			$sql.= "'".price2num($total_ttc)."'";
+			$sql.= ")";
 			dolibarr_syslog('Fournisseur.commande::addline sql='.$sql);
 			$resql=$this->db->query($sql);
 			//print $sql;
@@ -747,6 +778,7 @@ class CommandeFournisseur extends Commande
 			}
 			else
 			{
+				$this->error=$this->db->error();
 				$this->db->rollback();
 				return -1;
 			}
@@ -857,67 +889,6 @@ class CommandeFournisseur extends Commande
       }
     else
       {
-	return -1;
-      }
-  }
-
-  /**
-   * Mettre à jour le prix
-   *
-   */
-  function update_price()
-  {
-    include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
-
-    /*
-     *  Liste des produits a ajouter
-     */
-    $sql = "SELECT price, qty, tva_tx ";
-    $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet ";
-    $sql .= " WHERE fk_commande = $this->id";
-
-    if ( $this->db->query($sql) )
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	  
-	while ($i < $num)
-	  {
-	    $obj = $this->db->fetch_object();
-	    $products[$i][0] = $obj->price;
-	    $products[$i][1] = $obj->qty;
-	    $products[$i][2] = $obj->tva_tx;
-	    $i++;
-	  }
-      }
-    $calculs = calcul_price($products, $this->remise_percent);
-
-    $totalht = $calculs[0];
-    $totaltva = $calculs[1];
-    $totalttc = $calculs[2];
-    $total_remise = $calculs[3];
-
-    $this->remise         = $total_remise;
-    $this->total_ht       = $totalht;
-    $this->total_tva      = $totaltva;
-    $this->total_ttc      = $totalttc;
-    /*
-     *
-     */
-    $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur set";
-    $sql .= "  amount_ht ='".price2num($totalht)."'";
-    $sql .= ", total_ht  ='".price2num($totalht)."'";
-    $sql .= ", tva       ='".price2num($totaltva)."'";
-    $sql .= ", total_ttc ='".price2num($totalttc)."'";
-    $sql .= ", remise    ='".price2num($total_remise)."'";
-    $sql .= " WHERE rowid = $this->id";
-    if ( $this->db->query($sql) )
-      {
-	return 1;
-      }
-    else
-      {
-	print "Erreur mise à jour du prix<p>".$sql;
 	return -1;
       }
   }
@@ -1288,7 +1259,7 @@ class CommandeFournisseur extends Commande
 	if ($result > 0)
 	  {
 	    // Mise a jour info denormalisees au niveau facture
-	    $this->update_price($this->id);
+	    $this->update_price();
 	    $this->db->commit();
 	    return $result;
 	  }
@@ -1393,26 +1364,102 @@ class CommandeFournisseur extends Commande
  */
 class CommandeFournisseurLigne extends CommandeLigne
 {
-  // From llx_commandedet
-  var $qty;
-  var $tva_tx;
-  var $subprice;
-  var $remise_percent;
-  var $price;
-  var $fk_product;
-  var $desc;          // Description ligne
-	
-  // From llx_product
-  var $libelle;       // Label produit
-  var $product_desc;  // Description produit
-  
-  // From llx_product_fournisseur
-  var $ref_fourn;     // Référence fournisseur
+	// From llx_commandedet
+	var $qty;
+	var $tva_tx;
+	var $subprice;
+	var $remise_percent;
+	var $price;
+	var $fk_product;
+	var $desc;          // Description ligne
 
-  function CommandeFournisseurLigne()
-  {
+	// From llx_product
+	var $libelle;       // Label produit
+	var $product_desc;  // Description produit
+
+	// From llx_product_fournisseur
+	var $ref_fourn;     // Référence fournisseur
+
+	function CommandeFournisseurLigne($DB)
+	{
+		$this->db= $DB;		
+	}
+
+	/**
+	*  \brief     Load line order
+	*  \param     rowid           id line order
+	*/
+	function fetch($rowid)
+	{
+		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.description, cd.price, cd.qty, cd.tva_tx,';
+		$sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
+		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
+		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
+		$sql.= ' WHERE cd.rowid = '.$rowid;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$objp = $this->db->fetch_object($result);
+			$this->rowid            = $objp->rowid;
+			$this->fk_commande      = $objp->fk_commande;
+			$this->desc             = $objp->description;
+			$this->qty              = $objp->qty;
+			$this->price            = $objp->price;
+			$this->subprice         = $objp->subprice;
+			$this->tva_tx           = $objp->tva_tx;
+			$this->remise           = $objp->remise;
+			$this->remise_percent   = $objp->remise_percent;
+			$this->produit_id       = $objp->fk_product;
+			$this->info_bits        = $objp->info_bits;
+			$this->total_ht         = $objp->total_ht;
+			$this->total_tva        = $objp->total_tva;
+			$this->total_ttc        = $objp->total_ttc;
+			
+			$this->ref	            = $objp->product_ref;
+			$this->product_libelle  = $objp->product_libelle;
+			$this->product_desc     = $objp->product_desc;
+			
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}  
+	
+	/**
+	*      \brief     	Mise a jour de l'objet ligne de commande en base
+	*		\return		int		<0 si ko, >0 si ok
+	*/
+	function update_total()
+	{
+		$this->db->begin();
 		
-  }
+		// Mise a jour ligne en base
+		$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseurdet SET";
+		$sql.= " total_ht='".price2num($this->total_ht)."'";
+		$sql.= ",total_tva='".price2num($this->total_tva)."'";
+		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
+		$sql.= " WHERE rowid = ".$this->rowid;
+		
+		dolibarr_syslog("CommandeFournisseurLigne.class.php::update_total sql=$sql");
+		
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;	
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("CommandeFournisseurLigne.class.php::update_total Error ".$this->error);
+			$this->db->rollback();
+			return -2;
+		}
+	}  	
 }
 
 ?>

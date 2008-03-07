@@ -46,8 +46,8 @@ class Propal extends CommonObject
 	var $error;
 	var $element='propal';
 	var $table_element='propal';
-	var $fk_element='fk_propal';
 	var $table_element_line='propaldet';
+	var $fk_element='fk_propal';
 
 	var $id;
 
@@ -342,7 +342,7 @@ class Propal extends CommonObject
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la propale meme
-				$result=$this->update_price($propalid);
+				$result=$this->update_price();
 					
         if ($result > 0)
         {

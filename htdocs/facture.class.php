@@ -296,7 +296,7 @@ class Facture extends CommonObject
 
 			if (! $error)
 			{
-				$resql=$this->update_price($this->id);
+				$resql=$this->update_price();
 				if ($resql)
 				{
 					// Appel des triggers
@@ -641,7 +641,7 @@ class Facture extends CommonObject
 			$lineid=$facligne->insert();
 			if ($lineid > 0)
 			{
-				$result=$this->update_price($this->id);
+				$result=$this->update_price();
 				if ($result > 0)
 				{
 					// Crée lien entre remise et ligne de facture
@@ -713,72 +713,61 @@ class Facture extends CommonObject
 		
 		$this->db->begin();
 
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture = '.$rowid;
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'fa_pr WHERE fk_facture = '.$rowid;
 		if ($this->db->query($sql))
 		{
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'fa_pr WHERE fk_facture = '.$rowid;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'co_fa WHERE fk_facture = '.$rowid;
 			if ($this->db->query($sql))
 			{
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'co_fa WHERE fk_facture = '.$rowid;
+				// On met a jour le lien des remises
+				$list_rowid_det=array();
+				$sql = 'SELECT fd.rowid FROM '.MAIN_DB_PREFIX.'facturedet as fd WHERE fk_facture = '.$rowid;
+				$resql=$this->db->query($sql);
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$list_rowid_det[]=$obj->rowid;
+				}
+				
+				// On désaffecte de la facture les remises liées
+				if (sizeof($list_rowid_det))
+				{
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except as re';
+					$sql.= ' SET re.fk_facture = NULL';
+					$sql.= ' WHERE re.fk_facture in ('.join(',',$list_rowid_det).')';
+
+					dolibarr_syslog("Facture.class::delete sql=".$sql);
+					if (! $this->db->query($sql))
+					{
+						$this->error=$this->db->error()." sql=".$sql;
+						dolibarr_syslog("Facture.class::delete ".$this->error);
+						$this->db->rollback();
+						return -5;
+					}
+				}
+				
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
 				if ($this->db->query($sql))
 				{
-					// On met a jour le lien des remises
-					$list_rowid_det=array();
-					$sql = 'SELECT fd.rowid FROM '.MAIN_DB_PREFIX.'facturedet as fd WHERE fk_facture = '.$rowid;
+					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
 					$resql=$this->db->query($sql);
-					while ($obj = $this->db->fetch_object($resql))
+					if ($resql)
 					{
-						$list_rowid_det[]=$obj->rowid;
-					}
-					
-					// On désaffecte de la facture les remises liées
-					if (sizeof($list_rowid_det))
-					{
-						$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except as re';
-						$sql.= ' SET re.fk_facture = NULL';
-						$sql.= ' WHERE re.fk_facture in ('.join(',',$list_rowid_det).')';
-
-						dolibarr_syslog("Facture.class::delete sql=".$sql);
-						if (! $this->db->query($sql))
-						{
-							$this->error=$this->db->error()." sql=".$sql;
-							dolibarr_syslog("Facture.class::delete ".$this->error);
-							$this->db->rollback();
-							return -5;
-						}
-					}
-					
-					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
-					if ($this->db->query($sql))
-					{
-						$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
-						$resql=$this->db->query($sql);
-						if ($resql)
-						{
-							// Appel des triggers
-							include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-							$interface=new Interfaces($this->db);
-							$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
-							if ($result < 0) { $error++; $this->errors=$interface->errors; }
-							// Fin appel triggers
-							
-							$this->db->commit();
-							return 1;
-						}
-						else
-						{
-							$this->error=$this->db->error()." sql=".$sql;
-							dolibarr_syslog("Facture.class::delete ".$this->error);
-							$this->db->rollback();
-							return -6;
-						}
+						// Appel des triggers
+						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+						$interface=new Interfaces($this->db);
+						$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
+						if ($result < 0) { $error++; $this->errors=$interface->errors; }
+						// Fin appel triggers
+						
+						$this->db->commit();
+						return 1;
 					}
 					else
 					{
 						$this->error=$this->db->error()." sql=".$sql;
 						dolibarr_syslog("Facture.class::delete ".$this->error);
 						$this->db->rollback();
-						return -4;
+						return -6;
 					}
 				}
 				else
@@ -786,7 +775,7 @@ class Facture extends CommonObject
 					$this->error=$this->db->error()." sql=".$sql;
 					dolibarr_syslog("Facture.class::delete ".$this->error);
 					$this->db->rollback();
-					return -3;
+					return -4;
 				}
 			}
 			else
@@ -794,7 +783,7 @@ class Facture extends CommonObject
 				$this->error=$this->db->error()." sql=".$sql;
 				dolibarr_syslog("Facture.class::delete ".$this->error);
 				$this->db->rollback();
-				return -2;
+				return -3;
 			}
 		}
 		else
@@ -802,7 +791,7 @@ class Facture extends CommonObject
 			$this->error=$this->db->error()." sql=".$sql;
 			dolibarr_syslog("Facture.class::delete ".$this->error);
 			$this->db->rollback();
-			return -1;
+			return -2;
 		}
 	}
 
@@ -1071,7 +1060,7 @@ class Facture extends CommonObject
 				$numfa = $this->ref;
 			}
 
-			$this->update_price($this->id);
+			$this->update_price();
 
 			// Validation de la facture
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
@@ -1338,6 +1327,7 @@ class Facture extends CommonObject
 				$remise = round(($pu * $remise_percent / 100),2);
 				$price = ($pu - $remise);
 			}
+			
 			$product_type=0;
 			if ($fk_product)
 			{
@@ -1375,7 +1365,8 @@ class Facture extends CommonObject
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la facture meme
-				$result=$this->update_price($facid);
+				$this->id=$facid;	// \TODO A virer
+				$result=$this->update_price();
 				if ($result > 0)
 				{
 					$this->db->commit();
@@ -1476,7 +1467,7 @@ class Facture extends CommonObject
 			if ($result > 0)
 			{
 				// Mise a jour info denormalisees au niveau facture
-				$this->update_price($this->id);
+				$this->update_price();
 				$this->db->commit();
 				return $result;
 			}
@@ -1537,7 +1528,7 @@ class Facture extends CommonObject
     		return -1;
     	}
     	
-    	$result=$this->update_price($this->id);
+    	$result=$this->update_price();
     	
     	// Appel des triggers
     	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -1549,105 +1540,6 @@ class Facture extends CommonObject
     	$this->db->commit();
     	
     	return 1;
-	}
-
-	/**
-     \brief     	Mise à jour des sommes de la facture et calculs denormalises
-     \param     	facid      	id de la facture a modifier
-     \return		int			<0 si ko, >0 si ok
-	*/
-	function update_price($facid)
-	{
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		
-		$tvas=array();
-		$err=0;
-
-		// Liste des lignes a sommer
-		$sql = 'SELECT qty, tva_taux, subprice, remise_percent,';
-		$sql.= ' total_ht, total_tva, total_ttc';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet';
-		$sql.= ' WHERE fk_facture = '.$facid;
-
-		dolibarr_syslog("Facture::update_price sql=".$sql);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$this->total_ht  = 0;
-			$this->total_tva = 0;
-			$this->total_ttc = 0;
-			
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($resql);
-
-				$this->total_ht       += $obj->total_ht;
-				$this->total_tva      += ($obj->total_ttc - $obj->total_ht);
-				$this->total_ttc      += $obj->total_ttc;
-
-				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
-				$i++;
-			}
-
-			$this->db->free($resql);
-
-			// Met a jour indicateurs
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
-			$sql .= " total='".    price2num($this->total_ht)."',";
-			$sql .= " tva='".      price2num($this->total_tva)."',";
-			$sql .= " total_ttc='".price2num($this->total_ttc)."'";
-			$sql .= ' WHERE rowid = '.$facid;
-
-			dolibarr_syslog("Facture::update_price sql=".$sql);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				// \TODO A supprimer car l'utilisation de facture_tva_sum non utilisable
-				// dans un context compta propre. On utilisera plutot les lignes.
-				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture='.$this->id;
-				if ( $this->db->query($sql) )
-				{
-					foreach ($tvas as $key => $value)
-					{
-						$sql_del = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum where fk_facture ='.$this->id;
-						$this->db->query($sql_del);
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX."facture_tva_sum (fk_facture,amount,tva_tx) values ($this->id,'".price2num($tvas[$key])."','".price2num($key)."');";
-						if (! $this->db->query($sql) )
-						{
-							dolibarr_print_error($this->db);
-							$err++;
-						}
-					}
-				}
-				else
-				{
-					$err++;
-				}
-
-				if ($err == 0)
-				{
-					return 1;
-				}
-				else
-				{
-					return -3;
-				}
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				dolibarr_syslog("Facture::update_price error=".$this->error,LOG_ERR);
-				return -1;
-			}
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			dolibarr_syslog("Facture::update_price error=".$this->error,LOG_ERR);
-			return -1;
-		}
 	}
 
   /**
