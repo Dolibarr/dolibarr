@@ -26,7 +26,7 @@
 
 require ("../../master.inc.php");
 
-require_once (DOL_DOCUMENT_ROOT."/bon-prelevement.class.php");
+require_once (DOL_DOCUMENT_ROOT."/compta/prelevement/bon-prelevement.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
