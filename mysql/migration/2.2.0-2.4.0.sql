@@ -18,6 +18,12 @@ update llx_const set value='' where name='MAIN_FORCE_SETLOCALE_LC_MONETARY' and 
 update llx_const set value='' where name='MAIN_FORCE_SETLOCALE_LC_NUMERIC'  and value='MAIN_FORCE_SETLOCALE_LC_NUMERIC';
 update llx_const set value='' where name='MAIN_FORCE_SETLOCALE_LC_TIME'     and value='MAIN_FORCE_SETLOCALE_LC_TIME';
 
+-- remove old deprecated options
+update llx_const set name='SOCIETE_CODECLIENT_ADDON' where name='CODECLIENT_ADDON';
+update llx_const set name='SOCIETE_CODEFOURNISSEUR_ADDON' where name='CODEFOURNISSEUR_ADDON';
+delete from llx_const where name='CODECLIENT_ADDON';
+delete from llx_const where name='CODEFOURNISSEUR_ADDON';
+
 alter table llx_document_model modify type varchar(20) NOT NULL;
 
 DELETE FROM llx_rights_def WHERE module = 'menudb';
