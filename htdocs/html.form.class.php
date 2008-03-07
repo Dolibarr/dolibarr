@@ -2325,7 +2325,6 @@ class Form
 		if (sizeof($txtva))
 		{
 			print '<select class="flat" name="'.$name.'">';
-			if ($default) print '<option value="0">'.$langs->trans("Default").'</option>';
 			
 			for ($i = 0 ; $i < $nbdetaux ; $i++)
 			{
