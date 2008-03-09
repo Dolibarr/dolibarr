@@ -73,6 +73,7 @@ alter table llx_expedition add column fk_soc integer NOT NULL after ref;
 alter table llx_expedition add column fk_adresse_livraison integer DEFAULT NULL after date_expedition;
 -- V4.1 UPDATE llx_expedition as e SET e.fk_soc = (SELECT c.fk_soc FROM llx_commande AS c WHERE e.fk_commande = c.rowid);
 -- V4.1 UPDATE llx_expedition as e SET e.fk_adresse_livraison = (SELECT c.fk_adresse_livraison FROM llx_commande AS c WHERE e.fk_commande = c.rowid);
+update llx_expedition set fk_adresse_livraison=NULL where fk_adresse_livraison = 0;
 
 ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_soc (fk_soc);
 ALTER TABLE llx_expedition ADD INDEX idx_expedition_fk_user_author (fk_user_author);
