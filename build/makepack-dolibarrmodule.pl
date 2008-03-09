@@ -103,7 +103,7 @@ if (-d "/usr/src/RPM") {
     $RPMDIR="/usr/src/RPM";
 }
 
-$SOURCE="$DIR/../../dolibarr";
+$SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
 
 

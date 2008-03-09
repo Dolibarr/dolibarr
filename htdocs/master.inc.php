@@ -78,7 +78,7 @@ if (! isset($dolibarr_main_db_type))
 {	
   $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 }
-if (! $dolibarr_main_data_root) {
+if (empty($dolibarr_main_data_root)) {
   // Si repertoire documents non defini, on utilise celui par defaut
   $dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
   $dolibarr_main_data_root.="/documents";
@@ -90,6 +90,9 @@ $uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);								// URL racine relative
+
+// Special code for alternate dev directories (Used on dev env only)
+if (! empty($dolibarr_main_document_root_bis)) define('DOL_DOCUMENT_ROOT_BIS', $dolibarr_main_document_root_bis);
 
 
 /*

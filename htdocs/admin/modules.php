@@ -161,63 +161,72 @@ llxHeader("","");
 print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
 
 
-// Recherche les modules
-$dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
+// Search modules
+$dirlist=array();
+$dirlist[]=DOL_DOCUMENT_ROOT;
+if (defined('DOL_DOCUMENT_ROOT_BIS')) $dirlist[]=DOL_DOCUMENT_ROOT_BIS;
 
-// Charge tableaux modules, nom, numero, orders depuis r�pertoire dir
-$handle=opendir($dir);
 $filename = array();
 $modules = array();
 $orders = array();
 $categ = array();
-$i = 0;
-$j = 0;
-while (($file = readdir($handle))!==false)
+$dirmod = array();
+foreach ($dirlist as $dirroot)
 {
-    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
-    {
-        $modName = substr($file, 0, strlen($file) - 10);
+	$dir = $dirroot . "/includes/modules/";
 
-        if ($modName)
-        {
-            include_once($dir.$file);
-            $objMod = new $modName($db);
+	// Charge tableaux modules, nom, numero, orders depuis r�pertoire dir
+	$handle=opendir($dir);
+	$i = 0;
+	$j = 0;
+	while (($file = readdir($handle))!==false)
+	{
+	    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
+	    {
+	        $modName = substr($file, 0, strlen($file) - 10);
 
-            if ($objMod->numero > 0)
-            {
-                $j = $objMod->numero;
-            }
-            else
-            {
-                $j = 1000 + $i;
-            }
+	        if ($modName)
+	        {
+	            include_once($dir.$file);
+	            $objMod = new $modName($db);
 
-			$modulequalified=1;
+	            if ($objMod->numero > 0)
+	            {
+	                $j = $objMod->numero;
+	            }
+	            else
+	            {
+	                $j = 1000 + $i;
+	            }
 
-			// We discard modules that does not respect constraint on menu handlers
-			if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
-			if ($objMod->needtopmenu  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
+				$modulequalified=1;
 
-			// We dsicard modules according to features level (if active we always show them)
-			$const_name = $objMod->const_name;
-			if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
-			if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+				// We discard modules that does not respect constraint on menu handlers
+				if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
+				if ($objMod->needtopmenu  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
 
-			if ($modulequalified)
-			{
-	            $modules[$i] = $objMod;
-	            $filename[$i]= $modName;
-	            $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
-				$categ[$objMod->special]++;					// Array of all different modules categories
-	            $j++;
-	            $i++;
-			}
-        }
-    }
+				// We dsicard modules according to features level (if active we always show them)
+				$const_name = $objMod->const_name;
+				if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
+				if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+
+				if ($modulequalified)
+				{
+		            $modules[$i] = $objMod;
+		            $filename[$i]= $modName;
+		            $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
+					$categ[$objMod->special]++;					// Array of all different modules categories
+		            $dirmod[$i] = $dirroot;
+					$j++;
+		            $i++;
+				}
+	        }
+	    }
+	}
 }
 
-asort($orders);
 
+asort($orders);
 
 // Affichage debut page
 
@@ -368,15 +377,16 @@ foreach ($orders as $key => $value)
                     $i=0;
                     foreach ($objMod->config_page_url as $page)
                     {
+						$urlpage=$page;
                         if ($i++)
                         {
-                            print '<a href="'.$page.'" alt="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
+                            print '<a href="'.$urlpage.'" alt="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
                         //    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
                         }
                         else
                         {
                             //print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;';
-                            print '<a href="'.$page.'" alt="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+                            print '<a href="'.$urlpage.'" alt="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
                         }
                     }
                     print "</td>\n";
