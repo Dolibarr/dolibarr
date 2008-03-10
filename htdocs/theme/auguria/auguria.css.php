@@ -140,7 +140,7 @@ div.vmenu
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 160px;
+    width: 165px;
 }
 
 div.fiche
