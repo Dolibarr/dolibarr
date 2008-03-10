@@ -75,7 +75,9 @@ function Activate($value,$withdeps=1)
 	if ($modName)
 	{
 		$file = $modName . ".class.php";
-		include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
+		$res=@include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
+		if (defined('DOL_DOCUMENT_ROOT_BIS') && ! $res) include_once(DOL_DOCUMENT_ROOT_BIS."/includes/modules/".$file);
+		
 		$objMod = new $modName($db);
 		
 		// Test si version PHP ok
@@ -134,7 +136,9 @@ function UnActivate($value,$requiredby=1)
 	if ($modName)
 	{
 		$file = $modName . ".class.php";
-		include_once(DOL_DOCUMENT_ROOT."/includes/modules/$file");
+		$res=include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
+		if (defined('DOL_DOCUMENT_ROOT_BIS') && ! $res) include_once(DOL_DOCUMENT_ROOT_BIS."/includes/modules/".$file);
+
 		$objMod = new $modName($db);
 		$result=$objMod->remove();
 	}
