@@ -78,6 +78,7 @@ elseif ($actiontest)
     // Test de la connexion a la database mantis
     $conf->mantis->db->type=$dolibarr_main_db_type;
     $conf->mantis->db->host=$_POST["phpmantis_host"];
+    $conf->mantis->db->port=$_POST["phpmantis_port"];
     $conf->mantis->db->user=$_POST["phpmantis_user"];
     $conf->mantis->db->pass=$_POST["phpmantis_pass"];
     $conf->mantis->db->name=$_POST["phpmantis_dbname"];

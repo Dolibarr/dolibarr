@@ -81,6 +81,7 @@ elseif ($actiontest)
     // Test de la connexion a la database phenix
     $conf->phenix->db->type=$dolibarr_main_db_type;
     $conf->phenix->db->host=$_POST["phpphenix_host"];
+    $conf->phenix->db->port=$_POST["phpphenix_port"];
     $conf->phenix->db->user=$_POST["phpphenix_user"];
     $conf->phenix->db->pass=$_POST["phpphenix_pass"];
     $conf->phenix->db->name=$_POST["phpphenix_dbname"];

@@ -39,6 +39,7 @@ DatabaseType=Type de la base de données
 DriverType=Type du driver
 Server=Serveur
 ServerAddressDescription=Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web
+ServerPortDescription=Port du serveur. Ne rien mettre si inconnu.
 DatabaseServer=Serveur de la base de données
 DatabaseName=Nom de la base de données
 Login=Login

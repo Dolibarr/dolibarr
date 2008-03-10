@@ -74,11 +74,12 @@ elseif ($_POST["test"])
     // Test de la connexion a la database webcalendar
     $conf->oscommerce->db->type=$dolibarr_main_db_type;
     $conf->oscommerce->db->host=$_POST["oscommerce_dbhost"];
+    $conf->oscommerce->db->port=$_POST["oscommerce_dbport"];
     $conf->oscommerce->db->name=$_POST["oscommerce_dbname"];
     $conf->oscommerce->db->user=$_POST["oscommerce_dbuser"];
     $conf->oscommerce->db->pass=$_POST["oscommerce_dbpass"];
 
-    $oscommercedb=new DoliDB($conf->oscommerce->db->type,$conf->oscommerce->db->host,$conf->oscommerce->db->user,$conf->oscommerce->db->pass,$conf->oscommerce->db->name);
+    $oscommercedb=new DoliDB($conf->oscommerce->db->type,$conf->oscommerce->db->host,$conf->oscommerce->db->user,$conf->oscommerce->db->pass,$conf->oscommerce->db->name,$conf->oscommerce->db->port);
 
     //print "D ".$db." - ".$db->db."<br>\n";
     //print "W ".$oscommercedb." - ".$oscommercedb->db."<br>\n";

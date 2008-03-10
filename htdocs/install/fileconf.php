@@ -192,16 +192,6 @@ while (($file = readdir($handle))!==false)
     if (is_readable($dir."/".$file) && eregi('^(.*)\.lib\.php',$file,$reg))
     {
         $type=$reg[1];
-        $modName = 'DoliDb';
-        
-#		print "file=$file type=$type modName=$modName<br>\n";
-
-#        include_once($dir."/".$file);
-#        $objMod = new $modName();
-#        if ($objMod)
-#        {
-
-#        }
 
 		// Version min de la base
 		$versionbasemin=array();
@@ -254,6 +244,19 @@ while (($file = readdir($handle))!==false)
 </td>
 <td class="comment">
 <?php echo $langs->trans("ServerAddressDescription"); ?>
+</td>
+
+</tr>
+
+<tr>
+<td valign="top" class="label"><b>
+<?php echo $langs->trans("Port"); ?>
+</b></td>
+<td valign="top" class="label"><input type="text" name="db_port" value="<?php print (isset($dolibarr_main_db_port) && $dolibarr_main_db_port)?$dolibarr_main_db_port:''; ?>">
+<input type="hidden" name="base" value="">
+</td>
+<td class="comment">
+<?php echo $langs->trans("ServerPortDescription"); ?>
 </td>
 
 </tr>

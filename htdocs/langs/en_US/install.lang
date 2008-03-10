@@ -37,6 +37,7 @@ DatabaseType=Database type
 DriverType=Driver type
 Server=Server
 ServerAddressDescription=Name or ip address for database server, usually 'localhost' when database server is hosted on same server than web server
+ServerPortDescription=Database server port. Keep empty if unknown.
 DatabaseServer=Database server
 DatabaseName=Database name
 Login=Login

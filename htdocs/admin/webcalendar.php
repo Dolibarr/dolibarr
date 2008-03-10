@@ -83,6 +83,7 @@ elseif ($actiontest)
     // Test de la connexion a la database webcalendar
     $conf->webcal->db->type=$dolibarr_main_db_type;
     $conf->webcal->db->host=$_POST["phpwebcalendar_host"];
+    $conf->webcal->db->port=$_POST["phpwebcalendar_port"];
     $conf->webcal->db->user=$_POST["phpwebcalendar_user"];
     $conf->webcal->db->pass=$_POST["phpwebcalendar_pass"];
     $conf->webcal->db->name=$_POST["phpwebcalendar_dbname"];

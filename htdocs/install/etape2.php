@@ -63,7 +63,7 @@ if ($_POST["action"] == "set")
     print '<table cellspacing="0" cellpadding="4" border="0" width="100%">';
     $error=0;
 
-    $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
+    $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
     if ($db->connected == 1)
     {
         print "<tr><td>";

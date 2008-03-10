@@ -163,6 +163,7 @@ function conf($dolibarr_main_document_root)
 	global $conf;
 	global $dolibarr_main_db_type;
 	global $dolibarr_main_db_host;
+	global $dolibarr_main_db_port;
 	global $dolibarr_main_db_name;
 	global $dolibarr_main_db_user;
 	global $dolibarr_main_db_pass;
@@ -173,6 +174,7 @@ function conf($dolibarr_main_document_root)
 	$conf=new Conf();
 	$conf->db->type = trim($dolibarr_main_db_type);
 	$conf->db->host = trim($dolibarr_main_db_host);
+	$conf->db->port = trim($dolibarr_main_db_port);
 	$conf->db->name = trim($dolibarr_main_db_name);
 	$conf->db->user = trim($dolibarr_main_db_user);
 	$conf->db->pass = trim($dolibarr_main_db_pass);

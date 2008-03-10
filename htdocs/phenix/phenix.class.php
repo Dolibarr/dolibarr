@@ -57,13 +57,14 @@ class Phenix {
       // Défini parametres phenix (avec substitution eventuelle)
       $phenixtype=eregi_replace('__dolibarr_main_db_type__',$dolibarr_main_db_type,$conf->phenix->db->type);
       $phenixhost=eregi_replace('__dolibarr_main_db_host__',$dolibarr_main_db_host,$conf->phenix->db->host);
+      $phenixport=eregi_replace('__dolibarr_main_db_port__',$dolibarr_main_db_port,$conf->phenix->db->port);
       $phenixuser=eregi_replace('__dolibarr_main_db_user__',$dolibarr_main_db_user,$conf->phenix->db->user);
       $phenixpass=eregi_replace('__dolibarr_main_db_pass__',$dolibarr_main_db_pass,$conf->phenix->db->pass);
       $phenixname=eregi_replace('__dolibarr_main_db_name__',$dolibarr_main_db_name,$conf->phenix->db->name);
 
       // On initie la connexion à la base Phenix
       require_once (DOL_DOCUMENT_ROOT ."/lib/databases/".$phenixtype.".lib.php");
-      $this->localdb = new DoliDb($phenixtype,$phenixhost,$phenixuser,$phenixpass,$phenixname);
+      $this->localdb = new DoliDb($phenixtype,$phenixhost,$phenixuser,$phenixpass,$phenixname,$phenixport);
     }
 
 // TODO : Modifier la suite....

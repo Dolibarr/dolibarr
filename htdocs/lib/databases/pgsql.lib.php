@@ -65,9 +65,10 @@ class DoliDb
     	\param	    user		nom de l'utilisateur autorisé
         \param		pass		mot de passe
         \param		name		nom de la database
+		\param	    port		Port of database server
         \return		int			1 en cas de succès, 0 sinon
     */
-    function DoliDb($type='pgsql', $host, $user, $pass, $name='')
+    function DoliDb($type='pgsql', $host, $user, $pass, $name='', $port=0)
     {
     	global $conf,$langs;
 
@@ -110,7 +111,7 @@ class DoliDb
         }
 
         // Essai connexion serveur
-        $this->db = $this->connect($host, $user, $pass, $name);
+        $this->db = $this->connect($host, $user, $pass, $name, $port);
 
         if ($this->db)
         {
@@ -173,14 +174,15 @@ class DoliDb
         \param		login		nom de l'utilisateur autoris
         \param		passwd		mot de passe
         \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
+		\param		port		Port of database server
         \return		resource	handler d'accès à la base
     */
-    function connect($host, $login, $passwd, $name)
+    function connect($host, $login, $passwd, $name, $port=0)
     {
     	if (!$name){
     		$name="postgres";
     	}
-        $con_string = "host=$host dbname=$name user=$login password=$passwd";
+        $con_string = "host=$host port=$port dbname=$name user=$login password=$passwd";
         $this->db = pg_connect($con_string);
         if ($this->db)
         {

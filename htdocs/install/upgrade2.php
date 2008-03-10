@@ -80,6 +80,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	// $conf is already instancied inside inc.php
 	$conf->db->type = $dolibarr_main_db_type;
 	$conf->db->host = $dolibarr_main_db_host;
+	$conf->db->port = $dolibarr_main_db_port;
 	$conf->db->name = $dolibarr_main_db_name;
 	$conf->db->user = $dolibarr_main_db_user;
 	$conf->db->pass = $dolibarr_main_db_pass;

@@ -52,6 +52,15 @@ $dolibarr_main_data_root="";
 $dolibarr_main_db_host="";
 
 
+# dolibarr_main_db_port
+# This parameter contains the port of the Dolibarr database.
+# Default value: none
+# Examples:
+# $dolibarr_main_db_host="3306;
+#
+$dolibarr_main_db_port="";
+
+
 # dolibarr_main_db_name
 # This parameter contains name of Dolibarr database.
 # Examples:

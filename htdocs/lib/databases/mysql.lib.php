@@ -108,10 +108,10 @@ class DoliDb
      \param	    user		Nom de l'utilisateur autorisé
      \param	    pass		Mot de passe
      \param	    name		Nom de la database
-     \param	    newlink     ???
+     \param	    port		Port of database server
      \return     int			1 en cas de succès, 0 sinon
   */
-	function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
+	function DoliDb($type='mysql', $host, $user, $pass, $name='', $port=0)
 	{
 		global $conf,$langs;
 
@@ -156,7 +156,7 @@ class DoliDb
 		}
 
 		// Essai connexion serveur
-		$this->db = $this->connect($host, $user, $pass, $name, $newlink);
+		$this->db = $this->connect($host, $user, $pass, $name, $port);
 		if ($this->db)
 		{
 			$this->connected = 1;
@@ -223,13 +223,16 @@ class DoliDb
 		\param	    login		nom de l'utilisateur autoris
 		\param	    passwd		mot de passe
 		\param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
-		\return	resource	handler d'accès à la base
+		\param		port		Port of database server
+		\return		resource	Handler d'accès à la base
 		\seealso	close
 	*/
-	function connect($host, $login, $passwd, $name)
+	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=--hidden--, name=$name");
-		$this->db  = @mysql_connect($host, $login, $passwd);
+		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
+		$newhost=$host;
+		if ($port) $newhost.=':'.$port;
+		$this->db  = @mysql_connect($newhost, $login, $passwd);
 		//force les enregistrement en latin1 si la base est en utf8 par défaut
 		// Supprimé car plante sur mon PHP-Mysql. De plus, la base est forcement en latin1 avec
 		// les nouvelles version de Dolibarr car forcé par l'install Dolibarr.

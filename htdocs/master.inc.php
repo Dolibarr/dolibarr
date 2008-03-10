@@ -74,14 +74,12 @@ else
     }
 }
 
-if (! isset($dolibarr_main_db_type))
-{	
-  $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
-}
-if (empty($dolibarr_main_data_root)) {
-  // Si repertoire documents non defini, on utilise celui par defaut
-  $dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
-  $dolibarr_main_data_root.="/documents";
+if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_data_root))
+{
+	// Si repertoire documents non defini, on utilise celui par defaut
+	$dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
+	$dolibarr_main_data_root.="/documents";
 }
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);	// Filesystem pages php (htdocs)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);			// Filesystem donnes (documents)
@@ -120,10 +118,12 @@ require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 $conf = new Conf();
 // Identifiant propres au serveur base de donnee
 $conf->db->host   = $dolibarr_main_db_host;
+if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+$conf->db->port   = $dolibarr_main_db_port;
 $conf->db->name   = $dolibarr_main_db_name;
 $conf->db->user   = $dolibarr_main_db_user;
 $conf->db->pass   = $dolibarr_main_db_pass;
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 $conf->db->type   = $dolibarr_main_db_type;
 if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set='latin1'; 
 $conf->db->character_set=$dolibarr_main_db_character_set;
@@ -167,11 +167,11 @@ if (! defined('NOREQUIRETRAN'))
  */
 if (! defined('NOREQUIREDB'))   
 {
-	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
+	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
 	if ($db->error)
 	{
-		dolibarr_print_error($db,"host=".$conf->db->host.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
+		dolibarr_print_error($db,"host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
 		exit;   
 	}
 }

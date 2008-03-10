@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  *
@@ -17,14 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file       htdocs/install/etape1.php
 		\brief      Génère le fichier conf.php avec les informations issues de l'étape précédente
-		\version    $Revision$
+		\version    $Id$
 */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc..php
@@ -123,6 +121,9 @@ if ($_POST["action"] == "set")
 			fputs($fp, '$dolibarr_main_db_host="'.$_POST["db_host"].'";');
 			fputs($fp,"\n");
 			
+			fputs($fp, '$dolibarr_main_db_port="'.$_POST["db_port"].'";');
+			fputs($fp,"\n");
+
 			fputs($fp, '$dolibarr_main_db_name="'.$_POST["db_name"].'";');
 			fputs($fp,"\n");
 			
@@ -292,7 +293,7 @@ if ($_POST["action"] == "set")
 			
 			// Creation handler de base, verification du support et connexion
 
-			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest);
+			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest,$conf->db->port);
 			if ($db->error)
 			{		
 				print '<div class="error">'.$db->error.'</div>';
@@ -368,7 +369,7 @@ if ($_POST["action"] == "set")
 		{
 			dolibarr_install_syslog("etape1: Creation de la base : ".$dolibarr_main_db_name);
 
-			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot);
+			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,'',$conf->db->port);
 
 			if ($db->connected)
 			{
@@ -426,8 +427,8 @@ if ($_POST["action"] == "set")
 		*/
 		if (! $error)
 		{
-			dolibarr_install_syslog("etape1: connexion de type=".$conf->db->type." sur host=".$conf->db->host." user=".$conf->db->user." name=".$conf->db->name);
-			//print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." user=".$conf->db->user." name=".$conf->db->name;
+			dolibarr_install_syslog("etape1: connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name);
+			//print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
 			$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
 

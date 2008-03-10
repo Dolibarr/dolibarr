@@ -276,6 +276,7 @@ class Conf
 		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 		$this->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'__dolibarr_main_db_type__';
 		$this->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
+		$this->webcal->db->port=defined('PHPWEBCALENDAR_PORT')?PHPWEBCALENDAR_PORT:'';
 		$this->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
 		$this->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
 		$this->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
@@ -284,6 +285,7 @@ class Conf
 		$this->phenix->enabled=defined('MAIN_MODULE_PHENIX')?MAIN_MODULE_PHENIX:0;
 		$this->phenix->db->type=defined('PHPPHENIX_TYPE')?PHPPHENIX_TYPE:'__dolibarr_main_db_type__';
 		$this->phenix->db->host=defined('PHPPHENIX_HOST')?PHPPHENIX_HOST:'';
+		$this->phenix->db->port=defined('PHPPHENIX_PORT')?PHPPHENIX_PORT:'';
 		$this->phenix->db->user=defined('PHPPHENIX_USER')?PHPPHENIX_USER:'';
 		$this->phenix->db->pass=defined('PHPPHENIX_PASS')?PHPPHENIX_PASS:'';
 		$this->phenix->db->name=defined('PHPPHENIX_DBNAME')?PHPPHENIX_DBNAME:'';
@@ -292,6 +294,7 @@ class Conf
 		$this->mantis->enabled=defined('MAIN_MODULE_MANTIS')?MAIN_MODULE_MANTIS:0;
 		$this->mantis->db->type=defined('PHPMANTIS_TYPE')?PHPMANTIS_TYPE:'__dolibarr_main_db_type__';
 		$this->mantis->db->host=defined('PHPMANTIS_HOST')?PHPMANTIS_HOST:'';
+		$this->mantis->db->port=defined('PHPMANTIS_PORT')?PHPMANTIS_PORT:'';
 		$this->mantis->db->user=defined('PHPMANTIS_USER')?PHPMANTIS_USER:'';
 		$this->mantis->db->pass=defined('PHPMANTIS_PASS')?PHPMANTIS_PASS:'';
 		$this->mantis->db->name=defined('PHPMANTIS_DBNAME')?PHPMANTIS_DBNAME:'';

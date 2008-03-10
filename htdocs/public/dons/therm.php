@@ -62,12 +62,13 @@ if (file_exists ($thermlib))
       
       $conf = new Conf();
     $conf->db->type = $dolibarr_main_db_type;
+    $conf->db->port = $dolibarr_main_db_port;
     $conf->db->host = $dolibarr_main_db_host;
     $conf->db->name = $dolibarr_main_db_name;
     $conf->db->user = $dolibarr_main_db_user;
     $conf->db->pass = $dolibarr_main_db_pass;
 
-      $dbt = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
+      $dbt = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
       $dontherm = new Don($dbt);
       
