@@ -524,9 +524,8 @@ class MenuLeft {
 				if ($conf->facture->enabled && $conf->banque->enabled)
 				{
 					$newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=checks",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->lire);
-					if (eregi("checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->creer);
+					if (eregi("checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->modifier);
 					if (eregi("checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->lire);
-
 				}
 
 				// Bank-Caisse

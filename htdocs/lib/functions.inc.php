@@ -1248,7 +1248,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='')
 	{
 		if (! $user->rights->fournisseur->commande->lire) $readok=0;
 	}
-	else if (! empty($features))
+	else if (! empty($feature))
 	{
 		if (! $user->rights->$feature->lire) $readok=0;
 	}
@@ -1275,6 +1275,10 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='')
 		else if ($feature == 'commande_fournisseur')
 		{
 			if (! $user->rights->fournisseur->commande->creer) $createok=0;
+		}
+		else if ($feature == 'banque')
+		{
+			if (! $user->rights->banque->modifier) $createok=0;
 		}
 		else
 		{

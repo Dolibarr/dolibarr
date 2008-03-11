@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ if ($_GET['action'] == 'new')
 {
   $h=0;
   $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?action=new';
-  $head[$h][1] = $langs->trans("NewCheckDeposit");
+  $head[$h][1] = $langs->trans("MenuChequeDeposits");
   $hselected = $h;
   $h++;      
 
@@ -198,11 +198,7 @@ else
 
 if ($mesg) print $mesg.'<br>';
 
-/*
- *
- *
- *
- */
+
 if ($_GET['action'] == 'new')
 {
 	$accounts = array();
@@ -272,9 +268,14 @@ if ($_GET['action'] == 'new')
 		print "</table>";
 	
 		print '<div class="tabsAction">';
-		print '<a class="butAction" href="fiche.php?action=create&amp;accountid='.$bid.'">';
-		print $langs->trans('NewCheckDepositOn',$account_label);
-		print '</a>';
+		if ($user->rights->banque->modifier)
+		{
+			print '<a class="butAction" href="fiche.php?action=create&amp;accountid='.$bid.'">'.$langs->trans('NewCheckDepositOn',$account_label).'</a>';
+		}
+		else
+		{
+			print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn',$account_label).'</a>';
+		}
 		print '</div><br />';
 	}
 
