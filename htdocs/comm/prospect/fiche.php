@@ -483,15 +483,15 @@ if ($socid > 0)
                 print '<td>&nbsp;</td>';
 
 				// Action
-        print '<td>';
+				print '<td>';
 				$actionstatic->code=$obj->acode;
-		    $actionstatic->libelle=$obj->libelle;
-		    $actionstatic->id=$obj->id;
-		    print '<td>'.$actionstatic->getNomUrl(1,16).'</td>';
+				$actionstatic->libelle=$obj->libelle;
+				$actionstatic->id=$obj->id;
+				print '<td>'.$actionstatic->getNomUrl(1,16).'</td>';
 				print '</td>';
 
         		print '<td>';
-				if ($obj->propalrowid)
+				if ($conf->propal->enabled && $obj->propalrowid)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowPropal"),"propal");
 					print $langs->trans("Propal");
