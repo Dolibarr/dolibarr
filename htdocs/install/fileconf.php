@@ -126,20 +126,23 @@ if (isset($main_url) && $main_url)
   $dolibarr_main_url_root=$main_url;
 if (! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
-	# Si d�fini (Ex: Apache sous Linux)
+	# If defined (Ex: Apache sous Linux)
 	if (isset($_SERVER["SCRIPT_URI"])) {
 		$dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
 	}
-	# Si d�fini (Ex: Apache sous Caudium)
+	# If defined (Ex: Apache sous Caudium)
 	elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
 		$dolibarr_main_url_root=$_SERVER["SERVER_URL"].$_SERVER["DOCUMENT_URI"];
 	}
 	# Si SCRIPT_URI, SERVER_URL, DOCUMENT_URI non d�fini (Ex: Apache 2.0.44 pour Windows)
-	else {										
-		$dolibarr_main_url_root="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"];
+	else
+	{										
+		$proto='http';
+		if (! empty($_SERVER["HTTP_HOST"])) $serverport=$_SERVER["HTTP_HOST"];
+		else $serverport=$_SERVER["SERVER_NAME"];
+		$dolibarr_main_url_root=$proto."://".$serverport.$_SERVER["SCRIPT_NAME"];
 	}
-	# Nettoyage de l'URL propos�e
-//	$dolibarr_main_url_root = substr($dolibarr_main_url_root,0,strlen($dolibarr_main_url_root)-12);
+	# Clean proposed URL
 	$dolibarr_main_url_root = ereg_replace('\/fileconf\.php$','',$dolibarr_main_url_root);	# Supprime le /fileconf.php
 	$dolibarr_main_url_root = ereg_replace('\/$','',$dolibarr_main_url_root);				# Supprime le /
 	$dolibarr_main_url_root = ereg_replace('\/index\.php$','',$dolibarr_main_url_root);		# Supprime le /index.php
