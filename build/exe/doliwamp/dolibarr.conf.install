@@ -1,0 +1,21 @@
+Alias /dolibarr "WAMPROOT/www/dolibarr/htdocs/" 
+
+# to give access to dolibarr from outside 
+# replace the lines
+#
+#        Order Deny,Allow
+#	Deny from all
+#	Allow from 127.0.0.1
+#
+# by
+#
+#        Order Allow,Deny 
+#   Allow from all
+#
+
+<Directory "WAMPROOT/www/dolibarr/htdocs/">
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride all
+   Order Allow,Deny 
+   Allow from all
+</Directory>

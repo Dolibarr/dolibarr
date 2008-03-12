@@ -1,0 +1,5 @@
+NET STOP doliwampapache
+.\bin\apache\apacheWAMPAPACHEVERSION\bin\httpd.exe -k uninstall -n doliwampapache
+NET STOP doliwampmysqld 
+.\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld-nt.exe --remove doliwampmysqld
+REM wampmanager.exe -quit -id={doliwampserver}

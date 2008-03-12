@@ -1,0 +1,1 @@
+del /F .\mysqlinitpassword.bat

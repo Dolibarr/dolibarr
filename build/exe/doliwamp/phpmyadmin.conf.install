@@ -1,0 +1,22 @@
+Alias /phpmyadmin "WAMPROOT/apps/phpmyadminWAMPPHPMYADMINVERSION/" 
+
+# to give access to phpmyadmin from outside 
+# replace the lines
+#
+#        Order Deny,Allow
+#	Deny from all
+#	Allow from 127.0.0.1
+#
+# by
+#
+#        Order Allow,Deny 
+#   Allow from all
+#
+
+<Directory "WAMPROOT/apps/phpmyadminWAMPPHPMYADMINVERSION/">
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride all
+        Order Deny,Allow
+	Deny from all
+	Allow from 127.0.0.1
+</Directory>

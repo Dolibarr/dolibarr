@@ -1,0 +1,3 @@
+@echo off
+REM Lancement Dolibarr
+"WAMPBROWSER" http://localhost:WAMPAPACHEPORT/dolibarr/
