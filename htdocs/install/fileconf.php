@@ -45,7 +45,7 @@ if (! isset($force_install_databaselogin))     $force_install_databaselogin='';
 if (! isset($force_install_databasepass))      $force_install_databasepass='';
 if (! isset($force_install_databaserootlogin)) $force_install_databaserootlogin='';
 if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='';
-if (file_exists("../conf/conf.forced.php")) include_once("../conf/conf.forced.php");
+if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
 
 pHeader($langs->trans("ConfigurationFile"),"etape0");

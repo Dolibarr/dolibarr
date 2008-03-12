@@ -2,7 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 /**
         \file       htdocs/install/etape4.php
+		\ingroup	install
         \brief      Demande le login et mot de passe de l'administrateur Dolibarr
         \version    $Id$
 */
@@ -42,7 +43,7 @@ dolibarr_install_syslog("etape4: Entering etape4.php page");
 
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
-if (file_exists("../conf/conf.forced.php")) include_once("../conf/conf.forced.php");
+if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
 
 
