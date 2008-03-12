@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/product/liste.php
    \ingroup    produit
    \brief      Page liste des produits ou services
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -64,6 +62,7 @@ if ($conf->categorie->enabled && isset($_REQUEST['catid']))
 {
   $catid = $_REQUEST['catid'];
 }
+
 
 /*
  * Affichage mode liste
@@ -154,213 +153,209 @@ $resql = $db->query($sql) ;
 
 if ($resql)
 {
-  $num = $db->num_rows($resql);
+	$num = $db->num_rows($resql);
 
-  $i = 0;
+	$i = 0;
 
-  if ($num == 1 && ($sall or $snom or $sref))
-    {
-      $objp = $db->fetch_object($resql);
-      Header("Location: fiche.php?id=$objp->rowid");
-      exit;
-    }
-  
-  if (isset($_GET["envente"]) || isset($_POST["envente"]))
-    {
-      $envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
-    }
-     
-  llxHeader("","",$texte);
-  
-  if ($sref || $snom || $sall || $_POST["search"])
-    {
-      print_barre_liste($texte, $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
-    }
-  else
-    {
-      print_barre_liste($texte, $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
-    }
-  
-  if (isset($catid))
-    {
-      print "<div id='ways'>";
-      $c = new Categorie ($db, $catid);
-      $ways = $c->print_all_ways(' &gt; ','product/liste.php');
-      print " &gt; ".$ways[0]."<br />\n";
-      print "</div><br />";
-    }
-
-  $smarty->template_dir = DOL_DOCUMENT_ROOT;
-
-  if ($_GET["canvas"] <> '' && file_exists($smarty->template_dir . '/product/canvas/'.$_GET["canvas"].'/liste.tpl') )
-    {
-      $smarty->assign('datas', $object->list_datas);
-	  $smarty->assign('url_root', $dolibarr_main_url_root);
-	  $smarty->assign('theme', $conf->theme);
-	  $smarty->assign('langs', $langs);
-      $smarty->display('product/canvas/'.$_GET["canvas"].'/liste.tpl');
-    }
-  else
-    {
-      print '<form action="liste.php" method="post" name="formulaire">';
-      print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-      print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-      print '<input type="hidden" name="type" value="'.$type.'">';
-
-      print '<table class="liste" width="100%">';
-      
-      // Lignes des titres
-      print "<tr class=\"liste_titre\">";
-      print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans("DateModification"),"liste.php", "p.tms","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
-      if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration","&amp;envente=$envente&".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
-      if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("Stock").'</td>';
-      print_liste_field_titre($langs->trans("Status"),"liste.php", "p.envente","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
-      print "</tr>\n";
-      
-      // Lignes des champs de filtre
-      print '<tr class="liste_titre">';
-      print '<td class="liste_titre" align="left">';
-      print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
-      print '</td>';
-      print '<td class="liste_titre" align="left">';
-      print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
-      print '</td>';
-      print '<td class="liste_titre">';
-      print '&nbsp;';
-      print '</td>';
-      if ($conf->service->enabled && $type != 0)
-      {
-      	print '<td class="liste_titre">';
-      	print '&nbsp;';
-      	print '</td>';
-      }
-      print '<td class="liste_titre">';
-      print '&nbsp;';
-      print '</td>';
-      if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
-      {
-      	print '<td class="liste_titre">';
-      	print '&nbsp;';
-      	print '</td>';
-      }
-      print '<td class="liste_titre" align="right">';
-      print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-      print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
-      print '</td>';
-      print '</tr>';
-      
-      
-      $product_static=new Product($db);
-      
-      $var=True;
-      while ($i < min($num,$limit))
+	if ($num == 1 && ($sall or $snom or $sref))
 	{
-	  $objp = $db->fetch_object($resql);
-	  
-	  // Multilangs
-	  if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-	    {
-	      $sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
-	      $sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
-	      $sql.= " LIMIT 1";
-	      $result = $db->query($sql);
-	      if ($result)
-		{
-		  $objtp = $db->fetch_object($result);
-		  if ($objtp->label != '') $objp->label = $objtp->label;
-		}
-	    }
-	  
-	  $var=!$var;
-	  print '<tr '.$bc[$var].'>';
+		$objp = $db->fetch_object($resql);
+		Header("Location: fiche.php?id=$objp->rowid");
+		exit;
+	}
+
+	if (isset($_GET["envente"]) || isset($_POST["envente"]))
+	{
+		$envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
+	}
 	
-		// Ref
-	  print '<td nowrap="nowrap">';
-	  print "<a href=\"fiche.php?id=$objp->rowid\">";
-	  if ($objp->fk_product_type==1)
-	  	print img_object($langs->trans("ShowService"),"service");
-	  else
-	  	print img_object($langs->trans("ShowProduct"),"product");
-	  print '</a> ';
-	  print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref."</a></td>\n";
+	llxHeader("","",$texte);
 
-	  // Label
-	  print '<td>'.$objp->label.'</td>';
-	  
-	  // Date
-	  print '<td align="center">'.dolibarr_print_date($objp->datem,'day')."</td>\n";
+	$param="&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"];
+	$param.="&amp;fourn_id=".$fourn_id;
+	$param.=isset($type)?"&amp;type=".$type:"";
+	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
 
-	  // Duration
-	  if ($conf->service->enabled && $type != 0) 
-	  {
-	  	print '<td align="center">';
-	    if (eregi('([0-9]+)y',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-	    elseif (eregi('([0-9]+)m',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-	    elseif (eregi('([0-9]+)d',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-	    else print $objp->duration;
-	    print '</td>';
-	  }
-	  
-	  // Price
-	  print '<td align="right">';
-	  if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
-	  else print price($objp->price).' '.$langs->trans("HT");
-	  
-	  print '</td>';
-	  
-		// Affichage du stock
+	if (isset($catid))
+	{
+		print "<div id='ways'>";
+		$c = new Categorie ($db, $catid);
+		$ways = $c->print_all_ways(' &gt; ','product/liste.php');
+		print " &gt; ".$ways[0]."<br />\n";
+		print "</div><br />";
+	}
+
+	$smarty->template_dir = DOL_DOCUMENT_ROOT;
+
+	if ($_GET["canvas"] <> '' && file_exists($smarty->template_dir . '/product/canvas/'.$_GET["canvas"].'/liste.tpl') )
+	{
+		$smarty->assign('datas', $object->list_datas);
+		$smarty->assign('url_root', $dolibarr_main_url_root);
+		$smarty->assign('theme', $conf->theme);
+		$smarty->assign('langs', $langs);
+		$smarty->display('product/canvas/'.$_GET["canvas"].'/liste.tpl');
+	}
+	else
+	{
+		print '<form action="liste.php" method="post" name="formulaire">';
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+		print '<input type="hidden" name="type" value="'.$type.'">';
+
+		print '<table class="liste" width="100%">';
+		
+		// Lignes des titres
+		print "<tr class=\"liste_titre\">";
+		print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref",$param,"","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateModification"),"liste.php", "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
+		if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price",$param,"",'align="right"',$sortfield,$sortorder);
+		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("Stock").'</td>';
+		print_liste_field_titre($langs->trans("Status"),"liste.php", "p.envente",$param,"",'align="right"',$sortfield,$sortorder);
+		print "</tr>\n";
+		
+		// Lignes des champs de filtre
+		print '<tr class="liste_titre">';
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
+		print '</td>';
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
+		print '</td>';
+		print '<td class="liste_titre">';
+		print '&nbsp;';
+		print '</td>';
+		if ($conf->service->enabled && $type != 0)
+		{
+			print '<td class="liste_titre">';
+			print '&nbsp;';
+			print '</td>';
+		}
+		print '<td class="liste_titre">';
+		print '&nbsp;';
+		print '</td>';
 		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
 		{
-			if ($objp->fk_product_type != 1)
+			print '<td class="liste_titre">';
+			print '&nbsp;';
+			print '</td>';
+		}
+		print '<td class="liste_titre" align="right">';
+		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
+		print '</td>';
+		print '</tr>';
+		
+		
+		$product_static=new Product($db);
+		
+		$var=True;
+		while ($i < min($num,$limit))
+		{
+			$objp = $db->fetch_object($resql);
+			
+			// Multilangs
+			if ($conf->global->MAIN_MULTILANGS) // si l'option est active
 			{
-				$product_static->id = $objp->rowid;
-				$product_static->load_stock();
-				if ($product_static->stock_reel < $objp->seuil_stock_alerte)
+				$sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
+				$sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+				$sql.= " LIMIT 1";
+				$result = $db->query($sql);
+				if ($result)
 				{
-					print '<td align="right">'.$product_static->stock_reel.' '.img_warning($langs->trans("StockTooLow")).'</td>';
+					$objtp = $db->fetch_object($result);
+					if ($objtp->label != '') $objp->label = $objtp->label;
+				}
+			}
+			
+			$var=!$var;
+			print '<tr '.$bc[$var].'>';
+			
+			// Ref
+			print '<td nowrap="nowrap">';
+			print "<a href=\"fiche.php?id=$objp->rowid\">";
+			if ($objp->fk_product_type==1)
+			print img_object($langs->trans("ShowService"),"service");
+			else
+			print img_object($langs->trans("ShowProduct"),"product");
+			print '</a> ';
+			print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref."</a></td>\n";
+
+			// Label
+			print '<td>'.$objp->label.'</td>';
+			
+			// Date
+			print '<td align="center">'.dolibarr_print_date($objp->datem,'day')."</td>\n";
+
+			// Duration
+			if ($conf->service->enabled && $type != 0) 
+			{
+				print '<td align="center">';
+				if (eregi('([0-9]+)y',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
+				elseif (eregi('([0-9]+)m',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+				elseif (eregi('([0-9]+)d',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
+				else print $objp->duration;
+				print '</td>';
+			}
+			
+			// Price
+			print '<td align="right">';
+			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+			else print price($objp->price).' '.$langs->trans("HT");
+			
+			print '</td>';
+			
+			// Affichage du stock
+			if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
+			{
+				if ($objp->fk_product_type != 1)
+				{
+					$product_static->id = $objp->rowid;
+					$product_static->load_stock();
+					if ($product_static->stock_reel < $objp->seuil_stock_alerte)
+					{
+						print '<td align="right">'.$product_static->stock_reel.' '.img_warning($langs->trans("StockTooLow")).'</td>';
+					}
+					else
+					{
+						print '<td align="right">'.$product_static->stock_reel.'</td>';
+					}
 				}
 				else
 				{
-					print '<td align="right">'.$product_static->stock_reel.'</td>';
+					print '<td>&nbsp;</td>';
 				}
+			}
+			
+			// Statut
+			print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
+
+			print "</tr>\n";
+			$i++;
+		}
+		
+		if ($num > $conf->liste_limit)
+		{
+			if ($sref || $snom || $sall || $_POST["search"])
+			{
+				print_barre_liste($texte, $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
 			}
 			else
 			{
-				print '<td>&nbsp;</td>';
+				print_barre_liste($texte, $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
 			}
 		}
-	  
-	  // Statut
-	  print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
-
-	  print "</tr>\n";
-	  $i++;
+		
+		$db->free($resql);
+		
+		print "</table>";
+		print '</form>';    
 	}
-      
-      if ($num > $conf->liste_limit)
-	{
-	  if ($sref || $snom || $sall || $_POST["search"])
-	    {
-	      print_barre_liste($texte, $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
-	    }
-	  else
-	    {
-	      print_barre_liste($texte, $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
-	    }
-	}
-      
-      $db->free($resql);
-      
-      print "</table>";
-      print '</form>';    
-    }
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 
