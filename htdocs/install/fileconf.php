@@ -36,6 +36,17 @@ $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
 
+// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
+if (! isset($force_install_type))              $force_install_type='';
+if (! isset($force_install_port))              $force_install_port='';
+if (! isset($force_install_database))          $force_install_database='';
+if (! isset($force_install_createdatabase))    $force_install_createdatabase='';
+if (! isset($force_install_databaselogin))     $force_install_databaselogin='';
+if (! isset($force_install_databasepass))      $force_install_databasepass='';
+if (! isset($force_install_databaserootlogin)) $force_install_databaserootlogin='';
+if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='';
+if (file_exists("../conf/conf.forced.php")) include_once("../conf/conf.forced.php");
+
 
 pHeader($langs->trans("ConfigurationFile"),"etape0");
 
@@ -181,7 +192,7 @@ $dolibarr_main_db_host = "localhost";
 <td class="label">
 <?php
 
-$defaultype=isset($dolibarr_main_db_type)?$dolibarr_main_db_type:'mysql';
+$defaultype=! empty($dolibarr_main_db_type)?$dolibarr_main_db_type:($force_install_type?$force_install_type:'mysql');
 
 // Scan les drivers
 $dir=DOL_DOCUMENT_ROOT.'/lib/databases';
@@ -211,7 +222,7 @@ while (($file = readdir($handle))!==false)
 		if ($type=='mssql') 	$note='(SQL Server >= '.versiontostring($versionbasemin).')';
 
 		// Affiche ligne dans liste
-		$option.='<option value="'.$type.'" '.($defaultype==$type?" selected":"");
+		$option.='<option value="'.$type.'"'.($defaultype == $type?' selected':'');
 		if (! function_exists($testfunction)) $option.=' disabled="disabled"';
 		$option.='>';
 		$option.=$type.'&nbsp; &nbsp;';
@@ -255,7 +266,7 @@ while (($file = readdir($handle))!==false)
 <td valign="top" class="label"><b>
 <?php echo $langs->trans("Port"); ?>
 </b></td>
-<td valign="top" class="label"><input type="text" name="db_port" value="<?php print (isset($dolibarr_main_db_port) && $dolibarr_main_db_port)?$dolibarr_main_db_port:''; ?>">
+<td valign="top" class="label"><input type="text" name="db_port" value="<?php print (isset($dolibarr_main_db_port) && $dolibarr_main_db_port)?$dolibarr_main_db_port:$force_install_port; ?>">
 <input type="hidden" name="base" value="">
 </td>
 <td class="comment">
@@ -269,7 +280,7 @@ while (($file = readdir($handle))!==false)
 <?php echo $langs->trans("DatabaseName"); ?>
 </b></td>
 
-<td class="label" valign="top"><input type="text" name="db_name" value="<?php echo isset($dolibarr_main_db_name)?$dolibarr_main_db_name:''; ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_name" value="<?php echo isset($dolibarr_main_db_name)?$dolibarr_main_db_name:$force_install_database; ?>"></td>
 <td class="comment">
 <?php echo $langs->trans("DatabaseName"); ?>
 </td>
@@ -280,7 +291,7 @@ while (($file = readdir($handle))!==false)
 <?php echo $langs->trans("CreateDatabase"); ?>
 </td>
 
-<td class="label" valign="top"><input type="checkbox" name="db_create_database"></td>
+<td class="label" valign="top"><input type="checkbox" name="db_create_database"<?php if ($force_install_createdatabase) print ' checked="on"'; ?>></td>
 <td class="comment">
 <?php echo $langs->trans("CheckToCreateDatabase"); ?>
 </td>
@@ -290,7 +301,7 @@ while (($file = readdir($handle))!==false)
 <td class="label" valign="top">
 <b><?php echo $langs->trans("Login"); ?></b>
 </td>
-<td class="label" valign="top"><input type="text" name="db_user" value="<?php print isset($dolibarr_main_db_user)?$dolibarr_main_db_user:''; ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_user" value="<?php print ! empty($dolibarr_main_db_user)?$dolibarr_main_db_user:$force_install_databaselogin; ?>"></td>
 <td class="comment">
 <?php echo $langs->trans("AdminLogin"); ?>
 </td>
@@ -300,7 +311,7 @@ while (($file = readdir($handle))!==false)
 <td class="label" valign="top">
 <b><?php echo $langs->trans("Password"); ?></b>
 </td>
-<td class="label" valign="top"><input type="password" name="db_pass" value="<?php print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:''; ?>"></td>
+<td class="label" valign="top"><input type="password" name="db_pass" value="<?php print ! empty($dolibarr_main_db_pass)?$dolibarr_main_db_pass:$force_install_databasepass; ?>"></td>
 <td class="comment">
 <?php echo $langs->trans("AdminPassword"); ?>
 </td>
@@ -329,7 +340,7 @@ while (($file = readdir($handle))!==false)
 <td class="label" valign="top">
 <?php echo $langs->trans("Login"); ?>
 </td>
-<td class="label" valign="top"><input type="text" name="db_user_root" value="<?php if (isset($db_user_root)) print $db_user_root; ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_user_root" value="<?php print ! empty($db_user_root)?$db_user_root:$force_install_databaserootlogin; ?>"></td>
 <td class="label"><div class="comment">
 <?php echo $langs->trans("DatabaseRootLoginDescription"); ?>
 </div>
@@ -340,7 +351,7 @@ while (($file = readdir($handle))!==false)
 <td class="label" valign="top">
 <?php echo $langs->trans("Password"); ?>
 </td>
-<td class="label" valign="top"><input type="password" name="db_pass_root" value="<?php if (isset($db_pass_root)) print $db_pass_root; ?>"></td>
+<td class="label" valign="top"><input type="password" name="db_pass_root" value="<?php print ! empty($db_pass_root)?$db_pass_root:$force_install_databaserootpass; ?>"></td>
 <td class="label"><div class="comment">
 <?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>
 </div>
