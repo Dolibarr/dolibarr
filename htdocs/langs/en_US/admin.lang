@@ -458,6 +458,7 @@ Pear=Pear
 PearPackages=Pear Packages
 Database=Database
 DatabaseName=Database name
+DatabasePort=Database port
 DatabaseConfiguration=Database setup
 Tables=Tables
 TableName=Table name
