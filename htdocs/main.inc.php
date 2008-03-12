@@ -29,7 +29,7 @@
 */
 
 // Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING est positionnee.
-// A appeler avant tout. Fait l'equivalent de la fonction dol_microtime_float
+// A appeler avant tout. Fait l'equivalent de la fonction dol_microtime_float pas encore chargee.
 $micro_start_time=0;
 if (! empty($_SERVER['DOL_TUNING']))
 {
@@ -87,7 +87,25 @@ foreach ($_POST as $key => $val)
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
+
+// Test if install ok
+if (! @include_once("conf/conf.php"))
+{
+  Header("Location: install/index.php");
+  exit;
+}
+else
+{
+	if (! isset($dolibarr_main_db_host))
+    {
+      Header("Location: install/index.php");
+      exit;
+    }
+}
+
+
 require_once("master.inc.php");
+
 
 // Chargement des includes complementaire de presentation
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");			// Need 11ko memory

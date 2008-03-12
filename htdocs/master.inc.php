@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
@@ -60,18 +60,10 @@ else
 error_reporting(E_ALL ^ E_NOTICE);
 
 // Test si install ok
-if (! @include_once("conf/conf.php"))
+if (! isset($dolibarr_main_db_host))
 {
-  Header("Location: install/index.php");
-  exit;
-}
-else
-{
-	if (! isset($dolibarr_main_db_host))
-    {
-      Header("Location: install/index.php");
-      exit;
-    }
+    print "Error: Dolibarr setup is not complete.\n";
+    exit;
 }
 
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'

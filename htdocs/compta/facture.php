@@ -52,20 +52,12 @@ $langs->load('main');
 $sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
 $mesg=isset($_GET['mesg'])?urldecode($_GET['mesg']):'';
 $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
+$projetid=isset($_GET['projetid'])?$_GET['projetid']:0;
 
-// Sécurité accès client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
-
-// Récupération de l'id de projet
-$projetid = 0;
-if ($_GET["projetid"])
-{
-	$projetid = $_GET["projetid"];
-}
+// Security check
+$facid = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'facture', $facid,'');
 
 // Nombre de ligne pour choix de produit/service prédéfinis
 $NBLINES=4;

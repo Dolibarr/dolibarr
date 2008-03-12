@@ -39,6 +39,7 @@ $sref=isset($_GET['sref'])?$_GET['sref']:$_POST['sref'];
 $sref_client=isset($_GET['sref_client'])?$_GET['sref_client']:(isset($_POST['sref_client'])?$_POST['sref_client']:'');
 $snom=isset($_GET['snom'])?$_GET['snom']:$_POST['snom'];
 $sall=isset($_GET['sall'])?$_GET['sall']:$_POST['sall'];
+$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
 
 // Security check
 $orderid = isset($_GET["orderid"])?$_GET["orderid"]:'';

@@ -42,7 +42,7 @@ $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_contract=isset($_GET["search_contract"])?$_GET["search_contract"]:$_POST["search_contract"];
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
-$socid=$_GET["socid"];
+$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
 
 if (! $sortfield) $sortfield="c.rowid";
 if (! $sortorder) $sortorder="DESC";
