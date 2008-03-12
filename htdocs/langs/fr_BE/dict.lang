@@ -26,8 +26,16 @@ CountryCM=Cameroun
 CountrySA=Arabie Saoudite
 CountryMC=Monaco
 CountrySG=Singapour
-##### Civilities #####=
+##### Civilities #####
 CivilityMME=Madame
 CivilityMR=Monsieur
 CivilityMLE=Mademoiselle
 CivilityMTRE=Maître
+##### Currencies #####
+Currencyeuros=Euros
+CurrencyCHF=Francs suisses
+CurrencyEUR=Euros
+CurrencyGBP=Livre sterling
+CurrencyUSD=Dollar US
+CurrencyFRF=Francs Français
+CurrencyMAD=Dhiram

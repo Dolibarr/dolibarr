@@ -259,8 +259,10 @@ CurrencyCHF=Francs suisses
 CurrencyEUR=Euros
 CurrencyFRF=Francs Français
 CurrencyGBP=Livre sterling
+CurrencyMAD=Dhiram
 CurrencyTND=TND
 CurrencyUSD=Dollar US
 CurrencyXAF=Francs CFA BEAC
 CurrencyXOF=Francs CFA BCEAO
+
 
