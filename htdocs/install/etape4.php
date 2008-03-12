@@ -17,14 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/install/etape4.php
         \brief      Demande le login et mot de passe de l'administrateur Dolibarr
-        \version    $Revision$
+        \version    $Id$
 */
 
 
@@ -40,6 +38,11 @@ $langs->load("admin");
 $langs->load("install");
 
 dolibarr_install_syslog("etape4: Entering etape4.php page");
+
+
+// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
+if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
+if (file_exists("../conf/conf.forced.php")) include_once("../conf/conf.forced.php");
 
 
 
@@ -65,7 +68,7 @@ if ($db->ok == 1)
 {
   
   print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
-  print '<input name="login"></td></tr>';
+  print '<input name="login" value="'.$force_install_dolibarrlogin.'"></td></tr>';
   print '<tr><td>'.$langs->trans("Password").' :</td><td>';
   print '<input type="password" name="pass"></td></tr>';
   print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';
