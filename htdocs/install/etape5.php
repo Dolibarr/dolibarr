@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  *
@@ -17,14 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/install/etape5.php
         \brief      Page de fin d'installation ou de migration
-        \version    $Revision$
+        \version    $Id$
 */
 
 include_once("./inc.php");
@@ -48,19 +46,19 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
     {
         if ($_POST["pass"] <> $_POST["pass_verif"])
         {
-            Header("Location: etape4.php?error=1&selectlang=$setuplang");
+            Header("Location: etape4.php?error=1&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
             exit;
         }
     
         if (strlen(trim($_POST["pass"])) == 0)
         {
-            Header("Location: etape4.php?error=2&selectlang=$setuplang");
+            Header("Location: etape4.php?error=2&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
             exit;
         }
     
         if (strlen(trim($_POST["login"])) == 0)
         {
-            Header("Location: etape4.php?error=3&selectlang=$setuplang");
+            Header("Location: etape4.php?error=3&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
             exit;
         }
     }

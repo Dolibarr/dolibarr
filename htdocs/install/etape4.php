@@ -69,7 +69,7 @@ if ($db->ok == 1)
 {
   
   print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
-  print '<input name="login" value="'.$force_install_dolibarrlogin.'"></td></tr>';
+  print '<input name="login" value="'.(! empty($_GET["login"])?$_GET["login"]:$force_install_dolibarrlogin).'"></td></tr>';
   print '<tr><td>'.$langs->trans("Password").' :</td><td>';
   print '<input type="password" name="pass"></td></tr>';
   print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';
