@@ -60,11 +60,29 @@ else
 error_reporting(E_ALL ^ E_NOTICE);
 
 // Test si install ok
+/*
 if (! isset($dolibarr_main_db_host))
 {
     print "Error: Dolibarr setup is not complete.\n";
     exit;
 }
+*/
+
+// Régression temporaire
+if (! @include_once("conf/conf.php"))
+{
+	Header("Location: install/index.php"); 	 
+	exit; 	 
+} 	 
+else
+{
+	if (! isset($dolibarr_main_db_host))
+	{
+		Header("Location: install/index.php");
+		exit;
+	}
+}
+//Fin régression
 
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_data_root))
