@@ -63,13 +63,14 @@ error_reporting(E_ALL ^ E_NOTICE);
 /*
 if (! isset($dolibarr_main_db_host))
 {
-    print "Error: Dolibarr setup is not complete.\n";
+    print 'Error: Dolibarr setup was run but was not completed.<br>'."\n";
+	print 'Please, run <a href="install/index.php">Dolibarr install process</a> until the end...'."\n";
     exit;
 }
 */
 
 // Régression temporaire
-if (! @include_once("conf/conf.php"))
+if (! @include_once("conf/conf.php"))		// FIXME: Ce test est inutile car si le test renvoi vrai le suivant aussi. Seul le suivant est utile.
 {
 	Header("Location: install/index.php"); 	 
 	exit; 	 
