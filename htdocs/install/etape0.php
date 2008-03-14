@@ -93,50 +93,118 @@ if (! $error)
 	$result=include_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
 	if ($result)
 	{
-		if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
+		// If we ask database or user creation we need to connect as root
+		if (! empty($_POST["db_create_database"]) && ! $userroot)
+		{
+			print '<div class="error">'.$langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$_POST["db_name"]).'</div>';
+			print '<br>';
+			if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+			print $langs->trans("ErrorGoBackAndCorrectParameters");
+			$error++;
+		}
+		if (! empty($_POST["db_create_user"]) && ! $userroot)
+		{
+			print '<div class="error">'.$langs->trans("YouAskLoginCreationSoDolibarrNeedToConnect",$_POST["db_user"]).'</div>';
+			print '<br>';
+			if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+			print $langs->trans("ErrorGoBackAndCorrectParameters");
+			$error++;
+		}
+
+		// If we need root access
+		if (! $error && (! empty($_POST["db_create_database"]) || ! empty($_POST["db_create_user"])))
 		{	
-			$databasefortest='';
-			if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
+			$databasefortest=$_POST["db_name"];
+			if (! empty($_POST["db_create_database"]))
 			{
-				$databasefortest='mysql';
-			}
-			elseif ($_POST["db_type"] == 'pgsql')
-			{
-				$databasefortest='postgres';
-			}
-			else
-			{
-				$databasefortest='mssql';
+				if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
+				{
+					$databasefortest='mysql';
+				}
+				elseif ($_POST["db_type"] == 'pgsql')
+				{
+					$databasefortest='postgres';
+				}
+				else
+				{
+					$databasefortest='mssql';
+				}
 			}
 			$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest,$_POST["db_port"]);
+			
+			dolibarr_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
+			//print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
+
+			if (empty($_POST["db_create_database"]) && $db->connected && ! $db->database_selected)
+			{
+				print '<div class="error">'.$langs->trans("ErrorConnectedButDatabaseNotFound",$_POST["db_name"]).'</div>';
+				print '<br>';
+				if (! $db->connected) print $langs->trans("IfDatabaseNotExistsGoBackAndUncheckCreate").'<br><br>';
+				print $langs->trans("ErrorGoBackAndCorrectParameters");
+				$error++;
+			}		
+			elseif ($db->error && ! (! empty($_POST["db_create_database"]) && $db->connected))
+			{
+				print '<div class="error">'.$db->error.'</div>';
+				if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+				print $langs->trans("ErrorGoBackAndCorrectParameters");
+				$error++;
+			}
 		}
-		else
+		// If we need simple access
+		if (! $error && (empty($_POST["db_create_database"]) && empty($_POST["db_create_user"])))
 		{	
 			$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["db_name"],$_POST["db_port"]);
-		}
-		if ($db->error)
-		{
+			if ($db->error)
+			{
 				print '<div class="error">'.$db->error.'</div>';
+				if (! $db->connected) print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+				print $langs->trans("ErrorGoBackAndCorrectParameters");
 				$error++;
+			}
 		}
 	}
 	else
 	{
 		print "<br>\nFailed to include_once(\"".$main_dir."/lib/databases/".$_POST["db_type"].".lib.php\")<br>\n";
 		print '<div class="error">'.$langs->trans("ErrorWrongValueForParameter",$langs->transnoentities("WebPagesDirectory")).'</div>';
+		print $langs->trans("ErrorGoBackAndCorrectParameters");
 		$error++;
 	}
+}
+
+else
+{
+		if (isset($db)) print $db->lasterror();
+		if (! $db->connected) print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+		print $langs->trans("ErrorGoBackAndCorrectParameters");
+		$error++;
 }
 
 /*
 * Si creation database demandée, il est possible de faire un choix
 */
 $disabled="";
-if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
+if (! $error && ! empty($_POST["db_create_database"]))
 {
 	$disabled="";
 }else{
 	$disabled="disabled";
+}
+
+if (! $error && $db->connected)
+{
+	if (! empty($_POST["db_create_database"]))
+	{
+		$result=$db->select_db($_POST["db_name"]);
+		if ($result)
+		{
+			print '<div class="error">'.$langs->trans("ErrorDatabaseAlreadyExists",$_POST["db_name"]).'</div>';
+			print $langs->trans("IfDatabaseExistsGoBackAndCheckCreate").'<br><br>';
+			print $langs->trans("ErrorGoBackAndCorrectParameters");
+			$error++;
+		}
+	}
 }
 
 if (! $error && $db->connected)
@@ -252,24 +320,6 @@ if (! $error && $db->connected)
 	?>
 	</table>
 	<?php
-}
-else
-{
-	if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
-	{	
-		print $langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$_POST["db_user"],$_POST["db_host"],($userroot?$userroot:'?'));
-		print '<br>';
-		print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
-		print $langs->trans("ErrorGoBackAndCorrectParameters");
-		$error++;
-	}
-	else
-	{
-		if (isset($db)) print $db->lasterror();
-		print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
-		print $langs->trans("ErrorGoBackAndCorrectParameters");
-		$error++;
-	}
 }
 
 

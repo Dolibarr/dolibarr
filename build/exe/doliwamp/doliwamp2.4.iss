@@ -55,31 +55,31 @@ Source: "build\exe\doliwamp\install_services.bat.install"; DestDir: "{app}\"; Fl
 Source: "build\exe\doliwamp\uninstall_services.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\mysqlinitpassword.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin
-Source: "..\..\..\apps\phpmyadmin2.10.1\*.*"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: "config.inc.php,wampserver.conf"
+Source: "..\..\..\apps\phpmyadmin2.10.1\*.*"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf"
 ; Apache
-Source: "..\..\..\bin\apache\apache2.2.6\*.*"; DestDir: "{app}\bin\apache\apache2.2.6"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: "httpd.conf,wampserver.conf"
+Source: "..\..\..\bin\apache\apache2.2.6\*.*"; DestDir: "{app}\bin\apache\apache2.2.6"; Flags: ignoreversion recursesubdirs; Excludes: "httpd.conf,wampserver.conf"
 ; Php
-Source: "..\..\..\bin\php\php5.2.5\*.*"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: "php.ini,wampserver.conf"
+Source: "..\..\..\bin\php\php5.2.5\*.*"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,wampserver.conf"
 ; Mysql
-Source: "..\..\..\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: "my.ini,data\*,wampserver.conf"
+Source: "..\..\..\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf"
 ; Mysql database
-Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45\data\mysql"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
+Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45\data\mysql"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
+; Dolibarr
+Source: "external-libs\*.*"; DestDir: "{app}\www\dolibarr\external-libs"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
+Source: "htdocs\*.*"; DestDir: "{app}\www\dolibarr\htdocs"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db,telephonie\*,*\conf.php,*\install.forced.php"
+Source: "doc\*.*"; DestDir: "{app}\www\dolibarr\doc"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db,wiki\*,plaquette\*,dev\*"
+Source: "dev\*.*"; DestDir: "{app}\www\dolibarr\dev"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
+Source: "mysql\*.*"; DestDir: "{app}\www\dolibarr\mysql"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
+Source: "scripts\*.*"; DestDir: "{app}\www\dolibarr\scripts"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
+Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
 ; Config files
 Source: "build\exe\doliwamp\phpmyadmin.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\config.inc.php.install"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.2.6\conf"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
-; Dolibarr
-Source: "external-libs\*.*"; DestDir: "{app}\www\dolibarr\external-libs"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
-Source: "htdocs\*.*"; DestDir: "{app}\www\dolibarr\htdocs"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db,telephonie\*,*\conf.php"
-Source: "doc\*.*"; DestDir: "{app}\www\dolibarr\doc"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db,wiki\*,plaquette\*,dev\*"
-Source: "dev\*.*"; DestDir: "{app}\www\dolibarr\dev"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
-Source: "mysql\*.*"; DestDir: "{app}\www\dolibarr\mysql"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
-Source: "scripts\*.*"; DestDir: "{app}\www\dolibarr\scripts"; Flags: ignoreversion recursesubdirs onlyifdoesntexist; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
-Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion onlyifdoesntexist; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
+Source: "build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
 ; Licence
 Source: "COPYRIGHT"; DestDir: "{app}";
 
@@ -390,8 +390,8 @@ DeleteFile(SrcFile);
 // Fichier dolibarr
 //----------------------------------------------
 
-destFile := pathWithSlashes+'/www/dolibarr/conf/conf.php';
-srcFile := pathWithSlashes+'/www/dolibarr/conf/conf.php.example';
+destFile := pathWithSlashes+'/www/dolibarr/htdocs/conf/conf.php';
+srcFile := pathWithSlashes+'/www/dolibarr/htdocs/conf/conf.php.example';
 
 if not FileExists (destFile) then
 begin
@@ -407,6 +407,18 @@ begin
   SaveStringToFile(destFile,srcContents, False);
 end
 
+destFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php';
+srcFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php.install';
+
+if not FileExists (destFile) then
+begin
+  LoadStringFromFile (srcFile, srcContents);
+
+  StringChange (srcContents, 'WAMPMYSQLPORT', mysqlPort);
+  StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
+
+  SaveStringToFile(destFile,srcContents, False);
+end
 
 
 

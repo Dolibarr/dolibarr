@@ -263,9 +263,9 @@ while (($file = readdir($handle))!==false)
 </tr>
 
 <tr>
-<td valign="top" class="label"><b>
+<td valign="top" class="label">
 <?php echo $langs->trans("Port"); ?>
-</b></td>
+</td>
 <td valign="top" class="label"><input type="text" name="db_port" value="<?php print (isset($dolibarr_main_db_port) && $dolibarr_main_db_port)?$dolibarr_main_db_port:$force_install_port; ?>">
 <input type="hidden" name="base" value="">
 </td>
