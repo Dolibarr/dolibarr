@@ -271,10 +271,10 @@ class Translate {
     
     
     /**
-     *  \brief      Retourne la version traduite du texte pass� en param�tre en la codant en HTML
+     *  \brief      Retourne la version traduite du texte passe en parametre en la codant en HTML
      *              Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-     *              et si toujours pas trouv�, il est retourn� tel quel
-     *              Les param�tres de cette m�thode peuvent contenir de balises HTML.
+     *              et si toujours pas trouve, il est retourne tel quel
+     *              Les parametres de cette methode peuvent contenir de balises HTML.
      *  \param      key         cl� de chaine a traduire
      *  \param      param1      chaine de param1
      *  \param      param2      chaine de param2
@@ -287,7 +287,7 @@ class Translate {
     {
         if ($this->getTransFromTab($key))
         {
-            // Si la traduction est disponible
+            // Translation is available
             $str=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
             if ($maxsize) $str=dolibarr_trunc($str,$maxsize);
             // On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
@@ -309,6 +309,10 @@ class Translate {
         }
 		else
 		{
+			// Translation is not available
+			global $db;
+			if (ereg('CurrencyShort([A-Z]+)$',$key,$reg)) $key=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','code');
+			if (ereg('Currency([A-Z]+)$',$key,$reg)) $key=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
 			return $this->convToOuptutCharset($key);
 		}
     }
@@ -467,8 +471,7 @@ class Translate {
         $sql = "SELECT ".$fieldlabel." as label";
         $sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
         $sql.= " WHERE ".$fieldkey." = '".$key."'";
-
-        dolibarr_syslog('Translate::getLabelFromKey ',LOG_DEBUG);
+        dolibarr_syslog('Translate::getLabelFromKey sql='.$sql,LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {

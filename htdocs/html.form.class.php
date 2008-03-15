@@ -1124,7 +1124,7 @@ class Form
 				if ($objp->fprice != '') 
 				{
 					$opt.= price($objp->fprice);
-					$opt.= $langs->trans("Currency".$conf->monnaie)."/".$objp->quantity;
+					$opt.= $langs->trans("CurrencyShort".$conf->monnaie)."/".$objp->quantity;
 					if ($objp->quantity == 1)
 					{
 						$opt.= strtolower($langs->trans("Unit"));
@@ -1136,7 +1136,7 @@ class Form
 					if ($objp->quantity > 1)
 					{
 						$opt.=" - ";
-						$opt.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
+						$opt.= price($objp->unitprice).$langs->trans("CurrencyShort".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
 					}
 					if ($objp->duration) $opt .= " - ".$objp->duration;
 				}
