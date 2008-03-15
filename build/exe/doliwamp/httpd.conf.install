@@ -110,8 +110,8 @@ LoadModule setenvif_module modules/mod_setenvif.so
 #LoadModule unique_id_module modules/mod_unique_id.so
 LoadModule userdir_module modules/mod_userdir.so
 #LoadModule usertrack_module modules/mod_usertrack.so
-#LoadModule vhost_alias_module modules/mod_vhost_alias.so
-#LoadModule ssl_module modules/mod_ssl.so
+LoadModule vhost_alias_module modules/mod_vhost_alias.so
+LoadModule ssl_module modules/mod_ssl.so
 LoadModule php5_module "WAMPROOT/bin/php/phpWAMPPHPVERSION/php5apache2_2.dll"
 
 # 'Main' server configuration

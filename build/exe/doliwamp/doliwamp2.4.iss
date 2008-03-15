@@ -72,6 +72,7 @@ Source: "scripts\*.*"; DestDir: "{app}\www\dolibarr\scripts"; Flags: ignoreversi
 Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
 ; Config files
 Source: "build\exe\doliwamp\phpmyadmin.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\config.inc.php.install"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.2.6\conf"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
@@ -231,7 +232,7 @@ DeleteFile(SrcFile);
 destFile := pathWithSlashes+'/alias/phpmyadmin.conf';
 srcFile := pathWithSlashes+'/alias/phpmyadmin.conf.install';
 
-if not FileExists (destFile) then
+if not FileExists (destFile) and FileExists(srcFile) then
 begin
 
   LoadStringFromFile (srcFile, srcContents);
@@ -242,19 +243,6 @@ begin
 
   SaveStringToFile(destFile,srcContents, False);
 end
-//else
-//begin
-
-  //mise à jour de la version de phpmyadmin
-//  tmp := GetIniString('apps','phpmyadminVersion',phpmyadminVersion,pathWithSlashes+'/wampmanager.conf');
-//  if not CompareText(tmp,phpmyadminVersion) = 0  then
-//  begin
-//    SetIniString('apps','phpmyadminVersion',phpmyadminVersion,pathWithSlashes+'/wampmanager.conf');
-//    LoadStringFromFile (destFile, srcContents);
-//    StringChange (srcContents, tmp, phpmyadminVersion);
-//    SaveStringToFile(destFile,srcContents, False);
-//  end
-//end
 DeleteFile(SrcFile);
 
 
@@ -266,7 +254,7 @@ DeleteFile(SrcFile);
 destFile := pathWithSlashes+'/alias/dolibarr.conf';
 srcFile := pathWithSlashes+'/alias/dolibarr.conf.install';
 
-if not FileExists (destFile) then
+if not FileExists (destFile) and FileExists(srcFile) then
 begin
 
   LoadStringFromFile (srcFile, srcContents);
@@ -274,7 +262,7 @@ begin
   StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
   StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
 
-  SaveStringToFile(destFile,srcContents, False);
+  SaveStringToFile(destFile, srcContents, False);
 end
 DeleteFile(SrcFile);
 
@@ -388,22 +376,22 @@ DeleteFile(SrcFile);
 // Fichier dolibarr
 //----------------------------------------------
 
-destFile := pathWithSlashes+'/www/dolibarr/htdocs/conf/conf.php';
-srcFile := pathWithSlashes+'/www/dolibarr/htdocs/conf/conf.php.example';
+//destFile := pathWithSlashes+'/www/dolibarr/htdocs/conf/conf.php';
+//srcFile := pathWithSlashes+'/www/dolibarr/htdocs/conf/conf.php.example';
 
-if not FileExists (destFile) then
-begin
-  LoadStringFromFile (srcFile, srcContents);
+//if not FileExists (destFile) then
+//begin
+//  LoadStringFromFile (srcFile, srcContents);
 
   //installDir et version de php
-  StringChange (srcContents, '$dolibarr_main_document_root=""', '$dolibarr_main_document_root="{app}/www/dolibarr/htdocs"');
-  StringChange (srcContents, '$dolibarr_main_data_root=""', '$dolibarr_main_data_root="{app}/dolibarr_documents"');
-  StringChange (srcContents, '$dolibarr_main_db_port=""', '$dolibarr_main_db_port="'+mysqlPort+'"');
-  StringChange (srcContents, '$dolibarr_main_db_user=""', '$dolibarr_main_db_user="admin"');
-  StringChange (srcContents, '$dolibarr_main_db_pass=""', '$dolibarr_main_db_user="'+newPassword+'"');
+//  StringChange (srcContents, '$dolibarr_main_document_root=""', '$dolibarr_main_document_root="'+pathWithSlashes+'/www/dolibarr/htdocs"');
+//  StringChange (srcContents, '$dolibarr_main_data_root=""', '$dolibarr_main_data_root="'+pathWithSlashes+'/dolibarr_documents"');
+//  StringChange (srcContents, '$dolibarr_main_db_port=""', '$dolibarr_main_db_port="'+mysqlPort+'"');
+//  StringChange (srcContents, '$dolibarr_main_db_user=""', '$dolibarr_main_db_user="admin"');
+//  StringChange (srcContents, '$dolibarr_main_db_pass=""', '$dolibarr_main_db_user="'+newPassword+'"');
 
-  SaveStringToFile(destFile,srcContents, False);
-end
+//  SaveStringToFile(destFile,srcContents, False);
+//end
 
 destFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php';
 srcFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php.install';
