@@ -1,0 +1,11 @@
+<?php
+$force_install_type='mysqli';
+$force_install_port='WAMPMYSQLPORT';
+$force_install_database='dolibarr';
+$force_install_createdatabase='1';
+$force_install_databaselogin='root';
+$force_install_databasepass='WAMPMYSQLNEWPASSWORD';
+$force_install_databaserootlogin='root';
+$force_install_databaserootpass='WAMPMYSQLNEWPASSWORD';
+$force_install_dolibarrlogin='admin';
+?>
