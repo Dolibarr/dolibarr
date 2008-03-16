@@ -209,53 +209,53 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
   $var=true;
   
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td width="35%">'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
+  print '<tr class="liste_titre"><td width="35%">'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyName").'</td><td>';
-  print '<input name="nom" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
+  print '<input name="nom" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_NOM . '"></td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyAddress").'</td><td>';
-  print '<textarea name="address" cols="60" rows="'.ROWS_3.'">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
+  print '<textarea name="address" cols="60" rows="'.ROWS_3.'">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyZip").'</td><td>';
-  print '<input name="cp" value="'. $conf->global->MAIN_INFO_SOCIETE_CP . '" size="10"></td></tr>';
+  print '<input name="cp" value="'. $conf->global->MAIN_INFO_SOCIETE_CP . '" size="10"></td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyTown").'</td><td>';
-  print '<input name="ville" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_VILLE . '"></td></tr>';
+  print '<input name="ville" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_VILLE . '"></td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
   $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',($conf->use_javascript_ajax?' onChange="company_save_refresh()"':''));
-  print '</td></tr>';
+  print '</td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCurrency").'</td><td>';
   $form->select_currency($conf->global->MAIN_MONNAIE,"currency");
-  print '</td></tr>';
+  print '</td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("Tel").'</td><td>';
   print '<input name="tel" value="'. $conf->global->MAIN_INFO_SOCIETE_TEL . '"></td></tr>';
-  print '</td></tr>';
+  print '</td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("Fax").'</td><td>';
   print '<input name="fax" value="'. $conf->global->MAIN_INFO_SOCIETE_FAX . '"></td></tr>';
-  print '</td></tr>';
+  print '</td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("Mail").'</td><td>';
   print '<input name="mail" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
-  print '</td></tr>';
+  print '</td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("Web").'</td><td>';
   print '<input name="web" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
-  print '</td></tr>';
+  print '</td></tr>'."\n";
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("Gencod").'</td><td>';

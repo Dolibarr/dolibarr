@@ -574,7 +574,35 @@ class Form
 	}
 
 
-  /**
+	/**
+	*    \brief      Retourne la liste des types de comptes financiers
+	*    \param      selected        Type pré-sélectionné
+	*    \param      htmlname        Nom champ formulaire
+	*/
+	function select_type_socialcontrib($selected='',$htmlname='actioncode')
+	{
+		global $db,$langs,$user;
+
+	    $sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+	    $sql .= " ORDER BY lower(c.libelle) ASC";
+	    $resql=$db->query($sql);
+		if ($resql)
+	    {
+	      $num = $db->num_rows($resql);
+	      $i = 0;
+
+	      while ($i < $num)
+	        {
+	          $obj = $db->fetch_object($resql);
+	          print '<option value="'.$obj->id.'">'.$obj->type;
+	          $i++;
+	        }
+	    }
+	    print '</select>';
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+	}
+	
+	/**
 	 *    	\brief      Output html form to select a third party
 	 *    	\param      selected        Societe pré-sélectionnée
 	 *    	\param      htmlname        Nom champ formulaire
@@ -1073,9 +1101,12 @@ class Form
 		$langs->load('stocks');
 		
 		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
-		$sql.= " pf.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice";
+		$sql.= " pf.ref_fourn,";
+		$sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
+		$sql.= " s.nom";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pf.fk_soc = s.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
 		$sql.= " WHERE p.envente = 1";
 		if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
@@ -1121,10 +1152,10 @@ class Form
 				if ($objp->fprice == '') $opt.=' disabled="disabled"';
 				$opt.= '>'.$objp->ref_fourn.' - ';
 				$opt.= dolibarr_trunc($objp->label,18).' - ';
-				if ($objp->fprice != '') 
+				if ($objp->fprice != '') 	// Keep != ''
 				{
 					$opt.= price($objp->fprice);
-					$opt.= $langs->trans("CurrencyShort".$conf->monnaie)."/".$objp->quantity;
+					$opt.= $langs->trans("Currency".$conf->monnaie)."/".$objp->quantity;
 					if ($objp->quantity == 1)
 					{
 						$opt.= strtolower($langs->trans("Unit"));
@@ -1135,10 +1166,12 @@ class Form
 					}
 					if ($objp->quantity > 1)
 					{
-						$opt.=" - ";
-						$opt.= price($objp->unitprice).$langs->trans("CurrencyShort".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
+						$opt.=" (";
+						$opt.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
+						$opt.=")";
 					}
 					if ($objp->duration) $opt .= " - ".$objp->duration;
+					if (! $socid) $opt .= " - ".dolibarr_trunc($objp->nom,8);
 				}
 				else
 				{
@@ -2185,21 +2218,23 @@ class Form
     
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilité
     
-        $sql = "SELECT code_iso, label, active FROM ".MAIN_DB_PREFIX."c_currencies";
-        $sql .= " WHERE active = 1";
-        $sql .= " ORDER BY code_iso ASC";
+        $sql = "SELECT code, code_iso, label, active";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
+        $sql.= " WHERE active = 1";
+        $sql.= " ORDER BY code_iso ASC";
     
-        if ($this->db->query($sql))
+        $resql=$this->db->query($sql);
+		if ($resql)
         {
             print '<select class="flat" name="'.$htmlname.'">';
-            $num = $this->db->num_rows();
+            $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
             {
                 $foundselected=false;
                 while ($i < $num)
                 {
-                    $obj = $this->db->fetch_object();
+                    $obj = $this->db->fetch_object($resql);
                     if ($selected && $selected == $obj->code_iso)
                     {
                         $foundselected=true;
@@ -2209,8 +2244,8 @@ class Form
                     {
                         print '<option value="'.$obj->code_iso.'">';
                     }
-                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                     if ($obj->code_iso) { print $obj->code_iso . ' - '; }
+                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                     print ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
                     print '</option>';
                     $i++;

@@ -310,10 +310,20 @@ class Translate {
 		else
 		{
 			// Translation is not available
-			global $db;
-			if (ereg('CurrencyShort([A-Z]+)$',$key,$reg)) $key=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','code');
-			if (ereg('Currency([A-Z]+)$',$key,$reg)) $key=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
-			return $this->convToOuptutCharset($key);
+			$newstr=$key;
+			if (ereg('CurrencyShort([A-Z]+)$',$key,$reg))
+			{
+				global $db;
+				//$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','labelshort');
+				$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','code');
+			}
+			else if (ereg('Currency([A-Z]+)$',$key,$reg)) 
+			{
+				global $db;
+				$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
+				//print "xxx".$key."-".$value."\n";
+			}
+			return $this->convToOuptutCharset($newstr);
 		}
     }
 
@@ -481,7 +491,8 @@ class Translate {
         }
         else
         {
-            dolibarr_print_error($db);
+			$this->error=$db->lasterror();
+			dolibarr_syslog("Translate::getLabelFromKey error=".$this->error,LOG_ERR);
             return -1;
         }
     }

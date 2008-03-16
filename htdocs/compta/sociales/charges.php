@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/compta/sociales/charges.php
 		\ingroup    tax
 		\brief      Fiche d'une charge sociale
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -214,21 +212,7 @@ if ($_GET["action"] == 'create')
     print '<td><input type="text" size="8" name="period"><br>YYYYMMDD</td>';
 
     print '<td align="left"><select class="flat" name="type">';
-    $sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql .= " ORDER BY lower(c.libelle) ASC";
-    if ( $db->query($sql) )
-    {
-      $num = $db->num_rows();
-      $i = 0;
-
-      while ($i < $num)
-        {
-          $obj = $db->fetch_object();
-          print '<option value="'.$obj->id.'">'.$obj->type;
-          $i++;
-        }
-    }
-    print '</select>';
+	$html->select_type_socialcontrib();
     print '</td>';
 
     print '<td align="left"><input type="text" size="34" name="label" class="flat"></td>';

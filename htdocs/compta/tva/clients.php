@@ -77,7 +77,7 @@ $fsearch.='  <input type="submit" class="button" name="submit" value="'.$langs->
 $fsearch.='</form>';
 
 // Affiche en-tête du rapport
-if ($modetax==1)	// Caluclate on invoice for goods and services
+if ($modetax==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->trans("VATReportByCustomersInDueDebtMode");
     $nom.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';

@@ -38,6 +38,8 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	global $conf;
 
    	$list=array();
+	//print "xx".$conf->global->MAIN_MODULE_COMPTABILITEEXPERT;
+	//print "xx".$conf->global->MAIN_MODULE_COMPTABILITE;
 
 	if ($direction == 'sell') 
 	{
