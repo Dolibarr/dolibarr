@@ -362,6 +362,7 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta)
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (10, 'Taxe apprenttissage',    0,1,'TAXAPP');
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (11, 'Taxe professionnelle',   0,1,'TAXPRO');
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (20, 'Impots locaux/fonciers', 0,1,'TAXFON');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (25, 'Impots revenus',         0,1,'TAXREV');
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (30, 'Assurance Sante (SECU-URSSAF)',  0,1,'TAXSECU');
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (40, 'Mutuelle',                       0,1,'TAXMUT');
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (50, 'Assurance vieillesse (CNAV)',    0,1,'TAXRET');
