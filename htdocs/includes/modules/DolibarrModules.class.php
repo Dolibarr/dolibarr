@@ -323,7 +323,7 @@ class DolibarrModules
         if ($langs->trans($langstring) == $langstring)
         {
             // Traduction non trouvee
-            return $this->export_label[$r];
+            return $langs->trans($this->export_label[$r]);
         }
         else
         {

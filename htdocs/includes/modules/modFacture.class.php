@@ -18,12 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   facture     Module facture
         \brief      Module pour g�rer les factures clients et/ou fournisseurs
+		\version	$Id$
 */
 
 
@@ -48,8 +47,8 @@ class modFacture extends DolibarrModules
     */
     function modFacture($DB)
     {
-        $this->db = $DB ;
-        $this->numero = 30 ;
+        $this->db = $DB;
+        $this->numero = 30;
     
         $this->family = "financial";
         $this->name = "Factures";
