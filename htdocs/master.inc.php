@@ -62,7 +62,12 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 // Include configuration
 $result=@include_once("conf/conf.php");
-
+if (! $result && $_SERVER["GATEWAY_INTERFACE"])
+{
+	// If install not done and we are in a web session
+	header("Location: install/index.php");
+	exit;
+}
 if (empty($dolibarr_main_db_host))
 {
    	print 'Error: Dolibarr setup was run but was not completed.<br>'."\n";
