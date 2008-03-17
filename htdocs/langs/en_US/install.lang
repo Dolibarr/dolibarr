@@ -12,6 +12,7 @@ ConfFileIsWritable=Configuration file <b>%s</b> is writable.
 PHPSupportSessions=This PHP supports sessions.
 PHPSupportPOSTGETOk=This PHP supports variables POST and GET.
 PHPSupportPOSTGETKo=It's possible this PHP does not support variables POST and/or GET. Check your parameter <b>variables_order</b> in php.ini.
+PHPSupportGD=This PHP support GD graphical functions.
 PHPMemoryOK=Your PHP max session memory is set to <b>%s</b>. This should be enough.
 PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This should be too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
 Recheck=Click here for a more significative test
