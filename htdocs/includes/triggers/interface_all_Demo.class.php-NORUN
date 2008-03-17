@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
@@ -29,6 +27,7 @@
                     - Le nom de la classe doit etre InterfaceMytrigger
                     - Le nom de la methode constructeur doit etre InterfaceMytrigger
                     - Le nom de la propriete name doit etre Mytrigger
+		\version	$Id$
 */
 
 
@@ -104,7 +103,11 @@ class InterfaceDemo
         // Les données de l'action sont stockées dans $object
     
         // Users
-        if     ($action == 'USER_CREATE')
+        if     ($action == 'USER_LOGIN')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'USER_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
@@ -125,6 +128,20 @@ class InterfaceDemo
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
 
+		// Groups
+		elseif ($action == 'GROUP_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'GROUP_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'GROUP_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+		
         // Companies
         elseif     ($action == 'COMPANY_CREATE')
         {

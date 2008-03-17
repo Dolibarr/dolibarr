@@ -589,6 +589,8 @@ class User extends CommonObject
      */
 	function setstatus($statut)
 	{
+		global $conf,$langs,$user;
+		
 		$error=0;
 		
 		$this->db->begin();

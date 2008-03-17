@@ -244,7 +244,27 @@ if (! isset($_SESSION["dol_login"]))
     $_SESSION["dol_login"]=$user->login;
     $_SESSION["dol_password"]=$user->pass_crypted;
     dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
+
+	$db->begin();
+	
     $user->update_last_login_date();
+
+	// Appel des triggers
+	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	$interface=new Interfaces($db);
+	$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
+	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	// Fin appel triggers
+	
+	if ($error)
+	{
+		dolibarr_print_errors($db,$this->errors);
+		$db->rollback();
+	}
+	else
+	{
+		$db->commit();
+	}
 	
 	// Module webcalendar
 	if ($conf->webcal->enabled && $user->webcal_login != "")

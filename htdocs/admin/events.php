@@ -37,7 +37,18 @@ $langs->load("other");
 
 $action=$_POST["action"];
 
+
+// List of all events supported by triggers
 $eventstolog=array(
+	array('id'=>'USER_LOGIN',             'test'=>1),
+	array('id'=>'USER_CREATE',            'test'=>1),
+	array('id'=>'USER_MODIFY',            'test'=>1),
+	array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
+	array('id'=>'USER_DISABLE',           'test'=>1),
+	array('id'=>'USER_DELETE',            'test'=>1),
+	array('id'=>'GROUP_CREATE',           'test'=>1),
+	array('id'=>'GROUP_MODIFY',           'test'=>1),
+	array('id'=>'GROUP_DELETE',           'test'=>1),
 	array('id'=>'ACTION_CREATE',          'test'=>$conf->societe->enabled),
 	array('id'=>'COMPANY_CREATE',         'test'=>$conf->societe->enabled),
 	array('id'=>'CONTRACT_VALIDATE',      'test'=>$conf->contrat->enabled),
@@ -51,6 +62,7 @@ $eventstolog=array(
 	array('id'=>'BILL_CANCELED',          'test'=>$conf->facture->enabled),
 	array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),
 	array('id'=>'PAYMENT_SUPPLIER_CREATE','test'=>$conf->fournisseur->enabled),
+	array('id'=>'MEMBER_CREATE',          'test'=>$conf->adherent->enabled),
 	array('id'=>'MEMBER_VALIDATE',        'test'=>$conf->adherent->enabled),
 	array('id'=>'MEMBER_SUBSCRIPTION',    'test'=>$conf->adherent->enabled),
 	array('id'=>'MEMBER_MODIFY',          'test'=>$conf->adherent->enabled),

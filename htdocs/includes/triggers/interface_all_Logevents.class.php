@@ -105,6 +105,104 @@ class InterfaceLogevents
 		if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
 		
         // Actions
+        if ($action == 'USER_LOGIN')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("users");
+		
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("UserLogged",$object->nom);
+            $this->desc=$langs->transnoentities("UserLogged",$object->nom);
+		}
+        if ($action == 'USER_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("users");
+		
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("NewUserCreated",$object->nom);
+            $this->desc=$langs->transnoentities("NewUserCreated",$object->nom);
+		}
+        elseif ($action == 'USER_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("users");
+
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("UserModified",$object->nom);
+            $this->desc=$langs->transnoentities("UserModified",$object->nom);
+        }
+        elseif ($action == 'USER_NEW_PASSWORD')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("users");
+
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("NewUserPassword",$object->nom);
+            $this->desc=$langs->transnoentities("NewUserPassword",$object->nom);
+        }
+        elseif ($action == 'USER_DISABLE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("users");
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("UserDisabled",$object->nom);
+            $this->desc=$langs->transnoentities("UserDisabled",$object->nom);
+        }
+        elseif ($action == 'USER_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("users");
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("UserDeleted",$object->nom);
+            $this->desc=$langs->transnoentities("Userdeleted",$object->nom);
+        }
+
+		// Groupes
+        elseif ($action == 'GROUP_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("users");
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("NewGroupCreated",$object->nom);
+            $this->desc=$langs->transnoentities("NewGroupCreated",$object->nom);
+		}
+        elseif ($action == 'GROUP_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("users");
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("GroupModified",$object->nom);
+            $this->desc=$langs->transnoentities("GroupModified",$object->nom);
+		}
+        elseif ($action == 'GROUP_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("users");
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("GroupDeleted",$object->nom);
+            $this->desc=$langs->transnoentities("GroupDeleted",$object->nom);
+		}
+
+		// Actions
         if ($action == 'ACTION_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -285,6 +383,10 @@ class InterfaceLogevents
         // Members
         elseif ($action == 'MEMBER_CREATE')
         {
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("NewMemberCreated",$object->id);
+            $this->desc=$langs->transnoentities("NewMemberCreated",$object->id);
 		}
         elseif ($action == 'MEMBER_VALIDATE')
         {
@@ -368,7 +470,7 @@ class InterfaceLogevents
         }
 */
 
-        // Ajoute entree dans webcal
+        // Add entry in event table
         if ($this->date)
         {
 			include_once(DOL_DOCUMENT_ROOT.'/core/events.class.php');
