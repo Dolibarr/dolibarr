@@ -61,13 +61,14 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 
 // Include configuration
-if (! @include_once("conf/conf.php") || empty($dolibarr_main_db_host))
-{
-    print 'Error: Dolibarr setup was run but was not completed.<br>'."\n";
-	print 'Please, run <a href="install/index.php">Dolibarr install process</a> until the end...'."\n";
-    exit;
-}
+$result=@include_once("conf/conf.php");
 
+if (empty($dolibarr_main_db_host))
+{
+   	print 'Error: Dolibarr setup was run but was not completed.<br>'."\n";
+	print 'Please, run <a href="install/index.php">Dolibarr install process</a> until the end...'."\n";
+   	exit;
+}
 if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_data_root))
 {

@@ -88,22 +88,6 @@ foreach ($_POST as $key => $val)
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 
-// Test if install ok
-if (! @include_once("conf/conf.php"))
-{
-  Header("Location: install/index.php");
-  exit;
-}
-else
-{
-	if (! isset($dolibarr_main_db_host))
-    {
-      Header("Location: install/index.php");
-      exit;
-    }
-}
-
-
 require_once("master.inc.php");
 
 
