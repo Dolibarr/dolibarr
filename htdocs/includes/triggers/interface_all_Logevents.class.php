@@ -113,8 +113,8 @@ class InterfaceLogevents
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("UserLogged",$object->nom);
-            $this->desc=$langs->transnoentities("UserLogged",$object->nom);
+            $this->texte=$langs->transnoentities("UserLogged",$object->login);
+            $this->desc=$langs->transnoentities("UserLogged",$object->login);
 		}
         if ($action == 'USER_CREATE')
         {
@@ -124,8 +124,8 @@ class InterfaceLogevents
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("NewUserCreated",$object->nom);
-            $this->desc=$langs->transnoentities("NewUserCreated",$object->nom);
+            $this->texte=$langs->transnoentities("NewUserCreated",$object->login);
+            $this->desc=$langs->transnoentities("NewUserCreated",$object->login);
 		}
         elseif ($action == 'USER_MODIFY')
         {
@@ -135,8 +135,8 @@ class InterfaceLogevents
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("UserModified",$object->nom);
-            $this->desc=$langs->transnoentities("UserModified",$object->nom);
+            $this->texte=$langs->transnoentities("EventUserModified",$object->login);
+            $this->desc=$langs->transnoentities("EventUserModified",$object->login);
         }
         elseif ($action == 'USER_NEW_PASSWORD')
         {
@@ -146,8 +146,8 @@ class InterfaceLogevents
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("NewUserPassword",$object->nom);
-            $this->desc=$langs->transnoentities("NewUserPassword",$object->nom);
+            $this->texte=$langs->transnoentities("NewUserPassword",$object->login);
+            $this->desc=$langs->transnoentities("NewUserPassword",$object->login);
         }
         elseif ($action == 'USER_DISABLE')
         {
@@ -156,8 +156,8 @@ class InterfaceLogevents
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("UserDisabled",$object->nom);
-            $this->desc=$langs->transnoentities("UserDisabled",$object->nom);
+            $this->texte=$langs->transnoentities("UserDisabled",$object->login);
+            $this->desc=$langs->transnoentities("UserDisabled",$object->login);
         }
         elseif ($action == 'USER_DELETE')
         {
@@ -166,8 +166,8 @@ class InterfaceLogevents
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("UserDeleted",$object->nom);
-            $this->desc=$langs->transnoentities("Userdeleted",$object->nom);
+            $this->texte=$langs->transnoentities("UserDeleted",$object->login);
+            $this->desc=$langs->transnoentities("Userdeleted",$object->login);
         }
 
 		// Groupes
