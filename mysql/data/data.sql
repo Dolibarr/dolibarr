@@ -1198,7 +1198,8 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 1
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 12, 1, '8.5','0','VAT Rate 8.5 (DOM sauf Guyane et Saint-Martin)',0);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 13, 1, '8.5','1','VAT Rate 8.5 (DOM sauf Guyane et Saint-Martin), non perçu par le vendeur mais récupérable par l\'acheteur',0);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 14, 1, '5.5','0','VAT Rate 5.5 (France hors DOM-TOM)',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 15, 1,   '0','0','VAT Rate 0 ou non applicable (France, TOM)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 15, 1,   '0','0','VAT Rate 0 ou non applicable',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 16, 1, '2.1','0','VAT Rate 2.1',1);
 
 -- ITALY (id 3)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 31, 3,  '20','0','VAT Rate 20',1);
