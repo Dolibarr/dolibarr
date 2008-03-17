@@ -61,9 +61,9 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE',
 insert into llx_const (name, value, type, note, visible) values ('MAIN_POPUP_CALENDAR','eldy','chaine','Popup calendar module',0);
 
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_SERVER','','chaine','Host or ip address for SMTP server',1);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_PORT','','chaine','Port for SMTP server',1);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_EMAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les emails automatiques Dolibarr',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_SERVER','','chaine','Host or ip address for SMTP server',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_PORT','','chaine','Port for SMTP server',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_EMAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les emails automatiques Dolibarr',0);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','2048','chaine','Max size for file upload (0 means no upload allowed)',0);
 

@@ -16,14 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
     	\file       htdocs/admin/delais.php
 		\brief      Page d'administration des d?lais de retard
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -100,7 +98,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr class="liste_titre"><td colspan="2" width="60%">'.$langs->trans("DolibarrWorkBoard").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	//
-    if (1 == 1)
+    if ($conf->agenda->enabled)
     {
         $var=!$var;
         print '<tr '.$bc[$var].'>';
