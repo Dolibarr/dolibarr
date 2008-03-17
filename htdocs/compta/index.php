@@ -332,45 +332,6 @@ if ($conf->tax->enabled)
 }
 
 
-/**
- * Bookmark
- */
-$sql = "SELECT s.rowid as socid, s.nom, b.rowid as bid";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
-$sql .= " WHERE b.fk_soc = s.rowid AND b.fk_user = ".$user->id;
-$sql .= " ORDER BY lower(s.nom) ASC";
-
-$resql = $db->query($sql);
-
-if ( $resql )
-{
-  $num = $db->num_rows($resql);
-  $i = 0;
-  if ($num)
-    {
-      print '<table class="noborder" width="100%">';
-      print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Bookmarks")."</td></tr>\n";
-      $var = True;
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object($resql);
-	  $var = !$var;
-	  print "<tr $bc[$var]>";
-	  print '<td><a href="fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
-	  print '<td align="right"><a href="index.php?action=del_bookmark&amp;bid='.$obj->bid.'">'.img_delete().'</a></td>';
-	  print '</tr>';
-	  $i++;
-	}
-      print '</table>';
-    }
-  $db->free($resql);
-}
-else
-{
-  dolibarr_print_error($db);
-}
-
-
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
@@ -723,7 +684,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsSuppliersUnpayed").' ('.$num.')</td>';
+		print '<tr class="liste_titre"><td colspan="2"><a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php">'.$langs->trans("BillsSuppliersUnpayed",min($conf->liste_limit,$num)).' ('.$num.')</a></td>';
 		if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 		print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right">'.$langs->trans("Payed").'</td>';
