@@ -109,11 +109,18 @@ print $langs->trans("Examples").":<br>";
 <?php print $langs->trans("DocumentsDirectory"); ?>
 </b></td>
 <?php 
-if(! isset($dolibarr_main_data_root) || strlen($dolibarr_main_data_root) == 0)
+if (empty($dolibarr_main_data_root))
 {
-    // Si le r�pertoire documents non d�fini, on en propose un par d�faut
-    $dolibarr_main_data_root=ereg_replace("/htdocs$","",$dolibarr_main_document_root);
-    $dolibarr_main_data_root.="/documents";
+    // Si le repertoire documents non defini, on en propose un par defaut
+    if (empty($force_install_main_data_root))
+	{
+		$dolibarr_main_data_root=ereg_replace("/htdocs$","",$dolibarr_main_document_root);
+		$dolibarr_main_data_root.="/documents";
+	}
+	else
+	{
+		$dolibarr_main_data_root=$force_install_main_data_root;
+	}
 }
 ?>
 <td class="label" valign="top"><input type="text" size="60" value="<?php print $dolibarr_main_data_root; ?>" name="main_data_dir">

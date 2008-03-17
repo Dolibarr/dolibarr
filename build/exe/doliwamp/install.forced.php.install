@@ -1,4 +1,5 @@
 <?php
+$force_install_main_data_root='WAMPROOT/dolibarr_documents';
 $force_install_type='mysqli';
 $force_install_port='WAMPMYSQLPORT';
 $force_install_database='dolibarr';

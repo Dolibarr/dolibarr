@@ -276,7 +276,7 @@ if ($_POST["action"] == "set")
 		{
 			dolibarr_install_syslog("etape1: Creation de l'utilisateur: ".$dolibarr_main_db_user);
 
-			//print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->pass;
+			//print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->pass." , ".$conf->db->port;
 			$databasefortest=$conf->db->name;
 			if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 			{
@@ -430,7 +430,7 @@ if ($_POST["action"] == "set")
 			dolibarr_install_syslog("etape1: connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name);
 			//print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
-			$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
+			$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
 			if ($db->connected == 1)
 			{

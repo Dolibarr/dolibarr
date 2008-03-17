@@ -400,6 +400,7 @@ if not FileExists (destFile) then
 begin
   LoadStringFromFile (srcFile, srcContents);
 
+  StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
   StringChange (srcContents, 'WAMPMYSQLPORT', mysqlPort);
   StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
 

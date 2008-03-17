@@ -143,7 +143,7 @@ class DoliDb
         	$this->connected = 0;
         	$this->ok = 0;
             $this->error="Mysqli PHP functions are not available in this version of PHP. Try to use another driver.";
-        	dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions are not available in this version of PHP. Try to use another driver.");
+        	dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions are not available in this version of PHP. Try to use another driver.",LOG_ERR);
             return $this->ok;
         }
 
@@ -152,12 +152,12 @@ class DoliDb
         	$this->connected = 0;
         	$this->ok = 0;
             $this->error=$langs->trans("ErrorWrongHostParameter");
-        	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
+        	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
             return $this->ok;
         }
 
         // Essai connexion serveur
-        $this->db = $this->connect($host, $user, $pass, $name, $port);
+        $this->db = $this->connect($host, $user, $pass, '', $port);
 
         if ($this->db)
         {
@@ -169,8 +169,8 @@ class DoliDb
             // host, login ou password incorrect
             $this->connected = 0;
             $this->ok = 0;
-			$this->error=mysql_error();
-			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".mysql_error());
+			$this->error=mysqli_connect_error();
+			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysqli_connect_error=".$this->error,LOG_ERR);
         }
 
         // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
@@ -222,7 +222,7 @@ class DoliDb
     /**
             \brief      Connection vers le serveur
             \param	    host		addresse de la base de données
-            \param	    login		nom de l'utilisateur autoris
+            \param	    login		nom de l'utilisateur autorisé
             \param	    passwd		mot de passe
             \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
 			\param		port		Port of database server
@@ -232,9 +232,12 @@ class DoliDb
     function connect($host, $login, $passwd, $name, $port=0)
     {
 		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
-		$newhost=$host;
-		if ($port) $newhost.=':'.$port;
-        $this->db  = @mysqli_connect($newhost, $login, $passwd);
+
+		// With mysqli, port must be in connect parameters
+		$newport=$port;
+		if (! $newport) $newport=3306;
+
+        $this->db  = @mysqli_connect($newhost, $login, $passwd, $name, $newport);
 	    //force les enregistrement en latin1 si la base est en utf8 par défaut
 	    // Supprimé car plante sur mon PHP-Mysql. De plus, la base est forcement en latin1 avec
 		// les nouvelles version de Dolibarr car forcé par l'install Dolibarr.

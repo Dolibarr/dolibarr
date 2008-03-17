@@ -122,7 +122,7 @@ class DoliDb
     	$this->connected = 0;
     	$this->ok = 0;
     	$this->error="Mssql PHP functions for using MSSql driver are not available in this version of PHP";
-    	dolibarr_syslog("DoliDB::DoliDB : MSsql PHP functions for using MSsql driver are not available in this version of PHP");
+    	dolibarr_syslog("DoliDB::DoliDB : MSsql PHP functions for using MSsql driver are not available in this version of PHP",LOG_ERR);
     	return $this->ok;
     }
     
@@ -131,7 +131,7 @@ class DoliDb
     	$this->connected = 0;
     	$this->ok = 0;
     	$this->error=$langs->trans("ErrorWrongHostParameter");
-    	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
+    	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
     	return $this->ok;
     }
     
@@ -149,7 +149,8 @@ class DoliDb
     	// host, login ou password incorrect
     	$this->connected = 0;
     	$this->ok = 0;
-    	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mssql_get_last_message=".mssql_get_last_message());
+    	$this->error=mssql_get_last_message();
+		dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mssql_get_last_message=".$this->error,LOG_ERR);
     }
     
     // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
@@ -167,7 +168,7 @@ class DoliDb
     		$this->database_name = '';
     		$this->ok = 0;
     		$this->error=$this->error();
-    		dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
+    		dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
     	}
     }
     else

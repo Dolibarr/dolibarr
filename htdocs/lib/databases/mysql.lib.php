@@ -142,7 +142,7 @@ class DoliDb
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error="Mysql PHP functions for using MySql driver are not available in this version of PHP";
-			dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions for using Mysql driver are not available in this version of PHP");
+			dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions for using Mysql driver are not available in this version of PHP",LOG_ERR);
 			return $this->ok;
 		}
 		
@@ -151,7 +151,7 @@ class DoliDb
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=$langs->trans("ErrorWrongHostParameter");
-			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
+			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -168,7 +168,7 @@ class DoliDb
 			$this->connected = 0;
 			$this->ok = 0;
 			$this->error=mysql_error();
-			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".mysql_error());
+			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".$this->error,LOG_ERR);
 		}
 
 		// Si connexion serveur ok et si connexion base demandée, on essaie connexion base
@@ -194,7 +194,7 @@ class DoliDb
 				$this->database_name = '';
 				$this->ok = 0;
 				$this->error=$this->error();
-				dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
+				dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
 			}
 		}
 		else
@@ -220,7 +220,7 @@ class DoliDb
 	/**
 		\brief		Connection vers le serveur
 		\param	    host		addresse de la base de données
-		\param	    login		nom de l'utilisateur autoris
+		\param	    login		nom de l'utilisateur autorisé
 		\param	    passwd		mot de passe
 		\param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
 		\param		port		Port of database server
@@ -230,8 +230,11 @@ class DoliDb
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
 		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
+
+		// With mysql, port must be in hostname
 		$newhost=$host;
 		if ($port) $newhost.=':'.$port;
+
 		$this->db  = @mysql_connect($newhost, $login, $passwd);
 		//force les enregistrement en latin1 si la base est en utf8 par défaut
 		// Supprimé car plante sur mon PHP-Mysql. De plus, la base est forcement en latin1 avec
