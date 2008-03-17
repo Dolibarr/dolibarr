@@ -177,7 +177,7 @@ if (! $error)
 else
 {
 		if (isset($db)) print $db->lasterror();
-		if (! $db->connected) print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+		if (isset($db) && ! $db->connected) print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
 		print $langs->trans("ErrorGoBackAndCorrectParameters");
 		$error++;
 }

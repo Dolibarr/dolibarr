@@ -158,7 +158,7 @@ else
     $confexists=0;
 
 	# First we try by copying example
-	if (copy($conffile.".example", $conffile))
+	if (@copy($conffile.".example", $conffile))
 	{
 		# Success
 		dolibarr_install_syslog("check: copied file ".$conffile.".example into ".$conffile." done successfully.");
