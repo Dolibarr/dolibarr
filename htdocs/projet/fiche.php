@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,13 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 $projetid='';
 if ($_GET["id"]) { $projetid=$_GET["id"]; }
 
+// If socid provided by ajax company selector
+if (! empty($_POST['socid_id']))
+{
+	$_POST['socid'] = $_POST['socid_id'];
+	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+}
+
 if ($projetid == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
 
 // Security check
@@ -47,6 +54,7 @@ $result = restrictedArea($user, 'projet', $projetid);
 
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
+	//print $_POST["socid"];
 	$pro = new Project($db);
 	$pro->socid           = $_POST["socid"];
 	$pro->ref             = $_POST["ref"];
@@ -124,28 +132,20 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   if ($mesg) print $mesg;
   
   print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	if ($_REQUEST["socid"]) print '<input type="hidden" value="'.$_REQUEST["socid"].'">';
+  //if ($_REQUEST["socid"]) print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
   print '<table class="border" width="100%">';
   print '<input type="hidden" name="action" value="add">';
 
   // Ref
-  print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="8" type="text" name="ref"></td></tr>';
+  print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="8" type="text" name="ref" value="'.$_POST["ref"].'"></td></tr>';
 
 	// Label
-  print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title"></td></tr>';
+  print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
 
   // Client
   print '<tr><td>'.$langs->trans("Company").'</td><td>';
-/*  if ($_GET["socid"])
-  {
-	  $societe = new Societe($db);
-	  $societe->fetch($_GET["socid"]); 
-	  print $societe->getNomUrl(1);
-  }
-  else
-  { */
-		print $html->select_societes($_REQUEST["socid"],'socid','',1);
-//  }
+  //print $_REQUEST["socid"];
+  print $html->select_societes($_REQUEST["socid"],'socid','',1);
   print '</td></tr>';
 
   // Auteur du projet

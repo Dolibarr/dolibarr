@@ -41,11 +41,12 @@ $langs->load("interventions");
 
 // Get parameters
 $fichinterid = isset($_GET["id"])?$_GET["id"]:'';
-//Recupere le resultat de la recherche Ajax
-//Todo: voir pour le supprimer par la suite
-if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && $_POST['socid_id'])
+
+// If socid provided by ajax company selector
+if (! empty($_POST['socid_id']))
 {
 	$_POST['socid'] = $_POST['socid_id'];
+	$_REQUEST['socid'] = $_REQUEST['socid_id'];
 }
 
 // Security check

@@ -652,7 +652,7 @@ class Form
         		{
         			print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'"/>';
         		}
-        		print ajax_autocompleter($socid,$htmlname,'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
+        		print ajax_autocompleter(($socid?$socid:-1),$htmlname,'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
         		print '</td>';
         		print '<td class="nobordernopadding" align="left" width="16">';
         		print ajax_indicator($htmlname,'working');
@@ -661,28 +661,28 @@ class Form
         	}
         	else
         	{
-            print '<select class="flat" name="'.$htmlname.'">';
-            if ($showempty) print '<option value="-1">&nbsp;</option>';
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-            if ($num)
-            {
-                while ($i < $num)
-                {
-                    $obj = $this->db->fetch_object($resql);
-                    if ($selected > 0 && $selected == $obj->rowid)
-                    {
-                        print '<option value="'.$obj->rowid.'" selected="true">'.$obj->nom.'</option>';
-                    }
-                    else
-                    {
-                        print '<option value="'.$obj->rowid.'">'.$obj->nom.'</option>';
-                    }
-                    $i++;
-                }
-            }
-            print '</select>';
-          }
+	            print '<select class="flat" name="'.$htmlname.'">';
+	            if ($showempty) print '<option value="-1">&nbsp;</option>';
+	            $num = $this->db->num_rows($resql);
+	            $i = 0;
+	            if ($num)
+	            {
+	                while ($i < $num)
+	                {
+	                    $obj = $this->db->fetch_object($resql);
+	                    if ($selected > 0 && $selected == $obj->rowid)
+	                    {
+	                        print '<option value="'.$obj->rowid.'" selected="true">'.$obj->nom.'</option>';
+	                    }
+	                    else
+	                    {
+	                        print '<option value="'.$obj->rowid.'">'.$obj->nom.'</option>';
+	                    }
+	                    $i++;
+	                }
+	            }
+	            print '</select>';
+          	}
         }
         else
         {

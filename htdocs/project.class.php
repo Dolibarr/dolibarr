@@ -42,7 +42,7 @@ class Project extends CommonObject
 
 	/**
 	*    \brief  Constructeur de la classe
-	*    \param  DB          handler accès base de données
+	*    \param  DB          handler accï¿½s base de donnï¿½es
 	*/
 	function Project($DB)
 	{
@@ -51,37 +51,38 @@ class Project extends CommonObject
 	}
 
 	/*
-	*    \brief      Crée un projet en base
-	*    \param      user        Id utilisateur qui crée
-	*    \return     int         <0 si ko, id du projet crée si ok
+	*    \brief      Cree un projet en base
+	*    \param      user        Id utilisateur qui cree
+	*    \return     int         <0 si ko, id du projet cree si ok
 	*/
 	function create($user)
 	{
-		if (trim($this->ref))
-		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, dateo)";
-			$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."',";
-			$sql.= " ".($this->socid > 0?$this->socid:"null").",";
-			$sql.= " ".$user->id.",";
-			$sql.= " ".$this->user_resp_id.", now())";
-
-			if ($this->db->query($sql) )
-			{
-				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet");
-				$result = $this->id;
-			}
-			else
-			{
-				dolibarr_syslog("Project::Create error -2");
-				$this->error=$this->db->error();
-				$result = -2;
-			}
-		}
-		else
+		// Check parameters
+		if (! trim($this->ref))
 		{
 			$this->error='ErrorFieldsRequired';
 			dolibarr_syslog("Project::Create error -1 ref null");
-			$result = -1;
+			return -1;
+		}
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, dateo)";
+		$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."',";
+		$sql.= " ".($this->socid > 0?$this->socid:"null").",";
+		$sql.= " ".$user->id.",";
+		$sql.= " ".$this->user_resp_id.", now())";
+		
+		dolibarr_syslog("Project::create sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet");
+			$result = $this->id;
+		}
+		else
+		{
+			dolibarr_syslog("Project::Create error -2");
+			$this->error=$this->db->error();
+			$result = -2;
 		}
 
 		return $result;
@@ -120,7 +121,7 @@ class Project extends CommonObject
 
 	/*
 	*    \brief      Charge objet projet depuis la base
-	*    \param      rowid       id du projet à charger
+	*    \param      rowid       id du projet ï¿½ charger
 	*/
 	function fetch($rowid)
 	{
@@ -278,7 +279,7 @@ class Project extends CommonObject
 		}
 	}
 	/**
-	* Renvoie la liste des commande associées au projet
+	* Renvoie la liste des commande associï¿½es au projet
 	*
 	*
 	*/
@@ -338,9 +339,9 @@ class Project extends CommonObject
 	}
 
 	/*
-	*    \brief      Crée une tache dans le projet
-	*    \param      user        Id utilisateur qui crée
-	*    \param     title      titre de la tâche
+	*    \brief      Crï¿½e une tache dans le projet
+	*    \param      user        Id utilisateur qui crï¿½e
+	*    \param     title      titre de la tï¿½che
 	*    \param      parent   tache parente
 	*/
 	function CreateTask($user, $title, $parent = 0)
@@ -395,9 +396,9 @@ class Project extends CommonObject
 
 
 	/*
-	*    \brief      Crée une tache dans le projet
-	*    \param      user        Id utilisateur qui crée
-	*    \param     title      titre de la tâche
+	*    \brief      Crï¿½e une tache dans le projet
+	*    \param      user        Id utilisateur qui crï¿½e
+	*    \param     title      titre de la tï¿½che
 	*    \param      parent   tache parente
 	*/
 	function TaskAddTime($user, $task, $time, $date)
@@ -476,7 +477,7 @@ class Project extends CommonObject
 	{
 		$tasks = array();
 
-		/* Liste des tâches dans $tasks */
+		/* Liste des tï¿½ches dans $tasks */
 	
 		$sql = "SELECT t.rowid, t.title, t.fk_task_parent, t.duration_effective";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";
