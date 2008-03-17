@@ -214,8 +214,9 @@ if ($_POST["action"] == "set")
 			print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
 			print $langs->trans("YouMustCreateItAndAllowServerToWrite");
 			print '</td><td>';
-			print $langs->trans("Error");
+			print '<font class="error">'.$langs->trans("Error").'</font>';
 			print "</td></tr>";
+    		print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
 			$error++;
 		}
 		else

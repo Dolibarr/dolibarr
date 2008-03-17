@@ -105,7 +105,7 @@ Start=Démarrer
 InstallNotAllowed=Installation non autorisée par les permissions du fichier <b>conf.php</b>
 NotAvailable=Non disponible
 YouMustCreateWithPermission=Vous devez créer un fichier %s et donner les droits d'écriture dans celui-ci au serveur web durant le processus d'installation.
-CorrectProblemAndReloadPage=Corrigez le problème et <a href="%s">rechargez la page</a> (Touche F5).
+CorrectProblemAndReloadPage=Corrigez le problème et pressez F5 pour recharger la page.
 AlreadyDone=Déjà migré
 DatabaseVersion=Version de la base
 ServerVersion=Version du serveur de base de donnée

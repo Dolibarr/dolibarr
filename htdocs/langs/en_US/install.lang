@@ -104,7 +104,7 @@ Start=Start
 InstallNotAllowed=Setup not allowed by <b>conf.php</b> permissions
 NotAvailable=Not available
 YouMustCreateWithPermission=You must create file %s and set write permissions on it for web server during install process.
-CorrectProblemAndReloadPage=Correct problem and <a href="%s">reload page</a> (Press F5 key).
+CorrectProblemAndReloadPage=Correct problem and press F5 to reload page.
 AlreadyDone=Already migrated
 DatabaseVersion=Database version
 ServerVersion=Database server version
