@@ -1290,7 +1290,7 @@ class Facture extends CommonObject
 		{
 			$this->db->begin();
 
-			// Nettoyage paramètres
+			// Clean parameters
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			if (! $qty) $qty=1;
@@ -1336,7 +1336,7 @@ class Facture extends CommonObject
 				$product_type=$product->type;
 			}
 
-			// Insertion ligne
+			// Insert line
 			$ligne=new FactureLigne($this->db);
 
 			$ligne->fk_facture=$facid;

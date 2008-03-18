@@ -28,8 +28,8 @@
 /**
 		\brief 	Permet de calculer les parts total HT, TVA et TTC d'une ligne de
 				facture, propale, commande ou autre depuis:
-				quantité, prix unitaire, remise_percent_ligne, txtva, remise_percent_global
-		\param 	qty							Quantité
+				quantity, unit price, remise_percent_ligne, txtva, remise_percent_global
+		\param 	qty							Quantity
 		\param 	pu							Prix unitaire (HT ou TTC selon price_base_type)
 		\param 	remise_percent_ligne		Remise ligne
 		\param 	txtva						Taux tva
@@ -52,15 +52,17 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_pe
 		$tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
 		$tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
 		$result[0] = price2num($tot_avec_remise, 'MT');
-		$result[2] = price2num($tot_avec_remise * ( 1 + ($txtva / 100)), 'MT');
-		$result[1] = $result[2] - $result[0];
+		$result[2] = price2num($tot_avec_remise * ( 1 + ( (($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
+		$result2bis= price2num($tot_avec_remise * ( 1 + ( $txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR) 
+		$result[1] = $result2bis - $result[0];
 		$result[3] = price2num($pu, 'MU');
-		$result[5] = price2num($pu * ( 1 + ($txtva / 100)), 'MU');
-		$result[4] = $result[5] - $result[3];
+		$result[5] = price2num($pu * ( 1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MU');	// Selon TVA NPR ou non
+		$result5bis= price2num($pu * ( 1 + ($txtva / 100)), 'MU');	// Si TVA consideree normale (non NPR) 
+		$result[4] = $result5bis - $result[3];
 	}
 	else
 	{
-		// On cacule à l'envers en partant du prix TTC
+		// On cacule a l'envers en partant du prix TTC
 		// Utilise pour les produits a prix TTC reglemente (livres, ...)
 
 		$tot_sans_remise = $pu * $qty;
@@ -68,11 +70,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_pe
 		$tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
 
 		$result[2] = price2num($tot_avec_remise, 'MT');
-		$result[0] = price2num($tot_avec_remise / ( 1 + ($txtva / 100)), 'MT');
-		$result[1] = $result[2] - $result[0];
+		$result[0] = price2num($tot_avec_remise / ( 1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MT');	// Selon TVA NPR ou non
+		$result0bis= price2num($tot_avec_remise / ( 1 + ($txtva / 100)), 'MT');	// Si TVA consideree normale (non NPR)
+		$result[1] = $result[2] - $result0bis;
 		$result[5] = price2num($pu, 'MU');
-		$result[3] = price2num($pu / ( 1 + ($txtva / 100)), 'MU');
-		$result[4] = $result[5] - $result[3];
+		$result[3] = price2num($pu / ( 1 + ((($info_bits & 1)?0:$txtva) / 100)), 'MU');	// Selon TVA NPR ou non
+		$result3bis= price2num($pu / ( 1 + ($txtva / 100)), 'MU');	// Si TVA consideree normale (non NPR)
+		$result[4] = $result[5] - $result3bis;
 	}
 
 	return $result;

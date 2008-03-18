@@ -26,14 +26,14 @@
 
 /**
 		\class 		CommonObject
-        \brief 		Classe mere pour héritage des classes metiers
+        \brief 		Classe mere pour hï¿½ritage des classes metiers
 */
 
 class CommonObject
 {
 
 	/**
-	 *      \brief      Ajoute un contact associé au l'entité définie dans $this->element
+	 *      \brief      Ajoute un contact associï¿½ au l'entitï¿½ dï¿½finie dans $this->element
      *      \param      fk_socpeople        Id du contact a ajouter
 	 *   	\param 		type_contact 		Type de contact (code ou id)
      *      \param      source              external=Contact externe (llx_socpeople), internal=Contact interne (llx_user)
@@ -45,7 +45,7 @@ class CommonObject
 
         dolibarr_syslog("CommonObject::add_contact $fk_socpeople, $type_contact, $source");
 
-		// Vérification parametres
+		// Vï¿½rification parametres
 		if ($fk_socpeople <= 0)
 		{
 			$this->error=$langs->trans("ErrorWrongValueForParameter","1");
@@ -114,7 +114,7 @@ class CommonObject
 
     /**
 	 *      \brief      Mise a jour du statut d'un contact
-     *      \param      rowid               La reference du lien contact-entité
+     *      \param      rowid               La reference du lien contact-entitï¿½
      * 		\param		statut	            Le nouveau statut
      *      \param      type_contact_id     Description du type de contact
      *      \return     int                 <0 si erreur, =0 si ok
@@ -158,8 +158,8 @@ class CommonObject
     }
 
     /**
-     *    \brief      Récupère les lignes de contact de l'objet
-     *    \param      statut        Statut des lignes detail à récupérer
+     *    \brief      Rï¿½cupï¿½re les lignes de contact de l'objet
+     *    \param      statut        Statut des lignes detail ï¿½ rï¿½cupï¿½rer
      *    \param      source        Source du contact external (llx_socpeople) ou internal (llx_user)
      *    \return     array         Tableau des rowid des contacts
      */
@@ -214,7 +214,7 @@ class CommonObject
     }
 
 	 /**
-     *    \brief      Le détail d'un contact
+     *    \brief      Le dï¿½tail d'un contact
      *    \param      rowid      L'identifiant du contact
      *    \return     object     L'objet construit par DoliDb.fetch_object
      */
@@ -224,7 +224,7 @@ class CommonObject
         $sql.= " tc.code, tc.libelle,";
 		    $sql.= " s.fk_soc";
         $sql.= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est lié à une societe
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est liï¿½ ï¿½ une societe
         $sql.= " WHERE ec.rowid =".$rowid;
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
@@ -285,7 +285,7 @@ class CommonObject
     }
 
     /**
-     *      \brief      Retourne id des contacts d'une source et d'un type actif donné
+     *      \brief      Retourne id des contacts d'une source et d'un type actif donnï¿½
      *                  Exemple: contact client de facturation ('external', 'BILLING')
      *                  Exemple: contact client de livraison ('external', 'SHIPPING')
      *                  Exemple: contact interne suivi paiement ('internal', 'SALESREPFOLL')
@@ -391,10 +391,10 @@ class CommonObject
 	}
 
 /**
-  *    \brief      Retourne la liste déroulante des sociétés
+  *    \brief      Retourne la liste dï¿½roulante des sociï¿½tï¿½s
   *    \param      object          Fetch du document
   *    \param      var_id          Nom de la variable de l'id du document
-  *    \param      selected        Societe présélectionnée
+  *    \param      selected        Societe prï¿½sï¿½lectionnï¿½e
   *    \param      htmlname        Nom champ formulaire
   */
  function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany')
@@ -543,7 +543,7 @@ class CommonObject
 
 
   /**
-   *      \brief      On récupère les id de liste_contact
+   *      \brief      On rï¿½cupï¿½re les id de liste_contact
    *      \param      source      Source du contact external (llx_socpeople) ou internal (llx_user)
    *      \return     array
    */
@@ -629,7 +629,7 @@ class CommonObject
 
 
 	/**
-	*      \brief      Stocke un numéro de rang pour toutes les lignes de
+	*      \brief      Stocke un numï¿½ro de rang pour toutes les lignes de
 	*                  detail d'une facture qui n'en ont pas.
 	*/
 	function line_order()
@@ -856,7 +856,7 @@ class CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->total_ht       += $obj->total_ht;
-				$this->total_tva      += ($obj->total_ttc - $obj->total_ht);
+				$this->total_tva      += $obj->total_tva;
 				$this->total_ttc      += $obj->total_ttc;
 
 				$i++;

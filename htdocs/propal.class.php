@@ -253,49 +253,50 @@ class Propal extends CommonObject
 	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
 	 * 		\param    	price_base_type		HT or TTC
      * 		\param    	pu_ttc             	Prix unitaire TTC
+     * 		\param    	info_bits			Bits de type de lignes
      *    	\return    	int             	>0 si ok, <0 si ko
      *    	\see       	add_product
-	 * 		\remarks	Les parametres sont deja cens� etre juste et avec valeurs finales a l'appel
+	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete d�fini
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
  	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-    function addline($propalid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0)
+    function addline($propalid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0)
     {
     	global $conf;
     	
-    	dolibarr_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc");
+    	dolibarr_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits");
     	include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
     	
     	if ($this->statut == 0)
-      {
-      	$this->db->begin();
-	
-      	// Nettoyage param�tres
-      	$remise_percent=price2num($remise_percent);
-      	$qty=price2num($qty);
-      	if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
       	{
-      		$qty=0;
-      	}
-      	else if (! $qty)
-      	{
-      		$qty=1;
-      	}
-      	$pu_ht=price2num($pu_ht);
-      	$pu_ttc=price2num($pu_ttc);
-      	$txtva=price2num($txtva);
-      	
-      	if ($price_base_type=='HT')
-      	{
-      		$pu=$pu_ht;
-      	}
-      	else
-      	{
-      		$pu=$pu_ttc;
-      	}
-      	
-      	// Calcul du total TTC et de la TVA pour la ligne a partir de
+	      	$this->db->begin();
+		
+	      	// Clean parameters
+	      	$remise_percent=price2num($remise_percent);
+	      	$qty=price2num($qty);
+	      	if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
+	      	{
+	      		$qty=0;
+	      	}
+	      	else if (! $qty)
+	      	{
+	      		$qty=1;
+	      	}
+	      	$pu_ht=price2num($pu_ht);
+	      	$pu_ttc=price2num($pu_ttc);
+	      	$txtva=price2num($txtva);
+	      	
+	      	if ($price_base_type=='HT')
+	      	{
+	      		$pu=$pu_ht;
+	      	}
+	      	else
+	      	{
+	      		$pu=$pu_ttc;
+	      	}
+	      	
+	      	// Calcul du total TTC et de la TVA pour la ligne a partir de
 			  // qty, pu, remise_percent et txtva
 			  // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
 			  // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
@@ -314,7 +315,7 @@ class Propal extends CommonObject
 			  	$price = $pu - $remise;
 			  }
 
-			// Insertion ligne
+			// Insert line
 			$ligne=new PropaleLigne($this->db);
 
 			$ligne->fk_propal=$propalid;
@@ -343,16 +344,15 @@ class Propal extends CommonObject
 			{
 				// Mise a jour informations denormalisees au niveau de la propale meme
 				$result=$this->update_price();
-					
-        if ($result > 0)
-        {
+        		if ($result > 0)
+        		{
 					$this->db->commit();
 					return 1;
 				}
 				else
-        {
-        	$this->error=$this->db->error();
-	        dolibarr_syslog("Error sql=$sql, error=".$this->error);
+        		{
+        			$this->error=$this->db->error();
+	        		dolibarr_syslog("Error sql=$sql, error=".$this->error);
 					$this->db->rollback();
 					return -1;
 				}
@@ -361,22 +361,23 @@ class Propal extends CommonObject
 			{
 				$this->error=$ligne->error;
 				$this->db->rollback();
-        return -2;
-      }
-    }
-  }
+        		return -2;
+      		}
+    	}
+	}
 
 
   /**
-   *    \brief      Mise � jour d'une ligne de produit
+   *    \brief      Mise a jour d'une ligne de produit
    *    \param      rowid              	Id de la ligne
    *    \param      pu		        	Prix unitaire (HT ou TTC selon price_base_type)
-   *    \param      qty             	Quantit�
-   *    \param      remise_percent  	Remise effectu�e sur le produit
+   *    \param      qty             	Quantity
+   *    \param      remise_percent  	Remise effectuee sur le produit
    *    \param      txtva	          	Taux de TVA
    *    \param      desc            	Description
    *	\param		price_base_type		HT ou TTC
-   *    \return     int             	0 en cas de succ�s
+   *	\param     	info_bits        	Miscellanous informations
+   *    \return     int             	0 en cas de succes
    */
     function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $desc='', $price_base_type='HT', $info_bits=0)
     {
@@ -431,6 +432,7 @@ class Propal extends CommonObject
         $sql.= " , total_ht=".price2num($total_ht);
         $sql.= " , total_tva=".price2num($total_tva);
         $sql.= " , total_ttc=".price2num($total_ttc);
+        $sql.= " , info_bits=".$info_bits;
         if ($conf->global->PROPALE_USE_OPTION_LINE && !$qty)
         {
         	$sql.= " , special_code=3";
@@ -446,7 +448,7 @@ class Propal extends CommonObject
         {
         	$this->update_price();
         	$this->db->commit();
-        	return 0;
+        	return $result;
         }
         else
         {

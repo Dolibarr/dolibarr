@@ -1823,18 +1823,28 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
 /**
 *		\brief      Fonction qui retourne un taux de tva formaté pour visualisation
 *		\remarks    Fonction utilisée dans les pdf et les pages html
-*		\param	    rate			Taux a formater (19.6 19,6 19.6% 19,6%...)
-*		\return		string			Chaine avec montant formaté (19,6 ou 19,6%)
+*		\param	    rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
+*		\param		foundpercent	Add a percent % sign in output
+*		\param		info_bits		Miscellanous information on vat
+*		\return		string			Chaine avec montant formaté (19,6 ou 19,6% ou 8.5% *)
 */
-function vatrate($rate)
+function vatrate($rate,$foundpercent=false,$info_bits=0)
 {
-	$foundpercent=false;
+	// Test for compatibility
 	if (eregi('%',$rate))
 	{
 		$rate=eregi_replace('%','',$rate);
 		$foundpercent=true;
 	}
-	return price($rate,0,'',0,0).($foundpercent?'%':'');
+	if (eregi('\*',$rate))
+	{
+		$rate=eregi_replace('\*','',$rate);
+		$info_bits |= 1;
+	}
+	
+	$ret=price($rate,0,'',0,0).($foundpercent?'%':'');
+	if ($info_bits & 1) $ret.=' *';
+	return $ret;
 }
 
 

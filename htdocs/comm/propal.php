@@ -524,7 +524,8 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$prod->fetch($_POST['idprod']);
 			
 			$tva_tx = get_default_tva($mysoc,$propal->client,$prod->tva_tx);
-
+			$tva_npr = get_default_npr($mysoc,$propal->client,$prod->tva_tx);
+			
 			// On defini prix unitaire
 			if ($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
@@ -560,10 +561,15 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 		else
 		{
 			$pu_ht=$_POST['np_price'];
-			$tva_tx=$_POST['np_tva_tx'];
+	        $tva_tx=eregi_replace('\*','',$_POST['np_tva_tx']);
+			$tva_npr=eregi('\*',$_POST['np_tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
 		}
 
+		$info_bit=0;
+		if ($tva_npr) $info_bit |= 0x01;
+		
+		// Insert line
 		$result=$propal->addline(
 			$_POST['propalid'],
 			$desc,
@@ -573,7 +579,8 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$_POST['idprod'],
 			$_POST['remise_percent'],
 			$price_base_type,
-			$pu_ttc
+			$pu_ttc,
+			$info_bit
 		);
 
 		if ($result > 0)
@@ -1212,7 +1219,7 @@ if ($_GET['propalid'] > 0)
 				}
 				
 				// VAT Rate
-				print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
+				print '<td align="right">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
 				
 				// U.P HT
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
@@ -1346,14 +1353,7 @@ if ($_GET['propalid'] > 0)
 					print '<td align="right">'.vatrate($objp->marge_tx).'%</td>';
 				}
 				print '<td align="right">';
-				if($societe->tva_assuj == "0")
-				{
-					print '<input type="hidden" name="tva_tx" value="0">0';
-				}
-				else
-				{
-					print $html->select_tva("tva_tx",$objp->tva_tx,$mysoc,$societe);
-				}
+				print $html->select_tva('tva_tx',$objp->tva_tx,$mysoc,$societe,'',$objp->info_bits);
 				print '</td>';
 				print '<td align="right"><input size="6" type="text" class="flat" name="subprice" value="'.price($objp->subprice,0,'',0).'"></td>';
 				print '<td align="right">';

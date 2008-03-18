@@ -828,7 +828,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		$info_bit=0;
 		if ($tva_npr) $info_bit |= 0x01;
 
-		// Insere ligne
+		// Insert line
 		$result = $fac->addline(
 				$_POST['facid'],
 				$desc,
@@ -2407,7 +2407,7 @@ else
 							}
 							print "</td>\n";
 						}
-						print '<td align="right">'.vatrate($objp->tva_taux).'%'.($objp->info_bits & 1?' *':'').'</td>';
+						print '<td align="right">'.vatrate($objp->tva_taux,'%',$objp->info_bits).'</td>';
 						print '<td align="right">'.price($objp->subprice)."</td>\n";
 						print '<td align="right">';
 						if (($objp->info_bits & 2) != 2)
