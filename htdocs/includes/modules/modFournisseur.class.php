@@ -19,7 +19,7 @@
  */
 
 /**     \defgroup   fournisseur     Module fournisseur
-        \brief      Module pour g�rer des soci�t�s et contacts de type fournisseurs
+        \brief      Module pour gerer des societes et contacts de type fournisseurs
 		\version	$Id$
 */
 
@@ -41,7 +41,7 @@ class modFournisseur extends DolibarrModules
 
     /**
      *   \brief      Constructeur. Definit les noms, constantes et boites
-     *   \param      DB      handler d'acc�s base
+     *   \param      DB      handler d'acces base
      */
   	function modFournisseur($DB)
   	{
@@ -228,7 +228,7 @@ class modFournisseur extends DolibarrModules
 
         $r++;
         $this->export_code[$r]=$this->rights_class.'_'.$r;
-        $this->export_label[$r]='Factures fournisseurs et r�glements';
+        $this->export_label[$r]='Factures fournisseurs et reglements';
         $this->export_permission[$r]=array(array("fournisseur","facture","export"));
         $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','f.rowid'=>"InvoiceId",'f.facnumber'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",'f.datef'=>"DateInvoice",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.total_tva'=>"TotalVAT",'f.paye'=>"InvoicePayed",'f.fk_statut'=>'InvoiceStatus','f.note'=>"InvoiceNote",'pf.amount'=>'AmountPayment','p.datep'=>'DatePayment','p.num_paiement'=>'PaymentNumber');
         $this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.cp'=>'company','s.ville'=>'company','s.fk_pays'=>'company','s.tel'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total_ht'=>"invoice",'f.total_ttc'=>"invoice",'f.total_tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note'=>"invoice",'pf.amount'=>'payment','p.datep'=>'payment','p.num_paiement'=>'payment');
@@ -240,8 +240,8 @@ class modFournisseur extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+    *               Definit egalement les repertoires de donnees a creer pour ce module.
     */
   function init()
   {
@@ -260,7 +260,7 @@ class modFournisseur extends DolibarrModules
   }
 
   /**
-   *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+   *    \brief      Fonction appelee lors de la desactivation d'un module.
    *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
@@ -302,7 +302,7 @@ class modFournisseur extends DolibarrModules
 	    $this->db->query($sql);
 
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-	    $sql .= " (code,libelle) VALUES ('OrderByPhone','T�l�phone')";
+	    $sql .= " (code,libelle) VALUES ('OrderByPhone','Telephone')";
 
 	    $this->db->query($sql);
 
