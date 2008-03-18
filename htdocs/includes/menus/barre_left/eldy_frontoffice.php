@@ -558,8 +558,13 @@ class MenuLeft {
 					if ($user->societe_id == 0)
 					{
 						$newmenu->add_submenu(DOL_URL_ROOT."/product/fiche.php?leftmenu=product&amp;action=create&amp;type=0", $langs->trans("NewProduct"), 1, $user->rights->produit->creer);
+						$newmenu->add_submenu(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0", $langs->trans("ProductList"), 1, $user->rights->produit->lire);
+						if (! empty($conf->global->PRODUIT_SPECIAL_LIVRE) && ! empty($conf->global->PRODUCT_CANVAS_ABILITY))
+						{
+							$newmenu->add_submenu(DOL_URL_ROOT."/product/fiche.php?leftmenu=product&amp;action=create&amp;type=0&canvas=livre", $langs->trans("NewBook"), 1, $user->rights->produit->creer);
+							$newmenu->add_submenu(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0&amp;canvas=livre", $langs->trans("BookList"), 1, $user->rights->produit->creer);
+						}
 					}
-					$newmenu->add_submenu(DOL_URL_ROOT."/product/liste.php?leftmenu=product&amp;type=0", $langs->trans("List"), 1, $user->rights->produit->lire);
 					if ($conf->stock->enabled)
 					{
 						$newmenu->add_submenu(DOL_URL_ROOT."/product/reassort.php?type=0", $langs->trans("Stocks"), 1, $user->rights->stock->lire);
