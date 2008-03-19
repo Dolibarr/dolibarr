@@ -731,9 +731,9 @@ class Facture extends CommonObject
 				// On désaffecte de la facture les remises liées
 				if (sizeof($list_rowid_det))
 				{
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except as re';
-					$sql.= ' SET re.fk_facture = NULL';
-					$sql.= ' WHERE re.fk_facture in ('.join(',',$list_rowid_det).')';
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+					$sql.= ' SET fk_facture = NULL';
+					$sql.= ' WHERE fk_facture in ('.join(',',$list_rowid_det).')';
 
 					dolibarr_syslog("Facture.class::delete sql=".$sql);
 					if (! $this->db->query($sql))
