@@ -825,8 +825,8 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 	        $desc=$_POST['dp_desc'];
         }
 		
-		$info_bit=0;
-		if ($tva_npr) $info_bit |= 0x01;
+		$info_bits=0;
+		if ($tva_npr) $info_bits |= 0x01;
 
 		// Insert line
 		$result = $fac->addline(
@@ -840,7 +840,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 				$date_start,
 				$date_end,
 				0,
-				$info_bit,
+				$info_bits,
 				'',
 				$price_base_type,
 				$pu_ttc

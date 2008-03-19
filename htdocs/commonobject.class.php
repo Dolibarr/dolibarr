@@ -869,13 +869,16 @@ class CommonObject
 			if ($this->element == 'facture') $fieldht='total';
 			$fieldtva='tva';
 			if ($this->element == 'facture_fourn') $fieldtva='total_tva';
-
+			$fieldttc='total_ttc';
+			if ($this->element == 'propal') $fieldttc='total';
+			
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 			$sql .= " ".$fieldht."='".price2num($this->total_ht)."',";
 			$sql .= " ".$fieldtva."='".price2num($this->total_tva)."',";
-			$sql .= " total_ttc='".price2num($this->total_ttc)."'";
+			$sql .= " ".$fieldttc."='".price2num($this->total_ttc)."'";
 			$sql .= ' WHERE rowid = '.$this->id;
 
+			//print "xx".$sql;
 			dolibarr_syslog("CommonObject::update_price sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)

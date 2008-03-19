@@ -674,7 +674,7 @@ class Commande extends CommonObject
 				$price = $pu - $remise;
 			}
 			
-			// Insertion ligne
+			// Insert line
 			$ligne=new CommandeLigne($this->db);
 			
 			$ligne->fk_commande=$commandeid;
@@ -1564,19 +1564,20 @@ class Commande extends CommonObject
 
 
   /**
-   *  \brief     Mets � jour une ligne de commande
-   *  \param     rowid            Id de la ligne de facture
-   *  \param     desc             Description de la ligne
-   *  \param     pu               Prix unitaire
-   *  \param     qty              Quantit�
-   *  \param     remise_percent   Pourcentage de remise de la ligne
-   *  \param     tva_tx           Taux TVA
-   *  \param     info_bits        Miscellanous informations on line
-   *  \return    int              < 0 si erreur, > 0 si ok
+   *  \brief    Mets a jour une ligne de commande
+   *  \param    rowid            	Id de la ligne de facture
+   *  \param    desc             	Description de la ligne
+   *  \param    pu               	Prix unitaire
+   *  \param    qty              	Quantity
+   *  \param    remise_percent   	Pourcentage de remise de la ligne
+   *  \param    tva_tx           	Taux TVA
+   *  \param    price_base_type		HT or TTC
+   *  \param    info_bits        	Miscellanous informations on line
+   *  \return   int              	< 0 si erreur, > 0 si ok
    */
   function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0)
   {
-    dolibarr_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva");
+    dolibarr_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits");
     include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
     
     if ($this->brouillon)
@@ -1628,13 +1629,13 @@ class Commande extends CommonObject
 	//else { $sql.=',date_start=null'; }
 	//if ($date_end) { $sql.= ",date_end='$date_end'"; }
 	//else { $sql.=',date_end=null'; }
-	//$sql.= " info_bits=".$info_bits.",";
+	$sql.= ",info_bits='".$info_bits."'";
 	$sql.= ",total_ht='".price2num($total_ht)."'";
 	$sql.= ",total_tva='".price2num($total_tva)."'";
 	$sql.= ",total_ttc='".price2num($total_ttc)."'";
 	$sql.= " WHERE rowid = ".$rowid;
 	
-	$result = $this->db->query( $sql);
+	$result = $this->db->query($sql);
 	if ($result > 0)
 	  {
 	    // Mise a jour info denormalisees au niveau facture

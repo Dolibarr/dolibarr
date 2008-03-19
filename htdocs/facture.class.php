@@ -1375,7 +1375,7 @@ class Facture extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog("Error sql=$sql, error=".$this->error);
+					dolibarr_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
 					$this->db->rollback();
 					return -1;
 				}

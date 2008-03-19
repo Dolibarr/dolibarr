@@ -39,7 +39,9 @@ class Contrat extends CommonObject
 	var $error;
 	var $element='contrat';
 	var $table_element='contrat';
-    
+	var $table_element_line='contratdet';
+	var $fk_element='fk_contrat';
+
     var $id;
     var $ref;
     var $socid;
@@ -69,7 +71,7 @@ class Contrat extends CommonObject
         
     /**
      *    \brief      Constructeur de la classe
-     *    \param      DB          handler accès base de données
+     *    \param      DB          handler accï¿½s base de donnï¿½es
      */
     function Contrat($DB)
     {
@@ -81,7 +83,7 @@ class Contrat extends CommonObject
         $this->user_service = new User($DB);
         $this->user_cloture = new User($DB);
         
-        // Statut 0=ouvert, 1=actif, 2=cloturé
+        // Statut 0=ouvert, 1=actif, 2=cloturï¿½
         $this->statuts[0]=$langs->trans("Draft");
         $this->statuts[1]=$langs->trans("Validated");
         $this->statuts[2]=$langs->trans("Closed");
@@ -90,9 +92,9 @@ class Contrat extends CommonObject
     /**
      *      \brief      Active une ligne detail d'un contrat
      *      \param      user        Objet User qui avtice le contrat
-     *      \param      line_id     Id de la ligne de detail à activer
+     *      \param      line_id     Id de la ligne de detail ï¿½ activer
      *      \param      date        Date d'ouverture
-     *      \param      date_end    Date fin prévue
+     *      \param      date_end    Date fin prï¿½vue
      *      \return     int         < 0 si erreur, > 0 si ok
      */
     function active_line($user, $line_id, $date, $date_end='')
@@ -135,7 +137,7 @@ class Contrat extends CommonObject
     /**
      *      \brief      Active une ligne detail d'un contrat
      *      \param      user        Objet User qui avtice le contrat
-     *      \param      line_id     Id de la ligne de detail à activer
+     *      \param      line_id     Id de la ligne de detail ï¿½ activer
      *      \param      date_end     Date fin
      *      \return     int         <0 si erreur, >0 si ok
      */
@@ -174,7 +176,7 @@ class Contrat extends CommonObject
      *    \brief      Cloture un contrat
      *    \param      user      Objet User qui cloture
      *    \param      langs     Environnement langue de l'utilisateur
-     *    \param      conf      Environnement de configuration lors de l'opération
+     *    \param      conf      Environnement de configuration lors de l'opï¿½ration
      *
      */
     function cloture($user,$langs='',$conf='')
@@ -208,7 +210,7 @@ class Contrat extends CommonObject
      *    \brief      Valide un contrat
      *    \param      user      Objet User qui valide
      *    \param      langs     Environnement langue de l'utilisateur
-     *    \param      conf      Environnement de configuration lors de l'opération
+     *    \param      conf      Environnement de configuration lors de l'opï¿½ration
      */
     function validate($user,$langs,$conf)
     {
@@ -240,7 +242,7 @@ class Contrat extends CommonObject
      *    \brief      Annule un contrat
      *    \param      user      Objet User qui annule
      *    \param      langs     Environnement langue de l'utilisateur
-     *    \param      conf      Environnement de configuration lors de l'opération
+     *    \param      conf      Environnement de configuration lors de l'opï¿½ration
      */
     function annule($user,$langs='',$conf='')
     {
@@ -270,9 +272,9 @@ class Contrat extends CommonObject
     }
     
     /**
-     *    \brief      Chargement depuis la base des données du contrat
-     *    \param      id      Id du contrat à charger
-     *    \return     int     <0 si ko, id du contrat chargé si ok
+     *    \brief      Chargement depuis la base des donnï¿½es du contrat
+     *    \param      id      Id du contrat ï¿½ charger
+     *    \return     int     <0 si ko, id du contrat chargï¿½ si ok
      */
     function fetch($id)
     {
@@ -315,7 +317,7 @@ class Contrat extends CommonObject
                 $this->fk_projet         = $result["fk_projet"];
         
                 $this->socid            = $result["fk_soc"];
-                $this->societe->fetch($result["fk_soc"]);	// TODO A virer car la societe doit etre chargé par appel de fetch_client()
+                $this->societe->fetch($result["fk_soc"]);	// TODO A virer car la societe doit etre chargï¿½ par appel de fetch_client()
         
                 $this->db->free($resql);
     
@@ -344,7 +346,7 @@ class Contrat extends CommonObject
     {
         $this->lignes = array();
     
-        // Selectionne les lignes contrats liées à un produit
+        // Selectionne les lignes contrats liï¿½es ï¿½ un produit
         $sql = "SELECT p.label, p.description as product_desc, p.ref,";
         $sql.= " d.rowid, d.statut, d.description, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
         $sql.= " d.info_bits, d.fk_product,";
@@ -395,17 +397,17 @@ class Contrat extends CommonObject
         }
         else
         {
-            dolibarr_syslog("Contrat::Fetch Erreur lecture des lignes de contrats liées aux produits");
+            dolibarr_syslog("Contrat::Fetch Erreur lecture des lignes de contrats liï¿½es aux produits");
             return -3;
         }
         
-        // Selectionne les lignes contrat liées à aucun produit
+        // Selectionne les lignes contrat liï¿½es ï¿½ aucun produit
         $sql = "SELECT d.rowid, d.statut, d.qty, d.description, d.price_ht, d.subprice, d.tva_tx, d.rowid, d.remise_percent,";
         $sql.= " d.date_ouverture_prevue, d.date_ouverture,";
         $sql.= " d.date_fin_validite, d.date_cloture";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d";
         $sql.= " WHERE d.fk_contrat = ".$this->id;
-        $sql.= " AND (d.fk_product IS NULL OR d.fk_product = 0)";   // fk_product = 0 gardé pour compatibilité
+        $sql.= " AND (d.fk_product IS NULL OR d.fk_product = 0)";   // fk_product = 0 gardï¿½ pour compatibilitï¿½
 
         $result = $this->db->query($sql);
         if ($result)
@@ -443,7 +445,7 @@ class Contrat extends CommonObject
         }
         else
         {
-            dolibarr_syslog("Contrat::Fetch Erreur lecture des lignes de contrat non liées aux produits");
+            dolibarr_syslog("Contrat::Fetch Erreur lecture des lignes de contrat non liï¿½es aux produits");
             $this->error=$this->db->error();
             return -2;
         }
@@ -452,15 +454,15 @@ class Contrat extends CommonObject
     }
   
     /**
-     *      \brief      Crée un contrat vierge en base
-     *      \param      user        Utilisateur qui crée
+     *      \brief      Crï¿½e un contrat vierge en base
+     *      \param      user        Utilisateur qui crï¿½e
      *      \param      langs       Environnement langue de l'utilisateur
-     *      \param      conf        Environnement de configuration lors de l'opération
-     *      \return     int         <0 si erreur, id contrat créé sinon
+     *      \param      conf        Environnement de configuration lors de l'opï¿½ration
+     *      \return     int         <0 si erreur, id contrat crï¿½ï¿½ sinon
      */
     function create($user,$langs='',$conf='')
     {
-        // Controle validité des paramètres
+        // Controle validitï¿½ des paramï¿½tres
         $paramsok=1;
         if ($this->commercial_signature_id <= 0)
         {
@@ -479,7 +481,7 @@ class Contrat extends CommonObject
         
         $this->db->begin();
 
-        // Insère contrat
+        // Insï¿½re contrat
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat";
 //        $sql.= ", fk_commercial_signature, fk_commercial_suivi";
         $sql.= " , ref)";
@@ -496,11 +498,11 @@ class Contrat extends CommonObject
             
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
     
-            // Insère contacts commerciaux ('SALESREPSIGN','contrat')
+            // Insï¿½re contacts commerciaux ('SALESREPSIGN','contrat')
             $result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
             if ($result < 0) $error++;
             
-            // Insère contacts commerciaux ('SALESREPFOLL','contrat')
+            // Insï¿½re contacts commerciaux ('SALESREPFOLL','contrat')
             $result=$this->add_contact($this->commercial_suivi_id,'SALESREPFOLL','internal');
             if ($result < 0) $error++;
 
@@ -551,7 +553,7 @@ class Contrat extends CommonObject
      *      \brief      Supprime l'objet de la base
      *      \param      user        Utilisateur qui supprime
      *      \param      langs       Environnement langue de l'utilisateur
-     *      \param      conf        Environnement de configuration lors de l'opération
+     *      \param      conf        Environnement de configuration lors de l'opï¿½ration
      *      \return     int         < 0 si erreur, > 0 si ok
      */
     function delete($user,$langs='',$conf='')
@@ -649,47 +651,47 @@ class Contrat extends CommonObject
     /**
      *      \brief      Ajoute une ligne de contrat en base
      *      \param      desc            	Description de la ligne
-     *      \param      pu              	Prix unitaire (HT ou TTC selon price_base_type
-     *      \param      qty             	Quantité
+     *      \param      pu_ht              	Prix unitaire HT
+     *      \param      qty             	Quantitï¿½
      *      \param      txtva           	Taux tva
      *      \param      fk_product      	Id produit
      *      \param      remise_percent  	Pourcentage de remise de la ligne
-     *      \param      date_start      	Date de debut prévue
-     *      \param      date_end        	Date de fin prévue
+     *      \param      date_start      	Date de debut prï¿½vue
+     *      \param      date_end        	Date de fin prï¿½vue
 	 *		\param		price_base_type		HT ou TTC
+     * 	    \param    	pu_ttc             	Prix unitaire TTC
+     * 		\param    	info_bits			Bits de type de lignes
      *      \return     int             	<0 si erreur, >0 si ok
      */
-    function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start, $date_end, $price_base_type='HT')
+    function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start, $date_end, $price_base_type='HT', $pu_ttc=0, $info_bits=0)
     {
         global $langs, $conf;
         
-		// Nettoyage parametres
-		if (! $txtva) $txtva=0;
-		$remise_percent=price2num($remise_percent);
-		$qty=price2num($qty);
-		if (! $qty) $qty=1;
-		$pu = price2num($pu,'MU');
-		$txtva = price2num($txtva,'MU');
-		
-        dolibarr_syslog("Contrat::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $info_bits");
+        dolibarr_syslog("Contrat::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type, $pu_ttc, $info_bits");
 
         if ($this->statut == 0 || ($this->statut == 1 && $conf->global->CONTRAT_EDITWHENVALIDATED))
         {
-            if ($fk_product > 0)
-            {
-                $prod = new Product($this->db, $fk_product);
-                if ($prod->fetch($fk_product) > 0)
-                {
-                    $label = $prod->libelle;
-					// multiprix
-					if($conf->global->PRODUIT_MULTIPRICES == 1)
-						$pu = $prod->multiprices[$this ->societe->price_level];
-					else
-                    	$pu    = $prod->price;
-                    $txtva = $prod->tva_tx;
-                }
-            }
-            
+        	$this->db->begin();
+        	
+        	// Clean parameters
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			if (! $qty) $qty=1;
+			if (! $ventil) $ventil=0;
+			if (! $info_bits) $info_bits=0;
+			$pu_ht=price2num($pu_ht);
+			$pu_ttc=price2num($pu_ttc);
+			$txtva=price2num($txtva);
+
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
+			}
+			
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
@@ -714,6 +716,7 @@ class Contrat extends CommonObject
             $sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx,";
             $sql.= " remise_percent, subprice,";
 			$sql.= " total_ht, total_tva, total_ttc,";
+			$sql.= " info_bits,";
 			$sql.= " price_ht, remise";								// \TODO A virer
             if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
             if ($date_end > 0)  { $sql.= ",date_fin_validite"; }
@@ -723,20 +726,35 @@ class Contrat extends CommonObject
 			$sql.= " ".$txtva.",";
 			$sql.= " ".price2num($remise_percent).",".price2num($pu).",";
 			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_ttc).",";
+			$sql.= " '".$info_bits."',";
 			$sql.= " ".price2num($price).",".price2num( $remise);	// \TODO A virer
             if ($date_start > 0) { $sql.= ",".$this->db->idate($date_start); }
             if ($date_end > 0) { $sql.= ",".$this->db->idate($date_end); }
             $sql.= ")";
-            
-            if ( $this->db->query($sql) )
+
+            dolibarr_syslog("Contrat::addline sql=".$sql);
+
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
-                $this->update_price();
-                return 1;
+                $result=$this->update_price();
+        		if ($result > 0)
+        		{
+					$this->db->commit();
+					return 1;
+				}
+				else
+        		{
+	        		dolibarr_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
+					$this->db->rollback();
+					return -1;
+				}
             }
             else
             {
-				$this->error=$this->db->error()." sql=".$sql;
-                dolibarr_syslog("Contrat::addline ".$this->error);
+				$this->db->rollback();
+            	$this->error=$this->db->error()." sql=".$sql;
+                dolibarr_syslog("Contrat::addline ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -748,17 +766,17 @@ class Contrat extends CommonObject
     }
 
     /**
-     *      \brief     Mets à jour une ligne de contrat
+     *      \brief     Mets ï¿½ jour une ligne de contrat
      *      \param     rowid            Id de la ligne de facture
      *      \param     desc             Description de la ligne
      *      \param     pu               Prix unitaire
-     *      \param     qty              Quantité
+     *      \param     qty              Quantitï¿½
      *      \param     remise_percent   Pourcentage de remise de la ligne
-     *      \param     date_start       Date de debut prévue
-     *      \param     date_end         Date de fin prévue
+     *      \param     date_start       Date de debut prï¿½vue
+     *      \param     date_end         Date de fin prï¿½vue
      *      \param     tvatx            Taux TVA
-     *      \param     date_debut_reel  Date de debut réelle
-     *      \param     date_fin_reel    Date de fin réelle
+     *      \param     date_debut_reel  Date de debut rï¿½elle
+     *      \param     date_fin_reel    Date de fin rï¿½elle
      *      \return    int              < 0 si erreur, > 0 si ok
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0,
@@ -859,64 +877,20 @@ class Contrat extends CommonObject
 
 
     /**
-     *      \brief      Mets à jour le prix total du contrat
+     *      \brief      Mets a jour le prix total du contrat
      *		\return     int     <0 si ko, >0 si ok
      */
     function update_price()
     {
-        include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
-    
-        /*
-         *  Liste des produits a ajouter
-         */
-        $sql = "SELECT total_ht, total_tva, total_ttc";
-        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet";
-        $sql.= " WHERE fk_contrat = ".$this->id;
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-    
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($resql);
-                $this->total_ht  += $obj->total_ht;
-                $this->total_tva += $obj->total_tva;
-                $this->total_ttc += $obj->total_ttc;
-                $i++;
-            }
-
-	        // Met a jour en base
-			/*
-	        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
-	        $sql .= " total_ht=".  price2num($this->total_ht).",";
-	        $sql .= " total_tva=". price2num($this->total_tva).",";
-	        $sql .= " total_ttc='".price2num($this->total_ttc);
-	        $sql .=" WHERE rowid = ".$this->id;
-	        if ( $this->db->query($sql) )
-	        {
-	            return 1;
-	        }
-	        else
-	        {
-	            $this->error=$this->db->error();
-	            return -1;
-	        }
-			*/
-		}
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
+    	// Function empty because there is no total in contract parent table
+		return 1;
     }
     
 
 	/**
-	 *    	\brief      Retourne le libellé du statut du contrat
-	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-   	 *    	\return     string      	Libellé
+	 *    	\brief      Retourne le libellï¿½ du statut du contrat
+	 *    	\param      mode          	0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+   	 *    	\return     string      	Libellï¿½
    	 */
     function getLibStatut($mode)
     {
@@ -924,10 +898,10 @@ class Contrat extends CommonObject
     }
 
 	/**
-   	 *    	\brief      Renvoi le libellé d'un statut donné
+   	 *    	\brief      Renvoi le libellï¿½ d'un statut donnï¿½
    	 *    	\param      statut      	id statut
-	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-   	 *		\return     string      	Libellé
+	 *    	\param      mode          	0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+   	 *		\return     string      	Libellï¿½
    	 */
     function LibStatut($statut,$mode)
     {
@@ -1021,8 +995,8 @@ class Contrat extends CommonObject
  
  
     /** 
-     *    \brief      Récupère les lignes de detail du contrat
-     *    \param      statut      Statut des lignes detail à récupérer
+     *    \brief      Rï¿½cupï¿½re les lignes de detail du contrat
+     *    \param      statut      Statut des lignes detail ï¿½ rï¿½cupï¿½rer
      *    \return     array       Tableau des lignes de details
      */
     function array_detail($statut=-1)
@@ -1058,7 +1032,7 @@ class Contrat extends CommonObject
     /**
      *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
      *      \param      user        Objet user
-     *      \param      mode        "inactive" pour services à activer, "expired" pour services expirés
+     *      \param      mode        "inactive" pour services ï¿½ activer, "expired" pour services expirï¿½s
      *      \return     int         <0 si ko, >0 si ok
      */
     function load_board($user,$mode)
@@ -1165,7 +1139,7 @@ class ContratLigne
 
 	/**
 	 *      \brief     Constructeur d'objets ligne de contrat
-	 *      \param     DB      handler d'accès base de donnée
+	 *      \param     DB      handler d'accï¿½s base de donnï¿½e
 	 */
     function ContratLigne($DB)
     {
@@ -1179,9 +1153,9 @@ class ContratLigne
     }
     
 	/**
-	 *    \brief      Retourne le libellé du statut du contrat
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto
-   	 *    \return     string      	Libellé
+	 *    \brief      Retourne le libellï¿½ du statut du contrat
+	 *    \param      mode          0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto
+   	 *    \return     string      	Libellï¿½
    	 */
     function getLibStatut($mode)
     {
@@ -1189,10 +1163,10 @@ class ContratLigne
     }
 
 	/**
-   	 *    	\brief      Renvoi le libellé d'un statut donné
+   	 *    	\brief      Renvoi le libellï¿½ d'un statut donnï¿½
    	 *    	\param      statut      id statut
-	 *		\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-   	 *    	\return     string      Libellé
+	 *		\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+   	 *    	\return     string      Libellï¿½
    	 */
     function LibStatut($statut,$mode)
     {
@@ -1237,9 +1211,9 @@ class ContratLigne
     }    
 
     /**
-     *    \brief      Chargement depuis la base des données du contrat
-     *    \param      id      Id du contrat à charger
-     *    \return     int     <0 si ko, id du contrat chargé si ok
+     *    \brief      Chargement depuis la base des donnï¿½es du contrat
+     *    \param      id      Id du contrat ï¿½ charger
+     *    \return     int     <0 si ko, id du contrat chargï¿½ si ok
      */
     function fetch($id)
     {
@@ -1285,7 +1259,7 @@ class ContratLigne
 
 	/**
 	 *      \brief     	Mise a jour en base des champs total_xxx de ligne
-	 *		\remarks	Utilisé par migration
+	 *		\remarks	Utilise par migration
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
 	function update_total()

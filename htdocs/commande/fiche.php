@@ -353,10 +353,15 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		else
 		{
 			$pu_ht=$_POST['pu'];
-			$tva_tx=$_POST['tva_tx'];
+	        $tva_tx=eregi_replace('\*','',$_POST['tva_tx']);
+			$tva_npr=eregi('\*',$_POST['tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
 		}
 
+		$info_bits=0;
+		if ($tva_npr) $info_bits |= 0x01;
+
+		// Insert line
 		$result = $commande->addline(
 			$_POST['id'],
 			$desc,
@@ -365,7 +370,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$tva_tx,
 			$_POST['idprod'],
 			$_POST['remise_percent'],
-			'',
+			$info_bits,
 			'',
 			$price_base_type,
 			$pu_ttc
@@ -395,12 +400,22 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
   $commande = new Commande($db,'',$_POST['id']);
   if (! $commande->fetch($_POST['id']) > 0) dolibarr_print_error($db);
   
-  $result = $commande->updateline($_POST['elrowid'],
+  	// Define info_bits
+	$info_bits=0;
+	if (eregi('\*',$_POST['tva_tx'])) $info_bits |= 0x01;
+
+	// Define vat_rate
+	$vat_rate=$_POST['tva_tx'];
+	$vat_rate=eregi_replace('\*','',$vat_rate);
+  
+  	$result = $commande->updateline($_POST['elrowid'],
 				  $_POST['eldesc'],
 				  $_POST['pu'],
 				  $_POST['qty'],
 				  $_POST['elremise_percent'],
-				  $_POST['tva_tx']
+				  $vat_rate,
+				  'HT',
+				  $info_bits
 				  );
   
   if ($result >= 0)
@@ -1391,7 +1406,7 @@ else
 							print '</td>';
 						}
 
-						print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
+						print '<td align="right">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
 						print '<td align="right">'.price($objp->subprice).'</td>';
 						print '<td align="right">';
 						if (($objp->info_bits & 2) != 2)

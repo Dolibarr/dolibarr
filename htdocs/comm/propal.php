@@ -566,8 +566,8 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$desc=$_POST['dp_desc'];
 		}
 
-		$info_bit=0;
-		if ($tva_npr) $info_bit |= 0x01;
+		$info_bits=0;
+		if ($tva_npr) $info_bits |= 0x01;
 		
 		// Insert line
 		$result=$propal->addline(
@@ -580,7 +580,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$_POST['remise_percent'],
 			$price_base_type,
 			$pu_ttc,
-			$info_bit
+			$info_bits
 		);
 
 		if ($result > 0)
@@ -608,13 +608,22 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
     $propal = new Propal($db);
 	if (! $propal->fetch($_POST['propalid']) > 0) dolibarr_print_error($db);
 
-    $result = $propal->updateline($_POST['lineid'],
+	// Define info_bits
+	$info_bits=0;
+	if (eregi('\*',$_POST['tva_tx'])) $info_bits |= 0x01;
+
+	// Define vat_rate
+	$vat_rate=$_POST['tva_tx'];
+	$vat_rate=eregi_replace('\*','',$vat_rate);
+	
+	$result = $propal->updateline($_POST['lineid'],
     	$_POST['subprice'],
     	$_POST['qty'],
     	$_POST['remise_percent'],
-    	$_POST['tva_tx'],
+    	$vat_rate,
     	$_POST['desc'],
-		'HT');
+		'HT',
+		$info_bits);
 
 	if ($_REQUEST['lang_id'])
 	{

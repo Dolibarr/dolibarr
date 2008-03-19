@@ -352,7 +352,7 @@ class Propal extends CommonObject
 				else
         		{
         			$this->error=$this->db->error();
-	        		dolibarr_syslog("Error sql=$sql, error=".$this->error);
+	        		dolibarr_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
 					$this->db->rollback();
 					return -1;
 				}
@@ -618,83 +618,11 @@ class Propal extends CommonObject
         return $this->id;
     }
 
-    /**
-     *    \brief      Mets � jour le prix total de la proposition
-     *    \return     int     <0 si ko, >0 si ok
-     */
-    function update_price()
-    {
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-
-		$tvas=array();
-		$err=0;
-    	
-		// Liste des lignes a sommer
-		$sql = "SELECT qty, tva_tx, subprice, remise_percent,";
-		$sql.= " total_ht, total_tva, total_ttc, special_code";
-		$sql.= " FROM ".MAIN_DB_PREFIX."propaldet";
-		$sql.= " WHERE fk_propal = ".$this->id;
-
-		dolibarr_syslog("Propal::update_price sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$this->total_ht  = 0;
-	    $this->total_tva = 0;
-	    $this->total_ttc = 0;
-	      	
-	    $num = $this->db->num_rows($result);
-	    $i = 0;
-	    while ($i < $num)
-	    {
-	    	$obj = $this->db->fetch_object($result);
-	    	
-	    	if ($this->special_code != 3)
-	    	{
-	    		$this->total_ht    += $obj->total_ht;
-	    		$this->total_tva   += ($obj->total_ttc - $obj->total_ht);
-	    		$this->total_ttc   += $obj->total_ttc;
-	    		
-	    		$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
-	    	}
-	    	
-	      $i++;
-	    }
-	    
-	    $this->db->free($result);
-
-			// Met a jour indicateurs
-			$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
-	    $sql.= " total_ht=".price2num($this->total_ht).",";
-	    $sql.= " tva=".     price2num($this->total_tva).",";
-	    $sql.= " total=".   price2num($this->total_ttc);
-	    $sql.= " WHERE rowid = ".$this->id;
-
-			dolibarr_syslog("Propal::update_price sql=".$sql);
-	    if ( $this->db->query($sql) )
-	    {
-	    	return 1;
-	    }
-	    else
-	    {
-	    	$this->error=$this->db->error();
-	      dolibarr_syslog("Propal::update_price error=".$this->error);
-	      return -1;
-	    }
-	  }
-	  else
-		{
-			$this->error=$this->db->error();
-			dolibarr_syslog("Propal::update_price error=".$this->error,LOG_ERR);
-			return -1;
-		}		
-	}
-
 
     /**
-     *    	\brief      Recup�re de la base les caract�ristiques d'une propale
-     *    	\param      rowid       id de la propal � r�cup�rer
-     *		\return		int			<0 si ko, 0 si non trouv�, >0 si ok
+     *    	\brief      Recupere de la base les caracteristiques d'une propale
+     *    	\param      rowid       id de la propal a recuperer
+     *		\return		int			<0 si ko, 0 si non trouve, >0 si ok
      */
     function fetch($rowid)
     {

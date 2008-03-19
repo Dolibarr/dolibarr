@@ -186,7 +186,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 		}
 		$ret=$contrat->fetch_client();
 		
-				$date_start='';
+		$date_start='';
 		$date_end='';
 		// Si ajout champ produit libre
 		if ($_POST['mode'] == 'libre')
@@ -261,10 +261,15 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
         else
         {
 	        $pu_ht=$_POST['pu'];
-	        $tva_tx=$_POST['tva_tx'];
+	        $tva_tx=eregi_replace('\*','',$_POST['tva_tx']);
+			$tva_npr=eregi('\*',$_POST['tva_tx'])?1:0;
 	        $desc=$_POST['desc'];
         }
 
+		$info_bits=0;
+		if ($tva_npr) $info_bits |= 0x01;
+       
+		// Insert line
 		$result = $contrat->addline(
                 $desc,
                 $pu_ht,
@@ -275,7 +280,8 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
                 $date_start,
                 $date_end,
 				$price_base_type,
-				$pu_ttc
+				$pu_ttc,
+				$info_bits
                 );
     
 		if ($result > 0)
@@ -717,7 +723,8 @@ else
 			// Area with common detail of line
 			print '<table class="noborder" width="100%">';
 
-			$sql = "SELECT cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty, cd.rowid, cd.tva_tx, cd.remise_percent, cd.subprice,";
+			$sql = "SELECT cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty, cd.rowid,";
+			$sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice,";
 			$sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_debut, ".$db->pdate("cd.date_ouverture")." as date_debut_reelle,";
 			$sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle,";
 			$sql.= " p.ref, p.label";
@@ -763,7 +770,7 @@ else
 						print "<td>".nl2br($objp->description)."</td>\n";
 					}
 					// TVA
-					print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
+					print '<td align="center">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
 					// Prix
 					print '<td align="right">'.price($objp->subprice)."</td>\n";
 					// Quantite
