@@ -1836,14 +1836,14 @@ function vatrate($rate,$foundpercent=false,$info_bits=0)
 		$rate=eregi_replace('%','',$rate);
 		$foundpercent=true;
 	}
-	if (eregi('\*',$rate))
+	if (eregi('\*',$rate) || eregi(MAIN_LABEL_MENTION_NPR,$rate))
 	{
 		$rate=eregi_replace('\*','',$rate);
 		$info_bits |= 1;
 	}
 	
 	$ret=price($rate,0,'',0,0).($foundpercent?'%':'');
-	if ($info_bits & 1) $ret.=' *';
+	if ($info_bits & 1) $ret.=' '.MAIN_LABEL_MENTION_NPR;
 	return $ret;
 }
 

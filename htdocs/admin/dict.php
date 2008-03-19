@@ -22,7 +22,7 @@
 /**
 	    \file       htdocs/admin/dict.php
 		\ingroup    setup
-		\brief      Page d'administration des dictionnaires de données
+		\brief      Page d'administration des dictionnaires de donnï¿½es
 		\version    $Id$
 */
 
@@ -42,8 +42,8 @@ $actl[1] = $langs->trans("Disable");
 
 $active = 1;
 
-// Cette page est une page d'édition générique des dictionnaires de données
-// Mettre ici tous les caractéristiques des dictionnaires
+// Cette page est une page d'ï¿½dition gï¿½nï¿½rique des dictionnaires de donnï¿½es
+// Mettre ici tous les caractï¿½ristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
 $taborder=array(9,0,4,3,2,0,1,8,16,0,5,11,0,6,0,10,12,13,0,14,0,7,0,15);
@@ -66,7 +66,7 @@ $tabname[14]= MAIN_DB_PREFIX."c_ecotaxe";
 $tabname[15]= MAIN_DB_PREFIX."c_paper_format";
 $tabname[16]= MAIN_DB_PREFIX."c_prospectlevel";
 
-// Libellé des dictionnaires
+// Libellï¿½ des dictionnaires
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
 $tablib[2] = $langs->trans("DictionnaryCanton");
 $tablib[3] = $langs->trans("DictionnaryRegion");
@@ -84,7 +84,7 @@ $tablib[14]= $langs->trans("DictionnaryEcotaxe");
 $tablib[15]= $langs->trans("DictionnaryPaperFormat");
 $tablib[16]= $langs->trans("DictionnaryProspectLevel");
 
-// Requete pour extraction des données des dictionnaires
+// Requete pour extraction des donnï¿½es des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, d.fk_region as region_id, r.nom as region, p.libelle as pays, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
 $tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, r.fk_pays as pays_id, p.libelle as pays, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
@@ -138,7 +138,7 @@ $tabfield[14]= "code,libelle,price,organization,pays_id,pays";
 $tabfield[15]= "code,libelle,width,height,unit";
 $tabfield[16]= "code,libelle";
 
-// Nom des champs d'édition pour modification du dictionnaire
+// Nom des champs d'ï¿½dition pour modification du dictionnaire
 $tabfieldvalue[1] = "code,libelle,pays";
 $tabfieldvalue[2] = "code,libelle,region";   // "code,libelle,region"
 $tabfieldvalue[3] = "code,libelle,pays";
@@ -174,7 +174,7 @@ $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
 $tabfieldinsert[16]= "code,label";
 
-// Nom du rowid si le champ n'est pas de type autoincrément
+// Nom du rowid si le champ n'est pas de type autoincrï¿½ment
 $tabrowid[1] = "";
 $tabrowid[2] = "";
 $tabrowid[3] = "";
@@ -217,7 +217,7 @@ $sortfield=$_GET["sortfield"];
 $sortorder=$_GET["sortorder"];
 
 /*
- * Actions ajout ou modification d'une entrée dans un dictionnaire de donnée
+ * Actions ajout ou modification d'une entrï¿½e dans un dictionnaire de donnï¿½e
  */
 if ($_POST["actionadd"] || $_POST["actionmodify"])
 {
@@ -226,7 +226,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
     $listfieldmodify=split(',',$tabfieldinsert[$_POST["id"]]);
     $listfieldvalue=split(',',$tabfieldvalue[$_POST["id"]]);
 
-    // Verifie que tous les champs sont renseignés
+    // Verifie que tous les champs sont renseignï¿½s
     $ok=1;
     foreach ($listfield as $f => $value) {
         if (! isset($_POST[$value]) || $_POST[$value]=='') {
@@ -432,7 +432,7 @@ if ($_GET["id"])
         print $msg.'<br>';
     }
 
-    // Complète requete recherche valeurs avec critere de tri
+    // Complï¿½te requete recherche valeurs avec critere de tri
     $sql=$tabsql[$_GET["id"]];
     if ($_GET["sortfield"])
     {
@@ -471,7 +471,7 @@ if ($_GET["id"])
         foreach ($fieldlist as $field => $value)
         {
             // Determine le nom du champ par rapport aux noms possibles
-            // dans les dictionnaires de données
+            // dans les dictionnaires de donnï¿½es
             $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
             if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
             if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
@@ -482,7 +482,7 @@ if ($_GET["id"])
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; } 
             if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; } 
             if ($fieldlist[$field]=='pays')            { $valuetoshow=$langs->trans("Country"); }
-            if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MENTION_NPR; }
+            if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
             if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
@@ -512,7 +512,7 @@ if ($_GET["id"])
         print '<td colspan="3"><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
         print "</tr>";
 
-        if ($alabelisused)  // Si un des champs est un libellé
+        if ($alabelisused)  // Si un des champs est un libellï¿½
         {
             print '<tr><td colspan="'.(count($fieldlist)+2).'">* '.$langs->trans("LabelUsedByDefault").'.</td></tr>';
         }
@@ -533,7 +533,7 @@ if ($_GET["id"])
             foreach ($fieldlist as $field => $value)
 			{
                 // Determine le nom du champ par rapport aux noms possibles
-                // dans les dictionnaires de données
+                // dans les dictionnaires de donnï¿½es
                 $showfield=1;							  	// Par defaut
 				$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
                 if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
@@ -545,7 +545,7 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*";  }
                 if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
                 if ($fieldlist[$field]=='pays')            { $valuetoshow=$langs->trans("Country"); }
-                if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MENTION_NPR; }
+                if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MAIN_LABEL_MENTION_NPR; }
                 if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
                 if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
                 if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
@@ -603,7 +603,7 @@ if ($_GET["id"])
 					}
 
 					print '<td align="center" nowrap="nowrap">';
-					// Est-ce une entrée du dictionnaire qui peut etre désactivée ?
+					// Est-ce une entrï¿½e du dictionnaire qui peut etre dï¿½sactivï¿½e ?
 					$iserasable=1;  // Oui par defaut
 					if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || eregi('unknown',$obj->code))) $iserasable=0;
 					if ($obj->type && $obj->type == 'system') $iserasable=0;
