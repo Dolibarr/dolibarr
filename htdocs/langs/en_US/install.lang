@@ -126,6 +126,7 @@ RemoveItManuallyAndPressF5ToContinue=Remove it manually and press F5 to continue
 # upgrade
 #########
 MigrationOrder=Data migration for customers' orders
+MigrationSupplierOrder=Data migration for suppliers' orders
 MigrationProposal=Data migration for commercial proposals
 MigrationInvoice=Data migration for customers' invoices
 MigrationContract=Data migration for contracts

@@ -127,6 +127,7 @@ RemoveItManuallyAndPressF5ToContinue=Supprimer le manuellement et appuyez sur F5
 # upgrade
 #########
 MigrationOrder=Migration de données sur les commandes clients
+MigrationSupplierOrder=Migration de données sur les commandes fournisseurs
 MigrationProposal=Migration de données sur les propositions commerciales
 MigrationInvoice=Migration de données sur les factures clients
 MigrationContract=Migration de données sur les contrats
