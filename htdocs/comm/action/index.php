@@ -117,7 +117,7 @@ $day = -date("w",dolibarr_mktime(0,0,0,$month,1,$year))+2;
 if ($day > 1) $day -= 7;
 
 // Show navigation bar
-$param='&amp;userasked='.$fitlera.'&amp;usertodo='.$filtert.'&amp;userdone='.$filterd;
+$param='&amp;userasked='.$filtera.'&amp;usertodo='.$filtert.'&amp;userdone='.$filterd;
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
 $nav.=" <span id=\"month_name\">".dolibarr_print_date(dolibarr_mktime(0,0,0,$month,1,$year),"%b");
 $nav.=" $year";
