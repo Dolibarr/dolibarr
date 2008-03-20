@@ -279,8 +279,9 @@ if ($user->rights->societe->contact->creer)
 		}
 		else {
 			print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
+            print $form->select_societes('','socid','',1); 
 			//print $form->select_societes('','socid','');
-			print $langs->trans("ContactNotLinkedToCompany");
+			//print $langs->trans("ContactNotLinkedToCompany");
 			print '</td></tr>';
 		}
 
