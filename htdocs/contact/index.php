@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      �ric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,6 +146,13 @@ if ($socid)
 {
     $sql .= " AND s.rowid = ".$socid;
 }
+// Count total nb of records 
+$nbtotalofrecords = 0; 
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) 
+{ 
+    $result = $db->query($sql); 
+    $nbtotalofrecords = $db->num_rows($result); 
+} 
 
 if($_GET["view"] == "recent")
 {
@@ -168,7 +175,7 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
 
-    print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
+    print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords); 
 
     print '<form method="post" action="index.php">';
     print '<input type="hidden" name="view" value="'.$view.'">';
@@ -316,7 +323,7 @@ if ($result)
         $i++;
     }
     
-    if ($num > $limit) print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
+    if ($num > $limit) print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$begin.'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num,$nbtotalofrecords); 
     
     print "</table>";
 
