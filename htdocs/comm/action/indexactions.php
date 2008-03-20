@@ -96,27 +96,52 @@ print "</form></table><br>\n";
 $var=true;
 print '<form method="post" action="'.DOL_URL_ROOT.'/comm/action/listactions.php">';
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Calendar").'</td></tr>';
-// All my actions
-$var=!$var;
-print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/comm/action/index.php?filtera='.$user->id.'&amp;filtert='.$user->id.'&amp;filterd='.$user->id.'">';
-print img_picto('','object_calendar').' '.$langs->trans("AllMyActions").'</a></td></tr>';
-// Actions i asked
-$var=!$var;
-print '<tr '.$bc[$var].'><td> &nbsp; &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/comm/action/index.php?filtera='.$user->id.'">';
-print img_picto('','object_calendar').' '.$langs->trans("MyActionsAsked").'</a></td></tr>';
-// Actions affected to me
-$var=!$var;
-print '<tr '.$bc[$var].'><td> &nbsp; &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/comm/action/index.php?filtert='.$user->id.'">';
-print img_picto('','object_calendar').' '.$langs->trans("MyActionsToDo").'</a></td></tr>';
-// Actions done by me
-$var=!$var;
-print '<tr '.$bc[$var].'><td> &nbsp; &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/comm/action/index.php?filterd='.$user->id.'">';
-print img_picto('','object_calendar').' '.$langs->trans("MyActionsDone").'</a></td></tr>';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("ViewWithPredefinedFilters").'</td></tr>';
 // All actions of everybody
 $var=!$var;
-print '<tr '.$bc[$var].'><td><a href="'.DOL_URL_ROOT.'/comm/action/index.php">';
-print img_picto('','object_calendar').' '.$langs->trans("AllActions").'</a></td></tr>';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("AllActions").'</td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">';
+print img_picto($langs->trans("ViewList"),'object_list').'</a></td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/action/index.php">';
+print img_picto($langs->trans("ViewCal"),'object_calendar').'</a></td>';
+print '</tr>';
+// All my actions
+$var=!$var;
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("AllMyActions").'</td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?filter=mine">';
+print img_picto($langs->trans("ViewList"),'object_list').'</a></td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/action/index.php?filter=mine">';
+print img_picto($langs->trans("ViewCal"),'object_calendar').'</a></td>';
+print '</tr>';
+// Actions i asked
+$var=!$var;
+print '<tr '.$bc[$var].'><td> &nbsp; &nbsp; &nbsp; ';
+print $langs->trans("MyActionsAsked").'</td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?filtera='.$user->id.'">';
+print img_picto($langs->trans("ViewList"),'object_list').'</a></td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/action/index.php?filtera='.$user->id.'">';
+print img_picto($langs->trans("ViewCal"),'object_calendar').'</a></td>';
+print '</tr>';
+// Actions affected to me
+$var=!$var;
+print '<tr '.$bc[$var].'><td> &nbsp; &nbsp; &nbsp; ';
+print $langs->trans("MyActionsToDo").'</td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?filtert='.$user->id.'">';
+print img_picto($langs->trans("ViewList"),'object_list').'</a></td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/action/index.php?filtert='.$user->id.'">';
+print img_picto($langs->trans("ViewCal"),'object_calendar').'</a></td>';
+print '</tr>';
+// Actions done by me
+$var=!$var;
+print '<tr '.$bc[$var].'><td> &nbsp; &nbsp; &nbsp; ';
+print $langs->trans("MyActionsDone").'</td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?filterd='.$user->id.'">';
+print img_picto($langs->trans("ViewList"),'object_list').'</a></td>';
+print '<td><a href="'.DOL_URL_ROOT.'/comm/action/index.php?filterd='.$user->id.'">';
+print img_picto($langs->trans("ViewCal"),'object_calendar').'</a></td>';
+print '</tr>';
 print "</table></form><br>\n";
 
 
