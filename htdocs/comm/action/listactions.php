@@ -160,7 +160,15 @@ if ($resql)
 	if ($status == 'done') $title=$langs->trans("DoneActions");
 	if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
-	$param="&status=".$status;
+	$param='';
+	if ($status) $param="&status=".$status;
+	if ($filter) $param.="&filter=".$filter;
+	if ($filtera) $param.="&filtera=".$filtera;
+	if ($filtert) $param.="&filtert=".$filtert;
+	if ($filterd) $param.="&filterd=".$filterd;
+	if ($time) $param.="&time=".$_REQUEST["time"];
+	if ($socid) $param.="&socid=".$_REQUEST["socid"];
+	if ($_GET["type"]) $param.="&type=".$_REQUEST["type"];
 
     if ($socid)
     {

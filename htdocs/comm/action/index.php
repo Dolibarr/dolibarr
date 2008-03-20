@@ -58,8 +58,8 @@ if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')
 	$filterd=$user->id;
 }
 
-$year=isset($_GET["year"])?$_GET["year"]:date("Y");
-$month=isset($_GET["month"])?$_GET["month"]:date("m");
+$year=isset($_REQUEST["year"])?$_REQUEST["year"]:date("Y");
+$month=isset($_REQUEST["month"])?$_REQUEST["month"]:date("m");
 
 
 /*
@@ -116,19 +116,28 @@ $max_day_in_prev_month = date("t",dolibarr_mktime(0,0,0,$prev_month,1,$prev_year
 $day = -date("w",dolibarr_mktime(0,0,0,$month,1,$year))+2;
 if ($day > 1) $day -= 7;
 
+$title=$langs->trans("DoneAndToDoActions");
+if ($status == 'done') $title=$langs->trans("DoneActions");
+if ($status == 'todo') $title=$langs->trans("ToDoActions");
+
+$param='';
+if ($status) $param="&status=".$status;
+if ($filter) $param.="&filter=".$filter;
+if ($filtera) $param.="&filtera=".$filtera;
+if ($filtert) $param.="&filtert=".$filtert;
+if ($filterd) $param.="&filterd=".$filterd;
+if ($time) $param.="&time=".$_REQUEST["time"];
+if ($socid) $param.="&socid=".$_REQUEST["socid"];
+if ($_GET["type"]) $param.="&type=".$_REQUEST["type"];
+
 // Show navigation bar
-$param='&amp;userasked='.$filtera.'&amp;usertodo='.$filtert.'&amp;userdone='.$filterd;
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
 $nav.=" <span id=\"month_name\">".dolibarr_print_date(dolibarr_mktime(0,0,0,$month,1,$year),"%b");
 $nav.=" $year";
 $nav.=" </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 
-$title=$langs->trans("DoneAndToDoActions");
-if ($status == 'done') $title=$langs->trans("DoneActions");
-if ($status == 'todo') $title=$langs->trans("ToDoActions");
-
-print_fiche_titre($title,$nav,'');
+print_fiche_titre($title,$nav,$_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,'',$num);
 
 // Filters
 if ($canedit)
@@ -136,6 +145,8 @@ if ($canedit)
 	print '<form name="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="status" value="'.$status.'">';
 	print '<input type="hidden" name="time" value="'.$_REQUEST["time"].'">';
+	print '<input type="hidden" name="year" value="'.$year.'">';
+	print '<input type="hidden" name="month" value="'.$month.'">';
 	print '<table class="border" width="100%">';
 	print '<tr>';
 	print '<td>';
