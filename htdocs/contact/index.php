@@ -153,14 +153,16 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $result = $db->query($sql); 
     $nbtotalofrecords = $db->num_rows($result); 
 } 
-
+// Add order and limit
 if($_GET["view"] == "recent")
 {
-    $sql .= " ORDER BY p.datec DESC " . $db->plimit( $limit + 1, $offset);
+    $sql.= " ORDER BY p.datec DESC ";
+	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 }
 else
 {
-    $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1, $offset);
+    $sql.= " ORDER BY $sortfield $sortorder ";
+	$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 }
 
 dolibarr_syslog("contact/index.php sql=".$sql);

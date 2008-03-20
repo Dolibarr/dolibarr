@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /** 
         \file       htdocs/adherents/liste.php
         \ingroup    adherent
 		\brief      Page listant les adhérents
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -98,6 +96,14 @@ if ($filter == 'outofdate')
 {
     $sql.=" AND datefin < sysdate()";
 }
+// Count total nb of records 
+$nbtotalofrecords = 0; 
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) 
+{ 
+    $result = $db->query($sql); 
+    $nbtotalofrecords = $db->num_rows($result); 
+} 
+// Add order and limit
 $sql.= " ".$db->order($sortfield,$sortorder);
 $sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 
@@ -130,7 +136,7 @@ if ($result)
     if (isset($_GET["statut"]))     $param.="&statut=".$_GET["statut"];
     if (isset($_GET["search_nom"])) $param.="&search_nom=".$_GET["search_nom"];
     if (isset($_GET["filter"]))     $param.="&filter=".$_GET["filter"];
-    print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
+    print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
     print "<table class=\"noborder\" width=\"100%\">";
 
@@ -255,7 +261,7 @@ if ($result)
 
 	if ($num > $conf->liste_limit)
 	{
-	    print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
+	    print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	}
 }
 else
