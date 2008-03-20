@@ -138,7 +138,7 @@ class InterfaceLdapsynchro
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
-        elseif ($action == 'USER_DISABLE')
+        elseif ($action == 'USER_ENABLEDISABLE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }

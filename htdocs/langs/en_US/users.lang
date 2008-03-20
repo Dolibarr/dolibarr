@@ -90,6 +90,7 @@ NewUserCreated=User %s created
 NewUserPassword=Password change for %s
 EventUserModified=User %s modified
 UserDisabled=User %s disabled
+UserEnabled=User %s activated
 UserDeleted=User %s removed
 NewGroupCreated=Group %s created
 GroupModified=Group %s modified

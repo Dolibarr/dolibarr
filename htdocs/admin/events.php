@@ -44,7 +44,7 @@ $eventstolog=array(
 	array('id'=>'USER_CREATE',            'test'=>1),
 	array('id'=>'USER_MODIFY',            'test'=>1),
 	array('id'=>'USER_NEW_PASSWORD',      'test'=>1),
-	array('id'=>'USER_DISABLE',           'test'=>1),
+	array('id'=>'USER_ENABLEDISABLE',     'test'=>1),
 	array('id'=>'USER_DELETE',            'test'=>1),
 	array('id'=>'GROUP_CREATE',           'test'=>1),
 	array('id'=>'GROUP_MODIFY',           'test'=>1),

@@ -19,14 +19,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     
         \file       htdocs/user/fiche.php
         \brief      Onglet user et permissions de la fiche utilisateur
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -52,7 +50,7 @@ if ($_GET["id"])
 }
 if ($user->id <> $_GET["id"] && ! $canreadperms)
 {
-  accessforbidden();
+	accessforbidden();
 }
 
 $langs->load("users");
@@ -84,10 +82,11 @@ if ($_POST["action"] == 'confirm_disable' && $_POST["confirm"] == "yes")
 {
     if ($_GET["id"] <> $user->id)
     {
-        $edituser = new User($db, $_GET["id"]);
-        $edituser->fetch($_GET["id"]);
+        $edituser = new User($db);
+		$edituser->id=$_GET["id"];
+        $edituser->fetch();
         $edituser->setstatus(0);
-        Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
+		Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
         exit;
     }
 }
@@ -96,7 +95,8 @@ if ($_POST["action"] == 'confirm_enable' && $_POST["confirm"] == "yes")
     if ($_GET["id"] <> $user->id)
     {
         $edituser = new User($db, $_GET["id"]);
-        $edituser->fetch($_GET["id"]);
+		$edituser->id=$_GET["id"];
+        $edituser->fetch();
         $edituser->setstatus(1);
         Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
         exit;

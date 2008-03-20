@@ -585,13 +585,19 @@ class User extends CommonObject
 
     /**
      *      \brief      Change statut d'un utilisateur
-     *      \return     int     <0 si ko, >0 si ok
+     *      \return     int     <0 si ko, >=0 si ok
      */
 	function setstatus($statut)
 	{
 		global $conf,$langs,$user;
 		
 		$error=0;
+		
+		// Check parameters
+		if ($this->statut == $statut)
+		{
+			return 0;
+		}
 		
 		$this->db->begin();
 		
@@ -601,12 +607,13 @@ class User extends CommonObject
 		$sql.= " WHERE rowid = ".$this->id;
 		$result = $this->db->query($sql);
 		
+		dolibarr_syslog("User::setstatus sql=".$sql);
 		if ($result)
 		{
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('USER_DISABLE',$this,$user,$langs,$conf);
+			$result=$interface->run_triggers('USER_ENABLEDISABLE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 		}
@@ -619,6 +626,7 @@ class User extends CommonObject
 		else
 		{
 			$this->db->commit();
+			$this->statut=$statut;
 			return 1;
 		}
 	}

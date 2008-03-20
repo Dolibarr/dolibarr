@@ -149,15 +149,23 @@ class InterfaceLogevents
             $this->texte=$langs->transnoentities("NewUserPassword",$object->login);
             $this->desc=$langs->transnoentities("NewUserPassword",$object->login);
         }
-        elseif ($action == 'USER_DISABLE')
+        elseif ($action == 'USER_ENABLEDISABLE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("UserDisabled",$object->login);
-            $this->desc=$langs->transnoentities("UserDisabled",$object->login);
+			if ($object->statut == 0)
+			{
+				$this->texte=$langs->transnoentities("UserEnabled",$object->login);
+				$this->desc=$langs->transnoentities("UserEnabled",$object->login);
+			}
+			if ($object->statut == 1)
+			{
+				$this->texte=$langs->transnoentities("UserDisabled",$object->login);
+				$this->desc=$langs->transnoentities("UserDisabled",$object->login);
+			}
         }
         elseif ($action == 'USER_DELETE')
         {

@@ -90,6 +90,7 @@ NewUserCreated=Création utilisateur %s
 NewUserPassword=Changement mot de passe de %s
 EventUserModified=Modification utiliateur %s
 UserDisabled=Désactivation utilisateur %s
+UserEnabled=Activation utilisateur %s
 UserDeleted=Suppression utilisateur %s
 NewGroupCreated=Création groupe %s
 GroupModified=Modification groupe %s
