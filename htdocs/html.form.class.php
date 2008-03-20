@@ -2672,9 +2672,9 @@ class Form
     }
 	
 	/**
-			\brief  Fonction servant a afficher une durée dans une liste déroulante
-			\param	prefix   prefix
-			\param  iSecond  Nombre de secondes
+			\brief  	Fonction servant a afficher une durée dans une liste déroulante
+			\param		prefix   	prefix
+			\param  	iSecond  	Nombre de secondes
 	*/
 	function select_duree($prefix,$iSecond='')
 	{
@@ -2683,12 +2683,12 @@ class Form
 			$hourSelected = ConvertSecondToTime($iSecond,'hour');
 			$minSelected = ConvertSecondToTime($iSecond,'min');
 		}
+		
 		print '<select class="flat" name="'.$prefix.'hour">';
-		print "<option value=\"0\">0</option>";
-		for ($hour = 1 ; $hour < 24 ; $hour++)
+		for ($hour = 0; $hour < 24; $hour++)
 		{
 			print '<option value="'.$hour.'"';
-			if ((!$hourSelected && $hour == 1) || ($hourSelected == $hour))
+			if ($hourSelected == $hour || ($iSecond == '' && $hour == 1))
 			{
 				print " selected=\"true\"";
 			}	
@@ -2697,7 +2697,7 @@ class Form
 		print "</select>";
 		print "H &nbsp;";
 		print '<select class="flat" name="'.$prefix.'min">';
-		for ($min = 0 ; $min <= 55 ; $min=$min+5)
+		for ($min = 0; $min <= 55; $min=$min+5)
 		{
 			print '<option value="'.$min.'"';
 			if ($minSelected == $min) print ' selected="true"';

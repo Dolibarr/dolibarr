@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -767,7 +767,7 @@ elseif ($_GET["id"] > 0)
 				$html->select_date($objp->date_intervention,'di',0,0,0,"date_intervention");
 				print '</td>';
 				
-				// Dur�e
+				// Duration
 				print '<td>';
 				$html->select_duree('duration',$objp->duree);
 				print '</td>';
