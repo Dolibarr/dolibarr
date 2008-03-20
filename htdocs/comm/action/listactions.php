@@ -33,9 +33,9 @@ require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 $langs->load("companies");
 $langs->load("agenda");
 
-$filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:'';
-$filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:'';
-$filterd = isset($_REQUEST["userdone"])?$_REQUEST["userdone"]:'';
+$filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:(isset($_REQUEST["filtera"])?$_REQUEST["filtera"]:'');
+$filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:(isset($_REQUEST["filtert"])?$_REQUEST["filtert"]:'');
+$filterd = isset($_REQUEST["userdone"])?$_REQUEST["userdone"]:(isset($_REQUEST["filterd"])?$_REQUEST["filterd"]:'');
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
@@ -76,13 +76,29 @@ if (! $sortfield)
 }
 
 
-llxHeader();
-$form=new Form($db);
+/*
+*	Actions
+*/
+if (! empty($_POST["viewcal"]))
+{
+	$param='';
+	foreach($_POST as $key => $val)
+	{
+		$param.='&'.$key.'='.urlencode($val);
+	}
+	//print $param;
+	header("Location: ".DOL_URL_ROOT.'/comm/action/index.php?'.$param);
+	exit;
+}
+
+
 
 /*
- *  Affichage liste des actions
- *
+ *  View
  */
+
+llxHeader();
+$form=new Form($db);
 
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id, ".$db->pdate("a.datep")." as dp, ".$db->pdate("a.datep2")." as dp2,";
@@ -139,9 +155,11 @@ if ($resql)
     $societestatic=new Societe($db);
     
     $num = $db->num_rows($resql);
-    $title="DoneAndToDoActions";
-    if ($status == 'done') $title="DoneActions";
-    if ($status == 'todo') $title="ToDoActions";
+
+	$title=$langs->trans("DoneAndToDoActions");
+	if ($status == 'done') $title=$langs->trans("DoneActions");
+	if ($status == 'todo') $title=$langs->trans("ToDoActions");
+
 	$param="&status=".$status;
 
     if ($socid)
@@ -149,7 +167,7 @@ if ($resql)
         $societe = new Societe($db);
         $societe->fetch($socid);
 
-        print_barre_liste($langs->trans($title."For",$societe->nom), $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,'',$num);
+        print_barre_liste($langs->trans($title).' '.$langs->trans("For").' '.$societe->nom, $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,'',$num);
     }
     else
     {
@@ -172,7 +190,10 @@ if ($resql)
 		print $form->select_users($filtera,'userasked',1,'',!$canedit);
 		print '</td>';
 		print '<td rowspan="3" align="center" valign="middle">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Search").'" '.($canedit?'':'disabled="true"') .'>';
+		print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'" '.($canedit?'':'disabled="true"') .'>';
+		print '<br>';
+		print '<br>';
+		print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'" '.($canedit?'':'disabled="true"') .'>';
 		print '</td>';
 		print '</tr>';
 

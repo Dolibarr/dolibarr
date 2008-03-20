@@ -236,14 +236,14 @@ function show_actions_todo($conf,$langs,$db,$objsoc)
     {
 		require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 		$actionstatic=new ActionComm($db);
-    $userstatic=new User($db);
-    $contactstatic = new Contact($db);
+		$userstatic=new User($db);
+		$contactstatic = new Contact($db);
     	
 		print_titre($langs->trans("ActionsOnCompany"));
 		
 	    print '<table width="100%" class="noborder">';
 	    print '<tr class="liste_titre">';
-	    print '<td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$objsoc->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
+	    print '<td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$objsoc->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
 	    print '</tr>';
 	
 	    $sql = "SELECT a.id, a.label,";
@@ -373,7 +373,7 @@ function show_actions_done($conf,$langs,$db,$objsoc)
     	
     	print '<table class="noborder" width="100%">';
 	    print '<tr class="liste_titre">';
-	    print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
+	    print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
 	    print '</tr>';
 	
 	    $sql = "SELECT a.id, a.label,";

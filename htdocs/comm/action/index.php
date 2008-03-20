@@ -30,9 +30,9 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 
-$filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:'';
-$filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:'';
-$filterd = isset($_REQUEST["userdone"])?$_REQUEST["userdone"]:'';
+$filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:(isset($_REQUEST["filtera"])?$_REQUEST["filtera"]:'');
+$filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:(isset($_REQUEST["filtert"])?$_REQUEST["filtert"]:'');
+$filterd = isset($_REQUEST["userdone"])?$_REQUEST["userdone"]:(isset($_REQUEST["filterd"])?$_REQUEST["filterd"]:'');
 
 $page = $_GET["page"];
 $sortfield=$_GET["sortfield"];
@@ -65,6 +65,17 @@ $month=isset($_GET["month"])?$_GET["month"]:date("m");
 /*
  * Actions
  */
+if (! empty($_POST["viewlist"]))
+{
+	$param='';
+	foreach($_POST as $key => $val)
+	{
+		$param.='&'.$key.'='.urlencode($val);
+	}
+	//print $param;
+	header("Location: ".DOL_URL_ROOT.'/comm/action/listactions.php?'.$param);
+	exit;
+}
 if ($_GET["action"] == 'builddoc')
 {
 	$cat = new CommActionRapport($db, $_GET["month"], $_GET["year"]);
@@ -112,7 +123,12 @@ $nav.=" <span id=\"month_name\">".dolibarr_print_date(dolibarr_mktime(0,0,0,$mon
 $nav.=" $year";
 $nav.=" </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
-print_fiche_titre($langs->trans("Calendar"),$nav,'');
+
+$title=$langs->trans("DoneAndToDoActions");
+if ($status == 'done') $title=$langs->trans("DoneActions");
+if ($status == 'todo') $title=$langs->trans("ToDoActions");
+
+print_fiche_titre($title,$nav,'');
 
 // Filters
 if ($canedit)
@@ -129,7 +145,10 @@ if ($canedit)
 	print $form->select_users($filtera,'userasked',1,'',!$canedit);
 	print '</td>';
 	print '<td rowspan="3" align="center" valign="middle">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Search").'" '.($canedit?'':'disabled="true"') .'>';
+	print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'" '.($canedit?'':'disabled="true"') .'>';
+	print '<br>';
+	print '<br>';
+	print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'" '.($canedit?'':'disabled="true"') .'>';
 	print '</td>';
 	print '</tr>';
 

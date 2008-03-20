@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/includes/menus/barre_top/rodolphe.php
         \brief      Gestionnaire par d�faut du menu du haut
+		\version	$Id$
         
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
         \remarks    Toutes les entrees de menu e faire apparaitre dans la barre du haut
@@ -56,7 +55,6 @@ class MenuTop {
      */
     function showmenu()
     {
-    
         global $user,$conf,$langs,$dolibarr_main_db_name;
     
         if (! session_id()) {
@@ -324,6 +322,7 @@ class MenuTop {
 				$url.="&idmenu=".$tabMenu[$i]['rowid'];
 				// Define idsel
 				if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
+				elseif (! empty($_GET["mainmenu"]) && $_GET["mainmenu"] == $tabMenu[$i]['mainmenu']) $idsel='id="sel" ';
 				else $idsel='';
         		print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
         	}
