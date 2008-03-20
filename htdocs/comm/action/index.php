@@ -109,7 +109,7 @@ if ($day > 1) $day -= 7;
 $param='&amp;userasked='.$fitlera.'&amp;usertodo='.$filtert.'&amp;userdone='.$filterd;
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
 $nav.=" <span id=\"month_name\">".dolibarr_print_date(dolibarr_mktime(0,0,0,$month,1,$year),"%b");
-$nav.=" <a href=\"?year=".$year."&amp;region=".$region.$param."\">".$year."</a>";
+$nav.=" $year";
 $nav.=" </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 print_fiche_titre($langs->trans("Calendar"),$nav,'');
@@ -244,7 +244,7 @@ for($iter_week = 0; $iter_week < 6 ; $iter_week++)
 			$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
 
 			if ($curtime < $now)
-			$style='cal_past_month';
+			$style='cal_current_month';
 			else if($curtime == $now)
 			$style='cal_today';
 			else
@@ -281,8 +281,10 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray)
 {
 	global $filtera, $filtert, $filted;
 	
-	print '<table class="border" width="100%">';
-	print '<tr><td align="left">'.$day.'</td></tr>';
+	$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
+
+	print '<table class="noborder" width="100%">';
+	print '<tr style="border-bottom: solid 1px #AAAAAA;"><td align="left">'.dolibarr_print_date($curtime,'%a %d').'</td></tr>';
 	print '<tr height="60"><td valign="top">';
 
 	//$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);

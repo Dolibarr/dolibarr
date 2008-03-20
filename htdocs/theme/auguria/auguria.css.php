@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007 Patrick raguin  <patrick.raguin@gmail.com>
+/* Copyright (C) 2007 Patrick raguin      <patrick.raguin@gmail.com>
+ * Copyright (C) 2008 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -977,6 +978,8 @@ margin: 1px 0em 0em 0em;
 padding: 2px;
 }
 
+
+
 /* ============================================================================== */
 /* Admin Menu                                                                       */
 /* ============================================================================== */
@@ -1177,7 +1180,6 @@ cursor: pointer;
 }
 
 
-
 /* ============================================================================== */
 /*  Autre (telephonie)                                                            */
 /* ============================================================================== */
@@ -1197,6 +1199,19 @@ cursor: pointer;
 	background: white;
 	color: black;
 }
+
+
+
+/* ============================================================================== */
+/*  Module agenda                                                                 */
+/* ============================================================================== */
+
+.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; }
+.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; }
+.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; }
+.cal_today         { background: #DDFFDD; border: solid 1px #ACBCBB; }
+
+
 
 /* ============================================================================== */
 /*  Ajax - Liste déroulante de l'autocompletion                                   */

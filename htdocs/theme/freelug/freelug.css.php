@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net> 
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -942,6 +942,7 @@ vertical-align:middle;
 cursor: pointer;
 }
 
+
 /* ============================================================================== */
 /*  Afficher/cacher                                                               */
 /* ============================================================================== */
@@ -962,3 +963,13 @@ td.hidden {
     display: none;
 }
 
+
+
+/* ============================================================================== */
+/*  Module agenda                                                                 */
+/* ============================================================================== */
+
+.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; }
+.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; }
+.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; }
+.cal_today         { background: #DDFFDD; border: solid 1px #ACBCBB; }

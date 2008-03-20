@@ -1139,6 +1139,17 @@ td.hidden {
 
 
 /* ============================================================================== */
+/*  Module agenda                                                                 */
+/* ============================================================================== */
+
+.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; }
+.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; }
+.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; }
+.cal_today         { background: #DDFFDD; border: solid 1px #ACBCBB; }
+
+
+
+/* ============================================================================== */
 /*  Afficher/cacher                                                               */
 /* ============================================================================== */
 
@@ -1203,7 +1214,8 @@ div.autocomplete ul li {
       height:16px;
       cursor:pointer;
     }
-    
+
+	
 /* ============================================================================== */
 /*  Ajax - In place editor                                                        */
 /* ============================================================================== */
@@ -1237,6 +1249,8 @@ form.inplaceeditor-form a { /* The cancel link */
 	background-position : bottom;
 	cursor:pointer;
 }
+
+
     
 /* ============================================================================== */
 /* Admin Menu                                                                     */

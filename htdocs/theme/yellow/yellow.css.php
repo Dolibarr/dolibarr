@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net> 
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file       htdocs/theme/yellow/yellow.css
 		\brief      Fichier de style CSS du theme Yellow
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("../../conf/conf.php");
@@ -867,3 +865,14 @@ color:#222222;
 vertical-align:middle;
 cursor: pointer;
 }
+
+
+
+/* ============================================================================== */
+/*  Module agenda                                                                 */
+/* ============================================================================== */
+
+.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; }
+.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; }
+.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; }
+.cal_today         { background: #DDFFDD; border: solid 1px #ACBCBB; }
