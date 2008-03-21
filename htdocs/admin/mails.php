@@ -85,8 +85,7 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
     if ($sendto)
     {
 		// Le message est-il en html
-		$msgishtml=0;	// Non par defaut
-		//if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
+		$msgishtml=-1;	// Unknown by default
 		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
 
         // Pratique les substitutions sur le sujet et message

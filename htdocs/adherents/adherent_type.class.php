@@ -43,8 +43,8 @@ class AdherentType extends CommonObject
   var $libelle;
   var $statut;
   var $cotisation;  /**< Soumis à la cotisation */
-  var $vote;		/** droit de vote ? */
-  var $commentaire; /**< commentaire */
+  var $vote;		/**< droit de vote ? */
+  var $note; 		/**< commentaire */
   var $mail_valid;	/**< mail envoye lors de la validation */
 
 
@@ -114,7 +114,7 @@ class AdherentType extends CommonObject
       $sql.= "statut=".$this->statut.",";
       $sql.= "libelle = '".addslashes($this->libelle) ."',";
       $sql.= "cotisation='".$this->cotisation."',";
-      $sql.= "note='".addslashes($this->commentaire)."',";
+      $sql.= "note='".addslashes($this->note)."',";
       $sql.= "vote='".$this->vote."',";
       $sql.= "mail_valid='".addslashes($this->mail_valid)."'";
 
@@ -186,7 +186,7 @@ class AdherentType extends CommonObject
 				$this->statut         = $obj->statut;
 				$this->cotisation     = $obj->cotisation;
 				$this->mail_valid     = $obj->mail_valid;
-				$this->commentaire    = $obj->note;
+				$this->note           = $obj->note;
 				$this->vote           = $obj->vote;
 			}
 			return 1;

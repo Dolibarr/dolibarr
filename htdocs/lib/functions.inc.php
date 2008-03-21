@@ -2545,11 +2545,11 @@ function hexbin($hexa){
 function dol_htmlentities($stringtoencode,$htmlinfo=-1)
 {
 	if ($htmlinfo == 1) return $stringtoencode;
-	if ($htmlinfo == 0) return htmlentities($stringtoencode);
+	if ($htmlinfo == 0) return nl2br(htmlentities($stringtoencode));
 	if ($htmlinfo == -1)
 	{
 		if (dol_textishtml($stringtoencode)) return $stringtoencode;
-		else return htmlentities($stringtoencode);
+		else return nl2br(htmlentities($stringtoencode));
 	}
 	return $stringtoencode;
 }

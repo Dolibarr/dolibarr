@@ -144,7 +144,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 			$adh->naiss       = $datenaiss;
 
 			$adh->typeid      = $_POST["type"];
-			$adh->commentaire = $_POST["comment"];
+			$adh->note        = $_POST["comment"];
 			$adh->morphy      = $_POST["morphy"];
 
 			$adh->amount      = $_POST["amount"];
@@ -257,7 +257,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
     $adh->naiss       = $datenaiss;
     $adh->photo       = $photo;
     $adh->typeid      = $type;
-    $adh->commentaire = $comment;
+    $adh->note        = $comment;
     $adh->morphy      = $morphy;
     foreach($_POST as $key => $value){
         if (ereg("^options_",$key)){
@@ -448,7 +448,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 	{
 		if ($adh->email && $_POST["send_mail"])
 		{
-			$result=$adh->send_an_email($conf->global->ADHERENT_MAIL_RESIL,$conf->global->ADHERENT_MAIL_RESIL_SUBJECT,array(),array(),array(),"","",0,2);
+			$result=$adh->send_an_email($conf->global->ADHERENT_MAIL_RESIL,$conf->global->ADHERENT_MAIL_RESIL_SUBJECT,array(),array(),array(),"","",0,-1);
 		}
 		if ($result < 0)
 		{

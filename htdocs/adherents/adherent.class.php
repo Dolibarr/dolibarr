@@ -71,7 +71,7 @@ class Adherent extends CommonObject
 
 	var $morphy;
 	var $public;
-	var $commentaire;		// Note
+	var $note;				// Note
 	var $statut;			// -1:brouillon, 0:resilie, >=1:valide,paye
 	var $photo;
 
@@ -125,7 +125,7 @@ class Adherent extends CommonObject
 		\param 		addr_cc             email cc
 		\param 		addr_bcc            email bcc
 		\param 		deliveryreceipt		demande accuse reception
-		\param		msgishtml			1=message is a html message, 0=message is not html, 2=auto detect
+		\param		msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
 		\return		int					<0 si ko, >0 si ok
 		\remarks		La particularite de cette fonction est de remplacer certains champs
 		\remarks		par leur valeur pour l'adherent en l'occurrence :
@@ -137,10 +137,34 @@ class Adherent extends CommonObject
 	*/
 	function send_an_email($text,$subject,
 					$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
-                    $addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0, $errors_to='')
+                    $addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=-1, $errors_to='')
 	{
 		global $conf,$langs;
 
+		// Detect if message is HTML
+		if ($msgishtml == -1)
+		{
+			$msgishtml = 0;
+			if (dol_textishtml($text,1)) $msgishtml = 1;	
+		}
+
+		$infos='';
+	    $infos.= $langs->trans("Lastname").": $this->nom\n";
+	    $infos.= $langs->trans("Firstname").": $this->prenom\n";
+	    $infos.= $langs->trans("Company").": $this->societe\n";
+	    $infos.= $langs->trans("Address").": $this->adresse\n";
+	    $infos.= $langs->trans("Zip").": $this->cp\n";
+	    $infos.= $langs->trans("Town").": $this->ville\n";
+	    $infos.= $langs->trans("Country").": $this->pays\n";
+	    $infos.= $langs->trans("EMail").": $this->email\n";
+	    $infos.= $langs->trans("Login").": $this->login\n";
+	    $infos.= $langs->trans("Password").": $this->pass\n";
+	    $infos.= $langs->trans("Birthday").": $this->naiss\n";
+	    $infos.= $langs->trans("Photo").": $this->photo\n";
+		$infos.= $langs->trans("Public").": ".yn($this->public)."\n";
+		if ($msgishtml) $infos = dol_htmlentities($infos);
+
+		// Substitutions
 	    $patterns = array (
 		       '/%PRENOM%/',
 		       '/%NOM%/',
@@ -157,30 +181,6 @@ class Adherent extends CommonObject
 		       '/%LOGIN%/',
 		       '/%PASSWORD%/'
 		       );
-	    $infos.= $langs->trans("Lastname").": $this->nom\n";
-	    $infos.= $langs->trans("Firstname").": $this->prenom\n";
-	    $infos.= $langs->trans("Company").": $this->societe\n";
-	    $infos.= $langs->trans("Address").": $this->adresse\n";
-	    $infos.= $langs->trans("Zip").": $this->cp\n";
-	    $infos.= $langs->trans("Town").": $this->ville\n";
-	    $infos.= $langs->trans("Country").": $this->pays\n";
-	    $infos.= $langs->trans("EMail").": $this->email\n";
-	    $infos.= $langs->trans("Login").": $this->login\n";
-	    $infos.= $langs->trans("Password").": $this->pass\n";
-	    $infos.= $langs->trans("Birthday").": $this->naiss\n";
-	    $infos.= $langs->trans("Photo").": $this->photo\n";
-		$infos.= $langs->trans("Public").": ".yn($this->public)."\n";
-
-		// Is it an HTML Content ?
-		$html = $msgishtml;
-		if ($msgishtml == 2)
-		{
-			if (eregi('<html',$text))     $html = 1;
-			elseif (eregi('<body',$text)) $html = 1;
-			elseif (eregi('<br',$text))   $html = 1;
-		}
-		if ($html) $infos = nl2br($infos);
-		
 	    $replace = array (
 		      $this->prenom,
 		      $this->nom,
@@ -207,7 +207,7 @@ class Adherent extends CommonObject
         include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mailfile = new CMailFile($subjectosend,$this->email,$from,$texttosend,
 									$filename_list,$mimetype_list,$mimefilename_list,
-									$addr_cc, $addr_bcc, $deliveryreceipt, $html);
+									$addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml);
         if ($mailfile->sendfile())
         {
             return 1;
@@ -471,7 +471,7 @@ class Adherent extends CommonObject
 		$sql.= ", phone="   .($this->phone?"'".addslashes($this->phone)."'":"null");
 		$sql.= ", phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
 		$sql.= ", phone_mobile=" .($this->phone_mobile?"'".addslashes($this->phone_mobile)."'":"null");
-		$sql.= ", note="    .($this->commentaire?"'".addslashes($this->commentaire)."'":"null");
+		$sql.= ", note="    .($this->note?"'".addslashes($this->note)."'":"null");
 		$sql.= ", photo="   .($this->photo?"'".$this->photo."'":"null");
 		$sql.= ", public="  ."'".$this->public."'";
 		$sql.= ", statut="  .$this->statut;
@@ -559,7 +559,7 @@ class Adherent extends CommonObject
 						$luser->office_phone=$this->phone;
 						$luser->user_mobile=$this->phone_mobile;
 						
-						$luser->note=$this->commentaire;
+						$luser->note=$this->note;
 
 						$luser->fk_member=$this->id;
 
@@ -940,7 +940,7 @@ class Adherent extends CommonObject
                 $this->datevalid      = $obj->datevalid;
                 $this->naiss          = $obj->datenaiss;
 
-                $this->commentaire    = $obj->note;
+                $this->note           = $obj->note;
                 $this->morphy         = $obj->morphy;
 
                 $this->typeid         = $obj->fk_adherent_type;
@@ -1865,7 +1865,7 @@ class Adherent extends CommonObject
 		$this->phone        = '0999999999';
 		$this->phone_perso  = '0999999998';
 		$this->phone_mobile = '0999999997';
-		$this->commentaire='No comment';
+		$this->note='No comment';
 		$this->naiss=time();
 		$this->photo='';
 		$this->public=1;
@@ -1933,7 +1933,7 @@ class Adherent extends CommonObject
 		if ($this->phone_perso && $conf->global->LDAP_FIELD_PHONE_PERSO) $info[$conf->global->LDAP_FIELD_PHONE_PERSO] = $this->phone_perso;
 		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	      $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
-		if ($this->commentaire && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->commentaire;
+		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
 		if ($this->naiss && $conf->global->LDAP_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_FIELD_BIRTHDATE] = dolibarr_print_date($this->naiss,'dayhourldap');
 		if (isset($this->statut) && $conf->global->LDAP_FIELD_MEMBER_STATUS)  $info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
 		if ($this->datefin && $conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)  $info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dolibarr_print_date($this->datefin,'dayhourldap');

@@ -35,6 +35,11 @@
 
 class Don
 {
+	var $db;
+	var $error;
+	var $element='don';
+	var $table_element='don';
+
     var $id;
     var $db;
     var $date;
@@ -51,7 +56,7 @@ class Don
     var $projetid;
     var $modepaiement;
     var $modepaiementid;
-    var $commentaire;
+    var $note;
     var $statut;
     
     var $projet;
@@ -176,7 +181,7 @@ class Don
 		$this->ville = 'Town';
 		$this->note_public='SPECIMEN';
 		$this->email='email@email.com';
-		$this->commentaire='';
+		$this->note='';
 		$this->statut=1;
 	}
 	
@@ -297,7 +302,7 @@ class Don
         {
             $sql .= " $this->projetid,";
         }
-        $sql .= " '$this->commentaire', ".$user->id.", '$this->date','$this->email')";
+        $sql .= " '$this->note', ".$user->id.", '$this->date','$this->email')";
     
         $result = $this->db->query($sql);
         if ($result)
@@ -333,7 +338,7 @@ class Don
         $sql .= ",pays='".$this->pays."'";
         $sql .= ",public=".$this->public;
         if ($this->projetid) {    $sql .= ",fk_don_projet=".$this->projetid; }
-        $sql .= ",note='".$this->commentaire."'";
+        $sql .= ",note='".$this->note."'";
         $sql .= ",datedon='".$this->date."'";
         $sql .= ",email='".$this->email."'";
         $sql .= ",fk_statut=".$this->statut;
@@ -494,35 +499,6 @@ class Don
         }
     }
 
-  /*
-   *    \brief  Défini le commentaire
-   *    \param  rowid           id du don à modifier
-   *    \param  commentaire     commentaire à définir ('' par défaut)
-   *
-   */
-  function set_commentaire($rowid, $commentaire='')
-  {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET note = '$commentaire'";
-
-    $sql .=  " WHERE rowid = $rowid ;";
-
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-      dolibarr_print_error($this->db);
-	  return 0;
-      }    
-  }
 
 	/*
 	 *    \brief  Classe le don comme encaissé

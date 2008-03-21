@@ -772,7 +772,7 @@ class CommonObject
 	{
 		if (! $this->table_element)
 		{
-			dolibarr_syslog("CommonObject::update_note was called on objet with property table_element not defined",LOG_ERR);
+			dolibarr_syslog("CommonObject::update_note was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -780,7 +780,7 @@ class CommonObject
 		$sql.= " SET note = '".addslashes($note)."'";
 		$sql.= " WHERE rowid =". $this->id;
 
-		dolibarr_syslog("CommonObject::update_note sql=".$sql);
+		dolibarr_syslog("CommonObject::update_note sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			$this->note = $note;
@@ -789,6 +789,7 @@ class CommonObject
 		else
 		{
 			$this->error=$this->db->error();
+			dolibarr_syslog("CommonObject::update_note error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

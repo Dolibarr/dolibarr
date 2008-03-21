@@ -66,7 +66,7 @@ if ($_POST["action"] == 'update')
         $don->pays        = $_POST["pays"];
         $don->public      = $_POST["public"];
         $don->projetid    = $_POST["projetid"];
-        $don->commentaire = $_POST["comment"];
+        $don->note        = $_POST["comment"];
         $don->modepaiementid = $_POST["modepaiement"];
 
         if ($don->update($user) > 0)
@@ -101,7 +101,7 @@ if ($_POST["action"] == 'add')
         $don->pays        = $_POST["pays"];
         $don->public      = $_POST["public"];
         $don->projetid    = $_POST["projetid"];
-        $don->commentaire = $_POST["comment"];
+        $don->note        = $_POST["comment"];
         $don->modepaiementid = $_POST["modepaiement"];
 
         if ($don->create($user) > 0)
@@ -127,7 +127,8 @@ if ($_GET["action"] == 'delete')
 if ($_POST["action"] == 'commentaire')
 {
     $don = new Don($db);
-    $don->set_commentaire($_POST["rowid"],$_POST["commentaire"]);
+	$don->fetch($_POST["rowid"]);
+    $don->update_note($_POST["commentaire"]);
     $_GET["rowid"] = $_POST["rowid"];
 }
 if ($_GET["action"] == 'valid_promesse')
@@ -265,7 +266,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
     if ($conf->projet->enabled) $nbrows++;
     
     print '<td rowspan="'.$nbrows.'" valign="top">'.$langs->trans("Comments").' :<br>';
-    print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\">$don->commentaire</textarea></td></tr>";
+    print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\">".$don->note."</textarea></td></tr>";
     
     if ($conf->projet->enabled)
     {
@@ -354,7 +355,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
     if ($conf->projet->enabled) $nbrows++;
     
     print '<td rowspan="'.$nbrows.'" valign="top" width="50%">'.$langs->trans("Comments").' :<br>';
-    print nl2br($don->commentaire).'</td></tr>';
+    print nl2br($don->note).'</td></tr>';
     
     if ($conf->projet->enabled)
     {

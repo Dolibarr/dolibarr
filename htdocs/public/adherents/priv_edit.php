@@ -109,7 +109,7 @@ if ($action == 'update')
 					$adh->note        = $_POST["note"];
 					$adh->pays        = $_POST["pays"];
 					$adh->typeid      = $_POST["type"];
-					$adh->commentaire = $_POST["comment"];
+					$adh->note        = $_POST["comment"];
 					$adh->morphy      = $_POST["morphy"];
 					// recuperation du statut et public
 					$adh->statut      = $_POST["statut"];

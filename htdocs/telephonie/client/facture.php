@@ -88,20 +88,20 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	      if ($_POST["action"] == 'send') {
 		$subject = $langs->trans("Bill")." $fac->ref";
 		$actiontypeid=9;
-		$actionmsg ="Mail envoyé par $from à $sendto.<br>";
+		$actionmsg ="Mail envoyé par ".$from." à ".$sendto.".\n";
 		if ($message) {
-		  $actionmsg.="Texte utilisé dans le corps du message:<br>";
-		  $actionmsg.="$message";
+		  $actionmsg.="Texte utilisé dans le corps du message:\n";
+		  $actionmsg.=$message;
 		}
 		$actionmsg2="Envoi facture par mail";
 	      }
 	      if ($_POST["action"] == 'relance') 	{
 		$subject = "Relance facture $fac->ref";
 		$actiontypeid=9;
-		$actionmsg="Mail envoyé par $from à $sendto.<br>";
+		$actionmsg="Mail envoyé par ".$from." à ".$sendto.".\n";
 		if ($message) {
-		  $actionmsg.="Texte utilisé dans le corps du message:<br>";
-		  $actionmsg.="$message";
+		  $actionmsg.="Texte utilisé dans le corps du message:\n";
+		  $actionmsg.=$message;
 		}
 		$actionmsg2="Relance facture par mail";
 	      }

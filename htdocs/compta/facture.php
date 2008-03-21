@@ -1007,11 +1007,11 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 					}
 
 					$actiontypecode='AC_FAC';
-					$actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
+					$actionmsg ="Mail envoyé par ".$from." à ".$sendto.".\n";
 
 					if ($message)
 					{
-						$actionmsg.='Texte utilisé dans le corps du message:<br>';
+						$actionmsg.="Texte utilisé dans le corps du message:\n";
 						$actionmsg.=$message;
 					}
 
@@ -1021,9 +1021,9 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 				{
 					$subject = 'Relance facture '.$fac->ref;
 					$actiontypecode='AC_FAC';
-					$actionmsg='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
+					$actionmsg="Mail envoyé par ".$from." à ".$sendto.".\n";
 					if ($message) {
-						$actionmsg.='Texte utilisé dans le corps du message:<br>';
+						$actionmsg.="Texte utilisé dans le corps du message:\n";
 						$actionmsg.=$message;
 					}
 					$actionmsg2='Relance facture par mail';

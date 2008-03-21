@@ -379,7 +379,7 @@ if ($_GET["action"] == 'create')
 		}
 		print '</td></tr>';
 
-		// Si la societe est imposee, on propose ces contacts
+		// Si la societe est imposee, on propose ses contacts
 		if ($_REQUEST["socid"])
 		{
 			$contactid = $_REQUEST["contactid"]?$_REQUEST["contactid"]:'';
@@ -440,7 +440,7 @@ if ($_GET["action"] == 'create')
 	    }
 	    else
 	    {
-			print '<textarea name="note" cols="90" rows="'.ROWS_8.'">'.$societe->note.'</textarea>';
+			print '<textarea name="note" cols="90" rows="'.ROWS_8.'"></textarea>';
 	    }
 		print '</td></tr>';
 
@@ -704,7 +704,7 @@ if ($_GET["id"])
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
 		if ($conf->fckeditor->enabled)
 	    {
-		    // Editeur wysiwyg
+			// Editeur wysiwyg
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 			$doleditor=new DolEditor('note',$act->note,280,'dolibarr_notes','In',true);
 			$doleditor->Create();
@@ -785,7 +785,7 @@ if ($_GET["id"])
         print $act->getLibStatut(4);
         print '</td></tr>';
 
-		// Objet li�
+		// Objet lie
         if ($act->objet_url)
         {
             print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -794,8 +794,7 @@ if ($_GET["id"])
 
         // Note
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-		if ($conf->fckeditor->enabled) print nl2br($act->note);
-		else print nl2br(htmlentities($act->note));
+		print dol_htmlentities($act->note);
         print '</td></tr>';
 
         print '</table>';

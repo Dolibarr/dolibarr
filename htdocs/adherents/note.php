@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/adherents/note.php
         \ingroup    member
         \brief      Fiche de notes sur un adherent
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -116,17 +113,17 @@ if ($id)
 	    {
 		    // Editeur wysiwyg
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$adh->commentaire,280,'dolibarr_notes','In',true);
+			$doleditor=new DolEditor('note',$adh->note,280,'dolibarr_notes','In',true);
 			$doleditor->Create();
 	    }
 	    else
 	    {
-			print '<textarea name="note" cols="80" rows="10">'.$adh->commentaire.'</textarea>';
+			print '<textarea name="note" cols="80" rows="10">'.$adh->note.'</textarea>';
 	    }
 	}
 	else
 	{
-		print nl2br($adh->commentaire);
+		print nl2br($adh->note);
 	}
 	print "</td></tr>";
 

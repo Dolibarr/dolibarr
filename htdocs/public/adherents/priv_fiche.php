@@ -57,7 +57,7 @@ if ($rowid > 0)
   print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
 
   print '<td rowspan="13" valign="top" width="50%">';
-  print nl2br($adh->commentaire).'&nbsp;</td></tr>';
+  print nl2br($adh->note).'&nbsp;</td></tr>';
 
   print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
 

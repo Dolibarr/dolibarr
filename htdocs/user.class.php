@@ -1033,7 +1033,7 @@ class User extends CommonObject
 						$adh->phone=$this->office_phone;
 						$adh->phone_mobile=$this->user_mobile;
 						
-						$adh->commentaire=$this->note;
+						$adh->note=$this->note;
 
 						$adh->user_id=$this->id;
 						$adh->user_login=$this->login;

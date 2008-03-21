@@ -94,8 +94,7 @@ if ($_POST["action"] == 'sendallconfirmed')
 				$errorsto = $obj->email_errorsto;
 
 				// Le message est-il en html
-				$msgishtml=0;	// Non par defaut
-				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
+				$msgishtml=-1;	// Unknown by default
 				if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
 				
 				$i++;
@@ -250,15 +249,13 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
         $arr_name = array();
 
 		// Le message est-il en html
-		$msgishtml=0;	// Non par defaut
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
+		$msgishtml=-1;	// Inconnu par defaut
 		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
 
         // Pratique les substitutions sur le sujet et message
 		$mil->sujet=make_substitutions($mil->sujet,$substitutionarrayfortest);
 		$mil->body=make_substitutions($mil->body,$substitutionarrayfortest);
 		
-        require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body,
         							$arr_file,$arr_mime,$arr_name,
         							'', '', 0, $msgishtml);
@@ -434,7 +431,7 @@ if ($_GET["action"] == 'create')
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
     {
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('body',$objp->description,320,'dolibarr_mailings','',true,false);
+		$doleditor=new DolEditor('body','',320,'dolibarr_mailings','',true,false);
 		$doleditor->Create();
     }
     else

@@ -202,7 +202,7 @@ if ($result >= 0)
 			$member->phone_mobile=$ldapuser[$conf->global->LDAP_FIELD_MOBILE];
 			$member->email=$ldapuser[$conf->global->LDAP_FIELD_MAIL];
 
-			$member->commentaire=$ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION];
+			$member->note=$ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION];
 			$member->morphy='phy';
 			$member->photo='';
 			$member->public=1;

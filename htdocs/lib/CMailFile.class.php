@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 /**
 *       \class      CMailFile
 *       \brief      Classe d'envoi de mails et pieces jointes. Encapsule mail() avec d'eventuels attachements.
-*       \remarks    Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc);
+*       \remarks    Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to);
 *       \remarks           $mailfile->sendfile();
 */
 class CMailFile
@@ -67,11 +67,11 @@ class CMailFile
             \param 	addr_cc             email cc
             \param 	addr_bcc            email bcc
             \param 	deliveryreceipt		demande accuse reception
-            \param	msgishtml			1=message is a html message, 0=message is not html, 2=auto detect
+            \param	msgishtml			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
     */
     function CMailFile($subject,$to,$from,$msg,
                        $filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
-                       $addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0, $errors_to='')
+                       $addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='')
     {
         dolibarr_syslog("CMailFile::CMailfile: from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to");
         dolibarr_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml");
@@ -92,8 +92,8 @@ class CMailFile
 		if (eregi('^win',PHP_OS)) $this->eol="\r\n";
 		if (eregi('^mac',PHP_OS)) $this->eol="\r";
 
-		// On defini si message HTML
-		if ($msgishtml == 2)
+		// Detect if message is HTML
+		if ($msgishtml == -1)
 		{
 			$this->msgishtml = 0;
 			if (dol_textishtml($msg,1)) $this->msgishtml = 1;	

@@ -96,8 +96,7 @@ if ($resql)
 		$errorsto = $obj->email_errorsto;
 
 		// Le message est-il en html
-		$msgishtml=0;	// Non par defaut
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
+		$msgishtml=-1;	// Inconnu par defaut
 		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
 		
 		$i++;

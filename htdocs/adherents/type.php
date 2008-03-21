@@ -45,7 +45,7 @@ if ($user->rights->adherent->configurer && $_POST["action"] == 'add')
           
         $adht->libelle     = trim($_POST["libelle"]);
         $adht->cotisation  = trim($_POST["cotisation"]);
-        $adht->commentaire = trim($_POST["comment"]);
+        $adht->note        = trim($_POST["comment"]);
         $adht->mail_valid  = trim($_POST["mail_valid"]);
         $adht->vote        = trim($_POST["vote"]);
 
@@ -79,7 +79,7 @@ if ($user->rights->adherent->configurer && $_POST["action"] == 'update')
         $adht->id          = $_POST["rowid"];
         $adht->libelle     = trim($_POST["libelle"]);
         $adht->cotisation  = trim($_POST["cotisation"]);
-        $adht->commentaire = trim($_POST["comment"]);
+        $adht->note        = trim($_POST["comment"]);
         $adht->mail_valid  = trim($_POST["mail_valid"]);
         $adht->vote        = trim($_POST["vote"]);
         
@@ -101,7 +101,8 @@ if ($user->rights->adherent->configurer && $_GET["action"] == 'delete')
 if ($user->rights->adherent->configurer && $_GET["action"] == 'commentaire')
 {
 	$don = new Don($db);
-	$don->set_commentaire($rowid,$_POST["commentaire"]);
+	$don->fetch($rowid);
+	$don->update_note($_POST["commentaire"]);
 }
 
 
@@ -278,7 +279,7 @@ if ($rowid > 0)
         print '</tr>';
         
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-        print nl2br($adht->commentaire)."</td></tr>";
+        print nl2br($adht->note)."</td></tr>";
         
         print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
         print nl2br($adht->mail_valid)."</td></tr>";
@@ -348,7 +349,7 @@ if ($rowid > 0)
         print '</td></tr>';
         
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-        print "<textarea name=\"comment\" wrap=\"soft\" cols=\"90\" rows=\"3\">".$adht->commentaire."</textarea></td></tr>";
+        print "<textarea name=\"comment\" wrap=\"soft\" cols=\"90\" rows=\"3\">".$adht->note."</textarea></td></tr>";
         
         print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
 		if ($conf->fckeditor->enabled)

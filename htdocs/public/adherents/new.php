@@ -104,7 +104,7 @@ if ($_POST["action"] == 'add')
 		$adh->note        = $_POST["note"];
 		$adh->pays        = $_POST["pays"];
 		$adh->typeid      = $_POST["type"];
-		$adh->commentaire = $_POST["comment"];
+		$adh->note        = $_POST["comment"];
 		$adh->morphy      = $_POST["morphy"];
 		
 		foreach($_POST as $key => $value){

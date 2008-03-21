@@ -41,7 +41,7 @@ if ($conf->don->enabled)
     }
   $don->email       = $_POST["email"];
   $don->amount      = $_POST["montant"];
-  $don->commentaire = $_POST["commentaire"];
+  $don->note        = $_POST["commentaire"];
   
 
   if ($_POST["action"] == 'add')

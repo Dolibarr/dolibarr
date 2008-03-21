@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/lib/doleditor.class.php
         \brief      Classe permettant de gérer FCKEditor
-        \version    $Revision$
+        \version    $Id$
 */
 
 /**
@@ -56,8 +53,11 @@ class DolEditor
     	global $conf,$langs;
     	
     	dolibarr_syslog("DolEditor::DolEditor modulepart=".$modulepart);
-
+		
     	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
+
+		$content=dol_htmlentities($content);	// If content is not HTML, we convert to HTML.
+		
     	$this->editor = new FCKeditor($htmlname);
     	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;
     	$this->editor->Value	= $content;
