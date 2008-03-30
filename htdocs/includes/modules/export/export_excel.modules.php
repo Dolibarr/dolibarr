@@ -104,18 +104,26 @@ class ExportExcel extends ModeleExports
     }
 
 
+    /**
+	*	\brief		Open output file
+	*	\param		file		Path of filename
+	*	\return		int			<0 if KO, >=0 if OK
+	*/
     function open_file($file)
     {
         global $langs;
+        dolibarr_syslog("ExportExcel::open_file file=".$file);
+
+		$ret=1;
+		
         $langs->load("exports");
-        dolibarr_syslog("ExportExcel::open_file file=$file");
         $this->workbook = &new writeexcel_workbookbig($file);
         $this->workbook->set_sheetname($langs->trans("Sheet"));
         $this->worksheet = &$this->workbook->addworksheet();
 
         // $this->worksheet->set_column(0, 50, 18);
 
-        return 0;
+        return $ret;
     }
 
 

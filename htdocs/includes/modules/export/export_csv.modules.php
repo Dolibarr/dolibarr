@@ -97,11 +97,28 @@ class ExportCsv extends ModeleExports
     }
 
 
-    function open_file($file)
+    /**
+	*	\brief		Open output file
+	*	\param		file		Path of filename
+	*	\return		int			<0 if KO, >=0 if OK
+	*/
+	function open_file($file)
     {
-        dolibarr_syslog("ExportCsv::open_file file=$file");
-        $this->handle = fopen($file, "wt");
-        return 0;
+        global $langs;
+        dolibarr_syslog("ExportCsv::open_file file=".$file);
+
+		$ret=1;
+		
+        $langs->load("exports");
+		$this->handle = fopen($file, "wt");
+        if (! $this->handle)
+		{
+			$langs->load("errors");
+			$this->error=$langs->trans("ErrorFailToCreateFile",$file);
+			$ret=-1;
+		}
+		
+		return $ret;
     }
 
 

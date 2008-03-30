@@ -187,16 +187,6 @@ class Export
             else $i++;
 			$newfield=$key.' as '.$value;
 
-			// Cas particulier
-/*            if ($this->array_export_module[$indice]->name == 'Banque')
-			{
-				// Cas special du debit et credit
-				if ($value=='credit' || $value=='debit')
-				{
-					$newfield='IF('.$key.'>0,'.$key.',NULL) as '.$value;
-				}
-			}
-*/
 			$sql.=$newfield;
         }
         $sql.=$this->array_export_sql_end[$indice];
@@ -213,49 +203,57 @@ class Export
 
             // Open file
             create_exdir($dirname);
-            $objmodel->open_file($dirname."/".$filename);
+            $result=$objmodel->open_file($dirname."/".$filename);
 
-            // Genere en-tete
-            $objmodel->write_header($langs);
-
-            // Genere ligne de titre
-            $objmodel->write_title($this->array_export_fields[$indice],$array_selected,$langs);
-
-			while ($objp = $this->db->fetch_object($resql))
+			if ($result >= 0)
 			{
-				$var=!$var;
-                
-				// Process special operations
-				if (! empty($this->array_export_special[$indice]))
+	            // Genere en-tete
+	            $objmodel->write_header($langs);
+
+	            // Genere ligne de titre
+	            $objmodel->write_title($this->array_export_fields[$indice],$array_selected,$langs);
+
+				while ($objp = $this->db->fetch_object($resql))
 				{
-			        foreach ($this->array_export_special[$indice] as $key => $value)
-			        {
-						if (! array_key_exists($key, $array_selected)) continue;		// Field not selected
-						// Operation NULLIFNEG
-						if ($this->array_export_special[$indice][$key]=='NULLIFNEG')
-						{
-							$alias=$this->array_export_alias[$indice][$key];
-							if ($objp->$alias < 0) $objp->$alias='';
-						}
-						// Operation ZEROIFNEG
-						if ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
-						{
-							$alias=$this->array_export_alias[$indice][$key];
-							if ($objp->$alias < 0) $objp->$alias='0';
+					$var=!$var;
+	                
+					// Process special operations
+					if (! empty($this->array_export_special[$indice]))
+					{
+				        foreach ($this->array_export_special[$indice] as $key => $value)
+				        {
+							if (! array_key_exists($key, $array_selected)) continue;		// Field not selected
+							// Operation NULLIFNEG
+							if ($this->array_export_special[$indice][$key]=='NULLIFNEG')
+							{
+								$alias=$this->array_export_alias[$indice][$key];
+								if ($objp->$alias < 0) $objp->$alias='';
+							}
+							// Operation ZEROIFNEG
+							if ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
+							{
+								$alias=$this->array_export_alias[$indice][$key];
+								if ($objp->$alias < 0) $objp->$alias='0';
+							}
 						}
 					}
-				}
-				// end of special operation processing
-				
-				$objmodel->write_record($this->array_export_alias[$indice],$array_selected,$objp);
-            }
-            
-            // Genere en-tete
-            $objmodel->write_footer($langs);
-            
-            // Close file
-            $objmodel->close_file();
-            
+					// end of special operation processing
+					
+					$objmodel->write_record($this->array_export_alias[$indice],$array_selected,$objp);
+	            }
+	            
+	            // Genere en-tete
+	            $objmodel->write_footer($langs);
+	            
+	            // Close file
+	            $objmodel->close_file();
+			}
+			else
+			{
+	            $this->error=$objmodel->error;
+	            dolibarr_syslog("Error: ".$this->error);
+	            return -1;
+			}
         }
         else
         {

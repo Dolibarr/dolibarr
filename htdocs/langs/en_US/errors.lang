@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - errors
 ErrorDuplicateTrigger=A trigger file with class nam '<b>%s</b>' is present sevaral times. Remove duplicate trigger file in directory '<b>%s</b>'.
 ErrorFailToDeleteFile=Failed to remove file '<b>%s</b>'.
+ErrorFailToCreateFile=Failed to create file '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=This contact is already defined as contact for this type.
 ErrorCashAccountAcceptsOnlyCashMoney=This bank account is a cash account, so it accepts payments of type cash only.
 ErrorFromToAccountsMustDiffers=Source and targets bank accounts must be different.
