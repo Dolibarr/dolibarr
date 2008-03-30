@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -39,6 +40,7 @@ create table llx_socpeople
   fax            varchar(30),
   email          varchar(255),
   jabberid       varchar(255),
+  priv           smallint NOT NULL DEFAULT 0,
   fk_user_creat  integer DEFAULT 0, -- user qui a créé l'enregistrement
   fk_user_modif  integer,
   note           text

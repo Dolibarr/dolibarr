@@ -40,8 +40,10 @@ $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_prenom=isset($_GET["search_prenom"])?$_GET["search_prenom"]:$_POST["search_prenom"];
 $search_societe=isset($_GET["search_societe"])?$_GET["search_societe"]:$_POST["search_societe"];
 $search_email=isset($_GET["search_email"])?$_GET["search_email"]:$_POST["search_email"];
+$search_priv=isset($_GET["search_priv"])?$_GET["search_priv"]:(isset($_POST["search_priv"])?$_POST["search_priv"]:'');
 
 $type = isset($_GET["type"])?$_GET["type"]:$_POST["type"];
+
 $view=isset($_GET["view"])?$_GET["view"]:$_POST["view"];
 
 $sall=isset($_GET["contactname"])?$_GET["contactname"]:$_POST["contactname"];
@@ -71,9 +73,13 @@ if ($type == "f") {
 	$titre=$langs->trans("ListOfContacts").' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche="fiche.php";
 }
-if ($view == 'phone')  { $text="( Vue T�l�phones)"; }
+if ($type == "o") {
+	$titre=$langs->trans("ListOfContacts").' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
+	$urlfiche="";
+}
+if ($view == 'phone')  { $text="( Vue Telephones)"; }
 if ($view == 'mail')   { $text=" (Vue EMail)"; }
-if ($view == 'recent') { $text=" (R�cents)"; }
+if ($view == 'recent') { $text=" (Recents)"; }
 $titre = $titre." $text";
 
 if ($_POST["button_removefilter"])
@@ -82,9 +88,10 @@ if ($_POST["button_removefilter"])
     $search_prenom="";
     $search_societe="";
     $search_email="";
+    $search_priv="";
     $sall="";
 }
-
+if ($search_priv < 0) $search_priv='';
 
 
 
@@ -95,8 +102,10 @@ if ($_POST["button_removefilter"])
  
 llxHeader();
 
+$form=new Form($db);
+
 $sql = "SELECT s.rowid as socid, s.nom, ";
-$sql.= " p.rowid as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax,";
+$sql.= " p.rowid as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax, p.priv,";
 $sql.= " ".$db->pdate("p.tms")." as tms";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
@@ -106,10 +115,22 @@ if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND IFNULL(sc.fk_user, ".$user->id.") = " .$user->id;
 }
-if ($_GET["userid"])    // statut commercial
+if ($_GET["userid"])    // propre au commercial
 {
     $sql .= " AND p.fk_user_creat=".$_GET["userid"];
 }
+
+// Filter to exclude not owned private contacts
+if ($search_priv != '0' && $search_priv != '1')
+{
+	$sql .= " AND (p.priv='0' OR (p.priv='1' AND p.fk_user_creat=".$user->id."))";
+}
+else
+{
+	if ($search_priv == '0') $sql .= " AND p.priv='0'";
+	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
+}
+
 if ($search_nom)        // filtre sur le nom
 {
     $sql .= " AND p.name like '%".addslashes($search_nom)."%'";
@@ -125,6 +146,10 @@ if ($search_societe)    // filtre sur la societe
 if ($search_email)      // filtre sur l'email
 {
     $sql .= " AND p.email like '%".addslashes($search_email)."%'";
+}
+if ($type == "o")        // filtre sur type
+{
+    $sql .= " AND p.fk_soc IS NULL";
 }
 if ($type == "f")        // filtre sur type
 {
@@ -167,7 +192,6 @@ else
 
 dolibarr_syslog("contact/index.php sql=".$sql);
 $result = $db->query($sql);
-
 if ($result)
 {
 	$contactstatic=new Contact($db);
@@ -191,13 +215,15 @@ if ($result)
         print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname")." ".$langs->trans("or")." ".$langs->trans("EMail")."): ".$sall;
     }
 
+	$param="&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email";
+	if ($search_priv == '0' || $search_priv == '1') $param.="&search_priv=$search_priv";
+
     // Ligne des titres
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", '', $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", '', $sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", '', $sortfield,$sortorder);
-    print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
-
+    print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, $param, '', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Phone"),"index.php","p.phone", $begin, $param, '', $sortfield,$sortorder);
     if ($_GET["view"] == 'phone')
     {
         print '<td class="liste_titre">'.$langs->trans("Mobile").'</td>';
@@ -205,22 +231,23 @@ if ($result)
     }
     else
     {
-        print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, $param, '', $sortfield,$sortorder);
     }
-    print_liste_field_titre($langs->trans("DateModification"),"index.php","p.tms", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", 'align="center"', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateModification"),"index.php","p.tms", $begin, $param, 'align="center"', $sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ContactVisibility"),"index.php","p.priv", $begin, $param, 'align="center"', $sortfield,$sortorder);
     print '<td class="liste_titre">&nbsp;</td>';
     print "</tr>\n";
 
     // Ligne des champs de filtres
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
+    print '<input class="flat" type="text" name="search_nom" size="10" value="'.$search_nom.'">';
     print '</td>';
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_prenom" size="10" value="'.$search_prenom.'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input class="flat" type="text" name="search_societe" size="14" value="'.$search_societe.'">';
+    print '<input class="flat" type="text" name="search_societe" size="10" value="'.$search_societe.'">';
     print '</td>';
     if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
     {
@@ -246,6 +273,10 @@ if ($result)
     }
 
 	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">';
+	$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
+	$form->select_array('search_priv',$selectarray,$search_priv,1);
+	print '</td>';
     print '<td class="liste_titre" align="right">';
     print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
     print '&nbsp; <input type="image" value="button_removefilter" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
@@ -315,6 +346,9 @@ if ($result)
 		// Date
 		print '<td align="center">'.dolibarr_print_date($obj->tms,"day").'</td>';
 				
+		// Private/Public
+		print '<td align="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+
 		// Link export vcard
         print '<td align="right">';
         print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';

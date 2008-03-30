@@ -238,3 +238,5 @@ update llx_rights_def set module='societe' where module='commercial' and perms='
 
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (25, 'Impots revenus',         0,1,'TAXREV');
 
+alter table llx_socpeople add   priv           smallint NOT NULL DEFAULT 0 after jabberid;
+

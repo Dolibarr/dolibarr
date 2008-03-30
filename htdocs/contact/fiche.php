@@ -98,6 +98,7 @@ if ($user->rights->societe->contact->creer)
     $contact->phone_mobile = $_POST["phone_mobile"];
     $contact->fax          = $_POST["fax"];
     $contact->jabberid     = $_POST["jabberid"];
+    $contact->priv         = $_POST["priv"];
 
     $contact->note         = $_POST["note"];
 
@@ -167,6 +168,7 @@ if ($user->rights->societe->contact->creer)
 		$contact->phone_mobile  = $_POST["phone_mobile"];
 		$contact->fax           = $_POST["fax"];
 		$contact->jabberid      = $_POST["jabberid"];
+		$contact->priv          = $_POST["priv"];
 	
 		$contact->note          = $_POST["note"];
 	
@@ -307,10 +309,19 @@ if ($user->rights->societe->contact->creer)
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
 		print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
 
+		// EMail
 		print '<tr><td>'.$langs->trans("Email").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
 
+		// Jabberid
 		print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
+		// Visibility
+		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
+		$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
+		$form->select_array('priv',$selectarray,$contact->priv,0);
+		print '</td></tr>';
+		
+		// Note
 		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3" valign="note"><textarea name="note" cols="70" rows="'.ROWS_3.'">'.$contact->note.'</textarea></td></tr>';
 
 		print '<tr><td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
@@ -392,7 +403,14 @@ if ($user->rights->societe->contact->creer)
 		}
 		print '</tr>';
 
+		// Jabberid
 		print '<tr><td>Jabberid</td><td colspan="3"><input name="jabberid" type="text" size="40" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
+
+		// Visibility
+		print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
+		$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
+		$form->select_array('priv',$selectarray,$contact->priv,0);
+		print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
 		print '<textarea name="note" cols="70" rows="'.ROWS_3.'">';
@@ -530,8 +548,13 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	}
 	print '</tr>';
 
+	// Jabberid
 	print '<tr><td>Jabberid</td><td colspan="3">'.$contact->jabberid.'</td></tr>';
 
+	print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
+	print $contact->LibPubPriv($contact->priv);
+	print '</td></tr>';
+	
 	print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
 	print nl2br($contact->note);
 	print '</td></tr>';
@@ -592,7 +615,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 			print '<a class="butAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 		}
 
-		if (! $contact->user_id && $user->rights->user->user->creer && $contact->socid > 0)
+		if (! $contact->user_id && $user->rights->user->user->creer)
 		{
 			print '<a class="butAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
 		}

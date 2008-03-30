@@ -89,6 +89,7 @@ select.flat
 {
 	font-size: 12px;
     font-family: helvetica, verdana, arial, sans-serif;
+	font-weight: normal;
     border: 1px solid #cccccc;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;

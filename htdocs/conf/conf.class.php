@@ -65,6 +65,8 @@ class Conf
 	var $propal;
 	var $categorie;
 	var $oscommerce2;
+	var $css;
+	var $css_modules=array();
 
 
 	/**
@@ -100,6 +102,8 @@ class Conf
 				{
 					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE during install)
 					$this->global->$key=$value;
+					// If this is constant for a css file activated by a module
+					if (eregi('MAIN_MODULE_([A-Z_]+)_CSS',$key)) $this->css_modules[]=$value;
 				}
 				$i++;
 			}

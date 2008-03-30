@@ -653,7 +653,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 {
 	global $user, $conf, $langs, $db;
 	
-	if (! $conf->css)  $conf->css ='/theme/eldy/eldy.css.php';
+	if (empty($conf->css))  $conf->css ='/theme/eldy/eldy.css.php';
 
 	//header("Content-type: text/html; charset=UTF-8");
 	header("Content-type: text/html; charset=".$conf->character_set_client);
@@ -694,6 +694,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		// Output style sheets
 		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
 		print '<link rel="stylesheet" type="text/css" media="print" href="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
+		// CSS forced by modules
+		if (is_array($conf->css_modules))
+		{
+			foreach($conf->css_modules as $cssfile)
+			{	// cssfile is an absolute path
+				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.$cssfile.'">'."\n";
+			}
+		}
+		// CSS forced by page
 		if (is_array($arrayofcss))
 		{
 			foreach($arrayofcss as $cssfile)

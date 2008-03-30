@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,14 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/index.php
         \brief      Page accueil par defaut
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -229,7 +227,7 @@ print '</td><td width="65%" valign="top" class="notopnoleftnoright">';
 
 
 /*
- * Dolibarr Work Board
+ * Dolibarr Working Board
  */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -240,6 +238,7 @@ print '<td>&nbsp;</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
+$nboflate=0;
 $var=true;
 //
 // Ne pas inclure de sections sans gestion de permissions
@@ -264,7 +263,7 @@ if ($conf->commercial->enabled || $conf->compta->enabled || $conf->comptaexpert-
   print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -288,7 +287,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
   print ' (>'.ceil($conf->commande->traitement->warning_delay/60/60/24).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -314,7 +313,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
   print ' (>'.ceil($conf->propal->cloture->warning_delay/60/60/24).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -339,7 +338,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
   print ' (>'.ceil($conf->propal->facturation->warning_delay/60/60/24).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -365,7 +364,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
   print ' (>'.ceil($conf->contrat->services->inactifs->warning_delay/60/60/24).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -391,7 +390,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
   print ' (>'.ceil($conf->contrat->services->expires->warning_delay/60/60/24).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -417,7 +416,7 @@ if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->fac
   print ' (>'.ceil($conf->facture->fournisseur->warning_delay/60/60/24).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -443,7 +442,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
   print ' (>'.ceil($conf->facture->client->warning_delay/60/60/24).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -469,7 +468,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
   print ' (>'.ceil($conf->bank->rappro->warning_delay/60/60/24).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -495,7 +494,7 @@ if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id
   print ' (>'.ceil($conf->bank->cheque->warning_delay/60/60/24).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -521,7 +520,7 @@ if ($conf->adherent->enabled && $user->rights->adherent->lire && ! $user->societ
   print ' (>'.ceil($conf->adherent->cotisation->warning_delay/60/60/24).' '.$langs->trans("days").')';
   print '</td>';
   print '<td>';
-  if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
   else print '&nbsp;';
   print '</td>';
   print '</tr>';
@@ -529,6 +528,11 @@ print "\n";
 }
 
 print '</table>';
+
+if ($nboflate > 0)
+{
+	print '<br><table width="100%" class="border"><tr><td><font class="warning">'.img_picto($langs->trans("Alert"),'warning').' '.$langs->trans("WarningYouHaveAtLeastOneTaskLate").'</font></td></tr></table>';
+}
 
 print '</td></tr></table>'; 
 

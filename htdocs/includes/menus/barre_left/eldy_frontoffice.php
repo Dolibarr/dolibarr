@@ -205,7 +205,7 @@ class MenuLeft {
 						$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
 					}
 					$newmenu->add_submenu(DOL_URL_ROOT."/fourn/liste.php?leftmenu=suppliers", $langs->trans("List"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire && $user->rights->societe->contact->lire);
+					//$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire && $user->rights->societe->contact->lire);
 			    	$newmenu->add_submenu(DOL_URL_ROOT."/fourn/stats.php",$langs->trans("Statistics"), 2, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 				}
 
@@ -216,7 +216,7 @@ class MenuLeft {
 					$newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("Prospects"), 2, $user->rights->societe->lire);
 
 					$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
-					$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=p", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
+					//$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=p", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
 				}
 				
 				// Clients
@@ -226,14 +226,18 @@ class MenuLeft {
 					$newmenu->add(DOL_URL_ROOT."/comm/clients.php?leftmenu=customers", $langs->trans("Customers"), 1, $user->rights->societe->lire);
 
 					$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 2, $user->rights->societe->creer);
-					$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
+					//$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"), 2, $user->rights->societe->contact->lire);
 				}
 
 				// Contacts
 				$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("Contacts"), 0, $user->rights->societe->contact->lire);
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/fiche.php?leftmenu=contacts&amp;action=create", $langs->trans("NewContact"), 1, $user->rights->societe->contact->creer);
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("List"), 1, $user->rights->societe->contact->lire);
-
+				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=p", $langs->trans("Prospects"), 2, $user->rights->societe->contact->lire);
+				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=c", $langs->trans("Customers"), 2, $user->rights->societe->contact->lire);
+				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=f", $langs->trans("Suppliers"), 2, $user->rights->societe->contact->lire);
+				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=o", $langs->trans("Others"), 2, $user->rights->societe->contact->lire);
+				//$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?userid=$user->id", $langs->trans("MyContacts"), 1, $user->rights->societe->contact->lire);
 			}
 
 			/*
@@ -271,7 +275,12 @@ class MenuLeft {
 				$newmenu->add(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("Contacts"), 0, $user->rights->societe->contact->lire);
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/fiche.php?leftmenu=contacts&amp;action=create", $langs->trans("NewContact"), 1, $user->rights->societe->contact->creer);
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("List"), 1, $user->rights->societe->contact->lire);
+				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=p", $langs->trans("Prospects"), 2, $user->rights->societe->contact->lire);
+				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=c", $langs->trans("Customers"), 2, $user->rights->societe->contact->lire);
+				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=f", $langs->trans("Suppliers"), 2, $user->rights->societe->contact->lire);
+				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=o", $langs->trans("Others"), 2, $user->rights->societe->contact->lire);
 				*/
+				
 				// Propal
 				if ($conf->propal->enabled)
 				{

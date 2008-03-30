@@ -18,13 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/includes/modules/DolibarrModules.class.php
-   \brief      Fichier de description et activation des modules Dolibarr
+   \file       	htdocs/includes/modules/DolibarrModules.class.php
+   \brief 		Fichier de description et activation des modules Dolibarr
+   \version		$Id$
 */
 
 
@@ -36,16 +35,20 @@ class DolibarrModules
 {
   //! Database handler
   var $db;
+  //! Relative path to module style sheet
+  var $style_sheet = '';
+  //! Path to create when module activated
+  var $dirs = array();
   //! Tableau des boites
   var $boxes;
   //! Tableau des constantes
   var $const;
   //! Tableau des droits
   var $rights;
-  //! Tableau des documents
-  var $docs;
   //! Tableau des menus
   var $menu=array();
+  //! Tableau des documents ???
+  var $docs;
   
   var $dbversion;
 
@@ -79,6 +82,9 @@ class DolibarrModules
 		// Insere la constante d'activation module
 		if (! $err) $err+=$this->_active();
 	
+		// Insere le nom de la feuille de style
+		if (! $err) $err+=$this->insert_style_sheet();
+
 		// Insere les constantes associees au module dans llx_const
 		if (! $err) $err+=$this->insert_const();
 	
@@ -173,6 +179,9 @@ class DolibarrModules
     // Supprime la constante d'activation du module
     $err+=$this->_unactive();
     
+    // Supprime les boites de la liste des boites disponibles
+    $err+=$this->delete_style_sheet();
+
     // Supprime les boites de la liste des boites disponibles
     $err+=$this->delete_boxes();
     
@@ -484,42 +493,89 @@ class DolibarrModules
 	}
   
   
-  /**
-     \brief      Supprime les boites
-     \return     int     Nombre d'erreurs (0 si ok)
-  */
-  function delete_boxes()
-  {
-    $err=0;
-    
-    if (is_array($this->boxes))
-      {
-	foreach ($this->boxes as $key => $value)
-	  {
-	    //$titre = $this->boxes[$key][0];
-	    $file  = $this->boxes[$key][1];
-	    //$note  = $this->boxes[$key][2];
-	    
-	    $sql = "DELETE ".MAIN_DB_PREFIX."boxes";
-	    $sql.= " FROM ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
-	    $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
-	    $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".addslashes($file)."'";
-	    dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
-	    $this->db->query($sql);
-	    
-	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
-	    $sql.= " WHERE file = '".addslashes($file)."'";
-	    dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
-	    if (! $this->db->query($sql))
-	      {
-		$err++;
-	      }
-	  }
-      }
-    
-    return $err;
-  }
+	/**
+		\brief      Supprime les boites
+		\return     int     Nombre d'erreurs (0 si ok)
+	*/
+	function delete_boxes()
+	{
+		$err=0;
+		
+		if (is_array($this->boxes))
+		{
+			foreach ($this->boxes as $key => $value)
+			{
+				//$titre = $this->boxes[$key][0];
+				$file  = $this->boxes[$key][1];
+				//$note  = $this->boxes[$key][2];
+				
+				$sql = "DELETE ".MAIN_DB_PREFIX."boxes";
+				$sql.= " FROM ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
+				$sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
+				$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".addslashes($file)."'";
+				dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
+				$this->db->query($sql);
+				
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
+				$sql.= " WHERE file = '".addslashes($file)."'";
+				dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
+				if (! $this->db->query($sql))
+				{
+					$err++;
+				}
+			}
+		}
+		
+		return $err;
+	}
   
+	/**
+		\brief      Desactive feuille de style du module par suppression ligne dans llx_const
+		\return     int     Nombre d'erreurs (0 si ok)
+	*/
+	function delete_style_sheet()
+	{
+		$err=0;
+		
+		if ($this->style_sheet)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+			$sql.= " WHERE name = '".$this->const_name."_CSS'";
+			dolibarr_syslog("DolibarrModules::delete_style_sheet sql=".$sql);
+			if (! $this->db->query($sql))
+			{
+				$err++;
+			}
+		}
+		
+		return $err;
+	}
+
+    /**
+            \brief      Active la feuille de style associee au module par insertion ligne dans llx_const
+            \return     int     Nombre d'erreurs (0 si ok)
+     */
+    function insert_style_sheet()
+    {
+        $err=0;
+
+        if ($this->style_sheet)
+		{
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible)";
+			$sql.= " VALUES ('".$this->const_name."_CSS','chaine','".$this->style_sheet."','Style sheet for module ".$this->name."','0')";
+			dolibarr_syslog("DolibarrModules::insert_style_sheet sql=".$sql);
+			$resql=$this->db->query($sql);
+			/* Allow duplicate key
+			if (! $resql)
+			{
+				$err++;
+			}
+			*/
+		}
+		
+		return $err;
+	}
+	
     /**
             \brief      Insere les constantes associees au module dans llx_const
             \return     int     Nombre d'erreurs (0 si ok)
@@ -548,17 +604,18 @@ class DolibarrModules
                     if (! $visible) $visible='0';
                     if (strlen($note))
                     {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note','$visible');";
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note','$visible')";
                     }
                     elseif (strlen($val))
                     {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val','$visible');";
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val','$visible')";
                     }
                     else
                     {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type','$visible');";
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type','$visible')";
                     }
 
+					dolibarr_syslog("DolibarrModules::insert_const sql=".$sql);
                     if (! $this->db->query($sql) )
                     {
                         $err++;
@@ -585,7 +642,7 @@ class DolibarrModules
         //print $this->rights_class." ".sizeof($this->rights)."<br>";
 
         // Test si module actif
-        $sql_del = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."';";
+        $sql_del = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
         $resql=$this->db->query($sql_del);
         if ($resql) {
             
@@ -610,14 +667,14 @@ class DolibarrModules
                             $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
                             $sql .= " (id, libelle, module, type, bydefault, perms, subperms)";
                             $sql .= " VALUES ";
-                            $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."');";
+                            $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
                         }
                         else
                         {
                             $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
                             $sql .= " (id, libelle, module, type, bydefault, perms)";
                             $sql .= " VALUES ";
-                            $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."');";
+                            $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
                         }
                     }
                     else
@@ -625,9 +682,10 @@ class DolibarrModules
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
                         $sql .= " (id, libelle, module, type, bydefault)";
                         $sql .= " VALUES ";
-                        $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.");";
+                        $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
                     }
         
+					dolibarr_syslog("DolibarrModules::insert_permissions sql=".$sql);
                     $resql=$this->db->query($sql);
                     if (! $resql)
                     {
@@ -651,7 +709,8 @@ class DolibarrModules
     {
         $err=0;
         
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = '".$this->rights_class."';";
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = '".$this->rights_class."'";
+		dolibarr_syslog("DolibarrModules::delete_permissions sql=".$sql);
         if (!$this->db->query($sql))
         {
             $err++;

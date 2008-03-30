@@ -70,12 +70,15 @@ class modMyModule extends DolibarrModules
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png. 
 		$this->picto='generic';
 		
-		// Data directories to create when module is enabled
+		// Data directories to create when module is enabled.
 		$this->dirs = array();
 		//$this->dirs[0] = DOL_DATA_ROOT.'/mymodule;
         //$this->dirs[1] = DOL_DATA_ROOT.'/mymodule/temp;
  		
-		// Config pages. Put here list of php page names stored in admmin directory used to setup module
+		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
+		$this->style_sheet = '';
+
+		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
 		$this->config_page_url = array("mymodulesetuppage.php");
 		
 		// Dependencies

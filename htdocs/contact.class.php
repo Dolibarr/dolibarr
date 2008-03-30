@@ -93,15 +93,16 @@ class Contact extends CommonObject
         $this->name=trim($this->name);
         if (! $this->socid) $this->socid = 0;
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat, priv)";
         $sql.= " VALUES (now(),";
         if ($this->socid > 0) $sql.= " ".$this->socid.",";
         else $sql.= "null,";
         $sql.= "'".addslashes($this->name)."',";
-        $sql.= $user->id;
+        $sql.= $user->id.",";
+        $sql.= $this->priv;
         $sql.= ")";
         
-        dolibarr_syslog("Contact.class::create sql=".$sql);
+        dolibarr_syslog("Contact::create sql=".$sql);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -127,7 +128,7 @@ class Contact extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dolibarr_syslog("Contact.class::create ".$this->error);
+            dolibarr_syslog("Contact::create ".$this->error);
             return -1;
         }
     }
@@ -177,10 +178,11 @@ class Contact extends CommonObject
         $sql .= ", phone_perso = '".addslashes($this->phone_perso)."'";
         $sql .= ", phone_mobile = '".addslashes($this->phone_mobile)."'";
         $sql .= ", jabberid = '".addslashes($this->jabberid)."'";
+        $sql .= ", priv = '".$this->priv."'";
         if ($user) $sql .= ", fk_user_modif=".$user->id;
         $sql .= " WHERE rowid=".$id;
-        dolibarr_syslog("Contact.class::update sql=".$sql,LOG_DEBUG);
-    
+
+        dolibarr_syslog("Contact::update sql=".$sql,LOG_DEBUG);
         $result = $this->db->query($sql);
         if (! $result)
         {
@@ -371,7 +373,8 @@ class Contact extends CommonObject
         $sql.= " c.address, c.cp, c.ville,";
         $sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
         $sql.= " c.birthday,";
-        $sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.note,";
+        $sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
+		$sql.= " c.priv, c.note,";
         $sql.= " u.rowid as user_id, u.login as user_login";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
@@ -413,6 +416,7 @@ class Contact extends CommonObject
 
                 $this->email          = $obj->email;
                 $this->jabberid       = $obj->jabberid;
+                $this->priv           = $obj->priv;
                 $this->mail           = $obj->email;
     
                 $this->birthday       = $obj->birthday;
@@ -505,7 +509,7 @@ class Contact extends CommonObject
         $sql.=" AND fk_socpeople = ". $this->id;
         $sql.=" GROUP BY tc.element";
 
-        dolibarr_syslog("Contact.class::load_ref_elements sql=".$sql);
+        dolibarr_syslog("Contact::load_ref_elements sql=".$sql);
         
         $resql=$this->db->query($sql);
         if ($resql)
@@ -526,7 +530,7 @@ class Contact extends CommonObject
         else
         {
 	        $this->error=$this->db->error()." - ".$sql;
-	        dolibarr_syslog("Contact.class::load_ref_elements Error ".$this->error);
+	        dolibarr_syslog("Contact::load_ref_elements Error ".$this->error);
 	        return -1;
         }
     }
@@ -819,6 +823,19 @@ class Contact extends CommonObject
         	if ($statut==4) return $langs->trans('StatusContactValidatedShort').' '.img_picto($langs->trans('StatusContactValidatedShort'),'statut4');
         	if ($statut==5) return $langs->trans('StatusContactValidatedShort').' '.img_picto($langs->trans('StatusContactValidatedShort'),'statut5');
         }
+	}
+
+
+	/**
+	 *		\brief      Return translated label of Public or Private
+	 *    	\param      type		Type (0 = public, 1 = private)
+	 *    	\return     string		Label translated
+	 */
+	function LibPubPriv($statut)
+	{
+		global $langs;
+       	if ($statut=='1') return $langs->trans('ContactPrivate');
+       	else return $langs->trans('ContactPublic');
 	}
 
 

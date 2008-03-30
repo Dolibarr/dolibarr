@@ -94,6 +94,7 @@ select.flat
 {
     font-size: <?php print (eregi('MSIE 6',$_SERVER['HTTP_USER_AGENT']) ? "11" : "12"); ?>px;
 	font-family: helvetica, verdana, arial, sans-serif;
+	font-weight: normal;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
