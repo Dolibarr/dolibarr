@@ -127,7 +127,7 @@ if ($step == 1 || $action == 'cleanselect')
 
 if ($action == 'builddoc')
 {
-    // Gen�re le fichier
+    // Build export file
 	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected);
 	if ($result < 0)
 	{

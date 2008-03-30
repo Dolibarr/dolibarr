@@ -38,8 +38,9 @@ class Export
     var $array_export_module=array();           // Tableau de "nom de modules"
     var $array_export_label=array();            // Tableau de "libellé de lots"
     var $array_export_sql=array();              // Tableau des "requetes sql"
-    var $array_export_fields=array();           // Tableau des liste de champ+libellé à exporter
-    var $array_export_alias=array();            // Tableau des liste de champ+alias à exporter
+    var $array_export_fields=array();           // Tableau des listes de champ+libellé à exporter
+    var $array_export_alias=array();            // Tableau des listes de champ+alias à exporter
+    var $array_export_special=array();          // Tableau des operations speciales sur champ
     
     // Création des modéles d'export
     var $hexa;
@@ -131,13 +132,15 @@ class Export
                             $this->array_export_entities[$i]=$module->export_entities_array[$r];
                             // Tableau des alias à exporter (clé=champ, valeur=alias)
                             $this->array_export_alias[$i]=$module->export_alias_array[$r];
+                            // Tableau des operations speciales sur champ
+                            $this->array_export_special[$i]=$module->export_special_array[$r];
 
                             // Requete sql du dataset
                             $this->array_export_sql_start[$i]=$module->export_sql_start[$r];
                             $this->array_export_sql_end[$i]=$module->export_sql_end[$r];
                             //$this->array_export_sql[$i]=$module->export_sql[$r];
 
-                            dolibarr_syslog("Export chargé pour le module ".$modulename." en index ".$i.", dataset=".$module->export_code[$r].", nbre de champs=".sizeof($module->export_fields_code[$r]));
+                            dolibarr_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
                             $i++;
                         }
                     }            
@@ -185,7 +188,7 @@ class Export
 			$newfield=$key.' as '.$value;
 
 			// Cas particulier
-            if ($this->array_export_module[$indice]->id == 'banque')
+/*            if ($this->array_export_module[$indice]->name == 'Banque')
 			{
 				// Cas special du debit et credit
 				if ($value=='credit' || $value=='debit')
@@ -193,7 +196,7 @@ class Export
 					$newfield='IF('.$key.'>0,'.$key.',NULL) as '.$value;
 				}
 			}
-
+*/
 			$sql.=$newfield;
         }
         $sql.=$this->array_export_sql_end[$indice];
@@ -221,7 +224,30 @@ class Export
 			while ($objp = $this->db->fetch_object($resql))
 			{
 				$var=!$var;
-                $objmodel->write_record($this->array_export_alias[$indice],$array_selected,$objp);
+                
+				// Process special operations
+				if (! empty($this->array_export_special[$indice]))
+				{
+			        foreach ($this->array_export_special[$indice] as $key => $value)
+			        {
+						if (! array_key_exists($key, $array_selected)) continue;		// Field not selected
+						// Operation NULLIFNEG
+						if ($this->array_export_special[$indice][$key]=='NULLIFNEG')
+						{
+							$alias=$this->array_export_alias[$indice][$key];
+							if ($objp->$alias < 0) $objp->$alias='';
+						}
+						// Operation ZEROIFNEG
+						if ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
+						{
+							$alias=$this->array_export_alias[$indice][$key];
+							if ($objp->$alias < 0) $objp->$alias='0';
+						}
+					}
+				}
+				// end of special operation processing
+				
+				$objmodel->write_record($this->array_export_alias[$indice],$array_selected,$objp);
             }
             
             // Genere en-tete
