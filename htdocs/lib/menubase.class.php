@@ -91,7 +91,8 @@ class Menubase
 		$this->leftmenu=trim($this->leftmenu);
 		$this->perms=trim($this->perms);
 		$this->user=trim($this->user);
-
+		if (! $this->level) $this->level=0;
+		
 		// Check parameters
 		// Put here code to add control on parameters values
 		
@@ -128,7 +129,7 @@ class Menubase
 		$sql.= " '".$this->user."'";
 		$sql.= ")";
 
-	   	dolibarr_syslog("Menu::create sql=".$sql, LOG_DEBUG);
+	   	dolibarr_syslog("Menubase::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -139,7 +140,7 @@ class Menubase
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Menu::create ".$this->error, LOG_ERR);
+            dolibarr_syslog("Menubase::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -192,12 +193,12 @@ class Menubase
 		$sql.= " user='".$this->user."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dolibarr_syslog("Menu::update sql=".$sql, LOG_DEBUG);
+        dolibarr_syslog("Menubase::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Menu::update ".$this->error, LOG_ERR);
+            dolibarr_syslog("Menubase::update ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -235,7 +236,7 @@ class Menubase
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as t";
         $sql.= " WHERE t.rowid = ".$id;
     
-    	dolibarr_syslog("Menu::fetch sql=".$sql, LOG_DEBUG);
+    	dolibarr_syslog("Menubase::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -268,7 +269,7 @@ class Menubase
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Menu::fetch ".$this->error, LOG_ERR);
+            dolibarr_syslog("Menubase::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -286,12 +287,12 @@ class Menubase
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
 		$sql.= " WHERE rowid=".$this->id;
 	
-	   	dolibarr_syslog("Menu::delete sql=".$sql);
+	   	dolibarr_syslog("Menubase::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Menu::delete ".$this->error, LOG_ERR);
+            dolibarr_syslog("Menubase::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 	
