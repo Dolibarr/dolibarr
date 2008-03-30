@@ -19,11 +19,15 @@ For users:
 - Change in tanslation to make Dolibarr easier to understand.
 - Add a warning when sending a mail from a user with no email defined.
 - Added clicktodial module.
+- Add a property private/public in contact. This allows to user Dolibarr
+  for a personnal address book.
 - French NAF code can accept 5 chars.
 - Supplier prices can be input with or without taxe.
 - New generic numbering modules to offer more solutions for generating
   automatic id.
 - Other minor changes (features, look, fixes)
+- Changes in wizard installer to allow building autoexe installer for
+  Windows with Apache and Mysql included.
 
 For developers:
 - Update code skeletons examples.
