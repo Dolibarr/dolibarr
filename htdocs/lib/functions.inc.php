@@ -155,10 +155,15 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 			else $file=fopen(SYSLOG_FILE,"a+");
 			if ($file)
 			{
+				$ip='unknown_ip';
+				if (! empty($_SERVER["REMOTE_ADDR"])) $ip=$_SERVER["REMOTE_ADDR"];
+
 				$liblevelarray=array(LOG_ERR=>'ERROR',LOG_WARNING=>'WARN',LOG_INFO=>'INFO',LOG_DEBUG=>'DEBUG');
 				$liblevel=$liblevelarray[$level];
 				if (! $liblevel) $liblevel='UNDEF';
-				$message=strftime("%Y-%m-%d %H:%M:%S",time())." ".sprintf("%-5s",$liblevel)." ".$message;
+				
+				$message=strftime("%Y-%m-%d %H:%M:%S",time())." ".sprintf("%-5s",$liblevel)." ".$ip." ".$message;
+				
 				fwrite($file,$message."\n");
 				fclose($file);
 				
