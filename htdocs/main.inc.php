@@ -674,21 +674,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 
 		// Affiche title
-		if ($title)
-		{
-			print '<title>Dolibarr - '.$title.'</title>';
-		}
-		else
-		{
-			if (defined("MAIN_TITLE"))
-			{
-				print "<title>".MAIN_TITLE."</title>";
-			}
-			else
-			{
-				print '<title>Dolibarr</title>';
-			}
-		}
+		$appli='Dolibarr';
+		if (! empty($conf->global->MAIN_TITLE)) $appli=$conf->global->MAIN_TITLE;
+		
+		if ($title) print '<title>'.$appli.' - '.$title.'</title>';
+		else print "<title>".$appli."</title>";
 		print "\n";
 
 		// Output style sheets
