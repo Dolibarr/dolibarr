@@ -35,7 +35,7 @@ $form = new Form($db);
 
 $module=isset($_GET["module"])?$_GET["module"]:$_POST["module"];
 
-if (! isset($_GET["id"])) access_forbidden();
+if (! isset($_GET["id"])) accessforbidden();
 
 
 // Defini si peux modifier utilisateurs et permisssions

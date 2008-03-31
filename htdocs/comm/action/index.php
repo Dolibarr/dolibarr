@@ -49,7 +49,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid,'');
 
 $canedit=1;
-if (! $user->rights->agenda->myactions->read) access_forbidden();
+if (! $user->rights->agenda->myactions->read) accessforbidden();
 if (! $user->rights->agenda->allactions->read) $canedit=0;
 if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')
 {
