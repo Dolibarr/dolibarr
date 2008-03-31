@@ -229,7 +229,7 @@ class DoliDb
 	*/
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
+		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name",LOG_DEBUG);
 
 		// With mysql, port must be in hostname
 		$newhost=$host;
@@ -319,54 +319,54 @@ class DoliDb
 		}
 	}
 
-  /**
-     \brief      Validation d'une transaction
-     \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
-  */
-  function commit()
-  {
-    if ($this->transaction_opened<=1)
-      {
-	$ret=$this->query("COMMIT");
+	/**
+		\brief      Validation d'une transaction
+		\return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
+	*/
+	function commit()
+	{
+		if ($this->transaction_opened<=1)
+		{
+			$ret=$this->query("COMMIT");
 			if ($ret) 
 			{
 				$this->transaction_opened=0;
 				dolibarr_syslog("COMMIT Transaction",LOG_DEBUG);
 			}
-	return $ret;
-      }
-    else
-      {
-	$this->transaction_opened--;
-	return 1;
-      }
-  }
+			return $ret;
+		}
+		else
+		{
+			$this->transaction_opened--;
+			return 1;
+		}
+	}
   
-  /**
-     \brief      Annulation d'une transaction et retour aux anciennes valeurs
-     \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
-  */
-  function rollback()
-  {    
-    if ($this->transaction_opened<=1)
-      {
-	$ret=$this->query("ROLLBACK");
-	$this->transaction_opened=0;
-	dolibarr_syslog("ROLLBACK Transaction",LOG_DEBUG);
-	return $ret;
-      }
-    else
-      {
-	$this->transaction_opened--;
-	return 1;
-      }
-  }
+	/**
+		\brief      Annulation d'une transaction et retour aux anciennes valeurs
+		\return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	*/
+	function rollback()
+	{    
+		if ($this->transaction_opened<=1)
+		{
+			$ret=$this->query("ROLLBACK");
+			$this->transaction_opened=0;
+			dolibarr_syslog("ROLLBACK Transaction",LOG_DEBUG);
+			return $ret;
+		}
+		else
+		{
+			$this->transaction_opened--;
+			return 1;
+		}
+	}
   
-  /**
-     \brief      Effectue une requete et renvoi le resultset de réponse de la base
-     \param	    query	    Contenu de la query
-     \return	    resource    Resultset de la reponse
-  */
+	/**
+		\brief      Effectue une requete et renvoi le resultset de réponse de la base
+		\param	    query	    Contenu de la query
+		\return	    resource    Resultset de la reponse
+	*/
 	function query($query)
 	{
 		$query = trim($query);
@@ -789,7 +789,7 @@ class DoliDb
 		$sql .= ",".implode(',',$sqlk);
 		$sql .=") type=".$type;
 	
-		dolibarr_syslog($sql);
+		dolibarr_syslog($sql,LOG_DEBUG);
 		if(! $this -> query($sql))
 			return -1;
 		else
@@ -806,7 +806,7 @@ class DoliDb
     {
 		$sql="DESC ".$table." ".$field;
 
-		dolibarr_syslog($sql);
+		dolibarr_syslog($sql,LOG_DEBUG);
 		$this->results = $this->query($sql);
 		return $this->results;
     }
@@ -840,6 +840,7 @@ class DoliDb
 			$sql  .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 
+		dolibarr_syslog($sql,LOG_DEBUG);
 		if(! $this -> query($sql))
 			return -1;
 		else
@@ -872,7 +873,7 @@ class DoliDb
 		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_name','$dolibarr_main_db_user'";
 		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
 		
-		dolibarr_syslog("mysql.lib::DDLCreateUser sql=".$sql);
+		dolibarr_syslog("mysql.lib::DDLCreateUser sql=".$sql,LOG_DEBUG);
 		$resql=$this->query($sql);
 		if (! $resql)
 		{
@@ -881,7 +882,7 @@ class DoliDb
 
 		$sql="FLUSH Privileges";
 
-		dolibarr_syslog("mysql.lib::DDLCreateUser sql=".$sql);
+		dolibarr_syslog("mysql.lib::DDLCreateUser sql=".$sql,LOG_DEBUG);
 		$resql=$this->query($sql);
 	
 		return 1;
@@ -891,7 +892,8 @@ class DoliDb
 	*	\brief		Return charset used to store data in database
 	*	\return		string		Charset
 	*/
-	function getDefaultCharacterSetDatabase(){
+	function getDefaultCharacterSetDatabase()
+	{
 		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
 		  if (!$resql)
 	      {
@@ -902,8 +904,9 @@ class DoliDb
 	    return $liste['Value'];
 	}
 	
-	function getListOfCharacterSet(){
-		 $resql=$this->query('SHOW CHARSET');
+	function getListOfCharacterSet()
+	{
+		$resql=$this->query('SHOW CHARSET');
 		$liste = array();
 		if ($resql) 
 			{
@@ -926,7 +929,8 @@ class DoliDb
 	*	\brief		Return collation used in database
 	*	\return		string		Collation value
 	*/
-	function getDefaultCollationDatabase(){
+	function getDefaultCollationDatabase()
+	{
 		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
 		 if (!$resql)
 	      {
