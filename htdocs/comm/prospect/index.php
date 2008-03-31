@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -166,7 +166,7 @@ if ($conf->agenda->enabled) show_array_actions_to_do(10);
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-    $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+    $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.total as total_ttc, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -199,7 +199,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 print "<td><a href=\"fiche.php?id=".$obj->socid."\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
                 print "<td align=\"right\">";
                 print dolibarr_print_date($obj->dp)."</td>\n";
-                print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
+                print "<td align=\"right\">".price($obj->total_ttc)."</td></tr>\n";
                 $i++;
                 $total += $obj->price;
             }
@@ -209,6 +209,10 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
             print "</table><br>";
         }
     }
+	else
+	{
+		dolibarr_print_error($db);
+	}
 }
 
 /*
