@@ -75,30 +75,26 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_depa
 $sql.= " WHERE s.fk_stcomm = st.id AND s.client = 2";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-if (isset($stcomm))
+if (isset($stcomm) && $stcomm != '')
 {
     $sql .= " AND s.fk_stcomm=".$stcomm;
 }
-
 if ($user->societe_id)
 {
     $sql .= " AND s.rowid = " .$user->societe_id;
 }
-
 if ($_GET["search_nom"])
 {
-    $sql .= " AND lower(s.nom) like '%".strtolower($_GET["search_nom"])."%'";
+    $sql .= " AND s.nom like '%".strtolower($_GET["search_nom"])."%'";
 }
-
 if ($_GET["search_ville"])
 {
-    $sql .= " AND lower(s.ville) like '%".strtolower($_GET["search_ville"])."%'";
+    $sql .= " AND s.ville like '%".strtolower($_GET["search_ville"])."%'";
 }
-
 if ($socname)
 {
-    $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
-    $sortfield = "lower(s.nom)";
+    $sql .= " AND s.nom like '%".strtolower($socname)."%'";
+    $sortfield = "s.nom";
     $sortorder = "ASC";
 }
 
@@ -129,20 +125,18 @@ if ($resql)
         llxHeader();
     }
 
-    if (isset($stcomm)) $urladd.="&amp;stcomm=".$stcomm;
+	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($_GET["search_nom"]).'&amp;search_ville='.urlencode($_GET["search_ville"]);
 
-    print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"],$urladd,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-
-    $i = 0;
+    print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"], $param, $sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","","","valign=\"center\"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","","","align=\"center\"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","","","align=\"center\"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","","","align=\"center\"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","","","align=\"center\"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,"valign=\"center\"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","",$param,"align=\"center\"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","",$param,"align=\"center\"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","",$param,"align=\"center\"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","",$param,"align=\"center\"",$sortfield,$sortorder);
     print '<td class="liste_titre" colspan="4">&nbsp;</td>';
     print "</tr>\n";
 
@@ -159,6 +153,7 @@ if ($resql)
 
     print "</tr>\n";
 
+    $i = 0;
     $var=true;
 
     $prospectstatic=new Prospect($db);
