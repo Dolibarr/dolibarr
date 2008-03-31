@@ -172,7 +172,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 		
 		//print $sql;
-		dolibarr_syslog("mod_artic::getNextValue sql=".$sql, LOG_DEBUG);
+		dolibarr_syslog("mod_arctic::getNextValue sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -187,19 +187,19 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$numFinal = $mask;
 		
 		// We replace special codes
-		$numFinal = str_ireplace('{yyyy}',date("Y"),$numFinal);
-		$numFinal = str_ireplace('{yy}',date("y"),$numFinal);
-		$numFinal = str_ireplace('{y}' ,substr(date("y"),2,1),$numFinal);
-		$numFinal = str_ireplace('{mm}',date("m"),$numFinal);
-		$numFinal = str_ireplace('{dd}',date("d"),$numFinal);
+		$numFinal = str_replace('{yyyy}',date("Y"),$numFinal);
+		$numFinal = str_replace('{yy}',date("y"),$numFinal);
+		$numFinal = str_replace('{y}' ,substr(date("y"),2,1),$numFinal);
+		$numFinal = str_replace('{mm}',date("m"),$numFinal);
+		$numFinal = str_replace('{dd}',date("d"),$numFinal);
 
 		// Now we replace the counter
 		$maskbefore='{'.$masktri.'}';
 		$maskafter=str_pad($counter,strlen($maskcounter),"0",STR_PAD_LEFT);
 		//print 'x'.$maskbefore.'-'.$maskafter.'y';
-		$numFinal = str_ireplace($maskbefore,$maskafter,$numFinal);
+		$numFinal = str_replace($maskbefore,$maskafter,$numFinal);
 		
-		dolibarr_syslog("mod_artic::getNextValue return ".$numFinal);
+		dolibarr_syslog("mod_arctic::getNextValue return ".$numFinal);
 		return  $numFinal;
   }
     
