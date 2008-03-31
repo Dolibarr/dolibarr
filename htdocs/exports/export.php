@@ -41,7 +41,9 @@ $entitytoicon=array(
 	'tax'=>'generic' ,'tax_type'=>'generic',
 	'account'=>'account',
 	'payment'=>'payment',
-	'product'=>'product');
+	'product'=>'product','stock'=>'stock',
+	'other'=>'generic',
+	);
 $entitytolang=array(		// Translation code
 	'user'=>'User',
 	'company'=>'Company','contact'=>'Contact',
@@ -51,7 +53,9 @@ $entitytolang=array(		// Translation code
 	'tax'=>'SocialContribution','tax_type'=>'DictionnarySocialContributions',
 	'account'=>'BankTransactions',
 	'payment'=>'Payment',
-	'product'=>'Product');
+	'product'=>'Product','stock'=>'Stock',
+	'other'=>'Other'
+	);
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
 $datatoexport=isset($_GET["datatoexport"])? $_GET["datatoexport"] : (isset($_POST["datatoexport"])?$_POST["datatoexport"]:'');
