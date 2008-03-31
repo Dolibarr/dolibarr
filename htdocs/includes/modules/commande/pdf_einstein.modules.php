@@ -231,19 +231,19 @@ class pdf_einstein extends ModelePDFCommandes
                     $curY = $nexY;
 
                     // Description de la ligne produit
-                    $libelleproduitservice=dol_htmlentities($com->lignes[$i]->libelle);
+                    $libelleproduitservice=dol_htmlentitiesbr($com->lignes[$i]->libelle,1);
                     if ($com->lignes[$i]->desc && $com->lignes[$i]->desc!=$com->lignes[$i]->libelle)
                     {
-                        if ($libelleproduitservice) $libelleproduitservice.="\n";
+                        if ($libelleproduitservice) $libelleproduitservice.="<br>";
                         if ($com->lignes[$i]->desc == '(CREDIT_NOTE)' && $com->lignes[$i]->fk_remise_except)
                         {
                         	$discount=new DiscountAbsolute($this->db);
                         	$discount->fetch($com->lignes[$i]->fk_remise_except);
-                        	$libelleproduitservice=$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
+                        	$libelleproduitservice=dol_htmlentitiesbr($langs->trans("DiscountFromCreditNote",$discount->ref_facture_source),1);
                         }
                         else
                         {
-                        	$libelleproduitservice.=dol_htmlentities($com->lignes[$i]->desc);
+                        	$libelleproduitservice.=dol_htmlentitiesbr($com->lignes[$i]->desc,1);
                         }
                     }
                     // Si ligne associée à un code produit
@@ -269,7 +269,7 @@ class pdf_einstein extends ModelePDFCommandes
                     if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
                     {
                         // Affichage durée si il y en a une
-                        $libelleproduitservice.=dol_htmlentities("\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end).")");
+                        $libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end).")",1);
                     }
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page

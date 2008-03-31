@@ -711,7 +711,7 @@ if ($_GET["id"])
 	    }
 	    else
 	    {
-			print '<textarea name="note" cols="90" rows="'.ROWS_8.'">'.$act->note.'</textarea>';
+			print '<textarea name="note" cols="90" rows="'.ROWS_8.'">'.dol_htmlentitiesbr_decode($act->note).'</textarea>';
 	    }
 
         print '</td></tr>';
@@ -794,7 +794,7 @@ if ($_GET["id"])
 
         // Note
         print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="3">';
-		print dol_htmlentities($act->note);
+		print dol_htmlentitiesbr($act->note);
         print '</td></tr>';
 
         print '</table>';

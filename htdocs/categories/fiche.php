@@ -180,7 +180,7 @@ if ($user->rights->categorie->creer)
 		else
 		{
 			print '<textarea name="description" rows="'.ROWS_6.'" cols="50">';
-			print $categorie->description;
+			print dol_htmlentitiesbr_decode($categorie->description);
 			print '</textarea>';
 		}
 		

@@ -707,11 +707,11 @@ else
 						$text.= ' '.$objp->ref_fourn.'</a>';
 						$text.= ' ('.$objp->ref.')';
 						$text.= ' - '.$objp->product;
-						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':$objp->description);
+						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 						print $html->textwithtooltip($text,$description,3,'','',$i);
 						if ($conf->global->PRODUIT_DESC_IN_FORM)
 						{
-							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
+							print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 						}
 						
 						print "</td>";
@@ -781,7 +781,7 @@ else
 					}
 					else
 					{
-						print '<textarea name="eldesc" class="flat" cols="70" rows="1">'.$objp->description.'</textarea>';
+						print '<textarea name="eldesc" class="flat" cols="70" rows="1">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
 					}
 		      print '</td>';
 		      print '<td>';

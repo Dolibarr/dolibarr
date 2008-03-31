@@ -168,7 +168,7 @@ if ($_GET["action"] == 'edit')
 	  }
     else
 	  {
-	    print '<textarea name="desc-'.$key.'" rows="3" cols="80">'.$product->multilangs[$key]["description"].'</textarea>';
+	    print '<textarea name="desc-'.$key.'" rows="3" cols="80">'.dol_htmlentitiesbr_decode($product->multilangs[$key]["description"]).'</textarea>';
 	  }
 	  print '</td></tr>';
 		print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td>';
@@ -180,7 +180,7 @@ if ($_GET["action"] == 'edit')
 	  }
     else
 	  {
-	    print '<textarea name="note-'.$key.'" rows="3" cols="80">'.$product->multilangs[$key]["note"].'</textarea>';
+	    print '<textarea name="note-'.$key.'" rows="3" cols="80">'.dol_htmlentitiesbr_decode($product->multilangs[$key]["note"]).'</textarea>';
 	  }
 	  print '</td></tr>';
 		print '</tr>';

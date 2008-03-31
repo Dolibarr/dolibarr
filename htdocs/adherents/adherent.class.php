@@ -162,7 +162,7 @@ class Adherent extends CommonObject
 	    $infos.= $langs->trans("Birthday").": $this->naiss\n";
 	    $infos.= $langs->trans("Photo").": $this->photo\n";
 		$infos.= $langs->trans("Public").": ".yn($this->public)."\n";
-		if ($msgishtml) $infos = dol_htmlentities($infos);
+		if ($msgishtml) $infos = dol_htmlentitiesbr($infos);
 
 		// Substitutions
 	    $patterns = array (

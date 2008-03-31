@@ -411,7 +411,7 @@ else
 			else
 			{
 				print '<textarea class="flat" name="note" rows="'.ROWS_8.'" cols="90">';
-				print $group->note;
+				print dol_htmlentitiesbr_decode($group->note);
 				print '</textarea>';
 			}
 			print '</td>';

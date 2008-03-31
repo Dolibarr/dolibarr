@@ -621,7 +621,7 @@ elseif ($_GET["id"] > 0)
 		}
 		else
 		{
-			print '<textarea name="description" wrap="soft" cols="70" rows="12">'.$fichinter->description.'</textarea>';
+			print '<textarea name="description" wrap="soft" cols="70" rows="12">'.dol_htmlentitiesbr_decode($fichinter->description).'</textarea>';
 		}
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
@@ -758,7 +758,7 @@ elseif ($_GET["id"] > 0)
 				}
 				else
 				{
-					print '<textarea name="desc" cols="70" class="flat" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
+					print '<textarea name="desc" cols="70" class="flat" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
 				}
 				print '</td>';
 				

@@ -1555,8 +1555,9 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 	// If this is a sort field
 	if ($field)
 	{
-		print "&nbsp;";
-	    if (! $sortorder)
+		//print "&nbsp;";
+	    print '<img width="2px" src="/theme/common/transparent.png">';
+		if (! $sortorder)
 	    {
 	        print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 	        print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
@@ -2534,24 +2535,51 @@ function hexbin($hexa){
    return $bin;
 }
 
-/*
-*	\brief		Cette fonction est appelée pour coder ou non une chaine en html.
-*	\param		stringtoencode		String to encode
-*	\param		htmlinfo			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-*	\remarks	Selon qu'on compte l'afficher dans le PDF avec:
-*					writeHTMLCell -> a besoin d'etre encodé en HTML
-*					MultiCell -> ne doit pas etre encodé en HTML
+/**
+*	\brief		Replace CRLF in string with a HTML BR tag.
+*	\param		string2encode		String to encode
+*	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br
+*	\return		string				String encoded
 */
-function dol_htmlentities($stringtoencode,$htmlinfo=-1)
+function dol_nl2br($stringtoencode,$nl2brmode=0)
 {
-	if ($htmlinfo == 1) return $stringtoencode;
-	if ($htmlinfo == 0) return nl2br(htmlentities($stringtoencode));
-	if ($htmlinfo == -1)
+	if (! $nl2brmode) return nl2br($stringtoencode);
+	else 
 	{
-		if (dol_textishtml($stringtoencode)) return $stringtoencode;
-		else return nl2br(htmlentities($stringtoencode));
+	    $ret=ereg_replace("\r","",$stringtoencode);
+	    $ret=ereg_replace("\n","<br>",$ret);
+		return $ret;
 	}
-	return $stringtoencode;
+}
+
+/**
+*	\brief		This function is called to encode a string into a HTML string
+*	\param		stringtoencode		String to encode
+*	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br
+*	\remarks	For PDF usage, you can show text by 2 ways:
+*				- writeHTMLCell -> param must be encoded into HTML.
+*				- MultiCell -> param must not be encoded into HTML.
+*				Because writeHTMLCell convert also \n into <br>, if function
+*				is used to build PDF, nl2br must be 1.
+*/
+function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0)
+{
+	if (dol_textishtml($stringtoencode)) return $stringtoencode;
+	else return dol_nl2br(htmlentities($stringtoencode),$nl2brmode);
+}
+
+/*
+*	\brief		This function is called to decode a HTML string
+*	\param		stringtodecode		String to decode
+*/
+function dol_htmlentitiesbr_decode($stringtodecode)
+{
+	$ret=html_entity_decode($stringtodecode);
+	$ret=eregi_replace("\r\n".'<br ?/?>',"<br>",$ret);
+	$ret=eregi_replace('<br ?/?>'."\r\n","\r\n",$ret);
+	$ret=eregi_replace('<br ?/?>'."\n","\n",$ret);
+	$ret=eregi_replace('<br ?/?>',"\n",$ret);
+	return $ret;
 }
 
 /**

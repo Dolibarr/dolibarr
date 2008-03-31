@@ -122,7 +122,7 @@ if ($id)
 	    }
 	    else
 	    {
-			print '<textarea name="note" cols="80" rows="10">'.$fuser->note.'</textarea>';
+			print '<textarea name="note" cols="80" rows="10">'.dol_htmlentitiesbr_decode($fuser->note).'</textarea>';
 	    }
 	}
 	else

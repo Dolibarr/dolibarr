@@ -225,7 +225,7 @@ if ($_GET["action"] == 'create')
 	else
 	{
 		print '<textarea class="flat" name="account_comment" cols="70" rows="10">';
-		print $account->comment.'</textarea>';
+		print dol_htmlentitiesbr_decode($account->comment).'</textarea>';
 	}
 	print '</td></tr>';
 
@@ -464,7 +464,7 @@ else
 		else
 		{
 			print '<textarea class="flat" name="account_comment" cols="70" rows="10">';
-			print $account->comment.'</textarea>';
+			print dol_htmlentitiesbr_decode($account->comment).'</textarea>';
 		}
 		print '</td></tr>';
         

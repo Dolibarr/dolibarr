@@ -983,7 +983,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  else
 	    {
 	      print '<textarea name="desc" rows="4" cols="90">';
-	      print $product->description;
+	      print dol_htmlentitiesbr_decode($product->description);
 	      print "</textarea>";
 	    }
 	  print "</td></tr>";
@@ -1029,7 +1029,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  else
 	    {
 	      print '<textarea name="note" rows="8" cols="70">';
-	      print $product->note;
+	      print dol_htmlentitiesbr_decode($product->note);
 	      print "</textarea>";
 	    }
 	  print "</td></tr>";

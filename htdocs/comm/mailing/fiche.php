@@ -661,7 +661,7 @@ else
             else
             {
             	print '<textarea class="flat" name="body" cols="70" rows="20">';
-            	print $mil->body.'</textarea>';
+            	print dol_htmlentitiesbr_decode($mil->body).'</textarea>';
             }
             print '</td></tr>';
 

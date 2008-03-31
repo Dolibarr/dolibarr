@@ -197,11 +197,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
           	$curY = $nexY;
           	
           	// Description de la ligne produit
-            $libelleproduitservice=dol_htmlentities($delivery->lignes[$i]->label);
-            if ($delivery->lignes[$i]->description&&$delivery->lignes[$i]->description!=$delivery->lignes[$i]->label)
+            $libelleproduitservice=dol_htmlentitiesbr($delivery->lignes[$i]->label,1);
+            if ($delivery->lignes[$i]->description && $delivery->lignes[$i]->description!=$delivery->lignes[$i]->label)
             {
-            	if ($libelleproduitservice) $libelleproduitservice.="\n";
-              $libelleproduitservice.=dol_htmlentities($delivery->lignes[$i]->description);
+            	if ($libelleproduitservice) $libelleproduitservice.="<br>";
+              $libelleproduitservice.=dol_htmlentitiesbr($delivery->lignes[$i]->description,1);
             }
             // Si ligne associée à un code produit
             if ($delivery->lignes[$i]->fk_product)
@@ -226,7 +226,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
             {
             	// Affichage durée si il y en a une
-            	$libelleproduitservice.="\n(".$langs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")";
+            	$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$langs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")",1);
             }
             
             $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page

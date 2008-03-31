@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
@@ -25,7 +23,7 @@
 		\ingroup    facture
 		\brief      Fichier de la classe permettant de g�n�rer les factures au mod�le Crabe
 		\author	    Laurent Destailleur
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
@@ -206,7 +204,7 @@ class pdf_crabe extends ModelePDFFactures
                 {
 	                $tab_top = 88;
 
-	                $pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
+	                $pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 	                $pdf->SetXY ($this->posxdesc-1, $tab_top);
 	                $pdf->MultiCell(190, 3, $fac->note_public, 0, 'J');
 	                $nexY = $pdf->GetY();
@@ -234,31 +232,32 @@ class pdf_crabe extends ModelePDFFactures
                 	$curY = $nexY;
                 	
                 	// Description de la ligne produit
-                	$libelleproduitservice=dol_htmlentities($fac->lignes[$i]->libelle);
+                	$libelleproduitservice=dol_htmlentitiesbr($fac->lignes[$i]->libelle,1);
                   if ($fac->lignes[$i]->desc&&$fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)
                   {
-                  	if ($libelleproduitservice) $libelleproduitservice.="\n";
+                  	if ($libelleproduitservice) $libelleproduitservice.="<br>";
                   	
                   	if ($fac->lignes[$i]->desc == '(CREDIT_NOTE)' && $fac->lignes[$i]->fk_remise_except)
                   	{
                   		$discount=new DiscountAbsolute($this->db);
                   		$discount->fetch($fac->lignes[$i]->fk_remise_except);
-                  		$libelleproduitservice=$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
+                  		$libelleproduitservice=dol_htmlentitiesbr($langs->trans("DiscountFromCreditNote",$discount->ref_facture_source),1);
                   	}
                   	else
-                  	{ 
-                  		if ($fac->lignes[$i]->produit_id)
+                  	{
+						if ($fac->lignes[$i]->produit_id)
                   		{
-                  			$libelleproduitservice.=dol_htmlentities($fac->lignes[$i]->desc);
+                  			$libelleproduitservice.=dol_htmlentitiesbr($fac->lignes[$i]->desc,1);
                   		}
                   		else
                   		{
-                  			// On v�rifie si les lignes personnalis�es sont format�es avec fckeditor
-                  			$libelleproduitservice.=dol_htmlentities($fac->lignes[$i]->desc);
+                  			// On verifie si les lignes personnalisees sont formatees avec fckeditor
+                  			$libelleproduitservice.=dol_htmlentitiesbr($fac->lignes[$i]->desc,1);
                   		}
                   	}
                   }
-                  // Si ligne associ�e � un code produit
+				  
+                  // Si ligne associee a un code produit
                   if ($fac->lignes[$i]->produit_id)
                   {
                   	$prodser = new Product($this->db);
@@ -284,8 +283,9 @@ class pdf_crabe extends ModelePDFFactures
                     if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
                     {
                         // Affichage duree si il y en a une
-                        $libelleproduitservice.=dol_htmlentities("\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")");
+                        $libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")",1);
                     }
+               		//if ($i==0) { print $libelleproduitservice; exit; }
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 

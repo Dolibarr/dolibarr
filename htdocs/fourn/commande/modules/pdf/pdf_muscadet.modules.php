@@ -239,11 +239,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
                     $curY = $nexY;
 
                     // Description de la ligne produit
-                    $libelleproduitservice=dol_htmlentities($com->lignes[$i]->libelle);
+                    $libelleproduitservice=dol_htmlentitiesbr($com->lignes[$i]->libelle,1);
                     if ($com->lignes[$i]->desc&&$com->lignes[$i]->desc!=$com->lignes[$i]->libelle)
                     {
-                        if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=dol_htmlentities($com->lignes[$i]->desc);
+                        if ($libelleproduitservice) $libelleproduitservice.="<br>";
+                        $libelleproduitservice.=dol_htmlentitiesbr($com->lignes[$i]->desc,1);
                     }
                     // Si ligne associée à un code produit
                     if ($com->lignes[$i]->fk_product)
@@ -253,7 +253,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
                     if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
                     {
                         // Affichage durée si il y en a une
-                        $libelleproduitservice.=dol_htmlentities("\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end).")");
+                        $libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end).")",1);
                     }
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page

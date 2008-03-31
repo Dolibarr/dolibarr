@@ -1133,12 +1133,12 @@ if ($_GET['propalid'] > 0)
 					else $text.= img_object($langs->trans('ShowProduct'),'product');
 					$text.= ' '.$objp->ref.'</a>';
 					$text.= ' - '.$objp->product;
-					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':$objp->description);
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 					print $html->textwithtooltip($text,$description,3,'','',$i);
 					print_date_range($objp->date_start,$objp->date_end);
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
-						print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
+						print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 					}
 					
 					print '</td>';
@@ -1353,7 +1353,7 @@ if ($_GET['propalid'] > 0)
 					}
 					else
 					{
-						print '<textarea name="desc" cols="70" class="flat" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
+						print '<textarea name="desc" cols="70" class="flat" rows="'.ROWS_2.'">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
 					}
 				}
 				print '</td>';

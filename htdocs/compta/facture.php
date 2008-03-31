@@ -2363,13 +2363,13 @@ else
 							else $text.= img_object($langs->trans('ShowProduct'),'product');
 							$text.= ' '.$objp->ref.'</a>';
 							$text.= ' - '.$objp->product;
-							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':$objp->description);
+							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 							//print $description;
 							print $html->textwithtooltip($text,$description,3,'','',$i);
 							print_date_range($objp->date_start,$objp->date_end);
 							if ($conf->global->PRODUIT_DESC_IN_FORM)
 							{
-								print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
+								print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 							}
 
 							print '</td>';
@@ -2505,7 +2505,10 @@ else
 						}
 						else
 						{
-							print '<textarea name="desc" class="flat" cols="70" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
+							print '<textarea name="desc" class="flat" cols="70" rows="'.ROWS_2.'">';
+							//print $objp->description;
+							print dol_htmlentitiesbr_decode($objp->description);
+							print '</textarea>';
 						}
 						print '</td>';
 						print '<td align="right">';

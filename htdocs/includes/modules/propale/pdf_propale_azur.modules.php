@@ -233,20 +233,20 @@ class pdf_propale_azur extends ModelePDFPropales
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=dol_htmlentities($propale->lignes[$i]->libelle);
+					$libelleproduitservice=dol_htmlentitiesbr($propale->lignes[$i]->libelle,1);
 					if ($propale->lignes[$i]->desc && $propale->lignes[$i]->desc!=$propale->lignes[$i]->libelle)
 					{
-						if ($libelleproduitservice) $libelleproduitservice.="\n";
+						if ($libelleproduitservice) $libelleproduitservice.="<br>";
 
 	                    if ($propale->lignes[$i]->desc == '(CREDIT_NOTE)' && $propale->lignes[$i]->fk_remise_except)
 						{
 							$discount=new DiscountAbsolute($this->db);
 							$discount->fetch($propale->lignes[$i]->fk_remise_except);
-							$libelleproduitservice=$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
+							$libelleproduitservice=dol_htmlentitiesbr($langs->trans("DiscountFromCreditNote",$discount->ref_facture_source),1);
 						}
 						else
 						{
-							$libelleproduitservice.=dol_htmlentities($propale->lignes[$i]->desc);
+							$libelleproduitservice.=dol_htmlentitiesbr($propale->lignes[$i]->desc,1);
 						}
 					}
 					// Si ligne associée à un code produit
@@ -271,7 +271,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					if ($propale->lignes[$i]->date_start && $propale->lignes[$i]->date_end)
 					{
 						// Affichage durée si il y en a une
-						$libelleproduitservice.=dol_htmlentities("\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end).")");
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end).")",1);
 					}
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page

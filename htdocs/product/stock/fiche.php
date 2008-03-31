@@ -161,7 +161,7 @@ if ($_GET["action"] == 'create')
     }
     else
     {
-		print '<textarea name="desc" cols="70" rows="5">'.$entrepot->description.'</textarea>';
+		print '<textarea name="desc" cols="70" rows="5">'.dol_htmlentitiesbr_decode($entrepot->description).'</textarea>';
     }
     print '</td></tr>';
 
@@ -414,7 +414,7 @@ else
 		    }
 		    else
 		    {
-				print '<textarea name="desc" cols="70" rows="5">'.$entrepot->description.'</textarea>';
+				print '<textarea name="desc" cols="70" rows="5">'.dol_htmlentitiesbr_decode($entrepot->description).'</textarea>';
 		    }
             print '</td></tr>';
 

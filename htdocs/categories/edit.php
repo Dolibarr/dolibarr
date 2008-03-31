@@ -126,7 +126,7 @@ if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 else
 {
 	print '<textarea name="description" rows="'.ROWS_6.'" cols="50">';
-	print $categorie->description;
+	print dol_htmlentitiesbr_decode($categorie->description);
 	print '</textarea>';
 }
 

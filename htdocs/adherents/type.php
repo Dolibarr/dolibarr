@@ -224,7 +224,7 @@ if ($_GET["action"] == 'create')
 	else
 	{
 		print '<textarea class="flat" name="mail_valid" rows="15" cols="90">';
-		print $adht->mail_valid;
+		print dol_htmlentitiesbr_decode($adht->mail_valid);
 		print '</textarea>';
 	}
 	print '</td></tr>';
@@ -361,7 +361,7 @@ if ($rowid > 0)
 		else
 		{
 			print '<textarea class="flat" name="mail_valid" rows="15" cols="90">';
-			print $adht->mail_valid;
+			print dol_htmlentitiesbr_decode($adht->mail_valid);
 			print '</textarea>';
 		}
         print "</td></tr>";

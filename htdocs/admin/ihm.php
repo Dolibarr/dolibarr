@@ -208,7 +208,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	}
 	else
 	{
-		print '<textarea name="main_motd" cols="90" rows="'.ROWS_5.'">'.$conf->global->MAIN_MOTD.'</textarea>';
+		print '<textarea name="main_motd" cols="90" rows="'.ROWS_5.'">'.dol_htmlentitiesbr_decode($conf->global->MAIN_MOTD).'</textarea>';
 	}
 	print '</td></tr>';
 
@@ -225,7 +225,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	}
 	else
 	{
-		print '<textarea name="main_home" cols="90" rows="'.ROWS_5.'">'.$conf->global->MAIN_HOME.'</textarea>';
+		print '<textarea name="main_home" cols="90" rows="'.ROWS_5.'">'.dol_htmlentitiesbr_decode($conf->global->MAIN_HOME).'</textarea>';
 	}
 	print '</td></tr>';
     print '</table>';

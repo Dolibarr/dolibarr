@@ -106,7 +106,7 @@ if ($socid > 0)
 	    }
 	    else
 	    {
-			print '<textarea name="note" cols="70" rows="10">'.$societe->note.'</textarea>';
+			print '<textarea name="note" cols="70" rows="10">'.dol_htmlentitiesbr_decode($societe->note).'</textarea>';
 	    }
 	}
 	else

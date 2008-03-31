@@ -56,7 +56,7 @@ class DolEditor
 		
     	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
 
-		$content=dol_htmlentities($content);	// If content is not HTML, we convert to HTML.
+		$content=dol_htmlentitiesbr($content);	// If content is not HTML, we convert to HTML.
 		
     	$this->editor = new FCKeditor($htmlname);
     	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;

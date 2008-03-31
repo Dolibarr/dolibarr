@@ -215,11 +215,11 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					}
 					
                     // Description de la ligne produit
-                    $libelleproduitservice=dol_htmlentities($this->expe->lignes[$i]->description);
+                    $libelleproduitservice=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
                     if ($this->expe->lignes[$i]->description&&$this->expe->lignes[$i]->description!=$com->lignes[$i]->libelle)
                     {
-                        if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=dol_htmlentities($this->expe->lignes[$i]->description);
+                        if ($libelleproduitservice) $libelleproduitservice.="<br>";
+                        $libelleproduitservice.=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
                     }
                     // Si ligne associée à un code produit
                     if ($this->expe->lignes[$i]->fk_product)

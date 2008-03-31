@@ -260,7 +260,7 @@ if ($resql)
 		print $actionstatic->getNomUrl(1,4);
         print '</td>';
 
-       	print '<td align="left" nowrap="nowrap">';
+       	print '<td align="center" nowrap="nowrap">';
 		print dolibarr_print_date($obj->dp,"day");
 		$late=0;
 		if ($obj->percent == 0 && $obj->dp && date("U",$obj->dp) < time()) $late=1;
@@ -270,13 +270,13 @@ if ($resql)
 		if ($late) print img_warning($langs->trans("Late"));
 		print '</td>';
 
-		print '<td align="left" nowrap="nowrap">';
+		print '<td align="center" nowrap="nowrap">';
 		print dolibarr_print_date($obj->da2,"day");
 		print '</td>';
 
         // Titre
         print '<td>';
-       	print dolibarr_trunc($obj->label,12);
+       	print dolibarr_trunc($obj->label,10);
         print '</td>';
 
         // Société
@@ -284,7 +284,7 @@ if ($resql)
         $societestatic->id=$obj->socid;
 		$societestatic->client=$obj->client;
 		$societestatic->nom=$obj->societe;
-        print $societestatic->getNomUrl(1,'',8);
+        print $societestatic->getNomUrl(1,'',6);
 		print '</td>';
 
         // Contact
@@ -294,7 +294,7 @@ if ($resql)
 			$contactstatic->name=$obj->name;
 			$contactstatic->firstname=$obj->firstname;
 			$contactstatic->id=$obj->fk_contact;
-            print $contactstatic->getNomUrl(1,'',8);
+            print $contactstatic->getNomUrl(1,'',6);
         }
         else
         {
