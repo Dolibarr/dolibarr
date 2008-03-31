@@ -32,6 +32,7 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 /**
 		\class      DoliDb
 		\brief      Classe de gestion de la database de dolibarr
+		\remarks	Works with PHP5 Only
 */
 class DoliDb
 {
