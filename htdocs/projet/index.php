@@ -64,7 +64,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX
 $sql.= " ".MAIN_DB_PREFIX."projet as p";
 //$sql.= " , ".MAIN_DB_PREFIX."projet_task as t"; // pourquoi est-ce que c'était en commentaire ? => Si on laisse ce lien, les projet sans taches se retrouvent invisibles
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
-$sql.= " WHERE 1 == 1";
+$sql.= " WHERE 1 = 1";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 { 
