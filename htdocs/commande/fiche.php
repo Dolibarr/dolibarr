@@ -103,7 +103,7 @@ if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes
     {
     	if ($_REQUEST['lang_id'])
     	{
-    		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+    		$outputlangs = new Translate("",$conf);
     		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
     	}
     	commande_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
@@ -380,7 +380,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		{
 			if ($_REQUEST['lang_id'])
 			{
-				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
@@ -422,7 +422,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
     {
       if ($_REQUEST['lang_id'])
 	{
-	  $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+	  $outputlangs = new Translate("",$conf);
 	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
       commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
@@ -450,7 +450,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
   $soc->fetch($commande->socid);
   if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
   commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
@@ -494,7 +494,7 @@ if ($_GET['action'] == 'up' && $user->rights->commande->creer)
   $commande->line_up($_GET['rowid']);
   if ($_REQUEST['lang_id'])
     {
-      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+      $outputlangs = new Translate("",$conf);
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
   commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
@@ -509,7 +509,7 @@ if ($_GET['action'] == 'down' && $user->rights->commande->creer)
   $commande->line_down($_GET['rowid']);
   if ($_REQUEST['lang_id'])
     {
-      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+      $outputlangs = new Translate("",$conf);
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
   commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
@@ -534,7 +534,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 
 	if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
 
@@ -1927,7 +1927,7 @@ else
 				{
 					if ($_REQUEST['lang_id'])
 					{
-						$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+						$outputlangs = new Translate("",$conf);
 						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 					}
 					$result=commande_pdf_create($db, $_REQUEST['id'], '', $_REQUEST['model'], $outputlangs);

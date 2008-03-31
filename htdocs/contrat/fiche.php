@@ -289,7 +289,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 		/*
 			if ($_REQUEST['lang_id'])
 			{
-				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			contrat_pdf_create($db, $contrat->id, $contrat->modelpdf, $outputlangs);

@@ -33,7 +33,9 @@
 */
 class Translate {
 
-    var $dir;
+    var $dir;						// Directory with translation files
+    var $dir_bis;					// Second directory with translation files (for development on two workspaces)
+
     var $origlang;					// Langue origine
     var $defaultlang;				// Langue courante en vigueur de l'utilisateur
 
@@ -48,7 +50,7 @@ class Translate {
 
     /**
      *  \brief      Constructeur de la classe
-     *  \param      dir             Repertoire racine des fichiers de traduction
+     *  \param      dir             Force directory that contains translation files
      *  \param      conf			Objet qui contient la config Dolibarr
      */
     function Translate($dir = "",$conf)
@@ -58,7 +60,8 @@ class Translate {
 		{
 			$this->charset_output=$conf->character_set_client;
 		}
-        $this->dir=$dir;
+		$this->dir=(! $dir ? DOL_DOCUMENT_ROOT ."/langs" : $dir);
+		$this->dir_bis=(defined('DOL_DOCUMENT_ROOT_BIS') ? DOL_DOCUMENT_ROOT_BIS ."/langs" : "");
     }
 
 
@@ -153,7 +156,10 @@ class Translate {
      *              Si le domaine est deja charge, la fonction ne fait rien
      *  \param      domain      Nom du domain (fichier lang) a charger
      *  \param      alt         Utilise le fichier alternatif meme si fichier dans la langue est trouvee
-     */
+	 *	\return		int			<0 if KO, >0 if OK
+     *	\remarks	tab_loaded is completed with $domain key. 
+	 *				Value for key is: 1:Loaded from disk, 2:Not found, 3:Loaded from cache
+	 */
     function Load($domain,$alt=0)
     {
     	// dolibarr_syslog("Translate::Load domain=".$domain." alt=".$alt);
@@ -162,7 +168,7 @@ class Translate {
 		if (empty($domain))
 		{
 			dolibarr_syslog("Translate::Load ErrorWrongParameters",LOG_WARNING);
-			return;
+			return -1;
 		}
 		
 		// Check cache
@@ -172,6 +178,14 @@ class Translate {
         $scandir = $this->dir."/".$this->defaultlang;
         $file_lang =  $scandir . "/".$domain.".lang";
         $filelangexists=is_file($file_lang);
+
+		// If development with 2 workspaces
+        if (! $filelangexists && $this->dir_bis)
+        {
+	        $scandir = $this->dir_bis."/".$this->defaultlang;
+	        $file_lang =  $scandir . "/".$domain.".lang";
+	        $filelangexists=is_file($file_lang);
+		}
 
         if ($alt || ! $filelangexists)
         {
@@ -257,6 +271,8 @@ class Translate {
         {
 	        $this->tab_loaded[$domain]=2;           // Marque ce fichier comme charge non trouve
         }
+		
+		return 1;
     }
 
 
@@ -266,7 +282,13 @@ class Translate {
      */
     function list_domainloaded()
     {
-        return join(",",array_keys($this->tab_loaded));
+        $ret='';
+		foreach($this->tab_loaded as $key=>$val)
+		{
+			if ($ret) $ret.=',';
+			$ret.=$key.'='.$val;
+		}
+		return $ret;
     }
     
     

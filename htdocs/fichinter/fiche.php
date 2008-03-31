@@ -132,7 +132,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
 
@@ -208,7 +208,7 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
 
 		if ($_REQUEST['lang_id'])
 		{
-			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
 		fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
@@ -243,7 +243,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 
 	if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
     fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
@@ -270,7 +270,7 @@ if ($_GET['action'] == 'deleteline' && $user->rights->ficheinter->creer && !$con
 	}
 	if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
 	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
@@ -298,7 +298,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 	  }
     if ($_REQUEST['lang_id'])
     {
-    	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+    	$outputlangs = new Translate("",$conf);
     	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
     fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
@@ -318,7 +318,7 @@ if ($_GET['action'] == 'up' && $user->rights->ficheinter->creer)
 	$fichinter->line_up($_GET['rowid']);
 	if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
 	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
@@ -333,7 +333,7 @@ if ($_GET['action'] == 'down' && $user->rights->ficheinter->creer)
 	$fichinter->line_down($_GET['rowid']);
 	if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
   	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);

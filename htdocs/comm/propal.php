@@ -104,7 +104,7 @@ if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes
   	$result = $propal->delete_product($_GET['lineid']);
   	if ($_REQUEST['lang_id'])
   	{
-  		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+  		$outputlangs = new Translate("",$conf);
   		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
   	}
   	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
@@ -123,7 +123,7 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
         $result=$propal->update_price();
 		if ($_REQUEST['lang_id'])
 		{
-			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
         propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
@@ -262,7 +262,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			// Generation document PDF
 			if ($_REQUEST['lang_id'])
 			{
-				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			propale_pdf_create($db, $id, $_REQUEST['model'], $outputlangs);
@@ -587,7 +587,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 		{
 			if ($_REQUEST['lang_id'])
 			{
-				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
@@ -627,7 +627,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 
 	if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
     propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
@@ -647,7 +647,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
     
 	if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
 	$result=propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
@@ -715,7 +715,7 @@ if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 	$propal->line_up($_GET['rowid']);
 	if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
   propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
@@ -729,7 +729,7 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 	$propal->line_down($_GET['rowid']);
 	if ($_REQUEST['lang_id'])
 	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
   	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);

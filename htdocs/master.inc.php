@@ -159,7 +159,7 @@ if (! defined('NOREQUIREDB'))   require_once(DOL_DOCUMENT_ROOT ."/lib/databases/
  */
 if (! defined('NOREQUIRETRAN')) 
 {
-	$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);	// A mettre apres lecture de la conf
+	$langs = new Translate("",$conf);	// A mettre apres lecture de la conf
 }
 
 /*

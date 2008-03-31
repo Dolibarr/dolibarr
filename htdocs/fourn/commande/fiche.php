@@ -145,7 +145,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 	  {
 	    if ($_REQUEST['lang_id'])
 	    {
-	      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+	      $outputlangs = new Translate("",$conf);
 	      $outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	    }
 	    supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
@@ -177,7 +177,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
     {
       if ($_REQUEST['lang_id'])
 	{
-	  $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+	  $outputlangs = new Translate("",$conf);
 	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
       supplier_order_pdf_create($db, $commande->id,	$commande->modelpdf, $outputlangs);
@@ -206,7 +206,7 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
     $result = $commande->delete_line($_GET['lineid']);
     if ($_REQUEST['lang_id'])
     {
-      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+      $outputlangs = new Translate("",$conf);
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
     supplier_order_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
@@ -321,7 +321,7 @@ if ($_GET['action']	== 'up'	&& $user->rights->fournisseur->commande->creer)
   $commande->line_up($_GET['rowid']);
   if ($_REQUEST['lang_id'])
     {
-      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+      $outputlangs = new Translate("",$conf);
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
   supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
@@ -336,7 +336,7 @@ if ($_GET['action']	== 'down' && $user->rights->fournisseur->commande->creer)
   $commande->line_down($_GET['rowid']);
   if ($_REQUEST['lang_id'])
     {
-      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+      $outputlangs = new Translate("",$conf);
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
   supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
@@ -362,7 +362,7 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
 
   if ($_REQUEST['lang_id'])
   {
-    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+    $outputlangs = new Translate("",$conf);
     $outputlangs->setDefaultLang($_REQUEST['lang_id']);
   }
   $result=supplier_order_pdf_create($db, $commande->id,$commande->modelpdf,$outputlangs);

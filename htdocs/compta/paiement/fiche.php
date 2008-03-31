@@ -83,7 +83,7 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 			$fac->fetch($id);
 			if ($_REQUEST['lang_id'])
 			{
-				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
