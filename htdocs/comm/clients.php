@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,15 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
-$page=$_GET["page"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $_GET["page"] ;
-$pageprev = $_GET["page"] - 1;
-$pagenext = $_GET["page"] + 1;
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="s.nom";
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
@@ -68,13 +69,10 @@ if ($search_code)  $sql .= " AND s.code_client like '%".addslashes(strtolower($s
 
 if ($socname)
 {
-  $sql .= " AND lower(s.nom) like '%".addslashes(strtolower($socname))."%'";
-  $sortfield = "lower(s.nom)";
+  $sql .= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
+  $sortfield = "s.nom";
   $sortorder = "ASC";
 }
-
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="s.nom";
 
 // Count total nb of records
 $nbtotalofrecords = 0;
@@ -100,10 +98,10 @@ if ($result)
   print '<form method="get" action="clients.php">'."\n";
   print '<table class="liste">'."\n";
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom",$param,"","",$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$param,"","",$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$param,"","",$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$param,"",'align="center"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","",$param,"",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","",$param,"",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","",$param,"",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec","",$param,'align="center"',$sortfield,$sortorder);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
   

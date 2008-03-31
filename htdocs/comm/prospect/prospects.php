@@ -36,16 +36,16 @@ $result = restrictedArea($user, 'societe',$socid,'');
 
 $socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
 $stcomm=isset($_GET["stcomm"])?$_GET["stcomm"]:$_POST["stcomm"];
+
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 if ($page == -1) { $page = 0; }
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="s.nom";
-
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="s.nom";
 
 
 
@@ -83,17 +83,13 @@ if ($user->societe_id)
 {
     $sql .= " AND s.rowid = " .$user->societe_id;
 }
-if ($_GET["search_nom"])
-{
-    $sql .= " AND s.nom like '%".strtolower($_GET["search_nom"])."%'";
-}
-if ($_GET["search_ville"])
-{
-    $sql .= " AND s.ville like '%".strtolower($_GET["search_ville"])."%'";
-}
+
+if ($_GET["search_nom"])   $sql .= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
+if ($_GET["search_ville"]) $sql .= " AND s.ville like '%".addslashes(strtolower($_GET["search_ville"]))."%'";
+
 if ($socname)
 {
-    $sql .= " AND s.nom like '%".strtolower($socname)."%'";
+    $sql .= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
     $sortfield = "s.nom";
     $sortorder = "ASC";
 }

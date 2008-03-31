@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/fourn/liste.php
         \ingroup    fournisseur
         \brief      Page accueil de la zone fournisseurs
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -33,9 +31,6 @@ $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");
 
-$page = isset($_GET["page"])?$_GET["page"]:'';
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:'';
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:'';
 $socname = isset($_GET["socname"])?$_GET["socname"]:'';
 $search_nom = isset($_GET["search_nom"])?$_GET["search_nom"]:'';
 $search_ville = isset($_GET["search_ville"])?$_GET["search_ville"]:'';
@@ -49,10 +44,13 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe',$socid,'');
 
-
+$page = isset($_GET["page"])?$_GET["page"]:'';
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:'';
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:'';
 if ($page == -1) { $page = 0 ; }
-
 $offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 
@@ -99,7 +97,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -107,18 +106,18 @@ if ($resql)
   $num = $db->num_rows($resql);
   $i = 0;
 
-  $uadd = "&amp;cat=".$_GET["cat"];
+  $param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
   
-  print_barre_liste($langs->trans("ListOfSuppliers"), $page, "liste.php", $uadd, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
+  print_barre_liste($langs->trans("ListOfSuppliers"), $page, "liste.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
   print '<form action="liste.php?cat='.$_GET["cat"].'" method="GET">';
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$uadd,"",'valign="middle"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville",$uadd,"",'valign="middle"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur",$uadd,"",'align="left"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta",$uadd,"",'align="left"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec",$uadd,"",'align="center"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'valign="middle"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","",$param,'valign="middle"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur","",$param,'align="left"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","",$param,'align="left"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","",$param,'align="center"',$sortfield,$sortorder);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
 
