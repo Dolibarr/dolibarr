@@ -52,6 +52,7 @@ if ($_POST["action"] == 'add')
  */
 
 llxHeader();
+$form = new Form($db);
 
 if ($socid > 0)
 {
@@ -70,7 +71,10 @@ if ($socid > 0)
 	
 	print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$societe->nom.'</td></tr>';
+	print '<tr><td width="20%">'.$langs->trans('Name').'</td>';
+	print '<td colspan="3">';
+	print $form->showrefnav($societe,'socid','',1,'rowid','nom');
+	print '</td></tr>';
 
     print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
 
@@ -137,7 +141,7 @@ if ($_GET["action"] == '')
 
     if ($user->rights->societe->creer)
     {
-        print '<a class="butAction" href="'.DOL_URL_ROOT.'/socnote.php?socid='.$societe->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/societe/socnote.php?socid='.$societe->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
     }
     
     print '</div>';
