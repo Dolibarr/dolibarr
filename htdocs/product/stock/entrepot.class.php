@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/product/stock/entrepot.class.php
    \ingroup    stock
    \brief      Fichier de la classe de gestion des entrepots
-   \version    $Revision$
+   \version    $Id$
 */
 
 
@@ -64,60 +61,60 @@ class Entrepot
     $this->statuts[1] = $langs->trans("Opened");
   }
 
-  /*
-   *    \brief      Creation d'un entrepot en base
-   *    \param      Objet user qui crée l'entrepot
-   */
-  function create($user) 
-  {
-    // Si libelle non defini, erreur
-    if ($this->libelle == '') {
-      $this->error = "Libellé obligatoire";
-      return 0;
-    }
-    
-    $this->db->begin();
-    
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author)";
-    $sql .= " VALUES (now(),".$user->id.")";
-    
-    $result=$this->db->query($sql);
-    if ($result)
-      {
-	$id = $this->db->last_insert_id(MAIN_DB_PREFIX."entrepot");	      
-	if ($id > 0)
-	  {
-	    $this->id = $id;
-	    
-	    if ( $this->update($id, $user) > 0)
-	      {
-		$this->db->commit();
-		return $id;
-	      }
-	    else
-	      {
-		dolibarr_syslog("Entrepot::Create return -3");
-		$this->db->rollback();
-		return -3;
-	      }
-	  }
-	else {
-	  $this->error="Failed to get insert id";
-	  dolibarr_syslog("Entrepot::Create return -2");
-	  return -2;
+	/*
+	*    \brief      Creation d'un entrepot en base
+	*    \param      Objet user qui crée l'entrepot
+	*/
+	function create($user) 
+	{
+		// Si libelle non defini, erreur
+		if ($this->libelle == '')
+		{
+			$this->error = "ErrorFieldRequired";
+			return 0;
+		}
+		
+		$this->db->begin();
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author, label)";
+		$sql .= " VALUES (now(),".$user->id.",'".addslashes($this->libelle)."')";
+		
+		dolibarr_syslog("Entrepot::create sql=".$sql);
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."entrepot");	      
+			if ($id > 0)
+			{
+				$this->id = $id;
+				
+				if ( $this->update($id, $user) > 0)
+				{
+					$this->db->commit();
+					return $id;
+				}
+				else
+				{
+					dolibarr_syslog("Entrepot::Create return -3");
+					$this->db->rollback();
+					return -3;
+				}
+			}
+			else {
+				$this->error="Failed to get insert id";
+				dolibarr_syslog("Entrepot::Create return -2");
+				return -2;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("Entrepot::Create Error ".$this->db->error());
+			$this->db->rollback();
+			return -1;
+		}
+		
 	}
-      }
-    else
-      {
-	$this->error="Failed to insert warehouse";
-	dolibarr_syslog("Entrepot::Create return -1");
-	dolibarr_syslog("Entrepot::Create ".$this->error);
-	dolibarr_syslog("Entrepot::Create ".$this->db->error());
-	$this->db->rollback();
-	return -1;
-      }
-      
-  }
   
   /*
    *    \brief      Mise a jour des information d'un entrepot

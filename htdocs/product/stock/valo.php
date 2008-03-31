@@ -90,7 +90,7 @@ if ($result)
     {
       $entrepot=new Entrepot($db);
       $total = 0;      
-      $var=True;
+      $var=false;
       while ($i < min($num,$limit))
 	{
 	  $objp = $db->fetch_object($result);

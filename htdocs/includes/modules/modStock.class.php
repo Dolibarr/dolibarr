@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \defgroup   stock     Module stock
-   \brief      Module pour g�rer la tenue de stocks produits
+   \defgroup   	stock     Module stock
+   \brief      	Module pour gerer la tenue de stocks produits
+   \version		$Id$
 */
 
 /**
@@ -88,7 +87,7 @@ class modStock extends DolibarrModules
     $this->rights[0][5] = '';
 
     $this->rights[1][0] = 1002;
-    $this->rights[1][1] = 'Cr�er/Modifier les stocks';
+    $this->rights[1][1] = 'Creer/Modifier les stocks';
     $this->rights[1][2] = 'w';
     $this->rights[1][3] = 0;
     $this->rights[1][4] = 'creer';
@@ -109,17 +108,31 @@ class modStock extends DolibarrModules
     $this->rights[3][5] = 'lire';
 
     $this->rights[4][0] = 1005;
-    $this->rights[4][1] = 'Cr�er/modifier mouvements de stocks';
+    $this->rights[4][1] = 'Creer/modifier mouvements de stocks';
     $this->rights[4][2] = 'w';
     $this->rights[4][3] = 0;
     $this->rights[4][4] = 'mouvement';
     $this->rights[4][5] = 'creer';
 
+    // Exports
+    //--------
+    $r=0;
+
+    $r++;
+    $this->export_code[$r]=$this->rights_class.'_'.$r;
+    $this->export_label[$r]="ProductsOrServices";	// Translation key (used only if key ExportDataset_xxx_z not found)
+    $this->export_permission[$r]=array(array("produit","export"));
+    $this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
+    $this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product');
+    $this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification');
+    $this->export_sql_start[$r]='SELECT DISTINCT ';
+    $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
+	
   }
 
    /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+    *               Definit egalement les repertoires de donnees a creer pour ce module.
     */
   function init()
   {
