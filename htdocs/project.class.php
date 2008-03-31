@@ -65,11 +65,11 @@ class Project extends CommonObject
 			return -1;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, dateo)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, dateo, fk_statut)";
 		$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."',";
 		$sql.= " ".($this->socid > 0?$this->socid:"null").",";
 		$sql.= " ".$user->id.",";
-		$sql.= " ".$this->user_resp_id.", now())";
+		$sql.= " ".$this->user_resp_id.", now(), 0)";
 		
 		dolibarr_syslog("Project::create sql=".$sql);
 		$resql=$this->db->query($sql);
