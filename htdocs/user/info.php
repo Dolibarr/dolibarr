@@ -29,7 +29,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/usergroups.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 
-$langs->load("user");
+$langs->load("users");
 
 // Sécurité accés client et commerciaux
 $id = isset($_GET["id"])?$_GET["id"]:'';

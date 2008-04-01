@@ -36,6 +36,7 @@ $id=isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:"");
 $langs->load("companies");
 $langs->load("members");
 $langs->load("bills");
+$langs->load("users");
 
 $fuser = new User($db);
 $fuser->id = $id;

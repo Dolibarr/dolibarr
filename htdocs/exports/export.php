@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
 
 $langs->load("exports");
 
+
 if (! $user->societe_id == 0)
   accessforbidden();
 
@@ -41,7 +42,7 @@ $entitytoicon=array(
 	'tax'=>'generic' ,'tax_type'=>'generic',
 	'account'=>'account',
 	'payment'=>'payment',
-	'product'=>'product','stock'=>'stock',
+	'product'=>'product','stock'=>'generic','warehouse'=>'stock',
 	'other'=>'generic',
 	);
 $entitytolang=array(		// Translation code
@@ -53,7 +54,7 @@ $entitytolang=array(		// Translation code
 	'tax'=>'SocialContribution','tax_type'=>'DictionnarySocialContributions',
 	'account'=>'BankTransactions',
 	'payment'=>'Payment',
-	'product'=>'Product','stock'=>'Stock',
+	'product'=>'Product','stock'=>'Stock','warehouse'=>'Warehouse',
 	'other'=>'Other'
 	);
 
@@ -200,6 +201,7 @@ if ($step == 2 && $action == 'select_model')
  * Affichage Pages des Etapes
  */
 
+ 
 if ($step == 1 || ! $datatoexport)
 {
     llxHeader('',$langs->trans("NewExport"));
@@ -268,7 +270,8 @@ if ($step == 1 || ! $datatoexport)
 if ($step == 2 && $datatoexport)
 {
     llxHeader('',$langs->trans("NewExport"));
-    
+
+
     /*
      * Affichage onglets
      */

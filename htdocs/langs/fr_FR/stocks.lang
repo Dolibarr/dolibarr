@@ -50,3 +50,6 @@ MininumStock=Stock minimum
 StockUp=Stock maximum
 MininumStockShort=Stock min
 StockUpShort=Stock max
+IdWarehouse=Id entrepôt
+DescWareHouse=Description entrepôt
+LieuWareHouse=Lieu entrepôt

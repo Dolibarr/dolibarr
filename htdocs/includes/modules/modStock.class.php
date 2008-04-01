@@ -65,9 +65,10 @@ class modStock extends DolibarrModules
 
     $this->config_page_url = array("stock.php");
 
-    // D�pendences
+    // Dependencies
     $this->depends = array("modProduit");
     $this->requiredby = array();
+	$this->langfiles = array("stocks");
 
     // Constantes
     $this->const = array();
@@ -123,7 +124,7 @@ class modStock extends DolibarrModules
     $this->export_label[$r]="Stocks";	// Translation key (used only if key ExportDataset_xxx_z not found)
     $this->export_permission[$r]=array(array("stock","lire"));
     $this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification','ps.reel'=>'RealStock','e.rowid'=>'IdWarehouse','e.label'=>'LabelWareHouse','e.label'=>'DescWareHouse','e.lieu'=>'LieuWareHouse','e.address'=>'Address','e.cp'=>'Zip','e.ville'=>'Town');
-    $this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product','ps.reel'=>'other','e.rowid'=>'stock','e.label'=>'stock','e.label'=>'stock','e.lieu'=>'stock','e.address'=>'stock','e.cp'=>'stock','e.ville'=>'stock');
+    $this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product','ps.reel'=>'stock','e.rowid'=>'warehouse','e.label'=>'warehouse','e.label'=>'warehouse','e.lieu'=>'warehouse','e.address'=>'warehouse','e.cp'=>'warehouse','e.ville'=>'warehouse');
     $this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification','ps.reel'=>'quantity','e.rowid'=>'idwarehouse','e.label'=>'labelwarehouse','e.label'=>'descwarehouse','e.lieu'=>'lieuwarehouse','e.address'=>'addresswarehouse','e.cp'=>'zipwarehouse','e.ville'=>'townwarehouse');
     $this->export_sql_start[$r]='SELECT DISTINCT ';
     $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
@@ -136,7 +137,7 @@ class modStock extends DolibarrModules
     */
   function init()
   {
-    $sql = array();
+	$sql = array();
     
     return $this->_init($sql);
   }

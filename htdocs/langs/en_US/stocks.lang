@@ -50,3 +50,6 @@ MininumStock=Minimum stock
 StockUp=Stock up
 MininumStockShort=Stock min
 StockUpShort=Stock up
+IdWarehouse=Id warehouse
+DescWareHouse=Description warehouse
+LieuWareHouse=Localisation warehouse

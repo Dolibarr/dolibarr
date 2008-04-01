@@ -28,6 +28,7 @@ For users:
 - Other minor changes (features, look, fixes)
 - Changes in wizard installer to allow building autoexe installer for
   Windows with Apache and Mysql included.
+- Add new predefined exports wizards (stocks, suppliers, taxes...).
 
 For developers:
 - Update code skeletons examples.
