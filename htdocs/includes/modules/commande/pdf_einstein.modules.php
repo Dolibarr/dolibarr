@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,8 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
@@ -25,7 +23,7 @@
 		\ingroup    commande
 		\brief      Fichier de la classe permettant de générer les commandes au modèle Einstein
 		\author	    Laurent Destailleur
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
@@ -86,7 +84,7 @@ class pdf_einstein extends ModelePDFCommandes
 
         // Defini position des colonnes
         $this->posxdesc=$this->marge_gauche+1;
-        $this->posxtva=116;
+        $this->posxtva=113;
         $this->posxup=126;
         $this->posxqty=145;
         $this->posxdiscount=162;
@@ -98,10 +96,11 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
     /**
-    		\brief      Fonction générant la commande sur le disque
-    		\param	    com			Objet commande à générer
-    		\return	    int         1=ok, 0=ko
-    */
+     *		\brief      Fonction générant la commande sur le disque
+     *		\param	    com				Objet commande à générer
+	 *		\param		outputlangs		Lang object for output language
+     *		\return	    int         	1=ok, 0=ko
+     */
     function write_file($com,$outputlangs='')
     {
         global $user,$langs,$conf;
@@ -109,10 +108,10 @@ class pdf_einstein extends ModelePDFCommandes
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
-    $outputlangs->load("companies");
-    $outputlangs->load("bills");
-    $outputlangs->load("products");
-    $outputlangs->load("orders");
+    	$outputlangs->load("companies");
+    	$outputlangs->load("bills");
+    	$outputlangs->load("products");
+    	$outputlangs->load("orders");
 
 		$outputlangs->setPhpLang();
 
@@ -144,7 +143,7 @@ class pdf_einstein extends ModelePDFCommandes
             {
                 if (create_exdir($dir) < 0)
                 {
-                    $this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
                 }
             }
@@ -268,14 +267,14 @@ class pdf_einstein extends ModelePDFCommandes
 
                     if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
                     {
-                        // Affichage durée si il y en a une
+                        // Affichage duree si il y en a une
                         $libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end).")",1);
                     }
 
-                    $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+                    $pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description
-                   	$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+                   	$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
 
                     $pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
                     
@@ -283,21 +282,21 @@ class pdf_einstein extends ModelePDFCommandes
 
                     // TVA
                     $pdf->SetXY ($this->posxtva, $curY);
-                    $pdf->MultiCell($this->posxup-$this->posxtva-1, 4, ($com->lignes[$i]->tva_tx < 0 ? '*':'').abs($com->lignes[$i]->tva_tx), 0, 'R');
+                    $pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($com->lignes[$i]->tva_tx,1,$com->lignes[$i]->info_bits), 0, 'R');
 
                     // Prix unitaire HT avant remise
                     $pdf->SetXY ($this->posxup, $curY);
-                    $pdf->MultiCell($this->posxqty-$this->posxup-1, 4, price($com->lignes[$i]->subprice), 0, 'R', 0);
+                    $pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($com->lignes[$i]->subprice), 0, 'R', 0);
 
-                    // Quantité
+                    // Quantity
                     $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 4, $com->lignes[$i]->qty, 0, 'R');
+                    $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $com->lignes[$i]->qty, 0, 'R');
 
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
                     if ($com->lignes[$i]->remise_percent)
                     {
-                        $pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dolibarr_print_reduction($com->lignes[$i]->remise_percent), 0, 'R');
+                        $pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, dolibarr_print_reduction($com->lignes[$i]->remise_percent), 0, 'R');
                     }
 
                     // Total HT ligne
@@ -306,10 +305,11 @@ class pdf_einstein extends ModelePDFCommandes
                     $pdf->MultiCell(26, 4, $total, 0, 'R', 0);
 
                     // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-
                     $tvaligne=$com->lignes[$i]->total_tva;
                     if ($com->remise_percent) $tvaligne-=($tvaligne*$com->remise_percent)/100;
-                    $this->tva[(string) $com->lignes[$i]->tva_tx] += $tvaligne;
+                    $vatrate=(string) $com->lignes[$i]->tva_tx;
+					if ($com->lignes[$i]->info_bits & 0x01 == 0x01) $vatrate.='*';
+                    $this->tva[$vatrate] += $tvaligne;
 
                     $nexY+=2;    // Passe espace entre les lignes
 
@@ -356,7 +356,8 @@ class pdf_einstein extends ModelePDFCommandes
                 $posy=$this->_tableau_tot($pdf, $com, $deja_regle, $bottomlasttab, $outputlangs);
 
                 // Affiche zone versements
-                if ($deja_regle) {
+                if ($deja_regle)
+				{
                     $posy=$this->_tableau_versements($pdf, $com, $posy, $outputlangs);
                 }
 
@@ -373,18 +374,18 @@ class pdf_einstein extends ModelePDFCommandes
             }
             else
             {
-                $this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
+                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
 				$langs->setPhpLang();	// On restaure langue session
                 return 0;
             }
         }
         else
         {
-            $this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
+            $this->error=$langs->trans("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
             return 0;
         }
-        $this->error=$outputlangs->transnoentities("ErrorUnknown");
+        $this->error=$langs->trans("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
         return 0;   // Erreur par defaut
     }
@@ -393,6 +394,9 @@ class pdf_einstein extends ModelePDFCommandes
      *   \brief      Affiche tableau des versement
      *   \param      pdf     	Objet PDF
      *   \param      object		Objet commande
+	 *	\param		posy			Position y in PDF
+	 *	\param		outputlangs		Object langs for output
+	 *	\return 	int				<0 if KO, >0 if OK
      */
     function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
@@ -427,7 +431,7 @@ class pdf_einstein extends ModelePDFCommandes
         }
 
         /*
-        *	Conditions de règlements
+        *	Conditions de reglements
         */
         if ($object->cond_reglement_code || $object->cond_reglement)
         {
@@ -445,7 +449,7 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 
         /*
-        *	Check si absence mode règlement
+        *	Check si absence mode reglement
         */
         if (! $conf->global->FACTURE_CHQ_NUMBER && ! $conf->global->FACTURE_RIB_NUMBER)
 		{
@@ -459,7 +463,7 @@ class pdf_einstein extends ModelePDFCommandes
         }
 
         /*
-         * Propose mode règlement par CHQ
+         * Propose mode reglement par CHQ
          */
         if (! $object->mode_reglement_code || $object->mode_reglement_code == 'CHQ')
         {
@@ -499,7 +503,7 @@ class pdf_einstein extends ModelePDFCommandes
 		}
 
         /*
-         * Propose mode règlement par RIB
+         * Propose mode reglement par RIB
          */
         if (! $object->mode_reglement_code || $object->mode_reglement_code == 'VIR')
         {
@@ -560,7 +564,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 
     /*
-     *	\brief      Affiche le total à payer
+     *	\brief      Affiche le total a payer
      *	\param      pdf             Objet PDF
      *	\param      object          Objet commande
      *	\param      deja_regle      Montant deja regle
@@ -619,14 +623,22 @@ class pdf_einstein extends ModelePDFCommandes
 
                 $index++;
             	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-                $tvacompl = ( (float)$tvakey < 0 ) ? " (".$outputlangs->transnoentities("NonPercuRecuperable").")" : '' ;
-                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
+
+				$tvacompl='';
+				if (eregi('\*',$tvakey))
+				{
+					$tvakey=eregi_replace('\*','',$tvakey);
+					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")"; 
+				}
+                $totalvat =$outputlangs->transnoentities("TotalVAT").' ';
+				$totalvat.=vatrate($tvakey,1).$tvacompl;
+                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
                 $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
                 $pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
             }
         }
-        if (! $this->atleastoneratenotnull)
+        if (! $this->atleastoneratenotnull) // If not vat at all
         {
             $index++;
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
@@ -645,7 +657,7 @@ class pdf_einstein extends ModelePDFCommandes
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell($largcol2, $tab2_hl, price(abs($object->total_ttc)), $useborder, 'R', 1);
+        $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
         $pdf->SetTextColor(0,0,0);
 
         if ($deja_regle > 0)
@@ -668,7 +680,7 @@ class pdf_einstein extends ModelePDFCommandes
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($largcol2, $tab2_hl, price(abs($resteapayer)), $useborder, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer), $useborder, 'R', 1);
 
 			// Fin
             $pdf->SetFont('Arial','', 9);
@@ -679,7 +691,7 @@ class pdf_einstein extends ModelePDFCommandes
         return ($tab2_top + ($tab2_hl * $index));
     }
 
-    /*
+    /**
     *   \brief      Affiche la grille des lignes de commandes
     *   \param      pdf     objet PDF
     */
@@ -742,7 +754,7 @@ class pdf_einstein extends ModelePDFCommandes
      */
     function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
     {
-    	global $conf,$langs;
+		global $conf,$langs;
 
       $outputlangs->load("main");
       $outputlangs->load("bills");
@@ -769,7 +781,7 @@ class pdf_einstein extends ModelePDFCommandes
       		$pdf->SetTextColor(200,0,0);
           $pdf->SetFont('Arial','B',8);
           $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
-          $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
+          $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
         }
       }
       else if (defined("FAC_PDF_INTITULE"))
@@ -917,7 +929,12 @@ class pdf_einstein extends ModelePDFCommandes
 					// Caractéristiques client
 					$carac_client.="\n".$object->client->adresse;
 					$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
-					if ($this->emetteur->pays_code != $object->client->pays_code) $carac_client.=$object->client->pays."\n";
+
+					//Pays si différent de l'émetteur
+					if ($this->emetteur->pays_code != $object->client->pays_code)
+					{
+						$carac_client.=$object->client->pays."\n";
+					}
 				}
 				// Numéro TVA intracom
 				if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;

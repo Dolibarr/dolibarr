@@ -293,6 +293,6 @@ $yesno[1]="yes";
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
 
-if ( ! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','npr');
+if ( ! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 
 ?>
