@@ -151,8 +151,12 @@ $x_paye = vat_by_quarter($db, $y, $q, $modetax, 'buy');
 
 if (! is_array($x_coll) || ! is_array($x_paye))
 {
-	print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-	//print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
+	if ($x_coll == -1)
+		print '<tr><td colspan="5">'.$langs->trans("NoAccountancyModuleLoaded").'</td></tr>';
+	else if ($x_coll == -2)
+		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	else
+		print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
 }
 else
 {

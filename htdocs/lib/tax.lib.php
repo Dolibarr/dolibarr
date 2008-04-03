@@ -31,7 +31,7 @@
  *	\param		y			Year
  *	\param		modetax		0 or 1 (option vat on debit)
  *	\param		direction	'sell' or 'buy'
- *	\return		array		List of customers third parties with vat
+ *	\return		array		List of customers third parties with vat, -1 if no accountancy module, -2 if not yet developped, -3 if error
  */
 function vat_by_thirdparty($db, $y, $modetax, $direction)
 {
@@ -68,6 +68,7 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	        // Seul le module compta expert peut résoudre ce problème.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
+			$sql = 'TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
@@ -92,6 +93,7 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	        // Seul le module compta expert peut résoudre ce problème.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
+			$sql = 'TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
@@ -106,10 +108,13 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	        $sql.= " AND s.rowid = f.fk_soc AND f.rowid = fd.".$fk_facture;
 			$sql.= " GROUP BY s.rowid";
 */
+			$sql = 'TODO';
 		}
     }
 
-	if ($sql)
+	if (! $sql) return -1;
+	if ($sql && $sql=='TODO') return -2;
+	if ($sql && $sql!='TODO')
 	{
 		dolibarr_syslog("Client::vat_by_customer sql=".$sql);
 	    $resql = $db->query($sql);
@@ -125,12 +130,8 @@ function vat_by_thirdparty($db, $y, $modetax, $direction)
 	    else
 	    {
 	        dolibarr_print_error($db);
-			return -2;
+			return -3;
 	    }
-	}
-	else
-	{
-			return -1;
 	}
 }
 
@@ -190,6 +191,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        // Seul le module compta expert peut résoudre ce problème.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
+			$sql='TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
@@ -218,6 +220,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        // Seul le module compta expert peut résoudre ce problème.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
+			$sql='TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
@@ -238,7 +241,9 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		}
     }
 
-	if ($sql)
+	if (! $sql) return -1;
+	if ($sql && $sql=='TODO') return -2;
+	if ($sql && $sql!='TODO')
 	{
 		dolibarr_syslog("Client::vat_by_quarter sql=".$sql);
 	    $resql = $db->query($sql);
@@ -281,12 +286,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	    else
 	    {
 	        dolibarr_print_error($db);
-			return -2;
+			return -3;
 	    }
-	}
-	else
-	{
-			return -1;
 	}
 
 
@@ -304,6 +305,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        // Seul le module compta expert peut résoudre ce problème.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
+			$sql='TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
@@ -332,6 +334,7 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	        // Seul le module compta expert peut résoudre ce problème.
 	        // (Il faut quand un payment a lieu, stocker en plus du montant du paiement le
 	        // detail part tva et part ht).
+			$sql='TODO';
 		}
 		if ($conf->global->MAIN_MODULE_COMPTABILITE)
 		{
@@ -357,7 +360,9 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 		}
     }
 
-	if ($sql)
+	if (! $sql) return -1;
+	if ($sql && $sql=='TODO') return -2;
+	if ($sql && $sql!='TODO')
 	{
 		dolibarr_syslog("Client::vat_by_quarter sql=".$sql);
 	    $resql = $db->query($sql);
@@ -400,12 +405,8 @@ function vat_by_quarter($db, $y, $q, $modetax, $direction)
 	    else
 	    {
 	        dolibarr_print_error($db);
-			return -2;
+			return -3;
 	    }
-	}
-	else
-	{
-			return -1;
 	}
 	
 	return $list;

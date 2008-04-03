@@ -184,8 +184,12 @@ if (is_array($coll_list))
 }
 else
 {
-	print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-	//print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
+	if ($coll_list == -1)
+		print '<tr><td colspan="5">'.$langs->trans("NoAccountancyModuleLoaded").'</td></tr>';
+	else if ($coll_list == -2)
+		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	else
+		print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
 }
 
 print '</table>';
@@ -251,8 +255,12 @@ if (is_array($coll_list))
 }
 else
 {
-	print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-	//print '<tr><td colspan="5">'.$langs->trans("FeatureIsSupportedInInOutModeOnly").'</td></tr>';
+	if ($coll_list == -1)
+		print '<tr><td colspan="5">'.$langs->trans("NoAccountancyModuleLoaded").'</td></tr>';
+	else if ($coll_list == -2)
+		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	else
+		print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
 }
 
 print '</table>';
