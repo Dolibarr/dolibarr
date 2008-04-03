@@ -1,37 +1,7 @@
-<?xml version="1.0" ?>
-<XML_DIZ_INFO>
-	<MASTER_PAD_VERSION_INFO>
-		<MASTER_PAD_VERSION>3.01</MASTER_PAD_VERSION>
-		<MASTER_PAD_EDITOR>PADGen 3.0.1.35 http://www.padgen.org</MASTER_PAD_EDITOR>
-		<MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware authors to disseminate information to anyone interested in their software products. To find out more go to http://www.asp-shareware.org/pad</MASTER_PAD_INFO>
-	</MASTER_PAD_VERSION_INFO>
-	<Company_Info>
-		<Company_Name>Laurent Destailleur</Company_Name>
-		<Address_1>61 Boulevard Vauban</Address_1>
-		<Address_2 />
-		<City_Town>Montigny-le-Bretonneux</City_Town>
-		<State_Province>Yvelines</State_Province>
-		<Zip_Postal_Code>78180</Zip_Postal_Code>
-		<Country>FRANCE</Country>
-		<Company_WebSite_URL>http://www.destailleur.fr</Company_WebSite_URL>
-		<Contact_Info>
-			<Author_First_Name>Laurent</Author_First_Name>
-			<Author_Last_Name>Destailleur</Author_Last_Name>
-			<Author_Email>eldy@users.sourceforge.net</Author_Email>
-			<Contact_First_Name>Laurent</Contact_First_Name>
-			<Contact_Last_Name>Destailleur</Contact_Last_Name>
-			<Contact_Email>eldy@users.sourceforge.net</Contact_Email>
-		</Contact_Info>
-		<Support_Info>
-			<Sales_Email>eldy@users.sourceforge.net</Sales_Email>
-			<Support_Email>eldy@users.sourceforge.net</Support_Email>
-			<General_Email>eldy@users.sourceforge.net</General_Email>
-			<Sales_Phone />
-			<Support_Phone />
-			<General_Phone />
-			<Fax_Phone />
-		</Support_Info>
-	</Company_Info>
+<?xml version="1.0" encoding="UTF-8" ?>
+<PADGEN_PML>
+	<AppVerInfo>PADGen 3.0.1.35</AppVerInfo>
+	<CompanyName />
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
 		<Program_Version>2.2</Program_Version>
@@ -205,4 +175,4 @@
 		<Affiliates_Yaskifo_Product_ID />
 		<Affiliates_Yaskifo_Maximum_Commission_Rate />
 	</Affiliates>
-</XML_DIZ_INFO>
+</PADGEN_PML>
