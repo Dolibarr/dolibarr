@@ -877,3 +877,226 @@ cursor: pointer;
 .cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; }
 .cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; }
 .cal_today         { background: #DDFFDD; border: solid 1px #ACBCBB; }
+
+
+
+/* ============================================================================== */
+/*  Afficher/cacher                                                               */
+/* ============================================================================== */
+
+#evolForm input.error {
+                        font-weight: bold;
+                        border: solid 1px #FF0000;
+                        padding: 1px 1px 1px 1px;
+                        margin: 1px 1px 1px 1px;
+              }
+
+#evolForm input.focuserr {
+                        font-weight: bold;
+                        background: #FAF8E8;
+                        color: black;
+                        border: solid 1px #FF0000;
+                        padding: 1px 1px 1px 1px;
+                        margin: 1px 1px 1px 1px;
+              }
+
+
+#evolForm input.focus {	/*** Mise en avant des champs en cours d'utilisation ***/
+                        background: #FAF8E8;
+                        color: black;
+                        border: solid 1px #000000;
+                        padding: 1px 1px 1px 1px;
+                        margin: 1px 1px 1px 1px;
+              }
+
+#evolForm input.normal {	/*** Retour a l'etat normal apres l'utilisation ***/
+                         background: white;
+                         color: black;
+                         border: solid 1px white;
+                         padding: 1px 1px 1px 1px;
+                         margin: 1px 1px 1px 1px;
+               }
+
+
+
+/* ============================================================================== */
+/*  Ajax - Liste deroulante de l'autocompletion                                   */
+/* ============================================================================== */
+
+div.autocomplete {
+      position:absolute;
+      width:250px;
+      background-color:white;
+      border:1px solid #888;
+      margin:0px;
+      padding:0px;
+    }
+div.autocomplete ul {
+      list-style-type:none;
+      margin:0px;
+      padding:0px;
+    }
+div.autocomplete ul li.selected { background-color: #D3E5EC;}
+div.autocomplete ul li {
+      list-style-type:none;
+      display:block;
+      margin:0;
+      padding:2px;
+      height:16px;
+      cursor:pointer;
+    }
+
+	
+/* ============================================================================== */
+/*  Ajax - In place editor                                                        */
+/* ============================================================================== */
+
+form.inplaceeditor-form { /* The form */
+}
+
+form.inplaceeditor-form input[type="text"] { /* Input box */
+}
+
+form.inplaceeditor-form textarea { /* Textarea, if multiple columns */
+background: #FAF8E8;
+color: black;
+}
+
+form.inplaceeditor-form input[type="submit"] { /* The submit button */
+  font-size: 100%;
+  font-weight:normal;
+	border: 0px;
+	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
+	background-position : bottom;
+	cursor:pointer;
+}
+
+form.inplaceeditor-form a { /* The cancel link */
+  margin-left: 5px;
+  font-size: 11px;
+	font-weight:normal;
+	border: 0px;
+	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
+	background-position : bottom;
+	cursor:pointer;
+}
+
+
+    
+/* ============================================================================== */
+/* Admin Menu                                                                     */
+/* ============================================================================== */
+
+
+/* CSS a  appliquer a  l'arbre hierarchique */
+
+/* Lien plier /deplier tout */
+.arbre-switch {
+    text-align: right;
+    padding: 0 5px;
+    margin: 0 0 -18px 0;
+}
+
+/* Arbre */
+ul.arbre {
+    padding: 5px 10px;
+}
+/* strong : A modifier en fonction de la balise choisie */
+ul.arbre strong {
+    font-weight: normal;
+    padding: 0 0 0 20px;
+    margin: 0 0 0 -7px;
+    background-image: url(<?php echo $dolibarr_main_url_root.'/admin/menus/images/img/arbre-puce.png' ?>);
+    background-repeat: no-repeat;
+    background-position: 1px 50%;
+}
+ul.arbre strong.arbre-plier {
+    background-image: url(<?php echo $dolibarr_main_url_root.'/admin/menus/images/arbre-plier.png' ?>);
+    cursor: pointer;
+}
+ul.arbre strong.arbre-deplier {
+    background-image: url(<?php echo $dolibarr_main_url_root.'/admin/menus/images/arbre-deplier.png' ?>);
+    cursor: pointer;
+}
+ul.arbre ul {
+    padding: 0;
+    margin: 0;
+}
+ul.arbre li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+ul.arbre li li {
+    margin: 0 0 0 16px;
+}
+/* Uniquement pour les navigateurs a  moteur gecko */
+ul.arbre li:last-child {
+    border-left: 0;
+    background: url(<?php echo $dolibarr_main_url_root.'/admin/mens/images/arbre-trait.png' ?>) no-repeat 0 0;
+}
+/* Classe pour masquer */
+.hide {
+    display: none;
+}
+
+img.menuNew
+{
+	display:block;
+	border:0px;
+}
+
+img.menuEdit
+{
+	border: 0px;
+	display: block;
+}
+
+img.menuDel
+{
+	display:none;
+	border: 0px;
+}
+
+div.menuNew
+{
+	margin-top:-20px;
+	margin-left:270px;
+	height:20px;
+	padding:0px;
+	width:30px;
+	position:relative;
+}
+
+div.menuEdit
+{
+	margin-top:-15px;
+	margin-left:250px;
+	height:20px;
+	padding:0px;
+	width:30px;
+	position:relative;
+
+}
+
+div.menuDel
+{
+	margin-top:-20px;
+	margin-left:290px;
+	height:20px;
+	padding:0px;
+	width:30px;
+	position:relative;
+
+}
+
+div.menuFleche
+{
+	margin-top:-16px;
+	margin-left:320px;
+	height:20px;
+	padding:0px;
+	width:30px;
+	position:relative;
+
+}
