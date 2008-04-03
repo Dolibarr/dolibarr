@@ -831,9 +831,10 @@ class AccountLine
 
     /**
      *      \brief      Efface ligne bancaire
+	 *		\param		user	User object that delete
      *      \return		int 	<0 si KO, >0 si OK
      */
-    function delete()
+    function delete($user=0)
     {
         $nbko=0;
         

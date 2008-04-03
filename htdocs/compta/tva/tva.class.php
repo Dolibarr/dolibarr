@@ -225,7 +225,8 @@ class Tva extends CommonObject
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_modif,";
 		$sql.= " b.fk_account,";
-		$sql.= " b.fk_type";
+		$sql.= " b.fk_type,";
+		$sql.= " b.rappro";
 		
         $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
@@ -252,6 +253,7 @@ class Tva extends CommonObject
 				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
 				$this->fk_type = $obj->fk_type;
+				$this->rappro = $obj->rappro;
             }
             $this->db->free($resql);
             
@@ -482,9 +484,14 @@ class Tva extends CommonObject
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
             return -4;   
         }
-        if ($conf->banque->enabled && (empty($this->accountid) || $this->accountid < 0))
+        if ($conf->banque->enabled && (empty($this->accountid) || $this->accountid <= 0))
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Account"));
+            return -5;   
+        }
+        if ($conf->banque->enabled && (empty($this->paymenttype) || $this->paymenttype <= 0))
+        {
+            $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
             return -5;   
         }
                 
@@ -508,19 +515,28 @@ class Tva extends CommonObject
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // \todo devrait s'appeler paiementtva
             if ($this->id > 0)
             {
-                if ($conf->banque->enabled)
+                $ok=1;
+				if ($conf->banque->enabled)
                 {
                     // Insertion dans llx_bank
                     require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
-                    $acc = new Account($this->db, $this->accountid);
+                    $acc = new Account($this->db);
+					$result=$acc->fetch($this->accountid);
+					if ($result <= 0) dolibarr_print_error($db);
+									
                     $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
             	  
                     // Mise a jour fk_bank dans llx_tva. On connait ainsi la ligne de tva qui a généré l'écriture bancaire
-                    if ($bank_line_id)
+                    if ($bank_line_id > 0)
 					{
                         $this->update_fk_bank($bank_line_id);
                     }
+					else
+					{
+						$this->error=$acc->error;
+						$ok=0;
+					}
             	  
                     // Mise a jour liens (pour chaque charge concernée par le paiement)
                     //foreach ($paiement->amounts as $key => $value)
@@ -533,8 +549,17 @@ class Tva extends CommonObject
                     //    $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
             	    //}
 	            }
-                $this->db->commit();
-                return $this->id;
+                
+				if ($ok) 
+				{
+					$this->db->commit();
+					return $this->id;
+				}
+				else
+				{
+					$this->db->rollback();
+					return -3;
+				}
             }
             else
             {
