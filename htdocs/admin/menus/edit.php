@@ -382,7 +382,8 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print_titre($langs->trans("ModifMenu"),'','setup');
 	print '<br>';
 	
-	print '<form action="./edit.php?action=update" method="post" name="formmenuedit">';
+	print '<form action="./edit.php?action=update" method="POST" name="formmenuedit">';
+	print '<input type="hidden" name="handler_origine" value="'.$menu_handler.'">';
 	
 	print '<table class="border" width="100%">';
 	

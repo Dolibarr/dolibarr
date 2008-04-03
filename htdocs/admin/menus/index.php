@@ -47,7 +47,8 @@ $menu_handler_left=eregi_replace('_frontoffice','',$menu_handler_left);
 
 $menu_handler=$menu_handler_left;
 
-if ($_REQUEST["menu_handler"]) $menu_handler=$_REQUEST["menu_handler"];
+if ($_REQUEST["handler_origine"]) $menu_handler=$_REQUEST["handler_origine"];
+if ($_REQUEST["menu_handler"])    $menu_handler=$_REQUEST["menu_handler"];
 
 
 /*
