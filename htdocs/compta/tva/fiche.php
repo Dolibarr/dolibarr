@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@
 */
 
 require("./pre.inc.php");
-require("../../tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 $langs->load("compta");
 
 $id=$_GET["id"];
-
 
 $mesg = '';
 
@@ -72,6 +72,17 @@ llxHeader();
 
 $html = new Form($db);
 
+if ($id)
+{
+    $vatpayment = new Tva($db);
+	$result = $vatpayment->fetch($id);
+	if ($result <= 0)
+	{
+		dolibarr_print_error($db);
+		exit;
+	}
+}
+
 // Formulaire saisie tva
 if ($_GET["action"] == 'create')
 {
@@ -102,11 +113,11 @@ if ($_GET["action"] == 'create')
     if ($conf->banque->enabled)
     {
 		print '<tr><td>'.$langs->trans("Account").'</td><td>';
-        $html->select_comptes($charge->accountid,"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+        $html->select_comptes($vatpayment->accountid,"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
 
 	    print '<tr><td>'.$langs->trans("Type").'</td><td>';
-	    $html->select_types_paiements($charge->paiementtype, "paiementtype");
+	    $html->select_types_paiements($vatpayment->paiementtype, "paiementtype");
 	    print "</td>\n";
 	}
         
@@ -125,11 +136,7 @@ if ($_GET["action"] == 'create')
 
 if ($id)
 {
-    print_fiche_titre($langs->trans("VATPayment"));
-      
-    $vatpayment = new Tva($db);
-
-	if ($vatpayment->fetch($id) > 0)
+	if ($_GET["action"] == 'edit')
 	{
 		if ($mesg) print $mesg.'<br>';
 
@@ -166,7 +173,52 @@ if ($id)
 
 	    print '<tr><td>'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value=""></td></tr>';
 	}
-	
+
+
+	if ($_GET["action"] != 'edit')
+	{
+		if ($mesg) print $mesg.'<br>';
+
+		$h = 0;
+		$head[$h][0] = DOL_URL_ROOT.'/compta/tva/fiche.php?id='.$vatpayment->id;
+		$head[$h][1] = $langs->trans('Card');
+		$head[$h][2] = 'card';
+		$h++;
+
+		dolibarr_fiche_head($head, 'card', $langs->trans("VATPayment"));
+
+
+	    print '<table class="border" width="100%">';
+	    
+	    print "<tr>";
+	    print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
+	    print $vatpayment->ref;
+	    print '</td></tr>';
+
+	    print "<tr>";
+	    print '<td>'.$langs->trans("DatePayment").'</td><td>';
+	    print dolibarr_print_date($vatpayment->datep,'day');
+	    print '</td></tr>';
+
+	    print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
+	    print dolibarr_print_date($vatpayment->datev,'day');
+	    print '</td></tr>';
+
+	    if ($conf->banque->enabled)
+	    {
+	        print '<tr><td>'.$langs->trans("Account").'</td><td>';
+			$account=new Account($db);
+			$result=$account->fetch($vatpayment->fk_account);
+			print $account->getNomUrl(1);
+	        print '</td></tr>';
+
+		    print '<tr><td>'.$langs->trans("Type").'</td><td>';
+		    print $vatpayment->fk_type ? $langs->trans("PaymentTypeShort".$vatpayment->fk_type) : $langs->trans("Unknown");
+			print "</td>\n";
+		}
+
+	    print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($vatpayment->amount).'</td></tr>';
+	}	
 }
 
 

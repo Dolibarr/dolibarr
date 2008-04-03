@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Yannick Warnier      <ywarnier@beeznest.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 */
 
 require("./pre.inc.php");
-require("../../tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
 $year=$_GET["year"];
 if ($year == 0 )

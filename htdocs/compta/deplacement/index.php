@@ -26,7 +26,7 @@
 */
 
 require("./pre.inc.php");
-require("../../tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
 $langs->load("companies");
 $langs->load("users");

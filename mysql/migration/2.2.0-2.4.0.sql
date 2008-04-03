@@ -240,3 +240,5 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta)
 
 alter table llx_socpeople add   priv           smallint NOT NULL DEFAULT 0 after jabberid;
 
+alter table llx_tva modify fk_bank         integer;
+

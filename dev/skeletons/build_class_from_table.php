@@ -29,9 +29,10 @@ $script_file=__FILE__;
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
-if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Error: You use PHP for CGI mode. To execute $script_file as a command line program, you must use PHP for CLI mode (try php-cli).\n";
-    exit;
+if (substr($sapi_type, 0, 3) == 'cgi')
+{
+	echo "Error: You use PHP for CGI mode. To execute $script_file as a command line program, you must use PHP for CLI mode (try php-cli).\n";
+	exit;
 }
 
 // Include Dolibarr environment
@@ -263,7 +264,7 @@ foreach($property as $key => $prop)
 		$varprop.="\t\t\$sql.= \" ";
 		if ($prop['istime']) $varprop.="\".\$this->db->pdate('";
 		$varprop.="t.".$prop['field'];
-		if ($prop['istime']) $varprop.="').\"";
+		if ($prop['istime']) $varprop.="').\" as ".$prop['field'];
 		if ($i < sizeof($property)) $varprop.=",";
 		$varprop.="\";";
 		$varprop.="\n";

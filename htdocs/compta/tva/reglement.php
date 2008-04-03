@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,19 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/compta/tva/reglement.php
         \ingroup    tax
 		\brief      Liste des règlements de TVA effectués
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
 $langs->load("compta");
 $langs->load("compta");
@@ -35,7 +33,7 @@ $langs->load("compta");
 
 llxHeader();
 
-$tva = new Tva($db);
+$tva_static = new Tva($db);
 
 print_titre($langs->trans("VATPayments"));
 
@@ -52,6 +50,7 @@ if ($result)
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
+    print '<td nowrap align="left">'.$langs->trans("Ref").'</td>';
     print '<td nowrap align="left">'.$langs->trans("Date").'</td>';
     print "<td>".$langs->trans("Label")."</td>";
     print "<td align=\"right\">".$langs->trans("Amount")."</td>";
@@ -62,6 +61,10 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
         print "<tr $bc[$var]>";
+		
+		$tva_static->id=$obj->rowid;
+		$tva_static->ref=$obj->rowid;
+		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
         print '<td align="left">'.dolibarr_print_date($obj->dm,'day')."</td>\n";
         print "<td>".$obj->label."</td>\n";
         $total = $total + $obj->amount;
@@ -71,7 +74,7 @@ if ($result)
         
         $i++;
     }
-    print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
+    print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").'</td>';
     print "<td align=\"right\"><b>".price($total)."</b></td></tr>";
     
     print "</table>";

@@ -15,18 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file        htdocs/compta/resultat/clientfourn.php
    \brief       Page reporting resultat
-   \version     $Revision$
+   \version     $Id$
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.inc.php");
 

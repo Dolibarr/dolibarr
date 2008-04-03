@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,21 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
-require("./pre.inc.php");
-require("../../tva.class.php");
-require("../../chargesociales.class.php");
 
-/*
- *
- */
+ 
+require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
+
+
 if (!$user->rights->compta->resultat->lire)
   accessforbidden();
 
+/*
+*	Views
+*/
 llxHeader();
 
 $year=$_GET["year"];

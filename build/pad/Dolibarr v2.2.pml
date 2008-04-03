@@ -59,11 +59,11 @@
 			<Application_Order_URL>http://www.dolibarr.org</Application_Order_URL>
 			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot2.png</Application_Screenshot_URL>
 			<Application_Icon_URL>http://www.dolibarr.org/images/dolibarr.gif</Application_Icon_URL>
-			<Application_XML_File_URL>http://www.dolibarr.org/component/option,com_docman/task,doc_download/gid,17/Itemid,36/index.php</Application_XML_File_URL>
+			<Application_XML_File_URL>http://www.dolibarr.org/images/pad_dolibarr.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
-			<Primary_Download_URL>http://www.dolibarr.org/component/option,com_docman/task,doc_download/gid,1/Itemid,36/index.php</Primary_Download_URL>
-			<Secondary_Download_URL />
+			<Primary_Download_URL>http://www.dolibarr.org/images/dolibarr.tgz</Primary_Download_URL>
+			<Secondary_Download_URL>http://www.dolibarr.org/images/dolibarr.tgz</Secondary_Download_URL>
 			<Additional_Download_URL_1 />
 			<Additional_Download_URL_2 />
 		</Download_URLs>

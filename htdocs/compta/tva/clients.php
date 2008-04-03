@@ -29,7 +29,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
 $langs->load("bills");
 $langs->load("compta");
@@ -121,7 +121,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
 	$vatsup=$langs->trans("VATPayed");
-	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("TogetBack").')';
+	if ($conf->global->FACTURE_TVAOPTION != 'franchise') $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
 report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
 

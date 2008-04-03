@@ -28,7 +28,7 @@
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 
 if (!$user->admin && !$user->rights->tax->charges->lire)
   accessforbidden();

@@ -27,7 +27,7 @@ create table llx_tva
   amount          real NOT NULL DEFAULT 0,
   label           varchar(255),
   note            text,
-  fk_bank         integer NOT NULL,  
+  fk_bank         integer,  
   fk_user_creat   integer,            -- utilisateur qui a créé l'info
   fk_user_modif   integer             -- utilisateur qui a modifié l'info
 )type=innodb;
