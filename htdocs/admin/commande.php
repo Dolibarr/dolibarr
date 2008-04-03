@@ -125,41 +125,39 @@ if ($_GET["action"] == 'setdoc')
 
 if ($_GET["action"] == 'setmod')
 {
-  // \todo Verifier si module numerotation choisi peut etre activ�
+  // \todo Verifier si module numerotation choisi peut etre active
   // par appel methode canBeActivated
   
   dolibarr_set_const($db, "COMMANDE_ADDON",$_GET["value"]);
-  Header("Location: commande.php");
-  exit;
+}
+
+if ($_POST["action"] == 'set_COMMANDE_FREE_TEXT')
+{
+    dolibarr_set_const($db, "COMMANDE_FREE_TEXT",trim($_POST["COMMANDE_FREE_TEXT"]));
 }
 
 if ($_POST["action"] == 'setvalidorder')
 {
-  dolibarr_set_const($db, "COMMANDE_VALID_AFTER_CLOSE_PROPAL",$_POST["validorder"]);
-  Header("Location: commande.php");
-  exit;
+	dolibarr_set_const($db, "COMMANDE_VALID_AFTER_CLOSE_PROPAL",$_POST["validorder"]);
 }
 
 if ($_POST["action"] == 'deliverycostline')
 {
-  dolibarr_set_const($db, "COMMANDE_ADD_DELIVERY_COST_LINE",$_POST["addline"]);
-  Header("Location: commande.php");
-  exit;
+	dolibarr_set_const($db, "COMMANDE_ADD_DELIVERY_COST_LINE",$_POST["addline"]);
 }
 
 if ($_POST["action"] == 'set_use_customer_contact_as_recipient')
 {
 	dolibarr_set_const($db, "COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["use_customer_contact_as_recipient"]);
-  Header("Location: commande.php");
-  exit;
 }
 
-// d�fini les constantes du mod�le saphir
+// defini les constantes du modele saphir
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "COMMANDE_NUM_MATRICE",$_POST["matrice"]);
 if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "COMMANDE_NUM_PREFIX",$_POST["prefix"]);
 if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "COMMANDE_NUM_DELTA",$_POST["offset"]);
 if ($_POST["action"] == 'setFiscalMonth') dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonth"]);
 if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "COMMANDE_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
+
 
 /*
  * Affichage page
@@ -421,6 +419,17 @@ print '<td>'.$langs->trans("UseCustomerContactAsOrderRecipientIfExist").'</td>';
 print '<td width="60" align="center">'.$html->selectyesno("use_customer_contact_as_recipient",$conf->global->COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1).'</td>';
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
+print '</form>';
+
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="set_COMMANDE_FREE_TEXT">';
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("FreeLegalTextOnOrders").'<br>';
+print '<textarea name="COMMANDE_FREE_TEXT" class="flat" cols="100">'.$conf->global->COMMANDE_FREE_TEXT.'</textarea>';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
 print '</form>';
 
 print '</table>';

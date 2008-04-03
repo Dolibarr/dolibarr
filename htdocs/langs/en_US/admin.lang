@@ -603,8 +603,11 @@ CreditNote=Credit note
 CreditNotes=Credit notes
 ForceInvoiceDate=Force invoice date to validation date
 DisableRepeatable=Disable repeatable invoices
-SuggestedPaymentModesIfNotDefinedInInvoice=Suggested Payments mode on invoices if not explicitely defined
+SuggestedPaymentModesIfNotDefinedInInvoice=Suggested payments mode on invoice by default if not defined for invoice
 EnableEditDeleteValidInvoice=Enable the possibility to edit/delete valid invoice with no payment
+SuggestPaymentByRIBOnAccount=Suggest payment by withdraw on account
+SuggestPaymentByChequeToAddress=Suggest payment by cheque to
+FreeLegalTextOnInvoices=Free text on invoices
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms
@@ -619,12 +622,14 @@ HideTreadedPropal=Hide the treated commercial proposals in the list
 AddShippingDateAbility=Add shipping date ability
 AddDeliveryAddressAbility=Add delivery date ability
 UseOptionLineIfNoQuantity=A line of product/service with a zero amount is considered as an option
+FreeLegalTextOnProposal=Free text on commercial proposals
 ##### Orders #####
 OrdersSetup=Orders' management setup
 OrdersNumberingModules=Orders numbering modules
 OrdersModelModule=Order documents models
 HideTreadedOrders=Hide the treated or canceled orders in the list
 ValidOrderAfterPropalClosed=To validate the order after proposal closer, makes it possible not to step by the provisional order
+FreeLegalTextOnOrders=Free text on orders
 ##### Fiche inter #####
 FicheinterNumberingModules=Intervention numbering modules
 TemplatePDFInterventions=Intervention card documents models

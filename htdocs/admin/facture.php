@@ -145,6 +145,11 @@ if ($_POST["action"] == 'setribchq')
     dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"]);
 }
 
+if ($_POST["action"] == 'set_FACTURE_FREE_TEXT')
+{
+    dolibarr_set_const($db, "FACTURE_FREE_TEXT",trim($_POST["FACTURE_FREE_TEXT"]));
+}
+
 if ($_POST["action"] == 'setforcedate')
 {
     dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_POST["forcedate"]);
@@ -181,7 +186,7 @@ if ($_GET["action"] == 'delete')
   }
 }
 
-// d�fini les constantes du mod�le pluton
+// defini les constantes du modele pluton
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FACTURE_NUM_MATRICE",$_POST["matrice"]);
 if ($_POST["action"] == 'updatePrefixFacture') dolibarr_set_const($db, "FACTURE_NUM_PREFIX",$_POST["prefixfacture"]);
 if ($_POST["action"] == 'updatePrefixAvoir') dolibarr_set_const($db, "AVOIR_NUM_PREFIX",$_POST["prefixavoir"]);
@@ -457,7 +462,7 @@ print '<td align="right"><input type="submit" class="button" value="'.$langs->tr
 print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print "<td>Proposer paiement par RIB sur le compte</td>";
+print "<td>".$langs->trans("SuggestPaymentByRIBOnAccount")."</td>";
 print "<td>";
 if ($conf->banque->enabled)
 {
@@ -497,7 +502,7 @@ else
 print "</td></tr>";
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print "<td>Proposer paiement par ch�que � l'ordre et adresse de</td>";
+print "<td>".$langs->trans("SuggestPaymentByChequeToAddress")."</td>";
 print "<td>";
 print '<select name="chq">';
 print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
@@ -588,6 +593,17 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("UsBillingContactAsIncoiveRecipientIfExist");
 print '</td><td width="60" align="center">';
 print $html->selectyesno("use_bill_contact_as_recipient",$conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="set_FACTURE_FREE_TEXT">';
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("FreeLegalTextOnInvoices").'<br>';
+print '<textarea name="FACTURE_FREE_TEXT" class="flat" cols="100">'.$conf->global->FACTURE_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

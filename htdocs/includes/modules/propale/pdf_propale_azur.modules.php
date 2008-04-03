@@ -16,8 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
@@ -25,7 +23,7 @@
 		\ingroup    propale
 		\brief      Fichier de la classe permettant de générer les propales au modèle Azur
 		\author	    Laurent Destailleur
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
@@ -76,6 +74,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $this->option_multilang = 1;               // Dispo en plusieurs langues
         $this->option_escompte = 1;                // Affiche si il y a eu escompte
         $this->option_credit_note = 1;             // Gère les avoirs
+		$this->option_freetext = 1;					// Support add of a personalised text
 
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       		$this->franchise=1;
@@ -980,6 +979,9 @@ class pdf_propale_azur extends ModelePDFPropales
     {
 		global $conf;
 
+		// Line of free text
+		$ligne=(! empty($conf->global->PROPALE_FREE_TEXT))?$conf->global->PROPALE_FREE_TEXT:"";
+
         // Premiere ligne d'info réglementaires
         $ligne1="";
         if ($this->emetteur->forme_juridique_code)
@@ -1018,8 +1020,15 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetDrawColor(224,224,224);
 
         // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-        $posy=$this->marge_basse + 1 + ($ligne1?3:0) + ($ligne2?3:0);
+        $posy=$this->marge_basse + 1 + ($ligne?4:0) + ($ligne1?3:0) + ($ligne2?3:0);
 
+        if ($ligne)
+		{
+			$pdf->SetXY($this->marge_gauche,-$posy);
+			$pdf->MultiCell(190, 3, $ligne, 0, 'L', 0);
+			$posy-=7;
+		}
+		
         $pdf->SetY(-$posy);
         $pdf->line($this->marge_gauche, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);
         $posy--;

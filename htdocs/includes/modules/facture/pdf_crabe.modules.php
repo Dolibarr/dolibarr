@@ -74,7 +74,7 @@ class pdf_crabe extends ModelePDFFactures
         $this->option_multilang = 1;               // Dispo en plusieurs langues
         $this->option_escompte = 1;                // Affiche si il y a eu escompte
         $this->option_credit_note = 1;             // Gère les avoirs
-
+		$this->option_freetext = 1;						// Support add of a personalised text
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       		$this->franchise=1;
 
@@ -1142,7 +1142,10 @@ class pdf_crabe extends ModelePDFFactures
     {
         global $conf;
 
-        // Premiere ligne d'info rÃ©glementaires
+		// Line of free text
+		$ligne=(! empty($conf->global->FACTURE_FREE_TEXT))?$conf->global->FACTURE_FREE_TEXT:"";
+
+        // Premiere ligne d'info réglementaires
         $ligne1="";
         if ($this->emetteur->forme_juridique_code)
         {
@@ -1161,7 +1164,7 @@ class pdf_crabe extends ModelePDFFactures
             $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
         }
 
-        // Deuxieme ligne d'info rÃ©glementaires
+        // Deuxieme ligne d'info réglementaires
         $ligne2="";
         if ($this->emetteur->profid3)
         {
@@ -1175,13 +1178,20 @@ class pdf_crabe extends ModelePDFFactures
         {
             $ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$this->emetteur->tva_intra;
         }
-
+		
         $pdf->SetFont('Arial','',8);
         $pdf->SetDrawColor(224,224,224);
 
         // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-        $posy=$this->marge_basse + 1 + ($ligne1?3:0) + ($ligne2?3:0);
+        $posy=$this->marge_basse + 1 + ($ligne?4:0) + ($ligne1?3:0) + ($ligne2?3:0);
 
+        if ($ligne)
+		{
+			$pdf->SetXY($this->marge_gauche,-$posy);
+			$pdf->MultiCell(190, 3, $ligne, 0, 'L', 0);
+			$posy-=7;
+		}
+		
         $pdf->SetY(-$posy);
         $pdf->line($this->marge_gauche, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);
         $posy--;

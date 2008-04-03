@@ -77,53 +77,44 @@ if ($_GET["action"] == 'specimen')
 	}
 }
 
+if ($_POST["action"] == 'set_PROPALE_FREE_TEXT')
+{
+    dolibarr_set_const($db, "PROPALE_FREE_TEXT",trim($_POST["PROPALE_FREE_TEXT"]));
+}
+
 if ($_POST["action"] == 'setnbprod')
 {
     dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$_POST["value"]);
-    Header("Location: propale.php");
-    exit;
 }
 
 if ($_POST["action"] == 'setdefaultduration')
 {
     dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION",$_POST["value"]);
-    Header("Location: propale.php");
-    exit;
 }
 
 if ($_POST["action"] == 'setaddshippingdate')
 {
     dolibarr_set_const($db, "PROPALE_ADD_SHIPPING_DATE",$_POST["value"]);
-    Header("Location: propale.php");
-    exit;
 }
 
 if ($_POST["action"] == 'setadddeliveryaddress')
 {
     dolibarr_set_const($db, "PROPALE_ADD_DELIVERY_ADDRESS",$_POST["value"]);
-    Header("Location: propale.php");
-    exit;
 }
 
 if ($_POST["action"] == 'setuseoptionline')
 {
     dolibarr_set_const($db, "PROPALE_USE_OPTION_LINE",$_POST["value"]);
-    Header("Location: propale.php");
-    exit;
 }
 
 if ($_POST["action"] == 'setclassifiedinvoiced')
 {
     dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$_POST["value"]);
-    Header("Location: propale.php");
-    exit;
 }
 
 if ($_POST["action"] == 'setusecustomercontactasrecipient')
 {
     dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["value"]);
-    Header("Location: propale.php");
-    exit;
 }
 
 
@@ -492,6 +483,17 @@ if ($conf->commande->enabled)
 	print '</tr>';
 	print '</form>';
 }
+
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="set_PROPALE_FREE_TEXT">';
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("FreeLegalTextOnProposal").'<br>';
+print '<textarea name="PROPALE_FREE_TEXT" class="flat" cols="100">'.$conf->global->PROPALE_FREE_TEXT.'</textarea>';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
 
 print '</table>';
 

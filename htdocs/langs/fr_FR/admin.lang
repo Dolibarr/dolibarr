@@ -602,8 +602,11 @@ CreditNote=Avoir
 CreditNotes=Avoirs
 ForceInvoiceDate=Forcer la date de facture à la date de validation
 DisableRepeatable=Désactiver les factures récurrentes
-SuggestedPaymentModesIfNotDefinedInInvoice=Modes de paiements suggérés sur les factures si non défini explicitement
+SuggestedPaymentModesIfNotDefinedInInvoice=Modes de paiements suggérés par défaut si non défini au niveau de la facture
 EnableEditDeleteValidInvoice=Activer la possibilité d'éditer/supprimer une facture validée sans paiement
+SuggestPaymentByRIBOnAccount=Proposer paiement par RIB sur le compte
+SuggestPaymentByChequeToAddress=Proposer paiement par chèque à l'ordre et adresse de
+FreeLegalTextOnInvoices=Mention complémentaire sur les factures
 ##### Proposals #####
 PropalSetup=Configuration du module Propositions Commerciales
 CreateForm=Création formulaire
@@ -618,12 +621,14 @@ HideTreadedPropal=Cacher les propositions commerciales traitées de la liste
 AddShippingDateAbility=Possibilité de déterminer une date de livraison
 AddDeliveryAddressAbility=Possibilité de sélectionner une adresse de livraison
 UseOptionLineIfNoQuantity=Une ligne de produit/service ayant une quantité nulle est considérée comme une option
+FreeLegalTextOnProposal=Mention complémentaire sur les propositions
 ##### Orders #####
 OrdersSetup=Configuration du module Commandes
 OrdersNumberingModules=Modules de numérotation des commandes
 OrdersModelModule=Modèles de document des commandes
 HideTreadedOrders=Cacher les commandes traitées ou annulées de la liste
 ValidOrderAfterPropalClosed=Valider la commande après la clôture de la propale, permet de ne pas passer par la commande provisoire
+FreeLegalTextOnOrders=Mention complémentaire sur les commandes
 ##### Fiche inter #####
 FicheinterNumberingModules=Modules de numérotation des fiches interventions
 TemplatePDFInterventions=Modèle de documents des fiches d'interventions
