@@ -14,7 +14,7 @@ SourceDir=E:\Mes Developpements\dolibarr
 ; ----- End of change
 AppId=doliwamp
 AppPublisher=Laurent Destailleur - NLTechno
-AppPublisherURL=http://www.dolibarr.org
+AppPublisherURL=http://www.nltechno.com
 AppSupportURL=http://www.dolibarr.org
 AppUpdatesURL=http://www.dolibarr.org
 AppComments=DoliWamp includes Dolibarr, Apache, PHP and Mysql softwares.
@@ -44,6 +44,7 @@ Name: "desktopicon"; Description: "Create a &Desktop icon"; GroupDescription: "A
 Name: "{app}\logs"
 Name: "{app}\tmp"
 Name: "{app}\dolibarr_documents"
+Name: "{app}\bin\apache\apache2.2.6\logs"
 
 [Files]
 ; Stop/start
@@ -549,27 +550,22 @@ DeleteFile(SrcFile);
 
 
   // Install services
-  //Filename: "{app}\uninstall_services.bat"; Flags: runhidden waituntilterminated
   batFile := path+'\uninstall_services.bat';
   Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
-  //Filename: "{app}\install_services.bat"; Flags: runhidden waituntilterminated
   batFile := path+'\install_services.bat';
   Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
   // Stard services
-  //Filename: "{app}\startdoliwamp.bat"; Flags: runhidden waituntilterminated
   batFile := path+'\startdoliwamp.bat';
   Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
   // Change mysql password
-  //Filename: "{app}\mysqlinitpassword.bat"; Flags: runhidden waituntilterminated
   batFile := path+'\mysqlinitpassword.bat';
   Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
-  // Remove bat file
-  //Filename: "{app}\removefiles.bat"; Flags: runhidden waituntilterminated
-  //  batFile := path+'\removefiles.bat';
-  //  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+  // Remove dangerous files
+  batFile := path+'\removefiles.bat';
+  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
   end
 
@@ -678,6 +674,9 @@ Filename: "{app}\rundoliwamp.bat"; Description: "Launch Dolibarr now"; Flags: sh
 
 [UninstallDelete]
 Type: files; Name: "{app}\*.*"
+Type: files; Name: "{app}\www\dolibarr\htdocs\conf\conf.php"
+Type: files; Name: "{app}\www\dolibarr\htdocs\install\install.forced.php"
+Type: filesandordirs; Name: "{app}\alias"
 Type: filesandordirs; Name: "{app}\apps"
 Type: filesandordirs; Name: "{app}\bin\apache"
 Type: filesandordirs; Name: "{app}\bin\php"

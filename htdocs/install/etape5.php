@@ -39,32 +39,37 @@ $success=0;
 dolibarr_install_syslog("etape5: Entering etape5.php page", LOG_INFO);
 
 
+// If install, check pass and pass_verif used to create admin account
+if ($_POST["action"] == "set")
+{
+	if ($_POST["pass"] <> $_POST["pass_verif"])
+	{
+		Header("Location: etape4.php?error=1&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
+		exit;
+	}
+
+	if (strlen(trim($_POST["pass"])) == 0)
+	{
+		Header("Location: etape4.php?error=2&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
+		exit;
+	}
+
+	if (strlen(trim($_POST["login"])) == 0)
+	{
+		Header("Location: etape4.php?error=3&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
+		exit;
+	}
+}
+
+
+/*
+*	View
+*/
+
+pHeader($langs->trans("SetupEnd"),"etape5");
+
 if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 {
-    // If install, check pass and pass_verif used to create admin account
-    if ($_POST["action"] == "set")
-    {
-        if ($_POST["pass"] <> $_POST["pass_verif"])
-        {
-            Header("Location: etape4.php?error=1&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
-            exit;
-        }
-    
-        if (strlen(trim($_POST["pass"])) == 0)
-        {
-            Header("Location: etape4.php?error=2&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
-            exit;
-        }
-    
-        if (strlen(trim($_POST["login"])) == 0)
-        {
-            Header("Location: etape4.php?error=3&selectlang=$setuplang".(isset($_POST["login"])?'&login='.$_POST["login"]:''));
-            exit;
-        }
-    }
-    
-
-    pHeader($langs->trans("SetupEnd"),"etape5");
 
     print '<table cellspacing="0" cellpadding="2" width="100%">';
     $error=0;
