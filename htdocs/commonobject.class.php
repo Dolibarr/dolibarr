@@ -147,12 +147,16 @@ class CommonObject
     {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE rowid =".$rowid;
+
+		dolibarr_syslog("CommonObject::delete_contact sql=".$sql);
         if ($this->db->query($sql))
         {
             return 1;
         }
         else
         {
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("CommonObject::delete_contact error=".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -320,6 +324,7 @@ class CommonObject
         else
         {
             $this->error=$this->db->error();
+			dolibarr_syslog("CommonObject::getIdContact ".$this->error, LOG_ERR);
             return null;
         }
 
