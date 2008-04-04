@@ -182,9 +182,10 @@ class Form
      */
     function select_departement($selected='',$pays_code=0)
     {
-      dolibarr_syslog("Form::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
+      global $conf,$langs,$user;
+	  
+	  dolibarr_syslog("Form::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
 	    
-      global $conf,$langs;
       $langs->load("dict");
       
       $htmlname='departement_id';
@@ -243,6 +244,7 @@ class Form
 	            }
 	        }
 	        print '</select>';
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	    }
 	    else {
 	        dolibarr_print_error($this->db);
@@ -807,7 +809,10 @@ class Form
 					$i++;
 				}
 			}
-			if ($htmlname != 'none') print '</select>';
+			if ($htmlname != 'none')
+			{
+				print '</select>';
+			}
 			return $num;
 		}
 		else
@@ -1414,7 +1419,7 @@ class Form
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
     {
-        global $langs;
+        global $langs,$user;
         
         $this->load_cache_conditions_paiements();
  
@@ -1434,6 +1439,7 @@ class Form
             print '</option>';
         }
         print '</select>';
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
     
 
@@ -1658,7 +1664,7 @@ class Form
      */
     function select_civilite($selected='')
     {
-        global $conf,$langs;
+        global $conf,$langs,$user;
         $langs->load("dict");
     
         $sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
@@ -1691,6 +1697,7 @@ class Form
                 }
             }
             print '</select>';
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         }
         else
         {
@@ -1707,7 +1714,7 @@ class Form
      */
     function select_forme_juridique($selected='',$pays_code=0)
     {
-        global $conf,$langs;
+        global $conf,$langs,$user;
         $langs->load("dict");
     
         // On recherche les formes juridiques actives des pays actifs
@@ -1761,6 +1768,7 @@ class Form
                 }
             }
             print '</select>';
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</div>';
         }
         else
@@ -2218,7 +2226,7 @@ class Form
      */
     function select_currency($selected='',$htmlname='currency_id')
     {
-        global $conf,$langs;
+        global $conf,$langs,$user;
         $langs->load("dict");
     
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilité
@@ -2257,6 +2265,7 @@ class Form
                 }
             }
             print '</select>';
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             return 0;
         }
         else {
@@ -2767,7 +2776,7 @@ class Form
             print "</option>\n";
         }
     
-        print "</select>\n";
+        print "</select>";
     }
 
 

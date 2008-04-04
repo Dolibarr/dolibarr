@@ -431,6 +431,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 
 		print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
 		$form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="autofilltownfromzip_save_refresh_create()"':'');
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
@@ -522,9 +523,11 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		
 		print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
 		$form->select_array("typent_id",$soc->typent_array(0), $soc->typent_id);
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td>';
 		print '<td>'.$langs->trans("Staff").'</td><td>';
 		$form->select_array("effectif_id",$soc->effectif_array(0), $soc->effectif_id);
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 		
 		// Assujeti TVA
@@ -786,6 +789,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
         $form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript_ajax?' onChange="autofilltownfromzip_save_refresh_edit()"':'');
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
@@ -880,9 +884,11 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
     print '<tr><td>'.$langs->trans("Type").'</td><td>';
     $form->select_array("typent_id",$soc->typent_array(0), $soc->typent_id);
+	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td>';
     print '<td>'.$langs->trans("Staff").'</td><td>';
     $form->select_array("effectif_id",$soc->effectif_array(0), $soc->effectif_id);
+	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>';
 
     print '<tr><td align="center" colspan="4">';

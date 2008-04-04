@@ -301,6 +301,7 @@ if ($user->rights->societe->contact->creer)
 
 		print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
 		$form->select_pays($contact->fk_pays);
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
@@ -382,6 +383,7 @@ if ($user->rights->societe->contact->creer)
 
 		print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
 		$form->select_pays($contact->fk_pays);
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
