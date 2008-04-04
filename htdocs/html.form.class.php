@@ -1447,7 +1447,7 @@ class Form
      */
     function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0)
     {
-        global $langs;
+        global $langs,$user;
 		
 		dolibarr_syslog("Form::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
         
@@ -1479,6 +1479,7 @@ class Form
             print '</option>';
         }
         print '</select>';
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
     /**

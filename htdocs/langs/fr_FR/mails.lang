@@ -52,7 +52,7 @@ NoTargetYet=Aucun destinataire défini (Aller sur l'onglet Destinataires)
 AddRecipients=Ajout de destinataires
 RemoveRecipient=Supprime destinataire
 CommonSubstitutions=Substitutions communes
-YouCanAddYourOwnPredefindedListHere=Vous pouvez ajouter votre propre module de sélection/import de mails. Pour cela, voir le fichier htdocs/includes/modules/mailings/README.
+YouCanAddYourOwnPredefindedListHere=Pour créer votre module sélection mails, voir htdocs/includes/modules/mailings/README.
 EMailTestSubstitutionReplacedByGenericValues=En mode test, les variables de substitution sont remplacées par des valeurs génériques
 
 # Libelle des modules de liste de destinataires mailing

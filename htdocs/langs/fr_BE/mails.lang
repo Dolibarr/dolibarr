@@ -50,8 +50,9 @@ NoTargetYet=Aucun destinataire défini jusqu'à présent
 AddRecipients=Ajouter destinataires
 RemoveRecipient=Retirer destinataire 
 CommonSubstitutions=Substitutions communes
-YouCanAddYourOwnPredefindedListHere=Vous pouvez ajoutez votre propre module de sélection d'e-mails ici. Pour cela, jetez un oeil au fichier htdocs/includes/modules/mailings/README.
-=
+YouCanAddYourOwnPredefindedListHere=Pour créer votre module sélection mails, voir htdocs/includes/modules/mailings/README.
+EMailTestSubstitutionReplacedByGenericValues=En mode test, les variables de substitution sont remplacées par des valeurs génériques
+
 # Libelle des modules de liste de destinataires mailing=
 MailingModuleDescContactCompanies=Contacts uniques de tous les tiers
 MailingModuleDescDolibarrUsers=Tous les utilisateurs de Dolibarr avec une adresse e-mail

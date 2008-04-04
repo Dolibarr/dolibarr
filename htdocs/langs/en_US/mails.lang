@@ -52,7 +52,7 @@ NoTargetYet=No recipients defined yet (Go on tab 'Recipients')
 AddRecipients=Add recipients
 RemoveRecipient=Remove recipient
 CommonSubstitutions=Common substitutions
-YouCanAddYourOwnPredefindedListHere=You can add your own mails selector module here. For this take a look at the file htdocs/includes/modules/mailings/README.
+YouCanAddYourOwnPredefindedListHere=To create your email selector module, see htdocs/includes/modules/mailings/README.
 EMailTestSubstitutionReplacedByGenericValues=When using test mode, substitutions variables are replaced by generic values
 
 # Libelle des modules de liste de destinataires mailing

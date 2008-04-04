@@ -177,7 +177,9 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         print_titre($langs->trans("ToAddRecipientsChooseHere"));
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td>'.$langs->trans("RecipientSelectionModules").'</td>';
+        print '<td>'.$langs->trans("RecipientSelectionModules");
+		if ($user->admin) print ' '.info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1);
+		print '</td>';
         print '<td align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
         print '<td align="center">'.$langs->trans("Filter").'</td>';
         print '<td align="center" width="120">&nbsp;</td>';
@@ -272,14 +274,10 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         closedir($handle);
 
         print '</table>';
-        if ($user->admin)
-        {
-        	print info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"));
-        }
 		print '<br>';
 		
         print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
-        print_titre($langs->trans("ToClearAllRecipientsClickHere").': <input type="submit" class="button" value="'.$langs->trans("TargetsReset").'">');
+		print_titre($langs->trans("ToClearAllRecipientsClickHere").': <input type="submit" class="button" value="'.$langs->trans("TargetsReset").'">');
         print '</form>';
         print '<br>';
     }
