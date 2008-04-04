@@ -30,13 +30,6 @@ require_once('../lib/admin.lib.php');
 
 // DOL_DOCUMENT_ROOT has been defined in function.inc.php to '..'
 
-// Security check
-if (eregi('install.norun',$_SERVER["SCRIPT_FILENAME"])) 
-{
-	dolibarr_print_error('','Install pages have been disabled for security reason.');
-	exit;
-}
-
 // Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
 // et non path absolu.
 if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
@@ -114,7 +107,24 @@ define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root
 if (! isset($conf->character_set_client))     $conf->character_set_client='iso-8859-1';
 if (! isset($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
 if (! isset($conf->db->user)) $conf->db->user='';
+
 	
+// Security check
+if (eregi('install.norun',$_SERVER["SCRIPT_FILENAME"])) 
+{
+	print 'Install pages have been disabled for security reason (directory renamed with .norun).';
+	exit;
+}
+if (file_exists('../../install.lock'))
+{
+	print 'Install pages have been disabled for security reason (by lock file install.lock).<br>';
+	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+	print 'Click here to go to Dolibarr';
+	print '</a>';
+	exit;
+}
+
+
 // Forcage constante LOG
 
 
