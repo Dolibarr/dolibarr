@@ -990,7 +990,7 @@ class pdf_einstein extends ModelePDFCommandes
             $ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$this->emetteur->tva_intra;
         }
 
-        $pdf->SetFont('Arial','',8);
+        $pdf->SetFont('Arial','',7);
         $pdf->SetDrawColor(224,224,224);
 
         // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
