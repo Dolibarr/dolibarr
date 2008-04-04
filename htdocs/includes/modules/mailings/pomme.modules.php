@@ -16,9 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  *
- * $Id$
- * $Source$
- *
  *
  * L'utilisation d'adresses de courriers électroniques dans les opérations
  * de prospection commerciale est subordonnée au recueil du consentement 
@@ -38,7 +35,7 @@
        	\file       htdocs/includes/modules/mailings/pomme.modules.php
 		\ingroup    mailing
 		\brief      Fichier de la classe permettant de générer la liste de destinataires Pomme
-		\version    $Revision$
+		\version    $Id$
 */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';

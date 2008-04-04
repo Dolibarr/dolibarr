@@ -17,9 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
  *
- * $Id$
- * $Source$
- *
  *
  * L'utilisation d'adresses de courriers électroniques dans les opérations
  * de prospection commerciale est subordonnée au recueil du consentement 
@@ -39,7 +36,7 @@
        	\file       htdocs/includes/modules/mailings/poire.modules.php
 		\ingroup    mailing
 		\brief      Fichier de la classe permettant de générer la liste de destinataires Poire
-		\version    $Revision$
+		\version    $Id$
 */
 
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
@@ -115,6 +112,25 @@ class mailing_poire extends MailingTargets
         $s.='<select name="filter" class="flat">';
         $s.='<option value="all">'.$langs->trans("ContactsAllShort").'</option>';
         $s.='<option value="prospects">'.$langs->trans("ThirdPartyProspects").'</option>';
+        # Add prospect of a particular level
+		$sql = "SELECT code, label";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+        $sql.= " WHERE active > 0";
+        $sql.= " ORDER BY label";
+        $resql = $this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+				$level=$langs->trans($obj->code);
+				if ($level == $obj->code) $level=$langs->trans($obj->label);
+				$s.='<option value="prospectslevel'.$obj->code.'">'.$langs->trans("ThirdPartyProspects").' ('.$langs->trans("ProspectLevelShort").'='.$level.')</option>';
+				$i++;
+			}
+		}
         $s.='<option value="customers">'.$langs->trans("ThirdPartyCustomers").'</option>';
         //$s.='<option value="customersidprof">'.$langs->trans("ThirdPartyCustomersWithIdProf12",$langs->trans("ProfId1"),$langs->trans("ProfId2")).'</option>';
         $s.='<option value="suppliers">'.$langs->trans("ThirdPartySuppliers").'</option>';
@@ -143,7 +159,27 @@ class mailing_poire extends MailingTargets
     {
         $cibles = array();
 
-        // La requete doit retourner: id, email, fk_contact, name, firstname
+		# List prospects levels
+		$prospectlevel=array();
+		$sql = "SELECT code, label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+		$sql.= " WHERE active > 0";
+		$sql.= " ORDER BY label";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$prospectlevel[$obj->code]=$obj->label;
+				$i++;
+			}
+		}
+		else dolibarr_print_error($this->db);
+
+		// La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT c.rowid as id, c.email as email, c.rowid as fk_contact, c.name as name, c.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -152,11 +188,13 @@ class mailing_poire extends MailingTargets
         foreach($filtersarray as $key)
         {
             if ($key == 'prospects') $sql.= " AND s.client=2";
+			//print "xx".$key;
+			foreach($prospectlevel as $codelevel=>$valuelevel) if ($key == 'prospectslevel'.$codelevel) $sql.= " AND s.fk_prospectlevel='".$codelevel."'";
             if ($key == 'customers') $sql.= " AND s.client=1";
             if ($key == 'suppliers') $sql.= " AND s.fournisseur=1";
         }
         $sql .= " ORDER BY c.email";
-
+		//print "x".$sql;
 
         // Stocke destinataires dans cibles
         $result=$this->db->query($sql);
