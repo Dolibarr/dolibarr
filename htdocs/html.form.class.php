@@ -2034,12 +2034,15 @@ class Form
 				print '<option value="'.$obj->code.'"';
 				if ($selected == $obj->code) print ' selected="true"';
 				print '>';
-				print $obj->label;
+				$level=$langs->trans($obj->code);
+				if ($level == $obj->code) $level=$langs->trans($obj->label);
+				print $level;
 				print '</option>';
 				
 				$i++;
 			}
 		}
+		else dolibarr_print_error($this->db);
         print '</select>';
 		
 		print '</td>';
