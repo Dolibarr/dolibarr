@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,16 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/includes/modules/mailings/modules_mailings.php
 		\ingroup    mailing
 		\brief      Fichier contenant la classe mère des classes de liste de destinataires mailing
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.inc.php');
@@ -144,15 +141,15 @@ class MailingTargets
         for ($i = 0 ; $i < $num ; $i++)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
-            $sql .= " (fk_mailing, ";
-            if ($cibles[$i]['fk_contact']) $sql .= "fk_contact, ";
-            $sql .= "nom, prenom, email, url)";
+            $sql .= " (fk_mailing,";
+            $sql .= " fk_contact,";
+            $sql .= " nom, prenom, email, url)";
             $sql .= " VALUES (".$mailing_id.",";
-            if ($cibles[$i]['fk_contact']) $sql .=  $cibles[$i]['fk_contact'] .",";
-            $sql .=  "'".addslashes($cibles[$i]['name'])."',";
-            $sql .=  "'".addslashes($cibles[$i]['firstname'])."',";
-            $sql .=  "'".addslashes($cibles[$i]['email'])."',";
-            $sql .=  "'".addslashes($cibles[$i]['url'])."')";
+            $sql .= (empty($cibles[$i]['fk_contact']) ? '0' : "'".$cibles[$i]['fk_contact']."'") .",";
+            $sql .= "'".addslashes($cibles[$i]['name'])."',";
+            $sql .= "'".addslashes($cibles[$i]['firstname'])."',";
+            $sql .= "'".addslashes($cibles[$i]['email'])."',";
+            $sql .= "'".addslashes($cibles[$i]['url'])."')";
 
             $result=$this->db->query($sql);
             if ($result)
