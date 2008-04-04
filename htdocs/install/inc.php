@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
+ * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**	    \file       htdocs/install/inc.php
 		\brief      Fichier include du programme d'installation
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once('../translate.class.php');
@@ -31,6 +29,13 @@ require_once('../lib/functions.inc.php');
 require_once('../lib/admin.lib.php');
 
 // DOL_DOCUMENT_ROOT has been defined in function.inc.php to '..'
+
+// Security check
+if (eregi('install.norun',$_SERVER["SCRIPT_FILENAME"])) 
+{
+	dolibarr_print_error('','Install pages have been disabled for security reason.');
+	exit;
+}
 
 // Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
 // et non path absolu.

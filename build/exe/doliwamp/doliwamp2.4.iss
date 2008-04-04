@@ -1,6 +1,13 @@
 ; -- Doliwamp.iss --
 ; Script to build an auto installer for Dolibarr.
 ; Idea from WampServer 2 (http://www.wampserver.com)
+;
+; You must edit some path in this file to build an exe.
+; WARNING: Be sure that user files for Mysql data used to build
+; package contains only user root with no password.
+; For this, you can edit mysql.user table for a database to keep
+; only root user with no password, stop server and catch
+; files user.MY* to put them in data sources.
 
 
 [Setup]
@@ -61,7 +68,7 @@ Source: "C:\Program Files\Wamp\apps\phpmyadmin2.10.1\*.*"; DestDir: "{app}\apps\
 Source: "C:\Program Files\Wamp\bin\apache\apache2.2.6\*.*"; DestDir: "{app}\bin\apache\apache2.2.6"; Flags: ignoreversion recursesubdirs; Excludes: "httpd.conf,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\php\php5.2.5\*.*"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log"
-; Mysql database
+; Mysql data files
 Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45\data\mysql"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
 ; Dolibarr
 Source: "external-libs\*.*"; DestDir: "{app}\www\dolibarr\external-libs"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
@@ -221,7 +228,7 @@ begin
   StringChange (srcContents, 'WAMPAPACHEPORT', apachePort);
   SaveStringToFile(destFile,srcContents, False);
 end
-DeleteFile(SrcFile);
+DeleteFile(srcFile);
 
 
 
@@ -244,7 +251,7 @@ begin
 
   SaveStringToFile(destFile,srcContents, False);
 end
-DeleteFile(SrcFile);
+DeleteFile(srcFile);
 
 
 
@@ -265,7 +272,7 @@ begin
 
   SaveStringToFile(destFile, srcContents, False);
 end
-DeleteFile(SrcFile);
+DeleteFile(srcFile);
 
 
 
@@ -295,7 +302,7 @@ begin
     SaveStringToFile(destFile,srcContents, False);
   end
 end
-//DeleteFile(SrcFile);
+//DeleteFile(srcFile);
 
 
 
@@ -316,7 +323,7 @@ begin
 
   SaveStringToFile(destFile,srcContents, False);
 end
-//DeleteFile(SrcFile);
+//DeleteFile(srcFile);
 
 
 
@@ -367,7 +374,7 @@ begin
   StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
   SaveStringToFile(destFile, srcContents, False);
 end
-DeleteFile(SrcFile);
+DeleteFile(srcFile);
 
 
 
@@ -376,23 +383,6 @@ DeleteFile(SrcFile);
 //----------------------------------------------
 // Fichier dolibarr
 //----------------------------------------------
-
-//destFile := pathWithSlashes+'/www/dolibarr/htdocs/conf/conf.php';
-//srcFile := pathWithSlashes+'/www/dolibarr/htdocs/conf/conf.php.example';
-
-//if not FileExists (destFile) then
-//begin
-//  LoadStringFromFile (srcFile, srcContents);
-
-  //installDir et version de php
-//  StringChange (srcContents, '$dolibarr_main_document_root=""', '$dolibarr_main_document_root="'+pathWithSlashes+'/www/dolibarr/htdocs"');
-//  StringChange (srcContents, '$dolibarr_main_data_root=""', '$dolibarr_main_data_root="'+pathWithSlashes+'/dolibarr_documents"');
-//  StringChange (srcContents, '$dolibarr_main_db_port=""', '$dolibarr_main_db_port="'+mysqlPort+'"');
-//  StringChange (srcContents, '$dolibarr_main_db_user=""', '$dolibarr_main_db_user="admin"');
-//  StringChange (srcContents, '$dolibarr_main_db_pass=""', '$dolibarr_main_db_user="'+newPassword+'"');
-
-//  SaveStringToFile(destFile,srcContents, False);
-//end
 
 destFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php';
 srcFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php.install';
@@ -407,7 +397,7 @@ begin
 
   SaveStringToFile(destFile,srcContents, False);
 end
-
+DeleteFile(srcFile);
 
 
 
@@ -429,7 +419,7 @@ begin
 
   SaveStringToFile(destFile,srcContents, False);
 end
-DeleteFile(SrcFile);
+DeleteFile(srcFile);
 
 
 
@@ -453,7 +443,7 @@ begin
 
   SaveStringToFile(destFile,srcContents, False);
 end
-DeleteFile(SrcFile);
+DeleteFile(srcFile);
 
 
 
@@ -476,7 +466,7 @@ begin
 
   SaveStringToFile(destFile,srcContents, False);
 end
-DeleteFile(SrcFile);
+DeleteFile(srcFile);
 
 
 
@@ -494,11 +484,12 @@ begin
 
   //version de apache et mysql
   StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
+  StringChange (srcContents, 'WAMPMYSQLPORT', mysqlPort);
   StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
 
   SaveStringToFile(destFile,srcContents, False);
 end
-DeleteFile(SrcFile);
+DeleteFile(srcFile);
 
 
 
@@ -506,6 +497,7 @@ DeleteFile(SrcFile);
     //----------------------------------------------
     // fichier php.ini dans php
     //----------------------------------------------
+
     destFile := pathWithSlashes+'/bin/php/php'+phpVersion+'/php.ini';
     srcFile := pathWithSlashes+'/bin/php/php'+phpVersion+'/php.ini.install';
 
@@ -525,8 +517,6 @@ DeleteFile(SrcFile);
     // fichier phpForApache.ini dans php
     //----------------------------------------------
 
-
-    
     destFile := pathWithSlashes+'/bin/php/php'+phpVersion+'/phpForApache.ini';
     if not FileExists (destFile) then
     begin
@@ -538,8 +528,6 @@ DeleteFile(SrcFile);
     //----------------------------------------------
     // fichier php.ini dans apache
     //----------------------------------------------
-
-
 
     destFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/php.ini';
     if not FileExists (destFile) then
@@ -565,7 +553,7 @@ DeleteFile(SrcFile);
 
   // Remove dangerous files
   batFile := path+'\removefiles.bat';
-  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+//  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
   end
 
@@ -602,7 +590,7 @@ begin
   smtpServer := 'localhost';
   apachePort := '81';
   mysqlPort := '3307';
-  newPassword := 'dolibarr';
+  newPassword := 'changeme';
 
 
 
@@ -654,7 +642,7 @@ filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlas
    Page.Add('SMTP server (your own or ISP SMTP server) :', False);
    Page.Add('Apache port:', False);
    Page.Add('Mysql port:', False);
-   Page.Add('Mysql and dolibarr root password:', False);
+   Page.Add('Mysql and Dolibarr root password:', False);
 
    // Valeurs par defaut
    Page.Values[0] := smtpServer;
@@ -674,8 +662,6 @@ Filename: "{app}\rundoliwamp.bat"; Description: "Launch Dolibarr now"; Flags: sh
 
 [UninstallDelete]
 Type: files; Name: "{app}\*.*"
-Type: files; Name: "{app}\www\dolibarr\htdocs\conf\conf.php"
-Type: files; Name: "{app}\www\dolibarr\htdocs\install\install.forced.php"
 Type: filesandordirs; Name: "{app}\alias"
 Type: filesandordirs; Name: "{app}\apps"
 Type: filesandordirs; Name: "{app}\bin\apache"
@@ -685,6 +671,7 @@ Type: filesandordirs; Name: "{app}\lang"
 Type: filesandordirs; Name: "{app}\logs"
 Type: filesandordirs; Name: "{app}\scripts"
 Type: filesandordirs; Name: "{app}\tmp"
+Type: filesandordirs; Name: "{app}\www\dolibarr"
 
 
 [UninstallRun]
