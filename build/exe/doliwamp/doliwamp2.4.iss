@@ -553,7 +553,7 @@ DeleteFile(srcFile);
 
   // Remove dangerous files
   batFile := path+'\removefiles.bat';
-//  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
   end
 
