@@ -27,12 +27,14 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 
 $langs->load("admin");
 $langs->load("companies");
 
 if (!$user->admin)
   accessforbidden();
+
 
 if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
   || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )

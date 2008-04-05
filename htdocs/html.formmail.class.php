@@ -23,7 +23,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");
 
 
 /**     \class      FormMail

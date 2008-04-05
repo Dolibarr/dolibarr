@@ -2224,37 +2224,39 @@ class Product extends CommonObject
     {
     	$originImage = $dir . $file['name'];
     	
-    	// Cr�e fichier en taille origine
+    	// Cree fichier en taille origine
     	doliMoveFileUpload($file['tmp_name'], $originImage);
 
     	if (file_exists($originImage))
     	{
-    		// Cr�e fichier en taille vignette
+    		// Cree fichier en taille vignette
     		$this->add_thumb($originImage,$maxWidth,$maxHeight);
     	}
     }
   }
   
-  /**
-   *    \brief      G�n�re la vignette
-   *    \param      sdir           R�pertoire destination finale
-   *    \param      file           Chemin du fichier d'origine
-   *    \param      maxWidth       Largeur maximum que dois faire la miniature (160 par d�faut)
-   *    \param      maxHeight      Hauteur maximum que dois faire la miniature (120 par d�faut)
-   */
-  function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
-  {
-  	if (file_exists($file))
-    {
-    	vignette($file,$maxWidth,$maxHeight);
-    }
-  }
+	/**
+	*    \brief      Build thumb
+	*    \param      sdir           Repertoire destination finale
+	*    \param      file           Chemin du fichier d'origine
+	*    \param      maxWidth       Largeur maximum que dois faire la miniature (160 par defaut)
+	*    \param      maxHeight      Hauteur maximum que dois faire la miniature (120 par defaut)
+	*/
+	function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
+	{
+		require_once(DOL_DOCUMENT_ROOT ."/lib/images.lib.php");
+		
+		if (file_exists($file))
+		{
+			vignette($file,$maxWidth,$maxHeight);
+		}
+	}
 
   /**
-   *    \brief      D�place fichier r�cup�r� sur internet (utilis� pour interface avec OSC)
-   *    \param      sdir        R�pertoire destination finale
-   *    \param      $files      url de l'image
-   *		Jean Heimburger		juin 2007
+   *    \brief      Deplace fichier recupere sur internet (utilise pour interface avec OSC)
+   *    \param      sdir        		Repertoire destination finale
+   *    \param      $files      		url de l'image
+   *	\author		Jean Heimburger		juin 2007
    */
   function add_photo_web($sdir, $files)
   {
@@ -2269,10 +2271,10 @@ class Product extends CommonObject
   
     if (file_exists($dir))
     {
-	// Cr�e fichier en taille vignette
-	// \todo A faire
+		// Cree fichier en taille vignette
+		// \todo A faire
       
-	// Cr�e fichier en taille origine
+		// Cree fichier en taille origine
 			$content = file_get_contents($files);
 			
 			$nom = basename($files);

@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
@@ -28,10 +25,10 @@
    \ingroup    facture
    \brief      Fichier contenant la classe mère de generation des factures en PDF
    et la classe mère de numérotation des factures
-   \version    $Revision$
+   \version    $Id$
 */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.inc.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis car utilisé dans les classes qui héritent

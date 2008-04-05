@@ -17,19 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/expedition/mods/pdf/ModelePdfExpedition.class.php
    \ingroup    shipping
    \brief      Fichier contenant la classe mère de generation des expeditions
-   \version    $Revision$
+   \version    $Id$
 */
 
-require_once(DOL_DOCUMENT_ROOT.'/lib/functions.inc.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 require_once DOL_DOCUMENT_ROOT.'/includes/fpdf/DolibarrPdfBarCode.class.php';
 
 

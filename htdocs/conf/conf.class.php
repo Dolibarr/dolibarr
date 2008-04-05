@@ -76,7 +76,7 @@ class Conf
 	*/
 	function setValues($db)
 	{
-		dolibarr_syslog("functions.inc.php::setValues");
+		dolibarr_syslog("Conf::setValues");
 
 		// Par defaut, a oui
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;

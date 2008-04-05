@@ -96,7 +96,7 @@ if (! empty($dolibarr_main_document_root_bis)) define('DOL_DOCUMENT_ROOT_BIS', $
 /*
  * Controle validite fichier conf
  */
-if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php"))
+if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
 {
     print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
@@ -109,7 +109,7 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php"))
  */
 
 // on décode le mot de passe de la base si besoin
-require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");	// Need 1.1Mo memory
+require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");	// Need 1.1 Mo memory
 if (! empty($dolibarr_main_db_encrypted_pass)) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 //stopwithmem();
 

@@ -34,7 +34,7 @@ define('DOL_URL_ROOT', $pos);
 /*
 $conf->syslog->enabled=1;
 define('SYSLOG_FILE','c:/log/dolibarr/dolibarr.log');
-require_once("../../../../../../../../lib/functions.inc.php");
+require_once("../../../../../../../../lib/functions.lib.php");
 dolibarr_syslog("eee".$conf->fckeditor->dir_output);
 */
 
