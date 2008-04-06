@@ -224,7 +224,8 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
             $prod = new Product($db, $_POST['p_idprod']);
             $prod->fetch($_POST['p_idprod']);
 
-            $tva_tx = get_default_tva($mysoc,$fac->client,$prod->tva_tx);
+            $tva_tx = get_default_tva($mysoc,$contrat->client,$prod->tva_tx);
+            $tva_npr = get_default_npr($mysoc,$contrat->client,$prod->tva_npr);
 
             // On defini prix unitaire
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
@@ -304,28 +305,33 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 
 if ($_POST["action"] == 'updateligne' && $user->rights->contrat->creer && ! $_POST["cancel"])
 {
-    $contrat = new Contrat($db,"",$_GET["id"]);
-    if ($contrat->fetch($_GET["id"]))
+    $contratline = new ContratLigne($db);
+    if ($contratline->fetch($_POST["elrowid"]))
     {
-        $result = $contrat->updateline($_POST["elrowid"],
-            $_POST["eldesc"],
-            $_POST["elprice"],
-            $_POST["elqty"],
-            $_POST["elremise_percent"],
-            $date_start_update,
-            $date_end_update,
-            $_POST["eltva_tx"],
-            $date_start_real_update,
-            $date_end_real_update
-            );
+		$db->begin();
+		
+		if ($date_start_real_update == '') $date_start_real_update=$contratline->date_ouverture;
+		if ($date_end_real_update == '')   $date_end_real_update=$contratline->date_cloture;
+		
+		$contratline->description=$_POST["eldesc"];
+		$contratline->price_ht=$_POST["elprice"];
+		$contratline->subprice=$_POST["elprice"];
+        $contratline->qty=$_POST["elqty"];
+        $contratline->remise_percent=$_POST["elremise_percent"];
+        $contratline->date_ouverture_prevue=$date_start_update;
+		$contratline->date_ouverture=$date_start_real_update;
+		$contratline->date_fin_validite=$date_end_update;
+        $contratline->date_cloture=$date_end_real_update;
+		$contratline->tva_tx=$_POST["eltva_tx"];
             
+		$result=$contratline->update($user);
         if ($result > 0)
         {
             $db->commit();
         }
         else
         {
-            dolibarr_print_error($db,"result=$result");
+            dolibarr_print_error($db,'Failed to update contrat_det');
             $db->rollback();
         }        
     }
@@ -704,11 +710,11 @@ else
 		$servicepos=(isset($_REQUEST["servicepos"])?$_REQUEST["servicepos"]:1);
 		$nbofservices=sizeof($contrat->lignes);
 		$colorb='333333';
-		
+
         /*
          * Lignes de contrats
          */
-				
+
 		// Menu list of services
 		print '<table class="noborder" width="100%">';	// Array with (n*2)+1 lines
 		$cursorline=1;

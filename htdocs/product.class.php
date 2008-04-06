@@ -1906,9 +1906,10 @@ class Product extends CommonObject
    *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
    *		\param		withpicto		Inclut le picto dans le lien
    *		\param		option			Sur quoi pointe le lien
+   *		\param		maxlength		Maxlength of ref
    *		\return		string			Chaine avec URL
    */
-  function getNomUrl($withpicto=0,$option='')
+  function getNomUrl($withpicto=0,$option='',$maxlength=0)
   {
     global $langs;
 		
@@ -1916,12 +1917,14 @@ class Product extends CommonObject
 		
     $lien = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">';
     $lienfin='</a>';
-
+	$newref=$this->ref;
+	if ($maxlength) $newref=dolibarr_trunc($newref,$maxlength);
+	
     if ($withpicto) {
-      if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct"),'product').$lienfin.' ');
-      if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService"),'service').$lienfin.' ');
+      if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->ref,'product').$lienfin.' ');
+      if ($this->type == 1) $result.=($lien.img_object($langs->trans("ShowService").' '.$this->ref,'service').$lienfin.' ');
     }
-    $result.=$lien.$this->ref.$lienfin;
+    $result.=$lien.$newref.$lienfin;
     return $result;
   }
 	

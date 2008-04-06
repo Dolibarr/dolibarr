@@ -28,6 +28,7 @@ ServicesNotOnSell=Services hors vente
 InternalRef=Référence interne
 LastRecorded=Derniers produits/services en vente enregistrés
 LastRecordedProductsAndServices=Les %s derniers produits/services enregistrés
+LastModifiedProductsAndServices=Les %s derniers produits/services modifiés
 LastRecordedProducts=Les %s derniers produits enregistrés
 LastRecordedServices=Les %s derniers services enregistrés
 LastProducts=Derniers produits

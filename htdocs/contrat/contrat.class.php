@@ -272,9 +272,9 @@ class Contrat extends CommonObject
     }
     
     /**
-     *    \brief      Chargement depuis la base des donn�es du contrat
-     *    \param      id      Id du contrat � charger
-     *    \return     int     <0 si ko, id du contrat charg� si ok
+     *    \brief      Chargement depuis la base des donnees du contrat
+     *    \param      id      Id du contrat a charger
+     *    \return     int     <0 si ko, id du contrat charge si ok
      */
     function fetch($id)
     {
@@ -284,7 +284,7 @@ class Contrat extends CommonObject
         $sql.= " fk_projet,";
         $sql.= " fk_commercial_signature, fk_commercial_suivi,";
         $sql.= " note, note_public";
-        $sql.= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = ".$id;
     
 		dolibarr_syslog("Contrat::fetch sql=".$sql);
         $resql = $this->db->query($sql) ;
@@ -801,7 +801,7 @@ class Contrat extends CommonObject
             $remise_percent=0;
         }
 
-        dolibarr_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $tvatx");
+        dolibarr_syslog("Contrat::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $date_debut_reel, $date_fin_reel, $tvatx");
     
         $this->db->begin();
 
@@ -821,24 +821,30 @@ class Contrat extends CommonObject
         else { $sql.=",date_ouverture=null"; }
         if ($date_fin_reel > 0) { $sql.= ",date_cloture=".$this->db->idate($date_fin_reel); }
         else { $sql.=",date_cloture=null"; }
-        
-        $sql .= " WHERE rowid = $rowid ;";
+        $sql .= " WHERE rowid = ".$rowid;
 
+		dolibarr_syslog("Contrat::UpdateLine sql=".$sql);
         $result = $this->db->query($sql);
         if ($result)
         {
-            $this->update_price();
-
-            $this->db->commit();
-
-            return 1;
+            $result=$this->update_price();
+			if ($result >= 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+	        else
+	        {
+	            $this->db->rollback();
+	            dolibarr_syslog("Contrat::UpdateLigne Erreur -2");
+	            return -2;
+	        }
         }
         else
         {
             $this->db->rollback();
             $this->error=$this->db->error();
             dolibarr_syslog("Contrat::UpdateLigne Erreur -1");
-
             return -1;
         }
     }
@@ -846,28 +852,36 @@ class Contrat extends CommonObject
     /**
      *      \brief      Delete a contract line
      *      \param      idline		Id of line to delete
+     *		\param      user        User that delete
      *      \return     int         >0 if OK, <0 if KO
      */
-    function delete_line($idline)
+    function delete_line($idline,$user)
     {
-		global $conf;
+		global $conf, $langs;
 		
         if ($contrat->statut == 0 ||
 			($contrat->statut == 1 && $conf->global->CONTRAT_EDITWHENVALIDATED) )
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
-			$sql.= " WHERE rowid =".$idline;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
+			$sql.= " WHERE rowid=".$idline;
+		
+		   	dolibarr_syslog("Contratdet::delete sql=".$sql);
+			$resql = $this->db->query($sql);
+			if (! $resql)
+			{
+				$this->error="Error ".$this->db->lasterror();
+	            dolibarr_syslog("Contratdet::delete ".$this->error, LOG_ERR);
+				return -1;
+			}
+		
+	        // Appel des triggers
+	        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	        $interface=new Interfaces($this->db);
+	        $result=$interface->run_triggers('CONTRACTLINE_DELETE',$this,$user,$langs,$conf);
+	        if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	        // Fin appel triggers
 
-			dolibarr_syslog("Contrat::delete_line sql=".$sql);
-            if ($this->db->query($sql) )
-            {
-                $this->update_price();
-                return 1;
-            }
-            else
-            {
-                return -1;
-            }
+			return 1;
         }
         else
         {
@@ -1113,28 +1127,40 @@ class Contrat extends CommonObject
 
 class ContratLigne  
 {
-	var $db;
-	var $error;
-
+	var $db;							//!< To store db handler
+	var $error;							//!< To return error code (or message)
+	var $errors=array();				//!< To return several error codes (or messages)
+	//var $element='contratdet';			//!< Id that identify managed objects
+	//var $table_element='contratdet';	//!< Name of table without prefix where object is stored
+    
     var $id;
-    var $desc;
-    var $libelle;
-    var $product_desc;
-    var $qty;
-    var $ref;
-    var $tva_tx;
-    var $subprice;
-    var $remise_percent;
-    var $price;
-    var $fk_product;
-                
-    var $statut;  				// 4=actif, 5=clos
-    var $date_debut_prevue;
-    var $date_debut_reel;
-    var $date_fin_prevue;
-    var $date_fin_reel;
-
-	var $datem;
+    
+	var $tms;
+	var $fk_contrat;
+	var $fk_product;
+	var $statut;			// 4 active, 5 closed
+	var $label;
+	var $description;
+	var $date_commande;
+	var $date_ouverture_prevue;		// date start planned
+	var $date_ouverture;			// date start real
+	var $date_fin_validite;			// date end planned
+	var $date_cloture;				// date end real
+	var $tva_tx;
+	var $qty;
+	var $remise_percent;
+	var $remise;
+	var $fk_remise_except;
+	var $subprice;
+	var $price_ht;
+	var $total_ht;
+	var $total_tva;
+	var $total_ttc;
+	var $info_bits;
+	var $fk_user_author;
+	var $fk_user_ouverture;
+	var $fk_user_cloture;
+	var $commentaire;
 	
 
 	/**
@@ -1210,50 +1236,184 @@ class ContratLigne
 		}
     }    
 
-    /**
-     *    \brief      Chargement depuis la base des donn�es du contrat
-     *    \param      id      Id du contrat � charger
-     *    \return     int     <0 si ko, id du contrat charg� si ok
+    /*
+     *    \brief      Load object in memory from database
+     *    \param      id          id object
+     *    \param      user        User that load
+     *    \return     int         <0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch($id, $user=0)
     {
-        $sql = "SELECT rowid, fk_contrat, fk_product, ".$this->db->pdate("tms")." as datem,";
-        $sql.= " statut,";
-        $sql.= " label,";
-        $sql.= " description";
-        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet WHERE rowid = ".$id;
+    	global $langs;
+        $sql = "SELECT";
+		$sql.= " t.rowid,";
+		
+		$sql.= " ".$this->db->pdate('t.tms')." as tms,";
+		$sql.= " t.fk_contrat,";
+		$sql.= " t.fk_product,";
+		$sql.= " t.statut,";
+		$sql.= " t.label,";
+		$sql.= " t.description,";
+		$sql.= " ".$this->db->pdate('t.date_commande')." as date_commande,";
+		$sql.= " ".$this->db->pdate('t.date_ouverture_prevue')." as date_ouverture_prevue,";
+		$sql.= " ".$this->db->pdate('t.date_ouverture')." as date_ouverture,";
+		$sql.= " ".$this->db->pdate('t.date_fin_validite')." as date_fin_validite,";
+		$sql.= " ".$this->db->pdate('t.date_cloture')." as date_cloture,";
+		$sql.= " t.tva_tx,";
+		$sql.= " t.qty,";
+		$sql.= " t.remise_percent,";
+		$sql.= " t.remise,";
+		$sql.= " t.fk_remise_except,";
+		$sql.= " t.subprice,";
+		$sql.= " t.price_ht,";
+		$sql.= " t.total_ht,";
+		$sql.= " t.total_tva,";
+		$sql.= " t.total_ttc,";
+		$sql.= " t.info_bits,";
+		$sql.= " t.fk_user_author,";
+		$sql.= " t.fk_user_ouverture,";
+		$sql.= " t.fk_user_cloture,";
+		$sql.= " t.commentaire";
+		
+        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as t";
+        $sql.= " WHERE t.rowid = ".$id;
     
-		dolibarr_syslog("ContratLigne::fetch sql=".$sql);
-		$resql = $this->db->query($sql) ;
+    	dolibarr_syslog("Contratdet::fetch sql=".$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
         if ($resql)
         {
-            $obj = $this->db->fetch_object($resql);
-            if ($obj)
+            if ($this->db->num_rows($resql))
             {
-                $this->id                = $obj->rowid;
-                $this->fk_contrat        = $obj->fk_contrat;
-                $this->fk_product        = $obj->fk_product;
-                $this->datem             = $obj->datem;
-                $this->statut            = $obj->statut;
-                $this->label             = $obj->label;
-                $this->description       = $obj->description;
-        
-                $this->db->free($resql);
-                return $this->id;
+                $obj = $this->db->fetch_object($resql);
+    
+                $this->id    = $obj->rowid;
+                
+				$this->tms = $obj->tms;
+				$this->fk_contrat = $obj->fk_contrat;
+				$this->fk_product = $obj->fk_product;
+				$this->statut = $obj->statut;
+				$this->label = $obj->label;
+				$this->description = $obj->description;
+				$this->date_commande = $obj->date_commande;
+				$this->date_ouverture_prevue = $obj->date_ouverture_prevue;
+				$this->date_ouverture = $obj->date_ouverture;
+				$this->date_fin_validite = $obj->date_fin_validite;
+				$this->date_cloture = $obj->date_cloture;
+				$this->tva_tx = $obj->tva_tx;
+				$this->qty = $obj->qty;
+				$this->remise_percent = $obj->remise_percent;
+				$this->remise = $obj->remise;
+				$this->fk_remise_except = $obj->fk_remise_except;
+				$this->subprice = $obj->subprice;
+				$this->price_ht = $obj->price_ht;
+				$this->total_ht = $obj->total_ht;
+				$this->total_tva = $obj->total_tva;
+				$this->total_ttc = $obj->total_ttc;
+				$this->info_bits = $obj->info_bits;
+				$this->fk_user_author = $obj->fk_user_author;
+				$this->fk_user_ouverture = $obj->fk_user_ouverture;
+				$this->fk_user_cloture = $obj->fk_user_cloture;
+				$this->commentaire = $obj->commentaire;
+
+                
             }
-            else
-            {
-                $this->error="Contract line not found";
-                dolibarr_syslog("ContratLigne::Fetch ".$this->error,LOG_ERROR);
-                return -2;
-            }
+            $this->db->free($resql);
+            
+            return 1;
         }
         else
         {
-            $this->error=$this->db->error();
-            dolibarr_syslog("ContratLigne::Fetch ".$this->error,LOG_ERROR);
+      	    $this->error="Error ".$this->db->lasterror();
+            dolibarr_syslog("Contratdet::fetch ".$this->error, LOG_ERR);
             return -1;
         }
+    }
+
+
+    /*
+     *      \brief      Update database
+     *      \param      user        	User that modify
+     *      \param      notrigger	    0=no, 1=yes (no update trigger)
+     *      \return     int         	<0 if KO, >0 if OK
+     */
+    function update($user=0, $notrigger=0)
+    {
+    	global $conf, $langs;
+    	
+		// Clean parameters
+		$this->fk_contrat=trim($this->fk_contrat);
+		$this->fk_product=trim($this->fk_product);
+		$this->statut=trim($this->statut);
+		$this->label=trim($this->label);
+		$this->description=trim($this->description);
+		$this->tva_tx=trim($this->tva_tx);
+		$this->qty=trim($this->qty);
+		$this->remise_percent=trim($this->remise_percent);
+		$this->remise=trim($this->remise);
+		$this->fk_remise_except=trim($this->fk_remise_except);
+		$this->subprice=price2num($this->subprice);
+		$this->price_ht=price2num($this->price_ht);
+		$this->total_ht=trim($this->total_ht);
+		$this->total_tva=trim($this->total_tva);
+		$this->total_ttc=trim($this->total_ttc);
+		$this->info_bits=trim($this->info_bits);
+		$this->fk_user_author=trim($this->fk_user_author);
+		$this->fk_user_ouverture=trim($this->fk_user_ouverture);
+		$this->fk_user_cloture=trim($this->fk_user_cloture);
+		$this->commentaire=trim($this->commentaire);
+       
+		// Check parameters
+		// Put here code to add control on parameters values
+
+        // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
+		$sql.= " fk_contrat='".$this->fk_contrat."',";
+		$sql.= " fk_product='".$this->fk_product."',";
+		$sql.= " statut='".$this->statut."',";
+		$sql.= " label='".addslashes($this->label)."',";
+		$sql.= " description='".addslashes($this->description)."',";
+		$sql.= " date_commande=".($this->date_commande!=''?$this->db->idate($this->date_commande):"null").",";
+		$sql.= " date_ouverture_prevue=".($this->date_ouverture_prevue!=''?$this->db->idate($this->date_ouverture_prevue):"null").",";
+		$sql.= " date_ouverture=".($this->date_ouverture!=''?$this->db->idate($this->date_ouverture):"null").",";
+		$sql.= " date_fin_validite=".($this->date_fin_validite!=''?$this->db->idate($this->date_fin_validite):"null").",";
+		$sql.= " date_cloture=".($this->date_cloture!=''?$this->db->idate($this->date_cloture):"null").",";
+		$sql.= " tva_tx='".$this->tva_tx."',";
+		$sql.= " qty='".$this->qty."',";
+		$sql.= " remise_percent='".$this->remise_percent."',";
+		$sql.= " remise='".$this->remise."',";
+		$sql.= " fk_remise_except=".($this->fk_remise_except?"'".$this->fk_remise_except."'":"null").",";
+		$sql.= " subprice='".$this->subprice."',";
+		$sql.= " price_ht='".$this->price_ht."',";
+		$sql.= " total_ht='".$this->total_ht."',";
+		$sql.= " total_tva='".$this->total_tva."',";
+		$sql.= " total_ttc='".$this->total_ttc."',";
+		$sql.= " info_bits='".$this->info_bits."',";
+		$sql.= " fk_user_author='".$this->fk_user_author."',";
+		$sql.= " fk_user_ouverture='".$this->fk_user_ouverture."',";
+		$sql.= " fk_user_cloture='".$this->fk_user_cloture."',";
+		$sql.= " commentaire='".addslashes($this->commentaire)."'";
+        $sql.= " WHERE rowid=".$this->id;
+
+        dolibarr_syslog("Contratdet::update sql=".$sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            $this->error="Error ".$this->db->lasterror();
+            dolibarr_syslog("Contratdet::update ".$this->error, LOG_ERR);
+            return -1;
+        }
+
+		if (! $notrigger)
+		{
+            // Appel des triggers
+            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+            $interface=new Interfaces($this->db);
+            $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+            // Fin appel triggers
+    	}
+
+        return 1;
     }
 
 
@@ -1273,7 +1433,7 @@ class ContratLigne
 		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-       	dolibarr_syslog("ContratLigne::update_total sql=$sql");
+       	dolibarr_syslog("ContratLigne::update_total sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)

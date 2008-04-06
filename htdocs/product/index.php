@@ -123,7 +123,8 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  * Derniers produits/services en vente
  */
 $max=15;
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.envente";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.envente,";
+$sql.= " ".$db->pdate("tms")." as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
@@ -134,7 +135,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk
 $sql.= " WHERE sp.fk_product_subproduct IS NULL";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= " AND IFNULL(c.visible,1)=1 ";
 if (isset($_GET["type"])) $sql.= " AND p.fk_product_type = ".$_GET["type"];
-$sql.= " ORDER BY p.datec DESC ";
+$sql.= " ORDER BY p.tms DESC ";
 $sql.= $db->plimit($max,0);
 $result = $db->query($sql) ;
 
@@ -146,7 +147,7 @@ if ($result)
   
   if ($num > 0)
   {
-  	$transRecordedType = $langs->trans("LastRecordedProductsAndServices",$max);
+  	$transRecordedType = $langs->trans("LastModifiedProductsAndServices",$max);
   	if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts",$max);
   	if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices",$max);
   	
@@ -176,13 +177,14 @@ if ($result)
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print '<td nowrap="nowrap"><a href="fiche.php?id='.$objp->rowid.'">';
-	  if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
-	  else print img_object($langs->trans("ShowProduct"),"product");
-	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
-	  print '<td>'.dolibarr_trunc($objp->label,40).'</td>';
+	  $staticproduct->id=$objp->rowid;
+	  $staticproduct->ref=$objp->ref;
+	  $staticproduct->type=$objp->fk_product_type;
+	  print $staticproduct->getNomUrl(1,'',16);
+	  print "</td>\n";
+	  print '<td>'.dolibarr_trunc($objp->label,32).'</td>';
 	  print "<td>";
-	  if ($objp->fk_product_type==1) print $langs->trans("ShowService");
-	  else print $langs->trans("ShowProduct");
+	  print dolibarr_print_date($objp->datem,'day');
 	  print "</td>";
 	  print '<td align="right" nowrap="nowrap">';
 	  print $staticproduct->LibStatut($objp->envente,5);
