@@ -51,6 +51,7 @@ ServerRoot "WAMPROOT/bin/apache/apache2.2.6"
 #
 #Listen 12.34.56.78:80
 Listen 81
+Listen 444
 
 #
 # Dynamic Shared Object (DSO) Support
@@ -103,7 +104,7 @@ LoadModule mime_module modules/mod_mime.so
 #LoadModule proxy_http_module modules/mod_proxy_http.so
 #LoadModule proxy_ftp_module modules/mod_proxy_ftp.so
 LoadModule negotiation_module modules/mod_negotiation.so
-#LoadModule rewrite_module modules/mod_rewrite.so
+LoadModule rewrite_module modules/mod_rewrite.so
 LoadModule setenvif_module modules/mod_setenvif.so
 #LoadModule speling_module modules/mod_speling.so
 #LoadModule status_module modules/mod_status.so
