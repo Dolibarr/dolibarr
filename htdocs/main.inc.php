@@ -90,6 +90,25 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
 require_once("master.inc.php");
 
+// Check if HTTPS
+if ($conf->main_force_https)
+{
+	if (eregi('^http:',$_SERVER["SCRIPT_URI"]) && ! eregi('^https:',$_SERVER["SCRIPT_URI"]))
+	{
+		if ($_SERVER["HTTPS"] != 'on')
+		{
+			dolibarr_syslog("dolibarr_main_force_https is on but https disabled on serveur",LOG_ERR);
+		}
+		else
+		{
+			dolibarr_syslog("dolibarr_main_force_https is on, we make a redirect",LOG_DEBUG);
+			$newurl=eregi_replace('^http:','https:',$_SERVER["SCRIPT_URI"]);
+			
+			header("Location: ".$newurl);
+			exit;
+		}
+	}
+}
 
 // Chargement des includes complementaire de presentation
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");			// Need 11ko memory
