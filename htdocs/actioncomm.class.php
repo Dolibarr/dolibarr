@@ -209,14 +209,13 @@ class ActionComm
 		$sql.= " a.fk_soc,";
 		$sql.= " a.fk_user_author, a.fk_user_mod,";
 		$sql.= " a.fk_user_action, a.fk_user_done,";
-		$sql.= " a.fk_contact, a.fk_facture, a.percent as percentage, a.fk_commande,";
+		$sql.= " a.fk_contact, a.percent as percentage, a.fk_facture, a.fk_commande, a.propalrowid,";
 		$sql.= " a.priority,";
 		$sql.= " c.id as type_id, c.code as type_code, c.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
 	
 		dolibarr_syslog("ActionComm::fetch sql=".$sql);
-
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -246,18 +245,21 @@ class ActionComm
 				$this->priority = $obj->priority;
 
 				$this->contact->id = $obj->fk_contact;
+
 				$this->fk_facture = $obj->fk_facture;
 				if ($this->fk_facture)
 				{
 					$this->objet_url = img_object($langs->trans("ShowBill"),'bill').' '.'<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">'.$langs->trans("Bill").'</a>';
 					$this->objet_url_type = 'facture';
 				}
+
 				$this->fk_propal = $obj->propalrowid;
 				if ($this->fk_propal)
 				{
 					$this->objet_url = img_object($langs->trans("ShowPropal"),'propal').' '.'<a href="'. DOL_URL_ROOT . '/propal/fiche.php?rowid='.$this->fk_propal.'">'.$langs->trans("Propal").'</a>';
 					$this->objet_url_type = 'propal';
 				}
+
 				$this->fk_commande = $obj->fk_commande;
 				if ($this->fk_commande)
 				{
