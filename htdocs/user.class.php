@@ -689,9 +689,9 @@ class User extends CommonObject
    *  \param      notrigger		1 ne declenche pas les triggers, 0 sinon
    *  \return     int         	<0 si KO, id compte cree si OK
    */
-	function create($user='',$notrigger=0)
+	function create($user,$notrigger=0)
 	{
-		global $conf;
+		global $conf,$langs;
 		
 		// Nettoyage parametres
 		$this->login = trim($this->login);
@@ -798,7 +798,7 @@ class User extends CommonObject
 	*/
 	function create_from_contact($contact)
 	{
-        global $langs;
+        global $user,$langs;
 
         // Positionne parametres
         $this->nom = $contact->nom;
@@ -812,7 +812,7 @@ class User extends CommonObject
         $this->db->begin();
 
         // Cree et positionne $this->id
-        $result=$this->create();
+        $result=$this->create($user);
 
         if ($result > 0)
         {
@@ -853,7 +853,7 @@ class User extends CommonObject
    */
   function create_from_member($member)
   {
-        global $conf, $user,$langs;
+        global $conf,$user,$langs;
 
         // Positionne parametres
         $this->nom = $member->nom;
@@ -868,7 +868,7 @@ class User extends CommonObject
         $this->db->begin();
 
         // Cree et positionne $this->id
-        $result=$this->create();
+        $result=$this->create($user);
         if ($result > 0)
         {
 			$result=$this->setPassword($user,$this->pass);

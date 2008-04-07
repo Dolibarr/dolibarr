@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -976,7 +976,8 @@ if ($rowid && $action != 'edit')
      */
     print '<div class="tabsAction">';
     
-    if ($user->rights->adherent->creer || ($user->rights->adherent->self->creer && $adh->user_id == $user->id))
+    // Modify
+	if ($user->rights->adherent->creer || ($user->rights->adherent->self->creer && $adh->user_id == $user->id))
 	{
 		print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Modify")."</a>";
     }
@@ -1037,7 +1038,7 @@ if ($rowid && $action != 'edit')
 		}
 	}
 	
-	// Barre d'actions
+	// Create user
 	if (! $user->societe_id && ! $adh->user_id)
 	{
 		if ($user->rights->user->user->creer)

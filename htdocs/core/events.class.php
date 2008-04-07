@@ -76,16 +76,13 @@ class Events // extends CommonObject
     	global $conf, $langs;
     	
 		// Clean parameters
-        
 		$this->id=trim($this->id);
 		$this->fk_action=trim($this->fk_action);
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 
-        
-
 		// Check parameters
-		// Put here code to add control on parameters values
+		if (! $user->id) { $this->error='ErrorBadValueForParameter'; return -1; }
 		
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
@@ -96,9 +93,8 @@ class Events // extends CommonObject
 		$sql.= "label,";
 		$sql.= "description";
 
-		
         $sql.= ") VALUES (";
-        
+       
 		$sql.= " '".$this->type."',";
 		$sql.= " ".$this->db->idate($this->dateevent).",";
 		$sql.= " '".$user->id."',";

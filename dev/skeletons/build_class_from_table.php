@@ -163,7 +163,9 @@ foreach($property as $key => $prop)
 {
 	if ($prop['field'] != 'rowid')
 	{
-		$varprop.="\tvar \$".$prop['field'].";";
+		$varprop.="\tvar \$".$prop['field'];
+		if ($prop['istime']) $varprop.="=''";
+		$varprop.=";";
 		if ($prop['comment']) $varprop.="\t// ".$prop['extra'];
 		$varprop.="\n";
 	}
@@ -192,7 +194,11 @@ $i=0;
 foreach($property as $key => $prop)
 {
 	$i++;
-	if ($prop['field'] != 'rowid' || $prop['extra'] != 'auto_increment')
+	$addfield=1;
+	if ($prop['field'] == 'tms') $addfield=0;	// This is a field of type timestamp edited automatically
+	if ($prop['extra'] == 'auto_increment') $addfield=0;
+
+	if ($addfield)
 	{
 		$varprop.="\t\t\$sql.= \"".$prop['field'];
 		if ($i < sizeof($property)) $varprop.=",";
@@ -210,16 +216,29 @@ $i=0;
 foreach($property as $key => $prop)
 {
 	$i++;
-	if ($prop['field'] != 'rowid' || $prop['extra'] != 'auto_increment')
+	$addfield=1;
+	if ($prop['field'] == 'tms') $addfield=0;	// This is a field of type timestamp edited automatically
+	if ($prop['extra'] == 'auto_increment') $addfield=0;
+
+	if ($addfield)
 	{
 		$varprop.="\t\t\$sql.= \" ";
-		if ($prop['istime']) $varprop.='".$this->db->idate(';
-		else $varprop.="'\".";
-		$varprop.="\$this->".$prop['field']."";
-		if ($prop['istime']) $varprop.=')."';
-		else $varprop.=".\"'";
-		if ($i < sizeof($property)) $varprop.=",";
-		$varprop.="\";";
+		if ($prop['istime'])
+		{
+			$varprop.='".(! isset($this->'.$prop['field'].') || $this->'.$prop['field'].'==\'\'?\'NULL\':$this->db->idate(';
+			$varprop.="\$this->".$prop['field']."";
+			$varprop.='))."';
+			if ($i < sizeof($property)) $varprop.=",";
+			$varprop.="\";";
+		}
+		else
+		{
+			$varprop.='".(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
+			$varprop.="\$this->".$prop['field']."";
+			$varprop.='."\'")."';
+			if ($i < sizeof($property)) $varprop.=",";
+			$varprop.='";';
+		}
 		$varprop.="\n";
 	}
 }
