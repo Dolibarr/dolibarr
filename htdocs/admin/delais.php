@@ -172,7 +172,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
         $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','account').'</td>';
-        print '<td>'.$langs->trans("DelaysOfTolerancechequesToDeposit").'</td><td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceChequesToDeposit").'</td><td>';
         print '<input size="5" name="ChequesToDeposit" value="'. ($conf->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT+0) . '"> ' . $langs->trans("days") . '</td></tr>'; 
     }
     if ($conf->adherent->enabled)
