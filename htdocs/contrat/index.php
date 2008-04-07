@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +87,73 @@ print $staticcontratligne->LibStatut(5,4).'<br />';
 print '</td></tr>';
 print '</table>';
 
+/**
+ * Draft contratcs
+ */
+if ($conf->contrat->enabled && $user->rights->contrat->lire)
+{
+	$sql  = "SELECT c.rowid as ref, c.rowid,";
+	$sql.= " s.nom, s.rowid as socid";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+	$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE s.rowid = c.fk_soc AND c.statut = 0";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+
+	if ($socid)
+	{
+		$sql .= " AND f.fk_soc = ".$socid;
+	}
+
+	$resql = $db->query($sql);
+
+	if ( $resql )
+	{
+		$var = false;
+		$num = $db->num_rows($resql);
+
+		print '<br>';
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="3">'.$langs->trans("DraftContracts").($num?' ('.$num.')':'').'</td></tr>';
+		if ($num)
+		{
+			$companystatic=new Societe($db);
+
+			$i = 0;
+			$tot_ttc = 0;
+			while ($i < $num && $i < 20)
+			{
+				$obj = $db->fetch_object($resql);
+				print '<tr '.$bc[$var].'><td nowrap>';
+				$staticcontrat->ref=$obj->ref;
+				$staticcontrat->id=$obj->rowid;
+				print $staticcontrat->getNomUrl(1,'');
+				print '</td>';
+				print '<td>';
+				$companystatic->id=$obj->socid;
+				$companystatic->nom=$obj->nom;
+				$companystatic->client=1;
+				print $companystatic->getNomUrl(1,'',16);
+				print '</td>';
+				print '</tr>';
+				$tot_ttc+=$obj->total_ttc;
+				$i++;
+				$var=!$var;
+			}
+		}
+		else
+		{
+			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoContracts").'</td></tr>';
+		}
+		print "</table><br>";
+		$db->free($resql);
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
+}
 
 print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 
@@ -104,12 +171,12 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."contrat as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
-$sql.= " WHERE c.fk_soc = s.rowid ";
+$sql.= " WHERE c.fk_soc = s.rowid AND c.statut > 0";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
 $sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.rowid";
-$sql.= " ORDER BY c.datec DESC";
-$sql.= " LIMIT $max";
+$sql.= " ORDER BY c.tms DESC";
+$sql.= " LIMIT ".$max;
 
 $result=$db->query($sql);
 if ($result)
@@ -121,7 +188,7 @@ if ($result)
     
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
     print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-    print '<td align="left">'.$langs->trans("Status").'</td>';
+    //print '<td align="left">'.$langs->trans("Status").'</td>';
     print '<td align="center" width="80" colspan="3">'.$langs->trans("Services").'</td>';
     print "</tr>\n";
     
@@ -139,7 +206,7 @@ if ($result)
         print '</td>';
         print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
         print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
-        print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
+        //print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
         print '<td align="center">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0,3):'').'</td>';
         print '<td align="center">'.($obj->nb_running+$obj->nb_late>0 ? ($obj->nb_running+$obj->nb_late).$staticcontratligne->LibStatut(4,3):'').'</td>';
         print '<td align="center">'.($obj->nb_closed>0 ? $obj->nb_closed.$staticcontratligne->LibStatut(5,3):'').'</td>';

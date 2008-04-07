@@ -1,7 +1,7 @@
 # Dolibarr language file - fr_FR - contracts
 ContractsArea=Espace contrats
 ListOfContracts=Liste des contrats
-LastContracts=Les %s derniers contrats
+LastContracts=Les %s derniers contrats modifiés
 AllContracts=Tous les contrats
 ContractCard=Fiche contrat
 ContractStatus=État du contrat
@@ -30,11 +30,12 @@ DeleteAContract=Supprimer un contract
 CloseAContract=Cloturer un contract
 ConfirmDeleteAContract=Etes-vous sûr de vouloir supprimer ce contrat et tous ses services ?
 ConfirmValidateContract=Etes-vous sûr de vouloir valider ce contrat ?
-ConfirmCloseContract=Etes-vous sûr de vouloir cloturer ce contrat ?
+ConfirmCloseContract=Ceci fermera tous les services actifs et inactifs. Etes-vous sûr de vouloir cloturer ce contrat ?
 ConfirmCloseService=Etes-vous sûr de vouloir fermer ce service à la date du <b>%s</b> ?
 ValidateAContract=Valider un contrat
 ActivateService=Activer le service
 ConfirmActivateService=Etes-vous sûr de vouloir activer ce service en date du <b>%s</b> ?
+DateContract=Date contrat
 DateServiceActivate=Date activation du service
 DateServiceUnactivate=Date désactivation du service
 DateServiceStart=Date début du service
@@ -65,6 +66,9 @@ ServicesNomberShort=%s service(s)
 RunningServices=Services actifs
 BoardRunningServices=Services actifs expirés
 ServiceStatus=Statut du service
+DraftContracts=Contrats brouillons
+CloseRefusedBecauseOneServiceActive=Fermeture du contrat impossible car il y a au moins un service actif
+CloseAllContracts=Tout clôturer
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
 TypeContact_contrat_internal_SALESREPFOLL=Commercial suivi du contrat

@@ -589,6 +589,8 @@ else
 
         if ($mesg) print $mesg;
 		
+		$nbofservices=sizeof($contrat->lignes);
+
         $author = new User($db);
         $author->id = $contrat->user_author_id;
         $author->fetch();
@@ -669,7 +671,8 @@ else
 
         // Statut contrat
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-        print $contrat->getLibStatut(2);
+        if ($contrat->statut==0) print $contrat->getLibStatut(2);
+		else print $contrat->getLibStatut(4);
         print "</td></tr>";
 
         // Date
@@ -708,7 +711,6 @@ else
 		echo '<br>';
 		
 		$servicepos=(isset($_REQUEST["servicepos"])?$_REQUEST["servicepos"]:1);
-		$nbofservices=sizeof($contrat->lignes);
 		$colorb='333333';
 
         /*
@@ -1202,12 +1204,18 @@ else
 				else print '<a class="butAction" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
             }
 
-            $numclos=$contrat->array_detail(5); // Tableau des lignes au statut clos
-            if ($contrat->statut == 1 && $nbofservices == sizeof($numclos))
+			if ($contrat->nbofservicesclosed < $nbofservices)
             {
-                print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=close">'.$langs->trans("Close").'</a>';
+				//if (! $numactive)
+				//{
+					print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a>';
+				//}
+				//else
+				//{
+				//	print '<a class="butActionRefused" href="#" title="'.$langs->trans("CloseRefusedBecauseOneServiceActive").'">'.$langs->trans("Close").'</a>';
+				//}
             }
-
+						
             // On peut supprimer entite si
 			// - Droit de creer + mode brouillon (erreur creation)
 			// - Droit de supprimer

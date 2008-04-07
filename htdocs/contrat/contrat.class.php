@@ -46,7 +46,7 @@ class Contrat extends CommonObject
     var $ref;
     var $socid;
     var $societe;		// Objet societe
-
+	var $statut=0;		// 0=Draft, 
     var $product;
 
     var $user_author;
@@ -66,8 +66,8 @@ class Contrat extends CommonObject
 	
     var $fk_projet;
         
-    var $statuts=array();
-    
+    var $lignes=array();
+   
         
     /**
      *    \brief      Constructeur de la classe
@@ -82,11 +82,6 @@ class Contrat extends CommonObject
         $this->societe = new Societe($DB);
         $this->user_service = new User($DB);
         $this->user_cloture = new User($DB);
-        
-        // Statut 0=ouvert, 1=actif, 2=clotur�
-        $this->statuts[0]=$langs->trans("Draft");
-        $this->statuts[1]=$langs->trans("Validated");
-        $this->statuts[2]=$langs->trans("Closed");
     }
 
     /**
@@ -344,9 +339,11 @@ class Contrat extends CommonObject
      */
     function fetch_lignes()
     {
-        $this->lignes = array();
-    
-        // Selectionne les lignes contrats li�es � un produit
+        $this->nbofserviceswait=0;
+        $this->nbofservicesopened=0;
+        $this->nbofservicesclosed=0;
+		
+		// Selectionne les lignes contrats liees a un produit
         $sql = "SELECT p.label, p.description as product_desc, p.ref,";
         $sql.= " d.rowid, d.statut, d.description, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
         $sql.= " d.info_bits, d.fk_product,";
@@ -391,6 +388,11 @@ class Contrat extends CommonObject
                 $this->lignes[]        = $ligne;
                 //dolibarr_syslog("1 ".$ligne->desc);
                 //dolibarr_syslog("2 ".$ligne->product_desc);
+				
+				if ($ligne->statut == 0) $this->nbofserviceswait++;
+				if ($ligne->statut == 4) $this->nbofservicesopened++;
+				if ($ligne->statut == 5) $this->nbofservicesclosed++;
+
                 $i++;
             }
             $this->db->free($result);
@@ -401,7 +403,7 @@ class Contrat extends CommonObject
             return -3;
         }
         
-        // Selectionne les lignes contrat li�es � aucun produit
+        // Selectionne les lignes contrat liees a aucun produit
         $sql = "SELECT d.rowid, d.statut, d.qty, d.description, d.price_ht, d.subprice, d.tva_tx, d.rowid, d.remise_percent,";
         $sql.= " d.date_ouverture_prevue, d.date_ouverture,";
         $sql.= " d.date_fin_validite, d.date_cloture";
@@ -413,9 +415,9 @@ class Contrat extends CommonObject
         if ($result)
         {
             $num = $this->db->num_rows($result);
-            $j = 0;
+            $i = 0;
         
-            while ($j < $num)
+            while ($i < $num)
             {
                 $objp                  = $this->db->fetch_object($result);
                 $ligne                 = new ContratLigne($this->db);
@@ -436,9 +438,12 @@ class Contrat extends CommonObject
                 $ligne->date_fin_prevue   = $objp->date_fin_validite;
                 $ligne->date_fin_reel     = $objp->date_cloture;
         
+				if ($ligne->statut == 0) $this->nbofserviceswait++;
+				if ($ligne->statut == 4) $this->nbofservicesopened++;
+				if ($ligne->statut == 5) $this->nbofservicesclosed++;
+
                 $this->lignes[]        = $ligne;
                 $i++;
-                $j++;
             }
         
             $this->db->free($result);
@@ -450,19 +455,21 @@ class Contrat extends CommonObject
             return -2;
         }
     
+		$this->nbofservices=sizeof($this->lignes);
+	
         return $this->lignes;
     }
   
     /**
-     *      \brief      Cr�e un contrat vierge en base
-     *      \param      user        Utilisateur qui cr�e
+     *      \brief      Cree un contrat vierge en base
+     *      \param      user        Utilisateur qui cree
      *      \param      langs       Environnement langue de l'utilisateur
-     *      \param      conf        Environnement de configuration lors de l'op�ration
-     *      \return     int         <0 si erreur, id contrat cr�� sinon
+     *      \param      conf        Environnement de configuration lors de l'operation
+     *      \return     int         <0 si erreur, id contrat cre sinon
      */
     function create($user,$langs='',$conf='')
     {
-        // Controle validit� des param�tres
+        // Check parameters
         $paramsok=1;
         if ($this->commercial_signature_id <= 0)
         {
@@ -481,14 +488,14 @@ class Contrat extends CommonObject
         
         $this->db->begin();
 
-        // Ins�re contrat
+        // Insert contract
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat";
-//        $sql.= ", fk_commercial_signature, fk_commercial_suivi";
+        $sql.= ", fk_commercial_signature, fk_commercial_suivi";
         $sql.= " , ref)";
         $sql.= " VALUES (now(),".$this->socid.",".$user->id;
         $sql.= ",".$this->db->idate($this->date_contrat);
-//        $sql.= ",".($this->commercial_signature_id>=0?$this->commercial_signature_id:"null");
-//        $sql.= ",".($this->commercial_suivi_id>=0?$this->commercial_suivi_id:"null");
+        $sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
+        $sql.= ",".($this->commercial_suivi_id>0?$this->commercial_suivi_id:"NULL");
 		$sql .= ", " . (strlen($this->ref)<=0 ? "null" : "'".$this->ref."'");
         $sql.= ")";
         $resql=$this->db->query($sql);
@@ -737,7 +744,7 @@ class Contrat extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                $result=$this->update_price();
+                $result=$this->update_statut();
         		if ($result > 0)
         		{
 					$this->db->commit();
@@ -766,17 +773,17 @@ class Contrat extends CommonObject
     }
 
     /**
-     *      \brief     Mets � jour une ligne de contrat
+     *      \brief     Mets a jour une ligne de contrat
      *      \param     rowid            Id de la ligne de facture
      *      \param     desc             Description de la ligne
      *      \param     pu               Prix unitaire
-     *      \param     qty              Quantit�
+     *      \param     qty              Quantite
      *      \param     remise_percent   Pourcentage de remise de la ligne
-     *      \param     date_start       Date de debut pr�vue
-     *      \param     date_end         Date de fin pr�vue
+     *      \param     date_start       Date de debut prevue
+     *      \param     date_end         Date de fin prevue
      *      \param     tvatx            Taux TVA
-     *      \param     date_debut_reel  Date de debut r�elle
-     *      \param     date_fin_reel    Date de fin r�elle
+     *      \param     date_debut_reel  Date de debut reelle
+     *      \param     date_fin_reel    Date de fin reelle
      *      \return    int              < 0 si erreur, > 0 si ok
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent=0,
@@ -827,7 +834,7 @@ class Contrat extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-            $result=$this->update_price();
+            $result=$this->update_statut();
 			if ($result >= 0)
 			{
 				$this->db->commit();
@@ -891,19 +898,30 @@ class Contrat extends CommonObject
 
 
     /**
-     *      \brief      Mets a jour le prix total du contrat
+     *      \brief      Update statut of contract according to services
      *		\return     int     <0 si ko, >0 si ok
      */
-    function update_price()
+    function update_statut()
     {
-    	// Function empty because there is no total in contract parent table
+		// If draft, we keep it (should not happen)
+		if ($this->statut == 0) return 1;
+
+		// Load $this->lignes array
+//		$this->fetch_lignes();
+		
+		$newstatut=1;
+		foreach($this->lignes as $key => $contractline)
+		{
+//			if ($contractline)         // Loop on each service
+		}
+		
 		return 1;
     }
     
 
 	/**
-	 *    	\brief      Retourne le libell� du statut du contrat
-	 *    	\param      mode          	0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
+	 *    	\brief      Retourne le libelle du statut du contrat
+	 *    	\param      mode          	0=libell� long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
    	 *    	\return     string      	Libell�
    	 */
     function getLibStatut($mode)
@@ -912,10 +930,10 @@ class Contrat extends CommonObject
     }
 
 	/**
-   	 *    	\brief      Renvoi le libell� d'un statut donn�
+   	 *    	\brief      Renvoi le libelle d'un statut donne
    	 *    	\param      statut      	id statut
-	 *    	\param      mode          	0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-   	 *		\return     string      	Libell�
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+   	 *		\return     string      	Libelle
    	 */
     function LibStatut($statut,$mode)
     {
@@ -923,9 +941,9 @@ class Contrat extends CommonObject
         $langs->load("contracts");
 		if ($mode == 0)
 		{
-	        if ($statut == 0) { return $langs->trans("ContractStatusDraft"); }
-	        if ($statut == 1) { return $langs->trans("ContractStatusValidated"); }
-	        if ($statut == 2) { return $langs->trans("ContractStatusClosed"); }
+	        if ($statut == 0) { return $langs->trans("ContractStatusDraft").$text; }
+	        if ($statut == 1) { return $langs->trans("ContractStatusValidated").$text; }
+	        if ($statut == 2) { return $langs->trans("ContractStatusClosed").$text; }
 		}
 		if ($mode == 1)
 		{
@@ -947,7 +965,16 @@ class Contrat extends CommonObject
 		}
 		if ($mode == 4)
 		{
-	        if ($statut == 0) { return img_picto($langs->trans('ContractStatusDraft'),'statut0').' '.$langs->trans("ContractStatusDraft"); }
+			$line=new ContratLigne($this->db);
+			$text=($this->nbofserviceswait+$this->nbofservicesopened+$this->nbofservicesclosed);
+			$text.=' '.$langs->trans("Services");
+			$text.=': &nbsp; &nbsp; ';
+			$text.=$this->nbofserviceswait.' '.$line->LibStatut(0,3).' &nbsp; ';
+			$text.=$this->nbofservicesopened.' '.$line->LibStatut(4,3).' &nbsp; ';
+			$text.=$this->nbofservicesclosed.' '.$line->LibStatut(5,3);
+			return $text;
+
+		if ($statut == 0) { return img_picto($langs->trans('ContractStatusDraft'),'statut0').' '.$langs->trans("ContractStatusDraft"); }
 	        if ($statut == 1) { return img_picto($langs->trans('ContractStatusValidated'),'statut4').' '.$langs->trans("ContractStatusValidated"); }
 	        if ($statut == 2) { return img_picto($langs->trans('ContractStatusClosed'),'statut6').' '.$langs->trans("ContractStatusClosed"); }
 		}
@@ -960,7 +987,34 @@ class Contrat extends CommonObject
     }
 
 
-   /*
+	/**
+		\brief      Renvoie nom clicable (avec eventuellement le picto)
+		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+		\param		option			Sur quoi pointe le lien
+		\return		string			Chaine avec URL
+	*/
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+		
+		$result='';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+		
+		$picto='bill';
+		if ($this->type == 1) $picto.='r';
+		if ($this->type == 2) $picto.='a';
+
+		$label=$langs->trans("ShowContract").': '.$this->ref;
+		
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
+
+  /*
     *       \brief     Charge les informations d'ordre info dans l'objet contrat
     *       \param     id     id du contrat a charger
     */
@@ -1138,7 +1192,7 @@ class ContratLigne
 	var $tms;
 	var $fk_contrat;
 	var $fk_product;
-	var $statut;			// 4 active, 5 closed
+	var $statut;					// 0 inactive, 4 active, 5 closed
 	var $label;
 	var $description;
 	var $date_commande;
@@ -1173,15 +1227,10 @@ class ContratLigne
     }
 
     
-    function is_activated()
-    {
-    		return $this->statut == 4 ;
-    }
-    
 	/**
-	 *    \brief      Retourne le libell� du statut du contrat
-	 *    \param      mode          0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto
-   	 *    \return     string      	Libell�
+	 *    	\brief      Retourne le libelle du statut de la ligne de contrat
+	 *		\param      mode        	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+   	 *    	\return     string      	Libelle
    	 */
     function getLibStatut($mode)
     {
@@ -1189,10 +1238,10 @@ class ContratLigne
     }
 
 	/**
-   	 *    	\brief      Renvoi le libell� d'un statut donn�
+   	 *    	\brief      Renvoi le libelle d'un statut donne
    	 *    	\param      statut      id statut
-	 *		\param      mode        0=libell� long, 1=libell� court, 2=Picto + Libell� court, 3=Picto, 4=Picto + Libell� long, 5=Libell� court + Picto
-   	 *    	\return     string      Libell�
+	 *		\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+   	 *    	\return     string      Libelle
    	 */
     function LibStatut($statut,$mode)
     {
@@ -1331,12 +1380,12 @@ class ContratLigne
 
 
     /*
-     *      \brief      Update database
+     *      \brief      Update database for contract line
      *      \param      user        	User that modify
      *      \param      notrigger	    0=no, 1=yes (no update trigger)
      *      \return     int         	<0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update($user, $notrigger=0)
     {
     	global $conf, $langs;
     	
@@ -1388,16 +1437,22 @@ class ContratLigne
 		$sql.= " total_tva='".$this->total_tva."',";
 		$sql.= " total_ttc='".$this->total_ttc."',";
 		$sql.= " info_bits='".$this->info_bits."',";
-		$sql.= " fk_user_author='".$this->fk_user_author."',";
-		$sql.= " fk_user_ouverture='".$this->fk_user_ouverture."',";
-		$sql.= " fk_user_cloture='".$this->fk_user_cloture."',";
+		$sql.= " fk_user_author=".($this->fk_user_author >= 0?$this->fk_user_author:"NULL").",";
+		$sql.= " fk_user_ouverture=".($this->fk_user_ouverture > 0?$this->fk_user_ouverture:"NULL").",";
+		$sql.= " fk_user_cloture=".($this->fk_user_cloture > 0?$this->fk_user_cloture:"NULL").",";
 		$sql.= " commentaire='".addslashes($this->commentaire)."'";
         $sql.= " WHERE rowid=".$this->id;
 
         dolibarr_syslog("Contratdet::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if (! $resql)
+        if ($resql)
         {
+			$contrat=new Contrat($this->db);
+			$contrat->fetch($this->fk_contrat);
+			$result=$contrat->update_statut();
+		}
+		else
+		{
             $this->error="Error ".$this->db->lasterror();
             dolibarr_syslog("Contratdet::update ".$this->error, LOG_ERR);
             return -1;
