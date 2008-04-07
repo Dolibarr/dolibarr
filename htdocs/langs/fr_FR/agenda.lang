@@ -22,3 +22,6 @@ AllActions=Toutes les actions/taches
 ViewList=Voir liste
 ViewCal=Voir calendrier
 ViewWithPredefinedFilters=Vues avec filtres prédéfinis
+AutoActions=Création automatiques des actions
+AgendaAutoActionDesc=Définissez dans cet onglet, les actions pour lesquels dolibarr créera automatique une tache dans l'agenda. Si aucune case n'est cochée (par défaut), seules les actions manuelles seront incluses dans l'agenda.
+AgendaSetupOtherDesc=Cette page permet de configurer les autres paramètres.

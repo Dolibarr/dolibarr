@@ -521,6 +521,116 @@ class ActionComm
 		return $result;
 	}
 
+	
+    /**
+    		\brief      Export fichier cal depuis base webcalendar
+			\param		format			'ical' or 'vcal'
+			\param		type			'event' or 'journal'
+			\param		cachedelay		Do not rebuild file if date older than cachedelay seconds	
+			\param		filename		Force filename
+			\param		filters			Array of filters
+    		\return     int     		<0 if error, nb of events in new file if ok
+    */
+	function build_calfile($format,$type,$cachedelay,$filename,$filters)
+	{
+		global $conf,$langs,$dolibarr_main_url_root;
+		
+		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
+
+		dolibarr_syslog("ActionComm::build_calfile Build cal file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
+
+		// Check parameters
+		if (empty($format)) return -1;
+
+		// Clean parameters
+		if (! $filename)
+		{
+			$extension='vcs';
+			if ($format == 'ical') $extension='ics';
+			$filename=$format.'.'.$extension;
+		}
+		
+		create_exdir($conf->agenda->dir_temp);
+		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
+		$result=0;
+		
+		$buildfile=true;
+		if ($cachedelay)
+		{
+			// \TODO Check cache
+		}
+		
+		if ($buildfile)
+		{
+			// Build event array
+			$eventarray=array();
+			
+			$sql = "SELECT a.id,";
+			$sql.= " ".$this->db->pdate("a.datep")." as datep,";
+			$sql.= " ".$this->db->pdate("a.datep2")." as datep2,";
+			$sql.= " ".$this->db->pdate("a.datea")." as datea,";
+			$sql.= " ".$this->db->pdate("a.datea2")." as datea2,";
+			$sql.= " a.durationp, a.durationa,";
+			$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
+			$sql.= " a.note, a.label, a.fk_action as type_id,";
+			$sql.= " a.fk_soc,";
+			$sql.= " a.fk_user_author, a.fk_user_mod,";
+			$sql.= " a.fk_user_action, a.fk_user_done,";
+			$sql.= " a.fk_contact, a.fk_facture, a.percent as percentage, a.fk_commande,";
+			$sql.= " a.priority,";
+			$sql.= " c.id as type_id, c.code as type_code, c.libelle";
+			$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
+			$sql.= " WHERE a.fk_action=c.id";
+			$sql.= " order by datec";
+
+			dolibarr_syslog("ActionComm::build_vcal select events sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				while ($obj=$this->db->fetch_object($resql))
+				{
+					$qualified=true;
+					
+					// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
+					$event=array();
+					$event['uid']='dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
+					$event['type']=$type;
+					$datestart=$obj->datea?$obj->datea:$obj->datep;
+					$dateend=$obj->datea2?$obj->datea2:$obj->datep2;
+					$duration=$obj->durationa?$obj->durationa:$obj->durationp;
+					$event['startdate']=$datestart;
+					$event['duration']=$duration;	// Not required with type 'journal'
+					$event['enddate']=$dateend;		// Not required with type 'journal'
+					$event['summary']=$obj->label;
+					$event['desc']=$obj->note;
+					$event['author']=$obj->fk_user_done>0?$obj->fk_user_done:$obj->fk_user_action;
+					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
+					$url=$dolibarr_main_url_root.DOL_URL_ROOT;
+					if (! eregi('\/$',$url)) $url.='/';
+					$url.='comm/action/fiche.php?id='.$obj->id;
+					$event['url']=$url;
+					
+					if ($qualified)
+					{
+						$eventarray[$datestart]=$event;
+					}
+				}
+			}
+			else
+			{
+				dolibarr_syslog("ActionComm::build_calfile ".$this->db->lasterror(), LOG_ERR);
+				return -1;
+			}
+			
+			// Write file
+			$title='Dolibarr actions';
+			$desc='List of actions - built by Dolibarr';
+			$result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
+		}
+		
+		return $result;
+	}
+
 }
 
 ?>

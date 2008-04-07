@@ -378,6 +378,14 @@ if ($modulepart)
         $encoding='UTF-8';
         $original_file=$conf->webcal->dir_temp.'/'.$original_file;
     }
+
+    // Wrapping for webcalexport
+    if ($modulepart == 'agenda')
+    {
+        $accessallowed=1;
+        $encoding='UTF-8';
+        $original_file=$conf->agenda->dir_temp.'/'.$original_file;
+    }
 }
 
 // Basic protection (against external users only)

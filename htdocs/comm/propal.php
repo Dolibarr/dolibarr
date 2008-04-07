@@ -351,19 +351,19 @@ if ($_POST['action'] == 'send')
 
                 	if($subject == '')
                 	{
-                		$subject = $langs->trans('Propal').' '.$propal->ref;
+                		$subject = $langs->transnoentities('Propal').' '.$propal->ref;
                 	}
 
-                  $actiontypeid=3;
-                  $actionmsg = $langs->trans('MailSentBy').' '.$from.' '.$langs->trans('To').' '.$sendto.'.<br>';
+					$actiontypecode='AC_PROP';
+                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
 
                   if ($message)
                   {
-                    $actionmsg.=$langs->trans('TextUsedInTheMessageBody').' :<br>';
+                    $actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
                     $actionmsg.=$message;
                   }
 
-                  $actionmsg2=$langs->trans('SendPropalByMail');
+                  $actionmsg2=$langs->transnoentities('SendPropalByMail');
                 }
 
                 $filepath[0] = $file;
@@ -389,23 +389,24 @@ if ($_POST['action'] == 'send')
 					if ($result)
 					{
 	                    $mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+						
+						$error=0;
+						
+			            // Initialisation donnees
+						$propal->sendtoid=$sendtoid;
+						$propal->actiontypecode=$actiontypecode;
+						$propal->actionmsg = $actionmsg;
+						$propal->actionmsg2= $actionmsg2;
+						$propal->propalrowid=$propal->id;
+						
+						// Appel des triggers
+						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+						$interface=new Interfaces($db);
+						$result=$interface->run_triggers('PROPAL_SENTBYMAIL',$propal,$user,$langs,$conf);
+						if ($result < 0) { $error++; $this->errors=$interface->errors; }
+						// Fin appel triggers
 
-	                    // Insertion action
-	                    require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-						require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
-	                    $actioncomm = new ActionComm($db);
-	                    $actioncomm->type_id     = $actiontypeid;
-	                    $actioncomm->label       = $actionmsg2;
-	                    $actioncomm->note        = $actionmsg;
-	                    $actioncomm->date        = time();  // L'action est faite maintenant
-	                    $actioncomm->percentage  = 100;
-	                    $actioncomm->contact     = new Contact($db,$sendtoid);
-	                    $actioncomm->societe     = new Societe($db,$propal->socid);
-	                    $actioncomm->user        = $user;   // User qui a fait l'action
-	                    $actioncomm->propalrowid = $propal->id;
-
-	                    $ret=$actioncomm->add($user);       // User qui saisit l'action
-	                    if ($ret < 0)
+	                    if ($error)
 	                    {
 	                        dolibarr_print_error($db);
 	                    }
@@ -415,7 +416,7 @@ if ($_POST['action'] == 'send')
 	                        Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&msg='.urlencode($mesg));
 	                        exit;
 	                    }
-	                }
+					}
 	                else
 	                {
 						$langs->load("other");

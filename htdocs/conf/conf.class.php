@@ -155,6 +155,7 @@ class Conf
 
 		// Module agenda
 		$this->agenda->enabled=defined('MAIN_MODULE_AGENDA')?MAIN_MODULE_AGENDA:0;
+		$this->agenda->dir_temp=DOL_DATA_ROOT."/agenda/temp";
 
 		// Module bookmark
 		$this->bookmark->enabled=defined('MAIN_MODULE_BOOKMARK')?MAIN_MODULE_BOOKMARK:0;

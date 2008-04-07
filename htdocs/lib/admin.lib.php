@@ -307,12 +307,10 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
 
 /**
-   \file       htdocs/lib/company.lib.php
-   \brief      Ensemble de fonctions de base pour le module societe
-   \ingroup    societe
-   \version    $Id$
+   \brief      	Define head array for tabs of security setup pages
+   \return		Array of head
+   \version    	$Id$
 */
-
 function security_prepare_head()
 {
 	global $langs, $conf, $user;

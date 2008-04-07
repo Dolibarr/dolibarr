@@ -195,4 +195,29 @@ function show_array_last_actions_done($max=5)
 	}
 }
 
+
+/**
+   \brief      	Define head array for tabs of agenda setup pages
+   \return		Array of head
+   \version    	$Id$
+*/
+function agenda_prepare_head()
+{
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda.php";
+	$head[$h][1] = $langs->trans("AutoActions");
+	$head[$h][2] = 'autoactions';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/agenda_xcal.php";
+	$head[$h][1] = $langs->trans("Other");
+	$head[$h][2] = 'xcal';
+	$h++;
+
+	return $head;
+}
+
 ?>

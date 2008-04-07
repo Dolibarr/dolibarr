@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
  \file       htdocs/admin/stock.php
   \ingroup    stock
    \brief      Page d'administration/configuration du module gestion de stock
-    \version    $Revision$
+    \version    $Id$
 */
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -97,6 +95,7 @@ llxHeader('',$langs->trans("StockSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("StockSetup"),$linkback,'setup');
+print '<br>';
 
 $html=new Form($db);
 $var=true;

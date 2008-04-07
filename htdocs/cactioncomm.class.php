@@ -15,17 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
         \file       htdocs/cactioncomm.class.php
         \ingroup    commercial
         \brief      Fichier de la classe des types d'actions commerciales
-        \version    $Revision$
+        \version    $Id$
 */
 
 
@@ -62,7 +58,7 @@ class CActionComm {
    *    \param      id          id ou code du type d'action à récupérer
    *    \return     int         1=ok, 0=aucune action, -1=erreur
    */
-  function fetch($id)
+	function fetch($id)
     {
         
         $sql = "SELECT id, code, type, libelle, active";

@@ -17,78 +17,109 @@
  */
 
 /**
-	    \file       htdocs/admin/agenda.php
+	    \file       htdocs/admin/agenda_actions.php
         \ingroup    agenda
-        \brief      Page de configuration du module agenda
+        \brief      Autocreate actions for agenda module setup page
 		\version    $Id$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/agenda.lib.php');
-
+require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 
 if (!$user->admin)
     accessforbidden();
-
 
 $langs->load("admin");
 $langs->load("other");
 $langs->load("agenda");
 
-$def = array();
-$actionsave=$_POST["save"];
+$action=$_POST["action"];
 
-// Sauvegardes parametres
-if ($actionsave)
+
+// List of all events supported by triggers
+$eventstolog=array(
+//	array('id'=>'USER_CREATE',            'test'=>1),
+//	array('id'=>'GROUP_CREATE',           'test'=>1),
+//	array('id'=>'COMPANY_CREATE',         'test'=>$conf->societe->enabled),
+//	array('id'=>'CONTRACT_VALIDATE',      'test'=>$conf->contrat->enabled),
+//	array('id'=>'PROPAL_VALIDATE',        'test'=>$conf->propal->enabled),
+	array('id'=>'PROPAL_SENTBYMAIL',      'test'=>$conf->propal->enabled),
+//	array('id'=>'BILL_VALIDATE',          'test'=>$conf->facture->enabled),
+//	array('id'=>'BILL_PAYED',             'test'=>$conf->facture->enabled),
+//	array('id'=>'BILL_CANCELED',          'test'=>$conf->facture->enabled),
+	array('id'=>'BILL_SENTBYMAIL',        'test'=>$conf->facture->enabled),
+	array('id'=>'ORDER_SENTBYMAIL',       'test'=>$conf->commande->enabled),
+//	array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),
+//	array('id'=>'PAYMENT_SUPPLIER_CREATE','test'=>$conf->fournisseur->enabled),
+//	array('id'=>'MEMBER_VALIDATE',        'test'=>$conf->adherent->enabled),
+//	array('id'=>'MEMBER_SUBSCRIPTION',    'test'=>$conf->adherent->enabled),
+);
+
+
+/*
+*	Actions
+*/
+if ($action == "save")
 {
     $i=0;
 
     $db->begin();
     
-    $i+=dolibarr_set_const($db,'MAIN_PASSWORD_VCALEXPORT',trim($_POST["MAIN_PASSWORD_VCALEXPORT"]),'chaine',0);
-
-    if ($i > 0)
-    {
-        $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("SaveFailed")."</font>";
-    }
+	foreach ($eventstolog as $key => $arr)
+	{
+		$param='MAIN_AGENDA_ACTIONAUTO_'.$arr['id'];
+		//print "param=".$param." - ".$_POST[$param];
+		if (! empty($_POST[$param])) dolibarr_set_const($db,$param,$_POST[$param],'chaine',0);
+		else dolibarr_del_const($db,$param);
+	}
+	
+    $db->commit();
+    $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
 }
 
 
 
 /**
- * Vies
+ * Affichage du formulaire de saisie
  */
 
 llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("AgendaSetup"),$linkback,'setup');
-print '<br>';
+print "<br>\n";
+
+print $langs->trans("AgendaAutoActionDesc")."<br>\n";
+print "<br>\n";
+
+$head=agenda_prepare_head();
+
+dolibarr_fiche_head($head, 'autoactions', $langs->trans("Agenda"));
 
 
-print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="action" value="save">';
+
+$var=true;
 print "<table class=\"noborder\" width=\"100%\">";
-
 print "<tr class=\"liste_titre\">";
-print "<td width=\"30%\">".$langs->trans("Parameter")."</td>";
-print "<td>".$langs->trans("Value")."</td>";
-//print "<td>".$langs->trans("Examples")."</td>";
-print "<td>&nbsp;</td>";
-print "</tr>";
-
-print "<tr class=\"impair\">";
-print "<td>".$langs->trans("PasswordTogetVCalExport")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_PASSWORD_VCALEXPORT\" value=\"". ($_POST["MAIN_PASSWORD_VCALEXPORT"]?$_POST["MAIN_PASSWORD_VCALEXPORT"]:$conf->global->MAIN_PASSWORD_VCALEXPORT) . "\" size=\"40\"></td>";
-print "<td>&nbsp;</td>";
-print "</tr>";
-
+print "<td colspan=\"2\">".$langs->trans("LogEvents")."</td>";
+print "</tr>\n";
+foreach ($eventstolog as $key => $arr)
+{
+	if ($arr['id'])
+	{
+	    $var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$arr['id'].'</td>';
+	    print '<td>';
+	    $key='MAIN_AGENDA_ACTIONAUTO_'.$arr['id'];
+		$value=$conf->global->$key;
+		print '<input type="checkbox" name="'.$key.'" value="1"'.($value?' checked="true"':'').'>';
+	    print '</td></tr>'."\n";
+	}
+}
 print '</table>';
 
 print '<br><center>';
@@ -97,21 +128,13 @@ print "</center>";
 
 print "</form>\n";
 
+print '</div>';
 
-clearstatcache();
+
 
 if ($mesg) print "<br>$mesg<br>";
 print "<br>";
 
-// Show message
-$message='';
-$urlwithouturlroot=eregi_replace(DOL_URL_ROOT.'$','',$dolibarr_main_url_root);
-$urlvcal='<a href="'.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=vcal&exportkey=..." target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=vcal&exportkey=...'.'</a>';
-$message.=$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
-$message.='<br>';
-$urlical='<a href="'.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=ical&type=event&exportkey=..." target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=ical&type=event&exportkey=...'.'</a>';
-$message.=$langs->trans("WebCalUrlForVCalExport",'ical',$urlical);
-print info_admin($message);
 
 $db->close();
 

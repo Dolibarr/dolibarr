@@ -135,31 +135,9 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
                 {
 		  $msg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$from,$sendto).'.</div>';
 
-		  // Insertion action
-
-		  $actioncomm = new ActionComm($db);
-		  $actioncomm->type_id     = $actiontypeid;
-		  $actioncomm->label       = $actionmsg2;
-		  $actioncomm->note        = $actionmsg;
-		  $actioncomm->date        = time();
-		  $actioncomm->percentage  = 100;
-		  $actioncomm->contact     = new Contact($db,$sendtoid);
-		  $actioncomm->societe     = new Societe($db,$fac->socid);
-		  $actioncomm->user        = $user;   // User qui a fait l'action
-		  $actioncomm->facid       = $fac->id;
-
-		  $ret=$actioncomm->add($user);       // User qui saisi l'action
-
-		  if ($ret < 0)
-                    {
-		      dolibarr_print_error($db);
-                    }
-		  else
-                    {
 		      // Renvoie sur la fiche
 		      Header("Location: facture.php?facid=".$fac->id."&msg=".urlencode($msg));
 		      exit;
-                    }
                 }
 	      else
                 {

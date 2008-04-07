@@ -40,8 +40,10 @@ $sortorder=$_GET["sortorder"];
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="a.datea";
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="a.datec";
+
+$status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -137,7 +139,7 @@ $nav.=" $year";
 $nav.=" </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 
-print_fiche_titre($title,$nav,$_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,'',$num);
+print_fiche_titre($title,$nav,"");
 
 // Filters
 if ($canedit)
@@ -201,6 +203,8 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 	if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
 	$sql.= ")";
 }
+if ($status == 'done') { $sql.= " AND a.percent = 100"; }
+if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
 
 //echo "$sql<br>";
 $actionarray=array();
@@ -327,7 +331,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray)
 		if ($day==$jour && $month==$mois && $year==$annee)
 		{
 			if ($i) print "<br>";
-	   		print $action->getNomUrl(1,10)." ".$action->getLibStatut(3);
+	   		print $action->getNomUrl(1,9)." ".$action->getLibStatut(3);
 			$i++;
 		}
 	}

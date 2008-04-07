@@ -33,9 +33,8 @@ require_once(DOL_DOCUMENT_ROOT.'/webcal/webcal.class.php');
 function llxHeader() { print '<html><title>Export cal</title><body>'; }
 function llxFooter() { print '</body></html>'; }
 
-
 // Check config
-if (empty($conf->global->PHPWEBCALENDAR_URL))
+if (! $conf->webcal->enabled && empty($conf->global->PHPWEBCALENDAR_URL))
 {
 	$user->getrights();
 

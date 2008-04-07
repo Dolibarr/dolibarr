@@ -47,7 +47,7 @@ class InterfaceLogevents
     {
         $this->db = $DB ;
     
-        $this->name = "Eventsynchro";
+        $this->name = "Logevents";
         $this->family = "core";
         $this->description = "Les triggers de ce composant permettent de logguer les evenements Dolibarr (modification status des objets).";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version

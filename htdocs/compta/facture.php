@@ -1007,26 +1007,26 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 					}
 
 					$actiontypecode='AC_FAC';
-					$actionmsg ="Mail envoyé par ".$from." à ".$sendto.".\n";
+					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->trans('To').' '.$sendto.".\n";
 
 					if ($message)
 					{
-						$actionmsg.="Texte utilisé dans le corps du message:\n";
+						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 						$actionmsg.=$message;
 					}
 
-					$actionmsg2='Envoi facture par mail';
+					$actionmsg2=$langs->transnoentities('SendInvoiceByMail');
 				}
 				if ($_POST['action'] == 'relance')
 				{
 					$subject = 'Relance facture '.$fac->ref;
 					$actiontypecode='AC_FAC';
-					$actionmsg="Mail envoyé par ".$from." à ".$sendto.".\n";
+					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
 					if ($message) {
-						$actionmsg.="Texte utilisé dans le corps du message:\n";
+						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 						$actionmsg.=$message;
 					}
-					$actionmsg2='Relance facture par mail';
+					$actionmsg2=$langs->transnoentities('ReSendInvoiceByMail');
 				}
 
 				$filepath[0] = $file;
@@ -1053,22 +1053,23 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 					{
 						$mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
 
-						// Insertion action
-						require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
-						require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
-						$actioncomm = new ActionComm($db);
-						$actioncomm->type_code   = $actiontypecode;
-						$actioncomm->label       = $actionmsg2;
-						$actioncomm->note        = $actionmsg;
-						$actioncomm->date        = time();	// L'action est faite maintenant
-						$actioncomm->percentage  = 100;
-						$actioncomm->contact     = new Contact($db,$sendtoid);
-						$actioncomm->societe     = new Societe($db,$fac->socid);
-						$actioncomm->user        = $user;   // User qui a fait l'action
-						$actioncomm->facid       = $fac->id;
+						$error=0;
+						
+			            // Initialisation donnees
+						$fac->sendtoid=$sendtoid;
+						$fac->actiontypecode=$actiontypecode;
+						$fac->actionmsg = $actionmsg;
+						$fac->actionmsg2= $actionmsg2;
+						$fac->facid=$fac->id;
 
-						$ret=$actioncomm->add($user);       // User qui saisit l'action
-						if ($ret < 0)
+						// Appel des triggers
+						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+						$interface=new Interfaces($db);
+						$result=$interface->run_triggers('BILL_SENTBYMAIL',$fac,$user,$langs,$conf);
+						if ($result < 0) { $error++; $this->errors=$interface->errors; }
+						// Fin appel triggers
+
+						if ($error)
 						{
 							dolibarr_print_error($db);
 						}
