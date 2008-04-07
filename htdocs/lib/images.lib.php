@@ -26,15 +26,16 @@
 
 
 
-/*
- *    \brief     Création de 2 vignettes a partir d'un fichier image (une small et un mini)
- *    \brief     Les extension prise en compte sont jpg et png
- *    \param     file           Chemin du fichier image a redimensionner
- *    \param     maxWidth       Largeur maximum que dois faire la miniature (160 par défaut)
- *    \param     maxHeight      Hauteur maximum que dois faire l'image (120 par défaut)
- *    \param     extName        Extension pour différencier le nom de la vignette
- *    \param     quality        Qualité de compression (0=worst, 100=best)
- *    \return    string			Chemin de la vignette
+/**
+ *    	\brief     Create a thumbnail from an image file (une small et un mini)
+ *    	\brief     Les extensions prises en compte sont jpg et png
+ *    	\param     file           	Chemin du fichier image a redimensionner
+ *    	\param     maxWidth       	Largeur maximum que dois faire la miniature (160 par défaut)
+ *    	\param     maxHeight      	Hauteur maximum que dois faire l'image (120 par défaut)
+ *    	\param     extName        	Extension pour différencier le nom de la vignette
+ *    	\param     quality        	Qualité de compression (0=worst, 100=best)
+ *    	\return    string			Full path of thumb
+ *		\remarks					With file=myfile.jpg -> myfile_small.jpg
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50)
 {

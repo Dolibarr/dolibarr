@@ -827,7 +827,7 @@ llxFooter('$Date$ - $Revision$');
 
 /**
         \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option synchro calendrier
-        \return     int     Retourne le nombre de lignes ajout�es
+        \return     int     Retourne le nombre de lignes ajoutees
 */
 function add_row_for_calendar_link()
 {

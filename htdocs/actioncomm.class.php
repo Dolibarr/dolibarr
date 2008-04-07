@@ -552,7 +552,7 @@ class ActionComm
 			$filename=$format.'.'.$extension;
 		}
 		
-		create_exdir($conf->agenda->dir_temp);
+		$result=create_exdir($conf->agenda->dir_temp);
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
 		$result=0;
 		
@@ -583,7 +583,12 @@ class ActionComm
 			$sql.= " c.id as type_id, c.code as type_code, c.libelle";
 			$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
 			$sql.= " WHERE a.fk_action=c.id";
-			$sql.= " order by datec";
+			foreach($filters as $key => $value)
+			{
+				if ($key == 'year')     $sql.=' AND ';
+				if ($key == 'idaction') $sql.=' AND a.id='.$value;
+			}
+			$sql.= " ORDER by datec";
 
 			dolibarr_syslog("ActionComm::build_vcal select events sql=".$sql);
 			$resql=$this->db->query($sql);
@@ -620,6 +625,7 @@ class ActionComm
 			}
 			else
 			{
+				$this->error=$this->db->lasterror();
 				dolibarr_syslog("ActionComm::build_calfile ".$this->db->lasterror(), LOG_ERR);
 				return -1;
 			}
