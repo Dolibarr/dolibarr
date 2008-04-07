@@ -331,7 +331,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray)
 		if ($day==$jour && $month==$mois && $year==$annee)
 		{
 			if ($i) print "<br>";
-	   		print $action->getNomUrl(1,9)." ".$action->getLibStatut(3);
+	   		print $action->getNomUrl(1,10)." ".$action->getLibStatut(3);
 			$i++;
 		}
 	}
