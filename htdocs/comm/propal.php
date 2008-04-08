@@ -339,6 +339,8 @@ if ($_POST['action'] == 'send')
 
             if (strlen($sendto))
             {
+				$langs->load("commercial");
+
                 $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
                 $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
                 $message = $_POST['message'];
@@ -363,7 +365,7 @@ if ($_POST['action'] == 'send')
                     $actionmsg.=$message;
                   }
 
-                  $actionmsg2=$langs->transnoentities('SendPropalByMail');
+					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
                 }
 
                 $filepath[0] = $file;

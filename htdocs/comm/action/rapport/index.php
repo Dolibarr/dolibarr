@@ -56,14 +56,6 @@ if ($_GET["action"] == 'builddoc')
 	$result=$cat->generate($_GET["id"]);
 }
 
-if ($action=='delete_action')
-{
-	$actioncomm = new ActionComm($db);
-	$actioncomm->fetch($actionid);
-	$result=$actioncomm->delete();
-}
-
-
 
 /*
  * Affichage liste

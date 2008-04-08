@@ -17,7 +17,7 @@
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_all_ActionsAuto.class.php
+        \file       htdocs/includes/triggers/interface_modAgenda_ActionsAuto.class.php
         \ingroup    core
         \brief      Trigger file for 
 		\version	$Id$
@@ -102,28 +102,184 @@ class InterfaceActionsAuto
 		//dolibarr_syslog("xxxxxxxxxxx".$key);
 		if (empty($conf->global->$key)) return 0;				// Log events not enabled for this action
 		
+		// Following properties must be filled:
+		// $object->actiontypecode;
+		// $object->actionmsg (label)
+		// $object->actionmsg2 (note)
+		// $object->sendtoid
+		// $object->socid
+		// Optionnal:
+		// $object->facid
+		// $object->propalrowid
+		// $object->orderrowid
+		
 		$ok=0;
 		
 		// Actions
-        if ($action == 'PROPAL_SENTBYMAIL')
+        if ($action == 'COMPANY_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
+            $langs->load("companies");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
+            $object->actionmsg=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
+            if ($object->prefix) $object->actionmsg.=" (".$object->prefix.")";
+            //$this->desc.="\n".$langs->transnoentities("Customer").': '.yn($object->client);
+            //$this->desc.="\n".$langs->transnoentities("Supplier").': '.yn($object->fournisseur);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->facid=$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+        }
+        elseif ($action == 'CONTRACT_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("contracts");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
-        if ($action == 'BILL_SENTBYMAIL')
+		elseif ($action == 'PROPAL_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
+            $langs->load("propal");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("PropalValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->propalrowid=$object->id;
+			$object->facid=$object->orderrowid=0;
+			$ok=1;
+		}
+        elseif ($action == 'PROPAL_SENTBYMAIL')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("propal");
+			$ok=1;
+			
+			// Parameters $object->xxx defined by caller
+		}
+		elseif ($action == 'PROPAL_CLOSE_SIGNED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("propal");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->propalrowid=$object->id;
+			$object->facid=$object->orderrowid=0;
+			$ok=1;
+		}
+		elseif ($action == 'PROPAL_CLOSE_REFUSED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("propal");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->propalrowid=$object->id;
+			$object->facid=$object->orderrowid=0;
+			$ok=1;
+		}		
+		elseif ($action == 'ORDER_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("orders");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->orderrowid=$object->id;
+			$object->propalrowid=$object->facid=0;
 			$ok=1;
 		}
         elseif ($action == 'ORDER_SENTBYMAIL')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("users");
+            $langs->load("orders");
 			$ok=1;
-        }
 
+			// Parameters $object->xxx defined by caller
+		}
+		elseif ($action == 'BILL_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("bills");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->facid=$object->id;
+			$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+		}
+        elseif ($action == 'BILL_SENTBYMAIL')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("bills");
+			$ok=1;
+			
+			// Parameters $object->xxx defined by caller
+		}
+		elseif ($action == 'BILL_PAYED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("bills");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->facid=$object->id;
+			$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+		}
+		elseif ($action == 'BILL_CANCELED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("bills");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->facid=$object->id;
+			$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+		}
+
+		
+		
+		
 		// If not found
 /*
         else
@@ -140,7 +296,6 @@ class InterfaceActionsAuto
 			require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
 			require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 			$actioncomm = new ActionComm($this->db);
-			$actioncomm->type_id     = $object->actiontypeid;
 			$actioncomm->type_code   = $object->actiontypecode;
 			$actioncomm->label       = $object->actionmsg2;
 			$actioncomm->note        = $object->actionmsg;
@@ -160,7 +315,7 @@ class InterfaceActionsAuto
 			}
 			else
 			{
-                $error ="Failed to insert : ".$webcal->error." ";
+                $error ="Failed to insert : ".$actioncomm->error." ";
                 $this->error=$error;
 
                 //dolibarr_syslog("interface_webcal.class.php: ".$this->error);

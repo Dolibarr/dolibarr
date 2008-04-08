@@ -989,6 +989,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 
 			if (strlen($sendto))
 			{
+				$langs->load("commercial");
+				
 				$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
 				$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
 				$message = $_POST['message'];
@@ -1007,7 +1009,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 					}
 
 					$actiontypecode='AC_FAC';
-					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->trans('To').' '.$sendto.".\n";
+					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
 
 					if ($message)
 					{
@@ -1015,7 +1017,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 						$actionmsg.=$message;
 					}
 
-					$actionmsg2=$langs->transnoentities('SendInvoiceByMail');
+					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 				}
 				if ($_POST['action'] == 'relance')
 				{
@@ -1026,7 +1028,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 						$actionmsg.=$message;
 					}
-					$actionmsg2=$langs->transnoentities('ReSendInvoiceByMail');
+					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 				}
 
 				$filepath[0] = $file;

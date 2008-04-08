@@ -165,28 +165,6 @@ class InterfaceWebcalsynchro
             $this->desc=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
-        elseif ($action == 'CONTRACT_CANCEL')
-        {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("ContractCanceledInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("ContractCanceledInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
-        elseif ($action == 'CONTRACT_CLOSE')
-        {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("other");
-
-            $this->date=time();
-            $this->duree=0;
-            $this->texte=$langs->transnoentities("ContractClosedInDolibarr",$object->ref);
-            $this->desc=$langs->transnoentities("ContractClosedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
-        }
 
 		// Proposals
         elseif ($action == 'PROPAL_VALIDATE')
