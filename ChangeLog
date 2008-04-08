@@ -4,6 +4,7 @@ English Dolibarr changelog
 ***** Changelog for 2.4 compared to 2.2 *****
 
 For users:
+- Add a calendar module (module agenda)
 - Removed useless code:
   Replaced phplot and phplot5 librairies by artichow.
   Removed cryptograph library replaced by artichow.
@@ -29,6 +30,7 @@ For users:
 - Changes in wizard installer to allow building autoexe installer for
   Windows with Apache and Mysql included.
 - Add new predefined exports wizards (stocks, suppliers, taxes...).
+- Add feature to log security events (logon, change of users, passwords).
 
 For developers:
 - Update code skeletons examples.
