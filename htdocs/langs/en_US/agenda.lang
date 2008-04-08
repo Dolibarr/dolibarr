@@ -1,6 +1,6 @@
 # Dolibarr language file - en_US - agenda
-Actions=Actions/Tasks
-ActionsArea=Actions/Tasks area
+Actions=Actions
+ActionsArea=Actions area (Events and tasks)
 Agenda=Agenda
 Agendas=Agendas
 Calendar=Calendar
@@ -23,5 +23,6 @@ ViewList=View list
 ViewCal=View calendar
 ViewWithPredefinedFilters=View with predefined filters
 AutoActions=Automatic creation of actions
-AgendaAutoActionDesc=Define here, actions for which you want Dolibarr to creat automatically an action in agenda. If nothing is checked (by default), only manual actions will be included in agenda.
+AgendaAutoActionDesc=Define here events for which you want Dolibarr to create automatically an action in agenda. If nothing is checked (by default), only manual actions will be included in agenda.
 AgendaSetupOtherDesc=This page allows to configure other parameters.
+ActionsEvents=Events for which create an action

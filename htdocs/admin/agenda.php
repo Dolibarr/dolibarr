@@ -103,7 +103,7 @@ print '<input type="hidden" name="action" value="save">';
 $var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
-print "<td colspan=\"2\">".$langs->trans("LogEvents")."</td>";
+print "<td colspan=\"2\">".$langs->trans("ActionsEvents")."</td>";
 print "</tr>\n";
 foreach ($eventstolog as $key => $arr)
 {

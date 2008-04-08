@@ -1,6 +1,6 @@
 # Dolibarr language file - fr_FR - agenda
-Actions=Actions/Taches
-ActionsArea=Espace actions/taches
+Actions=Actions
+ActionsArea=Espace actions (évènement et tâches)
 Agenda=Agenda
 Agendas=Agendas
 Calendar=Calendrier
@@ -17,11 +17,12 @@ ListOfEvents=Liste des évènements Dolibarr
 ActionsAskedBy=Actions enregistrées par
 ActionsToDoBy=Actions affectées à
 ActionsDoneBy=Actions réalisées par
-AllMyActions=Toutes mes actions/taches
-AllActions=Toutes les actions/taches
+AllMyActions=Toutes mes actions
+AllActions=Toutes les actions
 ViewList=Voir liste
 ViewCal=Voir calendrier
 ViewWithPredefinedFilters=Vues avec filtres prédéfinis
 AutoActions=Création automatiques des actions
-AgendaAutoActionDesc=Définissez dans cet onglet, les actions pour lesquels dolibarr créera automatiquement une tache dans l'agenda. Si aucune case n'est cochée (par défaut), seules les actions manuelles seront incluses dans l'agenda.
+AgendaAutoActionDesc=Définissez dans cet onglet les évènements pour lesquels dolibarr créera automatiquement une action dans l'agenda. Si aucune case n'est cochée (par défaut), seules les actions manuelles seront incluses dans l'agenda.
 AgendaSetupOtherDesc=Cette page permet de configurer les autres paramètres.
+ActionsEvents=Evènements pour lesquels creer une action

@@ -49,7 +49,7 @@ $eventstolog=array(
 	array('id'=>'GROUP_CREATE',           'test'=>1),
 	array('id'=>'GROUP_MODIFY',           'test'=>1),
 	array('id'=>'GROUP_DELETE',           'test'=>1),
-	array('id'=>'ACTION_CREATE',          'test'=>$conf->societe->enabled),
+/*	array('id'=>'ACTION_CREATE',          'test'=>$conf->societe->enabled),
 	array('id'=>'COMPANY_CREATE',         'test'=>$conf->societe->enabled),
 	array('id'=>'CONTRACT_VALIDATE',      'test'=>$conf->contrat->enabled),
 	array('id'=>'PROPAL_VALIDATE',        'test'=>$conf->propal->enabled),
@@ -70,6 +70,7 @@ $eventstolog=array(
 	array('id'=>'MEMBER_MODIFY',          'test'=>$conf->adherent->enabled),
 	array('id'=>'MEMBER_RESILIATE',       'test'=>$conf->adherent->enabled),
 	array('id'=>'MEMBER_DELETE',          'test'=>$conf->adherent->enabled),
+*/	
 );
 
 
