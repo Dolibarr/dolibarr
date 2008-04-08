@@ -79,10 +79,11 @@ $agenda=new ActionComm($db);
 $result=$agenda->build_calfile($format,$type,0,$filename,$filters);
 if ($result >= 0)
 {
-	$attachment = false;
 	$encoding='UTF-8';
-	$type='text/plain';
-	//$type='text/calendar';
+	$attachment = true;
+	$type='text/calendar';
+	//$type='text/plain';		// OK
+	//$attachment = false;		// OK
 	
 	if ($encoding)   header('Content-Encoding: '.$encoding);
 	if ($type)       header('Content-Type: '.$type);
