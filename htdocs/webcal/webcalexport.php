@@ -28,13 +28,16 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 require("../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/webcal/webcal.class.php');
 
-
 // C'est un wrapper, donc header vierge
 function llxHeader() { print '<html><title>Export cal</title><body>'; }
 function llxFooter() { print '</body></html>'; }
 
+// Security check
+if (! $conf->webcal->enabled)
+	accessforbidden();
+
 // Check config
-if (! $conf->webcal->enabled && empty($conf->global->PHPWEBCALENDAR_URL))
+if (empty($conf->global->PHPWEBCALENDAR_URL))
 {
 	$user->getrights();
 
@@ -99,7 +102,7 @@ if ($result >= 0)
 {
 	$attachment = false;
 	$encoding='UTF-8';
-	$type='text/plain';
+	$type='text/calendar';
 	//$type='text/calendar';
 	
 	if ($encoding)   header('Content-Encoding: '.$encoding);
