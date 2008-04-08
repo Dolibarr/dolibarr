@@ -17,7 +17,7 @@
  */
 
 /**
-        \file       htdocs/includes/triggers/interface_all_Logevents.class.php
+        \file       htdocs/includes/triggers/interface_all_ActionsAuto.class.php
         \ingroup    core
         \brief      Trigger file for 
 		\version	$Id$
