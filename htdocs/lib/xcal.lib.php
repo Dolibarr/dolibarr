@@ -193,7 +193,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 		}
 
 		// Footer
-		fwrite($calfileh,"END:VCALENDAR\n");
+		fwrite($calfileh,"END:VCALENDAR");
 		
 		fclose($calfileh);
 	}

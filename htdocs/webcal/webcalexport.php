@@ -97,7 +97,25 @@ if (! empty($_GET["year"])) $filters['year']=$_GET["year"];
 $result=$webcal->build_calfile($format,$type,0,$filename,$filters);
 if ($result >= 0)
 {
-	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=webcal&file='.urlencode($filename));
+	$attachment = false;
+	$encoding='UTF-8';
+	$type='text/plain';
+	//$type='text/calendar';
+	
+	if ($encoding)   header('Content-Encoding: '.$encoding);
+	if ($type)       header('Content-Type: '.$type);
+	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+	
+	// Ajout directives pour resoudre bug IE
+	//header('Cache-Control: Public, must-revalidate');
+	//header('Pragma: public');
+	 
+	// Clean parameters
+	$outputfile=$conf->agenda->dir_temp.'/'.$filename;
+	$result=readfile($outputfile);
+	if (! $result) print 'File '.$outputfile.' was empty.';
+
+//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=webcal&file='.urlencode($filename));
 	exit;
 }
 

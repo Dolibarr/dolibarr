@@ -50,13 +50,14 @@ $mainmenu=isset($_GET["mainmenu"])?$_GET["mainmenu"]:"";
 $leftmenu=isset($_GET["leftmenu"])?$_GET["leftmenu"]:"";
 
 // Define format, type, filename and filter
-$format='vcal';
+$format='ical';
 $type='event';
 $filename='';
 if (! empty($_GET["format"])) $format=$_GET["format"];
 if ($format == 'vcal') $filename='dolibarrcalendar.vcs';
 if ($format == 'ical') $filename='dolibarrcalendar.ics';
 if (! empty($_GET["type"]))   $type=$_GET["type"];
+// Check filename
 if (! $filename)
 {
 	$langs->load("main");
@@ -66,6 +67,8 @@ if (! $filename)
 	llxFooter('$Date$ - $Revision$');
 	exit;
 }
+// Check exportkey
+// \TODO
 $filters=array();
 if (! empty($_GET["year"])) 	$filters['year']=$_GET["year"];
 if (! empty($_GET["idaction"])) $filters['idaction']=$_GET["idaction"];
@@ -76,7 +79,25 @@ $agenda=new ActionComm($db);
 $result=$agenda->build_calfile($format,$type,0,$filename,$filters);
 if ($result >= 0)
 {
-	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+	$attachment = false;
+	$encoding='UTF-8';
+	$type='text/plain';
+	//$type='text/calendar';
+	
+	if ($encoding)   header('Content-Encoding: '.$encoding);
+	if ($type)       header('Content-Type: '.$type);
+	if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+	
+	// Ajout directives pour resoudre bug IE
+	//header('Cache-Control: Public, must-revalidate');
+	//header('Pragma: public');
+	 
+	// Clean parameters
+	$outputfile=$conf->agenda->dir_temp.'/'.$filename;
+	$result=readfile($outputfile);
+	if (! $result) print 'File '.$outputfile.' was empty.';
+
+//	header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 	exit;
 }
 

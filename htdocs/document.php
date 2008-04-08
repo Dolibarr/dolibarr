@@ -32,7 +32,8 @@ $type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
 
 // Define if we need master or master+main
 $needmasteronly=false;
-if ($modulepart == 'webcal') $needmasteronly=true;
+//if ($modulepart == 'webcal') $needmasteronly=true;
+//if ($modulepart == 'agenda') $needmasteronly=true;
 
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
@@ -40,7 +41,7 @@ set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 // Load master or main
 if ($needmasteronly)
 {
-	// Pour companylogo, on charge juste environnement sans logon qui charge le user
+	// For some download we don't need login
 	require("./master.inc.php");
 }
 else
@@ -369,22 +370,6 @@ if ($modulepart)
         }
         $original_file=DOL_DATA_ROOT.'/admin/temp/'.$original_file;
 		$sqlprotectagainstexternals = '';
-    }
-
-    // Wrapping for webcalexport
-    if ($modulepart == 'webcal')
-    {
-        $accessallowed=1;
-        $encoding='UTF-8';
-        $original_file=$conf->webcal->dir_temp.'/'.$original_file;
-    }
-
-    // Wrapping for webcalexport
-    if ($modulepart == 'agenda')
-    {
-        $accessallowed=1;
-        $encoding='UTF-8';
-        $original_file=$conf->agenda->dir_temp.'/'.$original_file;
     }
 }
 

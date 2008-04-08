@@ -555,7 +555,7 @@ class ActionComm
 		$result=create_exdir($conf->agenda->dir_temp);
 		$outputfile=$conf->agenda->dir_temp.'/'.$filename;
 		$result=0;
-		
+
 		$buildfile=true;
 		if ($cachedelay)
 		{
