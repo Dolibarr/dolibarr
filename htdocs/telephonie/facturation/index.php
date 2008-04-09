@@ -35,7 +35,7 @@ if ( $_POST["sendit"] && $conf->upload != 0)
       
       if (is_dir($upload_dir))
 	{
-	  if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+	  if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
 	    {
 	      $mesg = "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.\n";
 	    }

@@ -87,7 +87,7 @@ foreach ($_POST as $key => $val)
 // This is to make Dolibarr working with Plesk
 set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
 
-
+// Set and init common variables
 require_once("master.inc.php");
 
 // Check if HTTPS
@@ -111,8 +111,9 @@ if ($conf->main_force_https)
 }
 
 // Chargement des includes complementaire de presentation
-if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");			// Need 11ko memory
-if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");	// Need 800ko memory
+
+if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");			// Need 11ko memory (11ko in 2.2)
+if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");	// Need 690ko memory (800ko in 2.2)
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');	// Need 20ko memory
 //stopwithmem();
 
@@ -436,11 +437,8 @@ if ($user->statut < 1)
 
 dolibarr_syslog("Access to ".$_SERVER["PHP_SELF"],LOG_INFO);
 
-
-if (! defined('MAIN_INFO_SOCIETE_PAYS'))
-{
-  define('MAIN_INFO_SOCIETE_PAYS','1');
-}
+// For backward compatibility
+if (! defined('MAIN_INFO_SOCIETE_PAYS')) define('MAIN_INFO_SOCIETE_PAYS','1');
 
 // If install not finished, we start again.
 if (defined("MAIN_NOT_INSTALLED"))
@@ -458,8 +456,11 @@ $langs->load("dict");
 // On charge les fichiers lang principaux
 $user->getrights();
 
+// Define some constants used for style of arrays
+$bc[0]="class=\"impair\"";
+$bc[1]="class=\"pair\"";
 
-// Constantes utilise pour definir le nombre de lignes des textarea
+// Constantes utilisees pour definir le nombre de lignes des textarea
 if (! eregi("firefox",$_SERVER["HTTP_USER_AGENT"]))
 {
   define('ROWS_1',1);

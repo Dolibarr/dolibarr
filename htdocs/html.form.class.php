@@ -2694,6 +2694,8 @@ class Form
 	{
 		if ($iSecond)
 		{
+			require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
+			
 			$hourSelected = ConvertSecondToTime($iSecond,'hour');
 			$minSelected = ConvertSecondToTime($iSecond,'min');
 		}

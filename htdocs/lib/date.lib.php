@@ -24,6 +24,37 @@
 */
 
 
+/**   \brief      Converti les heures et minutes en secondes
+ *    \param      iHours      Heures
+ *    \param      iMinutes    Minutes
+ *    \param      iSeconds    Secondes
+ *    \return     iResult	    Temps en secondes
+ */
+function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
+{
+	$iResult=($iHours*3600)+($iMinutes*60)+$iSeconds;
+	return $iResult;
+}
+
+
+/**	  \brief      Converti les secondes en heures et minutes
+ *    \param      iSecond     Nombre de secondes
+ *    \param      format      Choix de l'affichage (all:affichage complet, hour: n'affiche que les heures, min: n'affiche que les minutes)
+ *    \return     sTime       Temps formaté 	
+ */
+function ConvertSecondToTime($iSecond,$format='all'){
+	if ($format == 'all'){
+		$sTime=date("H",$iSecond)-1;
+		$sTime.='h'.date("i",$iSecond);
+	}else if ($format == 'hour'){
+		$sTime=date("H",$iSecond)-1;
+	}else if ($format == 'min'){
+		$sTime=date("i",$iSecond);
+	}
+	return $sTime;
+}
+
+
 /**	\brief		Return previous month
  *	\param		month	Month
  *	\param		year	Year

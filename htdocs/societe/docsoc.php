@@ -57,7 +57,7 @@ if ( $_POST["sendit"] && $conf->upload != 0)
   
   if (is_dir($upload_dir))
   {
-  	$result = doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']);
+  	$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']);
   	if ($result == 1)
     {
     	$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';

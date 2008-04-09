@@ -1386,6 +1386,8 @@ class Adherent extends CommonObject
 	*/
 	function add_to_spip()
 	{
+		require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
+
 		dolibarr_syslog("Adherent::add_to_spip");
 
 		if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&

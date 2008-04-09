@@ -276,7 +276,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 			if (is_dir($conf->users->dir_output))
 			{
 				$newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
-				if (! doliMoveFileUpload($_FILES['photo']['tmp_name'],$newfile))
+				if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile))
 				{
 					$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
 				}

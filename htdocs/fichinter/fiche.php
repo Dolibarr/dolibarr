@@ -30,6 +30,7 @@ require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 if ($conf->projet->enabled)
 {
 	require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
@@ -601,7 +602,7 @@ elseif ($_GET["id"] > 0)
 		print '</tr>';
 	}
 	
-	// Dur�e
+	// Duration
 	print '<tr><td>'.$langs->trans("TotalDuration").'</td><td>'.ConvertSecondToTime($fichinter->duree).'</td></tr>';
 	
 	// Description
