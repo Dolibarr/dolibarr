@@ -33,9 +33,12 @@ require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 function llxHeader() { print '<html><title>Export agenda cal</title><body>'; }
 function llxFooter() { print '</body></html>'; }
 
+// Security check
+if (! $conf->agenda->enabled)
+	accessforbidden();
 
 // Check config
-if (! $conf->agenda->enabled && empty($conf->global->MAIN_PASSWORD_VCALEXPORT))
+if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY))
 {
 	$user->getrights();
 

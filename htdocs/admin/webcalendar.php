@@ -55,6 +55,7 @@ if ($actionsave)
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_DBNAME',trim($_POST["phpwebcalendar_dbname"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_USER',trim($_POST["phpwebcalendar_user"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PASS',trim($_POST["phpwebcalendar_pass"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PASSWORD_VCALEXPORT',trim($_POST["PHPWEBCALENDAR_PASSWORD_VCALEXPORT"]),'chaine',0);
 
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_SYNCRO',trim($_POST["phpwebcalendar_syncro"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_COMPANYCREATE',trim($_POST["phpwebcalendar_companycreate"]),'chaine',0);
@@ -204,7 +205,7 @@ print '<td>';
 print '&nbsp;</td>';
 print "</tr>";
 
-print "<tr class=\"impair\">";
+print "<tr class=\"pair\">";
 print "<td>".$langs->trans("PasswordTogetVCalExport")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"PHPWEBCALENDAR_PASSWORD_VCALEXPORT\" value=\"". ($_POST["PHPWEBCALENDAR_PASSWORD_VCALEXPORT"]?$_POST["PHPWEBCALENDAR_PASSWORD_VCALEXPORT"]:$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT) . "\" size=\"40\"></td>";
 print "<td>&nbsp;</td>";
@@ -312,10 +313,10 @@ print "<br>";
 // Show message
 $message='';
 $urlwithouturlroot=eregi_replace(DOL_URL_ROOT.'$','',$dolibarr_main_url_root);
-$urlvcal='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey=..." target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey=...'.'</a>';
+$urlvcal='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=vcal&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
 $message.='<br>';
-$urlical='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event&exportkey=..." target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event&exportkey=...'.'</a>';
+$urlical='<a href="'.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/webcal/webcalexport.php?format=ical&type=event&exportkey='.$conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT.'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'ical',$urlical);
 print info_admin($message);
 

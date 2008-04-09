@@ -37,7 +37,7 @@ if (! $conf->webcal->enabled)
 	accessforbidden();
 
 // Check config
-if (empty($conf->global->PHPWEBCALENDAR_URL))
+if (empty($conf->global->PHPWEBCALENDAR_PASSWORD_VCALEXPORT))
 {
 	$user->getrights();
 
@@ -55,16 +55,14 @@ if (! $webcal->localdb->connected || ! $webcal->localdb->database_selected)
 	llxHeader();
 	if ($webcal->localdb->connected == 1 && $webcal->localdb->database_selected != 1)
     {
-        print '<div class="error">'.$langs->trans("WebCalTestKo1",$conf->webcal->db->host,$conf->webcal->db->name);
-        print '<br>'.$webcal->localdb->error();
+        print $webcal->localdb->error();
 		print '<br>'.$langs->trans("WebCalCheckWebcalSetup");
         print "</div>";
         //$webcal->localdb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
     }
     else
     {
-        print "<div class=\"error\">".$langs->trans("WebCalTestKo2",$conf->webcal->db->host,$conf->webcal->db->user);
-        print "<br>".$webcal->localdb->error();
+        print $webcal->localdb->error();
 		print '<br>'.$langs->trans("WebCalCheckWebcalSetup");
         print "</div>";
     }

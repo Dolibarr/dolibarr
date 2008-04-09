@@ -45,7 +45,7 @@ if ($actionsave)
 
     $db->begin();
     
-    $i+=dolibarr_set_const($db,'MAIN_PASSWORD_VCALEXPORT',trim($_POST["MAIN_PASSWORD_VCALEXPORT"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'MAIN_AGENDA_XCAL_EXPORTKEY',trim($_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]),'chaine',0);
 
     if ($i > 0)
     {
@@ -91,7 +91,7 @@ print "</tr>";
 
 print "<tr class=\"impair\">";
 print "<td>".$langs->trans("PasswordTogetVCalExport")."</td>";
-print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_PASSWORD_VCALEXPORT\" value=\"". ($_POST["MAIN_PASSWORD_VCALEXPORT"]?$_POST["MAIN_PASSWORD_VCALEXPORT"]:$conf->global->MAIN_PASSWORD_VCALEXPORT) . "\" size=\"40\"></td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"MAIN_AGENDA_XCAL_EXPORTKEY\" value=\"". ($_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]?$_POST["MAIN_AGENDA_XCAL_EXPORTKEY"]:$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . "\" size=\"40\"></td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
@@ -113,10 +113,10 @@ print "<br>";
 // Show message
 $message='';
 $urlwithouturlroot=eregi_replace(DOL_URL_ROOT.'$','',$dolibarr_main_url_root);
-$urlvcal='<a href="'.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_PASSWORD_VCALEXPORT?urlencode($conf->global->MAIN_PASSWORD_VCALEXPORT):'...').'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_PASSWORD_VCALEXPORT?urlencode($conf->global->MAIN_PASSWORD_VCALEXPORT):'...').'</a>';
+$urlvcal='<a href="'.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'...').'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=vcal&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'KEYNOTDEFINED').'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'vcal',$urlvcal);
 $message.='<br>';
-$urlical='<a href="'.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_PASSWORD_VCALEXPORT?urlencode($conf->global->MAIN_PASSWORD_VCALEXPORT):'...').'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_PASSWORD_VCALEXPORT?urlencode($conf->global->MAIN_PASSWORD_VCALEXPORT):'...').'</a>';
+$urlical='<a href="'.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'...').'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=ical&type=event&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'KEYNOTDEFINED').'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'ical',$urlical);
 print info_admin($message);
 
