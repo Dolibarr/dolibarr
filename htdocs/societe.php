@@ -246,7 +246,7 @@ if ($result)
 	}
       elseif ($obj->client==2)
 	{
-	  print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
+	  print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
 	}
       else
 	{
