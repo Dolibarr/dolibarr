@@ -49,7 +49,6 @@ class Events // extends CommonObject
 	var $tms;
 	var $type;
 	var $dateevent;
-	var $label;
 	var $description;
 
     
@@ -78,30 +77,28 @@ class Events // extends CommonObject
 		// Clean parameters
 		$this->id=trim($this->id);
 		$this->fk_action=trim($this->fk_action);
-		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 
 		// Check parameters
-		if (! $user->id) { $this->error='ErrorBadValueForParameter'; return -1; }
+		if (! $this->description) { $this->error='ErrorBadValueForParameter'; return -1; }
 		
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."events(";
 		
 		$sql.= "type,";
+		$sql.= "ip,";
 		$sql.= "dateevent,";
 		$sql.= "fk_user,";
-		$sql.= "label,";
 		$sql.= "description";
 
         $sql.= ") VALUES (";
        
 		$sql.= " '".$this->type."',";
+		$sql.= " '".$_SERVER['REMOTE_ADDR']."',";
 		$sql.= " ".$this->db->idate($this->dateevent).",";
-		$sql.= " '".$user->id."',";
-		$sql.= " '".$this->label."',";
+		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
 		$sql.= " '".$this->description."'";
 
-        
 		$sql.= ")";
 
 	   	dolibarr_syslog("Events::create sql=".$sql, LOG_DEBUG);
@@ -134,7 +131,6 @@ class Events // extends CommonObject
         
 		$this->id=trim($this->id);
 		$this->type=trim($this->type);
-		$this->label=trim($this->label);
 		$this->description=trim($this->description);
 
         
@@ -147,7 +143,6 @@ class Events // extends CommonObject
         
 		$sql.= " type='".$this->type."',";
 		$sql.= " dateevent=".$this->db->idate($this->dateevent).",";
-		$sql.= " label='".addslashes($this->label)."',";
 		$sql.= " description='".addslashes($this->description)."'";
         
         $sql.= " WHERE rowid=".$this->id;
@@ -180,7 +175,6 @@ class Events // extends CommonObject
 		$sql.= " ".$this->db->pdate('t.tms').",";
 		$sql.= " t.type,";
 		$sql.= " ".$this->db->pdate('t.dateevent').",";
-		$sql.= " t.label,";
 		$sql.= " t.description";
 
 		
@@ -200,7 +194,6 @@ class Events // extends CommonObject
 				$this->tms = $obj->tms;
 				$this->type = $obj->type;
 				$this->dateevent = $obj->dateevent;
-				$this->label = $obj->label;
 				$this->description = $obj->description;
 
                 
@@ -254,7 +247,6 @@ class Events // extends CommonObject
 		$this->tms=time();
 		$this->type='';
 		$this->dateevent=time();
-		$this->label='Speciment event';
 		$this->description='This is a specimen event';
 	}
 

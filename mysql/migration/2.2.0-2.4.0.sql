@@ -192,8 +192,8 @@ create table llx_events
   type			 varchar(32)  NOT NULL, 
   dateevent      datetime,             
   fk_user        integer,              
-  label          varchar(50)  NOT NULL, 
-  description    varchar(200) NOT NULL,        
+  description    varchar(250) NOT NULL,        
+  ip			 varchar(32) NOT NULL,
   fk_object      integer               
 ) type=innodb;
 

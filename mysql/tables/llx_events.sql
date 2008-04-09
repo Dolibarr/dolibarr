@@ -17,8 +17,9 @@
 --
 -- $Id$
 -- ========================================================================
--- This table logs all dolibarr events
--- Content of this table is not managed by users but by Dolibarr triggers.
+-- This table logs all dolibarr security events
+-- Content of this table is not managed by users but by Dolibarr
+-- trigger interface_all_LogEvent.
 -- ========================================================================
 
 create table llx_events
@@ -28,8 +29,8 @@ create table llx_events
   type			 varchar(32)  NOT NULL, -- action type
   dateevent      datetime,              -- date event
   fk_user        integer,               -- id user
-  label          varchar(50)  NOT NULL, -- label of action
-  description    varchar(200) NOT NULL, -- full description of action
+  description    varchar(250) NOT NULL, -- full description of action
+  ip			 varchar(32) NOT NULL,  -- ip
   fk_object      integer                -- id of related object
 ) type=innodb;
 

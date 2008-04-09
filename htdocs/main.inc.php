@@ -111,7 +111,6 @@ if ($conf->main_force_https)
 }
 
 // Chargement des includes complementaire de presentation
-
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");			// Need 11ko memory (11ko in 2.2)
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");	// Need 690ko memory (800ko in 2.2)
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');	// Need 20ko memory
@@ -122,9 +121,6 @@ $sessionname="DOLSESSID_".$dolibarr_main_db_name;
 session_name($sessionname);
 session_start();
 dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
-
-$bc[0]="class=\"impair\"";
-$bc[1]="class=\"pair\"";
 
 /*
  * Phase identification
@@ -177,40 +173,70 @@ if (! isset($_SESSION["dol_login"]))
 			dolibarr_syslog('Bad value for code, connexion refused');
 			$langs->load('main');
 			$langs->load('other');
+			
+			$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
 			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 			$test=false;
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+			if ($result < 0) { $error++; }
+			// Fin appel triggers
 		}
 	}
     
 	// Tests de validation user/mot de passe
 	// Si ok, la variable login doit avoir ete initialisee
 	// Si erreur, on a place message erreur dans session sous le nom dol_loginmesg
-	foreach($authmode as $mode)
+	if ($test)
 	{
-		if ($test && $mode && ! $login)
+		foreach($authmode as $mode)
 		{
-			$authfile=DOL_DOCUMENT_ROOT.'/includes/login/functions_'.$mode.'.php';
-			$result=include_once($authfile);
-			if ($result)
+			if ($test && $mode && ! $login)
 			{
-				// Call function to check user/password
-			    $usertotest=$_POST["username"];
-			    $passwordtotest=$_POST["password"];
-				$function='check_user_password_'.$mode;
-				$login=$function($usertotest,$passwordtotest);
-				if ($login) $test=false;
-			}
-			else
-			{
-				dolibarr_syslog("Authentification ko - failed to load file '".$authfile."'");
-				sleep(1);
-				$langs->load('main');
-				$langs->load('other');
-				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
+				$authfile=DOL_DOCUMENT_ROOT.'/includes/login/functions_'.$mode.'.php';
+				$result=include_once($authfile);
+				if ($result)
+				{
+					// Call function to check user/password
+				    $usertotest=$_POST["username"];
+				    $passwordtotest=$_POST["password"];
+					$function='check_user_password_'.$mode;
+					$login=$function($usertotest,$passwordtotest);
+					if ($login) $test=false;
+				}
+				else
+				{
+					dolibarr_syslog("Authentification ko - failed to load file '".$authfile."'",LOG_ERR);
+					sleep(1);
+					$langs->load('main');
+					$langs->load('other');
+					$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
+				}
 			}
 		}
-	}
 
+		if (! $login)
+		{
+			dolibarr_syslog('Bad password, connexion refused',LOG_DEBUG);
+			$langs->load('main');
+			$langs->load('other');
+
+			// Bad password. No authmode has found a good password.
+			$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.$_POST["username"];
+			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
+			
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($db);
+			$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+			if ($result < 0) { $error++; }
+			// Fin appel triggers
+		}
+	}
+	
 	// Fin des tests de login/passwords
     if (! $login)
     {
@@ -228,8 +254,27 @@ if (! isset($_SESSION["dol_login"]))
 		session_start();
 
 		$langs->load('main');
-		if ($resultFetchUser == 0) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-		if ($resultFetchUser < 0)  $_SESSION["dol_loginmesg"]=$user->error;
+		if ($resultFetchUser == 0) 
+		{
+			$langs->load('main');
+			$langs->load('other');
+
+			$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
+			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+		}
+		if ($resultFetchUser < 0)
+		{
+			$user->trigger_mesg=$user->error;
+			$_SESSION["dol_loginmesg"]=$user->error;
+		}
+
+		// Appel des triggers
+		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		$interface=new Interfaces($db);
+		$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+		if ($result < 0) { $error++; }
+		// Fin appel triggers
+
 		header('Location: '.DOL_URL_ROOT.'/index.php');
 		exit;
 	}
@@ -250,8 +295,27 @@ else
 		session_start();
 
 		$langs->load('main');
-		if ($resultFetchUser == 0) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
-		if ($resultFetchUser < 0)  $_SESSION["dol_loginmesg"]=$user->error;
+		if ($resultFetchUser == 0) 
+		{
+			$langs->load('main');
+			$langs->load('other');
+
+			$user->trigger_mesg='ErrorCantLoadUserFromDolibarrDatabase - login='.$login;
+			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+		}
+		if ($resultFetchUser < 0)
+		{
+			$user->trigger_mesg=$user->error;
+			$_SESSION["dol_loginmesg"]=$user->error;
+		}
+
+		// Appel des triggers
+		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		$interface=new Interfaces($db);
+		$result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
+		if ($result < 0) { $error++; }
+		// Fin appel triggers
+
 		header('Location: '.DOL_URL_ROOT.'/index.php');
 		exit;
 	}
@@ -273,13 +337,15 @@ if (! isset($_SESSION["dol_login"]))
 	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	$interface=new Interfaces($db);
 	$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
-	if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	if ($result < 0) { $error++; }
 	// Fin appel triggers
 	
 	if ($error)
 	{
-		dolibarr_print_errors($db,$this->errors);
 		$db->rollback();
+		session_destroy();
+		dolibarr_print_error($db,'Error in some triggers on action USER_LOGIN',LOG_ERR);
+		exit;
 	}
 	else
 	{

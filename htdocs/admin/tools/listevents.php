@@ -17,9 +17,9 @@
  */
 
 /**
-        \file       htdocs/compta/clients.php
-        \ingroup    compta
-        \brief      Page accueil des clients
+        \file       htdocs/admin/tools/listevents.php
+        \ingroup    core
+        \brief      List of security events
         \version    $Id$
 */
  
@@ -58,8 +58,8 @@ llxHeader();
 
 $userstatic=new User($db);
 
-$sql = "SELECT e.rowid, e.type, ".$db->pdate("e.dateevent")." as dateevent,";
-$sql.= " e.fk_user, e.label, e.description,";
+$sql = "SELECT e.rowid, e.type, e.ip, ".$db->pdate("e.dateevent")." as dateevent,";
+$sql.= " e.fk_user, e.description,";
 $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
@@ -77,9 +77,10 @@ if ($result)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"e.type","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Code"),$_SERVER["PHP_SELF"],"e.type","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("IP"),$_SERVER["PHP_SELF"],"e.ip","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"u.login","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"e.label","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"e.description","","",'align="left"',$sortfield,$sortorder);
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 
@@ -94,10 +95,6 @@ if ($result)
 
 	print '<td align="left" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_user"].'">';
-	print '</td>';
-
-	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_label"].'">';
 	print '</td>';
 
 	print '<td align="right" class="liste_titre">';
@@ -116,14 +113,32 @@ if ($result)
 		$var=!$var;
 
 		print "<tr $bc[$var]>";
-		print '<td align="left" nowrap="nowrap">'.dolibarr_print_date($obj->dateevent,'dayhour').'</td>';
+	
+		// Date
+		print '<td align="left" nowrap="nowrap">'.dolibarr_print_date($obj->dateevent,'%Y-%m-%d %H:%M:%S').'</td>';
+
+		// Code
 		print '<td>'.$obj->type.'</td>';
-		$userstatic->id=$obj->fk_user;
-		$userstatic->login=$obj->login;
-		print '<td>'.$userstatic->getLoginUrl(1).'</td>';
-		print '<td>'.$obj->label.'</td>';
-//		print '<td>'.$obj->description.'</td>';
+
+		// IP
+		print '<td>'.$obj->ip.'</td>';
+
+		// Login
+		print '<td>';
+		if ($obj->fk_user)
+		{
+			$userstatic->id=$obj->fk_user;
+			$userstatic->login=$obj->login;
+			print $userstatic->getLoginUrl(1);
+		}
+		else print '&nbsp;';
+		print '</td>';
+
+		// Description
+		print '<td>'.$obj->description.'</td>';
+		
 		print '<td>&nbsp;</td>';
+
 		print "</tr>\n";
 		$i++;
 	}

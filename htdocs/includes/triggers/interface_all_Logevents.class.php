@@ -49,7 +49,7 @@ class InterfaceLogevents
     
         $this->name = "Logevents";
         $this->family = "core";
-        $this->description = "Les triggers de ce composant permettent de logguer les evenements Dolibarr (modification status des objets).";
+        $this->description = "Les triggers de ce composant permettent de logguer les evenements de securite Dolibarr.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     }
 
@@ -115,6 +115,17 @@ class InterfaceLogevents
             $this->duree=0;
             $this->texte=$langs->transnoentities("UserLogged",$object->login);
             $this->desc=$langs->transnoentities("UserLogged",$object->login);
+		}
+        if ($action == 'USER_LOGIN_FAILED')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("users");
+		
+            // Initialisation donnees (date,duree,texte,desc)
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$object->trigger_mesg;	// Message direct
+            $this->desc=$object->trigger_mesg;	// Message direct
 		}
         if ($action == 'USER_CREATE')
         {
@@ -496,10 +507,10 @@ class InterfaceLogevents
             }
             else
             {
-                $error ="Failed to insert : ".$webcal->error." ";
+                $error ="Failed to insert security event: ".$event->error;
                 $this->error=$error;
 
-                //dolibarr_syslog("interface_webcal.class.php: ".$this->error);
+                dolibarr_syslog("interface_all_Logevents.class.php: ".$this->error);
                 return -1;
             }
         }
