@@ -346,7 +346,7 @@ class UserGroup
 	*/
 	function delete()
 	{
-    	global $conf,$langs;
+    	global $user,$conf,$langs;
 
 		$this->db->begin();
 	
@@ -387,7 +387,7 @@ class UserGroup
 	*/
 	function create()
 	{
-		global $conf,$langs;
+		global $user,$conf,$langs;
 		
 		$sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec,nom)";
 		$sql .= " VALUES(now(),'".addslashes($this->nom)."')";
@@ -424,7 +424,7 @@ class UserGroup
 	*/
   	function update($notrigger=0)
     {
-		global $conf, $langs;
+		global $user, $conf, $langs;
 		
         $sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
         $sql .= " nom = '".addslashes($this->nom)."',";

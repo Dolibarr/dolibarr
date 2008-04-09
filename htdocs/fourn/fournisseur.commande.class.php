@@ -203,6 +203,8 @@ class CommandeFournisseur extends Commande
    */
   function valid($user)
   {
+	global $langs,$conf;
+	
     dolibarr_syslog("CommandeFournisseur.class::Valid");
     $result = 0;
     if ($user->rights->fournisseur->commande->valider)
@@ -269,6 +271,8 @@ class CommandeFournisseur extends Commande
    */
   function Cancel($user)
   {
+	global $langs,$conf;
+	
     //dolibarr_syslog("CommandeFournisseur::Cancel");
     $result = 0;
     if ($user->rights->fournisseur->commande->annuler)
@@ -460,6 +464,8 @@ class CommandeFournisseur extends Commande
    */
   function approve($user)
   {
+	global $langs,$conf;
+	
     dolibarr_syslog("CommandeFournisseur::Approve");
     $result = 0;
     if ($user->rights->fournisseur->commande->approuver)
@@ -601,6 +607,8 @@ class CommandeFournisseur extends Commande
    */
   function create($user)
   {
+	global $langs,$conf;
+	
     dolibarr_syslog("CommandeFournisseur::Create soc id=".$this->socid);
 
     $this->db->begin();
@@ -899,6 +907,8 @@ class CommandeFournisseur extends Commande
    */
   function delete()
   {
+	global $langs,$conf;
+	
     $err = 0;
 	
     $this->db->begin();

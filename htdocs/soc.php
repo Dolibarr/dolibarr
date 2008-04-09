@@ -66,10 +66,12 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 	if ($_REQUEST["private"] == 1)
 	{
+		$soc->particulier           = $_REQUEST["private"];
+
 		$soc->nom                   = $_POST["nom"].' '.$_POST["prenom"];
 		$soc->nom_particulier       = $_POST["nom"];
 		$soc->prenom                = $_POST["prenom"];
-		$soc->particulier           = $_REQUEST["private"];
+		$soc->civilite_id           = $_POST["civilite_id"];
 	}
 	else
 	{
@@ -145,11 +147,36 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 		if ($_POST["action"] == 'add')
 		{
+			$db->begin();
+			
 			$result = $soc->create($user);
+			if ($result >= 0)
+			{
+				if ($soc->particulier)
+				{
+					dolibarr_syslog("This thirdparty is a personal people",LOG_DEBUG);
+					$contact=new Contact($db);
+			
+					$contact->civilite_id = $soc->civilite_id;
+				    $contact->name=$soc->name;
+				    $contact->firstname=$soc->firstname;
+				    $contact->address=$soc->address;
+				    $contact->cp=$soc->cp;
+				    $contact->ville=$soc->ville;
+				    $contact->fk_pays=$soc->fk_pays;
+				    $contact->socid=$soc->id;					// fk_soc
+				    $contact->status=1;	
+					$contact->priv=0;
+					
+					$result=$contact->create($user);
+				}
+			}
 			
 			if ($result >= 0)
 			{
-				if (  $soc->client == 1 )
+				$db->commit();
+				
+				if ( $soc->client == 1 )
 				{
 					Header("Location: comm/fiche.php?socid=".$soc->id);
 					return;
@@ -171,6 +198,8 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 			}
 			else
 			{
+				$db->rollback();
+
 				$langs->load("errors");
 				$mesg=$langs->trans($soc->error);
 				$_GET["action"]='create';
@@ -353,6 +382,10 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		{
 			print '<tr><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$soc->firstname.'"></td>';
 			print '<td colspan=2>&nbsp;</td></tr>';
+			
+		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
+		print $form->select_civilite($contact->civilite_id).'</td>';
+		print '<td colspan=2>&nbsp;</td></tr>';
 		}
 		
 		// Client / Prospect

@@ -218,6 +218,8 @@ class Fichinter extends CommonObject
      */
     function valid($user, $outputdir)
     {
+		global $langs, $conf;
+		
         $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
         $sql.= " SET fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
         $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";

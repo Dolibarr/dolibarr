@@ -119,7 +119,7 @@ class InterfaceActionsAuto
         if ($action == 'COMPANY_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-            $langs->load("companies");
+            $langs->load("other");
 
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
@@ -130,6 +130,7 @@ class InterfaceActionsAuto
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
 			$object->sendtoid=0;
+			$object->socid=$object->id;
 			$object->facid=$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
         }

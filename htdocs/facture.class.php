@@ -196,8 +196,10 @@ class Facture extends CommonObject
 		$sql.= ' fk_facture_source, fk_user_author, fk_projet,';
 		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf)';
 		$sql.= ' VALUES (';
-		$sql.= "'(PROV)', '".$this->type."', '$socid', now(), '$totalht', '".$this->remise_absolue."'";
-		$sql.= ",'".$this->remise_percent."', ".$this->db->idate($this->date);
+		$sql.= "'(PROV)', '".$this->type."', '".$socid."', now(), '".$totalht."'";
+		$sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
+		$sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
+		$sql.= ",".$this->db->idate($this->date);
 		$sql.= ",".($this->note?"'".addslashes($this->note)."'":"null");
 		$sql.= ",".($this->note_public?"'".addslashes($this->note_public)."'":"null");
 		$sql.= ",".($this->ref_client?"'".addslashes($this->ref_client)."'":"null");
@@ -1487,6 +1489,7 @@ class Facture extends CommonObject
 	/**
 	*	\brief		Supprime une ligne facture de la base
 	*	\param		rowid		Id de la ligne de facture a supprimer
+	*	\param		user		User object
 	*	\return		int			<0 if KO, >0 if OK
 	*/
 	function deleteline($rowid, $user='')
@@ -2594,7 +2597,7 @@ class FactureLigne
 	*/
 	function insert($notrigger=0)
 	{
-		global $langs;
+		global $langs,$user,$conf;
 		
 		dolibarr_syslog("FactureLigne::Insert rang=".$this->rang, LOG_DEBUG);
 

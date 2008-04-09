@@ -355,9 +355,9 @@ class Adherent extends CommonObject
 		\param      notrigger		1 ne declenche pas les triggers, 0 sinon
 		\return		int				<0 si ko, >0 si ok
 	*/
-	function create($user='',$notrigger=0)
+	function create($user,$notrigger=0)
 	{
-		global $conf,$langs,$user;
+		global $conf,$langs;
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
@@ -675,7 +675,7 @@ class Adherent extends CommonObject
 	*/
 	function delete($rowid)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 		$result = 0;
 
 		$this->db->begin();
@@ -1226,7 +1226,7 @@ class Adherent extends CommonObject
 	 */
 	function validate($user)
 	{
-		global $user,$langs,$conf;
+		global $langs,$conf;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql.= " statut=1, datevalid = now(),";
@@ -1267,7 +1267,7 @@ class Adherent extends CommonObject
 	 */
 	function resiliate($user)
 	{
-		global $user,$langs,$conf;
+		global $langs,$conf;
 
 		$this->db->begin();
 

@@ -712,7 +712,7 @@ if ($action == 'create')
 		$nomfichier=$nomclass.".class.php";
 		//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
 		require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
-		$genhandler=new $nomclass($db,$conf,$lang,$user);
+		$genhandler=new $nomclass($db,$conf,$langs,$user);
 		$generated_password=$genhandler->getNewGeneratedPassword();
 	}
     print '<tr><td>'.$langs->trans("Password").'*</td><td>';

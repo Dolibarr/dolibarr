@@ -85,11 +85,11 @@ class ActionComm
 
     /**
      *    \brief      Ajout d'une action en base
-     *    \param      author      	auteur de la creation de l'action
+     *    \param      user      	auteur de la creation de l'action
  	 *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
      *    \return     int         	id de l'action créée, < 0 si erreur
      */
-    function add($author,$notrigger=0)
+    function add($user,$notrigger=0)
     {
         global $langs,$conf;
 
@@ -157,7 +157,7 @@ class ActionComm
         $sql.= ($this->durationa >= 0?"'".$this->durationa."'":"null").",";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id > 0?"'".$this->contact->id."'":"null").",";
-        $sql.= "'".$author->id."',";
+        $sql.= "'".$user->id."',";
 		$sql.= ($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
 		$sql.= ($this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
 		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."',";
@@ -177,7 +177,7 @@ class ActionComm
 	            // Appel des triggers
 	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('ACTION_CREATE',$this,$author,$langs,$conf);
+	            $result=$interface->run_triggers('ACTION_CREATE',$this,$user,$langs,$conf);
                 if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	            // Fin appel triggers
 			}

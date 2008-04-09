@@ -197,7 +197,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$propal->ref       = $_POST['ref'];
 			$propal->statut    = 0;
 			
-			$id = $propal->create_from();
+			$id = $propal->create_from($user);
 		}
 		else
 		{

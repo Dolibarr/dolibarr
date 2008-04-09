@@ -1011,7 +1011,9 @@ class Propal extends CommonObject
      */
     function cloture($user, $statut, $note)
     {
-        $this->statut = $statut;
+        global $langs,$conf;
+		
+		$this->statut = $statut;
 
         $this->db->begin();
 
@@ -1634,13 +1636,13 @@ class Propal extends CommonObject
      *    \return    int                 l'id du nouvel objet propal en base si ok, <0 si ko
      *    \see       create
      */
-	function create_from()
+	function create_from($user)
 	{
-		global $conf;
+		global $conf,$lang;
 		
 		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 		
-		// on v�rifie si la ref n'est pas utilis�e
+		// on verifie si la ref n'est pas utilisee
 		$soc = new Societe($this->db);
 	  $soc->fetch($this->socid);
 	  $this->verifyNumRef($soc);

@@ -637,7 +637,7 @@ class User extends CommonObject
    */
   function delete()
   {
-    global $conf,$langs;
+    global $user,$conf,$langs;
     
     $this->db->begin();
     

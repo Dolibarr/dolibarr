@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -41,7 +41,7 @@ class Societe extends CommonObject
 	var $error;
 	var $errors=array();
     var $table_element = 'societe';
-	
+
 	var $id;
 	var $nom;
 	var $nom_particulier;
@@ -303,7 +303,7 @@ class Societe extends CommonObject
      */
     function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
     {
-        global $langs;
+        global $langs,$conf;
 
         dolibarr_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
@@ -703,6 +703,8 @@ class Societe extends CommonObject
      */
     function delete($id)
     {
+		global $user,$langs,$conf;
+		
         dolibarr_syslog("Societe::Delete");
         $sqr = 0;
 

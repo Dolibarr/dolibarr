@@ -101,7 +101,7 @@ class Commande extends CommonObject
   */
   function create_from_propale($user, $propale_id)
   {
-    dolibarr_syslog("Commande.class::create_from_propale propale_id=$propale_id");
+    dolibarr_syslog("Commande::create_from_propale propale_id=$propale_id");
     
     $propal = new Propal($this->db);
     $propal->fetch($propale_id);
@@ -504,18 +504,18 @@ class Commande extends CommonObject
     $this->db->begin();
     
     $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
-    $sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client,';
+    $sql.= ' ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client,';
     $sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
     $sql.= ' remise_absolue, remise_percent)';
-    $sql.= ' VALUES ('.$this->socid.', now(), '.$user->id.', '.$this->projetid.',';
+    $sql.= " VALUES ('".$this->ref."',".$this->socid.', now(), '.$user->id.', '.$this->projetid.',';
     $sql.= ' '.$this->db->idate($this->date_commande).',';
     $sql.= ' '.$this->source.', ';
     $sql.= " '".addslashes($this->note)."', ";
     $sql.= " '".addslashes($this->note_public)."', ";
     $sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."',";
     $sql.= " ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null").",";
-    $sql.= " '".$this->adresse_livraison_id."',";
-    $sql.= " '".$this->remise_absolue."',";
+    $sql.= " ".($this->adresse_livraison_id>0?$this->adresse_livraison_id:'NULL').",";
+    $sql.= " ".($this->remise_absolue>0?$this->remise_absolue:'NULL').",";
     $sql.= " '".$this->remise_percent."')";
     
     dolibarr_syslog("Commande::create sql=".$sql);
@@ -1670,9 +1670,10 @@ class Commande extends CommonObject
   
   
   /**
-   *		\brief		Supprime la commande
+   *	\brief		Supprime la commande
+   *	\user		User object	
    */
-  function delete()
+  function delete($user)
   {
     global $conf, $lang;
     
@@ -2177,11 +2178,12 @@ class CommandeLigne
 
 	/**
 	*    	\brief     	Supprime la ligne de commande en base
+	*		\user		User object
 	*		\return		int <0 si ko, >0 si ok
 	*/
-	function delete()
+	function delete($user)
 	{
-		global $langs, $conf, $user;
+		global $langs, $conf;
 
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->id."';";
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
- * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  *
@@ -18,15 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/contact.class.php
         \ingroup    societe
         \brief      Fichier de la classe des contacts
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
@@ -89,9 +87,10 @@ class Contact extends CommonObject
     {
     	global $conf, $langs;
     	
-		// Nettoyage parametres
+		// Clean parameters
         $this->name=trim($this->name);
         if (! $this->socid) $this->socid = 0;
+		if (! $this->priv) $this->priv = 0;
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat, priv)";
         $sql.= " VALUES (now(),";
@@ -103,7 +102,6 @@ class Contact extends CommonObject
         $sql.= ")";
         
         dolibarr_syslog("Contact::create sql=".$sql);
-
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -169,7 +167,7 @@ class Contact extends CommonObject
         $sql .= ", address='".addslashes($this->address)."'";
         $sql .= ", cp='".addslashes($this->cp)."'";
         $sql .= ", ville='".addslashes($this->ville)."'";
-        $sql .= ", fk_pays='".addslashes($this->fk_pays)."'";
+        $sql .= ", fk_pays=".($this->fk_pays>0?$this->fk_pays:'NULL');
         $sql .= ", poste='".addslashes($this->poste)."'";
         $sql .= ", fax='".addslashes($this->fax)."'";
         $sql .= ", email='".addslashes($this->email)."'";
@@ -186,7 +184,8 @@ class Contact extends CommonObject
         $result = $this->db->query($sql);
         if (! $result)
         {
-            $this->error=$this->db->error().' sql='.$sql;
+            $this->error=$this->db->lasterror().' sql='.$sql;
+			dolibarr_syslog("Contact::update Error ".$this->error,LOG_ERR);
             return -1;
         }
 
@@ -541,7 +540,7 @@ class Contact extends CommonObject
 	*/
 	function delete($notrigger=0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 		
 		$error=0;
 		
