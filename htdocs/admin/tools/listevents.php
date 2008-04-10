@@ -72,7 +72,7 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	print_barre_liste($langs->trans("ListOfEvents"), $page, "listevents.php","",$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, "listevents.php","",$sortfield,$sortorder,'',$num);
 
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
