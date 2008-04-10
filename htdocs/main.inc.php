@@ -188,9 +188,9 @@ if (! isset($_SESSION["dol_login"]))
 	}
     
 	// Tests de validation user/mot de passe
-	// Si ok, la variable login doit avoir ete initialisee
-	// Si erreur, on a place message erreur dans session sous le nom dol_loginmesg
-	if ($test)
+	// Si ok, la variable login sera initialisee
+	// Si erreur, on a placera message erreur dans session sous le nom dol_loginmesg
+	if ($test && isset($_POST["username"]))
 	{
 		foreach($authmode as $mode)
 		{
@@ -555,6 +555,9 @@ else
 
 /**
 		\brief      Affiche formulaire de login
+		\param		langs		Lang object
+		\param		conf		Conf object
+		\param		mysoc		Company object
 		\remarks    Il faut changer le code html dans cette fonction pour changer le design de la logon
 */
 function dol_loginfunction($langs,$conf,$mysoc)
@@ -641,6 +644,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<tr><td colspan="3">&nbsp;</td></tr>';
 
 	print '<tr>';
+
+	// Login field
 	print '<td align="left" valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
 	print '<td valign="bottom"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
 
@@ -668,6 +673,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '></td>';
 	print '</tr>'."\n";
 
+	// Password field
 	print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
 	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
 	print '</td></tr>';
