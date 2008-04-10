@@ -45,7 +45,7 @@ accessforbidden();
  * Actions
  */
 
-if ($_POST["action"] == 'update_price' && 
+if ($_POST["action"] == 'update_price' &&
     ! $_POST["cancel"] && $user->rights->produit->creer)
 {
 	$product = new Product($db);
@@ -87,7 +87,7 @@ if ($_POST["action"] == 'update_price' &&
 		$newprice=price2num($_POST["price"],'MU');
 		$newpricebase=$_POST["price_base_type"];
 	}
-	
+
 	if ($product->update_price($product->id, $newprice, $newpricebase, $user) > 0)
 	{
 		$_GET["action"] = '';
@@ -146,7 +146,7 @@ if($conf->global->PRODUIT_MULTIPRICES)
 		    {
 		  	  print '<td>'.price($product->multiprices["$i"]);
 		    }
-		  
+
         if ($product->multiprices_base_type["$i"])
         {
       	  print ' '.$langs->trans($product->multiprices_base_type["$i"]);
@@ -178,7 +178,7 @@ print $product->getLibStatut(2);
 print '</td></tr>';
 
 print "</table>\n";
-      
+
 print "</div>\n";
 
 
@@ -208,7 +208,10 @@ if (! $_GET["action"])
  */
 if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 {
-	print_fiche_titre($langs->trans("NewPrice"));
+	$texte = $langs->trans("NewPrice");
+	$titre = $html->textwithhelp($texte, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), $direction=1, $usehelpcursor=1);
+
+	print_fiche_titre($titre);
 
 	if (! $conf->global->PRODUIT_MULTIPRICES)
 	{
@@ -217,8 +220,7 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 		print '<input type="hidden" name="id" value="'.$product->id.'">';
 		print '<table class="border" width="100%">';
 		print '<tr><td width="15%">';
-		$text=$langs->trans('SellingPrice');
-		print $html->textwithhelp($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
+		print $langs->trans('SellingPrice');
 		print '</td>';
 
 		if ($product->price_base_type == 'TTC')
@@ -239,35 +241,41 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	}
 	else
     {
-		for($i=1;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-	    {
-	      print '<form action="price.php?id='.$product->id.'" method="post">';
-	      print '<input type="hidden" name="action" value="update_price">';
-	      print '<input type="hidden" name="id" value="'.$product->id.'">';
-	      print '<table class="border" width="100%">';
-	      print '<tr><td width="15%">';
-		  $text=$langs->trans('SellingPrice').' '.$i;
-		  print $html->textwithhelp($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
-		  print '</td>';
-	      
-	      if ($product->multiprices_base_type["$i"] == 'TTC')
-	      {
-	  	    print '<td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices_ttc["$i"]).'">';
-	      }
-	      else
-	      {
-	  	    print '<td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices["$i"]).'">';
-	      }
-	      
-	      print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
-	      print '</td></tr>';
-	      print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-	      print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-	      print '</table>';
-	      print '</form>';
-	    }
+
+		print '<form action="price.php?id='.$product->id.'" method="post">';
+		print '<input type="hidden" name="action" value="update_price">';
+
+		for ( $i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++ ) {
+
+			print '<input type="hidden" name="id" value="'.$product->id.'">';
+			print '<table class="border" width="100%">';
+			print '<tr><td width="15%">';
+
+			print ( $langs->trans('SellingPrice').' '.$i );
+			print '</td>';
+
+			if ($product->multiprices_base_type["$i"] == 'TTC') {
+
+				print '<td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices_ttc["$i"]).'">';
+
+			} else {
+
+				print '<td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices["$i"]).'">';
+
+			}
+
+			print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
+			print '</td></tr>';
+
+		}
+
+		print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+		print '</table>';
+		print '</form>';
+
     }
-  
+
 }
 
 
@@ -318,12 +326,12 @@ if ($result)
 
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
-		    
+
 		if($conf->global->PRODUIT_MULTIPRICES)
 		{
 			print '<td>'.$langs->trans("MultiPriceLevelsName").'</td>';
 		}
-		    
+
         print '<td align="right">'.$langs->trans("HT").'</td>';
         print '<td align="right">'.$langs->trans("TTC").'</td>';
         print '<td align="center">'.$langs->trans("PriceBase").'</td>';
@@ -339,7 +347,7 @@ if ($result)
 			print "<tr $bc[$var]>";
 			// Date
 			print "<td>".dolibarr_print_date($objp->dp,"dayhour")."</td>";
-			
+
 			// catégorie de Prix
 			if ($conf->global->PRODUIT_MULTIPRICES)
 			{
