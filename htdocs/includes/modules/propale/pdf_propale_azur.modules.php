@@ -1020,13 +1020,13 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetDrawColor(224,224,224);
 
         // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-        $posy=$this->marge_basse + 1 + ($ligne?4:0) + ($ligne1?3:0) + ($ligne2?3:0);
+        $posy=$this->marge_basse + 1 + ($ligne?6:0) + ($ligne1?3:0) + ($ligne2?3:0);
 
         if ($ligne)
 		{
 			$pdf->SetXY($this->marge_gauche,-$posy);
 			$pdf->MultiCell(190, 3, $ligne, 0, 'L', 0);
-			$posy-=7;
+			$posy-=9;	// 6 of ligne + 3 of MultiCell
 		}
 		
         $pdf->SetY(-$posy);
