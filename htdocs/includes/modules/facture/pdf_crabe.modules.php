@@ -251,7 +251,7 @@ class pdf_crabe extends ModelePDFFactures
 							}
 							else
 							{
-								$fac->lignes[$i]->desc='€zaaaa';
+								//$fac->lignes[$i]->desc='€zaaaa';
 								//print dol_string_is_good_iso($fac->lignes[$i]->desc);
 								//print dol_htmlentitiesbr($fac->lignes[$i]->desc);
 								//print exit;

@@ -2421,17 +2421,6 @@ function measuring_units_string($unit,$measuring_style='')
 }
 
 /**
-   \brief   Decode le code html
-   \param   string      StringHtml
-   \return  string	    DecodeString
-*/
-function dol_entity_decode($StringHtml)
-{
-	$DecodeString = html_entity_decode($StringHtml);
-	return $DecodeString;
-}
-
-/**
    \brief   	Clean an url
    \param   	url			Url
    \param   	http		1: keep http, 0: remove also http
@@ -2536,17 +2525,22 @@ function dol_nl2br($stringtoencode,$nl2brmode=0)
 /**
 *	\brief		This function is called to encode a string into a HTML string
 *	\param		stringtoencode		String to encode
-*	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br
+*	\param		nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
 *	\remarks	For PDF usage, you can show text by 2 ways:
 *				- writeHTMLCell -> param must be encoded into HTML.
 *				- MultiCell -> param must not be encoded into HTML.
 *				Because writeHTMLCell convert also \n into <br>, if function
-*				is used to build PDF, nl2br must be 1.
+*				is used to build PDF, nl2brmode must be 1.
 */
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0)
 {
 	if (dol_textishtml($stringtoencode)) return $stringtoencode;
-	else return dol_nl2br(htmlentities($stringtoencode),$nl2brmode);
+	else {
+		$newstring=dol_nl2br(htmlentities($stringtoencode),$nl2brmode);
+		// Other substitutions that htmlentities does not do
+		$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80
+		return $newstring;
+	}
 }
 
 /*
@@ -2563,6 +2557,37 @@ function dol_htmlentitiesbr_decode($stringtodecode)
 	return $ret;
 }
 
+/**
+   \brief   Decode le code html
+   \param   string      StringHtml
+   \return  string	    DecodeString
+*/
+function dol_entity_decode($StringHtml)
+{
+	$DecodeString = html_entity_decode($StringHtml);
+	return $DecodeString;
+}
+
+/**
+	\brief		Check if a string is a correct iso string
+				If not, it will we considered not HTML encoded even if it is by FPDF.
+	\remarks	Example, if string contains euro symbol that has ascii code 128.
+	\param		s		String to check
+	\return		int		0 if bad iso, 1 if good iso
+*/
+function dol_string_is_good_iso($s)
+{
+	$len=strlen($s);
+	$ok=1;
+	for($scursor=0;$scursor<$len;$scursor++)
+	{
+		$ordchar=ord($s{$scursor});
+		//print $scursor.'-'.$ordchar.'<br>'; 
+		if ($ordchar < 32 && $ordchar != 13 && $ordchar != 10) { $ok=0; break; }
+		if ($ordchar > 126 && $ordchar < 160) { $ok=0; break; }
+	}
+	return $ok;
+}
 
 /**
    \brief   Encode une chaine de caractére
