@@ -773,15 +773,17 @@ function img_object($alt, $object)
 
 /**
         \brief      Affiche picto (fonction générique)
-        \param      alt         Texte sur le alt de l'image
-        \param      picto       Nom de l'image a afficher (Si pas d'extension, on met '.png')
-        \param		options		Attribut supplémentaire a la balise img
-		\return     string      Retourne tag img
+        \param      alt         		Texte sur le alt de l'image
+        \param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
+        \param		options				Attribut supplémentaire a la balise img
+		\param		pictoisfullpath		If 1, image path is a full path
+		\return     string      		Retourne tag img
 */
-function img_picto($alt, $picto, $options='')
+function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 {
 	global $conf;
 	if (! eregi('(\.png|\.gif)$',$picto)) $picto.='.png';
+	if ($pictoisfullpath) return '<img src="'.$picto.'" border="0" alt="'.$alt.'" title="'.$alt.'"'.($options?' '.$options:'').'>';
 	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'" border="0" alt="'.$alt.'" title="'.$alt.'"'.($options?' '.$options:'').'>';
 }
 
@@ -1601,15 +1603,16 @@ function print_titre($titre)
 
 /**
 		\brief  Affichage d'un titre d'une fiche, aligné a gauche
-		\param	titre			Le titre a afficher
-		\param	mesg			Message suplémentaire a afficher a droite
-		\param	picto			Picto pour ligne de titre
+		\param	titre				Le titre a afficher
+		\param	mesg				Message suplémentaire a afficher a droite
+		\param	picto				Picto pour ligne de titre
+		\param	pictoisfullpath		1=Picto is a full absolute url of image
 */
-function print_fiche_titre($titre, $mesg='', $picto='')
+function print_fiche_titre($titre, $mesg='', $picto='', $pictoisfullpath=0)
 {
     print "\n";
     print '<table width="100%" border="0" class="notopnoleftnoright"><tr>';
-	if ($picto) print '<td width="24" align="left" valign="middle">'.img_picto('',$picto).'</td>';
+	if ($picto) print '<td width="24" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
     print '<td class="notopnoleftnoright" valign="middle">';
     print '<div class="titre">'.$titre.'</div>';
     print '</td>';

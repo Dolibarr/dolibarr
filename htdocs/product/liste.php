@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -274,16 +274,21 @@ if ($resql)
 			
 			// Ref
 			print '<td nowrap="nowrap">';
-			print "<a href=\"fiche.php?id=$objp->rowid\">";
+			$product_static->id = $objp->rowid;
+			$product_static->ref = $objp->ref;
+			$product_static->type = $objp->fk_product_type;
+			print $product_static->getNomUrl(1,'',16);
+			/*			print "<a href=\"fiche.php?id=$objp->rowid\">";
 			if ($objp->fk_product_type==1)
 			print img_object($langs->trans("ShowService"),"service");
 			else
 			print img_object($langs->trans("ShowProduct"),"product");
 			print '</a> ';
-			print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref."</a></td>\n";
+			print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref."</a>";
+*/			print "</td>\n";
 
 			// Label
-			print '<td>'.$objp->label.'</td>';
+			print '<td>'.dolibarr_trunc($objp->label,40).'</td>';
 			
 			// Date
 			print '<td align="center">'.dolibarr_print_date($objp->datem,'day')."</td>\n";

@@ -41,6 +41,7 @@ $contratid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat',$contratid,'');
 
+$staticcompany=new Societe($db);
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
 
@@ -158,7 +159,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)
 print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
 
 
-// Last contracts
+// Last modified contracts
 $max=5;
 $sql = 'SELECT ';
 $sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
@@ -199,12 +200,17 @@ if ($result)
         $var=!$var;
     
         print "<tr $bc[$var]>";
-        print "<td><a href=\"fiche.php?id=$obj->cid\">";
-        print img_object($langs->trans("ShowContract"),"contract").' '
-        . (isset($obj->ref) ? $obj->ref : $obj->cid).'</a>';
+        print "<td>";
+		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->cid);
+		$staticcontrat->id=$obj->cid;
+		print $staticcontrat->getNomUrl(1,16);
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
-        print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+        print '<td>';
+		$staticcompany->id=$obj->fk_soc;
+		$staticcompany->nom=$obj->nom;
+		print $staticcompany->getNomUrl(1,'',20);
+		print '</td>';
         print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
         //print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
         print '<td align="center">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0,3):'').'</td>';
@@ -254,12 +260,20 @@ if ( $db->query($sql) )
         $var=!$var;
         print "<tr $bc[$var]>";
 
-        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '
-        	.(isset($obj->ref) ? $obj->ref : $obj->fk_contrat).'</a></td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
+        print '<td>';
+		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
+		$staticcontrat->id=$obj->fk_contrat;
+		print $staticcontrat->getNomUrl(1,16);
+		print '</td>';
+        print '<td>';
+		print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
         if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
         else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_soc.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+        print '<td>';
+		$staticcompany->id=$obj->fk_soc;
+		$staticcompany->nom=$obj->nom;
+		print $staticcompany->getNomUrl(1,'',20);
+		print '</td>';
         print '<td width="16"><a href="ligne.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
         print $staticcontratligne->LibStatut($obj->statut,3);
         print '</a></td>';
@@ -281,7 +295,9 @@ print '<br>';
 // Last modified services
 $max=5;
 
-$sql = "SELECT cd.rowid as cid, c.ref, cd.statut, cd.label, cd.description as note, cd.fk_contrat, c.fk_soc, s.nom";
+$sql = "SELECT c.ref, c.fk_soc, ";
+$sql.= " cd.rowid as cid, cd.statut, cd.label, cd.description as note, cd.fk_contrat,";
+$sql.= " s.nom";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -290,9 +306,10 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc
 if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 $sql.= " ORDER BY cd.tms DESC";
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-    $num = $db->num_rows();
+    $num = $db->num_rows($resql);
     $i = 0;
 
     print '<table class="noborder" width="100%">';
@@ -303,18 +320,23 @@ if ( $db->query($sql) )
     $var=True;
     while ($i < min($num,$max))
     {
-        $obj = $db->fetch_object();
+        $obj = $db->fetch_object($resql);
         $var=!$var;
         print "<tr $bc[$var]>";
-// width="50" nowrap
-        print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowContract"),"contract").' '
-        .(isset($obj->ref) ? $obj->ref : $obj->fk_contrat).'</a>';
+        print '<td nowrap="nowrap">';
+		$staticcontrat->ref=($obj->ref?$obj->ref:$obj->fk_contrat);
+		$staticcontrat->id=$obj->fk_contrat;
+		print $staticcontrat->getNomUrl(1,16);
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
         print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"),"service");
         if ($obj->label) print ' '.dolibarr_trunc($obj->label,20).'</a></td>';
         else print '</a> '.dolibarr_trunc($obj->note,20).'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->fk_soc.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,28).'</a></td>';
+        print '<td>';
+		$staticcompany->id=$obj->fk_soc;
+		$staticcompany->nom=$obj->nom;
+		print $staticcompany->getNomUrl(1,'',20);
+		print '</td>';
         print '<td nowrap="nowrap" align="right"><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->fk_contrat.'&ligne='.$obj->cid.'">';
         print $staticcontratligne->LibStatut($obj->statut,5);
         print '</a></td>';

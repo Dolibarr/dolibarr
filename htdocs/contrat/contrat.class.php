@@ -990,10 +990,10 @@ class Contrat extends CommonObject
 	/**
 		\brief      Renvoie nom clicable (avec eventuellement le picto)
 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-		\param		option			Sur quoi pointe le lien
+		\param		maxlength		Max length of ref
 		\return		string			Chaine avec URL
 	*/
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$maxlength=0)
 	{
 		global $langs;
 		
@@ -1002,15 +1002,13 @@ class Contrat extends CommonObject
 		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 		
-		$picto='bill';
-		if ($this->type == 1) $picto.='r';
-		if ($this->type == 2) $picto.='a';
+		$picto='contract';
 
 		$label=$langs->trans("ShowContract").': '.$this->ref;
 		
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		if ($withpicto != 2) $result.=$lien.($maxlength?dolibarr_trunc($this->ref,$maxlength):$this->ref).$lienfin;
 		return $result;
 	}
 
@@ -1284,6 +1282,30 @@ class ContratLigne
 	        if ($statut == 5) { return $langs->trans("ServiceStatusClosed").' '.img_picto($langs->trans('ServiceStatusClosed'),'statut6'); }
 		}
     }    
+
+	/**
+		\brief      Renvoie nom clicable (avec eventuellement le picto)
+		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+		\return		string			Chaine avec URL
+	*/
+	function getNomUrl($withpicto=0,$maxlength=0)
+	{
+		global $langs;
+		
+		$result='';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$this->fk_contrat.'">';
+		$lienfin='</a>';
+		
+		$picto='contract';
+
+		$label=$langs->trans("ShowContractOfService").': '.$this->label;
+		
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->label.$lienfin;
+		return $result;
+	}
 
     /*
      *    \brief      Load object in memory from database
