@@ -578,7 +578,7 @@ class Contrat extends CommonObject
 			$sql.= " AND tc.element='".$this->element."'";
 			$sql.= " AND ec.element_id=".$this->id;
 
-			dolibarr_syslog("Contrat::delete element_contact sql=".$sql);
+			dolibarr_syslog("Contrat::delete element_contact sql=".$sql,LOG_DEBUG);
 	        $resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -594,7 +594,7 @@ class Contrat extends CommonObject
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
 	        $sql.= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".$this->id;
 
-			dolibarr_syslog("Contrat::delete contratdet_log sql=".$sql);
+			dolibarr_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
 	        $resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -609,7 +609,7 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 	        $sql.= " WHERE fk_contrat=".$this->id;
 
-			dolibarr_syslog("Contrat::delete contratdet sql=".$sql);
+			dolibarr_syslog("Contrat::delete contratdet sql=".$sql, LOG_DEBUG);
 	        $resql=$this->db->query($sql);
 			if (! $resql)
 			{
