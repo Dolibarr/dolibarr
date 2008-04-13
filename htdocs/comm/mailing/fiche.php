@@ -85,7 +85,7 @@ if ($_POST["action"] == 'sendallconfirmed')
 			{
 				$obj = $db->fetch_object($resql);
 
-				dolibarr_syslog("mailing-send: mailing ".$id);
+				dolibarr_syslog("mailing-send: mailing ".$id, LOG_DEBUG);
 
 				$id       = $obj->rowid;
 				$subject  = $obj->sujet;
@@ -116,7 +116,7 @@ if ($_POST["action"] == 'sendallconfirmed')
 
 		    if ($num) 
 		    {
-		        dolibarr_syslog("mailing-send: target number = $num");
+		        dolibarr_syslog("mailing-send: nb of targets = ".$num, LOG_DEBUG);
 		        // Positionne date debut envoi
 		        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
 		        $resql2=$db->query($sql);
@@ -147,11 +147,11 @@ if ($_POST["action"] == 'sendallconfirmed')
 					);
 
 					$substitutionisok=true;
-					$subject2=make_substitutions($subject,$substitutionarray);
-					$message2=make_substitutions($message,$substitutionarray);
+					$newsubject=make_substitutions($subject,$substitutionarray);
+					$newmessage=make_substitutions($message,$substitutionarray);
 					
 		            // Fabrication du mail
-		            $mail = new CMailFile($subject2, $sendto, $from, $message2, 
+		            $mail = new CMailFile($newsubject, $sendto, $from, $newmessage, 
 		            						array(), array(), array(),
 		            						'', '', 0, $msgishtml);
 		            $mail->errors_to = $errorsto;
@@ -178,7 +178,7 @@ if ($_POST["action"] == 'sendallconfirmed')
 		                // Mail envoye avec succes
 		                $nbok++;
 		    
-				        dolibarr_syslog("mailing-send: ok for #".$i.' - '.$mail->error);
+				        dolibarr_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 		                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 						$sql.=" SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
@@ -193,7 +193,7 @@ if ($_POST["action"] == 'sendallconfirmed')
 		                // Mail en echec
 		                $nbko++;
 		    
-				        dolibarr_syslog("mailing-send: error for #".$i.' - '.$mail->error);
+				        dolibarr_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
 		                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 						$sql.=" SET statut=-1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
@@ -213,7 +213,7 @@ if ($_POST["action"] == 'sendallconfirmed')
 		    if (! $nbko) $statut=3;
 
 		    $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
-		    dolibarr_syslog("mailing-send: update global status sql=".$sql);
+		    dolibarr_syslog("mailing-send: update global status sql=".$sql, LOG_DEBUG);
 		    $resql2=$db->query($sql);
 		    if (! $resql2)
 		    {

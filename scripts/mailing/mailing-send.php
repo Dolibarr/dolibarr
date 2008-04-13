@@ -119,7 +119,7 @@ if ($resql)
 
     if ($num) 
     {
-        dolibarr_syslog("mailing-send: nb of targets = ".$num);
+        dolibarr_syslog("mailing-send: nb of targets = ".$num, LOG_DEBUG);
 
         // Positionne date debut envoi
         $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
@@ -180,7 +180,7 @@ if ($resql)
                 // Mail envoye avec succes
                 $nbok++;
     
-		        dolibarr_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''));
+		        dolibarr_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
                 $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 				$sql.=" SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
@@ -195,7 +195,7 @@ if ($resql)
                 // Mail en echec
                 $nbko++;
     
-		        dolibarr_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''));
+		        dolibarr_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''), LOG_DEBUG);
 
                 $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 				$sql.=" SET statut=-1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
@@ -215,7 +215,7 @@ if ($resql)
     if (! $nbko) $statut=3;
 
     $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
-    dolibarr_syslog("mailing-send: update global status sql=".$sql);
+    dolibarr_syslog("mailing-send: update global status sql=".$sql, LOG_DEBUG);
     $resql2=$db->query($sql);
     if (! $resql2)
     {
