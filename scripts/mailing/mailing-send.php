@@ -106,8 +106,8 @@ if ($resql)
 
 $nbok=0; $nbko=0;
 
-// On choisit les mails non d�j� envoy�s pour ce mailing (statut=0)
-// ou envoy�s en erreur (statut=-1)
+// On choisit les mails non deja envoyes pour ce mailing (statut=0)
+// ou envoyes en erreur (statut=-1)
 $sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 $sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
@@ -119,7 +119,7 @@ if ($resql)
 
     if ($num) 
     {
-        dolibarr_syslog("mailing-send: target number = $num");
+        dolibarr_syslog("mailing-send: nb of targets = ".$num);
 
         // Positionne date debut envoi
         $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
@@ -131,7 +131,7 @@ if ($resql)
     
         // Boucle sur chaque adresse et envoie le mail
         $i = 0;
-        while ($i < $num )
+        while ($i < $num)
         {
             $res=1;
             
@@ -149,11 +149,11 @@ if ($resql)
 			);
 
 			$substitutionisok=true;
-			$subject=make_substitutions($subject,$substitutionarray);
-			$message=make_substitutions($message,$substitutionarray);
+			$newsubject=make_substitutions($subject,$substitutionarray);
+			$newmessage=make_substitutions($message,$substitutionarray);
 			
             // Fabrication du mail
-            $mail = new CMailFile($subject, $sendto, $from, $message, 
+            $mail = new CMailFile($newsubject, $sendto, $from, $newmessage, 
             						array(), array(), array(),
             						'', '', 0, $msgishtml);
             $mail->errors_to = $errorsto;
@@ -180,7 +180,7 @@ if ($resql)
                 // Mail envoye avec succes
                 $nbok++;
     
-		        dolibarr_syslog("mailing-send: ok for #".$i.' - '.$mail->error);
+		        dolibarr_syslog("mailing-send: ok for #".$i.($mail->error?' - '.$mail->error:''));
 
                 $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 				$sql.=" SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
@@ -195,7 +195,7 @@ if ($resql)
                 // Mail en echec
                 $nbko++;
     
-		        dolibarr_syslog("mailing-send: error for #".$i.' - '.$mail->error);
+		        dolibarr_syslog("mailing-send: error for #".$i.($mail->error?' - '.$mail->error:''));
 
                 $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
 				$sql.=" SET statut=-1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
