@@ -2842,7 +2842,7 @@ else
 			$filename=sanitize_string($fac->ref);
 			$filedir=$conf->facture->dir_output . '/' . sanitize_string($fac->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
-			$genallowed=($fac->statut >= 1 && $user->rights->facture->creer);
+			$genallowed=$user->rights->facture->creer;
 			$delallowed=$user->rights->facture->supprimer;
 
 			$var=true;
