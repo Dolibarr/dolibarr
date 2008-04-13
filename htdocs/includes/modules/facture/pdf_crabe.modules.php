@@ -103,308 +103,311 @@ class pdf_crabe extends ModelePDFFactures
      *		\return	    int     		1=ok, 0=ko
      */
     function write_file($fac,$outputlangs='')
-    {
-    	global $user,$langs,$conf;
-    	
-    	if (! is_object($outputlangs)) $outputlangs=$langs;
-    	$outputlangs->load("main");
-    	$outputlangs->load("dict");
-    	$outputlangs->load("companies");
-    	$outputlangs->load("bills");
-    	$outputlangs->load("products");
-    	
-    	$outputlangs->setPhpLang();
+	{
+		global $user,$langs,$conf;
+		
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		$outputlangs->load("main");
+		$outputlangs->load("dict");
+		$outputlangs->load("companies");
+		$outputlangs->load("bills");
+		$outputlangs->load("products");
+		
+		$outputlangs->setPhpLang();
 
-      if ($conf->facture->dir_output)
-      {
-      	// Définition de l'objet $fac (pour compatibilite ascendante)
-      	if (! is_object($fac))
-        {
-	        $id = $fac;
-	        $fac = new Facture($this->db,"",$id);
-	        $ret=$fac->fetch($id);
-	      }
-	      
-	      $deja_regle = $fac->getSommePaiement();
-	      $amount_credit_not_included = $fac->getSommeCreditNote();
+		if ($conf->facture->dir_output)
+		{
+			// Définition de l'objet $fac (pour compatibilite ascendante)
+			if (! is_object($fac))
+			{
+				$id = $fac;
+				$fac = new Facture($this->db,"",$id);
+				$ret=$fac->fetch($id);
+			}
+			
+			$deja_regle = $fac->getSommePaiement();
+			$amount_credit_not_included = $fac->getSommeCreditNote();
 
-	      // Définition de $dir et $file
-	      if ($fac->specimen)
-	      {
-	      	$dir = $conf->facture->dir_output;
-	      	$file = $dir . "/SPECIMEN.pdf";
-	      }
-	      else
-	      {
-	      	$facref = sanitize_string($fac->ref);
-	      	$dir = $conf->facture->dir_output . "/" . $facref;
-	      	$file = $dir . "/" . $facref . ".pdf";
-	      }
+			// Définition de $dir et $file
+			if ($fac->specimen)
+			{
+				$dir = $conf->facture->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
+			}
+			else
+			{
+				$facref = sanitize_string($fac->ref);
+				$dir = $conf->facture->dir_output . "/" . $facref;
+				$file = $dir . "/" . $facref . ".pdf";
+			}
 
-            if (! file_exists($dir))
-            {
-                if (create_exdir($dir) < 0)
-                {
-                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                    return 0;
-                }
-            }
-
-            if (file_exists($dir))
-            {
-	            $nblignes = sizeof($fac->lignes);
-
-                // Protection et encryption du pdf
-                if ($conf->global->PDF_SECURITY_ENCRYPTION)
-                {
-					$pdf=new FPDI_Protection('P','mm',$this->format);
-                	$pdfrights = array('print'); // Ne permet que l'impression du document
-                	$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-                	$pdfownerpass = NULL; // Mot de passe du propriétire, crée aléatoirement si pas défini
-                	$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-                }
-			   else
-			   {
-                   $pdf=new FPDI('P','mm',$this->format);
+			if (! file_exists($dir))
+			{
+				if (create_exdir($dir) < 0)
+				{
+					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					return 0;
 				}
-                
-                $pdf->Open();
-                $pdf->AddPage();
+			}
 
-                $pdf->SetDrawColor(128,128,128);
+			if (file_exists($dir))
+			{
+				$nblignes = sizeof($fac->lignes);
 
-                $pdf->SetTitle($fac->ref);
-                $pdf->SetSubject($outputlangs->transnoentities("Invoice"));
-                $pdf->SetCreator("Dolibarr ".DOL_VERSION);
-                $pdf->SetAuthor($user->fullname);
+				// Protection et encryption du pdf
+				if ($conf->global->PDF_SECURITY_ENCRYPTION)
+				{
+					$pdf=new FPDI_Protection('P','mm',$this->format);
+					$pdfrights = array('print'); // Ne permet que l'impression du document
+					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+					$pdfownerpass = NULL; // Mot de passe du propriétire, crée aléatoirement si pas défini
+					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+				}
+				else
+				{
+					$pdf=new FPDI('P','mm',$this->format);
+				}
+				
+				$pdf->Open();
+				$pdf->AddPage();
 
-                $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
-                $pdf->SetAutoPageBreak(1,0);
+				$pdf->SetDrawColor(128,128,128);
 
-                // Positionne $this->atleastonediscount si on a au moins une remise
-                for ($i = 0 ; $i < $nblignes ; $i++)
-                {
-                    if ($fac->lignes[$i]->remise_percent)
-                    {
-                        $this->atleastonediscount++;
-                    }
-                }
+				$pdf->SetTitle($fac->ref);
+				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
+				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+				$pdf->SetAuthor($user->fullname);
 
-                // Tete de page
-                $this->_pagehead($pdf, $fac, 1, $outputlangs);
+				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+				$pdf->SetAutoPageBreak(1,0);
 
-                $pagenb = 1;
-                $tab_top = 90;
-                $tab_top_newpage = 50;
-                $tab_height = 110;
-                $tab_height_newpage = 180;
+				// Positionne $this->atleastonediscount si on a au moins une remise
+				for ($i = 0 ; $i < $nblignes ; $i++)
+				{
+					if ($fac->lignes[$i]->remise_percent)
+					{
+						$this->atleastonediscount++;
+					}
+				}
+
+				// Tete de page
+				$this->_pagehead($pdf, $fac, 1, $outputlangs);
+
+				$pagenb = 1;
+				$tab_top = 90;
+				$tab_top_newpage = 50;
+				$tab_height = 110;
+				$tab_height_newpage = 180;
 
 				// Affiche notes
-                if ($fac->note_public)
-                {
-	                $tab_top = 88;
+				if ($fac->note_public)
+				{
+					$tab_top = 88;
 
-	                $pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
-	                $pdf->SetXY ($this->posxdesc-1, $tab_top);
-	                $pdf->MultiCell(190, 3, $fac->note_public, 0, 'J');
-	                $nexY = $pdf->GetY();
-	                $height_note=$nexY-$tab_top;
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetXY ($this->posxdesc-1, $tab_top);
+					$pdf->MultiCell(190, 3, $fac->note_public, 0, 'J');
+					$nexY = $pdf->GetY();
+					$height_note=$nexY-$tab_top;
 
-			            // Rect prend une longueur en 3eme param
-			            $pdf->SetDrawColor(192,192,192);
-			            $pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+					// Rect prend une longueur en 3eme param
+					$pdf->SetDrawColor(192,192,192);
+					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
-	                $tab_height = $tab_height - $height_note;
-                	$tab_top = $nexY+6;
-               	}
-               	else
-               	{
-               		$height_note=0;
-               	}
+					$tab_height = $tab_height - $height_note;
+					$tab_top = $nexY+6;
+				}
+				else
+				{
+					$height_note=0;
+				}
 
-                $iniY = $tab_top + 8;
-                $curY = $tab_top + 8;
-                $nexY = $tab_top + 8;
+				$iniY = $tab_top + 8;
+				$curY = $tab_top + 8;
+				$nexY = $tab_top + 8;
 
-                // Boucle sur les lignes
-                for ($i = 0 ; $i < $nblignes ; $i++)
-                {
-                	$curY = $nexY;
-                	
-                	// Description de la ligne produit
-                	$libelleproduitservice=dol_htmlentitiesbr($fac->lignes[$i]->libelle,1);
-                  if ($fac->lignes[$i]->desc&&$fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)
-                  {
-                  	if ($libelleproduitservice) $libelleproduitservice.="<br>";
-                  	
-                  	if ($fac->lignes[$i]->desc == '(CREDIT_NOTE)' && $fac->lignes[$i]->fk_remise_except)
-                  	{
-                  		$discount=new DiscountAbsolute($this->db);
-                  		$discount->fetch($fac->lignes[$i]->fk_remise_except);
-                  		$libelleproduitservice=dol_htmlentitiesbr($langs->trans("DiscountFromCreditNote",$discount->ref_facture_source),1);
-                  	}
-                  	else
-                  	{
-						if ($fac->lignes[$i]->produit_id)
-                  		{
-                  			$libelleproduitservice.=dol_htmlentitiesbr($fac->lignes[$i]->desc,1);
-                  		}
-                  		else
-                  		{
-                  			// On verifie si les lignes personnalisees sont formatees avec fckeditor
-                  			$libelleproduitservice.=dol_htmlentitiesbr($fac->lignes[$i]->desc,1);
-                  		}
-                  	}
-                  }
-				  
-                  // Si ligne associee a un code produit
-                  if ($fac->lignes[$i]->produit_id)
-                  {
-                  	$prodser = new Product($this->db);
-                    $prodser->fetch($fac->lignes[$i]->produit_id);
-                    // On ajoute la ref
-                    if ($prodser->ref)
-                    {
-                    	$prefix_prodserv = "";
-                      if($prodser->isservice())
-                      {
-                      	$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-                      }
-                      else
-                      {
-                      	$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
-                      }
+				// Boucle sur les lignes
+				for ($i = 0 ; $i < $nblignes ; $i++)
+				{
+					$curY = $nexY;
+					
+					// Description de la ligne produit
+					$libelleproduitservice=dol_htmlentitiesbr($fac->lignes[$i]->libelle,1);
+					if ($fac->lignes[$i]->desc&&$fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)
+					{
+						if ($libelleproduitservice) $libelleproduitservice.="<br>";
+						
+						if ($fac->lignes[$i]->desc == '(CREDIT_NOTE)' && $fac->lignes[$i]->fk_remise_except)
+						{
+							$discount=new DiscountAbsolute($this->db);
+							$discount->fetch($fac->lignes[$i]->fk_remise_except);
+							$libelleproduitservice=dol_htmlentitiesbr($langs->trans("DiscountFromCreditNote",$discount->ref_facture_source),1);
+						}
+						else
+						{
+							if ($fac->lignes[$i]->produit_id)
+							{
+								$libelleproduitservice.=dol_htmlentitiesbr($fac->lignes[$i]->desc,1);
+							}
+							else
+							{
+								$fac->lignes[$i]->desc='€zaaaa';
+								//print dol_string_is_good_iso($fac->lignes[$i]->desc);
+								//print dol_htmlentitiesbr($fac->lignes[$i]->desc);
+								//print exit;
+								$libelleproduitservice.=dol_htmlentitiesbr($fac->lignes[$i]->desc,1);
+							}
+						}
+					}
+					
+					// Si ligne associee a un code produit
+					if ($fac->lignes[$i]->produit_id)
+					{
+						$prodser = new Product($this->db);
+						$prodser->fetch($fac->lignes[$i]->produit_id);
+						// On ajoute la ref
+						if ($prodser->ref)
+						{
+							$prefix_prodserv = "";
+							if($prodser->isservice())
+							{
+								$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
+							}
+							else
+							{
+								$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
+							}
 
-                        $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
-                    }
-                    
-                    }
+							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
+						}
+						
+					}
 
-                    if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
-                    {
-                        // Affichage duree si il y en a une
-                        $libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")",1);
-                    }
-               		//if ($i==0) { print $libelleproduitservice; exit; }
+					if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
+					{
+						// Affichage duree si il y en a une
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")",1);
+					}
+					//if ($i==0) { print $libelleproduitservice; exit; }
 
-                    $pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description
-                   	$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
 
-                    $pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
-                    $nexY = $pdf->GetY();
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
+					$nexY = $pdf->GetY();
 
-                    // TVA
-                    $pdf->SetXY ($this->posxtva, $curY);
-                    $pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($fac->lignes[$i]->tva_tx,1,$fac->lignes[$i]->info_bits), 0, 'R');
+					// TVA
+					$pdf->SetXY ($this->posxtva, $curY);
+					$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, vatrate($fac->lignes[$i]->tva_tx,1,$fac->lignes[$i]->info_bits), 0, 'R');
 
-                    // Prix unitaire HT avant remise
-                    $pdf->SetXY ($this->posxup, $curY);
-                    $pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($fac->lignes[$i]->subprice), 0, 'R', 0);
+					// Prix unitaire HT avant remise
+					$pdf->SetXY ($this->posxup, $curY);
+					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($fac->lignes[$i]->subprice), 0, 'R', 0);
 
-                    // Quantity
-                    $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $fac->lignes[$i]->qty, 0, 'R');	// Enough for 6 chars
+					// Quantity
+					$pdf->SetXY ($this->posxqty, $curY);
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $fac->lignes[$i]->qty, 0, 'R');	// Enough for 6 chars
 
-                    // Remise sur ligne
-                    $pdf->SetXY ($this->posxdiscount, $curY);
-                    if ($fac->lignes[$i]->remise_percent)
-                    {
-                        $pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dolibarr_print_reduction($fac->lignes[$i]->remise_percent), 0, 'R');
-                    }
+					// Remise sur ligne
+					$pdf->SetXY ($this->posxdiscount, $curY);
+					if ($fac->lignes[$i]->remise_percent)
+					{
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 4, dolibarr_print_reduction($fac->lignes[$i]->remise_percent), 0, 'R');
+					}
 
-                    // Total HT ligne
-                    $pdf->SetXY ($this->postotalht, $curY);
-                    $total = price($fac->lignes[$i]->total_ht);
-                    $pdf->MultiCell(26, 4, $total, 0, 'R', 0);
+					// Total HT ligne
+					$pdf->SetXY ($this->postotalht, $curY);
+					$total = price($fac->lignes[$i]->total_ht);
+					$pdf->MultiCell(26, 4, $total, 0, 'R', 0);
 
-                    // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-                    $tvaligne=$fac->lignes[$i]->total_tva;
-                    if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
-                    $vatrate=(string) $fac->lignes[$i]->tva_tx;
+					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					$tvaligne=$fac->lignes[$i]->total_tva;
+					if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
+					$vatrate=(string) $fac->lignes[$i]->tva_tx;
 					if ($fac->lignes[$i]->info_bits & 0x01 == 0x01) $vatrate.='*';
 					$this->tva[$vatrate] += $tvaligne;
 
-                    $nexY+=2;    // Passe espace entre les lignes
+					$nexY+=2;    // Passe espace entre les lignes
 
-                    if ($nexY > ($tab_top+$tab_height) && $i < ($nblignes - 1))
-                    {
-                        if ($pagenb == 1)
-                        {
-                          $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
-                        }
-                        else
-                        {
-                        	$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
-                        }
+					if ($nexY > ($tab_top+$tab_height) && $i < ($nblignes - 1))
+					{
+						if ($pagenb == 1)
+						{
+							$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+						}
+						else
+						{
+							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+						}
 
 						$this->_pagefoot($pdf,$outputlangs);
 
-                        // Nouvelle page
-                        $pdf->AddPage();
-                        $pagenb++;
-                        $this->_pagehead($pdf, $fac, 0, $outputlangs);
+						// Nouvelle page
+						$pdf->AddPage();
+						$pagenb++;
+						$this->_pagehead($pdf, $fac, 0, $outputlangs);
 
-                        $nexY = $tab_top_newpage + 8;
-                        $pdf->SetTextColor(0,0,0);
-                        $pdf->SetFont('Arial','', 10);
-                    }
+						$nexY = $tab_top_newpage + 8;
+						$pdf->SetTextColor(0,0,0);
+						$pdf->SetFont('Arial','', 10);
+					}
 
-                }
+				}
 
-                // Affiche cadre tableau
-                if ($pagenb == 1)
-                {
-                    $this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
-                    $bottomlasttab=$tab_top + $tab_height + 1;
-                }
-                else
-                {
-                    $this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY, $outputlangs);
-                    $bottomlasttab=$tab_top_newpage + $tab_height + 1;
-                }
-
-                // Affiche zone infos
-                $posy=$this->_tableau_info($pdf, $fac, $bottomlasttab, $outputlangs);
-
-                // Affiche zone totaux
-                $posy=$this->_tableau_tot($pdf, $fac, $deja_regle, $bottomlasttab, $outputlangs);
-
-                // Affiche zone versements
-                if ($deja_regle || $amount_credit_not_included)
+				// Affiche cadre tableau
+				if ($pagenb == 1)
 				{
-                    $posy=$this->_tableau_versements($pdf, $fac, $posy, $outputlangs);
-                }
+					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top + $tab_height + 1;
+				}
+				else
+				{
+					$this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top_newpage + $tab_height + 1;
+				}
 
-                // Pied de page
-                $this->_pagefoot($pdf,$outputlangs);
-                $pdf->AliasNbPages();
+				// Affiche zone infos
+				$posy=$this->_tableau_info($pdf, $fac, $bottomlasttab, $outputlangs);
 
-                $pdf->Close();
+				// Affiche zone totaux
+				$posy=$this->_tableau_tot($pdf, $fac, $deja_regle, $bottomlasttab, $outputlangs);
 
-                $pdf->Output($file);
+				// Affiche zone versements
+				if ($deja_regle || $amount_credit_not_included)
+				{
+					$posy=$this->_tableau_versements($pdf, $fac, $posy, $outputlangs);
+				}
+
+				// Pied de page
+				$this->_pagefoot($pdf,$outputlangs);
+				$pdf->AliasNbPages();
+
+				$pdf->Close();
+
+				$pdf->Output($file);
 
 				$langs->setPhpLang();	// On restaure langue session
-                return 1;   // Pas d'erreur
-            }
-            else
-            {
-                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				return 1;   // Pas d'erreur
+			}
+			else
+			{
+				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
 				$langs->setPhpLang();	// On restaure langue session
-                return 0;
-            }
-        }
-        else
-        {
-            $this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
-			$langs->setPhpLang();	// On restaure langue session
-            return 0;
+				return 0;
+			}
 		}
-        $this->error=$langs->trans("ErrorUnknown");
+		else
+		{
+			$this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
+			$langs->setPhpLang();	// On restaure langue session
+			return 0;
+		}
+		$this->error=$langs->trans("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
-        return 0;   // Erreur par defaut
-    }
+		return 0;   // Erreur par defaut
+	}
 
 
     /**
