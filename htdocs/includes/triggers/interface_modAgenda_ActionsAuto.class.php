@@ -120,6 +120,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
+            $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
@@ -138,6 +139,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("contracts");
+            $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
@@ -152,6 +154,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("propal");
+            $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("PropalValidatedInDolibarr",$object->ref);
@@ -167,6 +170,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("propal");
+            $langs->load("agenda");
 			$ok=1;
 			
 			// Parameters $object->xxx defined by caller
@@ -175,6 +179,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("propal");
+            $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
@@ -190,6 +195,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("propal");
+            $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
@@ -205,7 +211,8 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("orders");
-
+            $langs->load("agenda");
+			
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
             $object->actionmsg=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
@@ -220,6 +227,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("orders");
+            $langs->load("agenda");
 			$ok=1;
 
 			// Parameters $object->xxx defined by caller
@@ -228,6 +236,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("bills");
+            $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
@@ -243,6 +252,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("bills");
+            $langs->load("agenda");
 			$ok=1;
 			
 			// Parameters $object->xxx defined by caller
@@ -251,6 +261,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("bills");
+            $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
@@ -266,6 +277,7 @@ class InterfaceActionsAuto
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("bills");
+            $langs->load("agenda");
 
 			$object->actiontypecode='AC_OTH';
             $object->actionmsg2=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);

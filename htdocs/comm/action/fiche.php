@@ -37,6 +37,7 @@ $langs->load("commercial");
 $langs->load("other");
 $langs->load("bills");
 $langs->load("orders");
+$langs->load("agenda");
 
 // Securite acces client
 if ($user->societe_id > 0)
@@ -45,6 +46,10 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 if (isset($_GET["error"])) $error=$_GET["error"];
+
+$cactioncomm = new CActionComm($db);
+$actioncomm = new ActionComm($db);
+$contact = new Contact($db);
 
 
 /*
@@ -55,7 +60,6 @@ if ($_POST["action"] == 'add_action')
 {
     if ($_POST["contactid"])
     {
-        $contact = new Contact($db);
         $result=$contact->fetch($_POST["contactid"]);
     }
 	
@@ -71,6 +75,10 @@ if ($_POST["action"] == 'add_action')
 	if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
 	if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
 	if ($_POST["admin"] == -1) $_POST["admin"]='0';
+	if ($_POST["p2hour"] == -1) $_POST["p2hour"]='0';
+	if ($_POST["p2min"] == -1) $_POST["p2min"]='0';
+	if ($_POST["a2hour"] == -1) $_POST["a2hour"]='0';
+	if ($_POST["a2min"] == -1) $_POST["a2min"]='0';
 	$datep=dolibarr_mktime($_POST["aphour"],
                    $_POST["apmin"],
                    0,
@@ -83,17 +91,103 @@ if ($_POST["action"] == 'add_action')
                    $_POST["admonth"],
                    $_POST["adday"],
                    $_POST["adyear"]);
+	$datep2=dolibarr_mktime($_POST["p2hour"],
+                   $_POST["p2min"],
+                   0,
+                   $_POST["p2month"],
+                   $_POST["p2day"],
+                   $_POST["p2year"]);
+	$datea2=dolibarr_mktime($_POST["a2hour"],
+                   $_POST["a2min"],
+                   0,
+                   $_POST["a2month"],
+                   $_POST["a2day"],
+                   $_POST["a2year"]);
 	// Si param incorrects, mktime renvoi false en PHP 5.1, -1 avant
 	if (! ($datep > 0)) $datep='';
 	if (! ($datea > 0)) $datea='';
-
+	if (! ($datep2 > 0)) $datep2='';
+	if (! ($datea2 > 0)) $datea2='';
+	
+	// Initialisation objet cactioncomm
     if (! $_POST["actioncode"])
     {
     	$error=1;
 		$_GET["action"] = 'create';
         $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
     }
+	else 
+	{
+		$result=$cactioncomm->fetch($_POST["actioncode"]);
+	}
+	
+	// Initialisation objet actioncomm
+	$actioncomm->type_id = $cactioncomm->id;
+	$actioncomm->type_code = $cactioncomm->code;
+	$actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
+	$actioncomm->label = trim($_POST["label"]);
+	if (! $_POST["label"])
+	{
+		if ($_POST["actioncode"] == 'AC_RDV' && $contact->getFullName($langs))
+		{
+			$actioncomm->label = $langs->trans("TaskRDVWith",$contact->getFullName($langs));
+		}
+		else
+		{
+			if ($langs->trans("Action".$actioncomm->type_code) != "Action".$actioncomm->type_code)
+			{
+				$actioncomm->label = $langs->trans("Action".$actioncomm->type_code)."\n";
+			}
+		}
+	}
+	$actioncomm->datep = $datep;
+	$actioncomm->date = $datea;
+	$actioncomm->datef = $datep2;
+	$actioncomm->dateend = $datea2;
+	if ($_POST["percentage"] < 100 && ! $actioncomm->datep) $actioncomm->datep=$actioncomm->date;
+	if ($actioncomm->type_code == 'AC_RDV')
+	{
+		// RDV
+		if ($actioncomm->date)
+		{
+			$actioncomm->percentage = 100;
+		}
+		else
+		{
+			$actioncomm->percentage = 0;
+		}
+	}
+	else
+	{
+		$actioncomm->percentage = isset($_POST["percentage"])?$_POST["percentage"]:0;
+	}
+	$actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
 
+	$usertodo=new User($db,$_POST["affectedto"]);
+	if ($_POST["affectedto"])
+	{
+		$usertodo->fetch();
+	}
+	$actioncomm->usertodo = $usertodo;
+	$userdone=new User($db,$_POST["doneby"]);
+	if ($_POST["doneby"])
+	{
+		$userdone->fetch();
+	}
+	$actioncomm->userdone = $userdone;
+	
+	$actioncomm->note = trim($_POST["note"]);
+	if (isset($_POST["contactid"])) $actioncomm->contact = $contact;
+	if (isset($_REQUEST["socid"]) && $_REQUEST["socid"] > 0)
+	{
+		$societe = new Societe($db);
+		$societe->fetch($_REQUEST["socid"]);
+		$actioncomm->societe = $societe;
+	}
+	if ($_POST["add_webcal"] == 'on' && $conf->webcal->enabled) $actioncomm->use_webcal=1;
+	if ($_POST["add_phenix"] == 'on' && $conf->phenix->enabled) $actioncomm->use_phenix=1;
+
+	
 	if ($datea && $_POST["percentage"] == 0)
 	{
 		$error=1;	
@@ -112,77 +206,7 @@ if ($_POST["action"] == 'add_action')
     {
         $db->begin();
 
-        $cactioncomm = new CActionComm($db);
-        $cactioncomm->fetch($_POST["actioncode"]);
-
-        // Initialisation objet actioncomm
-        $actioncomm = new ActionComm($db);
-
-        $actioncomm->type_id = $cactioncomm->id;
-        $actioncomm->type_code = $cactioncomm->code;
-        $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
-        $actioncomm->label = trim($_POST["label"]);
-        if (! $_POST["label"])
-        {
-            if ($_POST["actioncode"] == 'AC_RDV' && $contact->getFullName($langs))
-            {
-                $actioncomm->label = $langs->trans("TaskRDVWith",$contact->getFullName($langs));
-            }
-            else
-            {
-                if ($langs->trans("Action".$actioncomm->type_code) != "Action".$actioncomm->type_code)
-                {
-                    $actioncomm->label = $langs->trans("Action".$actioncomm->type_code)."\n";
-                }
-            }
-        }
-//        print $_POST["aphour"]." ".$_POST["apmin"]." ".$_POST["apday"];
-    	$actioncomm->datep = $datep;
-    	$actioncomm->date = $datea;
-	    if ($_POST["percentage"] < 100 && ! $actioncomm->datep) $actioncomm->datep=$actioncomm->date;
-		if ($actioncomm->type_code == 'AC_RDV')
-		{
-			// RDV
-			if ($actioncomm->date)
-			{
-				$actioncomm->percentage = 100;
-			}
-			else
-			{
-				$actioncomm->percentage = 0;
-			}
-		}
-		else
-		{
-        	$actioncomm->percentage = isset($_POST["percentage"])?$_POST["percentage"]:0;
-	    }
-        $actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
-
-		$usertodo=new User($db,$_POST["affectedto"]);
-        if ($_POST["affectedto"])
-		{
-			$usertodo->fetch();
-		}
-		$actioncomm->usertodo = $usertodo;
-		$userdone=new User($db,$_POST["doneby"]);
-        if ($_POST["doneby"])
-		{
-			$userdone->fetch();
-		}
-		$actioncomm->userdone = $userdone;
-		
-        $actioncomm->note = trim($_POST["note"]);
-        if (isset($_POST["contactid"]))    $actioncomm->contact = $contact;
-        if (isset($_REQUEST["socid"]) && $_REQUEST["socid"] > 0)
-        {
-	        $societe = new Societe($db);
-    	    $societe->fetch($_REQUEST["socid"]);
-        	$actioncomm->societe = $societe;
-       	}
-        if ($_POST["add_webcal"] == 'on' && $conf->webcal->enabled) $actioncomm->use_webcal=1;
-        if ($_POST["add_phenix"] == 'on' && $conf->phenix->enabled) $actioncomm->use_phenix=1;
-
-        // On cr�e l'action
+        // On cree l'action
         $idaction=$actioncomm->add($user);
 
         if ($idaction > 0)
@@ -260,21 +284,43 @@ if ($_POST["action"] == 'update')
         $actioncomm = new Actioncomm($db);
         $actioncomm->fetch($_POST["id"]);
 
-    	$actioncomm->datep = dolibarr_mktime($_POST["aphour"],
+    	$datep=dolibarr_mktime($_POST["aphour"],
                                    $_POST["apmin"],
                                    0,
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
-    	$actioncomm->date = dolibarr_mktime($_POST["adhour"],
+    	$datea=dolibarr_mktime($_POST["adhour"],
                                    $_POST["admin"],
                                    0,
                                    $_POST["admonth"],
                                    $_POST["adday"],
                                    $_POST["adyear"]);
+		$datep2=dolibarr_mktime($_POST["p2hour"],
+	                   $_POST["p2min"],
+	                   0,
+	                   $_POST["p2month"],
+	                   $_POST["p2day"],
+	                   $_POST["p2year"]);
+		$datea2=dolibarr_mktime($_POST["a2hour"],
+	                   $_POST["a2min"],
+	                   0,
+	                   $_POST["a2month"],
+	                   $_POST["a2day"],
+	                   $_POST["a2year"]);
+		// Si param incorrects, mktime renvoi false en PHP 5.1, -1 avant
+		if (! ($datep > 0)) $datep='';
+		if (! ($datea > 0)) $datea='';
+		if (! ($datep2 > 0)) $datep2='';
+		if (! ($datea2 > 0)) $datea2='';
+		
 		//print $_POST["apmonth"].",".$_POST["apday"].",".$_POST["apyear"].",".$_POST["aphour"].",".$_POST["apmin"]."<br>\n";
 		//print $actioncomm->datep;
         $actioncomm->label       = $_POST["label"];
+		$actioncomm->datep = $datep;
+		$actioncomm->date = $datea;
+		$actioncomm->datef = $datep2;
+		$actioncomm->dateend = $datea2;
         $actioncomm->percentage  = $_POST["percentage"];
         $actioncomm->priority    = $_POST["priority"];
         $actioncomm->contact->id = $_POST["contactid"];
@@ -334,8 +380,6 @@ $html = new Form($db);
 
 if ($_GET["action"] == 'create')
 {
-	$caction = new CActioncomm($db);
-
 	if ($_GET["contactid"])
 	{
 		$contact = new Contact($db);
@@ -353,9 +397,9 @@ if ($_GET["action"] == 'create')
 	if ($_GET["actioncode"] == 'AC_RDV')
 	{
 		print_titre ($langs->trans("AddActionRendezVous"));
-		print "<br>";
 
 		if ($mesg) print $mesg.'<br>';
+		else print "<br>";
 
 		print '<input type="hidden" name="date" value="'.$db->idate(time()).'">'."\n";
 
@@ -398,28 +442,30 @@ if ($_GET["action"] == 'create')
 		$html->select_users($_REQUEST["doneby"],'doneby',1);
 		print '</td></tr>';
 
-		// Date planification
-		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td>';
-		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
-		{
-			$html->select_date(-1,'ap',1,1,1,"action");
-		}
-		else
-		{
-			$html->select_date(-1,'ap',1,1,1,"action");
-		}
+		// Date start planed
+		print '<tr><td nowrap="nowrap">'.$langs->trans("DateActionPlannedStart").'</td><td>';
+		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datea,'ap',1,1,0,"action");
+		else if ($_REQUEST["afaire"] == 2) $html->select_date('','ap',1,1,1,"action");
+		else $html->select_date('','ap',1,1,1,"action");
+		print '</td></tr>';
+		// Date end planed
+		print '<tr><td>'.$langs->trans("DateActionPlannedEnd").'</td><td>';
+		if ($_REQUEST["afaire"] == 1) $html->select_date('','p2',1,1,1,"action");
+		else if ($_REQUEST["afaire"] == 2) $html->select_date('','p2',1,1,1,"action");
+		else $html->select_date('','p2',1,1,1,"action");
 		print '</td></tr>';
 
-		// Date done
-		print '<tr><td>'.$langs->trans("DateActionDone").'</td><td>';
-		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
-		{
-			$html->select_date(-1,'ad',1,1,1,"action");
-		}
-		else
-		{
-			$html->select_date(-1,'ad',1,1,1,"action");
-		}
+		// Date start done
+		print '<tr><td>'.$langs->trans("DateActionDoneStart").'</td><td>';
+		if ($_REQUEST["afaire"] == 1) $html->select_date('','ad',1,1,1,"action");
+		else if ($_REQUEST["afaire"] == 2) $html->select_date('','ad',1,1,0,"action");
+		else $html->select_date('','ad',1,1,1,"action");
+		print '</td></tr>';
+		// Date end done
+		print '<tr><td>'.$langs->trans("DateActionDoneEnd").'</td><td>';
+		if ($_REQUEST["afaire"] == 1) $html->select_date('','a2',1,1,1,"action");
+		else if ($_REQUEST["afaire"] == 2) $html->select_date('','a2',1,1,0,"action");
+		else $html->select_date('','a2',1,1,1,"action");
 		print '</td></tr>';
 
 		// Duration
@@ -459,10 +505,10 @@ if ($_GET["action"] == 'create')
 	else
 	{
 		print_titre ($langs->trans("AddAnAction"));
-		print "<br>";
 
 		if ($mesg) print $mesg.'<br>';
-
+		else print "<br>";
+		
 		print '<table class="border" width="100%">';
 
 		// Type d'action actifs
@@ -475,15 +521,15 @@ if ($_GET["action"] == 'create')
 		}
 		else
 		{
-			$html->select_type_actions(0, "actioncode");
+			$html->select_type_actions($actioncomm->type_code, "actioncode");
 		}
 		print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="30"></td></tr>';
+		print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="30" value="'.$actioncomm->label.'"></td></tr>';
 
 		// Societe, contact
 		print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
-		if ($_REQUEST["socid"])
+		if ($_REQUEST["socid"] > 0)
 		{
 			$societe = new Societe($db);
 			$societe->fetch($_REQUEST["socid"]);
@@ -497,7 +543,7 @@ if ($_GET["action"] == 'create')
 		print '</td></tr>';
 
 		// Si la societe est imposee, on propose ces contacts
-		if ($_REQUEST["socid"])
+		if ($_REQUEST["socid"] > 0)
 		{
 			print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
 			$html->select_contacts($_REQUEST["socid"],'','contactid',1,1);
@@ -506,22 +552,22 @@ if ($_GET["action"] == 'create')
 
 		// Affecte a
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td>';
-		$html->select_users($_REQUEST["affectedto"],'affectedto',1);
+		$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:$actioncomm->usertodo,'affectedto',1);
 		print '</td></tr>';
 
 		// Realise par
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-		$html->select_users($_REQUEST["doneby"],'doneby',1);
+		$html->select_users($_REQUEST["doneby"]?$_REQUEST["doneby"]:$actioncomm->userdone,'doneby',1);
 		print '</td></tr>';
 
 		// Avancement
-		if ($_GET["afaire"] == 1)
+		if ($_REQUEST["afaire"] == 1)
 		{
 			print '<input type="hidden" name="percentage" value="0">';
 			print '<input type="hidden" name="todo" value="on">';
 			print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionToDo").' / 0%</td></tr>';
 		}
-		elseif ($_GET["afaire"] == 2)
+		elseif ($_REQUEST["afaire"] == 2)
 		{
 			print '<input type="hidden" name="percentage" value="100">';
 			print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionDone").' / 100%</td></tr>';
@@ -530,28 +576,30 @@ if ($_GET["action"] == 'create')
 			print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0" size="4">%</td></tr>';
 		}
 
-		// Date planification
-		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td>';
-		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
-		{
-			$html->select_date('','ap',1,1,0,"action");
-		}
-		else
-		{
-			$html->select_date('','ap',1,1,0,"action");
-		}
+		// Date start planed
+		print '<tr><td nowrap="nowrap">'.$langs->trans("DateActionPlannedStart").'</td><td>';
+		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action");
+		else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
+		else $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
+		print '</td></tr>';
+		// Date end planed
+		print '<tr><td>'.$langs->trans("DateActionPlannedEnd").'</td><td>';
+		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
+		else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
+		else $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
 		print '</td></tr>';
 
-		// Date done
-		print '<tr><td>'.$langs->trans("DateActionDone").'</td><td>';
-		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
-		{
-			$html->select_date(-1,'ad',1,1,1,"action");
-		}
-		elseif ($_GET["afaire"] != 1)
-		{
-			$html->select_date(-1,'ad',1,1,1,"action");
-		}
+		// Date start done
+		print '<tr><td>'.$langs->trans("DateActionDoneStart").'</td><td>';
+		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->date,'ad',1,1,1,"action");
+		else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->date,'ad',1,1,0,"action");
+		else $html->select_date($actioncomm->date,'ad',1,1,1,"action");
+		print '</td></tr>';
+		// Date end done
+		print '<tr><td>'.$langs->trans("DateActionDoneEnd").'</td><td>';
+		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->dateend,'a2',1,1,1,"action");
+		else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->dateend,'a2',1,1,0,"action");
+		else $html->select_date($actioncomm->dateend,'a2',1,1,1,"action");
 		print '</td></tr>';
 
 		add_row_for_calendar_link();
@@ -834,7 +882,7 @@ function add_row_for_calendar_link()
 	global $conf,$langs,$user;
   $nbtr=0;
 
-  // Lien avec calendrier si module activ�
+  // Lien avec calendrier si module active
   if ($conf->webcal->enabled)
   {
   	if ($conf->global->PHPWEBCALENDAR_SYNCRO != 'never')

@@ -112,11 +112,16 @@ $next = dol_get_next_month($month, $year);
 $next_year  = $next['year'];
 $next_month = $next['month'];
 
-$max_day_in_month = date("t",dolibarr_mktime(0,0,0,$month,1,$year));
 $max_day_in_prev_month = date("t",dolibarr_mktime(0,0,0,$prev_month,1,$prev_year));
-
+$max_day_in_month = date("t",dolibarr_mktime(0,0,0,$month,1,$year));
 $day = -date("w",dolibarr_mktime(0,0,0,$month,1,$year))+2;
 if ($day > 1) $day -= 7;
+$firstdaytoshow=dolibarr_mktime(0,0,0,$prev_month,$max_day_in_prev_month+$day,$prev_year);
+$next_day=7-($max_day_in_month+1-$day)%7;
+if ($next_day < 6) $next_day+=7;
+$lastdaytoshow=dolibarr_mktime(0,0,0,$next_month,$next_day,$next_year);
+//print dolibarr_print_date($firstdaytoshow,'day');
+//print dolibarr_print_date($lastdaytoshow,'day');
 
 $title=$langs->trans("DoneAndToDoActions");
 if ($status == 'done') $title=$langs->trans("DoneActions");
@@ -205,6 +210,7 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
+// \TODO Add filters on dates
 
 //echo "$sql<br>";
 $actionarray=array();
@@ -224,23 +230,31 @@ if ($resql)
 		$action->libelle=$obj->label;
 		$action->percentage=$obj->percent;
 
+		// Defined date_start_in_calendar and date_end_in_calendar property
 		if ($action->percentage <= 0)
 		{
-			$action->date_to_show_in_calendar=$action->datep;
-			// Add days until datep2
+			$action->date_start_in_calendar=$action->datep;
+			if ($action->datef != '' && $action->datef >= $action->datep) $action->date_end_in_calendar=$action->datef;
+			else $action->date_end_in_calendar=$action->datep;
 		}
-		else if ($action->percentage > 0)
+		else
 		{
-			$action->date_to_show_in_calendar=$action->date;
-			// Add days until dateend
-
+			$action->date_start_in_calendar=$action->date;
+			if ($action->dateend != '' && $action->dateend >= $action->date) $action->date_end_in_calendar=$action->dateend;
+			else $action->date_end_in_calendar=$action->date;
+		}
+		// Define ponctuel property
+		if ($action->date_start_in_calendar == $action->date_end_in_calendar)
+		{
+			$action->ponctuel=1;
 		}
 
-		//var_dump($action);
-		$actionarray[]=$action;
+		// Add an entry in action array for each day
+		// \TODO
+		$daykey=$action->date_start_in_calendar;
+		$actionarray[$daykey]=$action;
 		$i++;
 	}
-	//echo $num;
 }
 else
 {
@@ -323,15 +337,15 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray)
 
 	//$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
 	$i=0;
-	foreach ($actionarray as $action)
+	foreach ($actionarray as $daykey => $action)
 	{
-		$annee = date('Y',$action->date_to_show_in_calendar);
-		$mois = date('m',$action->date_to_show_in_calendar);
-		$jour = date('d',$action->date_to_show_in_calendar);
+		$annee = date('Y',$action->date_start_in_calendar);
+		$mois = date('m',$action->date_start_in_calendar);
+		$jour = date('d',$action->date_start_in_calendar);
 		if ($day==$jour && $month==$mois && $year==$annee)
 		{
 			if ($i) print "<br>";
-	   		print $action->getNomUrl(1,10)." ".$action->getLibStatut(3);
+	   		print $action->getNomUrl(1,9).$action->getLibStatut(3);
 			$i++;
 		}
 	}

@@ -572,7 +572,7 @@ class Form
 		$arraylist[0]='&nbsp;';
 		asort($arraylist);
 		
-		$this->select_array($htmlname, $arraylist, 0);
+		$this->select_array($htmlname, $arraylist, $selected);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	}
 
@@ -2728,7 +2728,7 @@ class Form
         \brief  Affiche un select à partir d'un tableau
         \param	htmlname        Nom de la zone select
         \param	array           Tableau de key+valeur
-        \param	id              Key pré-sélectionnée
+        \param	id              Preselected key
         \param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
         \param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
         \param	value_as_key    1 pour utiliser la valeur comme clé
