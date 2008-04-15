@@ -225,8 +225,8 @@ if ($resql)
 		$action->id=$obj->id;
 		$action->datep=$obj->datep;
 		$action->datef=$obj->datep2;
-		$action->date=$obj->datea;
-		$action->dateend=$obj->datea2;
+		//$action->date=$obj->datea;
+		//$action->dateend=$obj->datea2;
 		$action->libelle=$obj->label;
 		$action->percentage=$obj->percent;
 
@@ -239,9 +239,9 @@ if ($resql)
 		}
 		else
 		{
-			$action->date_start_in_calendar=$action->date;
-			if ($action->dateend != '' && $action->dateend >= $action->date) $action->date_end_in_calendar=$action->dateend;
-			else $action->date_end_in_calendar=$action->date;
+			$action->date_start_in_calendar=$action->datep;
+			if ($action->datef != '' && $action->datef >= $action->datep) $action->date_end_in_calendar=$action->datef;
+			else $action->date_end_in_calendar=$action->datep;
 		}
 		// Define ponctuel property
 		if ($action->date_start_in_calendar == $action->date_end_in_calendar)

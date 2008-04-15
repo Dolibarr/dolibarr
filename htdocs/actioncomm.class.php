@@ -202,8 +202,11 @@ class ActionComm
 	{
 		global $langs;
 	
-		$sql = "SELECT a.id, ".$this->db->pdate("a.datea")." as datea,";
+		$sql = "SELECT a.id,";
+		$sql.= " ".$this->db->pdate("a.datea")." as datea,";
+		$sql.= " ".$this->db->pdate("a.datea2")." as datea2,";
 		$sql.= " ".$this->db->pdate("a.datep")." as datep,";
+		$sql.= " ".$this->db->pdate("a.datep2")." as datep2,";
 		$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
 		$sql.= " a.note, a.label, a.fk_action as type_id,";
 		$sql.= " a.fk_soc,";
@@ -228,10 +231,13 @@ class ActionComm
 				$this->type_code = $obj->type_code;
 				$transcode=$langs->trans("Action".$obj->code);
 				$type_libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-				$this->type = $type_libelle;
-				$this->label = $obj->label;
-				$this->date  = $obj->datea;
-				$this->datep = $obj->datep;
+				$this->type    = $type_libelle;
+				$this->label   = $obj->label;
+				$this->datep   = $obj->datep;
+				$this->datef   = $obj->datep2;
+				$this->date    = $obj->datea;
+				$this->dateend = $obj->datea2;
+
 				$this->datec = $obj->datec;
 				$this->datem = $obj->datem;
 				$this->note =$obj->note;

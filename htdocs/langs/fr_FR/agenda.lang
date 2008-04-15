@@ -34,3 +34,5 @@ DateActionPlannedStart=Date début réalisation prévue
 DateActionPlannedEnd=Date fin réalisation prévue
 DateActionDoneStart=Date début réalisation réelle
 DateActionDoneEnd=Date fin réalisation réelle
+DateActionStart=Date début
+DateActionEnd=Date fin

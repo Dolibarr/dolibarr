@@ -102,7 +102,7 @@ $form=new Form($db);
 
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id, ".$db->pdate("a.datep")." as dp, ".$db->pdate("a.datep2")." as dp2,";
-$sql.= " ".$db->pdate("a.datea")." as da, ".$db->pdate("a.datea2")." as da2,";
+//$sql.= " ".$db->pdate("a.datea")." as da, ".$db->pdate("a.datea2")." as da2,";
 $sql.= " a.fk_contact, a.note, a.label, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle,";
 $sql.= " ua.login as loginauthor, ua.rowid as useridauthor,";
@@ -231,8 +231,8 @@ if ($resql)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DatePlanShort"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateRealShort"),$_SERVER["PHP_SELF"],"a.datea2",$param,'','',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ActionUserAsk"),$_SERVER["PHP_SELF"],"ua.login",$param,"","",$sortfield,$sortorder);
@@ -276,7 +276,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td align="center" nowrap="nowrap">';
-		print dolibarr_print_date($obj->da2,"day");
+		print dolibarr_print_date($obj->dp2,"day");
 		print '</td>';
 
         // Société

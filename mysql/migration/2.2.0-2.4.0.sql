@@ -228,8 +228,11 @@ insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_HIGH',      '
 
 alter table llx_societe add column fk_prospectlevel varchar(12) after fournisseur;
 
-update llx_actioncomm set datea = datep where datea is null and percent = 100;
-update llx_actioncomm set datea2 = datea where datea2 is null and percent = 100;
+--update llx_actioncomm set datea = datep where datea is null and percent = 100;
+--update llx_actioncomm set datea2 = datea where datea2 is null and percent = 100;
+update llx_actioncomm set datep = datea where datep is null and datea is not null;
+update llx_actioncomm set datep = datec where datep is null and datea is null;
+update llx_actioncomm set datep2 = datep where datep2 is null and percent = 100;
 
 
 alter table llx_projet modify fk_soc           integer;

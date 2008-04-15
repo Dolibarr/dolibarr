@@ -152,6 +152,7 @@ Next=Next
 Cards=Cards
 Card=Card
 Date=Date
+DateStart=Date start
 DateEnd=Date end
 DateCreation=Creation date
 DateModification=Modification date
