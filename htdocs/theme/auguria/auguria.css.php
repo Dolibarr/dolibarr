@@ -355,17 +355,17 @@ img.login
 /* Barre de gauche                                                                */
 /* ============================================================================== */
 
-a.vmenu:link        { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-a.vmenu:visited     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-a.vmenu:active      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-a.vmenu:hover       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; margin: 1em 1em 1em 1em; }
+a.vmenu:link        { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 1px; }
+a.vmenu:visited     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 1px; }
+a.vmenu:active      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 1px; }
+a.vmenu:hover       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 1px; }
+font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; margin: 1px 1px 1px 1px; }
 
-a.vsmenu:link       { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:visited    { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:active     { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); margin: 1em 1em 1em 1em; }
-a.vsmenu:hover      { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); margin: 1em 1em 1em 1em; }
-font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #757575; margin: 1em 1em 1em 1em; }
+a.vsmenu:link       { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 1px; }
+a.vsmenu:visited    { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 1px; }
+a.vsmenu:active     { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); 1px 1px 1px 1px; }
+a.vsmenu:hover      { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); margin: 1px 1px 1px 1px; }
+font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #757575; margin: 1px 1px 1px 1px; }
 
 a.help:link         { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
@@ -1206,10 +1206,16 @@ cursor: pointer;
 /*  Module agenda                                                                 */
 /* ============================================================================== */
 
-.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; }
-.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; }
-.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; }
-.cal_today         { background: #DDFFDD; border: solid 1px #ACBCBB; }
+.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
+table.cal_event    { border-collapse: collapse; margin-bottom: 1px; }
+table.cal_event td { border: 0px; padding-left: 0px; padding-right: 2px; padding-top: 0px; padding-bottom: 0px; } */
+.cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal; !important }
+.cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal; !important }
+.cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal; !important }
+.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal; !important }
 
 
 

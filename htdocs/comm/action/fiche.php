@@ -39,7 +39,7 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("agenda");
 
-// Securite acces client
+// Security check
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -324,12 +324,15 @@ if ($_POST["action"] == 'update')
 		$actioncomm->dateend = $datea2;
         $actioncomm->percentage  = $_POST["percentage"];
         $actioncomm->priority    = $_POST["priority"];
+		$actioncomm->societe->id = $_POST["socid"];
         $actioncomm->contact->id = $_POST["contactid"];
         $actioncomm->note        = $_POST["note"];
-		if ($actioncomm->type_code == 'AC_RDV' && $actioncomm->percentage == 100 && ! $actioncomm->date)
-		{
-			$actioncomm->date = $actioncomm->datep;
-		}
+
+	 	if (! $datep2 && $_POST["percentage"] == 100)
+	 	{
+	    	$error=$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd"));
+			$_REQUEST["action"] = 'edit';
+	 	}
 
 		// Users
 		$usertodo=new User($db,$_POST["affectedto"]);
@@ -345,7 +348,21 @@ if ($_POST["action"] == 'update')
 		}
 		$actioncomm->userdone = $userdone;
 
-        $result=$actioncomm->update($user);
+		if (! $error)
+		{
+			$db->begin();
+			
+			$result=$actioncomm->update($user);
+			
+			if ($result > 0)
+			{
+				$db->commit();
+			}
+			else
+			{
+				$db->rollback();
+			}	
+		}
     }
 
     if ($result < 0)
@@ -391,234 +408,137 @@ if ($_GET["action"] == 'create')
     if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
 	print '<input type="hidden" name="action" value="add_action">';
 
-	/*
-	* Si action de type Rendez-vous
-	*
-	*/
-	if ($_GET["actioncode"] == 'AC_RDV')
+	if ($_GET["actioncode"] == 'AC_RDV') print_titre ($langs->trans("AddActionRendezVous"));
+	else print_titre ($langs->trans("AddAnAction"));
+
+	if ($mesg) print $mesg.'<br>';
+	else print "<br>";
+	
+	print '<table class="border" width="100%">';
+
+	// Type d'action actifs
+	print '<tr><td><b>'.$langs->trans("Type").'*</b></td><td>';
+	if ($_GET["actioncode"])
 	{
-		print_titre ($langs->trans("AddActionRendezVous"));
-
-		if ($mesg) print $mesg.'<br>';
-		else print "<br>";
-
-		print '<input type="hidden" name="date" value="'.$db->idate(time()).'">'."\n";
-
-		print '<table class="border" width="100%">';
-
-		// Type d'action
-		print '<input type="hidden" name="actioncode" value="AC_RDV">';
-
-		// Societe, contact
-		print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
-		if ($_REQUEST["socid"])
-		{
-			$societe = new Societe($db);
-			$societe->fetch($_REQUEST["socid"]);
-			print $societe->getNomUrl(1);
-			print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
-		}
-		else
-		{
-			print $html->select_societes('','socid',1,1);
-		}
-		print '</td></tr>';
-
-		// Si la societe est imposee, on propose ses contacts
-		if ($_REQUEST["socid"])
-		{
-			$contactid = $_REQUEST["contactid"]?$_REQUEST["contactid"]:'';
-			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
-			$html->select_contacts($_REQUEST["socid"],$contactid,'contactid',1,1);
-			print '</td></tr>';
-		}
-
-		// Affecte a
-		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td>';
-		$html->select_users($_REQUEST["affectedto"],'affectedto',1);
-		print '</td></tr>';
-
-		// Realise par
-		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-		$html->select_users($_REQUEST["doneby"],'doneby',1);
-		print '</td></tr>';
-
-		// Date start
-		print '<tr><td nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td>';
-		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action");
-		else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
-		else $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
-		print '</td></tr>';
-		// Date end
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
-		else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
-		else $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
-		print '</td></tr>';
-
-		// Duration
-		print '<tr><td>'.$langs->trans("Duration").'</td><td>';
-		$html->select_duree("duree");
-		print '</td></tr>';
-
-		add_row_for_calendar_link();
-
-		// Note
-		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
-		if ($conf->fckeditor->enabled)
-	    {
-		    // Editeur wysiwyg
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note','',280,'dolibarr_notes','In',true);
-			$doleditor->Create();
-	    }
-	    else
-	    {
-			print '<textarea name="note" cols="90" rows="'.ROWS_8.'"></textarea>';
-	    }
-		print '</td></tr>';
-
-		print '<tr><td colspan="2" align="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</td></tr>';
-		print '</table>';
+		print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
+		$caction->fetch($_GET["actioncode"]);
+		print $caction->getNomUrl();
 	}
-
-	/*
-	* Si action de type autre que rendez-vous
-	*
-	*/
 	else
 	{
-		print_titre ($langs->trans("AddAnAction"));
-
-		if ($mesg) print $mesg.'<br>';
-		else print "<br>";
-		
-		print '<table class="border" width="100%">';
-
-		// Type d'action actifs
-		print '<tr><td><b>'.$langs->trans("Type").'*</b></td><td>';
-		if ($_GET["actioncode"])
-		{
-			print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
-			$caction->fetch($_GET["actioncode"]);
-			print $caction->getNomUrl();
-		}
-		else
-		{
-			$html->select_type_actions($actioncomm->type_code, "actioncode");
-		}
-		print '</td></tr>';
-
-		print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="30" value="'.$actioncomm->label.'"></td></tr>';
-
-		// Societe, contact
-		print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
-		if ($_REQUEST["socid"] > 0)
-		{
-			$societe = new Societe($db);
-			$societe->fetch($_REQUEST["socid"]);
-			print $societe->getNomUrl(1);
-			print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
-		}
-		else
-		{
-			print $html->select_societes('','socid',1,1);
-		}
-		print '</td></tr>';
-
-		// Si la societe est imposee, on propose ces contacts
-		if ($_REQUEST["socid"] > 0)
-		{
-			print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
-			$html->select_contacts($_REQUEST["socid"],'','contactid',1,1);
-			print '</td></tr>';
-		}
-
-		// Affecte a
-		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td>';
-		$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:$actioncomm->usertodo,'affectedto',1);
-		print '</td></tr>';
-
-		// Realise par
-		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
-		$html->select_users($_REQUEST["doneby"]?$_REQUEST["doneby"]:$actioncomm->userdone,'doneby',1);
-		print '</td></tr>';
-
-		// Date start
-		print '<tr><td nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td>';
-		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action");
-		else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
-		else $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
-		print '</td></tr>';
-		// Date end
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
-		else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
-		else $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
-		print '</td></tr>';
-
-		// Date start done
-		/*
-		print '<tr><td>'.$langs->trans("DateActionDoneStart").'</td><td>';
-		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->date,'ad',1,1,1,"action");
-		else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->date,'ad',1,1,0,"action");
-		else $html->select_date($actioncomm->date,'ad',1,1,1,"action");
-		print '</td></tr>';
-		// Date end done
-		print '<tr><td>'.$langs->trans("DateActionDoneEnd").'</td><td>';
-		if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->dateend,'a2',1,1,1,"action");
-		else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->dateend,'a2',1,1,0,"action");
-		else $html->select_date($actioncomm->dateend,'a2',1,1,1,"action");
-		print '</td></tr>';
-		*/
-		
-		// Avancement
-		if ($_REQUEST["afaire"] == 1)
-		{
-			print '<input type="hidden" name="percentage" value="0">';
-			print '<input type="hidden" name="todo" value="on">';
-			print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionToDo").' / 0%</td></tr>';
-		}
-		elseif ($_REQUEST["afaire"] == 2)
-		{
-			print '<input type="hidden" name="percentage" value="100">';
-			print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionDone").' / 100%</td></tr>';
-		} else
-		{
-			print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0" size="4">%</td></tr>';
-		}
-
-		add_row_for_calendar_link();
-
-		// Note
-		print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
-		if ($conf->fckeditor->enabled)
-	    {
-		    // Editeur wysiwyg
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note','',280,'dolibarr_notes','In',true);
-			$doleditor->Create();
-	    }
-	    else
-	    {
-			print '<textarea name="note" cols="90" rows="'.ROWS_8.'"></textarea>';
-	    }
-		print '</td></tr>';
-
-		print '<tr><td align="center" colspan="2">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-		print ' &nbsp; &nbsp; ';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</td></tr>';
-
-		print '</table>';
-
-
+		$html->select_type_actions($actioncomm->type_code, "actioncode");
 	}
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="30" value="'.$actioncomm->label.'"></td></tr>';
+
+	// Societe, contact
+	print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
+	if ($_REQUEST["socid"] > 0)
+	{
+		$societe = new Societe($db);
+		$societe->fetch($_REQUEST["socid"]);
+		print $societe->getNomUrl(1);
+		print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
+	}
+	else
+	{
+		print $html->select_societes('','socid',1,1);
+	}
+	print '</td></tr>';
+
+	// Si la societe est imposee, on propose ces contacts
+	if ($_REQUEST["socid"] > 0)
+	{
+		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
+		$html->select_contacts($_REQUEST["socid"],'','contactid',1,1);
+		print '</td></tr>';
+	}
+
+	// Affecte a
+	print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td>';
+	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:$actioncomm->usertodo,'affectedto',1);
+	print '</td></tr>';
+
+	// Realise par
+	print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
+	$html->select_users($_REQUEST["doneby"]?$_REQUEST["doneby"]:$actioncomm->userdone,'doneby',1);
+	print '</td></tr>';
+
+	if (! empty($_GET["datep"]) && eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$',$_GET["datep"],$reg)) 
+	{
+		$actioncomm->datep=dolibarr_mktime(0,0,0,$reg[2],$reg[3],$reg[1]);
+	}
+
+	// Date start
+	print '<tr><td nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td>';
+	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action");
+	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
+	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
+	print '</td></tr>';
+	// Date end
+	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
+	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
+	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
+	else $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
+	print '</td></tr>';
+
+	// Date start done
+	/*
+	print '<tr><td>'.$langs->trans("DateActionDoneStart").'</td><td>';
+	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->date,'ad',1,1,1,"action");
+	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->date,'ad',1,1,0,"action");
+	else $html->select_date($actioncomm->date,'ad',1,1,1,"action");
+	print '</td></tr>';
+	// Date end done
+	print '<tr><td>'.$langs->trans("DateActionDoneEnd").'</td><td>';
+	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->dateend,'a2',1,1,1,"action");
+	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->dateend,'a2',1,1,0,"action");
+	else $html->select_date($actioncomm->dateend,'a2',1,1,1,"action");
+	print '</td></tr>';
+	*/
+	
+	// Avancement
+	if ($_REQUEST["afaire"] == 1)
+	{
+		print '<input type="hidden" name="percentage" value="0">';
+		print '<input type="hidden" name="todo" value="on">';
+		print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionToDo").' / 0%</td></tr>';
+	}
+	elseif ($_REQUEST["afaire"] == 2)
+	{
+		print '<input type="hidden" name="percentage" value="100">';
+		print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionDone").' / 100%</td></tr>';
+	} else
+	{
+		print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0" size="4">%</td></tr>';
+	}
+
+	add_row_for_calendar_link();
+
+	// Note
+	print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
+	if ($conf->fckeditor->enabled)
+	{
+		// Editeur wysiwyg
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('note','',280,'dolibarr_notes','In',true);
+		$doleditor->Create();
+	}
+	else
+	{
+		print '<textarea name="note" cols="90" rows="'.ROWS_8.'"></textarea>';
+	}
+	print '</td></tr>';
+
+	print '<tr><td align="center" colspan="2">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+	print ' &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</td></tr>';
+
+	print '</table>';
+
 	print "</form>";
 }
 
@@ -677,7 +597,7 @@ if ($_GET["id"])
         print '<br>';
     }
 
-    if ($_GET["action"] == 'edit')
+    if ($_REQUEST["action"] == 'edit')
     {
         // Fiche action en mode edition
         print '<form action="fiche.php" method="post">';
@@ -690,7 +610,9 @@ if ($_GET["id"])
         print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
         print '<tr><td>'.$langs->trans("Company").'</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$act->societe->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$act->societe->nom.'</a></td>';
+        print '<td>';
+		print $html->select_societes($act->societe->id,'socid',1,1);
+		print '</td>';
 
         print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
         $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
@@ -732,7 +654,7 @@ if ($_GET["id"])
 		print '</td></tr>';
 
 		// Status
-        print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percentage" value="'.$act->percentage.'" size="4">%</td></tr>';
+        print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percentage" value="'.(isset($_REQUEST["percentage"])?$_REQUEST["percentage"]:$act->percentage).'" size="4">%</td></tr>';
 
 		// Object linked
         if ($act->objet_url)
@@ -778,7 +700,7 @@ if ($_GET["id"])
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
 
 		// Societe - contact
-        print '<tr><td>'.$langs->trans("Company").'</td><td>'.$act->societe->getNomUrl(1).'</td>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None")).'</td>';
         print '<td>'.$langs->trans("Contact").'</td>';
         print '<td>';
         if ($act->contact->id > 0)

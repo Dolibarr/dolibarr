@@ -197,7 +197,8 @@ $sql.= ' '.$db->pdate('a.datep').' as datep,';
 $sql.= ' '.$db->pdate('a.datep2').' as datep2,';
 $sql.= ' '.$db->pdate('a.datea').' as datea,';
 $sql.= ' '.$db->pdate('a.datea2').' as datea2,';
-$sql.= ' a.percent,a.fk_user_author,a.fk_user_action,a.fk_user_done';
+$sql.= ' a.percent,';
+$sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';	
 $sql.= ' WHERE 1=1';
 if ($filtera > 0 || $filtert > 0 || $filterd > 0) 
@@ -229,7 +230,10 @@ if ($resql)
 		//$action->dateend=$obj->datea2;
 		$action->libelle=$obj->label;
 		$action->percentage=$obj->percent;
-
+		$action->author->id=$obj->fk_user_author;
+		$action->usertodo->id=$obj->fk_user_action;
+		$action->userdone->id=$obj->fk_user_done;
+		
 		// Defined date_start_in_calendar and date_end_in_calendar property
 		if ($action->percentage <= 0)
 		{
@@ -249,10 +253,21 @@ if ($resql)
 			$action->ponctuel=1;
 		}
 
-		// Add an entry in action array for each day
+		// Add an entry in actionarray for each day
 		// \TODO
-		$daykey=$action->date_start_in_calendar;
-		$actionarray[$daykey]=$action;
+		$daycursor=$action->date_start_in_calendar;
+		$annee = date('Y',$daycursor);
+		$mois = date('m',$daycursor);
+		$jour = date('d',$daycursor);
+		$daykey=dolibarr_mktime(0,0,0,$mois,$jour,$annee);
+		$loop=true;
+		do
+		{
+			$actionarray[$daykey][]=$action;
+			$daykey+=60*60*24;
+			if ($daykey > $action->date_end_in_calendar) $loop=false;
+		}
+		while ($loop);
 		$i++;
 	}
 }
@@ -260,6 +275,14 @@ else
 {
 	dolibarr_print_error($db);
 }
+
+// Define theme_datacolor array
+$color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
+if (is_readable($color_file))
+{
+	include_once($color_file);
+}
+if (! is_array($theme_datacolor)) $theme_datacolor=array(array(120,130,150), array(200,160,180), array(190,190,220));
 
 echo '<table width="100%" class="nocellnopadd">';
 echo ' <tr class="liste_titre">';
@@ -327,29 +350,83 @@ llxFooter('$Date$ - $Revision$');
 */
 function show_day_events($db, $day, $month, $year, $style, $actionarray)
 {
+	global $user, $conf, $langs;
 	global $filtera, $filtert, $filted;
+	global $theme_datacolor;
 	
 	$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
 
-	print '<table class="noborder" width="100%">';
-	print '<tr style="border-bottom: solid 1px #AAAAAA;"><td align="left">'.dolibarr_print_date($curtime,'%a %d').'</td></tr>';
-	print '<tr height="60"><td valign="top">';
+	print '<table class="nobordernopadding" width="100%">';
+	print '<tr style="background: #EEEEEE"><td align="left">';
+	print dolibarr_print_date($curtime,'%a %d');
+	print '</td><td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).'">';
+	print img_picto($langs->trans("NewAction"),'edit_add.png');
+	print '</a>';
+	print '</td></tr>';
+	print '<tr height="60"><td valign="top" colspan="2">';	// Minimum 60px height
 
 	//$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
 	$i=0;
-	foreach ($actionarray as $daykey => $action)
+	foreach ($actionarray as $daykey => $notused)
 	{
-		$annee = date('Y',$action->date_start_in_calendar);
-		$mois = date('m',$action->date_start_in_calendar);
-		$jour = date('d',$action->date_start_in_calendar);
+		$annee = date('Y',$daykey);
+		$mois = date('m',$daykey);
+		$jour = date('d',$daykey);
 		if ($day==$jour && $month==$mois && $year==$annee)
 		{
-			if ($i) print "<br>";
-	   		print $action->getNomUrl(1,9).$action->getLibStatut(3);
-			$i++;
+			foreach ($actionarray[$daykey] as $index => $action)
+			{
+		   		$ponct=($action->date_start_in_calendar == $action->date_end_in_calendar);
+				// Show rect of event
+				$colorindex=0;
+				if ($action->author->id == $user->id || $action->usertodo->id == $user->id || $action->userdone->id == $user->id) $colorindex=1;
+				$color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
+				//print "x".$color;
+				print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; " width="100%"><tr>';
+				print '<td>';
+				$tmpyearstart  = date('Y',$action->date_start_in_calendar);
+				$tmpmonthstart = date('m',$action->date_start_in_calendar);
+				$tmpdaystart   = date('d',$action->date_start_in_calendar);
+				$tmpyearend    = date('Y',$action->date_end_in_calendar);
+				$tmpmonthend   = date('m',$action->date_end_in_calendar);
+				$tmpdayend     = date('d',$action->date_end_in_calendar);
+				// Hour start
+				if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
+				{
+					print dolibarr_print_date($action->date_start_in_calendar,'%H:%M');
+					if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
+					{
+						if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend)
+							print '-';
+						//else
+							//print '...';
+					}
+				}
+				if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
+				{
+					if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend)
+					{
+						print '...';
+					}
+				}
+				// Hour end
+				if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
+				{
+					if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
+						print dolibarr_print_date($action->date_end_in_calendar,'%H:%M');
+				}
+				print '<br>';
+				print $action->getNomUrl(0,14,'cal_event');
+				print '</td>';
+				print '<td align="right">'.$action->getLibStatut(3);
+				print '</td></tr></table>';
+				$i++;
+			}
 		}
 	}
-	print '&nbsp;</td></tr>';
+	if (! $i) print '&nbsp;';
+	print '</td></tr>';
 	print '</table>';
 }
 

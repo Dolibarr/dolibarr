@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file       htdocs/theme/eldy/graph-color.php
 		\brief      Fichier de déclaration des couleurs pour les graphiques
         \ingroup    core
-		\version    $Revision$
+		\version    $Id$
 */
 
 global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;

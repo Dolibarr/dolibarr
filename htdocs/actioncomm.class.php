@@ -45,8 +45,8 @@ class ActionComm
 
     var $datec;			// Date creation enregistrement (datec)
     var $datem;			// Date modif enregistrement (tms)
-    var $author;		// User that create action
-    var $usermod;		// User that modified action
+    var $author;		// Object user that create action
+    var $usermod;		// Object user that modified action
 
     var $datep;			// Date action planifie debut (datep)
     var $datef;			// Date action planifie fin (datep2)
@@ -56,8 +56,8 @@ class ActionComm
     var $durationa = -1;
 	var $priority;
 
-    var $usertodo;		// User that must do action
-    var $userdone;	 	// User that did action
+    var $usertodo;		// Object user that must do action
+    var $userdone;	 	// Object user that did action
 	
     var $societe;
     var $contact;
@@ -338,6 +338,7 @@ class ActionComm
         $sql.= ", datea = ".($this->date ? "'".$this->db->idate($this->date)."'" : 'null');
         $sql.= ", datea2 = ".($this->dateend ? "'".$this->db->idate($this->dateend)."'" : 'null');
         $sql.= ", note = ".($this->note ? "'".addslashes($this->note)."'":"null");
+        $sql.= ", fk_soc =". ($this->societe->id > 0 ? "'".$this->societe->id."'":"null");
         $sql.= ", fk_contact =". ($this->contact->id > 0 ? "'".$this->contact->id."'":"null");
         $sql.= ", priority = '".$this->priority."'";
         $sql.= ", fk_user_mod = '".$user->id."'";
@@ -500,20 +501,21 @@ class ActionComm
 
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-	 *		\param		withpicto		Inclut le picto dans le lien
+	 * 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	 *		\param		maxlength		Nombre de caractères max dans libellé
+	 *		\param		class			Force style class on a link
 	 *		\return		string			Chaine avec URL
 	 *		\remarks	Utilise $this->id, $this->code et $this->libelle
 	 */
-	function getNomUrl($withpicto=0,$maxlength)
+	function getNomUrl($withpicto=0,$maxlength,$class='')
 	{
 		global $langs;
 		
 		$result='';
-		$lien = '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
+		$lien = '<a '.($class?'class="'.$class.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
-        if ($langs->trans("Action".$this->code) != "Action".$this->code)
+        if ($langs->trans("Action".$this->code) != "Action".$this->code || ! $this->libelle)
         {
         	$libelle=$langs->trans("Action".$this->code);
         	$libelleshort=$langs->trans("Action".$this->code,'','','','',$maxlength);
@@ -524,7 +526,8 @@ class ActionComm
         	$libelleshort=dolibarr_trunc($this->libelle,$maxlength);
         }
 		
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTask").': '.$libelle,'task').$lienfin.' ');
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTask").': '.$libelle,'task').$lienfin);
+		if ($withpicto==1) $result.=' '; 
 		$result.=$lien.$libelleshort.$lienfin;
 		return $result;
 	}

@@ -330,11 +330,11 @@ a.vmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align
 a.vmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 font.vmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #aaa593; margin: 0em 0em 0em 0em; }
 
-a.vsmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #aaa593; margin: 1em 1em 1em 1em; }
+a.vsmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #aaa593; margin: 1px 1px 1px 6px; }
 
 a.help:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 a.help:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
@@ -343,6 +343,7 @@ a.help:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:
 
 div.blockvmenupair
 {
+	width:160px;
 	border-right: 1px solid #555555;
 	border-bottom: 1px solid #555555;
 	background: #dcdcb3;
@@ -350,12 +351,16 @@ div.blockvmenupair
 	color: #000000; 
 	text-align:left;
 	text-decoration: none;
-    padding: 3px;
+    padding-left: 3px;
+    padding-right: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
 }
 
 div.blockvmenuimpair
 {
+	width:160px;
 	border-right: 1px solid #555555;
 	border-bottom: 1px solid #555555;
 	background: #dcdcb3;
@@ -363,12 +368,16 @@ div.blockvmenuimpair
 	color: #000000; 
 	text-align:left;
 	text-decoration: none;
-    padding: 3px;
+    padding-left: 3px;
+    padding-right: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
 }
 
 div.help
 {
+	width:160px;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
@@ -376,7 +385,10 @@ div.help
 	color: #000000; 
 	text-align:left;
 	text-decoration: none;
-    padding: 3px;
+    padding-left: 3px;
+    padding-right: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
 }
 
@@ -873,11 +885,16 @@ cursor: pointer;
 /*  Module agenda                                                                 */
 /* ============================================================================== */
 
-.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; }
-.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; }
-.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; }
-.cal_today         { background: #DDFFDD; border: solid 1px #ACBCBB; }
-
+.cal_other_month   { background: #DDDDDD; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_past_month    { background: #EEEEEE; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month { background: #FFFFFF; border: solid 1px #ACBCBB; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
+table.cal_event    { border-collapse: collapse; margin-bottom: 1px; }
+table.cal_event td { border: 0px; padding-left: 0px; padding-right: 2px; padding-top: 0px; padding-bottom: 0px; } */
+.cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal; !important }
+.cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal; !important }
+.cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal; !important }
+.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal; !important }
 
 
 /* ============================================================================== */

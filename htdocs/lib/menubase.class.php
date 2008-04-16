@@ -403,7 +403,7 @@ class Menubase
 						$leftmenuConstraint = false;
 						$str = "if(" . $tab[$x][6] . ") \$leftmenuConstraint = true;";
 
-						eval ($str);
+						dol_eval ($str);
 						if ($leftmenuConstraint == true) {
 							$this->newmenu->add_submenu(DOL_URL_ROOT . $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
 							$this->recur($tab, $tab[$x][0], $rang +1);
@@ -440,7 +440,7 @@ class Menubase
 				$obj = $this->db->fetch_object($result);
 				$strconstraint = "if(!(" . $obj->action . ")) { \$constraint = false; }";
 
-				eval ($strconstraint);
+				dol_eval ($strconstraint);
 				$i++;
 			}
 		}
@@ -463,7 +463,7 @@ class Menubase
 			$i = 0;
 			while (($i < count($tab_rights)) && ($rights == true)) {
 				$str = "if(!(" . $strRights . ")) { \$rights = false;}";
-				eval ($str);
+				dol_eval ($str);
 				$i++;
 			}
 		} else
@@ -537,7 +537,7 @@ class Menubase
 		        	if ($objm->perms)
 		        	{
 		        		$str = "if(!(".$objm->perms.")) \$right = false;";
-		        		eval($str);
+		        		dol_eval($str);
 		        	}
 		        	
 					// Define $chaine
@@ -580,10 +580,17 @@ class Menubase
 		{
 			dolibarr_print_error($this->db);
 		}
-		
+
 		return $tabMenu;
-		
 	}
 
 }
+
+function dol_eval($s)
+{
+	// \todo
+	// Warning. We must add code to exclude test if it contains = (affectation) that is not == (compare)
+	return eval($s);
+}
+
 ?>
