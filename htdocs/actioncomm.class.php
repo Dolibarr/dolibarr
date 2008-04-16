@@ -579,8 +579,8 @@ class ActionComm
 			$sql = "SELECT a.id,";
 			$sql.= " ".$this->db->pdate("a.datep")." as datep,";
 			$sql.= " ".$this->db->pdate("a.datep2")." as datep2,";
-			$sql.= " ".$this->db->pdate("a.datea")." as datea,";
-			$sql.= " ".$this->db->pdate("a.datea2")." as datea2,";
+			//$sql.= " ".$this->db->pdate("a.datea")." as datea,";
+			//$sql.= " ".$this->db->pdate("a.datea2")." as datea2,";
 			$sql.= " a.durationp, a.durationa,";
 			$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
 			$sql.= " a.note, a.label, a.fk_action as type_id,";
@@ -611,9 +611,12 @@ class ActionComm
 					$event=array();
 					$event['uid']='dolibarragenda-'.$this->db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
 					$event['type']=$type;
-					$datestart=$obj->datea?$obj->datea:$obj->datep;
-					$dateend=$obj->datea2?$obj->datea2:$obj->datep2;
-					$duration=$obj->durationa?$obj->durationa:$obj->durationp;
+					//$datestart=$obj->datea?$obj->datea:$obj->datep;
+					//$dateend=$obj->datea2?$obj->datea2:$obj->datep2;
+					//$duration=$obj->durationa?$obj->durationa:$obj->durationp;
+					$datestart=$obj->datep;
+					$dateend=$obj->datep2;
+					$duration=$obj->durationp;
 					$event['startdate']=$datestart;
 					$event['duration']=$duration;	// Not required with type 'journal'
 					$event['enddate']=$dateend;		// Not required with type 'journal'
