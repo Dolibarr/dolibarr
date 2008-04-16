@@ -18,9 +18,9 @@
  */
 
 /**
-	    \file       htdocs/compta/deplacement/fiche.php
-		\brief      Page fiche d'un déplacement
-		\version	$Id$
+   \file       htdocs/compta/deplacement/fiche.php
+   \brief      Page fiche d'un deplacement
+   \version	$Id$
 */
 
 require("./pre.inc.php");
@@ -177,12 +177,12 @@ else
 	      $soc = new Societe($db);
 	      $soc->fetch($deplacement->socid);
 
-	      print '<tr><td width="20%">'.$langs->trans("Personn").'</td><td>'.$user->fullname.'</td></tr>';
+	      print '<tr><td width="20%">'.$langs->trans("Person").'</td><td>'.$user->fullname.'</td></tr>';
 
-          print "<tr>";
-          print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-          print $html->select_societes($soc->id);
-          print '</td></tr>';
+	      print "<tr>";
+	      print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
+	      print $html->select_societes($soc->id);
+	      print '</td></tr>';
 
 	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	      print $html->select_date($deplacement->date,'','','','','update');
@@ -221,7 +221,7 @@ else
 	      $soc->fetch($deplacement->socid);
 
 	      print '<table class="border" width="100%">';
-	      print '<tr><td width="20%">'.$langs->trans("Personn").'</td><td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->fullname.'</a></td></tr>';
+	      print '<tr><td width="20%">'.$langs->trans("Person").'</td><td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->fullname.'</a></td></tr>';
 	      print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	      print dolibarr_print_date($deplacement->date);
