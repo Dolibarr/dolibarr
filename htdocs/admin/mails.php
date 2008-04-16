@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/admin/mails.php
         \brief      Page de configuration des emails
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -112,9 +109,16 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 }
 
 
+
 /*
 * Affichage page
 */
+
+$port=! empty($conf->global->MAIN_MAIL_SMTP_PORT)?$conf->global->MAIN_MAIL_SMTP_PORT:ini_get('smtp_port');
+if (! $port) $port=25;
+$server=! empty($conf->global->MAIN_MAIL_SMTP_SERVER)?$conf->global->MAIN_MAIL_SMTP_SERVER:ini_get('SMTP');
+if (! $server) $server='127.0.0.1';
+
 
 llxHeader();
 
@@ -175,6 +179,9 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER",ini_get('SMTP')?ini_get('SMTP'):$langs->transnoentities("Undefined")).'</td><td>'.$conf->global->MAIN_MAIL_SMTP_SERVER.'</td></tr>';
 
+//    $var=!$var;
+//    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_SERVER",ini_get('SMTPs')?ini_get('SMTPs'):$langs->transnoentities("Undefined")).'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_SERVER.'</td></tr>';
+
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td><td>'.$conf->global->MAIN_MAIL_EMAIL_FROM.'</td></tr>';
 
@@ -186,19 +193,43 @@ else
 
 	// Boutons actions
     print '<div class="tabsAction">';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("DoTest").'</a>';
+	if (function_exists('fsockopen') && $port && $server)
+	{
+	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+	}
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("DoTestSend").'</a>';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
 	
 	
 	// Affichage formulaire de TEST
+	if ($_GET["action"] == 'testconnect')
+	{
+			  print '<br>';
+			  print_titre($langs->trans("DoTestServerAvailability"));
+			  
+			  // Cree l'objet formulaire mail
+			  include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+			  $mail = new CMailFile('','','','');	    
+			  $result=$mail->check_server_port($server,$port);
+			  if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort",$server,$port).'</div>';
+			  else 
+			  {
+				print '<div class="error">'.$langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
+				if ($mail->error) print ' - '.$mail->error;
+				print '</div>';
+			  }
+			  print '<br>';
+	}
+
+	// Affichage formulaire de TEST
 	if ($_GET["action"] == 'test')
 	{
 			  print '<br>';
-			  print_titre($langs->trans("TestMailing"));
+			  print_titre($langs->trans("DoTestSend"));
 			  
-			  // Cr�� l'objet formulaire mail
-			  include_once("../html.formmail.class.php");
+			  // Cree l'objet formulaire mail
+			  include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
 			  $formmail = new FormMail($db);	    
 			  $formmail->fromname = $conf->global->MAIN_MAIL_EMAIL_FROM;
 			  $formmail->frommail = $conf->global->MAIN_MAIL_EMAIL_FROM;
@@ -215,7 +246,7 @@ else
 			  $formmail->withcancel=1;
 			  // Tableau des substitutions
 			  $formmail->substit=$substitutionarrayfortest;
-			  // Tableau des param�tres compl�mentaires du post
+			  // Tableau des parametres complementaires du post
 			  $formmail->param["action"]="send";
 			  $formmail->param["models"]="body";
 			  $formmail->param["mailid"]=$mil->id;

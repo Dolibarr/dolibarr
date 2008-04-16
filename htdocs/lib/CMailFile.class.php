@@ -19,8 +19,6 @@
  * or see http://www.gnu.org/
  *
  * Lots of code inspired from Dan Potter's CMailFile class
- * If chunk_split does not works on your system, change the call to chunk_split
- * to _chunk_split 
  */
 
 /**
@@ -157,7 +155,6 @@ class CMailFile
             $fd = fopen($sourcefile, "r");
             $contents = fread($fd, filesize($sourcefile));
             $encoded = chunk_split(base64_encode($contents), 68, $this->eol);
-            //$encoded = _chunk_split(base64_encode($contents));
             fclose($fd);
             return $encoded;
         }
@@ -180,7 +177,7 @@ class CMailFile
 		dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject);
 		dolibarr_syslog("CMailFile::sendfile header=\n".$this->headers);
 		//dolibarr_syslog("CMailFile::sendfile message=\n".$message);
-		//$this->send_to_file();
+		//$this->dump_mail();
 
 		$errorlevel=error_reporting();
 		error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
@@ -244,10 +241,9 @@ class CMailFile
 
 
     /**
-     *    \brief  Ecrit le mail dans un fichier.
-     *            Utilisation pour le debuggage
+     *    \brief  Ecrit le mail dans un fichier. Utilisation pour le debuggage.
      */
-    function send_to_file()
+    function dump_mail()
     {
     	if (@is_writeable("/tmp"))	// Avoid fatal error on fopen with open_basedir
     	{
@@ -408,7 +404,73 @@ class CMailFile
         $out = $out . "--" . $this->mime_boundary . "--" . $this->eol;
         return $out;
     }
-    
+	
+	
+	function check_server_port($host,$port)
+	{
+		$_retVal=0;
+
+		if (function_exists('fsockopen'))
+		{
+			//See if we can connect to the SMTP server
+	        if ( $socket = @fsockopen($host,       // Host to 'hit', IP or domain
+	                                  $port,       // which Port number to use
+	                                  $errno,           // actual system level error
+	                                  $errstr,          // and any text that goes with the error
+	                                  5) )  // timeout for reading/writing data over the socket
+	        {
+				// Windows still does not have support for this timeout function
+				if (function_exists('socket_set_timeout'))
+					socket_set_timeout($socket, 5, 0);
+
+				// Check response from Server
+				if ( $_retVal = $this->server_parse($socket, "220") )
+					$_retVal = $socket;
+			}
+			else
+			{
+				$this->error = 'Error '.$errno.' - '.$errstr;
+			}
+		}
+		return $_retVal;
+	}
+
+	// This function has been modified as provided
+	// by SirSir to allow multiline responses when
+	// using SMTP Extensions
+	//
+	function server_parse($socket, $response)
+	{
+	   /**
+		* Default return value
+		*
+		* Returns constructed SELECT Object string or boolean upon failure
+		* Default value is set at TRUE
+		*
+		* @var mixed $_retVal Indicates if Object was created or not
+		* @access private
+		* @static
+		*/
+		$_retVal = true;
+		$server_response = '';
+
+		while ( substr($server_response,3,1) != ' ' )
+		{
+			if( !( $server_response = fgets($socket, 256) ) )
+			{
+				$this->error="Couldn't get mail server response codes";
+				$_retVal = false;
+			}
+		}
+
+		if( !( substr($server_response, 0, 3) == $response ) )
+		{
+			$this->error="Ran into problems sending Mail.\r\nResponse: $server_response";
+			$_retVal = false;
+		}
+
+		return $_retVal;
+	}    
 }
 
 
@@ -465,32 +527,5 @@ function getValidAddress($adresses,$format)
 	
 	return $ret;
 }
-
-
-/**
-        \brief      Permet de diviser une chaine (RFC2045)
-        \param      str
-        \remarks    function chunk_split qui remplace celle de php si necessaire
-        \remarks    76 caracteres par ligne, termine par "\n"
-*/
-function _chunk_split($str)
-{
-    $stmp = $str;
-    $len = strlen($stmp);
-    $out = "";
-    while ($len > 0) {
-        if ($len >= 76) {
-            $out = $out . substr($stmp, 0, 76) . "\n";
-            $stmp = substr($stmp, 76);
-            $len = $len - 76;
-        }
-        else {
-            $out = $out . $stmp . "\n";
-            $stmp = ""; $len = 0;
-        }
-    }
-    return $out;
-}
-
 
 ?>
