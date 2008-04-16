@@ -891,10 +891,6 @@ cursor: pointer;
 .cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event    { border-collapse: collapse; margin-bottom: 1px; }
 table.cal_event td { border: 0px; padding-left: 0px; padding-right: 2px; padding-top: 0px; padding-bottom: 0px; } */
-.cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal; !important }
-.cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal; !important }
-.cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal; !important }
-.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal; !important }
 
 
 /* ============================================================================== */
