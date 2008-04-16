@@ -596,7 +596,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $lltot = 200; $col1x = 120; $col2x = 182; $largcol2 = $lltot - $col2x;
 
         // Total HT
-        $pdf->SetFillColor(256,256,256);
+        $pdf->SetFillColor(255,255,255);
         $pdf->SetXY ($col1x, $tab2_top + 0);
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
@@ -688,7 +688,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			if ($object->close_code == 'discount_vat')
 			{
 	            $index++;
-        		$pdf->SetFillColor(256,256,256);
+        		$pdf->SetFillColor(255,255,255);
 
 	            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 	            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOffered"), $useborder, 'L', 1);

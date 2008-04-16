@@ -466,7 +466,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $lltot = 200; $col1x = 120; $col2x = 182; $largcol2 = $lltot - $col2x;
 
         // Total HT
-        $pdf->SetFillColor(256,256,256);
+        $pdf->SetFillColor(255,255,255);
         $pdf->SetXY ($col1x, $tab2_top + 0);
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalHT"), 0, 'L', 1);
 
