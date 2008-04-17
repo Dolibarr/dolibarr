@@ -458,7 +458,7 @@ if ($_GET["action"] == 'create')
 	if ($_REQUEST["socid"] > 0)
 	{
 		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
-		$html->select_contacts($_REQUEST["socid"],'','contactid',1,1);
+		$html->select_contacts($_REQUEST["socid"],$_REQUEST['contactid'],'contactid',1,1);
 		print '</td></tr>';
 	}
 
