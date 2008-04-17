@@ -115,9 +115,14 @@ if ($what == 'mysql')
 	{
 		$param.=" -d";
 	}
-	$paramcrypted=$param." -p".eregi_replace('.','*',$dolibarr_main_db_pass);
-	$paramclear=$param." -p".$dolibarr_main_db_pass;
-
+	$paramcrypted=$param;
+	$paramclear=$param;
+	if (! empty($dolibarr_main_db_pass))
+	{
+		$paramcrypted.=" -p".eregi_replace('.','*',$dolibarr_main_db_pass);
+		$paramclear.=" -p".$dolibarr_main_db_pass;
+	}
+	
 	$relativepathdir='/admin/temp';
 	$relativepathfile=$relativepathdir.'/'.$file;
 	// for compression format, we add extension

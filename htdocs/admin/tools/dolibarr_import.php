@@ -14,19 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file 		htdocs/admin/tools/dolibarr_import.php
 		\brief      Page import de la base
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
-include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
 
 $langs->load("admin");
 $langs->load("other");
@@ -115,11 +111,18 @@ function show_checked_option() {
 	<?php
 	// Parameteres execution	
 	$command=escapeshellarg('mysql');
-	//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
-	$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host." -u ".$dolibarr_main_db_user." -p".$dolibarr_main_db_pass;
 
+	$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host." -u ".$dolibarr_main_db_user;
+	$paramcrypted=$param;
+	$paramclear=$param;
+	if (! empty($dolibarr_main_db_pass))
+	{
+		$paramcrypted.=" -p".eregi_replace('.','*',$dolibarr_main_db_pass);
+		$paramclear.=" -p".$dolibarr_main_db_pass;
+	}
+	
 	echo $langs->trans("ImportMySqlDesc"); ?><br>
-	<textarea rows="1" cols="120"><?php echo $langs->trans("ImportMySqlCommand",$command,$param); ?></textarea><br>
+	<textarea rows="1" cols="120"><?php echo $langs->trans("ImportMySqlCommand",$command,$paramcrypted); ?></textarea><br>
     </div>
 	
 	<script type="text/javascript" language="javascript">
