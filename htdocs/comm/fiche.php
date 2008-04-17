@@ -676,7 +676,7 @@ if ($socid > 0)
         // Lien click to dial
        	print '<td>';
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        	print '<a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+        	print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
         print dolibarr_print_phone($obj->phone);
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
     	    print '</a>';
@@ -684,14 +684,14 @@ if ($socid > 0)
     	print '</td>';
         print '<td>';
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-       		print '<a href="action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+       		print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
         print dolibarr_print_phone($obj->fax);
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
         	print '</a>';
         print '&nbsp;</td>';
         print '<td>';
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        	print '<a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+        	print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
         print $obj->email;
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
         	print '</a>';
@@ -704,7 +704,7 @@ if ($socid > 0)
 
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
         {
-        	print '<td align="center"><a href="action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+        	print '<td align="center"><a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
             print img_object($langs->trans("Rendez-Vous"),"action");
         	print '</a></td>';
         }

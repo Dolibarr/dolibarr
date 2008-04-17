@@ -65,14 +65,14 @@ if ($_POST["action"] == 'add_action')
 	
     if ($_POST['cancel'])
 	{
-		$back='';
-		if (! empty($_POST["back"])) $back=$_POST["back"];
-		if (! $back)
+		$backtopage='';
+		if (! empty($_POST["backtopage"])) $backtopage=$_POST["backtopage"];
+		if (! $backtopage)
 		{
-			if ($_POST['socid'] > 0) $back=DOL_URL_ROOT.'/comm/fiche.php?socid='.$_POST['socid'];
-			else $back=DOL_URL_ROOT.'/comm/action/indexactions.php';
+			if ($_POST['socid'] > 0) $backtopage=DOL_URL_ROOT.'/comm/fiche.php?socid='.$_POST['socid'];
+			else $backtopage=DOL_URL_ROOT.'/comm/action/indexactions.php';
 		}
-		header("Location: ".$back);
+		header("Location: ".$backtopage);
 		exit;	
 	}
 
@@ -411,9 +411,8 @@ if ($_GET["action"] == 'create')
 	}
 
 	print '<form name="action" action="fiche.php" method="post">';
-    if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
 	print '<input type="hidden" name="action" value="add_action">';
-	print '<input type="hidden" name="back" value="'.$_SERVER['HTTP_REFERER'].'">';
+    if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="backtopage" value="'.($_REQUEST["backtopage"] != 1 ? $_REQUEST["backtopage"] : $_SERVER["HTTP_REFERER"]).'">';
 
 	if ($_GET["actioncode"] == 'AC_RDV') print_titre ($langs->trans("AddActionRendezVous"));
 	else print_titre ($langs->trans("AddAnAction"));

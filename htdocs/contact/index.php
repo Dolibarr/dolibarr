@@ -104,8 +104,9 @@ llxHeader();
 
 $form=new Form($db);
 
-$sql = "SELECT s.rowid as socid, s.nom, s.fk_pays,";
-$sql.= " p.rowid as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax, p.priv,";
+$sql = "SELECT s.rowid as socid, s.nom,";
+$sql.= " p.rowid as cidp, p.name, p.firstname, p.email,";
+$sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv,";
 $sql.= " ".$db->pdate("p.tms")." as tms";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
@@ -312,9 +313,9 @@ if ($result)
 		// Phone
         print '<td>';
     	if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.dolibarr_print_phone($obj->phone,$obj->fk_pays).'</a>';
+        	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.dolibarr_print_phone($obj->phone,$obj->pays_code).'</a>';
 		else
-			print dolibarr_print_phone($obj->phone,$obj->fk_pays);
+			print dolibarr_print_phone($obj->phone,$obj->pays_code);
     	print '</td>';
 		
         if ($_GET["view"] == 'phone')
