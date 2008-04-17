@@ -1362,3 +1362,17 @@ insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_UNKOWN',    '
 insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_LOW',       'Low',      2);
 insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_MEDIUM',    'Medium',   3);
 insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_HIGH',      'High',     4);
+
+
+
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_COMPANY_CREATE','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_CONTRACT_VALIDATE','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_PROPAL_VALIDATE','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_PROPAL_SENTBYMAIL','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_ORDER_VALIDATE','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_ORDER_SENTBYMAIL','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_VALIDATE','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_PAYED','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_CANCELED','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_SENTBYMAIL','1','chaine',0,'');
+
