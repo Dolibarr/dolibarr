@@ -183,8 +183,8 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 					}
 				}
 
-				Header("Location: fiche.php?rowid=".$adh->id);
-				exit;
+				$_GET["rowid"]=$adh->id;
+				$_REQUEST["action"]='';
 			}
 			else
 			{

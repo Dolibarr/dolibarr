@@ -232,6 +232,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
   $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',($conf->use_javascript_ajax?' onChange="company_save_refresh()"':''));
+	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
   print '</td></tr>'."\n";
   
   $var=!$var;

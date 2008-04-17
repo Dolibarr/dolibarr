@@ -1,13 +1,16 @@
-; -- Doliwamp.iss --
+; ----- DoliWamp.iss ---------------------------------------------------------------------
 ; Script to build an auto installer for Dolibarr.
 ; Idea from WampServer 2 (http://www.wampserver.com)
-;
+;----------------------------------------------------------------------------------------
 ; You must edit some path in this file to build an exe.
 ; WARNING: Be sure that user files for Mysql data used to build
 ; package contains only user root with no password.
 ; For this, you can edit mysql.user table for a database to keep
 ; only root user with no password, stop server and catch
 ; files user.MY* to put them in data sources.
+;
+; Version: $Id$
+;----------------------------------------------------------------------------------------
 
 
 [Setup]
@@ -138,7 +141,7 @@ var batFile: String;
 
 function InitializeSetup(): Boolean;
 begin
-  Result := MsgBox('You will install Doliwamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install Dolibarr and third party softwares (Apache, Mysql and PHP) configured for ' #13 'a Dolibarr usage and could not be used for other reasons.' #13#13 'If you want to share your Apache, Mysql and PHP with other projects, you should make a manual' #13 'installation of Dolibarr on your own Apache, Mysql and PHP installation.' #13#13 'Do you want to continue install?', mbConfirmation, MB_YESNO) = idYes;
+  Result := MsgBox('You will install DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install Dolibarr and third party softwares (Apache, Mysql and PHP) configured for ' #13 'a Dolibarr usage.' #13#13 'If you want to share your Apache, Mysql and PHP with other projects then Dolibarr, it is recommended to make a manual' #13 'installation of Dolibarr on your own Apache, Mysql and PHP installation.' #13#13 'Do you want to continue install?', mbConfirmation, MB_YESNO) = idYes;
 end;
 
 

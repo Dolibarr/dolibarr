@@ -101,11 +101,7 @@ if ($_GET["facid"])
     $soc->fetch($fac->socid);
 
     $head = facture_prepare_head($fac);
-    $hselected = 2;
-    if ($conf->use_preview_tabs) $hselected++;
-    if ($fac->mode_reglement_code == 'PRE') $hselected++;
-
-    dolibarr_fiche_head($head, $hselected, $langs->trans("InvoiceCustomer"));
+    dolibarr_fiche_head($head, 'note', $langs->trans("InvoiceCustomer"));
 
 
     print '<table class="border" width="100%">';

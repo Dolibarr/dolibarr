@@ -365,7 +365,7 @@ class Conf
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard';
 
 		// conf->use_preview_tabs
-		$this->use_preview_tabs=1;
+		$this->use_preview_tabs=0;
 		if (isset($this->global->MAIN_USE_PREVIEW_TABS)) $this->use_preview_tabs=$this->global->MAIN_USE_PREVIEW_TABS;
 
 		// conf->use_javascript_ajax

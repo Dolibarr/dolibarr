@@ -165,7 +165,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     // Activer onglet preview
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
-    print $html->selectyesno('main_use_preview_tabs',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:1,1);
+    print $html->selectyesno('main_use_preview_tabs',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0,1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
@@ -297,7 +297,7 @@ else
     // Activer onglet preview
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
-    print yn(isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:1)."</td>";
+    print yn(isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:0)."</td>";
 	print '<td width="20">&nbsp;</td>';
 	print "</tr>";
 

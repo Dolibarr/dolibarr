@@ -112,9 +112,7 @@ if ($_GET["facid"] > 0)
         }
 
 		$head = facture_prepare_head($fac);
-		$hselected = 2;
-    if ($conf->use_preview_tabs) $hselected++;
-		dolibarr_fiche_head($head, $hselected, $langs->trans('InvoiceCustomer'));
+		dolibarr_fiche_head($head, 'standingorders', $langs->trans('InvoiceCustomer'));
 
         /*
          *   Facture

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -204,7 +204,7 @@ else
 
     $var=!$var;
 
-    if (1== 1)
+    if ($conf->agenda->enabled)
     {
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','task').'</td>';
