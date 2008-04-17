@@ -942,11 +942,13 @@ if ($_GET["id"] || $_GET["ref"])
 	  print '<input type="hidden" name="canvas" value="'.$product->canvas.'">';
 	  print '<table class="border" width="100%">';
 	  print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$product->ref.'"></td></tr>';
-	  print '<td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+	  print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
 	  print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">';
 	  print $html->select_tva("tva_tx", $product->tva_tx, $mysoc, '', $product->tva_tx);
 	  print '</td></tr>';
+
+	  // Status
 	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
 	  print '<select class="flat" name="statut">';
 	  if ($product->status)
@@ -959,7 +961,9 @@ if ($_GET["id"] || $_GET["ref"])
 	      print '<option value="1">'.$langs->trans("OnSell").'</option>';
 	      print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
 	    }
+	  print '</select>';
 	  print '</td></tr>';
+	  
 	  if ($product->isproduct() && $conf->stock->enabled)
 	    {
 	      print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
