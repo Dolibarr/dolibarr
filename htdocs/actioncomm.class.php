@@ -526,7 +526,7 @@ class ActionComm
         	$libelleshort=dolibarr_trunc($this->libelle,$maxlength);
         }
 		
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTask").': '.$libelle,'task').$lienfin);
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowAction").': '.$libelle,'task').$lienfin);
 		if ($withpicto==1) $result.=' '; 
 		$result.=$lien.$libelleshort.$lienfin;
 		return $result;
