@@ -1,5 +1,11 @@
-If fckeditor files are replaced by new version, following changes must be done:
 
+This file describe changes made on external library after beeing included
+in Dolibarr root.
+
+
+FCKEDITOR:
+----------
+If fckeditor files are replaced by new version, following changes must be done:
 
 * Edit fckconfig.js to set:
 ***************************
@@ -8,17 +14,15 @@ FCKConfig.LinkUpload = false ;
 FCKConfig.ImageUpload = false ;
 FCKConfig.FlashUpload = false ;
 
-
 * Edit htdocs\includes\fckeditor\editor\filemanager\connectors\php\config.php to set:
 *****************************************************************************************************
 
 //require_once("../../../../../../../../master.inc.php");
-require_once("../../../../../../../../conf/conf.php"); // ajouté car include master.inc.php ne marche pas
+require_once("../../../../../../../../conf/conf.php"); // car include master.inc.php ne marche pas
 $uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);
-
 
 // SECURITY: You must explicitelly enable this "connector". (Set it to "true").
 $Config['Enabled'] = true ;
