@@ -104,7 +104,7 @@ llxHeader();
 
 $form=new Form($db);
 
-$sql = "SELECT s.rowid as socid, s.nom, ";
+$sql = "SELECT s.rowid as socid, s.nom, s.fk_pays,";
 $sql.= " p.rowid as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax, p.priv,";
 $sql.= " ".$db->pdate("p.tms")." as tms";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
@@ -249,13 +249,7 @@ if ($result)
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_societe" size="10" value="'.$search_societe.'">';
     print '</td>';
-    if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-    {
-    	print '<td class="liste_titre">';
-    	print '&nbsp;';
-    	print '</td>';
-    }
-    
+	print '<td class="liste_titre">&nbsp;</td>';
     if ($_GET["view"] == 'phone')
     {
         print '<td class="liste_titre">';
@@ -271,7 +265,6 @@ if ($result)
         print '<input class="flat" type="text" name="search_email" size="12" value="'.$search_email.'">';
         print '</td>';
     }
-
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">';
 	$selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
@@ -316,16 +309,19 @@ if ($result)
         }
         print '</td>';
 		
+		// Phone
+        print '<td>';
     	if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-    	{
-        	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
-    	}
-    	
+        	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.dolibarr_print_phone($obj->phone,$obj->fk_pays).'</a>';
+		else
+			print dolibarr_print_phone($obj->phone,$obj->fk_pays);
+    	print '</td>';
+		
         if ($_GET["view"] == 'phone')
         {
-            print '<td>'.dolibarr_print_phone($obj->phone_mobile,$obj->fp_pays).'&nbsp;</td>';
+            print '<td>'.dolibarr_print_phone($obj->phone_mobile,$obj->fk_pays).'&nbsp;</td>';
 
-            print '<td>'.dolibarr_print_phone($obj->fax,$obj->fp_pays).'&nbsp;</td>';
+            print '<td>'.dolibarr_print_phone($obj->fax,$obj->fk_pays).'&nbsp;</td>';
         }
         else
         {

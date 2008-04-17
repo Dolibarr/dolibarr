@@ -326,7 +326,7 @@ if ( $societe->fetch($socid) )
 		print "</td>";
 		print "<td>$obj->poste&nbsp;</td>";
 		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->phone.'</a>';
-		if ($obj->phone) print ' '.dol_phone_link($obj->phone);
+		if ($obj->phone) print dol_phone_link($obj->phone);
 		print '</td>';
 		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->fax.'</a></td>';
 		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->email.'</a></td>';

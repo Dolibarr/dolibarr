@@ -65,8 +65,14 @@ if ($_POST["action"] == 'add_action')
 	
     if ($_POST['cancel'])
 	{
-		if ($_POST['socid'] > 0) header("Location: ".DOL_URL_ROOT.'/comm/fiche.php?socid='.$_POST['socid']);
-		else header("Location: ".DOL_URL_ROOT.'/comm/action/indexactions.php');
+		$back='';
+		if (! empty($_POST["back"])) $back=$_POST["back"];
+		if (! $back)
+		{
+			if ($_POST['socid'] > 0) $back=DOL_URL_ROOT.'/comm/fiche.php?socid='.$_POST['socid'];
+			else $back=DOL_URL_ROOT.'/comm/action/indexactions.php';
+		}
+		header("Location: ".$back);
 		exit;	
 	}
 
@@ -401,12 +407,13 @@ if ($_GET["action"] == 'create')
 	if ($_GET["contactid"])
 	{
 		$contact = new Contact($db);
-		$contact->fetch($_GET["contactid"]);
+		$result=$contact->fetch($_GET["contactid"]);
 	}
 
 	print '<form name="action" action="fiche.php" method="post">';
     if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
 	print '<input type="hidden" name="action" value="add_action">';
+	print '<input type="hidden" name="back" value="'.$_SERVER['HTTP_REFERER'].'">';
 
 	if ($_GET["actioncode"] == 'AC_RDV') print_titre ($langs->trans("AddActionRendezVous"));
 	else print_titre ($langs->trans("AddAnAction"));
@@ -421,8 +428,8 @@ if ($_GET["action"] == 'create')
 	if ($_GET["actioncode"])
 	{
 		print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
-		$caction->fetch($_GET["actioncode"]);
-		print $caction->getNomUrl();
+		$cactioncomm->fetch($_GET["actioncode"]);
+		print $cactioncomm->getNomUrl();
 	}
 	else
 	{

@@ -683,12 +683,15 @@ function dol_phone_link($phone,$option=0)
 	global $conf,$user;
 	
 	$link='';
-	$phone=trim($phone);
-	
-   	$url = $conf->global->CLICKTODIAL_URL;
-   	$url.= "?login=".urlencode($user->clicktodial_login)."&password=".urlencode($user->clicktodial_password);
-   	$url.= "&caller=".urlencode($user->clicktodial_poste)."&called=".urlencode(trim($phone));
-   	$link.='<a href="#" onclick="newpopup(\''.$url.'\',\'\');">'.img_phone("default",0).'</a>';	
+	//if (! empty($conf->global->CLICKTODIAL_URL))
+	if ($conf->clicktodial->enabled)
+	{
+		$phone=trim($phone);
+	   	$url = $conf->global->CLICKTODIAL_URL;
+	   	$url.= "?login=".urlencode($user->clicktodial_login)."&password=".urlencode($user->clicktodial_password);
+	   	$url.= "&caller=".urlencode($user->clicktodial_poste)."&called=".urlencode(trim($phone));
+	   	$link.='<a href="URL_DEFINED_IN_CLICKTODIAL_MODULE" onclick="newpopup(\''.$url.'\',\'\'); return false;">'.img_phone("default",0).'</a>';	
+	}
 	return $link;
 }
 

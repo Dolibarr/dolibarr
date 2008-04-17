@@ -680,7 +680,7 @@ if ($socid > 0)
         print dolibarr_print_phone($obj->phone);
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
     	    print '</a>';
-		if ($obj->phone) print ' '.dol_phone_link($obj->phone);
+		if ($obj->phone) print dol_phone_link($obj->phone);
     	print '</td>';
         print '<td>';
         if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
