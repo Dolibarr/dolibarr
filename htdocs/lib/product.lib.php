@@ -16,14 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
    \file       htdocs/lib/product.lib.php
    \brief      Ensemble de fonctions de base pour le module produit et service
-   \version    $Revision$   
+   \version    $Id$
 */
 
 function product_prepare_head($product, $user)

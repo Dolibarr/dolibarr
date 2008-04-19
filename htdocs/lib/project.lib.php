@@ -15,15 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/lib/project.lib.php
 		\brief      Ensemble de fonctions de base pour le module projet
         \ingroup    societe
-        \version    $Revision$
+        \version    $Id$
 */
 
 function project_prepare_head($objsoc)
@@ -42,30 +40,11 @@ function project_prepare_head($objsoc)
     $head[$h][2] = 'tasks';
 	$h++;
 
-	if ($conf->propal->enabled)
+	if ($conf->propal->enabled || $conf->commande->enabled || $conf->facture->enabled)
 	{
-		$langs->load("propal");
-		$head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Proposals");
-	    $head[$h][2] = 'propal';
-		$h++;
-	}
-
-	if ($conf->commande->enabled)
-	{
-		$langs->load("orders");
-		$head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Orders");
-	    $head[$h][2] = 'order';
-		$h++;
-	}
-
-	if ($conf->facture->enabled)
-	{
-		$langs->load("bills");
-		$head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$objsoc->id;
-		$head[$h][1] = $langs->trans("Invoices");
-	    $head[$h][2] = 'invoice';
+		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$objsoc->id;
+		$head[$h][1] = $langs->trans("Referers");
+	    $head[$h][2] = 'element';
 		$h++;
 	}
 

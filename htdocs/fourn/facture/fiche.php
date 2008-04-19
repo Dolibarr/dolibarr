@@ -31,6 +31,7 @@ require_once('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 
 
 if (!$user->rights->fournisseur->facture->lire)
@@ -298,7 +299,12 @@ if ($_GET['action'] == 'add_ligne')
 	$_GET['action'] = '';
 }
 
-
+if ($_POST['action'] == 'classin')
+{
+	$facture = new FactureFournisseur($db,'',$_GET['facid']);
+	$facture->fetch($_GET['facid']);
+	$facture->setProject($_POST['projetid']);
+}
 
 /*
 *	Affichage page
@@ -602,6 +608,37 @@ else
 			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td>'.price($fac->total_tva).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td>'.price($fac->total_ttc).'</td><td colspan="2" align="left">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
+			// Project
+			if ($conf->projet->enabled)
+			{
+				$langs->load('projects');
+				print '<tr>';
+				print '<td>';
+				
+				print '<table class="nobordernopadding" width="100%"><tr><td>';
+				print $langs->trans('Project');
+				print '</td>';
+				if ($_GET['action'] != 'classer')
+				{
+					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;facid='.$fac->id.'">';
+					print img_edit($langs->trans('SetProject'),1);
+					print '</a></td>';
+				}
+				print '</tr></table>';
+				
+				print '</td><td colspan="3">';
+				if ($_GET['action'] == 'classer')
+				{
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'projetid');
+				}
+				else
+				{
+					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->fk_project,'none');
+				}
+				print '</td>';
+				print '</tr>';
+			}
+			
 			print '</table>';
 
 			print '</td><td valign="top" class="notopnoleftnoright">';

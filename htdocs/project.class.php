@@ -121,7 +121,7 @@ class Project extends CommonObject
 
 	/*
 	*    \brief      Charge objet projet depuis la base
-	*    \param      rowid       id du projet � charger
+	*    \param      rowid       id du projet a charger
 	*/
 	function fetch($rowid)
 	{
@@ -163,45 +163,6 @@ class Project extends CommonObject
 		}
 	}
 
-
-	/*
-	*
-	*
-	*
-	*/
-	function get_propal_list()
-	{
-		$propales = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE fk_projet=$this->id;";
-
-		if ($this->db->query($sql) )
-		{
-			$nump = $this->db->num_rows();
-			if ($nump)
-			{
-				$i = 0;
-				while ($i < $nump)
-				{
-					$obj = $this->db->fetch_object();
-
-					$propales[$i] = $obj->rowid;
-
-					$i++;
-				}
-				$this->db->free();
-				/*
-				*  Retourne un tableau contenant la liste des propales associees
-				*/
-				return $propales;
-			}
-		}
-		else
-		{
-			print $this->db->error() . '<br>' .$sql;
-		}
-	}
-
-
 	/*
 	*
 	*
@@ -241,53 +202,25 @@ class Project extends CommonObject
 		}
 
 	}
-	/*
-	*
-	*
-	*
-	*/
-	function get_facture_list()
-	{
-		$factures = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE fk_projet=$this->id;";
-
-		$result=$this->db->query($sql);
-		if ($result)
-		{
-			$nump = $this->db->num_rows($result);
-			if ($nump)
-			{
-				$i = 0;
-				while ($i < $nump)
-				{
-					$obj = $this->db->fetch_object($result);
-
-					$factures[$i] = $obj->rowid;
-
-					$i++;
-				}
-				$this->db->free($result);
-				/*
-				*  Retourne un tableau contenant la liste des factures associees
-				*/
-				return $factures;
-			}
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-		}
-	}
+	
 	/**
-	* Renvoie la liste des commande associ�es au projet
-	*
-	*
+	* 	\brief		Return list of elements for type linked to project
+	*	\param		type		'propal','order','invoice','order_supplier','invoice_supplier'
+	*	\return		array		List of orders linked to project, <0 if error
 	*/
-	function get_commande_list()
+	function get_element_list($type)
 	{
-		$commandes = array();
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande WHERE fk_projet=$this->id;";
+		$elements = array();
 
+		$sql='';
+		if ($type == 'propal')           $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE fk_projet=".$this->id;
+		if ($type == 'order')            $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande WHERE fk_projet=".$this->id;
+		if ($type == 'invoice')          $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE fk_projet=".$this->id;
+		if ($type == 'order_supplier')   $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE fk_projet=".$this->id;
+		if ($type == 'invoice_supplier') $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn WHERE fk_projet=".$this->id;
+		if (! $sql) return -1;
+
+		dolibarr_syslog("Project::get_element_list sql=".$sql);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -299,15 +232,14 @@ class Project extends CommonObject
 				{
 					$obj = $this->db->fetch_object($result);
 
-					$commandes[$i] = $obj->rowid;
+					$elements[$i] = $obj->rowid;
 
 					$i++;
 				}
 				$this->db->free($result);
-				/*
-				*  Retourne un tableau contenant la liste des commandes associees
-				*/
-				return $commandes;
+
+				/* Return array */
+				return $elements;
 			}
 		}
 		else
@@ -316,11 +248,10 @@ class Project extends CommonObject
 		}
 	}
 
-	/*
+	/**
 	*    \brief    Supprime le projet dans la base
 	*    \param    Utilisateur
 	*/
-
 	function delete($user)
 	{
 
@@ -338,7 +269,7 @@ class Project extends CommonObject
 		}
 	}
 
-	/*
+	/**
 	*    \brief      Cr�e une tache dans le projet
 	*    \param      user        Id utilisateur qui cr�e
 	*    \param     title      titre de la t�che
@@ -395,8 +326,8 @@ class Project extends CommonObject
 	}
 
 
-	/*
-	*    \brief      Cr�e une tache dans le projet
+	/**
+	*    \brief      Cree une tache dans le projet
 	*    \param      user        Id utilisateur qui cr�e
 	*    \param     title      titre de la t�che
 	*    \param      parent   tache parente
@@ -477,7 +408,7 @@ class Project extends CommonObject
 	{
 		$tasks = array();
 
-		/* Liste des t�ches dans $tasks */
+		/* Liste des taches dans $tasks */
 	
 		$sql = "SELECT t.rowid, t.title, t.fk_task_parent, t.duration_effective";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";

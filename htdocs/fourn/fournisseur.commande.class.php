@@ -75,7 +75,7 @@ class CommandeFournisseur extends Commande
 	function fetch($id)
 	{
 		$sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
-		$sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande,";
+		$sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_methode_commande,";
 		$sql .= " c.note, c.note_public, c.model_pdf,";
 		$sql .= " cm.libelle as methode_commande";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -104,7 +104,8 @@ class CommandeFournisseur extends Commande
 			
 			$this->source              = $obj->source;
 			$this->facturee            = $obj->facture;
-			$this->projet_id           = $obj->fk_projet;
+			$this->fk_project          = $obj->fk_project;
+			$this->projet_id           = $obj->fk_project;	// For compatibility with old code
 			$this->note                = $obj->note;
 			$this->note_public         = $obj->note_public;
 			$this->modelpdf            = $obj->model_pdf;
@@ -600,64 +601,64 @@ class CommandeFournisseur extends Commande
     return $result ;
   }
 
-  /**
-   *      \brief      Créé la commande au statut brouillon
-   *      \param      user        Utilisateur qui crée
-   *      \return     int         <0 si ko, >0 si ok
-   */
-  function create($user)
-  {
-	global $langs,$conf;
-	
-    dolibarr_syslog("CommandeFournisseur::Create soc id=".$this->socid);
+	/**
+	*      \brief      Créé la commande au statut brouillon
+	*      \param      user        Utilisateur qui crée
+	*      \return     int         <0 si ko, >0 si ok
+	*/
+	function create($user)
+	{
+		global $langs,$conf;
+		
+		dolibarr_syslog("CommandeFournisseur::Create soc id=".$this->socid);
 
-    $this->db->begin();
-        
-    /* On positionne en mode brouillon la commande */
-    $this->brouillon = 1;
-    
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (fk_soc, date_creation, fk_user_author, fk_statut) ";
-    $sql .= " VALUES (".$this->socid.", now(), ".$user->id.",0)";
-    
-    if ( $this->db->query($sql) )
-      {
-	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
-    
-	$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-	$sql.= " SET ref='(PROV".$this->id.")'";
-	$sql.= " WHERE rowid=".$this->id;
-	if ($this->db->query($sql))
-	  {
-	    // On logue creation pour historique   
-	    $this->log($user, 0, time());
-                
-	    // Appel des triggers
-	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	    $interface=new Interfaces($this->db);
-	    $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	    // Fin appel triggers
+		$this->db->begin();
+		
+		/* On positionne en mode brouillon la commande */
+		$this->brouillon = 1;
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (ref, fk_soc, date_creation, fk_user_author, fk_statut, source) ";
+		$sql .= " VALUES ('',".$this->socid.", now(), ".$user->id.",0,0)";
+		
+		if ( $this->db->query($sql) )
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
+			
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql.= " SET ref='(PROV".$this->id.")'";
+			$sql.= " WHERE rowid=".$this->id;
+			if ($this->db->query($sql))
+			{
+				// On logue creation pour historique   
+				$this->log($user, 0, time());
+				
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
 
-	    dolibarr_syslog("CommandeFournisseur::Create : Success");
-	    $this->db->commit();
-	    return 1;
-	  }
-	else
-	  {
-	    $this->error=$this->db->error()." - ".$sql;
-	    dolibarr_syslog("CommandeFournisseur::Create: Failed -2 - ".$this->error);
-	    $this->db->rollback();
-	    return -2;
-	  }
-      }
-    else
-      {
-	$this->error=$this->db->error()." - ".$sql;
-	dolibarr_syslog("CommandeFournisseur::Create: Failed -1 - ".$this->error);
-	$this->db->rollback();
-	return -1;
-      }
-  }
+				dolibarr_syslog("CommandeFournisseur::Create : Success");
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error()." - ".$sql;
+				dolibarr_syslog("CommandeFournisseur::Create: Failed -2 - ".$this->error);
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error()." - ".$sql;
+			dolibarr_syslog("CommandeFournisseur::Create: Failed -1 - ".$this->error);
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	/**
 	*      \brief      Ajoute une ligne de commande

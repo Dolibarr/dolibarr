@@ -398,27 +398,31 @@ if ($action=='remove_file')
  */
 if ($_GET["action"]	== 'create')
 {
+	$fourn = new Fournisseur($db);
+	$fourn->fetch($_GET["socid"]);
 
-  $fourn = new Fournisseur($db);
-  $fourn->fetch($_GET["socid"]);
-  $commande->modelpdf			 = 'muscadet'; //test
-
-  if ($fourn->create_commande($user) > 0)
-    {
-      $idc = $fourn->single_open_commande;
-
-      if ($comclientid !=	'')
+	$db->begin();
+	
+	$orderid=$fourn->create_commande($user);
+	if ($orderid > 0)
 	{
-	  $fourn->updateFromCommandeClient($user,$idc,$comclientid);
-	}
+		$idc = $fourn->single_open_commande;
 
-      Header("Location:fiche.php?id=".$idc);
-      exit;
-    }
-  else
-    {
-      $mesg=$fourn->error;
-    }
+		if ($comclientid !=	'')
+		{
+			$fourn->updateFromCommandeClient($user,$idc,$comclientid);
+
+		}
+
+		$_GET['id']=$orderid;
+		$_GET['action']='edit';
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+		$mesg=$fourn->error;
+	}
 }
 
 

@@ -1850,7 +1850,7 @@ else
 						$var=!$var;
 						print '<tr '.$bc[$var].'>';
 						print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->facnumber.'</a></td>';
-						print '<td align="center">'.dolibarr_print_date($objp->df).'</td>';
+						print '<td align="center">'.dolibarr_print_date($objp->df,'day').'</td>';
 						print '<td align="right">'.$objp->total_ttc.'</td></tr>';
 						$i++;
 					}
@@ -1894,7 +1894,7 @@ else
 							$var=!$var;
 							print '<tr '.$bc[$var].'>';
 							print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-							print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
+							print '<td>'.dolibarr_print_date($objp->da,'day')."</td>\n";
 							print '<td>'.stripslashes($objp->label).'</td>';
 							$authoract = new User($db);
 							$authoract->id = $objp->fk_user_author;

@@ -27,3 +27,7 @@ ConfirmApproveThisOrder=Are you sure you want to approve this order ?
 DenyingThisOrder=Denying this order
 ConfirmDenyingThisOrder=Are you sure you want to deny this order ?
 ConfirmCancelThisOrder=Are you sure you want to cancel this order ?
+AddCustomerOrder=Create customer order
+AddCustomerInvoice=Create customer invoice
+AddSupplierOrder=Create supplier order
+AddSupplierInvoice=Create supplier invoice
