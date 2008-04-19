@@ -647,7 +647,7 @@ Filename: "{app}\rundoliwamp.bat"; Description: "Launch Dolibarr now"; Flags: sh
 
 [UninstallDelete]
 Type: files; Name: "{app}\*.*"
-Type: files; Name: "{app}\bin\mysql\mysq5.0.45\*.*"
+Type: files; Name: "{app}\bin\mysql\mysql5.0.45\*.*"
 Type: filesandordirs; Name: "{app}\alias"
 Type: filesandordirs; Name: "{app}\apps"
 Type: filesandordirs; Name: "{app}\bin\apache"
