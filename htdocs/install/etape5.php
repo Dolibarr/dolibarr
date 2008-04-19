@@ -27,6 +27,7 @@
 
 include_once("./inc.php");
 
+
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
 
@@ -152,9 +153,6 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	    
 	        if ($success)
 	        {
-				dolibarr_install_syslog('install/etape5.php Remove MAIN_NOT_INSTALLED const', LOG_ERR);
-	            $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
-	        
 	            // Si install non Français, on configure pour fonctionner en mode internationnal
 	            if ($langs->defaultlang != "fr_FR")
 	            {
@@ -165,7 +163,13 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	                $db->query("UPDATE llx_const set value='eldy_frontoffice.php' WHERE name='MAIN_MENUFRONT_BARRELEFT';");
 	            }
 	
-	        }
+				dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_INSTALL const', LOG_ERR);
+	            $db->query("DELETE FROM llx_const WHERE name='MAIN_VERSION_LAST_INSTALL'");
+				$db->query("INSERT INTO llx_const(name,value,type,visible,note) values('MAIN_VERSION_LAST_INSTALL','".DOL_VERSION."','chaine',0,'Dolibarr version for last install')");
+
+				dolibarr_install_syslog('install/etape5.php Remove MAIN_NOT_INSTALLED const', LOG_ERR);
+	            $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
+			}
     	}
     	else
     	{
@@ -173,6 +177,14 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
     	}
     }
 
+	// If upgrade
+    if ($_POST["action"] == "upgrade")
+    {
+		dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_UPGRADE const', LOG_ERR);
+	    $db->query("DELETE FROM llx_const WHERE name='MAIN_VERSION_LAST_UPGRADE'");
+		$db->query("INSERT INTO llx_const(name,value,type,visible,note) values('MAIN_VERSION_LAST_UPGRADE','".DOL_VERSION."','chaine',0,'Dolibarr version for last upgrade')");
+	}
+	
     // May fail if parameter already defined
     $resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note) values('MAIN_LANG_DEFAULT','".$setuplang."','chaine',0,'Default language')");
 	

@@ -25,11 +25,11 @@
 
 /**
    \file       htdocs/master.inc.php
-   \brief      Prepare Dolibarr environment
+   \brief      File that define environment for install pages
    \version    $Id$
 */
 
-define('DOL_VERSION','2.4-dev');
+define('DOL_VERSION','2.4-dev');	// Also defined in inc.php
 define('EURO',chr(128)); 
 
 // La fonction clearstatcache ne doit pas etre appelée de manière globale car ralenti.

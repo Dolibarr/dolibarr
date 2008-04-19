@@ -20,9 +20,11 @@
  */
 
 /**	    \file       htdocs/install/inc.php
-		\brief      Fichier include du programme d'installation
+		\brief      File that define environment for install pages
 		\version    $Id$
 */
+
+define('DOL_VERSION','2.4-dev');	// Also defined in master.inc.php
 
 require_once('../translate.class.php');
 require_once('../lib/functions.lib.php');
