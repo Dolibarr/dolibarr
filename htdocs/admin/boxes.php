@@ -134,7 +134,7 @@ llxHeader();
 
 print_fiche_titre($langs->trans("Boxes"),'','setup');
 
-print $langs->trans("BoxesDesc")."<br>\n";
+print $langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 
 /*
  * Recherche des boites actives par defaut pour chaque position possible
