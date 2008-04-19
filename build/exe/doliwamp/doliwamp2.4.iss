@@ -179,320 +179,306 @@ begin
   begin
 
 
+    //----------------------------------------------
+    // renommage du fichier c:/windows/php.ini
+    //----------------------------------------------
 
-//----------------------------------------------
-// renommage du fichier c:/windows/php.ini
-//----------------------------------------------
-
-if FileExists ('c:/windows/php.ini') then
-begin
-  if MsgBox('A previous c:/windows/php.ini file has been detected in your Windows directory. Do you want DoliWamp to rename it to php_old.ini to avoid conflicts ?',mbConfirmation,MB_YESNO) = IDYES then
-  begin
-    RenameFile('c:/windows/php.ini','c:/windows/php_old.ini');
-  end
-end
-if FileExists ('c:/winnt/php.ini') then
-begin
-  if MsgBox('A previous c:/winnt/php.ini file has been detected in your Windows directory. Do you want DoliWamp to rename it to php_old.ini to avoid conflicts ?',mbConfirmation,MB_YESNO) = IDYES then
-  begin
-    RenameFile('c:/winnt/php.ini','c:/winnt/php_old.ini');
-  end
-end
-
-
-
-
-//----------------------------------------------
-// rundoliwamp.bat
-//----------------------------------------------
-
-destFile := pathWithSlashes+'/rundoliwamp.bat';
-srcFile := pathWithSlashes+'/rundoliwamp.bat.install';
-
-if not FileExists (destFile) and FileExists(srcFile) then
-begin
-
-  //navigateur
-  browser := 'explorer.exe';
-  if FileExists ('C:/Program Files/Mozilla Firefox/firefox.exe')  then
-  begin
-    if MsgBox('Firefox has been detected on your computer. Would you like to use it as the default browser with Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
+    if FileExists ('c:/windows/php.ini') then
     begin
-      browser := 'C:/Program Files/Mozilla Firefox/firefox.exe';
+      if MsgBox('A previous c:/windows/php.ini file has been detected in your Windows directory. Do you want DoliWamp to rename it to php_old.ini to avoid conflicts ?',mbConfirmation,MB_YESNO) = IDYES then
+      begin
+        RenameFile('c:/windows/php.ini','c:/windows/php_old.ini');
+      end
     end
-  end
-  if browser = 'explorer.exe' then
-  begin
-    GetOpenFileName('Please choose your default browser. If you are not sure, just click Open :', browser, winPath,'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
-  end
+    if FileExists ('c:/winnt/php.ini') then
+    begin
+      if MsgBox('A previous c:/winnt/php.ini file has been detected in your Windows directory. Do you want DoliWamp to rename it to php_old.ini to avoid conflicts ?',mbConfirmation,MB_YESNO) = IDYES then
+      begin
+        RenameFile('c:/winnt/php.ini','c:/winnt/php_old.ini');
+      end
+    end
 
-  LoadStringFromFile (srcFile, srcContents);
-  StringChange (srcContents, 'WAMPBROWSER', browser);
-  StringChange (srcContents, 'WAMPAPACHEPORT', apachePort);
-  SaveStringToFile(destFile,srcContents, False);
-end
-DeleteFile(srcFile);
 
 
+    //----------------------------------------------
+    // rundoliwamp.bat
+    //----------------------------------------------
 
+    destFile := pathWithSlashes+'/rundoliwamp.bat';
+    srcFile := pathWithSlashes+'/rundoliwamp.bat.install';
 
-//----------------------------------------------
-// Fichier alias phpmyadmin
-//----------------------------------------------
+    if not FileExists (destFile) and FileExists(srcFile) then
+    begin
 
-destFile := pathWithSlashes+'/alias/phpmyadmin.conf';
-srcFile := pathWithSlashes+'/alias/phpmyadmin.conf.install';
+      //navigateur
+      browser := 'explorer.exe';
+      if FileExists ('C:/Program Files/Mozilla Firefox/firefox.exe')  then
+      begin
+        if MsgBox('Firefox has been detected on your computer. Would you like to use it as the default browser with Dolibarr ?',mbConfirmation,MB_YESNO) = IDYES then
+        begin
+          browser := 'C:/Program Files/Mozilla Firefox/firefox.exe';
+        end
+      end
+      if browser = 'explorer.exe' then
+      begin
+        GetOpenFileName('Please choose your default browser. If you are not sure, just click Open :', browser, winPath,'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
+      end
 
-if not FileExists (destFile) and FileExists(srcFile) then
-begin
+      LoadStringFromFile (srcFile, srcContents);
+      StringChange (srcContents, 'WAMPBROWSER', browser);
+      StringChange (srcContents, 'WAMPAPACHEPORT', apachePort);
+      SaveStringToFile(destFile,srcContents, False);
+    end
 
-  LoadStringFromFile (srcFile, srcContents);
 
-  //installDir et version de phpmyadmin
-  StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-  StringChange (srcContents, 'WAMPPHPMYADMINVERSION', phpmyadminVersion);
 
-  SaveStringToFile(destFile,srcContents, False);
-end
-DeleteFile(srcFile);
 
+    //----------------------------------------------
+    // Fichier alias phpmyadmin
+    //----------------------------------------------
 
+    destFile := pathWithSlashes+'/alias/phpmyadmin.conf';
+    srcFile := pathWithSlashes+'/alias/phpmyadmin.conf.install';
 
-//----------------------------------------------
-// Fichier alias dolibarr
-//----------------------------------------------
+    if not FileExists (destFile) and FileExists(srcFile) then
+    begin
 
-destFile := pathWithSlashes+'/alias/dolibarr.conf';
-srcFile := pathWithSlashes+'/alias/dolibarr.conf.install';
+      LoadStringFromFile (srcFile, srcContents);
 
-if not FileExists (destFile) and FileExists(srcFile) then
-begin
+      //installDir et version de phpmyadmin
+      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
+      StringChange (srcContents, 'WAMPPHPMYADMINVERSION', phpmyadminVersion);
 
-  LoadStringFromFile (srcFile, srcContents);
+      SaveStringToFile(destFile,srcContents, False);
+    end
+    DeleteFile(srcFile);
 
-  StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-  StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
 
-  SaveStringToFile(destFile, srcContents, False);
-end
-DeleteFile(srcFile);
 
+    //----------------------------------------------
+    // Fichier alias dolibarr
+    //----------------------------------------------
 
+    destFile := pathWithSlashes+'/alias/dolibarr.conf';
+    srcFile := pathWithSlashes+'/alias/dolibarr.conf.install';
 
+    if not FileExists (destFile) and FileExists(srcFile) then
+    begin
 
-//----------------------------------------------
-// Fichier de configuration de phpmyadmin
-//----------------------------------------------
+      LoadStringFromFile (srcFile, srcContents);
 
-destFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php';
-srcFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php.install';
+      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
+      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
 
-if not FileExists (destFile) then
-begin
+      SaveStringToFile(destFile, srcContents, False);
+    end
+    DeleteFile(srcFile);
 
-  // si un fichier existe pour une version precedente de phpmyadmin, on le recupere
-  if FileExists (pathWithSlashes+'/apps/phpmyadmin'+tmp+'/config.inc.php') then
-  begin
-    LoadStringFromFile (pathWithSlashes+'/apps/phpmyadmin'+tmp+'/config.inc.php', srcContents);
-    StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
-    SaveStringToFile(destFile,srcContents, False);
-  end
-  else
-  begin
-    // sinon on prends le fichier par defaut
-    LoadStringFromFile (srcFile, srcContents);
-    StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
-    SaveStringToFile(destFile,srcContents, False);
-  end
-end
-//DeleteFile(srcFile);
 
 
 
-//----------------------------------------------
-// Fichier httpd.conf
-//----------------------------------------------
+    //----------------------------------------------
+    // Fichier de configuration de phpmyadmin
+    //----------------------------------------------
 
-destFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/conf/httpd.conf';
-srcFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/conf/httpd.conf.install';
+    destFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php';
+    srcFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php.install';
 
-if not FileExists (destFile) then
-begin
-  LoadStringFromFile (srcFile, srcContents);
+    if not FileExists (destFile) then
+    begin
 
-  //installDir et version de php
-  StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-  StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
+      // si un fichier existe pour une version precedente de phpmyadmin, on le recupere
+      if FileExists (pathWithSlashes+'/apps/phpmyadmin'+tmp+'/config.inc.php') then
+      begin
+        LoadStringFromFile (pathWithSlashes+'/apps/phpmyadmin'+tmp+'/config.inc.php', srcContents);
+        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
+        SaveStringToFile(destFile,srcContents, False);
+      end
+      else
+      begin
+        // sinon on prends le fichier par defaut
+        LoadStringFromFile (srcFile, srcContents);
+        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
+        SaveStringToFile(destFile,srcContents, False);
+      end
+    end
 
-  SaveStringToFile(destFile,srcContents, False);
-end
-//DeleteFile(srcFile);
 
 
+    //----------------------------------------------
+    // Fichier httpd.conf
+    //----------------------------------------------
 
+    destFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/conf/httpd.conf';
+    srcFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/conf/httpd.conf.install';
 
-//----------------------------------------------
-// Fichier my.ini
-//----------------------------------------------
+    if not FileExists (destFile) then
+    begin
+      LoadStringFromFile (srcFile, srcContents);
 
-destFile := pathWithSlashes+'/bin/mysql/mysql'+mysqlVersion+'/my.ini';
-srcFile := pathWithSlashes+'/bin/mysql/mysql'+mysqlVersion+'/my.ini.install';
+      //installDir et version de php
+      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
+      StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
 
-if not FileExists (destFile) then
-begin
-  LoadStringFromFile (srcFile, srcContents);
+      SaveStringToFile(destFile,srcContents, False);
+    end
 
-  //installDir et version de php
-  StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
 
-  SaveStringToFile(destFile,srcContents, False);
-end
-//DeleteFile(SrcFile);
 
 
+    //----------------------------------------------
+    // Fichier my.ini
+    //----------------------------------------------
 
+    destFile := pathWithSlashes+'/bin/mysql/mysql'+mysqlVersion+'/my.ini';
+    srcFile := pathWithSlashes+'/bin/mysql/mysql'+mysqlVersion+'/my.ini.install';
 
+    if not FileExists (destFile) then
+    begin
+      LoadStringFromFile (srcFile, srcContents);
 
-//----------------------------------------------
-// Fichier index.php
-//----------------------------------------------
+      //installDir et version de php
+      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
 
-destFile := pathWithSlashes+'/www/index.php';
-srcFile := pathWithSlashes+'/www/index.php.install';
+      SaveStringToFile(destFile,srcContents, False);
+    end
 
-if not FileExists (destFile) then
-begin
-  LoadStringFromFile (srcFile, srcContents);
-  StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
-  StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-  StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-  SaveStringToFile(destFile, srcContents, False);
-end
-else
-begin
-  RenameFile(destFile, destFile+'.old');
-  LoadStringFromFile (srcFile, srcContents);
-  StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
-  StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-  StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-  SaveStringToFile(destFile, srcContents, False);
-end
-DeleteFile(srcFile);
 
 
 
 
+    //----------------------------------------------
+    // Fichier index.php
+    //----------------------------------------------
 
-//----------------------------------------------
-// Fichier dolibarr
-//----------------------------------------------
+    destFile := pathWithSlashes+'/www/index.php';
+    srcFile := pathWithSlashes+'/www/index.php.install';
 
-destFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php';
-srcFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php.install';
+    if not FileExists (destFile) then
+    begin
+      LoadStringFromFile (srcFile, srcContents);
+      StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
+      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
+      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+      SaveStringToFile(destFile, srcContents, False);
+    end
+    else
+    begin
+      RenameFile(destFile, destFile+'.old');
+      LoadStringFromFile (srcFile, srcContents);
+      StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
+      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
+      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+      SaveStringToFile(destFile, srcContents, False);
+    end
 
-if not FileExists (destFile) then
-begin
-  LoadStringFromFile (srcFile, srcContents);
 
-  StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-  StringChange (srcContents, 'WAMPMYSQLPORT', mysqlPort);
-  StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
 
-  SaveStringToFile(destFile,srcContents, False);
-end
-DeleteFile(srcFile);
 
 
+    //----------------------------------------------
+    // Fichier dolibarr parametres predefins install web
+    //----------------------------------------------
 
-//----------------------------------------------
-// Fichier install_services.bat
-//----------------------------------------------
+    destFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php';
+    srcFile := pathWithSlashes+'/www/dolibarr/htdocs/install/install.forced.php.install';
 
-destFile := pathWithSlashes+'/install_services.bat';
-srcFile := pathWithSlashes+'/install_services.bat.install';
+    if not FileExists (destFile) then
+    begin
+      LoadStringFromFile (srcFile, srcContents);
 
-if not FileExists (destFile) then
-begin
+      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
+      StringChange (srcContents, 'WAMPMYSQLPORT', mysqlPort);
+      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
 
-  LoadStringFromFile (srcFile, srcContents);
+      SaveStringToFile(destFile,srcContents, False);
+    end
 
-  //version de apache et mysql
-  StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-  StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
 
-  SaveStringToFile(destFile,srcContents, False);
-end
-DeleteFile(srcFile);
 
+    //----------------------------------------------
+    // Fichier install_services.bat
+    //----------------------------------------------
 
+    destFile := pathWithSlashes+'/install_services.bat';
+    srcFile := pathWithSlashes+'/install_services.bat.install';
 
+    if not FileExists (destFile) then
+    begin
 
+      LoadStringFromFile (srcFile, srcContents);
 
-//----------------------------------------------
-// Fichier install_services_auto.bat
-//----------------------------------------------
+      //version de apache et mysql
+      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
+      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
 
-destFile := pathWithSlashes+'/install_services_auto.bat';
-srcFile := pathWithSlashes+'/install_services_auto.bat.install';
+      SaveStringToFile(destFile,srcContents, False);
+    end
 
-if not FileExists (destFile) and FileExists (srcFile) then
-begin
 
-  LoadStringFromFile (srcFile, srcContents);
 
-  //version de apache et mysql
-  StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-  StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+    //----------------------------------------------
+    // Fichier install_services_auto.bat
+    //----------------------------------------------
 
-  SaveStringToFile(destFile,srcContents, False);
-end
-DeleteFile(srcFile);
+    destFile := pathWithSlashes+'/install_services_auto.bat';
+    srcFile := pathWithSlashes+'/install_services_auto.bat.install';
 
+    if not FileExists (destFile) and FileExists (srcFile) then
+    begin
 
+      LoadStringFromFile (srcFile, srcContents);
 
+      //version de apache et mysql
+      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
+      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
 
-//----------------------------------------------
-// Fichier uninstall_services.bat
-//----------------------------------------------
+      SaveStringToFile(destFile,srcContents, False);
+    end
 
-destFile := pathWithSlashes+'/uninstall_services.bat';
-srcFile := pathWithSlashes+'/uninstall_services.bat.install';
 
-if not FileExists (destFile) then
-begin
 
-  LoadStringFromFile (srcFile, srcContents);
 
-  //version de apache et mysql
-  StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-  StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+    //----------------------------------------------
+    // Fichier uninstall_services.bat
+    //----------------------------------------------
 
-  SaveStringToFile(destFile,srcContents, False);
-end
-DeleteFile(srcFile);
+    destFile := pathWithSlashes+'/uninstall_services.bat';
+    srcFile := pathWithSlashes+'/uninstall_services.bat.install';
 
+    if not FileExists (destFile) then
+    begin
 
+      LoadStringFromFile (srcFile, srcContents);
 
-//----------------------------------------------
-// Fichier mysqlinitpassword.bat
-//----------------------------------------------
+      //version de apache et mysql
+      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
+      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
 
-destFile := pathWithSlashes+'/mysqlinitpassword.bat';
-srcFile := pathWithSlashes+'/mysqlinitpassword.bat.install';
+      SaveStringToFile(destFile,srcContents, False);
+    end
 
-if not FileExists (destFile) and FileExists (srcFile) then
-begin
 
-  LoadStringFromFile (srcFile, srcContents);
 
-  //version de apache et mysql
-  StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-  StringChange (srcContents, 'WAMPMYSQLPORT', mysqlPort);
-  StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
+    //----------------------------------------------
+    // Fichier mysqlinitpassword.bat
+    //----------------------------------------------
 
-  SaveStringToFile(destFile,srcContents, False);
-end
-DeleteFile(srcFile);
+    destFile := pathWithSlashes+'/mysqlinitpassword.bat';
+    srcFile := pathWithSlashes+'/mysqlinitpassword.bat.install';
+
+    if not FileExists (destFile) and FileExists (srcFile) then
+    begin
+
+      LoadStringFromFile (srcFile, srcContents);
+
+      //version de apache et mysql
+      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
+      StringChange (srcContents, 'WAMPMYSQLPORT', mysqlPort);
+      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
+
+      SaveStringToFile(destFile,srcContents, False);
+    end
 
 
 
@@ -537,31 +523,29 @@ DeleteFile(srcFile);
     begin
       SaveStringToFile(destFile,srcContents, False);
     end
-  //DeleteFile(SrcFile);
 
 
-  // Install services
-  batFile := path+'\uninstall_services.bat';
-  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
-  batFile := path+'\install_services.bat';
-  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+    // Install services
+    batFile := path+'\uninstall_services.bat';
+    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+    batFile := path+'\install_services.bat';
+    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
-  // Stard services
-  batFile := path+'\startdoliwamp.bat';
-  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+    // Stard services
+    batFile := path+'\startdoliwamp.bat';
+    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
-  // Change mysql password
-  batFile := path+'\mysqlinitpassword.bat';
-  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+    // Change mysql password
+    batFile := path+'\mysqlinitpassword.bat';
+    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
-  // Remove dangerous files
-  batFile := path+'\removefiles.bat';
-  Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+    // Remove dangerous files
+    batFile := path+'\removefiles.bat';
+//    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
   end
-
+  
   Result := True;
-
 end;
 
 
@@ -597,61 +581,59 @@ begin
 
 
 
+  //----------------------------------------------
+  // copie des dll de php vers apache
+  //----------------------------------------------
 
+  phpDllCopy := 'fdftk.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'fribidi.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'gds32.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'libeay32.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'libmhash.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'libmysql.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'msql.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'libmysqli.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'ntwdblib.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'php5activescript.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'php5isapi.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'php5nsapi.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'ssleay32.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'yaz.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'libmcrypt.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
+  phpDllCopy := 'php5ts.dll';
+  filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
 
-//----------------------------------------------
-// copie des dll de php vers apache
-//----------------------------------------------
+  // Define pages
 
-phpDllCopy := 'fdftk.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'fribidi.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'gds32.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'libeay32.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'libmhash.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'libmysql.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'msql.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'libmysqli.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'ntwdblib.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'php5activescript.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'php5isapi.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'php5nsapi.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'ssleay32.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'yaz.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'libmcrypt.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-phpDllCopy := 'php5ts.dll';
-filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
-
-// Define pages
-
-   Page := CreateInputQueryPage(wpInstalling,
+  Page := CreateInputQueryPage(wpInstalling,
    'Technical parameters', '',
    'Please specify some technical parameters. If you don t understand or ' #13 'are not sure, just leave the default values.');
 
-   Page.Add('SMTP server (your own or ISP SMTP server) :', False);
-   Page.Add('Apache port:', False);
-   Page.Add('Mysql port:', False);
-   Page.Add('Mysql and Dolibarr root password:', False);
+  Page.Add('SMTP server (your own or ISP SMTP server) :', False);
+  Page.Add('Apache port:', False);
+  Page.Add('Mysql port:', False);
+  Page.Add('Mysql and Dolibarr root password:', False);
 
-   // Valeurs par defaut
-   Page.Values[0] := smtpServer;
-   Page.Values[1] := apachePort;
-   Page.Values[2] := mysqlPort;
-   Page.Values[3] := newPassword;
+  // Valeurs par defaut
+  Page.Values[0] := smtpServer;
+  Page.Values[1] := apachePort;
+  Page.Values[2] := mysqlPort;
+  Page.Values[3] := newPassword;
    
 end;
 
@@ -665,6 +647,7 @@ Filename: "{app}\rundoliwamp.bat"; Description: "Launch Dolibarr now"; Flags: sh
 
 [UninstallDelete]
 Type: files; Name: "{app}\*.*"
+Type: files; Name: "{app}\bin\mysql\mysq5.0.45\*.*"
 Type: filesandordirs; Name: "{app}\alias"
 Type: filesandordirs; Name: "{app}\apps"
 Type: filesandordirs; Name: "{app}\bin\apache"
