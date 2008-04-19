@@ -214,6 +214,7 @@ update llx_const set visible=1 where name='PRODUIT_CONFIRM_DELETE_LINE';
 update llx_const set name='NOTIFICATION_EMAIL_FROM', visible=0 where name='MAIN_MAIL_FROM';
 update llx_const set name='NOTIFICATION_EMAIL_FROM', visible=0 where name='MAIN_EMAIL_FROM';
 update llx_const set value=2048, visible=0 where name='MAIN_UPLOAD_DOC' and value=1;
+delete from llx_const where name = 'SIZE_LISTE_LIMIT';
 
 
 insert into llx_const(name,value,type,visible,note) values('MAIN_SHOW_DEVELOPMENT_MODULES','0','yesno',1,'Make development modules visible');
