@@ -1566,7 +1566,7 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 	if ($field)
 	{
 		//print "&nbsp;";
-	    print '<img width="2px" src="/theme/common/transparent.png">';
+	    print '<img width="2" src="/theme/common/transparent.png">';
 		if (! $sortorder)
 	    {
 	        print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
