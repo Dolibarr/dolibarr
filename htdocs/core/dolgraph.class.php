@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,33 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
- \file       htdocs/dolgraph.class.php
- \brief      Fichier de la classe mere de gestion des graph
- \version    $Revision$
- \remarks    Usage:
- $graph_data = array(array('labelA',yA),array('labelB',yB));
- array(array('labelA',yA1,...,yAn),array('labelB',yB1,...yBn));
- $px = new DolGraph();
- $px->SetData($graph_data);
- $px->SetMaxValue($px->GetCeilMaxValue());
- $px->SetMinValue($px->GetFloorMinValue());
- $px->SetTitle("title");
- $px->SetLegend(array("Val1","Val2"));
- $px->SetWidth(width);
- $px->SetHeight(height);
- $px->draw("file.png");
- */
+	\file       htdocs/dolgraph.class.php
+	\brief      Fichier de la classe mere de gestion des graph
+	\version    $Id$
+	\remarks    Usage:
+				$graph_data = array(array('labelA',yA),array('labelB',yB));
+				array(array('labelA',yA1,...,yAn),array('labelB',yB1,...yBn));
+				$px = new DolGraph();
+				$px->SetData($graph_data);
+				$px->SetMaxValue($px->GetCeilMaxValue());
+				$px->SetMinValue($px->GetFloorMinValue());
+				$px->SetTitle("title");
+				$px->SetLegend(array("Val1","Val2"));
+				$px->SetWidth(width);
+				$px->SetHeight(height);
+				$px->draw("file.png");
+*/
 
 
 /**
- \class      Graph
- \brief      Classe mere permettant la gestion des graph
- */
+	\class      Graph
+	\brief      Classe mere permettant la gestion des graph
+*/
 
 class DolGraph
 {

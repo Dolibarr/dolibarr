@@ -39,7 +39,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 $path=eregi_replace('graph-solde.php','',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
-require_once($path."../../htdocs/dolgraph.class.php");
+require_once($path."../../htdocs/core/dolgraph.class.php");
 
 
 $error = 0;

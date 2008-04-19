@@ -17,22 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/product/stats/fiche.php
         \ingroup    product
         \brief      Page des stats produits
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 $langs->load("companies");
 $langs->load("products");

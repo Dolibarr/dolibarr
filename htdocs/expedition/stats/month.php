@@ -15,22 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/expedition/stats/month.php
         \ingroup    commande
 		\brief      Page des stats expeditions par mois
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/stats/expeditionstats.class.php");
-require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 
 llxHeader();

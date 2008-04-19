@@ -15,20 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/comm/propal/stats/index.php
         \ingroup    propale
 		\brief      Page des stats propositions commerciales
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/stats/propalestats.class.php");
-require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 $WIDTH=500;
 $HEIGHT=200;

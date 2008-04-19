@@ -15,22 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/commande/stats/index.php
         \ingroup    commande
 		\brief      Page des stats commandes
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/stats/commandestats.class.php");
-require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 $WIDTH=500;
 $HEIGHT=200;

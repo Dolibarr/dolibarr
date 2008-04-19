@@ -15,17 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/rapport/Atome.class.php
         \brief      Fichier de la classe mère Atome de génération de rapports
+		\version	$Id$
 */
 
-include_once DOL_DOCUMENT_ROOT.'/dolgraph.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/dolgraph.class.php';
 
 
 /**

@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       scripts/cron/fournisseur-graph.php
         \ingroup    fournisseur
         \brief      Script de génération graph fournisseur
+		\version	$Id$
 */
 
 // Test si mode CLI
@@ -41,7 +39,7 @@ $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/dolgraph.class.php");
+require_once (DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 
 $error=0;
