@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,8 +52,6 @@ if ($_POST["action"] == 'set')
 	      dolibarr_del_const($db,"SYSLOG_FILE");
 	      dolibarr_set_const($db,"SYSLOG_FACILITY",$_POST["facility"]);
 	      dolibarr_syslog("admin/syslog: facility ".$_POST["facility"]);
-	      Header("Location: syslog.php");
-	      exit;
 	    } 
 	  else
 	    {
@@ -89,6 +87,7 @@ $def = array();
 
 $syslogfacility=$defaultsyslogfacility=dolibarr_get_const($db,"SYSLOG_FACILITY");
 $syslogfile=$defaultsyslogfile=dolibarr_get_const($db,"SYSLOG_FILE");
+
 if (! $defaultsyslogfacility) $defaultsyslogfacility='LOG_USER';
 if (! $defaultsyslogfile) $defaultsyslogfile='dolibarr.log';
 

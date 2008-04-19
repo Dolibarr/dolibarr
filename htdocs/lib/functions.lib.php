@@ -151,8 +151,10 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 		
 		if (defined("SYSLOG_FILE") && SYSLOG_FILE)
 		{
-			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen(SYSLOG_FILE,"a+");
-			else $file=fopen(SYSLOG_FILE,"a+");
+			$filelog=SYSLOG_FILE;
+			$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
+			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen($filelog,"a+");
+			else $file=fopen($filelog,"a+");
 			if ($file)
 			{
 				$ip='unknown_ip';
@@ -178,7 +180,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 			elseif (! defined("SYSLOG_FILE_NO_ERROR"))
 			{
 				$langs->load("main");
-				print $langs->trans("ErrorFailedToOpenFile",SYSLOG_FILE);
+				print $langs->trans("ErrorFailedToOpenFile",$filelog);
 			}
 		}
 		else

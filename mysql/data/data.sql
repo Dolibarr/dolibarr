@@ -60,6 +60,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTA
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_POPUP_CALENDAR','eldy','chaine','Popup calendar module',0);
 
+insert into llx_const(name,value,type,visible,note) values('SYSLOG_FILE','DOL_DATA_ROOT/dolibarr.log','chaine',0,'Directory where to write log file');
 insert into llx_const(name,value,type,visible,note) values('SYSLOG_LEVEL','6','chaine',0,'Level of debug info to show');
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_SERVER','','chaine','Host or ip address for SMTP server',0);
