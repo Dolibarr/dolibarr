@@ -142,6 +142,9 @@ if ($result)
 		print "</tr>\n";
 		$i++;
 	}
+	
+	if ($num == 0)
+	print '<tr><td>'.$langs->trans("NoEventOrNoAuditSetup").'</td></tr>';
 	print "</table>";
 	$db->free();
 }

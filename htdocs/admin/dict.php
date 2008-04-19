@@ -409,7 +409,8 @@ if ($_GET["id"])
 }
 print_fiche_titre($titre,'','setup');
 
-print $langs->trans("DictionnaryDesc")."<br>\n";
+print $langs->trans("DictionnaryDesc");
+print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 print "<br>\n";
 
   /*

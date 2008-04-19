@@ -125,7 +125,8 @@ Yes=Oui
 No=Non
 AutoDetectLang=Détection auto (navigateur)
 Rights=Permissions
-BoxesDesc=Les boîtes sont des zones d'information réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer une boîte en sélectionnant la page cible et en cliquant sur 'Activer', ou en cliquant sur la poubelle pour la désactiver. Seules les boîtes en rapport avec un <a href="modules.php">module</a> actif sont présentées.
+BoxesDesc=Les boîtes sont des zones d'information réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer une boîte en sélectionnant la page cible et en cliquant sur 'Activer', ou en cliquant sur la poubelle pour la désactiver.
+OnlyActiveElementsAreShown=Seuls les éléments en rapport avec un <a href="modules.php">module actif</a> sont présentées.
 ModulesDesc=Les modules Dolibarr définissent les fonctionnalités disponibles dans l'application. Certains modules nécessitent des droits qu'il vous faudra affecter aux utilisateurs pour qu'ils puissent accéder à leurs fonctionnalités.
 ModulesInterfaceDesc=Les modules d'interfaces sont des modules qui permettent de lier Dolibarr à des systèmes, applications ou services externes.
 ModulesSpecialDesc=Les modules spéciaux sont des modules à usage très spécifique ou moins courant que les modules standards.
@@ -543,8 +544,8 @@ TriggerDisabledAsModuleDisabled=Triggers de ce fichier désactivés car le module 
 TriggerAlwaysActive=Triggers de ce fichier toujours actifs, quelque soient les modules Dolibarr activés.
 TriggerActiveAsModuleActive=Triggers de ce fichier actifs car le module <b>%s</b> est actif.
 GeneratedPasswordDesc=Definissez ici quelle règle vous voulez utilisez pour générer les mots de passe quand vous demander à fabriquer un nouveau mot de passe
-DictionnaryDesc=Definissez ici les données de référence. Vous pouvez compléter/modifier les données prédéfinies avec les votres
-ConstDesc=Tout autre parametre non editable dans les pages précédentes
+DictionnaryDesc=Définissez ici les données de référence. Vous pouvez compléter/modifier les données prédéfinies avec les votres.
+ConstDesc=Cet écran permet d'éditer tout autre paramètre non editable dans les pages précédentes. Ce sont en général des paramètres réservés aux développeurs avancés ou utilisés pour du dépannage.
 OnceSetupFinishedCreateUsers=Attention, vous êtes sous un compte administrateur de Dolibarr. Les administrateurs sont utilisés pour configurer Dolibarr. Pour une utilisation courante de Dolibarr, il est recommandé d'utiliser un compte non administrateur créé depuis le menu "Utilisateurs & Groupes".
 MiscellanousDesc=Définissez ici les autres paramètres en rapport avec la sécurité.
 LimitsSetup=Configuration des limites et precisions
@@ -553,6 +554,7 @@ MAIN_MAX_DECIMALS_UNIT=Nombre de décimals maximum pour les prix unitaires
 MAIN_MAX_DECIMALS_TOT=Nombre de décimals maximum pour les prix totaux
 MAIN_MAX_DECIMALS_SHOWN=Nombre de décimals maximum pour les montant affichés à l'écran (Mettre <b>...</b> après ce nombre max si vous voulez voir <b>...</b> quand le nombre est tronqué à l'affichage écran)
 ParameterActiveForNextInputOnly=Parametre effectif pour les prochaines saisies uniquement
+NoEventOrNoAuditSetup=Aucun évenement d'audit de sécurité n'a été enregistré. Ceci peut etre normal si l'audit n'a pas été activé dans la configuration - sécurité - audit.
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Proposer un mot de passe généré

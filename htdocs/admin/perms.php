@@ -53,7 +53,8 @@ llxHeader();
 
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 
-print $langs->trans("DefaultRightsDesc")."<br>\n";
+print $langs->trans("DefaultRightsDesc");
+print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 print "<br>\n";
 
 $head=security_prepare_head();

@@ -64,7 +64,8 @@ llxHeader();
 
 print_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"),'','setup');
 
-print $langs->transnoentities("DelaysOfToleranceDesc",img_warning())."<br>\n";
+print $langs->transnoentities("DelaysOfToleranceDesc",img_warning());
+print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 print "<br>\n";
 
 $form = new Form($db);

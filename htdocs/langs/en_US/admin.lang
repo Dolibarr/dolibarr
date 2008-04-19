@@ -125,7 +125,8 @@ Yes=Yes
 No=No
 AutoDetectLang=Autodetect (browser language)
 Rights=Permissions
-BoxesDesc=Boxes are screen area that show some information on some pages. You can choose between showing or not a such box by selecting target page en clicking 'Activate', or by clicking the dustbin to disable it. Only boxes about enabled <a href="modules.php">modules</a> are shown.
+BoxesDesc=Boxes are screen area that show some information on some pages. You can choose between showing or not a such box by selecting target page en clicking 'Activate', or by clicking the dustbin to disable it.
+OnlyActiveElementsAreShown=Only elements about <a href="modules.php">enabled modules</a> are shown.
 ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module.
 ModulesInterfaceDesc=The Dolibarr modules interface allows you to add features depending on external softwares, systems or services.
 ModulesSpecialDesc=Special modules are very specific or rarely used modules.
@@ -545,8 +546,8 @@ TriggerDisabledAsModuleDisabled=Triggers in this file are disabled as module <b>
 TriggerAlwaysActive=Triggers in this file are always active, whatever are the activated Dolibarr modules.
 TriggerActiveAsModuleActive=Triggers in this file are active as module <b>%s</b> is enabled.
 GeneratedPasswordDesc=Define here which rule you want to use to generate new password if you ask to have auto generated password
-DictionnaryDesc=Define here all reference datas. You can complete predefined value with yours
-ConstDesc=All other parameters not available in previous pages
+DictionnaryDesc=Define here all reference datas. You can complete predefined value with yours.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. They are reserved parameters for advanced developers or for troubleshouting.
 OnceSetupFinishedCreateUsers=Warning, you are a Dolibarr administrator user. Administrator users are used to setup Dolibarr. For a usual usage of Dolibarr, it is recommended to use a non administrator user created from Users & Groups menu.
 MiscellanousDesc=Define here all other parameters related to security.
 LimitsSetup=Limits/Precision setup
@@ -555,6 +556,7 @@ MAIN_MAX_DECIMALS_UNIT=Max decimals for unit prices
 MAIN_MAX_DECIMALS_TOT=Max decimals for total prices
 MAIN_MAX_DECIMALS_SHOWN=Max decimals for prices shown on screen (Add <b>...</b> after this number if you want to see <b>...</b> when number is truncated when shown on screen)
 ParameterActiveForNextInputOnly=Parameter effective for next input only
+NoEventOrNoAuditSetup=No security event has been recorded yet. This can be normal if audit has not been enabled on "setup - security - audit" page.
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Suggest a generated password
