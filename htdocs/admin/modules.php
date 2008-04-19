@@ -175,16 +175,17 @@ $modules = array();
 $orders = array();
 $categ = array();
 $dirmod = array();
+$i = 0;	// is a sequencer of modules found
+$j = 0;	// j is module number. Automatically affeted if module number not defined.
 foreach ($dirlist as $dirroot)
 {
 	$dir = $dirroot . "/includes/modules/";
 
 	// Charge tableaux modules, nom, numero, orders depuis r�pertoire dir
 	$handle=opendir($dir);
-	$i = 0;
-	$j = 0;
 	while (($file = readdir($handle))!==false)
 	{
+		//print "$i ".$file."\n<br>";
 	    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
 	    {
 	        $modName = substr($file, 0, strlen($file) - 10);
@@ -219,6 +220,7 @@ foreach ($dirlist as $dirroot)
 		            $modules[$i] = $objMod;
 		            $filename[$i]= $modName;
 		            $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
+					//print "x".$modName." ".$orders[$i]."\n<br>";
 					$categ[$objMod->special]++;					// Array of all different modules categories
 		            $dirmod[$i] = $dirroot;
 					$j++;
@@ -227,10 +229,11 @@ foreach ($dirlist as $dirroot)
 	        }
 	    }
 	}
+
 }
 
-
 asort($orders);
+
 
 // Affichage debut page
 
