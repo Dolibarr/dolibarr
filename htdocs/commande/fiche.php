@@ -856,11 +856,12 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			// Projet
 			if ($conf->projet->enabled)
 			{
+				$projetid=$_POST["projetid"]?$_POST["projetid"]:$commande->projetid;
 				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
 				$numprojet=select_projects($soc->id,$projetid,'projetid');
 				if ($numprojet==0)
 				{
-					print ' &nbsp; <a href=../projet/fiche.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
+					print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
 				}
 				print '</td></tr>';
 			}

@@ -116,7 +116,10 @@ foreach ($listofreferent as $key => $value)
 		print '<table class="noborder" width="100%">';
 
 		print '<tr class="liste_titre">';
-		print '<td width="15%">'.$langs->trans("Ref").'</td><td width="25%">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
+		print '<td width="150">'.$langs->trans("Ref").'</td>';
+		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td align="right">'.$langs->trans("Amount").'</td>';
+		print '</tr>';
 		$elementarray = $projet->get_element_list($key);
 		if (sizeof($elementarray)>0 && is_array($elementarray))
 		{
@@ -135,14 +138,15 @@ foreach ($listofreferent as $key => $value)
 		        $date=$element->date;
 				if (empty($date)) $date=$element->datep;
 				print '<td>'.dolibarr_print_date($date,'day').'</td>';
-		        print '<td align="right">'.price($element->total_ht).'</td><td>&nbsp;</td></tr>';
+		        print '<td align="right">'.price($element->total_ht).'</td>';
+				print '</tr>';
 
 		        $total = $total + $element->total_ht;
 		    }
 
 		    print '<tr class="liste_total"><td colspan="2">'.$i.' '.$langs->trans("Bills").'</td>';
-		    print '<td align="right">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
-		    print '<td align="left">'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+		    print '<td align="right" width="100">'.$langs->trans("TotalHT").' : '.price($total).'</td>';
+		    print '</tr>';
 		}
 	    print "</table>";
 
