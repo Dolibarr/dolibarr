@@ -28,7 +28,7 @@
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/report.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/tax.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");

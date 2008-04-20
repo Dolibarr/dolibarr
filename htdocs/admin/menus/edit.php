@@ -26,7 +26,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
 
 $langs->load("admin");

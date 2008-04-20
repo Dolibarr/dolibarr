@@ -53,7 +53,7 @@ class MenuLeft {
      */
     function MenuLeft($db,&$menu_array)
     {
-      	require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
+      	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
         
         $this->db=$db;
         $this->menu_array=$menu_array;

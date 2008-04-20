@@ -15,13 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/lib/report.inc.php
-   \brief      Ensemble de fonctions de base de dolibarr pour reporting sous forme d'include
+   \file       	htdocs/lib/report.lib.php
+   \brief      	Ensemble de fonctions de base de dolibarr pour reporting sous forme d'include
+   \version		$Id$
 */
 
 

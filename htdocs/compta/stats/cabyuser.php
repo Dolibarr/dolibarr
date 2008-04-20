@@ -24,7 +24,7 @@
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/report.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 
 
 $year=$_GET["year"];

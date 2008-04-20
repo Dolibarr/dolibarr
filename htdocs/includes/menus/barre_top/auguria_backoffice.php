@@ -59,7 +59,7 @@ class MenuTop {
      */
     function showmenu()
     {
-       	require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
+       	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
        
         global $user,$conf,$langs,$dolibarr_main_db_name;;
         

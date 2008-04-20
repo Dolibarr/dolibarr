@@ -360,6 +360,7 @@ begin
       StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
       StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
       StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+      StringChange (srcContents, 'WAMPAPACHEPORT', apachePort);
       SaveStringToFile(destFile, srcContents, False);
     end
     else
@@ -369,6 +370,7 @@ begin
       StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
       StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
       StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+      StringChange (srcContents, 'WAMPAPACHEPORT', apachePort);
       SaveStringToFile(destFile, srcContents, False);
     end
 

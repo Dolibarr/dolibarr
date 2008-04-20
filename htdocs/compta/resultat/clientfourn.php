@@ -26,7 +26,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/report.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 
 
 $langs->load("bills");

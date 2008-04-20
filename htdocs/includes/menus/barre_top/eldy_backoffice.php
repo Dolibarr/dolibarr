@@ -343,7 +343,7 @@ class MenuTop {
 
 
 		// Affichage des menus personnalises
-       	require_once(DOL_DOCUMENT_ROOT."/lib/menubase.class.php");
+       	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
         $menuArbo = new Menubase($this->db,'eldy','top');
  		$tabMenu = $menuArbo->menutopCharger(0,$_SESSION['mainmenu'],'eldy');
