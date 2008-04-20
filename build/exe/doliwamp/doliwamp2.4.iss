@@ -532,8 +532,12 @@ begin
     batFile := path+'\mysqlinitpassword.bat';
     Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
+    // Save result in a file
+//    destFile := pathWithSlashes+'/mysqlinitpassword.log';
+//    SaveStringToFile(destFile,myResult, False);
+
     // Remove dangerous files
-    batFile := path+'\removefiles.bat';
+//    batFile := path+'\removefiles.bat';
 //    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
   end
