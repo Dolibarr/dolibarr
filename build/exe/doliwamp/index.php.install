@@ -231,7 +231,7 @@ while ($file = readdir($handle))
 	if (is_dir($file) && !in_array($file,$projectsListIgnore)) 
 	{		
 		$projectContents .= '<li><a href="'.$file.'">'.$file;
-		if ($file == 'dolibarr') $projectContents .= ' (URL=http://<i>ipofyourserver:WAMPAPACHEPORT</i>/'.$file.'/)';
+		if ($file == 'dolibarr') $projectContents .= ' (URL=http://<i>ipofyourserver</i>:WAMPAPACHEPORT/'.$file.'/)';
 		$projectContents .= '</a></li>';
 	}
 }
