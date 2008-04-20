@@ -26,6 +26,11 @@ update llx_const set name='SOCIETE_CODEFOURNISSEUR_ADDON' where name='CODEFOURNI
 delete from llx_const where name='CODECLIENT_ADDON';
 delete from llx_const where name='CODEFOURNISSEUR_ADDON';
 
+alter table llx_const add tms timestamp;
+update llx_const set tms=sysdate() where tms is null;
+update llx_const set tms=sysdate() where tms <= 0;
+
+
 alter table llx_document_model modify type varchar(20) NOT NULL;
 
 DELETE FROM llx_rights_def WHERE module = 'menudb';

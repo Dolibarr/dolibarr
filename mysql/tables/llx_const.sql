@@ -31,6 +31,6 @@ create table llx_const
   type        enum('yesno','texte','chaine'),
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
-
+  tms         timestamp
   UNIQUE INDEX(name)
 )type=innodb;
