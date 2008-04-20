@@ -68,8 +68,8 @@ Source: "build\exe\doliwamp\mysqlinitpassword.bat.install"; DestDir: "{app}\"; F
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications
 Source: "C:\Program Files\Wamp\apps\phpmyadmin2.10.1\*.*"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log"
-Source: "C:\Program Files\Wamp\bin\apache\apache2.2.6\*.*"; DestDir: "{app}\bin\apache\apache2.2.6"; Flags: ignoreversion recursesubdirs; Excludes: "httpd.conf,wampserver.conf,*.log,*_log"
-Source: "C:\Program Files\Wamp\bin\php\php5.2.5\*.*"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,wampserver.conf,*.log,*_log"
+Source: "C:\Program Files\Wamp\bin\apache\apache2.2.6\*.*"; DestDir: "{app}\bin\apache\apache2.2.6"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
+Source: "C:\Program Files\Wamp\bin\php\php5.2.5\*.*"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log"
 ; Mysql data files
 Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45\data\mysql"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
@@ -501,28 +501,19 @@ begin
       SaveStringToFile(destFile,srcContents, False);
     end
 
-
-
-
-    //----------------------------------------------
-    // fichier phpForApache.ini dans php
-    //----------------------------------------------
-
-    destFile := pathWithSlashes+'/bin/php/php'+phpVersion+'/phpForApache.ini';
-    if not FileExists (destFile) then
-    begin
-      SaveStringToFile(destFile,srcContents, False);
-    end
-
-
-
     //----------------------------------------------
     // fichier php.ini dans apache
     //----------------------------------------------
 
     destFile := pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/php.ini';
+    srcFile := pathWithSlashes+'/bin/php/php'+phpVersion+'/php.ini.install';
+
     if not FileExists (destFile) then
     begin
+      smtp := Page.Values[0];
+      LoadStringFromFile (srcFile, srcContents);
+      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
+      StringChange (srcContents, 'WAMPSMTP', smtp);
       SaveStringToFile(destFile,srcContents, False);
     end
 
