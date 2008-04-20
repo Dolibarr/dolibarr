@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+-- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+-- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 -- ===========================================================================
 
 --
--- Definitions des constantes utilisés comme parametres de configuration
+-- Table for constants used to store Dolibarr setup
 --
 
 create table llx_const
@@ -31,6 +32,6 @@ create table llx_const
   type        enum('yesno','texte','chaine'),
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
-  tms         timestamp
+  tms         timestamp,
   UNIQUE INDEX(name)
 )type=innodb;
