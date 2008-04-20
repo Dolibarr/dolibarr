@@ -653,7 +653,7 @@ default_socket_timeout = 60
 ; extension folders as well as the separate PECL DLL download (PHP 5).
 ; Be sure to appropriately set the extension_dir directive.
 
-;extension=php_bz2.dll
+extension=php_bz2.dll
 ;extension=php_curl.dll
 ;extension=php_dba.dll
 ;extension=php_dbase.dll
@@ -665,7 +665,7 @@ extension=php_gd2.dll
 ;extension=php_ifx.dll
 ;extension=php_imap.dll
 ;extension=php_interbase.dll
-;extension=php_ldap.dll
+extension=php_ldap.dll
 extension=php_mbstring.dll
 ;extension=php_mcrypt.dll
 ;extension=php_mhash.dll
@@ -691,13 +691,13 @@ extension=php_pdo_mysql.dll
 ;extension=php_shmop.dll
 ;extension=php_snmp.dll
 ;extension=php_soap.dll
-;extension=php_sockets.dll
+extension=php_sockets.dll
 extension=php_sqlite.dll
 ;extension=php_sybase_ct.dll
 ;extension=php_tidy.dll
 ;extension=php_xmlrpc.dll
 ;extension=php_xsl.dll
-;extension=php_zip.dll
+extension=php_zip.dll
 
 ;;;;;;;;;;;;;;;;;;;
 ; Module Settings ;
