@@ -13,7 +13,7 @@ For users:
 - Add tel and fax on delivery addresses.
 - Add a tool to edit personalized menu.
 - Changes for compatibility with PHP6/Mysql6.
-- Add an ical export link in webcalendar module.
+- Add an ical and vcal export link in agenda and webcalendar module.
 - Reduce memory usage.
 - Now triggers are enabled/disabled according to module they refers to.
 - Fix infinite loop on popup calendar.
@@ -26,12 +26,15 @@ For users:
 - Supplier prices can be input with or without taxe.
 - New generic numbering modules to offer more solutions for generating
   automatic id.
-- Other minor changes (features, look, fixes)
-- Changes in wizard installer to allow building autoexe installer for
-  Windows with Apache and Mysql included.
 - Add new predefined exports wizards (stocks, suppliers, taxes...).
 - Add feature to log security events (logon, change of users, passwords).
+- Can link all documents (included supplier invoices and orders) to a 
+  project.
 - New translation: Added spanish language.
+- Other minor changes (features, look, fixes)
+- Several enhancements to make addon development easier.
+- Changes in wizard installer to allow building autoexe installer for
+  Windows with Apache and Mysql included.
 
 For developers:
 - Update code skeletons examples.
