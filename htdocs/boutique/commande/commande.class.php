@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +15,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
-require_once(DOL_DOCUMENT_ROOT ."/address.class.php");
+ /**
+    	\file       htdocs/boutique/commande/commande.class.php
+		\ingroup    osc
+		\brief      Fichier de la classe des commandes OSC
+		\version    $Id$
+*/
+
+require_once(DOL_DOCUMENT_ROOT ."/core/address.class.php");
 
 
-class Commande {
+/** 
+        \class      Commande
+		\brief      Classe permettant la gestion des commandes OSC
+*/
+class Commande
+{
   var $db ;
 
   var $id ;
@@ -33,12 +42,13 @@ class Commande {
     $this->db = $DB;
     $this->id = $id ;
 
-    $this->billing_adr = New Address();
-    $this->delivry_adr = New Address();
+    $this->billing_adr = new Address();
+    $this->delivry_adr = new Address();
 
     $this->total_ot_subtotal = 0;
     $this->total_ot_shipping = 0;
   }  
+  
   /*
    *
    *
