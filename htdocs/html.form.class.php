@@ -2422,8 +2422,9 @@ class Form
     else if ($measuring_style == 'volume')
     {
   	  $measuring_units[0] = $langs->trans("VolumeUnitm3");
-      $measuring_units[-3] = $langs->trans("VolumeUnitcm3");
-      $measuring_units[-6] = $langs->trans("VolumeUnitmm3");
+      $measuring_units[-3] = $langs->trans("VolumeUnitdm3");
+      $measuring_units[-6] = $langs->trans("VolumeUnitcm3");
+      $measuring_units[-9] = $langs->trans("VolumeUnitmm3");
     }
 		
 		print '<select class="flat" name="'.$name.'">';

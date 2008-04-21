@@ -76,6 +76,7 @@ WeightUnitmg=mg
 Volume=Volume
 TotalVolume=Total volume
 VolumeUnitm3=m<SUP>3</SUP>
+VolumeUnitdm3=dm<SUP>3</SUP>
 VolumeUnitcm3=cm<SUP>3</SUP>
 VolumeUnitmm3=mm<SUP>3</SUP>
 BugTracker=Bug tracker
