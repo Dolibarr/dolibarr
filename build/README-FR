@@ -19,6 +19,15 @@ On trouve plusieurs outils:
 - Pour construire un package d'un module, il suffit de lancer le script
 > perl makepack-dolibarrmodule.pl
 
+- Pour construire un package DoliWamp autoexe:
+> Installer InnoSetup
+> Installer WampServer dans "C:\Program Files\Wamp"
+> Installer les addon WampServer afin d'y mettre les versions:
+   Apache2.2.6, Mysql5.0.45, Php5.2.5
+> Modifier dans le fichier build/exe/doliwamp2.4.iss la variable SourceDir
+  afin d'y mettre le repository Dolibarr.
+> Lancer innosetup, ouvrir le fichier build/exe/doliwamp2.4.iss et cliquer sur
+  le bouton "Compile". Le fichier .exe sera fabriqué dans le répertoire build.
 
 
 Note: 
