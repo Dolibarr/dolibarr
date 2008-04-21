@@ -136,8 +136,8 @@ print $langs->trans("WithNoSlashAtTheEnd")."<br>";
 print $langs->trans("DirectoryRecommendation")."<br>";
 print $langs->trans("Examples").":<br>";
 ?>
-<li>/var/www/dolibarr/documents</li>
-<li>C:/wwwroot/dolibarr/documents</li>
+<li>/var/dolibarr_documents</li>
+<li>C:/My Documents/dolibarr/</li>
 </td>
 </tr>
 
