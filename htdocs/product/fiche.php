@@ -83,10 +83,10 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 	$product->duration_unit      = $_POST["duration_unit"];
 	$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
 	$product->canvas             = $_POST["canvas"];
-	$product->new_weight         = $_POST["weight"];
-	$product->new_weight_units   = $_POST["weight_units"];
-	$product->new_volume         = $_POST["volume"];
-	$product->new_volume_units   = $_POST["volume_units"];
+	$product->weight             = $_POST["weight"];
+	$product->weight_units       = $_POST["weight_units"];
+	$product->volume             = $_POST["volume"];
+	$product->volume_units       = $_POST["volume_units"];
 	// MultiPrix
 	if($conf->global->PRODUIT_MULTIPRICES == 1)
 	{
@@ -147,10 +147,10 @@ if ($_POST["action"] == 'update' &&
 		$product->duration_value     = $_POST["duration_value"];
 		$product->duration_unit      = $_POST["duration_unit"];
 		$product->canvas             = $_POST["canvas"];
-		$product->new_weight         = $_POST["weight"];
-		$product->new_weight_units   = $_POST["weight_units"];
-		$product->new_volume         = $_POST["volume"];
-		$product->new_volume_units   = $_POST["volume_units"];
+		$product->weight             = $_POST["weight"];
+		$product->weight_units       = $_POST["weight_units"];
+		$product->volume             = $_POST["volume"];
+		$product->volume_units       = $_POST["volume_units"];
 		
 		if ($product->check())
 		{

@@ -70,14 +70,12 @@ class Product extends CommonObject
   // Statut indique si le produit est en vente '1' ou non '0'
   var $status;
   
-  //! Unit�s de mesure
-  var $new_weight;
+  //! Unites de mesure
   var $weight;
   var $weight_units;
-  var $new_volume;
   var $volume;
   var $volume_units;
-  
+
   //! Codes barres
   var $barcode;
   var $barcode_type;
@@ -335,20 +333,20 @@ class Product extends CommonObject
 		$this->description = trim($this->description);
 		$this->note = trim($this->note);
 		$this->stock_loc = trim($this->stock_loc);
-		$this->new_weight = price2num($this->new_weight);
-		$this->new_weight_units = trim($this->new_weight_units);
-		$this->new_volume = price2num($this->new_volume);
-		$this->new_volume_units = trim($this->new_volume_units);
+		$this->weight = price2num($this->weight);
+		$this->weight_units = trim($this->weight_units);
+		$this->volume = price2num($this->volume);
+		$this->volume_units = trim($this->volume_units);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 		$sql .= " SET label = '" . addslashes($this->libelle) ."'";
 		if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
 		$sql .= ",tva_tx = " . $this->tva_tx;
 		$sql .= ",envente = " . $this->status;
-		$sql .= ",weight = " . ($this->new_weight!='' ? "'".$this->new_weight."'" : 'null');
-		$sql .= ",weight_units = '" . $this->new_weight_units."'";
-		$sql .= ",volume = " . ($this->new_volume!='' ? "'".$this->new_volume."'" : 'null');
-		$sql .= ",volume_units = '" . $this->new_volume_units."'";
+		$sql .= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
+		$sql .= ",weight_units = '" . $this->weight_units."'";
+		$sql .= ",volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
+		$sql .= ",volume_units = '" . $this->volume_units."'";
 		$sql .= ",seuil_stock_alerte = '" . $this->seuil_stock_alerte."'";
 		$sql .= ",description = '" . addslashes($this->description) ."'";
 		$sql .= ",stock_loc   = '" . addslashes($this->stock_loc) ."'";
