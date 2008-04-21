@@ -536,6 +536,17 @@ class DoliDb
     }
 	
 	
+	/**
+        \brief      Escape a string to insert data.
+        \param	    stringtoencode		String to escape
+        \return	    string				String escaped
+    */
+    function escape($stringtoencode)
+	{
+		return addslashes($stringtoencode);
+	}
+
+
     /**
         \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
                     afin de retourner une donnée toujours au format universel date tms unix.
@@ -664,31 +675,13 @@ class DoliDb
             \brief          Renvoie l'id de la connexion
             \return	        string      Id connexion
     */
-    function getConnectId()
+    function DDLGetConnectId()
     {
         $resql=$this->query('SELECT CONNECTION_ID()');
         $row=$this->fetch_row($resql);
         return $row[0];
     }
 
-    /**
-            \brief          Renvoie la commande sql qui donne les droits sur les tables
-            \return	        string      Requete sql
-    */
-    function getGrantForUserQuery($databaseuser)
-    {
-        return '';
-    }
-
-
-    /**
-        \brief      Retourne le dsn pear
-        \return     dsn
-    */
-    function getDSN($db_type,$db_user,$db_pass,$db_host,$db_name)
-    {
-        return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
-    }
 
     /**
             \brief          Création d'une nouvelle base de donnée
@@ -696,20 +689,20 @@ class DoliDb
             \return	        resource		resource définie si ok, null si ko
             \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
     */
-  function DDLCreateDb($database)
-  {
-    // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-    $sql = 'CREATE DATABASE '.$database;
-    $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
-    $ret=$this->query($sql);
-	if (! $ret)
-		{
-		// On réessaie pour compatibilité avec Mysql < 4.1.1
-		$sql = 'CREATE DATABASE '.$database;
-		$ret=$this->query($sql);
-		}
-    return $ret;
-  }
+	function DDLCreateDb($database)
+	{
+	    // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
+	    $sql = 'CREATE DATABASE '.$database;
+	    $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+	    $ret=$this->query($sql);
+		if (! $ret)
+			{
+			// On réessaie pour compatibilité avec Mysql < 4.1.1
+			$sql = 'CREATE DATABASE '.$database;
+			$ret=$this->query($sql);
+			}
+	    return $ret;
+	}
 
 	/**
 		\brief     	Liste des tables dans une database.

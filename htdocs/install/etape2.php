@@ -317,26 +317,6 @@ if ($_POST["action"] == "set")
     
     /***************************************************************************************
     *
-    * Positionnement des droits
-    *
-    ***************************************************************************************/
-    if ($ok)
-    {
-        // Droits sur les tables
-        $grant_query=$db->getGrantForUserQuery($dolibarr_main_db_user);
-        
-        if ($grant_query)   // Seules les bases qui en ont besoin le definisse
-        {
-            if ($db->query($grant_query))
-            {
-                print "<tr><td>Grant User</td><td>".$langs->trans("OK")."</td></tr>";
-            }
-        }
-    }   
-
-
-    /***************************************************************************************
-    *
     * Chargement fichier functions.sql
     *
     ***************************************************************************************/

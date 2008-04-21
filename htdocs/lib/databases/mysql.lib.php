@@ -207,15 +207,15 @@ class DoliDb
 	}
   
 
-  /**
-     \brief      Selectionne une database.
-     \param	    database		Nom de la database
-     \return	    boolean         true si ok, false si ko
-  */
-  function select_db($database)
-  {
-    return mysql_select_db($database, $this->db);
-  }
+	/**
+		\brief      Selectionne une database.
+		\param	    database		Nom de la database
+		\return	    boolean         true si ok, false si ko
+	*/
+	function select_db($database)
+	{
+		return mysql_select_db($database, $this->db);
+	}
 
 	/**
 		\brief		Connection vers le serveur
@@ -248,15 +248,15 @@ class DoliDb
 		return $this->db;
 	}
     
-  /**
-     \brief          Renvoie la version du serveur
-     \return	        string      Chaine version
-  */
-  function getVersion()
-  {
-    return mysql_get_server_info($this->db);
-  }
-  
+	/**
+		\brief          Renvoie la version du serveur
+		\return	        string      Chaine version
+	*/
+	function getVersion()
+	{
+		return mysql_get_server_info($this->db);
+	}
+
     /**
      \brief          Renvoie la version du serveur sous forme de nombre
      \return	        string      Chaine version
@@ -521,7 +521,18 @@ class DoliDb
     }
 	
 	
-    /**
+	/**
+        \brief      Escape a string to insert data.
+        \param	    stringtoencode		String to escape
+        \return	    string				String escaped
+    */
+    function escape($stringtoencode)
+	{
+		return addslashes($stringtoencode);
+	}
+
+	
+	/**
         \brief      Formatage (par la base de données) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
                     afin de retourner une donnée toujours au format universel date TMS unix.
                     Fonction à utiliser pour générer les SELECT.
@@ -640,63 +651,44 @@ class DoliDb
     
 
 
-  // Next function are not required. Only minor features use them.
-  //--------------------------------------------------------------
+	// Next function are not required. Only minor features use them.
+	//--------------------------------------------------------------
 
 
 
-  /**
-     \brief          Renvoie l'id de la connexion
-     \return	        string      Id connexion
-  */
-  function getConnectId()
-  {
-    $resql=$this->query('SELECT CONNECTION_ID()');
-    $row=$this->fetch_row($resql);
-    return $row[0];
-  }
+	/**
+		\brief          Renvoie l'id de la connexion
+		\return	        string      Id connexion
+	*/
+	function DDLGetConnectId()
+	{
+		$resql=$this->query('SELECT CONNECTION_ID()');
+		$row=$this->fetch_row($resql);
+		return $row[0];
+	}
 
-  /**
-     \brief          Renvoie la commande sql qui donne les droits à user sur toutes les tables
-     \param          databaseuser    User à autoriser
-     \return	        string          Requete sql
-  */
-  function getGrantForUserQuery($databaseuser)
-  {
-    return '';
-  }
-  
-  
-  /**
-     \brief      Retourne le dsn pear
-     \return     dsn
-  */
-  function getDSN($db_type,$db_user,$db_pass,$db_host,$db_name)
-  {
-    return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
-  }
-  
-  /**
-     \brief          Création d'une nouvelle base de donnée
-     \param	        database		nom de la database à créer
-     \return	        resource		resource définie si ok, null si ko
-     \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
-     On force creation de la base avec le charset forcecharset
-  */
-  function DDLCreateDb($database)
-  {
-    // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-    $sql = 'CREATE DATABASE '.$database;
-    $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
-    $ret=$this->query($sql);
-	if (! $ret)
-		{
-		// On réessaie pour compatibilité avec Mysql < 4.1.1
+
+	/**
+		\brief          Création d'une nouvelle base de donnée
+		\param	        database		nom de la database à créer
+		\return	        resource		resource définie si ok, null si ko
+		\remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
+		On force creation de la base avec le charset forcecharset
+	*/
+	function DDLCreateDb($database)
+	{
+		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;
+		$sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
 		$ret=$this->query($sql);
+		if (! $ret)
+		{
+			// On réessaie pour compatibilité avec Mysql < 4.1.1
+			$sql = 'CREATE DATABASE '.$database;
+			$ret=$this->query($sql);
 		}
-    return $ret;
-  }
+		return $ret;
+	}
   
 	/**
 		\brief     	Liste des tables dans une database.

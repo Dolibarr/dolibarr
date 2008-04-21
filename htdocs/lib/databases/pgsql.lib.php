@@ -459,6 +459,17 @@ class DoliDb
     }
 	
 	
+	/**
+        \brief      Escape a string to insert data.
+        \param	    stringtoencode		String to escape
+        \return	    string				String escaped
+    */
+    function escape($stringtoencode)
+	{
+		return addslashes($stringtoencode);
+	}
+
+
     /**
         \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
                     afin de retourner une donnée toujours au format universel date tms unix.
@@ -591,51 +602,9 @@ class DoliDb
             \brief          Renvoie l'id de la connexion
             \return	        string      Id connexion
     */
-    function getConnectId()
+    function DDLGetConnectId()
     {
         return '?';
-    }
-
-
-    /**
-            \brief          Renvoie la commande sql qui donne les droits à user sur toutes les tables
-            \param          databaseuser    User à autoriser
-            \return	        string          Requete sql
-    */
-    function getGrantForUserQuery($databaseuser)
-    {
-        // Scan tables pour générer le grant
-        /*$dir = DOL_DOCUMENT_ROOT."/pgsql/tables";
-
-        $handle=opendir($dir);
-        $table_list="";
-        while (($file = readdir($handle))!==false)
-        {
-            if (! ereg("\.key\.sql",$file) && ereg("^(.*)\.sql",$file,$reg))
-            {
-                if ($table_list) {
-                    $table_list.=", ".$reg[0];
-                }
-                else {
-                    $table_list.=$reg[0];
-                }
-            }
-        }
-
-        // Genere le grant_query
-        $grant_query = 'GRANT ALL ON '.$table_list.' TO "'.$databaseuser.'";';
-        return $grant_query;
-        */
-        return '';
-    }
-
-    /**
-        \brief      Retourne le dsn pear
-        \return     dsn
-    */
-    function getDSN($db_type,$db_user,$db_pass,$db_host,$db_name)
-    {
-        return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
     }
 
 

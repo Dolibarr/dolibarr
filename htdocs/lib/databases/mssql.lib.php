@@ -528,6 +528,18 @@ class DoliDb
 		}
     }
 
+
+	/**
+        \brief      Escape a string to insert data.
+        \param	    stringtoencode		String to escape
+        \return	    string				String escaped
+    */
+    function escape($stringtoencode)
+	{
+		return addslashes($stringtoencode);
+	}
+
+
     /**
         \brief      Formatage (par la base de données) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
                     afin de retourner une donnée toujours au format universel date TMS unix.
@@ -655,96 +667,67 @@ class DoliDb
     }
 
 
-  // Next function are not required. Only minor features use them.
-  //--------------------------------------------------------------
+	// Next function are not required. Only minor features use them.
+	//--------------------------------------------------------------
 
 
 
-  /**
-     \brief          Renvoie l'id de la connexion
-     \return	        string      Id connexion
-  */
-  function getConnectId()
-  {
-    $resql=$this->query('SELECT CONNECTION_ID()');
-    $row=$this->fetch_row($resql);
-    return $row[0];
-  }
+	/**
+		\brief          Renvoie l'id de la connexion
+		\return	        string      Id connexion
+	*/
+	function DDLGetConnectId()
+	{
+		$resql=$this->query('SELECT CONNECTION_ID()');
+		$row=$this->fetch_row($resql);
+		return $row[0];
+	}
 
-  /**
-     \brief          Renvoie la commande sql qui donne les droits à user sur toutes les tables
-     \param          databaseuser    User à autoriser
-     \return	        string          Requete sql
-  */
-  function getGrantForUserQuery($databaseuser)
-  {
-	  /*
-	  $query = "DECLARE @tables TABLE(ROWID int IDENTITY(1,1), SQLSTR varchar(500)) INSERT INTO @tables SELECT '"
-	  $query .= "GRANT SELECT ON '+NAME+' TO ".$databaseuser." FROM sysobjects WHERE TYPE = 'U' AND "
-	  $query .= "NAME NOT LIKE 'SYNC%' DECLARE   @rowid int, @sqlstr varchar(500) SET @rowid = 0 "
-	  $query .= "SET @sqlstr = '' DECLARE grant_tbl_cursor CURSOR FOR SELECT ROWID, SQLSTR FROM @tables ORDER BY ROWID"
-	  $query .= "OPEN grant_tbl_cursor FETCH NEXT FROM grant_tbl_cursor INTO @rowid,@sqlstr WHILE @@FETCH_STATUS = 0 "
-	  $query .= "BEGIN EXECUTE (@sqlstr) FETCH NEXT FROM grant_tbl_cursor INTO @rowid,@sqlstr END CLOSE grant_tbl_cursor "
-	  $query .= "DEALLOCATE grant_tbl_cursor"
-	  */
-    return '';
-  }
-  
-  
-  /**
-     \brief      Retourne le dsn pear
-     \return     dsn
-  */
-  function getDSN($db_type,$db_user,$db_pass,$db_host,$db_name)
-  {
-    return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
-  }
-  
-  /**
-     \brief          Création d'une nouvelle base de donnée
-     \param	        database		nom de la database à créer
-     \return	        resource		resource définie si ok, null si ko
-     \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mssql, ...) car elles sont deprecated
-     On force creation de la base avec le charset forcecharset
-  */
-  function DDLCreateDb($database)
-  {
-    // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-    $sql = 'CREATE DATABASE '.$database;
-    $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
-    $ret=$this->query($sql);
-    if (! $ret)
-      {
-	// On réessaie pour compatibilité avec mssql < 5.0
-	$sql = 'CREATE DATABASE '.$database;
-	$ret=$this->query($sql);
-      }
+	/**
+		\brief          Création d'une nouvelle base de donnée
+		\param	        database		nom de la database à créer
+		\return	        resource		resource définie si ok, null si ko
+		\remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mssql, ...) car elles sont deprecated
+						On force creation de la base avec le charset forcecharset
+	*/
+	function DDLCreateDb($database)
+	{
+	    // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
+	    $sql = 'CREATE DATABASE '.$database;
+	    $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+	    $ret=$this->query($sql);
+	    if (! $ret)
+	      {
+		// On réessaie pour compatibilité avec mssql < 5.0
+		$sql = 'CREATE DATABASE '.$database;
+		$ret=$this->query($sql);
+	      }
     
-    return $ret;
-  }
+		return $ret;
+	}
   
-  /**
-     \brief      Liste des tables dans une database.
-     \param	    database	Nom de la database
-     \return	    resource
-  */
-  function DDLListTables($database)
-  {
-    $this->results = mssql_list_tables($database, $this->db);
-    return $this->results;
-  }
-  
-  /**
-     \brief      Crée une table
-     \param	    table 			Nom de la table
-     \param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
-     \param	    primary_key 	Nom du champ qui sera la clef primaire
-     \param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-     \param	    fulltext 		Tableau des Nom de champs qui seront indexés en fulltext
-     \param	    key 			Tableau des champs clés noms => valeur
-     \param	    type 			Type de la table
-     \return	    int				<0 si KO, >=0 si OK
-  */
+	/**
+		\brief      Liste des tables dans une database.
+		\param	    database	Nom de la database
+		\return	    resource
+	*/
+	function DDLListTables($database)
+	{
+		$this->results = mssql_list_tables($database, $this->db);
+		return $this->results;
+	}
+
+	/**
+	 \brief      Crée une table
+	 \param	    table 			Nom de la table
+	 \param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
+	 \param	    primary_key 	Nom du champ qui sera la clef primaire
+	 \param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+	 \param	    fulltext 		Tableau des Nom de champs qui seront indexés en fulltext
+	 \param	    key 			Tableau des champs clés noms => valeur
+	 \param	    type 			Type de la table
+	 \return	    int				<0 si KO, >=0 si OK
+	*/
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
 		// clés recherchées dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
