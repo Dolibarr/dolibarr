@@ -2485,9 +2485,11 @@ function clean_html($StringHtml,$removelinefeed=1)
 }
 
 /**
-   \brief   Convertir du binaire en héxadécimal
-   \param   string      bin
-   \return  string	    x
+   \brief   Convert a binaray data to string that represent hexadecimal value
+   \param   bin			Value to convert
+   \param   pad      	Add 0
+   \param   upper		Convert to tupper
+   \return  string		x
 */
 function binhex($bin, $pad=false, $upper=false){
   $last = strlen($bin)-1;
@@ -2511,6 +2513,7 @@ function hexbin($hexa){
    }
    return $bin;
 }
+
 
 /**
 *	\brief		Replace CRLF in string with a HTML BR tag.
