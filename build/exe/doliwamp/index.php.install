@@ -13,14 +13,14 @@
 
 //chemin jusqu'aux fichiers alias
 $aliasDir = '../alias/';
-
+$appDir = '../apps/';
 
 
 
 //on récpères les versions des applis
-$phpVersion = 'WAMPPHPVERSION';
-$apacheVersion = 'WAMPAPACHEVERSION';
-$mysqlVersion = 'WAMPMYSQLVERSION';
+$phpVersion = '5.2.5';
+$apacheVersion = '2.2.6';
+$mysqlVersion = '5.0.45';
 
 
 
@@ -41,10 +41,10 @@ $langues = array(
 		'versm' => 'MySQL Version :',
 		'phpExt' => 'Loaded Extensions : ',
 		'titrePage' => 'Tools',
-		'txtProjet' => 'Your Projects',
-		'txtNoProjet' => 'No projects yet.<br />To create a new one, just create a directory in \'www\'.',
-		'txtAlias' => 'Your Aliases',
-		'txtNoAlias' => 'No Alias yet.<br />To create a new one, use the WAMP5 menu.',
+		'txtAlias' => 'Your aliased softwares',
+		'txtNoAlias' => 'No Alias found.',
+		'txtProjet' => 'Your Softwares',
+		'txtNoProjet' => 'No softwares yet. To create a new one, just create a directory in \'www\'.',
 		'faq' => 'http://www.en.wampserver.com/faq.php'
 	),
 	'fr' => array(
@@ -58,10 +58,10 @@ $langues = array(
 		'versm' => 'Version de MySQL:',
 		'phpExt' => 'Extensions Charg&eacute;es: ',
 		'titrePage' => 'Outils',
-		'txtProjet' => 'Vos Projets',
-		'txtNoProjet' => 'Aucun projet.<br /> Pour en ajouter un nouveau, cr&eacute;ez simplement un r&eacute;pertoire dans \'www\'.',
-		'txtAlias' => 'Vos Alias',
-		'txtNoAlias' => 'Aucun alias.<br /> Pour en ajouter un nouveau, utilisez le menu de WAMP5.',
+		'txtAlias' => 'Alias d\'applications',
+		'txtNoAlias' => 'Aucun alias.',
+		'txtProjet' => 'Autres applications (sans alias)',
+		'txtNoProjet' => 'Aucune application hors alias. Pour en ajouter un nouveau, cr&eacute;ez simplement un r&eacute;pertoire dans \'www\'.',
 		'faq' => 'http://www.wampserver.com/faq.php'
 	)
 );
@@ -268,8 +268,15 @@ else
 }
 
 
+// Read PHP extensions
+$loaded_extensions = get_loaded_extensions();
+foreach ($loaded_extensions as $extension)
+	$phpExtContents .= "<li>${extension}</li>";
 
-// recuperation des alias
+
+	
+// Read alias
+$aliasarray=array();
 if (is_dir($aliasDir))
 {
     $handle=opendir($aliasDir);
@@ -278,35 +285,35 @@ if (is_dir($aliasDir))
 	    if (is_file($aliasDir.$file) && ereg('.conf',$file))
 	    {		
 		    $msg = '';
-		    $aliasContents .= '<li><a href="'.ereg_replace('.conf','',$file).'/">'.ereg_replace('.conf','',$file).'</a></li>';
+		    $aliasContents .= '<li><a href="'.ereg_replace('.conf','',$file).'/">';
+			$file = ereg_replace('.conf','',$file);
+			if (eregi('dolibarr',$file)) $aliasContents .= $file.' (URL=http://<i>ipofyourserver</i>:81/'.$file.'/)';
+			if (eregi('phpmyadmin',$file)) $aliasContents .= $file.' (URL=http://<i>ipofyourserver</i>:81/'.$file.'/)';
+			$aliasContents.='</a></li>';
+			$aliasarray[]=$file;
 	    }
     }
     closedir($handle);
 }
 if (!isset($aliasContents))
 	$aliasContents = $langues[$langue]['txtNoAlias'];
+	
 
-
-// recuperation des projets
+// Read projects in www dir
 $handle=opendir(".");
 while ($file = readdir($handle)) 
 {
-	if (is_dir($file) && !in_array($file,$projectsListIgnore)) 
+	if (is_dir($file) && !in_array($file,$projectsListIgnore) && !in_array($file,$aliasarray)) 
 	{		
-		$projectContents .= '<li><a href="'.$file.'">'.$file;
-		if ($file == 'dolibarr') $projectContents .= ' (URL=http://<i>ipofyourserver</i>:WAMPAPACHEPORT/'.$file.'/)';
+		$projectContents .= '<li><a href="'.$file.'">';
+		if (eregi('dolibarr',$file)) $projectContents .= $file.' (URL=http://<i>ipofyourserver</i>:81/'.$file.'/)';
+		if (eregi('phpmyadmin',$file)) $projectContents .= $file.' (URL=http://<i>ipofyourserver</i>:81/'.$file.'/)';
 		$projectContents .= '</a></li>';
 	}
 }
 closedir($handle);
 if (!isset($projectContents))
 	$projectContents = $langues[$langue]['txtNoProjet'];
-
-
-// recuperation des extensions PHP
-$loaded_extensions = get_loaded_extensions();
-foreach ($loaded_extensions as $extension)
-	$phpExtContents .= "<li>${extension}</li>";
 
 
 
@@ -464,13 +471,13 @@ a:hover {
 		<li><a href="?phpinfo=1">phpinfo()</a></li>
 		<li><a href="phpmyadmin/index.php">phpmyadmin</a></li>
 	</ul>
-	<h2>{$langues[$langue]['txtProjet']}</h2>
-	<ul class="projects">
-	$projectContents
-	</ul>
 	<h2>{$langues[$langue]['txtAlias']}</h2>
 	<ul class="aliases">
 	${aliasContents}			
+	</ul>
+	<h2>{$langues[$langue]['txtProjet']}</h2>
+	<ul class="projects">
+	$projectContents
 	</ul>
 	<ul id="foot">
 		<li>DoliWamp was built from idea of WampServer from Anaska</li>
