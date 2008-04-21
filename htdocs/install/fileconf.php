@@ -47,6 +47,12 @@ if (! isset($force_install_databaserootlogin)) $force_install_databaserootlogin=
 if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='';
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
+dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
+
+
+/*
+*	View
+*/
 
 pHeader($langs->trans("ConfigurationFile"),"etape0");
 

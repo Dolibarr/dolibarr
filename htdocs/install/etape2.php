@@ -19,6 +19,7 @@
 
 /**
         \file       htdocs/install/etape2.php
+		\ingroup	install
         \brief      Cree les tables, cles primaires, cles etrangeres, index et fonctions en base puis charge les donnees de reference
         \version    $Id$
 */
@@ -50,8 +51,15 @@ if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
 
+// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
+if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+
 dolibarr_install_syslog("etape2: Entering etape2.php page");
 
+
+/*
+*	View
+*/
 
 pHeader($langs->trans("CreateDatabaseObjects"),"etape4");
 

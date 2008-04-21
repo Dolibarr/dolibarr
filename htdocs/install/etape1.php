@@ -21,6 +21,7 @@
 
 /**
 		\file       htdocs/install/etape1.php
+		\ingroup	install
 		\brief      Génère le fichier conf.php avec les informations issues de l'étape précédente
 		\version    $Id$
 */
@@ -34,8 +35,15 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
+// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
+if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+
 dolibarr_install_syslog("etape1: Entering etape1.php page");
 
+
+/*
+*	View
+*/
 
 pHeader($langs->trans("ConfigurationFile"),"etape2");
 

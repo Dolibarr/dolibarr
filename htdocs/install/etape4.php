@@ -38,14 +38,16 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
-dolibarr_install_syslog("etape4: Entering etape4.php page");
-
-
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
+dolibarr_install_syslog("etape4: Entering etape4.php page");
 
+
+/*
+*	View
+*/
 
 pHeader($langs->trans("AdminAccountCreation"),"etape5");
 

@@ -21,6 +21,7 @@
 
 /**
         \file       htdocs/install/etape5.php
+		\ingroup	install
         \brief      Page de fin d'installation ou de migration
         \version    $Id$
 */
@@ -48,10 +49,12 @@ if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='
 if (! isset($force_install_renamedir))         $force_install_renamedir='';
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
-
-
 dolibarr_install_syslog("etape5: Entering etape5.php page", LOG_INFO);
 
+
+/*
+*	Actions
+*/
 
 // If install, check pass and pass_verif used to create admin account
 if ($_POST["action"] == "set")

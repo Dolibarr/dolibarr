@@ -36,14 +36,16 @@ $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
 
-
-dolibarr_install_syslog("check: Dolibarr install/upgrade process started");
-
 // Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
 if (! isset($force_install_dolibarrlogin))     $force_install_dolibarrlogin='';
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
+dolibarr_install_syslog("check: Dolibarr install/upgrade process started");
 
+
+/*
+*	View
+*/
 
 pHeader($langs->trans("DolibarrWelcome"),"");   // Etape suivante = license
 

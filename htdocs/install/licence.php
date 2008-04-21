@@ -31,8 +31,15 @@ $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
 
+// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
+if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+
 dolibarr_install_syslog("Licence: Entering licence.php page");
 
+
+/*
+*	View
+*/
 
 pHeader($langs->trans("License"),"fileconf");
 

@@ -18,9 +18,10 @@
  */
 
 /**
-   \file       htdocs/install/etape0.php
-   \brief      Permet d'afficher et de confirmer le charset par rapport aux informations précédentes -> sélection suite à connexion'
-   \version    $Id$
+		\file       htdocs/install/etape0.php
+		\ingroup	install
+		\brief      Permet d'afficher et de confirmer le charset par rapport aux informations précédentes -> sélection suite à connexion'
+		\version    $Id$
 */
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
@@ -36,18 +37,21 @@ $langs->load("errors");
 
 $error = 0;
 
-/**
- * Récuparation des information de connexion
- */
+// Récuparation des information de connexion
 $userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
 $passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
 // Répertoire des pages dolibarr
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 
+// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
+if (file_exists("./install.forced.php")) include_once("./install.forced.php");
+
+dolibarr_install_syslog("etape0: Entering etape0.php page");
+
 
 /*
- * Affichage page
- */
+*	View
+*/
 
 pHeader($langs->trans("ConfigurationFile"),"etape1");
 
