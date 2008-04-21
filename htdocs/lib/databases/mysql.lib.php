@@ -506,7 +506,7 @@ class DoliDb
 			$fields=split(',',$sortfield);
 			foreach($fields as $val)
 			{
-				if (! $return) $return.='ORDER BY ';
+				if (! $return) $return.=' ORDER BY ';
 				else $return.=',';
 				
 				$return.=$val;

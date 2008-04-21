@@ -499,6 +499,35 @@ class DoliDb
     }
 
 
+	/**
+        \brief      Défini le tri de la requète.
+        \param	    sortfield   liste des champ de tri
+        \param	    sortorder   ordre du tri
+        \return	    string      chaine exprimant la syntax sql de l'ordre de tri
+		\TODO		A mutualiser dans classe mere
+    */
+    function order($sortfield=0,$sortorder=0)
+    {
+		if ($sortfield)
+		{
+			$return='';
+			$fields=split(',',$sortfield);
+			foreach($fields as $val)
+			{
+				if (! $return) $return.=' ORDER BY ';
+				else $return.=',';
+				
+				$return.=$val;
+				if ($sortorder) $return.=' '.$sortorder;
+			}
+			return $return;
+		}
+		else
+		{
+			return '';
+		}
+    }
+
     /**
         \brief      Formatage (par la base de données) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
                     afin de retourner une donnée toujours au format universel date TMS unix.
