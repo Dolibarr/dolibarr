@@ -31,6 +31,7 @@ For users:
   Windows with Apache and Mysql included.
 - Add new predefined exports wizards (stocks, suppliers, taxes...).
 - Add feature to log security events (logon, change of users, passwords).
+- New translation: Added spanish language.
 
 For developers:
 - Update code skeletons examples.
