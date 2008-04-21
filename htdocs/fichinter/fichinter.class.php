@@ -16,15 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**	    \file       htdocs/fichinter/fichinter.class.php
-		\ingroup    fucheinter
+		\ingroup    ficheinter
 		\brief      Fichier de la classe des gestion des fiches interventions
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
@@ -429,7 +426,7 @@ class Fichinter extends CommonObject
 		}
 	}
 	
-/**
+	/**
 	*    \brief      Efface fiche intervention
 	*    \param      user        Objet du user qui efface
 	*/
@@ -437,14 +434,18 @@ class Fichinter extends CommonObject
 	{
 		global $conf;
 	
+		$this->db->begin();
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE fk_fichinter = ".$this->id;
+		dolibarr_syslog("Fichinter::delete sql=".$sql);
 		if ( $this->db->query($sql) )
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter WHERE rowid = ".$this->id;
+			dolibarr_syslog("Fichinter::delete sql=".$sql);
 			if ( $this->db->query($sql) )
 			{
 	
-				// On efface le repertoire du pdf
+				// Remove directory with files
 				$fichinterref = sanitize_string($this->ref);
 				if ($conf->fichinter->dir_output)
 				{
@@ -470,16 +471,20 @@ class Fichinter extends CommonObject
 					}
 				}
 	
-				dolibarr_syslog("Suppression de la fiche intervention $this->id par $user->id");
+				$this->db->commit();
 				return 1;
 			}
 			else
 			{
+				$this->error=$this->db->lasterror();
+				$this->db->rollback();
 				return -2;
 			}
 		}
 		else
 		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 	}
