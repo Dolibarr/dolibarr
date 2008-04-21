@@ -158,9 +158,9 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 					$contact=new Contact($db);
 			
 					$contact->civilite_id = $soc->civilite_id;
-				    $contact->name=$soc->name;
-				    $contact->firstname=$soc->firstname;
-				    $contact->address=$soc->address;
+				    $contact->name=$soc->nom_particulier;
+				    $contact->firstname=$soc->prenom;
+				    $contact->address=$soc->adresse;
 				    $contact->cp=$soc->cp;
 				    $contact->ville=$soc->ville;
 				    $contact->fk_pays=$soc->fk_pays;

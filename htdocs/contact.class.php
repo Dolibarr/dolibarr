@@ -159,8 +159,8 @@ class Contact extends CommonObject
         }
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
-        if ($this->socid > 0) $sql .= "  fk_soc='".addslashes($this->socid)."',";
-        if ($this->socid == -1) $sql .= "  fk_soc=null,";
+        if ($this->socid > 0) $sql .= " fk_soc='".addslashes($this->socid)."',";
+        if ($this->socid == -1) $sql .= " fk_soc=null,";
         $sql .= "  civilite='".addslashes($this->civilite_id)."'";
         $sql .= ", name='".addslashes($this->name)."'";
         $sql .= ", firstname='".addslashes($this->firstname)."'";

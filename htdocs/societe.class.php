@@ -421,34 +421,8 @@ class Societe extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-            	
-            	//Si c'est un particulier on cr�e la fiche contact
-            	if ($this->particulier == 1)
-            	{
-            		require_once (DOL_DOCUMENT_ROOT."/contact.class.php");
-            		$contact = new Contact($this->db);
-            		
-            		$contact->socid        = $id;
-            		$contact->name         = $this->nom_particulier;
-            		$contact->firstname    = $this->prenom;
-            		//$contact->civilite_id  = $_POST["civilite_id"];
-            		//$contact->poste        = $_POST["poste"];
-            		$contact->address      = $this->adresse;
-            		$contact->cp           = $this->cp;
-            		$contact->ville        = $this->ville;
-            		$contact->fk_pays      = $this->pays_id;
-            		$contact->email        = $this->email;
-            		$contact->phone_pro    = $this->tel;
-            		//$contact->phone_perso  = $_POST["phone_perso"];
-            		//$contact->phone_mobile = $_POST["phone_mobile"];
-            		$contact->fax          = $this->fax;
-            		
-            		$id =  $contact->create($user);
-            	}
-
-
-				      // si le fournisseur est classe on l'ajoute
-				      $this->AddFournisseurInCategory($this->fournisseur_categorie);
+				// Si le fournisseur est classe on l'ajoute
+				$this->AddFournisseurInCategory($this->fournisseur_categorie);
 
                 if ($call_trigger)
                 {
