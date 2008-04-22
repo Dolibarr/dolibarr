@@ -729,8 +729,8 @@ class Contrat extends CommonObject
             if ($date_end > 0)  { $sql.= ",date_fin_validite"; }
             $sql.= ") VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',";
             $sql.= ($fk_product>0 ? $fk_product : "null").",";
-            $sql.= " '$qty',";
-			$sql.= " ".$txtva.",";
+            $sql.= " '".$qty."',";
+			$sql.= " '".$txtva."',";
 			$sql.= " ".price2num($remise_percent).",".price2num($pu).",";
 			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_ttc).",";
 			$sql.= " '".$info_bits."',";

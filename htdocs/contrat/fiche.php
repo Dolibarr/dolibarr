@@ -230,9 +230,9 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
             // On defini prix unitaire
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
             {
-            	$pu_ht = $prod->multiprices[$fac->client->price_level];
-            	$pu_ttc = $prod->multiprices_ttc[$fac->client->price_level];
-            	$price_base_type = $prod->multiprices_base_type[$fac->client->price_level];
+            	$pu_ht = $prod->multiprices[$contrat->client->price_level];
+            	$pu_ttc = $prod->multiprices_ttc[$contrat->client->price_level];
+            	$price_base_type = $prod->multiprices_base_type[$contrat->client->price_level];
             }
             else
             {
