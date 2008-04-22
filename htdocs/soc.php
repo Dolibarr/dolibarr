@@ -23,7 +23,7 @@
 /**
    \file       htdocs/soc.php
    \ingroup    societe
-   \brief      Onglet societe d'une societe
+   \brief      Third party card page
    \version    $Id$
 */
 
@@ -237,20 +237,21 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)
 {
-  $soc = new Societe($db);
-  $soc->fetch($socid);
-  $result = $soc->delete($socid);
- 
-  if ($result == 0)
-  {
-  	Header("Location: ".DOL_URL_ROOT."/societe.php?delsoc=".$soc->nom."");
-  	exit;
-  }
-  else
-  {
-    $reload = 0;
-    $_GET["action"]='';
-  }
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	$result = $soc->delete($socid);
+
+	if ($result >= 0)
+	{
+		Header("Location: ".DOL_URL_ROOT."/societe.php?delsoc=".$soc->nom."");
+		exit;
+	}
+	else
+	{
+		$reload = 0;
+		$mesg=$soc->error;
+		$_GET["action"]='';
+	}
 }
 
 
@@ -961,11 +962,10 @@ else
         print "<br />\n";
     }
 
-
-    if ($soc->error)
+    if ($mesg)
     {
         print '<div class="error">';
-        print $soc->error;
+        print $mesg;
         print '</div>';
     }
 

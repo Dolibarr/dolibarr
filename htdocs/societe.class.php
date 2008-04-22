@@ -682,45 +682,48 @@ class Societe extends CommonObject
         dolibarr_syslog("Societe::Delete");
         $sqr = 0;
 
+		// \Todo
+		// Check if third party can be deleted
+		
+		
+		
+		
         if ( $this->db->begin())
         {
-            $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople ";
-            $sql .= " WHERE fk_soc = " . $id .";";
-
+            $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
+            $sql.= " WHERE fk_soc = " . $id;
             if ($this->db->query($sql))
             {
                 $sqr++;
             }
             else
             {
-                $this->error .= "Impossible de supprimer les contacts.\n";
-                dolibarr_syslog("Societe::Delete erreur -1");
+                $this->error .= $this->db->lasterror();
+                dolibarr_syslog("Societe::Delete erreur -1 ".$this->error);
             }
 
-            $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib ";
-            $sql .= " WHERE fk_soc = " . $id .";";
-
+            $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
+            $sql.= " WHERE fk_soc = " . $id;
             if ($this->db->query($sql))
             {
                 $sqr++;
             }
             else
             {
-                $this->error .= "Impossible de supprimer le RIB.\n";
-                dolibarr_syslog("Societe::Delete erreur -2");
+                $this->error = $this->db->lasterror();
+                dolibarr_syslog("Societe::Delete erreur -2 ".$this->error);
             }
 
-            $sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
-            $sql .= " WHERE rowid = " . $id .";";
-
+            $sql = "DELETE from ".MAIN_DB_PREFIX."societe";
+            $sql.= " WHERE rowid = " . $id;
             if ($this->db->query($sql))
             {
                 $sqr++;
             }
             else
             {
-                $this->error .= "Impossible de supprimer la soci�t�.\n";
-                dolibarr_syslog("Societe::Delete erreur -3");
+                $this->error = $this->db->lasterror();
+                dolibarr_syslog("Societe::Delete erreur -3 ".$this->error);
             }
 
             if ($sqr == 3)
