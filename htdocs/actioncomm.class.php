@@ -50,12 +50,13 @@ class ActionComm
 
     var $datep;			// Date action planifie debut (datep)
     var $datef;			// Date action planifie fin (datep2)
-    var $date;			// Date action realise debut (datea)
-    var $dateend; 		// Date action realise fin (datea2)
     var $durationp = -1;
-    var $durationa = -1;
+    //var $date;			// Date action realise debut (datea)	// deprecated
+    //var $dateend; 		// Date action realise fin (datea2)		// deprecated
+    var $durationa = -1;	// deprecated
 	var $priority;
-
+	var $punctual = 1;
+	
     var $usertodo;		// Object user that must do action
     var $userdone;	 	// Object user that did action
 	
@@ -98,6 +99,7 @@ class ActionComm
         $this->note=trim($this->note);
 		if (! $this->percentage) $this->percentage = 0;
         if (! $this->priority)   $this->priority = 0;
+        if (! $this->punctual)   $this->punctual = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
 		if ($this->datep && $this->datef)   $this->durationp=($this->datef - $this->datep);
@@ -145,7 +147,7 @@ class ActionComm
 		$sql.= "fk_user_author,";
 		$sql.= "fk_user_action,";
 		$sql.= "fk_user_done,";
-		$sql.= "label,percent,priority,";
+		$sql.= "label,percent,priority,punctual,";
         $sql.= "fk_facture,propalrowid,fk_commande)";
         $sql.= " VALUES (";
         $sql.= "'".$this->db->idate($now)."',";
@@ -160,7 +162,7 @@ class ActionComm
         $sql.= "'".$user->id."',";
 		$sql.= ($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
 		$sql.= ($this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
-		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."',";
+		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."','".$this->punctual."',";
         $sql.= ($this->facid?$this->facid:"null").",";
         $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
         $sql.= ($this->orderrowid?$this->orderrowid:"null");

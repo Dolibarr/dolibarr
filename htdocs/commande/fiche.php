@@ -444,19 +444,19 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 
 if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
-  $commande = new Commande($db);
-  $commande->fetch($_GET['id']);
-  $soc = new Societe($db);
-  $soc->fetch($commande->socid);
-  if ($_REQUEST['lang_id'])
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+
+	$result=$commande->valid($user);
+	if ($result	>= 0)
 	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	}
-  commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
-  $result=$commande->valid($user);
-  Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
-  exit;
 }
 
 if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->creer)
@@ -615,22 +615,16 @@ if ($_POST['action'] == 'send')
 
 				if ($_POST['action'] == 'send')
 				{
-					$subject = $_POST['subject'];
-
-					if($subject == '')
-					{
-						$subject = $langs->transnoentities('Order').' '.$commande->ref;
-					}
-
+					if (strlen($_POST['subject'])) $subject=$_POST['subject'];
+					else $subject = $langs->transnoentities('Order').' '.$commande->ref;
 					$actiontypecode='AC_COM';
 					$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
-
 					if ($message)
 					{
+						$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
 						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 						$actionmsg.=$message;
 					}
-
 					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 				}
 
@@ -1864,54 +1858,10 @@ else
 			}
 			print '</td><td valign="top" width="50%">';
 
-			/*
-			* Liste des actions propres a la commande
-			*/
-    		if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-		    {
-				$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
-				$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-				$sql .= ' WHERE a.fk_commande = '.$commande->id ;
-				if ($socid) $sql .= ' AND a.fk_soc = '.$socid;
-				$resql = $db->query($sql);
-				if ($resql)
-				{
-					$num = $db->num_rows($resql);
-					if ($num)
-					{
-						//print '<br>';
-						print_titre($langs->trans('ActionsOnOrder'));
-						$i = 0;
-						$total = 0;
-						$var=true;
-	
-						print '<table class="border" width="100%">';
-						print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
-						print "\n";
-	
-						while ($i < $num)
-						{
-							$objp = $db->fetch_object($resql);
-							$var=!$var;
-							print '<tr '.$bc[$var].'>';
-							print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-							print '<td>'.dolibarr_print_date($objp->da,'day')."</td>\n";
-							print '<td>'.stripslashes($objp->label).'</td>';
-							$authoract = new User($db);
-							$authoract->id = $objp->fk_user_author;
-							$authoract->fetch('');
-							print '<td>'.$authoract->login.'</td>';
-							print "</tr>\n";
-							$i++;
-						}
-						print '</table>';
-					}
-				}
-				else
-				{
-					dolibarr_print_error($db);
-				}
-		    }
+			// List of actions on element
+			include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
+			$formactions=new FormActions($db);
+			$somethingshown=$formactions->showactions($commande,'order',$socid);
 		    
 			print '</td></tr></table>';
 

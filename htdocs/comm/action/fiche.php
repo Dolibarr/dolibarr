@@ -624,13 +624,10 @@ if ($_GET["id"])
         $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
         print '</td></tr>';
 
-		// Priorite
-		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-		print '<input type="text" name="priority" value="'.$act->priority.'" size="5">';
-		print '</td></tr>';
+		print '</table><br><table class="border" width="100%">';
 
 		// Input by
-		print '<tr><td nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
+		print '<tr><td width="30%" nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
 		print $act->author->getNomUrl(1);
 		print '</td></tr>';
 
@@ -644,8 +641,10 @@ if ($_GET["id"])
 		$html->select_users($act->userdone->id,'doneby',1);
 		print '</td></tr>';
 
+		print '</table><br><table class="border" width="100%">';
+
 		// Date start
-		print '<tr><td nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
+		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
 		if ($_REQUEST["afaire"] == 1) $html->select_date($act->datep,'ap',1,1,0,"action");
 		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datep,'ap',1,1,1,"action");
 		else $html->select_date($act->datep,'ap',1,1,1,"action");
@@ -657,6 +656,11 @@ if ($_GET["id"])
 		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datef,'p2',1,1,1,"action");
 		else $html->select_date($act->datef,'p2',1,1,1,"action");
 		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
+		print '</td></tr>';
+
+		// Priorite
+		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<input type="text" name="priority" value="'.$act->priority.'" size="5">';
 		print '</td></tr>';
 
 		// Status
@@ -675,7 +679,7 @@ if ($_GET["id"])
 	    {
 			// Editeur wysiwyg
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$act->note,280,'dolibarr_notes','In',true);
+			$doleditor=new DolEditor('note',$act->note,240,'dolibarr_notes','In',true);
 			$doleditor->Create();
 	    }
 	    else
@@ -720,13 +724,10 @@ if ($_GET["id"])
 
         print '</td></tr>';
 
-		// Priorite
-		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-		print $act->priority;
-		print '</td></tr>';
+		print '</table><br><table class="border" width="100%">';
 
 		// Input by
-		print '<tr><td nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
+		print '<tr><td width="30%" nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
 		print $act->author->getNomUrl(1);
 		print '</td></tr>';
 
@@ -740,8 +741,10 @@ if ($_GET["id"])
 		if ($act->userdone->id > 0) print $act->userdone->getNomUrl(1);
 		print '</td></tr>';
 
+		print '</table><br><table class="border" width="100%">';
+
         // Date debut
-		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
+		print '<tr><td width="30%">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
 		print dolibarr_print_date($act->datep,'dayhour');
 		if ($act->percentage == 0 && $act->datep && $act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
@@ -750,6 +753,11 @@ if ($_GET["id"])
         print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
 		print dolibarr_print_date($act->datef,'dayhour');
 		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
+		print '</td></tr>';
+
+		// Priorite
+		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+		print $act->priority;
 		print '</td></tr>';
 
         // Statut

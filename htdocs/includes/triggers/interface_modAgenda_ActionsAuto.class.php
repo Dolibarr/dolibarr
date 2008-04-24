@@ -289,8 +289,38 @@ class InterfaceActionsAuto
 			$object->orderrowid=$object->propalrowid=0;
 			$ok=1;
 		}
+		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("orders");
+            $langs->load("agenda");
+			
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("OrderValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
-		
+			$object->sendtoid=0;
+			$object->orderrowid=0;	// Supplier order not yet supported
+			$object->propalrowid=$object->facid=0;
+			$ok=1;
+		}
+		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("bills");
+            $langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$object->sendtoid=0;
+			$object->facid=0;	// Supplier invoice not yet supported
+			$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+		}
 		
 		
 		// If not found
@@ -305,6 +335,8 @@ class InterfaceActionsAuto
         // Add entry in event table
         if ($ok)
         {
+			$now=time();
+			
 			// Insertion action
 			require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
 			require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
@@ -312,7 +344,10 @@ class InterfaceActionsAuto
 			$actioncomm->type_code   = $object->actiontypecode;
 			$actioncomm->label       = $object->actionmsg2;
 			$actioncomm->note        = $object->actionmsg;
-			$actioncomm->date        = time();	// L'action est faite maintenant
+			$actioncomm->datep       = $now;
+			$actioncomm->datef       = $now;
+			$actioncomm->durationp   = 0;
+			$actioncomm->punctual    = 1;
 			$actioncomm->percentage  = 100;
 			$actioncomm->contact     = new Contact($this->db,$object->sendtoid);
 			$actioncomm->societe     = new Societe($this->db,$object->socid);
@@ -331,7 +366,7 @@ class InterfaceActionsAuto
                 $error ="Failed to insert : ".$actioncomm->error." ";
                 $this->error=$error;
 
-                //dolibarr_syslog("interface_webcal.class.php: ".$this->error);
+                dolibarr_syslog("interface_modAgenda_ActionsAuto.class.php: ".$this->error);
                 return -1;
 			}
 		}

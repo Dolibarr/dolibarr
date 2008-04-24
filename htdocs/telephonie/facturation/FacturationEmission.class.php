@@ -678,7 +678,7 @@ class FacturationEmission {
 	    $y = substr($year, -1);
 	    $m = substr("00".$month, -2);
 	  
-	    if ( $fac->set_valid($facid, $user, $soc) )
+	    if ( $fac->set_valid($user, $soc) )
 	      {
 		$valid_ok = 1;
 	      }

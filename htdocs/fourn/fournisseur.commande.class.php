@@ -82,6 +82,7 @@ class CommandeFournisseur extends Commande
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
 		$sql .= " WHERE c.rowid = ".$id;
 		
+		dolibarr_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql) ;
 		if ($resql)
 		{

@@ -41,7 +41,7 @@ $langs->load('bills');
 $langs->load('suppliers');
 $langs->load('companies');
 
-// S�curit� acc�s client
+// Security check
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -57,9 +57,7 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 {
 	$facturefourn=new FactureFournisseur($db);
 	$facturefourn->fetch($_GET['facid']);
-    $facturefourn->set_valid($user);
-	Header('Location: fiche.php?facid='.$_GET['facid']);
-	exit;
+    $result = $facturefourn->set_valid($user);
 }
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')

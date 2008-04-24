@@ -317,16 +317,17 @@ class Commande extends CommonObject
 		return -1;
 	}
 
-  /**
-   *
-   *
-   */
-  function set_draft($user)
-  {
-  	global $conf;
+	/**
+	*		\brief		Set draft status
+	*		\param		user		Object user that modify
+	*		\param		int			<0 if KO, >0 if OK
+	*/
+	function set_draft($user)
+	{
+		global $conf,$langs;
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
-    $sql .= " WHERE rowid = $this->id;";
+    $sql .= " WHERE rowid = ".$this->id;
     
     if ($this->db->query($sql))
     {

@@ -217,17 +217,19 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
 
 if ($_POST['action'] ==	'confirm_valid'	&& $_POST['confirm'] ==	'yes' && $user->rights->fournisseur->commande->valider)
 {
-  $commande =	new	CommandeFournisseur($db);
-  $commande->fetch($_GET['id']);
-  $soc = new Societe($db);
-  $soc->fetch($commande->socid);
-  $result = $commande->valid($user);
-  if ($result	>= 0)
-    {
-      supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
-      Header("Location: fiche.php?id=".$_GET["id"]);
-      exit;
-    }
+	$commande =	new	CommandeFournisseur($db);
+	$commande->fetch($_GET['id']);
+
+	$result = $commande->valid($user);
+	if ($result	>= 0)
+	{
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	}
 }
 
 if ($_POST['action'] ==	'confirm_approve' && $_POST["confirm"] == 'yes'	&& $user->rights->fournisseur->commande->approuver)
@@ -235,11 +237,6 @@ if ($_POST['action'] ==	'confirm_approve' && $_POST["confirm"] == 'yes'	&& $user
   $commande =	new	CommandeFournisseur($db);
   $commande->fetch($_GET['id']);
   $result	= $commande->approve($user);
-  if ($result	>= 0)
-    {
-      Header("Location: fiche.php?id=".$_GET["id"]);
-      exit;
-    }
 }
 
 if ($_POST['action'] ==	'confirm_refuse' &&	$_POST['confirm'] == 'yes' && $user->rights->fournisseur->commande->approuver)
@@ -247,11 +244,6 @@ if ($_POST['action'] ==	'confirm_refuse' &&	$_POST['confirm'] == 'yes' && $user-
   $commande = new CommandeFournisseur($db);
   $commande->fetch($_GET['id']);
   $result = $commande->refuse($user);
-  if ($result	>= 0)
-    {
-      Header("Location: fiche.php?id=".$_GET["id"]);
-      exit;
-    }
 }
 
 if ($_POST['action'] ==	'confirm_commande' && $_POST['confirm']	== 'yes' &&	$user->rights->fournisseur->commande->commander)
@@ -259,8 +251,6 @@ if ($_POST['action'] ==	'confirm_commande' && $_POST['confirm']	== 'yes' &&	$use
   $commande =	new	CommandeFournisseur($db);
   $commande->fetch($_GET["id"]);
   $result	= $commande->commande($user, $_GET["datecommande"],	$_GET["methode"]);
-  Header("Location: fiche.php?id=".$_GET["id"]);
-  exit;
 }
 
 

@@ -664,12 +664,12 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
   
   if (!$error && !$cancel_facture)
     {
-      if ($verbose) dolibarr_syslog("Validation de la facture : $facid");
+      if ($verbose) dolibarr_syslog("Validation de la facture : $fac->id");
       
       $y = substr($year, -1);
       $m = substr("00".$month, -2);
       
-      if ( $fac->set_valid($facid, $user, $soc) )
+      if ( $fac->set_valid($user, $soc) )
 	{
 	  $valid_ok = 1;
 	}

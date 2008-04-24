@@ -115,7 +115,7 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 	$result=$facture->create($user);
 	if ($result >= 0)
 	{
-		$result=$facture->set_valid($facture->id,$user,$socid);
+		$result=$facture->set_valid($user,$socid);
 		if ($result) print " OK";
 		else
 		{

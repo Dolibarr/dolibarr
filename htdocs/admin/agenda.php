@@ -17,7 +17,7 @@
  */
 
 /**
-	    \file       htdocs/admin/agenda_actions.php
+	    \file       htdocs/admin/agenda.php
         \ingroup    agenda
         \brief      Autocreate actions for agenda module setup page
 		\version    $Id$
@@ -49,6 +49,8 @@ $eventstolog=array(
 	array('id'=>'BILL_PAYED',             'test'=>$conf->facture->enabled),
 	array('id'=>'BILL_CANCELED',          'test'=>$conf->facture->enabled),
 	array('id'=>'BILL_SENTBYMAIL',        'test'=>$conf->facture->enabled),
+	array('id'=>'ORDER_SUPPLIER_VALIDATE','test'=>$conf->fournisseur->enabled),
+	array('id'=>'BILL_SUPPLIER_VALIDATE', 'test'=>$conf->fournisseur->enabled),
 //	array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),
 //	array('id'=>'PAYMENT_SUPPLIER_CREATE','test'=>$conf->fournisseur->enabled),
 //	array('id'=>'MEMBER_VALIDATE',        'test'=>$conf->adherent->enabled),

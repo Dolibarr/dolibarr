@@ -382,17 +382,34 @@ class FactureFournisseur extends Facture
 	 */
 	function set_valid($user)
 	{
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
+		global $conf,$langs;
+		
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
         $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
+
+		dolibarr_syslog("FactureFournisseur::set_valid sql=".$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql)
+		if ($resql)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('BILL_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+
+			$this->db->commit();
+			return 1;
+		}
+		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_print_error($this->db);
+			$this->db->rollback();
             return -1;
 		}
-        return 1;
 	}
 
 

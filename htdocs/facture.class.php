@@ -987,13 +987,12 @@ class Facture extends CommonObject
 
 	/**
 	*      	\brief     	Tag la facture comme validée + appel trigger BILL_VALIDATE
-	*      	\param     	rowid           Id de la facture à valider
 	*      	\param     	user            Utilisateur qui valide la facture
 	*      	\param     	soc             Ne sert plus \\TODO A virer
 	*      	\param     	force_number	Référence à forcer de la facture
 	*		\return		int				<0 si ko, >0 si ok
 	*/
-	function set_valid($rowid, $user, $soc='', $force_number='')
+	function set_valid($user, $soc='', $force_number='')
 	{
 		global $conf,$langs;
 
@@ -1027,7 +1026,7 @@ class Facture extends CommonObject
 				
 				// Controle que facture source non deja remplacee par une autre
 				$idreplacement=$facreplaced->getIdReplacingInvoice('validated');
-				if ($idreplacement && $idreplacement != $rowid)
+				if ($idreplacement && $idreplacement != $this->id)
 				{
 					$facreplacement=new Facture($this->db);
 					$facreplacement->fetch($idreplacement);
@@ -1075,7 +1074,7 @@ class Facture extends CommonObject
 				$sql.= ', datef='.$this->db->idate($this->date);
 				$sql.= ', date_lim_reglement='.$this->db->idate($datelim);
 			}
-			$sql.= ' WHERE rowid = '.$rowid;
+			$sql.= ' WHERE rowid = '.$this->id;
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1192,15 +1191,17 @@ class Facture extends CommonObject
 
 	/**
 	*		\brief		Set draft status
-	*		\param		userid		Id user setting
+	*		\param		user		Object user that modify
+	*		\param		int			<0 if KO, >0 if OK
 	*/
-	function set_draft($userid)
+	function set_draft($user)
 	{
-		dolibarr_syslog("Facture::set_draft rowid=".$this->id, LOG_DEBUG);
+		global $conf,$langs;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
 		$sql.= " WHERE rowid = ".$this->id;
 
+		dolibarr_syslog("Facture::set_draft sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			return 1;
