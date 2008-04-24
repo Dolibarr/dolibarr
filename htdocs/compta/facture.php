@@ -999,32 +999,26 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 
 				if ($_POST['action'] == 'send')
 				{
-					if(strlen($_POST['subject']))
-					{
-						$subject = $_POST['subject'];
-					}
-					else
-					{
-						$subject = $langs->trans('Bill').' '.$fac->ref;
-					}
-
+					if (strlen($_POST['subject'])) $subject = $_POST['subject'];
+					else $subject = $langs->transnoentities('Bill').' '.$fac->ref;
 					$actiontypecode='AC_FAC';
 					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
-
 					if ($message)
 					{
+						$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
 						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 						$actionmsg.=$message;
 					}
-
 					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 				}
 				if ($_POST['action'] == 'relance')
 				{
-					$subject = 'Relance facture '.$fac->ref;
+					if (strlen($_POST['subject'])) $subject = $_POST['subject'];
+					else $subject = $langs->transnoentities('Relance facture '.$fac->ref);
 					$actiontypecode='AC_FAC';
 					$actionmsg=$langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
 					if ($message) {
+						$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
 						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
 						$actionmsg.=$message;
 					}
@@ -1063,7 +1057,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 						$fac->actionmsg = $actionmsg;
 						$fac->actionmsg2= $actionmsg2;
 						$fac->facid=$fac->id;
-
+						
 						// Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 						$interface=new Interfaces($db);

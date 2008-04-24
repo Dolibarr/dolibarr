@@ -349,22 +349,16 @@ if ($_POST['action'] == 'send')
 
                 if ($_POST['action'] == 'send')
                 {
-                	$subject = $_POST['subject'];
-
-                	if($subject == '')
-                	{
-                		$subject = $langs->transnoentities('Propal').' '.$propal->ref;
-                	}
-
+                	if (strlen($_POST['subject'])) $subject = $_POST['subject'];
+                	else $subject = $langs->transnoentities('Propal').' '.$propal->ref;
 					$actiontypecode='AC_PROP';
                     $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
-
-                  if ($message)
-                  {
-                    $actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
-                    $actionmsg.=$message;
-                  }
-
+					if ($message)
+					{
+						$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
+						$actionmsg.=$langs->transnoentities('TextUsedInTheMessageBody').":\n";
+						$actionmsg.=$message;
+					}
 					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
                 }
 
