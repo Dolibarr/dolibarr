@@ -250,3 +250,4 @@ alter table llx_socpeople add   priv           smallint NOT NULL DEFAULT 0 after
 
 alter table llx_tva modify fk_bank         integer;
 
+delete from llx_const where name='MAIN_USE_PREVIEW_TABS';

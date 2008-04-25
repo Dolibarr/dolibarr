@@ -2954,6 +2954,8 @@ else
 
 			print '</td><td valign="top" width="50%">';
 
+			print '<br>';
+			
 			// List of actions on element
 			include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
 			$formactions=new FormActions($db);

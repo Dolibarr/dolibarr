@@ -496,7 +496,10 @@ if ($_GET["id"] > 0)
 
         print '</td><td valign="top" width="50%">';
 
-		// Rien a droite
+		// List of actions on element
+		include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
+		$formactions=new FormActions($db);
+		$somethingshown=$formactions->showactions($commande,'order',$socid);
 
         print "</td></tr></table>";
         
