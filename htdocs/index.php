@@ -147,7 +147,7 @@ if ($user->societe_id == 0)
 				   'Commande',
 				   'Facture',
                    'LigneTel');
-    // Clé de tableau retourné par la methode load_state_bord pour chaque ligne
+    // Clé de tableau retourné par la methode load_state_board pour chaque ligne
     $keys=array('customers',
                 'prospects',
                 'suppliers',
@@ -169,17 +169,17 @@ if ($user->societe_id == 0)
 				 'order',
 				 'bill',
                  'phoning');
-    // Titre des lignes du tableau de bord
-    $titres=array($langs->trans("Customers"),
-                  $langs->trans("Prospects"),
-                  $langs->trans("Suppliers"),
-                  $langs->trans("Members"),
-                  $langs->trans("Products"),
-                  $langs->trans("Services"),
-                  $langs->trans("CommercialProposals"),
-                  $langs->trans("CustomersOrders"),
-                  $langs->trans("BillsCustomers"),
-                  $langs->trans("Lignes de téléphonie suivis"));
+    // Translation keyword
+    $titres=array("Customers",
+                  "Prospects",
+                  "Suppliers",
+                  "Members",
+                  "Products",
+                  "Services",
+                  "CommercialProposals",
+                  "CustomersOrders",
+                  "BillsCustomers",
+                  "Lignes de téléphonie suivis");
     // Lien des lignes du tableau de bord
     $links=array(DOL_URL_ROOT.'/comm/clients.php',
                  DOL_URL_ROOT.'/comm/prospect/prospects.php',
@@ -191,7 +191,18 @@ if ($user->societe_id == 0)
                  DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
                  DOL_URL_ROOT.'/compta/facture.php?mainmenu=accountancy',
                  DOL_URL_ROOT.'/telephonie/ligne/index.php');
-   
+    // Translation lang files
+    $langfile=array("bills",
+                    "prospects",
+                    "suppliers",
+                    "members",
+                    "products",
+                    "produts",
+                    "propal",
+                    "orders",
+                    "bills",
+                    "");
+                 
 	//print memory_get_usage()."<br>";
 
 	// Boucle et affiche chaque ligne du tableau
@@ -210,9 +221,12 @@ if ($user->societe_id == 0)
                 $boardloaded[$classe]=$board;
             }
             else $board=$boardloaded[$classe];
+
             $var=!$var;
-            print '<tr '.$bc[$var].'><td width="16">'.img_object($titres[$key],$icons[$key]).'</td>';
-            print '<td>'.$titres[$key].'</td>';
+            if ($langfile[$key]) $langs->load($langfile[$key]);
+            $title=$langs->trans($titres[$key]);
+            print '<tr '.$bc[$var].'><td width="16">'.img_object($title,$icons[$key]).'</td>';
+            print '<td>'.$title.'</td>';
             print '<td align="right"><a href="'.$links[$key].'">'.$board->nb[$val].'</a></td>';
             print '</tr>';
 
