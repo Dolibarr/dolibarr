@@ -625,7 +625,8 @@ class ActionComm
 					$event['enddate']=$dateend;		// Not required with type 'journal'
 					$event['summary']=$obj->label;
 					$event['desc']=$obj->note;
-					$event['author']=$obj->fk_user_done>0?$obj->fk_user_done:$obj->fk_user_action;
+					$event['category']=$obj->libelle;
+					$event['author']=$obj->fk_user_author;
 					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
 					$url=$dolibarr_main_url_root.DOL_URL_ROOT;
 					if (! eregi('\/$',$url)) $url.='/';
