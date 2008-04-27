@@ -216,6 +216,9 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 */
 function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$filter='')
 {
+	global $user,$conf,$langs;
+	global $dolibarr_main_url_root;
+	
 	dolibarr_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) return -1;
@@ -241,8 +244,12 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 //		'<language>fr</language>'."\n".
 		'<copyright>Dolibarr</copyright>'."\n".
 		'<lastBuildDate>'.$date.'</lastBuildDate>'."\n".
-		'<generator>Dolibarr</generator>'."\n".
-		'<link><![CDATA['.$_SERVER["PHP_SELF"].']]></link>'."\n";
+		'<generator>Dolibarr</generator>'."\n";
+
+		$url=$dolibarr_main_url_root;
+		if (! eregi('\/$',$url)) $url.='/';
+		$url.='comm/action/agendaexport.php?format=rss&exportkey='.urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
+		$html.='<link><![CDATA['.$url.']]></link>'."\n";
 //		'<managingEditor>editor@example.com</managingEditor>'."\n"
 //    	'<webMaster>webmaster@example.com</webMaster>'."\n"
 //		'<ttl>5</ttl>'."\n"
