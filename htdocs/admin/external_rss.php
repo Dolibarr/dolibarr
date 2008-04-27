@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003      �ric Seigne          <erics@rycks.com>
+/* Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -18,15 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/admin/external_rss.php
         \ingroup    external_rss
         \brief      Page d'administration/configuration du module ExternalRss
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -70,8 +68,8 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 
 		if ($_POST["modify"])
 		{
-			// Supprime boite box_external_rss de d�finition des boites
-	        $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
+			// Supprime boite box_external_rss de definition des boites
+/*	        $sql = "UPDATE ".MAIN_DB_PREFIX."boxes_def";
 			$sql.= " SET name = '".$boxlabel."'";
 	        $sql.= " WHERE file ='box_external_rss.php' AND note like '".$_POST["norss"]." %'";
 
@@ -81,14 +79,16 @@ if ($_POST["action"] == 'add' || $_POST["modify"])
 				dolibarr_print_error($db,"sql=$sql");
 				exit;
 	        }
+*/
 		}
 		else
 		{
 			// Ajoute boite box_external_rss dans d�finition des boites
-	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (name, file, note)";
-			$sql.= " VALUES ('".$boxlabel."','box_external_rss.php','".addslashes($_POST["norss"].' ('.$_POST[$external_rss_title]).")')";
+	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
+			$sql.= " VALUES ('box_external_rss.php','".addslashes($_POST["norss"].' ('.$_POST[$external_rss_title]).")')";
 	        if (! $db->query($sql))
 	        {
+	        	dolibarr_print_error($db);
 	            $err++;
 	        }
 		}
@@ -166,6 +166,7 @@ if ($_POST["delete"])
             $db->commit();
 	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
             header("Location: external_rss.php");
+            exit;
         }
         else
         {
@@ -220,9 +221,11 @@ print '</tr>';
 
 <?php
 
-$sql ="select rowid, name, file, note from ".MAIN_DB_PREFIX."boxes_def";
+$sql ="select rowid, file, note from ".MAIN_DB_PREFIX."boxes_def";
 $sql.=" WHERE file = 'box_external_rss.php'";
 $sql.=" ORDER BY note";
+
+dolibarr_syslog("external_rss select rss boxes sql=".$sql,LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -248,7 +251,7 @@ if ($resql)
 		print "<form name=\"externalrssconfig\" action=\"external_rss.php\" method=\"post\">";
 		
 		print "<tr class=\"liste_titre\">";
-		print "<td colspan=\"2\">Syndication du flux num�ro " . ($i+1) . "</td>";
+		print "<td colspan=\"2\">".$langs->trans("RSS")." ".($i+1)."</td>";
 		print "</tr>";
 
 		$var=!$var;
@@ -303,6 +306,10 @@ if ($resql)
 		
 		$i++;
 	}
+}
+else
+{
+	dolibarr_print_error($db);
 }
 ?>
 
