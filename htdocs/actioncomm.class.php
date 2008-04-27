@@ -628,7 +628,7 @@ class ActionComm
 					$event['category']=$obj->libelle;
 					$event['author']=$obj->fk_user_author;
 					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
-					$url=$dolibarr_main_url_root.DOL_URL_ROOT;
+					$url=$dolibarr_main_url_root;
 					if (! eregi('\/$',$url)) $url.='/';
 					$url.='comm/action/fiche.php?id='.$obj->id;
 					$event['url']=$url;
