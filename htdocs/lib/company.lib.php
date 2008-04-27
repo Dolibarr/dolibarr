@@ -409,12 +409,12 @@ function show_actions_done($conf,$langs,$db,$objsoc)
 	            print "<tr $bc[$var]>";
 	
 	            // Champ date
-                print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
-                $oldyear = strftime("%Y",$obj->da);
-                print '<td width="30" align="center">'.strftime("%b",$obj->da)."</td>\n";
-                $oldmonth = strftime("%Y%b",$obj->da);
-	            print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
-	            print '<td width="30">'.strftime("%H:%M",$obj->da)."</td>\n";
+                print '<td width="30" align="center">'.strftime("%Y",$obj->dp)."</td>\n";
+                $oldyear = strftime("%Y",$obj->dp);
+                print '<td width="30" align="center">'.strftime("%b",$obj->dp)."</td>\n";
+                $oldmonth = strftime("%Y%b",$obj->dp);
+	            print '<td width="20">'.strftime("%d",$obj->dp)."</td>\n";
+	            print '<td width="30">'.strftime("%H:%M",$obj->dp)."</td>\n";
 	
 				// Picto
 	            print '<td width="16">&nbsp;</td>';
