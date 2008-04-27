@@ -7,4 +7,8 @@ delete from llx_societe_remise;
 
 delete from llx_societe_remise_except;
 
+delete from llx_societe_commerciaux;
+
 delete from llx_societe;
+
+
