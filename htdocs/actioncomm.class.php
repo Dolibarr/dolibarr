@@ -244,7 +244,7 @@ class ActionComm
 				$this->datem = $obj->datem;
 				$this->note =$obj->note;
 				$this->percentage =$obj->percentage;
-				$this->societe->id = $obj->fk_soc;
+
 				$this->author->id  = $obj->fk_user_author;
 				$this->usermod->id  = $obj->fk_user_mod;
 
@@ -252,6 +252,7 @@ class ActionComm
 				$this->userdone->id  = $obj->fk_user_done;
 				$this->priority = $obj->priority;
 
+				$this->societe->id = $obj->fk_soc;
 				$this->contact->id = $obj->fk_contact;
 
 				$this->fk_facture = $obj->fk_facture;

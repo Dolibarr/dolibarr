@@ -443,8 +443,8 @@ class Contact extends CommonObject
 	            }
 	            else
 	            {
-	                dolibarr_syslog("Error in Contact::fetch() selectuser sql=$sql");
-	           	    $this->error="Error in Contact::fetch() selectuser - ".$this->db->error()." - ".$sql;
+	           	    $this->error=$this->db->error();
+	                dolibarr_syslog("Contact::fetch ".$this->error, LOG_ERR);
 	                return -1;
 	            }
 	    
@@ -453,7 +453,7 @@ class Contact extends CommonObject
 	            {
 	                $sql = "SELECT fk_user";
 	                $sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
-	                $sql .= " WHERE fk_user = $user->id AND fk_contact = ".$id;
+	                $sql .= " WHERE fk_user = ".$user->id." AND fk_contact = ".$id;
 	    
 	                $resql=$this->db->query($sql);
 	                if ($resql)
@@ -468,8 +468,8 @@ class Contact extends CommonObject
 	                 }
 	                else
 	                {
-	                    dolibarr_syslog("Error in Contact::fetch() selectuseralert sql=$sql");
-	            	    $this->error="Error in Contact::fetch() selectuseralert - ".$this->db->error()." - ".$sql;
+		           	    $this->error=$this->db->error();
+		                dolibarr_syslog("Contact::fetch ".$this->error, LOG_ERR);
 	                    return -1;
 	                }
 	            }
@@ -484,8 +484,8 @@ class Contact extends CommonObject
         }
         else
         {
-            dolibarr_syslog("Error in Contact::fetch() selectsocpeople sql=$sql");
-      	    $this->error="Error in Contact::fetch() selectsocpeople - ".$this->db->error()." - ".$sql;
+			$this->error=$this->db->error();
+			dolibarr_syslog("Contact::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }

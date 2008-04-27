@@ -565,14 +565,25 @@ if ($_GET["id"])
 
     $act = new ActionComm($db);
     $result=$act->fetch($_GET["id"]);
-	//print $result."ee".$act->userdone->id."ee";
-    $result=$act->societe->fetch($act->societe->id);
+
+	$societe = new Societe($db);
+	if ($act->societe->id)
+	{
+		$result=$societe->fetch($act->societe->id);
+	}
+	$act->societe = $societe;
+
     if ($act->author->id > 0)   $res=$act->author->fetch();     // Le parametre est le login, hors seul l'id est charge.
     if ($act->usermod->id > 0)  $res=$act->usermod->fetch();    
     if ($act->usertodo->id > 0) $res=$act->usertodo->fetch();   
     if ($act->userdone->id > 0) $res=$act->userdone->fetch();
 
-    $res=$act->contact->fetch($act->contact->id);
+	$contact = new Contact($db);
+	if ($act->contact->id)
+	{
+		$result=$contact->fetch($act->contact->id,$user);
+	}
+    $act->contact = $contact;
 
     /*
      * Affichage onglets
