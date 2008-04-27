@@ -35,7 +35,7 @@
 */
 function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$filter='')
 {
-	dolibarr_syslog("xcal.lib.php::build_cal_file Build cal file ".$outputfile." to format ".$format);
+	dolibarr_syslog("xcal.lib.php::build_calfile Build cal file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) return -1;
 	
@@ -203,6 +203,122 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 		return -2;
 	}
 }
+
+/**
+	\brief		Build a file from an array of events
+	\param		format				'rss'
+	\param		title				Title of export
+	\param		desc				Description of export
+	\param		events_array		Array of events ('eid','startdate','duration','enddate','title','summary','category','email','url','desc','author')
+	\param		outputfile			Output file
+	\param		filter				Filter
+	\return		int					<0 if ko, Nb of events in file if ok
+*/
+function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$filter='')
+{
+	dolibarr_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
+
+	if (empty($outputfile)) return -1;
+	
+	$fichier=fopen($outputfile,'w');
+	if ($fichier)
+	{
+		$now=mktime();
+		$date=date("r");
+
+		// Print header
+		$html='<?xml version="1.0" encoding="iso-8859-1"?>';
+		fwrite($fichier, $html);
+		fwrite($fichier, "\n");
+		$html='<rss version="2.0">';
+		fwrite($fichier, $html);
+		fwrite($fichier, "\n"); 
+		  				
+		$html="<channel>".
+		"\n".
+		"<title>".$title."</title>";
+		fwrite($fichier, $html);
+		fwrite($fichier, "\n");   				
+		
+		$html='<description><![CDATA['.$desc.'.]]></description>'.
+//		'<language>fr</language>'.
+		'<copyright>Dolibarr</copyright>'.
+		'<lastBuildDate>'.$date.'</lastBuildDate>'.
+		'<generator>Dolibarr</generator>'.
+		'<link><![CDATA['.$_SERVER["PHP_SELF"].']]></link>';
+//		'<image>'.
+//		'<url><![CDATA[http://www.lesbonnesannonces.com/images/logo_rss.gif]]></url>'.
+//		'<title><![CDATA[Dolibarr events]]></title>'.
+//		'<link><![CDATA[http://www.lesbonnesannonces.com/]]></link>'.
+//		'<width>144</width>'.
+//		'<height>36</height>'.		
+//		'</image>'."\n";
+
+		#print $html;
+		fwrite($fichier, $html);		
+		
+
+		foreach ($events_array as $date => $event)
+		{
+			$eventqualified=true;
+			if ($filter)
+			{
+				// \TODO Add a filter
+
+				$eventqualified=false;
+			}
+			
+			if ($eventqualified)
+			{
+				//$uid 		= dolibarr_print_date($now,'dayhourxcard').'-'.$event['uid']."-export@".$_SERVER["SERVER_NAME"];
+				$uid 		  = $event['uid'];
+				$type         = $event['type'];
+				$startdate	  = $event['startdate'];
+				$duration	  = $event['duration'];
+				$enddate	  = $event['enddate'];
+				$summary  	  = $event['summary'];
+				$category	  = $event['category'];
+				$location	  = $event['location'];
+				$email 		  = $event['email'];
+				$url		  = $event['url'];
+				$transparency = $event['transparency'];
+				$description=eregi_replace('<br[ \/]?>',"\n",$event['desc']);
+ 				$description=clean_html($description,0);	// Remove html tags
+ 				
+ 				
+				fwrite ($fichier, "<item>");
+				fwrite ($fichier, "\n");
+				fwrite ($fichier, "<title><![CDATA[".$summary."]]></title>");
+				fwrite ($fichier, "\n");
+				fwrite ($fichier, "<link><![CDATA[".$url."]]></link>");
+				fwrite ($fichier, "\n");		
+				fwrite ($fichier, "<description><![CDATA[");
+				if ($description) fwrite ($fichier, $description);
+				//else fwrite ($fichier, 'NoDesc');
+				fwrite ($fichier, "]]></description>");
+				fwrite ($fichier, "\n");
+				fwrite ($fichier, "<pubDate>".date("r", $startdate)."</pubDate>");
+				fwrite ($fichier, "\n");
+				fwrite ($fichier, '<guid isPermaLink="true"><![CDATA[');
+//				http://www.lesbonnesannonces.com/index_categ.php?origine=&id_categ='.$id_categ.
+				fwrite ($fichier, $url);
+				fwrite ($fichier, ']]></guid>');
+				fwrite ($fichier, "\n");				
+				fwrite ($fichier, "</item>");	
+				fwrite ($fichier, "\n");
+				
+				//chmod($fichierout, 0664);				
+			}
+		}
+
+		fwrite($fichier, '</channel>');
+		fwrite ($fichier, "\n");
+		fwrite($fichier, '</rss>');
+
+		fclose($fichier);
+	}
+}
+
 
 
 function format_cal($format,$string)

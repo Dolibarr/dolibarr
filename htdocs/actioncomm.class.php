@@ -545,13 +545,13 @@ class ActionComm
 			\param		filters			Array of filters
     		\return     int     		<0 if error, nb of events in new file if ok
     */
-	function build_calfile($format,$type,$cachedelay,$filename,$filters)
+	function build_exportfile($format,$type,$cachedelay,$filename,$filters)
 	{
 		global $conf,$langs,$dolibarr_main_url_root;
 		
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
 
-		dolibarr_syslog("ActionComm::build_calfile Build cal file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
+		dolibarr_syslog("ActionComm::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
 
 		// Check parameters
 		if (empty($format)) return -1;
@@ -602,7 +602,7 @@ class ActionComm
 			}
 			$sql.= " ORDER by datec";
 
-			dolibarr_syslog("ActionComm::build_vcal select events sql=".$sql);
+			dolibarr_syslog("ActionComm::build_exportfile select events sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -641,14 +641,16 @@ class ActionComm
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dolibarr_syslog("ActionComm::build_calfile ".$this->db->lasterror(), LOG_ERR);
+				dolibarr_syslog("ActionComm::build_exportfile ".$this->db->lasterror(), LOG_ERR);
 				return -1;
 			}
 			
 			// Write file
 			$title='Dolibarr actions';
 			$desc='List of actions - built by Dolibarr';
-			$result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
+			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
+			if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
+			if ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfile);
 		}
 		
 		return $result;
