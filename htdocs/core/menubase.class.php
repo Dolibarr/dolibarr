@@ -338,10 +338,12 @@ class Menubase
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " WHERE m.mainmenu = '".$this->mainmenu."'";
 		$sql.= " AND m.menu_handler= '".$this->menu_handler."'";
+		$sql.= " AND type = 'top'";
 		$result = $this->db->query($sql);
-		$menuTop = $this->db->fetch_object($result);
-
-		$data[] = array ($menutop->rowid,-1,$this->mainmenu);
+		$menutop = $this->db->fetch_object($result);
+		$menutopid=$menutop->rowid;
+		
+		$data[] = array ($menutopid,-1,$this->mainmenu);
 
 		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.target, m.mainmenu, m.leftmenu";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
@@ -359,6 +361,7 @@ class Menubase
 			while ($menu = $this->db->fetch_array($res))
 			{
 				if (! empty($menu['langs'])) $langs->load($menu['langs']);
+
 				$titre = $langs->trans($menu['titre']);
 				$rights = $this->verifRights($menu['right']);
 				$data[] = array (
@@ -373,20 +376,30 @@ class Menubase
 				$i++;
 
 			}
-
 		}
 		else
 		{
 			dolibarr_print_error($this->db);
 		}
-
-		$this->recur($data, $menuTop->rowid, 1);
+		
+		$this->recur($data, $menutopid, 1);
 
 		return $this->newmenu;
 
 	}
 
-	function recur($tab, $pere, $rang) {
+	/**
+	 * Complete this->newmenu with menu entry found in $tab
+	 *
+	 * @param string $tab
+	 * @param string $pere
+	 * @param string $rang
+	 */
+	function recur($tab, $pere, $rang) 
+	{
+		global $leftmenu, $leftmenuConstraint;	// To be exported in dol_eval function
+		
+		//print "xx".$pere;
 		$leftmenu = $this->leftmenu;
 		//ballayage du tableau
 		for ($x = 0; $x < count($tab); $x++) {
@@ -398,17 +411,21 @@ class Menubase
 
 				if ($this->verifConstraint($tab[$x][0], $tab[$x][6], $tab[$x][7]) != 0) {
 
-					if ($tab[$x][6]) {
-
+					if ($tab[$x][6]) 
+					{
 						$leftmenuConstraint = false;
-						$str = "if(" . $tab[$x][6] . ") \$leftmenuConstraint = true;";
-
-						dol_eval ($str);
-						if ($leftmenuConstraint == true) {
+						$str = 'if(' . $tab[$x][6] . ') $leftmenuConstraint = true;';
+						//print $str."<br>\n";
+						//eval ($str);
+						dol_eval($str);
+						if ($leftmenuConstraint == true) 
+						{
 							$this->newmenu->add_submenu(DOL_URL_ROOT . $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
 							$this->recur($tab, $tab[$x][0], $rang +1);
 						}
-					} else {
+					}
+					else
+					{
 						$this->newmenu->add_submenu(DOL_URL_ROOT . $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
 						$this->recur($tab, $tab[$x][0], $rang +1);
 					}
@@ -421,7 +438,8 @@ class Menubase
 	function verifConstraint($rowid, $mainmenu = "", $leftmenu = "") 
 	{
 		global $user, $conf, $user;
-
+		global $constraint;	// To export to dol_eval function
+		
 		include_once(DOL_DOCUMENT_ROOT.'/lib/admin.lib.php');	// Because later some eval try to run dynamic call to dolibarr_get_const
 		$constraint = true;
 
@@ -438,9 +456,8 @@ class Menubase
 			while (($i < $num) && $constraint == true) 
 			{
 				$obj = $this->db->fetch_object($result);
-				$strconstraint = "if(!(" . $obj->action . ")) { \$constraint = false; }";
-
-				dol_eval ($strconstraint);
+				$strconstraint = 'if(!(' . $obj->action . ')) { $constraint = false; }';
+				dol_eval($strconstraint);
 				$i++;
 			}
 		}
@@ -455,20 +472,25 @@ class Menubase
 	function verifRights($strRights) {
 
 		global $user,$conf,$user;
-
-		if ($strRights != "") {
+		global $rights;	// To export to dol_eval function
+		
+		if ($strRights != "")
+		{
 			$rights = true;
 
 			$tab_rights = explode(" || ", $strRights);
 			$i = 0;
 			while (($i < count($tab_rights)) && ($rights == true)) {
-				$str = "if(!(" . $strRights . ")) { \$rights = false;}";
+				$str = 'if(!(' . $strRights . ')) { $rights = false; }';
 				dol_eval ($str);
 				$i++;
 			}
-		} else
+		}
+		else
+		{
 			$rights = true;
-
+		}
+		
 		return $rights;
 	}
 
@@ -500,6 +522,7 @@ class Menubase
 	function menutopCharger($type_user, $mainmenu, $menu_handler)
 	{
 		global $langs, $user, $conf;
+		global $rights;	// To export to dol_eval function
 		
 		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.perms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
@@ -533,10 +556,10 @@ class Menubase
 		            $chaine="";
 
 		            // Define $right
-		        	$right = true;
+		        	$rights = true;
 		        	if ($objm->perms)
 		        	{
-		        		$str = "if(!(".$objm->perms.")) \$right = false;";
+		        		$str = 'if(!('.$objm->perms.')) { $rights = false; }';
 		        		dol_eval($str);
 		        	}
 		        	
@@ -567,7 +590,7 @@ class Menubase
 		        	$tabMenu[$b]['url'] = $objm->url;
 		        	$tabMenu[$b]['atarget'] = $this->atarget;
 		        	$tabMenu[$b]['class'] = $class;
-		        	$tabMenu[$b]['right'] = $right;
+		        	$tabMenu[$b]['right'] = $rights;
 		        	
 					$b++;
 					
@@ -588,9 +611,15 @@ class Menubase
 
 function dol_eval($s)
 {
+	// To get and return to caller
+	global $leftmenu, $leftmenuConstraint, $constraint, $rights, $user;
+	
+	//print $s."<br>\n";
+	eval($s);
+	
 	// \todo
 	// Warning. We must add code to exclude test if it contains = (affectation) that is not == (compare)
-	return eval($s);
+	return 1; 
 }
 
 ?>

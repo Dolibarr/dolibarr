@@ -73,8 +73,6 @@ class MenuLeft {
         global $user,$conf,$langs,$dolibarr_main_db_name;
         
         
-        
-        
         if (! session_id()) {
             session_name("DOLSESSID_".$dolibarr_main_db_name);
             session_start();    // En mode authentification PEAR, la session a déjà été ouverte
@@ -92,9 +90,9 @@ class MenuLeft {
         }
 
         if (isset($_GET["leftmenu"])) {
-            // On sauve en session le menu principal choisi
-            $this->leftmenu=$_GET["leftmenu"];
-            $_SESSION["leftmenu"]=$this->leftmenu;
+        	// On sauve en session le menu principal choisi
+        	$this->leftmenu=$_GET["leftmenu"];
+        	$_SESSION["leftmenu"]=$this->leftmenu;
             if ($_SESSION["leftmenuopened"]==$this->leftmenu) {
                 //$leftmenu="";
                 $_SESSION["leftmenuopened"]="";
@@ -107,8 +105,6 @@ class MenuLeft {
             $this->leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
         }
         
-        
-        
         /**
          * On definit newmenu en fonction de mainmenu et leftmenu
          * ------------------------------------------------------
@@ -116,10 +112,9 @@ class MenuLeft {
         if ($mainmenu) 
         {
 
-
+        	
 			$this->newmenu = $this->menuArbo->menuCharger($mainmenu, $this->newmenu,0,$this->leftmenu);
 			
-
             /*
              * Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
              */
@@ -139,7 +134,7 @@ class MenuLeft {
 		
 
 				
-		
+       
         // Affichage du menu
         $alt=0;
         if (! sizeof($this->menu_array))
