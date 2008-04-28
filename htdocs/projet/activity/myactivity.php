@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file       htdocs/projet/activity/myactivity.php
 		\ingroup    projet
 		\brief      Page activite perso du module projet
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -125,12 +123,12 @@ if ( $resql )
 {
   while ($row = $db->fetch_row($resql))
     {
+      $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
       print '<td align="center">'.$row[2].'</td>';
       print "</tr>\n";
       $total += $row[2];
-      $var=!$var;
     }
   
   $db->free($resql);
@@ -139,7 +137,7 @@ else
 {
   dolibarr_print_error($db);
 }
-print "<tr $bc[$var]>";
+print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
 print '<td align="center">'.$total.'</td>';
 print "</tr>\n";    
@@ -169,12 +167,12 @@ if ( $resql )
 {
   while ($row = $db->fetch_row($resql))
     {
-      print "<tr $bc[$var]>";
+      $var=!$var;
+    	print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
       print '<td align="center">'.$row[2].'</td>';
       print "</tr>\n";
       $total += $row[2];
-      $var=!$var;
     }
   
   $db->free($resql);
@@ -183,7 +181,7 @@ else
 {
   dolibarr_print_error($db);
 }
-print "<tr $bc[$var]>";
+print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
 print '<td align="center">'.$total.'</td>';
 print "</tr>\n";
@@ -214,12 +212,12 @@ if ( $resql )
 {
   while ($row = $db->fetch_row( $resql))
     {
-      print "<tr $bc[$var]>";
+      $var=!$var;
+    	print "<tr ".$bc[$var].">";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
       print '<td align="center">'.$row[2].'</td>';
       print "</tr>\n";    
       $total += $row[2];
-      $var=!$var;
     }
   
   $db->free($resql);
@@ -228,7 +226,7 @@ else
 {
   dolibarr_print_error($db);
 }
-print "<tr $bc[$var]>";
+print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
 print '<td align="center">'.$total.'</td>';
 print "</tr>\n";
