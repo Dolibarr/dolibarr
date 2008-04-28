@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
@@ -42,7 +42,8 @@ if (! $user->rights->produit->lire || ! $product->type == 0 || ! $conf->stock->e
 	accessforbidden();
 }
 
-/**
+
+/*
 *	Actions
 */
 
@@ -142,10 +143,15 @@ if ($_GET["id"] || $_GET["ref"])
         print '</td></tr>';
 
         // Stock
-        print '<tr><td>'.$langs->trans("TotalStock").'</td>';
+        print '<tr><td>'.$langs->trans("StockLimit").'</td>';
+		print '<td>'.$product->seuil_stock_alerte.'</td>';
+        print '</tr>';
+        
+        // Stock
+        print '<tr><td>'.$langs->trans("PhysicalStock").'</td>';
 		if ($product->stock_reel < $product->seuil_stock_alerte)
 		{
-			print '<td>'.$product->stock_reel.' '.img_warning().' (Seuil: '.$product->seuil_stock_alerte.')</td>';
+			print '<td>'.$product->stock_reel.' '.img_warning().'</td>';
 		}
 		else
 		{
@@ -153,7 +159,11 @@ if ($_GET["id"] || $_GET["ref"])
 		}
         print '</tr>';
         
-
+        // Stock
+        print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
+		print "<td>".$langs->trans("FeatureNotYetAvailable").'</td>';
+        print '</tr>';
+        
         // Nbre de commande clients en cours
 	if ($conf->commande->enabled)
 	  {

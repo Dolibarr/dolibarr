@@ -1,8 +1,6 @@
 # Dolibarr language file - es_ES - ecm
 MenuECM=Documentos
 DocsMine=Mis documentos
-DocsGlobal=Documentos globales
-DocsExternal=Documentos externos
 DocsGenerated=Documentos generados
 DocsElements=Doocumentos elementos
 DocsThirdParties=Documentos terceros

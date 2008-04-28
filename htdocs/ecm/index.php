@@ -118,7 +118,7 @@ if (! $_GET["action"] || $_GET["action"] == 'delete_section')
 
 	//print_fiche_titre($langs->trans("ECMManualOrg"));
 
-	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/todo.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
 	print '<td colspan="3">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
@@ -133,7 +133,7 @@ if (! $_GET["action"] || $_GET["action"] == 'delete_section')
 
 	//print_fiche_titre($langs->trans("ECMAutoOrg"));
 
-	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/todo.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
 	print '<td colspan="3">'.$langs->trans("ECMSearchByEntity").'</td></tr>';

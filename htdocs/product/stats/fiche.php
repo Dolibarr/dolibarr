@@ -103,29 +103,6 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
 		print '</td></tr>';
 
-		// Stock
-		if ($product->isproduct() && $conf->stock->enabled)
-		{
-			print '<tr><td>'.$langs->trans("Stock").'</td>';
-			if ($product->no_stock)
-			{
-				print "<td>".$langs->trans("NoStockForThisProduct");
-			}
-			else
-			{
-				if ($product->stock_reel <= $product->seuil_stock_alerte)
-				{
-					print '<td>'.img_warning().' '.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
-				}
-				else
-				{
-					print "<td>".$product->stock_reel;
-				}
-			}
-			print '</td></tr>';
-		}	
-		//show_stats_for_company($product,$socid);
-
 		// Graphs additionels generes pas les cron
 		$year = strftime('%Y',time());
 		$file = get_exdir($product->id, 3) . "ventes-".$year."-".$product->id.".png";	

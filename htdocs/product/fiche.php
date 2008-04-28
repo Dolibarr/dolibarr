@@ -854,27 +854,12 @@ if ($_GET["id"] || $_GET["ref"])
 			// TVA
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.price2num($product->tva_tx,'MU').'%</td></tr>';
 			
-			// Stock
-			if ($product->isproduct() && $conf->stock->enabled)
-			{
-				print '<tr><td>'.$langs->trans("Stock").'</td>';
-				if ($product->stock_reel < $product->seuil_stock_alerte)
-				{
-					print '<td>'.$product->stock_reel.' '.img_warning().' ('.$langs->trans("StockLimitShort").': '.$product->seuil_stock_alerte.')</td>';
-				}
-				else
-				{
-					print "<td>".$product->stock_reel.'</td>';
-				}
-				print '</tr>';
-			}
-			
 			// Description
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
 			
-			// Durée
 			if ($product->isservice())
 			{
+				// Duration
 				print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
 				if ($product->duration_value > 1)
 				{
@@ -890,6 +875,7 @@ if ($_GET["id"] || $_GET["ref"])
 			}
 			else
 			{
+				// Weight / Volume
 				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 				if ($product->weight != '')
 				{
@@ -995,6 +981,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 	  if ($product->isservice())
 	    {
+	    	// Duration
 	      print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
 	      print '&nbsp; ';
 	      print '<input name="duration_unit" type="radio" value="h"'.($product->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
@@ -1011,13 +998,13 @@ if ($_GET["id"] || $_GET["ref"])
 	    }
 	  else
 	    {
-	      // Le poids et le volume ne concerne que les produits et pas les services
+	      // Weight / Volume
 	      print '<tr><td>'.$langs->trans("Weight").'</td><td>';
-	      print '<input name="weight" size="5" value="'.$product->weight.'">';
+	      print '<input name="weight" size="5" value="'.$product->weight.'"> ';
 	      print $html->select_measuring_units("weight_units", "weight", $product->weight_units);
 	      print '</td></tr>';
 	      print '<tr><td>'.$langs->trans("Volume").'</td><td>';
-	      print '<input name="volume" size="5" value="'.$product->volume.'">';
+	      print '<input name="volume" size="5" value="'.$product->volume.'"> ';
 	      print $html->select_measuring_units("volume_units", "volume", $product->volume_units);
 	      print '</td></tr>';
 	    }
