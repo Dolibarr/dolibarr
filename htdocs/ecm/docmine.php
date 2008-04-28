@@ -27,6 +27,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 
 
 // Load traductions files
@@ -82,13 +83,15 @@ if ( $_POST["sendit"] && $conf->upload != 0)
   {
   	$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']);
   	if ($result == 1)
-    {
+  	{
     	$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
     	//print_r($_FILES);
+
+    	$result=$ecmdir->changeNbOfFiles('+');
     }
     else if (!$result)
     {
-    	// Echec transfert (fichier d?passant la limite ?)
+    	// Echec transfert (fichier depassant la limite ?)
     	$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
     	// print_r($_FILES);
     }
@@ -104,8 +107,11 @@ if ( $_POST["sendit"] && $conf->upload != 0)
 if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 {
   $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
-  dol_delete_file($file);
+  $result=dol_delete_file($file);
+  
   $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+
+  $result=$ecmdir->changeNbOfFiles('-');
 }
 
 
@@ -123,11 +129,12 @@ llxHeader();
 $form=new Form($db);
 
 print_fiche_titre($langs->trans("ECMManualOrg"));
+print '<br>';
 
 $ecmdir->ref=$ecmdir->label;
 print $langs->trans("ECMSection").': ';
 print img_picto('','object_dir').' ';
-print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php">'.$langs->trans("ECMRoot").'</a>';
+print '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a>';
 print ' -> <b>'.$ecmdir->getNomUrl(1).'</b>';
 print "<br><br>";
 
@@ -215,34 +222,7 @@ print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"date","",$pa
 print '<td>&nbsp;</td>';
 print '</tr>';
 
-function compare_file($a, $b)
-{
-	global $sortorder;
-	global $sortfield;
-	
-	$sortorder=strtoupper($sortorder);
-	
-	if ($sortorder == 'ASC') { $retup=-1; $retdown=1; }
-	else { $retup=1; $retdown=-1; }
-	
-	if ($sortfield == 'name')
-	{
-		if ($a->name == $b->name) return 0;
-		return ($a->name < $b->name) ? $retup : $retdown;
-	}
-	if ($sortfield == 'date')
-	{
-		if ($a->date == $b->date) return 0;
-		return ($a->date < $b->date) ? $retup : $retdown;
-	}
-	if ($sortfield == 'size')
-	{
-		if ($a->size == $b->size) return 0;
-		return ($a->size < $b->size) ? $retup : $retdown;
-	}
-}
-
-usort($filearray,"compare_file");
+usort($filearray,"dol_compare_file");
 
 $var=true;
 foreach($filearray as $key => $file)

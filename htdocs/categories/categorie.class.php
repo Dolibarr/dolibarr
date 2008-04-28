@@ -490,10 +490,10 @@ class Categorie
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
 
 		dolibarr_syslog("Categorie::get_full_arbo sql=".$sql);
-		$res = $this->db->query ($sql);
-		if ($res)
+		$resql = $this->db->query ($sql);
+		if ($resql)
 		{
-			while ($obj= $this->db->fetch_object($res))
+			while ($obj= $this->db->fetch_object($resql))
 			{
 				$this->motherof[$obj->id_fille]=$obj->id_mere;
 			}
@@ -513,12 +513,12 @@ class Categorie
 		$sql.= " ORDER BY c.label, c.rowid";
 
 		dolibarr_syslog("Categorie::get_full_arbo sql=".$sql);
-		$res = $this->db->query ($sql);
-		if ($res)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
 			$this->cats = array();
 			$i=0;
-			while ($obj = $this->db->fetch_object($res))
+			while ($obj = $this->db->fetch_object($resql))
 			{
 				
 				$this->cats[$obj->rowid]['id'] = $obj->rowid;
@@ -556,40 +556,18 @@ class Categorie
 			$this->build_path_from_id_categ($key,0);
 		}
 		
-		$this->cats=$this->sabsi($this->cats,'fulllabel', 'asc', true, false);
+		$this->cats=dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
 
 		//$this->debug_cats();
 		
 		return $this->cats;
 	}
 
-
-	/**
-	* 	\brief	Advanced sort array by second index function, which produces
-	*			ascending (default) or descending output and uses optionally
-	*			natural case insensitive sorting (which can be optionally case
-	*			sensitive as well).
-	*/
-	function sabsi ($array, $index, $order='asc', $natsort, $case_sensitive)
-	{
-		if (is_array($array) && count($array)>0)
-		{
-			foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
-			if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
-			else
-			{
-				($case_sensitive) ? natsort($temp) : natcasesort($temp);
-				if($order!='asc') $temp=array_reverse($temp,TRUE);
-			}
-			foreach(array_keys($temp) as $key) (is_numeric($key))? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
-			return $sorted;
-		}
-		return $array;
-	}
-
 	/**
 	*	\brief		Calcule les propriétés fullpath et fulllabel d'une categorie
 	*				du tableau this->cats et de toutes ces enfants
+	* 	\param		id_categ		id_categ entry to update
+	* 	\param		protection		Deep counter to avoid infinite loop
 	*/
 	function build_path_from_id_categ($id_categ,$protection=0)
 	{
@@ -606,6 +584,8 @@ class Categorie
 			$this->cats[$id_categ]['fullpath']='_'.$id_categ;			
 			$this->cats[$id_categ]['fulllabel']=$this->cats[$id_categ]['label'];
 		}
+		// We count number of _ to have level
+		$this->cats[$id_categ]['level']=strlen(eregi_replace('[^_]','',$this->cats[$id_categ]['fullpath']));
 		
 		// Traite ces enfants
 		$protection++;

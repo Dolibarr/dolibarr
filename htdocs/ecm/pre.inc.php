@@ -39,7 +39,8 @@ function llxHeader($head = "", $title="", $help_url='')
 	$menu = new Menu();
 
 	$menu->add(DOL_URL_ROOT."/ecm/index.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("MenuECM"),0,$user->rights->ecm->read);
-	$menu->add_submenu(DOL_URL_ROOT."/ecm/docdir.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("List"),1,$user->rights->ecm->read);
+	//$menu->add_submenu(DOL_URL_ROOT."/ecm/docdir.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("List"),1,$user->rights->ecm->read);
+	$menu->add_submenu(DOL_URL_ROOT."/ecm/index.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("List"),1,$user->rights->ecm->read);
 	$menu->add_submenu(DOL_URL_ROOT."/ecm/index?mainmenu=ecm&action=create&idmenu=".$_SESSION["idmenu"], $langs->trans("ECMNewDocument"),1,$user->rights->ecm->create);
 
 	$menu->add_submenu(DOL_URL_ROOT."/ecm/docdir?mainmenu=ecm&action=create&idmenu=".$_SESSION["idmenu"], $langs->trans("ECMNewSection"),1,$user->rights->ecm->setup);

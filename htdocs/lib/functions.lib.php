@@ -3007,4 +3007,31 @@ function stopwithmem()
 	exit;
 }
 
+
+/**
+* 	\brief	Advanced sort array by second index function, which produces
+*			ascending (default) or descending output and uses optionally
+*			natural case insensitive sorting (which can be optionally case
+*			sensitive as well).
+*/
+function dol_sort_array($array, $index, $order='asc', $natsort, $case_sensitive)
+{
+	// Clean parameters
+	$order=strtolower($order);
+	
+	if (is_array($array) && count($array)>0)
+	{
+		foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+		if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
+		else
+		{
+			($case_sensitive) ? natsort($temp) : natcasesort($temp);
+			if($order!='asc') $temp=array_reverse($temp,TRUE);
+		}
+		foreach(array_keys($temp) as $key) (is_numeric($key))? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
+		return $sorted;
+	}
+	return $array;
+}
+	
 ?>

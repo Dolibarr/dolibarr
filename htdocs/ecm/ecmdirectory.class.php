@@ -51,7 +51,7 @@ class EcmDirectory // extends CommonObject
 	var $description;
 	var $tms;
 
-    
+    var $cats=array();
 
 	
     /**
@@ -83,7 +83,7 @@ class EcmDirectory // extends CommonObject
 		if (! $this->cachenbofdoc) $this->cachenbofdoc=0;
 		$this->date_c=$now;
 		$this->fk_user_c=$user->id;
-        
+        if ($this->fk_parent <= 0) $this->fk_parent=0;
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -186,6 +186,34 @@ class EcmDirectory // extends CommonObject
   
   
     /*
+     *      \brief      Update database
+     * 		\sign		'+' or '-'
+     *      \return     int         	<0 if KO, >0 if OK
+     */
+    function changeNbOfFiles($sign)
+    {
+    	global $conf, $langs;
+    	
+        // Update request
+        $sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
+        
+		$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
+        $sql.= " WHERE rowid = ".$this->id;
+
+        dolibarr_syslog("Ecm_directories::changeNbOfFiles sql=".$sql, LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql)
+        {
+            $this->error="Error ".$this->db->lasterror();
+            dolibarr_syslog("Ecm_directories::changeNbOfFiles ".$this->error, LOG_ERR);
+            return -1;
+        }
+
+        return 1;
+    }
+
+    
+	/*
      *    \brief      Load object in memory from database
      *    \param      id          id object
      *    \param      user        User that load
@@ -262,7 +290,7 @@ class EcmDirectory // extends CommonObject
 		}
 	
 		$file = $conf->ecm->dir_output . "/" . $this->label;
-		$result=dol_delete_dir($file);
+		$result=@dol_delete_dir($file);
 		
         // Appel des triggers
         include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -290,29 +318,183 @@ class EcmDirectory // extends CommonObject
 
 	
   /**
-     \brief      Renvoie nom clicable (avec eventuellement le picto)
-     \param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     \param		option			Sur quoi pointe le lien
+     \brief      	Renvoie nom clicable (avec eventuellement le picto)
+     \param			withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     \param			option			Sur quoi pointe le lien
      \return		string			Chaine avec URL
    */
-  function getNomUrl($withpicto=0,$option='')
-  {
-    global $langs;
-		
-    $result='';
-		
-    $lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.'">';
-    $lienfin='</a>';
-		
-    $picto='dir';
+  	function getNomUrl($withpicto=0,$option='')
+  	{
+	    global $langs;
+			
+	    $result='';
+			
+	    $lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.'">';
+	    $lienfin='</a>';
+			
+	    //$picto=DOL_URL_ROOT.'/theme/common/treemenu/folder.gif';
+		$picto='dir';
+	
+	    $label=$langs->trans("ShowECMSection").': '.$this->ref;
+			
+	    if ($withpicto) $result.=($lien.img_object($label,$picto,'',1).$lienfin);
+	    if ($withpicto && $withpicto != 2) $result.=' ';
+	    if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+	    return $result;
+  	}
 
-    $label=$langs->trans("ShowECMSection").': '.$this->ref;
+  /**
+	* 	\brief		Load this->motherof array
+	*	\return		int		<0 if KO, >0 if OK
+	*/
+	function load_motherof()
+	{
+		$this->motherof=array();
 		
-    if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
-    if ($withpicto && $withpicto != 2) $result.=' ';
-    if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
-    return $result;
-  }
+		// Charge tableau des meres
+		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
+		$sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories";
+		$sql.= " WHERE fk_parent != 0";
+		
+		dolibarr_syslog("ECMDirectory::get_full_arbo sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj= $this->db->fetch_object($resql))
+			{
+				$this->motherof[$obj->id_son]=$obj->id_parent;
+			}
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+	}
+		
 
+	/**
+	* 	\brief		Reconstruit l'arborescence des catégories sous la forme d'un tableau
+	*				Renvoi un tableau de tableau('id','id_mere',...) trié selon
+	*				arbre et avec:
+	*				id = id de la categorie
+	*				id_mere = id de la categorie mere
+	*				id_children = tableau des id enfant
+	*				label = nom de la categorie
+	*				fulllabel = nom avec chemin complet de la categorie
+	*				fullpath = chemin complet compose des id
+	*	\return		array		Tableau de array
+	*/
+	function get_full_arbo()
+	{
+		// Init this->motherof array
+		$this->load_motherof();
+
+		// Charge tableau des categories
+		$sql = "SELECT c.rowid as rowid, c.label as label,";
+		$sql.= " c.description as description, c.cachenbofdoc,";
+		$sql.= " c.fk_user_c,";
+		$sql.= " c.date_c,";
+		$sql.= " u.login as login_c,";
+		$sql.= " ca.rowid as rowid_fille";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."ecm_directories as c";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."ecm_directories as ca";
+		$sql.= " ON c.rowid=ca.fk_parent";
+		$sql.= " WHERE c.fk_user_c = u.rowid";
+		$sql.= " ORDER BY c.label, c.rowid";
+
+		dolibarr_syslog("ECMDirectory::get_full_arbo sql=".$sql);
+		$resql = $this->db->query ($sql);
+		if ($resql)
+		{
+			$this->cats = array();
+			$i=0;
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$this->cats[$obj->rowid]['id'] = $obj->rowid;
+				$this->cats[$obj->rowid]['id_mere'] = $this->motherof[$obj->rowid];
+				$this->cats[$obj->rowid]['label'] = $obj->label;
+				$this->cats[$obj->rowid]['description'] = $obj->description;
+				$this->cats[$obj->rowid]['cachenbofdoc'] = $obj->cachenbofdoc;
+				$this->cats[$obj->rowid]['date_c'] = $obj->date_c;
+				$this->cats[$obj->rowid]['fk_user_c'] = $obj->fk_user_c;
+				$this->cats[$obj->rowid]['login_c'] = $obj->login_c;
+				
+				if ($obj->rowid_fille)
+				{
+					if (is_array($this->cats[$obj->rowid]['id_children']))
+					{
+						$newelempos=sizeof($this->cats[$obj->rowid]['id_children']);
+						//print "this->cats[$i]['id_children'] est deja un tableau de $newelem elements<br>";
+						$this->cats[$obj->rowid]['id_children'][$newelempos]=$obj->rowid_fille;
+					}
+					else
+					{
+						//print "this->cats[".$obj->rowid."]['id_children'] n'est pas encore un tableau<br>";
+						$this->cats[$obj->rowid]['id_children']=array($obj->rowid_fille);
+					}
+				}				
+				$i++;
+
+			}
+		}
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
+		
+		// On ajoute la propriete fullpath a tous les éléments
+		foreach($this->cats as $key => $val)
+		{
+			if (isset($motherof[$key])) continue;	
+			$this->build_path_from_id_categ($key,0);
+		}
+		
+		$this->cats=dol_sort_array($this->cats, 'fulllabel', 'asc', true, false);
+
+		//$this->debug_cats();
+		
+		return $this->cats;
+	}
+	
+	/**
+	*	\brief		Calcule les propriétés fullpath et fulllabel d'une categorie
+	*				du tableau this->cats et de toutes ces enfants
+	* 	\param		id_categ		id_categ entry to update
+	* 	\param		protection		Deep counter to avoid infinite loop
+	*/
+	function build_path_from_id_categ($id_categ,$protection=0)
+	{
+		// Define fullpath
+		if (isset($this->cats[$id_categ]['id_mere']))
+		{
+			$this->cats[$id_categ]['fullpath'] =$this->cats[$this->cats[$id_categ]['id_mere']]['fullpath'];
+			$this->cats[$id_categ]['fullpath'].='_'.$id_categ;
+			$this->cats[$id_categ]['fulllabel'] =$this->cats[$this->cats[$id_categ]['id_mere']]['fulllabel'];
+			$this->cats[$id_categ]['fulllabel'].=' >> '.$this->cats[$id_categ]['label'];
+		}
+		else
+		{
+			$this->cats[$id_categ]['fullpath']='_'.$id_categ;			
+			$this->cats[$id_categ]['fulllabel']=$this->cats[$id_categ]['label'];
+		}
+		// We count number of _ to have level
+		$this->cats[$id_categ]['level']=strlen(eregi_replace('[^_]','',$this->cats[$id_categ]['fullpath']));
+				
+		// Traite ces enfants
+		$protection++;
+		if ($protection > 20) return;	// On ne traite pas plus de 20 niveaux
+		if (is_array($this->cats[$id_categ]['id_children']))
+		{
+			foreach($this->cats[$id_categ]['id_children'] as $key => $val)
+			{
+				$this->build_path_from_id_categ($val,$protection);
+			}
+		}
+		
+		return;
+	}	
 }
 ?>
