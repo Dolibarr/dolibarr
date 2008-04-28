@@ -41,11 +41,11 @@ function llxHeader($head = "", $title="", $help_url='')
 	$menu->add(DOL_URL_ROOT."/ecm/index.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("MenuECM"),0,$user->rights->ecm->read);
 	//$menu->add_submenu(DOL_URL_ROOT."/ecm/docdir.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("List"),1,$user->rights->ecm->read);
 	$menu->add_submenu(DOL_URL_ROOT."/ecm/index.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("List"),1,$user->rights->ecm->read);
-	$menu->add_submenu(DOL_URL_ROOT."/ecm/index?mainmenu=ecm&action=create&idmenu=".$_SESSION["idmenu"], $langs->trans("ECMNewDocument"),1,$user->rights->ecm->create);
+	//$menu->add_submenu(DOL_URL_ROOT."/ecm/index?mainmenu=ecm&action=create&idmenu=".$_SESSION["idmenu"], $langs->trans("ECMNewDocument"),1,$user->rights->ecm->create);
 
 	$menu->add_submenu(DOL_URL_ROOT."/ecm/docdir?mainmenu=ecm&action=create&idmenu=".$_SESSION["idmenu"], $langs->trans("ECMNewSection"),1,$user->rights->ecm->setup);
-/*
-	if ($conf->societe->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsThirdParties"),2);
+
+/*	if ($conf->societe->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsThirdParties"),2);
 	if ($conf->contrat->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsContracts"),2);
 	if ($conf->propal->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsProposals"),2);
 	if ($conf->commande->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsOrders"),2);

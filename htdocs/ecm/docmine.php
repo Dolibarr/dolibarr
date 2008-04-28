@@ -28,6 +28,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ecm.lib.php");
 
 
 // Load traductions files
@@ -65,6 +66,7 @@ if (! empty($_REQUEST["section"]))
 		exit;
 	}
 }
+
 $upload_dir = $conf->ecm->dir_output.'/'.$ecmdir->label;
 
 
@@ -128,29 +130,6 @@ llxHeader();
 
 $form=new Form($db);
 
-print_fiche_titre($langs->trans("ECMManualOrg"));
-print '<br>';
-
-$ecmdir->ref=$ecmdir->label;
-print $langs->trans("ECMSection").': ';
-print img_picto('','object_dir').' ';
-print '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a>';
-print ' -> <b>'.$ecmdir->getNomUrl(1).'</b>';
-print "<br><br>";
-
-
-//$head = societe_prepare_head($societe);
-//dolibarr_fiche_head($head, 'document', $societe->nom);
-
-
-/*
-* Confirmation de la suppression d'une ligne produit
-*/
-if ($_GET['action'] == 'delete_file')
-{
-	$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
-	print '<br>';
-}
 
 // Construit liste des fichiers
 clearstatcache();
@@ -182,22 +161,62 @@ else
 }
 
 
-/*
+$head = ecm_prepare_head($ecmdir);
+dolibarr_fiche_head($head, 'card', $langs->trans("ECMManualOrg"));
 
-print '<table class="border"width="100%">';
 
-// Nbre fichiers
-print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
-
-//Total taille
-print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-
+print '<table class="border" width="100%">';
+print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+$s='';
+$tmpecmdir=$ecmdir;
+$result = 1;
+while ($tmpecmdir && $result > 0)
+{
+	$tmpecmdir->ref=$tmpecmdir->label;
+	$s=' -> '.$tmpecmdir->getNomUrl(1).$s;
+	if ($tmpecmdir->fk_parent)
+	{
+		$result=$tmpecmdir->fetch($tmpecmdir->fk_parent);
+	}
+	else
+	{
+		$tmpecmdir=0;
+	}
+}
+print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a>';
+print $s;
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("Description").'</td><td>';
+print dol_nl2br($ecmdir->description);
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("ECMCreationUser").'</td><td>';
+$user=new User($db,$ecmdir->fk_user_c);
+$user->fetch();
+print $user->getNomUrl(1);
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';
+print dolibarr_print_date($ecmdir->date_c,'dayhour');
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("ECMNbOfDocs").'</td><td>';
+print sizeof($filearray);
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
+print $totalsize;
+print '</td></tr>';
 print '</table>';
 
 print '</div>';
 
-*/
 
+
+/*
+* Confirmation de la suppression d'une ligne produit
+*/
+if ($_GET['action'] == 'delete_file')
+{
+	$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	print '<br>';
+}
 
 if ($mesg) { print $mesg."<br>"; }
 

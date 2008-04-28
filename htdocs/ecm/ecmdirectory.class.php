@@ -216,10 +216,9 @@ class EcmDirectory // extends CommonObject
 	/*
      *    \brief      Load object in memory from database
      *    \param      id          id object
-     *    \param      user        User that load
      *    \return     int         <0 if KO, >0 if OK
      */
-    function fetch($id, $user=0)
+    function fetch($id)
     {
     	global $langs;
         $sql = "SELECT";
@@ -230,8 +229,8 @@ class EcmDirectory // extends CommonObject
 		$sql.= " t.cachenbofdoc,";
 		$sql.= " t.fk_user_c,";
 		$sql.= " t.fk_user_m,";
-		$sql.= " ".$this->db->pdate('t.date_c').",";
-		$sql.= " ".$this->db->pdate('t.date_m')."";
+		$sql.= " ".$this->db->pdate('t.date_c')." as date_c,";
+		$sql.= " ".$this->db->pdate('t.date_m')." as date_m";
         $sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
         $sql.= " WHERE t.rowid = ".$id;
     
