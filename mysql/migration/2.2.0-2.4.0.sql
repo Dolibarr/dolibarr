@@ -251,3 +251,36 @@ alter table llx_socpeople add   priv           smallint NOT NULL DEFAULT 0 after
 alter table llx_tva modify fk_bank         integer;
 
 delete from llx_const where name='MAIN_USE_PREVIEW_TABS';
+
+create table llx_ecm_directories
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  label           varchar(32) NOT NULL,
+  fk_parent       integer,
+  description     varchar(255) NOT NULL,
+  cachenbofdoc    integer NOT NULL DEFAULT 0,
+  date_c		  timestamp,
+  date_m		  datetime,
+  fk_user_c		  integer,
+  fk_user_m		  integer
+) type=innodb;
+
+create table llx_ecm_document
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  ref             varchar(16)  NOT NULL,
+  filename        varchar(255) NOT NULL,
+  filesize        integer      NOT NULL,
+  filemime        varchar(32)  NOT NULL,
+  fullpath_dol    varchar(255) NOT NULL,
+  fullpath_orig   varchar(255) NOT NULL,
+  description     text,
+  manualkeyword   text,
+  fk_create       integer  NOT NULL,
+  fk_update       integer,
+  date_c	      datetime NOT NULL,
+  date_u		  timestamp,
+  fk_directory    integer,
+  fk_status		  smallint DEFAULT 0,
+  private         smallint DEFAULT 0
+) type=innodb;
