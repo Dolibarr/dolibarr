@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,7 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.$ecmdir->label.'"></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
-	print $formecm->select_all_sections($ecmdir->parent,'catParent');
+	print $formecm->select_all_sections($ecmdir->fk_parent,'catParent');
 	print '</td></tr>'."\n";
 
 	// Description

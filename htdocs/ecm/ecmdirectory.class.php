@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ class EcmDirectory // extends CommonObject
 		$now=time();
 		
 		// Clean parameters
-        $this->label=sanitize_string($this->label);
+    $this->label=sanitize_string($this->label);
 		$this->fk_parent=trim($this->fk_parent);
 		$this->description=trim($this->description);
 		if (! $this->cachenbofdoc) $this->cachenbofdoc=0;
@@ -97,9 +98,9 @@ class EcmDirectory // extends CommonObject
 		$sql.= "date_c,";
 		$sql.= "fk_user_c";
         $sql.= ") VALUES (";
-		$sql.= " '".$this->label."',";
+		$sql.= " '".addslashes($this->label)."',";
 		$sql.= " '".$this->fk_parent."',";
-		$sql.= " '".$this->description."',";
+		$sql.= " '".addslashes($this->description)."',";
 		$sql.= " ".($this->cachenbofdoc).",";
 		$sql.= " ".$this->db->idate($this->date_c).",";
 		$sql.= " '".$this->fk_user_c."'";
