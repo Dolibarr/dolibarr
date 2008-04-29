@@ -1,14 +1,5 @@
 <?php
-/* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2006      Marc Barilley/Ocebo  <marc@ocebo.com>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
- * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
+/* Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,23 +17,23 @@
  */
 
 /**
-        \file       htdocs/ecm/htmlecm.form.class.php
-        \brief      Fichier de la classe des fonctions prédéfinie de composants html
-		\version	$Id$
-*/
+ * \file       	htdocs/ecm/htmlecm.form.class.php
+ * \brief      	Fichier de la classe des fonctions prédéfinie de composants html
+ * \version		$Id$
+ */
 require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
 
 
 /**
-        \class      FormEcm
-        \brief      Classe permettant la génération de composants html
-		\remarks	Only common components must be here.
-*/
+ * \class      	FormEcm
+ * \brief      	Classe permettant la génération de composants html
+ * \remarks		Only common components must be here.
+ */
 class FormEcm
 {
 	var $db;
 	var $error;
-    
+
 	// Cache arrays
 	var $cache_types_paiements=array();
 	var $cache_conditions_paiements=array();
@@ -50,28 +41,28 @@ class FormEcm
 	var $tva_taux_value;
 	var $tva_taux_libelle;
 
-	
-  /**
-     \brief     Constructeur
-     \param     DB      handler d'accès base de donnée
-  */
-	  function FormEcm($DB)
-	  {
-	    $this->db = $DB;
-	    
-	    return 1;
-	  }
 
-	  
-    /**
-     *    \brief    Retourne la liste des catégories du type choisi
-     *    \param    selected    	Id categorie preselectionnee
-     *    \param    select_name		Nom formulaire HTML
-     */
-    function select_all_sections($selected='',$select_name='')
-    {
-        global $langs;
-        $langs->load("ecm");
+	/**
+	 * 	\brief     Constructeur
+	 * 	\param     DB      handler d'accès base de donnée
+	 */
+	function FormEcm($DB)
+	{
+		$this->db = $DB;
+		 
+		return 1;
+	}
+
+
+	/**
+	 *	\brief    Retourne la liste des catégories du type choisi
+	 *  \param    selected    		Id categorie preselectionnee
+	 *  \param    select_name		Nom formulaire HTML
+	 */
+	function select_all_sections($selected='',$select_name='')
+	{
+		global $langs;
+		$langs->load("ecm");
 
 		if ($select_name=="") $select_name="catParent";
 
@@ -101,7 +92,7 @@ class FormEcm
 		}
 		$output.= '</select>';
 		$output.= "\n";
-		return $output; 
+		return $output;
 	}
 }
 

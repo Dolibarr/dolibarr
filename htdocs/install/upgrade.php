@@ -77,8 +77,12 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 	$error=0;
 	
-	// on d�code le mot de passe de la base si besoin
-	if (isset($dolibarr_main_db_encrypted_pass) && $dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
+	// decode database pass if needed
+	if (! empty($dolibarr_main_db_encrypted_pass))
+	{
+		require_once($dolibarr_main_document_root."/lib/security.lib.php");
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+	}
 
 	// $conf is already instancied inside inc.php
 	$conf->db->type = $dolibarr_main_db_type;

@@ -26,12 +26,6 @@
 		\remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
 */
 
-// Put here all includes required by your class file
-//require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-
-
 /**
         \class      EcmDirectory
         \brief      Class to manage ECM directories
@@ -131,7 +125,7 @@ class EcmDirectory // extends CommonObject
         }
     }
 
-    /*
+    /**
      *      \brief      Update database
      *      \param      user        	User that modify
      *      \param      notrigger	    0=no, 1=yes (no update trigger)
@@ -186,7 +180,7 @@ class EcmDirectory // extends CommonObject
     }
   
   
-    /*
+    /**
      *      \brief      Update database
      * 		\sign		'+' or '-'
      *      \return     int         	<0 if KO, >0 if OK
@@ -214,7 +208,7 @@ class EcmDirectory // extends CommonObject
     }
 
     
-	/*
+	/**
      *    \brief      Load object in memory from database
      *    \param      id          id object
      *    \return     int         <0 if KO, >0 if OK
@@ -268,7 +262,7 @@ class EcmDirectory // extends CommonObject
     }
     
     
- 	/*
+ 	/**
 	*   \brief      Delete object in database
     *	\param      user        User that delete
 	*	\return		int			<0 if KO, >0 if OK
@@ -317,12 +311,12 @@ class EcmDirectory // extends CommonObject
 	}
 
 	
-  /**
+  	/**
      \brief      	Renvoie nom clicable (avec eventuellement le picto)
      \param			withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
      \param			option			Sur quoi pointe le lien
      \return		string			Chaine avec URL
-   */
+   	*/
   	function getNomUrl($withpicto=0,$option='')
   	{
 	    global $langs;
@@ -343,7 +337,44 @@ class EcmDirectory // extends CommonObject
 	    return $result;
   	}
 
-  /**
+  	/**
+     \brief      	Return relative path of a directory on disk
+     \return		string			Relative physical path
+   	*/
+  	function getRelativePath()
+  	{
+	    $this->get_full_arbo();
+	    
+		$ret='';
+		$idtosearch=$this->id;
+		$i=0;
+		do {
+			// Get index cursor in this->cats for id_mere
+			$cursorindex=-1;
+			foreach ($this->cats as $key => $val)
+			{
+				if ($this->cats[$key]['id'] == $idtosearch)
+				{
+					$cursorindex=$key;
+					break;
+				}
+			}
+			//print "c=".$idtosearch."-".$cursorindex;
+			
+			if ($cursorindex >= 0)
+			{
+				$ret=$this->cats[$cursorindex]['label'].'/'.$ret;
+			
+				$idtosearch=$this->cats[$cursorindex]['id_mere'];
+				$i++;
+			}
+		}
+		while ($cursorindex >= 0 && ! empty($idtosearch) && $i < 100);	// i avoid infinite loop
+		
+		return $ret;
+  	}
+  	
+  	/**
 	* 	\brief		Load this->motherof array
 	*	\return		int		<0 if KO, >0 if OK
 	*/

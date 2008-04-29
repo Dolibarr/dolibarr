@@ -110,7 +110,11 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
 
 // on décode le mot de passe de la base si besoin
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");	// Need 970ko memory (1.1 in 2.2)
-if (! empty($dolibarr_main_db_encrypted_pass)) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
+if (! empty($dolibarr_main_db_encrypted_pass))
+{
+	require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
+	$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+}
 //print memory_get_usage();
 
 require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");

@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+
 /**
     	\file       htdoc/ecm/docmine.php
 		\ingroup    ecm
@@ -23,7 +24,6 @@
 		\version    $Id$
 		\author		Laurent Destailleur
 */
-
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
@@ -39,15 +39,24 @@ $langs->load("other");
 // Load permissions
 $user->getrights('ecm');
 
-// Get parameters
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
-
-// Permissions
+// Security check
 if ($user->societe_id > 0)
 {
     $action = '';
     $socid = $user->societe_id;
 }
+
+// Get parameters
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="name";
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 $section=$_REQUEST["section"];
 if (! $section)
@@ -56,18 +65,22 @@ if (! $section)
 	exit;
 }
 
-$ecmdir = new ECMDirectory($db);
-if (! empty($_REQUEST["section"]))
-{
-	$result=$ecmdir->fetch($_REQUEST["section"]);
-	if (! $result > 0)
-	{
-		dolibarr_print_error($db,$ecmdir->error);
-		exit;
-	}
-}
 
-$upload_dir = $conf->ecm->dir_output.'/'.$ecmdir->label;
+// Load ecm object
+$ecmdir = new ECMDirectory($db);
+if (empty($_REQUEST["section"])) 
+{
+	dolibarr_print_error('','Error, section parameter missing');
+	exit;
+}
+$result=$ecmdir->fetch($_REQUEST["section"]);
+if (! $result > 0)
+{
+	dolibarr_print_error($db,$ecmdir->error);
+	exit;
+}
+$relativepath=$ecmdir->getRelativePath();
+$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
 
 /*******************************************************************
@@ -132,33 +145,7 @@ $form=new Form($db);
 
 
 // Construit liste des fichiers
-clearstatcache();
-$totalsize=0;
-$filearray=array();
-$errorlevel=error_reporting();
-error_reporting(0);
-$handle=opendir($upload_dir);
-error_reporting($errorlevel);
-if ($handle)
-{
-	$i=0;
-	while (($file = readdir($handle))!==false)
-	{
-		if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-		{
-			$filearray[$i]->name=$file;
-			$filearray[$i]->size=filesize($upload_dir."/".$file);
-			$filearray[$i]->date=filemtime($upload_dir."/".$file);
-			$totalsize+=$filearray[$i]->size;
-			$i++;
-		}
-	}
-	closedir($handle);
-}
-else
-{
-	//            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
-}
+$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
 
 
 $head = ecm_prepare_head($ecmdir);
@@ -173,9 +160,10 @@ $result = 1;
 while ($tmpecmdir && $result > 0)
 {
 	$tmpecmdir->ref=$tmpecmdir->label;
-	$s=' -> '.$tmpecmdir->getNomUrl(1).$s;
+	$s=$tmpecmdir->getNomUrl(1).$s;
 	if ($tmpecmdir->fk_parent)
 	{
+		$s=' -> '.$s;
 		$result=$tmpecmdir->fetch($tmpecmdir->fk_parent);
 	}
 	else
@@ -183,7 +171,7 @@ while ($tmpecmdir && $result > 0)
 		$tmpecmdir=0;
 	}
 }
-print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a>';
+//print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a>';
 print $s;
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("Description").'</td><td>';
@@ -197,11 +185,20 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';
 print dolibarr_print_date($ecmdir->date_c,'dayhour');
 print '</td></tr>';
+print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
+//print $conf->ecm->dir_output;
+print '/ecm/'.$relativepath;
+print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMNbOfDocs").'</td><td>';
 print sizeof($filearray);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
-print $totalsize;
+$totalsize=0;
+foreach($filearray as $key => $file)
+{
+	$totalsize+=$file['size'];
+}
+print dol_print_size($totalsize);
 print '</td></tr>';
 print '</table>';
 
@@ -227,6 +224,7 @@ $formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/docmine.php','',0,$section);
 // Affiche liste des documents existant
 print_titre($langs->trans("AttachedFiles"));
 
+
 /**
  * TODO Mettre cette section dans une zone AJAX
  */ 
@@ -234,28 +232,26 @@ $modulepart='ecm';
 $url=$_SERVER["PHP_SELF"];
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
-$param='&amp;socid='.$socid;
+$param='&amp;section='.$section;
 print_liste_field_titre($langs->trans("Document"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Size"),$_SERVER["PHP_SELF"],"size","",$param,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"date","",$param,'align="center"',$sortfield,$sortorder);
 print '<td>&nbsp;</td>';
 print '</tr>';
 
-usort($filearray,"dol_compare_file");
-
 $var=true;
 foreach($filearray as $key => $file)
 {
-	if (!is_dir($dir.$file->name) && substr($file->name, 0, 1) <> '.' && substr($file->name, 0, 3) <> 'CVS')
+	if (!is_dir($dir.$file['name']) && substr($file['name'], 0, 1) <> '.' && substr($file['name'], 0, 3) <> 'CVS')
 	{
 		$var=!$var;
 		print "<tr $bc[$var]><td>";
-		echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&type=application/binary&file='.urlencode($prefix.$file->name).'">'.$file->name.'</a>';
+		echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&type=application/binary&file='.urlencode($prefix.$file['name']).'">'.$file['name'].'</a>';
 		print "</td>\n";
-		print '<td align="right">'.$file->size.' '.$langs->trans("bytes").'</td>';
-		print '<td align="center">'.dolibarr_print_date($file->date,"dayhour").'</td>';
+		print '<td align="right">'.dol_print_size($file['size']).'</td>';
+		print '<td align="center">'.dolibarr_print_date($file['date'],"dayhour").'</td>';
 		print '<td align="center">';
-		echo '<a href="'.$url.'?section='.$_REQUEST["section"].'&amp;action=delete_file&urlfile='.urlencode($file->name).'">'.img_delete().'</a>';
+		echo '<a href="'.$url.'?section='.$_REQUEST["section"].'&amp;action=delete_file&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 		print "</td></tr>\n";
 	}
 }

@@ -93,7 +93,11 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
     
     // on décode le mot de passe de la base si besoin
     require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");
-    if (isset($dolibarr_main_db_encrypted_pass) && $dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
+    if (! empty($dolibarr_main_db_encrypted_pass))
+    {
+		require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");
+    	$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+    }
 
     $conf->db->type = $dolibarr_main_db_type;
     $conf->db->host = $dolibarr_main_db_host;

@@ -125,6 +125,7 @@ class FormFile
     function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0)
     {
         // filedir = conf->...dir_ouput."/".get_exdir(id)
+        include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
         
         global $langs,$bc,$conf;
         $var=true;
@@ -289,7 +290,7 @@ class FormFile
         	$png = '|\.png$';
         	$filter = $filename.'.pdf';
         }
-        $file_list=dolibarr_dir_list($filedir,'files',0,$filter,'\.meta$'.$png,'date',SORT_DESC);
+        $file_list=dol_dir_list($filedir,'files',0,$filter,'\.meta$'.$png,'date',SORT_DESC);
 		
         // Affiche en-tete tableau si non deja affiché
 		if (sizeof($file_list) && ! $headershown && !$iconPDF)

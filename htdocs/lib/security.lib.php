@@ -53,8 +53,8 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 }
 
 /**
-   \brief   Encode\decode le mot de passe de la base de données dans le fichier de conf
-   \param   level    niveau d'encodage : 0 non encodé, 1 encodé
+   \brief   Encode\decode database password in config file
+   \param   level    Encode level : 0 no enconding, 1 encoding
 */
 function encodedecode_dbpassconf($level=0)
 {
@@ -70,14 +70,14 @@ function encodedecode_dbpassconf($level=0)
 			{
 				$passwd = strstr($buffer,"$dolibarr_main_db_encrypted_pass=");
 				$passwd = substr(substr($passwd,2),0,-3);
-				$passwd = dolibarr_decode($passwd);
+				$passwd = dol_decode($passwd);
 				$config .= "\$dolibarr_main_db_pass=\"$passwd\";\n";
 			}
 			else if (strstr($buffer,"\$dolibarr_main_db_pass") && $level == 1)
 			{
 				$passwd = strstr($buffer,"$dolibarr_main_db_pass=");
 				$passwd = substr(substr($passwd,2),0,-3);
-				$passwd = dolibarr_encode($passwd);
+				$passwd = dol_encode($passwd);
 				$config .= "\$dolibarr_main_db_encrypted_pass=\"$passwd\";\n";
 			}
 			else
@@ -104,5 +104,38 @@ function encodedecode_dbpassconf($level=0)
 	}
 }
 
+/**
+ \brief   Encode une chaine de caractére
+ \param   chain    chaine de caractéres a encoder
+ \return  string_coded  chaine de caractéres encodée
+ */
+function dol_encode($chain)
+{
+	for($i=0;$i<strlen($chain);$i++)
+	{
+		$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
+	}
+
+	$string_coded = base64_encode(implode ("",$output_tab));
+	return $string_coded;
+}
+
+/**
+ \brief   Decode une chaine de caractére
+ \param   chain    chaine de caractéres a decoder
+ \return  string_coded  chaine de caractéres decodée
+ */
+function dol_decode($chain)
+{
+	$chain = base64_decode($chain);
+
+	for($i=0;$i<strlen($chain);$i++)
+	{
+		$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
+	}
+
+	$string_decoded = implode ("",$output_tab);
+	return $string_decoded;
+}
 
 ?>
