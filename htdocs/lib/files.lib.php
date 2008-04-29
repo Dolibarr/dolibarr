@@ -32,7 +32,7 @@
    \param		$exludefilter  	Regex for exclude filter (example: '\.meta$')
    \param		$sortcriteria	Sort criteria ("name","date","size")
    \param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
-	\param		$mode			0=Return array of key need, 1=Force all key to be loaded
+	\param		$mode			0=Return array with only keys needed, 1=Force all keys to be loaded
    \return		array			Array of array('name'=>xxx,'date'=>yyy,'size'=>zzz)
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)

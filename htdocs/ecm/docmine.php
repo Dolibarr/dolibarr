@@ -39,6 +39,7 @@ $langs->load("other");
 // Load permissions
 $user->getrights('ecm');
 
+
 // Security check
 if ($user->societe_id > 0)
 {
@@ -99,9 +100,8 @@ if ( $_POST["sendit"] && $conf->upload != 0)
   	$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']);
   	if ($result == 1)
   	{
-    	$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+    	//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
     	//print_r($_FILES);
-
     	$result=$ecmdir->changeNbOfFiles('+');
     }
     else if (!$result)
@@ -118,7 +118,7 @@ if ( $_POST["sendit"] && $conf->upload != 0)
   }
 }
 
-// Suppression fichier
+// Remove file
 if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 {
   $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
@@ -129,7 +129,21 @@ if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
   $result=$ecmdir->changeNbOfFiles('-');
 }
 
+// Remove dir
+if ($_POST['action'] == 'confirm_deletedir' && $_POST['confirm'] == 'yes')
+{
+	$result=$ecmdir->delete($user);
+	header("Location: ".DOL_URL_ROOT."/ecm/index.php");
+	exit;
+	//	$mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
+}
 
+// Remove dir
+if ($_POST['action'] == 'update' && ! $_POST['cancel'])
+{
+	$ecmdir->description = $_POST["description"];
+	$result=$ecmdir->update($user);
+}
 
 
 
@@ -151,6 +165,12 @@ $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolowe
 $head = ecm_prepare_head($ecmdir);
 dolibarr_fiche_head($head, 'card', $langs->trans("ECMManualOrg"));
 
+if ($_GET["action"] == 'edit')
+{
+	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="section" value="'.$section.'">';		
+	print '<input type="hidden" name="action" value="update">';		
+}
 
 print '<table class="border" width="100%">';
 print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
@@ -174,13 +194,19 @@ while ($tmpecmdir && $result > 0)
 //print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a>';
 print $s;
 print '</td></tr>';
-print '<tr><td>'.$langs->trans("Description").'</td><td>';
-print dol_nl2br($ecmdir->description);
+print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+if ($_GET["action"] == 'edit')
+{
+	print '<textarea class="flat" name="description" cols="80">';
+	print $ecmdir->description;
+	print '</textarea>';
+}
+else print dol_nl2br($ecmdir->description);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMCreationUser").'</td><td>';
-$user=new User($db,$ecmdir->fk_user_c);
-$user->fetch();
-print $user->getNomUrl(1);
+$userecm=new User($db,$ecmdir->fk_user_c);
+$userecm->fetch();
+print $userecm->getNomUrl(1);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("ECMCreationDate").'</td><td>';
 print dolibarr_print_date($ecmdir->date_c,'dayhour');
@@ -200,22 +226,67 @@ foreach($filearray as $key => $file)
 }
 print dol_print_size($totalsize);
 print '</td></tr>';
+if ($_GET["action"] == 'edit')
+{
+	print '<tr><td colspan="2" align="center">';
+	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</td></tr>';
+}
 print '</table>';
-
+if ($_GET["action"] == 'edit')
+{
+	print '</form>';
+}
 print '</div>';
 
 
+// Actions buttons
+if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete_dir' && $_GET['action'] != 'delete_file')
+{
+	print '<div class="tabsAction">';
+	
+	if ($user->rights->ecm->setup)
+	{
+		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&section='.$section.'">'.$langs->trans('Edit').'</a>';
+	}
+	
+	if (sizeof($filearray) == 0)
+	{
+		if ($user->rights->ecm->setup)
+		{
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir&section='.$section.'">'.$langs->trans('Delete').'</a>';
+		}
+		else
+		{
+			print '<a class="butActionDeleteRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+		}
+	}
+	else
+	{
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFiles").'">'.$langs->trans('Delete').'</a>';
+	}
+	print '</div>';
+}
 
-/*
-* Confirmation de la suppression d'une ligne produit
-*/
+if ($mesg) { print $mesg.'<br>'; }
+
+
+// Confirm remove file
 if ($_GET['action'] == 'delete_file')
 {
 	$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 	print '<br>';
 }
 
-if ($mesg) { print $mesg."<br>"; }
+// Confirm remove file
+if ($_GET['action'] == 'delete_dir')
+{
+	$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"], $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection'), 'confirm_deletedir');
+	print '<br>';
+}
+
 
 // Affiche formulaire upload
 $formfile=new FormFile($db);
@@ -250,11 +321,13 @@ foreach($filearray as $key => $file)
 		print "</td>\n";
 		print '<td align="right">'.dol_print_size($file['size']).'</td>';
 		print '<td align="center">'.dolibarr_print_date($file['date'],"dayhour").'</td>';
-		print '<td align="center">';
-		echo '<a href="'.$url.'?section='.$_REQUEST["section"].'&amp;action=delete_file&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+		print '<td align="right">';
+		//print '&nbsp;'; 
+		print '<a href="'.$url.'?section='.$_REQUEST["section"].'&amp;action=delete_file&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
 		print "</td></tr>\n";
 	}
 }
+if (sizeof($filearray) == 0) print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("ECMNoFileFound").'</td></tr>';
 print "</table>";
 // Fin de zone Ajax
 

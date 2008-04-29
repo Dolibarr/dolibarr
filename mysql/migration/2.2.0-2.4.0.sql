@@ -252,6 +252,7 @@ alter table llx_tva modify fk_bank         integer;
 
 delete from llx_const where name='MAIN_USE_PREVIEW_TABS';
 
+drop table if exists llx_ecm_directories;
 create table llx_ecm_directories
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -259,8 +260,8 @@ create table llx_ecm_directories
   fk_parent       integer,
   description     varchar(255) NOT NULL,
   cachenbofdoc    integer NOT NULL DEFAULT 0,
-  date_c		  timestamp,
-  date_m		  datetime,
+  date_c		  datetime,
+  date_m		  timestamp,
   fk_user_c		  integer,
   fk_user_m		  integer
 ) type=innodb;

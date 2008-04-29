@@ -18,11 +18,11 @@
  */
 
 /**
- \file       htdoc/ecm/index.php
- \ingroup    ecm
- \brief      Main page for ECM section area
- \version    $Id$
- \author		Laurent Destailleur
+ \file      htdoc/ecm/docdir.php
+ \ingroup   ecm
+ \brief     Main page for ECM section area
+ \version   $Id$
+ \author	Laurent Destailleur
  */
 
 require("./pre.inc.php");
@@ -43,6 +43,7 @@ $langs->load("categories");
 
 // Load permissions
 $user->getrights('ecm');
+
 
 // Get parameters
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -81,22 +82,34 @@ if (! empty($_GET["section"]))
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
 {
-	$ecmdir->ref                = $_POST["ref"];
-	$ecmdir->label              = $_POST["label"];
-	$ecmdir->description        = $_POST["desc"];
+	$ecmdir->ref                = trim($_POST["ref"]);
+	$ecmdir->label              = trim($_POST["label"]);
+	$ecmdir->description        = trim($_POST["desc"]);
 	$ecmdir->fk_parent          = $_POST["catParent"];
 
-	$id = $ecmdir->create($user);
-
-	if ($id > 0)
+	$ok=true;
+	
+	if (! $ecmdir->label)
 	{
-		Header("Location: ".DOL_URL_ROOT.'/ecm/docmine.php?section='.$id);
-		exit;
-	}
-	else
-	{
-		$mesg='<div class="error">Error '.$langs->trans($ecmdir->error).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
 		$_GET["action"] = "create";
+		$ok=false;
+	}
+	
+	if ($ok)
+	{
+		$id = $ecmdir->create($user);
+	
+		if ($id > 0)
+		{
+			Header("Location: ".DOL_URL_ROOT.'/ecm/index.php');
+			exit;
+		}
+		else
+		{
+			$mesg='<div class="error">Error '.$langs->trans($ecmdir->error).'</div>';
+			$_GET["action"] = "create";
+		}
 	}
 }
 
@@ -186,7 +199,7 @@ if (! $_GET["action"] || $_GET["action"] == 'delete_section')
 	// Construit fiche  rubrique
 
 
-
+print $user->rights->ecm->setup;
 	// Actions buttons
 	print '<div class="tabsAction">';
 	if ($user->rights->ecm->setup)
