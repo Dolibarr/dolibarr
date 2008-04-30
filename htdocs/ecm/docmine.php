@@ -317,7 +317,10 @@ foreach($filearray as $key => $file)
 	{
 		$var=!$var;
 		print "<tr $bc[$var]><td>";
-		echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&type=application/binary&file='.urlencode($prefix.$file['name']).'">'.$file['name'].'</a>';
+		echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&type=application/binary&file='.urlencode($prefix.$file['name']).'">';
+		print img_mime($file['name']).' ';
+		print $file['name'];
+		print '</a>';
 		print "</td>\n";
 		print '<td align="right">'.dol_print_size($file['size']).'</td>';
 		print '<td align="center">'.dolibarr_print_date($file['date'],"dayhour").'</td>';

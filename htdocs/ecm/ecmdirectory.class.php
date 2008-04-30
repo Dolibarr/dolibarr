@@ -44,10 +44,13 @@ class EcmDirectory // extends CommonObject
 	var $label;
 	var $fk_parent;
 	var $description;
-	var $tms;
-
+	var $cachenbofdoc;
+	var $date_c;
+	var $date_m;
+		
     var $cats=array();
-
+	var $motherof=array();
+	
 	
     /**
      *      \brief      Constructor
@@ -549,14 +552,17 @@ class EcmDirectory // extends CommonObject
         $sql.= " WHERE rowid=".$this->id;
         dolibarr_syslog("EcmDirectories::refreshcachenboffile sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if (! $resql)
+        if ($resql)
+        {
+        	$this->cachenbofdoc=sizeof($filelist);
+			return 1;
+        }
+        else
         {
             $this->error="Error ".$this->db->lasterror();
             dolibarr_syslog("EcmDirectories::refreshcachenboffile ".$this->error, LOG_ERR);
             return -1;
         }
-        
-		return 1;
 	}	
 	
 }
