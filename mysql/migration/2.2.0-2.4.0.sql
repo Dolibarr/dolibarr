@@ -252,7 +252,6 @@ alter table llx_tva modify fk_bank         integer;
 
 delete from llx_const where name='MAIN_USE_PREVIEW_TABS';
 
-drop table if exists llx_ecm_directories;
 create table llx_ecm_directories
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
