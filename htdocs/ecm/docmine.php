@@ -190,7 +190,6 @@ while ($tmpecmdir && $result > 0)
 	{
 		$tmpecmdir=0;
 	}
-	print 'S : '.$result->label.'<br>';
 }
 //print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a>';
 print $s;

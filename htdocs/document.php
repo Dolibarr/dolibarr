@@ -309,7 +309,7 @@ if ($modulepart)
     if ($modulepart == 'ecm')
     {
         $user->getrights('ecm');
-        if ($user->rights->ecm->lire)
+        if ($user->rights->ecm->read)
         {
 			$accessallowed=1;
         }
