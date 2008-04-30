@@ -190,6 +190,7 @@ while ($tmpecmdir && $result > 0)
 	{
 		$tmpecmdir=0;
 	}
+	print 'S : '.$result->label.'<br>';
 }
 //print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a>';
 print $s;
@@ -317,7 +318,8 @@ foreach($filearray as $key => $file)
 	{
 		$var=!$var;
 		print "<tr $bc[$var]><td>";
-		echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&type=application/binary&file='.urlencode($prefix.$file['name']).'">';
+		// TODO Chemin du fichier incorrecte
+		print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&type=application/binary&file='.urlencode($prefix.$file['name']).'">';
 		print img_mime($file['name']).' ';
 		print $file['name'];
 		print '</a>';
