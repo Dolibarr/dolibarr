@@ -317,8 +317,7 @@ foreach($filearray as $key => $file)
 	{
 		$var=!$var;
 		print "<tr $bc[$var]><td>";
-		// TODO Chemin du fichier incorrecte
-		print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&type=application/binary&file='.urlencode($prefix.$file['name']).'">';
+		print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&type=application/binary&file='.urlencode($relativepath.$file['name']).'">';
 		print img_mime($file['name']).' ';
 		print $file['name'];
 		print '</a>';
