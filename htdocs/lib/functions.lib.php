@@ -199,9 +199,9 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 			{
 				$facility = LOG_USER;
 			}
-				
+
 			openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
-				
+
 			if (! $level)
 			{
 				syslog(LOG_ERR, $message);
@@ -210,7 +210,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 			{
 				syslog($level, $message);
 			}
-				
+
 			closelog();
 		}
 	}
@@ -683,7 +683,7 @@ function dolibarr_print_phone($phone,$country="FR")
 function dol_print_size($size)
 {
 	global $langs;
-	
+
 	return $size.' '.$langs->trans("Bytes");
 }
 
@@ -1187,6 +1187,31 @@ function img_allow($allow)
 
 
 /**
+ *	\brief      Show mime picto
+ *	\param      file		Filename
+ *	\return     string     	Return img tag
+ */
+function img_mime($file)
+{
+	$mime='other';
+	if (eregi('\.pdf',$file))        { $mime='pdf'; }
+	if (eregi('\.(html|htm)',$file)) { $mime='html'; }
+	if (eregi('\.txt',$file))        { $mime='other'; }
+	if (eregi('\.php',$file))        { $mime='php'; }
+	if (eregi('\.pl',$file))         { $mime='pl'; }
+	if (eregi('\.js',$file))         { $mime='jscript'; }
+	if (eregi('\.(png|bmp|jpg|jpeg|gif)',$file)) $mime='image';
+	if (eregi('\.(mp3|ogg|au)',$file))           $mime='audio';
+	if (eregi('\.(avi|mvw|divx|xvid)',$file))    $mime='video';
+	if (eregi('\.(zip|rar|divx|xvid)',$file))    $mime='archive';
+	$alt='Mime type: '.$mime;
+	
+	$mime.='.png';
+	return '<img src="'.DOL_URL_ROOT.'/theme/common/mime/'.$mime.'" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+
+/**
  \brief      Return if a filename is file name of a supported image format
  \param      file		Filename
  \return		int			-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported
@@ -1477,7 +1502,7 @@ function dolibarr_print_error($db='',$error='')
 	if ($error)
 	{
 		$langs->load("errors");
-		 
+			
 		if (is_array($error)) $errors=$error;
 		else $errors=array($error);
 
@@ -1766,9 +1791,9 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			print '<tr><td class="notopnoleftnoright">';
 			print '<div class="titre">'.$titre.'</div>';
 			print '</td>';
-				
+
 			$maxnbofpage=10;
-				
+
 			$nbpages=ceil($totalnboflines/$conf->liste_limit);
 			$cpt=($page-$maxnbofpage);
 			if ($cpt < 0) { $cpt=0; }
@@ -2332,9 +2357,9 @@ function measuring_units_string($unit,$measuring_style='')
 	 * cela surchagerait inutilement d'une requete supplémentaire
 	 * pour quelque chose qui est somme toute peu variable
 	 */
-	 
+
 	global $langs;
-	 
+
 	if ($measuring_style == 'weight')
 	{
 		$measuring_units[3] = $langs->trans("WeightUnitton");
@@ -2551,7 +2576,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 		if ($countrycode == 'FR')
 		{
 			$countryfound=1;
-			 
+
 			// Definition des dates feriees fixes
 			if($jour == 1 && $mois == 1)   $ferie=true; // 1er janvier
 			if($jour == 1 && $mois == 5)   $ferie=true; // 1er mai
@@ -2561,7 +2586,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 			if($jour == 1 && $mois == 11)  $ferie=true; // 1 novembre
 			if($jour == 11 && $mois == 11) $ferie=true; // 11 novembre
 			if($jour == 25 && $mois == 12) $ferie=true; // 25 decembre
-			 
+
 			// Calcul du jour de paques
 			$date_paques = easter_date($annee);
 			$jour_paques = date("d", $date_paques);
@@ -2581,7 +2606,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 			$mois_ascension = date("m", $date_ascension);
 			if($jour_ascension == $jour && $mois_ascension == $mois) $ferie=true;
 			//Ascension
-			 
+
 			// Calcul de Pentecote (11 jours apres Paques)
 			$date_pentecote = mktime(date("H", $date_ascension),
 			date("i", $date_ascension),
