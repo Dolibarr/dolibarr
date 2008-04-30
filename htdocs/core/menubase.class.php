@@ -435,9 +435,12 @@ class Menubase
 		}
 	}
 
+
+	// \TODO Avoid call for each 
+	
 	function verifConstraint($rowid, $mainmenu = "", $leftmenu = "") 
 	{
-		global $user, $conf, $user;
+		global $user, $conf, $lang;
 		global $constraint;	// To export to dol_eval function
 		
 		include_once(DOL_DOCUMENT_ROOT.'/lib/admin.lib.php');	// Because later some eval try to run dynamic call to dolibarr_get_const
@@ -447,6 +450,7 @@ class Menubase
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu_constraint as c, " . MAIN_DB_PREFIX . "menu_const as mc";
 		$sql.= " WHERE mc.fk_constraint = c.rowid AND (mc.user = 0 OR mc.user = 2) AND mc.fk_menu = '" . $rowid . "'";
 
+		dolibarr_syslog("Menubase::verifConstraint sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result) 
 		{
@@ -517,7 +521,8 @@ class Menubase
 	}
 	
 	/**
-	*		brief		type_user		0=Internal,1=External,2=All
+	*		\brief		Load tabMenu array
+	* 		\param		type_user		0=Internal,1=External,2=All
 	*/
 	function menutopCharger($type_user, $mainmenu, $menu_handler)
 	{
@@ -545,6 +550,7 @@ class Menubase
 				// Init tabMenu array
 				$objm = $this->db->fetch_object($resql);
 				
+		        //print "x".$objm->rowid;
 				if ($this->verifConstraint($objm->rowid))
 		        {
 					// Define class
@@ -612,7 +618,7 @@ class Menubase
 function dol_eval($s)
 {
 	// To get and return to caller
-	global $leftmenu, $leftmenuConstraint, $constraint, $rights, $user;
+	global $leftmenu, $leftmenuConstraint, $constraint, $rights, $user, $conf;
 	
 	//print $s."<br>\n";
 	eval($s);
