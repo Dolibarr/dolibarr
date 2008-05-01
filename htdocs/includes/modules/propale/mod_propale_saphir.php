@@ -78,7 +78,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
     {
      	global $conf,$langs,$mysoc;
     	
-    	$numExample = $this->getNextValue($mysoc,$propalspecimen);
+    	$numExample = $this->getNextValue($mysoc);
         
 		if (! $numExample)
 		{
@@ -89,10 +89,9 @@ class mod_propale_saphir extends ModeleNumRefPropales
 
 	/**		\brief      Return next value
 	*      	\param      objsoc      Object third party
-	*      	\param      propal		Object proposal
 	*      	\return     string      Value if OK, 0 if KO
 	*/
-	function getNextValue($objsoc,$propal)
+	function getNextValue($objsoc)
 	{
 		global $db,$conf;
 
