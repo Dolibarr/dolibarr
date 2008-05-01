@@ -23,9 +23,6 @@ CREATE TABLE `llx_menu_const` (
   `rowid` int(11) NOT NULL auto_increment,
   `fk_menu` int(11) NOT NULL,
   `fk_constraint` int(11) NOT NULL,
-  `user` tinyint(4) NOT NULL default '2',
-  PRIMARY KEY  (`rowid`),
-  KEY `fk_menu` (`fk_menu`),
-  KEY `fk_constraint` (`fk_constraint`)
+  PRIMARY KEY  (`rowid`)
 ) type=innodb;
 

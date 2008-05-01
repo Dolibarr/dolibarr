@@ -310,27 +310,30 @@ class MenuTop {
        	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
         $menuArbo = new Menubase($this->db,'rodolphe','top');
- 		$tabMenu = $menuArbo->menutopCharger(2,$_SESSION['mainmenu'],'rodolphe');
-        for($i=0;$i<count($tabMenu);$i++)
+ 		$tabMenu = $menuArbo->menuTopCharger(2,$_SESSION['mainmenu'],'rodolphe');
+
+ 		for($i=0;$i<count($tabMenu);$i++)
         {
-        	if ($tabMenu[$i]['right'] == true)
+        	if ($tabMenu[$i]['enabled'] == true)
         	{
-				$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-				if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
-				else $url.='&';
-				$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
-				$url.="&idmenu=".$tabMenu[$i]['rowid'];
-				// Define idsel
-				if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
-				elseif (! empty($_GET["mainmenu"]) && $_GET["mainmenu"] == $tabMenu[$i]['mainmenu']) $idsel='id="sel" ';
-				else $idsel='';
-        		print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
+	        	if ($tabMenu[$i]['right'] == true)
+	        	{
+					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+					if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+					else $url.='&';
+					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
+					$url.="&idmenu=".$tabMenu[$i]['rowid'];
+					// Define idsel
+					if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
+					elseif (! empty($_GET["mainmenu"]) && $_GET["mainmenu"] == $tabMenu[$i]['mainmenu']) $idsel='id="sel" ';
+					else $idsel='';
+	        		print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
+	        	}
+	        	else
+	        	{
+	        		print '<td class="tmenu"><font class="tmenudisabled">'.$tabMenu[$i]['titre'].'</font></td>';
+	        	}
         	}
-        	else
-        	{
-        		print '<td class="tmenu"><font class="tmenudisabled">'.$tabMenu[$i]['titre'].'</font></td>';
-        	}
-      	
         }
 		
         

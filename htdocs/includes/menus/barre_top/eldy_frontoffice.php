@@ -311,26 +311,28 @@ class MenuTop {
        	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
         $menuArbo = new Menubase($this->db,'eldy','top');
- 		$tabMenu = $menuArbo->menutopCharger(1,$_SESSION['mainmenu'],'eldy');
+ 		$tabMenu = $menuArbo->menuTopCharger(1,$_SESSION['mainmenu'],'eldy');
         for($i=0; $i<count($tabMenu); $i++)
         {
-        	if ($tabMenu[$i]['right'] == true)
+        	if ($tabMenu[$i]['enabled'] == true)
         	{
-				$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
-				if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
-				else $url.='&';
-				$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
-				$url.="&idmenu=".$tabMenu[$i]['rowid'];
-				// Define idsel
-				if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
-				else $idsel='';
-        		print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
-        	}
-        	else
-        	{
-        		print '<td class="tmenu"><font class="tmenudisabled">'.$tabMenu[$i]['titre'].'</font></td>';
-        	}
-      	
+	        	if ($tabMenu[$i]['right'] == true)
+	        	{
+					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
+					if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
+					else $url.='&';
+					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
+					$url.="&idmenu=".$tabMenu[$i]['rowid'];
+					// Define idsel
+					if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
+					else $idsel='';
+	        		print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
+	        	}
+	        	else
+	        	{
+	        		print '<td class="tmenu"><font class="tmenudisabled">'.$tabMenu[$i]['titre'].'</font></td>';
+	        	}
+        	}      	
         }
         
         print '</tr></table>';

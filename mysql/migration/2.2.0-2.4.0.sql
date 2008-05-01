@@ -252,6 +252,8 @@ alter table llx_tva modify fk_bank         integer;
 
 delete from llx_const where name='MAIN_USE_PREVIEW_TABS';
 
+alter table llx_menu_const drop column user;
+
 create table llx_ecm_directories
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
