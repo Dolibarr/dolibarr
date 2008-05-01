@@ -496,34 +496,37 @@ class Propal extends CommonObject
 
 
     /**
-     *      \brief      Cr�e une propal
+     *      \brief      Create commercial proposal
+     * 		\param		user	User that create
      *      \return     int     <0 si ko, >=0 si ok
      */
     function create($user='')
     {
     	global $langs,$conf,$mysoc;
     	
-    	// on v�rifie si la ref n'est pas utilis�e
-		  $soc = new Societe($this->db);
+    	// on verifie si la ref n'est pas utilisee
+		$soc = new Societe($this->db);
 	    $soc->fetch($this->socid);
 	    $this->verifyNumRef($soc);
 
-      // Nettoyage/d�finition param�tres
-      $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+      	// Clean parameters
+      	$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
-		  dolibarr_syslog("Propal::create ref=".$this->ref);
+		dolibarr_syslog("Propal::create ref=".$this->ref);
 
-      $this->db->begin();
+      	$this->db->begin();
 
-		  $this->fetch_client();
+		$this->fetch_client();
 
         // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price, remise, remise_percent, remise_absolue,";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price,";
+        $sql.= " remise, remise_percent, remise_absolue,";
         $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite,";
         $sql.= " fk_cond_reglement, fk_mode_reglement, ref_client";
         if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $sql.= ", date_livraison";
         $sql.= ") ";
-        $sql.= " VALUES (".$this->socid.", 0, ".$this->remise.", ".$this->remise_percent.", ".$this->remise_absolue.",";
+        $sql.= " VALUES (".$this->socid.", 0,";
+        $sql.= " ".$this->remise.", ".($this->remise_percent?$this->remise_percent:'null').", ".($this->remise_absolue?$this->remise_absolue:'null').",";
         $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '".$this->ref."', ".$this->author.",";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
@@ -580,7 +583,7 @@ class Propal extends CommonObject
 
 	            if ($resql)
 	            {
-   					// Mise a jour infos d�normalis�s
+   					// Mise a jour infos denormalisees
 	                $resql=$this->update_price();
 	                if ($resql)
 	                {
@@ -619,6 +622,32 @@ class Propal extends CommonObject
     }
 
 
+	/**
+     *    \brief     Insert en base un objet propal completement definie par ses donnees membres (resultant d'une copie par exemple).
+     *    \return    int                 l'id du nouvel objet propal en base si ok, <0 si ko
+     *    \see       create
+     */
+	function create_from($user)
+	{
+		global $conf,$lang;
+		
+		$this->products=array();
+		$i=0;
+        foreach($this->lignes as $ligne)
+        {
+			$this->products[$i]->desc=$ligne->desc;
+			$this->products[$i]->subprice=$ligne->subprice;
+			$this->products[$i]->qty=$ligne->qty;
+			$this->products[$i]->tva_tx=$ligne->tva_tx;
+			$this->products[$i]->fk_product=$ligne->fk_product;
+			$this->products[$i]->remise_percent=$ligne->remise_percent;
+		
+			$i++;
+        }
+
+		return $this->create();
+	}
+	
     /**
      *    	\brief      Recupere de la base les caracteristiques d'une propale
      *    	\param      rowid       id de la propal a recuperer
@@ -1631,114 +1660,6 @@ class Propal extends CommonObject
             return -1;
         }
     }
-
-
-	/**
-     *    \brief     Insert en base un objet propal compl�tement d�finie par ses donn�es membres (resultant d'une copie par exemple).
-     *    \return    int                 l'id du nouvel objet propal en base si ok, <0 si ko
-     *    \see       create
-     */
-	function create_from($user)
-	{
-		global $conf,$lang;
-		
-		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
-		
-		// on verifie si la ref n'est pas utilisee
-		$soc = new Societe($this->db);
-	  $soc->fetch($this->socid);
-	  $this->verifyNumRef($soc);
-
-		dolibarr_syslog("Propal::create_from ref=".$this->ref);
-
-    $this->db->begin();
-
-		$this->fetch_client();
-
-        // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price, remise, remise_percent, remise_absolue,";
-        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, fk_adresse_livraison";
-        if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $sql.= ", date_livraison";
-        $sql.= ")";
-        $sql.= " VALUES ('$this->socid', '0', '$this->remise', '$this->remise_percent', '$this->remise_absolue',";
-        $sql.= " '0','0','".$this->db->idate($this->datep)."', now(), '$this->ref', '$this->author',";
-        $sql.= "'".addslashes($this->note)."',";
-        $sql.= "'".addslashes($this->note_public)."',";
-        $sql.= "'$this->modelpdf','".$this->db->idate($this->fin_validite)."',";
-        $sql.= " '$this->cond_reglement_id', '$this->mode_reglement_id', '$this->adresse_livraison_id'";
-        if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $sql.= ", '".$this->db->idate($this->date_livraison)."'";
-        $sql.= ")";
-
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal");
-
-            if ($this->id)
-            {
-                /*
-                 *  Insertion du detail des produits dans la base
-                 */
-                 foreach($this->lignes as $ligne)
-                 {
-					$resql = $this->addline(
-						$this->id,
-						$ligne->desc,
-						$ligne->subprice, //r�cup�rer le prix non remis�
-						$ligne->qty,
-						$ligne->tva_tx,
-						$ligne->fk_product,
-						$ligne->remise_percent,
-						'HT'
-						);
-
-					if ($resql < 0)
-					{
-						$this->error=$this->db->error;
-						dolibarr_print_error($this->db);
-						break;
-					}
-                }
-
-	            if ($resql)
-	            {
-   					// Mise a jour infos d�normalis�s
-	                $resql=$this->update_price();
-	                if ($resql)
-	                {
-	                    // Appel des triggers
-	                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	                    $interface=new Interfaces($this->db);
-	                    $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
-						if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	                    // Fin appel triggers
-	
-	                    $this->db->commit();
-			            dolibarr_syslog("Propal::Create_from done id=".$this->id);
-	                    return $this->id;
-	                }
-	                else
-	                {
-	                    $this->error=$this->db->error();
-	                    dolibarr_syslog("Propal::Create_from -2 ".$this->error);
-	                    $this->db->rollback();
-	                    return -2;
-	                }
-	            }
-            }
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            dolibarr_syslog("Propal::Create_from -1 ".$this->error);
-            $this->db->rollback();
-            return -1;
-        }
-
-		$this->db->commit();
-        dolibarr_syslog("Propal::Create_from done id=".$this->id);
-        return $this->id;
-	}
 
 
 	/**
