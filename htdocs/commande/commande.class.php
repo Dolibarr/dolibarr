@@ -1186,6 +1186,8 @@ class Commande extends CommonObject
 	*/
 	function delete_line($idligne)
 	{
+		global $user;
+		
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
@@ -1210,7 +1212,7 @@ class Commande extends CommonObject
 					$ligne = new CommandeLigne($this->db);
 					$ligne->id = $idligne;
 					$ligne->fk_commande = $this->id; // On en a besoin dans les triggers
-					$result=$ligne->delete();
+					$result=$ligne->delete($user);
 		
 					if ($result > 0)
 					{
