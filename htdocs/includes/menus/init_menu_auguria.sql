@@ -282,7 +282,7 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (2, '$conf->societe
 insert into `llx_menu_constraint` (`rowid`, `action`) values (3, '$user->rights->societe->creer');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (4, 'is_dir("societe/groupe")');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (5, '$conf->societe->enabled && $conf->fournisseur->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (6, '$user->societe_id == 0');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (6, '! $user->societe_id');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (7, '$conf->propal->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (8, '$conf->commande->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (9, '$conf->expedition->enabled');
@@ -312,18 +312,18 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (32, '($conf->socie
 insert into `llx_menu_constraint` (`rowid`, `action`) values (33, '$conf->produit->enabled || $conf->service->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (34, '$conf->fournisseur->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (35, '$conf->commercial->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (36, '$conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled\r\n        	|| $conf->commande->enabled || $conf->facture->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (36, '$conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->commande->enabled || $conf->facture->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (37, '$conf->mailing->enabled || $conf->export->enabled || $conf->bookmark->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (38, '$conf->boutique->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (39, '$conf->oscommerce2->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (40, '$conf->webcal->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (41, '$conf->mantis->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (42, '(dolibarr_get_const($this->db,"PRODUIT_SPECIAL_LIVRE")) && (dolibarr_get_const($this->db,"PRODUCT_CANVAS_ABILITY"))');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (42, '$conf->global->PRODUIT_SPECIAL_LIVRE && $conf->global->PRODUCT_CANVAS_ABILITY');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (44, '$conf->droitpret->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (45, '$conf->menudb->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (46, '$conf->energie->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (47, '$conf->telephonie->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (48, '($user->admin && function_exists("eaccelerator_info"))');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (48, '$user->admin && function_exists("eaccelerator_info")');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (49, '$conf->import->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (50, '$conf->phenix->enabled');
 

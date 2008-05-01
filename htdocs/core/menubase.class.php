@@ -549,7 +549,7 @@ class Menubase
 		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
 		$sql.= " ORDER BY m.position";
 
-		//print "x".$sql;
+		dolibarr_syslog("Menubase::menuTopCharger sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
