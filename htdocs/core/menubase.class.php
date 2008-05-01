@@ -523,6 +523,8 @@ class Menubase
 	/**
 	*		\brief		Load tabMenu array
 	* 		\param		type_user		0=Internal,1=External,2=All
+	* 		\param		mainmenu		Value for mainmenu that defined top menu
+	* 		\param		menu_handler	Name of menu_handler used (auguria, eldy...)
 	*/
 	function menutopCharger($type_user, $mainmenu, $menu_handler)
 	{
@@ -615,16 +617,24 @@ class Menubase
 
 }
 
+/**
+ * Replace eval function to add more security
+ *
+ * @param 	string	$s
+ * @return 	int		1
+ */
 function dol_eval($s)
 {
-	// To get and return to caller
-	global $leftmenu, $leftmenuConstraint, $constraint, $rights, $user, $conf;
+	// Only global variables can be changed by eval function and returned to caller
+	global $langs, $user, $conf;
+	global $leftmenu, $leftmenuConstraint, $constraint, $rights; 
+	
+	// \todo
+	// Warning. We must add code to exclude test if it contains = (affectation) that is not == (compare)
 	
 	//print $s."<br>\n";
 	eval($s);
 	
-	// \todo
-	// Warning. We must add code to exclude test if it contains = (affectation) that is not == (compare)
 	return 1; 
 }
 
