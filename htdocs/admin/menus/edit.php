@@ -185,7 +185,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add_const')
 
 	if($_POST['type'] == 'prede')
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_const(fk_menu, fk_constraint, user) VALUES(".$_POST['menuId'].",".$_POST['constraint'].",".$_POST['user'].")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_const(fk_menu, fk_constraint) VALUES(".$_POST['menuId'].",".$_POST['constraint'].")";
 	}
 	else
 	{
@@ -198,7 +198,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add_const')
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_constraint(rowid,action) VALUES(".$constraint.",'".$_POST['constraint']."')";
 		$db->query($sql);
 		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_const(fk_menu, fk_constraint, user) VALUES(".$_POST['menuId'].",".$constraint.",".$_POST['user'].")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu_const(fk_menu, fk_constraint) VALUES(".$_POST['menuId'].",".$constraint.")";
 	}
 	
 	$db->query($sql);	
@@ -457,11 +457,12 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	/*
 	* Lignes de contraintes
 	*/
-	$sql = 'SELECT c.rowid, c.action, mc.user ';
-	$sql.= 'FROM '.MAIN_DB_PREFIX.'menu_constraint as c, '.MAIN_DB_PREFIX.'menu_const as mc ';
-	$sql.= 'WHERE c.rowid = mc.fk_constraint ';
-	$sql.= 'AND mc.fk_menu = '.$_GET['menuId'];
+	$sql = 'SELECT c.rowid, c.action';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'menu_constraint as c, '.MAIN_DB_PREFIX.'menu_const as mc';
+	$sql.= ' WHERE c.rowid = mc.fk_constraint';
+	$sql.= ' AND mc.fk_menu = '.$_GET['menuId'];
 
+	dolibarr_syslog("Edit: sql=".$sql, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -472,8 +473,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		if ($num)
 		{
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans('Constraint').'</td>';
-			print '<td>'.$langs->trans('User').'</td>';
+			print '<td>'.$langs->trans('ConstraintsToShowOrNotEntry').' ('.$langs->trans("AllMustBeOk").')</td>';
 			print '<td width="16">&nbsp;</td>';
 			print "</tr>\n";
 		}
@@ -487,26 +487,13 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 			$var = !$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td>'.$objc->action.'</td>';	
-			print '<td>';
-
-			switch ($objc->user)
-			{
-				case 0: print 'Interne';
-					break;
-				case 1: print 'Externe';
-					break;
-				case 2: print 'Tous';
-					break;			
-			}
-			print '</td>';
 			print '<td align="center"><a href="edit.php?action=del_const&menuId='.$_GET['menuId'].'&constId='.$objc->rowid.'">'.img_delete().'</a></td>';
 
 			$i++;
 		}
 		
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Constraints').'</td>';
-		print '<td width="250">'.$langs->trans('User').'</td>';
+		print '<td>'.$langs->trans('ConstraintsToShowOrNotEntry').'</td>';
 		print '<td width="16">&nbsp;</td>';
 		print "</tr>\n";
 		
@@ -519,13 +506,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		$var=true;
 		print '<tr '.$bc[$var].'>';
 		print '  <td><textarea cols="70" name="constraint" rows="1"></textarea></td>';
-		print '<td>';
-		print '<select name="user">';
-    	print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Internal').'</option>';
-    	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('External').'</option>';
-    	print '<option value="2"'.($menu->user==2?' selected="true"':'').'>Tous</option>';		
-		print '</td>';
-		print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+		print '  <td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
 		print '</form>';
 		
@@ -553,12 +534,6 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 			
 		
 		print '</select>';
-		print '</td>';
-		print '<td>';
-		print '<select name="user">';
-    	print '<option value="0"'.($menu->user==0?' selected="true"':'').'>'.$langs->trans('Internal').'</option>';
-    	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('External').'</option>';
-    	print '<option value="2"'.($menu->user==2?' selected="true"':'').'>Tous</option>';		
 		print '</td>';
 		print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
