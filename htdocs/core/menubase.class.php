@@ -534,11 +534,12 @@ class Menubase
 	function menuTopCharger($type_user, $mainmenu, $menu_handler)
 	{
 		global $langs, $user, $conf;
-		global $rights;	// To export to dol_eval function
+		global $rights, $constraint;	// To export to dol_eval function
 		
 		$tabMenu=array();
 		
-		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.perms";
+		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.perms,";
+		$sql.= " mo.action";
 		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_const as mc ON m.rowid = mc.fk_menu";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_constraint as mo ON mc.fk_constraint = mo.rowid";
@@ -598,7 +599,7 @@ class Menubase
 	        		$rights = false;
 	        		$str = 'if ('.$objm->perms.') { $rights = true; }';
 	        		dol_eval($str);
-					//print "Check permission for ".$objm->perms.": rights=".$rights."<br>\n";
+					//print "Check permission for ".$objm->rowid.": ".$objm->perms.": rights=".$rights."<br>\n";
 	        	}
 				
 		        // Define $constraint
@@ -608,7 +609,7 @@ class Menubase
 	        		$constraint = false;
 					$strconstraint = 'if (' . $objm->action . ') { $constraint = true; }';
 					dol_eval($strconstraint);
-					//print "Check permission for ".$objm->perms.": rights=".$rights."<br>\n";
+					//print "Check enable constraint for ".$objm->rowid.": ".$objm->action.": constraint=".$constraint."<br>\n";
 				}
 				
 		        if ($objm->rowid != $oldrowid && $oldrowid) $b++;	// Break on new entry
