@@ -113,7 +113,7 @@ class MenuLeft {
         {
 
         	
-			$this->newmenu = $this->menuArbo->menuCharger($mainmenu, $this->newmenu,0,$this->leftmenu);
+			$this->newmenu = $this->menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,0);
 			
             /*
              * Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)

@@ -325,64 +325,125 @@ class Menubase
 		$this->tms='';
 	}
 
-	
-	function menuCharger($mainmenu, $newmenu, $type_user, $leftmenu) 
+	/**
+	 *	Add entries found in database in a menu array
+	 *
+	 * @param unknown_type $newmenu		Menu array to complete
+	 * @param unknown_type $mainmenu	Value for mainmenu that defined top menu
+	 * @param unknown_type $leftmenu	Value for left that defined leftmenu
+	 * @param unknown_type $type_user 	0=Internal,1=External,2=All
+	 * @return 	array					Menu array completed
+	 */
+	function menuLeftCharger($newmenu, $mainmenu, $leftmenu, $type_user) 
 	{
 		global $langs, $user, $conf;
-
-		$this->mainmenu = $mainmenu;
+		global $rights;	// To export to dol_eval function
+		
 		$this->newmenu = $newmenu;
 		$this->leftmenu = $leftmenu;
 
-		$sql = "SELECT m.rowid, m.titre, m.type";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
-		$sql.= " WHERE m.mainmenu = '".$this->mainmenu."'";
-		$sql.= " AND m.menu_handler= '".$this->menu_handler."'";
-		$sql.= " AND type = 'top'";
-		$result = $this->db->query($sql);
-		$menutop = $this->db->fetch_object($result);
-		$menutopid=$menutop->rowid;
+		$tabMenu = array ();
 		
-		$data[] = array ($menutopid,-1,$this->mainmenu);
-
-		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.target, m.mainmenu, m.leftmenu";
+		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.perms, m.target, m.mainmenu, m.leftmenu,";
+		$sql.= " mo.action";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
-		$sql.= " WHERE m.menu_handler= '".$this->menu_handler."'";
-		if($type_user == 0) $sql.= " AND m.user <> 1";
-		else $sql.= " AND m.user > 0";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_const as mc ON m.rowid = mc.fk_menu";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_constraint as mo ON mc.fk_constraint = mo.rowid";
+		$sql.= " WHERE m.menu_handler in('".$this->menu_handler."','all')";
+		if ($type_user == 0) $sql.= " AND m.user in (0,2)";
+		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
+		// If type_user == 2, no test requires
 		$sql.= " ORDER BY m.position, m.rowid";
 
-		$res = $this->db->query($sql);
-		if ($res)
+		dolibarr_syslog("Menubase::menuLeftCharger sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$num = $this->db->num_rows($res);
+			$numa = $this->db->num_rows($resql);
 
-			$i = 1;
-			while ($menu = $this->db->fetch_array($res))
+			$a = 0;
+			$b = 0;
+			$oldrowid=0;
+			while ($a < $numa)
 			{
-				if (! empty($menu['langs'])) $langs->load($menu['langs']);
+				//$objm = $this->db->fetch_object($resql);
+				$menu = $this->db->fetch_array($resql);
 
-				$titre = $langs->trans($menu['titre']);
-				$rights = $this->verifRights($menu['right']);
-				$data[] = array (
-					$menu['rowid'],
-					$menu['fk_menu'],
-					$menu['url'],
-					$titre,
-					$rights,
-					$menu['target'],
-					$menu['leftmenu']
-				);
-				$i++;
+	            // Define $chaine
+	            $chaine="";
+				$title = $langs->trans($menu['titre']);
+				if (! eregi('\(dotnoloadlang\)$',$title))
+				{
+					if (! empty($menu['langs'])) $langs->load($menu['langs']);
+				}
+				else
+				{
+					$title=eregi_replace('\(dotnoloadlang\)$','',$title);
+				}
+ 	        	if (eregi("/",$title))
+	        	{
+	        		$tab_titre = explode("/",$title);
+	        		$chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
+	        	}
+	        	else
+	        	{
+	        		$chaine = $langs->trans($title);
+	        	} 
+				
+		        // Define $right
+	        	$perms = true;
+	        	if ($menu['perms'])
+	        	{
+	        		//print "verifCond rowid=".$menu['rowid']." ".$menu['right']."<br>\n";
+					$perms = $this->verifCond($menu['perms']);
+	        	}
+	        	
+		        // Define $constraint
+	        	$constraint = true;
+	        	if ($menu['action'])
+				{
+					$constraint = $this->verifCond($menu['action']);
+				}
+	        	
+		        if ($menu['rowid'] != $oldrowid && $oldrowid) $b++;	// Break on new entry
+		        $oldrowid=$menu['rowid'];
 
+		        $tabMenu[$b][0] = $menu['rowid'];
+				$tabMenu[$b][1] = $menu['fk_menu'];
+				$tabMenu[$b][2] = $menu['url'];
+				$tabMenu[$b][3] = $chaine;
+//				$tabMenu[$b][4] = $perms;
+				$tabMenu[$b][5] = $menu['target'];
+				$tabMenu[$b][6] = $menu['leftmenu'];
+	        	if (! isset($tabMenu[$b][4])) $tabMenu[$b][4] = $perms;
+	        	else $tabMenu[$b][4] = ($tabMenu[$b][4] && $perms);
+	        	if (! isset($tabMenu[$b][7])) $tabMenu[$b][7] = $constraint;
+	        	else $tabMenu[$b][7] = ($tabMenu[$b][7] && $constraint);
+				
+				$a++;
 			}
+			$this->db->free($resql);
 		}
 		else
 		{
 			dolibarr_print_error($this->db);
 		}
 		
-		$this->recur($data, $menutopid, 1);
+
+		// Get menutopid
+		$sql = "SELECT m.rowid, m.titre, m.type";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
+		$sql.= " WHERE m.mainmenu = '".$mainmenu."'";
+		$sql.= " AND m.menu_handler= '".$this->menu_handler."'";
+		$sql.= " AND type = 'top'";
+		// It should have only one response
+		$resql = $this->db->query($sql);
+		$menutop = $this->db->fetch_object($resql);
+		$menutopid=$menutop->rowid;
+		$this->db->free($resql);
+		
+		// Now edit this->newmenu to add entries in data that are in parent sons
+		$this->recur($tabMenu, $menutopid, 1);
 
 		return $this->newmenu;
 
@@ -402,27 +463,21 @@ class Menubase
 		//print "xx".$pere;
 		$leftmenu = $this->leftmenu;
 		//ballayage du tableau
-		for ($x = 0; $x < count($tab); $x++) {
-
+		for ($x = 0; $x < count($tab); $x++)
+		{
 			//si un element a pour pere : $pere
-			if ($tab[$x][1] == $pere) {
-
-				//on affiche le menu
-
-				if ($this->verifConstraint($tab[$x][0], $tab[$x][6], $tab[$x][7]) != 0)
+			if ($tab[$x][1] == $pere) 
+			{
+				if ($tab[$x][7])
 				{
 
 					$leftmenuConstraint = true;
 					if ($tab[$x][6]) 
 					{
-						$leftmenuConstraint = false;
-						$str = 'if(' . $tab[$x][6] . ') $leftmenuConstraint = true;';
-						//print $str."<br>\n";
-						//eval ($str);
-						dol_eval($str);
+						$leftmenuConstraint = $this->verifCond($tab[$x][6]);
 					}
 
-					if ($leftmenuConstraint == true) 
+					if ($leftmenuConstraint) 
 					{
 						$this->newmenu->add_submenu(DOL_URL_ROOT . $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
 						$this->recur($tab, $tab[$x][0], $rang +1);
@@ -477,16 +532,15 @@ class Menubase
 		return $constraint;
 	}
 
-	function verifRights($strRights) {
+	function verifCond($strRights) {
 
-		global $user,$conf,$user;
+		global $user,$conf,$lang;
 		global $rights;	// To export to dol_eval function
 		
 		if ($strRights != "")
 		{
 			$rights = true;
-
-			$tab_rights = explode(" || ", $strRights);
+			$tab_rights = explode("||", $strRights);
 			$i = 0;
 			while (($i < count($tab_rights)) && ($rights == true)) {
 				$str = 'if(!(' . $strRights . ')) { $rights = false; }';
@@ -534,7 +588,7 @@ class Menubase
 	function menuTopCharger($type_user, $mainmenu, $menu_handler)
 	{
 		global $langs, $user, $conf;
-		global $rights, $constraint;	// To export to dol_eval function
+		global $rights;	// To export to dol_eval function
 		
 		$tabMenu=array();
 		
@@ -547,6 +601,7 @@ class Menubase
 		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
 		if ($type_user == 0) $sql.= " AND m.user in (0,2)";
 		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
+		// If type_user == 2, no test requires
 		$sql.= " ORDER BY m.position";
 
 		dolibarr_syslog("Menubase::menuTopCharger sql=".$sql);
@@ -560,19 +615,11 @@ class Menubase
 			$oldrowid=0;
 			while ($a < $numa)
 			{
-				// Init tabMenu array
 				$objm = $this->db->fetch_object($resql);
-				
-				// Define class
-	            $class="";
-	            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == $objm->mainmenu)
-	            {
-	                $class='id="sel"';
-	            }
+			
+	            // Define $chaine
 	            $chaine="";
-
-				// Define $chaine
-				$title=$objm->titre;
+	            $title=$objm->titre;
 				if (! eregi('\(dotnoloadlang\)$',$title))
 				{
 					if (! empty($objm->langs)) $langs->load($objm->langs);
@@ -581,7 +628,6 @@ class Menubase
 				{
 					$title=eregi_replace('\(dotnoloadlang\)$','',$title);
 				}
-
  	        	if (eregi("/",$title))
 	        	{
 	        		$tab_titre = explode("/",$title);
@@ -591,25 +637,26 @@ class Menubase
 	        	{
 	        		$chaine = $langs->trans($title);
 	        	} 
-		        		            
+
+	        	// Define class
+	            $class="";
+	            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == $objm->mainmenu)
+	            {
+	                $class='id="sel"';
+	            }
+				
 		        // Define $right
-	        	$rights = true;
+	        	$perms = true;
 	        	if ($objm->perms)
 	        	{
-	        		$rights = false;
-	        		$str = 'if ('.$objm->perms.') { $rights = true; }';
-	        		dol_eval($str);
-					//print "Check permission for ".$objm->rowid.": ".$objm->perms.": rights=".$rights."<br>\n";
+					$perms = $this->verifCond($objm->perms);
 	        	}
 				
 		        // Define $constraint
 	        	$constraint = true;
 	        	if ($objm->action)
 				{
-	        		$constraint = false;
-					$strconstraint = 'if (' . $objm->action . ') { $constraint = true; }';
-					dol_eval($strconstraint);
-					//print "Check enable constraint for ".$objm->rowid.": ".$objm->action.": constraint=".$constraint."<br>\n";
+					$constraint = $this->verifCond($objm->action);
 				}
 				
 		        if ($objm->rowid != $oldrowid && $oldrowid) $b++;	// Break on new entry
@@ -621,8 +668,8 @@ class Menubase
 	        	$tabMenu[$b]['url'] = $objm->url;
 	        	$tabMenu[$b]['atarget'] = $this->atarget;
 	        	$tabMenu[$b]['class'] = $class;
-	        	if (! isset($tabMenu[$b]['right'])) $tabMenu[$b]['right'] = $rights;
-	        	else $tabMenu[$b]['right'] = ($tabMenu[$b]['right'] && $rights);
+	        	if (! isset($tabMenu[$b]['right'])) $tabMenu[$b]['right'] = $perms;
+	        	else $tabMenu[$b]['right'] = ($tabMenu[$b]['right'] && $perms);
 	        	if (! isset($tabMenu[$b]['enabled'])) $tabMenu[$b]['enabled'] = $constraint;
 	        	else $tabMenu[$b]['enabled'] = ($tabMenu[$b]['enabled'] && $constraint);
 	        	
@@ -650,7 +697,8 @@ function dol_eval($s)
 {
 	// Only global variables can be changed by eval function and returned to caller
 	global $langs, $user, $conf;
-	global $leftmenu, $leftmenuConstraint, $constraint, $rights; 
+	global $rights;
+	global $leftmenu, $leftmenuConstraint; 
 	
 	// \todo
 	// Warning. We must add code to exclude test if it contains = (affectation) that is not == (compare)

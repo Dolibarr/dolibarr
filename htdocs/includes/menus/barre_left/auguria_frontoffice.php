@@ -112,7 +112,7 @@ class MenuLeft {
         if ($mainmenu) 
         {
 
-			$this->newmenu = $this->menuArbo->menuCharger($mainmenu, $this->newmenu,1,$this->leftmenu);
+			$this->newmenu = $this->menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,1);
 
             /*
              * Menu AUTRES (Pour les menus du haut qui ne serait pas g�r�s)
@@ -288,32 +288,6 @@ class MenuLeft {
 
 		return $constraint; 		
    	}
-    
-    function verifRights($strRights)
-    {
-    	
-    	global $user;
-    	
-    	if ($strRights != "") 
-    	{	
-    		$rights = true;
-
-	    	$tab_rights = explode(" || ",$strRights);
-	    	$i = 0;
-	    	while(($i < count($tab_rights)) && ($rights == true))
-	    	{
-				$str = "if(!(".$strRights.")) { \$rights = false;}";
-				eval($str);
-	    		$i++;
-	    	}
-    	}
-    	else $rights = true;
-
-    	
-    	return $rights;
-    }
-    
-    
 
 }
 
