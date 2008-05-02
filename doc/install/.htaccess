@@ -1,0 +1,15 @@
+<Files ~ "^\.(htaccess|htpasswd)$">
+Order deny,allow
+deny from all
+</Files>
+
+AuthUserFile ".htpasswd"
+AuthName "Zone Administration"
+AuthType Basic
+
+<Limit GET POST PUT>
+order deny,allow
+allow from all
+Require valid-user
+</Limit>
+
