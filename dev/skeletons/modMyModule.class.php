@@ -117,12 +117,36 @@ class modMyModule extends DolibarrModules
 
 		// Main menu entries
 		$this->menus = array();			// List of menus to add
-		$r=1;
+		$r=0;
 
 		// Example:
-		// $this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Agenda','mainmenu'=>'agenda','leftmenu'=>'agenda','url'=>'/comm/action/index.php','langs'=>'commercial','position'=>100,'perms'=>'$user->rights->agenda->myactions->read','target'=>'','user'=>0);
+		// This is to declare Top Menu entry:
+		// $this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
+		//							'type'=>'top',
+		//							'titre'=>'Title top menu',
+		//							'mainmenu'=>'mymodule',
+		//							'leftmenu'=>'1',		// 1 if you also want to add left menu entries in this top menu
+		//							'url'=>'/comm/action/index.php',
+		//							'langs'=>'mylangfile',
+		//							'position'=>100,
+		//							'perms'=>'$user->rights->mymodule->level1->level2',
+		//							'target'=>'',
+		//							'user'=>0);
 		// $r++;
-
+		//
+		// This is to declare a Left Menu entry:
+		// $this->menu[$r]=array(	'fk_menu'=>'r=1',	// Use r=value of r for the top menu entry
+		//							'type'=>'top',
+		//							'titre'=>'Title left menu',
+		//							'mainmenu'=>'mymodule',
+		//							'url'=>'/comm/action/index2.php',
+		//							'langs'=>'mylangfile',
+		//							'position'=>100,
+		//							'perms'=>'$user->rights->mymodule->level1->level2',
+		//							'target'=>'',
+		//							'user'=>0);
+		// $r++;
+		
 	}
 
 	/**
