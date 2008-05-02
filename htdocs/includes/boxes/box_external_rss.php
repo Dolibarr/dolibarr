@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/includes/boxes/box_external_rss.php
         \ingroup    external_rss
 		\brief      Fichier de gestion d'une box pour le module external_rss
-		\version    $Revision$
+		\version    $Id$
 */
 
 include_once(MAGPIERSS_PATH."rss_fetch.inc");
@@ -74,6 +71,8 @@ class box_external_rss extends ModeleBoxes {
 		$site=$reg[1];
 
 		// Creation rep (pas besoin, on le cree apres recup flux)
+		// documents/rss is created by module activation
+		// documents/rss/tmp is created by magpie
 		//$result=create_exdir($conf->externalrss->dir_temp);
 		
 		// Recupere flux RSS definie dans EXTERNAL_RSS_URLRSS_$site
