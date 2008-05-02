@@ -128,7 +128,7 @@ class MenuLeft {
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/delais.php",$langs->trans("Alerts"));
 
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
-					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"));
+					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/mails.php", $langs->trans("Emails"));
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/limits.php", $langs->trans("MenuLimits"));
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));

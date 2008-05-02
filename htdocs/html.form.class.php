@@ -1450,8 +1450,9 @@ class Form
      *      \param      filtertype      Pour filtre
      *      \param      format          0=id+libelle, 1=code+code, 2=code+libelle
      *      \param      empty			1=peut etre vide, 0 sinon
+     * 		\param		noadmininfo		0=Add admin info, 1=Disable admin info
      */
-    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0)
+    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0, $noadmininfo=0)
     {
         global $langs,$user;
 		
@@ -1485,7 +1486,7 @@ class Form
             print '</option>';
         }
         print '</select>';
-		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+		if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     }
 
     /**

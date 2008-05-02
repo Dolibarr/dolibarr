@@ -19,7 +19,7 @@
 
 /**
 	    \file       htdocs/includes/menus/barre_top/eldy_backoffice.php
-		\brief      Gestionnaire nomm� eldy du menu du haut
+		\brief      Gestionnaire nomme eldy du menu du haut
 		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:

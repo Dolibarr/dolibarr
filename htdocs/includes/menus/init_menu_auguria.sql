@@ -15,36 +15,36 @@ delete from llx_menu_const;
 -- 
 -- table `llx_menu`
 -- 
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    1, 'home', '', 0, '/index.php?mainmenu=home&amp;leftmenu=', 'Home', -1, '', '', '', 2, 1);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    2, 'companies', '', 0, '/index.php?mainmenu=companies&amp;leftmenu=', 'ThirdParties', -1, 'companies', '', '', 2, 2);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    3, 'products', '', 0, '/product/index.php?mainmenu=products&amp;leftmenu=', 'Products/Services', -1, 'products', '$user->rights->produit->lire', '', 0, 3);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    4, 'suppliers', '', 0, '/fourn/index.php?mainmenu=suppliers&amp;leftmenu=', 'Suppliers', -1, 'suppliers', '$user->rights->fournisseur->lire', '', 0, 4);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    5, 'commercial', '', 0, '/comm/index.php?mainmenu=commercial&amp;leftmenu=', 'Commercial', -1, 'commercial', '$user->rights->commercial->main->lire', '', 2, 5);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    1, 'home',        '', 0, '/index.php?mainmenu=home&amp;leftmenu=', 'Home', -1, '', '', '', 2, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    2, 'companies',   '', 0, '/index.php?mainmenu=companies&amp;leftmenu=', 'ThirdParties', -1, 'companies', '', '', 2, 2);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    3, 'products',    '', 0, '/product/index.php?mainmenu=products&amp;leftmenu=', 'Products/Services', -1, 'products', '$user->rights->produit->lire', '', 0, 3);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    4, 'suppliers',   '', 0, '/fourn/index.php?mainmenu=suppliers&amp;leftmenu=', 'Suppliers', -1, 'suppliers', '$user->rights->fournisseur->lire', '', 0, 4);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    5, 'commercial',  '', 0, '/comm/index.php?mainmenu=commercial&amp;leftmenu=', 'Commercial', -1, 'commercial', '$user->rights->commercial->main->lire', '', 2, 5);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    6, 'accountancy', '', 0, '/compta/index.php?mainmenu=accountancy&amp;leftmenu=', 'MenuFinancial', -1, 'compta', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->plancompte->lire || $user->rights->commande->lire || $user->rights->facture->lire || $user->rights->banque->lire', '', 2, 6);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    7, 'project', '', 0, '/projet/index.php?mainmenu=project&amp;leftmenu=', 'Projects', -1, 'projects', '$user->rights->projet->lire', '', 0, 7);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    8, 'tools', '', 0, '/index.php?mainmenu=tools&amp;leftmenu=', 'Tools', -1, 'other', '$user->rights->mailing->lire || $user->rights->bookmark->lire || $user->rights->export->lire', '', 2, 8);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    9, 'telephony', '', 0, '/telephonie/index.php?mainmenu=telephony&amp;leftmenu=', 'Telephony', -1, 'telephony', '$user->rights->telephonie->lire', '', 2, 9);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',   10, 'energy', '', 0, '/energie/index.php?mainmenu=energy&amp;leftmenu=', 'Energy', -1, 'energy', '', '', 2, 10);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',   11, 'shop', '', 0, '/boutique/index.php?mainmenu=shop&amp;leftmenu=', 'OSCommerce', -1, 'shop', '', '', 0, 11);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',   12, 'shop', '', 0, '/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu=', 'OSCommerce', -1, 'shop', '', '', 0, 12);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',   15, 'members', '', 0, '/adherents/index.php?mainmenu=members&amp;leftmenu=', 'Members', -1, 'members', '', '', 2, 15);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    7, 'project',     '', 0, '/projet/index.php?mainmenu=project&amp;leftmenu=', 'Projects', -1, 'projects', '$user->rights->projet->lire', '', 0, 7);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    8, 'tools',       '', 0, '/index.php?mainmenu=tools&amp;leftmenu=', 'Tools', -1, 'other', '$user->rights->mailing->lire || $user->rights->bookmark->lire || $user->rights->export->lire', '', 2, 8);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',    9, 'telephony',   '', 0, '/telephonie/index.php?mainmenu=telephony&amp;leftmenu=', 'Telephony', -1, 'telephony', '$user->rights->telephonie->lire', '', 2, 9);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',   10, 'energy',      '', 0, '/energie/index.php?mainmenu=energy&amp;leftmenu=', 'Energy', -1, 'energy', '', '', 2, 10);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',   11, 'shop',        '', 0, '/boutique/index.php?mainmenu=shop&amp;leftmenu=', 'OSCommerce', -1, 'shop', '', '', 0, 11);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',   12, 'shop',        '', 0, '/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu=', 'OSCommerce', -1, 'shop', '', '', 0, 12);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'top',   15, 'members',     '', 0, '/adherents/index.php?mainmenu=members&amp;leftmenu=', 'Members', -1, 'members', '', '', 2, 15);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 100, 'home', '', 1, '/admin/index.php?leftmenu=setup', 'Setup', 0, 'admin', '', '', 2, 0);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 101, 'home', '', 100, '/admin/company.php', 'MenuCompanySetup', 1, 'admin', '', '', 2, 0);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 102, 'home', '', 100, '/admin/ihm.php', 'GUISetup', 1, 'admin', '', '', 2, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 101, 'home', '', 100, '/admin/company.php', 'MenuCompanySetup', 1, 'admin', '', '', 2, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 102, 'home', '', 100, '/admin/ihm.php', 'GUISetup', 1, 'admin', '', '', 2, 4);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 103, 'home', '', 100, '/admin/modules.php', 'Modules', 1, 'admin', '', '', 2, 2);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 104, 'home', '', 100, '/admin/boxes.php', 'Boxes', 1, 'admin', '', '', 2, 3);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 105, 'home', '', 100, '/admin/menus.php', 'Menus', 1, 'admin', '', '', 2, 4);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 106, 'home', '', 100, '/admin/delais.php', 'DelaysBeforeWarning', 1, 'admin', '', '', 2, 5);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 107, 'home', '', 100, '/admin/triggers.php', 'Triggers', 1, 'admin', '', '', 2, 6);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 104, 'home', '', 100, '/admin/boxes.php', 'Boxes', 1, 'admin', '', '', 2, 5);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 105, 'home', '', 100, '/admin/menus.php', 'Menus', 1, 'admin', '', '', 2, 3);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 106, 'home', '', 100, '/admin/delais.php', 'Alerts', 1, 'admin', '', '', 2, 6);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 108, 'home', '', 100, '/admin/perms.php', 'Security', 1, 'admin', '', '', 2, 7);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 109, 'home', '', 100, '/admin/mails.php', 'Emails', 1, 'admin', '', '', 2, 8);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 110, 'home', '', 100, '/admin/limits.php', 'Limits', 1, 'admin', '', '', 2, 9);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 110, 'home', '', 100, '/admin/limits.php', 'MenuLimits', 1, 'admin', '', '', 2, 9);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 111, 'home', '', 100, '/admin/dict.php', 'DictionnarySetup', 1, 'admin', '', '', 2, 10);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 112, 'home', '', 100, '/admin/const.php', 'OtherSetup', 1, 'admin', '', '', 2, 11);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 200, 'home', '', 1, '/admin/system/index.php?leftmenu=system', 'SystemInfo', 0, 'admin', '', '', 2, 1);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 201, 'home', '', 200, '/admin/system/dolibarr.php', 'Dolibarr', 1, 'admin', '', '', 2, 0);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 202, 'home', '', 201, '/admin/system/constall.php', 'AllParameters', 2, 'admin', '', '', 2, 0);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 203, 'home', '', 201, '/about.php', 'About', 2, 'admin', '', '', 2, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 202, 'home', '', 201, '/admin/system/constall.php', 'AllParameters', 2, 'admin', '', '', 2, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 207, 'home', '', 201, '/admin/triggers.php', 'Triggers', 2, 'admin', '', '', 2, 2);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 203, 'home', '', 201, '/about.php', 'About', 2, 'admin', '', '', 2, 3);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 204, 'home', '', 200, '/admin/system/os.php', 'OS', 1, 'admin', '', '', 2, 1);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 205, 'home', '', 200, '/admin/system/web.php', 'WebServer', 1, 'admin', '', '', 2, 2);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 206, 'home', '', 200, '/admin/system/phpinfo.php', 'Php', 1, 'admin', '', '', 2, 3);
@@ -55,7 +55,9 @@ insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`,
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 301, 'home', '', 300, '/admin/tools/dolibarr_export.php', 'Backup', 1, 'admin', '', '', 2, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 302, 'home', '', 300, '/admin/tools/dolibarr_import.php', 'Restore', 1, 'admin', '', '', 2, 1);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 303, 'home', '', 300, '/admin/tools/purge.php', 'Purge', 1, 'admin', '', '', 2, 2);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 304, 'home', '', 300, '/admin/tools/eaccelerator.php', 'EAccelerator', 1, 'admin', '', '', 2, 3);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 305, 'home', '', 300, '/admin/tools/update.php', 'Upgrade', 1, 'admin', '', '', 2, 3);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 306, 'home', '', 300, '/admin/tools/listevents.php', 'Audit', 1, 'admin', '', '', 2, 4);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 304, 'home', '', 300, '/admin/tools/eaccelerator.php', 'EAccelerator', 1, 'admin', '', '', 2, 5);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 400, 'home', '', 1, '/user/home.php?leftmenu=users', 'MenuUsersAndGroups', 0, 'users', '', '', 2, 3);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 401, 'home', '', 400, '/user/index.php', 'Users', 1, 'users', '$user->rights->user->user->lire || $user->admin', '', 2, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 402, 'home', '', 401, '/user/fiche.php?action=create', 'NewUser', 2, 'users', '$user->rights->user->user->creer || $user->admin', '', 2, 0);
@@ -92,11 +94,12 @@ insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`,
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 900, 'commercial', '', 5, '/contact/index.php?leftmenu=contacts', 'Contacts', 0, 'companies', '$user->rights->societe->lire', '', 0, 2);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 901, 'commercial', '', 900, '/contact/fiche.php?leftmenu=contacts&action=create', 'NewContact', 1, 'companies', '$user->rights->societe->creer', '', 0, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 902, 'commercial', '', 900, '/contact/index.php?leftmenu=contacts&action=create', 'List', 1, 'companies', '$user->rights->societe->lire', '', 0, 1);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1000, 'commercial', '', 5, '/comm/action/index.php?leftmenu=actions', 'Actions', 0, 'companies', '$user->rights->societe->lire', '', 0, 3);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1001, 'commercial', '', 1000, '/societe.php?leftmenu=actions', 'NewAction', 1, 'companies', '$user->rights->societe->lire', '', 0, 0);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1002, 'commercial', '', 1000, '/comm/action/index.php?leftmenu=actions&status=todo', 'MenuToDoActions', 1, 'companies', '$user->rights->societe->lire', '', 0, 1);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1003, 'commercial', '', 1000, '/comm/action/index.php?leftmenu=actions&time=today', 'Today', 1, 'companies', '$user->rights->societe->lire', '', 0, 2);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1004, 'commercial', '', 1000, '/comm/action/rapport/index.php?leftmenu=actions', 'Reportings', 1, 'companies', '$user->rights->societe->lire', '', 0, 3);
+
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 910, 'commercial', '', 902, '/contact/index.php?leftmenu=contacts&type=p', 'Prospects', 1, 'companies', '$user->rights->societe->lire', '', 0, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 911, 'commercial', '', 902, '/contact/index.php?leftmenu=contacts&type=c', 'Customers', 1, 'companies', '$user->rights->societe->lire', '', 0, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 912, 'commercial', '', 902, '/contact/index.php?leftmenu=contacts&type=f', 'Suppliers', 1, 'companies', '$user->rights->societe->lire', '', 0, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 913, 'commercial', '', 902, '/contact/index.php?leftmenu=contacts&type=o', 'Other', 1, 'companies', '$user->rights->societe->lire', '', 0, 1);
+
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1100, 'commercial', '', 5, '/comm/propal.php?leftmenu=propals', 'Prop', 0, 'propal', '$user->rights->propale->lire', '', 2, 4);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1101, 'commercial', '', 1100, '/societe.php?leftmenu=propals', 'NewPropal', 1, 'propal', '$user->rights->propale->creer', '', 2, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1102, 'commercial', '', 1100, '/comm/propal.php?viewstatut=0', 'PropalsDraft', 1, 'propal', '$user->rights->propale->lire', '', 2, 1);
@@ -145,9 +148,11 @@ insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`,
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1708, 'accountancy', '', 1704, '/compta/paiement/liste.php?leftmenu=customers_bills_payments', 'Payments', 2, 'bills', '$user->rights->facture->lire', '', 2, 6);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1709, 'accountancy', '', 1708, '/compta/paiement/avalider.php?leftmenu=customers_bills_payments', 'MenuToValid', 3, 'bills', '$user->rights->facture->lire', '', 2, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1710, 'accountancy', '', 1708, '/compta/paiement/rapport.php?leftmenu=customers_bills_payments', 'Reportings', 3, 'bills', '$user->rights->facture->lire', '', 2, 1);
+
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1711, 'accountancy', '', 6, '/compta/paiement/cheque/index.php?leftmenu=checks', 'MenuChequeDeposits', 0, 'bills', '$user->rights->facture->lire', '', 2, 1);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1712, 'accountancy', '', 1711, '/compta/paiement/cheque/fiche.php?leftmenu=checks&action=new', 'NewCheckDeposit', 1, 'bills', '$user->rights->facture->lire', '', 2, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1713, 'accountancy', '', 1711, '/compta/paiement/cheque/liste.php?leftmenu=checks', 'MenuChequesReceipts', 1, 'bills', '$user->rights->facture->lire', '', 2, 1);
+
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1714, 'accountancy', '', 1704, '/compta/facture/stats/index.php?leftmenu=customers_bills', 'Statistics', 2, 'bills', '$user->rights->facture->lire', '', 2, 8);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1715, 'accountancy', '', 1700, '/compta/paiement/cheque/index.php', 'CheckReceipt', 1, 'bills', '$user->rights->facture->lire', '', 1, 4);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 1716, 'accountancy', '', 1704, '/compta/paiement/cheque/fiche.php?action=new', 'New', 2, 'bills', '$user->rights->facture->lire', '', 1, 9);
@@ -158,13 +163,22 @@ insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`,
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2001, 'accountancy', '', 2000, '/compta/dons/fiche.php?action=create', 'NewDonation', 1, 'donations', '$user->rights->don->creer', '', 2, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2002, 'accountancy', '', 2000, '/compta/dons/liste.php?action=create', 'List', 1, 'donations', '$user->rights->don->lire', '', 2, 1);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2003, 'accountancy', '', 2000, '/compta/dons/stats.php', 'Statistics', 1, 'donations', '$user->rights->don->lire', '', 2, 2);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2100, 'accountancy', '', 6, '/compta/deplacement/index.php', 'Trips', 0, 'trips', '$user->rights->deplacement->lire', '', 0, 5);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2200, 'accountancy', '', 6, '/compta/charges/index.php?leftmenu=charges&mainmenu=accountancy', 'Charges', 0, 'Charges', '$user->rights->tax->charges->lire', '', 0, 6);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2201, 'accountancy', '', 2200, '/compta/sociales/index.php', 'SocialContributions', 1, '', '$user->rights->tax->charges->lire', '', 0, 0);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2300, 'accountancy', '', 6, '/compta/tva/index.php?leftmenu=vat&mainmenu=accountancy', 'VAT', 0, 'companies', '$user->rights->tax->charges->lire', '', 0, 7);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2301, 'accountancy', '', 2300, '/compta/tva/fiche.php?action=create', 'NewPayment', 1, 'companies', '$user->rights->tax->charges->creer', '', 0, 0);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2302, 'accountancy', '', 2300, '/compta/tva/reglement.php', 'Payments', 1, 'companies', '$user->rights->tax->charges->lire', '', 0, 1);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2303, 'accountancy', '', 2300, '/compta/tva/clients.php', 'ReportByCustomers', 1, 'companies', '$user->rights->tax->charges->lire', '', 0, 2);
+
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2100, 'accountancy', '', 6, '/compta/deplacement/index.php?leftmenu=tripsandexpenses', 'TripsAndExpenses', 0, 'trips', '$user->rights->deplacement->lire', '', 0, 5);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2101, 'accountancy', '', 2100, '/compta/deplacement/fiche.php?action=create&leftmenu=tripsandexpenses', 'New', 1, 'trips', '$user->rights->deplacement->creer', '', 0, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2102, 'accountancy', '', 2100, '/compta/deplacement/index.php?leftmenu=tripsandexpenses', 'List', 1, 'trips', '$user->rights->deplacement->lire', '', 0, 2);
+
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2200, 'accountancy', '', 6, '/compta/charges/index.php?leftmenu=tax&mainmenu=accountancy', 'MenuTaxAndDividends', 0, 'compta', '$user->rights->tax->charges->lire', '', 0, 6);
+
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2201, 'accountancy', '', 2200, '/compta/sociales/index.php?leftmenu=tax_social', 'SocialContributions', 1, '', '$user->rights->tax->charges->lire', '', 0, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2202, 'accountancy', '', 2201, '/compta/sociales/charges.php?leftmenu=tax_social&action=create', 'MenuNewSocialContribution', 2, '', '$user->rights->tax->charges->creer', '', 0, 2);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2203, 'accountancy', '', 2201, '/compta/sociales/index.php?leftmenu=tax_social', 'List', 2, '', '$user->rights->tax->charges->lire', '', 0, 3);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2300, 'accountancy', '', 2200, '/compta/tva/index.php?leftmenu=tax_vat&mainmenu=accountancy', 'VAT', 1, 'companies', '$user->rights->tax->charges->lire', '', 0, 7);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2301, 'accountancy', '', 2300, '/compta/tva/fiche.php?leftmenu=tax_vat&action=create', 'NewPayment', 2, 'companies', '$user->rights->tax->charges->creer', '', 0, 0);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2302, 'accountancy', '', 2300, '/compta/tva/reglement.php?leftmenu=tax_vat', 'List', 2, 'companies', '$user->rights->tax->charges->lire', '', 0, 1);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2303, 'accountancy', '', 2300, '/compta/tva/clients.php?leftmenu=tax_vat', 'ReportByCustomers', 2, 'companies', '$user->rights->tax->charges->lire', '', 0, 2);
+insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2304, 'accountancy', '', 2300, '/compta/tva/quadri_detail.php?leftmenu=tax_vat', 'ReportByQuarter', 2, 'companies', '$user->rights->tax->charges->lire', '', 0, 3);
+
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2400, 'accountancy', '', 6, '/compta/ventilation/index.php?leftmenu=ventil', 'Ventilation', 0, 'companies', '$user->rights->compta->ventilation->lire', '', 0, 8);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2401, 'accountancy', '', 2400, '/compta/ventilation/liste.php', 'A ventiler', 1, 'companies', '$user->rights->compta->ventilation->lire', '', 0, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2402, 'accountancy', '', 2400, '/compta/ventilation/lignes.php', 'Ventilées', 1, 'companies', '$user->rights->compta->ventilation->lire', '', 0, 1);
@@ -174,6 +188,7 @@ insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`,
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2406, 'accountancy', '', 2400, '/compta/export/', 'Export', 1, 'companies', '$user->rights->compta->ventilation->lire', '', 0, 3);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2407, 'accountancy', '', 2406, '/compta/export/index.php', 'New', 2, 'companies', '$user->rights->compta->ventilation->lire', '', 0, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2408, 'accountancy', '', 2406, '/compta/export/liste.php', 'List', 2, 'companies', '$user->rights->compta->ventilation->lire', '', 0, 1);
+
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2500, 'accountancy', '', 6, '/compta/prelevement/index.php?leftmenu=withdraw', 'StandingOrders', 0, 'withdrawals', '$user->rights->prelevement->bons->lire', '', 2, 9);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2501, 'accountancy', '', 2500, '/compta/prelevement/demandes.php?status=0', 'StandingOrderToProcess', 1, 'withdrawals', '$user->rights->prelevement->bons->lire', '', 2, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2502, 'accountancy', '', 2500, '/compta/prelevement/create.php', 'NewStandingOrder', 1, 'withdrawals', '$user->rights->prelevement->bons->lire', '', 2, 1);
@@ -183,14 +198,13 @@ insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`,
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2506, 'accountancy', '', 2500, '/compta/prelevement/rejets.php', 'Rejects', 1, 'withdrawals', '$user->rights->prelevement->bons->lire', '', 2, 5);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2507, 'accountancy', '', 2500, '/compta/prelevement/stats.php', 'Statistics', 1, 'withdrawals', '$user->rights->prelevement->bons->lire', '', 2, 6);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2508, 'accountancy', '', 2500, '/compta/prelevement/config.php', 'Setup', 1, 'withdrawals', '$user->rights->prelevement->bons->configurer', '', 2, 7);
+
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2600, 'accountancy', '', 6, '/compta/bank/index.php?leftmenu=bank', 'MenuBankCash', 0, 'banks', '$user->rights->banque->lire', '', 0, 10);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2601, 'accountancy', '', 2600, '/compta/bank/fiche.php?action=create', 'MenuNewFinancialAccount', 1, 'banks', '$user->rights->banque->configurer', '', 0, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2602, 'accountancy', '', 2600, '/compta/bank/categ.php', 'Categories', 1, 'banks', '$user->rights->banque->configurer', '', 0, 1);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2603, 'accountancy', '', 2600, '/compta/bank/search.php', 'SearchTransaction', 1, 'banks', '$user->rights->banque->lire', '', 0, 2);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2604, 'accountancy', '', 2600, '/compta/bank/budget.php', 'ByCategories', 1, 'banks', '$user->rights->banque->lire', '', 0, 3);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2605, 'accountancy', '', 2600, '/compta/bank/bilan.php', 'Bilan', 1, 'banks', '$user->rights->banque->lire', '', 0, 4);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2606, 'accountancy', '', 2600, '/compta/bank/virement.php', 'BankTransfers', 1, 'banks', '$user->rights->banque->modifier', '', 0, 5);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2607, 'accountancy', '', 2600, '/compta/bank/bplc.php', 'Transactions BPLC', 1, 'banks', '', '', 0, 6);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2700, 'accountancy', '', 6, '/compta/resultat/index.php?leftmenu=ca&mainmenu=accountancy', 'Reportings', 0, 'main', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->comptarapport->lire', '', 0, 11);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2701, 'accountancy', '', 2700, '/compta/resultat/index.php?leftmenu=ca', 'Résultat / Exercice', 1, 'main', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->comptarapport->lire', '', 0, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 2702, 'accountancy', '', 2701, '/compta/resultat/clientfourn.php?leftmenu=ca', 'ByCompanies', 2, 'main', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->comptarapport->lire', '', 0, 0);
@@ -264,25 +278,25 @@ insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`,
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 4700, 'members', '', 15, '/adherents/index.php?leftmenu=setup&mainmenu=members', 'Setup', 0, 'members', '$user->rights->adherent->configurer', '', 2, 5);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 4701, 'members', '', 4700, '/adherents/type.php?leftmenu=setup', 'MembersTypes', 1, 'members', '$user->rights->adherent->configurer', '', 2, 0);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 4702, 'members', '', 4700, '/adherents/options.php?leftmenu=setup', 'MembersAttributes', 1, 'members', '$user->rights->adherent->configurer', '', 2, 1);
+
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 4800, 'product', '', 3, '/product/droitpret/index.php?leftmenu=droitpret', 'Droit de prêt', 0, 'products', '$user->rights->droitpret->lire', '', 2, 5);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 4801, 'product', '', 4800, '/product/droitpret/index.php?leftmenu=droitpret', 'Générer rapport', 1, 'products', '$user->rights->droitpret->creer', '', 2, 1);
+
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 4900, 'suppliers', '', 4, '/categories/index.php?leftmenu=cat&type=1', 'Categories', 0, 'categories', '$user->rights->categorie>lire', '', 2, 3);
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 4901, 'suppliers', '', 4900, '/categories/fiche.php?action=create&type=1', 'NewCat', 1, 'categories', '$user->rights->categorie>creer', '', 2, 0);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 5000, 'commercial', '', 5, '/categories/index.php?leftmenu=cat&type=2', 'Categories', 0, 'commercial', '$user->rights->categorie>lire', '', 2, 9);
-insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 5001, 'commercial', '', 5000, '/categories/fiche.php?action=create&type=2', 'NewCat', 1, 'commercial', '$user->rights->categorie>creer', '', 2, 0);
 
 -- 
 -- table `llx_menu_constraint`
 -- 
-insert into `llx_menu_constraint` (`rowid`, `action`) values (1, '$user->admin');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (2, '$conf->societe->enabled && $user->rights->societe->lire');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (3, '$user->rights->societe->creer');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (4, 'is_dir("societe/groupe")');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (5, '$conf->societe->enabled && $conf->fournisseur->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (6, '! $user->societe_id');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (7, '$conf->propal->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (8, '$conf->commande->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (9, '$conf->expedition->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (1,  '$user->admin');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (2,  '$conf->societe->enabled && $user->rights->societe->lire');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (3,  '$user->rights->societe->creer');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (4,  'is_dir("societe/groupe")');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (5,  '$conf->societe->enabled && $conf->fournisseur->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (6,  '! $user->societe_id');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (7,  '$conf->propal->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (8,  '$conf->commande->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (9,  '$conf->expedition->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (10, '$conf->contrat->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (11, '$conf->fichinter->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (12, '$conf->societe->enabled');
@@ -291,8 +305,8 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (14, '! $conf->glob
 insert into `llx_menu_constraint` (`rowid`, `action`) values (15, '$conf->don->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (16, '$conf->deplacement->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (17, '$conf->tax->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (18, '($conf->compta->enabled || $conf->comptaexpert->enabled) && $conf->compta->tva && $user->societe_id == 0');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (19, '$conf->compta-enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (18, '$conf->compta->tva');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (19, '$conf->compta->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (20, '$conf->prelevement->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (21, '$conf->banque->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (22, '$conf->compta->enabled || $conf->comptaexpert->enabled');
@@ -329,6 +343,22 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (53, '$leftmenu=="a
 insert into `llx_menu_constraint` (`rowid`, `action`) values (54, '$leftmenu=="users"');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (55, '$leftmenu=="customers"');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (56, '$leftmenu=="prospects"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (57, '$leftmenu=="contacts"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (58, '$leftmenu=="propals"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (59, '$leftmenu=="orders"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (60, '$leftmenu=="orders_suppliers"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (61, '$leftmenu=="contracts"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (62, '$leftmenu=="ficheinter"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (63, '$leftmenu=="suppliers"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (64, '$leftmenu=="tripsandexpenses"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (65, 'eregi("tax",$leftmenu)');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (66, '$leftmenu=="tax_social"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (67, '$leftmenu=="tax_vat"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (68, '$leftmenu=="checks"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (69, '$leftmenu=="bank"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (70, '$leftmenu=="suppliers_bills"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (71, '$leftmenu=="customers_bills"');
+
 
 -- 
 -- table `llx_menu_const`
@@ -342,7 +372,6 @@ insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (103, 51);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (104, 51);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (105, 51);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (106, 51);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (107, 51);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (108, 51);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (109, 51);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (110, 51);
@@ -364,6 +393,8 @@ insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (300, 1);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (301, 53);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (302, 53);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (303, 53);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (305, 53);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (306, 53);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (304, 53);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (304, 48);
 -- Menu users and groups
@@ -380,43 +411,126 @@ insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (503, 5);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (504, 5);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (505, 5);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (500, 2);
+
+-- Menu Prospects - List
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (703, 56);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (704, 56);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (705, 56);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (706, 56);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (707, 56);
+
+-- Menu Contacts
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (912, 34);
+
+-- Menu commercial proposal
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1100, 7);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1101, 58);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1102, 58);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1103, 58);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1104, 58);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1105, 58);
+-- Menu orders
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1200, 8);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1201, 59);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1202, 59);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1203, 59);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1204, 59);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1205, 59);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1206, 59);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1207, 59);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1208, 59);
+
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1300, 9);
+-- Menu contracts
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1400, 10);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1401, 61);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1402, 61);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1403, 61);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1404, 61);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1405, 61);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1406, 61);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1407, 61);
+-- Menu interventions
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1500, 11);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1501, 62);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1502, 62);
+
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1600, 5);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1601, 6);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1603, 12);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1605, 6);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1604, 13);
+-- Menu suppliers invoices
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1605, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1605, 70);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1606, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1606, 70);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1607, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1607, 70);
+
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1701, 6);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1700, 12);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1705, 6);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1706, 14);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1704, 13);
+-- Menu customers invoices
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1705, 6);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1705, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1705, 71);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1706, 14);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1706, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1706, 71);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1707, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1707, 71);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1708, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1708, 71);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1709, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1709, 71);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1710, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1710, 71);
+
+-- Menu checks deposit 
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1711, 13);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1712, 13);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1713, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1711, 21);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1712, 68);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1713, 68);
+
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1714, 13);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1714, 71);
+
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1800, 7);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1900, 13);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1900, 8);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2000, 15);
+-- Menu trips and expenses
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2100, 16);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2101, 64);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2102, 64);
+
+-- Menu tax
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2200, 17);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2201, 65);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2202, 65);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2203, 65);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2300, 18);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2300, 65);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2301, 65);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2302, 65);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2303, 65);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2304, 65);
+
+-- Menu accountacy - Ventilation
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2400, 19);
+
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2500, 20);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2300, 21);
+
+-- Menu bank 
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2601, 69);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2602, 69);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2603, 69);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2604, 69);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2605, 69);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2606, 69);
+
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2700, 22);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2800, 23);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2801, 6);
@@ -458,19 +572,12 @@ insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (9, 47);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (10, 46);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (11, 38);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (12, 39);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (13, 40);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (14, 41);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (15, 31);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (16, 50);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1715, 13);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1716, 13);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (1717, 13);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2804, 42);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2805, 42);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2801, 43);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (2802, 43);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (4800, 44);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (4900, 26);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (4901, 6);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (5000, 26);
-insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (5001, 6);
