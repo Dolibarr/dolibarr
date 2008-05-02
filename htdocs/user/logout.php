@@ -16,17 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/user/logout.php
         \brief      Fichier de deconnexion
+		\version	$Id$
 */
 
-if (!empty ($_SERVER["REMOTE_USER"]))
-   die("La d&eacute;connection ne fonctionne actuellement que pour l'authentification par pear");
+if ($_SESSION["dol_authmode"] == 'forceuser'
+  	 && $_SESSION["dol_authmode"] == 'http')
+{
+   die("Deconexion does not work when conexion was made in mode ".$_SESSION["dol_authmode"]);
+}
 
 include_once("../conf/conf.php");
 require_once("../main.inc.php");

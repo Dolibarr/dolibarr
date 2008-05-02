@@ -190,7 +190,11 @@ if (! isset($_SESSION["dol_login"]))
 	// Tests de validation user/mot de passe
 	// Si ok, la variable login sera initialisee
 	// Si erreur, on a placera message erreur dans session sous le nom dol_loginmesg
-	if ($test && isset($_POST["username"]))
+	$goontestloop=false;
+	if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
+	if (isset($_POST["username"])) $goontestloop=true;
+	
+	if ($test && $goontestloop)
 	{
 		foreach($authmode as $mode)
 		{
@@ -205,7 +209,11 @@ if (! isset($_SESSION["dol_login"]))
 				    $passwordtotest=$_POST["password"];
 					$function='check_user_password_'.$mode;
 					$login=$function($usertotest,$passwordtotest);
-					if ($login) $test=false;
+					if ($login) 
+					{
+						$test=false;
+						$conf->authmode=$mode;	// This properties is defined only when login
+					}
 				}
 				else
 				{
@@ -327,6 +335,7 @@ if (! isset($_SESSION["dol_login"]))
     // Nouvelle session pour ce login
     $_SESSION["dol_login"]=$user->login;
     $_SESSION["dol_password"]=$user->pass_crypted;
+    $_SESSION["dol_authmode"]=$conf->authmode;
     dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
 	$db->begin();
@@ -901,40 +910,47 @@ function top_menu($head, $title="", $target="")
     print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
     print '>'.$user->login.'</a>';
 
-    // Lien logout
-    if (! isset($_SERVER["REMOTE_USER"]) || ! $_SERVER["REMOTE_USER"])
+    // Lien info
+    $htmltext=''; $text='';
+    if ($_SESSION["dol_authmode"] != 'forceuser'
+    	 && $_SESSION["dol_authmode"] != 'http')
     {
-        $title=$langs->trans("Logout").'<br>';
-        $title.='<br><u>'.$langs->trans("User").'</u>';
-		$title.='<br><b>'.$langs->trans("Name").'</b>: '.$user->fullname;
-        $title.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
-        $title.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
-        $title.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
-        $title.='<br>';
-        $title.='<br><u>'.$langs->trans("Connection").'</u>';
-		$title.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"dayhour");
-		$title.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dolibarr_print_date($user->datepreviouslogin,"dayhour");
-        if ($dolibarr_main_authentication) $title.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$dolibarr_main_authentication;
+        $htmltext=$langs->trans("Logout").'<br>';
+        $htmltext.="<br>";
+        
+       	$text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+	    $text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+	    $text.='>';
+	    $text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+	    $text.=' alt="" title=""';
+	    $text.='>';
+	    $text.='</a>';
+    }
+    else
+    {
+	    $text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+	    $text.=' alt="" title=""';
+	    $text.='>';
+    }
+    $htmltext.='<u>'.$langs->trans("User").'</u>';
+	$htmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->fullname;
+    $htmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
+    $htmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
+    $htmltext.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
+    $htmltext.='<br>';
+    $htmltext.='<br><u>'.$langs->trans("Connection").'</u>';
+	$htmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"dayhour");
+	$htmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dolibarr_print_date($user->datepreviouslogin,"dayhour");
+    $htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
 
-        $text='';
-		$text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-        $text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-        $text.='>';
-        $text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-        $text.=' alt="" title=""';
-        $text.='>';
-        $text.='</a>';
-
-		$html=new Form($db);
-		print $html->textwithtooltip('',$title,2,1,$text);
+	$html=new Form($db);
+	print $html->textwithtooltip('',$htmltext,2,1,$text);
 
 //        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
 //        print ' alt="'.$title.'" title="'.$title.'"';
 //        print '>';
-    }
 
     print "\n</div>\n<!-- End top horizontal menu -->\n";
-
 }
 
 
