@@ -48,7 +48,7 @@ class Menubase
 	var $titre;
 	var $langs;
 	var $level;
-	var $leftmenu;
+	var $leftmenu;		//<! 0=Left menu in pre.inc.php files must not be overwrite by database menu, 1=Must be 
 	var $perms;
 	var $user;
 	var $tms;
@@ -335,10 +335,12 @@ class Menubase
 	 * @param menu_handler				Name of menu_handler used (auguria, eldy...)
 	 * @return 	array					Menu array completed
 	 */
-	function menuLeftCharger($newmenu, $mainmenu, $leftmenu, $type_user, $menu_handler) 
+	function menuLeftCharger($newmenu, $mainmenu, $myleftmenu, $type_user, $menu_handler) 
 	{
-		global $langs, $user, $conf;
+		global $langs, $user, $conf, $leftmenu;	// To export to dol_eval function
 		global $rights;	// To export to dol_eval function
+		
+		$leftmenu=$myleftmenu;
 		
 		$this->newmenu = $newmenu;
 		$this->leftmenu = $leftmenu;
@@ -392,8 +394,8 @@ class Menubase
 	        	$perms = true;
 	        	if ($menu['perms'])
 	        	{
-	        		//print "verifCond rowid=".$menu['rowid']." ".$menu['right']."<br>\n";
-					$perms = $this->verifCond($menu['perms']);
+	        		$perms = $this->verifCond($menu['perms']);
+	        		//print "verifCond rowid=".$menu['rowid']." ".$menu['right'].":".$perms."<br>\n";
 	        	}
 	        	
 		        // Define $constraint
@@ -401,6 +403,7 @@ class Menubase
 	        	if ($menu['action'])
 				{
 					$constraint = $this->verifCond($menu['action']);
+	        		//print "verifCond rowid=".$menu['rowid']." ".$menu['action'].":".$constraint."<br>\n";
 				}
 	        	
 		        if ($menu['rowid'] != $oldrowid && $oldrowid) $b++;	// Break on new entry
@@ -409,6 +412,8 @@ class Menubase
 		        $tabMenu[$b][0] = $menu['rowid'];
 				$tabMenu[$b][1] = $menu['fk_menu'];
 				$tabMenu[$b][2] = $menu['url'];
+				if (eregi('\?',$tabMenu[$b][2])) $tabMenu[$b][2].='&amp;idmenu='.$menu['rowid'];
+				else $tabMenu[$b][2].='?idmenu='.$menu['rowid'];
 				$tabMenu[$b][3] = $chaine;
 				$tabMenu[$b][5] = $menu['target'];
 				$tabMenu[$b][6] = $menu['leftmenu'];
@@ -454,7 +459,7 @@ class Menubase
 	 */
 	function recur($tab, $pere, $rang) 
 	{
-		global $leftmenu, $leftmenuConstraint;	// To be exported in dol_eval function
+		global $leftmenu;	// To be exported in dol_eval function
 		
 		//print "xx".$pere;
 		$leftmenu = $this->leftmenu;
@@ -492,7 +497,7 @@ class Menubase
 	 */
 	function verifCond($strRights)
 	{
-		global $user,$conf,$lang;
+		global $user,$conf,$lang,$leftmenu;
 		global $rights;	// To export to dol_eval function
 		
 		if ($strRights != "")
@@ -514,18 +519,28 @@ class Menubase
 		return $rights;
 	}
 
+	/**
+	 * Return all values of mainmenu where leftmenu defined 
+	 * in pre.inc.php must be overwritten completely by dynamic menu.
+	 *
+	 * @return array
+	 */
 	function listeMainmenu()
 	{
+		$overwritemenufor=array();
+		
 		$sql = "SELECT DISTINCT m.mainmenu";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " WHERE m.menu_handler in ('".$this->menu_handler."','all')";
+		$sql.= " AND m.leftmenu != '0'";	// leftmenu exists in database so pre.inc.php must be overwritten
 
+		//print $sql;
 		$res = $this->db->query($sql);
-		if ($res) {
-			$i = 0;
-			while ($menu = $this->db->fetch_array($res)) {
-				$overwritemenufor[$i] = $menu['mainmenu'];
-				$i++;
+		if ($res)
+		{
+			while ($menu = $this->db->fetch_array($res))
+			{
+				if ($menu['mainmenu']) $overwritemenufor[] = $menu['mainmenu'];
 			}
 		}
 		else
@@ -578,9 +593,9 @@ class Menubase
 	            // Define $chaine
 	            $chaine="";
 	            $title=$langs->trans($objm->titre);
-	            if ($title == $objm->titre && ! empty($menu['langs']))
+	            if ($title == $objm->titre && ! empty($objm->langs))
 				{
-					$langs->load($menu['langs']);
+					$langs->load($objm->langs);
 	            	$title=$langs->trans($objm->titre);
 				}
  	        	if (eregi("/",$title))
@@ -592,6 +607,7 @@ class Menubase
 	        	{
 	        		$chaine = $langs->trans($title);
 	        	} 
+				//print "x".$objm->titre."-".$chaine;
 
 	        	// Define class
 	            $class="";
@@ -653,7 +669,7 @@ function dol_eval($s)
 	// Only global variables can be changed by eval function and returned to caller
 	global $langs, $user, $conf;
 	global $rights;
-	global $leftmenu, $leftmenuConstraint; 
+	global $leftmenu; 
 	
 	// \todo
 	// Warning. We must add code to exclude test if it contains = (affectation) that is not == (compare)

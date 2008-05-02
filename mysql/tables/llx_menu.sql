@@ -1,6 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2007 Patrick Raguin      <patrick.raguin@gmail.com>
--- Copyright (C) 2007 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2007      Patrick Raguin      <patrick.raguin@gmail.com>
+-- Copyright (C) 2007-2008 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ CREATE TABLE `llx_menu` (
 
 	level			tinyint(1),							-- Used by auguria menu only. Do not use.
 
-	leftmenu		varchar(100) NULL,					-- Condition to show or hide
+	leftmenu		varchar(1) NULL default '1',		-- Say if left menu defined in pre.inc.php and used by top menu must be overwritten by dynamic databse menu (1=yes by default)
 	perms			varchar(255),						-- Condition to show enabled or disabled
 	user			integer NOT NULL default '0',	    -- 0 if menu for all users, 1 for external only, 2 for internal only
 

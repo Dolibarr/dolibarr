@@ -49,7 +49,7 @@ class MenuLeft {
 	*/
 	function MenuLeft($db,$menu_array)
 	{
-		$this->db=$db;
+    	$this->db=$db;
 		$this->menu_array=$menu_array;
 	}
 
@@ -100,7 +100,6 @@ class MenuLeft {
 		}
 
 		$newmenu = new Menu();
-		$overwritemenufor=array('home','companies','members','products','suppliers','commercial','accountancy','agenda','project','tools','ecm');
 
 		/**
 		* On definit newmenu en fonction de mainmenu et leftmenu
@@ -865,18 +864,18 @@ class MenuLeft {
 				}
 
 			}
-
 			
 			// Affichage des menus personnalises
     	   	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
-
+    	   	
 	        $menuArbo = new Menubase($this->db,'eldy','left');
-			$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,0,'eldy');
+			$this->overwritemenufor=array('home','companies','members','products','suppliers','commercial','accountancy','agenda','project','tools','ecm');
+	        $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,0,'eldy');
 			
 			/*
 			* Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
 			*/
-			if ($mainmenu && ! in_array($mainmenu,$overwritemenufor)) { $mainmenu=""; }
+			if ($mainmenu && ! in_array($mainmenu,$this->overwritemenufor)) { $mainmenu=""; }
 
 		}
 

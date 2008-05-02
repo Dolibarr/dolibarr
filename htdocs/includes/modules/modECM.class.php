@@ -121,11 +121,12 @@ class modECM extends DolibarrModules
 		//------
 		$r=0;
 		
+		// Top menu
 		$this->menu[$r]=array('fk_menu'=>0,
 							  'type'=>'top',
 							  'titre'=>'MenuECM',
 							  'mainmenu'=>'ecm',
-							  'leftmenu'=>'',
+							  'leftmenu'=>'1',		// To say if we can overwrite leftmenu
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>100,
@@ -134,11 +135,11 @@ class modECM extends DolibarrModules
 							  'user'=>0);
 		$r++;
 
+		// Left menu linked to top menu
 		$this->menu[$r]=array('fk_menu'=>'r=0',
 							  'type'=>'left',
 							  'titre'=>'MenuECM',
 							  'mainmenu'=>'ecm',
-							  'leftmenu'=>'',
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>100,
@@ -151,7 +152,6 @@ class modECM extends DolibarrModules
 							  'type'=>'left',
 							  'titre'=>'List',
 							  'mainmenu'=>'ecm',
-							  'leftmenu'=>'',
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>100,
@@ -164,7 +164,6 @@ class modECM extends DolibarrModules
 							  'type'=>'left',
 							  'titre'=>'ECMNewSection',
 							  'mainmenu'=>'ecm',
-							  'leftmenu'=>'',
 							  'url'=>'/ecm/docdir.php?action=create',
 							  'langs'=>'ecm',
 							  'position'=>100,

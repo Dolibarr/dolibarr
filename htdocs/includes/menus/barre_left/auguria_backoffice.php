@@ -40,7 +40,6 @@ class MenuLeft {
 
     var $require_top=array("auguria_backoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
 	var $newmenu;
-    var $menuArbo;
     
 	var $overwritemenufor = array();
     var $leftmenu; 
@@ -53,14 +52,9 @@ class MenuLeft {
      */
     function MenuLeft($db,&$menu_array)
     {
-      	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
-        
         $this->db=$db;
         $this->menu_array=$menu_array;
         $this->newmenu = new Menu();
-        
-        $this->menuArbo = new Menubase($this->db,'auguria','left');
- 		$this->overwritemenufor = $this->menuArbo->listeMainmenu();
     }
   
     
@@ -112,7 +106,11 @@ class MenuLeft {
          */
         if ($mainmenu) 
         {
-			$this->newmenu = $this->menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,0,'auguria');
+      		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+
+      		$menuArbo = new Menubase($this->db,'auguria','left');
+ 			$this->overwritemenufor = $menuArbo->listeMainmenu();
+ 			$this->newmenu = $menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,0,'auguria');
 			
             /*
              * Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)

@@ -47,7 +47,7 @@ class MenuLeft {
      */
     function MenuLeft($db,&$menu_array)
     {
-        $this->db=$db;
+      	$this->db=$db;
         $this->menu_array=$menu_array;
     }
   
@@ -57,43 +57,151 @@ class MenuLeft {
      */
     function showmenu()
     {
-        global $user, $conf, $langs;
+        global $user, $conf, $langs, $dolibarr_main_db_name;
 
-        $alt=0;
-        for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++) 
-        {
-            $alt++;
-            if ($this->menu_array[$i]['level']==0) {
-                if (($alt%2==0))
-                {
-                    print '<div class="blockvmenuimpair">'."\n";
-                }
-                else
-                {
-                    print '<div class="blockvmenupair">'."\n";
-                }
-            }
+    	if (! session_id()) {
+			session_name("DOLSESSID_".$dolibarr_main_db_name);
+			session_start();
+		}
 
-            if ($this->menu_array[$i]['level']==0) {
-                print '<a class="vmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a>';
-				// If title is not pure text and contains a table, no carriage return added
-				if (! strstr($this->menu_array[$i]['titre'],'<table')) print '<br>';
-            }
-            if ($this->menu_array[$i]['level']==1) {
-                print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a>';
-				// If title is not pure text and contains a table, no carriage return added
-				if (! strstr($this->menu_array[$i]['titre'],'<table')) print '<br>';
-            }
-            if ($this->menu_array[$i]['level']==2) {
-                print '&nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a>';
-				// If title is not pure text and contains a table, no carriage return added
-				if (! strstr($this->menu_array[$i]['titre'],'<table')) print '<br>';
-            }
-            
-            if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
-                print "</div>\n";
-            }
-        }
+		// On récupère mainmenu et leftmenu qui définissent le menu à afficher
+		if (isset($_GET["mainmenu"]))
+		{
+			// On sauve en session le menu principal choisi
+			$mainmenu=$_GET["mainmenu"];
+			$_SESSION["mainmenu"]=$mainmenu;
+			$_SESSION["leftmenuopened"]="";
+		}
+		else
+		{
+			// On va le chercher en session si non défini par le lien
+			$mainmenu=$_SESSION["mainmenu"];
+		}
+
+		if (isset($_GET["leftmenu"]))
+		{
+			// On sauve en session le menu principal choisi
+			$leftmenu=$_GET["leftmenu"];
+			$_SESSION["leftmenu"]=$leftmenu;
+			if ($_SESSION["leftmenuopened"]==$leftmenu)
+			{
+				//$leftmenu="";
+				$_SESSION["leftmenuopened"]="";
+			}
+			else
+			{
+				$_SESSION["leftmenuopened"]=$leftmenu;
+			}
+		} else {
+			// On va le chercher en session si non défini par le lien
+			$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
+		}
+		
+		$newmenu = new Menu();
+        
+		if ($mainmenu)
+		{
+	      	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+
+	      	$this->menuArbo = new Menubase($this->db,'rodolphe','left');
+    	    $this->overwritemenufor = $this->menuArbo->listeMainmenu();
+			$newmenu = $this->menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,0,'eldy');
+			
+			/*
+			* Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
+			*/
+			if ($mainmenu && ! in_array($mainmenu,$this->overwritemenufor)) { $mainmenu=""; }
+		}
+
+
+		/**
+		*  Si on est sur un cas géré de surcharge du menu, on ecrase celui par defaut
+		*/
+		if ($mainmenu) {
+			$this->menu_array=$newmenu->liste;
+		}
+		        
+    	// Affichage du menu
+		$alt=0;
+		if (! sizeof($this->menu_array))
+		{
+			print '<div class="blockvmenuimpair">'."\n";
+			print $langs->trans("NoMenu");
+			print '</div>';
+		}
+		else
+		{
+			$contenu = 0;
+			for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++)
+			{
+				$alt++;
+				if ($this->menu_array[$i]['level']==0)
+				{
+					if (($alt%2==0))
+					{
+						print '<div class="blockvmenuimpair">'."\n";
+					}
+					else
+					{
+						print '<div class="blockvmenupair">'."\n";
+					}
+				}
+
+				// Place tabulation
+				$tabstring='';
+				$tabul=($this->menu_array[$i]['level'] - 1);
+				if ($tabul > 0)
+				{
+					for ($j=0; $j < $tabul; $j++)
+					{
+						$tabstring.='&nbsp; &nbsp;';
+					}
+				}
+				
+				// Menu niveau 0
+				if ($this->menu_array[$i]['level'] == 0)
+				{
+					if ($contenu == 1) print '<div class="menu_fin"></div>';
+					if ($this->menu_array[$i]['enabled'])
+					{
+						print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>';
+					}
+					else
+					{
+						print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font></div>';
+					}
+				}
+				// Menu niveau > 0
+				if ($this->menu_array[$i]['level'] > 0)
+				{
+					if ($this->menu_array[$i]['level']==1) $contenu = 1;
+					if ($this->menu_array[$i]['enabled'])
+					{
+						print '<div class="menu_contenu">';
+						print $tabstring.'<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>';
+						print $this->menu_array[$i]['titre'];
+						print '</a>';
+						// If title is not pure text and contains a table, no carriage return added
+						if (! strstr($this->menu_array[$i]['titre'],'<table')) print '<br>';
+						print '</div>';
+					}
+					else
+					{
+						print '<div class="menu_contenu">';
+						print $tabstring.'<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+						print '</div>';
+					}
+				}
+
+
+				if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)
+				{
+					print "</div>\n";
+				}
+			}
+            if ($contenu == 1) print '<div class="menu_fin"></div>';
+			
+		}
 
     }
     

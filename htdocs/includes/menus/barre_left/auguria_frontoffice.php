@@ -52,15 +52,10 @@ class MenuLeft {
      */
     function MenuLeft($db,&$menu_array)
     {
-       	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
-        
         $this->db=$db;
         $this->menu_array=$menu_array;
   
         $this->newmenu = new Menu();
-        
-        $this->menuArbo = new Menubase($this->db,'auguria','left');
- 		$this->overwritemenufor = $this->menuArbo->listeMainmenu();        
     }
   
     
@@ -111,7 +106,11 @@ class MenuLeft {
          */
         if ($mainmenu) 
         {
-			$this->newmenu = $this->menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,1,'auguria');
+       		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+        	
+       		$menuArbo = new Menubase($this->db,'auguria','left');
+ 			$this->overwritemenufor = $menuArbo->listeMainmenu();        
+ 			$this->newmenu = $menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,1,'auguria');
 
             /*
              * Menu AUTRES (Pour les menus du haut qui ne serait pas g�r�s)

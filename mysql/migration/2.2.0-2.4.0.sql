@@ -253,6 +253,12 @@ alter table llx_tva modify fk_bank         integer;
 delete from llx_const where name='MAIN_USE_PREVIEW_TABS';
 
 alter table llx_menu_const drop column user;
+update llx_menu set leftmenu = '1' where leftmenu != '0';
+alter table llx_menu modify leftmenu varchar(1) default '1';
+
+--alter table llx_menu_const drop primary key;
+--alter table llx_menu_const add primary key (`fk_menu`,`fk_constraint`);
+--alter table llx_menu modify rowid			integer AUTO_INCREMENT NOT NULL PRIMARY KEY;
 
 create table llx_ecm_directories
 (
