@@ -98,7 +98,7 @@ class modPhenix extends DolibarrModules
 		//------
 		$r=0;
 		
-		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Calendar','mainmenu'=>'phenix','leftmenu'=>'','url'=>'/phenix/phenix.php','langs'=>'other','position'=>100,'perms'=>'','target'=>'','user'=>0);
+		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Calendar','mainmenu'=>'phenix','leftmenu'=>'1','url'=>'/phenix/phenix.php','langs'=>'other','position'=>100,'perms'=>'','target'=>'','user'=>0);
 		$r++;
 	}
 

@@ -99,7 +99,7 @@ class modWebcalendar extends DolibarrModules
 		//------
 		$r=0;
 		
-		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Calendar','mainmenu'=>'webcal','leftmenu'=>'','url'=>'/webcal/webcal.php','langs'=>'other','position'=>100,'perms'=>'','target'=>'','user'=>0);
+		$this->menu[$r]=array('fk_menu'=>0,'type'=>'top','titre'=>'Calendar','mainmenu'=>'webcal','leftmenu'=>'1','url'=>'/webcal/webcal.php','langs'=>'other','position'=>100,'perms'=>'','target'=>'','user'=>0);
 		$r++;
 		
 	}
