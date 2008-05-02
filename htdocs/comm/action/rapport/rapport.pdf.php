@@ -60,15 +60,34 @@ class CommActionRapport
         $this->month = $month;
         $this->year = $year;
 
+        // Dimension page pour format A4
+        $this->type = 'pdf';
+        $this->page_largeur = 210;
+        $this->page_hauteur = 297;
+        $this->format = array($this->page_largeur,$this->page_hauteur);
+        $this->marge_gauche=5;
+        $this->marge_droite=5;
+        $this->marge_haute=10;
+        $this->marge_basse=10;
+        
         $this->title=$langs->trans("ActionsReport").' '.$this->year."-".$this->month;
         $this->subject=$langs->trans("ActionsReport").' '.$this->year."-".$this->month;
     }
 
-    function generate($socid = 0, $catid = 0)
+    function generate($socid = 0, $catid = 0, $outputlangs='')
     {
         global $user,$conf,$langs;
 
-        $dir = $conf->actions->dir_temp."/";
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		$outputlangs->load("main");
+		$outputlangs->load("dict");
+		$outputlangs->load("companies");
+		$outputlangs->load("bills");
+		$outputlangs->load("products");
+		
+		$outputlangs->setPhpLang();
+        
+		$dir = $conf->actions->dir_temp."/";
         $file = $dir . "actions-".$this->month."-".$this->year.".pdf";
 
         if (! file_exists($dir))
@@ -82,19 +101,37 @@ class CommActionRapport
 
         if (file_exists($dir))
         {
-            $pdf=new PDF_html('P','mm','A4');
-            $pdf->Open();
+       		// Protection et encryption du pdf
+			if ($conf->global->PDF_SECURITY_ENCRYPTION)
+			{
+				$pdf=new FPDI_Protection('P','mm',$this->format);
+				$pdfrights = array('print'); // Ne permet que l'impression du document
+				$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+				$pdfownerpass = NULL; // Mot de passe du propriétire, crée aléatoirement si pas défini
+				$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+			}
+			else
+			{
+				$pdf=new FPDI('P','mm',$this->format);
+			}
 
-            $pdf->SetTitle($this->title);
+			$pdf->Open();
+			
+			$pdf->SetDrawColor(128,128,128);
+            $pdf->SetFillColor(220,220,220);
+			
+			$pdf->SetTitle($this->title);
             $pdf->SetSubject($this->subject);
             $pdf->SetCreator("Dolibarr ".DOL_VERSION);
             $pdf->SetAuthor($user->fullname);
+            $pdf->SetKeywords($this->title." ".$this->subject." Dolibarr");
+            
+			$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+			$pdf->SetAutoPageBreak(1,0);
+            
+            $nbpage = $this->_pages($pdf, $outputlangs);
 
-            $pdf->SetFillColor(220,220,220);
-
-            //	  $nbpage = $this->_cover($pdf);
-            $nbpage = $this->_pages($pdf);
-
+            $pdf->AliasNbPages();
             $pdf->Close();
 
             $pdf->Output($file);
@@ -103,98 +140,117 @@ class CommActionRapport
         }
     }
 
-    /*
-     *
-     */
-    function _cover(&$pdf)
+	/**
+	 * Write content of pages
+	 *
+	 * @param unknown_type 		$pdf
+	 * @return 	int				1
+	 */
+    function _pages(&$pdf, $outputlangs)
     {
-        global $user,$conf;
+		$height=3;		// height for text separation
+    	$pagenb=1;
+    	
+		$y=$this->_pagehead($pdf, $outputlangs, $pagenb);
+    	$y++;
+		$pdf->SetFont('Arial','',8);
+    	
+		$sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
+		$sql.= " a.id,".$this->db->pdate("a.datep")." as dp, ".$this->db->pdate("a.datep2")." as dp2,";
+		$sql.= " a.fk_contact, a.note, a.percent as percent,";
+		$sql.= " c.libelle,";
+		$sql.= " u.login";
+        $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
+        $sql.= " WHERE a.fk_soc = s.rowid AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
+        $sql.= " AND date_format(a.datep, '%m') = ".$this->month;
+        $sql.= " AND date_format(a.datep, '%Y') = ".$this->year;
+        $sql.= " ORDER BY a.datep DESC";
 
-        $pdf->AddPage();
-        $pdf->SetAutoPageBreak(false);
-        $pdf->SetFont('Arial','',40);
-        $pdf->SetXY (10, 80);
-        $pdf->MultiCell(190, 20, $langs->trans("ActionsReport").' '.$title, 0, 'C', 0);
-
-        $pdf->SetFont('Arial','',30);
-        $pdf->SetXY (10, 140);
-        $pdf->MultiCell(190, 20, $langs->trans("Date").': '.dolibarr_print_date($this->date_edition,"day"), 0, 'C', 0);
-
-        $pdf->SetXY (10, 170);
-        $pdf->SetFont('Arial','B',18);
-        $pdf->MultiCell(190, 15, $user->fullname, 0, 'C');
-        $pdf->SetFont('Arial','B',16);
-        $pdf->MultiCell(190, 15, $conf->global->SOCIETE_TEL, 0, 'C');
-
-        $pdf->SetFont('Arial','',10);
-        $pdf->SetXY (10, 277);
-        $pdf->MultiCell(190, 10,  $conf->global->SOCIETE_WEB, 1, 'C', 1);
-
-        $pdf->Rect(10, 10, 190, 277);
-        return 1;
-    }
-
-    /*
-     *
-     */
-    function _pages(&$pdf)
-    {
-        $pdf->AddPage();
-        $pdf->SetAutoPageBreak(true);
-
-        $pdf->SetFont('Arial','B',10);
-        $pdf->SetXY(5, $pdf->GetY());
-        $pdf->MultiCell(80, 2, $this->title, 0, 'L', 0);
-
-        $pdf->SetFont('Arial','',8);
-        $y=$pdf->GetY()+1;
-        
-        $sql = "SELECT s.nom as societe, s.rowid as socid, s.client, a.id,".$this->db->pdate("a.datea")." as da, a.datea, c.libelle, u.login, a.fk_contact, a.note, a.percent as percent";
-        $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
-        $sql .= " WHERE a.fk_soc = s.rowid AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
-
-        $sql .= " AND date_format(a.datea, '%m') = ".$this->month;
-        $sql .= " AND date_format(a.datea, '%Y') = ".$this->year;
-
-        $sql .= " ORDER BY a.datea DESC";
-
-        if ($this->db->query($sql))
+        dolibarr_syslog("Rapport.pdf::_page sql=".$sql);
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
-            $num = $this->db->num_rows();
+            $num = $this->db->num_rows($resql);
             $i = 0;
             $y0=$y1=$y2=$y3=0;
 
             while ($i < $num)
             {
-                $obj = $this->db->fetch_object();
+        		$obj = $this->db->fetch_object($resql);
 
-                $y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3) + 1;
-
-                $pdf->SetXY(5, $y);
-                $pdf->MultiCell(22, 4, dolibarr_print_date($obj->da,"day")."\n".dolibarr_print_date($obj->da,"hour"), 0, 'L', 0);
+		        $y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3);
+        		
+		        // Calculate height of text
+        		$text=dolibarr_trunc(dol_htmlentitiesbr_decode($obj->note),150);
+		        $nboflines=dol_nboflines($text);
+		        $heightlinemax=max(2*$height,$nboflines*$height);
+				// Check if there is enough space to print record
+		        if ((1+$y+$heightlinemax) >= ($this->page_hauteur - $this->marge_haute))
+		        {
+		        	// We need to break page
+		        	$pagenb++;
+					$y=$this->_pagehead($pdf, $outputlangs, $pagenb);
+			    	$y++;
+					$pdf->SetFont('Arial','',8);
+		        }
+		        $y++;
+		        
+                $pdf->SetXY($this->marge_gauche, $y);
+                $pdf->MultiCell(22, $height, dolibarr_print_date($obj->dp,"day")."\n".dolibarr_print_date($obj->dp,"hour"), 0, 'L', 0);
                 $y0 = $pdf->GetY();
 
                 $pdf->SetXY(26, $y);
-                $pdf->MultiCell(40, 4, $obj->societe, 0, 'L', 0);
+                $pdf->MultiCell(32, $height, dolibarr_trunc($obj->societe,32), 0, 'L', 0);
                 $y1 = $pdf->GetY();
 
-                $pdf->SetXY(66,$y);
-                $pdf->MultiCell(40, 4, $obj->libelle, 0, 'L', 0);
+                $pdf->SetXY(60,$y);
+                $pdf->MultiCell(32, $height, dolibarr_trunc($obj->libelle,32), 0, 'L', 0);
                 $y2 = $pdf->GetY();
 
                 $pdf->SetXY(106,$y);
-                $pdf->MultiCell(94, 4, eregi_replace('<br>',"\n",dolibarr_trunc($obj->note,150)), 0, 'L', 0);
+                //$pdf->Cell(94, 4, eregi_replace('<br>',"\n",dolibarr_trunc($obj->note,150)), 0, 'L', 0);
+                $pdf->MultiCell(94, $height, $text, 0, 'L', 0);
+                //$pdf->writeHTMLCell(dol_htmlentitiesbr($obj->note,1));
                 $y3 = $pdf->GetY();
+                
+                //$pdf->MultiCell(94,2,"y=$y y3=$y3",0,'L',0);
 
                 $i++;
             }
         }
 
-        $pdf->Rect(5, 5, 200, 287);
         return 1;
     }
 
+    /**
+     *      \brief      Affiche en-tete facture
+     *      \param      pdf             Objet PDF
+     *      \param      outputlang		Objet lang cible
+     * 		\param		pagenb			Page nb
+     */
+    function _pagehead(&$pdf, $outputlangs, $pagenb)
+    {
+		global $conf,$langs;
+    
+		// New page
+        $pdf->AddPage();
 
+    	// Show title
+        $pdf->SetFont('Arial','B',10);
+    	$pdf->SetXY($this->marge_gauche, $this->marge_haute);
+        $pdf->MultiCell(80, 1, $this->title, 0, 'L', 0);
+		$pdf->SetXY($this->page_largeur-$this->marge_droite-40, $this->marge_haute);
+        $pdf->MultiCell(40, 1, $pagenb.'/{nb}', 0, 'R', 0);
+		
+        $y=$pdf->GetY()+2;
+
+		$pdf->Rect($this->marge_gauche, $y, 
+			$this->page_largeur - $this->marge_gauche - $this->marge_droite,
+			$this->page_hauteur - $this->marge_haute - $this->marge_basse);
+		$y=$pdf->GetY()+1;
+		
+		return $y;
+    }
 }
 
 ?>

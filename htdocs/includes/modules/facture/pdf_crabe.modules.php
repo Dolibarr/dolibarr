@@ -901,7 +901,7 @@ class pdf_crabe extends ModelePDFFactures
 
     }
 
-    /*
+    /**
      *      \brief      Affiche en-tete facture
      *      \param      pdf             Objet PDF
      *      \param      object          Objet facture
@@ -1131,7 +1131,7 @@ class pdf_crabe extends ModelePDFFactures
 			}
 			// Numéro TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
-		  $pdf->SetFont('Arial','',9);
+		  	$pdf->SetFont('Arial','',9);
 			$pdf->SetXY(102,$posy+6);
 			$pdf->MultiCell(86,4, $carac_client);
 		}

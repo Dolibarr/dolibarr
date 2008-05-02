@@ -2554,6 +2554,21 @@ function dol_string_is_good_iso($s)
 
 
 /**
+ *	\brief		Return nb of lines of a text
+ *	\param		s			String to check
+ * 	\param		maxchar		Not yet used
+ *	\return		int			0 if bad iso, 1 if good iso
+ */
+function dol_nboflines($s,$maxchar=0)
+{
+	$arraystring=split("\n",$s);
+	$nb=sizeof($arraystring);
+	
+	return $nb;
+}
+
+
+/**
  \brief     	Fonction retournant le nombre de jour fieries samedis et dimanches entre 2 dates entrees en timestamp
  \remarks		SERVANT AU CALCUL DES JOURS OUVRABLES
  \param	    timestampStart      Timestamp de debut
