@@ -23,7 +23,7 @@
 
 body
 {
-	background-color: #f1f1e3;
+	background-color: #f1f1f1;
 }
 
 form
@@ -34,8 +34,8 @@ form
 
 .Frame
 {
-	background-color: #f1f1e3;
-	border-color: #f1f1e3;
+	background-color: #f1f1f1;
+	border-color: #f1f1f1;
 	border-right: thin inset;
 	border-top: thin inset;
 	border-left: thin inset;
@@ -75,7 +75,7 @@ body, td, input, select
 	border-left: #737357 1px solid;
 	color: #3b3b1f;
 	border-bottom: #737357 1px solid;
-	background-color: #c7c78f;
+	background-color: #bfbfbf;
 }
 
 .FolderListCurrentFolder img

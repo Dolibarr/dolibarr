@@ -7,6 +7,15 @@ FCKEDITOR:
 ----------
 If fckeditor files are replaced by new version, following changes must be done:
 
+* Edit file fckeditor/editor/filemanager/browser/default/browser.css
+**********************************************************
+Edit this file to put neutral colors (this theme is used for all themes)
+
+* Replace files and images in themes/fckeditor directories
+**********************************************************
+Replace in themes, files in fckeditor by new ones. Then edit them
+to get back colors that match the theme.
+
 * Edit fckconfig.js to set:
 ***************************
 (Rem: Pas requis car deja géré dans le fichier fckconfig.js qui est dans le repertoire du theme)
@@ -17,8 +26,8 @@ FCKConfig.FlashUpload = false ;
 * Edit htdocs\includes\fckeditor\editor\filemanager\connectors\php\config.php to set:
 *****************************************************************************************************
 
-//require_once("../../../../../../../../master.inc.php");
-require_once("../../../../../../../../conf/conf.php"); // car include master.inc.php ne marche pas
+//require_once("../../../../../../master.inc.php");
+require_once("../../../../../../conf/conf.php"); // car include master.inc.php ne marche pas
 $uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
@@ -37,3 +46,14 @@ $Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=fckeditor&fil
 
 //$Config['UserFilesAbsolutePath'] = $conf->fckeditor->dir_output; // ne fonctionne pas
 $Config['UserFilesAbsolutePath'] = $dolibarr_main_data_root.'/fckeditor/';
+
+// After file is uploaded, sometimes it is required to change its permissions
+// so that it was possible to access it at the later time.
+// If possible, it is recommended to set more restrictive permissions, like 0755.
+// Set to 0 to disable this feature.
+// Note: not needed on Windows-based servers.
+$Config['ChmodOnUpload'] = 0775 ;
+
+// See comments above.
+// Used when creating folders that does not exist.
+$Config['ChmodOnFolderCreate'] = 0775 ;

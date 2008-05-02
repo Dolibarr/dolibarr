@@ -24,8 +24,8 @@
 
 global $Config ;
 
-//require_once("../../../../../../../../master.inc.php");
-require_once("../../../../../../../../conf/conf.php"); // ajouté car include master.inc.php ne marche pas
+//require_once("../../../../../../master.inc.php");
+require_once("../../../../../../conf/conf.php"); // ajouté car include master.inc.php ne marche pas
 $uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
@@ -34,14 +34,14 @@ define('DOL_URL_ROOT', $pos);
 /*
 $conf->syslog->enabled=1;
 define('SYSLOG_FILE','c:/log/dolibarr/dolibarr.log');
-require_once("../../../../../../../../lib/functions.lib.php");
+require_once("../../../../../../lib/functions.lib.php");
 dolibarr_syslog("eee".$conf->fckeditor->dir_output);
 */
 
 // SECURITY: You must explicitly enable this "connector". (Set it to "true").
 // WARNING: don't just set "$Config['Enabled'] = true ;", you must be sure that only
 //		authenticated users can access this file or use some kind of session checking.
-$Config['Enabled'] = false ;
+$Config['Enabled'] = true ;
 
 
 // Path to user files relative to the document root.
@@ -76,11 +76,11 @@ $Config['HtmlExtensions'] = array("html", "htm", "xml", "xsd", "txt", "js") ;
 // If possible, it is recommended to set more restrictive permissions, like 0755.
 // Set to 0 to disable this feature.
 // Note: not needed on Windows-based servers.
-$Config['ChmodOnUpload'] = 0777 ;
+$Config['ChmodOnUpload'] = 0775 ;
 
 // See comments above.
 // Used when creating folders that does not exist.
-$Config['ChmodOnFolderCreate'] = 0777 ;
+$Config['ChmodOnFolderCreate'] = 0775 ;
 
 /*
 	Configuration settings for each Resource Type
