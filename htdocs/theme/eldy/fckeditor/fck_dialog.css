@@ -41,7 +41,7 @@ body, td, input, select, textarea
 
 body, .BackColor
 {
-	background-color: #f1f1e3;
+	background-color: #f7f7f7;
 }
 
 .PopupBody
@@ -62,8 +62,8 @@ body, .BackColor
 {
 	font-weight: bold;
 	font-size: 14pt;
-	color: #737357;
-	background-color: #e3e3c7;
+	color: #504845;
+	background-color: #dedede;
 	padding: 3px 10px 3px 10px;
 }
 
@@ -73,16 +73,16 @@ body, .BackColor
 	right: 0px;
 	left: 0px;
 	bottom: 0px;
-	border-top: #d5d59d 1px solid;
-	background-color: #e3e3c7;
+	border-top: #cec6b5 1px solid;
+	background-color: #DEDEDE;
 	padding: 7px 10px 7px 10px;
 }
 
 .Button
 {
-	border: #737357 1px solid;
-	color: #3b3b1f;
-	background-color: #c7c78f;
+	border: #7a7261 1px solid;
+	color: #504845;
+	background-color: #cec6b5;
 }
 
 #btnOk
@@ -92,7 +92,7 @@ body, .BackColor
 
 .DarkBackground
 {
-	background-color: #eaead1;
+	background-color: #f2f2f2;
 }
 
 .LightBackground
@@ -102,51 +102,51 @@ body, .BackColor
 
 .PopupTitleBorder
 {
-	border-bottom: #d5d59d 1px solid;
+	border-bottom: #cec6b5 1px solid;
 }
 
 .PopupTabArea
 {
-	color: #737357;
-	background-color: #e3e3c7;
+	color: #504845;
+	background-color: #DEDEDE;
 }
 
 .PopupTabEmptyArea
 {
-	padding-left: 10px;
-	border-bottom: #d5d59d 1px solid;
+	padding-left: 10px ;
+	border-bottom: #cec6b5 1px solid;
 }
 
 .PopupTab, .PopupTabSelected
 {
-	border-right: #d5d59d 1px solid;
-	border-top: #d5d59d 1px solid;
-	border-left: #d5d59d 1px solid;
+	border-right: #cec6b5 1px solid;
+	border-top: #cec6b5 1px solid;
+	border-left: #cec6b5 1px solid;
 	padding: 3px 5px 3px 5px;
-	color: #737357;
+	color: #504845;
 }
 
 .PopupTab
 {
 	margin-top: 1px;
-	border-bottom: #d5d59d 1px solid;
+	border-bottom: #cec6b5 1px solid;
 	cursor: pointer;
 	cursor: hand;
 }
 
 .PopupTabSelected
 {
-	font-weight: bold;
+	font-weight:bold;
 	cursor: default;
 	padding-top: 4px;
 	border-bottom: #f1f1e3 1px solid;
-	background-color: #f1f1e3;
+	background-color: #f7f7f7;
 }
 
 .PopupSelectionBox
 {
-	border: #ff9933 1px solid !important;
-	background-color: #fffacd !important;
+	border: #a9a9a9 1px solid !important;
+	background-color: #dcdcdc !important;
 	cursor: pointer;
 	cursor: hand;
 }
@@ -167,7 +167,7 @@ body, .BackColor
 	left: 16px;
 	right: 16px;
 	bottom: 20px;
-	background-color: #f1f1e3;
+	background-color: #f7f7f7;
 	overflow: hidden;
 	z-index: 1;
 }
@@ -373,30 +373,30 @@ body, .BackColor
 
 /*
 	Color Gradient Generator:
-	http://www.herethere.net/~samson/php/color_gradient/?cbegin=737357&cend=E3E3C7&steps=4
+	http://www.herethere.net/~samson/php/color_gradient/?cbegin=504845&cend=DEDEDE&steps=4
 */
 
 .throbber_1
 {
-	background-color: #737357;
+	background-color: #504845;
 }
 
 .throbber_2
 {
-	background-color: #8f8f73;
+	background-color: #736D6B;
 }
 
 .throbber_3
 {
-	background-color: #abab8f;
+	background-color: #979391;
 }
 
 .throbber_4
 {
-	background-color: #c7c7ab;
+	background-color: #BAB8B7;
 }
 
 .throbber_5
 {
-	background-color: #e3e3c7;
+	background-color: #DEDEDE;
 }

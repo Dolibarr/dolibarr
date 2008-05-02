@@ -51,13 +51,13 @@ body
 .TB_ToolbarSet, .TB_Expand, .TB_Collapse
 {
     cursor: default;
-    background-color: #efefde;
+    background-color: #f7f7f7;
 }
 
 .TB_ToolbarSet
 {
-    border-top: #efefde 1px outset;
-    border-bottom: #efefde 1px outset;
+    border-top: #f7f7f7 1px outset;
+    border-bottom: #f7f7f7 1px outset;
 }
 
 .TB_ToolbarSet TD
@@ -114,7 +114,7 @@ body
 .TB_Expand, .TB_Collapse
 {
     padding: 2px 2px 2px 2px;
-    border: #efefde 1px outset;
+    border: #f7f7f7 1px outset;
 }
 
 .TB_Collapse
@@ -133,7 +133,7 @@ body
 
 .TB_Button_On, .TB_Button_Off, .TB_Button_On_Over, .TB_Button_Off_Over, .TB_Button_Disabled
 {
-    border: #efefde 1px solid; /* This is the default border */
+    border: #f7f7f7 1px solid; /* This is the default border */
     height: 22px; /* The height is necessary, otherwise IE will not apply the alpha */
 }
 
@@ -184,7 +184,7 @@ body
 
 .TB_Button_Off .TB_Button_Text
 {
-   	background-color: #efefde;  /* Needed because of a bug on Clear Type */
+   	background-color: #f7f7f7;  /* Needed because of a bug on Clear Type */
 }
 
 .TB_ConnectionLine
@@ -202,7 +202,7 @@ body
 
 .TB_Button_Off .TB_Text
 {
-   	background-color: #efefde ;  /* Needed because of a bug on ClearType */
+   	background-color: #f7f7f7 ;  /* Needed because of a bug on ClearType */
 }
 
 .TB_Button_On_Over .TB_Text
@@ -237,7 +237,7 @@ body
 
 .MN_Icon
 {
-    background-color: #e3e3c7;
+    background-color: #dedede;
     text-align: center;
     height: 20px;
 }
@@ -267,12 +267,12 @@ body
 .MN_Item_Over
 {
     color: #ffffff;
-    background-color: #8f8f73;
+    background-color: #8a857d;
 }
 
 .MN_Item_Over .MN_Icon
 {
-    background-color: #737357;
+    background-color: #6c6761;
 }
 
 .MN_Item_Disabled IMG
@@ -332,6 +332,7 @@ body
     border: 1px solid #8f8f73;
     padding-left: 2px;
     padding-right: 2px;
+    background-color: #ffffff;
 }
 
 .SC_Panel, .SC_Panel TD
@@ -369,7 +370,7 @@ body
 
 .SC_ItemOver
 {
-    border: #316ac5 1px solid;
+    border: #404040 1px solid;
 }
 
 .SC_Field
@@ -386,7 +387,7 @@ body
     opacity: 0.75; /* Safari, Opera and Mozilla */
     filter: alpha(opacity=70); /* IE */ /* -moz-opacity: 0.75; Mozilla (Old) */
     height: 23px;
-    background-color: #efefde;
+    background-color: #f7f7f7;
 }
 
 .SC_FieldLabel
@@ -457,8 +458,8 @@ body
 
 .ColorSelected
 {
-    border: #330066 1px solid;
+    border: #316ac5 1px solid;
     padding: 2px;
     float: left;
-    background-color: #c4cdd6;
+    background-color: #c1d2ee;
 }
