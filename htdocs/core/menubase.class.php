@@ -609,13 +609,6 @@ class Menubase
 	        	} 
 				//print "x".$objm->titre."-".$chaine;
 
-	        	// Define class
-	            $class="";
-	            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == $objm->mainmenu)
-	            {
-	                $class='id="sel"';
-	            }
-				
 		        // Define $right
 	        	$perms = true;
 	        	if ($objm->perms)
