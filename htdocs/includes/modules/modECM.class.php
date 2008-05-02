@@ -123,13 +123,52 @@ class modECM extends DolibarrModules
 		
 		$this->menu[$r]=array('fk_menu'=>0,
 							  'type'=>'top',
-							  'titre'=>'MenuECM(dotnoloadlang)',
+							  'titre'=>'MenuECM',
 							  'mainmenu'=>'ecm',
 							  'leftmenu'=>'',
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>100,
 							  'perms'=>'',
+							  'target'=>'',
+							  'user'=>0);
+		$r++;
+
+		$this->menu[$r]=array('fk_menu'=>'r=0',
+							  'type'=>'left',
+							  'titre'=>'MenuECM',
+							  'mainmenu'=>'ecm',
+							  'leftmenu'=>'',
+							  'url'=>'/ecm/index.php',
+							  'langs'=>'ecm',
+							  'position'=>100,
+							  'perms'=>'$user->rights->ecm->read',
+							  'target'=>'',
+							  'user'=>0);
+		$r++;
+		
+		$this->menu[$r]=array('fk_menu'=>'r=1',
+							  'type'=>'left',
+							  'titre'=>'List',
+							  'mainmenu'=>'ecm',
+							  'leftmenu'=>'',
+							  'url'=>'/ecm/index.php',
+							  'langs'=>'ecm',
+							  'position'=>100,
+							  'perms'=>'$user->rights->ecm->read',
+							  'target'=>'',
+							  'user'=>0);
+		$r++;
+		
+		$this->menu[$r]=array('fk_menu'=>'r=1',
+							  'type'=>'left',
+							  'titre'=>'ECMNewSection',
+							  'mainmenu'=>'ecm',
+							  'leftmenu'=>'',
+							  'url'=>'/ecm/docdir.php?action=create',
+							  'langs'=>'ecm',
+							  'position'=>100,
+							  'perms'=>'$user->rights->ecm->setup',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;

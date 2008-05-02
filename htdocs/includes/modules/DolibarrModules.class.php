@@ -739,9 +739,14 @@ class DolibarrModules
        		$menu = new Menubase($this->db);
 			$menu->menu_handler='all';	
 			$menu->module=$this->rights_class;
-			if ($this->menu[$key]['fk_menu'])
+			if (! $this->menu[$key]['fk_menu'])
+			{
+				$menu->fk_menu=0;
+			}
+			else
 			{
 				$numparent=$this->menu[$key]['fk_menu'];
+				$numparent=eregi_replace('r=','',$numparent);
 				if (isset($this->menu[$numparent]['rowid']))
 				{
 					$menu->fk_menu=$this->menu[$numparent]['rowid'];
@@ -751,10 +756,6 @@ class DolibarrModules
 					$this->error="BadDefinitionOfMenuArrayInModuleDescriptor";
 					$err++;
 				}
-			}
-			else
-			{
-				$menu->fk_menu=0;
 			}
 			$menu->type=$this->menu[$key]['type'];
 			$menu->mainmenu=$this->menu[$key]['mainmenu'];

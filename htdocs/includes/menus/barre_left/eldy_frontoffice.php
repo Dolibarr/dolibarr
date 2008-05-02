@@ -99,7 +99,7 @@ class MenuLeft {
 
 
 		$newmenu = new Menu();
-		$overwritemenufor=array('home','companies','members','products','suppliers','commercial','accountancy','agenda','project','tools');
+		$overwritemenufor=array('home','companies','members','products','suppliers','commercial','accountancy','agenda','project','tools','ecm');
 
 		/**
 		* On definit newmenu en fonction de mainmenu et leftmenu

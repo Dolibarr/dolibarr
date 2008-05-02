@@ -419,7 +419,9 @@ TotalMan=Total
 YouCanChangeValuesForThisListFromDictionnarySetup=You can change values for this list from menu setup - dictionnary
 Color=Color
 MenuECM=Documents
+MenuAWStats=AWStats
 MenuMembers=Members
+MenuAgendaGoogle=Google agenda
 # Week day
 Monday=Monday
 Tuesday=Tuesday

@@ -61,7 +61,6 @@ class MenuLeft {
         
         $this->menuArbo = new Menubase($this->db,'auguria','left');
  		$this->overwritemenufor = $this->menuArbo->listeMainmenu();
-
     }
   
     
@@ -105,25 +104,25 @@ class MenuLeft {
             $this->leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
         }
         
+        //this->menu_array contains menu in pre.inc.php
+        
         /**
          * On definit newmenu en fonction de mainmenu et leftmenu
          * ------------------------------------------------------
          */
         if ($mainmenu) 
         {
-
-        	
-			$this->newmenu = $this->menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,0);
+			$this->newmenu = $this->menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,0,'auguria');
 			
             /*
              * Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
              */
-
-            if ($mainmenu && ! in_array($mainmenu,$this->overwritemenufor)) { $mainmenu=""; }
-        
+			if ($mainmenu && ! in_array($mainmenu,$this->overwritemenufor)) { $mainmenu=""; }
         }
 
-
+		//var_dump($this->newmenu->liste);
+		//var_dump($this->menu_array);
+        
         
         /**
          *  Si on est sur un cas géré de surcharge du menu, on ecrase celui par defaut
@@ -133,8 +132,7 @@ class MenuLeft {
         }
 		
 
-				
-       
+        
         // Affichage du menu
         $alt=0;
         if (! sizeof($this->menu_array))

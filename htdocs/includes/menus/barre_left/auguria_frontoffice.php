@@ -23,11 +23,11 @@
 		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
-        \remarks    A l'aide d'un objet $newmenu=new Menu() et des mï¿½thode add et add_submenu,
-        \remarks    dï¿½finir la liste des entrï¿½es menu ï¿½ faire apparaitre.
+        \remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,
+        \remarks    définir la liste des entrées menu à faire apparaitre.
         \remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
-        \remarks    Ce qui est dï¿½fini dans un tel gestionnaire sera alors prioritaire sur
-        \remarks    les dï¿½finitions de menu des fichiers pre.inc.php
+        \remarks    Ce qui est défini dans un tel gestionnaire sera alors prioritaire sur
+        \remarks    les définitions de menu des fichiers pre.inc.php
 */
 
 
@@ -38,7 +38,7 @@
 
 class MenuLeft {
 
-    var $require_top=array("auguria_backoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
+    var $require_top=array("auguria_frontoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
 	var $newmenu;
 	var $menuArbo;
     
@@ -111,15 +111,12 @@ class MenuLeft {
          */
         if ($mainmenu) 
         {
-
-			$this->newmenu = $this->menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,1);
+			$this->newmenu = $this->menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,1,'auguria');
 
             /*
              * Menu AUTRES (Pour les menus du haut qui ne serait pas gï¿½rï¿½s)
              */
-
             if ($mainmenu && ! in_array($mainmenu,$this->overwritemenufor)) { $mainmenu=""; }
-        
         }
 
 
@@ -207,88 +204,8 @@ class MenuLeft {
                 
             }
             if ($contenu == 1) print '<div class="menu_fin"></div>';
-
         }
-
     }
-    
-	function recur($tab,$pere,$rang) 
-    {
-	  $leftmenu = $this->leftmenu;
-	  //ballayage du tableau
-	  for ($x=0;$x<count($tab);$x++) {
-	
-	    //si un ï¿½lï¿½ment a pour pï¿½re : $pere
-	    if ($tab[$x][1]==$pere) {
-
-	       //on affiche le menu
-			
-			if ($this->verifConstraint($tab[$x][0],$tab[$x][6],$tab[$x][7]) != 0)
-		    {
-			
-				
-			    if ($tab[$x][6])
-				{
-					
-					$leftmenuConstraint = false;
-					$str = "if(".$tab[$x][6].") \$leftmenuConstraint = true;";
-
-					
-					eval($str);
-					if ($leftmenuConstraint == true)
-					{
-						//echo $tab[$x][0].'-'.$tab[$x][6].'-'.$leftmenu.'<br>';
-						$this->newmenu->add_submenu(DOL_URL_ROOT.$tab[$x][2], $tab[$x][3],$rang-1,$tab[$x][4],$tab[$x][5]);
-						$this->recur($tab,$tab[$x][0],$rang+1);
-					}
-				}
-				else
-				{
-					//echo $tab[$x][0].'-'.$tab[$x][3].'-'.$leftmenu.'<br>';
-					$this->newmenu->add_submenu(DOL_URL_ROOT.$tab[$x][2], $tab[$x][3],$rang-1,$tab[$x][4],$tab[$x][5]);	
-					$this->recur($tab,$tab[$x][0],$rang+1);
-				}
-			
-				//$this->newmenu->add(DOL_URL_ROOT.$tab[$x][2], $tab[$x][3],$rang-1,$tab[$x][4],$tab[$x][5]);
-
-		       	/*et on recherche ses fils
-		       	  en rappelant la fonction recur()
-		       	(+ incrï¿½mentation du dï¿½callage)*/
-		       	
-	       
-		    }
-	    }			
-	  }
-	} 
-	
-    
-    function verifConstraint($rowid,$mainmenu,$leftmenu)
-   	{
-   		global $user,$conf,$user;
-
-   		$constraint = true;
-   		
-   		$sql = "SELECT c.rowid, c.action, mc.user FROM ".MAIN_DB_PREFIX."menu_constraint as c, ".MAIN_DB_PREFIX."menu_const as mc WHERE mc.fk_constraint = c.rowid AND (mc.user = 0 OR mc.user = 2 ) AND mc.fk_menu = '".$rowid."'";
-		$result = $this->db->query($sql);
-		
-		if ($result)
-		{
-			$num = $this->db->num_rows($result);
-			$i = 0;	
-			while (($i < $num) && $constraint == true)
-			{
-
-				$obj = $this->db->fetch_object($result);
-				$strconstraint = "if(!(".$obj->action.")) { \$constraint = false;}";
-				
-				eval($strconstraint);
-				$i++;
-			}
-		}	
-
-		return $constraint; 		
-   	}
-
 }
 
 ?>

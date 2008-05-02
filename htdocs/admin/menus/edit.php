@@ -318,7 +318,14 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 
 	// MenuId Parent
 	print '<tr><td><b>'.$langs->trans('MenuIdParent').'</b></td>';
-	print '<td><input type="text" size="10" name="menuId" value="'.$parent_rowid.'"></td>';
+	if ($parent_rowid)
+	{
+		print '<td>'.$parent_rowid.'<input type="hidden" size="10" name="menuId" value="'.$parent_rowid.'"></td>';
+	}
+	else
+	{
+		print '<td><input type="text" size="10" name="menuId" value="'.$parent_rowid.'"></td>';
+	}
 	print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
 
 	// Handler
@@ -339,11 +346,19 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 
 	// Type
 	print '<tr><td><b>'.$langs->trans('Type').'</b></td><td>';
-	print '<select name="type" class="flat">';
-	print '<option value="">&nbsp;</option>';
-	print '<option value="top"'.($_POST["type"] && $_POST["type"]=='top'?' selected="true"':'').'>Top</option>';
-	print '<option value="left"'.($_POST["type"] && $_POST["type"]=='left'?' selected="true"':'').'>Left</option>';
-	print '</select>';
+	if ($parent_rowid)
+	{
+		print 'Left';
+		print '<input type="hidden" name="type" value="left">';
+	}
+	else
+	{
+		print '<select name="type" class="flat">';
+		print '<option value="">&nbsp;</option>';
+		print '<option value="top"'.($_POST["type"] && $_POST["type"]=='top'?' selected="true"':'').'>Top</option>';
+		print '<option value="left"'.($_POST["type"] && $_POST["type"]=='left'?' selected="true"':'').'>Left</option>';
+		print '</select>';
+	}
 	//	print '<input type="text" size="50" name="type" value="'.$type.'">';
 	print '</td><td>'.$langs->trans('DetailType').'</td></tr>';
 

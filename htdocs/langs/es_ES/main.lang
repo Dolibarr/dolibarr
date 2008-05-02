@@ -418,6 +418,8 @@ TotalMan=Total
 YouCanChangeValuesForThisListFromDictionnarySetup=Puede cambiar estos valores en el menú configuración->diccionarios
 Color=Color
 MenuECM=Documentos
+MenuAWStats=AWStats
+MenuMembers=Members
 # Week day
 Monday=Lunes
 Tuesday=Martes

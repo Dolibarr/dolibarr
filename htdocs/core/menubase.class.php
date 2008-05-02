@@ -332,9 +332,10 @@ class Menubase
 	 * @param unknown_type $mainmenu	Value for mainmenu that defined top menu
 	 * @param unknown_type $leftmenu	Value for left that defined leftmenu
 	 * @param unknown_type $type_user 	0=Internal,1=External,2=All
+	 * @param menu_handler				Name of menu_handler used (auguria, eldy...)
 	 * @return 	array					Menu array completed
 	 */
-	function menuLeftCharger($newmenu, $mainmenu, $leftmenu, $type_user) 
+	function menuLeftCharger($newmenu, $mainmenu, $leftmenu, $type_user, $menu_handler) 
 	{
 		global $langs, $user, $conf;
 		global $rights;	// To export to dol_eval function
@@ -349,7 +350,7 @@ class Menubase
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_const as mc ON m.rowid = mc.fk_menu";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."menu_constraint as mo ON mc.fk_constraint = mo.rowid";
-		$sql.= " WHERE m.menu_handler in('".$this->menu_handler."','all')";
+		$sql.= " WHERE m.menu_handler in('".$menu_handler."','all')";
 		if ($type_user == 0) $sql.= " AND m.user in (0,2)";
 		if ($type_user == 1) $sql.= " AND m.user in (1,2)";
 		// If type_user == 2, no test requires
@@ -372,15 +373,12 @@ class Menubase
 	            // Define $chaine
 	            $chaine="";
 				$title = $langs->trans($menu['titre']);
-				if (! eregi('\(dotnoloadlang\)$',$title))
+	            if ($title == $menu['titre'] && ! empty($menu['langs'])) 
 				{
-					if (! empty($menu['langs'])) $langs->load($menu['langs']);
+					$title = $langs->trans($menu['titre']);
+					$langs->load($menu['langs']);
 				}
-				else
-				{
-					$title=eregi_replace('\(dotnoloadlang\)$','',$title);
-				}
- 	        	if (eregi("/",$title))
+				if (eregi("/",$title))
 	        	{
 	        		$tab_titre = explode("/",$title);
 	        		$chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
@@ -412,7 +410,6 @@ class Menubase
 				$tabMenu[$b][1] = $menu['fk_menu'];
 				$tabMenu[$b][2] = $menu['url'];
 				$tabMenu[$b][3] = $chaine;
-//				$tabMenu[$b][4] = $perms;
 				$tabMenu[$b][5] = $menu['target'];
 				$tabMenu[$b][6] = $menu['leftmenu'];
 	        	if (! isset($tabMenu[$b][4])) $tabMenu[$b][4] = $perms;
@@ -429,24 +426,23 @@ class Menubase
 			dolibarr_print_error($this->db);
 		}
 		
-
 		// Get menutopid
 		$sql = "SELECT m.rowid, m.titre, m.type";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
 		$sql.= " WHERE m.mainmenu = '".$mainmenu."'";
-		$sql.= " AND m.menu_handler= '".$this->menu_handler."'";
+		$sql.= " AND m.menu_handler in('".$menu_handler."','all')";
 		$sql.= " AND type = 'top'";
 		// It should have only one response
 		$resql = $this->db->query($sql);
 		$menutop = $this->db->fetch_object($resql);
 		$menutopid=$menutop->rowid;
 		$this->db->free($resql);
-		
-		// Now edit this->newmenu to add entries in data that are in parent sons
+		//print "menutopid=".$menutopid." sql=".$sql;		
+
+		// Now edit this->newmenu to add entries in tabMenu that are in parent sons
 		$this->recur($tabMenu, $menutopid, 1);
 
 		return $this->newmenu;
-
 	}
 
 	/**
@@ -470,7 +466,6 @@ class Menubase
 			{
 				if ($tab[$x][7])
 				{
-
 					$leftmenuConstraint = true;
 					if ($tab[$x][6]) 
 					{
@@ -479,6 +474,8 @@ class Menubase
 
 					if ($leftmenuConstraint) 
 					{
+//				print "x".$pere." ".$tab[$x][6];
+
 						$this->newmenu->add_submenu(DOL_URL_ROOT . $tab[$x][2], $tab[$x][3], $rang -1, $tab[$x][4], $tab[$x][5]);
 						$this->recur($tab, $tab[$x][0], $rang +1);
 					}
@@ -487,53 +484,14 @@ class Menubase
 		}
 	}
 
-
 	/**
-	 * Check if constraint defined by rowid is ok or not
-	 * \TODO Avoid call for each 
-	 * 
-	 * @param unknown_type $rowid
-	 * @param unknown_type $mainmenu
-	 * @param unknown_type $leftmenu
-	 * @return unknown
+	 * Verify if condition in string is ok or not
+	 *
+	 * @param 	string 		$strRights
+	 * @return 	boolean		true or false
 	 */
-	function verifConstraint($rowid, $mainmenu = "", $leftmenu = "") 
+	function verifCond($strRights)
 	{
-		global $user, $conf, $lang;
-		global $constraint;	// To export to dol_eval function
-		
-		include_once(DOL_DOCUMENT_ROOT.'/lib/admin.lib.php');	// Because later some eval try to run dynamic call to dolibarr_get_const
-		$constraint = true;
-
-		$sql = "SELECT c.rowid, c.action";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "menu_constraint as c, " . MAIN_DB_PREFIX . "menu_const as mc";
-		$sql.= " WHERE mc.fk_constraint = c.rowid AND mc.fk_menu = '" . $rowid . "'";
-
-		dolibarr_syslog("Menubase::verifConstraint sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result) 
-		{
-			//echo $sql;
-			$num = $this->db->num_rows($result);
-			$i = 0;
-			while (($i < $num) && $constraint == true) 
-			{
-				$obj = $this->db->fetch_object($result);
-				$strconstraint = 'if(!(' . $obj->action . ')) { $constraint = false; }';
-				dol_eval($strconstraint);
-				$i++;
-			}
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-		}
-
-		return $constraint;
-	}
-
-	function verifCond($strRights) {
-
 		global $user,$conf,$lang;
 		global $rights;	// To export to dol_eval function
 		
@@ -560,7 +518,7 @@ class Menubase
 	{
 		$sql = "SELECT DISTINCT m.mainmenu";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
-		$sql.= " WHERE m.menu_handler= '".$this->menu_handler."'";
+		$sql.= " WHERE m.menu_handler in ('".$this->menu_handler."','all')";
 
 		$res = $this->db->query($sql);
 		if ($res) {
@@ -619,14 +577,11 @@ class Menubase
 			
 	            // Define $chaine
 	            $chaine="";
-	            $title=$objm->titre;
-				if (! eregi('\(dotnoloadlang\)$',$title))
+	            $title=$langs->trans($objm->titre);
+	            if ($title == $objm->titre && ! empty($menu['langs']))
 				{
-					if (! empty($objm->langs)) $langs->load($objm->langs);
-				}
-				else
-				{
-					$title=eregi_replace('\(dotnoloadlang\)$','',$title);
+					$langs->load($menu['langs']);
+	            	$title=$langs->trans($objm->titre);
 				}
  	        	if (eregi("/",$title))
 	        	{
