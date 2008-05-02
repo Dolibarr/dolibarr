@@ -76,10 +76,11 @@ if ($action == 'add_paiement')
 		}
 	}
 
+	
 	// Effectue les vérifications des parametres
 	if ($_POST['paiementid'] <= 0)
 	{
-		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
+		$mesg = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
 		$error++;
 	}
 
@@ -89,7 +90,7 @@ if ($action == 'add_paiement')
 		// d'un paiement
 		if (! $_POST['accountid'])
 		{
-			$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
+			$mesg = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
 			$error++;
 		}
 	}
@@ -98,7 +99,7 @@ if ($action == 'add_paiement')
 	\TODO A activer qd gestion avoir active et que creation facture fournisseur negative interdit
 	if ($total <= 0)
 	{
-		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Amount')).'</div>';
+		$mesg = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Amount')).'</div>';
 		$error++;
 	}
 */
@@ -110,7 +111,7 @@ if ($action == 'add_paiement')
 		// Creation de la ligne paiement
 		$paiement = new PaiementFourn($db);
 		$paiement->datepaye     = $datepaye;
-		$paiement->amounts      = $amounts;   // Tableau de montant
+		$paiement->amounts      = $amounts;   // Array of amounts
 		$paiement->paiementid   = $_POST['paiementid'];
 		$paiement->num_paiement = $_POST['num_paiement'];
 		$paiement->note         = $_POST['comment'];
@@ -149,7 +150,7 @@ if ($action == 'add_paiement')
 							DOL_URL_ROOT.'/fourn/paiement/fiche.php?id=',
 							'(paiement)',
 							'payment_supplier');
-						$acc->add_url_line($bank_line_id,
+							$acc->add_url_line($bank_line_id,
 							$fac->fournisseur->id,
 							DOL_URL_ROOT.'/fourn/fiche.php?socid=',
 							$fac->fournisseur->nom,
@@ -164,7 +165,7 @@ if ($action == 'add_paiement')
 		}
 		else
 		{
-			$fiche_erreur_message = '<div class="error">'.$langs->trans("Error").'</div>';
+			$mesg = '<div class="error">'.$langs->trans($paiement->error).'</div>';
 			$error++;
 		}
 
@@ -190,9 +191,9 @@ llxHeader();
 
 $html=new Form($db);
 
-if ($fiche_erreur_message)
+if ($mesg)
 {
-	print '<tr><td colspan="3" align="center">'.$fiche_erreur_message.'</td></tr>';
+	print '<tr><td colspan="3" align="center">'.$mesg.'</td></tr>';
 }
 
 if ($action == 'create' || $action == 'add_paiement')

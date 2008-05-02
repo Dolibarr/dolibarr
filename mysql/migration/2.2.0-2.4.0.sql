@@ -290,5 +290,6 @@ create table llx_ecm_document
   private         smallint DEFAULT 0
 ) type=innodb;
 
+ALTER TABLE llx_bank modify num_chq varchar(50);
 
 ALTER TABLE llx_menu_const ADD UNIQUE KEY uk_menu_const(fk_menu, fk_constraint);

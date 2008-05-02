@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/compta/bank/account.class.php
    \ingroup    banque
    \brief      Fichier de la classe des comptes bancaires
-   \version    $Revision$
+   \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
@@ -164,16 +162,16 @@ class Account extends CommonObject
 
 	/**
 		\brief     	Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
-		\param		$date			Date TMS op�ration
+		\param		$date			Date operation
 		\param		$oper			1,2,3,4...
 		\param		$label			Descripton
 		\param		$amount			Montant
 		\param		$num_chq		Numero cheque ou virement
 		\param		$categorie		Categorie optionnelle
-		\param		$user			Utilisateur qui cr�e
+		\param		$user			User that create
 		\param		$emetteur		Nom emetteur
 		\param		$banque			Banque emettrice
-		\return		int				Rowid de l'entr�e ajout�e, <0 si erreur
+		\return		int				Rowid of added entry, <0 si erreur
 	*/
 	function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user, $emetteur='',$banque='')
 	{
@@ -257,8 +255,9 @@ class Account extends CommonObject
 		}
 		else
 		{
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("Account::addline ".$this->error, LOG_ERR);
 			$this->db->rollback();
-			$this->error=$this->db->error();
 			return -2;
 		}
 	}

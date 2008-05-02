@@ -65,8 +65,8 @@ class PaiementFourn
 	}
 
 	/**
-	 *    \brief      R�cup�re l'objet paiement
-	 *    \param      id      id du paiement a r�cup�rer
+	 *    \brief      Load payment object
+	 *    \param      id      id paiement to get
 	 *    \return     int     <0 si ko, >0 si ok
 	 */
 	function fetch($id)
@@ -112,7 +112,7 @@ class PaiementFourn
 	}
 
 	/**
-	 *    \brief      Creta payment in database
+	 *    \brief      Create payment in database
 	 *    \param      user        Object of creating user
 	 *    \return     int         id of created payment, < 0 if error
 	 */
@@ -132,14 +132,18 @@ class PaiementFourn
 			$this->total += $val;
 		}
 		$this->total = price2num($this->total);
-		
+
 		
 		$this->db->begin();
 		
-		if ($this->total <> 0) // On accepte les montants n�gatifs
+		if ($this->total <> 0) // On accepte les montants negatifs
 		{
-			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_author)';
-			$sql .= ' VALUES (now(), '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.$this->note.'\', '.$user->id.')';
+			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
+			$sql.= 'datec, datep, amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
+			$sql.= ' VALUES (now(),';
+			$sql.= ' '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.$this->note.'\', '.$user->id.', 0)';
+			
+			dolibarr_syslog("PaiementFourn::create sql=".$sql);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -162,7 +166,7 @@ class PaiementFourn
 					}
 					else
 					{
-						dolibarr_syslog('PaiementFourn::Create Montant non num�rique');
+						dolibarr_syslog('PaiementFourn::Create Montant non numerique',LOG_ERR);
 					}
 				}
 
@@ -178,12 +182,19 @@ class PaiementFourn
 			}
 			else
 			{
-				dolibarr_syslog('PaiementFourn::Create Erreur INSERT dans paiementfourn');
+				$this->error=$this->db->lasterror();
+				dolibarr_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
 				$error++;
 			}
 		}
+		else
+		{
+			$this->error="ErrorTotalIsNull";
+			dolibarr_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
+			$error++;
+		}
 
-		if ( $this->total <> 0 && $error == 0 ) // On accepte les montants n�gatifs
+		if ($this->total <> 0 && $error == 0) // On accepte les montants negatifs
 		{
 			$this->db->commit();
 			dolibarr_syslog('PaiementFourn::Create Ok Total = '.$this->total);
@@ -192,7 +203,6 @@ class PaiementFourn
 		else
 		{
 			$this->db->rollback();
-			dolibarr_syslog('PaiementFourn::Create Erreur');
 			return -1;
 		}
 	}
