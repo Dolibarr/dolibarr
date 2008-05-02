@@ -27,7 +27,7 @@
 if ($_SESSION["dol_authmode"] == 'forceuser'
   	 && $_SESSION["dol_authmode"] == 'http')
 {
-   die("Deconexion does not work when conexion was made in mode ".$_SESSION["dol_authmode"]);
+   die("Disconnection does not work when connection was made in mode ".$_SESSION["dol_authmode"]);
 }
 
 include_once("../conf/conf.php");
