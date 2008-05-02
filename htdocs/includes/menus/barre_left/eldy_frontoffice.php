@@ -831,6 +831,12 @@ class MenuLeft {
 
 			}
 
+			// Affichage des menus personnalises
+    	   	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
+
+	        $menuArbo = new Menubase($this->db,'eldy','left');
+			$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,1,'eldy');
+			
 			/*
 			* Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
 			*/
