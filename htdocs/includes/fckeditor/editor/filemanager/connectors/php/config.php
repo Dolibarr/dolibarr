@@ -24,8 +24,11 @@
 
 global $Config ;
 
-//require_once("../../../../../../master.inc.php");
-require_once("../../../../../../conf/conf.php"); // ajouté car include master.inc.php ne marche pas
+// We must include the main because this page is
+// a web page that require security controls and
+// is a security hole if anybody can access without
+// being an authenticated user.
+require_once("../../../../../../main.inc.php");	
 $uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
