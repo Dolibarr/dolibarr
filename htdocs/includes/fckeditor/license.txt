@@ -1,5 +1,5 @@
 FCKeditor - The text editor for Internet - http://www.fckeditor.net
-Copyright (C) 2003-2007 Frederico Caldeira Knabben
+Copyright (C) 2003-2008 Frederico Caldeira Knabben
 
 Licensed under the terms of any of the following licenses at your
 choice:
@@ -1244,4 +1244,3 @@ EXHIBIT A -Mozilla Public License.
      the notices in the Source Code files of the Original Code. You should
      use the text of this Exhibit A rather than the text found in the
      Original Code Source Code for Your Modifications.]
-

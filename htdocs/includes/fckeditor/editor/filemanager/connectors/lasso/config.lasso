@@ -1,7 +1,7 @@
 [//lasso
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -51,8 +51,8 @@
 		),
 		'AllowedExtensions' = map(
 			'File' = array('7z','aiff','asf','avi','bmp','csv','doc','fla','flv','gif','gz','gzip','jpeg','jpg','mid','mov','mp3','mp4','mpc','mpeg','mpg','ods','odt','pdf','png','ppt','pxd','qt','ram','rar','rm','rmi','rmvb','rtf','sdc','sitd','swf','sxc','sxw','tar','tgz','tif','tiff','txt','vsd','wav','wma','wmv','xls','xml','zip'),
-			'Image' = array('bmp','gif','jpeg','jpg','png','psd','tif','tiff'),
-			'Flash' = array('swf','fla'),
+			'Image' = array('bmp','gif','jpeg','jpg','png'),
+			'Flash' = array('swf','flv'),
 			'Media' = array('aiff','asf','avi','bmp','fla','flv','gif','jpeg','jpg','mid','mov','mp3','mp4','mpc','mpeg','mpg','png','qt','ram','rm','rmi','rmvb','swf','tif','tiff','wav','wma','wmv')
 		),
 		'DeniedExtensions' = map(

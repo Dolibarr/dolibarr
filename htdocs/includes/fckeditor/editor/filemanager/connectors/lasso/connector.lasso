@@ -1,7 +1,7 @@
 [//lasso
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -55,6 +55,65 @@
 		'uploadResult'	=	'0'
 	);
 
+	/*.....................................................................
+	Custom tag sets the HTML response.
+	*/
+
+	define_tag(
+		'htmlreply',
+		-namespace='fck_',
+		-priority='replace',
+		-required='uploadResult',
+		-optional='NewFilePath',
+		-type='string',
+		-description='Sets the HTML response for the FCKEditor File Upload feature.'
+	);
+		$__html_reply__ = '\
+<script type="text/javascript">
+(function()
+{
+	var d = document.domain ;
+
+	while ( true )
+	{
+		// Test if we can access a parent property.
+		try
+		{
+			var test = window.top.opener.document.domain ;
+			break ;
+		}
+		catch( e ) {}
+
+		// Remove a domain part: www.mytest.example.com => mytest.example.com => example.com ...
+		d = d.replace( /.*?(?:\\.|$)/, "" ) ;
+
+		if ( d.length == 0 )
+			break ;		// It was not able to detect the domain.
+
+		try
+		{
+			document.domain = d ;
+		}
+		catch (e)
+		{
+			break ;
+		}
+	}
+})() ;
+';
+			if($uploadResult == '0' || $uploadResult == '201');
+			$__html_reply__ = $__html_reply__ + '\
+	window.parent.OnUploadCompleted(' + $uploadResult + ',\'' + $NewFilePath + '\',\'' + $NewFilePath->split('/')->last + '\');
+</script>
+			';
+			else;
+			$__html_reply__ = $__html_reply__ + '\
+	window.parent.OnUploadCompleted(' + $uploadResult + ');
+</script>
+			';
+			/if;
+	/define_tag;
+
 
     /*.....................................................................
     Calculate the path to the current folder.
@@ -63,9 +122,21 @@
 
 	var('currentFolderURL' = $ServerPath
 		+ $config->find('Subdirectories')->find(action_param('Type'))
-		+ action_param('CurrentFolder')
+		+ $CurrentFolder
 	);
 
+	if($CurrentFolder->(Find: '..') || $CurrentFolder->(Find: '\\'));
+		if($Command == 'FileUpload');
+			$responseType = 'html';
+			$uploadResult = '102';
+			fck_htmlreply(
+				-uploadResult=$uploadResult
+			);
+		else;
+			$errorNumber = 102;
+			$commandData += '<Error number="' + $errorNumber + '" />\n';
+		/if;
+	else;
 
     /*.....................................................................
     Build the appropriate response per the 'Command' parameter. Wrap the
@@ -110,6 +181,7 @@
             Create a directory 'NewFolderName' within the 'Current Folder.'
             */
 			case('CreateFolder');
+				$NewFolderName = (String_ReplaceRegExp: $NewFolderName, -find='\\.|\\\\|\\/|\\||\\:|\\?|\\*|"|<|>', -replace='_');
 				var('newFolder' = $currentFolderURL + $NewFolderName + '/');
 				file_create($newFolder);
 
@@ -148,7 +220,11 @@
                 /*.........................................................
                 Was a file actually uploaded?
                 */
-				file_uploads->size ? $NewFile = file_uploads->get(1) | $uploadResult = '202';
+                if(file_uploads->size);
+                	$NewFile = file_uploads->get(1);
+                else;
+                	$uploadResult = '202';
+                /if;
 
 				if($uploadResult == '0');
                     /*.....................................................
@@ -157,9 +233,11 @@
                     files. (Test.txt, Test(1).txt, Test(2).txt, etc.)
                     */
 					$NewFileName = $NewFile->find('OrigName');
+					$NewFileName = (String_ReplaceRegExp: $NewFileName, -find='\\\\|\\/|\\||\\:|\\?|\\*|"|<|>', -replace='_');
 					$OrigFilePath = $currentFolderURL + $NewFileName;
 					$NewFilePath = $OrigFilePath;
 					local('fileExtension') = '.' + $NewFile->find('OrigExtension');
+					#fileExtension = (String_ReplaceRegExp: #fileExtension, -find='\\\\|\\/|\\||\\:|\\?|\\*|"|<|>', -replace='_');
 					local('shortFileName') = $NewFileName->removetrailing(#fileExtension)&;
 
 
@@ -191,31 +269,17 @@
 							case(0);
 								$OrigFilePath != $NewFilePath ? $uploadResult = 201;
 							case;
-								$uploadResult = '202';
+								$uploadResult = file_currenterror( -errorcode);
 						/select;
 					/if;
 				/if;
-
-
-                /*.........................................................
-                Set the HTML response.
-                */
-                if($uploadResult == '0' || $uploadResult == '201');
-				$__html_reply__ = '\
-<script type="text/javascript">
-	window.parent.frames[\'frmUpload\'].OnUploadCompleted(' + $uploadResult + ',\'' + $NewFilePath + '\',\'' + $NewFilePath->split('/')->last + '\');
-</script>
-				';
-                else;
-				$__html_reply__ = '\
-<script type="text/javascript">
-	window.parent.frames[\'frmUpload\'].OnUploadCompleted(' + $uploadResult + ');
-</script>
-				';
-				/if;
+				fck_htmlreply(
+					-uploadResult=$uploadResult,
+					-NewFilePath=$NewFilePath
+				);
 		/select;
 	/inline;
-
+	/if;
 
     /*.....................................................................
     Send a custom header for xml responses.
@@ -234,24 +298,25 @@ Keep-Alive: timeout=15, max=98
 Connection: Keep-Alive
 Content-Type: text/xml; charset=utf-8
 [//lasso
-		/header;
+/header;
 
-
-        /*.................................................................
-        Set the content type encoding for Lasso.
-        */
+		/*
+			Set the content type encoding for Lasso.
+		*/
 		content_type('text/xml; charset=utf-8');
 
-
-        /*.................................................................
-        Wrap the response as XML and output.
-        */
+		/*
+			Wrap the response as XML and output.
+		*/
 		$__html_reply__ = '\
 <?xml version="1.0" encoding="utf-8" ?>
-<Connector command="' + $Command + '" resourceType="' + $Type + '">
-	<CurrentFolder path="' + $CurrentFolder + '" url="' + $currentFolderURL + '" />
-' + $commandData + '
-</Connector>
-		';
+<Connector command="' + $Command + '" resourceType="' + $Type + '">';
+
+		if($errorNumber != '102');
+			$__html_reply__ += '<CurrentFolder path="' + $CurrentFolder + '" url="' + $currentFolderURL + '" />';
+		/if;
+
+		$__html_reply__ += $commandData + '
+</Connector>';
 	/if;
 ]

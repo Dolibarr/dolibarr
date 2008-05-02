@@ -1,6 +1,6 @@
 ﻿<%
  ' FCKeditor - The text editor for Internet - http://www.fckeditor.net
- ' Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ ' Copyright (C) 2003-2008 Frederico Caldeira Knabben
  '
  ' == BEGIN LICENSE ==
  '
@@ -190,7 +190,7 @@ Sub FileUpload( resourceType, currentFolder, sCommand )
 
 	dim sFileUrl
 	sFileUrl = CombinePaths( GetResourceTypePath( resourceType, sCommand ) , currentFolder )
-	sFileUrl = CombinePaths( sFileUrl, sFileName ) 
+	sFileUrl = CombinePaths( sFileUrl, sFileName )
 
 	SendUploadResults sErrorNumber, sFileUrl, sFileName, ""
 End Sub

@@ -1,6 +1,6 @@
 """
 FCKeditor - The text editor for Internet - http://www.fckeditor.net
-Copyright (C) 2003-2007 Frederico Caldeira Knabben
+Copyright (C) 2003-2008 Frederico Caldeira Knabben
 
 == BEGIN LICENSE ==
 
@@ -57,7 +57,7 @@ class FCKeditor(object):
 
 	def CreateHtml(self):
 		HtmlValue = escape(self.Value)
-		Html = "<div>"
+		Html = ""
 
 		if (self.IsCompatible()):
 			File = "fckeditor.html"
@@ -105,7 +105,6 @@ class FCKeditor(object):
 					HeightCSS,
 					HtmlValue
 					)
-		Html += "</div>"
 		return Html
 
 	def IsCompatible(self):
@@ -159,4 +158,3 @@ class FCKeditor(object):
 				else:
 					sParams += "%s=%s" % (k, v)
 		return sParams
-

@@ -1,7 +1,7 @@
 [//lasso
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -64,17 +64,13 @@
 		define_tag('create');
 			if(self->isCompatibleBrowser);
 				local('out' = '
-					<div>
 						<input type="hidden" id="' + self->instancename + '" name="' + self->instancename + '" value="' + encode_html(self->initialvalue) + '" style="display:none" />
 						' + self->parseConfig + '
 						<iframe id="' + self->instancename + '___Frame" src="' + self->basepath + 'editor/fckeditor.html?InstanceName=' + self->instancename + '&Toolbar=' + self->toolbarset + '" width="' + self->width + '" height="' + self->height + '" frameborder="0" scrolling="no"></iframe>
-					</div>
 				');
 			else;
 				local('out' = '
-					<div>
 						<textarea name="' + self->instancename + '" rows="4" cols="40" style="width: ' + self->width + '; height: ' + self->height + '">' + encode_html(self->initialvalue) + '</textarea>
-					</div>
 				');
 			/if;
 			return(@#out);
@@ -82,10 +78,10 @@
 
 		define_tag('isCompatibleBrowser');
 			local('result' = false);
-			if (client_browser->Find("MSIE") && !client_browser->Find("mac") && !client_browser->Find("Opera"));    
+			if (client_browser->Find("MSIE") && !client_browser->Find("mac") && !client_browser->Find("Opera"));
 				#result = client_browser->Substring(client_browser->Find("MSIE")+5,3)>=5.5;
 			/if;
-			if (client_browser->Find("Gecko/"));    
+			if (client_browser->Find("Gecko/"));
 				#result = client_browser->Substring(client_browser->Find("Gecko/")+6,8)>=20030210;
 			/if;
 			if (client_browser->Find("Opera/"));

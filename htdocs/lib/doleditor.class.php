@@ -72,7 +72,7 @@ class DolEditor
 		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
     	$modulepart='fckeditor';
 		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&file=';
-		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DOCUMENT_ROOT.'/'.$modulepart.'/' ;
+		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DATA_ROOT.'/'.$modulepart.'/' ;
 
     	$this->editor->Config['LinkBrowser']=($uselocalbrowser?'true':'false');
     	$this->editor->Config['ImageBrowser']=($uselocalbrowser?'true':'false');

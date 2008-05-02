@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -28,7 +28,11 @@
 		<meta content="noindex, nofollow" name="robots">
 		<script src="common/fck_dialog_common.js" type="text/javascript"></script>
 		<script src="fck_flash/fck_flash.js" type="text/javascript"></script>
-		<link href="common/fck_dialog_common.css" type="text/css" rel="stylesheet">
+		<script type="text/javascript">
+
+document.write( FCKTools.GetStyleHtml( GetCommonDialogCss() ) ) ;
+
+		</script>
 	</head>
 	<body scroll="no" style="OVERFLOW: hidden">
 		<div id="divInfo">
@@ -92,7 +96,9 @@
 				<input id="txtUploadFile" style="WIDTH: 100%" type="file" size="40" name="NewFile" /><br />
 				<br />
 				<input id="btnUpload" type="submit" value="Send it to the Server" fckLang="DlgLnkBtnUpload" />
-				<iframe name="UploadWindow" style="DISPLAY: none" src="javascript:void(0)"></iframe>
+				<script type="text/javascript">
+					document.write( '<iframe name="UploadWindow" style="DISPLAY: none" src="' + FCKTools.GetVoidUrl() + '"></iframe>' ) ;
+				</script>
 			</form>
 		</div>
 		<div id="divAdvanced" style="DISPLAY: none">

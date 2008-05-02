@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Var god och klistra in Er text i rutan nedan genom att använda 
 DlgPasteSec		: "På grund av din webläsares säkerhetsinställningar kan verktyget inte få åtkomst till urklippsdatan. Var god och använd detta fönster istället.",
 DlgPasteIgnoreFont		: "Ignorera typsnittsdefinitioner",
 DlgPasteRemoveStyles	: "Radera Stildefinitioner",
-DlgPasteCleanBox		: "Töm rutans innehåll",
 
 // Color Picker
 ColorAutomatic	: "Automatisk",

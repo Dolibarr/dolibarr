@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Žemiau esančiame įvedimo lauke įdėkite tekstą, naudodami k
 DlgPasteSec		: "Because of your browser security settings, the editor is not able to access your clipboard data directly. You are required to paste it again in this window.",	//MISSING
 DlgPasteIgnoreFont		: "Ignoruoti šriftų nustatymus",
 DlgPasteRemoveStyles	: "Pašalinti stilių nustatymus",
-DlgPasteCleanBox		: "Trinti įvedimo lauką",
 
 // Color Picker
 ColorAutomatic	: "Automatinis",

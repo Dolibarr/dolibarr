@@ -1,6 +1,6 @@
 <%
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -62,7 +62,7 @@ DEFINE CLASS goFckeditor AS CONTAINER OLEPUBLIC
 
 		HtmlValue = THIS.cValue		&& HTMLSPECIALCHARS()
 
-		html = [<div>]
+		html = []
 		IF THIS.IsCompatible()
 			lcLink = THIS.BasePath+[editor/fckeditor.html?InstanceName=]+THIS.cInstanceName
 
@@ -93,8 +93,6 @@ DEFINE CLASS goFckeditor AS CONTAINER OLEPUBLIC
 
 			html = html + [<textarea name="]+THIS.cInstanceName +[" rows="4" cols="40" style="width: ]+WidthCSS+[ height: ]+HeightCSS+[">]+HtmlValue+[</textarea>]
 		ENDIF
-
-		html = html + [</div>]
 
 		RETURN (html)
 	ENDFUNC

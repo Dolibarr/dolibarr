@@ -1,7 +1,7 @@
 <cfsetting enablecfoutputonly="Yes">
 <!---
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -26,7 +26,8 @@
 	Config = StructNew() ;
 
 	// SECURITY: You must explicitly enable this "connector". (Set enabled to "true")
-	Config.Enabled = true ;
+	Config.Enabled = false ;
+
 
 	// Path to uploaded files relative to the document root.
 	Config.UserFilesPath = "/userfiles/" ;
@@ -37,7 +38,7 @@
 	// Example: C:\inetpub\wwwroot\myDocs\
 	Config.ServerPath = "" ;
 
-	// Due to security issues with Apache modules, it is reccomended to leave the
+	// Due to security issues with Apache modules, it is recommended to leave the
 	// following setting enabled.
 	Config.ForceSingleExtension = true ;
 
@@ -56,6 +57,11 @@
 	// (This feature works in MX 6.0 and above))
 	Config.HtmlExtensions					= "html,htm,xml,xsd,txt,js" ;
 
+	//Due to known issues with GetTempDirectory function, it is
+	//recommended to set this vairiable to a valid directory
+	//instead of using the GetTempDirectory function
+	//(used by MX 6.0 and above)
+	Config.TempDirectory = GetTempDirectory();
 
 //	Configuration settings for each Resource Type
 //
@@ -64,7 +70,7 @@
 //	- DeniedExtensions: The extensions that won't be allowed.
 //		If it is empty then no restrictions are done here.
 //
-//	For a file to be uploaded it has to fullfil both the AllowedExtensions
+//	For a file to be uploaded it has to fulfill both the AllowedExtensions
 //	and DeniedExtensions (that's it: not being denied) conditions.
 //
 //	- FileTypesPath: the virtual folder relative to the document root where
@@ -107,14 +113,14 @@
 	Config.QuickUploadPath["File"] 			= Config.FileTypesPath["File"] ;
 	Config.QuickUploadAbsolutePath["File"] 	= Config.FileTypesAbsolutePath["File"] ;
 
-	Config.AllowedExtensions["Image"] 		= "bmp,gif,jpeg,jpg,png,psd,tif,tiff" ;
+	Config.AllowedExtensions["Image"] 		= "bmp,gif,jpeg,jpg,png" ;
 	Config.DeniedExtensions["Image"] 		= "" ;
 	Config.FileTypesPath["Image"] 			= Config.UserFilesPath & 'image/' ;
 	Config.FileTypesAbsolutePath["Image"] 	= iif( Config.ServerPath eq "", de(""), de(Config.ServerPath & 'image/') ) ;
 	Config.QuickUploadPath["Image"] 		= Config.FileTypesPath["Image"] ;
 	Config.QuickUploadAbsolutePath["Image"] = Config.FileTypesAbsolutePath["Image"] ;
 
-	Config.AllowedExtensions["Flash"] 		= "swf,fla" ;
+	Config.AllowedExtensions["Flash"] 		= "swf,flv" ;
 	Config.DeniedExtensions["Flash"] 		= "" ;
 	Config.FileTypesPath["Flash"] 			= Config.UserFilesPath & 'flash/' ;
 	Config.FileTypesAbsolutePath["Flash"] 	= iif( Config.ServerPath eq "", de(""), de(Config.ServerPath & 'flash/') ) ;

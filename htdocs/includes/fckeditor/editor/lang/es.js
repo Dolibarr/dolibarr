@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -45,7 +45,7 @@ InsertLinkLbl		: "Vínculo",
 InsertLink			: "Insertar/Editar Vínculo",
 RemoveLink			: "Eliminar Vínculo",
 Anchor				: "Referencia",
-AnchorDelete		: "Remove Anchor",	//MISSING
+AnchorDelete		: "Eliminar Referencia",
 InsertImageLbl		: "Imagen",
 InsertImage			: "Insertar/Editar Imagen",
 InsertFlashLbl		: "Flash",
@@ -71,7 +71,7 @@ RightJustify		: "Alinear a Derecha",
 BlockJustify		: "Justificado",
 DecreaseIndent		: "Disminuir Sangría",
 IncreaseIndent		: "Aumentar Sangría",
-Blockquote			: "Blockquote",	//MISSING
+Blockquote			: "Cita",
 Undo				: "Deshacer",
 Redo				: "Rehacer",
 NumberedListLbl		: "Numeración",
@@ -105,27 +105,27 @@ SelectionField	: "Campo de Selección",
 ImageButton		: "Botón Imagen",
 
 FitWindow		: "Maximizar el tamaño del editor",
-ShowBlocks		: "Show Blocks",	//MISSING
+ShowBlocks		: "Mostrar bloques",
 
 // Context Menu
 EditLink			: "Editar Vínculo",
 CellCM				: "Celda",
 RowCM				: "Fila",
 ColumnCM			: "Columna",
-InsertRowAfter		: "Insert Row After",	//MISSING
-InsertRowBefore		: "Insert Row Before",	//MISSING
+InsertRowAfter		: "Insertar fila en la parte inferior",
+InsertRowBefore		: "Insertar fila en la parte superior",
 DeleteRows			: "Eliminar Filas",
-InsertColumnAfter	: "Insert Column After",	//MISSING
-InsertColumnBefore	: "Insert Column Before",	//MISSING
+InsertColumnAfter	: "Insertar columna a la derecha",
+InsertColumnBefore	: "Insertar columna a la izquierda",
 DeleteColumns		: "Eliminar Columnas",
-InsertCellAfter		: "Insert Cell After",	//MISSING
-InsertCellBefore	: "Insert Cell Before",	//MISSING
+InsertCellAfter		: "Insertar celda a la derecha",
+InsertCellBefore	: "Insertar celda a la izquierda",
 DeleteCells			: "Eliminar Celdas",
 MergeCells			: "Combinar Celdas",
-MergeRight			: "Merge Right",	//MISSING
-MergeDown			: "Merge Down",	//MISSING
-HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
-VerticalSplitCell	: "Split Cell Vertically",	//MISSING
+MergeRight			: "Combinar a la derecha",
+MergeDown			: "Combinar hacia abajo",
+HorizontalSplitCell	: "Dividir la celda horizontalmente",
+VerticalSplitCell	: "Dividir la celda verticalmente",
 TableDelete			: "Eliminar Tabla",
 CellProperties		: "Propiedades de Celda",
 TableProperties		: "Propiedades de Tabla",
@@ -171,10 +171,10 @@ DlgAlertUrl			: "Inserte el URL",
 // General Dialogs Labels
 DlgGenNotSet		: "<No definido>",
 DlgGenId			: "Id",
-DlgGenLangDir		: "Orientación de idioma",
+DlgGenLangDir		: "Orientación",
 DlgGenLangDirLtr	: "Izquierda a Derecha (LTR)",
 DlgGenLangDirRtl	: "Derecha a Izquierda (RTL)",
-DlgGenLangCode		: "Código de idioma",
+DlgGenLangCode		: "Cód. de idioma",
 DlgGenAccessKey		: "Clave de Acceso",
 DlgGenName			: "Nombre",
 DlgGenTabIndex		: "Indice de tabulación",
@@ -210,7 +210,7 @@ DlgImgAlignRight	: "Derecha",
 DlgImgAlignTextTop	: "Tope del texto",
 DlgImgAlignTop		: "Tope",
 DlgImgPreview		: "Vista Previa",
-DlgImgAlertUrl		: "Por favor tipee el URL de la imagen",
+DlgImgAlertUrl		: "Por favor escriba la URL de la imagen",
 DlgImgLinkTab		: "Vínculo",
 
 // Flash Dialog
@@ -271,7 +271,7 @@ DlgLnkPopTop		: "Posición Derecha",
 DlnLnkMsgNoUrl		: "Por favor tipee el vínculo URL",
 DlnLnkMsgNoEMail	: "Por favor tipee la dirección de e-mail",
 DlnLnkMsgNoAnchor	: "Por favor seleccione una referencia",
-DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
+DlnLnkMsgInvPopName	: "El nombre debe empezar con un caracter alfanumérico y no debe contener espacios",
 
 // Color Dialog
 DlgColorTitle		: "Seleccionar Color",
@@ -332,7 +332,7 @@ DlgCellBorderColor	: "Color de Borde",
 DlgCellBtnSelect	: "Seleccione...",
 
 // Find and Replace Dialog
-DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
+DlgFindAndReplaceTitle	: "Buscar y Reemplazar",
 
 // Find Dialog
 DlgFindTitle		: "Buscar",
@@ -356,10 +356,9 @@ PasteAsText		: "Pegar como Texto Plano",
 PasteFromWord	: "Pegar desde Word",
 
 DlgPasteMsg2	: "Por favor pegue dentro del cuadro utilizando el teclado (<STRONG>Ctrl+V</STRONG>); luego presione <STRONG>OK</STRONG>.",
-DlgPasteSec		: "Because of your browser security settings, the editor is not able to access your clipboard data directly. You are required to paste it again in this window.",	//MISSING
+DlgPasteSec		: "Debido a la configuración de seguridad de su navegador, el editor no tiene acceso al portapapeles. Es necesario que lo pegue de nuevo en esta ventana.",
 DlgPasteIgnoreFont		: "Ignorar definiciones de fuentes",
 DlgPasteRemoveStyles	: "Remover definiciones de estilo",
-DlgPasteCleanBox		: "Borrar el contenido del cuadro",
 
 // Color Picker
 ColorAutomatic	: "Automático",
@@ -393,9 +392,9 @@ IeSpellDownload			: "Módulo de Control de Ortografía no instalado. ¿Desea des
 // Button Dialog
 DlgButtonText		: "Texto (Valor)",
 DlgButtonType		: "Tipo",
-DlgButtonTypeBtn	: "Button",	//MISSING
-DlgButtonTypeSbm	: "Submit",	//MISSING
-DlgButtonTypeRst	: "Reset",	//MISSING
+DlgButtonTypeBtn	: "Boton",
+DlgButtonTypeSbm	: "Enviar",
+DlgButtonTypeRst	: "Reestablecer",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Nombre",
@@ -444,7 +443,7 @@ DlgHiddenValue	: "Valor",
 // Bulleted List Dialog
 BulletedListProp	: "Propiedades de Viñetas",
 NumberedListProp	: "Propiedades de Numeraciones",
-DlgLstStart			: "Start",	//MISSING
+DlgLstStart			: "Inicio",
 DlgLstType			: "Tipo",
 DlgLstTypeCircle	: "Círculo",
 DlgLstTypeDisc		: "Disco",
@@ -467,15 +466,15 @@ DlgDocLangDirLTR	: "Izq. a Derecha (LTR)",
 DlgDocLangDirRTL	: "Der. a Izquierda (RTL)",
 DlgDocLangCode		: "Código de Idioma",
 DlgDocCharSet		: "Codif. de Conjunto de Caracteres",
-DlgDocCharSetCE		: "Central European",	//MISSING
-DlgDocCharSetCT		: "Chinese Traditional (Big5)",	//MISSING
-DlgDocCharSetCR		: "Cyrillic",	//MISSING
-DlgDocCharSetGR		: "Greek",	//MISSING
-DlgDocCharSetJP		: "Japanese",	//MISSING
-DlgDocCharSetKR		: "Korean",	//MISSING
-DlgDocCharSetTR		: "Turkish",	//MISSING
-DlgDocCharSetUN		: "Unicode (UTF-8)",	//MISSING
-DlgDocCharSetWE		: "Western European",	//MISSING
+DlgDocCharSetCE		: "Centro Europeo",
+DlgDocCharSetCT		: "Chino Tradicional (Big5)",
+DlgDocCharSetCR		: "Cirílico",
+DlgDocCharSetGR		: "Griego",
+DlgDocCharSetJP		: "Japonés",
+DlgDocCharSetKR		: "Coreano",
+DlgDocCharSetTR		: "Turco",
+DlgDocCharSetUN		: "Unicode (UTF-8)",
+DlgDocCharSetWE		: "Europeo occidental",
 DlgDocCharSetOther	: "Otra Codificación",
 
 DlgDocDocType		: "Encabezado de Tipo de Documento",
@@ -505,7 +504,7 @@ DlgTemplatesTitle	: "Contenido de Plantillas",
 DlgTemplatesSelMsg	: "Por favor selecciona la plantilla a abrir en el editor<br>(el contenido actual se perderá):",
 DlgTemplatesLoading	: "Cargando lista de Plantillas. Por favor, aguarde...",
 DlgTemplatesNoTpl	: "(No hay plantillas definidas)",
-DlgTemplatesReplace	: "Replace actual contents",	//MISSING
+DlgTemplatesReplace	: "Reemplazar el contenido actual",
 
 // About Dialog
 DlgAboutAboutTab	: "Acerca de",

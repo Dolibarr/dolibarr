@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -45,7 +45,7 @@ InsertLinkLbl		: "Ссылка",
 InsertLink			: "Вставить/Редактировать ссылку",
 RemoveLink			: "Убрать ссылку",
 Anchor				: "Вставить/Редактировать якорь",
-AnchorDelete		: "Remove Anchor",	//MISSING
+AnchorDelete		: "Убрать якорь",
 InsertImageLbl		: "Изображение",
 InsertImage			: "Вставить/Редактировать изображение",
 InsertFlashLbl		: "Flash",
@@ -71,7 +71,7 @@ RightJustify		: "По правому краю",
 BlockJustify		: "По ширине",
 DecreaseIndent		: "Уменьшить отступ",
 IncreaseIndent		: "Увеличить отступ",
-Blockquote			: "Blockquote",	//MISSING
+Blockquote			: "Цитата",
 Undo				: "Отменить",
 Redo				: "Повторить",
 NumberedListLbl		: "Нумерованный список",
@@ -105,27 +105,27 @@ SelectionField	: "Список",
 ImageButton		: "Кнопка с изображением",
 
 FitWindow		: "Развернуть окно редактора",
-ShowBlocks		: "Show Blocks",	//MISSING
+ShowBlocks		: "Показать блоки",
 
 // Context Menu
 EditLink			: "Вставить ссылку",
 CellCM				: "Ячейка",
 RowCM				: "Строка",
 ColumnCM			: "Колонка",
-InsertRowAfter		: "Insert Row After",	//MISSING
-InsertRowBefore		: "Insert Row Before",	//MISSING
+InsertRowAfter		: "Вставить строку после",
+InsertRowBefore		: "Вставить строку до",
 DeleteRows			: "Удалить строки",
-InsertColumnAfter	: "Insert Column After",	//MISSING
-InsertColumnBefore	: "Insert Column Before",	//MISSING
+InsertColumnAfter	: "Вставить колонку после",
+InsertColumnBefore	: "Вставить колонку до",
 DeleteColumns		: "Удалить колонки",
-InsertCellAfter		: "Insert Cell After",	//MISSING
-InsertCellBefore	: "Insert Cell Before",	//MISSING
+InsertCellAfter		: "Вставить ячейку после",
+InsertCellBefore	: "Вставить ячейку до",
 DeleteCells			: "Удалить ячейки",
 MergeCells			: "Соединить ячейки",
-MergeRight			: "Merge Right",	//MISSING
-MergeDown			: "Merge Down",	//MISSING
-HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
-VerticalSplitCell	: "Split Cell Vertically",	//MISSING
+MergeRight			: "Соединить вправо",
+MergeDown			: "Соединить вниз",
+HorizontalSplitCell	: "Разбить ячейку горизонтально",
+VerticalSplitCell	: "Разбить ячейку вертикально",
 TableDelete			: "Удалить таблицу",
 CellProperties		: "Свойства ячейки",
 TableProperties		: "Свойства таблицы",
@@ -146,7 +146,7 @@ FormProp			: "Свойства формы",
 FontFormats			: "Нормальный;Форматированный;Адрес;Заголовок 1;Заголовок 2;Заголовок 3;Заголовок 4;Заголовок 5;Заголовок 6;Нормальный (DIV)",
 
 // Alerts and Messages
-ProcessingXHTML		: "Обработка XHTML. Пожалуйста подождите...",
+ProcessingXHTML		: "Обработка XHTML. Пожалуйста, подождите...",
 Done				: "Сделано",
 PasteWordConfirm	: "Текст, который вы хотите вставить, похож на копируемый из Word. Вы хотите очистить его перед вставкой?",
 NotCompatiblePaste	: "Эта команда доступна для Internet Explorer версии 5.5 или выше. Вы хотите вставить без очистки?",
@@ -156,7 +156,7 @@ NotImplemented		: "Команда не реализована",
 UnknownToolbarSet	: "Панель инструментов \"%1\" не существует",
 NoActiveX			: "Настройки безопасности вашего браузера могут ограничивать некоторые свойства редактора. Вы должны включить опцию \"Запускать элементы управления ActiveX и плугины\". Вы можете видеть ошибки и замечать отсутствие возможностей.",
 BrowseServerBlocked : "Ресурсы браузера не могут быть открыты. Проверьте что блокировки всплывающих окон выключены.",
-DialogBlocked		: "Не возможно открыть окно диалога. Проверьте что блокировки всплывающих окон выключены.",
+DialogBlocked		: "Невозможно открыть окно диалога. Проверьте что блокировки всплывающих окон выключены.",
 
 // Dialogs
 DlgBtnOK			: "ОК",
@@ -166,7 +166,7 @@ DlgBtnBrowseServer	: "Просмотреть на сервере",
 DlgAdvancedTag		: "Расширенный",
 DlgOpOther			: "<Другое>",
 DlgInfoTab			: "Информация",
-DlgAlertUrl			: "Пожалуйста вставьте URL",
+DlgAlertUrl			: "Пожалуйста, вставьте URL",
 
 // General Dialogs Labels
 DlgGenNotSet		: "<не определено>",
@@ -210,7 +210,7 @@ DlgImgAlignRight	: "По правому краю",
 DlgImgAlignTextTop	: "Текст наверху",
 DlgImgAlignTop		: "По верху",
 DlgImgPreview		: "Предварительный просмотр",
-DlgImgAlertUrl		: "Пожалуйста введите URL изображения",
+DlgImgAlertUrl		: "Пожалуйста, введите URL изображения",
 DlgImgLinkTab		: "Ссылка",
 
 // Flash Dialog
@@ -268,9 +268,9 @@ DlgLnkPopHeight		: "Высота",
 DlgLnkPopLeft		: "Позиция слева",
 DlgLnkPopTop		: "Позиция сверху",
 
-DlnLnkMsgNoUrl		: "Пожалуйста введите URL ссылки",
-DlnLnkMsgNoEMail	: "Пожалуйста введите адрес эл. почты",
-DlnLnkMsgNoAnchor	: "Пожалуйста выберете якорь",
+DlnLnkMsgNoUrl		: "Пожалуйста, введите URL ссылки",
+DlnLnkMsgNoEMail	: "Пожалуйста, введите адрес эл. почты",
+DlnLnkMsgNoAnchor	: "Пожалуйста, выберете якорь",
 DlnLnkMsgInvPopName	: "Название вспывающего окна должно начинаться буквы и не может содержать пробелов",
 
 // Color Dialog
@@ -332,7 +332,7 @@ DlgCellBorderColor	: "Цвет бордюра",
 DlgCellBtnSelect	: "Выберите...",
 
 // Find and Replace Dialog
-DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
+DlgFindAndReplaceTitle	: "Найти и заменить",
 
 // Find Dialog
 DlgFindTitle		: "Найти",
@@ -349,17 +349,16 @@ DlgReplaceReplAllBtn	: "Заменить все",
 DlgReplaceWordChk		: "Совпадение целых слов",
 
 // Paste Operations / Dialog
-PasteErrorCut	: "Настройки безопасности вашего браузера не позволяют редактору автоматически выполнять операции вырезания. Пожалуйста используйте клавиатуру для этого (Ctrl+X).",
-PasteErrorCopy	: "Настройки безопасности вашего браузера не позволяют редактору автоматически выполнять операции копирования. Пожалуйста используйте клавиатуру для этого (Ctrl+C).",
+PasteErrorCut	: "Настройки безопасности вашего браузера не позволяют редактору автоматически выполнять операции вырезания. Пожалуйста, используйте клавиатуру для этого (Ctrl+X).",
+PasteErrorCopy	: "Настройки безопасности вашего браузера не позволяют редактору автоматически выполнять операции копирования. Пожалуйста, используйте клавиатуру для этого (Ctrl+C).",
 
 PasteAsText		: "Вставить только текст",
 PasteFromWord	: "Вставить из Word",
 
-DlgPasteMsg2	: "Пожалуйста вставьте текст в прямоугольник используя сочетание клавиш (<STRONG>Ctrl+V</STRONG>) и нажмите <STRONG>OK</STRONG>.",
-DlgPasteSec		: "Because of your browser security settings, the editor is not able to access your clipboard data directly. You are required to paste it again in this window.",	//MISSING
+DlgPasteMsg2	: "Пожалуйста, вставьте текст в прямоугольник, используя сочетание клавиш (<STRONG>Ctrl+V</STRONG>), и нажмите <STRONG>OK</STRONG>.",
+DlgPasteSec		: "По причине настроек безопасности браузера, редактор не имеет доступа к данным буфера обмена напрямую. Вам необходимо вставить текст снова в это окно.",
 DlgPasteIgnoreFont		: "Игнорировать определения гарнитуры",
 DlgPasteRemoveStyles	: "Убрать определения стилей",
-DlgPasteCleanBox		: "Очистить",
 
 // Color Picker
 ColorAutomatic	: "Автоматический",
@@ -371,7 +370,7 @@ DocProps		: "Свойства документа",
 // Anchor Dialog
 DlgAnchorTitle		: "Свойства якоря",
 DlgAnchorName		: "Имя якоря",
-DlgAnchorErrorName	: "Пожалуйста введите имя якоря",
+DlgAnchorErrorName	: "Пожалуйста, введите имя якоря",
 
 // Speller Pages Dialog
 DlgSpellNotInDic		: "Нет в словаре",
@@ -463,8 +462,8 @@ DlgDocMetaTab		: "Мета данные",
 
 DlgDocPageTitle		: "Заголовок страницы",
 DlgDocLangDir		: "Направление текста",
-DlgDocLangDirLTR	: "Слева на право (LTR)",
-DlgDocLangDirRTL	: "Справа на лево (RTL)",
+DlgDocLangDirLTR	: "Слева направо (LTR)",
+DlgDocLangDirRTL	: "Справа налево (RTL)",
 DlgDocLangCode		: "Код языка",
 DlgDocCharSet		: "Кодировка набора символов",
 DlgDocCharSetCE		: "Центрально-европейская",
@@ -502,8 +501,8 @@ DlgDocPreview		: "Предварительный просмотр",
 // Templates Dialog
 Templates			: "Шаблоны",
 DlgTemplatesTitle	: "Шаблоны содержимого",
-DlgTemplatesSelMsg	: "Пожалуйста выберете шаблон для открытия в редакторе<br>(текущее содержимое будет потеряно):",
-DlgTemplatesLoading	: "Загрузка списка шаблонов. Пожалуйста подождите...",
+DlgTemplatesSelMsg	: "Пожалуйста, выберете шаблон для открытия в редакторе<br>(текущее содержимое будет потеряно):",
+DlgTemplatesLoading	: "Загрузка списка шаблонов. Пожалуйста, подождите...",
 DlgTemplatesNoTpl	: "(Ни одного шаблона не определено)",
 DlgTemplatesReplace	: "Заменить текущее содержание",
 

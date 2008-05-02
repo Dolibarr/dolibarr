@@ -1,4 +1,4 @@
-# replace the name of this file to .htaccess (if using apache), 
+# replace the name of this file to .htaccess (if using apache),
 # and set the proper options and paths according your enviroment
 
 Allow from all
@@ -19,5 +19,5 @@ PythonOption wsgi.application wsgi::App
 
 
 # Plain old CGI
-#Options +ExecCGI 
+#Options +ExecCGI
 #AddHandler cgi-script py

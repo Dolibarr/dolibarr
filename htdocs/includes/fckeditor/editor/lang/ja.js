@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "キーボード(<STRONG>Ctrl+V</STRONG>)を使用して、次の
 DlgPasteSec		: "ブラウザのセキュリティ設定により、エディタはクリップボード・データに直接アクセスすることができません。このウィンドウは貼り付け操作を行う度に表示されます。",
 DlgPasteIgnoreFont		: "FontタグのFace属性を無視します。",
 DlgPasteRemoveStyles	: "スタイル定義を削除します。",
-DlgPasteCleanBox		: "入力エリアクリア",
 
 // Color Picker
 ColorAutomatic	: "自動",

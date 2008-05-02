@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -45,7 +45,7 @@ InsertLinkLbl		: "Linkki",
 InsertLink			: "Lisää linkki/muokkaa linkkiä",
 RemoveLink			: "Poista linkki",
 Anchor				: "Lisää ankkuri/muokkaa ankkuria",
-AnchorDelete		: "Remove Anchor",	//MISSING
+AnchorDelete		: "Poista ankkuri",
 InsertImageLbl		: "Kuva",
 InsertImage			: "Lisää kuva/muokkaa kuvaa",
 InsertFlashLbl		: "Flash",
@@ -71,7 +71,7 @@ RightJustify		: "Tasaa oikeat reunat",
 BlockJustify		: "Tasaa molemmat reunat",
 DecreaseIndent		: "Pienennä sisennystä",
 IncreaseIndent		: "Suurenna sisennystä",
-Blockquote			: "Blockquote",	//MISSING
+Blockquote			: "Lainaus",
 Undo				: "Kumoa",
 Redo				: "Toista",
 NumberedListLbl		: "Numerointi",
@@ -105,27 +105,27 @@ SelectionField	: "Valintakenttä",
 ImageButton		: "Kuvapainike",
 
 FitWindow		: "Suurenna editori koko ikkunaan",
-ShowBlocks		: "Show Blocks",	//MISSING
+ShowBlocks		: "Näytä elementit",
 
 // Context Menu
 EditLink			: "Muokkaa linkkiä",
 CellCM				: "Solu",
 RowCM				: "Rivi",
 ColumnCM			: "Sarake",
-InsertRowAfter		: "Insert Row After",	//MISSING
-InsertRowBefore		: "Insert Row Before",	//MISSING
+InsertRowAfter		: "Lisää rivi alapuolelle",
+InsertRowBefore		: "Lisää rivi yläpuolelle",
 DeleteRows			: "Poista rivit",
-InsertColumnAfter	: "Insert Column After",	//MISSING
-InsertColumnBefore	: "Insert Column Before",	//MISSING
+InsertColumnAfter	: "Lisää sarake oikealle",
+InsertColumnBefore	: "Lisää sarake vasemmalle",
 DeleteColumns		: "Poista sarakkeet",
-InsertCellAfter		: "Insert Cell After",	//MISSING
-InsertCellBefore	: "Insert Cell Before",	//MISSING
+InsertCellAfter		: "Lisää solu perään",
+InsertCellBefore	: "Lisää solu eteen",
 DeleteCells			: "Poista solut",
 MergeCells			: "Yhdistä solut",
-MergeRight			: "Merge Right",	//MISSING
-MergeDown			: "Merge Down",	//MISSING
-HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
-VerticalSplitCell	: "Split Cell Vertically",	//MISSING
+MergeRight			: "Yhdistä oikealla olevan kanssa",
+MergeDown			: "Yhdistä alla olevan kanssa",
+HorizontalSplitCell	: "Jaa solu vaakasuunnassa",
+VerticalSplitCell	: "Jaa solu pystysuunnassa",
 TableDelete			: "Poista taulu",
 CellProperties		: "Solun ominaisuudet",
 TableProperties		: "Taulun ominaisuudet",
@@ -332,7 +332,7 @@ DlgCellBorderColor	: "Rajan väri",
 DlgCellBtnSelect	: "Valitse...",
 
 // Find and Replace Dialog
-DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
+DlgFindAndReplaceTitle	: "Etsi ja korvaa",
 
 // Find Dialog
 DlgFindTitle		: "Etsi",
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Liitä painamalla (<STRONG>Ctrl+V</STRONG>) ja painamalla <STRON
 DlgPasteSec		: "Selaimesi turva-asetukset eivät salli editorin käyttää leikepöytää suoraan. Sinun pitää suorittaa liittäminen tässä ikkunassa.",
 DlgPasteIgnoreFont		: "Jätä huomioimatta fonttimääritykset",
 DlgPasteRemoveStyles	: "Poista tyylimääritykset",
-DlgPasteCleanBox		: "Tyhjennä",
 
 // Color Picker
 ColorAutomatic	: "Automaattinen",

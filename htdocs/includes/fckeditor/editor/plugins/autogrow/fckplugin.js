@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -63,6 +63,13 @@ function FCKAutoGrow_Check()
 			return ;
 
 		window.frameElement.height = iMainFrameSize ;
+
+		// Gecko browsers use an onresize handler to update the innermost
+		// IFRAME's height. If the document is modified before the onresize
+		// is triggered, the plugin will miscalculate the new height. Thus,
+		// forcibly trigger onresize. #1336
+		if ( typeof window.onresize == 'function' )
+			window.onresize() ;
 	}
 }
 

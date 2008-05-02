@@ -1,7 +1,7 @@
 <cfsetting enablecfoutputonly="Yes">
 <!---
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -32,14 +32,24 @@
 	<cfset var sFilePart = "">
 	<cfset var sFileExt = "">
 	<cfset var sFileUrl = "">
+	<cfset var sTempDir = "">
 	<cfset var sTempFilePath = "">
 	<cfset var errorNumber = 0>
 	<cfset var customMsg = 0>
 	<cfset var counter = 0>
 	<cfset var destination = "">
 
-    <cftry>
-        <cffile action="UPLOAD" filefield="NewFile" destination="#GetTempDirectory()#" nameconflict="makeunique" mode="0755" />
+	<cftry>
+		<cfif isDefined( "REQUEST.Config.TempDirectory" )>
+			<cfset sTempDir = REQUEST.Config.TempDirectory>
+		<cfelse>
+			<cfset sTempDir = GetTempDirectory()>
+		</cfif>
+		<cfif NOT DirectoryExists (sTempDir)>
+			<cfthrow message="Invalid temporary directory: #sTempDir#">
+		</cfif>
+
+		<cffile action="UPLOAD" filefield="NewFile" destination="#sTempDir#" nameconflict="makeunique" mode="0755" />
 		<cfset sTempFilePath = CFFILE.ServerDirectory & REQUEST.fs & CFFILE.ServerFile>
 
 		<!--- Map the virtual path to the local server path. --->
@@ -92,12 +102,7 @@
 		</cfscript>
 
  		<cfset destination = sServerDir & sFileName>
-<!---
-		<cfdump var="#sTempFilePath#">
-		<cfoutput ><br /></cfoutput>
-		<cfdump var="#destination#">
-		<cfabort>
- --->
+
 		<cflock name="#destination#" timeout="30" type="Exclusive">
 		<cftry>
 			<cffile action="move" source="#sTempFilePath#" destination="#destination#" mode="755">
@@ -120,7 +125,7 @@
 			<cfset customMsg = CFCATCH.Message >
 		</cfcatch>
 
-    </cftry>
+	</cftry>
 
 	<cfset SendUploadResults( errorNumber, sFileUrl, sFileName, customMsg ) >
 </cffunction>

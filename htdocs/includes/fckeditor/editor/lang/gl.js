@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Por favor, pegue dentro do seguinte cadro usando o teclado (<STR
 DlgPasteSec		: "Because of your browser security settings, the editor is not able to access your clipboard data directly. You are required to paste it again in this window.",	//MISSING
 DlgPasteIgnoreFont		: "Ignorar as definicións de Tipografía",
 DlgPasteRemoveStyles	: "Eliminar as definicións de Estilos",
-DlgPasteCleanBox		: "Limpar o Cadro",
 
 // Color Picker
 ColorAutomatic	: "Automático",

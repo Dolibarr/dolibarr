@@ -2,7 +2,7 @@
 
 """
 FCKeditor - The text editor for Internet - http://www.fckeditor.net
-Copyright (C) 2003-2007 Frederico Caldeira Knabben
+Copyright (C) 2003-2008 Frederico Caldeira Knabben
 
 == BEGIN LICENSE ==
 
@@ -20,7 +20,7 @@ http://www.mozilla.org/MPL/MPL-1.1.html
 
 == END LICENSE ==
 
-Utility functions for the File Manager Connector for Python 
+Utility functions for the File Manager Connector for Python
 
 """
 
@@ -49,10 +49,10 @@ def removeFromEnd(string, char):
 # Path functions
 
 def combinePaths( basePath, folder ):
-	return removeFromEnd( basePath, '/' ) + '/' + removeFromStart( folder, '/' ) 
+	return removeFromEnd( basePath, '/' ) + '/' + removeFromStart( folder, '/' )
 
 def getFileName(filename):
-	" Purpose: helper function to extrapolate the filename " 
+	" Purpose: helper function to extrapolate the filename "
 	for splitChar in ["/", "\\"]:
 		array = filename.split(splitChar)
 		if (len(array) > 1):
@@ -61,8 +61,8 @@ def getFileName(filename):
 
 def sanitizeFolderName( newFolderName ):
 	"Do a cleanup of the folder name to avoid possible problems"
-	# Remove . \ / | : ? *
-	return re.sub( '\\.|\\\\|\\/|\\||\\:|\\?|\\*', '_', newFolderName )
+	# Remove . \ / | : ? * " < > and control characters
+	return re.sub( '(?u)\\.|\\\\|\\/|\\||\\:|\\?|\\*|"|<|>|[^\u0000-\u001f\u007f-\u009f]', '_', newFolderName )
 
 def sanitizeFileName( newFileName ):
 	"Do a cleanup of the file name to avoid possible problems"
@@ -72,27 +72,27 @@ def sanitizeFileName( newFileName ):
 	newFileName = newFileName.replace('\\','/')		# convert windows to unix path
 	newFileName = os.path.basename (newFileName)	# strip directories
 	# Remove \ / | : ? *
-	return re.sub ( '/\\\\|\\/|\\||\\:|\\?|\\*/', '_', newFileName )
+	return re.sub ( '(?u)/\\\\|\\/|\\||\\:|\\?|\\*|"|<|>|[^\u0000-\u001f\u007f-\u009f]/', '_', newFileName )
 
 def getCurrentFolder(currentFolder):
-	if not currentFolder: 
-		currentFolder = '/' 
+	if not currentFolder:
+		currentFolder = '/'
 
 	# Check the current folder syntax (must begin and end with a slash).
 	if (currentFolder[-1] <> "/"):
 		currentFolder += "/"
 	if (currentFolder[0] <> "/"):
 		currentFolder = "/" + currentFolder
-				
+
 	# Ensure the folder path has no double-slashes
 	while '//' in currentFolder:
-		currentFolder = currentFolder.replace('//','/') 
+		currentFolder = currentFolder.replace('//','/')
 
 	# Check for invalid folder paths (..)
-	if '..' in currentFolder:
+	if '..' in currentFolder or '\\' in currentFolder:
 		return None
 
-	return currentFolder 
+	return currentFolder
 
 def mapServerPath( environ, url):
 	" Emulate the asp Server.mapPath function. Given an url path return the physical directory that it corresponds to "
@@ -101,7 +101,7 @@ def mapServerPath( environ, url):
 	return combinePaths( getRootPath(environ), url )
 
 def mapServerFolder(resourceTypePath, folderPath):
-	return combinePaths ( resourceTypePath  , folderPath ) 
+	return combinePaths ( resourceTypePath  , folderPath )
 
 def getRootPath(environ):
 	"Purpose: returns the root path on the server"
@@ -111,17 +111,16 @@ def getRootPath(environ):
 	if environ.has_key('DOCUMENT_ROOT'):
 		return environ['DOCUMENT_ROOT']
 	else:
-		realPath = os.path.realpath( './' ) 
+		realPath = os.path.realpath( './' )
 		selfPath = environ['SCRIPT_FILENAME']
-		selfPath = selfPath [ :  selfPath.rfind( '/'  ) ] 		
-		selfPath = selfPath.replace( '/', os.path.sep) 
-		
-		position = realPath.find(selfPath) 
+		selfPath = selfPath [ :  selfPath.rfind( '/'  ) ]
+		selfPath = selfPath.replace( '/', os.path.sep)
+
+		position = realPath.find(selfPath)
 
 		# This can check only that this script isn't run from a virtual dir
 		# But it avoids the problems that arise if it isn't checked
-		raise realPath 
+		raise realPath
 		if ( position < 0 or position <> len(realPath) - len(selfPath) or realPath[ : position ]==''):
 			raise Exception('Sorry, can\'t map "UserFilesPath" to a physical path. You must set the "UserFilesAbsolutePath" value in "editor/filemanager/connectors/py/config.py".')
 		return realPath[ : position ]
-

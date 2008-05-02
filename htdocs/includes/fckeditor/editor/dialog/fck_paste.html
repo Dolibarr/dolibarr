@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -28,41 +28,61 @@
 	<title></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="robots" content="noindex, nofollow" />
-
+	<script src="common/fck_dialog_common.js" type="text/javascript"></script>
 	<script type="text/javascript">
-var oEditor = window.parent.InnerDialogLoaded() ;
+var dialog = window.parent ;
+var oEditor = dialog.InnerDialogLoaded() ;
 var FCK = oEditor.FCK;
 var FCKTools	= oEditor.FCKTools ;
 var FCKConfig	= oEditor.FCKConfig ;
+var FCKBrowserInfo = oEditor.FCKBrowserInfo ;
 
 window.onload = function ()
 {
 	// First of all, translate the dialog box texts
 	oEditor.FCKLanguageManager.TranslatePage(document) ;
 
-	var sPastingType = window.parent.dialogArguments.CustomValue ;
+	var sPastingType = dialog.Args().CustomValue ;
 
 	if ( sPastingType == 'Word' || sPastingType == 'Security' )
 	{
 		if ( sPastingType == 'Security' )
 			document.getElementById( 'xSecurityMsg' ).style.display = '' ;
 
-		var oFrame = document.getElementById('frmData') ;
-		oFrame.style.display = '' ;
+		// For document.domain compatibility (#123) we must do all the magic in
+		// the URL for IE.
+		var sFrameUrl = !oEditor.FCK_IS_CUSTOM_DOMAIN || !FCKBrowserInfo.IsIE ?
+			'javascript:void(0)' :
+			'javascript:void( (function(){' +
+				'document.open() ;' +
+				'document.domain=\'' + document.domain + '\' ;' +
+				'document.write(\'<html><head><script>window.onerror = function() { return true ; };<\/script><\/head><body><\/body><\/html>\') ;' +
+				'document.close() ;' +
+				'document.body.contentEditable = true ;' +
+				'window.focus() ;' +
+				'})() )' ;
 
-		// Avoid errors if the pasted content has any script that fails: #389
-		var oDoc = oFrame.contentWindow.document ;
-		oDoc.open() ;
-		oDoc.write('<html><head><script>window.onerror = function() { return true ; };<\/script><\/head><body><\/body><\/html>') ;
-		oDoc.close() ;
-		
-		if ( oFrame.contentDocument )
-			oFrame.contentDocument.designMode = 'on' ;
-		else
-			oFrame.contentWindow.document.body.contentEditable = true ;
+		var eFrameSpace = document.getElementById( 'xFrameSpace' ) ;
+		eFrameSpace.innerHTML = '<iframe id="frmData" src="' + sFrameUrl + '" ' +
+					'height="98%" width="99%" frameborder="0" style="border: #000000 1px; background-color: #ffffff"></iframe>' ;
 
-		// Set the focus on the pasting area
-		oFrame.contentWindow.focus();
+		var oFrame = eFrameSpace.firstChild ;
+
+		if ( !oEditor.FCK_IS_CUSTOM_DOMAIN || !FCKBrowserInfo.IsIE )
+		{
+			// Avoid errors if the pasted content has any script that fails: #389
+			var oDoc = oFrame.contentWindow.document ;
+			oDoc.open() ;
+			oDoc.write('<html><head><script>window.onerror = function() { return true ; };<\/script><\/head><body><\/body><\/html>') ;
+			oDoc.close() ;
+
+			if ( FCKBrowserInfo.IsIE )
+				oDoc.body.contentEditable = true ;
+			else
+				oDoc.designMode = 'on' ;
+
+			oFrame.contentWindow.focus();
+		}
 	}
 	else
 	{
@@ -72,8 +92,8 @@ window.onload = function ()
 	if ( sPastingType != 'Word' )
 		document.getElementById('oWordCommands').style.display = 'none' ;
 
-	window.parent.SetOkButton( true ) ;
-	window.parent.SetAutoSize( true ) ;
+	dialog.SetOkButton( true ) ;
+	dialog.SetAutoSize( true ) ;
 }
 
 function Ok()
@@ -83,7 +103,7 @@ function Ok()
 
 	var sHtml ;
 
-	var sPastingType = window.parent.dialogArguments.CustomValue ;
+	var sPastingType = dialog.Args().CustomValue ;
 
 	if ( sPastingType == 'Word' || sPastingType == 'Security' )
 	{
@@ -119,6 +139,7 @@ function Ok()
 		// Use the marker method instead. It's primitive, but it works.
 		var range = new oEditor.FCKDomRange( oEditor.FCK.EditorWindow ) ;
 		var oDoc = oEditor.FCK.EditorDocument ;
+		dialog.Selection.EnsureSelection() ;
 		range.MoveToSelection() ;
 		range.DeleteContents() ;
 		var marker = [] ;
@@ -156,17 +177,6 @@ function Ok()
 
 	return true ;
 }
-
-function CleanUpBox()
-{
-	var oFrame = document.getElementById('frmData') ;
-
-	if ( oFrame.contentDocument )
-		oFrame.contentDocument.body.innerHTML = '' ;
-	else
-		oFrame.contentWindow.document.body.innerHTML = '' ;
-}
-
 
 // This function will be called from the PasteFromWord dialog (fck_paste.html)
 // Input: oNode a DOM node that contains the raw paste from the clipboard
@@ -306,33 +316,22 @@ function CleanWord( oNode, bIgnoreFont, bRemoveStyles )
 			</td>
 		</tr>
 		<tr>
-			<td valign="top" height="100%" style="border-right: #000000 1px solid; border-top: #000000 1px solid;
-				border-left: #000000 1px solid; border-bottom: #000000 1px solid">
+			<td id="xFrameSpace" valign="top" height="100%" style="border: #000000 1px solid">
 				<textarea id="txtData" cols="80" rows="5" style="border: #000000 1px; display: none;
 					width: 99%; height: 98%"></textarea>
-				<iframe id="frmData" src="javascript:void(0)" height="98%" width="99%" frameborder="0"
-					style="border-right: #000000 1px; border-top: #000000 1px; display: none; border-left: #000000 1px;
-					border-bottom: #000000 1px; background-color: #ffffff"></iframe>
 			</td>
 		</tr>
 		<tr id="oWordCommands">
 			<td>
-				<table border="0" cellpadding="0" cellspacing="0" width="100%">
-					<tr>
-						<td nowrap="nowrap">
-							<input id="chkRemoveFont" type="checkbox" checked="checked" />
-							<label for="chkRemoveFont" fcklang="DlgPasteIgnoreFont">
-								Ignore Font Face definitions</label>
-							<br />
-							<input id="chkRemoveStyles" type="checkbox" />
-							<label for="chkRemoveStyles" fcklang="DlgPasteRemoveStyles">
-								Remove Styles definitions</label>
-						</td>
-						<td align="right" valign="top">
-							<input type="button" fcklang="DlgPasteCleanBox" value="Clean Up Box" onclick="CleanUpBox()" />
-						</td>
-					</tr>
-				</table>
+
+					<input id="chkRemoveFont" type="checkbox" checked="checked" />
+					<label for="chkRemoveFont" fcklang="DlgPasteIgnoreFont">
+						Ignore Font Face definitions</label>
+					<br />
+					<input id="chkRemoveStyles" type="checkbox" />
+					<label for="chkRemoveStyles" fcklang="DlgPasteRemoveStyles">
+						Remove Styles definitions</label>
+
 			</td>
 		</tr>
 	</table>

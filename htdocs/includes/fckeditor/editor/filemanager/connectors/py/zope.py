@@ -2,7 +2,7 @@
 
 """
 FCKeditor - The text editor for Internet - http://www.fckeditor.net
-Copyright (C) 2003-2007 Frederico Caldeira Knabben
+Copyright (C) 2003-2008 Frederico Caldeira Knabben
 
 == BEGIN LICENSE ==
 
@@ -23,8 +23,8 @@ http://www.mozilla.org/MPL/MPL-1.1.html
 Connector for Python and Zope.
 
 This code was not tested at all.
-It just was ported from pre 2.5 release, so for further reference see 
-\editor\filemanager\browser\default\connectors\py\connector.py in previous 
+It just was ported from pre 2.5 release, so for further reference see
+\editor\filemanager\browser\default\connectors\py\connector.py in previous
 releases.
 
 """
@@ -48,7 +48,7 @@ class FCKeditorConnectorZope(FCKeditorConnector):
 		# Instance Attributes
 		self.context = context
 		self.request = FCKeditorRequest(context)
-	
+
 	def getZopeRootContext(self):
 		if self.zopeRootContext is None:
 			self.zopeRootContext = self.context.getPhysicalRoot()
@@ -186,4 +186,3 @@ we then have a like to the Zope context.
 import Products.zope as connector
 return connector.FCKeditorConnectorZope(context=context).doResponse()
 """
-

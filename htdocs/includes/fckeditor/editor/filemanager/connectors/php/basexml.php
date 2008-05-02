@@ -1,7 +1,7 @@
 <?php
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -66,7 +66,7 @@ function CreateXmlFooter()
 function SendError( $number, $text )
 {
 	if ( isset( $GLOBALS['HeaderSent'] ) && $GLOBALS['HeaderSent'] )
-	{ 
+	{
 		SendErrorNode( $number, $text ) ;
 		CreateXmlFooter() ;
 	}
@@ -78,9 +78,9 @@ function SendError( $number, $text )
 		echo '<?xml version="1.0" encoding="utf-8" ?>' ;
 
 		echo '<Connector>' ;
-		
+
 		SendErrorNode( $number, $text ) ;
-		
+
 		echo '</Connector>' ;
 	}
 	exit ;

@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -104,29 +104,29 @@ Button			: "버튼",
 SelectionField	: "펼침목록",
 ImageButton		: "이미지버튼",
 
-FitWindow		: "Maximize the editor size",	//MISSING
+FitWindow		: "에디터 최대화",
 ShowBlocks		: "Show Blocks",	//MISSING
 
 // Context Menu
 EditLink			: "링크 수정",
-CellCM				: "Cell",	//MISSING
-RowCM				: "Row",	//MISSING
-ColumnCM			: "Column",	//MISSING
-InsertRowAfter		: "Insert Row After",	//MISSING
-InsertRowBefore		: "Insert Row Before",	//MISSING
+CellCM				: "셀/칸(Cell)",
+RowCM				: "행(Row)",
+ColumnCM			: "열(Column)",
+InsertRowAfter		: "뒤에 행 삽입",
+InsertRowBefore		: "앞에 행 삽입",
 DeleteRows			: "가로줄 삭제",
-InsertColumnAfter	: "Insert Column After",	//MISSING
-InsertColumnBefore	: "Insert Column Before",	//MISSING
+InsertColumnAfter	: "뒤에 열 삽입",
+InsertColumnBefore	: "앞에 열 삽입",
 DeleteColumns		: "세로줄 삭제",
-InsertCellAfter		: "Insert Cell After",	//MISSING
-InsertCellBefore	: "Insert Cell Before",	//MISSING
+InsertCellAfter		: "뒤에 셀/칸 삽입",
+InsertCellBefore	: "앞에 셀/칸 삽입",
 DeleteCells			: "셀 삭제",
 MergeCells			: "셀 합치기",
-MergeRight			: "Merge Right",	//MISSING
-MergeDown			: "Merge Down",	//MISSING
-HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
-VerticalSplitCell	: "Split Cell Vertically",	//MISSING
-TableDelete			: "Delete Table",	//MISSING
+MergeRight			: "오른쪽 뭉치기",
+MergeDown			: "왼쪽 뭉치기",
+HorizontalSplitCell	: "수평 나누기",
+VerticalSplitCell	: "수직 나누기",
+TableDelete			: "표 삭제",
 CellProperties		: "셀 속성",
 TableProperties		: "표 속성",
 ImageProperties		: "이미지 속성",
@@ -154,9 +154,9 @@ UnknownToolbarItem	: "알수없는 툴바입니다. : \"%1\"",
 UnknownCommand		: "알수없는 기능입니다. : \"%1\"",
 NotImplemented		: "기능이 실행되지 않았습니다.",
 UnknownToolbarSet	: "툴바 설정이 없습니다. : \"%1\"",
-NoActiveX			: "Your browser's security settings could limit some features of the editor. You must enable the option \"Run ActiveX controls and plug-ins\". You may experience errors and notice missing features.",	//MISSING
-BrowseServerBlocked : "The resources browser could not be opened. Make sure that all popup blockers are disabled.",	//MISSING
-DialogBlocked		: "It was not possible to open the dialog window. Make sure all popup blockers are disabled.",	//MISSING
+NoActiveX			: "브러우저의 보안 설정으로 인해 몇몇 기능의 작동에 장애가 있을 수 있습니다. \"액티브-액스 기능과 플러그 인\" 옵션을 허용하여 주시지 않으면 오류가 발생할 수 있습니다.",
+BrowseServerBlocked : "브러우저 요소가 열리지 않습니다. 팝업차단 설정이 꺼져있는지 확인하여 주십시오.",
+DialogBlocked		: "윈도우 대화창을 열 수 없습니다. 팝업차단 설정이 꺼져있는지 확인하여 주십시오.",
 
 // Dialogs
 DlgBtnOK			: "예",
@@ -207,7 +207,7 @@ DlgImgAlignBaseline	: "기준선",
 DlgImgAlignBottom	: "아래",
 DlgImgAlignMiddle	: "중간",
 DlgImgAlignRight	: "오른쪽",
-DlgImgAlignTextTop	: "글자위(Text Top)",
+DlgImgAlignTextTop	: "글자상단",
 DlgImgAlignTop		: "위",
 DlgImgPreview		: "미리보기",
 DlgImgAlertUrl		: "이미지 URL을 입력하십시요",
@@ -271,7 +271,7 @@ DlgLnkPopTop		: "윗쪽 위치",
 DlnLnkMsgNoUrl		: "링크 URL을 입력하십시요.",
 DlnLnkMsgNoEMail	: "이메일주소를 입력하십시요.",
 DlnLnkMsgNoAnchor	: "책갈피명을 입력하십시요.",
-DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
+DlnLnkMsgInvPopName	: "팝업창의 타이틀은 공백을 허용하지 않습니다.",
 
 // Color Dialog
 DlgColorTitle		: "색상 선택",
@@ -332,7 +332,7 @@ DlgCellBorderColor	: "테두리 색상",
 DlgCellBtnSelect	: "선택",
 
 // Find and Replace Dialog
-DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
+DlgFindAndReplaceTitle	: "찾기 & 바꾸기",
 
 // Find Dialog
 DlgFindTitle		: "찾기",
@@ -356,10 +356,9 @@ PasteAsText		: "텍스트로 붙여넣기",
 PasteFromWord	: "MS Word 형식에서 붙여넣기",
 
 DlgPasteMsg2	: "키보드의 (<STRONG>Ctrl+V</STRONG>) 를 이용해서 상자안에 붙여넣고 <STRONG>OK</STRONG> 를 누르세요.",
-DlgPasteSec		: "Because of your browser security settings, the editor is not able to access your clipboard data directly. You are required to paste it again in this window.",	//MISSING
+DlgPasteSec		: "브러우저 보안 설정으로 인해, 클립보드의 자료를 직접 접근할 수 없습니다. 이 창에 다시 붙여넣기 하십시오.",
 DlgPasteIgnoreFont		: "폰트 설정 무시",
 DlgPasteRemoveStyles	: "스타일 정의 제거",
-DlgPasteCleanBox		: "글상자 제거",
 
 // Color Picker
 ColorAutomatic	: "기본색상",
@@ -505,12 +504,12 @@ DlgTemplatesTitle	: "내용 템플릿",
 DlgTemplatesSelMsg	: "에디터에서 사용할 템플릿을 선택하십시요.<br>(지금까지 작성된 내용은 사라집니다.):",
 DlgTemplatesLoading	: "템플릿 목록을 불러오는중입니다. 잠시만 기다려주십시요.",
 DlgTemplatesNoTpl	: "(템플릿이 없습니다.)",
-DlgTemplatesReplace	: "Replace actual contents",	//MISSING
+DlgTemplatesReplace	: "현재 내용 바꾸기",
 
 // About Dialog
 DlgAboutAboutTab	: "About",
 DlgAboutBrowserInfoTab	: "브라우저 정보",
 DlgAboutLicenseTab	: "License",	//MISSING
 DlgAboutVersion		: "버전",
-DlgAboutInfo		: "For further information go to"
+DlgAboutInfo		: "더 많은 정보를 보시려면 다음 사이트로 가십시오."
 };

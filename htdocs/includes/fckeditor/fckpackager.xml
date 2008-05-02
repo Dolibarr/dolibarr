@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -27,24 +27,24 @@
 <Package>
 	<Header><![CDATA[/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
- * 
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
+ *
  * == BEGIN LICENSE ==
- * 
+ *
  * Licensed under the terms of any of the following licenses at your
  * choice:
- * 
+ *
  *  - GNU General Public License Version 2 or later (the "GPL")
  *    http://www.gnu.org/licenses/gpl.html
- * 
+ *
  *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
  *    http://www.gnu.org/licenses/lgpl.html
- * 
+ *
  *  - Mozilla Public License Version 1.1 or later (the "MPL")
  *    http://www.mozilla.org/MPL/MPL-1.1.html
- * 
+ *
  * == END LICENSE ==
- * 
+ *
  * This file has been compressed for better performance. The original source
  * can be found at "editor/_source".
  */
@@ -98,7 +98,7 @@
 		<File path="editor/dtd/fck_xhtml10transitional.js" />
 		<File path="editor/_source/classes/fckstyle.js" />
 		<File path="editor/_source/internals/fckstyles.js" />
-			  
+
 		<File path="editor/_source/internals/fcklisthandler.js" />
 		<File path="editor/_source/classes/fckelementpath.js" />
 		<File path="editor/_source/classes/fckdomrange.js" />
@@ -151,13 +151,13 @@
 		<File path="editor/_source/classes/fcktoolbarbreak_ie.js" />
 		<File path="editor/_source/internals/fcktoolbarset.js" />
 		<File path="editor/_source/internals/fckdialog.js" />
-		<File path="editor/_source/internals/fckdialog_ie.js" />
 
 		<File path="editor/_source/classes/fckmenuitem.js" />
 		<File path="editor/_source/classes/fckmenublock.js" />
 		<File path="editor/_source/classes/fckmenublockpanel.js" />
 		<File path="editor/_source/classes/fckcontextmenu.js" />
 		<File path="editor/_source/internals/fck_contextmenu.js" />
+		<File path="editor/_source/classes/fckhtmliterator.js" />
 
 		<File path="editor/_source/classes/fckplugin.js" />
 		<File path="editor/_source/internals/fckplugins.js" />
@@ -247,13 +247,13 @@
 		<File path="editor/_source/classes/fcktoolbarbreak_gecko.js" />
 		<File path="editor/_source/internals/fcktoolbarset.js" />
 		<File path="editor/_source/internals/fckdialog.js" />
-		<File path="editor/_source/internals/fckdialog_gecko.js" />
 
 		<File path="editor/_source/classes/fckmenuitem.js" />
 		<File path="editor/_source/classes/fckmenublock.js" />
 		<File path="editor/_source/classes/fckmenublockpanel.js" />
 		<File path="editor/_source/classes/fckcontextmenu.js" />
 		<File path="editor/_source/internals/fck_contextmenu.js" />
+		<File path="editor/_source/classes/fckhtmliterator.js" />
 
 		<File path="editor/_source/classes/fckplugin.js" />
 		<File path="editor/_source/internals/fckplugins.js" />

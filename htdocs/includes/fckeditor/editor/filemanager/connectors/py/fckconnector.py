@@ -2,7 +2,7 @@
 
 """
 FCKeditor - The text editor for Internet - http://www.fckeditor.net
-Copyright (C) 2003-2007 Frederico Caldeira Knabben
+Copyright (C) 2003-2008 Frederico Caldeira Knabben
 
 == BEGIN LICENSE ==
 
@@ -38,7 +38,7 @@ class FCKeditorConnectorBase( object ):
 	def __init__(self, environ=None):
 		"Constructor: Here you should parse request fields, initialize variables, etc."
 		self.request = FCKeditorRequest(environ) # Parse request
-		self.headers = []						# Clean Headers 
+		self.headers = []						# Clean Headers
 		if environ:
 			self.environ = environ
 		else:

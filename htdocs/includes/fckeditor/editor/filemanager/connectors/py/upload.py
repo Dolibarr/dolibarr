@@ -2,7 +2,7 @@
 
 """
 FCKeditor - The text editor for Internet - http://www.fckeditor.net
-Copyright (C) 2003-2007 Frederico Caldeira Knabben
+Copyright (C) 2003-2008 Frederico Caldeira Knabben
 
 == BEGIN LICENSE ==
 
@@ -31,8 +31,8 @@ from fckconnector import FCKeditorConnectorBase # import base connector
 import config as Config
 
 class FCKeditorQuickUpload(	FCKeditorConnectorBase,
-							UploadFileCommandMixin, 
-							BaseHttpMixin, BaseHtmlMixin):	
+							UploadFileCommandMixin,
+							BaseHttpMixin, BaseHtmlMixin):
 	def doResponse(self):
 		"Main function. Process the request, set headers and return a string as response."
 		# Check if this connector is disabled
@@ -48,24 +48,24 @@ class FCKeditorQuickUpload(	FCKeditorConnectorBase,
 
 		# Check if it is an allowed command
 		if ( not command in Config.ConfigAllowedCommands ):
-			return self.sendUploadResults( 1, '', '', 'The %s command isn\'t allowed' % command ) 
-		
+			return self.sendUploadResults( 1, '', '', 'The %s command isn\'t allowed' % command )
+
 		if ( not resourceType in Config.ConfigAllowedTypes  ):
-			return self.sendUploadResults( 1, '', '', 'Invalid type specified' ) 
+			return self.sendUploadResults( 1, '', '', 'Invalid type specified' )
 
 		# Setup paths
-		self.userFilesFolder = Config.QuickUploadAbsolutePath[resourceType] 
-		self.webUserFilesFolder =  Config.QuickUploadPath[resourceType]	
+		self.userFilesFolder = Config.QuickUploadAbsolutePath[resourceType]
+		self.webUserFilesFolder =  Config.QuickUploadPath[resourceType]
 		if not self.userFilesFolder: # no absolute path given (dangerous...)
-			self.userFilesFolder = mapServerPath(self.environ, 
+			self.userFilesFolder = mapServerPath(self.environ,
 									self.webUserFilesFolder)
-		
+
 		# Ensure that the directory exists.
 		if not os.path.exists(self.userFilesFolder):
 			try:
-				self.createServerFoldercreateServerFolder( self.userFilesFolder ) 
+				self.createServerFoldercreateServerFolder( self.userFilesFolder )
 			except:
-				return self.sendError(1, "This connector couldn\'t access to local user\'s files directories.  Please check the UserFilesAbsolutePath in \"editor/filemanager/connectors/py/config.py\" and try again. ")			
+				return self.sendError(1, "This connector couldn\'t access to local user\'s files directories.  Please check the UserFilesAbsolutePath in \"editor/filemanager/connectors/py/config.py\" and try again. ")
 
 		# File upload doesn't have to return XML, so intercept here
 		return self.uploadFile(resourceType, currentFolder)
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 		for header in conn.headers:
 			if not header is None:
 				print '%s: %s' % header
-		print 
+		print
 		print data
 	except:
 		print "Content-Type: text/plain"

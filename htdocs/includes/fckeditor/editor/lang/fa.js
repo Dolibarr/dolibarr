@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "لطفا متن را با کلیدهای (<STRONG>Ctrl+V</STRONG
 DlgPasteSec		: "به خاطر تنظیمات امنیتی مرورگر شما، ویرایشگر نمی‌تواند دسترسی مستقیم به داده‌های clipboard داشته باشد. شما باید دوباره آنرا در این پنجره بچسبانید.",
 DlgPasteIgnoreFont		: "چشم‌پوشی از تعاریف نوع قلم",
 DlgPasteRemoveStyles	: "چشم‌پوشی از تعاریف سبک (style)",
-DlgPasteCleanBox		: "پاک‌کردن ناحیه",
 
 // Color Picker
 ColorAutomatic	: "خودکار",

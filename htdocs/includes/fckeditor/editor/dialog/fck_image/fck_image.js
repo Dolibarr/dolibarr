@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -21,27 +21,29 @@
  * Scripts related to the Image dialog window (see fck_image.html).
  */
 
-var oEditor		= window.parent.InnerDialogLoaded() ;
+var dialog		= window.parent ;
+var oEditor		= dialog.InnerDialogLoaded() ;
 var FCK			= oEditor.FCK ;
 var FCKLang		= oEditor.FCKLang ;
 var FCKConfig	= oEditor.FCKConfig ;
 var FCKDebug	= oEditor.FCKDebug ;
+var FCKTools	= oEditor.FCKTools ;
 
 var bImageButton = ( document.location.search.length > 0 && document.location.search.substr(1) == 'ImageButton' ) ;
 
 //#### Dialog Tabs
 
 // Set the dialog tabs.
-window.parent.AddTab( 'Info', FCKLang.DlgImgInfoTab ) ;
+dialog.AddTab( 'Info', FCKLang.DlgImgInfoTab ) ;
 
 if ( !bImageButton && !FCKConfig.ImageDlgHideLink )
-	window.parent.AddTab( 'Link', FCKLang.DlgImgLinkTab ) ;
+	dialog.AddTab( 'Link', FCKLang.DlgImgLinkTab ) ;
 
 if ( FCKConfig.ImageUpload )
-	window.parent.AddTab( 'Upload', FCKLang.DlgLnkUpload ) ;
+	dialog.AddTab( 'Upload', FCKLang.DlgLnkUpload ) ;
 
 if ( !FCKConfig.ImageDlgHideAdvanced )
-	window.parent.AddTab( 'Advanced', FCKLang.DlgAdvancedTag ) ;
+	dialog.AddTab( 'Advanced', FCKLang.DlgAdvancedTag ) ;
 
 // Function called when a dialog tag is selected.
 function OnDialogTabChange( tabCode )
@@ -53,13 +55,13 @@ function OnDialogTabChange( tabCode )
 }
 
 // Get the selected image (if available).
-var oImage = FCK.Selection.GetSelectedElement() ;
+var oImage = dialog.Selection.GetSelectedElement() ;
 
 if ( oImage && oImage.tagName != 'IMG' && !( oImage.tagName == 'INPUT' && oImage.type == 'image' ) )
 	oImage = null ;
 
 // Get the active link.
-var oLink = FCK.Selection.MoveToAncestorNode( 'A' ) ;
+var oLink = dialog.Selection.GetSelection().MoveToAncestorNode( 'A' ) ;
 
 var oImageOriginal ;
 
@@ -111,10 +113,12 @@ window.onload = function()
 	if ( FCKConfig.ImageUpload )
 		GetE('frmUpload').action = FCKConfig.ImageUploadURL ;
 
-	window.parent.SetAutoSize( true ) ;
+	dialog.SetAutoSize( true ) ;
 
 	// Activate the "OK" button.
-	window.parent.SetOkButton( true ) ;
+	dialog.SetOkButton( true ) ;
+
+	SelectField( 'txtUrl' ) ;
 }
 
 function LoadSelection()
@@ -197,7 +201,7 @@ function Ok()
 {
 	if ( GetE('txtUrl').value.length == 0 )
 	{
-		window.parent.SetSelectedTab( 'Info' ) ;
+		dialog.SetSelectedTab( 'Info' ) ;
 		GetE('txtUrl').focus() ;
 
 		alert( FCKLang.DlgImgAlertUrl ) ;
@@ -380,6 +384,11 @@ function OnSizeChanged( dimension, value )
 function ResetSizes()
 {
 	if ( ! oImageOriginal ) return ;
+	if ( oEditor.FCKBrowserInfo.IsGecko && !oImageOriginal.complete )
+	{
+		setTimeout( ResetSizes, 50 ) ;
+		return ;
+	}
 
 	GetE('txtWidth').value  = oImageOriginal.width ;
 	GetE('txtHeight').value = oImageOriginal.height ;
@@ -433,7 +442,7 @@ function SetUrl( url, width, height, alt )
 		UpdateOriginal( true ) ;
 	}
 
-	window.parent.SetSelectedTab( 'Info' ) ;
+	dialog.SetSelectedTab( 'Info' ) ;
 }
 
 function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
@@ -458,6 +467,9 @@ function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
 		case 203 :
 			alert( "Security error. You probably don't have enough permissions to upload. Please check your server." ) ;
 			return ;
+		case 500 :
+			alert( 'The connector is disabled' ) ;
+			break ;
 		default :
 			alert( 'Error on file upload. Error number: ' + errorNumber ) ;
 			return ;

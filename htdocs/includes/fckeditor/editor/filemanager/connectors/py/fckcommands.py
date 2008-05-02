@@ -2,7 +2,7 @@
 
 """
 FCKeditor - The text editor for Internet - http://www.fckeditor.net
-Copyright (C) 2003-2007 Frederico Caldeira Knabben
+Copyright (C) 2003-2008 Frederico Caldeira Knabben
 
 == BEGIN LICENSE ==
 
@@ -100,7 +100,7 @@ class CreateFolderCommandMixin (object):
 					elif e.errno==13: # permission denied
 						errorNo = 103
 					elif e.errno==36 or e.errno==2 or e.errno==22: # filename too long / no such file / invalid name
-						errorNo = 102 
+						errorNo = 102
 				else:
 					errorNo = 110
 		else:
@@ -110,9 +110,18 @@ class CreateFolderCommandMixin (object):
 	def createServerFolder(self, folderPath):
 		"Purpose: physically creates a folder on the server"
 		# No need to check if the parent exists, just create all hierachy
-		oldumask = os.umask(0)
-		os.makedirs(folderPath,mode=0755)
-		os.umask( oldumask ) 
+
+		try:
+			permissions = Config.ChmodOnFolderCreate
+			if not permissions:
+				os.makedirs(folderPath)
+		except AttributeError: #ChmodOnFolderCreate undefined
+			permissions = 0755
+
+		if permissions:
+			oldumask = os.umask(0)
+			os.makedirs(folderPath,mode=0755)
+			os.umask( oldumask )
 
 class UploadFileCommandMixin (object):
 	def uploadFile(self, resourceType, currentFolder):
@@ -125,7 +134,7 @@ class UploadFileCommandMixin (object):
 			newFile = self.request.get("NewFile", "")
 			# Get the file name
 			newFileName = newFile.filename
-			newFileName = sanitizeFileName( newFileName ) 
+			newFileName = sanitizeFileName( newFileName )
 			newFileNameOnly = removeExtension(newFileName)
 			newFileExtension = getExtension(newFileName).lower()
 			allowedExtensions = Config.AllowedExtensions[resourceType]
@@ -168,9 +177,17 @@ class UploadFileCommandMixin (object):
 						fout.close()
 
 						if os.path.exists ( newFilePath ):
-							oldumask = os.umask(0) 
-							os.chmod( newFilePath, 0755 ) 
-							os.umask( oldumask ) 
+							doChmod = False
+							try:
+								doChmod = Config.ChmodOnUpload
+								permissions = Config.ChmodOnUpload
+							except AttributeError: #ChmodOnUpload undefined
+								doChmod = True
+								permissions = 0755
+							if ( doChmod ):
+								oldumask = os.umask(0)
+								os.chmod( newFilePath, permissions )
+								os.umask( oldumask )
 
 						newFileUrl = self.webUserFilesFolder + currentFolder + newFileName
 

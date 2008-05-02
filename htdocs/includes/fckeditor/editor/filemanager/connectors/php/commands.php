@@ -1,7 +1,7 @@
 <?php
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -184,15 +184,16 @@ function FileUpload( $resourceType, $currentFolder, $sCommand )
 
 		if ( isset( $Config['SecureImageUploads'] ) )
 		{
-			if ( !IsImageValid( $oFile['tmp_name'], $sExtension ) )
+			if ( ( $isImageValid = IsImageValid( $oFile['tmp_name'], $sExtension ) ) === false )
 			{
 				$sErrorNumber = '202' ;
 			}
 		}
-		
+
 		if ( isset( $Config['HtmlExtensions'] ) )
 		{
-			if ( !IsHtmlExtension( $sExtension, $Config['HtmlExtensions'] ) && DetectHtml( $oFile['tmp_name'] ) )
+			if ( !IsHtmlExtension( $sExtension, $Config['HtmlExtensions'] ) &&
+				( $detectHtml = DetectHtml( $oFile['tmp_name'] ) ) === true )
 			{
 				$sErrorNumber = '202' ;
 			}
@@ -219,12 +220,39 @@ function FileUpload( $resourceType, $currentFolder, $sCommand )
 
 					if ( is_file( $sFilePath ) )
 					{
+						if ( isset( $Config['ChmodOnUpload'] ) && !$Config['ChmodOnUpload'] )
+						{
+							break ;
+						}
+
+						$permissions = 0777;
+
+						if ( isset( $Config['ChmodOnUpload'] ) && $Config['ChmodOnUpload'] )
+						{
+							$permissions = $Config['ChmodOnUpload'] ;
+						}
+
 						$oldumask = umask(0) ;
-						chmod( $sFilePath, 0777 ) ;
+						chmod( $sFilePath, $permissions ) ;
 						umask( $oldumask ) ;
 					}
 
 					break ;
+				}
+			}
+
+			if ( file_exists( $sFilePath ) )
+			{
+				//previous checks failed, try once again
+				if ( isset( $isImageValid ) && $isImageValid === -1 && IsImageValid( $sFilePath, $sExtension ) === false )
+				{
+					@unlink( $sFilePath ) ;
+					$sErrorNumber = '202' ;
+				}
+				else if ( isset( $detectHtml ) && $detectHtml === -1 && DetectHtml( $sFilePath ) === true )
+				{
+					@unlink( $sFilePath ) ;
+					$sErrorNumber = '202' ;
 				}
 			}
 		}

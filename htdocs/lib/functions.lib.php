@@ -2747,6 +2747,8 @@ function dol_textishtml($msg,$option=0)
 		if (eregi('<html',$msg))                 return true;
 		elseif (eregi('<body',$msg))             return true;
 		elseif (eregi('<br',$msg))               return true;
+		elseif (eregi('<span',$msg))             return true;
+		elseif (eregi('<div',$msg))              return true;
 		elseif (eregi('<table',$msg))            return true;
 		elseif (eregi('<font',$msg))             return true;
 		elseif (eregi('<strong',$msg))           return true;

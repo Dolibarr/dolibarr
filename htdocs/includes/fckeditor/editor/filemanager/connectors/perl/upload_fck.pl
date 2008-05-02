@@ -1,6 +1,6 @@
 #####
 #  FCKeditor - The text editor for Internet - http://www.fckeditor.net
-#  Copyright (C) 2003-2007 Frederico Caldeira Knabben
+#  Copyright (C) 2003-2008 Frederico Caldeira Knabben
 #
 #  == BEGIN LICENSE ==
 #
@@ -27,6 +27,16 @@ $img_dir	= './temp/';
 
 # File size max(unit KB)
 $MAX_CONTENT_SIZE =  30000;
+
+# After file is uploaded, sometimes it is required to change its permissions
+# so that it was possible to access it at the later time.
+# If possible, it is recommended to set more restrictive permissions, like 0755.
+# Set to 0 to disable this feature.
+$CHMOD_ON_UPLOAD = 0777;
+
+# See comments above.
+# Used when creating folders that does not exist.
+$CHMOD_ON_FOLDER_CREATE = 0755;
 
 # Filelock (1=use,0=not use)
 $PM{'flock'}		= '1';
@@ -124,9 +134,18 @@ eval("use File::Path;");
 
 	my ($FORM) = @_;
 
-
-	mkdir($img_dir,0777);
-	chmod(0777,$img_dir);
+	if (defined $CHMOD_ON_FOLDER_CREATE && !$CHMOD_ON_FOLDER_CREATE) {
+		mkdir("$img_dir");
+	}
+	else {
+		umask(000);
+		if (defined $CHMOD_ON_FOLDER_CREATE) {
+			mkdir("$img_dir",$CHMOD_ON_FOLDER_CREATE);
+		}
+		else {
+			mkdir("$img_dir",0777);
+		}
+	}
 
 	undef $img_data_exists;
 	undef @NEWFNAMES;

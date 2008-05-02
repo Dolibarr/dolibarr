@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Vă rugăm adăugaţi în căsuţa următoare folosind tastatura
 DlgPasteSec		: "Din cauza setărilor de securitate ale programului dvs. cu care navigaţi pe internet (browser), editorul nu poate accesa direct datele din clipboard. Va trebui să adăugaţi din nou datele în această fereastră.",
 DlgPasteIgnoreFont		: "Ignoră definiţiile Font Face",
 DlgPasteRemoveStyles	: "Şterge definiţiile stilurilor",
-DlgPasteCleanBox		: "Şterge căsuţa",
 
 // Color Picker
 ColorAutomatic	: "Automatic",

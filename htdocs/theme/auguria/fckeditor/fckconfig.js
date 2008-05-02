@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -43,6 +43,9 @@ FCKConfig.Debug = false ;
 FCKConfig.AllowQueryStringDebug = true ;
 
 FCKConfig.SkinPath = FCKConfig.BasePath + 'skins/default/' ;
+FCKConfig.SkinEditorCSS = '' ;	// FCKConfig.SkinPath + "|<minified css>" ;
+FCKConfig.SkinDialogCSS = '' ;	// FCKConfig.SkinPath + "|<minified css>" ;
+
 FCKConfig.PreloadImages = [ FCKConfig.SkinPath + 'images/toolbar.start.gif', FCKConfig.SkinPath + 'images/toolbar.buttonarrow.gif' ] ;
 
 FCKConfig.PluginsPath = FCKConfig.BasePath + 'plugins/' ;
@@ -52,7 +55,7 @@ FCKConfig.PluginsPath = FCKConfig.BasePath + 'plugins/' ;
 FCKConfig.AutoGrowMax = 400 ;
 
 // FCKConfig.ProtectedSource.Add( /<%[\s\S]*?%>/g ) ;	// ASP style server side code <%...%>
-FCKConfig.ProtectedSource.Add( /<\?[\s\S]*?\?>/g ) ;	// PHP style server side code
+// FCKConfig.ProtectedSource.Add( /<\?[\s\S]*?\?>/g ) ;	// PHP style server side code
 // FCKConfig.ProtectedSource.Add( /(<asp:[^\>]+>[\s|\S]*?<\/asp:[^\>]+>)|(<asp:[^\>]+\/>)/gi ) ;	// ASP.Net style tags <asp:control>
 
 FCKConfig.AutoDetectLanguage	= true ;
@@ -73,7 +76,6 @@ FCKConfig.FormatSource		= false ;
 FCKConfig.FormatOutput		= false ;
 FCKConfig.FormatIndentator	= '    ' ;
 
-FCKConfig.GeckoUseSPAN	= false ;
 FCKConfig.StartupFocus	= false ;
 FCKConfig.ForcePasteAsPlainText	= false ;
 FCKConfig.AutoDetectPasteFromWord = true ;	// IE only.
@@ -157,6 +159,7 @@ FCKConfig.Keystrokes = [
 	[ CTRL + 67 /*C*/, true ],
 	[ CTRL + 70 /*F*/, true ],
 	[ CTRL + 83 /*S*/, true ],
+	[ CTRL + 84 /*T*/, true ],
 	[ CTRL + 88 /*X*/, true ],
 	[ CTRL + 86 /*V*/, 'Paste' ],
 	[ SHIFT + 45 /*INS*/, 'Paste' ],
@@ -170,8 +173,7 @@ FCKConfig.Keystrokes = [
 	[ CTRL + 73 /*I*/, 'Italic' ],
 	[ CTRL + 85 /*U*/, 'Underline' ],
 	[ CTRL + SHIFT + 83 /*S*/, 'Save' ],
-	[ CTRL + ALT + 13 /*ENTER*/, 'FitWindow' ],
-	[ CTRL + 9 /*TAB*/, 'Source' ]
+	[ CTRL + ALT + 13 /*ENTER*/, 'FitWindow' ]
 ] ;
 
 FCKConfig.ContextMenu = ['Generic','Link','Anchor','Image','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','BulletedList','NumberedList','Table','Form'] ;
@@ -180,7 +182,7 @@ FCKConfig.BrowserContextMenuOnCtrl = false ;
 FCKConfig.EnableMoreFontColors = true ;
 FCKConfig.FontColors = '000000,993300,333300,003300,003366,000080,333399,333333,800000,FF6600,808000,808080,008080,0000FF,666699,808080,FF0000,FF9900,99CC00,339966,33CCCC,3366FF,800080,999999,FF00FF,FFCC00,FFFF00,00FF00,00FFFF,00CCFF,993366,C0C0C0,FF99CC,FFCC99,FFFF99,CCFFCC,CCFFFF,99CCFF,CC99FF,FFFFFF' ;
 
-FCKConfig.FontFormats	= 'p;div;pre;address;h1;h2;h3;h4;h5;h6' ;
+FCKConfig.FontFormats	= 'p;h1;h2;h3;h4;h5;h6;pre;address;div' ;
 FCKConfig.FontNames		= 'Arial;Comic Sans MS;Courier New;Tahoma;Times New Roman;Verdana' ;
 FCKConfig.FontSizes		= 'smaller;larger;xx-small;x-small;small;medium;large;x-large;xx-large' ;
 
@@ -224,22 +226,25 @@ FCKConfig.CleanWordKeepsStructure = false ;
 // Only inline elements are valid.
 FCKConfig.RemoveFormatTags = 'b,big,code,del,dfn,em,font,i,ins,kbd,q,samp,small,span,strike,strong,sub,sup,tt,u,var' ;
 
-FCKConfig.CustomStyles = 
+// Attributes that will be removed
+FCKConfig.RemoveAttributes = 'class,style,lang,width,height,align,hspace,valign' ;
+
+FCKConfig.CustomStyles =
 {
 	'Red Title'	: { Element : 'h3', Styles : { 'color' : 'Red' } }
 };
 
 // Do not add, rename or remove styles here. Only apply definition changes.
-FCKConfig.CoreStyles = 
+FCKConfig.CoreStyles =
 {
 	// Basic Inline Styles.
-	'Bold'			: { Element : 'b', Overrides : 'strong' },
-	'Italic'		: { Element : 'i', Overrides : 'em' },
+	'Bold'			: { Element : 'strong', Overrides : 'b' },
+	'Italic'		: { Element : 'em', Overrides : 'i' },
 	'Underline'		: { Element : 'u' },
 	'StrikeThrough'	: { Element : 'strike' },
 	'Subscript'		: { Element : 'sub' },
 	'Superscript'	: { Element : 'sup' },
-	
+
 	// Basic Block Styles (Font Format Combo).
 	'p'				: { Element : 'p' },
 	'div'			: { Element : 'div' },
@@ -251,30 +256,32 @@ FCKConfig.CoreStyles =
 	'h4'			: { Element : 'h4' },
 	'h5'			: { Element : 'h5' },
 	'h6'			: { Element : 'h6' },
-	
+
 	// Other formatting features.
-	'FontFace' : 
-	{ 
-		Element		: 'span', 
-		Styles		: { 'font-family' : '#("Font")' }, 
+	'FontFace' :
+	{
+		Element		: 'span',
+		Styles		: { 'font-family' : '#("Font")' },
 		Overrides	: [ { Element : 'font', Attributes : { 'face' : null } } ]
 	},
-	
+
 	'Size' :
-	{ 
-		Element		: 'span', 
-		Styles		: { 'font-size' : '#("Size","fontSize")' }, 
+	{
+		Element		: 'span',
+		Styles		: { 'font-size' : '#("Size","fontSize")' },
 		Overrides	: [ { Element : 'font', Attributes : { 'size' : null } } ]
 	},
-	
+
 	'Color' :
-	{ 
-		Element		: 'span', 
-		Styles		: { 'color' : '#("Color","color")' }, 
+	{
+		Element		: 'span',
+		Styles		: { 'color' : '#("Color","color")' },
 		Overrides	: [ { Element : 'font', Attributes : { 'color' : null } } ]
 	},
-	
-	'BackColor'		: { Element : 'span', Styles : { 'background-color' : '#("Color","color")' } }
+
+	'BackColor'		: { Element : 'span', Styles : { 'background-color' : '#("Color","color")' } },
+
+	'SelectionHighlight' : { Element : 'span', Styles : { 'background-color' : 'navy', 'color' : 'white' } }
 };
 
 // The distance of an indentation step.
@@ -298,43 +305,46 @@ FCKConfig.JustifyClasses = [] ;
 var _FileBrowserLanguage	= 'php' ;	// asp | aspx | cfm | lasso | perl | php | py
 var _QuickUploadLanguage	= 'php' ;	// asp | aspx | cfm | lasso | perl | php | py
 
-// Don't care about the following line. It just calculates the correct connector
+// Don't care about the following two lines. It just calculates the correct connector
 // extension to use for the default File Browser (Perl uses "cgi").
 var _FileBrowserExtension = _FileBrowserLanguage == 'perl' ? 'cgi' : _FileBrowserLanguage ;
+var _QuickUploadExtension = _QuickUploadLanguage == 'perl' ? 'cgi' : _QuickUploadLanguage ;
 
 FCKConfig.LinkBrowser = true ;
-FCKConfig.LinkBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Connector=../../connectors/' + _FileBrowserLanguage + '/connector.' + _FileBrowserExtension ;
+FCKConfig.LinkBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Connector=' + encodeURIComponent( FCKConfig.BasePath + 'filemanager/connectors/' + _FileBrowserLanguage + '/connector.' + _FileBrowserExtension ) ;
 FCKConfig.LinkBrowserWindowWidth	= FCKConfig.ScreenWidth * 0.7 ;		// 70%
 FCKConfig.LinkBrowserWindowHeight	= FCKConfig.ScreenHeight * 0.7 ;	// 70%
 
 FCKConfig.ImageBrowser = true ;
-FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&Connector=../../connectors/' + _FileBrowserLanguage + '/connector.' + _FileBrowserExtension ;
+FCKConfig.ImageBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Image&Connector=' + encodeURIComponent( FCKConfig.BasePath + 'filemanager/connectors/' + _FileBrowserLanguage + '/connector.' + _FileBrowserExtension ) ;
 FCKConfig.ImageBrowserWindowWidth  = FCKConfig.ScreenWidth * 0.7 ;	// 70% ;
 FCKConfig.ImageBrowserWindowHeight = FCKConfig.ScreenHeight * 0.7 ;	// 70% ;
 
 FCKConfig.FlashBrowser = true ;
-FCKConfig.FlashBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Flash&Connector=../../connectors/' + _FileBrowserLanguage + '/connector.' + _FileBrowserExtension ;
+FCKConfig.FlashBrowserURL = FCKConfig.BasePath + 'filemanager/browser/default/browser.html?Type=Flash&Connector=' + encodeURIComponent( FCKConfig.BasePath + 'filemanager/connectors/' + _FileBrowserLanguage + '/connector.' + _FileBrowserExtension ) ;
 FCKConfig.FlashBrowserWindowWidth  = FCKConfig.ScreenWidth * 0.7 ;	//70% ;
 FCKConfig.FlashBrowserWindowHeight = FCKConfig.ScreenHeight * 0.7 ;	//70% ;
 
 FCKConfig.LinkUpload = false ;
-FCKConfig.LinkUploadURL = FCKConfig.BasePath + 'filemanager/connectors/' + _QuickUploadLanguage + '/upload.' + _QuickUploadLanguage ;
-FCKConfig.LinkUploadAllowedExtensions	= "" ;			// empty for all
-FCKConfig.LinkUploadDeniedExtensions	= ".(html|htm|php|php2|php3|php4|php5|phtml|pwml|inc|asp|aspx|ascx|jsp|cfm|cfc|pl|bat|exe|com|dll|vbs|js|reg|cgi|htaccess|asis|sh|shtml|shtm|phtm)$" ;	// empty for no one
+FCKConfig.LinkUploadURL = FCKConfig.BasePath + 'filemanager/connectors/' + _QuickUploadLanguage + '/upload.' + _QuickUploadExtension ;
+FCKConfig.LinkUploadAllowedExtensions	= ".(7z|aiff|asf|avi|bmp|csv|doc|fla|flv|gif|gz|gzip|jpeg|jpg|mid|mov|mp3|mp4|mpc|mpeg|mpg|ods|odt|pdf|png|ppt|pxd|qt|ram|rar|rm|rmi|rmvb|rtf|sdc|sitd|swf|sxc|sxw|tar|tgz|tif|tiff|txt|vsd|wav|wma|wmv|xls|xml|zip)$" ;			// empty for all
+FCKConfig.LinkUploadDeniedExtensions	= "" ;	// empty for no one
 
 FCKConfig.ImageUpload = false ;
-FCKConfig.ImageUploadURL = FCKConfig.BasePath + 'filemanager/connectors/' + _QuickUploadLanguage + '/upload.' + _QuickUploadLanguage + '?Type=Image' ;
+FCKConfig.ImageUploadURL = FCKConfig.BasePath + 'filemanager/connectors/' + _QuickUploadLanguage + '/upload.' + _QuickUploadExtension + '?Type=Image' ;
 FCKConfig.ImageUploadAllowedExtensions	= ".(jpg|gif|jpeg|png|bmp)$" ;		// empty for all
 FCKConfig.ImageUploadDeniedExtensions	= "" ;							// empty for no one
 
-FCKConfig.FlashUpload = false ;
-FCKConfig.FlashUploadURL = FCKConfig.BasePath + 'filemanager/connectors/' + _QuickUploadLanguage + '/upload.' + _QuickUploadLanguage + '?Type=Flash' ;
-FCKConfig.FlashUploadAllowedExtensions	= ".(swf|fla)$" ;		// empty for all
+FCKConfig.FlashUpload = true ;
+FCKConfig.FlashUploadURL = FCKConfig.BasePath + 'filemanager/connectors/' + _QuickUploadLanguage + '/upload.' + _QuickUploadExtension + '?Type=Flash' ;
+FCKConfig.FlashUploadAllowedExtensions	= ".(swf|flv)$" ;		// empty for all
 FCKConfig.FlashUploadDeniedExtensions	= "" ;					// empty for no one
 
 FCKConfig.SmileyPath	= FCKConfig.BasePath + 'images/smiley/msn/' ;
 FCKConfig.SmileyImages	= ['regular_smile.gif','sad_smile.gif','wink_smile.gif','teeth_smile.gif','confused_smile.gif','tounge_smile.gif','embaressed_smile.gif','omg_smile.gif','whatchutalkingabout_smile.gif','angry_smile.gif','angel_smile.gif','shades_smile.gif','devil_smile.gif','cry_smile.gif','lightbulb.gif','thumbs_down.gif','thumbs_up.gif','heart.gif','broken_heart.gif','kiss.gif','envelope.gif'] ;
 FCKConfig.SmileyColumns = 8 ;
 FCKConfig.SmileyWindowWidth		= 320 ;
-FCKConfig.SmileyWindowHeight	= 240 ;
+FCKConfig.SmileyWindowHeight	= 210 ;
 
+FCKConfig.BackgroundBlockerColor = '#ffffff' ;
+FCKConfig.BackgroundBlockerOpacity = 0.50 ;

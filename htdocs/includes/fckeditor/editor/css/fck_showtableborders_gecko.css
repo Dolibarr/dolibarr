@@ -1,6 +1,6 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -19,6 +19,13 @@
  * == END LICENSE ==
  *
  * This CSS Style Sheet defines the rules to show table borders on Gecko.
+ */
+
+/* #########
+ *  WARNING
+ * #########
+ * When changing this file, the minified version of it must be updated in the
+ * fckeditor.html file (see FCK_ShowTableBordersCSS).
  */
 
 /* For tables with the "border" attribute set to "0" */

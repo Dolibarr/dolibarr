@@ -1,7 +1,7 @@
 <?php
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -49,8 +49,8 @@ function DoResponse()
 	$sResourceType	= $_GET['Type'] ;
 	$sCurrentFolder	= GetCurrentFolder() ;
 
-	// Check if it is an allowed command 
-	if ( ! IsAllowedCommand( $sCommand ) ) 
+	// Check if it is an allowed command
+	if ( ! IsAllowedCommand( $sCommand ) )
 		SendError( 1, 'The "' . $sCommand . '" command isn\'t allowed' ) ;
 
 	// Check if it is an allowed type.

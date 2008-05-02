@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -45,7 +45,7 @@ InsertLinkLbl		: "رابط",
 InsertLink			: "إدراج/تحرير رابط",
 RemoveLink			: "إزالة رابط",
 Anchor				: "إدراج/تحرير إشارة مرجعية",
-AnchorDelete		: "Remove Anchor",	//MISSING
+AnchorDelete		: "إزالة إشارة مرجعية",
 InsertImageLbl		: "صورة",
 InsertImage			: "إدراج/تحرير صورة",
 InsertFlashLbl		: "فلاش",
@@ -71,7 +71,7 @@ RightJustify		: "محاذاة إلى اليمين",
 BlockJustify		: "ضبط",
 DecreaseIndent		: "إنقاص المسافة البادئة",
 IncreaseIndent		: "زيادة المسافة البادئة",
-Blockquote			: "Blockquote",	//MISSING
+Blockquote			: "اقتباس",
 Undo				: "تراجع",
 Redo				: "إعادة",
 NumberedListLbl		: "تعداد رقمي",
@@ -105,27 +105,27 @@ SelectionField	: "قائمة منسدلة",
 ImageButton		: "زر صورة",
 
 FitWindow		: "تكبير حجم المحرر",
-ShowBlocks		: "Show Blocks",	//MISSING
+ShowBlocks		: "مخطط تفصيلي",
 
 // Context Menu
 EditLink			: "تحرير رابط",
 CellCM				: "خلية",
 RowCM				: "صف",
 ColumnCM			: "عمود",
-InsertRowAfter		: "Insert Row After",	//MISSING
-InsertRowBefore		: "Insert Row Before",	//MISSING
+InsertRowAfter		: "إدراج صف بعد",
+InsertRowBefore		: "إدراج صف قبل",
 DeleteRows			: "حذف صفوف",
-InsertColumnAfter	: "Insert Column After",	//MISSING
-InsertColumnBefore	: "Insert Column Before",	//MISSING
+InsertColumnAfter	: "إدراج عمود بعد",
+InsertColumnBefore	: "إدراج عمود قبل",
 DeleteColumns		: "حذف أعمدة",
-InsertCellAfter		: "Insert Cell After",	//MISSING
-InsertCellBefore	: "Insert Cell Before",	//MISSING
+InsertCellAfter		: "إدراج خلية بعد",
+InsertCellBefore	: "إدراج خلية قبل",
 DeleteCells			: "حذف خلايا",
 MergeCells			: "دمج خلايا",
-MergeRight			: "Merge Right",	//MISSING
-MergeDown			: "Merge Down",	//MISSING
-HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
-VerticalSplitCell	: "Split Cell Vertically",	//MISSING
+MergeRight			: "دمج لليمين",
+MergeDown			: "دمج للأسفل",
+HorizontalSplitCell	: "تقسيم الخلية أفقياً",
+VerticalSplitCell	: "تقسيم الخلية عمودياً",
 TableDelete			: "حذف الجدول",
 CellProperties		: "خصائص الخلية",
 TableProperties		: "خصائص الجدول",
@@ -332,7 +332,7 @@ DlgCellBorderColor	: "لون الحدود",
 DlgCellBtnSelect	: "حدّد...",
 
 // Find and Replace Dialog
-DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
+DlgFindAndReplaceTitle	: "بحث واستبدال",
 
 // Find Dialog
 DlgFindTitle		: "بحث",
@@ -356,10 +356,9 @@ PasteAsText		: "لصق كنص بسيط",
 PasteFromWord	: "لصق من وورد",
 
 DlgPasteMsg2	: "الصق داخل الصندوق بإستخدام زرّي (<STRONG>Ctrl+V</STRONG>) في لوحة المفاتيح، ثم اضغط زر  <STRONG>موافق</STRONG>.",
-DlgPasteSec		: "Because of your browser security settings, the editor is not able to access your clipboard data directly. You are required to paste it again in this window.",	//MISSING
+DlgPasteSec		: "نظراً لإعدادات الأمان الخاصة بمتصفحك، لن يتمكن هذا المحرر من الوصول لمحتوى حافظتك، لذا وجب عليك لصق المحتوى مرة أخرى في هذه النافذة.",
 DlgPasteIgnoreFont		: "تجاهل تعريفات أسماء الخطوط",
 DlgPasteRemoveStyles	: "إزالة تعريفات الأنماط",
-DlgPasteCleanBox		: "نظّف محتوى الصندوق",
 
 // Color Picker
 ColorAutomatic	: "تلقائي",

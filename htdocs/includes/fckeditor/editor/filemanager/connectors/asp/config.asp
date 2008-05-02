@@ -1,6 +1,6 @@
 ﻿<%
  ' FCKeditor - The text editor for Internet - http://www.fckeditor.net
- ' Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ ' Copyright (C) 2003-2008 Frederico Caldeira Knabben
  '
  ' == BEGIN LICENSE ==
  '
@@ -22,22 +22,22 @@
 %>
 <%
 
-' SECURITY: You must explicitelly enable this "connector" (set it to "True").
-' WARNING: don't just set "ConfigIsEnabled = true", you must be sure that only 
+' SECURITY: You must explicitly enable this "connector" (set it to "True").
+' WARNING: don't just set "ConfigIsEnabled = true", you must be sure that only
 '		authenticated users can access this file or use some kind of session checking.
 Dim ConfigIsEnabled
 ConfigIsEnabled = False
 
 ' Path to user files relative to the document root.
-' This setting is preserved only for backward compatibility. 
+' This setting is preserved only for backward compatibility.
 ' You should look at the settings for each resource type to get the full potential
 Dim ConfigUserFilesPath
 ConfigUserFilesPath = "/userfiles/"
 
-' Due to security issues with Apache modules, it is reccomended to leave the
+' Due to security issues with Apache modules, it is recommended to leave the
 ' following setting enabled.
 Dim ConfigForceSingleExtension
-ConfigForceSingleExtension = true 
+ConfigForceSingleExtension = true
 
 ' What the user can do with this connector
 Dim ConfigAllowedCommands
@@ -54,36 +54,36 @@ ConfigHtmlExtensions = "html|htm|xml|xsd|txt|js"
 '
 '	Configuration settings for each Resource Type
 '
-'	- AllowedExtensions: the possible extensions that can be allowed. 
+'	- AllowedExtensions: the possible extensions that can be allowed.
 '		If it is empty then any file type can be uploaded.
 '
-'	- DeniedExtensions: The extensions that won't be allowed. 
+'	- DeniedExtensions: The extensions that won't be allowed.
 '		If it is empty then no restrictions are done here.
 '
-'	For a file to be uploaded it has to fullfil both the AllowedExtensions
+'	For a file to be uploaded it has to fulfill both the AllowedExtensions
 '	and DeniedExtensions (that's it: not being denied) conditions.
 '
 '	- FileTypesPath: the virtual folder relative to the document root where
-'		these resources will be located. 
+'		these resources will be located.
 '		Attention: It must start and end with a slash: '/'
 '
 '	- FileTypesAbsolutePath: the physical path to the above folder. It must be
-'		an absolute path. 
+'		an absolute path.
 '		If it's an empty string then it will be autocalculated.
-'		Usefull if you are using a virtual directory, symbolic link or alias. 
+'		Useful if you are using a virtual directory, symbolic link or alias.
 '		Examples: 'C:\\MySite\\userfiles\\' or '/root/mysite/userfiles/'.
 '		Attention: The above 'FileTypesPath' must point to the same directory.
 '		Attention: It must end with a slash: '/'
 '
 ' - QuickUploadPath: the virtual folder relative to the document root where
-'		these resources will be uploaded using the Upload tab in the resources 
+'		these resources will be uploaded using the Upload tab in the resources
 '		dialogs.
 '		Attention: It must start and end with a slash: '/'
 '
 '	 - QuickUploadAbsolutePath: the physical path to the above folder. It must be
-'		an absolute path. 
+'		an absolute path.
 '		If it's an empty string then it will be autocalculated.
-'		Usefull if you are using a virtual directory, symbolic link or alias. 
+'		Useful if you are using a virtual directory, symbolic link or alias.
 '		Examples: 'C:\\MySite\\userfiles\\' or '/root/mysite/userfiles/'.
 '		Attention: The above 'QuickUploadPath' must point to the same directory.
 '		Attention: It must end with a slash: '/'
@@ -104,14 +104,14 @@ ConfigFileTypesAbsolutePath.Add "File", ""
 ConfigQuickUploadPath.Add "File", ConfigUserFilesPath
 ConfigQuickUploadAbsolutePath.Add "File", ""
 
-ConfigAllowedExtensions.Add	"Image", "bmp|gif|jpeg|jpg|png|psd|tif|tiff"
+ConfigAllowedExtensions.Add	"Image", "bmp|gif|jpeg|jpg|png"
 ConfigDeniedExtensions.Add	"Image", ""
 ConfigFileTypesPath.Add "Image", ConfigUserFilesPath & "image/"
 ConfigFileTypesAbsolutePath.Add "Image", ""
 ConfigQuickUploadPath.Add "Image", ConfigUserFilesPath
 ConfigQuickUploadAbsolutePath.Add "Image", ""
 
-ConfigAllowedExtensions.Add	"Flash", "swf|fla"
+ConfigAllowedExtensions.Add	"Flash", "swf|flv"
 ConfigDeniedExtensions.Add	"Flash", ""
 ConfigFileTypesPath.Add "Flash", ConfigUserFilesPath & "flash/"
 ConfigFileTypesAbsolutePath.Add "Flash", ""

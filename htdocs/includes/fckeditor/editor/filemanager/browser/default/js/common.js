@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -21,6 +21,38 @@
  * Common objects and functions shared by all pages that compose the
  * File Browser dialog window.
  */
+
+// Automatically detect the correct document.domain (#1919).
+(function()
+{
+	var d = document.domain ;
+
+	while ( true )
+	{
+		// Test if we can access a parent property.
+		try
+		{
+			var test = window.top.opener.document.domain ;
+			break ;
+		}
+		catch( e ) {}
+
+		// Remove a domain part: www.mytest.example.com => mytest.example.com => example.com ...
+		d = d.replace( /.*?(?:\.|$)/, '' ) ;
+
+		if ( d.length == 0 )
+			break ;		// It was not able to detect the domain.
+
+		try
+		{
+			document.domain = d ;
+		}
+		catch (e)
+		{
+			break ;
+		}
+	}
+})() ;
 
 function AddSelectOption( selectElement, optionText, optionValue )
 {

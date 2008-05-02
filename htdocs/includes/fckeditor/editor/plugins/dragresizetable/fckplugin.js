@@ -10,6 +10,7 @@
 	"_MaximumX" : null,
 	"_LastX" : null,
 	"_TableMap" : null,
+	"_doc" : document,
 	"_IsInsideNode" : function( w, domNode, pos )
 	{
 		var myCoords = FCKTools.GetWindowPosition( w, domNode ) ;
@@ -99,7 +100,7 @@
 
 		// Calculate maximum and minimum x-coordinate delta.
 		var borderIndex = FCKDragTableHandler._GetResizeBarPosition() ;
-		var offset = FCKTools.GetDocumentPosition( window, FCK.EditingArea.IFrame ) ;
+		var offset = FCKDragTableHandler._GetIframeOffset();
 		var table = FCKTools.GetElementAscensor( FCKDragTableHandler._LeftCell, "table" );
 		var minX = null ;
 		var maxX = null ;
@@ -307,9 +308,9 @@
 		// We need to resolve the mouse pointer position relative to the editing area iframe.
 		var mouseX = evt.clientX ;
 		var mouseY = evt.clientY ;
-		if ( node.ownerDocument == document )
+		if ( FCKTools.GetElementDocument( node ) == document )
 		{
-			var offset = FCKTools.GetDocumentPosition( window, FCK.EditingArea.IFrame ) ;
+			var offset = this._GetIframeOffset() ;
 			mouseX -= offset.x ;
 			mouseY -= offset.y ;
 		}
@@ -371,9 +372,9 @@
 
 		// Convert mouse coordinates in reference to the outer iframe.
 		var node = evt.srcElement || evt.target ;
-		if ( node.ownerDocument == FCK.EditorDocument )
+		if ( FCKTools.GetElementDocument( node ) == FCK.EditorDocument )
 		{
-			var offset = FCKTools.GetDocumentPosition( window, FCK.EditingArea.IFrame ) ;
+			var offset = this._GetIframeOffset() ;
 			mouse.x += offset.x ;
 			mouse.y += offset.y ;
 		}
@@ -392,7 +393,7 @@
 	{
 		if ( this._ResizeBar == null )
 		{
-			this._ResizeBar = document.createElement( "div" ) ;
+			this._ResizeBar = this._doc.createElement( "div" ) ;
 			var paddingBar = this._ResizeBar ;
 			var paddingStyles = { 'position' : 'absolute', 'cursor' : 'e-resize' } ;
 			if ( FCKBrowserInfo.IsIE )
@@ -400,7 +401,9 @@
 			else
 				paddingStyles.opacity = 0.10 ;
 			FCKDomTools.SetElementStyles( paddingBar, paddingStyles ) ;
-			document.body.appendChild( paddingBar ) ;
+			this._avoidStyles( paddingBar );
+			paddingBar.setAttribute('_fcktemp', true);
+			this._doc.body.appendChild( paddingBar ) ;
 			FCKTools.AddEventListener( paddingBar, "mousemove", this._ResizeBarMouseMoveListener ) ;
 			FCKTools.AddEventListener( paddingBar, "mousedown", this._ResizeBarMouseDownListener ) ;
 			FCKTools.AddEventListener( document, "mouseup", this._ResizeBarMouseUpListener ) ;
@@ -408,7 +411,8 @@
 
 			// IE doesn't let the tranparent part of the padding block to receive mouse events unless there's something inside.
 			// So we need to create a spacer image to fill the block up.
-			var filler = document.createElement( "img" ) ;
+			var filler = this._doc.createElement( "img" ) ;
+			filler.setAttribute('_fcktemp', true);
 			filler.border = 0 ;
 			filler.src = FCKConfig.BasePath + "images/spacer.gif" ;
 			filler.style.position = "absolute" ;
@@ -429,8 +433,8 @@
 		}
 
 		var paddingBar = this._ResizeBar ;
-		var offset = FCKTools.GetDocumentPosition( window, FCK.EditingArea.IFrame ) ;
-		var tablePos = FCKTools.GetWindowPosition( w, table ) ;
+		var offset = this._GetIframeOffset() ;
+		var tablePos = this._GetTablePosition( w, table ) ;
 		var barHeight = table.offsetHeight ;
 		var barTop = offset.y + tablePos.y ;
 		// Do not let the resize bar intrude into the toolbar area.
@@ -471,7 +475,9 @@
 		var visibleBar = null ;
 		if ( paddingBar.getElementsByTagName( "div" ).length < 1 )
 		{
-			visibleBar = document.createElement( "div" ) ;
+			visibleBar = this._doc.createElement( "div" ) ;
+			this._avoidStyles( visibleBar );
+			visibleBar.setAttribute('_fcktemp', true);
 			paddingBar.appendChild( visibleBar ) ;
 		}
 		else
@@ -497,7 +503,25 @@
 					top		: '-100000px',
 					left	: '-100000px'
 				} ) ;
+	},
+	"_GetIframeOffset" : function ()
+	{
+		return FCKTools.GetDocumentPosition( window, FCK.EditingArea.IFrame ) ;
+	},
+	"_GetTablePosition" : function ( w, table )
+	{
+		return FCKTools.GetWindowPosition( w, table ) ;
+	},
+	"_avoidStyles" : function( element )
+	{
+		FCKDomTools.SetElementStyles( element,
+			{
+				padding		: '0',
+				backgroundImage	: 'none',
+				border		: '0'
+			} ) ;
 	}
+
 };
 
 FCK.Events.AttachEvent( "OnMouseMove", FCKDragTableHandler.MouseMoveListener ) ;

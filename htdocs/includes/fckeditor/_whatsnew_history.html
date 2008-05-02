@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -21,14 +21,583 @@
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>FCKeditor - What's New?</title>
+	<title>FCKeditor ChangeLog - What's New?</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<style type="text/css">
 		body { font-family: arial, verdana, sans-serif }
 		p { margin-left: 20px }
+		h1 { border-bottom: solid 1px gray; padding-bottom: 20px }
 	</style>
 </head>
 <body>
+	<h1>
+		FCKeditor ChangeLog - What's New?</h1>
+	<h3>
+		Version 2.5.1</h3>
+	<p>
+		New Features and Improvements:</p>
+	<ul>
+		<li><strong>FCKeditor.Net 2.5</strong> compatibility.</li>
+		<li>JavaScript integration file:
+			<ul>
+				<li>The new "<strong>FCKeditor.ReplaceAllTextareas</strong>" function is being introduced,
+					making it possible to replace many (or unknown) &lt;textarea&gt; elements in a single
+					call. The replacement can be also filtered by CSS class name, or by a custom function
+					evaluator. </li>
+				<li>It is now possible to set the default BasePath for all editor instances by setting
+					<strong>FCKeditor.BasePath</strong>. This is extremely useful when working with
+					the ReplaceAllTextareas function. </li>
+			</ul>
+		</li>
+	</ul>
+	<p>
+		Fixed Bugs:</p>
+	<ul>
+		<li>[<a href="http://dev.fckeditor.net/ticket/339" target="_blank">#339</a>] [<a
+			href="http://dev.fckeditor.net/ticket/681" target="_blank">#681</a>] The SpellerPages
+			spell checker will now completely ignore the presence of HTML tags in the text.
+		</li>
+		<li>[<a href="http://dev.fckeditor.net/ticket/1643" target="_blank">#1643</a>] Resolved
+			several "strict warning" messages in Firefox when running FCKeditor. </li>
+		<li>[<a href="http://dev.fckeditor.net/ticket/1603" target="_blank">#1603</a>] Certain
+			specific markup was making FCKeditor entering in a loop, blocking its execution.
+		</li>
+		<li>[<a href="http://dev.fckeditor.net/ticket/1664" target="_blank">#1664</a>] The ENTER
+			key will not any more swap the order of the tags when hit at the end of paragraphs.
+		</li>
+	</ul>
+	<h3>
+		Version 2.5</h3>
+	<p>
+		New Features and Improvements:</p>
+	<ul>
+		<li>The heading options have been moved to the top, in the default settings for the
+			Format combo.</li>
+	</ul>
+	<p>
+		Fixed Bugs:</p>
+	<ul>
+		<li>The focus is now correctly set when working on Safari.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1436">#1436</a>] Nested
+			context menu panels are now correctly closed on Safari.</li>
+		<li>Empty anchors are now properly created on Safari.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1359">#1359</a>] FCKeditor
+			will no longer produce the strange visual effect of creating a selected space and
+			then deleting it in Internet Explorer.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1399">#1399</a>] Removed
+			the empty entry in the language selection box of sample03.html.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1400">#1400</a>] Fixed
+			the issue where the style selection box in sample14.html is not context sensitive.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1401">#1401</a>] Completed
+			Hebrew translation of the user interface.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1409">#1409</a>] Completed
+			Finnish translation of the user interface.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1414">#1414</a>] Fixed
+			the issue where entity code words written inside a &lt;pre&gt; block in Source mode
+			are not converted to the corresponding characters after switching back to editor
+			mode.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1418">#1418</a>] Fixed
+			the issue where a detached toolbar would flicker when FCKeditor is being loaded.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1419">#1419</a>] Fixed
+			the issue where pressing Delete in the middle of two lists would incorrectly move
+			contents after the lists to the character position.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1420">#1420</a>] Fixed
+			the issue where empty list items can become collapsed and uneditable when it has
+			one of more indented list items directly under it. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1431">#1431</a>] Fixed
+			the issue where pressing Enter in a &lt;pre&gt; block in Internet Explorer would
+			move the caret one space forward instead of sending it to the next line.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1472">#1472</a>] Completed
+			Arabic translation of the user interface.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1474">#1474</a>] Fixed
+			the issue where reloading a page containing FCKeditor may provoke JavaScript errors
+			in Internet Explorer.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1478">#1478</a>] Fixed
+			the issue where parsing fckstyles.xml fails if the file contains no &lt;style&gt;
+			nodes.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1491">#1491</a>] Fixed
+			the issue where FCKeditor causes the selection to include an "end of line" character
+			in list items even though the list item is empty.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1496">#1496</a>] Fixed
+			the issue where attributes under &lt;area&gt; and &lt;map&gt; nodes are destroyed
+			or left unprotected when switching to and from Source mode.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1500">#1500</a>] Fixed
+			the issue where the function _FCK_PaddingNodeListener() is called excessively which
+			negatively affects performance.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1514">#1514</a>] Fixed
+			the issue where floating menus are incorrectly positioned when the toolbar or the
+			editor frame are not static positioned.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1518">#1518</a>] Fixed
+			the issue where excessive &lt;BR&gt; nodes are not removed after a paragraph is
+			split when creating lists.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1521">#1521</a>] Fixed
+			JavaScript error and erratic behavior of the Replace dialog.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1524">#1524</a>] Fixed
+			the issue where the caret jumps to the beginning or end of a list block and when
+			user is trying to select the end of a list item.</li>
+		<li>Completed Simplified Chinese translation of the user interface.</li>
+		<li>Completed Estonian translation of the user interface.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1406">#1406</a>] Editor
+			was always "dirty" if flash is available in the contents.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1561">#1561</a>] Non standard
+			elements are now properly applied if defined in the styles XML file.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1412">#1412</a>] The _QuickUploadLanguage
+			value is now work properly for Perl.</li>
+		<li>Several compatibility fixes for Firefox 3 (Beta 1):
+			<ul>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1558">#1558</a>] Nested
+					context menu close properly when one of their options is selected.</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1556">#1556</a>] Dialogs
+					contents are now showing completely, without scrollbar.</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1559">#1559</a>] It is
+					not possible to have more than one panel opened at the same time.</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1554">#1554</a>] Links
+					now get underlined.</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1557">#1557</a>] The "Automatic"
+					and "More colors..." buttons were improperly styled in the color selector panels
+					(Opera too).</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1462">#1462</a>] The enter
+					key will not any more scroll the main window.</li>
+			</ul>
+		</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1562">#1562</a>] Fixed
+			the issue where empty paragraphs are added around page breaks each time the user
+			switches to Source mode.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1578">#1578</a>] The editor
+			will now scroll correctly when hitting enter in front of a paragraph.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1579">#1579</a>] Fixed
+			the issue where the create table and table properties dialogs are too narrow for
+			certain translations.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1580">#1580</a>] Completed
+			Polish translation of the user interface.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1591">#1591</a>] Fixed
+			JavaScript error when using the blockquote command in an empty document in IE.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1592">#1592</a>] Fixed
+			the issue where attempting to remove a blockquote with an empty paragraph would
+			leave behind an empty blockquote IE.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1594">#1594</a>] Undo/Redo
+			will now work properly for the color selectors.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1597">#1597</a>] The color
+			boxes are now properly rendered in the color selector panels on sample14.html.</li>
+	</ul>
+	<h3>
+		Version 2.5 Beta</h3>
+	<p>
+		New Features and Improvements:</p>
+	<ul>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/624">#624</a>] [<a
+			target="_blank" href="http://dev.fckeditor.net/ticket/634">#634</a>] [<a target="_blank"
+				href="http://dev.fckeditor.net/ticket/1300">#1300</a>] [<a target="_blank" href="http://dev.fckeditor.net/ticket/1301">#1301</a>]
+			Official compatibility support with <strong>Opera 9.50</strong> and <strong>Safari 3</strong>
+			(WebKit based browsers actually). These browsers are still in Beta, but we are confident
+			that we'll have amazing results as soon as they get stable. We are continuously
+			collaborating with Opera Software and Apple to bring a wonderful FCKeditor experience
+			over their browser platforms.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/494">#494</a>] Introduced
+			the <strong>new Style System</strong>. We are not anymore relaying on browser features
+			to apply and remove styles, which guarantees that the editor will <strong>behave in
+				the same way in all browsers</strong>. It is an incredibly flexible system,
+			which aims to fit all developer's needs, from Flash content or HTML4 to XHTML 1.0
+			Strict or XHTML 1.1:
+			<ul>
+				<li>All basic formatting features, like Bold and Italic, can be precisely controlled
+					by using the configuration file (<b>CoreStyles</b> setting). It means that now,
+					the Bold button, for example, can produce &lt;b&gt;, &lt;strong&gt;, &lt;span class...&gt;,
+					&lt;span style...&gt; or anything the developer prefers.</li>
+				<li>Again with the <b>CoreStyles</b> setting, each block format, font, size, and even
+					the color pickers can precisely reflect end developer's needs.</li>
+				<li>Because of the above changes, font sizes are much more flexible. <b>Any kind of
+					font unit</b> can be used, including a mix of units.</li>
+				<li>All styles, including toolbar bottom styles, are precisely controlled when being
+					applied to the document. FCKeditor uses an element table derived from the <b>W3C XHTML
+						DTDs</b> to precisely create the elements, guarantee standards compliant code.</li>
+				<li><b>No more &lt;font&gt; tags</b>... well... actually, the system is so flexible
+					that it is up to you to use them or not.</li>
+				<li>It is possible to configure FCKeditor to produce a truly <b>semantic aware </b>and<b>
+					XHTML 1.1 compliant </b>code. Check out sample14.html.</li>
+				<li>It's also possible to precisely control which inline elements must be removed with
+					the &quot;Remove All&quot; button, by using the &quot;<b>RemoveFormatTags</b>&quot;
+					setting.</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1231">#1231</a>] [<a
+					target="_blank" href="http://dev.fckeditor.net/ticket/160">#160</a>] Paragraph <b>indentation</b>
+					and <b>justification</b> now uses style attributes and don't create unnecessary
+					elements, and &lt;blockquote&gt; is not anymore used for it. Now, even CSS classes
+					can be used to indent or align text.</li>
+				<li>All paragraph formatting features work well when EnterMode=br.</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/172">#172</a>] All paragraph
+					formatting features work well when list items too.</li>
+			</ul>
+		</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1197">#1197</a>] [<a
+			target="_blank" href="http://dev.fckeditor.net/ticket/132">#132</a>] The toolbar
+			now presents a <strong>new button for Blockquote</strong>. The indentation button
+			will not anymore be used for that.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/125">#125</a>] Table's
+			<strong>columns size can now be changed by dragging on cell borders</strong>, with
+			the "dragresizetable" plugin. </li>
+		<li>The EditorAreaCSS config option can now also be set to a string of paths separated
+			by commas.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/212">#212</a>] New "<strong>Show
+			Blocks</strong>" command button in toolbar to show block details in the editing
+			area. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/915">#915</a>] The <strong>
+			undo/redo system has been revamped</strong> to work the same across Internet Explorer
+			and Gecko-based browsers (e.g. Firefox). A number of critical bugs in the undo/redo
+			system are also fixed. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/194">#194</a>] The editor
+			now uses the <strong>Data Processor</strong> technology, which makes it possible
+			to handle different input formats. A sample of it may be found at "editor/plugins/bbcode/_sample",
+			that shows some simple BBCode support. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/145">#145</a>] The "htaccess.txt"
+			file has been renamed to ".htaccess" as it doesn't bring security concerns, being
+			active out of the box.</li>
+		<li>File Browser and Quick Upload changes:
+			<ul>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/163">#163</a>] <span
+					style="color: #ff0000"><strong>Attention:</strong></span> The default connector
+					in fckconfig.js has been changed from ASP to PHP. If you are using ASP remember
+					to change the _FileBrowserLanguage and _QuickUploadLanguage settings in your fckconfig.js.
+					[<a target="_blank" href="http://dev.fckeditor.net/ticket/454">#454</a>] The file
+					browser and upload connectors have been unified so they can reuse the same configuration
+					settings.</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/865">#865</a>] The ASP
+					and PHP connectors have been improved so it's easy to select the location of the
+					destination folder for each file type, and it's no longer necessary to use the "file",
+					"image", "flash" subfolders<br />
+					<span style="color: #ff0000"><strong>Attention:</strong></span> The location of
+					all the connectors have been changed in the fckconfig.js file. Please check your
+					settings to match the current ones. Also review carefully the config file for your
+					server language. </li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/688">#688</a>] Now the
+					Perl quick upload is available. </li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/575">#575</a>] The Python
+					connector has been rewritten as a WSGI app to be fully compatible with the latest
+					python frameworks and servers. The QuickUpload feature has been added as well as
+					all the features available in the PHP connector. Thanks to Mariano Reingart.</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/561">#561</a>] The ASP
+					connector provides an AbsolutePath setting so it's possible to set the url to a
+					full domain or a relative path and specify that way the physical folder where the
+					files are stored..</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/333">#333</a>] The Quick
+					Upload now can use the same ServerPath parameter as the full connector.</li>
+				<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/199">#199</a>] The AllowedCommands
+					configuration setting is available in the asp and php connectors so it's possible
+					to disallow the upload of files (although the "select file" button will still be
+					available in the file browser).</li>
+			</ul>
+		</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/100">#100</a>] A new configuration
+			directive "FCKConfig.EditorAreaStyles" has been implemented to allow setting editing
+			area styles from JavaScript. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/102">#102</a>] HTML code
+			generated by the "Paste As Plain Text" feature now obeys the EnterMode setting.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1266">#1266</a>] Introducing
+			the HtmlEncodeOutput setting to instruct the editor to HTML-encode some characters
+			(&amp;, &lt; and &gt;) in the posted data.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/357">#357</a>] Added a
+			"Remove Anchor" option in the context menu for anchors. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1060">#1060</a>] Compatibility
+			checks with Firefox 3.0 Alpha. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/817">#817</a>] [<a
+			target="_blank" href="http://dev.fckeditor.net/ticket/1077">#1077</a>] New "Merge
+			Down/Right" commands for merging tables cells in non-Gecko browsers.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1288">#1288</a>] The "More
+			Colors..." button in color selector popup has been made optional and configurable
+			by the <strong>EnableMoreFontColors</strong> option. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/356">#356</a>] The <strong>
+			Find and Replace</strong> dialogs are now unified into a single dialog with tabs.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/549">#549</a>] Added a
+			'None' option to the FCKConfig.ToolbarLocation option to allow for hidden toolbars.
+		</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1313">#1313</a>] An XHTML
+			1.1 target editor sample has been created as sample14.html. </li>
+		<li>The ASP, ColdFusion and PHP integration have been aligned to our standards.</li>
+	</ul>
+	<p>
+		Fixed Bugs:</p>
+	<ul>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/71">#71</a>] [<a target="_blank"
+			href="http://dev.fckeditor.net/ticket/243">#243</a>] [<a target="_blank" href="http://dev.fckeditor.net/ticket/267">#267</a>]
+			The editor now takes care to not create invalid nested block elements, like creating
+			&lt;form&gt; or &lt;hr&gt; inside &lt;p&gt;. &nbsp;</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&aid=1511298&group_id=75348&atid=543655">SF
+			Patch 1511298</a>] The CF Component failed on CFMX 6.0</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/639">#639</a>] If the
+			FCKConfig.DefaultLinkTarget setting was missing in fckconfig.js the links has target="undefined".</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/497">#497</a>] Fixed EMBED
+			attributes handling in IE.</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&aid=1315722&group_id=75348&atid=543655">SF
+			Patch 1315722</a>] Avoid getting a cached version of the folder contents after uploading
+			a file</li>
+		<li>[<a target="_blank" href="https://sourceforge.net/tracker/?func=detail&aid=1386086&group_id=75348&atid=543655">SF
+			Patch 1386086</a>] The php connector has been protected so mkdir doesn't fail if
+			there are double slashes.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/943">#943</a>] The PHP
+			connector now specifies that the included files are relative to the current path.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/560">#560</a>] The PHP
+			connector will work better if the connector or the userfiles folder is a symlink.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/784">#784</a>] Fixed a
+			non initialized $php_errormsg in the PHP connector.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/802">#802</a>] The replace
+			dialog will now advance its searching position correctly and is able to search for
+			strings spanning across multiple inline tags.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/944">#944</a>] The _samples
+			didn't work directly from the Mac filesystem.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/946">#946</a>] Toolbar
+			images didn't show in non-IE browsers if the path contained a space.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/291">#291</a>] [<a
+			target="_blank" href="http://dev.fckeditor.net/ticket/395">#395</a>] [<a target="_blank"
+				href="http://dev.fckeditor.net/ticket/932">#932</a>] Clicking outside the editor
+			it was possible to paste or apply formatting to the rest of the page in IE.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/137">#137</a>] Fixed FCKConfig.TabSpaces
+			being ignored, and weird behaviors when pressing tab in edit source mode.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/268">#268</a>] Fixed special
+			XHTML characters present in event attribute values being converted inappropriately
+			when switching to source view.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/272">#272</a>] The toolbar
+			was cut sometimes in IE to just one row if there are multiple instances of the editor.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/515">#515</a>] Tables
+			in Firefox didn't inherit font styles properly in Standards mode.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/321">#321</a>] If FCKeditor
+			is initially hidden in Firefox it will no longer be necessary to call the oEditor.MakeEditable()
+			function.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/299">#299</a>] The 'Browse
+			Server' button in the Image and Flash dialogs was a little too high.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/931">#931</a>] The BodyId
+			and BodyClass configuration settings weren't applied in the preview window.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/583">#583</a>] The "noWrap"
+			attribute for table cells was getting an empty value in Firefox. Thanks to geirhelge.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/141">#141</a>] Fixed incorrect
+			startup focus in Internet Explorer after page reloads. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/143">#143</a>] Fixed browser
+			lockup when the user writes &lt;!--{PS..x}&gt; into the editor in source mode. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/174">#174</a>] Fixed incorrect
+			positioning of FCKeditor in full screen mode. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/978">#978</a>] Fixed a
+			SpellerPages error with ColdFusion when no suggestions where available for a word.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/977">#977</a>] The "shape"
+			attribute of &lt;area&gt; had its value changed to uppercase in IE.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/996">#996</a>] "OnPaste"
+			event listeners will now get executed only once.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/289">#289</a>] Removed
+			debugging popups from page load regarding JavaScript and CSS loading errors.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/328">#328</a>] [<a
+			target="_blank" href="http://dev.fckeditor.net/ticket/346">#346</a>] [<a target="_blank"
+				href="http://dev.fckeditor.net/ticket/404">#404</a>] Fixed a number of problems
+			regarding &lt;pre&gt; blocks:
+			<ol>
+				<li>Leading whitespaces and line breaks in &lt;pre&gt; blocks are trimmed when the user
+					switches between editor mode and source mode;</li>
+				<li>Pressing Enter inside a &lt;pre&gt; block would split the block into two, but the
+					expected behavior is simply inserting a line break;</li>
+				<li>Simple line breaks inside &lt;pre&gt; blocks entered in source mode are being turned
+					into &lt;br&gt; tags when the user switches to editor mode and back.</li>
+			</ol>
+		</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/581">#581</a>] Fixed the
+			issue where the "Maximize the editor size" toolbar button stops working if any of
+			the following occurs:
+			<ol>
+				<li>There exists a form input whose name or id is "style" in FCKeditor's host form;</li>
+				<li>There exists a form input whose name or id is "className" in FCKeditor's host form;</li>
+				<li>There exists a form and a form input whose name of id is "style" in the editing
+					frame.</li>
+			</ol>
+		</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/183">#183</a>] Fixed the
+			issue when FCKeditor is being executed in a custom application with the WebBrowser
+			ActiveX control, hiding the WebBrowser control would incorrectly invoke FCKeditor's
+			cleanup routines, causing FCKeditor to stop working.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/539">#539</a>] Fixed the
+			issue where right clicking on a table inside the editing frame in Firefox would
+			cause the editor the scroll to the top of the document.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/523">#523</a>] Fixed the
+			issue where, under certain circumstances, FCKeditor would obtain focus at startup
+			even though FCKConfig.StartupFocus is set to false. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/393">#393</a>] Fixed the
+			issue where if an inline tag is at the end of the document, the user would have
+			no way of escaping from the inline tag if he continues typing at the end of the
+			document. FCKeditor's behaviors regarding inline tags has been made to be more like
+			MS Word's:
+			<ol>
+				<li>If the caret is moved to the end of a hyperlink by the keyboard, then hyperlink
+					mode is disabled. </li>
+				<li>If the caret is moved to the end of other styled inline tags by any key other than
+					the End key (like bold text or italic text), the original bold/italic/... modes
+					would continue to be effective. </li>
+				<li>If the caret is moved to the end of other styled inline tags by the End key, all
+					style tag modes (e.g. bold, italic, underline, etc.) would be canceled. This is
+					not consistent with MS Word, but provides a convenient way for the user to escape
+					the inline tag at the end of a line.</li>
+			</ol>
+		</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/338">#338</a>] Fixed the
+			issue where the configuration directive FCKConfig.ForcePasteAsPlainText is ignored
+			when new contents are pasted into the editor via drag-and drop from outside of the
+			editor. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1026">#1026</a>] Fixed
+			the issue where the cursor or selection positions are not restored with undo/redo
+			commands correctly in IE, under some circumstances. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1160">#1160</a>] [<a
+			target="_blank" href="http://dev.fckeditor.net/ticket/1184">#1184</a>] Home, End
+			and Tab keys are working properly for numeric fields in dialogs. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/68">#68</a>] The style
+			system now properly handles Format styles when EnterMode=br.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/525">#525</a>] The union
+			of successive DIVs will work properly now if EnterMode!=div.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1227">#1227</a>] The color
+			commands used an unnecessary temporary variable. Thanks to Matthias Miller</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/67">#67</a>] [<a target="_blank"
+			href="http://dev.fckeditor.net/ticket/277">#277</a>] [<a target="_blank" href="http://dev.fckeditor.net/ticket/427">#427</a>]
+			[<a target="_blank" href="http://dev.fckeditor.net/ticket/428">#428</a>] [<a target="_blank"
+				href="http://dev.fckeditor.net/ticket/965">#965</a>] [<a target="_blank" href="http://dev.fckeditor.net/ticket/1178">#1178</a>]
+			[<a target="_blank" href="http://dev.fckeditor.net/ticket/1267">#1267</a>] The list
+			insertion/removal/indent/outdent logic in FCKeditor has been rewritten, such that:
+			<ol>
+				<li>Text separated by &lt;br&gt; will always be treated as separate items during list
+					insertion regardless of browser;</li>
+				<li>List removal will now always obey the FCKConfig.EnterMode setting;</li>
+				<li>List indentation will be XHTML 1.1 compliant - all child elements under an &lt;ol&gt;
+					or &lt;ul&gt; must be &lt;li&gt; nodes;</li>
+				<li>IE editor hacks like &lt;ul type=&quot;1&quot;&gt; will no longer appear;</li>
+				<li>Excessive &lt;div&gt; nodes are no longer inserted into list items due to alignment
+					changes.</li>
+			</ol>
+		</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/205">#205</a>] Fixed the
+			issue where visible &lt;br&gt; tags at the end of paragraphs are incorrectly removed
+			after switching to and from source mode.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1050">#1050</a>] Fixed
+			a minor PHP/XML incompatibility bug in editor/dialog/fck_docprops.html.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/462">#462</a>] Fixed an
+			algorithm bug in switching from source mode to WYSIWYG mode which causes the browser
+			to spin up and freeze for broken HTML code inputs.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1019">#1019</a>] Table
+			command buttons are now disabled when the current selection is not inside a table.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/135">#135</a>] Fixed the
+			issue where context menus are misplaced in FCKeditor when FCKeditor is created inside
+			a &lt;div&gt; node with scrolling. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1067">#1067</a>] Fixed
+			the issue where context menus are misplaced in Safari when FCKeditor is scrolled
+			down.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1081">#1081</a>] Fixed
+			the issue where undoing table deletion in IE7 would cause JavaScript errors.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1061">#1061</a>] Fixed
+			the issue where backspace and delete cannot delete special characters in Firefox
+			under some circumstances.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/403">#403</a>] Fixed the
+			issue where switching to and from source mode in full page mode under IE would add
+			excessive line breaks to &lt;style&gt; blocks.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/121">#121</a>] Fixed the
+			issue where maximizing FCKeditor inside a frameset would resize FCKeditor to the
+			whole window's size instead of just the container frame's size.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1093">#1093</a>] Fixed
+			the issue where pressing Enter inside an inline tag would not create a new paragraph
+			correctly.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1089">#1089</a>] Fixed
+			the issue where pressing Enter inside a &lt;pre&gt; block do not generate visible
+			line breaks in IE.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/332">#332</a>] Hitting
+			Enter when the caret is at the end of a hyperlink will no longer continue the link
+			at the new paragraph.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1121">#1121</a>] Hitting
+			Enter with FCKConfig.EnterMode=br will now scroll the document correctly when the
+			new lines have exceeded the lower boundary of the editor frame.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1063">#1063</a>] [<a
+			target="_blank" href="http://dev.fckeditor.net/ticket/1084">#1084</a>] [<a target="_blank"
+				href="http://dev.fckeditor.net/ticket/1092">#1092</a>] Fixed a few Norwegian
+			language translation errors.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1148">#1148</a>] Fixed
+			the issue where the &quot;Automatic&quot; and &quot;More Colors...&quot; buttons
+			in the color selection panel are not centered in Safari.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1187">#1187</a>] Fixed
+			the issue where the &quot;Paste as plain text&quot; command cannot be undone in
+			non-IE browsers.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1222">#1222</a>] Ctrl-Backspace
+			operations will now save undo snapshots in all browsers.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1223">#1223</a>] Fixed
+			the issue where the insert link dialog would save multiple undo snapshots for a
+			single operation.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/247">#247</a>] Fixed the
+			issue where deleting everything in the document in IE would create an empty &lt;p&gt;
+			block in the document regardless of EnterMode setting. </li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1280">#1280</a>] Fixed
+			the issue where opening a combo box will cause the editor frames to lose focus when
+			there are multiple editors in the same document.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/363">#363</a>] Fixed the
+			issue where the Find dialog does not work under Opera.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/50">#50</a>] Fixed the
+			issue where the Paste button is always disabled in Safari.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/389">#389</a>] Pasting
+			text with comments from Word won't generate errors in IE, thanks to the idea from
+			Swift.</li>
+		<li>The pasting area in the Paste from Word dialog is focused on initial load</li>
+		<li>Some fixes related to html comment handling in the Word clean up routine</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1303">#1303</a>] &lt;col&gt;
+			is correctly treated as an empty element.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/969">#969</a>] Removed
+			unused files (fcknumericfield.htc and moz-bindings.xml).</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1166">#1166</a>] Fixed
+			the issue where &lt;meta&gt; tags are incorrectly outputted with closing tags in
+			full page mode.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1200">#1200</a>] Fixed
+			the issue where context menus sometimes disappear prematurely before the user can
+			click on any items in Opera.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1315">#1315</a>] Fixed
+			the issue where the source view text area in Safari is displayed with an excessive
+			blue border.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1201">#1201</a>] Fixed
+			the issue where hitting Backspace or Delete inside a table cell deletes the table
+			cell instead of its contents in Opera.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1311">#1311</a>] Fixed
+			the issue where undoing and redoing a special character insertion would send the
+			caret to incorrect positions. (e.g. the beginning of document)</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/923">#923</a>] Font colors
+			are now properly applied on links.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1316">#1316</a>] Fixed
+			the issue where the image dialog expands to a size too big in Safari.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/1306">#1306</a>] [<a
+			target="_blank" href="http://dev.fckeditor.net/ticket/894">#894</a>] The undo system
+			can now undo text formatting steps like setting fonts to bold and italic.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/95">#95</a>] Fixed the
+			issue where FCKeditor breaks &lt;meta&gt; tags in full page mode in some circumstances.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/175">#175</a>] Fixed the
+			issue where entering an email address with a '%' sign in the insert link dialog
+			would cause JavaScript error.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/180">#180</a>] Improved
+			backward compatibility with older PHP versions. FCKeditor can now work with PHP
+			versions down to 4.0.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/192">#192</a>] Document
+			modifying actions from the FCKeditor JavaScript API will now save undo steps.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/246">#246</a>] Using text
+			formatting commands in EnterMode=div will no longer cause tags to randomly disappear.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/327">#327</a>] It is no
+			longer possible for the browser's back action to misfire when a user presses backspace
+			while an image is being selected in FCKeditor.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/362">#362</a>] Ctrl-Backspace
+			now works in FCKeditor.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/390">#390</a>] Text alignment
+			and justification commands now respects EnterMode=br paragraph rules.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/534">#534</a>] Pressing
+			Ctrl-End while the document contains a list towards the end will no longer make
+			the cursor disappear.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/906">#906</a>] It is now
+			possible to have XHTML 1.0 Strict compliant output from a document pasted from Word.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/929">#929</a>] Pressing
+			the Enter key will now produce an undo step.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/934">#934</a>] Fixed the
+			"Cannot execute code from a freed script" error in IE from editor dialogs.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/942">#942</a>] Server
+			based spell checking with ColdFusion integration no longer breaks fir non en_US
+			languages.</li>
+		<li>[<a target="_blank" href="http://dev.fckeditor.net/ticket/942">#1056</a>] Deleting
+			everything in the editor document and moving the cursor around will no longer leave
+			the cursor hanging beyond the top of the editor document.</li>
+	</ul>
+	<p>
+		# This version has been <a href="http://dev.fckeditor.net/wiki/SD/COE">partially sponsored</a>
+		by the <a href="http://www.coe.int/">Council of Europe</a>.
+	</p>
 	<h3>
 		Version 2.4.3</h3>
 	<p>

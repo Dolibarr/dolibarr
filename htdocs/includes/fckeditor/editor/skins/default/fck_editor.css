@@ -1,6 +1,6 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -409,7 +409,7 @@ body
     background-repeat: no-repeat;
 }
 
-.SC_FieldDisabled .SC_FieldButton, .SC_FieldDisabled .SC_FieldCaption
+.SC_FieldDisabled .SC_FieldButton, .SC_FieldDisabled .SC_FieldCaption, .SC_FieldDisabled .TB_ButtonType_Text
 {
     opacity: 0.30; /* Safari, Opera and Mozilla */
     filter: gray() alpha(opacity=30); /* IE */ /* -moz-opacity: 0.30; Mozilla (Old) */

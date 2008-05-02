@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -24,6 +24,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<link href="browser.css" type="text/css" rel="stylesheet" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<script type="text/javascript" src="js/common.js"></script>
 	<script type="text/javascript">
 
@@ -87,7 +88,7 @@ function OpenFolder( folderPath )
 
 function OpenFile( fileUrl )
 {
-	window.top.opener.SetUrl( encodeURI( fileUrl ) ) ;
+	window.top.opener.SetUrl( encodeURI( fileUrl ).replace( '#', '%23' ) ) ;
 	window.top.close() ;
 	window.top.opener.focus() ;
 }

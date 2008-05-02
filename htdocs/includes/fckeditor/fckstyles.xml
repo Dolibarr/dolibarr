@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -67,9 +67,6 @@
 	<Style name="Marker: Green" element="span">
 		<Style name="background-color" value="Lime" />
 	</Style>
-
-	<Style name="Strong Emphasis" element="strong" />
-	<Style name="Emphasis" element="em" />
 
 	<Style name="Big" element="big" />
 	<Style name="Small" element="small" />

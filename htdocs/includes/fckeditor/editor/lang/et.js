@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -42,16 +42,16 @@ Print				: "Prindi",
 SelectAll			: "Vali kõik",
 RemoveFormat		: "Eemalda vorming",
 InsertLinkLbl		: "Link",
-InsertLink			: "Sisesta/Muuda link",
+InsertLink			: "Sisesta link / Muuda linki",
 RemoveLink			: "Eemalda link",
-Anchor				: "Sisesta/Muuda ankur",
-AnchorDelete		: "Remove Anchor",	//MISSING
+Anchor				: "Sisesta ankur / Muuda ankrut",
+AnchorDelete		: "Eemalda ankur",
 InsertImageLbl		: "Pilt",
-InsertImage			: "Sisesta/Muuda pilt",
+InsertImage			: "Sisesta pilt / Muuda pilti",
 InsertFlashLbl		: "Flash",
-InsertFlash			: "Sisesta/Muuda flash",
+InsertFlash			: "Sisesta flash / Muuda flashi",
 InsertTableLbl		: "Tabel",
-InsertTable			: "Sisesta/Muuda tabel",
+InsertTable			: "Sisesta tabel / Muuda tabelit",
 InsertLineLbl		: "Joon",
 InsertLine			: "Sisesta horisontaaljoon",
 InsertSpecialCharLbl: "Erimärgid",
@@ -59,10 +59,10 @@ InsertSpecialChar	: "Sisesta erimärk",
 InsertSmileyLbl		: "Emotikon",
 InsertSmiley		: "Sisesta emotikon",
 About				: "FCKeditor teave",
-Bold				: "Rasvane kiri",
-Italic				: "Kursiiv kiri",
-Underline			: "Allajoonitud kiri",
-StrikeThrough		: "Läbijoonitud kiri",
+Bold				: "Paks",
+Italic				: "Kursiiv",
+Underline			: "Allajoonitud",
+StrikeThrough		: "Läbijoonitud",
 Subscript			: "Allindeks",
 Superscript			: "Ülaindeks",
 LeftJustify			: "Vasakjoondus",
@@ -71,7 +71,7 @@ RightJustify		: "Paremjoondus",
 BlockJustify		: "Rööpjoondus",
 DecreaseIndent		: "Vähenda taanet",
 IncreaseIndent		: "Suurenda taanet",
-Blockquote			: "Blockquote",	//MISSING
+Blockquote			: "Blokktsitaat",
 Undo				: "Võta tagasi",
 Redo				: "Korda toimingut",
 NumberedListLbl		: "Nummerdatud loetelu",
@@ -92,7 +92,7 @@ Replace				: "Asenda",
 SpellCheck			: "Kontrolli õigekirja",
 UniversalKeyboard	: "Universaalne klaviatuur",
 PageBreakLbl		: "Lehepiir",
-PageBreak			: "Sisesta lehevahetus koht",
+PageBreak			: "Sisesta lehevahetuskoht",
 
 Form			: "Vorm",
 Checkbox		: "Märkeruut",
@@ -105,31 +105,31 @@ SelectionField	: "Valiklahter",
 ImageButton		: "Piltnupp",
 
 FitWindow		: "Maksimeeri redaktori mõõtmed",
-ShowBlocks		: "Show Blocks",	//MISSING
+ShowBlocks		: "Näita blokke",
 
 // Context Menu
 EditLink			: "Muuda linki",
 CellCM				: "Lahter",
 RowCM				: "Rida",
 ColumnCM			: "Veerg",
-InsertRowAfter		: "Insert Row After",	//MISSING
-InsertRowBefore		: "Insert Row Before",	//MISSING
-DeleteRows			: "Eemalda ridu",
-InsertColumnAfter	: "Insert Column After",	//MISSING
-InsertColumnBefore	: "Insert Column Before",	//MISSING
+InsertRowAfter		: "Sisesta rida peale",
+InsertRowBefore		: "Sisesta rida enne",
+DeleteRows			: "Eemalda read",
+InsertColumnAfter	: "Sisesta veerg peale",
+InsertColumnBefore	: "Sisesta veerg enne",
 DeleteColumns		: "Eemalda veerud",
-InsertCellAfter		: "Insert Cell After",	//MISSING
-InsertCellBefore	: "Insert Cell Before",	//MISSING
+InsertCellAfter		: "Sisesta lahter peale",
+InsertCellBefore	: "Sisesta lahter enne",
 DeleteCells			: "Eemalda lahtrid",
 MergeCells			: "Ühenda lahtrid",
-MergeRight			: "Merge Right",	//MISSING
-MergeDown			: "Merge Down",	//MISSING
-HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
-VerticalSplitCell	: "Split Cell Vertically",	//MISSING
+MergeRight			: "Ühenda paremale",
+MergeDown			: "Ühenda alla",
+HorizontalSplitCell	: "Poolita lahter horisontaalselt",
+VerticalSplitCell	: "Poolita lahter vertikaalselt",
 TableDelete			: "Kustuta tabel",
 CellProperties		: "Lahtri atribuudid",
 TableProperties		: "Tabeli atribuudid",
-ImageProperties		: "Pildi  atribuudid",
+ImageProperties		: "Pildi atribuudid",
 FlashProperties		: "Flash omadused",
 
 AnchorProp			: "Ankru omadused",
@@ -146,15 +146,15 @@ FormProp			: "Vormi omadused",
 FontFormats			: "Tavaline;Vormindatud;Aadress;Pealkiri 1;Pealkiri 2;Pealkiri 3;Pealkiri 4;Pealkiri 5;Pealkiri 6;Tavaline (DIV)",
 
 // Alerts and Messages
-ProcessingXHTML		: "Töötlen XHTML. Palun oota...",
+ProcessingXHTML		: "Töötlen XHTML'i. Palun oota...",
 Done				: "Tehtud",
-PasteWordConfirm	: "Tekst, mida soovid lisada paistab pärinevat Wordist. Kas soovid seda enne kleepimist puhastada?",
+PasteWordConfirm	: "Tekst, mida soovid lisada paistab pärinevat Word'ist. Kas soovid seda enne kleepimist puhastada?",
 NotCompatiblePaste	: "See käsk on saadaval ainult Internet Explorer versioon 5.5 või uuema puhul. Kas soovid kleepida ilma puhastamata?",
-UnknownToolbarItem	: "Tundmatu tööriistariba üksus \"%1\"",
+UnknownToolbarItem	: "Tundmatu tööriistarea üksus \"%1\"",
 UnknownCommand		: "Tundmatu käsunimi \"%1\"",
 NotImplemented		: "Käsku ei täidetud",
 UnknownToolbarSet	: "Tööriistariba \"%1\" ei eksisteeri",
-NoActiveX			: "Sinu veebisirvija turvalisuse seaded võivad limiteerida mõningaid tekstirdaktori kasutus võimalusi. Sa peaksid võimaldama valiku \"Run ActiveX controls and plug-ins\" oma sirvija seadetes. Muidu võid sa täheldada vigu tekstiredaktori töös ja märgata puuduvaid funktsioone.",
+NoActiveX			: "Sinu veebisirvija turvalisuse seaded võivad limiteerida mõningaid tekstirdaktori kasutusvõimalusi. Sa peaksid võimaldama valiku \"Run ActiveX controls and plug-ins\" oma veebisirvija seadetes. Muidu võid sa täheldada vigu tekstiredaktori töös ja märgata puuduvaid funktsioone.",
 BrowseServerBlocked : "Ressursside sirvija avamine ebaõnnestus. Võimalda pop-up akende avanemine.",
 DialogBlocked		: "Ei olenud võimalik avada dialoogi akent. Võimalda pop-up akende avanemine.",
 
@@ -249,7 +249,7 @@ DlgLnkTarget		: "Sihtkoht",
 DlgLnkTargetFrame	: "<raam>",
 DlgLnkTargetPopup	: "<hüpikaken>",
 DlgLnkTargetBlank	: "Uus aken (_blank)",
-DlgLnkTargetParent	: "Vanem aken (_parent)",
+DlgLnkTargetParent	: "Esivanem aken (_parent)",
 DlgLnkTargetSelf	: "Sama aken (_self)",
 DlgLnkTargetTop		: "Pealmine aken (_top)",
 DlgLnkTargetFrameName	: "Sihtmärk raami nimi",
@@ -332,7 +332,7 @@ DlgCellBorderColor	: "Joone värv",
 DlgCellBtnSelect	: "Vali...",
 
 // Find and Replace Dialog
-DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
+DlgFindAndReplaceTitle	: "Otsi ja asenda",
 
 // Find Dialog
 DlgFindTitle		: "Otsi",
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Palun kleebi järgnevasse kasti kasutades klaviatuuri klahvikomb
 DlgPasteSec		: "Sinu veebisirvija turvaseadete tõttu, ei oma redaktor otsest ligipääsu lõikelaua andmetele. Sa pead kleepima need uuesti siia aknasse.",
 DlgPasteIgnoreFont		: "Ignoreeri kirja definitsioone",
 DlgPasteRemoveStyles	: "Eemalda stiilide definitsioonid",
-DlgPasteCleanBox		: "Puhasta ära kast",
 
 // Color Picker
 ColorAutomatic	: "Automaatne",

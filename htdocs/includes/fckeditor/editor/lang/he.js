@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -45,7 +45,7 @@ InsertLinkLbl		: "קישור",
 InsertLink			: "הוספת/עריכת קישור",
 RemoveLink			: "הסרת הקישור",
 Anchor				: "הוספת/עריכת נקודת עיגון",
-AnchorDelete		: "Remove Anchor",	//MISSING
+AnchorDelete		: "הסר נקודת עיגון",
 InsertImageLbl		: "תמונה",
 InsertImage			: "הוספת/עריכת תמונה",
 InsertFlashLbl		: "פלאש",
@@ -71,7 +71,7 @@ RightJustify		: "יישור לימין",
 BlockJustify		: "יישור לשוליים",
 DecreaseIndent		: "הקטנת אינדנטציה",
 IncreaseIndent		: "הגדלת אינדנטציה",
-Blockquote			: "Blockquote",	//MISSING
+Blockquote			: "בלוק ציטוט",
 Undo				: "ביטול צעד אחרון",
 Redo				: "חזרה על צעד אחרון",
 NumberedListLbl		: "רשימה ממוספרת",
@@ -105,27 +105,27 @@ SelectionField	: "שדה בחירה",
 ImageButton		: "כפתור תמונה",
 
 FitWindow		: "הגדל את גודל העורך",
-ShowBlocks		: "Show Blocks",	//MISSING
+ShowBlocks		: "הצג בלוקים",
 
 // Context Menu
 EditLink			: "עריכת קישור",
 CellCM				: "תא",
 RowCM				: "שורה",
 ColumnCM			: "עמודה",
-InsertRowAfter		: "Insert Row After",	//MISSING
-InsertRowBefore		: "Insert Row Before",	//MISSING
+InsertRowAfter		: "הוסף שורה אחרי",
+InsertRowBefore		: "הוסף שורה לפני",
 DeleteRows			: "מחיקת שורות",
-InsertColumnAfter	: "Insert Column After",	//MISSING
-InsertColumnBefore	: "Insert Column Before",	//MISSING
+InsertColumnAfter	: "הוסף עמודה אחרי",
+InsertColumnBefore	: "הוסף עמודה לפני",
 DeleteColumns		: "מחיקת עמודות",
-InsertCellAfter		: "Insert Cell After",	//MISSING
-InsertCellBefore	: "Insert Cell Before",	//MISSING
+InsertCellAfter		: "הוסף תא אחרי",
+InsertCellBefore	: "הוסף תא אחרי",
 DeleteCells			: "מחיקת תאים",
 MergeCells			: "מיזוג תאים",
-MergeRight			: "Merge Right",	//MISSING
-MergeDown			: "Merge Down",	//MISSING
-HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
-VerticalSplitCell	: "Split Cell Vertically",	//MISSING
+MergeRight			: "מזג ימינה",
+MergeDown			: "מזג למטה",
+HorizontalSplitCell	: "פצל תא אופקית",
+VerticalSplitCell	: "פצל תא אנכית",
 TableDelete			: "מחק טבלה",
 CellProperties		: "תכונות התא",
 TableProperties		: "תכונות הטבלה",
@@ -332,7 +332,7 @@ DlgCellBorderColor	: "צבע מסגרת",
 DlgCellBtnSelect	: "בחירה...",
 
 // Find and Replace Dialog
-DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
+DlgFindAndReplaceTitle	: "חפש והחלף",
 
 // Find Dialog
 DlgFindTitle		: "חיפוש",
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "אנא הדבק בתוך הקופסה באמצעות  (<STRONG>C
 DlgPasteSec		: "עקב הגדרות אבטחה בדפדפן, לא ניתן לגשת אל לוח הגזירים (clipboard) בצורה ישירה.אנא בצע הדבק שוב בחלון זה.",
 DlgPasteIgnoreFont		: "התעלם מהגדרות סוג פונט",
 DlgPasteRemoveStyles	: "הסר הגדרות סגנון",
-DlgPasteCleanBox		: "ניקוי קופסה",
 
 // Color Picker
 ColorAutomatic	: "אוטומטי",

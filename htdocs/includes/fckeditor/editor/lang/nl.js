@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Plak de tekst in het volgende vak gebruik makend van je toetsten
 DlgPasteSec		: "Door de beveiligingsinstellingen van uw browser is het niet mogelijk om direct vanuit het klembord in de editor te plakken. Middels opnieuw plakken in dit venster kunt u de tekst alsnog plakken in de editor.",
 DlgPasteIgnoreFont		: "Negeer \"Font Face\"-definities",
 DlgPasteRemoveStyles	: "Verwijder \"Style\"-definities",
-DlgPasteCleanBox		: "Vak opschonen",
 
 // Color Picker
 ColorAutomatic	: "Automatisch",

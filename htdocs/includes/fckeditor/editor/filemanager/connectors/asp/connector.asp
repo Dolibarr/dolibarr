@@ -5,7 +5,7 @@ Response.Buffer = True
 %>
 <%
  ' FCKeditor - The text editor for Internet - http://www.fckeditor.net
- ' Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ ' Copyright (C) 2003-2008 Frederico Caldeira Knabben
  '
  ' == BEGIN LICENSE ==
  '
@@ -50,13 +50,13 @@ Sub DoResponse()
 
 	sCurrentFolder = GetCurrentFolder()
 
-	' Check if it is an allowed command 
+	' Check if it is an allowed command
 	if ( Not IsAllowedCommand( sCommand ) ) then
 		SendError 1, "The """ & sCommand & """ command isn't allowed"
 	end if
 
 	' Check if it is an allowed resource type.
-	if ( Not IsAllowedType( sResourceType ) ) Then 
+	if ( Not IsAllowedType( sResourceType ) ) Then
 		SendError 1, "The """ & sResourceType & """ resource type isn't allowed"
 	end if
 

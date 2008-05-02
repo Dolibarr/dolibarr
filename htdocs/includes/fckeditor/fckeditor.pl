@@ -1,6 +1,6 @@
 #####
 #  FCKeditor - The text editor for Internet - http://www.fckeditor.net
-#  Copyright (C) 2003-2007 Frederico Caldeira Knabben
+#  Copyright (C) 2003-2008 Frederico Caldeira Knabben
 #
 #  == BEGIN LICENSE ==
 #
@@ -63,7 +63,7 @@ sub CreateHtml
 {
 
 	$HtmlValue = &specialchar_cnv($Value);
-	$Html = '<div>' ;
+	$Html = '' ;
 	if(&IsCompatible()) {
 		$Link = $BasePath . "editor/fckeditor.html?InstanceName=$InstanceName";
 		if($ToolbarSet ne '') {
@@ -93,7 +93,6 @@ sub CreateHtml
 		}
 		$Html .= "<textarea name=\"$InstanceName\" rows=\"4\" cols=\"40\" style=\"width: $WidthCSS; height: $HeightCSS\">$HtmlValue</textarea>";
 	}
-	$Html .= '</div>';
 	return($Html);
 }
 

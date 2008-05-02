@@ -2,7 +2,7 @@
 
 """
 FCKeditor - The text editor for Internet - http://www.fckeditor.net
-Copyright (C) 2003-2007 Frederico Caldeira Knabben
+Copyright (C) 2003-2008 Frederico Caldeira Knabben
 
 == BEGIN LICENSE ==
 
@@ -33,7 +33,7 @@ import cgitb
 from cStringIO import StringIO
 
 # Running from WSGI capable server (recomended)
-def App(environ, start_response): 
+def App(environ, start_response):
 	"WSGI entry point. Run the connector"
 	if environ['SCRIPT_NAME'].endswith("connector.py"):
 		conn = FCKeditorConnector(environ)
@@ -54,5 +54,5 @@ def App(environ, start_response):
 	except:
 		start_response("500 Internal Server Error",[("Content-type","text/html")])
 		file = StringIO()
-		cgitb.Hook(file = file).handle()    
+		cgitb.Hook(file = file).handle()
 		yield file.getvalue()

@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -30,12 +30,13 @@
 		<script type="text/javascript" src="fck_select/fck_select.js"></script>
 		<script type="text/javascript">
 
-var oEditor = window.parent.InnerDialogLoaded() ;
+var dialog	= window.parent ;
+var oEditor = dialog.InnerDialogLoaded() ;
 
 // Gets the document DOM
 var oDOM = oEditor.FCK.EditorDocument ;
 
-var oActiveEl = oEditor.FCKSelection.GetSelectedElement() ;
+var oActiveEl = dialog.Selection.GetSelectedElement() ;
 
 var oListText ;
 var oListValue ;
@@ -47,6 +48,10 @@ window.onload = function()
 
 	oListText	= document.getElementById( 'cmbText' ) ;
 	oListValue	= document.getElementById( 'cmbValue' ) ;
+
+	// Fix the lists widths. (Bug #970)
+	oListText.style.width = oListText.offsetWidth ;
+	oListValue.style.width = oListValue.offsetWidth ;
 
 	if ( oActiveEl && oActiveEl.tagName == 'SELECT' )
 	{
@@ -68,23 +73,21 @@ window.onload = function()
 	else
 		oActiveEl = null ;
 
-	window.parent.SetOkButton( true ) ;
+	dialog.SetOkButton( true ) ;
+	dialog.SetAutoSize( true ) ;
+	SelectField( 'txtName' ) ;
 }
 
 function Ok()
 {
 	oEditor.FCKUndo.SaveUndoStep() ;
-	
+
 	var sSize = GetE('txtLines').value ;
 	if ( sSize == null || isNaN( sSize ) || sSize <= 1 )
 		sSize = '' ;
 
-	if ( !oActiveEl )
-	{
-		oActiveEl = oEditor.FCK.InsertElement( 'select' ) ;
-	}
+	oActiveEl = CreateNamedElement( oEditor, oActiveEl, 'SELECT', {name: GetE('txtName').value} ) ;
 
-	SetAttribute( oActiveEl, 'name'	, GetE('txtName').value ) ;
 	SetAttribute( oActiveEl, 'size'	, sSize ) ;
 	oActiveEl.multiple = ( sSize.length > 0 && GetE('chkMultiple').checked ) ;
 
@@ -113,7 +116,7 @@ function Ok()
 
 		</script>
 	</head>
-	<body style='OVERFLOW: hidden' scroll='no'>
+	<body style="overflow: hidden">
 		<table width="100%" height="100%">
 			<tr>
 				<td>

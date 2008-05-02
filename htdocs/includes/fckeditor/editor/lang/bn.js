@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "অনুগ্রহ করে নীচের বাক্স�
 DlgPasteSec		: "Because of your browser security settings, the editor is not able to access your clipboard data directly. You are required to paste it again in this window.",	//MISSING
 DlgPasteIgnoreFont		: "ফন্ট ফেস ডেফিনেশন ইগনোর করুন",
 DlgPasteRemoveStyles	: "স্টাইল ডেফিনেশন সরিয়ে দিন",
-DlgPasteCleanBox		: "বাক্স পরিষ্কার করুন",
 
 // Color Picker
 ColorAutomatic	: "অটোমেটিক",

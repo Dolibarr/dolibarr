@@ -1,7 +1,7 @@
 [//lasso
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -56,7 +56,6 @@
 		+ action_param('CurrentFolder')
 	);
 
-
 	/*.....................................................................
 	Custom tag sets the HTML response.
 	*/
@@ -77,6 +76,36 @@
 	);
 		$__html_reply__ = '\
 <script type="text/javascript">
+(function()
+{
+	var d = document.domain ;
+
+	while ( true )
+	{
+		// Test if we can access a parent property.
+		try
+		{
+			var test = window.top.opener.document.domain ;
+			break ;
+		}
+		catch( e ) {}
+
+		// Remove a domain part: www.mytest.example.com => mytest.example.com => example.com ...
+		d = d.replace( /.*?(?:\\.|$)/, "" ) ;
+
+		if ( d.length == 0 )
+			break ;		// It was not able to detect the domain.
+
+		try
+		{
+			document.domain = d ;
+		}
+		catch (e)
+		{
+			break ;
+		}
+	}
+})() ;
 	window.parent.OnUploadCompleted(' + #errorNumber + ',"'
 		+ string_replace(#fileUrl, -find='"', -replace='\\"') + '","'
 		+ string_replace(#fileName, -find='"', -replace='\\"') + '","'
@@ -85,6 +114,9 @@
 		';
 	/define_tag;
 
+	if($CurrentFolder->(Find: '..') || $CurrentFolder->(Find: '\\'));
+		$errorNumber = 102;
+	/if;
 
 	if($config->find('Enabled'));
 		/*.................................................................
@@ -94,7 +126,9 @@
 			/*.............................................................
 			Was a file actually uploaded?
 			*/
-			file_uploads->size ? $NewFile = file_uploads->get(1) | $errorNumber = 202;
+			if($errorNumber != '102');
+				file_uploads->size ? $NewFile = file_uploads->get(1) | $errorNumber = 202;
+			/if;
 
 			if($errorNumber == 0);
 				/*.........................................................

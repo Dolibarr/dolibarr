@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -246,7 +246,7 @@ DlgLnkUpload		: "Télécharger",
 DlgLnkBtnUpload		: "Envoyer sur le serveur",
 
 DlgLnkTarget		: "Destination",
-DlgLnkTargetFrame	: "<cadre>",
+DlgLnkTargetFrame	: "<Cadre>",
 DlgLnkTargetPopup	: "<fenêtre popup>",
 DlgLnkTargetBlank	: "Nouvelle fenêtre (_blank)",
 DlgLnkTargetParent	: "Fenêtre mère (_parent)",
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Veuillez coller dans la zone ci-dessous en utilisant le clavier 
 DlgPasteSec		: "A cause des paramètres de sécurité de votre navigateur, l'éditeur ne peut accéder au presse-papier directement. Vous devez coller à nouveau le contenu dans cette fenêtre.",
 DlgPasteIgnoreFont		: "Ignorer les polices de caractères",
 DlgPasteRemoveStyles	: "Supprimer les styles",
-DlgPasteCleanBox		: "Effacer le contenu",
 
 // Color Picker
 ColorAutomatic	: "Automatique",
@@ -471,7 +470,7 @@ DlgDocCharSetCE		: "Europe Centrale",
 DlgDocCharSetCT		: "Chinois Traditionnel (Big5)",
 DlgDocCharSetCR		: "Cyrillique",
 DlgDocCharSetGR		: "Grec",
-DlgDocCharSetJP		: "Japanais",
+DlgDocCharSetJP		: "Japonais",
 DlgDocCharSetKR		: "Coréen",
 DlgDocCharSetTR		: "Turc",
 DlgDocCharSetUN		: "Unicode (UTF-8)",
@@ -510,7 +509,7 @@ DlgTemplatesReplace	: "Remplacer tout le contenu",
 // About Dialog
 DlgAboutAboutTab	: "A propos de",
 DlgAboutBrowserInfoTab	: "Navigateur",
-DlgAboutLicenseTab	: "License",
-DlgAboutVersion		: "version",
+DlgAboutLicenseTab	: "Licence",
+DlgAboutVersion		: "Version",
 DlgAboutInfo		: "Pour plus d'informations, aller à"
 };

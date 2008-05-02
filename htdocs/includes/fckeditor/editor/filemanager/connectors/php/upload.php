@@ -1,7 +1,7 @@
 <?php
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -43,10 +43,10 @@ $sCommand = 'QuickUpload' ;
 // The file type (from the QueryString, by default 'File').
 $sType = isset( $_GET['Type'] ) ? $_GET['Type'] : 'File' ;
 
-$sCurrentFolder	= GetCurrentFolder() ; 
+$sCurrentFolder	= GetCurrentFolder() ;
 
 // Is enabled the upload?
-if ( ! IsAllowedCommand( $sCommand ) ) 
+if ( ! IsAllowedCommand( $sCommand ) )
 	SendUploadResults( '1', '', '', 'The ""' . $sCommand . '"" command isn\'t allowed' ) ;
 
 // Check if it is an allowed type.

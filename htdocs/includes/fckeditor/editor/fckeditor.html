@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -26,8 +26,48 @@
 	<title>FCKeditor</title>
 	<meta name="robots" content="noindex, nofollow">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<meta http-equiv="Cache-Control" content="public" />
+	<meta http-equiv="Cache-Control" content="public">
 	<script type="text/javascript">
+
+// Save a reference to the default domain.
+var FCK_ORIGINAL_DOMAIN ;
+
+// Automatically detect the correct document.domain (#123).
+(function()
+{
+	var d = FCK_ORIGINAL_DOMAIN = document.domain ;
+
+	while ( true )
+	{
+		// Test if we can access a parent property.
+		try
+		{
+			var test = window.parent.document.domain ;
+			break ;
+		}
+		catch( e ) {}
+
+		// Remove a domain part: www.mytest.example.com => mytest.example.com => example.com ...
+		d = d.replace( /.*?(?:\.|$)/, '' ) ;
+
+		if ( d.length == 0 )
+			break ;		// It was not able to detect the domain.
+
+		try
+		{
+			document.domain = d ;
+		}
+		catch (e)
+		{
+			break ;
+		}
+	}
+})() ;
+
+// Save a reference to the detected runtime domain.
+var FCK_RUNTIME_DOMAIN = document.domain ;
+
+var FCK_IS_CUSTOM_DOMAIN = ( FCK_ORIGINAL_DOMAIN != FCK_RUNTIME_DOMAIN ) ;
 
 // Instead of loading scripts and CSSs using inline tags, all scripts are
 // loaded by code. In this way we can guarantee the correct processing order,
@@ -37,11 +77,6 @@
 function LoadScript( url )
 {
 	document.write( '<scr' + 'ipt type="text/javascript" src="' + url + '"><\/scr' + 'ipt>' ) ;
-}
-
-function LoadCss( url )
-{
-	document.write( '<link href="' + url + '" type="text/css" rel="stylesheet" />' ) ;
 }
 
 // Main editor scripts.
@@ -54,6 +89,10 @@ LoadScript( '../fckconfig.js' ) ;
 
 	</script>
 	<script type="text/javascript">
+
+// Adobe AIR compatibility file.
+if ( FCKBrowserInfo.IsAIR )
+	LoadScript( 'js/fckadobeair.js' ) ;
 
 if ( FCKBrowserInfo.IsIE )
 {
@@ -95,8 +134,17 @@ FCKConfig_LoadPageConfig() ;
 
 FCKConfig_PreProcess() ;
 
+// CSS minified by http://iceyboard.no-ip.org/projects/css_compressor
+var FCK_InternalCSS			= FCKTools.FixCssUrls( FCKConfig.FullBasePath + 'css/', 'html{min-height:100%}table.FCK__ShowTableBorders,table.FCK__ShowTableBorders td,table.FCK__ShowTableBorders th{border:#d3d3d3 1px solid}form{border:1px dotted #F00;padding:2px}.FCK__Flash{border:#a9a9a9 1px solid;background-position:center center;background-image:url(images/fck_flashlogo.gif);background-repeat:no-repeat;width:80px;height:80px}.FCK__Anchor{border:1px dotted #00F;background-position:center center;background-image:url(images/fck_anchor.gif);background-repeat:no-repeat;width:16px;height:15px;vertical-align:middle}.FCK__AnchorC{border:1px dotted #00F;background-position:1px center;background-image:url(images/fck_anchor.gif);background-repeat:no-repeat;padding-left:18px}a[name]{border:1px dotted #00F;background-position:0 center;background-image:url(images/fck_anchor.gif);background-repeat:no-repeat;padding-left:18px}.FCK__PageBreak{background-position:center center;background-image:url(images/fck_pagebreak.gif);background-repeat:no-repeat;clear:both;display:block;float:none;width:100%;border-top:#999 1px dotted;border-bottom:#999 1px dotted;border-right:0;border-left:0;height:5px}.FCK__InputHidden{width:19px;height:18px;background-image:url(images/fck_hiddenfield.gif);background-repeat:no-repeat;vertical-align:text-bottom;background-position:center center}.FCK__ShowBlocks p,.FCK__ShowBlocks div,.FCK__ShowBlocks pre,.FCK__ShowBlocks address,.FCK__ShowBlocks blockquote,.FCK__ShowBlocks h1,.FCK__ShowBlocks h2,.FCK__ShowBlocks h3,.FCK__ShowBlocks h4,.FCK__ShowBlocks h5,.FCK__ShowBlocks h6{background-repeat:no-repeat;border:1px dotted gray;padding-top:8px;padding-left:8px}.FCK__ShowBlocks p{background-image:url(images/block_p.png)}.FCK__ShowBlocks div{background-image:url(images/block_div.png)}.FCK__ShowBlocks pre{background-image:url(images/block_pre.png)}.FCK__ShowBlocks address{background-image:url(images/block_address.png)}.FCK__ShowBlocks blockquote{background-image:url(images/block_blockquote.png)}.FCK__ShowBlocks h1{background-image:url(images/block_h1.png)}.FCK__ShowBlocks h2{background-image:url(images/block_h2.png)}.FCK__ShowBlocks h3{background-image:url(images/block_h3.png)}.FCK__ShowBlocks h4{background-image:url(images/block_h4.png)}.FCK__ShowBlocks h5{background-image:url(images/block_h5.png)}.FCK__ShowBlocks h6{background-image:url(images/block_h6.png)}' ) ;
+var FCK_ShowTableBordersCSS	= FCKTools.FixCssUrls( FCKConfig.FullBasePath + 'css/', 'table:not([border]),table:not([border]) > tr > td,table:not([border]) > tr > th,table:not([border]) > tbody > tr > td,table:not([border]) > tbody > tr > th,table:not([border]) > thead > tr > td,table:not([border]) > thead > tr > th,table:not([border]) > tfoot > tr > td,table:not([border]) > tfoot > tr > th,table[border=\"0\"],table[border=\"0\"] > tr > td,table[border=\"0\"] > tr > th,table[border=\"0\"] > tbody > tr > td,table[border=\"0\"] > tbody > tr > th,table[border=\"0\"] > thead > tr > td,table[border=\"0\"] > thead > tr > th,table[border=\"0\"] > tfoot > tr > td,table[border=\"0\"] > tfoot > tr > th{border:#d3d3d3 1px dotted}' ) ;
+
+// Popup the debug window if debug mode is set to true. It guarantees that the
+// first debug message will not be lost.
+if ( FCKConfig.Debug )
+	FCKDebug._GetWindow() ;
+
 // Load the active skin CSS.
-LoadCss( FCKConfig.SkinPath + 'fck_editor.css' ) ;
+document.write( FCKTools.GetStyleHtml( FCKConfig.SkinEditorCSS ) ) ;
 
 // Load the language file.
 FCKLanguageManager.Initialize() ;
@@ -178,13 +226,16 @@ function WaitForActive( editorInstance, newStatus )
 	}
 }
 
-// Gecko browsers doens't calculate well that IFRAME size so we must
+// Gecko browsers doesn't calculate well the IFRAME size so we must
 // recalculate it every time the window size changes.
-if ( FCKBrowserInfo.IsGecko )
+if ( FCKBrowserInfo.IsGecko && !FCKBrowserInfo.IsOpera )
 {
-	function Window_OnResize()
+	window.onresize = function( e )
 	{
-		if ( FCKBrowserInfo.IsOpera )
+		// Running in Chrome makes the window receive the event including subframes.
+		// we care only about this window. Ticket #1642.
+		// #2002: The originalTarget from the event can be the current document, the window, or the editing area.
+		if ( e && e.originalTarget !== document && e.originalTarget !== window && (!e.originalTarget.ownerDocument || e.originalTarget.ownerDocument != document ))
 			return ;
 
 		var oCell = document.getElementById( 'xEditingArea' ) ;
@@ -192,11 +243,10 @@ if ( FCKBrowserInfo.IsGecko )
 		var eInnerElement = oCell.firstChild ;
 		if ( eInnerElement )
 		{
-			eInnerElement.style.height = 0 ;
-			eInnerElement.style.height = oCell.scrollHeight - 2 ;
+			eInnerElement.style.height = '0px' ;
+			eInnerElement.style.height = ( oCell.scrollHeight - 2 ) + 'px' ;
 		}
 	}
-	window.onresize = Window_OnResize ;
 }
 
 	</script>

@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -45,7 +45,7 @@ InsertLinkLbl		: "Odkaz",
 InsertLink			: "Vložit/změnit odkaz",
 RemoveLink			: "Odstranit odkaz",
 Anchor				: "Vložít/změnit záložku",
-AnchorDelete		: "Remove Anchor",	//MISSING
+AnchorDelete		: "Odstranit kotvu",
 InsertImageLbl		: "Obrázek",
 InsertImage			: "Vložit/změnit obrázek",
 InsertFlashLbl		: "Flash",
@@ -71,7 +71,7 @@ RightJustify		: "Zarovnat vpravo",
 BlockJustify		: "Zarovnat do bloku",
 DecreaseIndent		: "Zmenšit odsazení",
 IncreaseIndent		: "Zvětšit odsazení",
-Blockquote			: "Blockquote",	//MISSING
+Blockquote			: "Citace",
 Undo				: "Zpět",
 Redo				: "Znovu",
 NumberedListLbl		: "Číslování",
@@ -105,27 +105,27 @@ SelectionField	: "Seznam",
 ImageButton		: "Obrázkové tlačítko",
 
 FitWindow		: "Maximalizovat velikost editoru",
-ShowBlocks		: "Show Blocks",	//MISSING
+ShowBlocks		: "Ukázat bloky",
 
 // Context Menu
 EditLink			: "Změnit odkaz",
 CellCM				: "Buňka",
 RowCM				: "Řádek",
 ColumnCM			: "Sloupec",
-InsertRowAfter		: "Insert Row After",	//MISSING
-InsertRowBefore		: "Insert Row Before",	//MISSING
-DeleteRows			: "Smazat řádek",
-InsertColumnAfter	: "Insert Column After",	//MISSING
-InsertColumnBefore	: "Insert Column Before",	//MISSING
+InsertRowAfter		: "Vložit řádek za",
+InsertRowBefore		: "Vložit řádek před",
+DeleteRows			: "Smazat řádky",
+InsertColumnAfter	: "Vložit sloupec za",
+InsertColumnBefore	: "Vložit sloupec před",
 DeleteColumns		: "Smazat sloupec",
-InsertCellAfter		: "Insert Cell After",	//MISSING
-InsertCellBefore	: "Insert Cell Before",	//MISSING
+InsertCellAfter		: "Vložit buňku za",
+InsertCellBefore	: "Vložit buňku před",
 DeleteCells			: "Smazat buňky",
 MergeCells			: "Sloučit buňky",
-MergeRight			: "Merge Right",	//MISSING
-MergeDown			: "Merge Down",	//MISSING
-HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
-VerticalSplitCell	: "Split Cell Vertically",	//MISSING
+MergeRight			: "Sloučit doprava",
+MergeDown			: "Sloučit dolů",
+HorizontalSplitCell	: "Rozdělit buňky vodorovně",
+VerticalSplitCell	: "Rozdělit buňky svisle",
 TableDelete			: "Smazat tabulku",
 CellProperties		: "Vlastnosti buňky",
 TableProperties		: "Vlastnosti tabulky",
@@ -238,7 +238,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Vybrat kotvu",
 DlgLnkAnchorByName	: "Podle jména kotvy",
 DlgLnkAnchorById	: "Podle Id objektu",
-DlgLnkNoAnchors		: "(Ve stránce žádná kotva není definována)",
+DlgLnkNoAnchors		: "(Ve stránce není definována žádná kotva!)",
 DlgLnkEMail			: "E-Mailová adresa",
 DlgLnkEMailSubject	: "Předmět zprávy",
 DlgLnkEMailBody		: "Tělo zprávy",
@@ -332,7 +332,7 @@ DlgCellBorderColor	: "Barva ohraničení",
 DlgCellBtnSelect	: "Výběr...",
 
 // Find and Replace Dialog
-DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
+DlgFindAndReplaceTitle	: "Najít a nahradit",
 
 // Find Dialog
 DlgFindTitle		: "Hledat",
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Do následujícího pole vložte požadovaný obsah pomocí klá
 DlgPasteSec		: "Z důvodů nastavení bezpečnosti Vašeho prohlížeče nemůže editor přistupovat přímo do schránky. Obsah schránky prosím vložte znovu do tohoto okna.",
 DlgPasteIgnoreFont		: "Ignorovat písmo",
 DlgPasteRemoveStyles	: "Odstranit styly",
-DlgPasteCleanBox		: "Vyčistit",
 
 // Color Picker
 ColorAutomatic	: "Automaticky",
@@ -444,7 +443,7 @@ DlgHiddenValue	: "Hodnota",
 // Bulleted List Dialog
 BulletedListProp	: "Vlastnosti odrážek",
 NumberedListProp	: "Vlastnosti číslovaného seznamu",
-DlgLstStart			: "Start",	//MISSING
+DlgLstStart			: "Začátek",
 DlgLstType			: "Typ",
 DlgLstTypeCircle	: "Kružnice",
 DlgLstTypeDisc		: "Kruh",

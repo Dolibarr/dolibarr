@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -23,7 +23,7 @@
  */
 FCK.DTD = (function()
 {
-    X = FCKTools.Merge ;
+    var X = FCKTools.Merge ;
 
     var H,I,J,K,C,L,M,A,B,D,E,G,N,F ;
     A = {ins:1, del:1, script:1} ;

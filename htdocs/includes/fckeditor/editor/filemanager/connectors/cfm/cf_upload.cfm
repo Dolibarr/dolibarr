@@ -1,7 +1,7 @@
 <cfsetting enablecfoutputonly="yes" showdebugoutput="no">
 <!---
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -32,6 +32,12 @@
 <cfinclude template="cf_util.cfm">
 <cfinclude template="cf_io.cfm">
 <cfinclude template="cf_commands.cfm">
+
+<cffunction name="SendError" returntype="void" output="true">
+	<cfargument name="number" required="true" type="Numeric">
+	<cfargument name="text" required="true">
+	<cfreturn SendUploadResults( "#ARGUMENTS.number#", "", "", "ARGUMENTS.text" )>
+</cffunction>
 
 <cfset REQUEST.Config = Config>
 <cfif find( "/", getBaseTemplatePath() ) >
@@ -64,5 +70,3 @@
 </cfif>
 
 <cfset FileUpload( sType, sCurrentFolder, sCommand )>
-
-

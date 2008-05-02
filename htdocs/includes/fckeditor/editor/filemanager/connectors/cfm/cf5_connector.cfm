@@ -1,7 +1,7 @@
 <cfsetting enablecfoutputonly="yes" showdebugoutput="no">
 <!---
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -129,7 +129,7 @@
 
 	<cfset xmlContent = "<Error number=""1"" text=""This connector is disabled. Please check the 'editor/filemanager/connectors/cfm/config.cfm' file"" />">
 
-<cfelseif find("..",url.currentFolder)>
+<cfelseif find("..",url.currentFolder) or find("\",url.currentFolder)>
 
 	<cfset xmlContent = "<Error number=""102"" />">
 

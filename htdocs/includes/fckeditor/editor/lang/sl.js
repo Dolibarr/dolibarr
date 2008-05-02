@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -45,7 +45,7 @@ InsertLinkLbl		: "Povezava",
 InsertLink			: "Vstavi/uredi povezavo",
 RemoveLink			: "Odstrani povezavo",
 Anchor				: "Vstavi/uredi zaznamek",
-AnchorDelete		: "Remove Anchor",	//MISSING
+AnchorDelete		: "Odstrani zaznamek",
 InsertImageLbl		: "Slika",
 InsertImage			: "Vstavi/uredi sliko",
 InsertFlashLbl		: "Flash",
@@ -71,7 +71,7 @@ RightJustify		: "Desna poravnava",
 BlockJustify		: "Obojestranska poravnava",
 DecreaseIndent		: "Zmanjšaj zamik",
 IncreaseIndent		: "Povečaj zamik",
-Blockquote			: "Blockquote",	//MISSING
+Blockquote			: "Citat",
 Undo				: "Razveljavi",
 Redo				: "Ponovi",
 NumberedListLbl		: "Oštevilčen seznam",
@@ -104,28 +104,28 @@ Button			: "Gumb",
 SelectionField	: "Spustni seznam",
 ImageButton		: "Gumb s sliko",
 
-FitWindow		: "Maximize the editor size",	//MISSING
-ShowBlocks		: "Show Blocks",	//MISSING
+FitWindow		: "Razširi velikost urejevalnika čez cel zaslon",
+ShowBlocks		: "Prikaži ograde",
 
 // Context Menu
 EditLink			: "Uredi povezavo",
-CellCM				: "Cell",	//MISSING
-RowCM				: "Row",	//MISSING
-ColumnCM			: "Column",	//MISSING
-InsertRowAfter		: "Insert Row After",	//MISSING
-InsertRowBefore		: "Insert Row Before",	//MISSING
+CellCM				: "Celica",
+RowCM				: "Vrstica",
+ColumnCM			: "Stolpec",
+InsertRowAfter		: "Vstavi vrstico za",
+InsertRowBefore		: "Vstavi vrstico pred",
 DeleteRows			: "Izbriši vrstice",
-InsertColumnAfter	: "Insert Column After",	//MISSING
-InsertColumnBefore	: "Insert Column Before",	//MISSING
+InsertColumnAfter	: "Vstavi stolpec za",
+InsertColumnBefore	: "Vstavi stolpec pred",
 DeleteColumns		: "Izbriši stolpce",
-InsertCellAfter		: "Insert Cell After",	//MISSING
-InsertCellBefore	: "Insert Cell Before",	//MISSING
+InsertCellAfter		: "Vstavi celico za",
+InsertCellBefore	: "Vstavi celico pred",
 DeleteCells			: "Izbriši celice",
 MergeCells			: "Združi celice",
-MergeRight			: "Merge Right",	//MISSING
-MergeDown			: "Merge Down",	//MISSING
-HorizontalSplitCell	: "Split Cell Horizontally",	//MISSING
-VerticalSplitCell	: "Split Cell Vertically",	//MISSING
+MergeRight			: "Združi desno",
+MergeDown			: "Druži navzdol",
+HorizontalSplitCell	: "Razdeli celico vodoravno",
+VerticalSplitCell	: "Razdeli celico navpično",
 TableDelete			: "Izbriši tabelo",
 CellProperties		: "Lastnosti celice",
 TableProperties		: "Lastnosti tabele",
@@ -154,9 +154,9 @@ UnknownToolbarItem	: "Neznan element orodne vrstice \"%1\"",
 UnknownCommand		: "Neznano ime ukaza \"%1\"",
 NotImplemented		: "Ukaz ni izdelan",
 UnknownToolbarSet	: "Skupina orodnih vrstic \"%1\" ne obstoja",
-NoActiveX			: "Your browser's security settings could limit some features of the editor. You must enable the option \"Run ActiveX controls and plug-ins\". You may experience errors and notice missing features.",	//MISSING
-BrowseServerBlocked : "The resources browser could not be opened. Make sure that all popup blockers are disabled.",	//MISSING
-DialogBlocked		: "It was not possible to open the dialog window. Make sure all popup blockers are disabled.",	//MISSING
+NoActiveX			: "Varnostne nastavitve vašega brskalnika lahko omejijo delovanje nekaterih zmožnosti urejevalnika. Če ne želite zaznavati napak in sporočil o manjkajočih zmožnostih, omogočite možnost \"Zaženi ActiveX kontrolnike in vtičnike\".",
+BrowseServerBlocked : "Brskalnik virov se ne more odpreti. Prepričajte se, da je preprečevanje pojavnih oken onemogočeno.",
+DialogBlocked		: "Pogovorno okno se ni moglo odpreti. Prepričajte se, da je preprečevanje pojavnih oken onemogočeno.",
 
 // Dialogs
 DlgBtnOK			: "V redu",
@@ -271,7 +271,7 @@ DlgLnkPopTop		: "Lega na vrhu",
 DlnLnkMsgNoUrl		: "Vnesite URL povezave",
 DlnLnkMsgNoEMail	: "Vnesite elektronski naslov",
 DlnLnkMsgNoAnchor	: "Izberite zaznamek",
-DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
+DlnLnkMsgInvPopName	: "Ime pojavnega okna se mora začeti s črko ali številko in ne sme vsebovati presledkov",
 
 // Color Dialog
 DlgColorTitle		: "Izberite barvo",
@@ -332,7 +332,7 @@ DlgCellBorderColor	: "Barva obrobe",
 DlgCellBtnSelect	: "Izberi...",
 
 // Find and Replace Dialog
-DlgFindAndReplaceTitle	: "Find and Replace",	//MISSING
+DlgFindAndReplaceTitle	: "Najdi in zamenjaj",
 
 // Find Dialog
 DlgFindTitle		: "Najdi",
@@ -356,10 +356,9 @@ PasteAsText		: "Prilepi kot golo besedilo",
 PasteFromWord	: "Prilepi iz Worda",
 
 DlgPasteMsg2	: "Prosim prilepite v sleči okvir s pomočjo tipkovnice (<STRONG>Ctrl+V</STRONG>) in pritisnite <STRONG>V redu</STRONG>.",
-DlgPasteSec		: "Because of your browser security settings, the editor is not able to access your clipboard data directly. You are required to paste it again in this window.",	//MISSING
+DlgPasteSec		: "Zaradi varnostnih nastavitev vašega brskalnika urejevalnik ne more neposredno dostopati do odložišča. Vsebino odložišča ponovno prilepite v to okno.",
 DlgPasteIgnoreFont		: "Prezri obliko pisave",
 DlgPasteRemoveStyles	: "Odstrani nastavitve stila",
-DlgPasteCleanBox		: "Počisti okvir",
 
 // Color Picker
 ColorAutomatic	: "Samodejno",
@@ -393,9 +392,9 @@ IeSpellDownload			: "Črkovalnik ni nameščen. Ali ga želite prenesti sedaj?",
 // Button Dialog
 DlgButtonText		: "Besedilo (Vrednost)",
 DlgButtonType		: "Tip",
-DlgButtonTypeBtn	: "Button",	//MISSING
-DlgButtonTypeSbm	: "Submit",	//MISSING
-DlgButtonTypeRst	: "Reset",	//MISSING
+DlgButtonTypeBtn	: "Gumb",
+DlgButtonTypeSbm	: "Potrdi",
+DlgButtonTypeRst	: "Ponastavi",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Ime",
@@ -444,7 +443,7 @@ DlgHiddenValue	: "Vrednost",
 // Bulleted List Dialog
 BulletedListProp	: "Lastnosti označenega seznama",
 NumberedListProp	: "Lastnosti oštevilčenega seznama",
-DlgLstStart			: "Start",	//MISSING
+DlgLstStart			: "Začetek",
 DlgLstType			: "Tip",
 DlgLstTypeCircle	: "Pikica",
 DlgLstTypeDisc		: "Kroglica",
@@ -467,15 +466,15 @@ DlgDocLangDirLTR	: "Od leve proti desni (LTR)",
 DlgDocLangDirRTL	: "Od desne proti levi (RTL)",
 DlgDocLangCode		: "Oznaka jezika",
 DlgDocCharSet		: "Kodna tabela",
-DlgDocCharSetCE		: "Central European",	//MISSING
-DlgDocCharSetCT		: "Chinese Traditional (Big5)",	//MISSING
-DlgDocCharSetCR		: "Cyrillic",	//MISSING
-DlgDocCharSetGR		: "Greek",	//MISSING
-DlgDocCharSetJP		: "Japanese",	//MISSING
-DlgDocCharSetKR		: "Korean",	//MISSING
-DlgDocCharSetTR		: "Turkish",	//MISSING
-DlgDocCharSetUN		: "Unicode (UTF-8)",	//MISSING
-DlgDocCharSetWE		: "Western European",	//MISSING
+DlgDocCharSetCE		: "Srednjeevropsko",
+DlgDocCharSetCT		: "Tradicionalno Kitajsko (Big5)",
+DlgDocCharSetCR		: "Cirilica",
+DlgDocCharSetGR		: "Grško",
+DlgDocCharSetJP		: "Japonsko",
+DlgDocCharSetKR		: "Korejsko",
+DlgDocCharSetTR		: "Turško",
+DlgDocCharSetUN		: "Unicode (UTF-8)",
+DlgDocCharSetWE		: "Zahodnoevropsko",
 DlgDocCharSetOther	: "Druga kodna tabela",
 
 DlgDocDocType		: "Glava tipa dokumenta",
@@ -505,12 +504,12 @@ DlgTemplatesTitle	: "Vsebinske predloge",
 DlgTemplatesSelMsg	: "Izberite predlogo, ki jo želite odpreti v urejevalniku<br>(trenutna vsebina bo izgubljena):",
 DlgTemplatesLoading	: "Nalagam seznam predlog. Prosim počakajte...",
 DlgTemplatesNoTpl	: "(Ni pripravljenih predlog)",
-DlgTemplatesReplace	: "Replace actual contents",	//MISSING
+DlgTemplatesReplace	: "Zamenjaj trenutno vsebino",
 
 // About Dialog
 DlgAboutAboutTab	: "Vizitka",
 DlgAboutBrowserInfoTab	: "Informacije o brskalniku",
-DlgAboutLicenseTab	: "License",	//MISSING
+DlgAboutLicenseTab	: "Dovoljenja",
 DlgAboutVersion		: "različica",
 DlgAboutInfo		: "Za več informacij obiščite"
 };

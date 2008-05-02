@@ -37,7 +37,9 @@ others files in certain cases.
 	<cfset text = text & "%"  & CRLF
                       & "^A" & CRLF
                       & "!"  & CRLF>
-	<cfloop list="#URLDecode(field)#" index="line" delimiters="#CRLF#">
+	<!--- Strip all tags for the text. (by FredCK - #339 / #681) --->
+	<cfset field = REReplace(URLDecode(field), "<[^>]+>", " ", "all")>
+	<cfloop list="#field#" index="line" delimiters="#CRLF#">
 		<cfset text = ListAppend(text, "^" & Trim(JSStringFormat(line)), CRLF)>
 	</cfloop>
 </cfloop>

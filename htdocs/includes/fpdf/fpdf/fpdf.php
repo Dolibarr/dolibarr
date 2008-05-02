@@ -2260,8 +2260,18 @@ function _out($s)
 				case 'span': {
 					if (isset($attr['style']) && $attr['style']!='') {
 						if (eregi("color",$attr['style'])){
-							$coul = substr($attr['style'],11,-2);
-							list($R, $G, $B) = split(', ', $coul);
+							if (eregi("rgb",$attr['style'])){
+								//print 'style rgb '.$attr['style'].'<br>';
+								$coul = substr($attr['style'],11,-2);
+								list($R, $G, $B) = split(', ', $coul);
+							}
+							else if (eregi("#",$attr['style'])){
+								//print 'style hexa '.$attr['style'].'<br>';
+								$R = hexdec(substr($attr['style'],8,2));
+								$G = hexdec(substr($attr['style'],10,2));
+								$B = hexdec(substr($attr['style'],12,2));
+							}
+							//print 'color '.$R.' '.$G.' '.$B;
 							$this->SetTextColor($R,$G,$B);
 							$this->issetcolor=true;
 						}
@@ -2275,12 +2285,12 @@ function _out($s)
 							}
 						}
 						if (eregi("font-size",$attr['style'])){
-							$headsize = substr($attr['style'],11,-1);
-							$headsize = eregi_replace('-','',$headsize);
+							$headsize = substr($attr['style'],11);
+							$headsize = eregi_replace('[;-]','',$headsize);
 							//print 'headsize1: '.$headsize.'<br>';
 							//print 'recupheadsize: '.$this->$headsize.'<br>';
-							$headsize = intval($this->$headsize)/3;
-							//print 'headsize2: '.$headsize.'<br>';
+							$headsize = intval($this->$headsize);
+							//print 'headsize2: '.$headsize.'<br><br>';
 						}
 					}	else {
 						$headsize = 1;

@@ -2,7 +2,7 @@
 
 """
 FCKeditor - The text editor for Internet - http://www.fckeditor.net
-Copyright (C) 2003-2007 Frederico Caldeira Knabben
+Copyright (C) 2003-2008 Frederico Caldeira Knabben
 
 == BEGIN LICENSE ==
 
@@ -53,12 +53,12 @@ class BaseHttpMixin(object):
 		# Date in the past
 		self.setHeader('Expires','Mon, 26 Jul 1997 05:00:00 GMT')
 		# always modified
-		self.setHeader('Last-Modified',strftime("%a, %d %b %Y %H:%M:%S GMT", gmtime())) 
+		self.setHeader('Last-Modified',strftime("%a, %d %b %Y %H:%M:%S GMT", gmtime()))
 		# HTTP/1.1
-		self.setHeader('Cache-Control','no-store, no-cache, must-revalidate') 
-		self.setHeader('Cache-Control','post-check=0, pre-check=0') 
+		self.setHeader('Cache-Control','no-store, no-cache, must-revalidate')
+		self.setHeader('Cache-Control','post-check=0, pre-check=0')
 		# HTTP/1.0
-		self.setHeader('Pragma','no-cache') 
+		self.setHeader('Pragma','no-cache')
 
 		# Set the response format.
 		self.setHeader( 'Content-Type', content_type + '; charset=utf-8' )
@@ -93,7 +93,7 @@ class BaseXmlMixin(object):
 				"""<Connector>""" +
 				self.sendErrorNode (number, text) +
 				"""</Connector>""" )
-		
+
 	def sendErrorNode(self, number, text):
 		return """<Error number="%s" text="%s" />""" % (number, convertToXmlAttribute(text))
 
@@ -102,10 +102,41 @@ class BaseHtmlMixin(object):
 		self.setHttpHeaders("text/html")
 		"This is the function that sends the results of the uploading process"
 		return """<script type="text/javascript">
-			window.parent.OnUploadCompleted(%(errorNumber)s,"%(fileUrl)s","%(fileName)s","%(customMsg)s"); 
+			(function()
+			{
+				var d = document.domain ;
+
+				while ( true )
+				{
+					// Test if we can access a parent property.
+					try
+					{
+						var test = window.top.opener.document.domain ;
+						break ;
+					}
+					catch( e ) {}
+
+					// Remove a domain part: www.mytest.example.com => mytest.example.com => example.com ...
+					d = d.replace( /.*?(?:\.|$)/, '' ) ;
+
+					if ( d.length == 0 )
+						break ;		// It was not able to detect the domain.
+
+					try
+					{
+						document.domain = d ;
+					}
+					catch (e)
+					{
+						break ;
+					}
+				}
+			})() ;
+
+			window.parent.OnUploadCompleted(%(errorNumber)s,"%(fileUrl)s","%(fileName)s","%(customMsg)s");
 			</script>""" % {
 			'errorNumber': errorNo,
 			'fileUrl': fileUrl.replace ('"', '\\"'),
-			'fileName': fileName.replace ( '"', '\\"' ) , 
+			'fileName': fileName.replace ( '"', '\\"' ) ,
 			'customMsg': customMsg.replace ( '"', '\\"' ),
 			}

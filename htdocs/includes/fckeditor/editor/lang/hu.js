@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Másolja be az alábbi mezőbe a <STRONG>Ctrl+V</STRONG> billent
 DlgPasteSec		: "A böngésző biztonsági beállításai miatt a szerkesztő nem képes hozzáférni a vágólap adataihoz. Illeszd be újra ebben az ablakban.",
 DlgPasteIgnoreFont		: "Betű formázások megszüntetése",
 DlgPasteRemoveStyles	: "Stílusok eltávolítása",
-DlgPasteCleanBox		: "Törlés",
 
 // Color Picker
 ColorAutomatic	: "Automatikus",

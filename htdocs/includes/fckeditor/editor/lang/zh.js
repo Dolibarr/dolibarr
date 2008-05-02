@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "請使用快捷鍵 (<strong>Ctrl+V</strong>) 貼到下方區域�
 DlgPasteSec		: "因為瀏覽器的安全性設定，本編輯器無法直接存取您的剪貼簿資料，請您自行在本視窗進行貼上動作。",
 DlgPasteIgnoreFont		: "移除字型設定",
 DlgPasteRemoveStyles	: "移除樣式設定",
-DlgPasteCleanBox		: "清除文字區域",
 
 // Color Picker
 ColorAutomatic	: "自動",

@@ -1,6 +1,6 @@
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -23,7 +23,40 @@
 <html>
 	<head>
 		<title>FCKeditor - Uploaders Tests</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<script type="text/javascript">
+
+// Automatically detect the correct document.domain (#1919).
+(function()
+{
+	var d = document.domain ;
+
+	while ( true )
+	{
+		// Test if we can access a parent property.
+		try
+		{
+			var test = window.opener.document.domain ;
+			break ;
+		}
+		catch( e ) {}
+
+		// Remove a domain part: www.mytest.example.com => mytest.example.com => example.com ...
+		d = d.replace( /.*?(?:\.|$)/, '' ) ;
+
+		if ( d.length == 0 )
+			break ;		// It was not able to detect the domain.
+
+		try
+		{
+			document.domain = d ;
+		}
+		catch (e)
+		{
+			break ;
+		}
+	}
+})() ;
 
 function SendFile()
 {
@@ -41,9 +74,14 @@ function SendFile()
 	eURL.innerHTML = sUploaderUrl ;
 	txtUrl.value = '' ;
 
-	frmUpload.action = sUploaderUrl;
+	var date = new Date()
+
+	frmUpload.action = sUploaderUrl + '?time=' + date.getTime();
 	if (document.getElementById('cmbType').value) {
-		frmUpload.action = frmUpload.action + '?Type='+document.getElementById('cmbType').value;
+		frmUpload.action = frmUpload.action + '&Type='+document.getElementById('cmbType').value;
+	}
+	if (document.getElementById('CurrentFolder').value) {
+		frmUpload.action = frmUpload.action + '&CurrentFolder='+document.getElementById('CurrentFolder').value;
 	}
 	frmUpload.submit() ;
 }
@@ -88,7 +126,7 @@ function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
 					<table cellSpacing="0" cellPadding="0" width="100%" border="0">
 						<tr>
 							<td nowrap>
-								Select the "File Uploader" to use:<br>
+								Select the "File Uploader" to use: <br>
 								<select id="cmbUploaderUrl">
 									<option selected value="asp/upload.asp">ASP</option>
 									<option value="aspx/upload.aspx">ASP.Net</option>
@@ -111,6 +149,10 @@ function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
 								<option value="Invalid">Invalid Type (for testing)</option>
 							</select>
 						</td>
+						<td>
+						Current Folder: <br>
+						<input type="text" name="CurrentFolder" id="CurrentFolder" value="/">
+						</td>
 							<td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 							<td width="100%">
 								Custom Uploader URL:<BR>
@@ -125,6 +167,7 @@ function OnUploadCompleted( errorNumber, fileUrl, fileName, customMsg )
 								<form id="frmUpload" target="UploadWindow" enctype="multipart/form-data" action="" method="post">
 									Upload a new file:<br>
 									<input type="file" name="NewFile"><br>
+
 									<input type="button" value="Send it to the Server" onclick="SendFile();">
 								</form>
 							</td>

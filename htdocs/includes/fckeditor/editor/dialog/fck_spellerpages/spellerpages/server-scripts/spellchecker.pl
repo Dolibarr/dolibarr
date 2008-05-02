@@ -58,6 +58,8 @@ sub printCheckerResults {
 	# open temp file, add the submitted text.
 	for( my $i = 0; $i <= $#textinputs; $i++ ) {
 		$text = url_decode( $textinputs[$i] );
+		# Strip all tags for the text. (by FredCK - #339 / #681)
+		$text =~ s/<[^>]+>/ /g;
 		@lines = split( /\n/, $text );
 		print $fh "\%\n"; # exit terse mode
 		print $fh "^$input_separator\n";
@@ -177,4 +179,3 @@ wordWindowObj.writeBody();
 </body>
 </html>
 EOF
-

@@ -1,6 +1,6 @@
 ﻿<%
  ' FCKeditor - The text editor for Internet - http://www.fckeditor.net
- ' Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ ' Copyright (C) 2003-2008 Frederico Caldeira Knabben
  '
  ' == BEGIN LICENSE ==
  '
@@ -40,14 +40,14 @@ Function GetResourceTypeDirectory( resourceType, sCommand )
 			GetResourceTypeDirectory = ConfigQuickUploadAbsolutePath.Item( resourceType )
 		else
 			' Map the "UserFiles" path to a local directory.
-			GetResourceTypeDirectory = Server.MapPath( ConfigQuickUploadPath.Item( resourceType ) ) 
+			GetResourceTypeDirectory = Server.MapPath( ConfigQuickUploadPath.Item( resourceType ) )
 		end if
 	else
-		if ( ConfigFileTypesAbsolutePath.Item( resourceType ) <> "" ) then 
+		if ( ConfigFileTypesAbsolutePath.Item( resourceType ) <> "" ) then
 			GetResourceTypeDirectory = ConfigFileTypesAbsolutePath.Item( resourceType )
 		else
 			' Map the "UserFiles" path to a local directory.
-			GetResourceTypeDirectory = Server.MapPath( ConfigFileTypesPath.Item( resourceType ) ) 
+			GetResourceTypeDirectory = Server.MapPath( ConfigFileTypesPath.Item( resourceType ) )
 		end if
 	end if
 end Function
@@ -63,7 +63,7 @@ End Function
 Function ServerMapFolder( resourceType, folderPath, sCommand )
 	Dim sResourceTypePath
 	' Get the resource type directory.
-	sResourceTypePath = GetResourceTypeDirectory( resourceType, sCommand ) 
+	sResourceTypePath = GetResourceTypeDirectory( resourceType, sCommand )
 
 	' Ensure that the directory exists.
 	CreateServerFolder sResourceTypePath
@@ -172,7 +172,7 @@ function GetCurrentFolder()
 	If ( Left( sCurrentFolder, 1 ) <> "/" ) Then sCurrentFolder = "/" & sCurrentFolder
 
 	' Check for invalid folder paths (..)
-	If ( InStr( 1, sCurrentFolder, ".." ) <> 0 ) Then
+	If ( InStr( 1, sCurrentFolder, ".." ) <> 0 OR InStr( 1, sCurrentFolder, "\" ) <> 0) Then
 		SendError 102, ""
 	End If
 
@@ -185,8 +185,8 @@ function SanitizeFolderName( sNewFolderName )
 	Set oRegex = New RegExp
 	oRegex.Global		= True
 
-' remove . \ / | : ? *  " < >
-	oRegex.Pattern = "(\.|\\|\/|\||:|\?|\*|""|\<|\>)"
+' remove . \ / | : ? *  " < > and control characters
+	oRegex.Pattern = "(\.|\\|\/|\||:|\?|\*|""|\<|\>|[\u0000-\u001F]|\u007F)"
 	SanitizeFolderName = oRegex.Replace( sNewFolderName, "_" )
 
 	Set oRegex = Nothing
@@ -203,8 +203,8 @@ function SanitizeFileName( sNewFileName )
 		sNewFileName = oRegex.Replace( sNewFileName, "_" )
 	end if
 
-' remove \ / | : ? *  " < >
-	oRegex.Pattern = "(\\|\/|\||:|\?|\*|""|\<|\>)"
+' remove \ / | : ? *  " < > and control characters
+	oRegex.Pattern = "(\\|\/|\||:|\?|\*|""|\<|\>|[\u0000-\u001F]|\u007F)"
 	SanitizeFileName = oRegex.Replace( sNewFileName, "_" )
 
 	Set oRegex = Nothing
@@ -214,6 +214,38 @@ end function
 Sub SendUploadResults( errorNumber, fileUrl, fileName, customMsg )
 	Response.Clear
 	Response.Write "<script type=""text/javascript"">"
+	Response.Write "(function()"
+	Response.Write "{"
+	Response.Write "var d = document.domain ;"
+
+	Response.Write " while ( true )"
+	Response.Write "	{"
+	' Test if we can access a parent property.
+	Response.Write "		try"
+	Response.Write "		{"
+	Response.Write "			var test = window.top.opener.document.domain ;"
+	Response.Write "			break ;"
+	Response.Write "		}"
+	Response.Write "		catch( e ) {}"
+
+	' Remove a domain part: www.mytest.example.com => mytest.example.com => example.com ...
+	Response.Write "		d = d.replace( /.*?(?:\.|$)/, '' ) ;"
+
+	Response.Write "		if ( d.length == 0 )"
+	' It was not able to detect the domain.
+	Response.Write "			break ;"
+	Response.Write ""
+	Response.Write "		try"
+	Response.Write "		{"
+	Response.Write "			document.domain = d ;"
+	Response.Write "		}"
+	Response.Write "		catch (e)"
+	Response.Write "		{"
+	Response.Write "			break ;"
+	Response.Write "		}"
+	Response.Write "	}"
+	Response.Write "})() ;"
+
 	Response.Write "window.parent.OnUploadCompleted(" & errorNumber & ",""" & Replace( fileUrl, """", "\""" ) & """,""" & Replace( fileName, """", "\""" ) & """,""" & Replace( customMsg , """", "\""" ) & """) ;"
 	Response.Write "</script>"
 	Response.End

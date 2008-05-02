@@ -1,6 +1,6 @@
 #####
 #  FCKeditor - The text editor for Internet - http://www.fckeditor.net
-#  Copyright (C) 2003-2007 Frederico Caldeira Knabben
+#  Copyright (C) 2003-2008 Frederico Caldeira Knabben
 #
 #  == BEGIN LICENSE ==
 #
@@ -87,9 +87,19 @@ sub CreateServerFolder
 		}
 	}
 	if(!(-e $folderPath)) {
-		umask(000);
-		mkdir("$folderPath",0777);
-		chmod(0777,"$folderPath");
+		if (defined $CHMOD_ON_FOLDER_CREATE && !$CHMOD_ON_FOLDER_CREATE) {
+			mkdir("$folderPath");
+		}
+		else {
+			umask(000);
+			if (defined $CHMOD_ON_FOLDER_CREATE) {
+				mkdir("$folderPath",$CHMOD_ON_FOLDER_CREATE);
+			}
+			else {
+				mkdir("$folderPath",0777);
+			}
+		}
+
 		return(0);
 	} else {
 		return(1);

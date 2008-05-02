@@ -1,6 +1,6 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -34,7 +34,7 @@ var FCKeditor = function( instanceName, width, height, toolbarSet, value )
 	this.Height			= height		|| '200' ;
 	this.ToolbarSet		= toolbarSet	|| 'Default' ;
 	this.Value			= value			|| '' ;
-	this.BasePath		= '/fckeditor/' ;
+	this.BasePath		= FCKeditor.BasePath ;
 	this.CheckBrowser	= true ;
 	this.DisplayErrors	= true ;
 
@@ -44,8 +44,23 @@ var FCKeditor = function( instanceName, width, height, toolbarSet, value )
 	this.OnError		= null ;	// function( source, errorNumber, errorDescription )
 }
 
-FCKeditor.prototype.Version			= '2.5 Beta' ;
-FCKeditor.prototype.VersionBuild	= '16848' ;
+/**
+ * This is the default BasePath used by all editor instances.
+ */
+FCKeditor.BasePath = '/fckeditor/' ;
+
+/**
+ * The minimum height used when replacing textareas.
+ */
+FCKeditor.MinHeight = 200 ;
+
+/**
+ * The minimum width used when replacing textareas.
+ */
+FCKeditor.MinWidth = 750 ;
+
+FCKeditor.prototype.Version			= '2.6' ;
+FCKeditor.prototype.VersionBuild	= '18638' ;
 
 FCKeditor.prototype.Create = function()
 {
@@ -61,7 +76,7 @@ FCKeditor.prototype.CreateHtml = function()
 		return '' ;
 	}
 
-	var sHtml = '<div>' ;
+	var sHtml = '' ;
 
 	if ( !this.CheckBrowser || this._IsCompatibleBrowser() )
 	{
@@ -75,8 +90,6 @@ FCKeditor.prototype.CreateHtml = function()
 		var sHeight = this.Height.toString().indexOf('%') > 0 ? this.Height : this.Height + 'px' ;
 		sHtml += '<textarea name="' + this.InstanceName + '" rows="4" cols="40" style="width:' + sWidth + ';height:' + sHeight + '">' + this._HTMLEncode( this.Value ) + '<\/textarea>' ;
 	}
-
-	sHtml += '</div>' ;
 
 	return sHtml ;
 }
@@ -185,6 +198,78 @@ FCKeditor.prototype._HTMLEncode = function( text )
 	return text ;
 }
 
+;(function()
+{
+	var textareaToEditor = function( textarea )
+	{
+		var editor = new FCKeditor( textarea.name ) ;
+
+		editor.Width = Math.max( textarea.offsetWidth, FCKeditor.MinWidth ) ;
+		editor.Height = Math.max( textarea.offsetHeight, FCKeditor.MinHeight ) ;
+
+		return editor ;
+	}
+
+	/**
+	 * Replace all <textarea> elements available in the document with FCKeditor
+	 * instances.
+	 *
+	 *	// Replace all <textarea> elements in the page.
+	 *	FCKeditor.ReplaceAllTextareas() ;
+	 *
+	 *	// Replace all <textarea class="myClassName"> elements in the page.
+	 *	FCKeditor.ReplaceAllTextareas( 'myClassName' ) ;
+	 *
+	 *	// Selectively replace <textarea> elements, based on custom assertions.
+	 *	FCKeditor.ReplaceAllTextareas( function( textarea, editor )
+	 *		{
+	 *			// Custom code to evaluate the replace, returning false if it
+	 *			// must not be done.
+	 *			// It also passes the "editor" parameter, so the developer can
+	 *			// customize the instance.
+	 *		} ) ;
+	 */
+	FCKeditor.ReplaceAllTextareas = function()
+	{
+		var textareas = document.getElementsByTagName( 'textarea' ) ;
+
+		for ( var i = 0 ; i < textareas.length ; i++ )
+		{
+			var editor = null ;
+			var textarea = textareas[i] ;
+			var name = textarea.name ;
+
+			// The "name" attribute must exist.
+			if ( !name || name.length == 0 )
+				continue ;
+
+			if ( typeof arguments[0] == 'string' )
+			{
+				// The textarea class name could be passed as the function
+				// parameter.
+
+				var classRegex = new RegExp( '(?:^| )' + arguments[0] + '(?:$| )' ) ;
+
+				if ( !classRegex.test( textarea.className ) )
+					continue ;
+			}
+			else if ( typeof arguments[0] == 'function' )
+			{
+				// An assertion function could be passed as the function parameter.
+				// It must explicitly return "false" to ignore a specific <textarea>.
+				editor = textareaToEditor( textarea ) ;
+				if ( arguments[0]( textarea, editor ) === false )
+					continue ;
+			}
+
+			if ( !editor )
+				editor = textareaToEditor( textarea ) ;
+
+			editor.ReplaceTextarea() ;
+		}
+	}
+})() ;
+
 function FCKeditor_IsCompatibleBrowser()
 {
 	var sAgent = navigator.userAgent.toLowerCase() ;
@@ -202,7 +287,13 @@ function FCKeditor_IsCompatibleBrowser()
 
 	// Opera 9.50+
 	if ( window.opera && window.opera.version && parseFloat( window.opera.version() ) >= 9.5 )
-			return true ;
+		return true ;
+
+	// Adobe AIR
+	// Checked before Safari because AIR have the WebKit rich text editor
+	// features from Safari 3.0.4, but the version reported is 420.
+	if ( sAgent.indexOf( ' adobeair/' ) != -1 )
+		return ( sAgent.match( / adobeair\/(\d+)/ )[1] >= 1 ) ;	// Build must be at least v1
 
 	// Safari 3+
 	if ( sAgent.indexOf( ' applewebkit/' ) != -1 )

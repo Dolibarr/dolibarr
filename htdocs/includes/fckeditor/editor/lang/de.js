@@ -1,6 +1,6 @@
 ﻿/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -359,7 +359,6 @@ DlgPasteMsg2	: "Bitte fügen Sie den Text in der folgenden Box über die Tastatu
 DlgPasteSec		: "Aufgrund von Sicherheitsbeschränkungen Ihres Browsers kann der Editor nicht direkt auf die Zwischenablage zugreifen. Bitte fügen Sie den Inhalt erneut in diesem Fenster ein.",
 DlgPasteIgnoreFont		: "Ignoriere Schriftart-Definitionen",
 DlgPasteRemoveStyles	: "Entferne Style-Definitionen",
-DlgPasteCleanBox		: "Inhalt aufräumen",
 
 // Color Picker
 ColorAutomatic	: "Automatisch",

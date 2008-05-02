@@ -1,6 +1,6 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -46,7 +46,8 @@ body, td
 
 a[href]
 {
-	color: -moz-hyperlinktext !important;	/* For Firefox... mark as important, otherwise it becomes black */
+	color: -moz-hyperlinktext !important;		/* For Firefox... mark as important, otherwise it becomes black */
+	text-decoration: -moz-anchor-decoration;	/* For Firefox 3, otherwise no underline will be used */
 }
 
 /*

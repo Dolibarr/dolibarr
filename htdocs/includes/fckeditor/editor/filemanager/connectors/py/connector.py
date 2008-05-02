@@ -2,7 +2,7 @@
 
 """
 FCKeditor - The text editor for Internet - http://www.fckeditor.net
-Copyright (C) 2003-2007 Frederico Caldeira Knabben
+Copyright (C) 2003-2008 Frederico Caldeira Knabben
 
 == BEGIN LICENSE ==
 
@@ -37,7 +37,7 @@ class FCKeditorConnector(	FCKeditorConnectorBase,
 							GetFoldersCommandMixin,
 							GetFoldersAndFilesCommandMixin,
 							CreateFolderCommandMixin,
-							UploadFileCommandMixin, 
+							UploadFileCommandMixin,
 							BaseHttpMixin, BaseXmlMixin, BaseHtmlMixin  ):
 	"The Standard connector class."
 	def doResponse(self):
@@ -57,39 +57,39 @@ class FCKeditorConnector(	FCKeditorConnectorBase,
 		# Check for invalid paths
 		if currentFolder is None:
 			return self.sendError(102, "")
-		
+
 		# Check if it is an allowed command
 		if ( not command in Config.ConfigAllowedCommands ):
-			return self.sendError( 1, 'The %s command isn\'t allowed' % command ) 
-		
+			return self.sendError( 1, 'The %s command isn\'t allowed' % command )
+
 		if ( not resourceType in Config.ConfigAllowedTypes  ):
-			return self.sendError( 1, 'Invalid type specified' ) 
+			return self.sendError( 1, 'Invalid type specified' )
 
 		# Setup paths
 		if command == "QuickUpload":
-			self.userFilesFolder = Config.QuickUploadAbsolutePath[resourceType] 
+			self.userFilesFolder = Config.QuickUploadAbsolutePath[resourceType]
 			self.webUserFilesFolder =  Config.QuickUploadPath[resourceType]
 		else:
 			self.userFilesFolder = Config.FileTypesAbsolutePath[resourceType]
-			self.webUserFilesFolder = Config.FileTypesPath[resourceType]	
-		
+			self.webUserFilesFolder = Config.FileTypesPath[resourceType]
+
 		if not self.userFilesFolder: # no absolute path given (dangerous...)
-			self.userFilesFolder = mapServerPath(self.environ, 
+			self.userFilesFolder = mapServerPath(self.environ,
 									self.webUserFilesFolder)
 		# Ensure that the directory exists.
 		if not os.path.exists(self.userFilesFolder):
 			try:
-				self.createServerFoldercreateServerFolder( self.userFilesFolder ) 
+				self.createServerFoldercreateServerFolder( self.userFilesFolder )
 			except:
 				return self.sendError(1, "This connector couldn\'t access to local user\'s files directories.  Please check the UserFilesAbsolutePath in \"editor/filemanager/connectors/py/config.py\" and try again. ")
 
 		# File upload doesn't have to return XML, so intercept here
 		if (command == "FileUpload"):
 			return self.uploadFile(resourceType, currentFolder)
-		
+
 		# Create Url
 		url = combinePaths( self.webUserFilesFolder, currentFolder )
-		
+
 		# Begin XML
 		s += self.createXmlHeader(command, resourceType, currentFolder, url)
 		# Execute the command
@@ -99,8 +99,8 @@ class FCKeditorConnector(	FCKeditorConnectorBase,
 					}
 		s += selector[command](resourceType, currentFolder)
 		s += self.createXmlFooter()
-		return s	
-	
+		return s
+
 # Running from command line (plain old CGI)
 if __name__ == '__main__':
 	try:
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 		data = conn.doResponse()
 		for header in conn.headers:
 			print '%s: %s' % header
-		print 
+		print
 		print data
 	except:
 		print "Content-Type: text/plain"

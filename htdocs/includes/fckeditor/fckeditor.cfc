@@ -2,7 +2,7 @@
 
 <!---
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
- * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
  * == BEGIN LICENSE ==
  *
@@ -43,6 +43,8 @@
  * Do not use path names with a "." (dot) in the name. This is a coldfusion
  * limitation with the cfc invocation.
 --->
+
+<cfinclude template="fckutils.cfm">
 
 <cffunction
 	name="Create"
@@ -98,50 +100,7 @@
 	if( not this.checkBrowser )
 		return true;
 
-	// check for Internet Explorer ( >= 5.5 )
-	if( find( "msie", sAgent ) and not find( "mac", sAgent ) and not find( "opera", sAgent ) )
-	{
-		// try to extract IE version
-		stResult = reFind( "msie ([5-9]\.[0-9])", sAgent, 1, true );
-		if( arrayLen( stResult.pos ) eq 2 )
-		{
-			// get IE Version
-			sBrowserVersion = mid( sAgent, stResult.pos[2], stResult.len[2] );
-			return ( sBrowserVersion GTE 5.5 );
-		}
-	}
-	// check for Gecko ( >= 20030210+ )
-	else if( find( "gecko/", sAgent ) )
-	{
-		// try to extract Gecko version date
-		stResult = reFind( "gecko/(200[3-9][0-1][0-9][0-3][0-9])", sAgent, 1, true );
-		if( arrayLen( stResult.pos ) eq 2 )
-		{
-			// get Gecko build (i18n date)
-			sBrowserVersion = mid( sAgent, stResult.pos[2], stResult.len[2] );
-			return ( sBrowserVersion GTE 20030210 );
-		}
-	}
-	else if( find( "opera/", sAgent ) )
-	{
-		// try to extract Opera version
-		stResult = reFind( "opera/([0-9]+\.[0-9]+)", sAgent, 1, true );
-		if( arrayLen( stResult.pos ) eq 2 )
-		{
-			return ( mid( sAgent, stResult.pos[2], stResult.len[2] ) gte 9.5);
-		}
-	}
-	else if( find( "applewebkit", sAgent ) )
-	{
-		// try to extract Gecko version date
-		stResult = reFind( "applewebkit/([0-9]+)", sAgent, 1, true );
-		if( arrayLen( stResult.pos ) eq 2 )
-		{
-			return ( mid( sAgent, stResult.pos[2], stResult.len[2] ) gte 522 );
-		}
-	}
-
-	return false;
+	return FCKeditor_IsCompatibleBrowser();
 	</cfscript>
 </cffunction>
 
@@ -153,19 +112,21 @@
 	hint="Create a textarea field for non-compatible browsers."
 >
 	<cfset var result = "" />
+	<cfset var sWidthCSS = "" />
+	<cfset var sHeightCSS = "" />
 
 	<cfscript>
-	// append unit "px" for numeric width and/or height values
-	if( isNumeric( this.width ) )
-		this.width = this.width & "px";
-	if( isNumeric( this.height ) )
-		this.height = this.height & "px";
-	</cfscript>
+	if( Find( "%", this.width ) gt 0)
+		sWidthCSS = this.width;
+	else
+		sWidthCSS = this.width & "px";
 
-	<cfscript>
-	result = result & "<div>" & chr(13) & chr(10);
-	result = result & "<textarea name=""#this.instanceName#"" rows=""4"" cols=""40"" style=""WIDTH: #this.width#; HEIGHT: #this.height#"">#HTMLEditFormat(this.value)#</textarea>" & chr(13) & chr(10);
-	result = result & "</div>" & chr(13) & chr(10);
+	if( Find( "%", this.width ) gt 0)
+		sHeightCSS = this.height;
+	else
+		sHeightCSS = this.height & "px";
+
+	result = "<textarea name=""#this.instanceName#"" rows=""4"" cols=""40"" style=""width: #sWidthCSS#; height: #sHeightCSS#"">#HTMLEditFormat(this.value)#</textarea>" & chr(13) & chr(10);
 	</cfscript>
 	<cfreturn result />
 </cffunction>
@@ -194,11 +155,9 @@
 	</cfscript>
 
 	<cfscript>
-	result = result & "<div>" & chr(13) & chr(10);
 	result = result & "<input type=""hidden"" id=""#this.instanceName#"" name=""#this.instanceName#"" value=""#HTMLEditFormat(this.value)#"" style=""display:none"" />" & chr(13) & chr(10);
 	result = result & "<input type=""hidden"" id=""#this.instanceName#___Config"" value=""#GetConfigFieldString()#"" style=""display:none"" />" & chr(13) & chr(10);
 	result = result & "<iframe id=""#this.instanceName#___Frame"" src=""#sURL#"" width=""#this.width#"" height=""#this.height#"" frameborder=""0"" scrolling=""no""></iframe>" & chr(13) & chr(10);
-	result = result & "</div>" & chr(13) & chr(10);
 	</cfscript>
 	<cfreturn result />
 </cffunction>
@@ -229,7 +188,7 @@
 	lConfigKeys = lConfigKeys & ",PreloadImages,PluginsPath,AutoDetectLanguage,DefaultLanguage,ContentLangDirection";
 	lConfigKeys = lConfigKeys & ",ProcessHTMLEntities,IncludeLatinEntities,IncludeGreekEntities,ProcessNumericEntities,AdditionalNumericEntities";
 	lConfigKeys = lConfigKeys & ",FillEmptyBlocks,FormatSource,FormatOutput,FormatIndentator";
-	lConfigKeys = lConfigKeys & ",GeckoUseSPAN,StartupFocus,ForcePasteAsPlainText,AutoDetectPasteFromWord,ForceSimpleAmpersand";
+	lConfigKeys = lConfigKeys & ",StartupFocus,ForcePasteAsPlainText,AutoDetectPasteFromWord,ForceSimpleAmpersand";
 	lConfigKeys = lConfigKeys & ",TabSpaces,ShowBorders,SourcePopup,ToolbarStartExpanded,ToolbarCanCollapse";
 	lConfigKeys = lConfigKeys & ",IgnoreEmptyParagraphValue,PreserveSessionOnFileBrowser,FloatingPanelsZIndex,TemplateReplaceAll,TemplateReplaceCheckbox";
 	lConfigKeys = lConfigKeys & ",ToolbarLocation,ToolbarSets,EnterMode,ShiftEnterMode,Keystrokes";
