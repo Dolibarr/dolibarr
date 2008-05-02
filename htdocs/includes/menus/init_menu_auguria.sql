@@ -327,6 +327,8 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (51, '$leftmenu=="s
 insert into `llx_menu_constraint` (`rowid`, `action`) values (52, '$leftmenu=="system"');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (53, '$leftmenu=="admintools"');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (54, '$leftmenu=="users"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (55, '$leftmenu=="customers"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (56, '$leftmenu=="prospects"');
 
 -- 
 -- table `llx_menu_const`

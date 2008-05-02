@@ -256,9 +256,6 @@ alter table llx_menu_const drop column user;
 update llx_menu set leftmenu = '1' where leftmenu != '0';
 alter table llx_menu modify leftmenu varchar(1) default '1';
 
---alter table llx_menu_const drop primary key;
---alter table llx_menu_const add primary key (`fk_menu`,`fk_constraint`);
---alter table llx_menu modify rowid			integer AUTO_INCREMENT NOT NULL PRIMARY KEY;
 
 create table llx_ecm_directories
 (
@@ -292,3 +289,6 @@ create table llx_ecm_document
   fk_status		  smallint DEFAULT 0,
   private         smallint DEFAULT 0
 ) type=innodb;
+
+
+ALTER TABLE llx_menu_const ADD UNIQUE KEY uk_menu_const(fk_menu, fk_constraint);
