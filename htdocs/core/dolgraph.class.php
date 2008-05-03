@@ -124,6 +124,12 @@ class DolGraph
 	 */
 	function draw($file)
 	{
+		if (! is_array($this->data) || sizeof($this->data) < 1)
+		{
+			$this->error="Call to draw method was made but SetData was not called or called with an empty dataset for parameters";
+			dolibarr_syslog("DolGraph::draw ".$this->error, LOG_ERR);
+			return -1;			
+		}
 		$call = "draw_".$this->library;
 		$this->$call($file);
 	}
