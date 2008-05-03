@@ -1241,9 +1241,9 @@ class Product extends CommonObject
   }
 
   /**
-   *    \brief    Renvoie tableau des stats pour une requete donn�e
-   *    \param    sql         Requete a ex�cuter
-   *    \return   array       Tableau de stats, -1 si ko
+   *    \brief    Return an array formated for showing graphs
+   *    \param    sql         Request to execute
+   *    \return   array       <0 if KO, result[i]=array(valuex,valuey);
    */
   function _get_stats($sql)
   {
