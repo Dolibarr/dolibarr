@@ -494,6 +494,9 @@ class Translate {
      */
     function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
     {
+		// If key empty
+		if ($key == '') return '';
+		
     	// Check in cache
         if (! empty($this->cache_labels[$tablename][$key]))
         {
