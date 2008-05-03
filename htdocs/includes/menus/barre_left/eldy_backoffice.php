@@ -869,8 +869,11 @@ class MenuLeft {
     	   	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
     	   	
 	        $menuArbo = new Menubase($this->db,'eldy','left');
-			$this->overwritemenufor=array('home','companies','members','products','suppliers','commercial','accountancy','agenda','project','tools','ecm');
-	        $newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,0,'eldy');
+			$this->overwritemenufor = $menuArbo->listeMainmenu();
+			// Add other mainmenu to the list of menu to overwrite pre.inc.php
+			$overwritemenumore=array('home','companies','members','products','suppliers','commercial','accountancy','agenda','project','tools','ecm');
+			$this->overwritemenufor=array_merge($overwritemenumore, $this->overwritemenufor);
+			$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,0,'eldy');
 			
 			/*
 			* Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
