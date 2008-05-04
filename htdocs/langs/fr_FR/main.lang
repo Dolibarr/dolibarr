@@ -18,7 +18,7 @@ ErrorGoToGlobalSetup=Allez dans la Configuration 'Société/Institution' pour corr
 ErrorGoToModuleSetup=Allez dans la Configuration du module pour corriger
 ErrorFailedToSendMail=Échec de l'envoi du mail (emetteur=%s, destinataire=%s)
 ErrorAttachedFilesDisabled=La gestion des fichiers associés est désactivée sur ce serveur
-ErrorFileNotUploaded=Le fichier n'a pas été transféré. Vérifiez l'espace disque ou qu'un fichier du même nom n'existe pas déjà.
+ErrorFileNotUploaded=Le fichier n'a pas été transféré. Vérifiez que sa taille ne dépasse pas le maxium autorisé, que l'espace disque est disponible et qu'un fichier du même nom n'existe pas déjà.
 ErrorInternalErrorDetected=Erreur détectée
 ErrorNoRequestRan=Aucune requête exécutée
 ErrorWrongHostParameter=Mauvais paramètre Serveur
