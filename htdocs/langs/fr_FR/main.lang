@@ -424,6 +424,7 @@ MenuECM=Documents
 MenuAWStats=AWStats
 MenuMembers=Adhérents
 MenuAgendaGoogle=Agenda Google
+ThisLimitIsDefinedInSetup=Limite Dolibarr (Menu accueil-configuration-sécurité): %s Ko, Limite PHP: %s Ko
 # Week day
 Monday=Lundi
 Tuesday=Mardi

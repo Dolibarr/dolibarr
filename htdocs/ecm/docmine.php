@@ -160,6 +160,11 @@ $form=new Form($db);
 
 // Construit liste des fichiers
 $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+$totalsize=0;
+foreach($filearray as $key => $file)
+{
+	$totalsize+=$file['size'];
+}
 
 
 $head = ecm_prepare_head($ecmdir);
@@ -191,7 +196,7 @@ while ($tmpecmdir && $result > 0)
 		$tmpecmdir=0;
 	}
 }
-//print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a>';
+print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
 print $s;
 print '</td></tr>';
 print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
@@ -219,11 +224,6 @@ print '<tr><td>'.$langs->trans("ECMNbOfDocs").'</td><td>';
 print sizeof($filearray);
 print '</td></tr>';
 print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>';
-$totalsize=0;
-foreach($filearray as $key => $file)
-{
-	$totalsize+=$file['size'];
-}
 print dol_print_size($totalsize);
 print '</td></tr>';
 if ($_GET["action"] == 'edit')

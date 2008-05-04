@@ -29,6 +29,7 @@
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
 $langs->load('bills');
@@ -81,6 +82,7 @@ if ($action=='delete')
 {
 	$facture = new FactureFournisseur($db);
 
+   	$facid=$_GET["id"];
 	if ($facture->fetch($facid))
     {
 		$ref = sanitize_string($facture->ref);
@@ -111,35 +113,15 @@ if ($facid > 0)
 		$head = facturefourn_prepare_head($facture);
 		dolibarr_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'));
 
-        // Construit liste des fichiers
-        clearstatcache();
 
-        $totalsize=0;
-        $filearray=array();
-
-        $errorlevel=error_reporting();
-		error_reporting(0);
-		$handle=opendir($upload_dir);
-		error_reporting($errorlevel);
-        if ($handle)
-        {
-            $i=0;
-            while (($file = readdir($handle))!==false)
-            {
-                if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-                {
-                    $filearray[$i]=$file;
-                    $totalsize+=filesize($upload_dir.'/'.$file);
-                    $i++;
-                }
-            }
-            closedir($handle);
-        }
-        else
-        {
-//            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
-        }
-
+		// Construit liste des fichiers
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$totalsize=0;
+		foreach($filearray as $key => $file)
+		{
+			$totalsize+=$file['size'];
+		}
+		
 
         print '<table class="border"width="100%">';
 
@@ -163,58 +145,15 @@ if ($facid > 0)
 
         if ($mesg) { print $mesg.'<br>'; }
 
+        
         // Affiche formulaire upload
        	$formfile=new FormFile($db);
 		$formfile->form_attach_new_file(DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$facture->id);
 
-        // Affiche liste des documents existant
-        print_titre($langs->trans('AttachedFiles'));
 
-        print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre">';
-        print '<td>'.$langs->trans('Document').'</td>';
-        print '<td align="right">'.$langs->trans('Size').'</td>';
-        print '<td align="center">'.$langs->trans('Date').'</td>';
-        print '<td>&nbsp;</td>';
-        print '</tr>';
-
-        if (is_dir($upload_dir))
-        {
-    		$handle=opendir($upload_dir);
-    		if ($handle)
-    		{
-    			$var=true;
-    			while (($file = readdir($handle))!==false)
-    			{
-    				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-    				{
-    					$var=!$var;
-    					print '<tr '.$bc[$var].'>';
-    					print '<td>';
-    					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_fournisseur&file='.get_exdir($facture->id,2).$facture->id.'/'.urlencode($file).'">'.$file.'</a>';
-    					print "</td>\n";
-    					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
-    					print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir.'/'.$file),'dayhour').'</td>';
-    					print '<td align="center">';
-    					if ($file == $facref . '.pdf')
-    					{
-    						echo '-';
-    					}
-    					else
-    					{
-    						echo '<a href="'.DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$facture->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
-    					}
-    					print "</td></tr>\n";
-    				}
-    			}
-    			closedir($handle);
-    		}
-    		else
-    		{
-    			print '<div class="error">'.$langs->trans('ErrorCantOpenDir').'<b> '.$upload_dir.'</b></div>';
-    		}
-        }
-		print '</table>';
+		// List of document
+		$formfile->list_of_documents($upload_dir,$facture,'facture_fournisseur');
+		
 	}
 	else
 	{

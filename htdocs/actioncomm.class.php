@@ -229,6 +229,7 @@ class ActionComm
 				$obj = $this->db->fetch_object($resql);
 	
 				$this->id        = $obj->id;
+				$this->ref       = $obj->id;
 				$this->type_id   = $obj->type_id;
 				$this->type_code = $obj->type_code;
 				$transcode=$langs->trans("Action".$obj->code);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
@@ -18,22 +18,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**
         \file       htdocs/product/document.php
         \ingroup    product
         \brief      Page des documents joints sur les produits
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
 $langs->load("companies");
@@ -149,36 +147,13 @@ if ($_GET["id"] > 0)
 	print '</td></tr>';
 	
 	// Construit liste des fichiers
-	clearstatcache();
-
+	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
 	$totalsize=0;
-	$filearray=array();
-
-	if (is_dir($upload_dir))
+	foreach($filearray as $key => $file)
 	{
-		$errorlevel=error_reporting();
-		error_reporting(0);
-		$handle=opendir($upload_dir);
-		error_reporting($errorlevel);
-		if ($handle)
-		{
-			$i=0;
-			while (($file = readdir($handle))!==false)
-			{
-				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-				{
-					$filearray[$i]=$file;
-					$totalsize+=filesize($upload_dir."/".$file);
-					$i++;
-				}
-			}
-			closedir($handle);
-		}
-		else
-		{
-			print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
-		}
+		$totalsize+=$file['size'];
 	}
+	
 	
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
@@ -188,52 +163,15 @@ if ($_GET["id"] > 0)
 
 	if ($mesg) { print $mesg."<br>"; }
 
+	
 	// Affiche formulaire upload
    	$formfile=new FormFile($db);
 	$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id);
 	
-	// Affiche liste des documents existant
-	print_titre($langs->trans("AttachedFiles"));
-
-	print '<table width="100%" class="noborder">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('Document').'</td>';
-	print '<td align="right">'.$langs->trans('Size').'</td>';
-	print '<td align="center">'.$langs->trans('Date').'</td>';
-	print '<td>&nbsp;</td>';
-	print '</tr>';
-
-	if (is_dir($upload_dir))
-	{
-		$errorlevel=error_reporting();
-		$handle=opendir($upload_dir);
-		if ($handle)
-		{
-			$var=true;
-			while (($file = readdir($handle))!==false)
-			{
-				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-				{
-					$var=!$var;
-					print '<tr '.$bc[$var].'>';
-					print '<td>';
-					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=actions&file='.$act->id.'/'.urlencode($file).'">'.$file.'</a>';
-					print "</td>\n";
-					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
-					print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir.'/'.$file),'dayhour').'</td>';
-					print '<td align="center">';
-					print '<a href="'.DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
-					print "</td></tr>\n";
-				}
-			}
-			closedir($handle);
-		}
-		else
-		{
-			print '<div class="error">'.$langs->trans('ErrorCantOpenDir').'<b> '.$upload_dir.'</b></div>';
-		}	  
-	}
-	print '</table>';
+	
+	// List of document
+	$formfile->list_of_documents($upload_dir,$act,'actions');
+	
 }
 else
 {

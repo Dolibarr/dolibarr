@@ -21,15 +21,16 @@
  */
  
 /**
-        \file       htdocs/product/document.php
-        \ingroup    product
-        \brief      Page des documents joints sur les produits
+        \file       htdocs/contrat/document.php
+        \ingroup    contrat
+        \brief      Page des documents joints sur les contrats
         \version    $Id$
 */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/contract.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/files.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 
 $langs->load("other");
@@ -105,34 +106,14 @@ if ($contrat->id)
 	dolibarr_fiche_head($head, 'documents',  $langs->trans("Contract"));
 
 
-    // Construit liste des fichiers
-    clearstatcache();
-
-    $totalsize=0;
-    $filearray=array();
-
-    $errorlevel=error_reporting();
-	error_reporting(0);
-	$handle=opendir($upload_dir);
-	error_reporting($errorlevel);
-    if ($handle)
-    {
-        $i=0;
-        while (($file = readdir($handle))!==false)
-        {
-            if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-            {
-                $filearray[$i]=$file;
-                $totalsize+=filesize($upload_dir."/".$file);
-                $i++;
-            }
-        }
-        closedir($handle);
-    }
-    else
-    {
-//            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
-    }
+	// Construit liste des fichiers
+	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+	$totalsize=0;
+	foreach($filearray as $key => $file)
+	{
+		$totalsize+=$file['size'];
+	}
+	
     
     print '<table class="border" width="100%">';
 
@@ -154,53 +135,9 @@ if ($contrat->id)
    	$formfile=new FormFile($db);
 	$formfile->form_attach_new_file(DOL_URL_ROOT.'/contrat/document.php?id='.$contrat->id);
 
-   
-    $errorlevel=error_reporting();
-	error_reporting(0);
-	$handle=opendir($upload_dir);
-	error_reporting($errorlevel);
-
-	print '<table width="100%" class="noborder">';
 	
-	// Affiche liste des documents existant
-  print_titre($langs->trans("AttachedFiles"));
-  
-  print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('Document').'</td>';
-	print '<td align="right">'.$langs->trans('Size').'</td>';
-	print '<td align="center">'.$langs->trans('Date').'</td>';
-	print '<td>&nbsp;</td>';
-	print '</tr>';
-	$var=true;
-	
-	if ($handle)
-	{
-		while (($file = readdir($handle))!==false)
-		{
-			if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-			{
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
-				print '<td>';
-				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($contratref.'/'.$file).'">'.$file.'</a>';
-				print "</td>\n";
-				print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
-				print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir.'/'.$file),'dayhour').'</td>';
-				print '<td align="center">';
-				if ($file == $propref . '.pdf')
-				{
-					echo '-';
-				}
-				else
-				{
-					echo '<a href="'.DOL_URL_ROOT.'/contrat/document.php?id='.$contrat->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
-				}
-				print "</td></tr>\n";
-			}
-		}
-		closedir($handle);
-	}
-	print '</table>';
+	// List of document
+	$formfile->list_of_documents($upload_dir,$contrat,'contract');
 
 }
 else
