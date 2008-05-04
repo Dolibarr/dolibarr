@@ -94,14 +94,14 @@ if ( $_POST["sendit"] && $conf->upload != 0)
   
   if (is_dir($upload_dir))
   {
-  	$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']);
-  	if ($result == 1)
+  	$result = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0);
+  	if ($result > 0)
   	{
     	//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
     	//print_r($_FILES);
     	$result=$ecmdir->changeNbOfFiles('+');
     }
-    else if (!$result)
+    else if ($result < 0)
     {
     	// Echec transfert (fichier depassant la limite ?)
     	$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';

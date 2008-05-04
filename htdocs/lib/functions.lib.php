@@ -1526,17 +1526,19 @@ function dolibarr_print_error($db='',$error='')
 
 
 /**
- \brief  Deplacer les fichiers telechargés, apres quelques controles divers
- \param	src_file	fichier source
- \param	dest_file	fichier de destination
- \return int         true=Deplacement OK, false=Pas de deplacement ou KO
+ *	\brief  Deplacer les fichiers telechargés, apres quelques controles divers
+ *	\param	src_file			Source filename
+ *	\param	dest_file			Target filename
+ * 	\param	allowoverwrite		Overwrite if exists
+ *	\return int         		>0 if OK, <0 if KO, Name of virus if virus found
  */
-function dol_move_uploaded_file($src_file, $dest_file)
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 {
 	global $conf;
 
 	$file_name = $dest_file;
 
+	// If we need to make a virus scan
 	if ($conf->global->MAIN_USE_AVSCAN)
 	{
 		$malware = dol_avscan_file($src_file);
@@ -1544,21 +1546,21 @@ function dol_move_uploaded_file($src_file, $dest_file)
 	}
 
 	// Security:
-	// On renomme les fichiers avec extention executable car si on a mis le rep
+	// On renomme les fichiers avec extention script web car si on a mis le rep
 	// documents dans un rep de la racine web (pas bien), cela permet d'executer
 	// du code a la demande.
 	if (eregi('\.htm|\.html|\.php|\.pl|\.cgi$',$file_name))
 	{
-		$file_name.= '.txt';
+		$file_name.= '.noexe';
 	}
 
 	// Security:
-	// On interdit les remontées de repertoire ainsi que les pipe dans
+	// On interdit les remontées de repertoire ainsi que les pipes dans
 	// les noms de fichiers.
 	if (eregi('\.\.',$src_file) || eregi('[<>|]',$src_file))
 	{
 		dolibarr_syslog("Refused to deliver file ".$src_file);
-		return false;
+		return -1;
 	}
 
 	// Security:
@@ -1567,12 +1569,31 @@ function dol_move_uploaded_file($src_file, $dest_file)
 	if (eregi('\.\.',$dest_file) || eregi('[<>|]',$dest_file))
 	{
 		dolibarr_syslog("Refused to deliver file ".$dest_file);
-		return false;
+		return -1;
 	}
 
+	// Check if destination file already exists
+	if (! $allowoverwrite)
+	{
+		if (file_exists($file_name))
+		{
+			dolibarr_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." already exists", LOG_WARNING);
+			return -2;			
+		}
+	}
+	
+	// Move file
 	$return=move_uploaded_file($src_file, $file_name);
-
-	return $return;
+	if ($return)
+	{
+		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name, LOG_DEBUG);
+		return 1;			
+	}
+	else 
+	{
+		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Failed to mode ".$src_file." to ".$file_name, LOG_ERR);			
+		return -3;
+	}
 }
 
 

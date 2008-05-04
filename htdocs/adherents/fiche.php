@@ -176,7 +176,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 					if (is_dir($conf->adherent->dir_output))
 					{
 						$newfile=$conf->adherent->dir_output . "/" . $adh->id . ".jpg";
-						if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile))
+						if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
 						{
 							$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
 						}

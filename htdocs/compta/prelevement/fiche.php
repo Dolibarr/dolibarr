@@ -57,19 +57,20 @@ if ($_POST["action"] == 'infotrans')
     {      
       $dir = $conf->prelevement->dir_output.'/bon/';
 
-      if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name']))
+      if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1) > 0)
 	{
-	  $dt = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+	  $dt = dolibarr_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	  
 	  $bon->set_infotrans($user, $dt, $_POST["methode"]);
 	}
     }
   else
     {
-      dolibarr_syslog("Fichier invalide",LOG_WARN);
+      dolibarr_syslog("Fichier invalide",LOG_WARNING);
     }
 
   Header("Location: fiche.php?id=".$_GET["id"]);
+  exit;
 }
 
 if ($_POST["action"] == 'infocredit')

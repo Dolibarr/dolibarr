@@ -277,7 +277,7 @@ class Ldap
 		{
 			$this->error='Failed to connect to LDAP';
 			$return=-1;
-			dolibarr_syslog("Ldap::connect_bind return=".$return, LOG_WARN);
+			dolibarr_syslog("Ldap::connect_bind return=".$return, LOG_WARNING);
 		}
 		return $return;
 	}

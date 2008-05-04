@@ -2226,7 +2226,7 @@ class Product extends CommonObject
     	$originImage = $dir . $file['name'];
     	
     	// Cree fichier en taille origine
-    	dol_move_uploaded_file($file['tmp_name'], $originImage);
+    	dol_move_uploaded_file($file['tmp_name'], $originImage, 1);
 
     	if (file_exists($originImage))
     	{
