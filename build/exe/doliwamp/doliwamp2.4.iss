@@ -65,6 +65,7 @@ Source: "build\exe\doliwamp\rundoliwamp.bat.install"; DestDir: "{app}\"; Flags: 
 Source: "build\exe\doliwamp\install_services.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\uninstall_services.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\mysqlinitpassword.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\mysqltestinstall.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications
 Source: "C:\Program Files\Wamp\apps\phpmyadmin2.10.1\*.*"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log"
@@ -114,7 +115,6 @@ var apacheVersion: String;
 var path: String;
 var pathWithSlashes: String;
 var Page: TInputQueryWizardPage;
-var smtp: String;
 
 var smtpServer: String;
 var apachePort: String;
@@ -133,6 +133,11 @@ var sqlitemanagerVersion: String;
 var tmp: String;
 var phpDllCopy: String;
 var batFile: String;
+
+var mysmtp: String;
+var myporta: String;
+var myport: String;
+var mypass: String;
 
 
 //-----------------------------------------------
@@ -209,6 +214,7 @@ begin
 
     if not FileExists (destFile) and FileExists(srcFile) then
     begin
+      myporta := Page.Values[1];
 
       //navigateur
       browser := 'explorer.exe';
@@ -226,7 +232,7 @@ begin
 
       LoadStringFromFile (srcFile, srcContents);
       StringChange (srcContents, 'WAMPBROWSER', browser);
-      StringChange (srcContents, 'WAMPAPACHEPORT', apachePort);
+      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
       SaveStringToFile(destFile,srcContents, False);
     end
 
@@ -264,11 +270,12 @@ begin
 
     if not FileExists (destFile) and FileExists(srcFile) then
     begin
+      mypass := Page.Values[3];
 
       LoadStringFromFile (srcFile, srcContents);
 
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
+      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
 
       SaveStringToFile(destFile, srcContents, False);
     end
@@ -290,15 +297,19 @@ begin
       // si un fichier existe pour une version precedente de phpmyadmin, on le recupere
       if FileExists (pathWithSlashes+'/apps/phpmyadmin'+tmp+'/config.inc.php') then
       begin
+        mypass := Page.Values[3];
+
         LoadStringFromFile (pathWithSlashes+'/apps/phpmyadmin'+tmp+'/config.inc.php', srcContents);
-        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
+        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
         SaveStringToFile(destFile,srcContents, False);
       end
       else
       begin
+        mypass := Page.Values[3];
+
         // sinon on prends le fichier par defaut
         LoadStringFromFile (srcFile, srcContents);
-        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
+        StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
         SaveStringToFile(destFile,srcContents, False);
       end
     end
@@ -356,21 +367,25 @@ begin
 
     if not FileExists (destFile) then
     begin
+      myporta := Page.Values[1];
+
       LoadStringFromFile (srcFile, srcContents);
       StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
       StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
       StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-      StringChange (srcContents, 'WAMPAPACHEPORT', apachePort);
+      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
       SaveStringToFile(destFile, srcContents, False);
     end
     else
     begin
+      myporta := Page.Values[1];
+
       RenameFile(destFile, destFile+'.old');
       LoadStringFromFile (srcFile, srcContents);
       StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
       StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
       StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
-      StringChange (srcContents, 'WAMPAPACHEPORT', apachePort);
+      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
       SaveStringToFile(destFile, srcContents, False);
     end
 
@@ -387,11 +402,14 @@ begin
 
     if not FileExists (destFile) then
     begin
+      myport := Page.Values[2];
+      mypass := Page.Values[3];
+
       LoadStringFromFile (srcFile, srcContents);
 
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-      StringChange (srcContents, 'WAMPMYSQLPORT', mysqlPort);
-      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
+      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
+      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
 
       SaveStringToFile(destFile,srcContents, False);
     end
@@ -471,13 +489,36 @@ begin
 
     if not FileExists (destFile) and FileExists (srcFile) then
     begin
+      myport := Page.Values[2];
+      mypass := Page.Values[3];
 
       LoadStringFromFile (srcFile, srcContents);
 
       //version de apache et mysql
       StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
-      StringChange (srcContents, 'WAMPMYSQLPORT', mysqlPort);
-      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', newPassword);
+      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
+      StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
+
+      SaveStringToFile(destFile,srcContents, False);
+    end
+
+
+    //----------------------------------------------
+    // Fichier mysqltestinstall.bat
+    //----------------------------------------------
+
+    destFile := pathWithSlashes+'/mysqltestinstall.bat';
+    srcFile := pathWithSlashes+'/mysqltestinstall.bat.install';
+
+    if not FileExists (destFile) and FileExists (srcFile) then
+    begin
+      myport := Page.Values[2];
+
+      LoadStringFromFile (srcFile, srcContents);
+
+      //version de apache et mysql
+      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
+      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
 
       SaveStringToFile(destFile,srcContents, False);
     end
@@ -494,10 +535,10 @@ begin
 
     if not FileExists (destFile) then
     begin
-      smtp := Page.Values[0];
+      mysmtp := Page.Values[0];
       LoadStringFromFile (srcFile, srcContents);
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-      StringChange (srcContents, 'WAMPSMTP', smtp);
+      StringChange (srcContents, 'WAMPSMTP', mysmtp);
       SaveStringToFile(destFile,srcContents, False);
     end
 
@@ -510,10 +551,10 @@ begin
 
     if not FileExists (destFile) then
     begin
-      smtp := Page.Values[0];
+      mysmtp := Page.Values[0];
       LoadStringFromFile (srcFile, srcContents);
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
-      StringChange (srcContents, 'WAMPSMTP', smtp);
+      StringChange (srcContents, 'WAMPSMTP', mysmtp);
       SaveStringToFile(destFile,srcContents, False);
     end
 
