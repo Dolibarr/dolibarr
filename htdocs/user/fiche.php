@@ -276,7 +276,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 			if (is_dir($conf->users->dir_output))
 			{
 				$newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
-				if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
+				if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1))
 				{
 					$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
 				}

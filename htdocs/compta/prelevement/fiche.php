@@ -57,7 +57,7 @@ if ($_POST["action"] == 'infotrans')
     {      
       $dir = $conf->prelevement->dir_output.'/bon/';
 
-      if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1) > 0)
+      if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1))
 	{
 	  $dt = dolibarr_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	  

@@ -65,7 +65,7 @@ if ( $_POST["sendit"] && $conf->upload != 0)
 {
   $imp = new DolibarrImport($db);
   $imp->CreateBackupDir();  
-  if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $imp->upload_dir . "/" . $_FILES['userfile']['name'],1) > 0)
+  if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $imp->upload_dir . "/" . $_FILES['userfile']['name'],1))
     {
       
       $imp->ImportClients($imp->upload_dir . "/" . $_FILES['userfile']['name']);

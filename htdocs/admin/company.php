@@ -65,7 +65,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 				{
 					create_exdir($conf->societe->dir_logos);
 				}        
-				if (dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file,1) > 0)
+				if (dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file,1))
 				{
 					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
 					

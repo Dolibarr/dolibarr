@@ -53,7 +53,7 @@ if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && $conf->upload != 0)
         $product = new Product($db);
         $result = $product->fetch($_GET["id"]);
 
-        // if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1) > 0)
+        // if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1))
 
         //      var_dump($_FILES);
 

@@ -75,7 +75,7 @@ if ( $_POST["sendit"] && $conf->upload )
 
     if (is_dir($upload_dir))
     {
-        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
+        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0))
         {
             $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
             //print_r($_FILES);
