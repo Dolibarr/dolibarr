@@ -19,7 +19,7 @@
  */
 
 /**
- *  \file       htdocs/societe/docsoc.php
+ *  \file       htdocs/societe/document.php
  *  \brief      Tab for documents linked to third party
  *  \ingroup    societe
  *  \version    $Id$
@@ -167,7 +167,7 @@ if ($socid > 0)
 		
 		// Affiche formulaire upload
        	$formfile=new FormFile($db);
-		$formfile->form_attach_new_file(DOL_URL_ROOT.'/societe/docsoc.php?socid='.$socid);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/societe/document.php?socid='.$socid);
 		
 
 		// List of document

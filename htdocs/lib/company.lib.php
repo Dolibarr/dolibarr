@@ -84,7 +84,7 @@ function societe_prepare_head($objsoc)
 	}
 	if ($user->societe_id == 0)
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/societe/docsoc.php?socid='.$objsoc->id;
+		$head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$objsoc->id;
 		$head[$h][1] = $langs->trans("Documents");
 		$head[$h][2] = 'document';
 		$h++;
