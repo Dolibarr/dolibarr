@@ -36,6 +36,7 @@ ECMDocsByProposals=Documents associés aux propositions
 ECMDocsByOrders=Documents associés aux commandes
 ECMDocsByContracts=Documents associés aux contrats
 ECMDocsByInvoices=Documents associés aux factures
+ECMDocsByProducts=Documents associés aux produits
 ECMManualOrg=Rubrique manuelle
 ECMAutoOrg=Rubrique automatique
 ECMNoDirecotyYet=Aucune rubrique créée

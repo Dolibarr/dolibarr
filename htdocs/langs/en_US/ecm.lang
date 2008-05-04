@@ -36,6 +36,7 @@ ECMDocsByProposals=Documents linked to proposals
 ECMDocsByOrders=Documents linked to customers orders
 ECMDocsByContracts=Documents linked to contracts
 ECMDocsByInvoices=Documents linked to customers invoices
+ECMDocsByProducts=Documents linked to products
 ECMManualOrg=Manual directory
 ECMAutoOrg=Automatic directory
 ECMNoDirecotyYet=No directory created
