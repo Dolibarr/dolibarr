@@ -1,4 +1,4 @@
-// script.aculo.us unittest.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
+// script.aculo.us unittest.js v1.8.1, Thu Jan 03 22:07:12 -0500 2008
 
 // Copyright (c) 2005-2007 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
 //           (c) 2005-2007 Jon Tirsen (http://www.tirsen.com)

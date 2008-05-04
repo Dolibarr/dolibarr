@@ -1,4 +1,4 @@
-// script.aculo.us effects.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
+// script.aculo.us effects.js v1.8.1, Thu Jan 03 22:07:12 -0500 2008
 
 // Copyright (c) 2005-2007 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
 // Contributors:
@@ -103,7 +103,7 @@ var Effect = {
     }
   },
   DefaultOptions: {
-    duration:   0.2,   // seconds
+    duration:   1.0,   // seconds
     fps:        100,   // 100= assume 66fps max.
     sync:       false, // true for combining
     from:       0.0,
@@ -568,7 +568,7 @@ Effect.Puff = function(element) {
    [ new Effect.Scale(element, 200, 
       { sync: true, scaleFromCenter: true, scaleContent: true, restoreAfterFinish: true }), 
      new Effect.Opacity(element, { sync: true, to: 0.0 } ) ], 
-     Object.extend({ duration: 0.2, 
+     Object.extend({ duration: 1.0, 
       beforeSetupInternal: function(effect) {
         Position.absolutize(effect.effects[0].element)
       },
@@ -614,7 +614,7 @@ Effect.SwitchOff = function(element) {
   element = $(element);
   var oldOpacity = element.getInlineOpacity();
   return new Effect.Appear(element, Object.extend({
-    duration: 0.2,
+    duration: 0.4,
     from: 0,
     transition: Effect.Transitions.flicker,
     afterFinishInternal: function(effect) {
@@ -642,7 +642,7 @@ Effect.DropOut = function(element) {
     [ new Effect.Move(element, {x: 0, y: 100, sync: true }), 
       new Effect.Opacity(element, { sync: true, to: 0.0 }) ],
     Object.extend(
-      { duration: 0.2,
+      { duration: 0.5,
         beforeSetup: function(effect) {
           effect.effects[0].element.makePositioned(); 
         },
@@ -656,7 +656,7 @@ Effect.Shake = function(element) {
   element = $(element);
   var options = Object.extend({
     distance: 20,
-    duration: 0.2
+    duration: 0.5
   }, arguments[1] || {});
   var distance = parseFloat(options.distance);
   var split = parseFloat(options.duration) / 10.0;
@@ -885,7 +885,7 @@ Effect.Pulsate = function(element) {
   var reverser   = function(pos){ return transition(1-Effect.Transitions.pulse(pos, options.pulses)) };
   reverser.bind(transition);
   return new Effect.Opacity(element, 
-    Object.extend(Object.extend({  duration: 1.0, from: 0,
+    Object.extend(Object.extend({  duration: 2.0, from: 0,
       afterFinishInternal: function(effect) { effect.element.setStyle({opacity: oldOpacity}); }
     }, options), {transition: reverser}));
 };
@@ -1076,11 +1076,11 @@ if (document.defaultView && document.defaultView.getComputedStyle) {
   Element.getStyles = function(element) {
     element = $(element);
     var css = element.currentStyle, styles;
-    styles = Element.CSS_PROPERTIES.inject({ }, function(hash, property) {
-      hash.set(property, css[property]);
-      return hash;
+    styles = Element.CSS_PROPERTIES.inject({ }, function(results, property) {
+      results[property] = css[property];
+      return results;
     });
-    if (!styles.opacity) styles.set('opacity', element.getOpacity());
+    if (!styles.opacity) styles.opacity = element.getOpacity();
     return styles;
   };
 };
