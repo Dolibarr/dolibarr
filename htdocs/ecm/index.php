@@ -336,6 +336,7 @@ else
 print '</div>';
 */
 
+print '<br>';
 
 // End of page
 $db->close();

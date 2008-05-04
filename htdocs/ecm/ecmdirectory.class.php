@@ -83,50 +83,93 @@ class EcmDirectory // extends CommonObject
 		$this->fk_user_c=$user->id;
         if ($this->fk_parent <= 0) $this->fk_parent=0;
 
-		// Check parameters
-		// Put here code to add control on parameters values
-		
-        // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."ecm_directories(";
-		$sql.= "label,";
-		$sql.= "fk_parent,";
-		$sql.= "description,";
-		$sql.= "cachenbofdoc,";
-		$sql.= "date_c,";
-		$sql.= "fk_user_c";
-        $sql.= ") VALUES (";
-		$sql.= " '".addslashes($this->label)."',";
-		$sql.= " '".$this->fk_parent."',";
-		$sql.= " '".addslashes($this->description)."',";
-		$sql.= " ".($this->cachenbofdoc).",";
-		$sql.= " ".$this->db->idate($this->date_c).",";
-		$sql.= " '".$this->fk_user_c."'";
-		$sql.= ")";
+		// Check if same directory does not exists with this name
+		$relativepath=$this->label;
+		if ($this->fk_parent)
+		{
+			$parent = new ECMDirectory($this->db);
+			$parent->fetch($this->fk_parent);
+			$relativepath=$parent->getRelativePath().$relativepath;
+		}
+		$relativepath=eregi_replace('[\/]+','/',$relativepath);	// Avoid duplicate / or \
+        //print $relativepath.'<br>';
 
-	   	dolibarr_syslog("EcmDirectories::create sql=".$sql, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ecm_directories");
-    
-			$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
-			$result=create_exdir($dir);
-			
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+		$cat = new ECMDirectory($this->db);
+        $cate_arbo = $cat->get_full_arbo(1);
+		$pathfound=0;
+		foreach ($cate_arbo as $key => $categ)
+		{
+			$path=eregi_replace('[ -><\/]+','/',$categ['fulllabel']);
+			//print $path.'<br>';
+			if ($path == $relativepath)
+			{
+				$pathfound=1;
+				break;
+			}
+		}
 
-            return $this->id;
-        }
-        else
-        {
-            $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("EcmDirectories::create ".$this->error, LOG_ERR);
-            return -1;
-        }
+		if ($pathfound)
+		{
+	        $this->error="ErrorDirAlreadyExists";
+	        dolibarr_syslog("EcmDirectories::create ".$this->error, LOG_WARNING);
+			return -1;			
+		}
+		else
+		{
+	        $this->db->begin();
+	        
+	        // Insert request
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."ecm_directories(";
+			$sql.= "label,";
+			$sql.= "fk_parent,";
+			$sql.= "description,";
+			$sql.= "cachenbofdoc,";
+			$sql.= "date_c,";
+			$sql.= "fk_user_c";
+	        $sql.= ") VALUES (";
+			$sql.= " '".addslashes($this->label)."',";
+			$sql.= " '".$this->fk_parent."',";
+			$sql.= " '".addslashes($this->description)."',";
+			$sql.= " ".($this->cachenbofdoc).",";
+			$sql.= " ".$this->db->idate($this->date_c).",";
+			$sql.= " '".$this->fk_user_c."'";
+			$sql.= ")";
+	
+		   	dolibarr_syslog("EcmDirectories::create sql=".$sql, LOG_DEBUG);
+	        $resql=$this->db->query($sql);
+	        if ($resql)
+	        {
+	            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."ecm_directories");
+	    
+				$dir=$conf->ecm->dir_output.'/'.$this->getRelativePath();
+				$result=create_exdir($dir);
+				
+	            // Appel des triggers
+	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            // Fin appel triggers
+	
+	            if (! $error)
+	            {
+	            	$this->db->commit();
+	            	return $this->id;
+	            }
+	            else
+	            {
+	        		$this->db->rollback();
+	            	return -1;
+	            }
+	        }
+	        else
+	        {
+	            $this->error="Error ".$this->db->lasterror();
+	            dolibarr_syslog("EcmDirectories::create ".$this->error, LOG_ERR);
+	        	$this->db->rollback();
+	            return -1;
+	        }
+		}
     }
 
     /**

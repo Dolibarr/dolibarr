@@ -107,7 +107,8 @@ if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
 		}
 		else
 		{
-			$mesg='<div class="error">Error '.$langs->trans($ecmdir->error).'</div>';
+			$langs->load("errors");
+			$mesg='<div class="error">'.$langs->trans($ecmdir->error).'</div>';
 			$_GET["action"] = "create";
 		}
 	}
@@ -199,7 +200,6 @@ if (! $_GET["action"] || $_GET["action"] == 'delete_section')
 	// Construit fiche  rubrique
 
 
-print $user->rights->ecm->setup;
 	// Actions buttons
 	print '<div class="tabsAction">';
 	if ($user->rights->ecm->setup)

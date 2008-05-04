@@ -24,3 +24,4 @@ ErrorTopMenuMustHaveAParentWithId0=A menu of type 'Top' can't have a parent menu
 ErrorLeftMenuMustHaveAParentId=A menu of type 'Left' must have a parent id.
 ErrorGenbarCodeNotfound=File not found (Bad path, wrong permissions or access denied by openbasedir parameter)
 ErrorFunctionNotAvailableInPHP=Function <b>%s</b> is required for this feature but is not available in this version/setup of PHP.
+ErrorDirAlreadyExists=A directory with this name already exists.
