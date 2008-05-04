@@ -297,7 +297,7 @@ else
 	if ($resultFetchUser <= 0)
 	{
 		// Account has been removed after login
-		dolibarr_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARN);
+		dolibarr_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
 		session_destroy();
 		session_name($sessionname);
 		session_start();
