@@ -260,28 +260,46 @@ function form_constantes($tableau)
 			print $langs->trans("Desc".$obj->name) != ("Desc".$obj->name) ? $langs->trans("Desc".$obj->name) : $obj->note;
 			print "</td>\n";
 			
-			print '<td>';
-			if ($obj->type == 'yesno')
+			if ($obj->name == 'ADHERENT_ETIQUETTE_TYPE')
 			{
-				print $form->selectyesno('constvalue',$obj->value,1);
-				print '</td><td>';
-				$form->select_array('consttype',array('yesno','texte','chaine'),0);
-			}
-			elseif ($obj->type == 'texte')
-			{
-				print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">';
-				print $obj->value;
-				print "</textarea>\n";
+				print '<td>';
+				// List of possible labels. Values must exists in 
+				// file htdocs/adherents/PDF_Card.class.php
+				require_once(DOL_DOCUMENT_ROOT.'/adherents/cartes/PDF_card.class.php');
+				$pdfcard=new PDF_card('5160',1,1,'mm');
+				$arrayoflabels=array_keys($pdfcard->_Avery_Labels);
+				
+				$form->select_array('constvalue',$arrayoflabels,$obj->value);
 				print '</td><td>';
 				$form->select_array('consttype',array('yesno','texte','chaine'),1);
 			}
 			else
 			{
-				print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
-				print '</td><td>';
-				$form->select_array('consttype',array('yesno','texte','chaine'),2);
+				print '<td>';
+				if ($obj->type == 'yesno')
+				{
+					print $form->selectyesno('constvalue',$obj->value,1);
+					print '</td><td>';
+					$form->select_array('consttype',array('yesno','texte','chaine'),0);
+				}
+				elseif ($obj->type == 'texte')
+				{
+					print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">';
+					print $obj->value;
+					print "</textarea>\n";
+					print '</td><td>';
+					$form->select_array('consttype',array('yesno','texte','chaine'),1);
+				}
+				else
+				{
+					print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
+					print '</td><td>';
+					$form->select_array('consttype',array('yesno','texte','chaine'),2);
+				}
+				print '</td>';
 			}
-			print '</td><td align="center">';
+			
+			print '<td align="center">';
 			
 			print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
 			//      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';

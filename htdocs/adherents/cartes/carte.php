@@ -16,22 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file 		htdocs/adherents/cartes/carte.php
         \ingroup    adherent
 		\brief      Page de creation d'une carte PDF
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/cartes/PDF_card.class.php");
 
-require_once('PDF_card.class.php');
 
 // liste des patterns remplacable dans le texte a imprimer
 $patterns = array (
@@ -50,6 +47,7 @@ $patterns = array (
 		   '/%ID%/',
 		   '/%ANNEE%/'
 		   );
+
 /*
  *-------------------------------------------------
  * Pour créer l'objet on a 2 moyens :
@@ -108,7 +106,9 @@ if ($result)
 
       // imprime le texte specifique sur la carte
       //$pdf->Add_PDF_card(sprintf("%s\n%s\n%s\n%s\n%s, %s\n%s", $objp->type." n° ".$objp->rowid,ucfirst(strtolower($objp->prenom))." ".strtoupper($objp->nom),"<".$objp->email.">", ucwords(strtolower($objp->adresse)), $objp->cp, strtoupper($objp->ville), ucfirst(strtolower($objp->pays))),$annee,"Association FreeLUG http://www.freelug.org/");
-      $pdf->Add_PDF_card(preg_replace ($patterns, $replace, ADHERENT_CARD_TEXT),preg_replace ($patterns, $replace, ADHERENT_CARD_HEADER_TEXT),preg_replace ($patterns, $replace, ADHERENT_CARD_FOOTER_TEXT));
+      $pdf->Add_PDF_card(preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_TEXT),
+      					preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_HEADER_TEXT),
+      					preg_replace ($patterns, $replace, $conf->global->ADHERENT_CARD_FOOTER_TEXT));
       $i++;
     }
 

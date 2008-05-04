@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /* Inspire de PDF_Label 
@@ -64,7 +61,7 @@
 		\author	    Laurent Passebecq
 		\author	    Rodolphe Quiedville
 		\author	    Jean Louis Bergamo.
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(FPDFI_PATH.'fpdi_protection.php');
@@ -74,7 +71,6 @@ require_once(FPDFI_PATH.'fpdi_protection.php');
         \class      PDF_card
 		\brief      Classe afin d'éditer au format PDF des étiquettes au format Avery ou personnalisé
 */
-
 class PDF_card extends FPDF {
 
   // Propriétés privées
@@ -96,8 +92,8 @@ class PDF_card extends FPDF {
   var $_COUNTY = 1;
   var $_First = 1;
 
-  // Listing of labels size
-  var $_Avery_Labels = array (
+	// Listing of labels size
+  	var $_Avery_Labels = array (
 			      '5160'=>array('name'=>'5160',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
@@ -209,47 +205,22 @@ class PDF_card extends FPDF {
 					    'logo1'=>'logo1.jpg',
 					    'logo2'=>'logo2.jpg',
 					    'fond'=>'fond.jpg')
-			      );
+			      );  
   
-  // convert units (in to mm, mm to in)
-  // $src and $dest must be 'in' or 'mm'
-  function _Convert_Metric ($value, $src, $dest) {
-    if ($src != $dest) {
-      $tab['in'] = 39.37008;
-      $tab['mm'] = 1000;
-      return $value * $tab[$dest] / $tab[$src];
-    } else {
-      return $value;
-    }
-  }
+ 
   
-  // Give the height for a char size given.
-  function _Get_Height_Chars($pt) {
-    // Tableau de concordance entre la hauteur des caractères et de l'espacement entre les lignes
-    $_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>4, 10=>5, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
-    if (in_array($pt, array_keys($_Table_Hauteur_Chars))) {
-      return $_Table_Hauteur_Chars[$pt];
-    } else {
-      return 100; // There is a prob..
-    }
-  }
-  
-  function _Set_Format($format) {
-    $this->_Metric 	= $format['metric'];
-    $this->_Avery_Name 	= $format['name'];
-    $this->_Margin_Left	= $this->_Convert_Metric ($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
-    $this->_Margin_Top	= $this->_Convert_Metric ($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
-    $this->_X_Space 	= $this->_Convert_Metric ($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
-    $this->_Y_Space 	= $this->_Convert_Metric ($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);
-    $this->_X_Number 	= $format['NX'];
-    $this->_Y_Number 	= $format['NY'];
-    $this->_Width 	= $this->_Convert_Metric ($format['width'], $this->_Metric, $this->_Metric_Doc);
-    $this->_Height	= $this->_Convert_Metric ($format['height'], $this->_Metric, $this->_Metric_Doc);
-    $this->Set_Char_Size( $format['font-size']);
-  }
-  
-  function PDF_card ($format, $posX=1, $posY=1, $unit='mm') {
-    if (is_array($format)) {
+  /**
+   * Constructor
+   *
+   * @param unknown_type $format		Avery format of label paper. For example 5160, 5161, 5162, 5163, 5164, 8600, L7163
+   * @param unknown_type $posX
+   * @param unknown_type $posY
+   * @param unknown_type $unit
+   * @return PDF_card
+   */
+  function PDF_card ($format, $posX=1, $posY=1, $unit='mm') 
+  {
+  	if (is_array($format)) {
       // Si c'est un format personnel alors on maj les valeurs
       $Tformat = $format;
     } else {
@@ -271,6 +242,7 @@ class PDF_card extends FPDF {
     $this->_Set_Format($Tformat);
   }
   
+  
   //Méthode qui permet de modifier la taille des caractères
   // Cela modiera aussi l'espace entre chaque ligne
   function Set_Char_Size($pt) {
@@ -280,6 +252,7 @@ class PDF_card extends FPDF {
       $this->SetFont('Arial','',$pt);
     }
   }
+  
   
   // On imprime une étiqette
   function Add_PDF_card($texte,$header='',$footer='') {
@@ -336,6 +309,7 @@ class PDF_card extends FPDF {
     }
   }
   
+  
   function _Pointille($x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$nbPointilles=15)
     {
       $this->SetLineWidth($epaisseur);
@@ -389,5 +363,43 @@ class PDF_card extends FPDF {
 
       //$this->Color('#000000');
     }
+    
+  // convert units (in to mm, mm to in)
+  // $src and $dest must be 'in' or 'mm'
+  function _Convert_Metric ($value, $src, $dest) {
+    if ($src != $dest) {
+      $tab['in'] = 39.37008;
+      $tab['mm'] = 1000;
+      return $value * $tab[$dest] / $tab[$src];
+    } else {
+      return $value;
+    }
+  }
+  
+  // Give the height for a char size given.
+  function _Get_Height_Chars($pt) {
+    // Tableau de concordance entre la hauteur des caractères et de l'espacement entre les lignes
+    $_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>4, 10=>5, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
+    if (in_array($pt, array_keys($_Table_Hauteur_Chars))) {
+      return $_Table_Hauteur_Chars[$pt];
+    } else {
+      return 100; // There is a prob..
+    }
+  }
+  
+  function _Set_Format($format) {
+    $this->_Metric 	= $format['metric'];
+    $this->_Avery_Name 	= $format['name'];
+    $this->_Margin_Left	= $this->_Convert_Metric ($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
+    $this->_Margin_Top	= $this->_Convert_Metric ($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
+    $this->_X_Space 	= $this->_Convert_Metric ($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);
+    $this->_Y_Space 	= $this->_Convert_Metric ($format['SpaceY'], $this->_Metric, $this->_Metric_Doc);
+    $this->_X_Number 	= $format['NX'];
+    $this->_Y_Number 	= $format['NY'];
+    $this->_Width 	= $this->_Convert_Metric ($format['width'], $this->_Metric, $this->_Metric_Doc);
+    $this->_Height	= $this->_Convert_Metric ($format['height'], $this->_Metric, $this->_Metric_Doc);
+    $this->Set_Char_Size( $format['font-size']);
+  }
+      
 }
 ?>
