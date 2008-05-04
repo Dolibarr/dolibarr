@@ -58,7 +58,7 @@ class modECM extends DolibarrModules
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "Electronic Content Management";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'experimental';    
+		$this->version = 'dolibarr';    
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_ECM';
 		// Where to store the module in setup page (0=common,1=interface,2=other)
