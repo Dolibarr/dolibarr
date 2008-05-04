@@ -2,6 +2,7 @@
 ErrorDuplicateTrigger=Un fichier trigger de classe '<b>%s</b>' est present plusieurs fois. Supprimer le doublon du répertoire '<b>%s</b>'.
 ErrorFailToCreateFile=Echec de la création du fichier '<b>%s</b>'.
 ErrorFailToDeleteFile=Echec de l'effacement du fichier '<b>%s</b>'.
+ErrorFailToRenameDir=Echec du renommage du répertoire '<b>%s</b>' en '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=Ce contact est déjà défini comme contact pour ce type.
 ErrorCashAccountAcceptsOnlyCashMoney=Ce compte bancaire est de type caisse et n'accepte que les mode de réglement de type <b>espèce</b>.
 ErrorFromToAccountsMustDiffers=Le compte source et destination doivent etre différents.

@@ -373,9 +373,10 @@ class FormFile
      * 		\param		param				Parameters on sort links
      * 		\param		forcedownload		Mime type is forced to 'application/binary' to have a download
      * 		\param		relativepath		Relative path of docs (autodefined if not provided)
+     * 		\param		permtodelete		Permission to delete
      *		\return		int					<0 if KO, nb of files shown if OK
      */
-    function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='')
+    function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1)
     {
     	global $user, $conf, $langs;
     	global $bc;
@@ -422,7 +423,10 @@ class FormFile
 				print '<td align="center">'.dolibarr_print_date($file['date'],"dayhour").'</td>';
 				print '<td align="right">';
 				//print '&nbsp;'; 
-				print '<a href="'.$url.'?id='.$object->id.'&amp;section='.$_REQUEST["section"].'&amp;action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				if ($permtodelete)
+					print '<a href="'.$url.'?id='.$object->id.'&amp;section='.$_REQUEST["section"].'&amp;action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				else
+					print '&nbsp;';
 				print "</td></tr>\n";
 			}
 		}

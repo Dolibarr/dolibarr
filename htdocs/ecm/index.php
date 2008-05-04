@@ -121,12 +121,12 @@ $userstatic = new User($db);
 // Ajout rubriques automatiques
 $rowspan=0;
 $sectionauto=array();
-if ($conf->societe->enabled)  { $rowspan++; $sectionauto[]=array('test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
-if ($conf->propal->enabled)   { $rowspan++; $sectionauto[]=array('test'=>$conf->propal->enabled,  'label'=>$langs->trans("Proposals"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
-if ($conf->commande->enabled) { $rowspan++; $sectionauto[]=array('test'=>$conf->commande->enabled,'label'=>$langs->trans("Orders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
-if ($conf->contrat->enabled)  { $rowspan++; $sectionauto[]=array('test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
-if ($conf->facture->enabled)  { $rowspan++; $sectionauto[]=array('test'=>$conf->facture->enabled, 'label'=>$langs->trans("Invoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
-if ($conf->produit->enabled)  { $rowspan++; $sectionauto[]=array('test'=>$conf->produit->enabled, 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
+if ($conf->societe->enabled)  { $rowspan++; $sectionauto[]=array('module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
+if ($conf->propal->enabled)   { $rowspan++; $sectionauto[]=array('module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
+if ($conf->commande->enabled) { $rowspan++; $sectionauto[]=array('module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("Orders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
+if ($conf->contrat->enabled)  { $rowspan++; $sectionauto[]=array('module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
+if ($conf->facture->enabled)  { $rowspan++; $sectionauto[]=array('module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("Invoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
+if ($conf->produit->enabled)  { $rowspan++; $sectionauto[]=array('module'=>'product', 'test'=>$conf->produit->enabled, 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
 
 
 //***********************
@@ -160,18 +160,26 @@ print '</td><td width="50%" valign="top">';
 print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print '<td colspan="3">'.$langs->trans("ECMSearchByEntity").'</td></tr>';
-
-
+print '<td colspan="4">'.$langs->trans("ECMSearchByEntity").'</td></tr>';
 
 $buthtml='<td rowspan="'.$rowspan.'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 $butshown=0;
-if ($conf->societe->enabled)  { print "<tr $bc[0]><td>".$langs->trans("ThirdParty").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown++; }
-if ($conf->contrat->enabled)  { print "<tr $bc[0]><td>".$langs->trans("Contrat").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown++; }
-if ($conf->propal->enabled)   { print "<tr $bc[0]><td>".$langs->trans("Proposal").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown++; }
-if ($conf->commande->enabled) { print "<tr $bc[0]><td>".$langs->trans("Order").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown++; }
-if ($conf->facture->enabled)  { print "<tr $bc[0]><td>".$langs->trans("Invoice").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown++; }
-if ($conf->produit->enabled)  { print "<tr $bc[0]><td>".$langs->trans("ProductsAndServices").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>'.($butshown?'':$buthtml).'</tr>'; $butshown++; }
+foreach($sectionauto as $section)
+{
+	if (! $section['test']) continue;
+	if ($butshown % 2 == 0) print '<tr '. $bc[0].'>';
+	print "<td>".$section['label'].':</td>';
+	print '<td';
+	if ($butshown % 2 == 1) print ' align="right"';
+	print '>';
+	print '<input type="text" name="search_'.$section['module'].'" class="flat" size="6">';
+	print '</td>';
+	if ($butshown % 2 == 1) print '</tr>';
+	$butshown++;
+}
+if ($butshown % 2 == 1) print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+
+print '<tr '. $bc[0].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 print "</table></form><br>";
 //print $langs->trans("ECMAutoOrgDesc");
 	
