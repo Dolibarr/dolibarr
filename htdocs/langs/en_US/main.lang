@@ -18,7 +18,7 @@ ErrorGoToGlobalSetup=Go to 'Company/Fundation' setup to fix this
 ErrorGoToModuleSetup=Go to Module setup to fix this
 ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=%s)
 ErrorAttachedFilesDisabled=Attaching files feature is disabled on this serveur
-ErrorFileNotUploaded=File was not uploaded
+ErrorFileNotUploaded=File was not uploaded. Check free space on disk and that there is not already a file with same name.
 ErrorInternalErrorDetected=Error detected
 ErrorNoRequestRan=No request ran
 ErrorWrongHostParameter=Wrong host parameter
