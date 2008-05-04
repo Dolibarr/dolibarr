@@ -139,11 +139,51 @@ if ($_POST['action'] == 'confirm_deletedir' && $_POST['confirm'] == 'yes')
 // Update description
 if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 {
+	$db->begin();
+	
+	$oldlabel=$ecmdir->label;
+	$olddir=$ecmdir->getRelativePath(0);
+	$olddir=$conf->ecm->dir_output.'/'.$olddir;
+	
 	// Fetch was already done
+	$ecmdir->label = $_POST["label"];
 	$ecmdir->description = $_POST["description"];
 	$result=$ecmdir->update($user);
-	if ($result <= 0)
+	if ($result > 0)
 	{
+		$error=0;
+		
+		// Try to rename file if changed
+		if ($oldlabel != $ecmdir->label
+			&& file_exists($olddir))
+		{
+			$newdir=$ecmdir->getRelativePath(1);		// return "xxx/zzz/" from ecm directory
+			$newdir=$conf->ecm->dir_output.'/'.$newdir;
+			//print $olddir.'-'.$newdir;
+			$result=@rename($olddir,$newdir);
+			if (! $result)
+			{
+				$langs->load('errors');
+				$mesg='<div class="error">'.$langs->trans('ErrorFailToRenameDir',$olddir,$newdir).'</div>';
+				$error++;
+			}
+		}
+		
+		if (! $error)
+		{
+			$db->commit();
+			
+			$relativepath=$ecmdir->getRelativePath();
+			$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
+		}
+		else
+		{
+			$db->rollback();
+		}			
+	}
+	else
+	{
+		$db->rollback();
 		$mesg='<div class="error">'.$ecmdir->error.'</div>';
 	}
 }
@@ -186,10 +226,15 @@ $s='';
 $tmpecmdir=new ECMDirectory($db);	// Need to create a new one
 $tmpecmdir->fetch($ecmdir->id);
 $result = 1;
+$i=0;
 while ($tmpecmdir && $result > 0)
 {
 	$tmpecmdir->ref=$tmpecmdir->label;
-	$s=$tmpecmdir->getNomUrl(1).$s;
+	if ($i == 0 && $_GET["action"] == 'edit')
+	{
+		$s='<input type="text" name="label" size="32" value="'.$tmpecmdir->label.'">';
+	}
+	else $s=$tmpecmdir->getNomUrl(1).$s;
 	if ($tmpecmdir->fk_parent)
 	{
 		$s=' -> '.$s;
@@ -199,6 +244,7 @@ while ($tmpecmdir && $result > 0)
 	{
 		$tmpecmdir=0;
 	}
+	$i++;
 }
 
 print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
@@ -247,6 +293,7 @@ if ($_GET["action"] == 'edit')
 print '</div>';
 
 
+
 // Actions buttons
 if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete_dir' && $_GET['action'] != 'delete')
 {
@@ -275,7 +322,7 @@ if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete_dir' && $_GET['actio
 	print '</div>';
 }
 
-if ($mesg) { print $mesg.'<br>'; }
+if ($mesg) { print '<br>'.$mesg.'<br>'; }
 
 
 // Confirm remove file

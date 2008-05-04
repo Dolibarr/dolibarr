@@ -392,12 +392,13 @@ class EcmDirectory // extends CommonObject
   	}
 
   	/**
-     \brief      	Return relative path of a directory on disk
-     \return		string			Relative physical path
-   	*/
-  	function getRelativePath()
+	 *  \brief     	Return relative path of a directory on disk
+	 * 	\param		force		Force reload of full arbo even if already loaded
+     *	\return		string		Relative physical path
+   	 */
+  	function getRelativePath($force=0)
   	{
-	    $this->get_full_arbo();
+	    $this->get_full_arbo($force);
 	    
 		$ret='';
 		$idtosearch=$this->id;
