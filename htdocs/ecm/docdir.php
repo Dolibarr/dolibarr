@@ -44,7 +44,7 @@ $langs->load("categories");
 // Load permissions
 $user->getrights('ecm');
 
-if (!$user->rights->ecm->create) accessforbidden();
+if (!$user->rights->ecm->setup) accessforbidden();
 
 // Get parameters
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
