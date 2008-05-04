@@ -15,7 +15,7 @@ Smarty			  2.6.0    LGPL 2.1                    Oui              Some pages temp
 In alphabetical order of includes directory:
 AdoDb-Date        0.21     Modified BSD License        Oui              Conversion dates
 Php-barcode       0.3pl1   GPL 2.0                     Oui              Bar code generation
-FCKEditor         2.4.4    LGPL 2.1 ou Mozilla PL 1.0  Oui              Editor WYSIWYG
+FCKEditor         2.6      LGPL 2.1 ou Mozilla PL 1.0  Oui              Editor WYSIWYG
 FPDF              1.53     Public Domain (not clear)   Oui              PDF generation (original code was modified)
 FPDI              1.2      Apache Software License 2.0 Non GPL3 uniqmt  PDF encryption (8 files)
 MagPieRss         0.72     GPL 2.0                     Oui              Load RSS
