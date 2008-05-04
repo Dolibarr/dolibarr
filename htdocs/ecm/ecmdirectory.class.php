@@ -75,7 +75,7 @@ class EcmDirectory // extends CommonObject
 		$now=time();
 		
 		// Clean parameters
-    $this->label=sanitize_string($this->label);
+    	$this->label=sanitize_string($this->label);
 		$this->fk_parent=trim($this->fk_parent);
 		$this->description=trim($this->description);
 		if (! $this->cachenbofdoc) $this->cachenbofdoc=0;
@@ -139,6 +139,8 @@ class EcmDirectory // extends CommonObject
     {
     	global $conf, $langs;
     	
+    	$error=0;
+    	
 		// Clean parameters
 		$this->label=trim($this->label);
 		$this->fk_parent=trim($this->fk_parent);
@@ -147,6 +149,8 @@ class EcmDirectory // extends CommonObject
 		// Check parameters
 		// Put here code to add control on parameters values
 
+		$this->db->begin();
+		
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
         
@@ -159,12 +163,12 @@ class EcmDirectory // extends CommonObject
         $resql = $this->db->query($sql);
         if (! $resql)
         {
-            $this->error="Error ".$this->db->lasterror();
+            $error++;
+        	$this->error="Error ".$this->db->lasterror();
             dolibarr_syslog("EcmDirectories::update ".$this->error, LOG_ERR);
-            return -1;
         }
 
-		if (! $notrigger)
+		if (! $error && ! $notrigger)
 		{
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -174,7 +178,16 @@ class EcmDirectory // extends CommonObject
             // Fin appel triggers
     	}
 
-        return 1;
+        if (! $error)
+        {
+        	$this->db->commit();
+        	return 1;
+        }
+        else
+        {
+        	$this->db->rollback();
+        	return -1;
+        }
     }
   
   

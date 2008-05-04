@@ -80,6 +80,7 @@ $relativepath=$ecmdir->getRelativePath();
 $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 
 
+
 /*******************************************************************
 * ACTIONS
 *
@@ -128,17 +129,23 @@ if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 // Remove dir
 if ($_POST['action'] == 'confirm_deletedir' && $_POST['confirm'] == 'yes')
 {
+	// Fetch was already done
 	$result=$ecmdir->delete($user);
 	header("Location: ".DOL_URL_ROOT."/ecm/index.php");
 	exit;
 	//	$mesg = '<div class="ok">'.$langs->trans("ECMSectionWasRemoved", $ecmdir->label).'</div>';
 }
 
-// Remove dir
+// Update description
 if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 {
+	// Fetch was already done
 	$ecmdir->description = $_POST["description"];
 	$result=$ecmdir->update($user);
+	if ($result <= 0)
+	{
+		$mesg='<div class="error">'.$ecmdir->error.'</div>';
+	}
 }
 
 
@@ -176,7 +183,8 @@ if ($_GET["action"] == 'edit')
 print '<table class="border" width="100%">';
 print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
 $s='';
-$tmpecmdir=$ecmdir;
+$tmpecmdir=new ECMDirectory($db);	// Need to create a new one
+$tmpecmdir->fetch($ecmdir->id);
 $result = 1;
 while ($tmpecmdir && $result > 0)
 {
@@ -192,6 +200,7 @@ while ($tmpecmdir && $result > 0)
 		$tmpecmdir=0;
 	}
 }
+
 print img_picto('','object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> ';
 print $s;
 print '</td></tr>';
