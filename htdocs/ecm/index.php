@@ -146,10 +146,10 @@ print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
-print "<tr $bc[0]><td>".$langs->trans("Title").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>';
-print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "<tr $bc[0]><td>".$langs->trans("Keyword").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
-print '</tr>';
+print "<tr $bc[0]><td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
+print '<td rowspan="3"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print "<tr $bc[0]><td>".$langs->trans("Title").':</td><td><input type="text" name="search_title" class="flat" size="18"></td></tr>';
+print "<tr $bc[0]><td>".$langs->trans("Keyword").':</td><td><input type="text" name="search_keyword" class="flat" size="18"></td></tr>';
 print "</table></form><br>";
 //print $langs->trans("ECMManualOrgDesc");
 	
