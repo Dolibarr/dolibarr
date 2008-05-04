@@ -41,6 +41,27 @@ if (!$user->rights->produit->lire)
 
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
+// Security check
+if ($user->societe_id > 0) 
+{
+	unset($_GET["action"]);
+	$action=''; 
+	$socid = $user->societe_id;
+}
+
+// Get parameters
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="name";
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+
 $product = new Product($db);
 if ($_GET['id'] || $_GET["ref"])
 {
@@ -159,7 +180,8 @@ if ($product->id)
 
    
 	// List of document
-	$formfile->list_of_documents($upload_dir,$product,'produit');
+	$param='&id='.$product->id;
+	$formfile->list_of_documents($filearray,$product,'produit',$param);
 	
 }
 else

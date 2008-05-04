@@ -367,12 +367,79 @@ class FormFile
 
 	/**
      *      \brief      Show list of documents in a directory
+     *      \param      filearray			Array of files loaded by dol_dir_list function
+     * 		\param		object				Object on which document is linked to
+     * 		\param		modulepart			Value for modulepart used by download wrapper
+     * 		\param		param				Parameters on sort links
+     * 		\param		forcedownload		Mime type is forced to 'application/binary' to have a download
+     * 		\param		relativepath		Relative path of docs (autodefined if not provided)
+     *		\return		int					<0 if KO, nb of files shown if OK
+     */
+    function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='')
+    {
+    	global $user, $conf, $langs;
+    	global $bc;
+    	global $sortfield, $sortorder;
+    	
+		// Affiche liste des documents existant
+	  	print_titre($langs->trans("AttachedFiles"));
+		
+		$url=$_SERVER["PHP_SELF"];
+		print '<table width="100%" class="noborder">';
+		print '<tr class="liste_titre">';
+		print_liste_field_titre($langs->trans("Document"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Size"),$_SERVER["PHP_SELF"],"size","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"date","",$param,'align="center"',$sortfield,$sortorder);
+		print '<td>&nbsp;</td>';
+		print '</tr>';
+		
+		$var=true;
+		foreach($filearray as $key => $file)
+		{
+			if (!is_dir($dir.$file['name'])
+						&& $file['name'] != '.'
+						&& $file['name'] != '..'
+						&& $file['name'] != 'CVS'
+						&& ! eregi('\.meta$',$file['name']))
+			{
+				// Define relative path used to store the file
+				if (! $relativepath)
+				{
+					$relativepath=$object->ref.'/';
+					if ($modulepart == 'facture_fournisseur')	$relativepath=get_exdir($object->id,2).$relativepath;
+				}
+				
+				$var=!$var;
+				print "<tr $bc[$var]><td>";
+				print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
+				if ($forcedownload) print '&type=application/binary';
+				print '&file='.urlencode($relativepath.$file['name']).'">';
+				print img_mime($file['name']).' ';
+				print $file['name'];
+				print '</a>';
+				print "</td>\n";
+				print '<td align="right">'.dol_print_size($file['size']).'</td>';
+				print '<td align="center">'.dolibarr_print_date($file['date'],"dayhour").'</td>';
+				print '<td align="right">';
+				//print '&nbsp;'; 
+				print '<a href="'.$url.'?id='.$object->id.'&amp;section='.$_REQUEST["section"].'&amp;action=delete&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
+				print "</td></tr>\n";
+			}
+		}
+		if (sizeof($filearray) == 0) print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("NoFileFound").'</td></tr>';
+		print "</table>";
+		// Fin de zone
+
+	}
+
+	/**
+     *      \brief      Show list of documents in a directory
      *      \param      upload_dir			Dir to scan
      * 		\param		object				Object on which document is linked to
      * 		\param		modulepart			Value for modulepart used by download wrapper
      *		\return		int					<0 if KO, nb of files shown if OK
      */
-    function list_of_documents($upload_dir,$object,$modulepart)
+    function list_of_documents2($upload_dir,$object,$modulepart)
     {
     	global $user, $conf, $langs;
     	global $bc;

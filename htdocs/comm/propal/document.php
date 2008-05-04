@@ -40,8 +40,25 @@ $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action'
 $propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->societe_id) 
+{
+	unset($_GET["action"]);
+	$action=''; 
+	$socid = $user->societe_id;
+}
 $result = restrictedArea($user, 'propale', $propalid, 'propal');
+
+// Get parameters
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="name";
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 
 /*
@@ -80,6 +97,7 @@ if ($action=='delete')
 {
 	$propal = new Propal($db);
 
+	$propalid=$_GET["id"];
 	if ($propal->fetch($propalid))
     {
         $upload_dir = $conf->propal->dir_output . "/" . $propal->ref;
@@ -145,7 +163,8 @@ if ($propalid > 0)
 
 
 		// List of document
-		$formfile->list_of_documents($upload_dir,$propal,'propal');
+		$param='&propalid='.$propal->id;
+		$formfile->list_of_documents($filearray,$propal,'propal',$param);
 
 	}
 	else

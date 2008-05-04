@@ -43,6 +43,26 @@ if (!$user->rights->fournisseur->facture->lire)
 $facid=empty($_GET['facid']) ? 0 : intVal($_GET['facid']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
+// Security check
+if ($user->societe_id > 0) 
+{
+	unset($_GET["action"]);
+	$action=''; 
+	$socid = $user->societe_id;
+}
+
+// Get parameters
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="name";
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 
 
 /*
@@ -152,7 +172,8 @@ if ($facid > 0)
 
 
 		// List of document
-		$formfile->list_of_documents($upload_dir,$facture,'facture_fournisseur');
+		$param='&facid='.$facture->id;
+		$formfile->list_of_documents($filearray,$facture,'facture_fournisseur',$param);
 		
 	}
 	else

@@ -42,12 +42,25 @@ $langs->load("bills");
 if (isset($_GET["error"])) $error=$_GET["error"];
 $upload_dir = $conf->actions->dir_output.'/'.$_GET['id'];
 
-// Sécurité accés client
+// Security check
 if ($user->societe_id > 0) 
 {
-  $action = '';
-  $socid = $user->societe_id;
+	unset($_GET["action"]);
+	$action=''; 
+	$socid = $user->societe_id;
 }
+
+// Get parameters
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="name";
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 
 /*
@@ -170,7 +183,8 @@ if ($_GET["id"] > 0)
 	
 	
 	// List of document
-	$formfile->list_of_documents($upload_dir,$act,'actions');
+	$param='&id='.$act->id;
+	$formfile->list_of_documents($filearray,$act,'actions',$param);
 	
 }
 else

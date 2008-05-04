@@ -41,11 +41,7 @@ $user->getrights('ecm');
 
 
 // Security check
-if ($user->societe_id > 0)
-{
-    $action = '';
-    $socid = $user->societe_id;
-}
+if ($user->societe_id > 0) $socid = $user->societe_id;
 
 // Get parameters
 $page=$_GET["page"];
@@ -243,7 +239,7 @@ print '</div>';
 
 
 // Actions buttons
-if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete_dir' && $_GET['action'] != 'delete_file')
+if ($_GET["action"] != 'edit' && $_GET['action'] != 'delete_dir' && $_GET['action'] != 'delete')
 {
 	print '<div class="tabsAction">';
 	
@@ -274,7 +270,7 @@ if ($mesg) { print $mesg.'<br>'; }
 
 
 // Confirm remove file
-if ($_GET['action'] == 'delete_file')
+if ($_GET['action'] == 'delete')
 {
 	$form->form_confirm($_SERVER["PHP_SELF"].'?section='.$_REQUEST["section"].'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 	print '<br>';
@@ -292,47 +288,11 @@ if ($_GET['action'] == 'delete_dir')
 $formfile=new FormFile($db);
 $formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/docmine.php','',0,$section);
 
-// Affiche liste des documents existant
-print_titre($langs->trans("AttachedFiles"));
 
-
-/**
- * TODO Mettre cette section dans une zone AJAX
- */ 
-$modulepart='ecm';
-$url=$_SERVER["PHP_SELF"];
-print '<table width="100%" class="noborder">';
-print '<tr class="liste_titre">';
+// List of document
 $param='&amp;section='.$section;
-print_liste_field_titre($langs->trans("Document"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Size"),$_SERVER["PHP_SELF"],"size","",$param,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"date","",$param,'align="center"',$sortfield,$sortorder);
-print '<td>&nbsp;</td>';
-print '</tr>';
+$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath);
 
-$var=true;
-foreach($filearray as $key => $file)
-{
-	if (!is_dir($dir.$file['name']) && substr($file['name'], 0, 1) <> '.' && substr($file['name'], 0, 3) <> 'CVS')
-	{
-		$var=!$var;
-		print "<tr $bc[$var]><td>";
-		print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&type=application/binary&file='.urlencode($relativepath.$file['name']).'">';
-		print img_mime($file['name']).' ';
-		print $file['name'];
-		print '</a>';
-		print "</td>\n";
-		print '<td align="right">'.dol_print_size($file['size']).'</td>';
-		print '<td align="center">'.dolibarr_print_date($file['date'],"dayhour").'</td>';
-		print '<td align="right">';
-		//print '&nbsp;'; 
-		print '<a href="'.$url.'?section='.$_REQUEST["section"].'&amp;action=delete_file&urlfile='.urlencode($file['name']).'">'.img_delete().'</a>';
-		print "</td></tr>\n";
-	}
-}
-if (sizeof($filearray) == 0) print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("ECMNoFileFound").'</td></tr>';
-print "</table>";
-// Fin de zone Ajax
 
 
 // End of page

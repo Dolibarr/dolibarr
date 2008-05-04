@@ -39,6 +39,26 @@ $langs->load("products");
 if (!$user->rights->contrat->lire)
 	accessforbidden();
 
+// Security check
+if ($user->societe_id > 0) 
+{
+	unset($_GET["action"]);
+	$action=''; 
+	$socid = $user->societe_id;
+}
+
+// Get parameters
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="name";
+if ($page == -1) { $page = 0 ; }
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 
 $contrat = new Contrat($db);
 $contrat->fetch($_GET["id"]);
@@ -137,7 +157,8 @@ if ($contrat->id)
 
 	
 	// List of document
-	$formfile->list_of_documents($upload_dir,$contrat,'contract');
+	$param='&id='.$contrat->id;	
+	$formfile->list_of_documents($filearray,$contrat,'contract',$param);
 
 }
 else

@@ -44,4 +44,3 @@ DeleteSection=Suppression rubrique
 ConfirmDeleteSection=Confirmez-vous la suppression de la rubrique <b>%s</b> ?
 ECMDirectoryForFiles=Répertoire relatif pour les fichiers
 CannotRemoveDirectoryContainsFiles=Suppression impossible car des fichiers sont présents
-ECMNoFileFound=Pas de documents stockés dans cette rubrique
