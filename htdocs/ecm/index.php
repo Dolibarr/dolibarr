@@ -277,9 +277,10 @@ foreach($rub as $key => $val)
 	if ($_GET['action'] == 'refreshauto')
 	{
 		$result=$ecmdirstatic->fetch($val['id']);
-		$result=$ecmdirstatic->refreshcachenboffile();
-		
 		$ecmdirstatic->ref=$ecmdirstatic->label;
+
+		$result=$ecmdirstatic->refreshcachenboffile();
+		$val['cachenbofdoc']=$result;
 	}
 	
 

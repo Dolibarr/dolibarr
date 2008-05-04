@@ -545,9 +545,9 @@ class EcmDirectory // extends CommonObject
 	}	
 
 	/**
-	*	\brief		refresh cachenboffile
+	*	\brief		Refresh value for cachenboffile
 	* 	\param		directory		Directory to scan
-	* 	\return		int				<0 if ko, >0 if OK
+	* 	\return		int				<0 if KO, Nb of files in directory if OK
 	*/
 	function refreshcachenboffile()
 	{
@@ -569,7 +569,7 @@ class EcmDirectory // extends CommonObject
         if ($resql)
         {
         	$this->cachenbofdoc=sizeof($filelist);
-			return 1;
+			return $this->cachenbofdoc;
         }
         else
         {
