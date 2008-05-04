@@ -352,7 +352,7 @@ if ($user->rights->ecm->create)
 if ($user->rights->ecm->read)
 {
 	$param='&amp;section='.$section;
-	$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath);
+	$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->create);
 }
 
 // End of page

@@ -104,7 +104,7 @@ class modECM extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 2501;
-		$this->rights[$r][1] = 'Soumettre des documents';
+		$this->rights[$r][1] = 'Soumettre ou supprimer des documents';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'create';
