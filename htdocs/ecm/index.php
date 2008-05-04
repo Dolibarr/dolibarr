@@ -255,7 +255,7 @@ print '<td class="liste_titre" align="right">'.$langs->trans("ECMNbOfDocsSmall")
 print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshauto">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
 print '</td>';
 print '<td class="liste_titre" align="right">';
-if ($user->rights->ecm->create)
+if ($user->rights->ecm->setup)
 {
 	print '<a href="'.DOL_URL_ROOT.'/ecm/docdir?action=create">'.img_picto($langs->trans("ECMNewSection"),'edit_add').'</a>';
 }
