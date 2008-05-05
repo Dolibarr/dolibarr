@@ -326,11 +326,14 @@ begin
 
     if not FileExists (destFile) then
     begin
+      myporta := Page.Values[1];
+
       LoadStringFromFile (srcFile, srcContents);
 
       //installDir et version de php
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
       StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
+      StringChange (srcContents, 'WAMPAPACHEPORT', myporta);
 
       SaveStringToFile(destFile,srcContents, False);
     end

@@ -50,7 +50,7 @@ ServerRoot "WAMPROOT/bin/apache/apache2.2.6"
 # prevent Apache from glomming onto all bound IP addresses (0.0.0.0)
 #
 #Listen 12.34.56.78:80
-Listen 81
+Listen WAMPAPACHEPORT
 Listen 444
 
 #
