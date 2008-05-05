@@ -50,7 +50,7 @@
 #
 [client]
 
-port=3307
+port=WAMPMYSQLPORT
 
 
 # SERVER SECTION
@@ -63,7 +63,7 @@ port=3307
 [doliwampmysqld]
 
 # The TCP/IP Port the MySQL Server will listen on
-port=3307
+port=WAMPMYSQLPORT
 
 
 #Path to installation directory. All paths are usually resolved relative to this.
@@ -212,8 +212,3 @@ innodb_log_file_size=10M
 # depends highly on the application, hardware as well as the OS
 # scheduler properties. A too high value may lead to thread thrashing.
 innodb_thread_concurrency=8
-
-
-
-[mysqld]
-port=3307

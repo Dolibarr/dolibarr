@@ -184,6 +184,7 @@ begin
   begin
 
 
+
     //----------------------------------------------
     // renommage du fichier c:/windows/php.ini
     //----------------------------------------------
@@ -346,10 +347,13 @@ begin
 
     if not FileExists (destFile) then
     begin
+      myport := Page.Values[2];
+
       LoadStringFromFile (srcFile, srcContents);
 
       //installDir et version de php
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
+      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
 
       SaveStringToFile(destFile,srcContents, False);
     end
@@ -557,6 +561,11 @@ begin
       StringChange (srcContents, 'WAMPSMTP', mysmtp);
       SaveStringToFile(destFile,srcContents, False);
     end
+
+
+
+
+    MsgBox('DoliWamp installer will now start Apache and Mysql, this may last from several seconds to one minute after this confirmation.',mbInformation,MB_OK)
 
 
     // Install services
