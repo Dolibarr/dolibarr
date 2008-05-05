@@ -67,7 +67,7 @@ class DolibarrModules
 	/**
 	 *      \brief      Fonction d'activation. Insere en base les constantes et boites du module
 	 *      \param      array_sql       Tableau de requete sql a executer a l'activation
-	 *      \return     int             1 si ok, 0 si erreur
+	 *      \return     int             1 if OK, 0 if KO
 	 */
 	function _init($array_sql)
 	{
@@ -165,10 +165,10 @@ class DolibarrModules
 	}
 
   /**
-     \brief      Fonction de desactivation. Supprime de la base les constantes et boites du module
-     \param      array_sql       tableau de requete sql a executer a la desactivation
-     \return     int             1 si ok, 0 si erreur
-  */
+   *  \brief      Fonction de desactivation. Supprime de la base les constantes et boites du module
+   *  \param      array_sql       tableau de requete sql a executer a la desactivation
+   *  \return     int             1 if OK, 0 if KO
+   */
   function _remove($array_sql)
   {
     $err = 0;

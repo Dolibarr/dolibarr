@@ -56,13 +56,13 @@ class modMyModule extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
 		// It is used to group modules in module setup page 
 		$this->family = "projects";		
-		// Module title used if translation string 'ModuleXXXName' not found (XXX is value MyModule)
-		$this->name = "Webcalendar";	
-		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is value MyModule)
+		// Module label (no space allowed) used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = "MyModuleLabel";	
+		// Module description used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module MyModule";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = '1.0';    
-		// Key used in llx_const table to save module status enabled/disabled (XXX is value MyModule)
+		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_MYMODULE';
 		// Where to store the module in setup page (0=common,1=interface,2=other)
 		$this->special = 1;
@@ -120,39 +120,40 @@ class modMyModule extends DolibarrModules
 		$r=0;
 
 		// Example:
-		// This is to declare Top Menu entry:
+		// This is to declare the Top Menu entry:
 		// $this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
-		//							'type'=>'top',
+		//							'type'=>'top',			// This is a Top menu entry
 		//							'titre'=>'Title top menu',
 		//							'mainmenu'=>'mymodule',
-		//							'leftmenu'=>'1',		// 1 if you also want to add left menu entries in this top menu
+		//							'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 		//							'url'=>'/comm/action/index.php',
-		//							'langs'=>'mylangfile',
+		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module
 		//							'position'=>100,
 		//							'perms'=>'$user->rights->mymodule->level1->level2',
 		//							'target'=>'',
-		//							'user'=>0);
+		//							'user'=>0);				// 0=menu for all users
 		// $r++;
 		//
 		// This is to declare a Left Menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'r=1',	// Use r=value of r for the top menu entry
-		//							'type'=>'top',
+		// $this->menu[$r]=array(	'fk_menu'=>'r=0',		// Use r=value where r is index key used for the top menu entry
+		//							'type'=>'left',			// This is a Left menu entry
 		//							'titre'=>'Title left menu',
 		//							'mainmenu'=>'mymodule',
 		//							'url'=>'/comm/action/index2.php',
-		//							'langs'=>'mylangfile',
+		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module
 		//							'position'=>100,
 		//							'perms'=>'$user->rights->mymodule->level1->level2',
 		//							'target'=>'',
-		//							'user'=>0);
+		//							'user'=>0);				// 0=menu for all users
 		// $r++;
 		
 	}
 
 	/**
      *		\brief      Function called when module is enabled.
-     *					The init function add previous constants, boxes and permissions into Dolibarr database.
+     *					The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
      *					It also creates data directories.
+	 *      \return     int             1 if OK, 0 if KO
      */
 	function init()
   	{
@@ -167,6 +168,7 @@ class modMyModule extends DolibarrModules
 	 *		\brief		Function called when module is disabled.
  	 *              	Remove from database constants, boxes and permissions from Dolibarr database.
  	 *					Data directories are not deleted.
+	 *      \return     int             1 if OK, 0 if KO
  	 */
 	function remove()
 	{
@@ -177,8 +179,11 @@ class modMyModule extends DolibarrModules
 
 	
 	/**
-	*		\brief		Create tables and keys (called by this->init)
-	*		\return		int		<=0 if KO, >0 if OK
+	*		\brief		Create tables and keys required by module
+	* 					Files mymodule.sql and mymodule.key.sql with create table and create keys
+	* 					commands must be stored in directory /mysql/tables/mymodule/.
+	*					This function is called by this->init.
+	* 		\return		int		<=0 if KO, >0 if OK
 	*/
 	function load_tables()
 	{
