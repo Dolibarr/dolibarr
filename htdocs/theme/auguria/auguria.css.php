@@ -149,11 +149,21 @@ div.fiche
 	float: right;
 <?php
 	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
-	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
+	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) 
+	{
+		// If position is relative, IE6 put the div under the leftmenu, so we force to absolute
+		print "    position: absolute;\n";
+		// If position is abolute, we must not include the leftmenu in value
+		print "    margin-left: 20px;";
+	}
+	else
+	{	
+		// If position is relative we need to include the leftmenu in value
+		print "    margin-left: 180px;";
+	}
 ?>
     display: block;
     margin-top: 8px;
-    margin-left: 180px;
 	margin-right: 2px;
     width:auto;
 }
@@ -1212,6 +1222,10 @@ cursor: pointer;
 .cal_today         { background: #FFFFFF; border: solid 2px #6C7C7B; padding-left: 2px; padding-right: 1px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event    { border-collapse: collapse; margin-bottom: 1px; }
 table.cal_event td { border: 0px; padding-left: 0px; padding-right: 2px; padding-top: 0px; padding-bottom: 0px; } */
+.cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal; !important }
+.cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal; !important }
+.cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal; !important }
+.cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal; !important }
 
 
 
