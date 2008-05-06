@@ -82,7 +82,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
   {
   	$commande = new Commande($db);
     $commande->fetch($_GET['id']);
-    $commande->delete();
+    $commande->delete($user);
     Header('Location: index.php');
     exit;
   }
