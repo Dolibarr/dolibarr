@@ -201,7 +201,10 @@ if ($resql)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print '<td nowrap><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->facid.'" title="'.$obj->ref.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->ref."</a>";
+        print '<td nowrap>';
+		$facturestatic->id=$obj->facid;
+		$facturestatic->ref=$obj->facnumber;
+		print $facturestatic->getNomUrl(1);
         if (($obj->paye == 0) && ($obj->fk_statut > 0) && $obj->date_echeance < (time() - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
         print "</td>\n";
         print '<td nowrap>'.dolibarr_trunc($obj->facnumber,10)."</td>";
