@@ -146,7 +146,7 @@ var mypass: String;
 
 function InitializeSetup(): Boolean;
 begin
-  Result := MsgBox('You will install DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install Dolibarr and third party softwares (Apache, Mysql and PHP) configured for ' #13 'a Dolibarr usage.' #13#13 'If you want to share your Apache, Mysql and PHP with other projects then Dolibarr, it is recommended to make a manual' #13 'installation of Dolibarr on your own Apache, Mysql and PHP installation.' #13#13 'Do you want to continue install?', mbConfirmation, MB_YESNO) = idYes;
+  Result := MsgBox('You will install DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install Dolibarr and third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you want to share your Apache, Mysql and PHP with other projects than Dolibarr, it is recommended to make a manual' #13 'installation of Dolibarr on your own Apache, Mysql and PHP installation.' #13#13 'Do you want to continue install ?', mbConfirmation, MB_YESNO) = idYes;
 end;
 
 
@@ -675,9 +675,9 @@ begin
    'Please specify some technical parameters. If you don t understand or ' #13 'are not sure, just leave the default values.');
 
   Page.Add('SMTP server (your own or ISP SMTP server) :', False);
-  Page.Add('Apache port:', False);
-  Page.Add('Mysql port:', False);
-  Page.Add('Mysql and Dolibarr root password:', False);
+  Page.Add('Apache port (common choice is 80) :', False);
+  Page.Add('Mysql port (common choice is 3306) :', False);
+  Page.Add('Mysql server and database password you want for root :', False);
 
   // Valeurs par defaut
   Page.Values[0] := smtpServer;
