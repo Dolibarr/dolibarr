@@ -374,7 +374,7 @@ class ActionComm
         global $conf, $user;
         
         $this->nbtodo=$this->nbtodolate=0;
-        $sql = "SELECT a.id,".$this->db->pdate("a.datea")." as da";
+        $sql = "SELECT a.id,".$this->db->pdate("a.datep")." as dp";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -387,7 +387,7 @@ class ActionComm
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-                if ($obj->da < (time() - $conf->actions->warning_delay)) $this->nbtodolate++;
+                if ($obj->dp < (time() - $conf->actions->warning_delay)) $this->nbtodolate++;
             }
             return 1;
         }

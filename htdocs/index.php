@@ -254,12 +254,13 @@ print '</tr>';
 
 $nboflate=0;
 $var=true;
+
 //
 // Ne pas inclure de sections sans gestion de permissions
 //
 
 // Nbre actions à faire (en retard)
-if ($conf->commercial->enabled || $conf->compta->enabled || $conf->comptaexpert->enabled)
+if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 {
   include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
   $board=new ActionComm($db);
