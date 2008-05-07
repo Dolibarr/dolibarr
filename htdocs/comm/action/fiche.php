@@ -136,13 +136,13 @@ if ($_POST["action"] == 'add_action')
 	{
 		if ($_POST["actioncode"] == 'AC_RDV' && $contact->getFullName($langs))
 		{
-			$actioncomm->label = $langs->trans("TaskRDVWith",$contact->getFullName($langs));
+			$actioncomm->label = $langs->transnoentities("TaskRDVWith",$contact->getFullName($langs));
 		}
 		else
 		{
 			if ($langs->trans("Action".$actioncomm->type_code) != "Action".$actioncomm->type_code)
 			{
-				$actioncomm->label = $langs->trans("Action".$actioncomm->type_code)."\n";
+				$actioncomm->label = $langs->transnoentities("Action".$actioncomm->type_code)."\n";
 			}
 			else $actioncomm->label = $cactioncomm->libelle;
 		}
@@ -191,6 +191,8 @@ if ($_POST["action"] == 'add_action')
 		$societe->fetch($_REQUEST["socid"]);
 		$actioncomm->societe = $societe;
 	}
+
+	// Special for module webcal and phenix
 	if ($_POST["add_webcal"] == 'on' && $conf->webcal->enabled) $actioncomm->use_webcal=1;
 	if ($_POST["add_phenix"] == 'on' && $conf->phenix->enabled) $actioncomm->use_phenix=1;
 
