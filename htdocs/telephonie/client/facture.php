@@ -587,7 +587,7 @@ if ($_GET["facid"] > 0)
       /*
        * Liste des actions propres à la facture
        */
-      $sql = "SELECT id, ".$db->pdate("a.datea")." as da, a.label, a.note";
+      $sql = "SELECT id, ".$db->pdate("a.datep")." as da, a.label, a.note";
       $sql .= ", u.login";
       $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
       $sql .= " WHERE a.fk_user_author = u.rowid ";

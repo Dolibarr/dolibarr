@@ -40,7 +40,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="a.datea";
+if (! $sortfield) $sortfield="a.datep";
 
 // Sécurité accés client
 if ($user->societe_id > 0) 

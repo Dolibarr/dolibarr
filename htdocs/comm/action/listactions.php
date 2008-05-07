@@ -72,7 +72,7 @@ if (! $sortfield)
 {
 	$sortfield="a.percent";
 	if ($status == 'todo') $sortfield="a.datep";
-	if ($status == 'done') $sortfield="a.datea2";
+	if ($status == 'done') $sortfield="a.datep2";
 }
 
 

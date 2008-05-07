@@ -637,7 +637,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	$numaction = 0 ;
 
 	// Recherche histo sur actioncomm
-	$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, a.note, a.percent as percentage,";
+	$sql = "SELECT a.id, ".$db->pdate("a.datep")." as da, a.note, a.percent as percentage,";
 	$sql.= " c.code as acode, c.libelle,";
 	$sql.= " u.rowid as user_id, u.login";
 	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";

@@ -121,7 +121,7 @@ function show_array_last_actions_done($max=5)
 {
 	global $langs, $conf, $user, $db, $bc, $socid;
 	
-	$sql = "SELECT a.id, a.percent, ".$db->pdate("a.datea")." as da, ".$db->pdate("a.datea2")." as da2, a.fk_user_author, a.label,";
+	$sql = "SELECT a.id, a.percent, ".$db->pdate("a.datep")." as da, ".$db->pdate("a.datep2")." as da2, a.fk_user_author, a.label,";
 	$sql.= " c.code, c.libelle,";
 	$sql.= " s.rowid, s.nom as sname, s.client";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -136,7 +136,7 @@ function show_array_last_actions_done($max=5)
 	{
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	}
-	$sql .= " ORDER BY a.datea2 DESC";
+	$sql .= " ORDER BY a.datep2 DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$resql=$db->query($sql);
