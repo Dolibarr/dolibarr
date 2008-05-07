@@ -260,7 +260,7 @@ $var=true;
 //
 
 // Nbre actions à faire (en retard)
-if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
+if ($conf->agenda->enabled)
 {
   include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
   $board=new ActionComm($db);
