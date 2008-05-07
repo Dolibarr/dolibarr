@@ -1673,8 +1673,9 @@ class Commande extends CommonObject
   
   
   /**
-   *	\brief		Supprime la commande
+   *	\brief		Delete the customer order
    *	\user		User object	
+   * 	\return		int		<=0 if KO, >0 if OK
    */
   function delete($user)
   {
