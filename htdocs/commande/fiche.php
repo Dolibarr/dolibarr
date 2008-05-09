@@ -140,10 +140,9 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 
   $commande->date_commande        = $datecommande;
   $commande->note                 = $_POST['note'];
+  $commande->note_public          = $_POST['note_public'];
   $commande->source               = $_POST['source_id'];
   $commande->projetid             = $_POST['projetid'];
-  //$commande->remise_absolue       = $_POST['remise_absolue']; //la remise etait appliquee sur les lignes et sur le total
-  //$commande->remise_percent       = $_POST['remise_percent'];
   $commande->ref_client           = $_POST['ref_client'];
   $commande->modelpdf             = $_POST['model'];
   $commande->cond_reglement_id    = $_POST['cond_reglement_id'];
@@ -768,7 +767,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			$soc = new Societe($db);
 			$soc->fetch($obj->rowid);
 			
-			$nbrow=9;
+			$nbrow=10;
 			
 			print '<form name="crea_commande" action="fiche.php" method="post">';
 			print '<input type="hidden" name="action" value="add">';
@@ -779,13 +778,12 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<table class="border" width="100%">';
 			
 			// Reference
-			print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td>';
-			print '<td>'.$langs->trans('NotePublic').'</td></tr>';
+			print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
 			
 			// Reference client
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 			print '<input type="text" name="ref_client" value=""></td>';
-			print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" cols="70" rows="8"></textarea></td></tr>';
+			print '</tr>';
 			
 			// Client
 			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
@@ -872,6 +870,23 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			$liste=$model->liste_modeles($db);
 			$html->select_array('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
 			print "</td></tr>";
+			
+			// Note publique
+			print '<tr>';
+			print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
+			print '<td valign="top" colspan="2">';
+			print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+			print '</textarea></td></tr>';
+			
+			// Note privée
+			if (! $user->societe_id)
+			{
+				print '<tr>';
+				print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
+				print '<td valign="top" colspan="2">';
+				print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+				print '</textarea></td></tr>';
+			}
 			
 			if ($propalid > 0)
 			{

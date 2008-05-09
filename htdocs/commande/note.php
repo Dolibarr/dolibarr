@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,28 +55,14 @@ $commande->fetch($_GET["id"]);
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update_public' && $user->rights->commande->creer)
-{
-	$db->begin();
-	
-	$res=$commande->update_note_public($_POST["note_public"],$user);
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$commande->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
-	}
-}
-
 if ($_POST["action"] == 'update' && $user->rights->commande->creer)
 {
 	$db->begin();
+
+	$resPrivateNote=$commande->update_note($_POST["note"]);
+	$resPublicNote=$commande->update_note_public($_POST["note_public"]);
 	
-	$res=$commande->update_note($_POST["note"],$user);
-	if ($res < 0)
+	if ($resPrivateNote < 0 || $resPublicNote < 0)
 	{
 		$mesg='<div class="error">'.$commande->error.'</div>';
 		$db->rollback();
@@ -98,15 +85,14 @@ $html = new Form($db);
 
 if ($_GET["id"])
 {
-    $soc = new Societe($db, $commande->socid);
-    $soc->fetch($commande->socid);
-
-    $head = commande_prepare_head($commande);
-
-    dolibarr_fiche_head($head, 'note', $langs->trans("CustomerOrder"));
-
-
-    print '<table class="border" width="100%">';
+	$soc = new Societe($db, $commande->socid);
+  $soc->fetch($commande->socid);
+  
+  $head = commande_prepare_head($commande);
+  
+  dolibarr_fiche_head($head, 'note', $langs->trans("CustomerOrder"));
+  
+  print '<table class="border" width="100%">';
 
 	// Ref
 	print '<tr><td width="18%">'.$langs->trans("Ref").'</td><td colspan="3">';
@@ -115,11 +101,11 @@ if ($_GET["id"])
 
 	// Ref commande client
 	print '<tr><td>';
-    print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+  print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
 	print $langs->trans('RefCustomer').'</td><td align="left">';
-    print '</td>';
-    print '</tr></table>';
-    print '</td><td colspan="3">';
+  print '</td>';
+  print '</tr></table>';
+  print '</td><td colspan="3">';
 	print $commande->ref_client;
 	print '</td>';
 	print '</tr>';
@@ -129,59 +115,59 @@ if ($_GET["id"])
 	print '<td colspan="3">'.$soc->getNomUrl(1).'</td></tr>';
 
 	// Note publique
-    print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
+  print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
 	print '<td valign="top" colspan="3">';
-    if ($_GET["action"] == 'edit')
-    {
-        print '<form method="post" action="note.php?id='.$commande->id.'">';
-        print '<input type="hidden" name="action" value="update_public">';
-        print '<textarea name="note_public" cols="80" rows="8">'.$commande->note_public."</textarea><br>";
-        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-        print '</form>';
-    }
-    else
-    {
-	    print ($commande->note_public?nl2br($commande->note_public):"&nbsp;");
-    }
-	print "</td></tr>";
+  if ($_GET["action"] == 'edit')
+  {
+  	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'">';
+  	print '<input type="hidden" name="action" value="update">';
+    print '<textarea name="note_public" cols="80" rows="8">'.$commande->note_public."</textarea><br>";
+  }
+  else
+  {
+  	print ($commande->note_public?nl2br($commande->note_public):"&nbsp;");
+  }
+  print "</td></tr>";
 
 	// Note privée
 	if (! $user->societe_id)
 	{
-	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
+		print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
 		print '<td valign="top" colspan="3">';
-	    if ($_GET["action"] == 'edit')
-	    {
-	        print '<form method="post" action="note.php?id='.$commande->id.'">';
-	        print '<input type="hidden" name="action" value="update">';
-	        print '<textarea name="note" cols="80" rows="8">'.$commande->note."</textarea><br>";
-	        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-	        print '</form>';
-	    }
+	  if ($_GET["action"] == 'edit')
+	  {
+	    print '<textarea name="note" cols="80" rows="8">'.$commande->note."</textarea><br>";
+	  }
 		else
 		{
-		    print ($commande->note?nl2br($commande->note):"&nbsp;");
+		  print ($commande->note?nl2br($commande->note):"&nbsp;");
 		}
 		print "</td></tr>";
 	}
+	print "</table>";
 	
-    print "</table>";
+	if ($_GET["action"] == 'edit')
+	{
+		print '<br><center>';
+		print ' <input type="submit" class="button" value="'.$langs->trans('Save').'">';
+		print '</center>';
+		print '</form>';
+	}
+	
+	print '</div>';
+	
+	/*
+   * Actions
+   */
+   
+  print '<div class="tabsAction">';
 
+  if ($user->rights->commande->creer && $_GET["action"] <> 'edit')
+  {
+  	print "<a class=\"butAction\" href=\"note.php?id=".$commande->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
+  }
 
-    /*
-    * Actions
-    */
-    print '</div>';
-    print '<div class="tabsAction">';
-
-    if ($user->rights->commande->creer && $_GET["action"] <> 'edit')
-    {
-        print "<a class=\"butAction\" href=\"note.php?id=$commande->id&amp;action=edit\">".$langs->trans('Modify')."</a>";
-    }
-
-    print "</div>";
-
-
+  print "</div>";
 }
 
 $db->close();
