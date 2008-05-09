@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005	   Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005	     Eric	Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -44,6 +44,7 @@ $langs->load('stocks');
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
 $comclientid = isset($_GET["comid"])?$_GET["comid"]:'';
+$id = isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 
 // Securite	acces client
 $socid=0;
@@ -71,7 +72,7 @@ $mesg='';
 if ($_POST['action'] ==	'classin')
 {
   $commande	= new CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
+  $commande->fetch($id);
   $commande->setProject($_POST["projetid"]);
 }
 
@@ -80,7 +81,7 @@ if ($_REQUEST['action'] ==	'setremisepercent' && $user->rights->fournisseur->com
   $commande = new CommandeFournisseur($db);
   $commande->fetch($_REQUEST['id']);
   $result = $commande->set_remise($user, $_POST['remise_percent']);
-  $_GET['id']=$_REQUEST['id'];
+  $id=$_REQUEST['id'];
 }
 
 /*
@@ -91,7 +92,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 	if ($_POST['qty'] && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice']))
   {
   	$commande =	new	CommandeFournisseur($db);
-    $ret=$commande->fetch($_POST["id"]);
+    $ret=$commande->fetch($id);
     if ($ret < 0)
     {
     	dolibarr_print_error($db,$commande->error);
@@ -162,8 +163,8 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
  */
 if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
 {
-  $commande =	new	CommandeFournisseur($db,"",$_POST["id"]);
-  if ($commande->fetch($_POST['id']) < 0) dolibarr_print_error($db);
+  $commande =	new	CommandeFournisseur($db,"",$id);
+  if ($commande->fetch($id) < 0) dolibarr_print_error($db);
 
   $result	= $commande->updateline($_POST['elrowid'],
 					$_POST['eldesc'],
@@ -187,13 +188,11 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
       dolibarr_print_error($db,$commande->error);
       exit;
     }
-
-  $_GET['id']=$_POST['id'];	// Pour	reaffichage	de la fiche	en cours d'edition
 }
 
 if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['cancel'] ==	$langs->trans('Cancel'))
 {
-  Header('Location: fiche.php?id='.$_POST['id']);	  // Pour reaffichage de la	fiche en cours d'edition
+  Header('Location: fiche.php?id='.$id);	  // Pour reaffichage de la	fiche en cours d'edition
   exit;
 }
 
@@ -202,23 +201,23 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
 	if ($user->rights->fournisseur->commande->creer)
 	{
 		$commande = new CommandeFournisseur($db);
-		$commande->fetch($_GET['id']);
+		$commande->fetch($id);
     $result = $commande->delete_line($_GET['lineid']);
     if ($_REQUEST['lang_id'])
     {
       $outputlangs = new Translate("",$conf);
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    supplier_order_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
+    supplier_order_pdf_create($db, $id, $commande->modelpdf, $outputlangs);
   }
-  Header('Location: fiche.php?id='.$_GET['id']);
+  Header('Location: fiche.php?id='.$id);
   exit;
 }
 
 if ($_POST['action'] ==	'confirm_valid'	&& $_POST['confirm'] ==	'yes' && $user->rights->fournisseur->commande->valider)
 {
 	$commande =	new	CommandeFournisseur($db);
-	$commande->fetch($_GET['id']);
+	$commande->fetch($id);
 
 	$result = $commande->valid($user);
 	if ($result	>= 0)
@@ -235,21 +234,21 @@ if ($_POST['action'] ==	'confirm_valid'	&& $_POST['confirm'] ==	'yes' && $user->
 if ($_POST['action'] ==	'confirm_approve' && $_POST["confirm"] == 'yes'	&& $user->rights->fournisseur->commande->approuver)
 {
   $commande =	new	CommandeFournisseur($db);
-  $commande->fetch($_GET['id']);
+  $commande->fetch($id);
   $result	= $commande->approve($user);
 }
 
 if ($_POST['action'] ==	'confirm_refuse' &&	$_POST['confirm'] == 'yes' && $user->rights->fournisseur->commande->approuver)
 {
   $commande = new CommandeFournisseur($db);
-  $commande->fetch($_GET['id']);
+  $commande->fetch($id);
   $result = $commande->refuse($user);
 }
 
 if ($_POST['action'] ==	'confirm_commande' && $_POST['confirm']	== 'yes' &&	$user->rights->fournisseur->commande->commander)
 {
   $commande =	new	CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
+  $commande->fetch($id);
   $result	= $commande->commande($user, $_GET["datecommande"],	$_GET["methode"]);
 }
 
@@ -257,7 +256,7 @@ if ($_POST['action'] ==	'confirm_commande' && $_POST['confirm']	== 'yes' &&	$use
 if ($_POST['action'] ==	'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->commande->creer)
 {
   $commande = new CommandeFournisseur($db);
-  $commande->id = $_GET['id'];
+  $commande->id = $id;
   $commande->delete();
   Header('Location: index.php');
   exit;
@@ -266,7 +265,7 @@ if ($_POST['action'] ==	'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->receptionner)
 {
 	$commande =	new	CommandeFournisseur($db);
-	$commande->fetch($_GET["id"]);
+	$commande->fetch($id);
 
 	if ($_POST["type"])
 	{
@@ -275,7 +274,7 @@ if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->rec
 		$result	= $commande->Livraison($user, $date_liv, $_POST["type"]);
 		if ($result > 0)
 		{
-			Header("Location: fiche.php?id=".$_GET["id"]);
+			Header("Location: fiche.php?id=".$id);
 			exit;
 		}
 		else
@@ -294,9 +293,9 @@ if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->rec
 if ($_POST["action"] ==	'confirm_cancel' &&	$_POST["confirm"] == yes &&	$user->rights->fournisseur->commande->annuler)
 {
   $commande =	new	CommandeFournisseur($db);
-  $commande->fetch($_GET["id"]);
+  $commande->fetch($id);
   $result	= $commande->cancel($user);
-  Header("Location: fiche.php?id=".$_GET["id"]);
+  Header("Location: fiche.php?id=".$id);
   exit;
 }
 
@@ -306,8 +305,8 @@ if ($_POST["action"] ==	'confirm_cancel' &&	$_POST["confirm"] == yes &&	$user->r
 
 if ($_GET['action']	== 'up'	&& $user->rights->fournisseur->commande->creer)
 {
-  $commande =	new	CommandeFournisseur($db,'',$_GET['id']);
-  $commande->fetch($_GET['id']);
+  $commande =	new	CommandeFournisseur($db,'',$id);
+  $commande->fetch($id);
   $commande->line_up($_GET['rowid']);
   if ($_REQUEST['lang_id'])
     {
@@ -315,14 +314,14 @@ if ($_GET['action']	== 'up'	&& $user->rights->fournisseur->commande->creer)
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
   supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
-  Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
+  Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
   exit;
 }
 
 if ($_GET['action']	== 'down' && $user->rights->fournisseur->commande->creer)
 {
-  $commande =	new	CommandeFournisseur($db,'',$_GET['id']);
-  $commande->fetch($_GET['id']);
+  $commande =	new	CommandeFournisseur($db,'',$id);
+  $commande->fetch($id);
   $commande->line_down($_GET['rowid']);
   if ($_REQUEST['lang_id'])
     {
@@ -330,7 +329,7 @@ if ($_GET['action']	== 'down' && $user->rights->fournisseur->commande->creer)
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
   supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
-  Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
+  Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$id.'#'.$_GET['rowid']);
   exit;
 }
 
@@ -404,7 +403,7 @@ if ($_GET["action"]	== 'create')
 
 		}
 
-		$_GET['id']=$orderid;
+		$id=$orderid;
 		$_GET['action']='edit';
 		$db->commit();
 	}
@@ -422,31 +421,18 @@ llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 $html =	new	Form($db);
 $formfile = new FormFile($db);
 
-/*********************************************************************
- *
- * Mode	creation
- *
- *********************************************************************/
-if ($_GET['action']	== 'create'	&& $user->rights->fournisseur->commande->creer)
+/* *************************************************************************** */
+/*                                                                             */
+/* Mode vue et edition                                                         */
+/*                                                                             */
+/* *************************************************************************** */
+
+if ($id > 0)
 {
-  // Gerer par autre page
-}
-else
-{
+	//if ($mesg) print $mesg.'<br>';
 	
-  /* *************************************************************************** */
-  /*																			   */
-  /* Mode vue et edition														   */
-  /*																			   */
-  /* *************************************************************************** */
-	
-  $id = $_GET['id'];
-  if ($id > 0)
-    {
-      //if ($mesg) print $mesg.'<br>';
-	
-      $commande =	new	CommandeFournisseur($db);
-      if ( $commande->fetch($_GET['id']) >= 0)
+	$commande =	new	CommandeFournisseur($db);
+  if ( $commande->fetch($id) >= 0)
 	{
 	  $soc = new Societe($db);
 	  $soc->fetch($commande->socid);
@@ -653,7 +639,7 @@ else
 	   */
 	  print '<table class="noborder" width="100%">';
 	
-	  $sql = "SELECT l.ref as ref_fourn, l.fk_product, l.description, l.price,	l.qty";
+	  $sql = "SELECT l.ref as ref_fourn, l.fk_product, l.description, l.qty";
 	  $sql.= ", l.rowid, l.tva_tx, l.remise_percent, l.subprice";
 	  $sql.= ", l.total_ht, l.total_tva, l.total_ttc";
 	  $sql.= ", p.rowid as product_id, p.label as product, p.ref";
@@ -817,7 +803,7 @@ else
 	      // Ajout produit produits/services personnalises
 	      print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
 	      print '<input type="hidden"	name="action" value="addligne">';
-	      print '<input type="hidden"	name="id" value="'.$_REQUEST["id"].'">';
+	      print '<input type="hidden"	name="id" value="'.$comid.'">';
 	      
 	      $var=true;
 				print '<tr '.$bc[$var].'>';
@@ -955,7 +941,7 @@ else
 	
 	  print '<table width="100%"><tr><td width="50%" valign="top">';
 	  print '<a name="builddoc"></a>'; // ancre
-	
+
 	  /*
 	   * Documents	generes
 	   *
@@ -1043,7 +1029,6 @@ else
 	  // Commande	non	trouvee
 	  dolibarr_print_error($db);
 	}
-    }
 }
 
 $db->close();

@@ -31,7 +31,6 @@ create table llx_commande_fournisseurdet
   qty                        real,                      -- quantité
   remise_percent             real         DEFAULT 0,    -- pourcentage de remise
   remise                     real         DEFAULT 0,    -- montant de la remise
-  price                      real,                      -- prix final
   subprice                   double(24,8) DEFAULT 0,    -- prix unitaire
   total_ht                   double(24,8) DEFAULT 0,    -- Total HT de la ligne toute quantité et incluant remise ligne et globale
   total_tva                  double(24,8) DEFAULT 0,	  -- Total TVA de la ligne toute quantité et incluant remise ligne et globale

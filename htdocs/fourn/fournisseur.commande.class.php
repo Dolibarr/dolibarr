@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,7 @@ class CommandeFournisseur extends Commande
 			// export pdf -----------
 			
 			$this->lignes = array();
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice';
+			$sql = 'SELECT l.fk_product, l.description, l.total_ht, l.total_tva, l.total_ttc, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice';
 			$sql.= ', p.label, p.description as product_desc, p.rowid as prodid';
 			$sql.= ', pf.ref_fourn';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as l';
@@ -146,7 +147,9 @@ class CommandeFournisseur extends Commande
 					$ligne->tva_tx              = $objp->tva_tx;
 					$ligne->subprice            = $objp->subprice;
 					$ligne->remise_percent      = $objp->remise_percent;
-					$ligne->price               = $objp->price;
+					$ligne->total_ht            = $objp->total_ht;
+					$ligne->total_tva           = $objp->total_tva;
+					$ligne->total_ttc           = $objp->total_ttc;
 					
 					$ligne->fk_product          = $objp->fk_product;   // Id du produit
 					$ligne->libelle             = $objp->label;        // Label produit
@@ -618,8 +621,8 @@ class CommandeFournisseur extends Commande
 		/* On positionne en mode brouillon la commande */
 		$this->brouillon = 1;
 		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (ref, fk_soc, date_creation, fk_user_author, fk_statut, source) ";
-		$sql .= " VALUES ('',".$this->socid.", now(), ".$user->id.",0,0)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (ref, fk_soc, date_creation, fk_user_author, fk_statut, source, model_pdf) ";
+		$sql .= " VALUES ('',".$this->socid.", now(), ".$user->id.",0,0,'".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."')";
 		
 		if ( $this->db->query($sql) )
 		{
@@ -755,23 +758,21 @@ class CommandeFournisseur extends Commande
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
-			$price = $subprice;
 			if ($remise_percent > 0)
 			{
 				$remise = round(($pu * $remise_percent / 100), 2);
-				$price = $pu - $remise;
 			}
 			
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
 			$sql.= " (fk_commande,label, description,";
 			$sql.= " fk_product,";
-			$sql.= " price, qty, tva_tx, remise_percent, subprice, remise, ref,";
+			$sql.= " qty, tva_tx, remise_percent, subprice, remise, ref,";
 			$sql.= " total_ht, total_tva, total_ttc";
 			$sql.= ")";
 			$sql.= " VALUES (".$this->id.", '" . addslashes($label) . "','" . addslashes($desc) . "',";
 			if ($fk_product) { $sql.= $fk_product.","; }
 			else { $sql.= "null,"; }
-			$sql.= price2num($price,'MU').", '$qty', $txtva, $remise_percent,'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."',";
+			$sql.= "'".$qty."', ".$txtva.", ".$remise_percent.",'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."',";
 			$sql.= "'".price2num($total_ht)."',";
 			$sql.= "'".price2num($total_tva)."',";
 			$sql.= "'".price2num($total_ttc)."'";
@@ -1237,21 +1238,17 @@ class CommandeFournisseur extends Commande
 	$total_ttc = $tabprice[2];
 
 	// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
-	$price = $pu;
 	$subprice = $pu;
 	$remise = 0;
 	if ($remise_percent > 0)
-	  {
-	    $remise = round(($pu * $remise_percent / 100),2);
-	    $price = ($pu - $remise);
-	  }
-	$price    = price2num($price);
+	{
+		$remise = round(($pu * $remise_percent / 100),2);
+	}
 	$subprice  = price2num($subprice);
 
 	// Mise a jour ligne en base
 	$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseurdet SET";
 	$sql.= " description='".addslashes($desc)."'";
-	$sql.= ",price='".price2num($price)."'";
 	$sql.= ",subprice='".price2num($subprice)."'";
 	$sql.= ",remise='".price2num($remise)."'";
 	$sql.= ",remise_percent='".price2num($remise_percent)."'";
@@ -1354,7 +1351,6 @@ class CommandeFournisseur extends Commande
 			$ligne->desc=$langs->trans("Description")." ".$xnbp;
 			$ligne->qty=1;
 			$ligne->subprice=100;
-			$ligne->price=100;
 			$ligne->tva_tx=19.6;
 			$prodid = rand(1, $num_prods);
 			$ligne->produit_id=$prodids[$prodid];
@@ -1381,7 +1377,9 @@ class CommandeFournisseurLigne extends CommandeLigne
 	var $tva_tx;
 	var $subprice;
 	var $remise_percent;
-	var $price;
+	var $total_ht;
+	var $total_tva;
+	var $total_ttc;
 	var $fk_product;
 	var $desc;          // Description ligne
 
@@ -1403,7 +1401,7 @@ class CommandeFournisseurLigne extends CommandeLigne
 	*/
 	function fetch($rowid)
 	{
-		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.description, cd.price, cd.qty, cd.tva_tx,';
+		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.description, cd.qty, cd.tva_tx,';
 		$sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
 		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
@@ -1418,7 +1416,6 @@ class CommandeFournisseurLigne extends CommandeLigne
 			$this->fk_commande      = $objp->fk_commande;
 			$this->desc             = $objp->description;
 			$this->qty              = $objp->qty;
-			$this->price            = $objp->price;
 			$this->subprice         = $objp->subprice;
 			$this->tva_tx           = $objp->tva_tx;
 			$this->remise           = $objp->remise;

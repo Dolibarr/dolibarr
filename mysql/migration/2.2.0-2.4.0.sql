@@ -306,3 +306,4 @@ INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active)
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (220, 'Canadian P5', 'Format Canadian P5',    '140',  '215',  'mm', 0);
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (225, 'Canadian P6', 'Format Canadian P6',    '107',  '140',  'mm', 0);
 
+ALTER TABLE llx_commande_fournisseurdet DROP COLUMN price;

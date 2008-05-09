@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +96,7 @@ if ( $societe->fetch($socid) )
   print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel,$societe->pays_code).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax,$societe->pays_code).'&nbsp;</td></tr>';
   print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
   
-  // Assujeti � TVA ou pas
+  // Assujetti a TVA ou pas
   print '<tr>';
   print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
   print yn($societe->tva_assuj);
@@ -120,7 +121,7 @@ if ( $societe->fetch($socid) )
   print '<br>';
   
   /*
-   * Liste des commandes associ�es
+   * Liste des commandes associees
    */
   $orderstatic = new CommandeFournisseur($db);
   
@@ -177,7 +178,7 @@ if ( $societe->fetch($socid) )
 
 
 	/*
-	 * Liste des factures associ�es
+	 * Liste des factures associees
 	 */
 	$MAXLIST=5;
 

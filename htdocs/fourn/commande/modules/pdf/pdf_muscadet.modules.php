@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -285,14 +285,15 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
                     // Total HT ligne
                     $pdf->SetXY ($this->postotalht, $curY);
-                    $total = price($com->lignes[$i]->price * $com->lignes[$i]->qty);
+                    $total = price($com->lignes[$i]->total_ht);
                     $pdf->MultiCell(23, 4, $total, 0, 'R', 0);
 
-                    // Collecte des totaux par valeur de tva
-                    // dans le tableau tva["taux"]=total_tva
-                    $tvaligne=$com->lignes[$i]->price * $com->lignes[$i]->qty;
+                    // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+                    $tvaligne=$com->lignes[$i]->total_tva;
                     if ($com->remise_percent) $tvaligne-=($tvaligne*$com->remise_percent)/100;
-                    $this->tva[ (string)$com->lignes[$i]->tva_tx ] += $tvaligne;
+                    $vatrate=(string) $com->lignes[$i]->tva_tx;
+                    if ($com->lignes[$i]->info_bits & 0x01 == 0x01) $vatrate.='*';
+                    $this->tva[$vatrate] += $tvaligne;
 
                     $nexY+=2;    // Passe espace entre les lignes
 
@@ -517,29 +518,39 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
         // Affichage des totaux de TVA par taux (conformément à réglementation)
         $pdf->SetFillColor(248,248,248);
+
         foreach( $this->tva as $tvakey => $tvaval )
         {
-            if ($tvakey)    // On affiche pas taux 0
-            {
-                $this->atleastoneratenotnull++;
-                
-                $index++;
-            	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-                $tvacompl = ( (float)$tvakey < 0 ) ? " (".$outputlangs->transnoentities("NonPercuRecuperable").")" : '' ; 
-                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
-    
-                $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-                $pdf->MultiCell($largcol2, $tab2_hl, price($tvaval * abs((float)$tvakey) / 100 ), 0, 'R', 1);
-            }
-        }
-        if (! $this->atleastoneratenotnull)
-        {
-            $index++;
+        	if ($tvakey)    // On affiche pas taux 0
+          {
+          	$this->atleastoneratenotnull++;
+          	
+          	$index++;
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
-    
+            
+            $tvacompl='';
+            
+            if (eregi('\*',$tvakey))
+            {
+            	$tvakey=eregi_replace('\*','',$tvakey);
+            	$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")"; 
+            }
+            
+            $totalvat =$outputlangs->transnoentities("TotalVAT").' ';
+            $totalvat.=vatrate($tvakey,1).$tvacompl;
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+            
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($largcol2, $tab2_hl, price($com->total_tva), 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+          }
+        }
+        if (! $this->atleastoneratenotnull) // If not vat at all
+        {
+        	$index++;
+          $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+          $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
+          $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+          $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
         }
         
         $useborder=0;
