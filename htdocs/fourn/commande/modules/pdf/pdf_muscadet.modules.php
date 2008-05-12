@@ -462,14 +462,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         return 0;   // Erreur par defaut
     }
 
-    /*
+    /**
      *   \brief      Affiche le total à payer
      *   \param      pdf         	Objet PDF
-     *   \param      prop         	Objet propale
+     *   \param      object        	Objet order
      *   \param      deja_regle  	Montant deja regle
      *   \return     y              Position pour suite
     */
-    function _tableau_tot(&$pdf, $com, $deja_regle, $posy, $outputlangs)
+    function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
     {
         $tab2_top = $posy;
         $tab2_hl = 5;
@@ -492,22 +492,22 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + 0);
-        $pdf->MultiCell($largcol2, $tab2_hl, price($com->total_ht +$com->remise), 0, 'R', 1);
+        $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
 
         // Remise globale
-        if ($com->remise > 0)
+        if ($object->remise > 0)
         {
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("GlobalDiscount"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
-            $pdf->MultiCell($largcol2, $tab2_hl, "-".$com->remise_percent."%", 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, "-".$object->remise_percent."%", 0, 'R', 1);
 
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT après remise", 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell($largcol2, $tab2_hl, price($com->total_ht), 0, 'R', 0);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht), 0, 'R', 0);
 
             $index = 2;
         }
@@ -562,7 +562,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell($largcol2, $tab2_hl, price($com->total_ttc), $useborder, 'R', 1);
+        $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
         $pdf->SetFont('Arial','', 9);
         $pdf->SetTextColor(0,0,0);
 
@@ -583,7 +583,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($largcol2, $tab2_hl, price($com->total_ttc - $deja_regle), $useborder, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle), $useborder, 'R', 1);
             $pdf->SetFont('Arial','', 9);
             $pdf->SetTextColor(0,0,0);
         }
@@ -592,7 +592,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         return ($tab2_top + ($tab2_hl * $index));
     }
 
-    /*
+    /**
     *   \brief      Affiche la grille des lignes de propales
     *   \param      pdf     objet PDF
     */
@@ -646,13 +646,14 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
     }
 
-    /*
-     *   	\brief      Affiche en-tête propale
-     *   	\param      pdf     objet PDF
-     *   	\param      fac     objet propale
-     *      \param      showadress      0=non, 1=oui
+    /**
+     *   	\brief      Show header of page
+     *    	\param      pdf     		Object PDF
+     *      \param      object          Object invoice
+     *      \param      showadress      0=no, 1=yes
+     *      \param      outputlang		Object lang for output
      */
-    function _pagehead(&$pdf, $com, $showadress=1, $outputlangs)
+    function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
     {
         global $langs,$conf,$mysoc;
 
@@ -692,97 +693,97 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         $pdf->SetFont('Arial','B',13);
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Order")." ".$com->ref, '' , 'R');
+        $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Order")." ".$object->ref, '' , 'R');
         $pdf->SetFont('Arial','',12);
         
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($com->date,"day"), '', 'R');
+        $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($object->date,"day"), '', 'R');
 
         if ($showadress)
         {
-        // Emetteur
-        $posy=42;
-        $hautcadre=40;
-        $pdf->SetTextColor(0,0,0);
-        $pdf->SetFont('Arial','',8);
-        $pdf->SetXY($this->marge_gauche,$posy-5);
-        $pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
-
-
-        $pdf->SetXY($this->marge_gauche,$posy);
-        $pdf->SetFillColor(230,230,230);
-        $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
-
-
-        $pdf->SetXY($this->marge_gauche+2,$posy+3);
-
-        // Nom emetteur
-        $pdf->SetTextColor(0,0,60);
-        $pdf->SetFont('Arial','B',11);
-        if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-        else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
-
-        // Caractéristiques emetteur
-        $carac_emetteur = '';
-        if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
-        else {
-            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->adresse;
-            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->cp.' '.$mysoc->ville;
+	        // Emetteur
+	        $posy=42;
+	        $hautcadre=40;
+	        $pdf->SetTextColor(0,0,0);
+	        $pdf->SetFont('Arial','',8);
+	        $pdf->SetXY($this->marge_gauche,$posy-5);
+	        $pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
+	
+	
+	        $pdf->SetXY($this->marge_gauche,$posy);
+	        $pdf->SetFillColor(230,230,230);
+	        $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+	
+	
+	        $pdf->SetXY($this->marge_gauche+2,$posy+3);
+	
+	        // Nom emetteur
+	        $pdf->SetTextColor(0,0,60);
+	        $pdf->SetFont('Arial','B',11);
+	        if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
+	        else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
+	
+	        // Caractéristiques emetteur
+	        $carac_emetteur = '';
+	        if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
+	        else {
+	            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->adresse;
+	            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->cp.' '.$mysoc->ville;
+	        }
+	        $carac_emetteur .= "\n";
+	        // Tel
+	        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
+	        elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$mysoc->tel;
+	        // Fax
+	        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
+	        elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$mysoc->fax;
+	        // EMail
+			if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
+	        elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$mysoc->email;
+	        // Web
+			if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
+	        elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$mysoc->url;
+	
+	        $pdf->SetFont('Arial','',9);
+	        $pdf->SetXY($this->marge_gauche+2,$posy+8);
+	        $pdf->MultiCell(80,4, $carac_emetteur);
+	
+	        // Client destinataire
+	        $posy=42;
+	        $pdf->SetTextColor(0,0,0);
+	        $pdf->SetFont('Arial','',8);
+	        $pdf->SetXY(100,$posy-5);
+	        $pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
+			//
+			$client = new Societe($this->db);
+	     	$client->fetch($object->socid);
+			$object->client = $client;
+			// 
+			
+	        // Cadre client destinataire
+	        $pdf->rect(100, $posy, 100, $hautcadre);
+	
+			// Nom client
+	        $pdf->SetXY(102,$posy+3);
+	        $pdf->SetFont('Arial','B',11);
+	        $pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
+	
+			// Caractéristiques client
+	        $carac_client=$object->client->adresse;
+	        $carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
+			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
+	        $pdf->SetFont('Arial','',9);
+	        $pdf->SetXY(102,$posy+8);
+	        $pdf->MultiCell(86,4, $carac_client);
         }
-        $carac_emetteur .= "\n";
-        // Tel
-        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
-        elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$mysoc->tel;
-        // Fax
-        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
-        elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$mysoc->fax;
-        // EMail
-		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
-        elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$mysoc->email;
-        // Web
-		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
-        elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$mysoc->url;
-
-        $pdf->SetFont('Arial','',9);
-        $pdf->SetXY($this->marge_gauche+2,$posy+8);
-        $pdf->MultiCell(80,4, $carac_emetteur);
-
-        // Client destinataire
-        $posy=42;
-        $pdf->SetTextColor(0,0,0);
-        $pdf->SetFont('Arial','',8);
-        $pdf->SetXY(100,$posy-5);
-        $pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
-		//
-		$client = new Societe($this->db);
-     	$client->fetch($com->socid);
-		$com->client = $client;
-		// 
-		
-        // Cadre client destinataire
-        $pdf->rect(100, $posy, 100, $hautcadre);
-
-		// Nom client
-        $pdf->SetXY(102,$posy+3);
-        $pdf->SetFont('Arial','B',11);
-        $pdf->MultiCell(106,4, $com->client->nom, 0, 'L');
-
-		// Caractéristiques client
-        $carac_client=$com->client->adresse;
-        $carac_client.="\n".$com->client->cp . " " . $com->client->ville."\n";
-		if ($com->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$com->client->tva_intra;
-        $pdf->SetFont('Arial','',9);
-        $pdf->SetXY(102,$posy+8);
-        $pdf->MultiCell(86,4, $carac_client);
-        }
-
     }
 
-    /*
-     *   \brief      Affiche le pied de page
-     *   \param      pdf     objet PDF
+    /**
+     *   	\brief      Show footer of page
+     *		\param      pdf     		Object PDF
+     *      \param      outputlang		Object lang for output
      */
     function _pagefoot(&$pdf, $outputlangs)
     {

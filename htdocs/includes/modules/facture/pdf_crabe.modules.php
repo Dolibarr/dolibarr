@@ -544,7 +544,7 @@ class pdf_crabe extends ModelePDFFactures
     }
 
 
-	/*
+	/**
      *	\brief      Affiche infos divers
      *	\param      pdf             Objet PDF
      *	\param      object          Objet facture
@@ -703,7 +703,7 @@ class pdf_crabe extends ModelePDFFactures
     }
 
 
-    /*
+    /**
      *	\brief      Affiche le total a payer
      *	\param      pdf             Objet PDF
      *	\param      object          Objet facture
@@ -902,11 +902,11 @@ class pdf_crabe extends ModelePDFFactures
     }
 
     /**
-     *      \brief      Affiche en-tete facture
-     *      \param      pdf             Objet PDF
-     *      \param      object          Objet facture
-     *      \param      showadress      0=non, 1=oui
-     *      \param      outputlang		Objet lang cible
+     *   	\brief      Show header of page
+     *      \param      pdf             Object PDF
+     *      \param      object          Object invoice
+     *      \param      showadress      0=no, 1=yes
+     *      \param      outputlang		Object lang for output
      */
     function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
     {
@@ -1137,9 +1137,10 @@ class pdf_crabe extends ModelePDFFactures
 		}
 	}
 
-    /*
-     *   \brief      Affiche le pied de page
-     *   \param      pdf     objet PDF
+    /**
+     *   	\brief      Show footer of page
+     *   	\param      pdf     		Object PDF
+     *      \param      outputlang		Object lang for output
      */
     function _pagefoot(&$pdf,$outputlangs)
     {
