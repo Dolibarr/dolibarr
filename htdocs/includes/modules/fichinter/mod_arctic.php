@@ -29,7 +29,7 @@
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 
 /**
-	\class      mod_commande_saphir
+	\class      mod_arctic
 	\brief      Classe du modèle de numérotation de référence de fiche intervention Arctic
 */
 class mod_arctic extends ModeleNumRefFicheinter

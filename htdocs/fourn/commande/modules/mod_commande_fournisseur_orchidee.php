@@ -20,7 +20,7 @@
  */
 
 /**
-	\file       htdocs/includes/modules/commande/mod_commande_saphir.php
+	\file       htdocs/fourn/commande/modules/mod_commande_fournisseur_orchidee.php
 	\ingroup    commande
 	\brief      Fichier contenant la classe du modèle de numérotation de référence de commande fournisseur Orchidee
 	\version    $Id$
