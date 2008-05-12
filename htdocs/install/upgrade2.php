@@ -1464,7 +1464,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 		$db->free($resql);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet";
-		$sql.= " WHERE price = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0";
+		$sql.= " WHERE subprice = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0";
 		$resql=$db->query($sql);
 		if (! $resql)
 		{
