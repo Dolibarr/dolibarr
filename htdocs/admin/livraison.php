@@ -136,13 +136,6 @@ if ($_GET["action"] == 'setmod')
 	dolibarr_set_const($db, "LIVRAISON_ADDON",$_GET["value"]);
 }
 
-// d�fini les constantes du mod�le saphir
-if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "LIVRAISON_NUM_MATRICE",$_POST["matrice"]);
-if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "LIVRAISON_NUM_PREFIX",$_POST["prefix"]);
-if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "LIVRAISON_NUM_DELTA",$_POST["offset"]);
-if ($_POST["action"] == 'setFiscalMonth') dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonth"]);
-if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "LIVRAISON_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
-
 
 /*
  * Affiche page
