@@ -112,9 +112,12 @@ if (! isset($conf->db->user)) $conf->db->user='';
 
 	
 // Security check
-if (eregi('install.norun',$_SERVER["SCRIPT_FILENAME"])) 
+if (eregi('install.lock',$_SERVER["SCRIPT_FILENAME"])) 
 {
-	print 'Install pages have been disabled for security reason (directory renamed with .norun).';
+	print 'Install pages have been disabled for security reason (directory renamed with .lock).';
+	print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+	print 'Click here to go to Dolibarr';
+	print '</a>';
 	exit;
 }
 if (file_exists('../../install.lock'))
