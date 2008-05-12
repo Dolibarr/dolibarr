@@ -2420,7 +2420,7 @@ class Facture extends CommonObject
 	$ligne->tva_tx=19.6;
 	$ligne->remise_percent=10;	
 	$ligne->total_ht=90;
-	$ligne->total_ttc=107.64;
+	$ligne->total_ttc=107.64;	// 90 * 1.196
 	$ligne->total_tva=17.64;
 	$prodid = rand(1, $num_prods);
 	$ligne->produit_id=$prodids[$prodid];
@@ -2428,10 +2428,10 @@ class Facture extends CommonObject
 	$xnbp++;
       }
 
-    $this->amount_ht      = $xnbp*100;
-    $this->total_ht       = $xnbp*100;
-    $this->total_tva      = $xnbp*19.6;
-    $this->total_ttc      = $xnbp*119.6;
+    $this->amount_ht      = $xnbp*90;
+    $this->total_ht       = $xnbp*90;
+    $this->total_tva      = $xnbp*90*0.196;
+    $this->total_ttc      = $xnbp*90*1.196;
   }
 
   	/**
