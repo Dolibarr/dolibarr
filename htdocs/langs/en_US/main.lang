@@ -37,6 +37,7 @@ ErrorFailedToSaveFile=Error, failed to save file.
 ErrorOnlyPngJpgSupported=Error, only .png and .jpg image format file are supported.
 ErrorImageFormatNotSupported=Your PHP does not support functions to convert images of this format.
 LevelOfFeature=Level of features
+NotDefined=Not defined
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is setup to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that password database is extern to Dolibarr, so changing this field may have no effects.
 Administrator=Administrator
 Undefined=Undefined
