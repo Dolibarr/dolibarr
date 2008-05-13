@@ -488,61 +488,48 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 
 		print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-		if ($soc->pays_code == 'FR')
-		{
-			$maxlength1=9;
-			$maxlength2=14;
-			$maxlength3=5;
-			$maxlength4=12;
-		}
-		
-		// Id prof
-		print '<tr><td>'.($langs->transcountry("ProfId1",$soc->pays_code) != '-'?$langs->transcountry('ProfId1',$soc->pays_code):'').'</td><td>';
-		if ($soc->pays_id)
-		{
-			if ($langs->transcountry("ProfId1",$soc->pays_code) != '-') print '<input type="text" name="idprof1" size="15" maxlength="'.$maxlength1.'" value="'.$soc->siren.'">';
-			else print '&nbsp;';
-		}
-		else
-		{
-			print $countrynotdefined;
-		}
-		print '</td>';
-		print '<td>'.($langs->transcountry("ProfId2",$soc->pays_code) != '-'?$langs->transcountry('ProfId2',$soc->pays_code):'').'</td><td>';
-		if ($soc->pays_id)
-		{
-			if ($langs->transcountry("ProfId2",$soc->pays_code) != '-') print '<input type="text" name="idprof2" size="15" maxlength="'.$maxlength2.'" value="'.$soc->siret.'">';
-			else print '&nbsp;';
-		}
-		else
-		{
-			print $countrynotdefined;
-		}
-		print '</td></tr>';
-		
-		print '<tr><td>'.($langs->transcountry("ProfId3",$soc->pays_code) != '-'?$langs->transcountry('ProfId3',$soc->pays_code):'').'</td><td>';
-		if ($soc->pays_id)
-		{
-			if ($langs->transcountry("ProfId3",$soc->pays_code) != '-') print '<input type="text" name="idprof3" size="15" maxlength="'.$maxlength3.'" value="'.$soc->ape.'">';
-			else print '&nbsp;';
-		}
-		else
-		{
-			print $countrynotdefined;
-		}
-		print '</td>';
-		print '<td>'.($langs->transcountry("ProfId4",$soc->pays_code) != '-'?$langs->transcountry('ProfId4',$soc->pays_code):'').'</td><td>';
-		if ($soc->pays_id)
-		{
-			if ($langs->transcountry("ProfId4",$soc->pays_code) != '-') print '<input type="text" name="idprof4" size="15" maxlength="'.$maxlength4.'" value="'.$soc->idprof4.'">';
-			else print '&nbsp;';
-		}
-		else
-		{
-			print $countrynotdefined;
-		}
-		print '</td></tr>';
 
+        print '<tr>';
+        // IdProf1 (SIREN pour France)
+        $idprof=$langs->transcountry('ProfId1',$soc->pays_code);
+        if ($idprof!='-')
+        {
+            print '<td>'.$idprof.'</td><td>';
+            $soc->show_input_id_prof(1,'idprof1',$soc->siren);
+            print '</td>';
+        }
+        else print '<td>&nbsp;</td><td>&nbsp;</td>';
+        // IdProf2 (SIRET pour France)
+        $idprof=$langs->transcountry('ProfId2',$soc->pays_code);
+        if ($idprof!='-')
+        {
+            print '<td>'.$idprof.'</td><td>';
+            $soc->show_input_id_prof(2,'idprof2',$soc->siret);
+            print '</td>';
+        }
+        else print '<td>&nbsp;</td><td>&nbsp;</td>';
+        print '</tr>';
+        print '<tr>';
+        // IdProf3 (APE pour France)
+        $idprof=$langs->transcountry('ProfId3',$soc->pays_code);
+        if ($idprof!='-')
+        {
+            print '<td>'.$idprof.'</td><td>';
+            $soc->show_input_id_prof(3,'idprof3',$soc->ape);
+            print '</td>';
+        }
+        else print '<td>&nbsp;</td><td>&nbsp;</td>';
+        // IdProf4 (NU pour France)
+        $idprof=$langs->transcountry('ProfId4',$soc->pays_code);
+        if ($idprof!='-')
+        {
+            print '<td>'.$idprof.'</td><td>';
+            $soc->show_input_id_prof(4,'idprof4',$soc->idprof4);
+            print '</td>';
+        }
+        else print '<td>&nbsp;</td><td>&nbsp;</td>';
+        print '</tr>';		
+		
 		// Forme juridique
 		print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
 		print '<td colspan="3">';

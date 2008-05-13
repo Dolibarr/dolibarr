@@ -1835,8 +1835,9 @@ class Societe extends CommonObject
      *      \brief      Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
      *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *      \param      htmlname        Nom de la zone input
+     * 		\param		preselected		Default value to show
      */
-    function show_input_id_prof($idprof,$htmlname)
+    function show_input_id_prof($idprof,$htmlname,$preselected)
     {
         global $langs;
 		
@@ -1848,11 +1849,11 @@ class Societe extends CommonObject
 			if ($idprof==3) $formlength=5;		// 4 chiffres et 1 lettre depuis janvier
 			if ($idprof==4) $formlength=12;
 		}
-		$selected='';
-        if ($idprof==1) $selected=$soc->siren;
-        if ($idprof==2) $selected=$soc->siret;
-        if ($idprof==3) $selected=$soc->ape;
-        if ($idprof==4) $selected=$soc->idprof4;
+		$selected=$preselected;
+        if (! $selected && $idprof==1) $selected=$this->siren;
+        if (! $selected && $idprof==2) $selected=$this->siret;
+        if (! $selected && $idprof==3) $selected=$this->ape;
+        if (! $selected && $idprof==4) $selected=$this->idprof4;
 
         print '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
     }
