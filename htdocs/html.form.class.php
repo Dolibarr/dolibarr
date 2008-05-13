@@ -1331,6 +1331,111 @@ class Form
         }
     }
 
+    
+    /**
+     *		\brief      Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
+     *		\param		mode		0=renvoi id+libelle, 1=renvoi code+libelle
+     *    	\return     array		tableau des types d'effectifs
+     */
+    function effectif_array($mode=0)
+    {
+    	$effs = array();
+
+      $sql = "SELECT id, code, libelle";
+      $sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
+      $sql.= " WHERE active = 1";
+      $sql .= " ORDER BY id ASC";
+      dolibarr_syslog('Form::effectif_array sql='.$sql,LOG_DEBUG);
+      $resql=$this->db->query($sql);
+      if ($resql)
+      {
+      	$num = $this->db->num_rows($resql);
+        $i = 0;
+
+        while ($i < $num)
+        {
+        	$objp = $this->db->fetch_object($resql);
+        	if (! $mode) $key=$objp->id;
+        	else $key=$objp->code;
+
+          $effs[$key] = $objp->libelle!='-'?$objp->libelle:'';
+          $i++;
+        }
+        $this->db->free($resql);
+      }
+      return $effs;
+    }
+
+    /**
+     *    \brief      Renvoie la liste des formes juridiques existantes (pas de traduction car unique au pays)
+     *    \return     array      tableau des formes juridiques
+     */
+    function forme_juridique_array()
+    {
+        $fj = array();
+
+        $sql = "SELECT code, libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+        $sql.= " WHERE active = 1";
+        $sql.= " ORDER BY code ASC";
+        dolibarr_syslog('Form::forme_juridique_array sql='.$sql,LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+
+            while ($i < $num)
+            {
+                $objp = $this->db->fetch_object($resql);
+                $fj[$objp->code] = $objp->libelle!='-'?$objp->libelle:'';
+                $i++;
+            }
+            $this->db->free($resql);
+        }
+        return $fj;
+    }
+    
+    /**
+     *    	\brief      Renvoie la liste des libelles traduits des types actifs de societes
+     *		\param		mode		0=renvoi id+libelle, 1=renvoi code+libelle
+	 *    	\return     array      	tableau des types
+     */
+    function typent_array($mode=0)
+    {
+        global $langs;
+
+        $effs = array();
+
+        $sql = "SELECT id, code, libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_typent";
+        $sql.= " WHERE active = 1";
+        $sql.= " ORDER by id";
+        dolibarr_syslog('Form::typent_array sql='.$sql,LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num = $this->db->num_rows($resql);
+            $i = 0;
+
+            while ($i < $num)
+            {
+                $objp = $this->db->fetch_object($resql);
+				if (! $mode) $key=$objp->id;
+				else $key=$objp->code;
+
+                if ($langs->trans($objp->code) != $objp->code)
+                    $effs[$key] = $langs->trans($objp->code);
+                else
+                    $effs[$key] = $objp->libelle!='-'?$objp->libelle:'';
+                $i++;
+            }
+            $this->db->free($resql);
+        }
+
+        return $effs;
+    }
+
     /**
      *      \brief      Charge dans cache la liste des conditions de paiements possibles
      *      \return     int             Nb lignes chargées, 0 si déjà chargées, <0 si ko
@@ -1341,11 +1446,11 @@ class Form
 
         if (sizeof($this->cache_conditions_paiements)) return 0;    // Cache déja chargé
 
-        dolibarr_syslog('Form::load_cache_conditions_paiements',LOG_DEBUG);
         $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY sortorder";
+        dolibarr_syslog('Form::load_cache_conditions_paiements sql='.$sql,LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1379,11 +1484,11 @@ class Form
 
         if (sizeof($this->cache_types_paiements)) return 0;    // Cache déja chargé
 
-        dolibarr_syslog('Form::load_cache_types_paiements',LOG_DEBUG);
         $sql = "SELECT id, code, libelle, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";
         $sql.= " ORDER BY id";
+        dolibarr_syslog('Form::load_cache_types_paiements sql='.$sql,LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {

@@ -86,14 +86,14 @@ if ($_GET["action"] == 'edit')
 
       print '<tr><td>Forme juridique</td><td colspan="3">';
       $html = new Form($db);
-      print $html->select_array("forme_juridique_id",$soc->forme_juridique_array(), $soc->forme_juridique_id,0,1);
+      print $html->select_array("forme_juridique_id",$form->forme_juridique_array(), $soc->forme_juridique_id,0,1);
       print '</td></tr>';
 
       print '<tr><td>'.$langs->trans("Type").'</td><td>';
-      $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
+      $form->select_array("typent_id",$form->typent_array(), $soc->typent_id);
       print '</td>';
       print '<td>'.$langs->trans("Staff").'</td><td>';
-      $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
+      $form->select_array("effectif_id",$form->effectif_array(), $soc->effectif_id);
       print '</td></tr>';
 
       print '<input type="hidden" name="tva_intra_code" value="'.$soc->tva_intra_code.'">';

@@ -557,11 +557,11 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '</td></tr>';
 		
 		print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
-		$form->select_array("typent_id",$soc->typent_array(0), $soc->typent_id);
+		$form->select_array("typent_id",$form->typent_array(0), $soc->typent_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td>';
 		print '<td>'.$langs->trans("Staff").'</td><td>';
-		$form->select_array("effectif_id",$soc->effectif_array(0), $soc->effectif_id);
+		$form->select_array("effectif_id",$form->effectif_array(0), $soc->effectif_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 		
@@ -918,11 +918,11 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("Type").'</td><td>';
-    $form->select_array("typent_id",$soc->typent_array(0), $soc->typent_id);
+    $form->select_array("typent_id",$form->typent_array(0), $soc->typent_id);
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td>';
     print '<td>'.$langs->trans("Staff").'</td><td>';
-    $form->select_array("effectif_id",$soc->effectif_array(0), $soc->effectif_id);
+    $form->select_array("effectif_id",$form->effectif_array(0), $soc->effectif_id);
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
     print '</td></tr>';
 
@@ -1136,7 +1136,7 @@ else
     print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
 
     // Type + Staff
-    $arr = $soc->typent_array(1);
+    $arr = $form->typent_array(1);
     $soc->typent= $arr[$soc->typent_code];
     print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 
