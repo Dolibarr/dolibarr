@@ -165,7 +165,7 @@ print '#login {';
 print '  margin-top: 70px;';
 print '  margin-bottom: 30px;';
 print '  text-align: center;';
-print '  font: 12px arial,helvetica;';
+print '  font: 10px arial,helvetica;';
 print '}'."\n";
 print '#login table {';
 print '  border: 1px solid #C0C0C0;';
@@ -177,7 +177,7 @@ else
 {
   print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/login_background.png) repeat-x;';
 }
-print 'font-size: 12px;';
+print '  font-size: 12px;';
 print '}'."\n";
 print '-->'."\n";
 print '</style>'."\n";
@@ -280,7 +280,7 @@ print '<center>'."\n";
 print '<table width="90%"><tr><td align="center">';
 if (($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') || (! $disabled))
 {
-	print '<font style="font-size: 14px;">'.$langs->trans("SendNewPasswordDesc").'</font>'."\n";
+	print '<font style="font-size: 12px;">'.$langs->trans("SendNewPasswordDesc").'</font>'."\n";
 }
 else
 {
@@ -290,7 +290,7 @@ print '</td></tr></table><br>';
 
 if ($message)
 { 
-	print '<table width="90%"><tr><td align="center">';
+	print '<table width="90%"><tr><td align="center" style="font-size: 12px;">';
 	print $message.'</td></tr></table><br>';
 }
 
