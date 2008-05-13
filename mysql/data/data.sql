@@ -348,11 +348,6 @@ insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 8, 'AC_C
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 9, 'AC_FAC',  'system', 'Envoi Facture'      ,'invoice');
 insert into llx_c_actioncomm (id, code, type, libelle, module) values (50, 'AC_OTH',  'system', 'Autre'              ,NULL);
 
---
--- Ape
---
-delete from llx_c_ape;
-
 
 --
 -- Types de charges

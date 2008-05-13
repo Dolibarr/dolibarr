@@ -5,7 +5,8 @@
 -- Ce fichier doit être chargé sur une version 2.2.0 
 --
 
-drop table llx_facture_tva_sum;
+DROP TABLE llx_facture_tva_sum;
+DROP TABLE llx_c_ape;
 
 delete from llx_const where name='MAIN_GRAPH_LIBRARY' and (value like 'phplot%' or value like 'artichow%');
 
