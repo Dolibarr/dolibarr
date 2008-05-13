@@ -138,6 +138,7 @@ class InterfaceActionsAuto
         elseif ($action == 'CONTRACT_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
             $langs->load("contracts");
             $langs->load("agenda");
 
