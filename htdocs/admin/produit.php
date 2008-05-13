@@ -18,15 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/admin/produit.php
    \ingroup    produit
    \brief      Page d'administration/configuration du module Produit
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -35,6 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/barcode/html.formbarcode.class.php");
 
 $langs->load("admin");
 $langs->load("propal");
+$langs->load("products");
 
 if (!$user->admin)
   accessforbidden();
