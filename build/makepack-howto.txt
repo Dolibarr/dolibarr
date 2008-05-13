@@ -5,6 +5,7 @@
 - Update version number in makepack-dolibarr.pl file
 - Update version number in htdocs/master.inc.php
 - Update version number in htdocs/install/inc.php
+- Run dolibarr_mysql2pgsql.pl
 - Update PAD files
 - Commit all changes and add a CVS Tag
 
