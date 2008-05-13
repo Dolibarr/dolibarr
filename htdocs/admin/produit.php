@@ -110,6 +110,9 @@ else if ($_POST["action"] == 'confirmDeleteProdLineInForm')
 else if ($_POST["action"] == 'ProductCanvasAbility')
 {
   dolibarr_set_const($db, "PRODUCT_CANVAS_ABILITY", $_POST["ProductCanvasAbility"]);
+  // Create temp directory for smarty
+  if (! empty($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
+  if (! empty($dolibarr_smarty_cache))   create_exdir($dolibarr_smarty_cache);
 }
 else if ($_POST["action"] == 'usesearchtoselectproduct')
 {
@@ -290,8 +293,8 @@ if ($conf->barcode->enabled && $conf->global->PRODUIT_USE_BARCODE)
 	print '</form>';
 }
 
-
-if ($conf->left_menu == 'default.php' || $conf->left_menu == 'auguria_backoffice.php')
+// Only rodolphe and auguria menu manage canvas menu (auguria not correctly yet)
+if (eregi('^rodolphe',$conf->left_menu) || eregi('^auguria',$conf->left_menu)) 
 {
 	// Propose utilisation de canvas.
 	// Ces derniers ne sont geres que par le menu default
