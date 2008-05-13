@@ -356,11 +356,12 @@ class InterfaceActionsAuto
 			$actioncomm->percentage  = 100;
 			$actioncomm->contact     = new Contact($this->db,$object->sendtoid);
 			$actioncomm->societe     = new Societe($this->db,$object->socid);
-			$actioncomm->user        = $user;   // User qui a fait l'action
+			$actioncomm->author      = $user;   // User saving action
+			//$actioncomm->usertodo  = $user;	// User affected to action
+			$actioncomm->userdone    = $user;	// User doing action
 			$actioncomm->facid       = $object->facid;
 			$actioncomm->orderrowid  = $object->orderrowid;
 			$actioncomm->propalrowid = $object->propalrowid;
-			
 			$ret=$actioncomm->add($user);       // User qui saisit l'action
 			if ($ret > 0)
 			{
