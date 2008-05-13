@@ -170,7 +170,7 @@ class MenuLeft {
                 // Menu niveau 0
 				if ($this->menu_array[$i]['level']==0) 
                 {
-                    if ($contenu == 1) print '<div class="menu_fin"></div>';
+                    if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
                     if ($this->menu_array[$i]['enabled']) 
                     {
                         	
@@ -202,7 +202,7 @@ class MenuLeft {
                 }
                 
             }
-            if ($contenu == 1) print '<div class="menu_fin"></div>';
+            if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
         }
     }
 }

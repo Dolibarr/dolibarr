@@ -1088,8 +1088,10 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 {
     global $langs;
     print '<form action="'.$urlaction.'" method="post">';
-    print '<a class="vmenu" href="'.$urlobject.'">';
+    print '<div class="menu_titre">';
+    print '<a class="vsmenu" href="'.$urlobject.'">';
     print $title.'</a><br>';
+    print '</div>';
     print '<input type="hidden" name="mode" value="search">';
     print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
     print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';

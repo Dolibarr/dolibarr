@@ -897,7 +897,7 @@ class MenuLeft {
 				// Menu niveau 0
 				if ($this->menu_array[$i]['level'] == 0)
 				{
-					if ($contenu == 1) print '<div class="menu_fin"></div>';
+					if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
 					if ($this->menu_array[$i]['enabled'])
 					{
 						print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>';
@@ -935,7 +935,7 @@ class MenuLeft {
 					print "</div>\n";
 				}
 			}
-            if ($contenu == 1) print '<div class="menu_fin"></div>';
+            if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
 			
 		}
 
