@@ -136,9 +136,6 @@ if ($_POST["action"] == 'update' &&
 	{
 		$product->ref                = $_POST["ref"];
 		$product->libelle            = $_POST["libelle"];
-		if ( isset( $_POST["price"] ) )
-		$product->price              = $_POST["price"];
-		$product->tva_tx             = $_POST["tva_tx"];
 		$product->description        = $_POST["desc"];
 		$product->note               = $_POST["note"];
 		$product->status             = $_POST["statut"];
@@ -572,34 +569,6 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
-		if($conf->global->PRODUIT_MULTIPRICES == 1)
-		{
-			print '<tr><td>'.$langs->trans("SellingPrice").' 1</td>';
-			print '<td><input name="price" size="10" value="'.$product->price.'">';
-			print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
-			print '</td></tr>';
-			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-			{
-				print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
-				print '<td><input name="price_'.$i.'" size="10" value="'.$product->multiprices["$i"].'">';
-				print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
-				print '</td></tr>';
-			}
-		}
-		// PRIX
-		else
-		{
-			print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
-			print '<td><input name="price" size="10" value="'.$product->price.'">';
-			print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
-			print '</td></tr>';
-		}
-		
-		// VAT
-		print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-		print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
-		print '</td></tr>';
-		
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
 		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
@@ -672,9 +641,47 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 			print '</textarea>';
 		}
 		print "</td></tr>";
-		
-		print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 		print '</table>';
+		
+		print '<br>';
+		
+		print '<table class="border" width="100%">';
+		if($conf->global->PRODUIT_MULTIPRICES == 1)
+		{
+			print '<tr><td>'.$langs->trans("SellingPrice").' 1</td>';
+			print '<td><input name="price" size="10" value="'.$product->price.'">';
+			print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
+			print '</td></tr>';
+			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+			{
+				print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
+				print '<td><input name="price_'.$i.'" size="10" value="'.$product->multiprices["$i"].'">';
+				print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
+				print '</td></tr>';
+			}
+		}
+		// PRIX
+		else
+		{
+			print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
+			print '<td><input name="price" size="10" value="'.$product->price.'">';
+			print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
+			print '</td></tr>';
+		}
+		
+		// VAT
+		print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
+		print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+		print '</td></tr>';
+				
+		print '</table>';
+
+		print '<br>';
+		
+		print '<table class="border" width="100%">';
+		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+		print '</table>';
+		
 		print '</form>';
 	}
 	else
@@ -846,13 +853,13 @@ if ($_GET["id"] || $_GET["ref"])
 				print '</td></tr>';
 			}
 
+			// TVA
+			print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';
+			
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print $product->getLibStatut(2);
 			print '</td></tr>';
-			
-			// TVA
-			print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.price2num($product->tva_tx,'MU').'%</td></tr>';
 			
 			// Description
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
@@ -929,10 +936,6 @@ if ($_GET["id"] || $_GET["ref"])
 	  print '<table class="border" width="100%">';
 	  print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$product->ref.'"></td></tr>';
 	  print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
-
-	  print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">';
-	  print $html->select_tva("tva_tx", $product->tva_tx, $mysoc, '', $product->tva_tx);
-	  print '</td></tr>';
 
 	  // Status
 	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';

@@ -43,7 +43,7 @@ class Product extends CommonObject
 
 	//! Identifiant unique
   var $id ;
-  //! R�f�rence
+  //! Ref
   var $ref;
   var $libelle;
   var $description;
@@ -761,40 +761,45 @@ class Product extends CommonObject
 
 
 	/**
-		\brief  	Modifie le prix d'un produit/service
-		\param  	id          	Id du produit/service � modifier
-		\param  	newprice		Nouveau prix
-		\param  	newpricebase	HT ou TTC
-		\param  	user        	Objet utilisateur qui modifie le prix
+	*	\brief  	Modifie le prix d'un produit/service
+	*	\param  	id          	Id du produit/service a modifier
+	*	\param  	newprice		Nouveau prix
+	*	\param  	newpricebase	HT ou TTC
+	*	\param  	user        	Objet utilisateur qui modifie le prix
+	*	\param  	newvat			New VAT Rate
+	* 	\return		int				<0 if KO, >0 if OK
 	*/
-	function update_price($id, $newprice, $newpricebase, $user)
+	function update_price($id, $newprice, $newpricebase, $user, $newvat='')
 	{
 		//multiprix
 		global $conf,$langs;
 		dolibarr_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase);
 
+		if ($newvat == '') $newvat=$this->tva_tx;
+		
 		if ($newprice)
 		{
 			if ($newpricebase == 'TTC')
 			{
 				$price_ttc = price2num($newprice,'MU');
-				$price = price2num($newprice) / (1 + ($this->tva_tx / 100));
+				$price = price2num($newprice) / (1 + ($newvat / 100));
 				$price = price2num($price,'MU');
 			}
 			else
 			{
 				$price = price2num($newprice,'MU');
-				$price_ttc = price2num($newprice) * (1 + ($this->tva_tx / 100));
+				$price_ttc = price2num($newprice) * (1 + ($newvat / 100));
 				$price_ttc = price2num($price_ttc,'MU');
 			}
 			
 			// Ne pas mettre de quote sur le num�riques decimaux.
 			// Ceci provoque des sotckage avec arrondis en base au lieu des valeurs exactes.
-			$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-			$sql .= " SET price=".$price."";
-			$sql .= " , price_base_type='".$newpricebase."'";
-			$sql .= " , price_ttc=".$price_ttc."";
-			$sql .= " WHERE rowid = " . $id;
+			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
+			$sql.= " price_base_type='".$newpricebase."',";
+			$sql.= " price=".$price.",";
+			$sql.= " price_ttc=".$price_ttc.",";
+			$sql.= " tva_tx='".price2num($newvat)."'";
+			$sql.= " WHERE rowid = " . $id;
 
 			dolibarr_syslog("Product::update_price sql=".$sql);
 			$resql=$this->db->query($sql);
@@ -803,7 +808,8 @@ class Product extends CommonObject
 				$this->price = $price; 
 				$this->price_ttc = $price_ttc; 
 				$this->price_base_type = $newpricebase;
-
+				$this->tva_tx = $newvat;
+				
 				$this->_log_price($user);
 				return 1;
 			}

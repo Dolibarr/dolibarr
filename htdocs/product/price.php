@@ -367,7 +367,7 @@ if ($result)
 			}
 
 			print '<td align="center">'.$langs->trans($objp->price_base_type)."</td>";
-			print '<td align="right">'.vatrate($objp->tva_tx)."</td>";
+			print '<td align="right">'.vatrate($objp->tva_tx,true)."</td>";
 			print '<td align="right">'.price($objp->price)."</td>";
 			print '<td align="right">'.price($objp->price_ttc)."</td>";
 
