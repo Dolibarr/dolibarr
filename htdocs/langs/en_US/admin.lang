@@ -124,6 +124,7 @@ EncodeBinariesInHexa=Encode binary datas in hexadecimal
 Yes=Yes
 No=No
 AutoDetectLang=Autodetect (browser language)
+FeatureDisabledInDemo=Feature disabled in demo
 Rights=Permissions
 BoxesDesc=Boxes are screen area that show some information on some pages. You can choose between showing or not a such box by selecting target page en clicking 'Activate', or by clicking the dustbin to disable it.
 OnlyActiveElementsAreShown=Only elements about <a href="modules.php">enabled modules</a> are shown.

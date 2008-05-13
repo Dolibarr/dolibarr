@@ -163,14 +163,16 @@ if ($_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
-    print '<td align="left" nowrap="nowrap" width="20%"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($fuser->conf->MAIN_SIZE_LISTE_LIMIT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left" nowrap="nowrap" width="20%"><input name="check_SIZE_LISTE_LIMIT" type="checkbox" '.($fuser->conf->MAIN_SIZE_LISTE_LIMIT?" checked":"");
+    print ! empty($conf->global->MAIN_DEMO)?' disabled="true"':'';	// Disabled for demo
+    print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td><input class="flat" name="main_size_liste_limit" size="4" value="' . $fuser->conf->SIZE_LISTE_LIMIT . '"></td></tr>';
 
     print '</table><br>';
 
 
     // Theme
-    show_theme($fuser,1);
+    show_theme($fuser,$conf->global->MAIN_DEMO?0:1);
 
     print '</div>';
 
@@ -210,13 +212,20 @@ else
     print '</div>';
 
     print '<div class="tabsAction">';
-    if ($caneditfield  || $user->admin)       // Si utilisateur édité = utilisateur courant ayant les droits de créer ou admin
-    {
-        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Modify").'</a>';
-    }
-   	else
+	if ($conf->global->MAIN_DEMO)
 	{
-		print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+		print "<a class=\"butActionRefused\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+	}
+	else
+	{
+		if ($caneditfield  || $user->admin)       // Si utilisateur édité = utilisateur courant ayant les droits de créer ou admin
+	    {
+	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Modify").'</a>';
+	    }
+	   	else
+		{
+			print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
+		}			
 	}
    
     print '</div>';

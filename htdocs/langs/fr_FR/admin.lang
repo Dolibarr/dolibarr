@@ -124,6 +124,7 @@ EncodeBinariesInHexa=Encoder les champs binaires en hexadécimal
 Yes=Oui
 No=Non
 AutoDetectLang=Détection auto (navigateur)
+FeatureDisabledInDemo=Fonction désactivée dans la demo
 Rights=Permissions
 BoxesDesc=Les boîtes sont des zones d'information réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer une boîte en sélectionnant la page cible et en cliquant sur 'Activer', ou en cliquant sur la poubelle pour la désactiver.
 OnlyActiveElementsAreShown=Seuls les éléments en rapport avec un <a href="modules.php">module actif</a> sont présentées.
