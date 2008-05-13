@@ -91,13 +91,13 @@ class Societe extends CommonObject
 	var $code_compta_fournisseur;
 	
 	var $note;
-  //! code statut prospect
-  var $stcomm_id;
-  var $statut_commercial;
+  	//! code statut prospect
+  	var $stcomm_id;
+  	var $statut_commercial;
   
-  var $price_level;
+  	var $price_level;
   
-  var $commercial_id; //Id du commercial affecte
+  	var $commercial_id; //Id du commercial affecte
 
 
   /**
@@ -498,7 +498,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
-		$sql .= ', s.code_client, s.code_compta, s.code_fournisseur, s.parent';
+		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent';
 		$sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
 		$sql .= ', s.fk_prospectlevel';
 		$sql .= ', fj.libelle as forme_juridique';
