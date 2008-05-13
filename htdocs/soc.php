@@ -492,7 +492,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		{
 			$maxlength1=9;
 			$maxlength2=14;
-			$maxlength3=4;
+			$maxlength3=5;
 			$maxlength4=12;
 		}
 		
