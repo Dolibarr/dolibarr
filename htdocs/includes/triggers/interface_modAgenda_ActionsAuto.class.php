@@ -235,6 +235,7 @@ class InterfaceActionsAuto
 		elseif ($action == 'BILL_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
 
@@ -251,6 +252,7 @@ class InterfaceActionsAuto
         elseif ($action == 'BILL_SENTBYMAIL')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
 			$ok=1;
@@ -260,6 +262,7 @@ class InterfaceActionsAuto
 		elseif ($action == 'BILL_PAYED')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
 
@@ -276,6 +279,7 @@ class InterfaceActionsAuto
 		elseif ($action == 'BILL_CANCELED')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
 
@@ -308,6 +312,7 @@ class InterfaceActionsAuto
 		elseif ($action == 'BILL_SUPPLIER_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
             $langs->load("bills");
             $langs->load("agenda");
 
