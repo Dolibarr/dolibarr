@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,14 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/user/param_ihm.php
         \brief      Onglet parametrage de la fiche utilisateur
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -153,7 +151,9 @@ if ($_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
     print '<td>'.($conf->global->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):$conf->global->MAIN_LANG_DEFAULT).'</td>';
-    print '<td align="left" nowrap="nowrap" width="20%"><input name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+    print '<td align="left" nowrap="nowrap" width="20%"><input name="check_MAIN_LANG_DEFAULT" type="checkbox" '.($fuser->conf->MAIN_LANG_DEFAULT?" checked":"");
+    print ! empty($conf->global->MAIN_DEMO)?' disabled="true"':'';	// Disabled for demo
+    print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     $html=new Form($db);
     $html->select_lang($fuser->conf->MAIN_LANG_DEFAULT,'main_lang_default',1);
