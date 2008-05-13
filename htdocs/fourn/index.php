@@ -222,7 +222,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td>';
-				$companystatic->id=$obj->rowid;
+				$companystatic->id=$obj->socid;
 				$companystatic->nom=$obj->nom;
 				$companystatic->client=0;
 				print $companystatic->getNomUrl(1,'',16);
