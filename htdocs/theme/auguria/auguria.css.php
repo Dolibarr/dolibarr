@@ -149,17 +149,24 @@ div.fiche
 	float: right;
 <?php
 	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
-	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) 
-	{
+	if (eregi('MSIE 6\.0',$_SERVER['HTTP_USER_AGENT']))
+	{ 
 		// If position is relative, IE6 put the div under the leftmenu, so we force to absolute
 		print "    position: absolute;\n";
 		// If position is abolute, we must not include the leftmenu in value
 		print "    margin-left: 20px;";
 	}
-	else
-	{	
-		// If position is relative we need to include the leftmenu in value
-		print "    margin-left: 180px;";
+	if (eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT']))
+	{ 
+		// If position is relative, IE6 put the div under the leftmenu, so we force to absolute
+		print "    position: absolute;\n";
+		// If position is abolute, we must not include the leftmenu in value
+		print "    margin-left: 20px;";
+	}
+	if (eregi('Firefox',$_SERVER['HTTP_USER_AGENT'])) 
+	{
+		print "    position: absolute;\n";
+   		print "    margin-left: 180px;\n";
 	}
 ?>
     display: block;
@@ -365,17 +372,17 @@ img.login
 /* Barre de gauche                                                                */
 /* ============================================================================== */
 
-a.vmenu:link        { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 1px; }
-a.vmenu:visited     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 1px; }
-a.vmenu:active      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 1px; }
-a.vmenu:hover       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 1px; }
-font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; margin: 1px 1px 1px 1px; }
+a.vmenu:link        { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
+a.vmenu:visited     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
+a.vmenu:active      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
+a.vmenu:hover       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
+font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; margin: 1px 1px 1px 4px; }
 
-a.vsmenu:link       { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 1px; }
-a.vsmenu:visited    { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 1px; }
-a.vsmenu:active     { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); 1px 1px 1px 1px; }
-a.vsmenu:hover      { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); margin: 1px 1px 1px 1px; }
-font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #757575; margin: 1px 1px 1px 1px; }
+a.vsmenu:link       { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 4px; }
+a.vsmenu:visited    { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 4px; }
+a.vsmenu:active     { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); margin: 1px 1px 1px 4px; }
+a.vsmenu:hover      { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); margin: 1px 1px 1px 4px; }
+font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #757575; margin: 1px 1px 1px 4px; }
 
 a.help:link         { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
