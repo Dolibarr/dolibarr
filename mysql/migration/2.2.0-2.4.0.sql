@@ -232,6 +232,8 @@ insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_HIGH',      '
 
 
 alter table llx_societe add column fk_prospectlevel varchar(12) after fournisseur;
+alter table llx_societe modify tva_assuj tinyint        DEFAULT 1;
+
 
 --update llx_actioncomm set datea = datep where datea is null and percent = 100;
 --update llx_actioncomm set datea2 = datea where datea2 is null and percent = 100;
