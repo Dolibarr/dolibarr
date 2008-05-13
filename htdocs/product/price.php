@@ -55,7 +55,8 @@ if ($_POST["action"] == 'update_price' &&
 	{
 		$newprice='';
 		$newpricebase='';
-
+		$newvat='';
+		
 		for($i=1;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
 		{
 			if($_POST["price_".$i])
@@ -65,11 +66,13 @@ if ($_POST["action"] == 'update_price' &&
 				{
 					$newprice=price2num($_POST["price_".$i],'MU');
 					$newpricebase=$_POST["multiprices_base_type_".$i];
+					$newvat=$_POST["tva_tx_".$i];
 				}
 				else
 				{
 				  $product->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
 				  $product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
+				  $product->multiprices_vat_rate["$i"] = $_POST["tva_tx_".$i];
 				}
 			}
 			else
@@ -77,6 +80,7 @@ if ($_POST["action"] == 'update_price' &&
 				$product->multiprices["$i"] = "";
 				$product->multiprices_ttc["$i"] = "";
 				$product->multiprices_base_type["$i"] = "";
+				$product->multiprices_vat_rate["$i"] = "";
 			}
 		}
 	}
@@ -84,9 +88,10 @@ if ($_POST["action"] == 'update_price' &&
 	{
 		$newprice=price2num($_POST["price"],'MU');
 		$newpricebase=$_POST["price_base_type"];
+		$newvat=$_POST["tva_tx"];
 	}
 	
-	if ($product->update_price($product->id, $newprice, $newpricebase, $user) > 0)
+	if ($product->update_price($product->id, $newprice, $newpricebase, $user, $newvat) > 0)
 	{
 		$_GET["action"] = '';
 		$mesg = $langs->trans("RecordSaved");
@@ -170,6 +175,9 @@ else
 	}
 }
 
+// TVA
+print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">'.vatrate($product->tva_tx,true).'</td></tr>';
+
 // Statut
 print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
 print $product->getLibStatut(2);
@@ -214,6 +222,8 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$product->id.'">';
 		print '<table class="border" width="100%">';
+
+		// Price
 		print '<tr><td width="15%">';
 		$text=$langs->trans('SellingPrice');
 		print $html->textwithhelp($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
@@ -230,6 +240,11 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 		print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
 		print '</td></tr>';
 
+		// VAT
+		print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
+		print $html->select_tva("tva_tx",$product->tva_tx,$mysoc,'');
+		print '</td></tr>';
+		
 		print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 		print '</table>';
@@ -258,7 +273,13 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	      }
 	      
 	      print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
-	      print '</td></tr>';
+	      print '</td>';
+
+	    // VAT
+		print '<td width="20%">'.$langs->trans("VATRate").'</td><td>';
+		print $html->select_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'');
+		print '</td></tr>';
+	      
 	      print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
 	      print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
@@ -272,22 +293,22 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 // Liste des evolutions du prix
 if($conf->global->PRODUIT_MULTIPRICES)
 {
-  $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type,";
+  $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx,";
   $sql.= " p.price_level,";
   $sql.= " ".$db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
   $sql.= " FROM ".MAIN_DB_PREFIX."product_price as p, ".MAIN_DB_PREFIX."user as u";
   $sql.= " WHERE fk_product = ".$product->id;
   $sql.= " AND p.fk_user_author = u.rowid ";
-  $sql.= " ORDER BY p.price_level ASC, p.date_price DESC ";
+  $sql.= " ORDER BY p.price_level ASC, p.date_price DESC";
 }
 else
 {
-  $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type,";
+  $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx,";
   $sql.= " ".$db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
   $sql.= " FROM ".MAIN_DB_PREFIX."product_price as p, ".MAIN_DB_PREFIX."user as u";
   $sql.= " WHERE fk_product = ".$product->id;
   $sql.= " AND p.fk_user_author = u.rowid";
-  $sql.= " ORDER BY p.date_price DESC ";
+  $sql.= " ORDER BY p.date_price DESC";
 }
 //$sql .= $db->plimit();
 
@@ -322,10 +343,11 @@ if ($result)
 			print '<td>'.$langs->trans("MultiPriceLevelsName").'</td>';
 		}
 		    
+        print '<td align="center">'.$langs->trans("PriceBase").'</td>';
+		print '<td align="right">'.$langs->trans("VAT").'</td>';
         print '<td align="right">'.$langs->trans("HT").'</td>';
         print '<td align="right">'.$langs->trans("TTC").'</td>';
-        print '<td align="center">'.$langs->trans("PriceBase").'</td>';
-        print '<td>'.$langs->trans("ChangedBy").'</td>';
+        print '<td align="right">'.$langs->trans("ChangedBy").'</td>';
         print '</tr>';
 
         $var=True;
@@ -344,12 +366,13 @@ if ($result)
 				print "<td>".$objp->price_level."</td>";
 			}
 
+			print '<td align="center">'.$langs->trans($objp->price_base_type)."</td>";
+			print '<td align="right">'.vatrate($objp->tva_tx)."</td>";
 			print '<td align="right">'.price($objp->price)."</td>";
 			print '<td align="right">'.price($objp->price_ttc)."</td>";
-			print '<td align="center">'.$langs->trans($objp->price_base_type)."</td>";
 
 			// User
-			print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
+			print '<td align="right"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
 			print "</tr>\n";
 			$i++;
 		}
