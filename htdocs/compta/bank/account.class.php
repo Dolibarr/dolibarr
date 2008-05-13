@@ -163,7 +163,7 @@ class Account extends CommonObject
 	/**
 		\brief     	Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
 		\param		$date			Date operation
-		\param		$oper			1,2,3,4...
+		\param		$oper			1,2,3,4... or TYP,VIR,PRE,LIQ,VAD,CB,CHQ...
 		\param		$label			Descripton
 		\param		$amount			Montant
 		\param		$num_chq		Numero cheque ou virement
@@ -175,7 +175,7 @@ class Account extends CommonObject
 	*/
 	function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user, $emetteur='',$banque='')
 	{
-		// Nettoyage parametres
+		// Clean parameters
 		$emetteur=trim($emetteur);
 		$banque=trim($banque);
 		switch ($oper)
@@ -203,7 +203,7 @@ class Account extends CommonObject
 				break;
 		}
 		
-		// Verification parametres
+		// Check parameters
 		if (! $oper)
 		{
 			$this->error="Account::addline oper not defined";

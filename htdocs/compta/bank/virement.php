@@ -79,13 +79,32 @@ if ($_POST["action"] == 'add')
 		{
 			$db->begin();
 			
-			$bank_line_id_from = $accountfrom->addline($dateo, 'VIR', $label, -1*price2num($amount), '', '', $user);
-			$bank_line_id_to = $accountto->addline($dateo, 'VIR', $label, price2num($amount), '', '', $user);
-	
-	        $result1=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
-	        $result2=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
-	
-			if ($result1 > 0 && $result2 > 0)
+			$error=0;
+			$bank_line_id_from=0;
+			$bank_line_id_to=0;
+			$result=0;
+			
+			// By default, electronic transfert from bank to bank
+			$typefrom='PRE';
+			$typeto='VIR';
+			if ($accountto->courant == 2 || $accountfrom->courant == 2)
+			{
+				// This is transfert of change
+				$typefrom='LIQ';
+				$typeto='LIQ';
+			}
+			
+			if (! $error) $bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1*price2num($amount), '', '', $user);
+			if (! ($bank_line_id_from > 0)) $error++;
+			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+			if (! ($bank_line_id_to > 0)) $error++;
+			
+		    if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+			if (! ($result > 0)) $error++;
+		    if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+			if (! ($result > 0)) $error++;
+		    
+			if (! $error)
 			{
 				$mesg.="<div class=\"ok\">";
 				$mesg.=$langs->trans("TransferFromToDone","<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->monnaie));
