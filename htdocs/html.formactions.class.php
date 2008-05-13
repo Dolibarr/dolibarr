@@ -89,7 +89,7 @@ class FormActions
 					print '<tr '.$bc[$var].'>';
 					print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
 					print '<td>'.dolibarr_print_date($objp->da,'day').'</td>';
-					print '<td>'.$objp->label.'</td>';
+					print '<td>'.dolibarr_trunc($objp->label,32).'</td>';
 					print '<td>'.$objp->login.'</td>';
 					print '</tr>';
 					$i++;
