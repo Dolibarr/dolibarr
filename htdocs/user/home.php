@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/user/home.php
         \brief      Page acceuil de la zone utilisateurs et groupes
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -53,7 +50,7 @@ print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAUser").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
-print $langs->trans("Ref").'</td><td><input class="flat" type="text" name="search_user" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_user" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
 print "</table><br>\n";
 print '</form>';
