@@ -265,7 +265,7 @@ print '</td>';
 print '<td class="liste_titre" align="right">';
 if ($user->rights->ecm->setup)
 {
-	print '<a href="'.DOL_URL_ROOT.'/ecm/docdir?action=create">'.img_picto($langs->trans("ECMNewSection"),'edit_add').'</a>';
+	print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_picto($langs->trans("ECMNewSection"),'edit_add').'</a>';
 }
 else
 {
