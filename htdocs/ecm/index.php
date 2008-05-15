@@ -308,7 +308,7 @@ foreach($rub as $key => $val)
 	print "</td>\n";
 
 	// Description
-	print '<td align="left">'.dolibarr_trunc($val['description'],32).'</td>';
+	print '<td align="left">'.dolibarr_trunc($val['description'],48).'</td>';
 		
 	// Nb of docs
 	//print '<td align="right">'.$obj->cachenbofdoc.'</td>';
