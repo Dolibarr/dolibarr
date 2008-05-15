@@ -32,7 +32,9 @@ if (! $user->rights->mailing->lire || $user->societe_id > 0)
   accessforbidden();
 
 
-$dir=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
+$dirmod=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
+if (defined('DOL_DOCUMENT_ROOT_BIS')) $dirmod2=DOL_DOCUMENT_ROOT_BIS."/includes/modules/mailings";
+
 $mesg = '';
 
 
@@ -59,7 +61,7 @@ if ($_GET["action"] == 'add')
     $modulename=$_GET["module"];
     
     // Chargement de la classe
-    $file = $dir."/".$modulename.".modules.php";
+    $file = $dirmod."/".$modulename.".modules.php";
     $classname = "mailing_".$modulename;
     require_once($file);
     
@@ -88,7 +90,7 @@ if ($_GET["action"] == 'add')
 if ($_GET["action"] == 'clear')
 {
     // Chargement de la classe
-    $file = $dir."/modules_mailings.php";
+    $file = $dirmod."/modules_mailings.php";
     $classname = "MailingTargets";
     require_once($file);
     
@@ -106,7 +108,7 @@ if ($_GET["action"] == 'delete')
     $resql=$db->query($sql);
     if ($resql)
     {
-        $file = $dir."/modules_mailings.php";
+        $file = $dirmod."/modules_mailings.php";
         $classname = "MailingTargets";
         require_once($file);
         
@@ -187,93 +189,100 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         
         clearstatcache();
         
-        $handle=opendir($dir);
+        $listdir=array();
+        $listdir[]=$dirmod;
+        if (! empty($dirmod2)) $listdir[]=$dirmod2;
         
-        $var=True;
-        while (($file = readdir($handle))!==false)
+        foreach ($listdir as $dir)
         {
-            if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-            {
-                if (eregi("(.*)\.modules\.php$",$file,$reg))
-                {
-                    $modulename=$reg[1];
-        			if ($modulename == 'example') continue;
-        			
-                    // Chargement de la classe
-                    $file = $dir."/".$modulename.".modules.php";
-                    $classname = "mailing_".$modulename;
-                    require_once($file);
-        
-                    $obj = new $classname($db);
-
-                    $qualified=1;
-                    foreach ($obj->require_module as $key)
-                    {
-                        if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
-                        {
-                            $qualified=0;
-                            //print "Les prérequis d'activation du module mailing ne sont pas respectés. Il ne sera pas actif";
-                            break;
-                        }
-                    }
-                    
-                    // Si le module mailing est qualifié
-                    if ($qualified)
-                    {
-                        $var = !$var;
-                        print '<tr '.$bc[$var].'>';
-                        
-                        if ($mil->statut == 0) print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST">';
-                        
-                        print '<td>';
-                        if (! $obj->picto) $obj->picto='generic';
-                        print img_object('',$obj->picto).' '.$obj->getDesc();
-                        print '</td>';
-            
-                        /*
-                        print '<td width=\"100\">';
-                        print $modulename;
-                        print "</td>";
-                        */
-                        $nbofrecipient=$obj->getNbOfRecipients();
-                        print '<td align="center">';
-                        if ($nbofrecipient >= 0)
-                        {
-                        	print $nbofrecipient;
-                        }
-                        else
-                        {
-                        	print $langs->trans("Error").' '.img_error($obj->error);
-                        }
-                        print '</td>';
-
-                        print '<td align="center">';
-                        $filter=$obj->formFilter();
-                        if ($filter) print $filter;
-                        else print $langs->trans("None");
-                        print '</td>';
-        
-                        print '<td align="center">';
-                        if ($mil->statut == 0)
-                        {
-                            print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-                        }
-                        else
-                        {
-                            //print $langs->trans("MailNoChangePossible");
-                            print "&nbsp;";
-                        }
-                        print '</td>';
-
-                        if ($mil->statut == 0) print '</form>';
-                        
-                        print "</tr>\n";
-                    }
-                }
-            }
+	        $handle=opendir($dir);
+	        
+	        $var=True;
+	        while (($file = readdir($handle))!==false)
+	        {
+	            if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+	            {
+	                if (eregi("(.*)\.modules\.php$",$file,$reg))
+	                {
+	                    $modulename=$reg[1];
+	        			if ($modulename == 'example') continue;
+	        			
+	                    // Chargement de la classe
+	                    $file = $dir."/".$modulename.".modules.php";
+	                    $classname = "mailing_".$modulename;
+	                    require_once($file);
+	        
+	                    $obj = new $classname($db);
+	
+	                    $qualified=1;
+	                    foreach ($obj->require_module as $key)
+	                    {
+	                        if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
+	                        {
+	                            $qualified=0;
+	                            //print "Les prérequis d'activation du module mailing ne sont pas respectés. Il ne sera pas actif";
+	                            break;
+	                        }
+	                    }
+	                    
+	                    // Si le module mailing est qualifié
+	                    if ($qualified)
+	                    {
+	                        $var = !$var;
+	                        print '<tr '.$bc[$var].'>';
+	                        
+	                        if ($mil->statut == 0) print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST">';
+	                        
+	                        print '<td>';
+	                        if (! $obj->picto) $obj->picto='generic';
+	                        print img_object('',$obj->picto).' '.$obj->getDesc();
+	                        print '</td>';
+	            
+	                        /*
+	                        print '<td width=\"100\">';
+	                        print $modulename;
+	                        print "</td>";
+	                        */
+	                        $nbofrecipient=$obj->getNbOfRecipients();
+	                        print '<td align="center">';
+	                        if ($nbofrecipient >= 0)
+	                        {
+	                        	print $nbofrecipient;
+	                        }
+	                        else
+	                        {
+	                        	print $langs->trans("Error").' '.img_error($obj->error);
+	                        }
+	                        print '</td>';
+	
+	                        print '<td align="center">';
+	                        $filter=$obj->formFilter();
+	                        if ($filter) print $filter;
+	                        else print $langs->trans("None");
+	                        print '</td>';
+	        
+	                        print '<td align="center">';
+	                        if ($mil->statut == 0)
+	                        {
+	                            print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+	                        }
+	                        else
+	                        {
+	                            //print $langs->trans("MailNoChangePossible");
+	                            print "&nbsp;";
+	                        }
+	                        print '</td>';
+	
+	                        if ($mil->statut == 0) print '</form>';
+	                        
+	                        print "</tr>\n";
+	                    }
+	                }
+	            }
+	        }
+	        closedir($handle);
         }
-        closedir($handle);
-
+        
         print '</table>';
 		print '<br>';
 		
