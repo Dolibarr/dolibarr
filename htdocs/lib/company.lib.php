@@ -378,7 +378,7 @@ function show_actions_done($conf,$langs,$db,$objsoc)
 	
 	    $sql = "SELECT a.id, a.label,";
 	    $sql.= " ".$db->pdate("a.datep")." as dp,";
-	    $sql.= " ".$db->pdate("a.datea")." as da,";
+	    $sql.= " ".$db->pdate("a.datep2")." as dp2,";
 	    $sql.= " a.percent,";
 	    $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
 	    $sql.= " c.code as acode, c.libelle,";
@@ -389,7 +389,7 @@ function show_actions_done($conf,$langs,$db,$objsoc)
 	    $sql.= " WHERE a.fk_soc = ".$objsoc->id;
 	    $sql.= " AND u.rowid = a.fk_user_author";
 	    $sql.= " AND c.id=a.fk_action AND a.percent = 100";
-	    $sql.= " ORDER BY a.datea DESC, a.id DESC";
+	    $sql.= " ORDER BY a.datep2 DESC, a.id DESC";
 	
 		dolibarr_syslog("comm/fiche.php sql=".$sql);
 	    $result=$db->query($sql);
@@ -409,12 +409,12 @@ function show_actions_done($conf,$langs,$db,$objsoc)
 	            print "<tr $bc[$var]>";
 	
 	            // Champ date
-                print '<td width="30" align="center">'.strftime("%Y",$obj->dp)."</td>\n";
-                $oldyear = strftime("%Y",$obj->dp);
-                print '<td width="30" align="center">'.strftime("%b",$obj->dp)."</td>\n";
-                $oldmonth = strftime("%Y%b",$obj->dp);
-	            print '<td width="20">'.strftime("%d",$obj->dp)."</td>\n";
-	            print '<td width="30">'.strftime("%H:%M",$obj->dp)."</td>\n";
+                print '<td width="30" align="center">'.strftime("%Y",$obj->dp2)."</td>\n";
+                $oldyear = strftime("%Y",$obj->dp2);
+                print '<td width="30" align="center">'.strftime("%b",$obj->dp2)."</td>\n";
+                $oldmonth = strftime("%Y%b",$obj->dp2);
+	            print '<td width="20">'.strftime("%d",$obj->dp2)."</td>\n";
+	            print '<td width="30">'.strftime("%H:%M",$obj->dp2)."</td>\n";
 	
 				// Picto
 	            print '<td width="16">&nbsp;</td>';
