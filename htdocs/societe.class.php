@@ -470,7 +470,7 @@ class Societe extends CommonObject
 		global $conf;
 		
 		// Init data for telephonie module
-		if ($this->telephonie->enabled && $user && $user->id)
+		if ($conf->telephonie->enabled && $user && $user->id)
 		{
 			/* Lecture des permissions */
 			$sql = "SELECT p.pread, p.pwrite, p.pperms";
