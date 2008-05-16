@@ -80,26 +80,48 @@ $formfile = new FormFile($db);
  
 if ($action=='selectfield')
 { 
-    $array_selected[$_GET["field"]]=sizeof($array_selected)+1;
-    //print_r($array_selected);
-    $_SESSION["export_selected_fields"]=$array_selected;
+    if ($_GET["field"]=='all')
+    {
+		$fieldsarray=$objexport->array_export_alias[0];
+		foreach($fieldsarray as $key=>$val)
+		{
+			if (! empty($array_selected[$key])) continue;		// If already selected, select next
+			$array_selected[$key]=sizeof($array_selected)+1;
+		    //print_r($array_selected);
+		    $_SESSION["export_selected_fields"]=$array_selected;
+		}
+    }
+    else
+    {
+		$array_selected[$_GET["field"]]=sizeof($array_selected)+1;
+	    //print_r($array_selected);
+	    $_SESSION["export_selected_fields"]=$array_selected;
+    }
+    
 }
 if ($action=='unselectfield')
 { 
-    unset($array_selected[$_GET["field"]]);
-    // Renumerote champs de array_selected (de 1 � nb_elements)
-    asort($array_selected);
-    $i=0;
-    $array_selected_save=$array_selected;
-    foreach($array_selected as $code=>$value)
+    if ($_GET["field"]=='all')
     {
-        $i++;
-        $array_selected[$code]=$i;
-        //print "x $code x $i y<br>";
+		$array_selected=array();
+		$_SESSION["export_selected_fields"]=$array_selected;		
     }
-    $_SESSION["export_selected_fields"]=$array_selected;
+    else
+    {	
+	    unset($array_selected[$_GET["field"]]);
+	    // Renumber fields of array_selected (from 1 to nb_elements)
+	    asort($array_selected);
+	    $i=0;
+	    $array_selected_save=$array_selected;
+	    foreach($array_selected as $code=>$value)
+	    {
+	        $i++;
+	        $array_selected[$code]=$i;
+	        //print "x $code x $i y<br>";
+	    }
+	    $_SESSION["export_selected_fields"]=$array_selected;
+    }
 }
-
 if ($action=='downfield' || $action=='upfield')
 { 
     $pos=$array_selected[$_GET["field"]];
@@ -297,14 +319,14 @@ if ($step == 2 && $datatoexport)
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de donn�es � exporter
+    // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>'.$objexport->array_export_label[0].'</td></tr>';
     
     print '</table>';
     print '<br>';
     
-    // Liste d�roulante des mod�les d'export
+    // Liste deroulante des modeles d'export
     print '<form action="export.php" method="post">';
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="2">';
@@ -322,7 +344,11 @@ if ($step == 2 && $datatoexport)
     print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
     print '<td>'.$langs->trans("ExportableFields").'</td>';
-    print '<td width="12">&nbsp;</td>';
+    print '<td width="12" align="middle">';
+    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
+    print '/';
+    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
+    print '</td>';
     print '<td width="44%">'.$langs->trans("ExportedFields").'</td>';
     print '</tr>';
 
@@ -354,17 +380,17 @@ if ($step == 2 && $datatoexport)
         print '<td nowrap="nowrap">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
         if ((isset($array_selected[$code]) && $array_selected[$code]) || $modelchoice == 1)
         {
-            // Champ s�lectionn�
+            // Selected fields
             print '<td>&nbsp;</td>';
-            print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
+            print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
             $bit=1;
         }
         else
         {
-        	// Champ non s�lectionn�
+        	// Fields not selected
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
-            print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
+            print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
             print '<td>&nbsp;</td>';
             $bit=0;
         }
@@ -388,6 +414,10 @@ if ($step == 2 && $datatoexport)
     if (sizeof($array_selected))
 	{
 		print '<a class="butAction" href="export.php?step=3&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+	}
+	else
+	{
+		print '<a class="butActionRefused" href="#">'.$langs->trans("NextStep").'</a>';
 	}
 	
     print '</div>';
