@@ -112,7 +112,7 @@ if ($action == 'add_paiement')
       $paiement->amounts      = $amounts;   // Array of amounts
       $paiement->paiementid   = $_POST['paiementid'];
       $paiement->num_paiement = $_POST['num_paiement'];
-      $paiement->note         = mysql_real_escape_string($_POST['comment']);
+      $paiement->note         = $_POST['comment'];
       
       $paiement_id = $paiement->create($user);
       if ($paiement_id > 0)
