@@ -313,7 +313,7 @@ if ($_POST["action"] == "set")
 			{
 				if ($db->connected)
 				{
-					$result=$db->DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass);
+					$result=$db->DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name);
 
 					if ($result > 0)
 					{

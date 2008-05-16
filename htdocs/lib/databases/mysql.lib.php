@@ -840,13 +840,14 @@ class DoliDb
 	}
 	
 	/**
-			\brief      Crée un utilisateur
+			\brief      Create a user
 			\param	    dolibarr_main_db_host 		Ip serveur
 			\param	    dolibarr_main_db_user 		Nom user à créer
 			\param	    dolibarr_main_db_pass 		Mot de passe user à créer
+			\param		dolibarr_main_db_name		Database name where user must be granted
 			\return	    int							<0 si KO, >=0 si OK
 	*/
-	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass)
+	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
 		$sql = "INSERT INTO user ";
 		$sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
