@@ -751,7 +751,7 @@ class Contact extends CommonObject
 		$ret='';
 		if ($option && $this->civilite_id)
 		{	
-			if ($langs->trans("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->trans("Civility".$this->civilite_id).' ';
+			if ($langs->transnoentities("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentities("Civility".$this->civilite_id).' ';
 			else $ret.=$this->civilite_id.' ';
 		}
 		if ($this->name)      $ret.=$this->name.' ';
