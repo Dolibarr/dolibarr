@@ -54,11 +54,10 @@ IV - WHAT DOLIBARR CAN DO
 
 Main modules/features:
 - Products and services catalog
-- Customers, Suppliers or Prospects directory
+- Customers, Prospects or Suppliers directory
+- Address book
 - Stock management
 - Bank accounts management
-- Contacts directory
-- Commercial actions management
 - Orders management with PDF export
 - Commercial proposals management with PDF export
 - Contracts management
@@ -66,39 +65,46 @@ Main modules/features:
 - Payments management
 - Standing orders management
 - Shipping management
+- ECM (Electronic Content Management)
 - EMailings
-- Management for fundation members
-- Donations management
+- Agenda with ical,vcal export for third tools integration
+- Management of fundation members
+- Donation management
 
 Other modules:
 - Bookmarks management
-- Can reports Dolibarr events inside Webcalendar
-- Reporting
+- Can reports Dolibarr events inside Webcalendar or Phenix
 - Data export tools
 - LDAP connectivity
+- Third parties or products categories 
+- ClickToDial phone numbers
+- RSS
 
 Miscellanous:
 - Mutli-user, with several permissions levels for each feature.
 - Serveral menu managers (can be used by internal users, as a back-office,
   with a particular menu, or by external users, as a front-office, with
   another menu and permissions).
-- Very user friendly and easy to use
+- Very user friendly and easy to use.
 - Optional WYSIWYG forms, optional Ajax forms.
 - Several skins.
-- Code is highly customizable (a lot of use of modules).
+- Code is highly customizable (a lot of use of modules and submodules).
 - Works with Mysql 3.1 or higher, experimental support for PostgreSql.
 - Works with PHP 4.1 or higher.
 - An easy to understand and maintain code (PHP with no heavy frameworks).
 - A trigger architecture to allow you to make Dolibarr business events run
   PHP code to update your own information system.
+- "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM 
+  called "Non Perçue Récupérable").
 
 
 
 V - WHAT DOLIBARR CAN'T DO YET (TODO LIST)
 ------------------------------------------
 This is feature Dolibarr does not support completely yet:
-- "NPR VAT Rate" (French particularity for managing VAT in DOM-TOM 
-  called "Non Perçue Récupérable").
 - Accountancy.
 - Dolibarr can manage only one currency.
+- Dolibarr does not support the double Canadian Tax.
 - Dolibarr does not make coffee (not yet).
+- The module to manage stock is not stable yet.
+
