@@ -371,10 +371,11 @@ class Adherent extends CommonObject
 		
 		// Insertion membre
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-		$sql.= " (datec,login)";
+		$sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid)";
 		$sql.= " VALUES (";
 		$sql.= " '".$this->db->idate($this->datec)."',";
-		$sql.= " '".addslashes($this->login)."'";
+		$sql.= " '".addslashes($this->login)."',";
+		$sql.= " '".$user->id."',null,null";
 		$sql.= ")";
 
 		dolibarr_syslog("Adherent::create sql=".$sql);

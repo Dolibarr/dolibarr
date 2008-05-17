@@ -53,7 +53,7 @@ create table llx_adherent
   datec            datetime,  -- date de creation
   tms              timestamp, -- date de modification
   fk_user_author   integer NOT NULL,
-  fk_user_mod      integer NOT NULL,
-  fk_user_valid    integer NOT NULL, 
+  fk_user_mod      integer,
+  fk_user_valid    integer, 
   UNIQUE INDEX(login)
 )type=innodb;
