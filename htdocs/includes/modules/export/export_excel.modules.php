@@ -28,6 +28,7 @@
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/export/modules_export.php");
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_workbookbig.inc.php");
 require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
+require_once(PHP_WRITEEXCEL_PATH."/functions.writeexcel_utility.inc.php");
 
 
 /**
@@ -123,7 +124,7 @@ class ExportExcel extends ModeleExports
 
         // $this->worksheet->set_column(0, 50, 18);
 
-        return $ret;
+		return $ret;
     }
 
 
@@ -136,12 +137,23 @@ class ExportExcel extends ModeleExports
     function write_title($array_export_fields_label,$array_selected_sorted,$langs)
     {
     	global $langs;
-        $this->col=0;
+
+		// Create a format for the column headings
+		$formatheader =$this->workbook->addformat();
+		$formatheader->set_bold();
+		$formatheader->set_color('blue');
+		//$formatheader->set_size(12);
+		//$formatheader->set_font("Courier New");
+		//$formatheader->set_align('center');
+    	
+		//$this->worksheet->insert_bitmap('A1', 'php.bmp', 16, 8);
+		
+		$this->col=0;
         foreach($array_selected_sorted as $code => $value)
         {
             $alias=$array_export_fields_label[$code];
             //print "dd".$alias;
-            $this->worksheet->write($this->row, $this->col, $langs->transnoentities($alias));
+            $this->worksheet->write($this->row, $this->col, $langs->transnoentities($alias), $formatheader);
             $this->col++;
         }
         $this->row++;
@@ -153,6 +165,15 @@ class ExportExcel extends ModeleExports
     {
     	global $langs;
 
+		$formatdate=$this->workbook->addformat();
+    	$formatdate->set_num_format('yyyy-mm-dd');
+		//$formatdate->set_num_format(0x0f);
+		
+		$formatdatehour=$this->workbook->addformat();
+    	$formatdatehour->set_num_format('yyyy-mm-dd hh:mm:ss');
+		//$formatdatehour->set_num_format(0x0f);
+    	
+    	
       $this->col=0;
       foreach($array_selected_sorted as $code => $value)
       {
@@ -165,7 +186,25 @@ class ExportExcel extends ModeleExports
         {
         	$newvalue=$langs->transnoentities($reg[1]);
         }       
-        $this->worksheet->write($this->row, $this->col, $newvalue);
+        
+        if (eregi('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',$newvalue))
+        {
+        	$arrayvalue=split('[\.,]',xl_parse_date($newvalue));
+			//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
+        	$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
+			$this->worksheet->write($this->row, $this->col, $newvalue, $formatdate);
+        }
+        elseif (eregi('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]$',$newvalue))
+        {
+        	$arrayvalue=split('[\.,]',xl_parse_date($newvalue));
+			//print "x".$arrayvalue[0].'.'.strval($arrayvalue[1]).'<br>';
+        	$newvalue=strval($arrayvalue[0]).'.'.strval($arrayvalue[1]);	// $newvalue=strval(36892.521); directly does not work because . will be convert into , later
+			$this->worksheet->write($this->row, $this->col, $newvalue, $formatdatehour);
+        }
+        else
+        {
+        	$this->worksheet->write($this->row, $this->col, $newvalue);
+        }
         $this->col++;
       }
       $this->row++;
