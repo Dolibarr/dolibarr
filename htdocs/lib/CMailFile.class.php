@@ -329,7 +329,9 @@ class CMailFile
     */
     function write_body($msgtext, $filename_list)
     {
-        $out='';
+        global $conf;
+        
+    	$out='';
         
         if ($this->atleastonefile)
         {
