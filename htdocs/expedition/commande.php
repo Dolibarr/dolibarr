@@ -16,10 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Id$
- * $Source$
  */
 
 // Code identique a /expedition/fiche.php
@@ -27,7 +23,7 @@
 /**
    \file       htdocs/expedition/commande.php
    \ingroup    expedition
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -396,6 +392,7 @@ if ($_GET["id"] > 0)
     /*
      * Boutons Actions
      */
+    
     if ($user->societe_id == 0)
     {
     	print '<div class="tabsAction">';
@@ -403,10 +400,11 @@ if ($_GET["id"] > 0)
       // Bouton expedier sans gestion des stocks
       if (! $conf->stock->enabled && $reste_a_livrer_total > 0 && ! $commande->brouillon && $user->rights->expedition->creer)
       {
-      	print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;object_id='.$_GET["id"].'">'.$langs->trans("NewSending").'</a>';
+      	print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;origin=commande&amp;object_id='.$_GET["id"].'">'.$langs->trans("NewSending").'</a>';
       } 
       print "</div>";
     }
+    
     
     print '<table width="100%"><tr><td width="50%" valign="top">';
     
@@ -435,7 +433,7 @@ if ($_GET["id"] > 0)
     print '<input type="hidden" name="action" value="create">';
     print '<input type="hidden" name="id" value="'.$commande->id.'">';
     print '<input type="hidden" name="origin" value="commande">';
-    print '<input type="hidden" name="origin_id" value="'.$commande->id.'">';
+    print '<input type="hidden" name="object_id" value="'.$commande->id.'">';
     print '<table class="border" width="100%">';
 
     $entrepot = new Entrepot($db);

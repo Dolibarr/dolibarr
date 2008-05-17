@@ -50,7 +50,7 @@ if ($_GET["action"] == 'specimen')
 
 	$exp = new Expedition($db);
 	$exp->initAsSpecimen();
-	$exp->fetch_commande();
+	//$exp->fetch_commande();
 
 	// Charge le modele
 	$dir = DOL_DOCUMENT_ROOT . "/expedition/mods/pdf/";

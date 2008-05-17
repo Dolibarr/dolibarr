@@ -17,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 // Code identique a /expedition/commande.php
@@ -27,7 +25,7 @@
         \file       htdocs/expedition/fiche.php
         \ingroup    expedition
         \brief      Fiche descriptive d'une expedition
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -56,8 +54,8 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-$origin     = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];
-$origin_id  = $_GET["origin_id"]?$_GET["origin_id"]:$_POST["origin_id"];
+$origin     = $_GET["origin"]?$_GET["origin"]:$_POST["origin"];				// Example: commande, propal
+$origin_id  = $_GET["object_id"]?$_GET["object_id"]:$_POST["object_id"];	// Id of order or propal
 
 /*
  * Actions
@@ -81,6 +79,7 @@ if ($_POST["action"] == 'add')
   $object = new $class($db);
   $object->fetch($expedition->origin_id);
   //$object->fetch_lines();
+
   
   $expedition->socid  = $object->socid;
   
@@ -188,239 +187,246 @@ if ($_GET["action"] == 'create')
 {
 
 	print_titre($langs->trans("CreateASending"));
-
+	if (! $origin)
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorBadParameters").'</div>';	
+	}
+	
 	if ($mesg)
 	{
 		print $mesg.'<br>';
 	}
 
-  $class = ucfirst($origin);
-
-	$object = new $class($db);
-	$object->loadExpeditions();
-
-	if ( $object->fetch($origin_id))
+	if ($origin)
 	{
-		$soc = new Societe($db);
-		$soc->fetch($object->socid);
-
-		$author = new User($db);
-		$author->id = $object->user_author_id;
-		$author->fetch();
-
-		$entrepot = new Entrepot($db);
-
-		/*
-		 *   Document source
-		 */
-		print '<form action="fiche.php" method="post">';
-		print '<input type="hidden" name="action" value="add">';
-		print '<input type="hidden" name="origin" value="'.$origin.'">';
-		print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
-		if ($_GET["entrepot_id"])
+	  	$class = ucfirst($origin);
+	
+		$object = new $class($db);
+		$object->loadExpeditions();
+	
+		if ( $object->fetch($origin_id))
 		{
-			print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
-		}
-
-		print '<table class="border" width="100%">';
-
-		// Ref
-		print '<tr><td>';
-		if ($conf->commande->enabled)
-		{
-			print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$object->ref;
+			$soc = new Societe($db);
+			$soc->fetch($object->socid);
+	
+			$author = new User($db);
+			$author->id = $object->user_author_id;
+			$author->fetch();
+	
+			if ($conf->stock->enabled) $entrepot = new Entrepot($db);
+	
+			/*
+			 *   Document source
+			 */
+			print '<form action="fiche.php" method="post">';
+			print '<input type="hidden" name="action" value="add">';
+			print '<input type="hidden" name="origin" value="'.$origin.'">';
+			print '<input type="hidden" name="object_id" value="'.$object->id.'">';
+			if ($_GET["entrepot_id"])
+			{
+				print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
+			}
+	
+			print '<table class="border" width="100%">';
+	
+			// Ref
+			print '<tr><td>';
+			if ($conf->commande->enabled)
+			{
+				print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$object->ref;
+			}
+			else
+			{
+				print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/fiche.php?propalid='.$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$object->ref;
+			}
+			print '</a></td>';
+			print "</tr>\n";
+	
+			// Ref client
+			print '<tr><td>';
+			print $langs->trans('RefCustomer').'</td><td colspan="3">';
+			print $object->ref_client;
+			print '</td>';
+			print '</tr>';
+	
+			// Tiers
+			print '<tr><td>'.$langs->trans('Company').'</td>';
+			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+			print '</tr>';
+	
+			// Date
+			print "<tr><td>".$langs->trans("Date")."</td>";
+			print '<td colspan="3">'.dolibarr_print_date($object->date,"day")."</td></tr>\n";
+	
+			// Entrepot (si forcé)
+			if ($conf->stock->enabled && $_GET["entrepot_id"])
+			{
+				print '<tr><td>'.$langs->trans("Warehouse").'</td>';
+				print '<td colspan="3">';
+				$ents = $entrepot->list_array();
+				print '<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
+				print '</td></tr>';
+			}
+	
+			if ($object->note && ! $user->societe_id)
+			{
+				print '<tr><td colspan="3">'.$langs->trans("NotePrivate").': '.nl2br($object->note)."</td></tr>";
+			}
+	
+			print "</table>";
+	
+			/*
+			* Lignes de commandes
+			*
+			*/
+			print '<br><table class="noborder" width="100%">';
+	
+			//$lignes = $object->fetch_lines(1);
+			$numAsked = sizeof($object->lignes);
+	
+			/* Lecture des expeditions déjà effectuées */
+			$object->loadExpeditions();
+	
+			if ($numAsked)
+			{
+				print '<tr class="liste_titre">';
+				print '<td>'.$langs->trans("Description").'</td>';
+				print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
+				print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
+				print '<td align="center">'.$langs->trans("QtyToShip").'</td>';
+				if ($conf->stock->enabled)
+				{
+					if ($_GET["entrepot_id"])
+					{
+						print '<td align="right">'.$langs->trans("Stock").'</td>';
+					}
+					else
+					{
+						print '<td align="left">'.$langs->trans("Warehouse").'</td>';
+					}
+				}
+				print "</tr>\n";
+			}
+	
+			$var=true;
+			$indiceAsked = 0;
+			while ($indiceAsked < $numAsked)
+			{
+				$ligne = $object->lignes[$indiceAsked];
+				$var=!$var;
+				print "<tr $bc[$var]>\n";
+				if ($ligne->fk_product > 0)
+				{
+					$product = new Product($db);
+					$product->fetch($ligne->fk_product);
+	
+					print '<td>';
+					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
+					if ($ligne->description) print nl2br($ligne->description);
+					print '</td>';
+				}
+				else
+				{
+					print "<td>".nl2br($ligne->description)."</td>\n";
+				}
+	
+				print '<td align="center">'.$ligne->qty.'</td>';
+	
+				print '<td align="center">';
+				$quantityDelivered = $object->expeditions[$ligne->fk_product];
+				print $quantityDelivered;
+				print '</td>';
+	
+				$quantityAsked = $ligne->qty;
+				$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
+	
+				if ($conf->stock->enabled)
+				{
+					$defaultqty=0;
+					if ($_GET["entrepot_id"])
+					{
+						$stock = $product->stock_entrepot[$_GET["entrepot_id"]];
+						$stock+=0;  // Convertit en numérique
+						$defaultqty=min($quantityToBeDelivered, $stock);
+					}
+	
+					// Quantité à livrer
+					print '<td align="center">';
+					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$ligne->id.'">';
+					print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
+					print '</td>';
+	
+					// Stock
+					if ($_GET["entrepot_id"])
+					{
+						print '<td align="right">'.$stock;
+						if ($stock < $quantityToBeDelivered)
+						{
+							print ' '.img_warning($langs->trans("StockTooLow"));
+						}
+						print '</td>';
+					}
+					else
+					{
+						$array=array();
+	
+				        $sql = "SELECT e.rowid, e.label, ps.reel";
+				        $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."entrepot as e";
+				        $sql.= " WHERE ps.fk_entrepot = e.rowid AND fk_product = '".$product->id."'";
+				        $result = $db->query($sql) ;
+				        if ($result)
+				        {
+				            $num = $db->num_rows($result);
+				            $i=0;
+				            if ($num > 0)
+				            {
+				                while ($i < $num)
+				                {
+				                    $obj = $db->fetch_object($result);
+				                    $array[$obj->rowid] = $obj->label.' ('.$obj->reel.')';
+				                    $i++;
+				                }
+				            }
+				            $db->free($result);
+				        }
+				        else
+				        {
+				            $this->error=$db->error();
+				            return -1;
+				        }
+	
+						print '<td align="left">';
+						$html->select_array('entl'.$i,$array,'',1,0,0);
+						print '</td>';
+					}
+				}
+				else
+				{
+					// Quantité à livrer
+					print '<td align="center">';
+					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$ligne->id.'">';
+					print '<input name="qtyl'.$indiceAsked.'" type="text" size="6" value="'.$quantityToBeDelivered.'">';
+					print '</td>';
+				}
+	
+				print "</tr>\n";
+	
+				$indiceAsked++;
+				$var=!$var;
+			}
+	
+			/*
+			*
+			*/
+	
+			print '<tr><td align="center" colspan="5"><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+			print "</table>";
+			print '</form>';
 		}
 		else
 		{
-			print $langs->trans("RefProposal").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/comm/fiche.php?propalid='.$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$object->ref;
+			dolibarr_print_error($db);
 		}
-		print '</a></td>';
-		print "</tr>\n";
-
-		// Ref client
-		print '<tr><td>';
-		print $langs->trans('RefCustomer').'</td><td colspan="3">';
-		print $object->ref_client;
-		print '</td>';
-		print '</tr>';
-
-		// Tiers
-		print '<tr><td>'.$langs->trans('Company').'</td>';
-		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
-		print '</tr>';
-
-		// Date
-		print "<tr><td>".$langs->trans("Date")."</td>";
-		print '<td colspan="3">'.dolibarr_print_date($object->date,"day")."</td></tr>\n";
-
-		// Entrepot (si forcé)
-		if ($conf->stock->enabled && $_GET["entrepot_id"])
-		{
-			print '<tr><td>'.$langs->trans("Warehouse").'</td>';
-			print '<td colspan="3">';
-			$ents = $entrepot->list_array();
-			print '<a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$_GET["entrepot_id"].'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$ents[$_GET["entrepot_id"]].'</a>';
-			print '</td></tr>';
-		}
-
-		if ($object->note && ! $user->societe_id)
-		{
-			print '<tr><td colspan="3">'.$langs->trans("NotePrivate").': '.nl2br($object->note)."</td></tr>";
-		}
-
-		print "</table>";
-
-		/*
-		* Lignes de commandes
-		*
-		*/
-		print '<br><table class="noborder" width="100%">';
-
-		//$lignes = $object->fetch_lines(1);
-		$numAsked = sizeof($object->lignes);
-
-		/* Lecture des expeditions déjà effectuées */
-		$object->loadExpeditions();
-
-		if ($numAsked)
-		{
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Description").'</td>';
-			print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-			print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-			print '<td align="center">'.$langs->trans("QtyToShip").'</td>';
-			if ($conf->stock->enabled)
-			{
-				if ($_GET["entrepot_id"])
-				{
-					print '<td align="right">'.$langs->trans("Stock").'</td>';
-				}
-				else
-				{
-					print '<td align="left">'.$langs->trans("Warehouse").'</td>';
-				}
-			}
-			print "</tr>\n";
-		}
-
-		$var=true;
-		$indiceAsked = 0;
-		while ($indiceAsked < $numAsked)
-		{
-			$ligne = $object->lignes[$indiceAsked];
-			$var=!$var;
-			print "<tr $bc[$var]>\n";
-			if ($ligne->fk_product > 0)
-			{
-				$product = new Product($db);
-				$product->fetch($ligne->fk_product);
-
-				print '<td>';
-				print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-				if ($ligne->description) print nl2br($ligne->description);
-				print '</td>';
-			}
-			else
-			{
-				print "<td>".nl2br($ligne->description)."</td>\n";
-			}
-
-			print '<td align="center">'.$ligne->qty.'</td>';
-
-			print '<td align="center">';
-			$quantityDelivered = $object->expeditions[$ligne->fk_product];
-			print $quantityDelivered;
-			print '</td>';
-
-			$quantityAsked = $ligne->qty;
-			$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
-
-			if ($conf->stock->enabled)
-			{
-				$defaultqty=0;
-				if ($_GET["entrepot_id"])
-				{
-					$stock = $product->stock_entrepot[$_GET["entrepot_id"]];
-					$stock+=0;  // Convertit en numérique
-					$defaultqty=min($quantityToBeDelivered, $stock);
-				}
-
-				// Quantité à livrer
-				print '<td align="center">';
-				print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$ligne->id.'">';
-				print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
-				print '</td>';
-
-				// Stock
-				if ($_GET["entrepot_id"])
-				{
-					print '<td align="right">'.$stock;
-					if ($stock < $quantityToBeDelivered)
-					{
-						print ' '.img_warning($langs->trans("StockTooLow"));
-					}
-					print '</td>';
-				}
-				else
-				{
-					$array=array();
-
-			        $sql = "SELECT e.rowid, e.label, ps.reel";
-			        $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."entrepot as e";
-			        $sql.= " WHERE ps.fk_entrepot = e.rowid AND fk_product = '".$product->id."'";
-			        $result = $db->query($sql) ;
-			        if ($result)
-			        {
-			            $num = $db->num_rows($result);
-			            $i=0;
-			            if ($num > 0)
-			            {
-			                while ($i < $num)
-			                {
-			                    $obj = $db->fetch_object($result);
-			                    $array[$obj->rowid] = $obj->label.' ('.$obj->reel.')';
-			                    $i++;
-			                }
-			            }
-			            $db->free($result);
-			        }
-			        else
-			        {
-			            $this->error=$db->error();
-			            return -1;
-			        }
-
-					print '<td align="left">';
-					$html->select_array('entl'.$i,$array,'',1,0,0);
-					print '</td>';
-				}
-			}
-			else
-			{
-				// Quantité à livrer
-				print '<td align="center">';
-				print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$ligne->id.'">';
-				print '<input name="qtyl'.$indiceAsked.'" type="text" size="6" value="'.$quantityToBeDelivered.'">';
-				print '</td>';
-			}
-
-			print "</tr>\n";
-
-			$indiceAsked++;
-			$var=!$var;
-		}
-
-		/*
-		*
-		*/
-
-		print '<tr><td align="center" colspan="5"><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-		print "</table>";
-		print '</form>';
-	}
-	else
-	{
-		dolibarr_print_error($db);
 	}
 }
 else

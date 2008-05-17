@@ -87,10 +87,10 @@ class Expedition extends CommonObject
     
     $this->db->begin();
     
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (date_creation, fk_user_author, date_expedition";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (ref, date_creation, fk_user_author, date_expedition";
     $sql.= ", fk_soc";
     $sql.= ")";
-    $sql.= " VALUES (now(), $user->id, ".$this->db->idate($this->date_expedition);
+    $sql.= " VALUES ('(PROV)', now(), $user->id, ".$this->db->idate($this->date_expedition);
     $sql.= ", ".$this->socid;
     $sql.= ")";
     
@@ -105,13 +105,13 @@ class Expedition extends CommonObject
         // Insertion des lignes
         for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
         {
-        	if (! $this->create_line($this->lignes[$i]->entrepot_id, $this->lignes[$i]->origin_line_id, $this->lignes[$i]->qty))
+        	if (! $this->create_line($this->lignes[$i]->entrepot_id, $this->lignes[$i]->origin_line_id, $this->lignes[$i]->qty) > 0)
           {
           	$error++;
           }
         }
         
-        if ($this->id && $this->origin_id)
+        if (! $error && $this->id && $this->origin_id)
         {
         	if ($conf->commande->enabled)
         	{
@@ -126,10 +126,10 @@ class Expedition extends CommonObject
         		{
         			$error++;
         		}
-	    		}
-	    		else
-	    		{
-	    			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'pr_exp (fk_expedition, fk_propal) VALUES ('.$this->id.','.$this->origin_id.')';
+	    	}
+	    	else
+	    	{
+	    		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'pr_exp (fk_expedition, fk_propal) VALUES ('.$this->id.','.$this->origin_id.')';
         		if (!$this->db->query($sql))
         		{
         			$error++;
@@ -142,9 +142,9 @@ class Expedition extends CommonObject
         			$error++;
         		}
         	}
-	    	}
+	    }
         
-        if ($error==0)
+        if (! $error)
         {
         	$this->db->commit();
         	return $this->id;
@@ -152,7 +152,7 @@ class Expedition extends CommonObject
         else
         {
         	$error++;
-          $this->error=$this->db->error()." - sql=$sql";
+          $this->error=$this->db->lasterror()." - sql=$sql";
           $this->db->rollback();
           return -3;
         }
@@ -160,7 +160,7 @@ class Expedition extends CommonObject
       else
       {
       	$error++;
-        $this->error=$this->db->error()." - sql=$sql";
+        $this->error=$this->db->lasterror()." - sql=$sql";
         $this->db->rollback();
         return -2;
       }
@@ -183,17 +183,15 @@ class Expedition extends CommonObject
   	$error = 0;
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (fk_expedition, fk_entrepot, fk_origin_line, qty)";
-    $sql .= " VALUES (".$this->id.", ".$entrepot_id.", ".$origin_line_id.", ".$qty.")";
-    
-    if (! $this->db->query($sql) )
+    $sql .= " VALUES (".$this->id.", ".($entrepot_id?$entrepot_id:'null').", ".$origin_line_id.", ".$qty.")";
+    //print 'x'.$sql;
+    if (! $this->db->query($sql))
     {
     	$error++;
     }
 
-    if ($error == 0 )
-    {
-    	return 1;
-    }
+    if (! $error) return 1;
+    else return -1;
   }
 
 	/** 
@@ -640,6 +638,11 @@ class Expedition extends CommonObject
         	if ($statut==0) return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
         	if ($statut==1) return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
 		}
+        if ($mode == 5)
+        {
+        	if ($statut==0) return $langs->trans('StatusSendingDraftShort').' '.img_picto($langs->trans('StatusSendingDraft'),'statut0');
+        	if ($statut==1) return $langs->trans('StatusSendingValidatedShort').' '.img_picto($langs->trans('StatusSendingValidated'),'statut4');
+		}
     }  
 
 	/**
@@ -683,13 +686,15 @@ class Expedition extends CommonObject
 			}
 		}
 
+		$order=new Commande($this->db);
+		$order->initAsSpecimen();
+		
 		// Initialise paramètres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
 		$socid = rand(1, $num_socs);
         $this->statut               = 1;
-        $this->commande_id          = 0;
         if ($conf->livraison->enabled)
         {
           	$this->livraison_id     = 0;
@@ -699,6 +704,9 @@ class Expedition extends CommonObject
         $this->adresse_livraison_id = 0;
 		$this->socid = $socids[$socid];
 
+		$this->commande_id          = 0;
+		$this->commande             = $order;
+		
 		$nbp = 5;
 		$xnbp = 0;
 		while ($xnbp < $nbp)

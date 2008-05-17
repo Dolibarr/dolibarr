@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -114,7 +114,7 @@ if ($resql)
   	print_liste_field_titre($langs->trans("Proposal"),"liste.php","ori.ref", "", "&amp;socid=$socid",'width="25%" align="left"',$sortfield,$sortorder);
   }
   print_liste_field_titre($langs->trans("Date"),"liste.php","e.date_expedition","","&amp;socid=$socid", 'width="25%" align="right" colspan="2"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","","&amp;socid=$socid",'width="10%" align="center"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","","&amp;socid=$socid",'width="10%" align="right"',$sortfield,$sortorder);
   print "</tr>\n";
   $var=True;
   
@@ -158,7 +158,7 @@ if ($resql)
     print " <a href=\"propal.php?year=$y\">";
     print strftime("%Y",$objp->date_expedition)."</a></TD>\n";      
     
-    print '<td align="center">'.$expedition->statuts[$objp->fk_statut].'</td>';
+    print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';
     print "</tr>\n";
     
     $i++;
