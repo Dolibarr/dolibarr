@@ -56,6 +56,11 @@ dolibarr_install_syslog("Fileconf: Entering fileconf.php page");
 
 pHeader($langs->trans("ConfigurationFile"),"etape0");
 
+if ($force_install_message_doliwamp)
+{
+	print $langs->trans("KeepDefaultValues").'<br>';	
+}
+
 
 print '<table border="0" cellpadding="1" cellspacing="0">';
 
@@ -335,7 +340,7 @@ while (($file = readdir($handle))!==false)
 <?php echo $langs->trans("CreateUser"); ?>
 </td>
 
-<td class="label" valign="top"><input type="checkbox" name="db_create_user"></td>
+<td class="label" valign="top"><input type="checkbox" name="db_create_user"<?php if ($force_install_createuser) print ' checked="on"'; ?>></td>
 <td class="comment">
 <?php echo $langs->trans("CheckToCreateUser"); ?>
 </td>

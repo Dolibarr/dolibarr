@@ -46,7 +46,7 @@ if (! isset($force_install_databaselogin))     $force_install_databaselogin='';
 if (! isset($force_install_databasepass))      $force_install_databasepass='';
 if (! isset($force_install_databaserootlogin)) $force_install_databaserootlogin='';
 if (! isset($force_install_databaserootpass))  $force_install_databaserootpass='';
-if (! isset($force_install_renamedir))         $force_install_renamedir='';
+if (! isset($force_install_lockinstall))       $force_install_lockinstall='';
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
 dolibarr_install_syslog("etape5: Entering etape5.php page", LOG_INFO);
@@ -208,7 +208,7 @@ if ($_POST["action"] == "set")
 {
     // Fin install
     print $langs->trans("SystemIsInstalled")."<br>";
-    if (empty($force_install_renamedir))
+    if (empty($force_install_lockinstall))
 	{
 		print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 	}
@@ -230,7 +230,7 @@ if ($_POST["action"] == "upgrade")
 {
     // Fin install
     print $langs->trans("SystemIsUpgraded")."<br>";
-    if (empty($force_install_renamedir))
+    if (empty($force_install_lockinstall))
 	{
 		print '<div class="warning">'.$langs->trans("WarningRemoveInstallDir")."</div>";
 	}
