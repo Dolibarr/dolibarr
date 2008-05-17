@@ -602,11 +602,11 @@ if ($step == 4 && $datatoexport)
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
-    // Lot de donn�es � exporter
+    // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>'.$objexport->array_export_label[0].'</td></tr>';
 
-    // Nbre champs export�s
+    // Nbre champs exportes
     print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
     $list='';
     foreach($array_selected as $code=>$label)
@@ -648,7 +648,7 @@ if ($step == 4 && $datatoexport)
 
     // Affiche liste des documents
     // NB: La fonction show_documents rescanne les modules qd genallowed=1
-    $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,'csv','',1);
+    $formfile->show_documents('export','',$conf->export->dir_temp.'/'.$user->id,$_SERVER["PHP_SELF"].'?step=4&datatoexport='.$datatoexport,$liste,1,(! empty($_POST['model'])?$_POST['model']:'csv'),'',1);
     
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';
