@@ -32,7 +32,7 @@ if ($conf->propal->enabled)  require_once(DOL_DOCUMENT_ROOT."/propal.class.php")
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/agenda.lib.php");
 
-if (!$user->rights->commercial->main->lire)
+if (!$user->rights->societe->lire)
   accessforbidden();
 	  
 $langs->load("commercial");
@@ -113,7 +113,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 /*
  * Recherche Contrat
  */
-if ($conf->contrat->enabled)
+if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
   $var=false;
   print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
@@ -182,7 +182,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 /*
  * Commandes brouillons
  */
-if ($conf->commande->enabled)
+if ($conf->commande->enabled && $user->rights->commande->lire)
 {
     $langs->load("orders");
     $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.rowid as socid";
@@ -283,14 +283,18 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  * Actions to do
  *
  */
-show_array_actions_to_do(10);
-
+if ($user->rights->agenda->myactions->read)
+{
+	show_array_actions_to_do(10);
+}
 
 /*
  * Last actions
  */
-show_array_last_actions_done($max);
-
+if ($user->rights->agenda->myactions->read)
+{
+	show_array_last_actions_done($max);
+}
 
 /*
  * Derniers clients enregistrés
@@ -356,7 +360,7 @@ if ($user->rights->societe->lire)
  * Derniers contrat
  *
  */
-if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
+if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
   $langs->load("contracts");
   
@@ -487,7 +491,8 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
  *
  */
 
-if ($conf->propal->enabled && $user->rights->propale->lire) {
+if ($conf->propal->enabled && $user->rights->propale->lire)
+{
     $NBMAX=5;
     
 	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
