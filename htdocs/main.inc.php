@@ -788,7 +788,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 		// Output style sheets
 		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
-		print '<link rel="stylesheet" type="text/css" media="print" href="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
 		// CSS forced by modules
 		if (is_array($conf->css_modules))
 		{
