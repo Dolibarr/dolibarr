@@ -835,14 +835,12 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			// Those ones are required only with option "confirm by ajax popup"
 			if ($conf->global->MAIN_CONFIRM_AJAX)
 			{
-				// Bug: should not require default.css but does not work without.
-				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/default.css">'."\n";
-				// Only this css should be required
+				// PWC css
 				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/alert.css">'."\n";
 				// Scriptaculous used by PWC
 				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
 				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/controls.js"></script>'."\n";
-				// PWC
+				// PWC js
 				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window.js"></script>'."\n";
 			}
 		}	
