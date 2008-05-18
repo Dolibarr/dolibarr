@@ -205,116 +205,121 @@ class Commande extends CommonObject
 	{
 		global $conf,$langs;
 			
-		if ($user->rights->commande->valider)
+		if ($this->statut == 1)
 		{
-			$this->db->begin();
-	
-			// Definition du nom de module de numerotation de commande
-			$soc = new Societe($this->db);
-			$soc->fetch($this->socid);
-			$num=$this->getNextNumRef($soc);
-	
-			// Class of company linked to order
-			$result=$soc->set_as_client();
-	
-			// check if temporary number
-			$comref = substr($this->ref, 1, 4);
-			if ($comref == 'PROV')
-			{
-	 			$num = $this->getNextNumRef($soc);
-			}
-			else
-			{
-	   			$num = $this->ref;
-			}
-	
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
-			$sql .= " WHERE rowid = $this->id AND fk_statut = 0";
-	
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				// On efface le repertoire de pdf provisoire
-				if ($comref == 'PROV')
-				{
-					$comref = sanitize_string($this->ref);
-					if ($conf->commande->dir_output)
-					{
-						$dir = $conf->commande->dir_output . "/" . $comref ;
-						$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
-						if (file_exists($file))
-						{
-							commande_delete_preview($this->db, $this->id, $this->ref);
-	
-							if (!dol_delete_file($file))
-							{
-								$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-								$this->db->rollback();
-								return 0;
-							}
-						}
-						if (file_exists($dir))
-						{
-							if (!dol_delete_dir($dir))
-							{
-								$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-								$this->db->rollback();
-								return 0;
-							}
-						}
-	    			}
-				}
-					
-				//Si active on decremente le produit principal et ses composants a la validation de command
-				if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
-	
-					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-					{
-						if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
-						{
-							$prod = new Product($this->db, $this->lignes[$i]->fk_product);
-							$prod -> get_sousproduits_arbo ();
-							$prods_arbo = $prod->get_each_prod();
-							if(sizeof($prods_arbo) > 0)
-							{
-								foreach($prods_arbo as $key => $value)
-								{
-									// on decompte le stock de tous les sousproduits
-									$mouvS = new MouvementStock($this->db);
-									$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-									$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
-								}
-							}
-						}
-						$mouvP = new MouvementStock($this->db);
-						// on decompte le stock du produit principal
-						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
-					}
-				}
-	
-			   // Appel des triggers
-			   include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			   $interface=new Interfaces($this->db);
-			   $result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
-			   if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			   // Fin appel triggers
-			
-			   $this->db->commit();
-			   return $this->id;
-			}
-			else
-			{
-			   $this->db->rollback();
-			   $this->error=$this->db->error();
-			   return -1;
-			}
+			return 0;	
+		}
+
+		if (! $this->$user->rights->commande->valider)
+		{
+			$this->error='Autorisation insuffisante';
+			return -1;
 		}
 			
-		$this->error='Autorisation insuffisante';
-		return -1;
+		$this->db->begin();
+
+		// Definition du nom de module de numerotation de commande
+		$soc = new Societe($this->db);
+		$soc->fetch($this->socid);
+		$num=$this->getNextNumRef($soc);
+
+		// Class of company linked to order
+		$result=$soc->set_as_client();
+
+		// check if temporary number
+		$comref = substr($this->ref, 1, 4);
+		if ($comref == 'PROV')
+		{
+ 			$num = $this->getNextNumRef($soc);
+		}
+		else
+		{
+   			$num = $this->ref;
+		}
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+		$sql .= " WHERE rowid = $this->id AND fk_statut = 0";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			// On efface le repertoire de pdf provisoire
+			if ($comref == 'PROV')
+			{
+				$comref = sanitize_string($this->ref);
+				if ($conf->commande->dir_output)
+				{
+					$dir = $conf->commande->dir_output . "/" . $comref ;
+					$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+					if (file_exists($file))
+					{
+						commande_delete_preview($this->db, $this->id, $this->ref);
+
+						if (!dol_delete_file($file))
+						{
+							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+							$this->db->rollback();
+							return 0;
+						}
+					}
+					if (file_exists($dir))
+					{
+						if (!dol_delete_dir($dir))
+						{
+							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+							$this->db->rollback();
+							return 0;
+						}
+					}
+    			}
+			}
+				
+			//Si active on decremente le produit principal et ses composants a la validation de command
+			if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
+				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				{
+					if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
+					{
+						$prod = new Product($this->db, $this->lignes[$i]->fk_product);
+						$prod -> get_sousproduits_arbo ();
+						$prods_arbo = $prod->get_each_prod();
+						if(sizeof($prods_arbo) > 0)
+						{
+							foreach($prods_arbo as $key => $value)
+							{
+								// on decompte le stock de tous les sousproduits
+								$mouvS = new MouvementStock($this->db);
+								$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+								$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
+							}
+						}
+					}
+					$mouvP = new MouvementStock($this->db);
+					// on decompte le stock du produit principal
+					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+					$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+				}
+			}
+
+		   // Appel des triggers
+		   include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		   $interface=new Interfaces($this->db);
+		   $result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
+		   if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		   // Fin appel triggers
+		
+		   $this->db->commit();
+		   return $this->id;
+		}
+		else
+		{
+		   $this->db->rollback();
+		   $this->error=$this->db->error();
+		   return -1;
+		}
 	}
 
 	/**
