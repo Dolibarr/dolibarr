@@ -107,13 +107,28 @@ LoadModule negotiation_module modules/mod_negotiation.so
 LoadModule rewrite_module modules/mod_rewrite.so
 LoadModule setenvif_module modules/mod_setenvif.so
 #LoadModule speling_module modules/mod_speling.so
-#LoadModule status_module modules/mod_status.so
+LoadModule status_module modules/mod_status.so
 #LoadModule unique_id_module modules/mod_unique_id.so
 LoadModule userdir_module modules/mod_userdir.so
 #LoadModule usertrack_module modules/mod_usertrack.so
 LoadModule vhost_alias_module modules/mod_vhost_alias.so
 LoadModule ssl_module modules/mod_ssl.so
 LoadModule php5_module "WAMPROOT/bin/php/phpWAMPPHPVERSION/php5apache2_2.dll"
+
+#
+# ExtendedStatus controls whether Apache will generate "full" status
+# information (ExtendedStatus On) or just basic information (ExtendedStatus
+# Off) when the "server-status" handler is called. The default is Off.
+#
+ExtendedStatus On
+
+<Location /server-status>
+SetHandler server-status
+Order Deny,Allow
+Deny from all
+Allow from localhost
+</Location>
+
 
 # 'Main' server configuration
 #
