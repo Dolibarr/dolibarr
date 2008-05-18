@@ -468,8 +468,9 @@ a:hover {
 	</dl>
 	<h2>{$langues[$langue]['titrePage']}</h2>
 	<ul class="tools">
-		<li><a href="?phpinfo=1">phpinfo()</a></li>
+		<li><a href="?phpinfo=1">phpinfo</a></li>
 		<li><a href="phpmyadmin/index.php">phpmyadmin</a></li>
+		<li><a href="server-status">server-status</a></li>
 	</ul>
 	<h2>{$langues[$langue]['txtAlias']}</h2>
 	<ul class="aliases">
