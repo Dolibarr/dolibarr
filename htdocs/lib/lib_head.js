@@ -634,7 +634,7 @@ function cleanSerialize(expr) {
 ==================================================================*/
 function dialogConfirm(linkurl,message,ok,cancel,objectID) {
 	Dialog.confirm(message, {
-		width:300,
+		width:560,
 		okLabel: ok,
 		cancelLabel: cancel,
 		buttonClass: "buttonajax",
