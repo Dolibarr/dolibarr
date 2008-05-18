@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/includes/boxes/modules_boxes.php
 		\ingroup    facture
 		\brief      Fichier contenant la classe mère des boites
-		\version    $Revision$
+		\version    $Id$
 */
 
 
@@ -141,7 +139,8 @@ class ModeleBoxes
 			if ($conf->use_javascript_ajax)
 	        {
 	      		print '</td><td class="nocellnopadd" width="14">';
-	      		print img_picto($langs->trans("MoveBox",$this->box_id),'uparrow','style="cursor:move;"');
+	      		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
+	      		print img_picto($langs->trans("MoveBox",$this->box_id),'uparrow','class="boxhandle" style="cursor:move;"');
 				print '</td></tr></table>';
 			}
 	        print '</td>';

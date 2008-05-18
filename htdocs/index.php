@@ -260,7 +260,7 @@ $var=true;
 //
 
 // Nbre actions à faire (en retard)
-if ($conf->agenda->enabled)
+if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 {
   include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
   $board=new ActionComm($db);
@@ -658,6 +658,7 @@ if ($conf->use_javascript_ajax)
 	print 'tag:\'div\', '."\n";
 	print 'containment:["left","right"], '."\n";
 	print 'constraint:false, '."\n";
+	print "handle: 'boxhandle',"."\n";
 	print 'onUpdate:updateOrder';
 	print "});\n";
 		
@@ -665,6 +666,7 @@ if ($conf->use_javascript_ajax)
 	print 'tag:\'div\', '."\n";
 	print 'containment:["right","left"], '."\n";
 	print 'constraint:false, '."\n";
+	print "handle: 'boxhandle',"."\n";
 	print 'onUpdate:updateOrder';
 	print "});\n";
 		
