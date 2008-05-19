@@ -870,28 +870,35 @@ class Facture extends CommonObject
 	{
 		global $conf,$langs;
 
-		dolibarr_syslog("Facture::set_payed rowid=".$this->id, LOG_DEBUG);
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
-		$sql.= ' fk_statut=2';
-		if (! $close_code) $sql.= ', paye=1';
-		if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
-		if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
-		$sql.= ' WHERE rowid = '.$this->id;
-
-		$resql = $this->db->query($sql);
-		if ($resql)
+		if ($this->paye != 1)
 		{
-			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
-
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+			dolibarr_syslog("Facture::set_payed rowid=".$this->id, LOG_DEBUG);
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
+			$sql.= ' fk_statut=2';
+			if (! $close_code) $sql.= ', paye=1';
+			if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
+			if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
+			$sql.= ' WHERE rowid = '.$this->id;
+	
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+	
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
+	
+			return 1;
 		}
-
-		return 1;
+		else
+		{
+			return 0;
+		}
 	}
 
 
