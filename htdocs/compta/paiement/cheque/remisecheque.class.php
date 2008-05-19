@@ -279,77 +279,93 @@ class RemiseCheque extends CommonObject
   }
   
   /**
-     \brief  Supprime la remise en base
-     \param  user 	Utilisateur qui effectue l'operation
-   */	 
+   *  \brief  Validate receipt
+   *  \param  user 	User
+   */
   function Validate($user)
   {
-    $this->errno = 0;
-    $this->db->begin();
+  	$this->errno = 0;
+  	$this->db->begin();
 
-    $sql = "SELECT MAX(number) FROM ".MAIN_DB_PREFIX."bordereau_cheque;";
+  	$num=$this->getNextNumber();
+  	
+  	if ($this->errno === 0)
+  	{
+  		$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
+  		$sql.= " SET statut=1, number='".$num."'";
+  		$sql .= " WHERE rowid = $this->id AND statut=0;";
 
-    $resql = $this->db->query($sql);
-    if ( $resql )
-      {
-	$row = $this->db->fetch_row($resql);
-	$num = $row[0];
-	$this->db->free($resql);
-      }
-    else
-      {
-	$this->errno = -1034;
-	dolibarr_syslog("Remisecheque::Validate Erreur SELECT ($this->errno)");
-      }
+  		$resql = $this->db->query($sql);
+  		if ( $resql )
+  		{
+  			$num = $this->db->affected_rows($resql);
 
-    if ($this->errno === 0)
-      {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-	$sql.= " SET statut=1, number='".($num+1)."'";
-	$sql .= " WHERE rowid = $this->id AND statut=0;";
-	
-	$resql = $this->db->query($sql);
-	if ( $resql )
-	  {
-	    $num = $this->db->affected_rows($resql);
-	    
-	    if ($num == 1)
-	      {
-		$this->statut = 1;
-	      }
-	    else
-	      {
-		$this->errno = -1029;
-		dolibarr_syslog("Remisecheque::Validate Erreur UPDATE ($this->errno)");
-	      }
-	  }
-	else
-	  {
-	    $this->errno = -1033;
-	    dolibarr_syslog("Remisecheque::Validate Erreur UPDATE ($this->errno)");
-	  }
-      }
+  			if ($num == 1)
+  			{
+  				$this->statut = 1;
+  			}
+  			else
+  			{
+  				$this->errno = -1029;
+  				dolibarr_syslog("Remisecheque::Validate Erreur UPDATE ($this->errno)");
+  			}
+  		}
+  		else
+  		{
+  			$this->errno = -1033;
+  			dolibarr_syslog("Remisecheque::Validate Erreur UPDATE ($this->errno)");
+  		}
+  	}
 
-    if ($this->errno === 0)
-      {
-	$this->GeneratePdf();
-      }
+  	if ($this->errno === 0)
+  	{
+  		$this->GeneratePdf();
+  	}
 
-    if ($this->errno === 0)
-      {
-	$this->db->commit();
-      }
-    else
-      {
-	$this->db->rollback();
-	dolibarr_syslog("RemiseCheque::Validate ROLLBACK ($this->errno)");
-      }
-    
-    return $this->errno;
+  	if ($this->errno === 0)
+  	{
+  		$this->db->commit();
+  	}
+  	else
+  	{
+  		$this->db->rollback();
+  		dolibarr_syslog("RemiseCheque::Validate ".$this->errno, LOG_ERR);
+  	}
+
+  	return $this->errno;
   }
 
+
+  /**
+   * Old module for cheque receipt numbering
+   *
+   * @return string
+   */
+  function getNextNumber()
+  {
+  	$num=0;
+  	 
+  	// We use +0 to convert varchar to number
+  	$sql = "SELECT MAX(number+0) FROM ".MAIN_DB_PREFIX."bordereau_cheque";
+  	$resql = $this->db->query($sql);
+  	if ($resql)
+  	{
+  		$row = $this->db->fetch_row($resql);
+  		$num = $row[0];
+  		$this->db->free($resql);
+  	}
+  	else
+  	{
+  		$this->errno = -1034;
+  		dolibarr_syslog("Remisecheque::Validate Erreur SELECT ($this->errno)");
+  	}
+  	 
+  	$num++;
+  	 
+  	return $num;
+  }
   
-      /**
+    /**
      *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
      *      \param      user        Objet user
      *      \return     int         <0 si ko, >0 si ok
