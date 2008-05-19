@@ -39,28 +39,26 @@ class Don
 	var $error;
 	var $element='don';
 	var $table_element='don';
-
-    var $id;
-    var $db;
-    var $date;
-    var $amount;
-    var $prenom;
-    var $nom;
-    var $societe;
-    var $adresse;
-    var $cp;
-    var $ville;
-    var $pays;
-    var $email;
-    var $public;
-    var $projetid;
-    var $modepaiement;
-    var $modepaiementid;
-    var $note;
-    var $statut;
+	
+	var $id;
+  var $date;
+  var $amount;
+  var $prenom;
+  var $nom;
+  var $societe;
+  var $adresse;
+  var $cp;
+  var $ville;
+  var $pays;
+  var $email;
+  var $public;
+  var $projetid;
+  var $modepaiement;
+  var $modepaiementid;
+  var $note;
+  var $statut;
     
-    var $projet;
-    var $error;
+  var $projet;
     
     /**
      *    \brief  Constructeur
