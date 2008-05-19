@@ -69,9 +69,7 @@ function llxHeader($head = "")
 
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("SearchTransaction"),1,$user->rights->banque->lire);
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ByCategories"),1,$user->rights->banque->lire);
-	// Obsolete. Replaced by page Rapport E/S 
-	// $menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan",1,$user->rights->banque->lire);
-	
+
 	if ($user->rights->banque->transfer)
 	{
 		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
@@ -80,6 +78,16 @@ function llxHeader($head = "")
 	if ($conf->global->COMPTA_ONLINE_PAYMENT_BPLC)
 	{
 		$menu->add(DOL_URL_ROOT."/compta/bank/bplc.php","Transactions BPLC");
+	}
+	
+	// Gestion cheques
+	if ($conf->facture->enabled && $conf->banque->enabled)
+	{
+		$langs->load("bills");
+		
+		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
+		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
+		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
 	}
 	
 	left_menu($menu->liste);
