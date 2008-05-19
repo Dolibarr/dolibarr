@@ -75,6 +75,7 @@ OffsetWithGreenwich=Offset avec Greenwich (secondes)
 OSEnv=Environnement OS
 Box=Boîte
 Boxes=Boîtes
+MaxNbOfLinesForBoxes=Nombre max de lignes pour les boites
 PositionByDefault=Position par défaut
 Position=Ordre
 MenusDesc=Les gestionnaires de menu définissent le contenu des 2 barres de menus (la barre horizontale et la barre verticale). Il est possible de mettre un gestionnaire différent selon que l'utilisateur soit interne ou externe.
@@ -912,4 +913,6 @@ OptionVatDebitOptionDesc=L'exigibilité de la TVA est:<br>- sur livraison pour le
 ##### Agenda #####
 AgendaSetup=Configuration du module actions et agenda
 PasswordTogetVCalExport=Clé pour autoriser export vcal
+##### ClickToDial #####
+ClickToDialDesc=Ce module permet d'ajouter un petit picto a coté des numéros de téléphones des contacts. Un clic sur ce picto provoque l'appel de l'URL définie dans ce paramétrage. Ceci permet de provoquer des appels à un serveur de téléphonie depuis Dolibarr qui peut alors composer le numéro sur un system SIP par exemple.
 

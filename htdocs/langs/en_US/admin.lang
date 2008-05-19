@@ -75,6 +75,7 @@ OffsetWithGreenwich=Offset width Greenwich (secondes)
 OSEnv=OS Environment
 Box=Box
 Boxes=Boxes
+MaxNbOfLinesForBoxes=Max number of lines for boxes
 PositionByDefault=Default order
 Position=Order
 MenusDesc=Menus managers define content of the 2 menu bars (horizontal bar and vertical bar). 
@@ -908,3 +909,5 @@ OptionVatDebitOptionDesc=L'exigibilité de la TVA est:<br>- sur livraison pour le
 ##### Agenda #####
 AgendaSetup=Actions and agenda module setup
 PasswordTogetVCalExport=Key to authorize vcal export link
+##### ClickToDial #####
+ClickToDialDesc=This module allows to add an icon after the phone number of Dolibarr contacts. A click on this icon, will call a serveur with a particular URL you define below. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.

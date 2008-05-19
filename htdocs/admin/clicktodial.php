@@ -56,6 +56,9 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("ClickToDialSetup"),$linkback,'setup');
 
+print $langs->trans("ClickToDialDesc")."<br>\n";
+
+
 if ($mesg) print '<br>'.$mesg;
 
 print '<br>';
