@@ -104,7 +104,7 @@ Name: "{group}\Start DoliWamp server"; Filename: "{app}\startdoliwamp.bat"; Work
 Name: "{group}\Stop DoliWamp server"; Filename: "{app}\stopdoliwamp.bat"; WorkingDir: "{app}"; IconFilename: {app}\www\dolibarr\doc\images\doliwampoff.ico
 Name: "{group}\Uninstall DoliWamp"; Filename: "{app}\unins000.exe"; WorkingDir: "{app}"; IconFilename: {app}\uninstall_services.bat
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Dolibarr"; WorkingDir: "{app}"; Filename: "{app}\rundoliwamp.bat"; Tasks: quicklaunchicon; IconFilename: {app}\www\dolibarr\doc\images\dolibarr.ico
-Name: "{userdesktop}\Dolibarr"; Filename: "{app}\rundoliwamp.bat"; Tasks: desktopicon; IconFilename: {app}\www\dolibarr\doc\images\dolibarr.ico
+Name: "{userdesktop}\Dolibarr"; Filename: "{app}\rundoliwamp.bat"; WorkingDir: "{app}"; Tasks: desktopicon; IconFilename: {app}\www\dolibarr\doc\images\dolibarr.ico
 ;Start of servers fromstartup menu disabled as services are auto
 ;Name: "{userstartup}\DoliWamp server"; Filename: "{app}\startdoliwamp.bat"; WorkingDir: "{app}"; Flags: runminimized; IconFilename: {app}\www\dolibarr\doc\images\dolibarr.ico
 
@@ -683,8 +683,8 @@ begin
     Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
     // Remove dangerous files
-//    batFile := path+'\removefiles.bat';
-//    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+    batFile := path+'\removefiles.bat';
+    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
 
   end
 
