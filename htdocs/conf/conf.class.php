@@ -364,6 +364,10 @@ class Conf
 		// securite
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard';
 
+		// conf->box_max_lines
+		$this->box_max_lines=5;
+		if (isset($conf->global->MAIN_BOXES_MAXLINES)) $this->box_max_lines=$conf->global->MAIN_BOXES_MAXLINES;
+		
 		// conf->use_preview_tabs
 		$this->use_preview_tabs=0;
 		if (isset($this->global->MAIN_USE_PREVIEW_TABS)) $this->use_preview_tabs=$this->global->MAIN_USE_PREVIEW_TABS;

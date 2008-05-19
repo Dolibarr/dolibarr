@@ -25,6 +25,7 @@
 
 require("./pre.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
+include_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 $langs->load("admin");
 
@@ -39,6 +40,10 @@ $boxes = array();
 /*
  * Actions
  */
+if ((isset($_POST["action"]) && $_POST["action"] == 'addconst'))
+{
+    dolibarr_set_const($db, "MAIN_BOXES_MAXLINES",$_POST["MAIN_BOXES_MAXLINES"]);
+}
 
 if ($_POST["action"] == 'add')
 {
@@ -372,6 +377,26 @@ if ($resql)
 }
 
 print '</table><br>';
+
+
+# Affiche ligne d'ajout
+print '<table class="noborder" width="100%">';
+
+$var=false;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="action" value="addconst">';
+print "<tr $bc[$var] class=value><td>";
+print $langs->trans("MaxNbOfLinesForBoxes")."</td>\n";
+print '<td>';
+print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.$conf->global->MAIN_BOXES_MAXLINES.'">';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"><br>';
+print "</td>\n";
+print '</tr>';
+print '</form>';
+
+print '</table>';
+
 
 $db->close();
 
