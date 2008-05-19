@@ -273,7 +273,7 @@ if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
 
 	}
 }
-if ($user->societe_id == 0 && $allow_delete && $paiement->statut == 0 && $_GET['action'] == '')
+if ($user->societe_id == 0 && $allow_delete && $_GET['action'] == '')
 {
 	if ($user->rights->facture->paiement)
 	{

@@ -112,10 +112,10 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-		\brief  	Crée bordereau en base
+		\brief  	Create a receipt to send cheques
 		\param  	user 			Utilisateur qui effectue l'operation
 		\param  	account_id 		Compte bancaire concerne
-		\return	int				<0 if KO, >0 if OK
+		\return		int				<0 if KO, >0 if OK
 	*/	 
 	function Create($user, $account_id)
 	{
@@ -124,8 +124,8 @@ class RemiseCheque extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (datec, date_bordereau,fk_user_author,fk_bank_account)";
-		$sql .= " VALUES (now(),now(),".$user->id.",".$account_id.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (datec, date_bordereau, fk_user_author, fk_bank_account, amount, number, nbcheque)";
+		$sql.= " VALUES (now(),now(),".$user->id.",".$account_id.",0,0,0)";
 		
 		dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -209,6 +209,7 @@ class RemiseCheque extends CommonObject
 		else
 		{
 			$result = -1;
+			$this->error=$this->db->lasterror();
 			dolibarr_syslog("RemiseCheque::Create Erreur $result INSERT Mysql");
 		}
 		
@@ -459,8 +460,8 @@ class RemiseCheque extends CommonObject
 	$this->db->free($resql);
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-	$sql.= " SET amount='".ereg_replace(",",".",$total)."'";
-	$sql.= " ,nbcheque=$nb";
+	$sql.= " SET amount='".price2num($total)."'";
+	$sql.= " ,nbcheque=".$nb;
 	$sql.= " WHERE rowid='".$this->id."';";
 	$resql = $this->db->query($sql);	    
 	if (!$resql)

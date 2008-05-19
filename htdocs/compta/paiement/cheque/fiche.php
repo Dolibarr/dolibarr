@@ -36,7 +36,7 @@ $langs->load('companies');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'banque', '','');
+$result = restrictedArea($user, 'cheque', '','');
 
 $mesg='';
 
@@ -54,18 +54,18 @@ $offset = $limit * $page ;
  * Actions
  */
 
-if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banque)
+if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banque->cheque)
 {	
-  $remisecheque = new RemiseCheque($db);
-  $result = $remisecheque->Create($user, $_GET["accountid"]);
-  if ($result >= 0)
+  	$remisecheque = new RemiseCheque($db);
+  	$result = $remisecheque->Create($user, $_GET["accountid"]);
+  	if ($result > 0)
     {      
-      Header("Location: fiche.php?id=".$remisecheque->id);
-      exit;
+      	Header("Location: fiche.php?id=".$remisecheque->id);
+      	exit;
     }
-  else
+ 	 else
     {
-      $mesg='<div class="error">'.$remisecheque->error.'</div>';
+    	$mesg='<div class="error">'.$remisecheque->error.'</div>';
     }
 }
 
@@ -268,7 +268,7 @@ if ($_GET['action'] == 'new')
 		print "</table>";
 	
 		print '<div class="tabsAction">';
-		if ($user->rights->banque->modifier)
+		if ($user->rights->banque->cheque)
 		{
 			print '<a class="butAction" href="fiche.php?action=create&amp;accountid='.$bid.'">'.$langs->trans('NewCheckDepositOn',$account_label).'</a>';
 		}
