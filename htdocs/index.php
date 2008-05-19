@@ -581,7 +581,7 @@ if (sizeof($boxarray))
 		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 		  $boxid_left[$key] = $boxarray[$key]->box_id;
 			// Affichage boite key
-			$box->loadBox();
+			$box->loadBox($conf->box_max_lines);
 			$box->showBox();
 		}
 	}
@@ -612,10 +612,10 @@ if (sizeof($boxarray))
 			$ii++;
 			//print 'key:'.$key.'<br>';
 			//print 'box_id '.$boxarray[$key]->box_id.' ';
-		  //print 'box_order '.$boxarray[$key]->box_order.'<br>';
-		  $boxid_right[$key] = $boxarray[$key]->box_id;
+		  	//print 'box_order '.$boxarray[$key]->box_order.'<br>';
+		  	$boxid_right[$key] = $boxarray[$key]->box_id;
 			// Affichage boite key
-			$box->loadBox();
+			$box->loadBox($conf->box_max_lines);
 			$box->showBox();
 		}
 	}
