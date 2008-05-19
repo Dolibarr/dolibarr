@@ -92,7 +92,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
 	if ($db->connected != 1)
 	{
-		print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name).'</td><td align="right">'.$langs->trans('Error').'</td></tr>';
+		print '<tr><td colspan="4">'.$langs->trans("ErrorFailedToConnectToDatabase",$conf->db->name).'</td><td align="right">'.$langs->trans('Error').'</td></tr>';
+		dolibarr_install_syslog('upgrade2: Failed to connect to database : '.$conf->db->name.' on '.$conf->db->host.' for user '.$conf->db->user, LOG_ERR);
 		$error++;
 	}
 
@@ -109,7 +110,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	}
 
 	// Chargement config
-	$conf->setValues($db);
+	if (! $error) $conf->setValues($db);
 
 
 	/*

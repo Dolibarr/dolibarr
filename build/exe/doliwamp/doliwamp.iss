@@ -16,7 +16,9 @@
 [Setup]
 ; ----- Change this -----
 AppName=DoliWamp
-AppVerName=DoliWamp 2.4
+; DoliWamp x.x or DoliWamp x.x-dev
+AppVerName=DoliWamp 2.4-dev
+; DoliWamp x.x or DoliWamp x.x-dev
 OutputBaseFilename=DoliWamp 2.4-dev
 ; Define full path from wich all relative path are defined
 ; You must modify this to put here your dolibarr root directory
@@ -72,8 +74,8 @@ Source: "C:\Program Files\Wamp\apps\phpmyadmin2.10.1\*.*"; DestDir: "{app}\apps\
 Source: "C:\Program Files\Wamp\bin\apache\apache2.2.6\*.*"; DestDir: "{app}\bin\apache\apache2.2.6"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\php\php5.2.5\*.*"; DestDir: "{app}\bin\php\php5.2.5"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log"
-; Mysql data files
-Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45\data\mysql"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
+; Mysql data files (does not overwrite if exists)
+Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45\data\mysql"; Flags: onlyifdoesntexist ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
 ; Dolibarr
 Source: "external-libs\*.*"; DestDir: "{app}\www\dolibarr\external-libs"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db"
 Source: "htdocs\*.*"; DestDir: "{app}\www\dolibarr\htdocs"; Flags: ignoreversion recursesubdirs; Excludes: ".cvsignore,.project,CVS\*,Thumbs.db,telephonie\*,*\conf.php,*\install.forced.php,*\modTelephonie.class.php,*\modEnergie.class.php,*\interface_modEditeur_Editeur.class.php*,*\rodolphe"
@@ -139,16 +141,76 @@ var myporta: String;
 var myport: String;
 var mypass: String;
 
+var firstinstall: Boolean;
+var value: String;
+
 
 //-----------------------------------------------
 
-//procedure lancée au début de l'installation, elle alerte sur les upgrades de WampServer
+//procedures lancées au début de l'installation
 
 function InitializeSetup(): Boolean;
 begin
-  Result := MsgBox('You will install DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install Dolibarr and third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you want to share your Apache, Mysql and PHP with other projects than Dolibarr, it is recommended to make a manual' #13 'installation of Dolibarr on your own Apache, Mysql and PHP installation.' #13#13 'Do you want to continue install ?', mbConfirmation, MB_YESNO) = idYes;
+  Result := MsgBox('You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install Dolibarr and third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you want to share your Apache, Mysql and PHP with other projects than Dolibarr, it is recommended to make ' #13 'a manual installation of Dolibarr on your own Apache, Mysql and PHP installation.' #13#13 'Do you want to continue install ?', mbConfirmation, MB_YESNO) = idYes;
 end;
 
+procedure InitializeWizard();
+begin
+  //version des applis, à modifier pour chaque version de WampServer 2
+  apacheVersion := '2.2.6';
+  phpVersion := '5.2.5' ;
+  mysqlVersion := '5.0.45';
+  wampserverVersion := '2.0';
+  phpmyadminVersion := '2.10.1';
+  sqlitemanagerVersion := '1.2.0';
+
+  smtpServer := 'localhost';
+  apachePort := '81';
+  mysqlPort := '3307';
+  newPassword := 'changeme';
+
+  firstinstall := true;
+
+
+  //LoadStringFromFile (srcFile, srcContents);
+  //posvalue=Pos('$dolibarr_main_db_port=', srcFile);
+
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','smtpServer', value) then
+  begin
+      if value <> '' then smtpServer:=value;
+  end
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','apachePort', value) then
+  begin
+      if value <> '' then apachePort:=value;
+  end
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','mysqlPort', value) then
+  begin
+      if value <> '' then mysqlPort:=value;
+  end
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','newPassword', value) then
+  begin
+      if value <> '' then newPassword:=value;
+  end
+
+
+  // Create a page wpInstalling
+  Page := CreateInputQueryPage(wpInstalling,
+  'Technical parameters', '',
+  'Please specify some technical parameters. If you don t understand or ' #13 'are not sure, just leave the default values.');
+
+  // TODO Add control differently if first install or update
+  Page.Add('SMTP server (your own or ISP SMTP server) :', False);
+  Page.Add('Apache port (common choice is 80) :', False);
+  Page.Add('Mysql port (common choice is 3306) :', False);
+  Page.Add('Mysql server and database password you want for root :', False);
+
+  // Valeurs par defaut
+  Page.Values[0] := smtpServer;
+  Page.Values[1] := apachePort;
+  Page.Values[2] := mysqlPort;
+  Page.Values[3] := newPassword;
+
+end;
 
 
 //-----------------------------------------------
@@ -183,10 +245,34 @@ begin
   if CurPageID = Page.ID then
   begin
 
+    // Check if parameters already defined in conf.php file
+    srcFile := pathWithSlashes+'/www/dolibarr/htdocs/conf/conf.php';
+    if not FileExists (srcFile) then
+    begin
+        firstinstall := true;
+
+        mysmtp  := Page.Values[0];
+        myporta := Page.Values[1];
+        myport  := Page.Values[2];
+        mypass  := Page.Values[3];
+    end
+    else
+    begin
+        mysmtp  := smtpServer;
+        myporta := apachePort;
+        myport  := mysqlPort;
+        mypass  := newPassword;
+    end
+    
+    // Save parameters to registry
+    RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp', 'smtpServer',  mysmtp);
+    RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp', 'apachePort',  myporta);
+    RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp', 'mysqlPort',   myport);
+    RegWriteStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp', 'newPassword', mypass);
 
 
     //----------------------------------------------
-    // renommage du fichier c:/windows/php.ini
+    // Rename file c:/windows/php.ini (we don't want it)
     //----------------------------------------------
 
     if FileExists ('c:/windows/php.ini') then
@@ -215,8 +301,6 @@ begin
 
     if not FileExists (destFile) and FileExists(srcFile) then
     begin
-      myporta := Page.Values[1];
-
       //navigateur
       browser := 'explorer.exe';
       if FileExists ('C:/Program Files/Mozilla Firefox/firefox.exe')  then
@@ -249,7 +333,6 @@ begin
 
     if not FileExists (destFile) and FileExists(srcFile) then
     begin
-
       LoadStringFromFile (srcFile, srcContents);
 
       //installDir et version de phpmyadmin
@@ -271,8 +354,6 @@ begin
 
     if not FileExists (destFile) and FileExists(srcFile) then
     begin
-      mypass := Page.Values[3];
-
       LoadStringFromFile (srcFile, srcContents);
 
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
@@ -294,20 +375,15 @@ begin
 
     if not FileExists (destFile) then
     begin
-
       // si un fichier existe pour une version precedente de phpmyadmin, on le recupere
       if FileExists (pathWithSlashes+'/apps/phpmyadmin'+tmp+'/config.inc.php') then
       begin
-        mypass := Page.Values[3];
-
         LoadStringFromFile (pathWithSlashes+'/apps/phpmyadmin'+tmp+'/config.inc.php', srcContents);
         StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
         SaveStringToFile(destFile,srcContents, False);
       end
       else
       begin
-        mypass := Page.Values[3];
-
         // sinon on prends le fichier par defaut
         LoadStringFromFile (srcFile, srcContents);
         StringChange (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass);
@@ -326,8 +402,6 @@ begin
 
     if not FileExists (destFile) then
     begin
-      myporta := Page.Values[1];
-
       LoadStringFromFile (srcFile, srcContents);
 
       //installDir et version de php
@@ -350,8 +424,6 @@ begin
 
     if not FileExists (destFile) then
     begin
-      myport := Page.Values[2];
-
       LoadStringFromFile (srcFile, srcContents);
 
       //installDir et version de php
@@ -360,7 +432,6 @@ begin
 
       SaveStringToFile(destFile,srcContents, False);
     end
-
 
 
 
@@ -374,8 +445,6 @@ begin
 
     if not FileExists (destFile) then
     begin
-      myporta := Page.Values[1];
-
       LoadStringFromFile (srcFile, srcContents);
       StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
       StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
@@ -385,8 +454,6 @@ begin
     end
     else
     begin
-      myporta := Page.Values[1];
-
       RenameFile(destFile, destFile+'.old');
       LoadStringFromFile (srcFile, srcContents);
       StringChange (srcContents, 'WAMPPHPVERSION', phpVersion);
@@ -409,9 +476,6 @@ begin
 
     if not FileExists (destFile) then
     begin
-      myport := Page.Values[2];
-      mypass := Page.Values[3];
-
       LoadStringFromFile (srcFile, srcContents);
 
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
@@ -432,7 +496,6 @@ begin
 
     if not FileExists (destFile) then
     begin
-
       LoadStringFromFile (srcFile, srcContents);
 
       //version de apache et mysql
@@ -453,7 +516,6 @@ begin
 
     if not FileExists (destFile) and FileExists (srcFile) then
     begin
-
       LoadStringFromFile (srcFile, srcContents);
 
       //version de apache et mysql
@@ -475,7 +537,6 @@ begin
 
     if not FileExists (destFile) then
     begin
-
       LoadStringFromFile (srcFile, srcContents);
 
       //version de apache et mysql
@@ -496,9 +557,6 @@ begin
 
     if not FileExists (destFile) and FileExists (srcFile) then
     begin
-      myport := Page.Values[2];
-      mypass := Page.Values[3];
-
       LoadStringFromFile (srcFile, srcContents);
 
       //version de apache et mysql
@@ -519,8 +577,6 @@ begin
 
     if not FileExists (destFile) and FileExists (srcFile) then
     begin
-      myport := Page.Values[2];
-
       LoadStringFromFile (srcFile, srcContents);
 
       //version de apache et mysql
@@ -542,7 +598,6 @@ begin
 
     if not FileExists (destFile) then
     begin
-      mysmtp := Page.Values[0];
       LoadStringFromFile (srcFile, srcContents);
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
       StringChange (srcContents, 'WAMPSMTP', mysmtp);
@@ -558,7 +613,6 @@ begin
 
     if not FileExists (destFile) then
     begin
-      mysmtp := Page.Values[0];
       LoadStringFromFile (srcFile, srcContents);
       StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
       StringChange (srcContents, 'WAMPSMTP', mysmtp);
@@ -567,69 +621,7 @@ begin
 
 
 
-
-    MsgBox('DoliWamp installer will now start Apache and Mysql, this may last from several seconds to one minute after this confirmation.',mbInformation,MB_OK)
-
-
-    // Install services
-    batFile := path+'\uninstall_services.bat';
-    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
-    batFile := path+'\install_services.bat';
-    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
-
-    // Stard services
-    batFile := path+'\startdoliwamp.bat';
-    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
-
-    // Change mysql password
-    batFile := path+'\mysqlinitpassword.bat';
-    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
-
-    // Save result in a file
-//    destFile := pathWithSlashes+'/mysqlinitpassword.log';
-//    SaveStringToFile(destFile,myResult, False);
-
-    // Remove dangerous files
-//    batFile := path+'\removefiles.bat';
-//    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
-
-  end
-  
-  Result := True;
-end;
-
-
-
-
-
-//-----------------------------------------------
-
-//procedure lancée à la fin de l'installation, elle supprime les fichiers d'installation
-
-procedure DeinitializeSetup();
-
-begin
-//  DeleteFile(path+'\install_services.bat');
-//  DeleteFile(path+'\install_services_auto.bat');
-end;
-
-
-procedure InitializeWizard();
-begin
-  //version des applis, à modifier pour chaque version de WampServer 2
-  apacheVersion := '2.2.6';
-  phpVersion := '5.2.5' ;
-  mysqlVersion := '5.0.45';
-  wampserverVersion := '2.0';
-  phpmyadminVersion := '2.10.1';
-  sqlitemanagerVersion := '1.2.0';
-
-  smtpServer := 'localhost';
-  apachePort := '81';
-  mysqlPort := '3307';
-  newPassword := 'changeme';
-
-
+    // This must be in if curpage.id = page.id, otherwise it is executed after each Next button
 
   //----------------------------------------------
   // copie des dll de php vers apache
@@ -668,25 +660,62 @@ begin
   phpDllCopy := 'php5ts.dll';
   filecopy (pathWithSlashes+'/bin/php/php'+phpVersion+'/'+phpDllCopy, pathWithSlashes+'/bin/apache/apache'+apacheVersion+'/bin/'+phpDllCopy, False);
 
-  // Define pages
 
-  Page := CreateInputQueryPage(wpInstalling,
-   'Technical parameters', '',
-   'Please specify some technical parameters. If you don t understand or ' #13 'are not sure, just leave the default values.');
+    // Remove lock file
+    DeleteFile(pathWithSlashes+'/www/dolibarr/install.lock');
 
-  Page.Add('SMTP server (your own or ISP SMTP server) :', False);
-  Page.Add('Apache port (common choice is 80) :', False);
-  Page.Add('Mysql port (common choice is 3306) :', False);
-  Page.Add('Mysql server and database password you want for root :', False);
 
-  // Valeurs par defaut
-  Page.Values[0] := smtpServer;
-  Page.Values[1] := apachePort;
-  Page.Values[2] := mysqlPort;
-  Page.Values[3] := newPassword;
-   
+    MsgBox('DoliWamp installer will now start Apache and Mysql, this may last from several seconds to one minute after this confirmation.',mbInformation,MB_OK)
+
+
+    // Install services
+    batFile := path+'\uninstall_services.bat';
+    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+    batFile := path+'\install_services.bat';
+    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+
+    // Stard services
+    batFile := path+'\startdoliwamp.bat';
+    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+
+    // Change mysql password
+    batFile := path+'\mysqlinitpassword.bat';
+    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+
+    // Remove dangerous files
+//    batFile := path+'\removefiles.bat';
+//    Exec(batFile, '',path+'\', SW_HIDE, ewWaitUntilTerminated, myResult);
+
+  end
+
+
+  Result := True;
 end;
 
+
+
+
+
+//-----------------------------------------------
+
+//procedure lancée à la fin de l'installation, elle supprime les fichiers d'installation
+
+procedure DeinitializeSetup();
+begin
+//  DeleteFile(path+'\install_services.bat');
+//  DeleteFile(path+'\install_services_auto.bat');
+end;
+
+
+
+function InitializeUninstall(): Boolean;
+begin
+    Result := RegDeleteValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','smtpServer');
+    Result := RegDeleteValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','apachePort');
+    Result := RegDeleteValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','mysqlPort');
+    Result := RegDeleteValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','newPassword');
+    Result := RegDeleteKeyIncludingSubkeys(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp');
+end;
 
 
 
