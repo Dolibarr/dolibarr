@@ -121,7 +121,14 @@ class modBanque extends DolibarrModules
 	    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
 	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
 	    $this->rights[$r][4] = 'transfer';
-
+	    
+	    $r++;
+	    $this->rights[$r][0] = 117; // id de la permission
+	    $this->rights[$r][1] = 'Gérer les envois de chèques'; // libelle de la permission
+	    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
+	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	    $this->rights[$r][4] = 'cheque';
+	    
 	    
 		
 		// Exports
