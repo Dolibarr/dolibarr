@@ -236,7 +236,7 @@ if ($resql)
         {
 		  // Print total
 		  print '<tr class="liste_total">';
-		  print '<td class="liste_total" colspan="5" align="left">'.$langs->trans("Total").'</td>';
+		  print '<td class="liste_total" colspan="6" align="left">'.$langs->trans("Total").'</td>';
 		  print '<td class="liste_total" align="right">'.price($total).'</td>';
 		  print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
 		  print '<td class="liste_total" align="center">&nbsp;</td>';
