@@ -1225,13 +1225,13 @@ if ($_GET['propalid'] > 0)
 				}
 				
 				// VAT Rate
-				print '<td align="right">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
+				print '<td align="right" nowrap="nowrap">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
 				
 				// U.P HT
-				print '<td align="right">'.price($objp->subprice)."</td>\n";
+				print '<td align="right" nowrap="nowrap">'.price($objp->subprice)."</td>\n";
 
 				// Qty
-				print '<td align="right">';
+				print '<td align="right" nowrap="nowrap">';
 				if ((($objp->info_bits & 2) != 2) && $objp->special_code != 3)
 				{
 					print $objp->qty;
@@ -1253,11 +1253,11 @@ if ($_GET['propalid'] > 0)
 				if ($objp->special_code == 3)
 				{
 					// Si ligne en option
-					print '<td align="right">'.$langs->trans('Option').'</td>';
+					print '<td align="right" nowrap="nowrap">'.$langs->trans('Option').'</td>';
 				}
 				else
 				{
-					print '<td align="right">'.price($objp->total_ht)."</td>\n";
+					print '<td align="right" nowrap="nowrap">'.price($objp->total_ht)."</td>\n";
 				}
 
 				// Icone d'edition et suppression

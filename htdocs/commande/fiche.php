@@ -1419,8 +1419,8 @@ else
 							print '</td>';
 						}
 
-						print '<td align="right">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
-						print '<td align="right">'.price($objp->subprice).'</td>';
+						print '<td align="right" nowrap="nowrap">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
+						print '<td align="right" nowrap="nowrap">'.price($objp->subprice).'</td>';
 						print '<td align="right">';
 						if (($objp->info_bits & 2) != 2)
 						{
@@ -1436,7 +1436,7 @@ else
 						{
 							print '<td>&nbsp;</td>';
 						}
-						print '<td align="right">'.price($objp->total_ht).'</td>';
+						print '<td align="right nowrap="nowrap"">'.price($objp->total_ht).'</td>';
 
 						// Icone d'edition et suppression
 						if ($commande->statut == 0  && $user->rights->commande->creer)

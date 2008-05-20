@@ -703,19 +703,19 @@ if ($id > 0)
 						print nl2br($objp->description);
 						print '</td>';
 					}
-					print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
-					print '<td align="right">'.price($objp->subprice)."</td>\n";
-					print '<td align="right">'.$objp->qty.'</td>';
+					print '<td align="right" nowrap="nowrap">'.vatrate($objp->tva_tx).'%</td>';
+					print '<td align="right" nowrap="nowrap">'.price($objp->subprice)."</td>\n";
+					print '<td align="right" nowrap="nowrap">'.$objp->qty.'</td>';
 					if ($objp->remise_percent >	0)
 					{
-						print '<td align="right">'.dolibarr_print_reduction($objp->remise_percent)."</td>\n";
+						print '<td align="right" nowrap="nowrap">'.dolibarr_print_reduction($objp->remise_percent)."</td>\n";
 					}
 					else
 					{
 						print '<td>&nbsp;</td>';
 					}
 					//Todo: Modifier la classe pour utiliser le champ total_ttc
-					print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100).'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100).'</td>';
 					if ($commande->statut == 0	&& $user->rights->fournisseur->commande->creer)
 					{
 						print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
