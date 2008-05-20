@@ -121,12 +121,14 @@ $userstatic = new User($db);
 // Ajout rubriques automatiques
 $rowspan=0;
 $sectionauto=array();
-if ($conf->societe->enabled)  { $rowspan++; $sectionauto[]=array('module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
-if ($conf->propal->enabled)   { $rowspan++; $sectionauto[]=array('module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
-if ($conf->commande->enabled) { $rowspan++; $sectionauto[]=array('module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("Orders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
-if ($conf->contrat->enabled)  { $rowspan++; $sectionauto[]=array('module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
-if ($conf->facture->enabled)  { $rowspan++; $sectionauto[]=array('module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("Invoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
-if ($conf->produit->enabled)  { $rowspan++; $sectionauto[]=array('module'=>'product', 'test'=>$conf->produit->enabled, 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
+if ($conf->produit->enabled)     { $rowspan++; $sectionauto[]=array('module'=>'product', 'test'=>$conf->produit->enabled, 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
+if ($conf->societe->enabled)     { $rowspan++; $sectionauto[]=array('module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
+if ($conf->propal->enabled)      { $rowspan++; $sectionauto[]=array('module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
+if ($conf->contrat->enabled)     { $rowspan++; $sectionauto[]=array('module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
+if ($conf->commande->enabled)    { $rowspan++; $sectionauto[]=array('module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("CustomersOrders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
+if ($conf->fournisseur->enabled) { $rowspan++; $sectionauto[]=array('module'=>'supplier_order', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
+if ($conf->facture->enabled)     { $rowspan++; $sectionauto[]=array('module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
+if ($conf->fournisseur->enabled) { $rowspan++; $sectionauto[]=array('module'=>'supplier_invoice', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersOrders"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
 
 
 //***********************
