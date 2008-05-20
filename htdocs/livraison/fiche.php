@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
@@ -425,13 +425,13 @@ else
       if ($conf->commande->enabled)
       {
       	print '<tr><td>'.$langs->trans("RefOrder").'</td>';
-      	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$livraison->$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$livraison->$object->ref."</a></td>\n";
+      	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$livraison->commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$livraison->commande->ref."</a></td>\n";
       	print '</tr>';
       }
       else
       {
       	print '<tr><td>'.$langs->trans("RefProposal").'</td>';
-      	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$livraison->$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$livraison->$object->ref."</a></td>\n";
+      	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$livraison->propal->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$livraison->propal->ref."</a></td>\n";
       	print '</tr>';
       }
     
@@ -568,7 +568,7 @@ else
       $sql.= ", cd.rowid, cd.qty as qty_commande";
       $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
       $sql.= " , ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l";
-      $sql.= " WHERE cd.fk_commande = ".$livraison->commande_id;
+      $sql.= " WHERE cd.fk_commande = ".$livraison->origin_id;
       $sql.= " AND l.rowid <> ".$livraison->id;
       $sql.= " AND cd.rowid = ld.fk_origin_line";
       $sql.= " AND ld.fk_livraison = l.rowid";

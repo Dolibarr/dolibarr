@@ -87,7 +87,7 @@ class Form
 	    $htmltext=ereg_replace("\r","",$htmltext);
 	    $htmltext=ereg_replace("<br>\n","<br>",$htmltext);
 	    $htmltext=ereg_replace("\n","",$htmltext);
-	    
+
 	    if ($conf->use_javascript_ajax && $tooltipon == 4)
 	    {
 	    	$s = '<div id="tip'.$i.'">'."\n";
@@ -116,34 +116,34 @@ class Form
 					$paramfortooltippicto.=' onmouseover="showtip(\''.$htmltext.'\')"';
 					$paramfortooltippicto.=' onMouseout="hidetip()"';
 				}
-	    }
+	    	}
 
-		$s="";
-		$s.='<table class="nobordernopadding"><tr>';
-		if ($direction > 0)
-		{
-			if ($text)
+			$s="";
+			$s.='<table class="nobordernopadding"><tr>';
+			if ($direction > 0)
 			{
-				$s.='<td'.$paramfortooltiptext.'>'.$text;
-				if ($direction) $s.='&nbsp;';
-				$s.='</td>';
+				if ($text)
+				{
+					$s.='<td'.$paramfortooltiptext.'>'.$text;
+					if ($direction) $s.='&nbsp;';
+					$s.='</td>';
+				}
+				if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
 			}
-			if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
-		}
-		else
-		{
-			if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
-			if ($text)
+			else
 			{
-				$s.='<td'.$paramfortooltiptext.'>';
-				if ($direction) $s.='&nbsp;';
-				$s.=$text.'</td>';
+				if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
+				if ($text)
+				{
+					$s.='<td'.$paramfortooltiptext.'>';
+					if ($direction) $s.='&nbsp;';
+					$s.=$text.'</td>';
+				}
 			}
+			$s.='</tr></table>';
 		}
-		$s.='</tr></table>';
+		return $s;
 	}
-	return $s;
- }
 
 	/**
      \brief     Affiche un texte avec picto help qui affiche un tooltip

@@ -212,7 +212,7 @@ class Expedition extends CommonObject
         {
         	$sql.=", pe.fk_propal as origin_id";
         }
-        if ($conf->livraison->enabled) $sql.=", l.rowid as livraison_id";
+        if ($conf->livraison_bon->enabled) $sql.=", l.rowid as livraison_id";
         $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
         if ($conf->commande->enabled)
         {
@@ -224,7 +224,7 @@ class Expedition extends CommonObject
         	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."pr_exp as pe ON e.rowid = pe.fk_expedition";
         	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."propal as p ON pe.fk_propal = p.rowid";
         }
-        if ($conf->livraison->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON e.rowid = l.fk_expedition";
+        if ($conf->livraison_bon->enabled) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON e.rowid = l.fk_expedition";
         $sql.= " WHERE e.rowid = ".$id;
 
         $result = $this->db->query($sql) ;
@@ -432,7 +432,7 @@ class Expedition extends CommonObject
     {
         global $conf;
         
-        if ($conf->livraison->enabled)
+        if ($conf->livraison_bon->enabled)
         {
             if ($this->statut == 1)
             {
@@ -440,8 +440,15 @@ class Expedition extends CommonObject
                 include_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
                 $livraison = new Livraison($this->db);
                 $result=$livraison->create_from_sending($user, $this->id);
-    
-                return $result;
+    			if ($result > 0)
+    			{
+    				return $result;
+    			}
+    			else 
+    			{
+    				$this->error=$livraison->error;
+    				return $result;
+    			}
             }
             else return 0;
         }
@@ -695,7 +702,7 @@ class Expedition extends CommonObject
 		$this->specimen=1;
 		$socid = rand(1, $num_socs);
         $this->statut               = 1;
-        if ($conf->livraison->enabled)
+        if ($conf->livraison_bon->enabled)
         {
           	$this->livraison_id     = 0;
         }

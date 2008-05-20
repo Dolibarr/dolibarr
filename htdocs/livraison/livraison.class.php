@@ -17,21 +17,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/livraison/livraison.class.php
         \ingroup    livraison
         \brief      Fichier de la classe de gestion des bons de livraison
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
-if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 
@@ -47,7 +45,7 @@ class Livraison extends CommonObject
 	var $brouillon;
 	var $origin;
 	var $origin_id;
-
+	var $socid;
 
 	/**
 	* Initialisation
@@ -76,7 +74,7 @@ class Livraison extends CommonObject
 	{
 		global $conf;
 	
-		dolibarr_syslog("Livraison::create ");
+		dolibarr_syslog("Livraison::create");
 	
 		$error = 0;
 	
@@ -84,14 +82,16 @@ class Livraison extends CommonObject
 		$this->brouillon = 1;
 	
 		$this->user = $user;
-	
+		
 		$this->db->begin();
 	
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (date_creation, fk_user_author, fk_adresse_livraison";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraison (ref, fk_soc, date_creation, fk_user_author,";
+		$sql.= " fk_adresse_livraison";
 		if ($this->commande_id) $sql.= ", fk_commande";
 		if ($this->expedition_id) $sql.= ", fk_expedition";
 		$sql.= ")";
-		$sql.= " VALUES (now(), $user->id, $this->adresse_livraison_id";
+		$sql.= " VALUES ('(PROV)', ".$this->socid.", now(), $user->id,";
+		$sql.= " ".($this->adresse_livraison_id > 0?$this->adresse_livraison_id:"null");
 		if ($this->commande_id) $sql.= ", $this->commande_id";
 		if ($this->expedition_id) $sql.= ", $this->expedition_id";
 		$sql.= ")";
@@ -120,7 +120,10 @@ class Livraison extends CommonObject
 				*/
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 				{
-					if (! $this->create_line(0, $this->lignes[$i]->commande_ligne_id, $this->lignes[$i]->qty))
+					$origin_id=$this->lignes[$i]->origin_ligne_id;
+					if (! $origin_id) $origin_id=$this->lignes[$i]->commande_ligne_id;	// For backward compatibility
+					
+					if (! $this->create_line(0, $origin_id, $this->lignes[$i]->qty))
 					{
 						$error++;
 					}
@@ -146,7 +149,7 @@ class Livraison extends CommonObject
 				else
 				{
 					$error++;
-					$this->error=$this->db->error()." - sql=".$this->db->lastqueryerror;
+					$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 					dolibarr_syslog("Livraison::create Error -3 ".$this->error);
 					$this->db->rollback();
 					return -3;
@@ -155,7 +158,7 @@ class Livraison extends CommonObject
 			else
 			{
 				$error++;
-				$this->error=$this->db->error()." - sql=".$this->db->lastqueryerror;
+				$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 				dolibarr_syslog("Livraison::create Error -2 ".$this->error);
 				$this->db->rollback();
 				return -2;
@@ -164,7 +167,7 @@ class Livraison extends CommonObject
 		else
 		{
 			$error++;
-			$this->error=$this->db->error()." - sql=".$this->db->lastqueryerror;
+			$this->error=$this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 			dolibarr_syslog("Livraison::create Error -1 ".$this->error);
 			$this->db->rollback();
 			return -1;
@@ -181,6 +184,7 @@ class Livraison extends CommonObject
 		$idprod = 0;
 		$j = 0;
 	
+		// Search product id
 		while (($j < sizeof($this->commande->lignes)) && idprod == 0)
 		{
 			if ($this->commande->lignes[$j]->id == $commande_ligne_id)
@@ -190,8 +194,12 @@ class Livraison extends CommonObject
 			$j++;
 		}
 	
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraisondet (fk_livraison, fk_commande_ligne, qty)";
-		$sql .= " VALUES ($this->id,".$commande_ligne_id.",".$qty.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraisondet (fk_livraison, fk_origin_line,";
+		if ($idprod) $sql.=" fk_product";
+		$sql.= " qty)";
+		$sql.= " VALUES (".$this->id.",".$commande_ligne_id.",";
+		if ($idprod) $sql.=" ".$idprod.",";
+		$sql.= $qty.")";
 	
 		if (! $this->db->query($sql) )
 		{
@@ -205,7 +213,6 @@ class Livraison extends CommonObject
 	}
 	
 	/**
-	*
 	* Lit un bon de livraison
 	*
 	*/
@@ -234,7 +241,8 @@ class Livraison extends CommonObject
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."pr_liv as pl ON pl.fk_livraison = l.rowid";
 		}
 		$sql.= " WHERE l.rowid = ".$id;
-	
+
+		dolibarr_syslog("Livraison::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
 		if ($result)
 		{
@@ -475,7 +483,7 @@ class Livraison extends CommonObject
 			$LivraisonLigne->origin_ligne_id   = $expedition->lignes[$i]->origin_line_id;
 			$LivraisonLigne->libelle           = $expedition->lignes[$i]->libelle;
 			$LivraisonLigne->description       = $expedition->lignes[$i]->product_desc;
-			$LivraisonLigne->qty               = $expedition->lignes[$i]->qty_expedie;
+			$LivraisonLigne->qty               = $expedition->lignes[$i]->qty_shipped;
 			$LivraisonLigne->fk_product        = $expedition->lignes[$i]->fk_product;
 			$LivraisonLigne->ref               = $expedition->lignes[$i]->ref;
 			$this->lignes[$i] = $LivraisonLigne;
@@ -487,7 +495,8 @@ class Livraison extends CommonObject
 		$this->projetid             = $expedition->projetidp;
 		$this->date_livraison       = $expedition->date_livraison;
 		$this->adresse_livraison_id = $expedition->adresse_livraison_id;
-	
+		$this->socid                = $expedition->socid;
+		
 		return $this->create($user);
 	}
 	
@@ -619,16 +628,16 @@ class Livraison extends CommonObject
 	{
 		$this->lignes = array();
 	
-		$sql = "SELECT p.label, p.ref";
-		$sql.= ", l.description, l.fk_product, l.subprice, l.total_ht, l.qty as qtyliv";
+		$sql = "SELECT p.label, p.ref,";
+		$sql.= " l.description, l.fk_product, l.subprice, l.total_ht, l.qty as qtyliv";
 		//$sql.= ", c.qty as qtycom";
-		$sql .= " FROM ".MAIN_DB_PREFIX."livraisondet as l";
+		$sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as l";
 		//$sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
-		$sql .= " , ".MAIN_DB_PREFIX."product as p";	
-		$sql .= " WHERE l.fk_livraison = ".$this->id;
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = l.fk_product";	
+		$sql.= " WHERE l.fk_livraison = ".$this->id;
 		//$sql .= " AND l.fk_commande_ligne = c.rowid";
-		$sql .= " AND l.fk_product = p.rowid";
 	
+		dolibarr_syslog("Livraison::fetch_lignes sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

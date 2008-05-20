@@ -863,7 +863,7 @@ if ($_GET['propalid'] > 0)
 	print '</td>';
 
 	if ($conf->projet->enabled) $rowspan++;
-	if ($conf->expedition->enabled || $conf->livraison->enabled)
+	if ($conf->expedition_bon->enabled || $conf->livraison_bon->enabled)
 	{
 		if ($conf->global->PROPALE_ADD_SHIPPING_DATE || !$conf->commande->enabled) $rowspan++;
 		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS || !$conf->commande->enabled) $rowspan++;
@@ -908,7 +908,7 @@ if ($_GET['propalid'] > 0)
 
 	// date de livraison (conditionne sur PROPALE_ADD_SHIPPING_DATE car carac a
 	// gerer par les commandes et non les propales
-	if ($conf->expedition->enabled || $conf->livraison->enabled)
+	if ($conf->expedition_bon->enabled || $conf->livraison_bon->enabled)
 	{
 		if ($conf->global->PROPALE_ADD_SHIPPING_DATE || !$conf->commande->enabled)
 		{

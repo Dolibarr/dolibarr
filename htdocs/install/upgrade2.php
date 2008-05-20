@@ -1683,7 +1683,7 @@ function migrate_commande_expedition($db,$langs,$conf)
  */
 function migrate_commande_livraison($db,$langs,$conf)
 {
-	if ($conf->livraison->enabled)
+	if ($conf->livraison_bon->enabled)
 	{
 		print '<tr><td colspan="4">';
 		

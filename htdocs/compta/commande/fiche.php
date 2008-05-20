@@ -28,6 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
@@ -504,103 +505,7 @@ if ($_GET["id"] > 0)
         print "</td></tr></table>";
         
         
-        /*
-         * 	Liste des expéditions/livraisons
-         */
-        if ($conf->expedition->enabled && ($conf->expedition_bon->enabled || $conf->livraison->enabled))
-        {
-        	print '<br>';
-        	
-        	$sql = "SELECT cd.fk_product, cd.rowid, cd.qty as qty_asked";
-        	$sql .= ", ed.qty as qty_shipped, e.ref, ed.fk_expedition as expedition_id";
-        	$sql .= ", ".$db->pdate("e.date_expedition")." as date_expedition";
-        	if ($conf->livraison->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
-        	$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
-        	$sql .= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
-        	if ($conf->livraison->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid";
-        	$sql .= " WHERE cd.fk_commande = ".$commande->id;
-        	$sql .= " AND cd.rowid = ed.fk_origin_line";
-        	$sql .= " AND ed.fk_expedition = e.rowid";
-        	$sql .= " ORDER BY cd.fk_product";
-        	
-        	$resql = $db->query($sql);
-        	if ($resql)
-        	{
-        		$num = $db->num_rows($resql);
-        		$i = 0;
-        		
-        		if ($num)
-        		{
-        			if ($somethingshown) print '<br>';
-                
-                print_titre($langs->trans("SendingsAndReceivingForSameOrder"));
-                print '<table class="liste" width="100%">';
-                print '<tr class="liste_titre">';
-                print '<td>'.$langs->trans("Product").'</td>';
-                print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-                print '<td align="center">'.$langs->trans("DateSending").'</td>';
-                if ($conf->expedition_bon->enabled)
-                {
-                	print '<td>'.$langs->trans("SendingSheet").'</td>';
-                }
-                if ($conf->livraison->enabled)
-                {
-                	print '<td>'.$langs->trans("DeliveryOrder").'</td>';
-                }
-                print "</tr>\n";
-
-                $var=True;
-                while ($i < $num)
-                {
-                    $var=!$var;
-                    $objp = $db->fetch_object($resql);
-                    print "<tr $bc[$var]>";
-                    
-                    if ($objp->fk_product > 0)
-                    {
-            	      $product = new Product($db);
-            	      $product->fetch($objp->fk_product);
-            	      
-            	      print '<td>';
-            	      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-            	      print '</td>';
-                    }
-                    else
-                    {
-                        print "<td>".nl2br($objp->description)."</td>\n";
-                    }
-                    print '<td align="center">'.$objp->qty_shipped.'</td>';
-                    print '<td align="center">'.dolibarr_print_date($objp->date_expedition).'</td>';
-                    if ($conf->expedition_bon->enabled)
-                    {
-	                    print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
-                    }
-                    if ($conf->livraison->enabled)
-                    {
-                    	if ($objp->livraison_id)
-                    	{
-                    		print '<td align="left"><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
-                    	}
-                    	else
-                    	{
-                    		print '<td>&nbsp;</td>';
-                    	}
-                    }
-					print '</tr>';
-
-                    $i++;
-                }
-
-                print '</table>';
-            }
-	      $db->free($resql);
-        }
-        else
-        {
-            dolibarr_print_error($db);
-        }
-      }
-        
+		show_list_sending_receive('commande',$commande->id);
     }
     else
     {

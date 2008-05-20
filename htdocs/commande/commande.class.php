@@ -210,7 +210,7 @@ class Commande extends CommonObject
 			return 0;	
 		}
 
-		if (! $this->$user->rights->commande->valider)
+		if (! $user->rights->commande->valider)
 		{
 			$this->error='Autorisation insuffisante';
 			return -1;

@@ -180,14 +180,16 @@ class Conf
 
 		// Module expeditions
 		$this->expedition->enabled=defined("MAIN_MODULE_EXPEDITION")?MAIN_MODULE_EXPEDITION:0;
-		// Sous module bons d'expedition
-		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
 		$this->expedition->dir_output=DOL_DATA_ROOT."/expedition";
 		$this->expedition->dir_temp  =DOL_DATA_ROOT."/expedition/temp";
+		// Sous module bons d'expedition
+		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
+		$this->expedition_bon->dir_output=DOL_DATA_ROOT."/expedition/sending";
+		$this->expedition_bon->dir_temp  =DOL_DATA_ROOT."/expedition/sending/temp";
 		// Sous module bons de livraison
-		$this->livraison->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
-		$this->livraison->dir_output=DOL_DATA_ROOT."/livraison";
-		$this->livraison->dir_temp  =DOL_DATA_ROOT."/livraison/temp";
+		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
+		$this->livraison_bon->dir_output=DOL_DATA_ROOT."/expedition/receipt";
+		$this->livraison_bon->dir_temp  =DOL_DATA_ROOT."/expedition/receipt/temp";
 
 		// Module societe
 		$this->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;
