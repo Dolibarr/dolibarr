@@ -143,7 +143,10 @@ MigrationPaymentsNothingUpdatable=No more payments that can be corrected
 
 # Contracts Update
 MigrationContractsUpdate=Contract data correction
+MigrationContractsNumberToUpdate=%s contract(s) to update
+MigrationContractsLineCreation=Create contract line for contract ref %s
 MigrationContractsNothingToUpdate=No more things to do
+MigrationContractsFieldDontExist=Field fk_facture does not exists anymore. Nothing to do.
 
 # Contracts Empty Dates Update
 MigrationContractsEmptyDatesUpdate=Contract empty date correction
@@ -172,4 +175,8 @@ MigrationReopeningContractsNothingToUpdate=No closed contract to open
 MigrationBankTransfertsUpdate=Update links between bank transaction and a bank transfert
 MigrationBankTransfertsNothingToUpdate=All links are up to date
 
+# Migration delivery
+MigrationShipmentOrderMatching=Sendings receipt update
+MigrationDeliveryOrderMatching=Delivery receipt update
+MigrationDeliveryDetail=Delivery update
 

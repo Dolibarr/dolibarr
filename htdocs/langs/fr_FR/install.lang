@@ -177,5 +177,8 @@ MigrationReopeningContractsNothingToUpdate=Pas ou plus de contrats à réouvrir.
 MigrationBankTransfertsUpdate=Mise a jour des liens entre ecriture bancaire et un transfert entre compte
 MigrationBankTransfertsNothingToUpdate=Aucun lien non à jour
 
-
+# Migration delivery
+MigrationShipmentOrderMatching=Mise a jour bon expedition
+MigrationDeliveryOrderMatching=Mise a jour bon reception
+MigrationDeliveryDetail=Mise a jour bon reception
 
