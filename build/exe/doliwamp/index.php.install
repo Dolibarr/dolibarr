@@ -306,8 +306,7 @@ while ($file = readdir($handle))
 	if (is_dir($file) && !in_array($file,$projectsListIgnore) && !in_array($file,$aliasarray)) 
 	{		
 		$projectContents .= '<li><a href="'.$file.'">';
-		if (eregi('dolibarr',$file)) $projectContents .= $file.' (URL=http://<i>ipofyourserver</i>:81/'.$file.'/)';
-		if (eregi('phpmyadmin',$file)) $projectContents .= $file.' (URL=http://<i>ipofyourserver</i>:81/'.$file.'/)';
+		$projectContents .= $file;
 		$projectContents .= '</a></li>';
 	}
 }
