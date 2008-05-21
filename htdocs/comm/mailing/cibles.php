@@ -193,11 +193,11 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         $listdir[]=$dirmod;
         if (! empty($dirmod2)) $listdir[]=$dirmod2;
         
+	    $var=true;
         foreach ($listdir as $dir)
         {
 	        $handle=opendir($dir);
 	        
-	        $var=True;
 	        while (($file = readdir($handle))!==false)
 	        {
 	            if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
