@@ -251,7 +251,7 @@ safe_mode_protected_env_vars = LD_LIBRARY_PATH
 ; and below.  This directive makes most sense if used in a per-directory
 ; or per-virtualhost web server configuration file. This directive is
 ; *NOT* affected by whether Safe Mode is turned On or Off.
-;open_basedir =
+open_basedir = "WAMPROOT"
 
 ; This directive allows you to disable certain functions for security reasons.
 ; It receives a comma-delimited list of function names. This directive is
@@ -301,10 +301,10 @@ expose_php = On
 ; Resource Limits ;
 ;;;;;;;;;;;;;;;;;;;
 
-max_execution_time = 30     ; Maximum execution time of each script, in seconds
-max_input_time = 60	; Maximum amount of time each script may spend parsing request data
+max_execution_time = 30       ; Maximum execution time of each script, in seconds
+max_input_time = 60	          ; Maximum amount of time each script may spend parsing request data
 ;max_input_nesting_level = 64 ; Maximum input variable nesting level
-memory_limit = 128M      ; Maximum amount of memory a script may consume (128MB)
+memory_limit = 64M            ; Maximum amount of memory a script may consume (128MB)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -426,7 +426,7 @@ track_errors = Off
 ;error_append_string = "</font>"
 
 ; Log errors to specified file.
-error_log = WAMPROOT/logs/php_error.log
+error_log = "WAMPROOT/logs/php_error.log"
 
 ; Log errors to syslog (Event Log on NT, not valid in Windows 95).
 ;error_log = syslog
@@ -603,7 +603,7 @@ upload_max_filesize = 2M
 ;;;;;;;;;;;;;;;;;;
 
 ; Whether to allow the treatment of URLs (like http:// or ftp://) as files.
-allow_url_fopen = On
+allow_url_fopen = Off
 
 ; Whether to allow include/require to open URLs (like http:// or ftp://) as files.
 allow_url_include = Off

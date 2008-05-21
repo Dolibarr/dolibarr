@@ -27,3 +27,4 @@ ErrorLeftMenuMustHaveAParentId=A menu of type 'Left' must have a parent id.
 ErrorGenbarCodeNotfound=File not found (Bad path, wrong permissions or access denied by openbasedir parameter)
 ErrorFunctionNotAvailableInPHP=Function <b>%s</b> is required for this feature but is not available in this version/setup of PHP.
 ErrorDirAlreadyExists=A directory with this name already exists.
+WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> must be set to <b>on</b> in filer <b>php.ini</b> for having this module working completely. You must modify this file manually.
