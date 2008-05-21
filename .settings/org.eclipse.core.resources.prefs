@@ -1,4 +1,4 @@
-#Fri May 16 20:28:51 CEST 2008
+#Wed May 21 02:07:20 GMT 2008
 eclipse.preferences.version=1
 encoding//dev/skeletons/modMyModule.class.php=ISO-8859-1
 encoding//htdocs/about.php=ISO-8859-1
@@ -40,7 +40,7 @@ encoding//htdocs/expedition/stats/month.php=ISO-8859-1
 encoding//htdocs/facture.class.php=ISO-8859-1
 encoding//htdocs/fichinter/fichinter.class.php=ISO-8859-1
 encoding//htdocs/fourn/facture/fiche.php=ISO-8859-1
-encoding//htdocs/fourn/facture/paiement.php=UTF-8
+encoding//htdocs/fourn/facture/paiement.php=ISO-8859-1
 encoding//htdocs/fourn/facture/paiementfourn.class.php=ISO-8859-1
 encoding//htdocs/fourn/liste.php=ISO-8859-1
 encoding//htdocs/html.form.class.php=ISO-8859-1
