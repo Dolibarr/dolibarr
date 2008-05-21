@@ -26,6 +26,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/mailing.class.php';
 
 $langs->load("mails");
 
