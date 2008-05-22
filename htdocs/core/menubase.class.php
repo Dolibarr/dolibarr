@@ -499,7 +499,8 @@ class Menubase
 	{
 		global $user,$conf,$lang,$leftmenu;
 		global $rights;	// To export to dol_eval function
-		
+
+		//print $strRights."<br>\n";		
 		if ($strRights != "")
 		{
 			$rights = true;
