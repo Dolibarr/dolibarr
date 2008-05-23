@@ -56,24 +56,66 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	exit;
 }
 
-// Action envoi test mailing
-if ($_POST["action"] == 'send' && ! $_POST["cancel"])
-{
-	$filepath = array();
-	$mimetype = array();
-	$filename = array();
 
+/*
+ * Add file
+ */
+if ($_POST['addfile'])
+{
+	// Set tmp user directory
+	$conf->users->dir_tmp=DOL_DATA_ROOT."/users/".$user->id;
+	$upload_dir = $conf->users->dir_tmp.'/temp/';
+	
+	if (! empty($_FILES['addedfile']['tmp_name']))
+	{
+	    if (! is_dir($upload_dir)) create_exdir($upload_dir);
+	
+	    if (is_dir($upload_dir))
+	    {
+	        if (dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0) > 0)
+	        {
+	            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+	            //print_r($_FILES);
+
+				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+				$formmail = new FormMail($db);
+				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+	        }
+	        else
+	        {
+	            // Echec transfert (fichier dépassant la limite ?)
+	            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+	            // print_r($_FILES);
+	        }
+	    }
+	}
+	$_GET["action"]='test';
+}
+
+/*
+ * Send mail
+ */
+if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
+{
 	$email_from = $conf->global->MAIN_MAIL_EMAIL_FROM;
 	$errors_to  = $_POST["errorstomail"];
 	$sendto     = $_POST["sendto"];
 	$subject    = $_POST['subject'];
 	$body       = $_POST['message'];
-	if ($_FILES['addedfile']['tmp_name'])
+
+	// Get list of attached files
+	$listofpaths=array();
+	$listofnames=array();
+	$listofmimes=array();
+	if (! empty($_SESSION["listofpaths"])) $listofpaths=split(';',$_SESSION["listofpaths"]);
+	if (! empty($_SESSION["listofnames"])) $listofnames=split(';',$_SESSION["listofnames"]);
+	if (! empty($_SESSION["listofmimes"])) $listofmimes=split(';',$_SESSION["listofmimes"]);
+	if (! empty($_FILES['addedfile']['tmp_name']))
 	{
-		$filepath[0] = $_FILES['addedfile']['tmp_name'];
-		$mimetype[0] = $_FILES['addedfile']['type'];
-		$filename[0] = $_FILES['addedfile']['name'];
-	}
+		$listofpaths[] = $_FILES['addedfile']['tmp_name'];
+		$listofnames[] = $_FILES['addedfile']['name'];
+		$listofmimes[] = $_FILES['addedfile']['type'];
+	}	
 
 	if (! $sendto)
 	{
@@ -91,7 +133,7 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 		
         require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
-        							$filepath,$mimetype,$filename,
+        							$listofpaths,$listofmimes,$listofnames,
         							'', '', 0, $msgishtml,$errors_to);
         
 		$result=$mailfile->sendfile();
@@ -197,7 +239,7 @@ else
 	{
 	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("DoTestSend").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
 	
@@ -224,37 +266,44 @@ else
 
 	// Affichage formulaire de TEST
 	if ($_GET["action"] == 'test')
-	{
-			  print '<br>';
-			  print_titre($langs->trans("DoTestSend"));
-			  
-			  // Cree l'objet formulaire mail
-			  include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
-			  $formmail = new FormMail($db);	    
-			  $formmail->fromname = $conf->global->MAIN_MAIL_EMAIL_FROM;
-			  $formmail->frommail = $conf->global->MAIN_MAIL_EMAIL_FROM;
-			  $formmail->withsubstit=0;
-			  $formmail->withfrom=1;
-			  $formmail->witherrorsto=1;
-			  $formmail->withto=$user->email?$user->email:1;
-			  $formmail->withtocc=1;
-			  $formmail->withtopic=$langs->trans("Test");
-			  $formmail->withtopicreadonly=0;
-			  $formmail->withfile=1;
-			  $formmail->withbody=$langs->trans("Test");
-			  $formmail->withbodyreadonly=0;
-			  $formmail->withcancel=1;
-			  // Tableau des substitutions
-			  $formmail->substit=$substitutionarrayfortest;
-			  // Tableau des parametres complementaires du post
-			  $formmail->param["action"]="send";
-			  $formmail->param["models"]="body";
-			  $formmail->param["mailid"]=$mil->id;
-			  $formmail->param["returnurl"]=DOL_URL_ROOT."/admin/mails.php";
-	
-			  $formmail->show_form();
-			  
-			  print '<br>';
+	{	
+		  print '<br>';
+		  print_titre($langs->trans("DoTestSend"));
+		  
+		  // Cree l'objet formulaire mail
+		  include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
+		  $formmail = new FormMail($db);	    
+		  $formmail->fromname = $conf->global->MAIN_MAIL_EMAIL_FROM;
+		  $formmail->frommail = $conf->global->MAIN_MAIL_EMAIL_FROM;
+		  $formmail->withsubstit=0;
+		  $formmail->withfrom=1;
+		  $formmail->witherrorsto=1;
+		  $formmail->withto=$user->email?$user->email:1;
+		  $formmail->withtocc=1;
+		  $formmail->withtopic=$langs->trans("Test");
+		  $formmail->withtopicreadonly=0;
+		  $formmail->withfile=2;
+		  $formmail->withbody=$langs->trans("Test");
+		  $formmail->withbodyreadonly=0;
+		  $formmail->withcancel=1;
+		  $formmail->withdeliveryreceipt=1;
+		  // Tableau des substitutions
+		  $formmail->substit=$substitutionarrayfortest;
+		  // Tableau des parametres complementaires du post
+		  $formmail->param["action"]="send";
+		  $formmail->param["models"]="body";
+		  $formmail->param["mailid"]=$mil->id;
+		  $formmail->param["returnurl"]=DOL_URL_ROOT."/admin/mails.php";
+		
+			// Init list of files
+			if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+			{
+				$formmail->clear_attached_files();
+			}
+		  
+		  $formmail->show_form();
+		  
+		  print '<br>';
 	}
 	
 }

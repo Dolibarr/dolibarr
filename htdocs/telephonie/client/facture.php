@@ -474,14 +474,14 @@ if ($_GET["facid"] > 0)
 	  // Envoyer
 	  if ($fac->statut == 1 && $user->rights->facture->envoyer)
 	    {
-	      print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">".$langs->trans("Send")."</a>\n";
+	      print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend&amp;mode=init\">".$langs->trans("Send")."</a>\n";
 	    }
 
 	  // Envoyer une relance
 	  /*
 	  if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer)
 	    {
-	      print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">".$langs->trans("SendRemind")."</a>\n";
+	      print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance&amp;mode=init\">".$langs->trans("SendRemind")."</a>\n";
 	    }
 	  */
 
@@ -665,6 +665,12 @@ if ($_GET["facid"] > 0)
 	  $formmail->param["facid"]=$fac->id;
 	  $formmail->param["returnurl"]=DOL_URL_ROOT."/telephonie/client/facture.php?facid=$fac->id";
 
+		// Init list of files
+		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+		{
+			$formmail->clear_attached_files();
+		}
+				
 	  $formmail->show_form();
 
 	  print '<br>';
@@ -700,7 +706,13 @@ if ($_GET["facid"] > 0)
 	  $formmail->param["facid"]=$fac->id;
 	  $formmail->param["returnurl"]=DOL_URL_ROOT."/compta/facture.php?facid=$fac->id";
 
-	  $formmail->show_form();
+		// Init list of files
+		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+		{
+			$formmail->clear_attached_files();
+		}
+	  
+		$formmail->show_form();
 
 	  print '<br>';
 	}

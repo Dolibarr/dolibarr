@@ -404,10 +404,11 @@ if ($user->admin)
     $user->rights->user->self->password=1;
 }
 
-/**
+/*
  * Overwrite configs global par configs perso
  * ------------------------------------------
  */
+// Set liste_limite
 if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	// Can be 0
 {
     $conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;

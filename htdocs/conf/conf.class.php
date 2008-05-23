@@ -141,7 +141,7 @@ class Conf
 		 * Autres parametres globaux de configurations
 		 */
 		$this->users->dir_output=DOL_DATA_ROOT."/users";
-
+		
 		/*
 		 * Autorisation globale d'uploader (necessaire pour desactiver dans la demo)
 		 * conf->upload peut etre ecrasee dans main.inc.php (selon user)

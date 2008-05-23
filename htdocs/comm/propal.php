@@ -292,17 +292,54 @@ if ($_REQUEST['action'] == 'setstatut' && $user->rights->propale->cloturer)
     {
         $propal = new Propal($db);
         $propal->fetch($_GET['propalid']);
-	// prevent browser refresh from closing proposal several times
-	if ($propal->statut==1) {
-        $propal->cloture($user, $_REQUEST['statut'], $_REQUEST['note']);
-    }
+		// prevent browser refresh from closing proposal several times
+		if ($propal->statut==1) 
+		{
+    	    $propal->cloture($user, $_REQUEST['statut'], $_REQUEST['note']);
+    	}
+	}
 }
+
+
+/*
+ * Add file
+ */
+if ($_POST['addfile'])
+{
+	// Set tmp user directory
+	$conf->users->dir_tmp=DOL_DATA_ROOT."/users/".$user->id;
+	$upload_dir = $conf->users->dir_tmp.'/temp/';
+	
+	if (! empty($_FILES['addedfile']['tmp_name']))
+	{
+	    if (! is_dir($upload_dir)) create_exdir($upload_dir);
+	
+	    if (is_dir($upload_dir))
+	    {
+	        if (dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0) > 0)
+	        {
+	            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+	            //print_r($_FILES);
+
+				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+				$formmail = new FormMail($db);
+				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+	        }
+	        else
+	        {
+	            // Echec transfert (fichier dépassant la limite ?)
+	            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+	            // print_r($_FILES);
+	        }
+	    }
+	}
+	$_GET["action"]='presend';
 }
 
 /*
- * Envoi de la propale par mail
+ * Send mail
  */
-if ($_POST['action'] == 'send')
+if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 {
     $langs->load('mails');
 
@@ -1571,145 +1608,150 @@ if ($_GET['propalid'] > 0)
 	/*
 	* Boutons Actions
 	*/
-	print '<div class="tabsAction">';
-
-	if ($_GET['action'] != 'statut' && $_GET['action'] <> 'editline')
+	if ($_GET['action'] != 'presend')
 	{
-
-		// Valid
-		if ($propal->statut == 0 && $propal->total_ttc > 0 && $user->rights->propale->valider)
+		print '<div class="tabsAction">';
+	
+		if ($_GET['action'] != 'statut' && $_GET['action'] <> 'editline')
 		{
-			print '<a class="butAction" ';
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+	
+			// Valid
+			if ($propal->statut == 0 && $propal->total_ttc > 0 && $user->rights->propale->valider)
 			{
-				$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_validate&confirm=yes';
-				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmValidateProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+				print '<a class="butAction" ';
+				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+				{
+					$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_validate&confirm=yes';
+					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmValidateProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+				}
+				else
+				{
+					print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=validate"';
+				}
+				print '>'.$langs->trans('Validate').'</a>';
 			}
-			else
+	
+			// Edit
+			if ($propal->statut == 1 && $user->rights->propale->creer)
 			{
-				print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=validate"';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
 			}
-			print '>'.$langs->trans('Validate').'</a>';
+	
+			// Send
+			if ($propal->statut == 1 && $user->rights->propale->envoyer)
+			{
+				$propref = sanitize_string($propal->ref);
+				$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
+				if (file_exists($file))
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+				}
+			}
+	
+			// Close
+			if ($propal->statut == 1 && $user->rights->propale->cloturer)
+			{
+				print '<div id="confirm_close" style="display:none">';
+				print $form_close."\n";
+				print '</div>'."\n";
+				
+				print '<a class="butAction" ';
+				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+				{
+					print 'href="#" onClick="dialogInfo($(\'confirm_close\').innerHTML)"'."\n";
+				}
+				else
+				{
+					print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut"';
+				}
+				print '>'.$langs->trans('Close').'</a>';
+			}
+	
+			// Delete
+			if ($propal->statut == 0 && $user->rights->propale->supprimer)
+			{
+				print '<a class="butActionDelete" ';
+				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+				{
+					$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_delete&confirm=yes';
+					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
+				}
+				else
+				{
+					print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete"';
+				}
+				print '>'.$langs->trans('Delete').'</a>';
+			}
+	
 		}
-
-		// Edit
-		if ($propal->statut == 1 && $user->rights->propale->creer)
-		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
-		}
-
-		// Send
-		if ($propal->statut == 1 && $user->rights->propale->envoyer)
-		{
-			$propref = sanitize_string($propal->ref);
-			$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
-			if (file_exists($file))
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
-			}
-		}
-
-		// Close
-		if ($propal->statut == 1 && $user->rights->propale->cloturer)
-		{
-			print '<div id="confirm_close" style="display:none">';
-			print $form_close."\n";
-			print '</div>'."\n";
-			
-			print '<a class="butAction" ';
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-			{
-				print 'href="#" onClick="dialogInfo($(\'confirm_close\').innerHTML)"'."\n";
-			}
-			else
-			{
-				print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut"';
-			}
-			print '>'.$langs->trans('Close').'</a>';
-		}
-
-		// Delete
-		if ($propal->statut == 0 && $user->rights->propale->supprimer)
-		{
-			print '<a class="butActionDelete" ';
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-			{
-				$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_delete&confirm=yes';
-				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
-			}
-			else
-			{
-				print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete"';
-			}
-			print '>'.$langs->trans('Delete').'</a>';
-		}
-
+	
+		print '</div>';
+		print "<br>\n";
 	}
 
-	print '</div>';
-	print "<br>\n";
-
-
-	print '<table width="100%"><tr><td width="50%" valign="top">';
-	print '<a name="builddoc"></a>'; // ancre
-
-
-	/*
-	* Documents generes
-	*/
-	$filename=sanitize_string($propal->ref);
-	$filedir=$conf->propal->dir_output . "/" . sanitize_string($propal->ref);
-	$urlsource=$_SERVER["PHP_SELF"]."?propalid=".$propal->id;
-	$genallowed=$user->rights->propale->creer;
-	$delallowed=$user->rights->propale->supprimer;
-
-	$var=true;
-
-	$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
-
-
-	/*
-	* Commandes rattachees
-	*/
-	if($conf->commande->enabled)
+	if ($_GET['action'] != 'presend')
 	{
-		$propal->loadOrders();
-		$coms = $propal->commandes;
-		if (sizeof($coms) > 0)
+		print '<table width="100%"><tr><td width="50%" valign="top">';
+		print '<a name="builddoc"></a>'; // ancre
+	
+	
+		/*
+		* Documents generes
+		*/
+		$filename=sanitize_string($propal->ref);
+		$filedir=$conf->propal->dir_output . "/" . sanitize_string($propal->ref);
+		$urlsource=$_SERVER["PHP_SELF"]."?propalid=".$propal->id;
+		$genallowed=$user->rights->propale->creer;
+		$delallowed=$user->rights->propale->supprimer;
+	
+		$var=true;
+	
+		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
+	
+	
+		/*
+		* Commandes rattachees
+		*/
+		if($conf->commande->enabled)
 		{
-			if ($somethingshown) { print '<br>'; $somethingshown=1; }
-			print_titre($langs->trans('RelatedOrders'));
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Ref").'</td>';
-			print '<td align="center">'.$langs->trans("Date").'</td>';
-			print '<td align="right">'.$langs->trans("Price").'</td>';
-			print '<td align="right">'.$langs->trans("Status").'</td>';
-			print '</tr>';
-			$var=true;
-			for ($i = 0 ; $i < sizeof($coms) ; $i++)
+			$propal->loadOrders();
+			$coms = $propal->commandes;
+			if (sizeof($coms) > 0)
 			{
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>';
-				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
-				print '<td align="center">'.dolibarr_print_date($coms[$i]->date,'day').'</td>';
-				print '<td align="right">'.price($coms[$i]->total_ttc).'</td>';
-				print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
-				print "</tr>\n";
+				if ($somethingshown) { print '<br>'; $somethingshown=1; }
+				print_titre($langs->trans('RelatedOrders'));
+				print '<table class="noborder" width="100%">';
+				print '<tr class="liste_titre">';
+				print '<td>'.$langs->trans("Ref").'</td>';
+				print '<td align="center">'.$langs->trans("Date").'</td>';
+				print '<td align="right">'.$langs->trans("Price").'</td>';
+				print '<td align="right">'.$langs->trans("Status").'</td>';
+				print '</tr>';
+				$var=true;
+				for ($i = 0 ; $i < sizeof($coms) ; $i++)
+				{
+					$var=!$var;
+					print '<tr '.$bc[$var].'><td>';
+					print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
+					print '<td align="center">'.dolibarr_print_date($coms[$i]->date,'day').'</td>';
+					print '<td align="right">'.price($coms[$i]->total_ttc).'</td>';
+					print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
+					print "</tr>\n";
+				}
+				print '</table>';
 			}
-			print '</table>';
 		}
+	
+		print '</td><td valign="top" width="50%">';
+	
+		// List of actions on element
+		include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
+		$formactions=new FormActions($db);
+		$somethingshown=$formactions->showactions($propal,'propal',$socid);
+	
+	    print '</td></tr></table>';
 	}
-
-	print '</td><td valign="top" width="50%">';
-
-	// List of actions on element
-	include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
-	$formactions=new FormActions($db);
-	$somethingshown=$formactions->showactions($propal,'propal',$socid);
-
-    print '</td></tr></table>';
-
+	
 
 	/*
 	* Action presend
@@ -1717,6 +1759,9 @@ if ($_GET['propalid'] > 0)
 	*/
 	if ($_GET['action'] == 'presend')
 	{
+    	$ref = sanitize_string($propal->ref);
+		$file = $conf->propal->dir_output . '/' . $ref . '/' . $ref . '.pdf';
+
 		print '<br>';
 		print_titre($langs->trans('SendPropalByMail'));
 
@@ -1748,6 +1793,13 @@ if ($_GET['propalid'] > 0)
 		$formmail->param['propalid']=$propal->id;
 		$formmail->param['returnurl']=DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
 
+		// Init list of files
+		if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+		{
+			$formmail->clear_attached_files();
+			$formmail->add_attached_files($file,$propal->ref.'.pdf','application/pdf');
+		}
+				
 		$formmail->show_form();
 
 		print '<br>';

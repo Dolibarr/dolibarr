@@ -525,7 +525,7 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 
 	// Sauvegarde le dernier modele choisi pour generer un document
 	$commande = new Commande($db, 0, $_REQUEST['id']);
-	$commande->fetch($_REQUEST['id']);
+	$result=$commande->fetch($_REQUEST['id']);
 	if ($_REQUEST['model'])
 	{
 		$commande->setDocModel($user, $_REQUEST['model']);
@@ -565,17 +565,53 @@ if ($_REQUEST['action'] == 'remove_file')
 }
 
 /*
- * Envoi de la commande par mail
+ * Add file
  */
-if ($_POST['action'] == 'send')
+if ($_POST['addfile'])
+{
+	// Set tmp user directory
+	$conf->users->dir_tmp=DOL_DATA_ROOT."/users/".$user->id;
+	$upload_dir = $conf->users->dir_tmp.'/temp/';
+	
+	if (! empty($_FILES['addedfile']['tmp_name']))
+	{
+	    if (! is_dir($upload_dir)) create_exdir($upload_dir);
+	
+	    if (is_dir($upload_dir))
+	    {
+	        if (dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0) > 0)
+	        {
+	            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+	            //print_r($_FILES);
+
+				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+				$formmail = new FormMail($db);
+				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+	        }
+	        else
+	        {
+	            // Echec transfert (fichier dépassant la limite ?)
+	            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+	            // print_r($_FILES);
+	        }
+	    }
+	}
+	$_GET["action"]='presend';
+}
+
+/*
+ * Send mail
+ */
+if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 {
 	$langs->load('mails');
 
 	$commande= new Commande($db);
-	if ( $commande->fetch($_POST['orderid']) )
+	$result=$commande->fetch($_POST['orderid']);
+	if ($result)
 	{
-		$orderref = sanitize_string($commande->ref);
-		$file = $conf->commande->dir_output . '/' . $orderref . '/' . $orderref . '.pdf';
+		$ref = sanitize_string($commande->ref);
+		$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 		if (is_readable($file))
 		{
@@ -627,19 +663,23 @@ if ($_POST['action'] == 'send')
 					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 				}
 
-				$filepath[0] = $file;
-				$filename[0] = $commande->ref.'.pdf';
-				$mimetype[0] = 'application/pdf';
-				if ($_FILES['addedfile']['tmp_name'])
+				// Get list of attached files
+				$listofpaths=array();
+				$listofnames=array();
+				$listofmimes=array();
+				if (! empty($_SESSION["listofpaths"])) $listofpaths=split(';',$_SESSION["listofpaths"]);
+				if (! empty($_SESSION["listofnames"])) $listofnames=split(';',$_SESSION["listofnames"]);
+				if (! empty($_SESSION["listofmimes"])) $listofmimes=split(';',$_SESSION["listofmimes"]);
+				if (! empty($_FILES['addedfile']['tmp_name']))
 				{
-					$filepath[1] = $_FILES['addedfile']['tmp_name'];
-					$filename[1] = $_FILES['addedfile']['name'];
-					$mimetype[1] = $_FILES['addedfile']['type'];
+					$listofpaths[] = $_FILES['addedfile']['tmp_name'];
+					$listofnames[] = $_FILES['addedfile']['name'];
+					$listofmimes[] = $_FILES['addedfile']['type'];
 				}
-
-				// Envoi de la commande
+				
+				// Send mail
 				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
-				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+				$mailfile = new CMailFile($subject,$sendto,$from,$message,$listofpaths,$listofmimes,$listofnames,$sendtocc,'',$deliveryreceipt);
 				if ($mailfile->error)
 				{
 					$mesg='<div class="error">'.$mailfile->error.'</div>';
@@ -699,6 +739,7 @@ if ($_POST['action'] == 'send')
 			{
 				$langs->load("other");
 				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
+				$_GET["action"]='presend';
 				dolibarr_syslog('Recipient email is empty');
 			}
 		}
@@ -1679,207 +1720,213 @@ else
 			print '</table>';
 			print '</div>';
 
+			
 			/*
 			* Boutons actions
 			*/
-			if ($user->societe_id == 0 && $_GET['action'] <> 'editline')
+			if ($_GET['action'] != 'presend')
 			{
-				print '<div class="tabsAction">';
-
-				// Valid
-				if ($commande->statut == 0 && $commande->total_ttc >= 0 && $numlines > 0 && $user->rights->commande->valider)
+				if ($user->societe_id == 0 && $_GET['action'] <> 'editline')
 				{
-					print '<a class="butAction" ';
-					if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-					{
-						// on verifie si la commande est en numerotation provisoire
-						$ref = substr($commande->ref, 1, 4);
-						if ($ref == 'PROV')
-						{
-							$num = $commande->getNextNumRef($soc);
-						}
-						else
-						{
-							$num = $commande->ref;
-						}
-						$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_validate&confirm=yes';
-						print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmValidateOrder',$num).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
-					}
-					else
-					{
-						print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=validate"';
-					}
-					print '>'.$langs->trans('Validate').'</a>';
-				}
-
-				// Edit
-				if ($commande->statut == 1)
-				{
-					if ($user->rights->commande->creer)
-					{
-						print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
-					}
-				}
-
-				// Send
-				if ($commande->statut > 0)
-				{
-					if ($user->rights->commande->envoyer)
-					{
-						$comref = sanitize_string($commande->ref);
-						$file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
-						if (file_exists($file))
-						{
-							print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
-						}
-					}
-				}
-
-				// Ship
-				if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer
-				&& $commande->getNbOfProductsLines() > 0)
-				{
-
-					// Chargement des permissions
-					$error = $user->load_entrepots();
-					if (sizeof($user->entrepots) === 1)
-					{
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$_GET['id'].'&amp;action=create&amp;commande_id='.$_GET["id"].'&entrepot_id='.$user->entrepots[0]['id'].'">';
-						print $langs->trans('ShipProduct').'</a>';
-
-					}
-					else
-					{
-						print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
-					}
-				}
-
-				// Cloturer
-				if ($commande->statut == 1 || $commande->statut == 2)
-				{
-					if ($user->rights->commande->cloturer)
+					print '<div class="tabsAction">';
+	
+					// Valid
+					if ($commande->statut == 0 && $commande->total_ttc >= 0 && $numlines > 0 && $user->rights->commande->valider)
 					{
 						print '<a class="butAction" ';
 						if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 						{
-							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_close&confirm=yes';
-							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmCloseOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'close\')"';
+							// on verifie si la commande est en numerotation provisoire
+							$ref = substr($commande->ref, 1, 4);
+							if ($ref == 'PROV')
+							{
+								$num = $commande->getNextNumRef($soc);
+							}
+							else
+							{
+								$num = $commande->ref;
+							}
+							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_validate&confirm=yes';
+							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmValidateOrder',$num).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
 						}
 						else
 						{
-							print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=close"';
+							print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=validate"';
 						}
-						print '>'.$langs->trans('Close').'</a>';
+						print '>'.$langs->trans('Validate').'</a>';
 					}
-				}
-
-				// Annuler commande
-				if ($commande->statut == 1)
-				{
-					$nb_expedition = $commande->nb_expedition();
-					if ($user->rights->commande->annuler && $nb_expedition == 0)
+	
+					// Edit
+					if ($commande->statut == 1)
+					{
+						if ($user->rights->commande->creer)
+						{
+							print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
+						}
+					}
+	
+					// Send
+					if ($commande->statut > 0)
+					{
+						if ($user->rights->commande->envoyer)
+						{
+							$comref = sanitize_string($commande->ref);
+							$file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
+							if (file_exists($file))
+							{
+								print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+							}
+						}
+					}
+	
+					// Ship
+					if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer
+					&& $commande->getNbOfProductsLines() > 0)
+					{
+	
+						// Chargement des permissions
+						$error = $user->load_entrepots();
+						if (sizeof($user->entrepots) === 1)
+						{
+							print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$_GET['id'].'&amp;action=create&amp;commande_id='.$_GET["id"].'&entrepot_id='.$user->entrepots[0]['id'].'">';
+							print $langs->trans('ShipProduct').'</a>';
+	
+						}
+						else
+						{
+							print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET['id'].'">'.$langs->trans('ShipProduct').'</a>';
+						}
+					}
+	
+					// Cloturer
+					if ($commande->statut == 1 || $commande->statut == 2)
+					{
+						if ($user->rights->commande->cloturer)
+						{
+							print '<a class="butAction" ';
+							if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+							{
+								$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_close&confirm=yes';
+								print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmCloseOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'close\')"';
+							}
+							else
+							{
+								print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=close"';
+							}
+							print '>'.$langs->trans('Close').'</a>';
+						}
+					}
+	
+					// Annuler commande
+					if ($commande->statut == 1)
+					{
+						$nb_expedition = $commande->nb_expedition();
+						if ($user->rights->commande->annuler && $nb_expedition == 0)
+						{
+							print '<a class="butActionDelete" ';
+							if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+							{
+								$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_cancel&confirm=yes';
+								print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmCancelOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'cancel\')"';
+							}
+							else
+							{
+								print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=cancel"';
+							}
+							print '>'.$langs->trans('CancelOrder').'</a>';
+						}
+					}
+	
+					// Supprimer commande
+					if ($commande->statut == 0 && $user->rights->commande->supprimer)
 					{
 						print '<a class="butActionDelete" ';
 						if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 						{
-							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_cancel&confirm=yes';
-							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmCancelOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'cancel\')"';
+							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_delete&confirm=yes';
+							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
 						}
 						else
 						{
-							print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=cancel"';
+							print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete"';
 						}
-						print '>'.$langs->trans('CancelOrder').'</a>';
+						print '>'.$langs->trans('Delete').'</a>';
 					}
+	
+					print '</div>';
 				}
-
-				// Supprimer commande
-				if ($commande->statut == 0 && $user->rights->commande->supprimer)
-				{
-					print '<a class="butActionDelete" ';
-					if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-					{
-						$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_delete&confirm=yes';
-						print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
-					}
-					else
-					{
-						print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete"';
-					}
-					print '>'.$langs->trans('Delete').'</a>';
-				}
-
-				print '</div>';
+				print '<br>';
 			}
-			print '<br>';
 
-
-			print '<table width="100%"><tr><td width="50%" valign="top">';
-			print '<a name="builddoc"></a>'; // ancre
-
-			/*
-			* Documents generes
-			*
-			*/
-			$comref = sanitize_string($commande->ref);
-			$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
-			$relativepath = $comref.'/'.$comref.'.pdf';
-			$filedir = $conf->commande->dir_output . '/' . $comref;
-			$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
-			$genallowed=$user->rights->commande->creer;
-			$delallowed=$user->rights->commande->supprimer;
-
-			$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
-
-			/*
-			* Liste des factures
-			*/
-			$sql = 'SELECT f.rowid,f.facnumber, f.total_ttc, '.$db->pdate('f.datef').' as df';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'co_fa as cf';
-			$sql .= ' WHERE f.rowid = cf.fk_facture AND cf.fk_commande = '. $commande->id;
-
-			$result = $db->query($sql);
-			if ($result)
+			
+			if ($_GET['action'] != 'presend')
 			{
-				$num = $db->num_rows($result);
-				if ($num)
+				print '<table width="100%"><tr><td width="50%" valign="top">';
+				print '<a name="builddoc"></a>'; // ancre
+	
+				/*
+				* Documents generes
+				*
+				*/
+				$comref = sanitize_string($commande->ref);
+				$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
+				$relativepath = $comref.'/'.$comref.'.pdf';
+				$filedir = $conf->commande->dir_output . '/' . $comref;
+				$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
+				$genallowed=$user->rights->commande->creer;
+				$delallowed=$user->rights->commande->supprimer;
+	
+				$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+	
+				/*
+				* Liste des factures
+				*/
+				$sql = 'SELECT f.rowid,f.facnumber, f.total_ttc, '.$db->pdate('f.datef').' as df';
+				$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'co_fa as cf';
+				$sql .= ' WHERE f.rowid = cf.fk_facture AND cf.fk_commande = '. $commande->id;
+	
+				$result = $db->query($sql);
+				if ($result)
 				{
-					print '<br>';
-					print_titre($langs->trans('RelatedBills'));
-					$i = 0; $total = 0;
-					print '<table class="noborder" width="100%">';
-					print '<tr class="liste_titre"><td>'.$langs->trans('Ref')."</td>";
-					print '<td align="center">'.$langs->trans('Date').'</td>';
-					print '<td align="right">'.$langs->trans('Price').'</td>';
-					print '</tr>';
-
-					$var=True;
-					while ($i < $num)
+					$num = $db->num_rows($result);
+					if ($num)
 					{
-						$objp = $db->fetch_object($result);
-						$var=!$var;
-						print '<tr '.$bc[$var].'>';
-						print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->facnumber.'</a></td>';
-						print '<td align="center">'.dolibarr_print_date($objp->df,'day').'</td>';
-						print '<td align="right">'.$objp->total_ttc.'</td></tr>';
-						$i++;
+						print '<br>';
+						print_titre($langs->trans('RelatedBills'));
+						$i = 0; $total = 0;
+						print '<table class="noborder" width="100%">';
+						print '<tr class="liste_titre"><td>'.$langs->trans('Ref')."</td>";
+						print '<td align="center">'.$langs->trans('Date').'</td>';
+						print '<td align="right">'.$langs->trans('Price').'</td>';
+						print '</tr>';
+	
+						$var=True;
+						while ($i < $num)
+						{
+							$objp = $db->fetch_object($result);
+							$var=!$var;
+							print '<tr '.$bc[$var].'>';
+							print '<td><a href="../compta/facture.php?facid='.$objp->rowid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->facnumber.'</a></td>';
+							print '<td align="center">'.dolibarr_print_date($objp->df,'day').'</td>';
+							print '<td align="right">'.$objp->total_ttc.'</td></tr>';
+							$i++;
+						}
+						print '</table>';
 					}
-					print '</table>';
 				}
+				else
+				{
+					dolibarr_print_error($db);
+				}
+				print '</td><td valign="top" width="50%">';
+	
+				// List of actions on element
+				include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
+				$formactions=new FormActions($db);
+				$somethingshown=$formactions->showactions($commande,'order',$socid);
+			    
+				print '</td></tr></table>';
 			}
-			else
-			{
-				dolibarr_print_error($db);
-			}
-			print '</td><td valign="top" width="50%">';
-
-			// List of actions on element
-			include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
-			$formactions=new FormActions($db);
-			$somethingshown=$formactions->showactions($commande,'order',$socid);
-		    
-			print '</td></tr></table>';
-
 
 
 			/*
@@ -1888,24 +1935,8 @@ else
 			*/
 			if ($_GET['action'] == 'presend')
 			{
-				$orderref = sanitize_string($commande->ref);
-				$file = $conf->commande->dir_output . '/' . $orderref . '/' . $orderref . '.pdf';
-
-				// Construit PDF si non existant
-				if (! is_readable($file))
-				{
-					if ($_REQUEST['lang_id'])
-					{
-						$outputlangs = new Translate("",$conf);
-						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-					}
-					$result=commande_pdf_create($db, $_REQUEST['id'], '', $_REQUEST['model'], $outputlangs);
-					if ($result <= 0)
-					{
-						dolibarr_print_error($db,$result);
-						exit;
-					}
-				}
+				$ref = sanitize_string($commande->ref);
+				$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 				print '<br>';
 				print_titre($langs->trans('SendOrderByMail'));
@@ -1920,7 +1951,7 @@ else
 				}
 
 				// Cree l'objet formulaire mail
-				include_once('../html.formmail.class.php');
+				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
 				$formmail = new FormMail($db);
 				$formmail->fromtype = 'user';
 				$formmail->fromid   = $user->id;
@@ -1933,6 +1964,7 @@ else
 				$formmail->withfile=1;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
+				$formmail->withcancel=1;
 				// Tableau des substitutions
 				$formmail->substit['__ORDERREF__']=$commande->ref;
 				// Tableau des parametres complementaires
@@ -1941,8 +1973,16 @@ else
 				$formmail->param['orderid']=$commande->id;
 				$formmail->param['returnurl']=DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
 
+				// Init list of files
+				if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+				{
+					$formmail->clear_attached_files();
+					$formmail->add_attached_files($file,$ref.'.pdf','application/pdf');
+				}
+				
+				// Show form
 				$formmail->show_form();
-
+				
 				print '<br>';
 			}
 		}

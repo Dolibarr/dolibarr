@@ -950,17 +950,53 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 }
 
 /*
- * Action envoi de mail
+ * Add file
  */
-if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['cancel'])
+if ($_POST['addfile'])
+{
+	// Set tmp user directory
+	$conf->users->dir_tmp=DOL_DATA_ROOT."/users/".$user->id;
+	$upload_dir = $conf->users->dir_tmp.'/temp/';
+	
+	if (! empty($_FILES['addedfile']['tmp_name']))
+	{
+	    if (! is_dir($upload_dir)) create_exdir($upload_dir);
+	
+	    if (is_dir($upload_dir))
+	    {
+	        if (dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0) > 0)
+	        {
+	            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+	            //print_r($_FILES);
+
+				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+				$formmail = new FormMail($db);
+				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
+	        }
+	        else
+	        {
+	            // Echec transfert (fichier dépassant la limite ?)
+	            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+	            // print_r($_FILES);
+	        }
+	    }
+	}
+	$_GET["action"]='presend';
+}
+
+/*
+ * Send mail
+ */
+if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['addfile'] && ! $_POST['cancel'])
 {
 	$langs->load('mails');
 
 	$fac = new Facture($db,'',$_POST['facid']);
-	if ( $fac->fetch($_POST['facid']) )
+	$result=$fac->fetch($_POST['facid']);
+	if ($result)
 	{
-		$facref = sanitize_string($fac->ref);
-		$file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
+		$ref = sanitize_string($fac->ref);
+		$file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 		if (is_readable($file))
 		{
@@ -2684,257 +2720,210 @@ else
 			print "</div>\n";
 
 
-		/*
-		* Boutons actions
-		*/
-			if ($user->societe_id == 0 && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
-			{
-				print '<div class="tabsAction">';
-
-				// Editer une facture déjà validée, sans paiement effectué et pas exporté en compta
-				if ($fac->statut == 1)
+			/*
+			* Boutons actions
+			*/
+			if ($_GET['action'] != 'prerelance' && $_GET['action'] != 'presend')
+			{			
+				if ($user->societe_id == 0 && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
 				{
-					// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
-					$ventilExportCompta = $fac->getVentilExportCompta();
-
-					if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
-							&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))
+					print '<div class="tabsAction">';
+	
+					// Editer une facture déjà validée, sans paiement effectué et pas exporté en compta
+					if ($fac->statut == 1)
 					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
-					}
-				}
-
-				// Récurrente
-				if (! $conf->global->FACTURE_DISABLE_RECUR && $fac->type == 0)
-				{
-					if (! $facidnext)
-					{
-						print '<a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
-					}
-				}
-
-				// Valider
-				if ($fac->statut == 0 && $num_lignes > 0 && (($fac->type < 2 && $fac->total_ttc >= 0) || ($fac->type == 2 && $fac->total_ttc <= 0)))
-				{
-					if ($user->rights->facture->valider)
-					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
-					}
-				}
-				
-				// Envoyer
-				if (($fac->statut == 1 || $fac->statut == 2) && $user->rights->facture->envoyer)
-				{
-					if ($facidnext)
-					{
-						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendByMail').'</span>';
-					}
-					else
-					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
-					}
-				}
-
-				// Envoyer une relance
-				if (($fac->statut == 1 || $fac->statut == 2) && $resteapayer > 0 && $user->rights->facture->envoyer)
-				{
-					if ($facidnext)
-					{
-						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendRemindByMail').'</span>';
-					}
-					else
-					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=prerelance">'.$langs->trans('SendRemindByMail').'</a>';
-					}
-				}
-
-				// Emettre paiement
-				if ($fac->type != 2 && $fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
-				{
-					if ($facidnext)
-					{
-						print '<font class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</font>';
-					}
-					else
-					{
-						if ($resteapayer == 0)
+						// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+						$ventilExportCompta = $fac->getVentilExportCompta();
+	
+						if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
+								&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))
 						{
-							print '<font class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</font>';
-						}
-						else
-						{
-							print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
 						}
 					}
-				}
-
-				// Emettre remboursement ou Convertir en reduc
-				if ($fac->type == 2)
-				{
-					if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
+	
+					// Récurrente
+					if (! $conf->global->FACTURE_DISABLE_RECUR && $fac->type == 0)
 					{
-						print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a>';
+						if (! $facidnext)
+						{
+							print '<a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
+						}
 					}
-
-					if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->creer && $fac->getSommePaiement() == 0)
+	
+					// Valider
+					if ($fac->statut == 0 && $num_lignes > 0 && (($fac->type < 2 && $fac->total_ttc >= 0) || ($fac->type == 2 && $fac->total_ttc <= 0)))
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
+						if ($user->rights->facture->valider)
+						{
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
+						}
 					}
-				}
-
-				// Classer 'payé'
-				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement &&
-					(($fac->type != 2 && $resteapayer <= 0) || ($fac->type == 2 && $resteapayer >= 0)) )
-				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
-				}
-
-				// Classer 'fermée' (possible si validée et pas encore classée payée)
-				if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
-						&& $user->rights->facture->paiement)
-				{
-					if ($totalpaye > 0 || $totalavoir > 0)
-					{
-						// If one payment or one credit note was linked to this invoice
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayedPartially').'</a>';
-					}
-					else
+					
+					// Envoyer
+					if (($fac->statut == 1 || $fac->statut == 2) && $user->rights->facture->envoyer)
 					{
 						if ($facidnext)
 						{
-							print '<a class="butActionRefused">'.$langs->trans('ClassifyCanceled').'</span>';
+							print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendByMail').'</span>';
 						}
 						else
 						{
-							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
 						}
 					}
-				}
-
-				// Supprimer
-				if ($fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
-				{
-					if ($facidnext)
+	
+					// Envoyer une relance
+					if (($fac->statut == 1 || $fac->statut == 2) && $resteapayer > 0 && $user->rights->facture->envoyer)
 					{
-						print '<span class="butActionDeleteRefused">'.$langs->trans('Delete').'</span>';
+						if ($facidnext)
+						{
+							print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendRemindByMail').'</span>';
+						}
+						else
+						{
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=prerelance&amp;mode=init">'.$langs->trans('SendRemindByMail').'</a>';
+						}
 					}
-					else
+	
+					// Emettre paiement
+					if ($fac->type != 2 && $fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 					{
-						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+						if ($facidnext)
+						{
+							print '<font class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</font>';
+						}
+						else
+						{
+							if ($resteapayer == 0)
+							{
+								print '<font class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</font>';
+							}
+							else
+							{
+								print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
+							}
+						}
 					}
-				}
-
-				print '</div>';
-			}
-
-			print '<table width="100%"><tr><td width="50%" valign="top">';
-			print '<a name="builddoc"></a>'; // ancre
-
-			/*
-			* Documents générés
-			*/
-			$filename=sanitize_string($fac->ref);
-			$filedir=$conf->facture->dir_output . '/' . sanitize_string($fac->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
-			$genallowed=$user->rights->facture->creer;
-			$delallowed=$user->rights->facture->supprimer;
-
-			$var=true;
-
-			print '<br>';
-			$somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
-
-			/*
-			*   Propales rattachées
-			*/
-			$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.total_ht, p.ref, p.ref_client, p.rowid as propalid';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p';
-			$sql .= ", ".MAIN_DB_PREFIX."fa_pr as fp";
-			$sql .= " WHERE fp.fk_propal = p.rowid AND fp.fk_facture = ".$fac->id;
-
-			dolibarr_syslog("facture.php: sql=".$sql);
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$num = $db->num_rows($resql);
-				if ($num)
-				{
-					$i = 0; $total = 0;
-					if ($somethingshown) print '<br>';
-					$somethingshown=1;
-					print_titre($langs->trans('RelatedCommercialProposals'));
-					print '<table class="noborder" width="100%">';
-					print '<tr class="liste_titre">';
-					print '<td width="150">'.$langs->trans('Ref').'</td>';
-					print '<td>'.$langs->trans('RefCustomer').'</td>';
-					print '<td align="center">'.$langs->trans('Date').'</td>';
-					print '<td align="right">'.$langs->trans('AmountHT').'</td>';
-					print '</tr>';
-
-					$var=True;
-					while ($i < $num)
+	
+					// Emettre remboursement ou Convertir en reduc
+					if ($fac->type == 2)
 					{
-						$objp = $db->fetch_object($resql);
-						$var=!$var;
-						print '<tr '.$bc[$var].'>';
-						print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref.'</a></td>';
-						print '<td>'.$objp->ref_client.'</td>';
-						print '<td align="center">'.dolibarr_print_date($objp->dp,'day').'</td>';
-						print '<td align="right">'.price($objp->total_ht).'</td>';
-						print '</tr>';
-						$total = $total + $objp->total_ht;
-						$i++;
+						if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
+						{
+							print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a>';
+						}
+	
+						if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->creer && $fac->getSommePaiement() == 0)
+						{
+							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
+						}
 					}
-					print '<tr class="liste_total">';
-					print '<td align="left">'.$langs->trans('TotalHT').'</td>';
-					print '<td>&nbsp;</td>';
-					print '<td>&nbsp;</td>';
-					print '<td align="right">'.price($total).'</td></tr>';
-					print '</table>';
+	
+					// Classer 'payé'
+					if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement &&
+						(($fac->type != 2 && $resteapayer <= 0) || ($fac->type == 2 && $resteapayer >= 0)) )
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
+					}
+	
+					// Classer 'fermée' (possible si validée et pas encore classée payée)
+					if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
+							&& $user->rights->facture->paiement)
+					{
+						if ($totalpaye > 0 || $totalavoir > 0)
+						{
+							// If one payment or one credit note was linked to this invoice
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayedPartially').'</a>';
+						}
+						else
+						{
+							if ($facidnext)
+							{
+								print '<a class="butActionRefused">'.$langs->trans('ClassifyCanceled').'</span>';
+							}
+							else
+							{
+								print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+							}
+						}
+					}
+	
+					// Supprimer
+					if ($fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
+					{
+						if ($facidnext)
+						{
+							print '<span class="butActionDeleteRefused">'.$langs->trans('Delete').'</span>';
+						}
+						else
+						{
+							print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+						}
+					}
+	
+					print '</div>';
 				}
 			}
-			else
+			
+			
+			if ($_GET['action'] != 'prerelance' && $_GET['action'] != 'presend')
 			{
-				dolibarr_print_error($db);
-			}
-
-			/*
-			* Commandes rattachées
-			*/
-			if($conf->commande->enabled)
-			{
-				$sql = 'SELECT '.$db->pdate('c.date_commande').' as date_commande, c.total_ht, c.ref, c.ref_client, c.rowid as id';
-				$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'co_fa as co_fa WHERE co_fa.fk_commande = c.rowid AND co_fa.fk_facture = '.$fac->id;
+				print '<table width="100%"><tr><td width="50%" valign="top">';
+				print '<a name="builddoc"></a>'; // ancre
+	
+				/*
+				* Documents générés
+				*/
+				$filename=sanitize_string($fac->ref);
+				$filedir=$conf->facture->dir_output . '/' . sanitize_string($fac->ref);
+				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
+				$genallowed=$user->rights->facture->creer;
+				$delallowed=$user->rights->facture->supprimer;
+	
+				$var=true;
+	
+				print '<br>';
+				$somethingshown=$formfile->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
+	
+				/*
+				*   Propales rattachées
+				*/
+				$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.total_ht, p.ref, p.ref_client, p.rowid as propalid';
+				$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p';
+				$sql .= ", ".MAIN_DB_PREFIX."fa_pr as fp";
+				$sql .= " WHERE fp.fk_propal = p.rowid AND fp.fk_facture = ".$fac->id;
+	
+				dolibarr_syslog("facture.php: sql=".$sql);
 				$resql = $db->query($sql);
 				if ($resql)
 				{
 					$num = $db->num_rows($resql);
 					if ($num)
 					{
-						$langs->load("orders");
-						
 						$i = 0; $total = 0;
 						if ($somethingshown) print '<br>';
 						$somethingshown=1;
-						print_titre($langs->trans('RelatedOrders'));
+						print_titre($langs->trans('RelatedCommercialProposals'));
 						print '<table class="noborder" width="100%">';
 						print '<tr class="liste_titre">';
 						print '<td width="150">'.$langs->trans('Ref').'</td>';
-						print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
+						print '<td>'.$langs->trans('RefCustomer').'</td>';
 						print '<td align="center">'.$langs->trans('Date').'</td>';
 						print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 						print '</tr>';
-						$var=true;
+	
+						$var=True;
 						while ($i < $num)
 						{
 							$objp = $db->fetch_object($resql);
 							$var=!$var;
-							print '<tr '.$bc[$var].'><td>';
-							print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
+							print '<tr '.$bc[$var].'>';
+							print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref.'</a></td>';
 							print '<td>'.$objp->ref_client.'</td>';
-							print '<td align="center">'.dolibarr_print_date($objp->date_commande,'day').'</td>';
+							print '<td align="center">'.dolibarr_print_date($objp->dp,'day').'</td>';
 							print '<td align="right">'.price($objp->total_ht).'</td>';
-							print "</tr>\n";
+							print '</tr>';
 							$total = $total + $objp->total_ht;
 							$i++;
 						}
@@ -2950,27 +2939,80 @@ else
 				{
 					dolibarr_print_error($db);
 				}
+	
+				/*
+				* Commandes rattachées
+				*/
+				if($conf->commande->enabled)
+				{
+					$sql = 'SELECT '.$db->pdate('c.date_commande').' as date_commande, c.total_ht, c.ref, c.ref_client, c.rowid as id';
+					$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'co_fa as co_fa WHERE co_fa.fk_commande = c.rowid AND co_fa.fk_facture = '.$fac->id;
+					$resql = $db->query($sql);
+					if ($resql)
+					{
+						$num = $db->num_rows($resql);
+						if ($num)
+						{
+							$langs->load("orders");
+							
+							$i = 0; $total = 0;
+							if ($somethingshown) print '<br>';
+							$somethingshown=1;
+							print_titre($langs->trans('RelatedOrders'));
+							print '<table class="noborder" width="100%">';
+							print '<tr class="liste_titre">';
+							print '<td width="150">'.$langs->trans('Ref').'</td>';
+							print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
+							print '<td align="center">'.$langs->trans('Date').'</td>';
+							print '<td align="right">'.$langs->trans('AmountHT').'</td>';
+							print '</tr>';
+							$var=true;
+							while ($i < $num)
+							{
+								$objp = $db->fetch_object($resql);
+								$var=!$var;
+								print '<tr '.$bc[$var].'><td>';
+								print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
+								print '<td>'.$objp->ref_client.'</td>';
+								print '<td align="center">'.dolibarr_print_date($objp->date_commande,'day').'</td>';
+								print '<td align="right">'.price($objp->total_ht).'</td>';
+								print "</tr>\n";
+								$total = $total + $objp->total_ht;
+								$i++;
+							}
+							print '<tr class="liste_total">';
+							print '<td align="left">'.$langs->trans('TotalHT').'</td>';
+							print '<td>&nbsp;</td>';
+							print '<td>&nbsp;</td>';
+							print '<td align="right">'.price($total).'</td></tr>';
+							print '</table>';
+						}
+					}
+					else
+					{
+						dolibarr_print_error($db);
+					}
+				}
+	
+				print '</td><td valign="top" width="50%">';
+	
+				print '<br>';
+				
+				// List of actions on element
+				include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
+				$formactions=new FormActions($db);
+				$somethingshown=$formactions->showactions($fac,'invoice',$socid);
+				
+				print '</td></tr></table>';
 			}
-
-			print '</td><td valign="top" width="50%">';
-
-			print '<br>';
-			
-			// List of actions on element
-			include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
-			$formactions=new FormActions($db);
-			$somethingshown=$formactions->showactions($fac,'invoice',$socid);
-			
-			print '</td></tr></table>';
-
 
 			/*
 			* Affiche formulaire mail
 			*/
 			if ($_GET['action'] == 'presend')
 			{
-				$facref = sanitize_string($fac->ref);
-				$file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
+				$ref = sanitize_string($fac->ref);
+				$file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 				// Construit PDF si non existant
 				if (! is_readable($file))
@@ -3021,6 +3063,13 @@ else
 				$formmail->param['facid']=$fac->id;
 				$formmail->param['returnurl']=DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
 
+				// Init list of files
+				if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+				{
+					$formmail->clear_attached_files();
+					$formmail->add_attached_files($file,$ref.'.pdf','application/pdf');
+				}
+				
 				$formmail->show_form();
 
 				print '<br>';
@@ -3028,8 +3077,8 @@ else
 
 			if ($_GET['action'] == 'prerelance')
 			{
-				$facref = sanitize_string($fac->ref);
-				$file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
+				$ref = sanitize_string($fac->ref);
+				$file = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 				// Construit PDF si non existant
 				if (! is_readable($file))
@@ -3068,6 +3117,7 @@ else
 				$formmail->withfile=1;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
+				$formmail->withcancel=1;
 				// Tableau des substitutions
 				$formmail->substit['__FACREF__']=$fac->ref;
 				// Tableau des paramètres complémentaires
@@ -3076,6 +3126,13 @@ else
 				$formmail->param['facid']=$fac->id;
 				$formmail->param['returnurl']=DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
 
+				// Init list of files
+				if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+				{
+					$formmail->clear_attached_files();
+					$formmail->add_attached_files($file,$ref.'.pdf','application/pdf');
+				}
+				
 				$formmail->show_form();
 
 				print '<br>';

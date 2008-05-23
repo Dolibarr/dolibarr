@@ -436,69 +436,6 @@ class FormFile
 
 	}
 
-	/**
-     *      \brief      Show list of documents in a directory
-     *      \param      upload_dir			Dir to scan
-     * 		\param		object				Object on which document is linked to
-     * 		\param		modulepart			Value for modulepart used by download wrapper
-     *		\return		int					<0 if KO, nb of files shown if OK
-     */
-    function list_of_documents2($upload_dir,$object,$modulepart)
-    {
-    	global $user, $conf, $langs;
-    	global $bc;
-    	
-		// List of documents
-	    $errorlevel=error_reporting();
-		error_reporting(0);
-		$handle=opendir($upload_dir);
-		error_reporting($errorlevel);
-	
-		// Affiche liste des documents existant
-	  	print_titre($langs->trans("AttachedFiles"));
-		
-	  	print '<table width="100%" class="noborder">';
-		
-	  	print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Document').'</td>';
-		print '<td align="right">'.$langs->trans('Size').'</td>';
-		print '<td align="center">'.$langs->trans('Date').'</td>';
-		print '<td>&nbsp;</td>';
-		print '</tr>';
-		$var=true;
-		
-		if ($handle)
-		{
-			while (($file = readdir($handle))!==false)
-			{
-				if (!is_dir($dir.$file) 
-					&& $file != '.'
-					&& $file != '..'
-					&& $file != 'CVS'
-					&& ! eregi('\.meta$',$file)
-					)
-				{
-					// Define relative path used to store the file
-					$morepath=$object->ref.'/';
-					if ($modulepart == 'facture_fournisseur')	$morepath=get_exdir($object->id,2).$morepath;
-					
-					$var=!$var;
-					print '<tr '.$bc[$var].'>';
-					print '<td>';
-					print img_mime($file).' ';
-					print '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($morepath.$file).'">'.$file.'</a>';
-					print "</td>\n";
-					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' '.$langs->trans('bytes').'</td>';
-					print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir.'/'.$file),'dayhour').'</td>';
-					print '<td align="center">';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
-					print "</td></tr>\n";
-				}
-			}
-			closedir($handle);
-		}
-		print '</table>';
-	}
 }
 
 ?>

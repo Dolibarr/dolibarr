@@ -16,7 +16,7 @@ MailCC=Copy to
 MailCCC=Cached copy to
 MailTopic=EMail topic
 MailText=Message
-MailFile=Attach a file
+MailFile=Attached files
 MailMessage=EMail body
 ListOfEMailings=List of emailings
 NewMailing=New emailing
@@ -54,6 +54,8 @@ RemoveRecipient=Remove recipient
 CommonSubstitutions=Common substitutions
 YouCanAddYourOwnPredefindedListHere=To create your email selector module, see htdocs/includes/modules/mailings/README.
 EMailTestSubstitutionReplacedByGenericValues=When using test mode, substitutions variables are replaced by generic values
+MailingAddFile=Attach this file
+NoAttachedFiles=No attached files
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Unique contacts of all third parties

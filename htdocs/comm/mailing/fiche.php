@@ -616,6 +616,7 @@ else
             	      $formmail->withbody=0;
             	      $formmail->withbodyreadonly=1;
             	      $formmail->withcancel=1;
+            	      $formmail->withdeliveryreceipt=0;
                       // Tableau des substitutions
 					  $formmail->substit=$substitutionarrayfortest;
                       // Tableau des paramètres complémentaires du post
@@ -624,6 +625,12 @@ else
                       $formmail->param["mailid"]=$mil->id;
                       $formmail->param["returnurl"]=DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$mil->id;
             
+						// Init list of files
+						if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+						{
+							$formmail->clear_attached_files();
+						}
+				
                       $formmail->show_form();
                       
                       print '<br>';

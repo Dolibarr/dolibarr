@@ -32,7 +32,6 @@ require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");
         \remarks                 $formmail->proprietes=1 ou chaine ou tableau de valeurs
         \remarks                 $formmail->show_form() affiche le formulaire
 */
-
 class FormMail
 {
 	var $db;
@@ -49,7 +48,7 @@ class FormMail
 	var $withto;
 	var $withtocc;
 	var $withtopic;
-	var $withfile;
+	var $withfile;				// 0=No attaches files, 1=Show attached files, 2=Can add new attached files
 	var $withbody;
 	
 	var $withfromreadonly;
@@ -95,9 +94,51 @@ class FormMail
 		return 1;
 	}
 
+	/**
+	 * Clear list of attached files (store in SECTION array)
+	 */
+	function clear_attached_files()
+	{	
+		global $conf,$user;
+		
+		$conf->users->dir_tmp=DOL_DATA_ROOT."/users/".$user->id;
+		$upload_dir = $conf->users->dir_tmp.'/temp';
+		if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
+		
+		unset($_SESSION["listofpaths"]);
+		unset($_SESSION["listofnames"]);
+		unset($_SESSION["listofmimes"]);
+	}
+	
+	/**
+	 * Add a file into the list of attached files (stored in SECTION array)
+	 *
+	 * @param unknown_type $path
+	 * @param unknown_type $file
+	 * @param unknown_type $type
+	 */
+	function add_attached_files($path,$file,$type)
+	{
+		$listofpaths=array();
+		$listofnames=array();
+		$listofmimes=array();
+		if (! empty($_SESSION["listofpaths"])) $listofpaths=split(';',$_SESSION["listofpaths"]);
+		if (! empty($_SESSION["listofnames"])) $listofnames=split(';',$_SESSION["listofnames"]);
+		if (! empty($_SESSION["listofmimes"])) $listofmimes=split(';',$_SESSION["listofmimes"]);
+		if (! in_array($file,$listofnames))
+		{
+			$listofpaths[]=$path;
+			$listofnames[]=$file;
+			$listofmimes[]=$type;
+			$_SESSION["listofpaths"]=join(';',$listofpaths);
+			$_SESSION["listofnames"]=join(';',$listofnames);
+			$_SESSION["listofmimes"]=join(';',$listofmimes);
+		}
+	}
 
-	/*
-	 *    \brief  Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
+	/**
+	 *	\brief  	Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
+	 * 	\remarks	this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
 	 */
 	function show_form()
 	{
@@ -106,6 +147,15 @@ class FormMail
 		$langs->load("other");
 		$langs->load("mails");
 	
+		// Define list of attached files		
+		$listofpaths=array();
+		$listofnames=array();
+		$listofmimes=array();
+		if (! empty($_SESSION["listofpaths"])) $listofpaths=split(';',$_SESSION["listofpaths"]);
+		if (! empty($_SESSION["listofnames"])) $listofnames=split(';',$_SESSION["listofnames"]);
+		if (! empty($_SESSION["listofmimes"])) $listofmimes=split(';',$_SESSION["listofmimes"]);
+		
+		
 		$form=new Form($DB);
 	
 		print "\n<!-- Debut form mail -->\n";
@@ -294,13 +344,32 @@ class FormMail
 			print "</td></tr>\n";
 		}
 
-		// Si fichier joint
+		// Attached files
 		if ($this->withfile)
 		{
 			print "<tr>";
-			print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
+			print '<td width="180">'.$langs->trans("MailFile")."</td>";
 			print "<td>";
-			print "<input type=\"file\" class=\"flat\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
+			//print '<table class="nobordernopadding" width="100%"><tr><td>';
+			if (sizeof($listofpaths))
+			{
+				foreach($listofpaths as $key => $val)
+				{
+					print img_mime($listofnames[$key]).' '.$listofnames[$key].'<br>';
+				}
+			}
+			else
+			{
+				print $langs->trans("NoAttachedFiles").'<br>';
+			}
+			if ($this->withfile == 2)	// Can add other files
+			{
+				//print '<td><td align="right">';
+				print "<input type=\"file\" class=\"flat\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
+				print ' ';
+				print '<input type="submit" class="button" name="addfile" value="'.$langs->trans("MailingAddFile").'">';
+				//print '</td></tr></table>';
+			}
 			print "</td></tr>\n";
 		}
 
