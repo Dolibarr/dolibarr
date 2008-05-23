@@ -205,7 +205,7 @@ if ($id	> 0)
 	      $db->free($resql);
 	    }
 
-	  $sql = "SELECT l.ref,l.fk_product,l.description,(sum(l.price * l.qty) / sum(l.qty)) as price, sum(l.qty) as qty";
+	  $sql = "SELECT l.ref,l.fk_product,l.description, l.subprice, sum(l.qty) as qty";
 	  $sql.= ", l.rowid";
 	  $sql.= ", p.label";
 	  $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
@@ -249,7 +249,7 @@ if ($id	> 0)
 	    		print ' - '.$objp->label;
 	    		if ($objp->description) print '<br>'.nl2br($objp->description);
 	    		print '<input name="product_'.$i.'" type="hidden" value="'.$objp->fk_product.'">';
-	    		print '<input name="pu_'.$i.'" type="hidden" value="'.$objp->price.'">';
+	    		print '<input name="pu_'.$i.'" type="hidden" value="'.$objp->subprice.'">';
 	    		print "</td>\n";
 	    		
 	    		print '<td align="right">'.$objp->qty.'</td>';
