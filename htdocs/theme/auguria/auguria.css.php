@@ -156,6 +156,7 @@ div.fiche
 		// If position is abolute, we must not include the leftmenu in value
 		print "    margin-left: 20px;";
 	}
+	/*
 	elseif (eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT']))
 	{ 
 		// If position is relative, IE6 put the div under the leftmenu, so we force to absolute
@@ -163,7 +164,8 @@ div.fiche
 		// If position is abolute, we must not include the leftmenu in value
 		print "    margin-left: 20px;";
 	}
-	else
+	*/
+	else if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT']))
 	{
 		//  Firefox
 		print "    position: absolute;\n";
