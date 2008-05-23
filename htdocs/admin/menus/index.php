@@ -226,7 +226,7 @@ if ($_GET["action"] == 'delete')
 }
 
 
-print '<form name="newmenu" class="nocellnopadding" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form name="newmenu" class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
 print $htmladmin->select_menu_families($menu_handler,'menu_handler',$dirleft);
