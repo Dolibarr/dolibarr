@@ -29,6 +29,7 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 
 $langs->load("companies");
+$langs->load("other");
 
 // Security check
 $contactid = isset($_GET["id"])?$_GET["id"]:'';

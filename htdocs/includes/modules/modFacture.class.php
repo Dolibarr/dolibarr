@@ -21,7 +21,7 @@
  */
 
 /**     \defgroup   facture     Module facture
-        \brief      Module pour g�rer les factures clients et/ou fournisseurs
+        \brief      Module pour gerer les factures clients et/ou fournisseurs
 		\version	$Id$
 */
 
@@ -165,9 +165,8 @@ class modFacture extends DolibarrModules
 
 		// Exports
         //--------
-        $r=0;
+        $r=1;
     
-        $r++;
         $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='CustomersInvoicesAndInvoiceLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
         $this->export_permission[$r]=array(array("facture","facture","export"));
@@ -178,8 +177,8 @@ class modFacture extends DolibarrModules
         $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'facturedet as fd, '.MAIN_DB_PREFIX.'societe as s)';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
-
         $r++;
+		
         $this->export_code[$r]=$this->rights_class.'_'.$r;
         $this->export_label[$r]='CustomersInvoicesAndPayments';	// Translation key (used only if key ExportDataset_xxx_z not found)
         $this->export_permission[$r]=array(array("facture","facture","export"));
@@ -189,6 +188,7 @@ class modFacture extends DolibarrModules
         $this->export_sql_start[$r]='SELECT DISTINCT ';
         $this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'societe as s) LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON pf.fk_paiement = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
+        $r++;
     }
 
 

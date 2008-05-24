@@ -97,7 +97,7 @@ class modTax extends DolibarrModules
 	
 		$r++;
 		$this->rights[$r][0] = 92;
-		$this->rights[$r][1] = 'Cr�er modifier les charges';
+		$this->rights[$r][1] = 'Creer/modifier les charges';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';
