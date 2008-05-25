@@ -18,9 +18,9 @@
  */
 
 /**
-   \file       htdocs/compta/deplacement/fiche.php
-   \brief      Page fiche d'un deplacement
-   \version	$Id$
+   \file       	htdocs/compta/deplacement/fiche.php
+   \brief      	Page fiche d'un deplacement
+   \version		$Id$
 */
 
 require("./pre.inc.php");
@@ -59,6 +59,7 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 						$_POST["reyear"]);
 
 		$deplacement->km = $_POST["km"];
+		$deplacement->type = $_POST["type"];
 		$deplacement->socid = $_POST["socid"];
 		$deplacement->userid = $user->id; //$_POST["km"];
 		$id = $deplacement->create($user);
@@ -70,7 +71,8 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 		}
 		else
 		{
-			dolibarr_print_error($db,$deplacement->error);
+			$mesg=$deplacement->error;
+			$_GET["action"]='create';
 		}
 	}
 	else
@@ -93,22 +95,23 @@ if ($_POST["action"] == 'update' && $user->rights->deplacement->creer)
 					$_POST["reyear"]);
 		
 		$deplacement->km     = $_POST["km"];
+		$deplacement->type   = $_POST["type"];
 		
 		$result = $deplacement->update($user);
 		
 		if ($result > 0)
 		{
-			Header ( "Location: fiche.php?id=".$_POST["id"]);
+			Header("Location: fiche.php?id=".$_POST["id"]);
 			exit;
 		}
 		else
 		{
-			print $mesg=$langs->trans("ErrorUnknown");
+			$mesg=$deplacement->error;
 		}
 	}
 	else
 	{
-		Header ( "Location: index.php");
+		Header("Location: index.php");
 		exit;
 	}
 }
@@ -124,19 +127,26 @@ $html = new Form($db);
  */
 if ($_GET["action"] == 'create')
 {
-  print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
-  print '<input type="hidden" name="action" value="add">';
-
   print_fiche_titre($langs->trans("NewTrip"));
 
+	if ($mesg) print $mesg."<br>";
+  
+  print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
+  print '<input type="hidden" name="action" value="add">';
+	
   print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans("Person").'</td><td>'.$user->fullname.'</td></tr>';
 
   print "<tr>";
   print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-  print $html->select_societes($_GET["socid"]);
+  print $html->select_societes($_GET["socid"],'socid','',1);
   print '</td></tr>';
 
+  print "<tr>";
+  print '<td>'.$langs->trans("Type").'</td><td>';
+  print $html->select_type_fees($_GET["type"],'type',1);
+  print '</td></tr>';
+  
   print "<tr>";
   print '<td>'.$langs->trans("Date").'</td><td>';
   print $html->select_date('','','','','','add');
@@ -157,8 +167,8 @@ else
       if ($result)
 	{
 
-      if ($mesg) print "$mesg<br>";
-
+      if ($mesg) print $mesg."<br>";
+		
 	  if ($_GET["action"] == 'edit')
 	    {
           $h=0;
@@ -184,6 +194,11 @@ else
 	      print $html->select_societes($soc->id);
 	      print '</td></tr>';
 
+		  print "<tr>";
+		  print '<td>'.$langs->trans("Type").'</td><td>';
+		  print $html->select_type_fees($deplacement->type,'type',1);
+		  print '</td></tr>';
+		  
 	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	      print $html->select_date($deplacement->date,'','','','','update');
 	      print '</td></tr>';
@@ -223,6 +238,7 @@ else
 	      print '<table class="border" width="100%">';
 	      print '<tr><td width="20%">'.$langs->trans("Person").'</td><td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->fullname.'</a></td></tr>';
 	      print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
+	      print '<tr><td width="20%">'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
 	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	      print dolibarr_print_date($deplacement->date);
 	      print '</td></tr>';

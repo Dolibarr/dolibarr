@@ -578,15 +578,16 @@ class Form
 
 
 	/**
-	*    \brief      Retourne la liste des types de comptes financiers
-	*    \param      selected        Type pré-sélectionné
-	*    \param      htmlname        Nom champ formulaire
-	*/
+	 *		\brief      Return list of social contributions
+	 *		\param      selected        Preselected type
+	 *		\param      htmlname        Name of field in form
+	 */
 	function select_type_socialcontrib($selected='',$htmlname='actioncode')
 	{
 		global $db,$langs,$user;
 
-	    $sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+	    print '<select class="flat" name="'.$htmlname.'">';
+		$sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 	    $sql .= " ORDER BY lower(c.libelle) ASC";
 	    $resql=$db->query($sql);
 		if ($resql)
@@ -597,18 +598,62 @@ class Form
 	      while ($i < $num)
 	        {
 	          $obj = $db->fetch_object($resql);
-	          print '<option value="'.$obj->id.'">'.$obj->type;
+	          print '<option value="'.$obj->id.'"';
+	          if ($obj->id == $selected) print ' selected="true"';
+	          print '>'.$obj->type;
+	          $i++;
+	        }
+	    }
+	    print '</select>';
+	    if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+	}
+	
+	/**
+	 *		\brief      Return list of types of notes
+	 *		\param      selected        Preselected type
+	 *		\param      htmlname        Name of field in form
+	 * 		\param		showempty		Add an empty field
+	 */
+	function select_type_fees($selected='',$htmlname='type',$showempty=0)
+	{
+		global $db,$langs,$user;
+		$langs->load("trips");
+		
+	    print '<select class="flat" name="'.$htmlname.'">';
+        if ($showempty)
+        {
+            print '<option value="-1"';
+            if ($selected == -1) print ' selected="true"';
+            print '>&nbsp;</option>';
+        }
+	    
+        $sql = "SELECT c.code, c.libelle as type FROM ".MAIN_DB_PREFIX."c_type_fees as c";
+	    $sql.= " ORDER BY lower(c.libelle) ASC";
+	    $resql=$db->query($sql);
+		if ($resql)
+	    {
+	      $num = $db->num_rows($resql);
+	      $i = 0;
+
+	      while ($i < $num)
+	        {
+	          $obj = $db->fetch_object($resql);
+	          print '<option value="'.$obj->code.'"';
+	          if ($obj->code == $selected) print ' selected="true"';
+	          print '>';
+	          if ($obj->code != $langs->trans($obj->code)) print $langs->trans($obj->code);
+	          else print $langs->trans($obj->type);
 	          $i++;
 	        }
 	    }
 	    print '</select>';
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	}
-	
+
 	/**
 	 *    	\brief      Output html form to select a third party
-	 *    	\param      selected        Societe pré-sélectionnée
-	 *    	\param      htmlname        Nom champ formulaire
+	 *		\param      selected        Preselected type
+	 *		\param      htmlname        Name of field in form
 	 *    	\param      filter          Criteres optionnels de filtre
 	 *		\param		showempty		Add an empty field
 	 */

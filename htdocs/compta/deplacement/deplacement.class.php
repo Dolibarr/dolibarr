@@ -15,19 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/compta/deplacement/deplacement.class.php
         \ingroup    deplacement
         \brief      Fichier de la classe des deplacements
-        \version    $Revision$
+        \version    $Id$
 */
 
-class Deplacement
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+
+/**
+        \class      Deplacement
+        \brief      Class to manage trips and working credit notes
+*/
+class Deplacement extends CommonObject
 {
 	var $db;
 	var $id;
@@ -45,15 +48,29 @@ class Deplacement
 		return 1;
 	}
 
-	/*
-	*
-	*/
+	/**
+	 * Create object in database
+	 *
+	 * @param unknown_type $user	User that creat
+	 * @param unknown_type $type	Type of record: 0=trip, 1=credit note
+	 * @return unknown
+	 */
 	function create($user)
 	{
+		// Check parameters
+		if (empty($this->type) || $this->type < 0)
+		{
+			$this->error='ErrorBadParameter';
+			return -1;
+		}
+		
 		$this->db->begin();
 		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement (datec, fk_user_author) VALUES (now(), $user->id)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement";
+		$sql.= " (datec, fk_user_author, fk_user, type)";
+		$sql.= " VALUES (now(), ".$user->id.", ".$user->id.", '".$this->type."')";
 
+		dolibarr_syslog("Deplacement::create sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -85,21 +102,24 @@ class Deplacement
 	function update($user)
 	{
 		global $langs;
-		
+
+		// Check parameters
 		if (! is_numeric($this->km)) $this->km = 0;
-		if (! $this->socid)
+		if (empty($this->type) || $this->type < 0)
 		{
-			$this->error=$langs->trans("ErrorSocidNotDefined");
-			return -1;	
+			$this->error='ErrorBadParameter';
+			return -1;
 		}
-		
+				
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
 		$sql .= " SET km = ".$this->km;
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
+		$sql .= " , type = '".$this->type."'";
 		$sql .= " , fk_user = ".$this->userid;
-		$sql .= " , fk_soc = ".$this->socid;
+		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
 		$sql .= " WHERE rowid = ".$this->id;
 
+		dolibarr_syslog("Deplacement::update sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -112,26 +132,28 @@ class Deplacement
 		}
 	}
 
-	/*
+	/**
 	*
 	*/
-	function fetch ($id)
+	function fetch($id)
 	{
-		$sql = "SELECT fk_user, km, fk_soc,".$this->db->pdate("dated")." as dated";
-		$sql .= " FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = $id";
+		$sql = "SELECT rowid, fk_user, type, km, fk_soc,".$this->db->pdate("dated")." as dated";
+		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
+		$sql.= " WHERE rowid = ".$id;
 
+		dolibarr_syslog("Deplacement::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
-
 		if ( $result )
 		{
-			$result = $this->db->fetch_array();
+			$obj = $this->db->fetch_object($result);
 
-			$this->id       = $id;
+			$this->id       = $obj->rowid;
+			$this->date     = $obj->dated;
+			$this->userid   = $obj->fk_user;
+			$this->socid    = $obj->fk_soc;
+			$this->km       = $obj->km;
+			$this->type     = $obj->type;
 
-			$this->date     = $result["dated"];
-			$this->userid   = $result["fk_user"];
-			$this->socid    = $result["fk_soc"];
-			$this->km       = $result["km"];
 			return 1;
 		}
 		else

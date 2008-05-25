@@ -10,3 +10,6 @@ CompanyVisited=Société/Institution visitée
 Kilometers=Kilomètres
 DeleteTrip=Supprimer déplacement
 ConfirmDeleteTrip=Êtes vous sur de vouloir supprimer ce déplacement ?
+TF_OTHER=Autre
+TF_LUNCH=Repas
+TF_TRIP=Déplacement
