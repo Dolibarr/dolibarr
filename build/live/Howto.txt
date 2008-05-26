@@ -1,0 +1,71 @@
+Howto (English)
+##################################################
+Building a live CD/USB
+##################################################
+
+This is all steps to follow to build a live CD/USB demo of Dolibarr using
+SLAX distribution.
+
+1) Download SLAX (www.slax.org) as a zip file.
+
+2) Unzip file on a directory on any USB key with at least 512Mo free (even
+if you want to build a CD live).
+
+3) Download following modules from SLAX web sites and put files
+into the /slax/modules directory:
+apr-1.2.12-i486-1.lzm
+apr-util-1.2.12-i486-1.lzm
+cairomm-1.4.8-i686.lzm
+cli-ftp-pack.lzm
+codecs-essential-20071007.lzm
+firefox-2.0.0.14.lzm
+ghostscript-8.62-i486-5.lzm
+gimp-2.4.5-i486-1sl.lzm
+gparted-0.3.7-i486-1as.lzm
+grsync.lzm
+httpd-2.2.8-i486-1.lzm
+libsigc++-2.0.18-i686.lzm
+mysql-5.0.51b-i486-1.lzm
+php-5.2.6-i486-1.lzm
+printmodule-s6.lzm
+Save_by_Pastrugno-0.1.lzm
+telnet-1.5.lzm
+
+4) Copy dolibarr files into path
+\slax\changes\var\www\htdocs\dolibarr
+
+5) Run the script 
+> /boot/bootinst.bat
+or
+> /boot/bootinst.sh
+and answer yes to overwrite the MBR of the disk of your USB key.
+
+6) Boot on USB key (Change your BIOS setup if required).
+
+7) After boot, run the script 
+> mysql_install_db --user=mysql
+This will create mysql empty system database.
+
+8) Edit the file /etc/httpd/httpd.conf to uncomment the line
+with PHP activation.
+Include /etc/httpd/mod_php.conf
+
+9) Edit PHP.ini file to disabled features where librairies does not
+exists. You can comment lines:
+;extension=gd.so
+;extension=mhash.so
+;extension=snmp.so
+
+10) Copy files demo_drop_dolibarr_database.php and demo_load_dolibarr_data.php
+found in this directory into 
+\slax\changes\var\www\htdocs\
+Thoose files could be used to clean a Dolibarr install or load demo datas.
+
+11) Personalized your desktop.
+Add a link to firefor http://localhost/dolibarr/htdocs/index.php
+
+12) Reboot again on your USB key.
+
+13) Now you can run Dolibarr install process.
+or build a CD or copy USB key content to build antoher one quickly.
+
