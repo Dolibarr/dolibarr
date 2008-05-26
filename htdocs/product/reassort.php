@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/product/liste.php
+   \file       htdocs/product/reassort.php
    \ingroup    produit
    \brief      Page liste des produits ou services
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -181,13 +179,18 @@ if ($resql)
       print "</div><br />";
     }
 
+    print '<form action="reassort.php" method="post" name="formulaire">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="type" value="'.$type.'">';
+    
     print '<table class="liste" width="100%">';
     
     // Lignes des titres
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre($langs->trans("Ref"),"reassort.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+    //print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     if ($conf->service->enabled && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("MininumStock"),"reassort.php", "p.seuil_stock_alerte","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
@@ -195,10 +198,6 @@ if ($resql)
     print "</tr>\n";
 
     // Lignes des champs de filtre
-    print '<form action="reassort.php" method="post" name="formulaire">';
-    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="type" value="'.$type.'">';
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
@@ -212,7 +211,7 @@ if ($resql)
       print '&nbsp;';
       print '</td>';
     }
-    print '<td class="liste_titre" colspan="3">';
+    print '<td class="liste_titre" colspan="2">';
     print '&nbsp;';
     print '</td>';
     print '<td class="liste_titre" align="right">';
@@ -220,7 +219,6 @@ if ($resql)
     print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
     print '</td>';
     print '</tr>';
-    print '</form>';
 
     $product_static=new Product($db);
     
@@ -245,21 +243,12 @@ if ($resql)
         
         $var=!$var;
         print '<tr '.$bc[$var].'><td nowrap="nowrap">';
-        print "<a href=\"fiche.php?id=$objp->rowid\">";
-        if ($objp->fk_product_type==1) 
-	  {
-	    print img_object($langs->trans("ShowService"),"service");
-	  }
-        else
-	  {
-	    if ( $objp->stock_theorique > $objp->seuil_stock_alerte) {
-	      print img_object($langs->trans("ShowProduct"),"product");
-	    } else {
-	      print img_warning($langs->trans("StockTooLow"));
-	    }
-	  }
-        print '</a> ';
-        print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></td>';
+		$product_static->ref=$objp->ref;
+        $product_static->id=$objp->rowid;
+		$product_static->type=$objp->fk_product_type;
+        print $product_static->getNomUrl(1,'',16);
+        //if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
+        print '</td>';
         print '<td>'.$objp->label.'</td>';
 
         if ($conf->service->enabled && $type == 1) 
@@ -271,7 +260,7 @@ if ($resql)
             else print $objp->duration;
             print '</td>';
         }
-        print '<td align="right">'.$objp->stock_theorique.'</td>';
+        //print '<td align="right">'.$objp->stock_theorique.'</td>';
         print '<td align="right">'.$objp->stock_physique.'</td>';
         print '<td align="right">'.$objp->seuil_stock_alerte.'</td>';
         print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
@@ -279,6 +268,9 @@ if ($resql)
         $i++;
     }
     
+    print "</table>";
+    print '</form>';
+        
     if ($num > $conf->liste_limit)
     {
       if ($sref || $snom || $sall || $_POST["search"])
@@ -292,8 +284,6 @@ if ($resql)
     }
     
     $db->free($resql);
-    
-    print "</table>";
     
 }
 else

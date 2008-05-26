@@ -21,11 +21,11 @@
  */
 
 /**
-        \file       htdocs/product/stock/product.php
-        \ingroup    product
-        \brief      Page de la fiche stock d'un produit
-        \version    $Id$
-*/
+ \file       htdocs/product/stock/product.php
+ \ingroup    product
+ \brief      Page de la fiche stock d'un produit
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -44,50 +44,50 @@ if (! $user->rights->produit->lire || ! $product->type == 0 || ! $conf->stock->e
 
 
 /*
-*	Actions
-*/
+ *	Actions
+ */
 
 if ($_POST["action"] == "create_stock")
 {
-  $product = new Product($db);
-  $product->id = $_GET["id"];
-  $product->create_stock($_POST["id_entrepot"], $_POST["nbpiece"]);
+	$product = new Product($db);
+	$product->id = $_GET["id"];
+	$product->create_stock($_POST["id_entrepot"], $_POST["nbpiece"]);
 }
 
 if ($_POST["action"] == "correct_stock" && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
 	if (is_numeric($_POST["nbpiece"]))
-    {
-      $product = new Product($db);
-      $product->id = $_GET["id"];
-      $product->correct_stock($user, 
-			      $_POST["id_entrepot"], 
-			      $_POST["nbpiece"],
-			      $_POST["mouvement"]);
-    }
+	{
+		$product = new Product($db);
+		$product->id = $_GET["id"];
+		$product->correct_stock($user,
+		$_POST["id_entrepot"],
+		$_POST["nbpiece"],
+		$_POST["mouvement"]);
+	}
 }
 
 if ($_POST["action"] == "transfert_stock" && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-  if ($_POST["id_entrepot_source"] <> $_POST["id_entrepot_destination"])
-    {
-      if (is_numeric($_POST["nbpiece"]))
+	if ($_POST["id_entrepot_source"] <> $_POST["id_entrepot_destination"])
 	{
-	  
+		if (is_numeric($_POST["nbpiece"]))
+		{
+			 
 	  $product = new Product($db);
 	  $product->id = $_GET["id"];
 
-	  $product->correct_stock($user, 
-				  $_POST["id_entrepot_source"], 
-				  $_POST["nbpiece"],
-				  1);
+	  $product->correct_stock($user,
+	  $_POST["id_entrepot_source"],
+	  $_POST["nbpiece"],
+	  1);
 
-	  $product->correct_stock($user, 
-				  $_POST["id_entrepot_destination"], 
-				  $_POST["nbpiece"],
-				  0);
+	  $product->correct_stock($user,
+	  $_POST["id_entrepot_destination"],
+	  $_POST["nbpiece"],
+	  0);
+		}
 	}
-    }
 }
 
 /*
@@ -96,251 +96,271 @@ if ($_POST["action"] == "transfert_stock" && $_POST["cancel"] <> $langs->trans("
  */
 if ($_GET["id"] || $_GET["ref"])
 {
-    $product = new Product($db);
-    if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
-    if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
-    
-    llxHeader("","",$langs->trans("CardProduct".$product->type));
+	$product = new Product($db);
+	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-    if ($result > 0)
-    {
-      $head=product_prepare_head($product, $user);
-        $titre=$langs->trans("CardProduct".$product->type);
-        dolibarr_fiche_head($head, 'stock', $titre);
-        
-        $html = new Form($db);
-        
-        print($mesg);
+	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
-        print '<table class="border" width="100%">';
+	if ($result > 0)
+	{
+		$head=product_prepare_head($product, $user);
+		$titre=$langs->trans("CardProduct".$product->type);
+		dolibarr_fiche_head($head, 'stock', $titre);
 
-        // Reference
-        print '<tr>';
-        print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
-        print $html->showrefnav($product,'ref','',1,'ref');
-        print '</td>';
-        print '</tr>';
-        
-        // Libellé
-        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-        print '</tr>';
+		$html = new Form($db);
 
-         // Prix
-         print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
-         if ($product->price_base_type == 'TTC')
-         {
-         	 print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
-         }
-         else
-         {
-         	 print price($product->price).' '.$langs->trans($product->price_base_type);
-         }
-         print '</td></tr>';
+		print($mesg);
 
-        // Statut
-        print '<tr><td>'.$langs->trans("Status").'</td><td>';
-        print $product->getLibStatut(2);
-        print '</td></tr>';
+		print '<table class="border" width="100%">';
 
-        // Stock
-        print '<tr><td>'.$langs->trans("StockLimit").'</td>';
-		print '<td>'.$product->seuil_stock_alerte.'</td>';
-        print '</tr>';
-        
-        // Stock
-        print '<tr><td>'.$langs->trans("PhysicalStock").'</td>';
-		if ($product->stock_reel < $product->seuil_stock_alerte)
+		// Reference
+		print '<tr>';
+		print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
+		print $html->showrefnav($product,'ref','',1,'ref');
+		print '</td>';
+		print '</tr>';
+
+		// Libellé
+		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+		print '</tr>';
+
+		// Prix
+		print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
+		if ($product->price_base_type == 'TTC')
 		{
-			print '<td>'.$product->stock_reel.' '.img_warning().'</td>';
+			print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
 		}
 		else
 		{
-			print "<td>".$product->stock_reel.'</td>';
+			print price($product->price).' '.$langs->trans($product->price_base_type);
 		}
-        print '</tr>';
-        
-        // Stock
-        print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
-		print "<td>".$langs->trans("FeatureNotYetAvailable").'</td>';
-        print '</tr>';
-        
-        // Nbre de commande clients en cours
-	if ($conf->commande->enabled)
-	  {
-	    $result=$product->load_stats_commande(0,'2');
-	    if ($result < 0) dolibarr_print_error($db,$product->error);
-	    print '<tr><td>'.$langs->trans("CustomersOrdersRunning").'</td>';
-	    print '<td>';
-	    print $product->stats_commande['qty'];
-	    $result=$product->load_stats_commande(0,'0,1');
-	    if ($result < 0) dolibarr_print_error($db,$product->error);
-	    print ' ('.$langs->trans("DraftOrWaitingShipped").': '.$product->stats_commande['qty'].')';
-	    print '</td></tr>';
-	  }
-		        
-        // Nbre de commande fournisseurs en cours
-	if ($conf->fournisseur->enabled)
-	  {
-	    $result=$product->load_stats_commande_fournisseur(0,'3');
-	    if ($result < 0) dolibarr_print_error($db,$product->error);
-	    print '<tr><td>'.$langs->trans("SuppliersOrdersRunning").'</td>';
-	    print '<td>';
-	    print $product->stats_commande_fournisseur['qty'];
-	    $result=$product->load_stats_commande_fournisseur(0,'0,1,2');
-	    if ($result < 0) dolibarr_print_error($db,$product->error);
-	    print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
-	    print '</td></tr>';
-	  }
-                
-        print "</table>";
+		print '</td></tr>';
 
-    }
-    print '</div>';
+		// Statut
+		print '<tr><td>'.$langs->trans("Status").'</td><td>';
+		print $product->getLibStatut(2);
+		print '</td></tr>';
 
-    /*
-     * Correction du stock
-     */
-    if ($_GET["action"] == "correction")
-    {
-        print_titre($langs->trans("StockCorrection"));
-        print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
-        print '<input type="hidden" name="action" value="correct_stock">';
-        print '<table class="border" width="100%"><tr>';
-        print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
-        
-        // Entrepot
-        print '<td width="20%"><select class="flat" name="id_entrepot">';
-        $sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
-        $sql .= " WHERE statut = 1";
-        $sql .= " ORDER BY lower(e.label)";
+		// Stock physique
+		print '<tr><td>'.$langs->trans("PhysicalStock").'</td>';
+		print '<td>'.$product->stock_reel.'</td>';
+		print '</tr>';
 
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-                print '<option value="'.$obj->rowid.'">'.$obj->label ;
-                $i++;
-            }
-        }
-        print '</select></td>';
-        print '<td width="20%">';
-        print '<select name="mouvement" class="flat">';
-        print '<option value="0">'.$langs->trans("Add").'</option>';
-        print '<option value="1">'.$langs->trans("Delete").'</option>';
-        print '</select></td>';
-        print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" size="10" value=""></td>';
 
-	print '</tr>';
-        print '<tr><td colspan="5" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-        print '</table>';
-        print '</form>';
+		// Calculating a theorical value of stock if stock increment is done on order			
+		if ($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)
+		{
+			$stock_commande_client=$stock_commande_fournisseur=0;
+	
+			if ($conf->commande->enabled)
+			{
+				$result=$product->load_stats_commande(0,'2');
+				if ($result < 0) dolibarr_print_error($db,$product->error);
+				$stock_commande_client=$product->stats_commande['qty'];
+			}
+			if ($conf->fournisseur->enabled)
+			{
+				$result=$product->load_stats_commande_fournisseur(0,'3');
+				if ($result < 0) dolibarr_print_error($db,$product->error);
+				$stock_commande_fournisseur=$product->stats_commande_fournisseur['qty'];
+			}
+			 
+			$product->stock_theorique=$product->stock_reel-$stock_commande_client+$stock_commande_fournisseur;
+			 
+			// Stock theorique
+			print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
+			print "<td>".$product->stock_theorique;
+			if ($product->stock_theorique < $product->seuil_stock_alerte)
+			{
+				print ' '.img_warning($langs->trans("StockTooLow"));
+			}
+			print '</td>';
+			print '</tr>';
+	
+			if ($product->stock_theorique != $product->stock_reel)
+			{
+				print '<tr><td>'.$langs->trans("StockDiffPhysicTeoric").'</td>';
+				print '<td>';
+				$found=0;
+				
+				// Nbre de commande clients en cours
+				if ($conf->commande->enabled)
+				{
+					if ($found) print '<br>'; else $found=1;
+					print $langs->trans("CustomersOrdersRunning").': '.$stock_commande_client;
+					$result=$product->load_stats_commande(0,'0,1');
+					if ($result < 0) dolibarr_print_error($db,$product->error);
+					print ' ('.$langs->trans("DraftOrWaitingShipped").': '.$product->stats_commande['qty'].')';
+				}
+	
+				// Nbre de commande fournisseurs en cours
+				if ($conf->fournisseur->enabled)
+				{
+					if ($found) print '<br>'; else $found=1;
+					print $langs->trans("SuppliersOrdersRunning").': '.$stock_commande_fournisseur;
+					$result=$product->load_stats_commande_fournisseur(0,'0,1,2');
+					if ($result < 0) dolibarr_print_error($db,$product->error);
+					print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
+				}
+				print '</td></tr>';
+			}
+		}
+	
+		// Stock
+		print '<tr><td>'.$langs->trans("StockLimit").'</td>';
+		print '<td>'.$product->seuil_stock_alerte.'</td>';
+		print '</tr>';
 
-    }
-    
-    /*
-     * Transfert de pièces
-     */
-    if ($_GET["action"] == "transfert")
-    {
-        print_titre($langs->trans("Transfer"));
-        print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
-        print '<input type="hidden" name="action" value="transfert_stock">';
-        print '<table class="border" width="100%"><tr>';
-        print '<td width="20%">'.$langs->trans("Source").'</td><td width="20%"><select name="id_entrepot_source">';
+		print "</table>";
 
-        $sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
-        $sql .= " WHERE statut = 1";
-        $sql .= " ORDER BY lower(e.label)";
+	}
+	print '</div>';
 
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-                print '<option value="'.$obj->rowid.'">'.$obj->label ;
-                $i++;
-            }
-        }
-        print '</select></td>';
+	/*
+	 * Correction du stock
+	 */
+	if ($_GET["action"] == "correction")
+	{
+		print_titre($langs->trans("StockCorrection"));
+		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
+		print '<input type="hidden" name="action" value="correct_stock">';
+		print '<table class="border" width="100%"><tr>';
+		print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
 
-        print '<td width="20%">'.$langs->trans("Target").'</td><td width="20%"><select name="id_entrepot_destination">';
+		// Entrepot
+		print '<td width="20%"><select class="flat" name="id_entrepot">';
+		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
+		$sql .= " WHERE statut = 1";
+		$sql .= " ORDER BY lower(e.label)";
 
-        $sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
-        $sql .= " WHERE statut = 1";
-        $sql .= " ORDER BY lower(e.label)";
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				print '<option value="'.$obj->rowid.'">'.$obj->label ;
+				$i++;
+			}
+		}
+		print '</select></td>';
+		print '<td width="20%">';
+		print '<select name="mouvement" class="flat">';
+		print '<option value="0">'.$langs->trans("Add").'</option>';
+		print '<option value="1">'.$langs->trans("Delete").'</option>';
+		print '</select></td>';
+		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" size="10" value=""></td>';
 
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-                print '<option value="'.$obj->rowid.'">'.$obj->label ;
-                $i++;
-            }
-        }
-        print '</select></td>';
-        print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
-        print '<tr><td colspan="6" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-        print '</table>';
-        print '</form>';
+		print '</tr>';
+		print '<tr><td colspan="5" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+		print '</table>';
+		print '</form>';
 
-    }
-    
-    /*
-     *
-     */
-    if ($_GET["action"] == "definir")
-    {
-        print_titre($langs->trans("SetStock"));
-        print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
-        print '<input type="hidden" name="action" value="create_stock">';
-        print '<table class="border" width="100%"><tr>';
-        print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="40%"><select name="id_entrepot">';
+	}
 
-        $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
-        $sql .= " ORDER BY lower(e.label)";
+	/*
+	 * Transfert de pièces
+	 */
+	if ($_GET["action"] == "transfert")
+	{
+		print_titre($langs->trans("Transfer"));
+		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
+		print '<input type="hidden" name="action" value="transfert_stock">';
+		print '<table class="border" width="100%"><tr>';
+		print '<td width="20%">'.$langs->trans("Source").'</td><td width="20%"><select name="id_entrepot_source">';
 
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($resql);
-                print '<option value="'.$obj->rowid.'">'.$obj->label ;
-                $i++;
-            }
-        }
-        print '</select></td><td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
-        print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';
-        print '</table>';
-        print '</form>';
-    }
+		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
+		$sql .= " WHERE statut = 1";
+		$sql .= " ORDER BY lower(e.label)";
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				print '<option value="'.$obj->rowid.'">'.$obj->label ;
+				$i++;
+			}
+		}
+		print '</select></td>';
+
+		print '<td width="20%">'.$langs->trans("Target").'</td><td width="20%"><select name="id_entrepot_destination">';
+
+		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
+		$sql .= " WHERE statut = 1";
+		$sql .= " ORDER BY lower(e.label)";
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				print '<option value="'.$obj->rowid.'">'.$obj->label ;
+				$i++;
+			}
+		}
+		print '</select></td>';
+		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
+		print '<tr><td colspan="6" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+		print '</table>';
+		print '</form>';
+
+	}
+
+	/*
+	 *
+	 */
+	if ($_GET["action"] == "definir")
+	{
+		print_titre($langs->trans("SetStock"));
+		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
+		print '<input type="hidden" name="action" value="create_stock">';
+		print '<table class="border" width="100%"><tr>';
+		print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="40%"><select name="id_entrepot">';
+
+		$sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
+		$sql .= " ORDER BY lower(e.label)";
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				print '<option value="'.$obj->rowid.'">'.$obj->label ;
+				$i++;
+			}
+		}
+		print '</select></td><td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
+		print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';
+		print '</table>';
+		print '</form>';
+	}
 }
 else
 {
-    dolibarr_print_error();
+	dolibarr_print_error();
 }
 
 
 /* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
+/*                                                                            */
+/* Barre d'action                                                             */
+/*                                                                            */
 /* ************************************************************************** */
 
 print "<div class=\"tabsAction\">\n";
@@ -351,7 +371,7 @@ if ($_GET["action"] == '' )
 	{
 		print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
 	}
-	
+
 	if ($user->rights->stock->creer)
 	{
 		print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
@@ -378,21 +398,21 @@ $entrepotstatic=new Entrepot($db);
 $resql=$db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i=0; $total=0; $var=false;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($resql);
-        $entrepotstatic->id=$obj->rowid;
-        $entrepotstatic->libelle=$obj->label;
-        print '<tr '.$bc[$var].'>';
-        print '<td>'.$entrepotstatic->getNomUrl(1).'</td>';
-        print '<td align="right">'.$obj->reel.'</td>';
-        print '</tr>'; ;
-        $total = $total + $obj->reel;
-        $i++;
-        $var=!$var;
-    }
+	$num = $db->num_rows($resql);
+	$i=0; $total=0; $var=false;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		$entrepotstatic->id=$obj->rowid;
+		$entrepotstatic->libelle=$obj->label;
+		print '<tr '.$bc[$var].'>';
+		print '<td>'.$entrepotstatic->getNomUrl(1).'</td>';
+		print '<td align="right">'.$obj->reel.'</td>';
+		print '</tr>'; ;
+		$total = $total + $obj->reel;
+		$i++;
+		$var=!$var;
+	}
 }
 print '<tr class="liste_total"><td align="right" class="liste_total">'.$langs->trans("Total").':</td><td class="liste_total" align="right">'.$total."</td></tr>";
 print "</table>";

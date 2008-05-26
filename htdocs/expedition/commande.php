@@ -464,7 +464,7 @@ if ($_GET["id"] > 0)
   
   	print "</td></tr></table>";
 
-
+	print '<br>';
 	show_list_sending_receive('commande',$commande->id);
   	
 
