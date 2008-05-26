@@ -50,7 +50,7 @@ This will create mysql empty system database.
 with PHP activation.
 Include /etc/httpd/mod_php.conf
 
-9) Edit PHP.ini file to disabled features where librairies does not
+9) Edit \slax\changes\etc\httpd\php.ini file to disabled features where librairies does not
 exists. You can comment lines:
 ;extension=gd.so
 ;extension=mhash.so
@@ -62,10 +62,14 @@ found in this directory into
 Thoose files could be used to clean a Dolibarr install or load demo datas.
 
 11) Personalized your desktop.
-Add a link to firefor http://localhost/dolibarr/htdocs/index.php
+Add a link to application
+"firefox http://localhost/dolibarr/htdocs/index.php"
 
 12) Reboot again on your USB key.
 
-13) Now you can run Dolibarr install process.
-or build a CD or copy USB key content to build antoher one quickly.
+13) Now you can run Dolibarr install process
+http://localhost/dolibarr/htdocs/install/index.php
+or build a CD with command
+
+or copy USB key content to build antoher one quickly.
 
