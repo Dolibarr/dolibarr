@@ -145,7 +145,7 @@ class modMyModule extends DolibarrModules
 		//							'url'=>'/comm/action/index.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module
 		//							'position'=>100,
-		//							'perms'=>'$user->rights->mymodule->level1->level2',
+		//							'perms'=>'$user->rights->mymodule->level1->level2',		// Use 'perms'=>'1' if you want your menu with no permission rules
 		//							'target'=>'',
 		//							'user'=>0);				// 0=menu for all users
 		// $r++;
@@ -158,7 +158,7 @@ class modMyModule extends DolibarrModules
 		//							'url'=>'/comm/action/index2.php',
 		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module
 		//							'position'=>100,
-		//							'perms'=>'$user->rights->mymodule->level1->level2',
+		//							'perms'=>'$user->rights->mymodule->level1->level2',		// Use 'perms'=>'1' if you want your menu with no permission rules
 		//							'target'=>'',
 		//							'user'=>0);				// 0=menu for all users
 		// $r++;
