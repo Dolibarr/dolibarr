@@ -313,3 +313,19 @@ ALTER TABLE llx_commande_fournisseurdet DROP COLUMN price;
 
 alter table llx_adherent modify fk_user_mod integer;
 alter table llx_adherent modify fk_user_valid integer;
+
+create table llx_c_type_fees
+(
+  id        integer      AUTO_INCREMENT PRIMARY KEY,
+  code      varchar(12)  UNIQUE NOT NULL,
+  libelle   varchar(30),
+  active    tinyint DEFAULT 1   NOT NULL
+)type=innodb;
+
+
+alter table llx_deplacement modify type varchar(12) NOT NULL;
+
+insert into llx_c_type_fees (code,libelle,active) values ('TF_OTHER',    'Other',  1);
+insert into llx_c_type_fees (code,libelle,active) values ('TF_TRIP',     'Trip',   1);
+insert into llx_c_type_fees (code,libelle,active) values ('TF_LUNCH',    'Lunch',  1);
+

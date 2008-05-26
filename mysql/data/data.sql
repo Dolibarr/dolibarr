@@ -1371,6 +1371,13 @@ insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_LOW',       '
 insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_MEDIUM',    'Medium',   3);
 insert into llx_c_prospectlevel (code,label,sortorder) values ('PL_HIGH',      'High',     4);
 
+--
+-- Type fees
+--
+
+insert into llx_c_type_fees (code,libelle,active) values ('TF_OTHER',    'Other',  1);
+insert into llx_c_type_fees (code,libelle,active) values ('TF_TRIP',     'Trip',   1);
+insert into llx_c_type_fees (code,libelle,active) values ('TF_LUNCH',    'Lunch',  1);
 
 
 INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_COMPANY_CREATE','1','chaine',0,'');

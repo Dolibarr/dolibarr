@@ -1,5 +1,6 @@
--- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- ========================================================================
+-- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,18 +17,12 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- ============================================================================
+-- ========================================================================
 
-create table llx_deplacement
+create table llx_c_type_fees
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datec           datetime NOT NULL,
-  tms             timestamp,
-  dated           datetime,
-  fk_user	        integer NOT NULL,
-  fk_user_author  integer,
-  type            varchar(12) NOT NULL,
-  km              smallint,
-  fk_soc          integer,
-  note            text
+  id        integer      AUTO_INCREMENT PRIMARY KEY,
+  code      varchar(12)  UNIQUE NOT NULL,
+  libelle   varchar(30),
+  active    tinyint DEFAULT 1   NOT NULL
 )type=innodb;

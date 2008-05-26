@@ -63,32 +63,33 @@ if ($user->societe_id > 0)
 }
 
 $sql = "SELECT s.nom, s.rowid as socid,";                       // Ou
-$sql.= " d.rowid, ".$db->pdate("d.dated")." as dd, d.km, ";     // Comment
+$sql.= " d.rowid, d.type, ".$db->pdate("d.dated")." as dd, d.km, ";     // Comment
 $sql.= " u.name, u.firstname";                                  // Qui
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
+$sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."deplacement as d";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on d.fk_soc = s.rowid"; 
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE d.fk_soc = s.rowid AND d.fk_user = u.rowid";
+$sql.= " WHERE d.fk_user = u.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-
 if ($socid)
 {
   $sql .= " AND s.rowid = ".$socid;
 }
-
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
 
+//print $sql;
 $resql=$db->query($sql);
 if ($resql)
 {
   $num = $db->num_rows($resql);
 
-  print_barre_liste($langs->trans("ListOfTrips"), $page, "index.php","&socid=$socid",$sortfield,$sortorder,'',$num);
+  print_barre_liste($langs->trans("ListOfFees"), $page, "index.php","&socid=$socid",$sortfield,$sortorder,'',$num);
 
   $i = 0;
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"index.php","d.rowid","","&socid=$socid",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Type"),"index.php","d.type","","&socid=$socid",'',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Date"),"index.php","d.dated","","&socid=$socid",'',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&socid=$socid",'',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Person"),"index.php","u.name","","&socid=$socid",'',$sortfield,$sortorder);
@@ -104,6 +105,7 @@ if ($resql)
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
+      print '<td>'.$langs->trans($objp->type).'</td>';
       print '<td>'.dolibarr_print_date($objp->dd).'</td>';
       print '<td>'.$soc->getNomUrl(1).'</a></td>';
       print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';

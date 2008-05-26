@@ -873,8 +873,8 @@ class Form
      *  \param      selected        Id user preselected
      *  \param      htmlname        Field name in form
      *  \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *	\param		disabled		If select list must be disabled
-     *  \param      exclude         Liste des id utilisateurs à exclure
+     *  \param      exclude         List of users id to exclude
+	 * 	\param		disabled		If select list must be disabled
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='',$disabled=0)
     {

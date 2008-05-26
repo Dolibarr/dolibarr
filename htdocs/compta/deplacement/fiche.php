@@ -61,7 +61,8 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 		$deplacement->km = $_POST["km"];
 		$deplacement->type = $_POST["type"];
 		$deplacement->socid = $_POST["socid"];
-		$deplacement->userid = $user->id; //$_POST["km"];
+		$deplacement->fk_user = $_POST["fk_user"];
+		
 		$id = $deplacement->create($user);
 
 		if ($id > 0)
@@ -96,6 +97,7 @@ if ($_POST["action"] == 'update' && $user->rights->deplacement->creer)
 		
 		$deplacement->km     = $_POST["km"];
 		$deplacement->type   = $_POST["type"];
+		$deplacement->fk_user = $_POST["fk_user"];
 		
 		$result = $deplacement->update($user);
 		
@@ -135,16 +137,20 @@ if ($_GET["action"] == 'create')
   print '<input type="hidden" name="action" value="add">';
 	
   print '<table class="border" width="100%">';
-  print '<tr><td width="20%">'.$langs->trans("Person").'</td><td>'.$user->fullname.'</td></tr>';
 
   print "<tr>";
-  print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
+  print '<td width="25%">'.$langs->trans("CompanyVisited").'</td><td>';
   print $html->select_societes($_GET["socid"],'socid','',1);
   print '</td></tr>';
 
   print "<tr>";
   print '<td>'.$langs->trans("Type").'</td><td>';
   print $html->select_type_fees($_GET["type"],'type',1);
+  print '</td></tr>';
+  
+  print "<tr>";
+  print '<td>'.$langs->trans("Person").'</td><td>';
+  print $html->select_users($_GET["fk_user"],'fk_user',1);
   print '</td></tr>';
   
   print "<tr>";
@@ -187,11 +193,9 @@ else
 	      $soc = new Societe($db);
 	      $soc->fetch($deplacement->socid);
 
-	      print '<tr><td width="20%">'.$langs->trans("Person").'</td><td>'.$user->fullname.'</td></tr>';
-
 	      print "<tr>";
 	      print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-	      print $html->select_societes($soc->id);
+	      print $html->select_societes($soc->id,'socid','',1);
 	      print '</td></tr>';
 
 		  print "<tr>";
@@ -199,7 +203,12 @@ else
 		  print $html->select_type_fees($deplacement->type,'type',1);
 		  print '</td></tr>';
 		  
-	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
+		  print "<tr>";
+		  print '<td>'.$langs->trans("Person").'</td><td>';
+		  print $html->select_users($deplacement->fk_user,'fk_user',1);
+		  print '</td></tr>';
+		  
+  		  print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	      print $html->select_date($deplacement->date,'','','','','update');
 	      print '</td></tr>';
 	      print '<tr><td>'.$langs->trans("Kilometers").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
@@ -236,9 +245,13 @@ else
 	      $soc->fetch($deplacement->socid);
 
 	      print '<table class="border" width="100%">';
-	      print '<tr><td width="20%">'.$langs->trans("Person").'</td><td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->fullname.'</a></td></tr>';
 	      print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 	      print '<tr><td width="20%">'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
+	      print '<tr><td width="20%">'.$langs->trans("Person").'</td><td>';
+	      $userfee=new User($db,$deplacement->fk_user);
+	      $userfee->fetch();
+	      print $userfee->getNomUrl(1);
+	      print '</td></tr>';
 	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	      print dolibarr_print_date($deplacement->date);
 	      print '</td></tr>';

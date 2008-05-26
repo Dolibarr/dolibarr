@@ -33,8 +33,11 @@ require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 class Deplacement extends CommonObject
 {
 	var $db;
+	var $errors;
+	
 	var $id;
-	var $user;
+	var $fk_user_author;
+	var $fk_user;
 	var $km;
 	var $note;
 
@@ -63,12 +66,17 @@ class Deplacement extends CommonObject
 			$this->error='ErrorBadParameter';
 			return -1;
 		}
+		if (empty($this->fk_user) || $this->fk_user < 0)
+		{
+			$this->error='ErrorBadParameter';
+			return -1;
+		}
 		
 		$this->db->begin();
 		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " (datec, fk_user_author, fk_user, type)";
-		$sql.= " VALUES (now(), ".$user->id.", ".$user->id.", '".$this->type."')";
+		$sql.= " VALUES (now(), ".$user->id.", ".$this->fk_user.", '".$this->type."')";
 
 		dolibarr_syslog("Deplacement::create sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -110,12 +118,17 @@ class Deplacement extends CommonObject
 			$this->error='ErrorBadParameter';
 			return -1;
 		}
-				
+		if (empty($this->fk_user) || $this->fk_user < 0)
+		{
+			$this->error='ErrorBadParameter';
+			return -1;
+		}
+		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
 		$sql .= " SET km = ".$this->km;
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->type."'";
-		$sql .= " , fk_user = ".$this->userid;
+		$sql .= " , fk_user = ".$this->fk_user;
 		$sql .= " , fk_soc = ".($this->socid > 0?$this->socid:'null');
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -149,7 +162,7 @@ class Deplacement extends CommonObject
 
 			$this->id       = $obj->rowid;
 			$this->date     = $obj->dated;
-			$this->userid   = $obj->fk_user;
+			$this->fk_user  = $obj->fk_user;
 			$this->socid    = $obj->fk_soc;
 			$this->km       = $obj->km;
 			$this->type     = $obj->type;
