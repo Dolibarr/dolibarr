@@ -85,9 +85,9 @@ function llxHeader($head = "")
 	{
 		$langs->load("bills");
 		
-		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
-		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
-		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
+		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequeDeposits"),0,$user->rights->banque->cheque);
+		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=bank&amp;mainmenu=bank&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->banque->cheque);
+		$menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuChequesReceipts"),1,$user->rights->banque->cheque);
 	}
 	
 	left_menu($menu->liste);
