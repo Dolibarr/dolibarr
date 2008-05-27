@@ -1390,4 +1390,6 @@ INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTION
 INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_PAYED','1','chaine',0,'');
 INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_CANCELED','1','chaine',0,'');
 INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_SENTBYMAIL','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_ORDER_SUPPLIER_VALIDATE','1','chaine',0,'');
+INSERT INTO llx_const (name,value,type,visible,note) VALUES ('MAIN_AGENDA_ACTIONAUTO_BILL_SUPPLIER_VALIDATE','1','chaine',0,'');
 
