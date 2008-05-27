@@ -70,7 +70,7 @@ if ($_POST["action"] == 'add_action')
 		if (! $backtopage)
 		{
 			if ($_POST['socid'] > 0) $backtopage=DOL_URL_ROOT.'/comm/fiche.php?socid='.$_POST['socid'];
-			else $backtopage=DOL_URL_ROOT.'/comm/action/indexactions.php';
+			else $backtopage=DOL_URL_ROOT.'/comm/action/index.php';
 		}
 		header("Location: ".$backtopage);
 		exit;	

@@ -18,9 +18,10 @@
 
 /**
 	    \file       htdocs/comm/action/indexactions.php
-        \ingroup    agenda
+		\ingroup    agenda
 		\brief      Actions area
 		\version    $Id$
+		\TODO		This file is deprecated. Not more reach.
 */
 
 require_once("./pre.inc.php");
