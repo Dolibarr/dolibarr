@@ -38,12 +38,10 @@ $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="a.datep";
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
 
 

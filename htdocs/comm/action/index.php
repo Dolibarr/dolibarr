@@ -48,7 +48,7 @@ $status=isset($_GET["status"])?$_GET["status"]:$_POST["status"];
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'societe', $socid,'');
+$result = restrictedArea($user, 'agenda', $socid, '', 'myactions');
 
 $canedit=1;
 if (! $user->rights->agenda->myactions->read) accessforbidden();

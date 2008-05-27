@@ -1273,8 +1273,9 @@ function info_admin($texte,$infoonimgalt=0)
  \param      feature		Feature to check (in most cases, it's module name)
  \param      objectid      	Object ID if we want to check permission on on object (optionnal)
  \param      dbtable       	Table name where object is stored. Not used if objectid is null (optionnel)
+ \param      feature		Feature to check (second level of permission)
  */
-function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='')
+function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',$feature2='')
 {
 	global $db;
 
@@ -1303,7 +1304,11 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='')
 	{
 		if (! $user->rights->banque->cheque) $readok=0;
 	}
-	else if (! empty($feature))
+	else if (! empty($feature2))	// This should be used for future changes
+	{
+		if (! $user->rights->$feature->$feature2->read) $readok=0;
+	}
+	else if (! empty($feature))		// This is for old permissions
 	{
 		if (! $user->rights->$feature->lire) $readok=0;
 	}
