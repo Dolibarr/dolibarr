@@ -10,7 +10,7 @@ use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="2";
-$MINOR="2";
+$MINOR="4";
 $BUILD="0";				# Mettre x pour release, ou x-betay pour beta
 $RPMSUBVERSION="1";		# A incrementer au moment de la release
 
