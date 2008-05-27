@@ -206,8 +206,10 @@ if ($_GET['action'] == 'new')
 	$accounts = array();
 	$lines = array();
 	
+	$now=time();
+	
 	print '<table class="border" width="100%">';
-	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dolibarr_print_date(time()).'</td></tr>';
+	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dolibarr_print_date($now,'day').'</td></tr>';
 	print '</table><br />';
 	
 	$sql = "SELECT ba.rowid as bid, ".$db->pdate("b.dateo")." as date,";
@@ -245,8 +247,8 @@ if ($_GET['action'] == 'new')
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Date")."</td>\n";
-		print '<td>'.$langs->trans("ChequeNumber")."</td>\n";
+		print '<td>'.$langs->trans("DateChequeReceived")." &nbsp;</td>\n";
+		print '<td width="120">'.$langs->trans("ChequeNumber")."</td>\n";
 		print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
 		print '<td>'.$langs->trans("Bank")."</td>\n";
 		print '<td align="right">'.$langs->trans("Amount")."</td>\n";
@@ -261,8 +263,8 @@ if ($_GET['action'] == 'new')
 			$account_id = $objp->bid;
 			$accounts[$objp->bid] += 1;
 	
-			print "<tr $bc[$var]>";
-			print '<td width="120">'.dolibarr_print_date($value["date"]).'</td>';
+			print "<tr ".$bc[$var].">";
+			print '<td width="120">'.dolibarr_print_date($value["date"],'day').'</td>';
 			print '<td>'.$value["numero"]."</td>\n";
 			print '<td>'.$value["emetteur"]."</td>\n";
 			print '<td>'.$value["banque"]."</td>\n";
@@ -321,7 +323,7 @@ else
 
 	
 	// Liste des cheques
-	$sql = "SELECT b.rowid, b.amount, b.num_chq,b.emetteur,";
+	$sql = "SELECT b.rowid, b.amount, b.num_chq, b.emetteur,";
 	$sql.= " ".$db->pdate("b.dateo")." as date,".$db->pdate("b.datec")." as datec, b.banque,";
 	$sql.= " p.rowid as pid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -339,7 +341,7 @@ else
 
 		$param="&amp;id=".$remisecheque->id;
 		print '<tr class="liste_titre">';
-		'<td>'.$langs->trans("Num").'</td>';
+		'<td width="30">'.$langs->trans("Num").'</td>';
 		print '<td>'.$langs->trans("Cheque").'</td>';
 		print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("CheckTransmitter"),$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield,$sortorder);
