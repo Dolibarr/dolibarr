@@ -68,7 +68,7 @@ else
 {
     print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphparray());
 }
-if (empty($force_install_nophpinfo)) print ' (<a href="phpinfo.php" target="_info">'.$langs->trans("MoreInformation").'</a>)';
+if (empty($force_install_nophpinfo)) print ' (<a href="phpinfo.php" target="_blank">'.$langs->trans("MoreInformation").'</a>)';
 print "<br>\n";
 
 
