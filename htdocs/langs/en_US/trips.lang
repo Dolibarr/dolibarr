@@ -9,6 +9,7 @@ ListOfFees=List of fees
 NewTrip=New trip
 CompanyVisited=Company/fundation visited
 Kilometers=Kilometers
+FeesKilometersOrAmout=Amount or kilometers
 DeleteTrip=Delete trip
 ConfirmDeleteTrip=Are you sure you want to delete this trip ?
 TF_OTHER=Other
