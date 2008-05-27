@@ -176,7 +176,7 @@ if ($conf->banque->enabled)
 }
 
 // Date
-print '<tr><td valign="top" width="140">'.$langs->trans('Date').'</td><td colspan="3">'.dolibarr_print_date($paiement->date).'</td></tr>';
+print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dolibarr_print_date($paiement->date,'day').'</td></tr>';
 
 // Mode
 print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$paiement->type_code).'</td></tr>';

@@ -132,8 +132,10 @@ if ($_POST['action'] == 'builddoc' && $user->rights->banque)
       $mesg='<div class="error">'.$paiement->error.'</div>';
     }
 }
+
+
 /*
- * Visualisation de la fiche
+ * View
  */
 
 llxHeader();
@@ -209,12 +211,12 @@ if ($_GET['action'] == 'new')
 	print '</table><br />';
 	
 	$sql = "SELECT ba.rowid as bid, ".$db->pdate("b.dateo")." as date,";
-	$sql.= " b.amount, ba.label, b.emetteur, b.banque";
+	$sql.= " b.amount, ba.label, b.emetteur, b.num_chq, b.banque";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b ";
 	$sql.= ",".MAIN_DB_PREFIX."bank_account as ba ";
 	$sql.= " WHERE b.fk_type = 'CHQ' AND b.fk_account = ba.rowid";
 	$sql.= " AND b.fk_bordereau = 0 AND b.amount > 0";
-	$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
+	$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC";
 	
 	$resql = $db->query($sql);
 	if ($resql)
@@ -226,6 +228,7 @@ if ($_GET['action'] == 'new')
 			$lines[$obj->bid][$i]["date"] = $obj->date;
 			$lines[$obj->bid][$i]["amount"] = $obj->amount;
 			$lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
+			$lines[$obj->bid][$i]["numero"] = $obj->num_chq;
 			$lines[$obj->bid][$i]["banque"] = $obj->banque;
 			$i++;
 		}
@@ -243,6 +246,7 @@ if ($_GET['action'] == 'new')
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date")."</td>\n";
+		print '<td>'.$langs->trans("ChequeNumber")."</td>\n";
 		print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
 		print '<td>'.$langs->trans("Bank")."</td>\n";
 		print '<td align="right">'.$langs->trans("Amount")."</td>\n";
@@ -259,6 +263,7 @@ if ($_GET['action'] == 'new')
 	
 			print "<tr $bc[$var]>";
 			print '<td width="120">'.dolibarr_print_date($value["date"]).'</td>';
+			print '<td>'.$value["numero"]."</td>\n";
 			print '<td>'.$value["emetteur"]."</td>\n";
 			print '<td>'.$value["banque"]."</td>\n";
 			print '<td align="right">'.price($value["amount"]).'</td>';
@@ -316,8 +321,8 @@ else
 
 	
 	// Liste des cheques
-	$sql = "SELECT b.rowid,b.amount,";
-	$sql.= " b.num_chq,b.emetteur,".$db->pdate("b.dateo")." as date,".$db->pdate("b.datec")." as datec,b.banque,";
+	$sql = "SELECT b.rowid, b.amount, b.num_chq,b.emetteur,";
+	$sql.= " ".$db->pdate("b.dateo")." as date,".$db->pdate("b.datec")." as datec, b.banque,";
 	$sql.= " p.rowid as pid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
