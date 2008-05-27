@@ -22,7 +22,7 @@
 /**
 	    \file       htdocs/admin/dict.php
 		\ingroup    setup
-		\brief      Page d'administration des dictionnaires de donn�es
+		\brief      Page to administer data tables
 		\version    $Id$
 */
 
@@ -46,7 +46,7 @@ $active = 1;
 // Mettre ici tous les caract�ristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(9,0,4,3,2,0,1,8,16,0,5,11,0,6,0,10,12,13,0,14,0,7,0,15);
+$taborder=array(9,0,4,3,2,0,1,8,16,0,5,11,0,6,0,10,12,13,0,14,0,7,17,0,15);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -65,6 +65,7 @@ $tabname[13]= MAIN_DB_PREFIX."c_paiement";
 $tabname[14]= MAIN_DB_PREFIX."c_ecotaxe";
 $tabname[15]= MAIN_DB_PREFIX."c_paper_format";
 $tabname[16]= MAIN_DB_PREFIX."c_prospectlevel";
+$tabname[17]= MAIN_DB_PREFIX."c_type_fees";
 
 // Libell� des dictionnaires
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
@@ -83,6 +84,7 @@ $tablib[13]= $langs->trans("DictionnaryPaymentModes");
 $tablib[14]= $langs->trans("DictionnaryEcotaxe");
 $tablib[15]= $langs->trans("DictionnaryPaperFormat");
 $tablib[16]= $langs->trans("DictionnaryProspectLevel");
+$tablib[17]= $langs->trans("DictionnaryFees");
 
 // Requete pour extraction des donn�es des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
@@ -101,6 +103,7 @@ $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as pays_id, p.libelle as pays, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_pays as p WHERE e.fk_pays=p.rowid and p.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 $tabsql[16]= "SELECT code, label as libelle, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+$tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_fees";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays, code ASC";
@@ -119,7 +122,8 @@ $tabsqlsort[13]="code ASC";
 $tabsqlsort[14]="pays, e.organization ASC, code ASC";
 $tabsqlsort[15]="rowid ASC";
 $tabsqlsort[16]="sortorder ASC";
- 
+$tabsqlsort[17]="code ASC";
+
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
 $tabfield[2] = "code,libelle,region_id,region";   // "code,libelle,region"
@@ -137,8 +141,9 @@ $tabfield[13]= "code,libelle,type";
 $tabfield[14]= "code,libelle,price,organization,pays_id,pays";
 $tabfield[15]= "code,libelle,width,height,unit";
 $tabfield[16]= "code,libelle";
+$tabfield[17]= "code,libelle";
 
-// Nom des champs d'�dition pour modification du dictionnaire
+// Nom des champs d'edition pour modification du dictionnaire
 $tabfieldvalue[1] = "code,libelle,pays";
 $tabfieldvalue[2] = "code,libelle,region";   // "code,libelle,region"
 $tabfieldvalue[3] = "code,libelle,pays";
@@ -155,6 +160,7 @@ $tabfieldvalue[13]= "code,libelle,type";
 $tabfieldvalue[14]= "code,libelle,price,organization,pays";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
 $tabfieldvalue[16]= "code,libelle";
+$tabfieldvalue[17]= "code,libelle";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -173,6 +179,7 @@ $tabfieldinsert[13]= "code,libelle,type";
 $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
 $tabfieldinsert[16]= "code,label";
+$tabfieldinsert[17]= "code,libelle";
 
 // Nom du rowid si le champ n'est pas de type autoincr�ment
 $tabrowid[1] = "";
@@ -191,6 +198,7 @@ $tabrowid[13]= "id";
 $tabrowid[14]= "";
 $tabrowid[15]= "";
 $tabrowid[16]= "code";
+$tabrowid[17]= "id";
 
 // Condition to show dictionnary in setup page
 $tabcond[1] = true;
@@ -209,6 +217,7 @@ $tabcond[13]= $conf->facture->enabled||$conf->fournisseur->enabled;
 $tabcond[14]= $conf->produit->enabled&&$conf->global->PRODUIT_USE_ECOTAXE;
 $tabcond[15]= true;
 $tabcond[16]= $conf->societe->enabled;
+$tabcond[17]= $conf->deplacement->enabled;
 
 $msg='';
 
@@ -217,7 +226,7 @@ $sortfield=$_GET["sortfield"];
 $sortorder=$_GET["sortorder"];
 
 /*
- * Actions ajout ou modification d'une entr�e dans un dictionnaire de donn�e
+ * Actions ajout ou modification d'une entree dans un dictionnaire de donnee
  */
 if ($_POST["actionadd"] || $_POST["actionmodify"])
 {
@@ -397,28 +406,37 @@ if ($_GET["action"] == $acts[1])       // disable
 }
 
 
-
-llxHeader();
+/*
+ * View
+ */
 
 $html = new Form($db);
 
+llxHeader();
+
 $titre=$langs->trans("DictionnarySetup");
+$linkback='';
 if ($_GET["id"])
 {
 	$titre.=' - '.$tablib[$_GET["id"]];
+	$linkback='<a href="'.DOL_URL_ROOT.'/admin/dict.php">'.$langs->trans("BackToDictionnaryList").'</a>';
 }
-print_fiche_titre($titre,'','setup');
+print_fiche_titre($titre,$linkback,'setup');
 
-print $langs->trans("DictionnaryDesc");
-print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
-print "<br>\n";
+if (empty($_GET["id"]))
+{
+	print $langs->trans("DictionnaryDesc");
+	print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
+}
+	print "<br>\n";
 
+	
   /*
    * Confirmation de la suppression de la ligne
    */
   if ($_GET['action'] == 'delete')
   {
-  	$html = new Form($db);
+	$html = new Form($db);
   	$html->form_confirm($_SERVER["PHP_SELF"].'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&amp;code='.$_GET["code"].'&amp;id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete');
     print '<br>';
   }
@@ -433,7 +451,7 @@ if ($_GET["id"])
         print $msg.'<br>';
     }
 
-    // Compl�te requete recherche valeurs avec critere de tri
+    // Complete requete recherche valeurs avec critere de tri
     $sql=$tabsql[$_GET["id"]];
     if ($_GET["sortfield"])
     {

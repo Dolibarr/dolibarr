@@ -435,8 +435,10 @@ DictionnaryPaymentModes=Payments modes
 DictionnaryTypeContact=Contacts types
 DictionnaryEcotaxe=Ecotaxe (WEEE)
 DictionnaryPaperFormat=Paper formats
+DictionnaryFees=Type of fees
 SetupSaved=Setup saved
 BackToModuleList=Back to modules list
+BackToDictionnaryList=Back to dictionnaries list
 VATReceivedOnly=Special rate not billed
 VATManagement=VAT Management
 VATIsUsedDesc=The VAT rate by default when creating prospects, invoices, orders etc follow the active standard rule:<br>If the seller is subjected to VAT, then VAT by default=0. End of rule.<br>If the (selling country = buying country), then the VAT by default=VAT of the product in the selling country. End of rule. <br>If seller and buyer in the European Community and goods are sold having new means of transport (car, ship, plane), the default VAT=0 ( The VAT should be paid by the buyer at the customoffice of his country and not at the seller). End of rule.<br>If seller and buyer in the European Community and goods sold by other means rather than new means of transport, then the VAT by default=VAT of product sold.  End of rule.<br>Else the proposed default VAT =1. End of rule.

@@ -396,19 +396,21 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 
 
 
+/*
+ * View
+ */
+
 llxHeader("","","Fiche Mailing");
 
-
-/*
- * Mailing en mode création
- *
- */
+$html = new Form($db);
 
 $mil = new Mailing($db);
 
+
 if ($_GET["action"] == 'create')
 {
-    print '<form action="fiche.php" method="post">'."\n";
+	// Mailing en mode création
+	print '<form action="fiche.php" method="post">'."\n";
     print '<input type="hidden" name="action" value="add">';
 
     print_titre($langs->trans("NewMailing"));
@@ -446,8 +448,6 @@ if ($_GET["action"] == 'create')
 }
 else
 {
-    $html = new Form($db);
-    
     if ($mil->fetch($_GET["id"]) >= 0)
     {
 
@@ -543,8 +543,8 @@ else
 
 			// Message
             print '<tr><td valign="top">'.$langs->trans("MailMessage").'</td>';
-            print '<td colspan="3" bgcolor="#FFFFFF">';
-            print nl2br($mil->body);
+            print '<td colspan="3">';
+            print dol_htmlentitiesbr($mil->body);
             print '</td>';
             print '</tr>';
 
