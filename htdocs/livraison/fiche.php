@@ -568,9 +568,8 @@ else
       $sql.= ", cd.rowid, cd.qty as qty_commande";
       $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
       $sql.= " , ".MAIN_DB_PREFIX."livraisondet as ld, ".MAIN_DB_PREFIX."livraison as l";
-      $sql.= " WHERE cd.fk_commande = ".$livraison->origin_id;
-      $sql.= " AND l.rowid <> ".$livraison->id;
-      $sql.= " AND cd.rowid = ld.fk_origin_line";
+      $sql.= " WHERE l.rowid <> ".$livraison->id;
+      $sql.= " AND cd.rowid = ld.fk_commande_ligne";
       $sql.= " AND ld.fk_livraison = l.rowid";
       $sql.= " AND l.fk_statut > 0";
       $sql.= " ORDER BY cd.fk_product";
