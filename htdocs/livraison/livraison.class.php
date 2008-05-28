@@ -120,10 +120,10 @@ class Livraison extends CommonObject
 				*/
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 				{
-					$origin_id=$this->lignes[$i]->origin_ligne_id;
+					$origin_id=$this->lignes[$i]->origin_line_id;
 					if (! $origin_id) $origin_id=$this->lignes[$i]->commande_ligne_id;	// For backward compatibility
 					
-					if (! $this->create_line(0, $origin_id, $this->lignes[$i]->qty))
+					if (! $this->create_line(0, $origin_id, $this->lignes[$i]->qty, $this->lignes[$i]->fk_product))
 					{
 						$error++;
 					}
@@ -178,24 +178,14 @@ class Livraison extends CommonObject
 	*
 	*
 	*/
-	function create_line($transaction, $commande_ligne_id, $qty)
+	function create_line($transaction, $commande_ligne_id, $qty, $fk_product=0)
 	{
 		$error = 0;
-		$idprod = 0;
+		$idprod = $fk_product;
 		$j = 0;
 	
-		// Search product id
-		while (($j < sizeof($this->commande->lignes)) && idprod == 0)
-		{
-			if ($this->commande->lignes[$j]->id == $commande_ligne_id)
-			{
-				$idprod = $this->commande->lignes[$j]->fk_product;
-			}
-			$j++;
-		}
-	
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livraisondet (fk_livraison, fk_origin_line,";
-		if ($idprod) $sql.=" fk_product";
+		if ($idprod) $sql.=" fk_product,";
 		$sql.= " qty)";
 		$sql.= " VALUES (".$this->id.",".$commande_ligne_id.",";
 		if ($idprod) $sql.=" ".$idprod.",";
@@ -480,9 +470,9 @@ class Livraison extends CommonObject
 		for ($i = 0 ; $i < sizeof($expedition->lignes) ; $i++)
 		{
 			$LivraisonLigne = new LivraisonLigne($this->db);
-			$LivraisonLigne->origin_ligne_id   = $expedition->lignes[$i]->origin_line_id;
+			$LivraisonLigne->origin_line_id    = $expedition->lignes[$i]->origin_line_id;
 			$LivraisonLigne->libelle           = $expedition->lignes[$i]->libelle;
-			$LivraisonLigne->description       = $expedition->lignes[$i]->product_desc;
+			$LivraisonLigne->description       = $expedition->lignes[$i]->description;
 			$LivraisonLigne->qty               = $expedition->lignes[$i]->qty_shipped;
 			$LivraisonLigne->fk_product        = $expedition->lignes[$i]->fk_product;
 			$LivraisonLigne->ref               = $expedition->lignes[$i]->ref;
