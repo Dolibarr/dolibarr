@@ -167,7 +167,8 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 				    $contact->fk_pays=$soc->fk_pays;
 				    $contact->socid=$soc->id;					// fk_soc
 				    $contact->status=1;	
-					$contact->priv=0;
+				    $contact->email=$soc->email;	
+				    $contact->priv=0;
 					
 					$result=$contact->create($user);
 				}
