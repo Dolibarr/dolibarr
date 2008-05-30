@@ -65,8 +65,9 @@ class box_factures extends ModeleBoxes {
         include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
         $facturestatic=new Facture($db);
         
+        $text = $langs->trans("BoxTitleLastCustomerBills",$max);
         $this->info_box_head = array(
-				'text' => $langs->trans("BoxTitleLastCustomerBills",$max),
+				'text' => $text,
 				'limit'=> strlen($text)
 			);
         
@@ -74,7 +75,8 @@ class box_factures extends ModeleBoxes {
         {
             $sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, ".$db->pdate("f.datef")." as df,";
             $sql.= " f.paye, f.fk_statut, f.datec,";
-            $sql.= " s.nom, s.rowid as socid";
+            $sql.= " s.nom, s.rowid as socid, ";
+            $sql.= $db->pdate('f.date_lim_reglement')." as datelimite ";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -94,6 +96,7 @@ class box_factures extends ModeleBoxes {
                 $num = $db->num_rows();
         
                 $i = 0;
+                $l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
         
                 while ($i < $num)
                 {
@@ -102,10 +105,13 @@ class box_factures extends ModeleBoxes {
 					          $picto='bill';
 					          if ($objp->type == 1) $picto.='r';
 					          if ($objp->type == 2) $picto.='a';
+                              $late = '';
+                              if($objp->paye == 0 && $objp->datelimite < (time() - $conf->facture->warning_delay)) { $late = img_warning(sprintf($l_due_date,dolibarr_print_date($objp->datelimite,'day')));}
                     
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $picto,
                     'text' => $objp->facnumber,
+                    'text2'=> $late,
                     'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
         
                     $this->info_box_contents[$i][1] = array('align' => 'left',

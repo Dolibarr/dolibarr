@@ -92,14 +92,15 @@ class box_factures_fourn_imp extends ModeleBoxes {
                 $num = $db->num_rows();
 
                 $i = 0;
-
+                $l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
+                
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
 
-                    $late="";
-                    if ($objp->datelimite < (time() - $conf->facture->fournisseur->warning_delay)) $late=img_warning($langs->trans("Late"));
-
+                    $late='';
+                    if ($objp->datelimite < (time() - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date,dolibarr_print_date($objp->datelimite,'day')));
+                    
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
                     'text' => $objp->facnumber,

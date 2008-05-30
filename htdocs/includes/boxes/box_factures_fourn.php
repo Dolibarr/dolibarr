@@ -73,7 +73,8 @@ class box_factures_fourn extends ModeleBoxes {
         {
             $sql = "SELECT s.nom, s.rowid as socid,";
             $sql.= " f.rowid as facid, f.facnumber, f.amount,".$db->pdate("f.datef")." as df,";
-            $sql.= " f.paye, f.fk_statut, f.datec";
+            $sql.= " f.paye, f.fk_statut, f.datec,";
+            $sql.= ' '.$db->pdate('f.date_lim_reglement').' as datelimite ';
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -93,14 +94,18 @@ class box_factures_fourn extends ModeleBoxes {
                 $num = $db->num_rows($result);
 
                 $i = 0;
+                $l_due_date =  $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
 
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
+                    $late = '';
+                    if ($objp->paye == 0 && $objp->datelimite < (time() - $conf->facture->fournisseur->warning_delay)) $late=img_warning(sprintf($l_due_date, dolibarr_print_date($objp->datelimite,'day')));
 
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
                     'text' => $objp->facnumber,
+                    'text2'=> $late,
                     'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
 
                     $this->info_box_contents[$i][1] = array('align' => 'left',
