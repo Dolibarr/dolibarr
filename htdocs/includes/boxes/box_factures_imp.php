@@ -84,7 +84,7 @@ class box_factures_imp extends ModeleBoxes {
                 $sql .= " AND s.rowid = ".$user->societe_id;
             }
             //$sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
-            $sql .= " ORDER BY f.datef ASC, f.facnumber ASC ";
+            $sql .= " ORDER BY datelimite ASC, f.facnumber ASC ";
             $sql .= $db->plimit($max, 0);
 
             $result = $db->query($sql);
@@ -113,9 +113,13 @@ class box_factures_imp extends ModeleBoxes {
                     'maxlength'=>44,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-                    $this->info_box_contents[$i][2] = array(
+                    $this->info_box_contents[$i][2] = array('align' => 'right',
+                    'text' => dolibarr_print_date($objp->datelimite,'day'),
+                    );
+
+                    $this->info_box_contents[$i][3] = array(
                     'align' => 'right',
-                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
+                    'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));                    
 
                     $i++;
                 }
@@ -126,15 +130,13 @@ class box_factures_imp extends ModeleBoxes {
                     if ($num==0 && $i==$num)
                     {
                         $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoUnpayedCustomerBills"));
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
                     } else {
                         $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
                     }
+                    $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                    $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                    $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
+                    $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
                     $i++;
                 }
             }
