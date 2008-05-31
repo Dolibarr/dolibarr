@@ -171,6 +171,12 @@ if ($resql)
 	
 	llxHeader("","",$texte);
 
+    // Displays product removal confirmation
+    if (!empty($_GET['delprod'])) 
+    {
+        print '<div class="warning">'.$langs->trans("ProductDeleted",$_GET['delprod']).'</div><br />';
+    }
+
 	$param="&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"];
 	$param.="&amp;fourn_id=".$fourn_id;
 	$param.=isset($type)?"&amp;type=".$type:"";

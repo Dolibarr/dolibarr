@@ -236,23 +236,21 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 /*
 * Suppression d'un produit/service pas encore affect
 */
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->produit->supprimer)
+if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->produit->supprimer)
 {
   $product = new Product($db);
-  $product->fetch($_GET["id"]);
-  $result = $product->delete($_GET["id"]);
+  $product->fetch($_GET['id']);
+  $result = $product->delete($_GET['id']);
   
   if ($result == 0)
     {
-      llxHeader();
-      print '<div class="ok">'.$langs->trans("ProductDeleted",$product->ref).'</div>';
-      llxFooter();
-      exit ;
+      Header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.$product->ref);
+      exit;
     }
   else
     {
       $reload = 0;
-      $_GET["action"]='';
+      $_GET['action']='';
     }
 }
 
