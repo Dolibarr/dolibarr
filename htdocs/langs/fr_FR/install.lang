@@ -123,6 +123,7 @@ BecauseConnectionFailedParametersMayBeWrong=La connexion ayant échoué, les param
 OrphelinsPaymentsDetectedByMethod=Paiement orphelins detectés par la méthode %s
 RemoveItManuallyAndPressF5ToContinue=Supprimer le manuellement et appuyez sur F5 pour continuer.
 KeepDefaultValues=Comme vous utilisez l'assistant d'installation depuis DoliWamp, les valeurs proposées aux paramètres sont déjà optimisées. Ne les modifier qu'en connaissance de cause.
+FieldRenamed=Champ renommé
 
 #########
 # upgrade

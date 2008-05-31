@@ -122,6 +122,7 @@ BecauseConnectionFailedParametersMayBeWrong=As connection failed, host or super 
 OrphelinsPaymentsDetectedByMethod=Orphelins payment detected by method %s
 RemoveItManuallyAndPressF5ToContinue=Remove it manually and press F5 to continue.
 KeepDefaultValues=You use the Doliwamp setup wizard, so values proposed here are already optimized. Change them only if you know what you do.
+FieldRenamed=Field renamed
 
 #########
 # upgrade
