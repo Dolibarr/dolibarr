@@ -16,15 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**     \file       htdocs/adherents/options.php
         \ingroup    adherent
 		\brief      Page de configuratin des champs optionnels
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -35,42 +32,73 @@ $langs->load("members");
 $adho = new AdherentOptions($db);
 $form = new Form($db);
 
-if ($_POST["action"] == 'add' && $user->admin) 
+if ($_POST["action"] == 'add' && $user->rights->adherent->configurer) 
 {
-    if ($_POST["button"] != $langs->trans("Cancel")) {
+    if ($_POST["button"] != $langs->trans("Cancel")) 
+    {
         // Type et taille non encore pris en compte => varchar(255)
-        if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-]*$/",$_POST['attrname'])){
-        $adho->create($_POST['attrname'],$_POST['type'],$_POST['size']);
+        if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
+        {
+        	$adho->create($_POST['attrname'],$_POST['type'],$_POST['size']);
+	        if (isset($_POST['label']))
+	        {
+	        	$adho->create_label($_POST['attrname'],$_POST['label']);
+	        }
+		    Header("Location: ".$_SERVER["PHP_SELF"]);
+    		exit;
         }
-        if (isset($_POST['label'])){
-        $adho->create_label($_POST['attrname'],$_POST['label']);
+        else
+        {
+        	$langs->load("errors");
+        	$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
+			$_GET["action"] = 'create';        	
         }
     }
-    Header("Location: ".$_SERVER["PHP_SELF"]);
 }
 
-if ($_POST["action"] == 'update' && $user->admin) 
+if ($_POST["action"] == 'update' && $user->rights->adherent->configurer) 
 {
-    if ($_POST["button"] != $langs->trans("Cancel")) {
-        if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-]*$/",$_POST['attrname'])){
-        $adho->update($_POST['attrname'],$_POST['type'],$_POST['size']);
+    if ($_POST["button"] != $langs->trans("Cancel")) 
+    {
+        if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_POST['attrname']))
+        {
+        	$adho->update($_POST['attrname'],$_POST['type'],$_POST['size']);
+	        if (isset($_POST['label']))
+	        {
+	        	$adho->update_label($_POST['attrname'],$_POST['label']);
+	        }
+		    Header("Location: ".$_SERVER["PHP_SELF"]);
+		    exit;
         }
-        if (isset($_POST['label'])){
-        $adho->update_label($_POST['attrname'],$_POST['label']);
+        else
+        {
+        	$langs->load("errors");
+        	$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
         }
     } 
-    Header("Location: ".$_SERVER["PHP_SELF"]);
 }
 
 # Suppression attribut
-if ($_GET["action"] == 'delete' && $user->admin)
+if ($_GET["action"] == 'delete' && $user->rights->adherent->configurer)
 {
-  if(isset($_GET["attrname"]) && preg_match("/^\w[a-zA-Z0-9-]*$/",$_GET["attrname"])){
-    $adho->delete($_GET["attrname"]);
-  }
-  Header("Location: ".$_SERVER["PHP_SELF"]);
+  	if(isset($_GET["attrname"]) && preg_match("/^\w[a-zA-Z0-9-_]*$/",$_GET["attrname"]))
+  	{
+    	$adho->delete($_GET["attrname"]);
+  		Header("Location: ".$_SERVER["PHP_SELF"]);
+  		exit;
+  	}
+    else
+    {
+        $langs->load("errors");
+    	$mesg=$langs->trans("ErrorFieldCanNotContainSpecialCharacters",$langs->transnoentities("AttributeCode"));
+    }
 }
 
+
+
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -79,11 +107,7 @@ llxHeader();
 print_titre($langs->trans("OptionalFieldsSetup"));
 print '<br>';
 
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                                            */
-/*                                                                            */
-/* ************************************************************************** */
+if ($mesg) print '<div class="error">'.$mesg.'</div><br>';
 
 $array_options=$adho->fetch_name_optionals();
 $array_label=$adho->fetch_name_optionals_label();

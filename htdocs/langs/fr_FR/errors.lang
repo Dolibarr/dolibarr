@@ -28,3 +28,4 @@ ErrorGenbarCodeNotfound=Fichier introuvable (Mauvais chemin, permissions incorre
 ErrorFunctionNotAvailableInPHP=La fonction <b>%s</b> est requise pour cette fonctionnalité mais n'est pas disponible dans cette version/installation de PHP.
 ErrorDirAlreadyExists=Un répertoire portant ce nom existe déjà.
 WarningAllowUrlFopenMustBeOn=Attention, le paramètre <b>allow_url_fopen</b> doit etre positionné à <b>on</b> dans le fichier <b>php.ini</b> pour que ce module soit pleinement opérationnel. Vous devez modifier ce fichier manuellement.
+ErrorFieldCanNotContainSpecialCharacters=Le champ <b>%s</b> ne peut contenir de caractères spéciaux.

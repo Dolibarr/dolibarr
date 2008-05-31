@@ -24,372 +24,370 @@
  */
 
 /*!	\file htdocs/adherents/adherent_options.class.php
-        \ingroup    adherent
-		\brief      Fichier de la classe de gestion de la table des champs optionels adhérents
-		\author     Rodolphe Quiedville
-		\author	    Jean-Louis Bergamo
-		\author     Sebastien Di Cintio
-		\author     Benoit Mortier
-		\version    $Revision$
-*/
+ \ingroup    adherent
+ \brief      Fichier de la classe de gestion de la table des champs optionels adhérents
+ \author     Rodolphe Quiedville
+ \author	    Jean-Louis Bergamo
+ \author     Sebastien Di Cintio
+ \author     Benoit Mortier
+ \version    $Revision$
+ */
 
 /*! \class AdherentOptions
-		\brief      Classe de gestion de la table des champs optionels adhérents
-*/
+ \brief      Classe de gestion de la table des champs optionels adhérents
+ */
 
 class AdherentOptions
 {
-  var $id;
-  var $db;
-  /*
-   * Tableau contenant le nom des champs en clef et la definition de
-   * ces champs
-   */
-  var $attribute_name;
-  /*
-   * Tableau contenant le nom des champs en clef et le label de ces
-   * champs en value
-   */
-  var $attribute_label;
+	var $id;
+	var $db;
+	/*
+	 * Tableau contenant le nom des champs en clef et la definition de
+	 * ces champs
+	 */
+	var $attribute_name;
+	/*
+	 * Tableau contenant le nom des champs en clef et le label de ces
+	 * champs en value
+	 */
+	var $attribute_label;
 
-  var $error;
-  /*
-   * Constructor
-   *
-   */
+	var $error;
+	/*
+	 * Constructor
+	 *
+	 */
 
-/*!
+	/*!
 		\brief AdherentOptions
 		\param DB			base de données
 		\param id			id de l'adhérent
-*/
+		*/
 
-  function AdherentOptions($DB, $id='')
-    {
-      $this->db = $DB ;
-      $this->id = $id;
-      $this->error = array();
-      $this->attribute_name = array();
-      $this->attribute_label = array();
-    }
+	function AdherentOptions($DB, $id='')
+	{
+		$this->db = $DB ;
+		$this->id = $id;
+		$this->error = array();
+		$this->attribute_name = array();
+		$this->attribute_label = array();
+	}
 
-/*!
+	/*!
 		\brief fonction qui imprime un liste d'erreurs
-*/
-  function print_error_list()
-  {
-    $num = sizeof($this->error);
-    for ($i = 0 ; $i < $num ; $i++)
-      {
-	print "<li>" . $this->error[$i];
-      }
-  }
+		*/
+	function print_error_list()
+	{
+		$num = sizeof($this->error);
+		for ($i = 0 ; $i < $num ; $i++)
+		{
+			print "<li>" . $this->error[$i];
+		}
+	}
 
-/*!
+	/*!
 		\brief fonction qui vérifie les données entrées
 		\param	minimum
-*/
+		*/
 	function check($minimum=0)
-    {
-      $err = 0;
-
-      if (strlen(trim($this->societe)) == 0)
 	{
+		$err = 0;
+
+		if (strlen(trim($this->societe)) == 0)
+		{
 	  if ((strlen(trim($this->nom)) + strlen(trim($this->prenom))) == 0)
-	    {
-	      $error_string[$err] = "Vous devez saisir vos nom et prénom ou le nom de votre société.";
-	      $err++;
-	    }
-	}
+	  {
+	  	$error_string[$err] = "Vous devez saisir vos nom et prénom ou le nom de votre société.";
+	  	$err++;
+	  }
+		}
 
-      if (strlen(trim($this->adresse)) == 0)
-	{
+		if (strlen(trim($this->adresse)) == 0)
+		{
 	  $error_string[$err] = "L'adresse saisie est invalide";
 	  $err++;
-	}
+		}
 
-      /*
-       * Return errors
-       *
-       */
+		/*
+		 * Return errors
+		 *
+		 */
 
-      if ($err)
-	{
+		if ($err)
+		{
 	  $this->error = $error_string;
 	  return 0;
-	}
-      else
-	{
+		}
+		else
+		{
 	  return 1;
+		}
+
 	}
 
-    }
-
-/*!
+	/**
 		\brief  fonction qui crée un attribut optionnel
 		\param	attrname			nom de l'atribut
 		\param	type				type de l'attribut
 		\param	length				longuer de l'attribut
 
 		\remarks	Ceci correspond a une modification de la table et pas a un rajout d'enregistrement
-*/
+		*/
+	function create($attrname,$type='varchar',$length=255) {
 
-  function create($attrname,$type='varchar',$length=255) {
-    /*
-     *  Insertion dans la base
-     */
-    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options ";
-      switch ($type){
-      case 'varchar' :
-      case 'interger' :
-	$sql .= " ADD $attrname $type($length)";
-	break;
-      case 'text' :
-      case 'date' :
-      case 'datetime' :
-	$sql .= " ADD $attrname $type";
-	break;
-      default:
-	$sql .= " ADD $attrname $type";
-	break;
-      }
+		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
+		{
+			$sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options ";
+			switch ($type){
+				case 'varchar' :
+				case 'interger' :
+					$sql .= " ADD $attrname $type($length)";
+					break;
+				case 'text' :
+				case 'date' :
+				case 'datetime' :
+					$sql .= " ADD $attrname $type";
+					break;
+				default:
+					$sql .= " ADD $attrname $type";
+					break;
+			}
 
-      if ($this->db->query($sql))
-	{
-	  return 1;
+			dolibarr_syslog("AdherentOptions::create sql=".$sql);
+			if ($this->db->query($sql))
+			{
+				return 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				return 0;
+			}
+		}else{
+			return 0;
+		}
 	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	  return 0;
-	}
-    }else{
-      return 0;
-    }
-  }
 
-/*!
+	/**
 		\brief fonction qui crée un label
 		\param	attrname			nom de l'atribut
 		\param	label				nom du label
-*/
+		*/
+	function create_label($attrname,$label='')
+	{
 
-  function create_label($attrname,$label='') {
-    /*
-     *  Insertion dans la base
-     */
-    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)) {
-          $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET ";
-          $escaped_label=mysql_escape_string($label);
-          $sql .= " name='$attrname',label='$escaped_label' ";
-    
-          if ($this->db->query($sql))
-    	{
-    	  return 1;
-    	}
-          else
-    	{
-    	  print dolibarr_print_error($this->db);
-    	  return 0;
-    	}
-    }
-  }
+		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
+		{
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET ";
+			$escaped_label=mysql_escape_string($label);
+			$sql .= " name='$attrname',label='".addslashes($escaped_label)."'";
 
-/*!
+			dolibarr_syslog("AdherentOptions::create_label sql=".$sql);
+			if ($this->db->query($sql))
+			{
+				return 1;
+			}
+			else
+			{
+				print dolibarr_print_error($this->db);
+				return 0;
+			}
+		}
+	}
+
+	/*!
 		\brief fonction qui supprime un attribut
 		\param	attrname			nom de l'atribut
-*/
+		*/
 
-  function delete($attrname)
-  {
-    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options DROP COLUMN $attrname";
-      
-      if ( $this->db->query( $sql) )
+	function delete($attrname)
 	{
-	  return $this->delete_label($attrname);
-	}
-      else
-	{
-   	  print dolibarr_print_error($this->db);
-	  return 0;
-	}
-    }else{
-      return 0;
-    }
+		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname)){
+			$sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options DROP COLUMN $attrname";
 
-  }
+			if ( $this->db->query( $sql) )
+			{
+				return $this->delete_label($attrname);
+			}
+			else
+			{
+				print dolibarr_print_error($this->db);
+				return 0;
+			}
+		}else{
+			return 0;
+		}
 
-/*!
+	}
+
+	/*!
 		\brief fonction qui supprime un label
 		\param	attrname			nom du label
-*/
+		*/
 
-  function delete_label($attrname)
-  {
-    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label WHERE name='$attrname'";
-
-      if ( $this->db->query( $sql) )
+	function delete_label($attrname)
 	{
-	  return 1;
-	}
-      else
-	{
-   	  print dolibarr_print_error($this->db);
-	  return 0;
-	}
-    }else{
-      return 0;
-    }
+		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname)){
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label WHERE name='$attrname'";
 
-  }
+			if ( $this->db->query( $sql) )
+			{
+				return 1;
+			}
+			else
+			{
+				print dolibarr_print_error($this->db);
+				return 0;
+			}
+		}else{
+			return 0;
+		}
 
-/*!
+	}
+
+	/*!
 		\brief fonction qui modifie un attribut optionnel
 		\param	attrname			nom de l'atribut
 		\param	type					type de l'attribut
 		\param	length				longuer de l'attribut
-*/
+		*/
 
-  function update($attrname,$type='varchar',$length=255)
-  {
-    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options ";
-      switch ($type){
-      case 'varchar' :
-      case 'interger' :
-	$sql .= " MODIFY COLUMN $attrname $type($length)";
-	break;
-      case 'text' :
-      case 'date' :
-      case 'datetime' :
-	$sql .= " MODIFY COLUMN $attrname $type";
-	break;
-      default:
-	$sql .= " MODIFY COLUMN $attrname $type";
-	break;
-      }
-      //$sql .= "MODIFY COLUMN $attrname $type($length)";
-      
-      if ( $this->db->query( $sql) )
+	function update($attrname,$type='varchar',$length=255)
 	{
-	  return 1;
-	}
-      else
-	{
-   	  print dolibarr_print_error($this->db);
-	  return 0;
-	}
-    }else{
-      return 0;
-    }
+		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname)){
+			$sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options ";
+			switch ($type){
+				case 'varchar' :
+				case 'interger' :
+					$sql .= " MODIFY COLUMN $attrname $type($length)";
+					break;
+				case 'text' :
+				case 'date' :
+				case 'datetime' :
+					$sql .= " MODIFY COLUMN $attrname $type";
+					break;
+				default:
+					$sql .= " MODIFY COLUMN $attrname $type";
+					break;
+			}
+			//$sql .= "MODIFY COLUMN $attrname $type($length)";
 
-  }
+			if ( $this->db->query( $sql) )
+			{
+				return 1;
+			}
+			else
+			{
+				print dolibarr_print_error($this->db);
+				return 0;
+			}
+		}else{
+			return 0;
+		}
 
-/*!
+	}
+
+	/*!
 		\brief fonction qui modifie un label
 		\param	attrname			nom de l'atribut
 		\param	label					nom du label
-*/
+		*/
 
-  function update_label($attrname,$label='')
-  {
-    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $escaped_label=mysql_escape_string($label);
+	function update_label($attrname,$label='')
+	{
+		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname)){
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label WHERE name =
 			'$attrname';";
 			$this->db->query($sql_del);
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label (name,label) 
-							VALUES ('$attrname','$escaped_label');";
-      //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options_label SET name='$attrname',label='$escaped_label'";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label (name,label)
+			VALUES ('$attrname','".addslashes($escaped_label)."')";
+			//$sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options_label SET name='$attrname',label='$escaped_label'";
 
-      if ( $this->db->query( $sql) )
-	{
-	  return 1;
+			if ( $this->db->query( $sql) )
+			{
+				return 1;
+			}
+			else
+			{
+				print dolibarr_print_error($this->db);
+				return 0;
+			}
+		}else{
+			return 0;
+		}
+
 	}
-      else
-	{
-   	  print dolibarr_print_error($this->db);
-	  return 0;
-	}
-    }else{
-      return 0;
-    }
-
-  }
 
 
-/*!
+	/*!
 		\brief fonction qui modifie un label
-*/
+		*/
 	function fetch_optionals()
-    {
-      $this->fetch_name_optionals();
-      $this->fetch_name_optionals_label();
-    }
+	{
+		$this->fetch_name_optionals();
+		$this->fetch_name_optionals_label();
+	}
 
 
-/*!
+	/*!
 		\brief fonction qui modifie un label
-*/
+		*/
 	function fetch_name_optionals()
-  {
-    $array_name_options=array();
-    $sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
-
-    if ( $this->db->query( $sql) )
-      {
-      if ($this->db->num_rows())
 	{
-	while ($tab = $this->db->fetch_object())
-	  {
-	  if ($tab->Field != 'optid' && $tab->Field != 'tms' && $tab->Field != 'adhid')
+		$array_name_options=array();
+		$sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
+
+		if ( $this->db->query( $sql) )
+		{
+			if ($this->db->num_rows())
+			{
+				while ($tab = $this->db->fetch_object())
+				{
+					if ($tab->Field != 'optid' && $tab->Field != 'tms' && $tab->Field != 'adhid')
 	    {
-	      // we can add this attribute to adherent object
-	      $array_name_options[]=$tab->Field;
-	      $this->attribute_name[$tab->Field]=$tab->Type;
+	    	// we can add this attribute to adherent object
+	    	$array_name_options[]=$tab->Field;
+	    	$this->attribute_name[$tab->Field]=$tab->Type;
 	    }
-	  }
-	return $array_name_options;
-      }else{
-	return array();
-      }
-    }else{
-      print $this->db->error();
-      return array() ;
-    }
+				}
+				return $array_name_options;
+			}else{
+				return array();
+			}
+		}else{
+			print $this->db->error();
+			return array() ;
+		}
 
-  }
+	}
 
-/*!
+	/*!
 		\brief fonction qui modifie un label
-*/
+		*/
 	function fetch_name_optionals_label()
-  {
-    $array_name_label=array();
-    $sql = "SELECT name,label FROM ".MAIN_DB_PREFIX."adherent_options_label";
-
-    if ( $this->db->query( $sql) )
-      {
-      if ($this->db->num_rows())
 	{
-	while ($tab = $this->db->fetch_object())
-	  {
+		$array_name_label=array();
+		$sql = "SELECT name,label FROM ".MAIN_DB_PREFIX."adherent_options_label";
+
+		if ( $this->db->query( $sql) )
+		{
+			if ($this->db->num_rows())
+			{
+				while ($tab = $this->db->fetch_object())
+				{
 	    // we can add this attribute to adherent object
 	    $array_name_label[$tab->name]=stripslashes($tab->label);
 	    $this->attribute_label[$tab->name]=stripslashes($tab->label);
-	  }
-	return $array_name_label;
-      }else{
-	return array();
-      }
-    }else{
-   	  print dolibarr_print_error($this->db);
-      return array() ;
-    }
+				}
+				return $array_name_label;
+			}else{
+				return array();
+			}
+		}else{
+			print dolibarr_print_error($this->db);
+			return array() ;
+		}
 
-  }
+	}
 }
 ?>
