@@ -1395,7 +1395,7 @@ class ContratLigne
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Contratdet::fetch ".$this->error, LOG_ERR);
+            dolibarr_syslog("ContratLigne::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -1465,7 +1465,7 @@ class ContratLigne
 		$sql.= " commentaire='".addslashes($this->commentaire)."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dolibarr_syslog("Contratdet::update sql=".$sql, LOG_DEBUG);
+        dolibarr_syslog("ContratLigne::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1476,7 +1476,7 @@ class ContratLigne
 		else
 		{
             $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Contratdet::update ".$this->error, LOG_ERR);
+            dolibarr_syslog("ContratLigne::update ".$this->error, LOG_ERR);
             return -1;
         }
 
