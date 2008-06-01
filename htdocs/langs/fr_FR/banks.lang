@@ -115,3 +115,7 @@ CashBudget=Budget de trésorerie
 ExportDataset_banque_1=Transaction bancaire et relevé
 TransactionOnTheOtherAccount=Transaction sur l'autre compte
 TransactionWithOtherAccount=Transfert de compte
+PaymentNumberUpdateSucceeded=Numéro de paiement mis à jour
+PaymentNumberUpdateFailed=Impossible de mettre le numéro de paiement à jour
+PaymentDateUpdateSucceeded=Date de paiement mise à jour
+PaymentDateUpdateFailed=Impossible de mettre la date de paiement à jour

@@ -49,6 +49,7 @@ class PaiementFourn
 	var $bank_account;	// Id compte bancaire du paiement
 	var $bank_line;		// Id de la ligne d'�criture bancaire
 	var $note;
+    var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
 
@@ -486,5 +487,59 @@ class PaiementFourn
 		if ($withpicto != 2) $result.=$lien.$this->rowid.$lienfin;
 		return $result;
 	}
+    /**
+     *      \brief      Updates the payment number
+     *      \param      string          New num
+     *      \return     int             -1 on error, 0 otherwise 
+     */
+    function update_num($num)
+    {
+    	if(!empty($num) && $this->statut!=1)
+        {
+            $sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn SET num_paiement = \''.$this->db->escape($num).'\' WHERE rowid = '.$this->id;
+    
+            dolibarr_syslog("PaiementFourn::update_num sql=".$sql);
+            $result = $this->db->query($sql);
+            if ($result)
+            {
+            	$this->numero = $this->db->escape($num);
+                return 0;
+            }
+            else
+            {
+                $this->error='PaiementFourn::update_num Error -1 '.$this->db->error();
+                dolibarr_syslog('PaiementFourn::update_num error '.$this->error);
+                return -1;
+            }
+        }
+        return -1; //no num given or already validated
+    }
+    /**
+     *      \brief      Updates the payment date
+     *      \param      string          New date
+     *      \return     int             -1 on error, 0 otherwise 
+     */
+    function update_date($date)
+    {
+        if(!empty($date) && $this->statut!=1)
+        {
+            $sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn SET datep = '.$this->db->idate($date).' WHERE rowid = '.$this->id;
+            dolibarr_syslog("PaiementFourn::update_date sql=".$sql);
+            $result = $this->db->query($sql);
+            if ($result)
+            {
+            	$this->datepaye = $date;
+                $this-> date = $date;
+                return 0;
+            }
+            else
+            {
+                $this->error='PaiementFourn::update_date Error -1 '.$this->db->error();
+                dolibarr_syslog('PaiementFourn::update_date error '.$this->error);
+                return -1;
+            }
+        }
+        return -1; //no date given or already validated
+    }    
 }
 ?>

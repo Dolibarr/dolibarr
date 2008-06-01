@@ -115,3 +115,7 @@ CashBudget=Cash budget
 ExportDataset_banque_1=Bank transactions and account statement
 TransactionOnTheOtherAccount=Transaction on the other account
 TransactionWithOtherAccount=Account transfert
+PaymentNumberUpdateSucceeded=Payment number updated succesfully
+PaymentNumberUpdateFailed=Payment number could not be updated
+PaymentDateUpdateSucceeded=Payment date update succesfully
+PaymentDateUpdateFailed=Payment date could not be updated
