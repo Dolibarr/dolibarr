@@ -238,6 +238,12 @@ if ($paiement->numero)
             print '<td colspan="3">'.$paiement->numero.'</td></tr>';    	
     }
 }
+else
+{
+     print '<tr><td valign="top">'.$langs->trans('Numero').'</td>';
+     print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_num">'.img_edit().'</a></td>';
+     print '<td colspan="3"></td></tr>';
+}
 print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$paiement->getLibStatut(4).'</td></tr>';
 print '<tr><td valign="top" colspan="2">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
