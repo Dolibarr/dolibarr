@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/product/stats/facture_fournisseur.php
         \ingroup    product, service, facture
         \brief      Page des stats des factures fournisseurs pour un produit
-        \version    $Revision$
+        \version    $Id$
 */
 
 
@@ -68,7 +65,11 @@ $html = new Form($db);
 if ($_GET["id"] || $_GET["ref"])
 {
     $product = new Product($db);
-    if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
+    if ($_GET["ref"]) 
+    {
+    	$result = $product->fetch('',$_GET["ref"]);
+    	$_GET["id"]=$product->id;
+    }
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
     
     llxHeader("","",$langs->trans("CardProduct".$product->type));
@@ -120,7 +121,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '</div>';
         
 
-        $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, f.facnumber, f.amount as amount,";
+        $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, f.facnumber, f.total_ht as total_ht,";
         $sql.= " ".$db->pdate("f.datef")." as date, f.paye, f.fk_statut as statut, f.rowid as facid";
         if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."facture_fourn_det as d";
@@ -150,7 +151,7 @@ if ($_GET["id"] || $_GET["ref"])
             print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
 
@@ -170,7 +171,7 @@ if ($_GET["id"] || $_GET["ref"])
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";
-                    print "<td align=\"right\">".price($objp->amount)."</td>\n";
+                    print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
                     $fac=new Facture($db);
                     print '<td align="right">'.$fac->LibStatut($objp->paye,$objp->statut,5).'</td>';
                     print "</tr>\n";
