@@ -97,7 +97,12 @@ if ($_POST['addfile'])
  */
 if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 {
-	$email_from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+	$error=0;
+	
+	$email_from='';
+	if (! empty($_POST["fromname"])) $email_from=$_POST["fromname"].' ';
+	if (! empty($_POST["frommail"])) $email_from.='<'.$_POST["frommail"].'>';
+
 	$errors_to  = $_POST["errorstomail"];
 	$sendto     = $_POST["sendto"];
 	$subject    = $_POST['subject'];
@@ -117,11 +122,19 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 		$listofmimes[] = $_FILES['addedfile']['type'];
 	}	
 
-	if (! $sendto)
+	if (empty($_POST["frommail"]))
 	{
-		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTo")).'</div>';
+		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom")).'</div>';
+		$_GET["action"]='test';
+		$error++;
 	}
-    if ($sendto)
+	if (empty($sendto))
+	{
+		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTo")).'</div>';
+		$_GET["action"]='test';
+		$error++;
+	}
+    if (! $error)
     {
 		// Le message est-il en html
 		$msgishtml=-1;	// Unknown by default
