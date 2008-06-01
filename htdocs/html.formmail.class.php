@@ -214,6 +214,14 @@ class FormMail
 				print "</td></tr>\n";
 				print "</td></tr>\n";
 			}
+			else
+			{
+				print "<tr><td>".$langs->trans("MailFrom")."</td><td>";
+				print $langs->trans("Name").':<input type="text" name="fromname" size="32" value="'.$this->fromname.'">';
+				print '&nbsp; &nbsp; ';
+				print $langs->trans("EMail").':&lt;<input type="text" name="frommail" size="32" value="'.$this->frommail.'">&gt;';
+				print "</td></tr>\n";
+			}
 		}
 	
 		// Replyto

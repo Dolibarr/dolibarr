@@ -275,6 +275,7 @@ else
 		  $formmail = new FormMail($db);	    
 		  $formmail->fromname = $conf->global->MAIN_MAIL_EMAIL_FROM;
 		  $formmail->frommail = $conf->global->MAIN_MAIL_EMAIL_FROM;
+		  $formmail->withfromreadonly=0;
 		  $formmail->withsubstit=0;
 		  $formmail->withfrom=1;
 		  $formmail->witherrorsto=1;
