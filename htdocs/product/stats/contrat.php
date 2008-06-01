@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/product/stats/contrat.php
         \ingroup    product, service, contrat
         \brief      Page des stats des contrats pour un produit
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -152,7 +149,7 @@ if ($_GET["id"] || $_GET["ref"])
             print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"c.datec","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+            //print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
 
@@ -174,7 +171,7 @@ if ($_GET["id"] || $_GET["ref"])
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";
-                    print "<td align=\"right\">".price($objp->amount)."</td>\n";
+                    //print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
                     print '<td align="right">'.$contratstatic->LibStatut($objp->statut,5).'</td>';
                     print "</tr>\n";
                     $i++;

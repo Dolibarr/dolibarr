@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/product/stats/commande.php
         \ingroup    product, service, commande
         \brief      Page des stats des commandes clients pour un produit
-        \version    $Revision$
+        \version    $Id$
 */
 
 
@@ -126,7 +123,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '</div>';
         
 
-        $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, c.rowid, c.total_ht as amount, c.ref,";
+        $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, c.rowid, c.total_ht as total_ht, c.ref,";
         $sql.= " ".$db->pdate("c.date_creation")." as date, c.fk_statut as statut, c.facture, c.rowid as commandeid";
         if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."commandedet as d";
@@ -156,7 +153,7 @@ if ($_GET["id"] || $_GET["ref"])
             print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"c.date_creation","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount_ht","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.total_ht","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
 
@@ -178,7 +175,7 @@ if ($_GET["id"] || $_GET["ref"])
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";
-                    print "<td align=\"right\">".price($objp->amount)."</td>\n";
+                    print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
                     print '<td align="right">'.$commandestatic->LibStatut($objp->statut,$objp->facture,5).'</td>';
                     print "</tr>\n";
                     $i++;
