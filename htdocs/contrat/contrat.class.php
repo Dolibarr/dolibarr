@@ -1439,7 +1439,7 @@ class ContratLigne
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
 		$sql.= " fk_contrat='".$this->fk_contrat."',";
-		$sql.= " fk_product='".$this->fk_product."',";
+		$sql.= " fk_product=".($this->fk_product?"'".$this->fk_product."'":'null').",";
 		$sql.= " statut='".$this->statut."',";
 		$sql.= " label='".addslashes($this->label)."',";
 		$sql.= " description='".addslashes($this->description)."',";
