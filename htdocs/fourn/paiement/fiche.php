@@ -115,7 +115,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans('SupplierPayment'));
 if ($_GET['action'] == 'delete')
 {
 	$html->form_confirm('fiche.php?id='.$paiement->id, 'Supprimer le paiement', 'Etes-vous sûr de vouloir supprimer ce paiement ?', 'confirm_delete');
-	print '<br />';
+	print '<br>';
 }
 
 /*
@@ -124,16 +124,16 @@ if ($_GET['action'] == 'delete')
 if ($_GET['action'] == 'valide')
 {
 	$html->form_confirm('fiche.php?id='.$paiement->id, 'Valider le paiement', 'Etes-vous sûr de vouloir valider ce paiment, auncune modification n\'est possible une fois le paiement validé ?', 'confirm_valide');
-	print '<br />';
+	print '<br>';
 }
 
 if (!empty($_POST['action']) && $_POST['action'] == 'update_num' && !empty($_POST['new_num']))
 {
 	$res = $paiement->update_num($_POST['new_num']);
     if ($res === 0) {
-    	$mesg = $langs->trans('PaymentNumberUpdateSucceeded');
+    	$mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
     } else {
-    	$mesg = $langs->trans('PaymentNumberUpdateFailed');
+    	$mesg = '<div class="error">'.$langs->trans('PaymentNumberUpdateFailed').'</div>';
     }
 }
 
@@ -145,13 +145,11 @@ if (!empty($_POST['action']) && $_POST['action'] == 'update_date' && !empty($_PO
     $_POST['reyear']);
     $res = $paiement->update_date($datepaye);
     if ($res === 0) {
-        $mesg = $langs->trans('PaymentDateUpdateSucceeded');
+        $mesg = '<div class="ok">'.$langs->trans('PaymentDateUpdateSucceeded').'</div>';
     } else {
-        $mesg = $langs->trans('PaymentDateUpdateFailed');
+        $mesg = '<div class="error">'.$langs->trans('PaymentDateUpdateFailed').'</div>';
     }
 }
-
-if ($mesg) print $mesg.'<br />';
 
 
 print '<table class="border" width="100%">';
@@ -176,60 +174,66 @@ if ($conf->banque->enabled)
     	print '</tr>';
     }
 }
-//switch through edition options for date (only available when statut is -not 1- (=validated))
-if($paiement->statut == 0)
-{
+
+	//switch through edition options for date (only available when statut is -not 1- (=validated))
     if(empty($_GET['action']) or $_GET['action']!='edit_date')
     {
-        print '<tr><td valign="top">'.$langs->trans('Date').'</td>';
-        print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_date">'.img_edit().'</a></td>';
-        print '<td colspan="3">'.dolibarr_print_date($paiement->date).'</td></tr>';
+        print '<tr><td colspan="2">';
+		print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+        print $langs->trans('Date');
+		print '</td>';
+		if ($_GET['action'] != 'edit_date') print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_date">'.img_edit($langs->trans('Modify')).'</a></td>';
+		print '</tr></table>';
+		print '</td>';
+		print '<td colspan="3">'.dolibarr_print_date($paiement->date,'day').'</td></tr>';
     }
     else
     {
-        print '<tr><form name="formsoc" method="post" action="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'"><input type="hidden" name="action" value="update_date" />';
+    	print '<tr>';
         print '<td valign="top" width="140" colspan="2">'.$langs->trans('Date').'</td>';
         print '<td colspan="3">';
+    	print '<form name="formsoc" method="post" action="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'"><input type="hidden" name="action" value="update_date" />';
         if (!empty($_POST['remonth']) && !empty($_POST['reday']) && !empty($_POST['reyear']))
-            $sel_date=mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+            $sel_date=dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         else
             $sel_date=$paiement->date;
         $html->select_date($sel_date,'','','','',"addpaiement");    
-        print '<input type="submit" name="submit" value="'.$langs->trans('Validate').'" />';
+        print '<input type="submit" class="button" name="submit" value="'.$langs->trans('Validate').'" />';
+        print '</form>';
         print '</td>';
-        print '</form></tr>';	
+        print '</tr>';	
     }
-}
-else
-{
-	    print '<tr><td valign="top" colspan="2">'.$langs->trans('Date').'</td>';
-        print '<td colspan="3">'.dolibarr_print_date($paiement->date).'</td></tr>';
-}
-print '<tr><td valign="top" colspan="2">'.$langs->trans('Type').'</td><td colspan="3">'.$paiement->type_libelle.'</td></tr>';
-//switch through edition options for number (only available when statut is -not 1- (=validated))
-if ($paiement->numero)
-{
+
+    print '<tr><td valign="top" colspan="2">'.$langs->trans('Type').'</td><td colspan="3">'.$paiement->type_libelle.'</td></tr>';
+
+    //switch through edition options for number (only available when statut is -not 1- (=validated))
     if ($paiement->statut == 0) 
     {
     	if(empty($_GET['action']) or $_GET['action'] != 'edit_num')
         {
-    	    print '<tr><td valign="top">'.$langs->trans('Numero').'</td>';
-            print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_num">'.img_edit().'</a></td>';
-            print '<td colspan="3">'.$paiement->numero.'</td></tr>';
+        	print '<tr><td colspan="2">';
+			print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+        	print $langs->trans('Numero');
+			print '</td>';
+        	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_num">'.img_edit($langs->trans('Modify')).'</a></td>';
+			print '</tr></table>';
+			print '</td>';
+			print '<td colspan="3">'.$paiement->numero.'</td></tr>';
         }
         else
         {
-            print '<tr><form name="formsoc" method="post" action="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'"><input type="hidden" name="action" value="update_num" />';
-            print '<td valign="top" width="140" colspan="2">'.$langs->trans('Date').'</td>';
+            print '<tr>';
+            print '<td valign="top" width="140" colspan="2">'.$langs->trans('Numero').'</td>';
             print '<td colspan="3">';
+            print '<form name="formsoc" method="post" action="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'"><input type="hidden" name="action" value="update_num" />';
             if (!empty($_POST['new_num']))
                 $num = $this->db->escape($_POST['new_num']);
             else
                 $num = $paiement->numero;
             print '<input type="text" name="new_num" value="'.$num.'"/>';
-            print '<input type="submit" name="submit" value="'.$langs->trans('Validate').'" />';
-            print '</td>';
-            print '</form></tr>';       	
+            print '<input type="submit" class="button" name="submit" value="'.$langs->trans('Validate').'" />';
+            print '</form></td>';
+            print '</tr>';       	
         }
     }
     else
@@ -237,18 +241,12 @@ if ($paiement->numero)
             print '<tr><td valign="top" colspan="2">'.$langs->trans('Numero').'</td>';
             print '<td colspan="3">'.$paiement->numero.'</td></tr>';    	
     }
-}
-else
-{
-     print '<tr><td valign="top">'.$langs->trans('Numero').'</td>';
-     print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_num">'.img_edit().'</a></td>';
-     print '<td colspan="3"></td></tr>';
-}
 print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$paiement->getLibStatut(4).'</td></tr>';
 print '<tr><td valign="top" colspan="2">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
 print '</table>';
 
+if ($mesg) print '<br>'.$mesg.'<br>';
 
 /**
  *	Liste des factures
@@ -265,7 +263,7 @@ if ($resql)
 
 	$i = 0;
 	$total = 0;
-	print '<br /><b>'.$langs->trans("Invoices").'</b><br />';
+	print '<b>'.$langs->trans("Invoices").'</b><br>';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Ref').'</td>';
