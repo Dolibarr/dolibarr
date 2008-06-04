@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -93,7 +93,7 @@ if ($resql)
   print_liste_field_titre($langs->trans("Date"),"index.php","d.dated","","&socid=$socid",'',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&socid=$socid",'',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Person"),"index.php","u.name","","&socid=$socid",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Distance"),"index.php","d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),"index.php","d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
   print "</tr>\n";
 
   $var=true;
@@ -106,7 +106,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';
       print '<td>'.$langs->trans($objp->type).'</td>';
-      print '<td>'.dolibarr_print_date($objp->dd).'</td>';
+      print '<td>'.dolibarr_print_date($objp->dd,'day').'</td>';
       print '<td>'.$soc->getNomUrl(1).'</a></td>';
       print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$objp->firstname.' '.$objp->name.'</a></td>';
       print '<td align="right">'.$objp->km.'</td>';
