@@ -124,5 +124,5 @@ else
 }
 $db->close();
 
-llxFooter('$Date$ r&eacute;vision $Revision$');
+llxFooter('$Date$ - $Revision$');
 ?>

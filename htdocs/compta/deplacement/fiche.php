@@ -85,7 +85,7 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 
 if ($_POST["action"] == 'update' && $user->rights->deplacement->creer)
 {
-	if (!  $_POST["cancel"])
+	if (empty($_POST["cancel"]))
 	{
 		$deplacement = new Deplacement($db);
 		$result = $deplacement->fetch($_POST["id"]);
@@ -113,7 +113,7 @@ if ($_POST["action"] == 'update' && $user->rights->deplacement->creer)
 	}
 	else
 	{
-		Header("Location: index.php");
+		Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST["id"]);
 		exit;
 	}
 }
@@ -194,7 +194,7 @@ else
 	      $soc->fetch($deplacement->socid);
 
 	      print "<tr>";
-	      print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
+	      print '<td width="20%">'.$langs->trans("CompanyVisited").'</td><td>';
 	      print $html->select_societes($soc->id,'socid','',1);
 	      print '</td></tr>';
 
@@ -246,8 +246,8 @@ else
 
 	      print '<table class="border" width="100%">';
 	      print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
-	      print '<tr><td width="20%">'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
-	      print '<tr><td width="20%">'.$langs->trans("Person").'</td><td>';
+	      print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
+	      print '<tr><td>'.$langs->trans("Person").'</td><td>';
 	      $userfee=new User($db,$deplacement->fk_user);
 	      $userfee->fetch();
 	      print $userfee->getNomUrl(1);
