@@ -176,13 +176,13 @@ if ($conf->banque->enabled)
 }
 
 	//switch through edition options for date (only available when statut is -not 1- (=validated))
-    if(empty($_GET['action']) or $_GET['action']!='edit_date')
+    if (empty($_GET['action']) || $_GET['action']!='edit_date')
     {
         print '<tr><td colspan="2">';
 		print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
         print $langs->trans('Date');
 		print '</td>';
-		if ($_GET['action'] != 'edit_date') print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_date">'.img_edit($langs->trans('Modify')).'</a></td>';
+		if ($paiement->statut == 0 && $_GET['action'] != 'edit_date') print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_date">'.img_edit($langs->trans('Modify')).'</a></td>';
 		print '</tr></table>';
 		print '</td>';
 		print '<td colspan="3">'.dolibarr_print_date($paiement->date,'day').'</td></tr>';
@@ -207,15 +207,13 @@ if ($conf->banque->enabled)
     print '<tr><td valign="top" colspan="2">'.$langs->trans('Type').'</td><td colspan="3">'.$paiement->type_libelle.'</td></tr>';
 
     //switch through edition options for number (only available when statut is -not 1- (=validated))
-    if ($paiement->statut == 0) 
-    {
-    	if(empty($_GET['action']) or $_GET['action'] != 'edit_num')
+    	if (empty($_GET['action']) || $_GET['action'] != 'edit_num')
         {
         	print '<tr><td colspan="2">';
 			print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
         	print $langs->trans('Numero');
 			print '</td>';
-        	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_num">'.img_edit($langs->trans('Modify')).'</a></td>';
+        	if ($paiement->statut == 0 && $_GET['action'] != 'edit_num') print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$paiement->id.'&action=edit_num">'.img_edit($langs->trans('Modify')).'</a></td>';
 			print '</tr></table>';
 			print '</td>';
 			print '<td colspan="3">'.$paiement->numero.'</td></tr>';
@@ -235,18 +233,14 @@ if ($conf->banque->enabled)
             print '</form></td>';
             print '</tr>';       	
         }
-    }
-    else
-    {
-            print '<tr><td valign="top" colspan="2">'.$langs->trans('Numero').'</td>';
-            print '<td colspan="3">'.$paiement->numero.'</td></tr>';    	
-    }
 print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 print '<tr><td valign="top" colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$paiement->getLibStatut(4).'</td></tr>';
 print '<tr><td valign="top" colspan="2">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
 print '</table>';
 
-if ($mesg) print '<br>'.$mesg.'<br>';
+if ($mesg) print '<br>'.$mesg;
+
+print '<br>';
 
 /**
  *	Liste des factures
