@@ -46,3 +46,5 @@ NoRecordedOrders=No recorded customer's orders
 NoRecordedProposals=No recorded proposals
 NoRecordedInvoices=No recorded customer's invoices
 NoUnpayedCustomerBills=No unpayed customer's invoices
+NoRecordedSupplierInvoices=No recorded supplier's invoices
+NoUnpayedSupplierBills=No unpayed supplier's invoices

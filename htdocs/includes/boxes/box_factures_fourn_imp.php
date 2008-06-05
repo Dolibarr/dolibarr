@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/includes/boxes/box_factures_fourn_imp.php
         \ingroup    fournisseur
 		\brief      Fichier de gestion d'une box des factures fournisseurs impayees
-		\version    $Revision$
+		\version    $Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -126,7 +123,7 @@ class box_factures_fourn_imp extends ModeleBoxes {
                 {
                     if ($num==0 && $i==$num)
                     {
-                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoUnpayedCustomerBills"));
+                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoUnpayedSupplierBills"));
                     } else {
                         $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
                     }

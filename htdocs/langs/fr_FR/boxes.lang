@@ -47,3 +47,5 @@ NoRecordedOrders=Pas de commandes clients enregistrées
 NoRecordedProposals=Pas de propositions commerciales enregistrées
 NoRecordedInvoices=Pas de factures clients enregistrées
 NoUnpayedCustomerBills=Pas de factures clients impayées
+NoRecordedSupplierInvoices=Pas de factures fournisseurs enregistrées
+NoUnpayedSupplierBills=Pas de factures fournisseurs impayées
