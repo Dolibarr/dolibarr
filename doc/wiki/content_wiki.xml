@@ -255,9 +255,8 @@ The PDF documents generation scripts, at the time of version 2.2 development, us
   <page>
     <title>Authentification</title>
     <revision>
-      <timestamp>2006-11-16T00:45:16Z</timestamp>
+      <timestamp>2008-01-11T23:48:37Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Processus */</comment>
       <text>== Introduction ==
 
 Le système d'authentification de Dolibarr devient relativement complexe, et un bug peut être particulièrement difficile à trouver si l'on ne connaît par le processus d'authentification.
@@ -265,8 +264,8 @@ Cette page présente une découpe du processus, qui permet de suivre la procédu
 
 == Processus ==
 
-Le processus démarre par les inclusions de htdocs/index.php, qui est la première page que l'on charge pour s'authentifier dans Dolibarr. Pourtant, ce n'est pas index.php qui commence réellement le boulot, mais bien main.inc.php, inclut par pre.inc.php, lui même inclut par index.php. Nous avons donc:
-
+Le processus démarre par l'appel de la page que l'on souhaite voir. Par exemple, la page d'accueil htdocs/index.php. Mais ce n'est pas ce fichier assure la demande d'authentification. En fait toute page de Dolibarr inclut un fichier pre.inc.php qui lui même inclut  le fichier main.php qui inclut master.php.
+Nous avons donc:
 &lt;pre&gt;
  &lt;index.php&gt;
    &lt;pre.inc.php&gt;
@@ -282,7 +281,7 @@ Le processus démarre par les inclusions de htdocs/index.php, qui est la premiè
 
 Le #1# représente le chargement de tout un tas de librairie que nous utiliserons par la suite, ainsi que l'initialisation du contexte d'exécution du code PHP (langue, configuration, utilisateur vierge).
 
-Le #2# représente l'exécution de code propre à l'interface graphique dont le login. C'est la que l'objet utilisateur est initialisé:
+Le #2# représente l'exécution de code propre à l'authentification: La verification que l'on ait dans une session loguée et si ce n'est pas le cas l'affichage de l'écran de login. C'est la que l'objet utilisateur est initialisé:
 
 L'exécution du login, elle, se présente comme suit:
 
@@ -292,9 +291,9 @@ L'exécution du login, elle, se présente comme suit:
  // sinon appel du module qui réalise sa demande.
  // A l'issu de cette phase, la variable $login sera définie.
  $login='';
- if (! session_id() || ! isset($_SESSION[&quot;dol_user&quot;]) || ! isset($_SESSION[&quot;dol_token&quot;]))
+ if (! session_id() || ! isset($_SESSION[&quot;dol_user&quot;]))
  {
-  # Procédure de login #
+  # Procédure de login. Affiche page login #
  }
  else
  {
@@ -329,199 +328,24 @@ Mais analysons plus en détail le code d'appel de la méthode d'authentification
 
     session_name(&quot;DOLSESSID_&quot;.$dolibarr_main_db_name);
     session_start();
-    // On est pas déjà authentifié, on demande le login/mot de passe
-    // A l'issu de cette demande, le login et un jeton doivent avoir été placé
-    // en session dans dol_user et dol_token et la page rappelée.
-    // MODE AUTO
-    if (in_array('auto',$authmode) &amp;&amp; ! $login)
-    {
-        $login=$dolibarr_auto_user;
-        dolibarr_syslog (&quot;Authentification ok (en mode force)&quot;);
-    }
-    // MODE HTTP (Basic)
-    if (in_array('http',$authmode) &amp;&amp; ! $login)
-    {
-        $login=$_SERVER[&quot;REMOTE_USER&quot;];
-    }
-    // MODE DOLIBARR
-    if (in_array('dolibarr',$authmode) &amp;&amp; ! $login)
-    {
-        require_once(DOL_DOCUMENT_ROOT.&quot;/includes/pear/Auth/Auth.php&quot;);
-        $pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
-        if ($conf-&gt;global-&gt;DATABASE_PWD_ENCRYPTED)
-        {
-            $cryptType = &quot;md5&quot;;
-        }
-        else
-        {
-            $cryptType = &quot;none&quot;;
-        }
-        $params = array(
-            &quot;dsn&quot; =&gt; $pear,
-            &quot;table&quot; =&gt; MAIN_DB_PREFIX.&quot;user&quot;,
-            &quot;usernamecol&quot; =&gt; &quot;login&quot;,
-            &quot;passwordcol&quot; =&gt; &quot;pass&quot;,
-            &quot;cryptType&quot; =&gt; $cryptType,
-        );
-        $aDol = new DOLIAuth(&quot;DB&quot;, $params, &quot;dol_loginfunction&quot;);
-        $aDol-&gt;setSessionName(&quot;DOLSESSID_&quot;.$dolibarr_main_db_name);
-        $aDol-&gt;start();         $result = $aDol-&gt;getAuth(); // Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
-        if ($result)
-        {
-            // Authentification Auth OK, on va chercher le login
-            $login=$aDol-&gt;getUsername();
-            dolibarr_syslog (&quot;Authentification ok (en mode Pear Base Dolibarr)&quot;);
-        }
-        else
-        {
-            if (isset($_POST[&quot;loginfunction&quot;]))
-            {
-                // Echec authentification
-                dolibarr_syslog(&quot;Authentification ko (en mode Pear Base Dolibarr) pour '&quot;.$_POST[&quot;username&quot;].&quot;'&quot;);
-            }
-            else
-            {
-                // Non authentifie
-                //dolibarr_syslog(&quot;Authentification non realise&quot;);
-            }
-            exit;
-        }
-    }
-    // MODE LDAP
-    if ($conf-&gt;ldap-&gt;enabled &amp;&amp; in_array('ldap',$authmode) &amp;&amp; ! $login)
-    {
-        // Authentification Apache KO ou non active, pas de mode force on demande le login
-        require_once(DOL_DOCUMENT_ROOT.&quot;/includes/pear/Auth/Auth.php&quot;);
-        $params = array(
-            'dsn' =&gt; $ldap,
-            'host' =&gt; $conf-&gt;global-&gt;LDAP_SERVER_HOST,
-            'port' =&gt; $conf-&gt;global-&gt;LDAP_SERVER_PORT,             'version' =&gt; $conf-&gt;global-&gt;LDAP_SERVER_PORT,
-            'basedn' =&gt; $conf-&gt;global-&gt;LDAP_SERVER_DN,
-            'binddn' =&gt; $conf-&gt;global-&gt;LDAP_ADMIN_DN,
-            'bindpw' =&gt; $conf-&gt;global-&gt;LDAP_ADMIN_PASS,
-            //'userattr' =&gt; $conf-&gt;global-&gt;LDAP_FIELD_LOGIN_SAMBA,
-            'userattr' =&gt; 'samAccountName',             'userfilter' =&gt; '(objectClass=user)',
-        );
-        $aDol = new DOLIAuth(&quot;LDAP&quot;, $params, &quot;dol_loginfunction&quot;);
-        $aDol-&gt;start();
-        $result = $aDol-&gt;getAuth(); // Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
-        if ($result)
-        {
-            // Authentification Auth OK, on va chercher le login
-            $login=$aDol-&gt;getUsername();
-            dolibarr_syslog (&quot;Authentification ok (en mode Pear Base LDAP)&quot;);
-        }
-        else
-        {
-            if (isset($_POST[&quot;loginfunction&quot;]))
-            {
-                // Echec authentification
-                dolibarr_syslog(&quot;Authentification ko (en mode Pear Base LDAP) pour '&quot;.$_POST[&quot;username&quot;].&quot;'&quot;);
-            }
-            else
-            {
-                // Non authentifie
-                //dolibarr_syslog(&quot;Authentification non realise&quot;);
-            }
-            exit;
-        }
-     }
 
-Pour cette analyse, nous ignorerons le mode '''http''' et le mode '''LDAP''' pour nous concentrer sur le mode '''dolibarr'''.
-Il y a deux choses qui nous intéressent en particulier ici.
+    // Si on rentre ici suite a soumission d'un couple user/password alors
 
-# l'instanciation de l'objet DOLIAuth (avec en paramètres les informations nécessaires à la connexion à la DB, et une string 'dol_loginfunction' que l'on devine être le nom de la fonction de login)
-# l'appel à la méthode '''start()''' sur cet objet DOLIAuth
+        // Selon la valeur dolibarr_main_authentication, on appelle la fonction
+        // dans le bon fichier qui verifie si un couple user/mot de passe est correcte
 
-=== Objet DOLIAuth ===
+    // Sinon, on affiche la page de login
 
-L'instanciation est simple à analyser. En allant faire un tour dans htdocs/includes/pear/Auth/Auth.php, on a vite fait de comprendre qu'on assigne ''dol_loginfunction'' à un attribut de l'objet DOLIAuth. Sans plus.
+== Les modules de login ==
 
-Pour la méthode ''start()'', par contre, nous irons un petit peu plus loin dans l'analyse. Toujours dans htdocs/includes/pear/Auth/Auth.php, on retrouve la définition de la méthode en question:
+Les modules de login sont les fichiers qui contiennent les fonctions qui controlent la validite d'un couple user/password.
+Il y a un fichier par module. Chaque fichier assure un type de controle différent.
+* Le fichier '''htdocs/include/login/functions_http.php''' controle la validite du couple user/mot de passe par une authentification de type http Basic.
+* Le fichier '''htdocs/include/login/functions_ldap.php''' verifie la validite d'un couple user/mot de passe dans un annuaire LDAP.
+* Le fichier '''htdocs/include/login/functions_dolibarr.php''' veririe la validite d'un couple user/mot de passe dans la base de donnee Dolibarr.
 
-    /**
-     * Start new auth session
-     *
-     * @access public
-     * @return void
-     */
-    function start()
-    {
-        $this-&gt;assignData();
-        session_start();
-        if (!$this-&gt;checkAuth()) {
-            $this-&gt;login();
-        }
-    }
-
-Et cela nous mène donc vers la méthode ''assignData()'' (on notera au passage que l'on appelle aussi session_start() et $this-&gt;login() un peu plus tard).
-
-    /**
-     * Assign data from login form to internal values
-     *
-     * This function takes the values for username and password
-     * from $HTTP_POST_VARS and assigns them to internal variables.
-     * If you wish to use another source apart from $HTTP_POST_VARS,
-     * you have to derive this function.
-     *
-     * @access private
-     * @global $HTTP_POST_VARS
-     * @see    Auth
-     * @return void
-     */
-    function assignData()
-    {
-        $post = &amp;$this-&gt;_importGlobalVariable(&quot;post&quot;);
-        if (isset($post['username']) &amp;&amp; $post['username'] != &quot;&quot;) {
-            $this-&gt;username = (get_magic_quotes_gpc() == 1 ? stripslashes($post['username']) : $post['username']);
-        }
-        if (isset($post['password']) &amp;&amp; $post['password'] != &quot;&quot;) {
-            $this-&gt;password = (get_magic_quotes_gpc() == 1 ? stripslashes($post['password']) : $post['password'] );
-        }
-    }
-
-Fonction toute simple donc, mais qui, par l'intermédiaire de ''_importGlobalVariable(&quot;post&quot;)'', va récupérer username et password comme ils ont été entrés dans le formulaire d'authentification.
-
-Toutefois, toujours pas de vérification de ces données jusqu'ici. C'est le bon moment pour analyser la méthode '''login()'''.
-
-    /**
-     * Login function
-     *
-     * @access private
-     * @return void
-     */
-    function login()
-    {
-        $login_ok = false;
-        /**
-         * When the user has already entered a username,
-         * we have to validate it.
-         */
-        if (!empty($this-&gt;username)) {
-            if (true === $this-&gt;storage-&gt;fetchData($this-&gt;username, $this-&gt;password)) {
-                $login_ok = true;
-            }
-        }
-        if (!empty($this-&gt;username) &amp;&amp; $login_ok) {
-            $this-&gt;setAuth($this-&gt;username);
-            if (!empty($this-&gt;loginCallback)) {
-                call_user_func($this-&gt;loginCallback,$this-&gt;username);
-            }
-        }
-        /**
-         * If the login failed or the user entered no username,
-         * output the login screen again.
-         */
-        if (!empty($this-&gt;username) &amp;&amp; !$login_ok) {
-            $this-&gt;status = AUTH_WRONG_LOGIN;
-        }
-        if ((empty($this-&gt;username) || !$login_ok) &amp;&amp; $this-&gt;showLogin) {
-            $this-&gt;drawLogin($this-&gt;storage-&gt;activeUser);
-            return;
-        }
-    }
-
-Voilà. Je n'irai pas jusqu'à expliquer le fonctionnement de cette dernière méthode (qui appelle drawLogin() en cas d'échec, laquelle affiche le formulaire de login), mais cette explication s'arrête ici. Si vous avez des problèmes d'identification sur votre plateforme, cette procédure détaillée devrait vous faire gagner pas mal de temps.</text>
+Chaque fichier contient en fait uniquement une fonction '''check_user_password_xxx''' mais Dolibarr ne va en utiliser qu'un. Ce sera celui dont la valeur '''xxx''' correspond a la valeur de la variable '''dolibarr_main_authentication'''.
+Dans ce fichier, Dolibarr sollicite la seule fonction qui s'y trouve en envoyant comme parametres le user et mot de passe.La fonction renvoie vrai si le couple est valide.</text>
     </revision>
   </page>
   <page>
@@ -667,23 +491,22 @@ Contains bank accounts definitions.
   <page>
     <title>Banques et Caisses</title>
     <revision>
-      <timestamp>2007-09-14T14:40:27Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>Page utilisateur module banque/caisse</comment>
-      <text>
+      <timestamp>2008-02-03T09:59:02Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
+      <text>{{Navigation documentation}}
+{{TemplateDocUtil}}
+
 == Définitions ==
 
 * '''Un compte banque''' c'est un compte bancaire (souvent ce compte permet de faire des chèques ou de payer par carte bancaire).
-* '''Une caisse''', c'est la boite a gateau de grand-mere dans laquelle tu met de l'argent liquide ou encore ton porte-monnaie ou encore la caisse enregistreuse pour les commercants.
+* '''Une caisse''', c'est la boite à gâteau de grand-mère dans laquelle tu mets de l'argent liquide ou encore ton porte-monnaie ou encore la caisse enregistreuse pour les commerçants.
 
-Quand on recoit un paiement en chèque, il sera forcement déposé sur un compte bancaire (compte banque) mais en cas de réception d'argent liquide, il est possible de ranger les billets dans un porte monnaie, une caisse enregistreuse (compte caisse) comme de les mettre de coté pour les déposer à la banque.
-Dolibarr permet de créer autant de comptes banque ou de comptes caisse que besoin. Pour gerer une tresorerie, il en faudra au moins un (en general compte bancaire, a mois que le commerce géré n'accepte ni chèque, ni carte bleu et que tout est fait en liquide, achat comme vente), mais ceci reste optionnel. Si la tresorerie ne doit pas être gérée par Dolibarr, le module Banque/Caisse peut etre désactivé.
+Quand on reçoit un paiement en chèque, il sera forcement déposé sur un compte bancaire (compte banque) mais en cas de réception d'argent liquide, il est possible de ranger les billets dans un porte monnaie, une caisse enregistreuse (compte caisse) comme de les mettre de coté pour les déposer à la banque.
+Dolibarr permet de créer autant de comptes banque ou de comptes caisse que besoin. Pour gérer une trésorerie, il en faudra au moins un (en général compte bancaire, à moins que le commerce géré n'accepte ni chèque, ni carte bleu et que tout soit fait en liquide, achat comme vente), mais ceci reste optionnel. Si la trésorerie ne doit pas être gérée par Dolibarr, le module Banque/Caisse peut être désactivé.
 
+== Création d'un nouveau compte bancaire / caisse ==
 
-== Creation d'un nouveau compte bancaire / caisse ==
-
-Aller dans le menu Compta/Tréso puis Banque puis bouton &quot;Creer compte&quot;.
-
+Aller dans le menu Compta/Trésorerie puis Banque puis bouton &quot;Créer compte&quot;.
 
 == Suppression/Desactivation d'un compte ==
 
@@ -795,12 +618,12 @@ A compléter</text>
   <page>
     <title>Ce que fait Dolibarr</title>
     <revision>
-      <timestamp>2007-09-10T16:56:30Z</timestamp>
+      <timestamp>2008-04-03T11:04:58Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Other modules */</comment>
-      <text>Voici un résumé des fonctionnalités géré par Dolibarr
+      <comment>/* Miscellanous */</comment>
+      <text>This is a summary of main Dolibarr features
 
-== Modules principaux ==
+== Main modules ==
 * Products and services catalog
 * Stock management
 * Bank accounts management
@@ -814,9 +637,10 @@ A compléter</text>
 * Payments management
 * Standing orders management
 * Shipping management
+* Support NPR VAT (for french DOM-TOM)
 
-== Autres modules ==
-* [[Adherents|Gestion des adhérents d'association]]
+== Other modules ==
+* [[Adherents|Fundations members management]]
 * Gestion des Bookmarks
 * EMailing
 * Can reports Dolibarr events inside Webcalendar
@@ -832,19 +656,18 @@ A compléter</text>
 * Several skins.
 * Code is highly customizable (a lot of use of modules).
 * Works with Mysql 3.1 or higher, experimental support for PostgreSql.
-* Works with PHP 4.1 or higher.</text>
+* Works with PHP 4.3 or higher.</text>
     </revision>
   </page>
   <page>
     <title>Ce que ne fait pas Dolibarr</title>
     <revision>
-      <timestamp>2007-12-13T14:49:34Z</timestamp>
+      <timestamp>2008-04-03T10:58:00Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <text>Ces fonctionalités ne sont pas disponibles en version 2.2
+      <text>Ces fonctionalités ne sont pas disponibles en version 2.4
 
-* &quot;TVA NPR&quot; (TVA &quot;Non Perçue Récupérable&quot;).
 * Pas de compta (uniquement gestion de trésorerie).
-* Dolibarr ne gère qu'une seule monnaie.
+* Dolibarr ne gère qu'une seule monnaie à la fois (mono-devise).
 * Ne gère pas la double tva (Fédérale / provinciale) du canada.
 * Dolibarr ne fait pas le café (pas encore).</text>
     </revision>
@@ -852,9 +675,9 @@ A compléter</text>
   <page>
     <title>Charte de nommage</title>
     <revision>
-      <timestamp>2007-01-18T20:48:33Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>/* Format de fichier */</comment>
+      <timestamp>2008-05-13T12:42:48Z</timestamp>
+      <contributor><username>Raphaelb</username></contributor>
+      <comment>/* Clé alternative */</comment>
       <text>== Nom de table ==
 Toutes les tables sont préfixées pour éviter les conflits de nommage. Aujourd'hui, le préfixe est déterminé et n'est pas modifiable. Sa valeur est &lt;tt&gt;llx_&lt;/tt&gt;. Il est cependant envisagé, dans une version future, de pouvoir le modifier au moment de l'installation.
 
@@ -875,7 +698,7 @@ Exemple:
 fk_facture_fourn_fk_soc
 
 == Clé alternative ==
-Parfois, il n'y a pas que la clé primaire qui doit etre unique. On peut donc ajouter aussi un index clé alternative unique. Un tel index est nommé par un nom qui commence par le préfixe &lt;tt&gt;fk_&lt;/tt&gt; suivi du nom de la table d'un underscore (requis pour eviter doublons d'index globals à la base, problématiques sous certains SGBD comme postgresql) puis d'un suffixe qui caractérise la clé (pour permettre plusieurs index uniques sur une meme table).
+Parfois, il n'y a pas que la clé primaire qui doit etre unique. On peut donc ajouter aussi un index clé alternative unique. Un tel index est nommé par un nom qui commence par le préfixe &lt;tt&gt;uk_&lt;/tt&gt; suivi du nom de la table d'un underscore (requis pour eviter doublons d'index globals à la base, problématiques sous certains SGBD comme postgresql) puis d'un suffixe qui caractérise la clé (pour permettre plusieurs index uniques sur une meme table).
 
 Exemple:
 uk_societe_code_client
@@ -885,6 +708,13 @@ Certains champs sont souvent utilisés comme critère de recherche, de tri ou de
 
 Exemple:
 idx_societe_user_creat
+
+
+== Utilisation des alias/nommages de champs ==
+Dans le cas des select on pourra utiliser les alias pour simplifier l'écriture des requetes:
+&lt;pre&gt;select chp1, chpxxx2 as chp2 from table2 as t1, table2 as t2 where t1.chpx = t2.chpy&lt;/pre&gt;
+Toutefois, il ne faut pas utiliser ces alias sur des requetes update car non compatible avec mysql 3.1.
+
 
 
 == Spécificités MySQL ==
@@ -1163,10 +993,10 @@ La suite de l'article liste toutes les constantes de configurations utilisées p
   <page>
     <title>Developpement module</title>
     <revision>
-      <timestamp>2007-11-17T11:07:30Z</timestamp>
-      <contributor><username>Hregis</username></contributor>
-      <comment>/* Définir votre page de configuration (optionnel) */</comment>
-      <text>Pour créer un nouveau module, il existe plusieurs étapes. Ce didacticiel apour but de vous décrire chacune d'elle afin d'ajouter de réaliser un module permettant d'étendre les possibilités de Dolibarr, comme par exemple ajouter une ou plusieurs des fonctionnalités suivantes:
+      <timestamp>2008-03-19T00:02:37Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Créer un descripteur de Module (obligatoire) */</comment>
+      <text>Pour créer un nouveau module, il existe plusieurs étapes. Ce didacticiel a pour but de vous décrire chacune d'elle afin d'ajouter un module permettant d'étendre les possibilités de Dolibarr, comme par exemple ajouter une ou plusieurs des fonctionnalités suivantes:
 * Développer de nouvelles permissions
 * Ajouter de nouvelles boites
 * Ajouter des entrées menu
@@ -1177,38 +1007,127 @@ etc...
 
 
 == Créer un descripteur de Module (obligatoire) ==
-'''Quand''': Obligatoire dès qu'une extention est développée, quelque soit sa vocation.
+'''Quand''': Obligatoire dès qu'une extension est développée, quelque soit sa vocation.
+
+'''Créer votre descripteur''':
 
 La première étape est donc de créer un fichier descripteur du module.
-Pour cela, aller dans le répertoire '''htdoc/includes/modules''' et recopier le fichier modFactures.php en modMonModule.php.
+Pour cela, aller dans le répertoire '''dev/skeletons''' et recopier le fichier modMyModule.class.php dans le répertoire
+'''htdocs/includes/modules'''.
 Ensuite, modifier le contenu de ce fichier afin de remplacer:
-* les 'modFactures' en 'modMonModule'.
-* $this-&gt;id = 'invoice' par $this-&gt;id = 'monmodule'
-* $this-&gt;numero = 30  par $this-&gt;numero = 100000   (mettre un id libre pris par aucun module)
-* $this-&gt;const_name = 'MAIN_MODULE_FACTURE' par $this-&gt;const_name = 'MAIN_MODULE_MONMODULE'
+* les ''modMyModule'' en une valeur qui corresponde a la vocation de votre module. Cette valeur doit toujours commencer par 'mod'.
+* $this-&gt;numero = ''10000'' par un numero de module libre (Aller dans la page Accueil -&gt; Infos système -&gt; Dolibarr pour connaitre la liste des id module deja utilises).
+* $this-&gt;const_name = 'MAIN_MODULE_MYMODULE' par $this-&gt;const_name = 'MAIN_MODULE_XXX' où XXX doit correspondre à la valeur choisie pour remplacer MYMODULE et mis en majuscule.
+* $dir = DOL_DOCUMENT_ROOT.'/mysql/tables/mymodule/'; par $dir = DOL_DOCUMENT_ROOT.'/mysql/tables/xxxxxxxx/'; ou xxxxxxxx représente le nom de votre module (sans espaces).
+* Modifier éventuellement les autres variables définies dans le constructeurs (Voir le commentaire dans le code du squelette pour leur signification).
+
+Votre fichier descripteur de votre module est alors en place.
+
 
 '''Tester votre descripteur''':
-Lancer Dolibarr et aller sur la page '''Configuration-&gt;module''', vous devez voir apparaitre une nouvelle ligne avec votre nouveau module et la possibilité de l'activer ou non.
 
+Lancer Dolibarr et aller sur la page '''Configuration-&gt;module''', vous devez voir apparaitre une nouvelle ligne avec votre nouveau module et la possibilité de l'activer ou non (parcourez tous les onglets de chaque catégories de modules jusqu'à le retrouver).
+C'est la valeur de $this-&gt;special qui détermine dans quel onglet se trouve votre module.
 
-== Créer vos tables SQL (optionnel) ==
+== Créer vos tables SQL et la classe PHP des accesseurs (optionnel) ==
 '''Quand''': Si votre module a besoin de gérer des données qui lui sont propres
 
+=== Créer vos fichiers .sql ===
 Si votre module a vocation à gérer des données bien a lui, il est nécessaire de définir des tables SQL pour stocker ces données.
 
-Ajouter la définition de vos tables sur le principe d'un fichier par table dans '''mysql/tables/''' (voir les fichiers existants pour exemples). Ce sont les fichiers pour '''mysql''' qui font fois. Les fichiers des autres bases sont générés, au moment d'une release, à partir de ces derniers via le script:
+Créer un sous-répertoire de '''htdocs/mysql/tables''' (si non déjà fait) propre à votre module (Par exemple '''htdocs/mysql/tables/monmodule/''') afin d'y placer les scripts sql que vous aller créer.
+
+Ajouter les fichiers d'ordre de création de vos tables sur le principe d'un fichier par table (voir les fichiers existants dans '''htdocs/mysql/tables''' pour exemple). Les fichiers doivent être opérationnel pour la base '''mysql'''.
+Les fichiers des autres bases sont générés, au moment d'une release, à partir de ces derniers via le script:
 &lt;pre&gt;build/dolibarr_mysql2autrebase.pl&lt;/pre&gt;
 
+=== Tester vos fichier .sql ===
+
+Une fois les fichiers prêts, vous pouvez retourner sous Dolibarr puis désactiver le module, dropper les tables en base et réactiver le module.
+Les tables doivent alors être recréées par l'activation du module.
+Si tel n'est pas le cas, vérifiez vos scripts en les passant à la main, ou consultez les logs Dolibarr.
+
+=== Générer la classe PHP d'accès ===
+
+Une fois votre ou vos tables créées en base, aller dans le répertoire '''dev/skeletons''' et lancez le script
+&lt;pre&gt;php build_class_from_table.php nomtable&lt;/pre&gt;
+Remarque: Si la commande ne fonctionne pas, essayer d'utiliser php-cli plutot que php.
+
+Ceci génèrera un fichier '''out.nomtable.class.php''' qui contient la classe de gestion de la table nomtable.
+Dans cette classe, se trouve des méthodes déjà opérationnelles pour faire un insert, un update, un delete et un fetch (select) d'une ligne de la table.
+Supprimer juste le &quot;out&quot; du nom de fichier et placer votre fichier dans un sous-répertoire de '''htdocs''' propre à votre module (Dans '''htdocs/monmodule''' par exemple).
+
 == Créer vos pages PHP (optionnel) ==
-'''Quand''': Si l'objet de votre module est d'ajouter des fonctionnalités qui nécessite des nouveaux écrans.
+'''Quand''': Si l'objet de votre module est d'ajouter des fonctionnalités qui nécessitent de nouveaux écrans.
 
-Dans un second temps, créez vos pages PHP qui se basent sur les données de vos tables en utilisant les squelettes fournis comme exemple dans le repertoire '''dev/skeletons'''.
+Vous devez ensuite créer vos pages PHP qui se basent sur les données de vos tables en utilisant les squelettes fournis comme exemple dans le répertoire '''dev/skeletons''' (Pour le développement d'un script en ligne de commande, voir [[Developpement_script]]).
 
+Pour créer une nouvelle page écran utilisateur, créer un sous-répertoire de '''htdocs''' (si non déjà fait) propre à votre module (Dans '''htdocs/monmodule''' par exemple) afin d'y placer les pages que vous aller créer.
+
+Y recopier le fichier '''skeletons_page.php''' qui va servir de point de départ à votre page ainsi que le fichier '''pre.inc.php'''.
+Modifier le fichier '''pre.inc.php''' afin que le chemin relatif du
+&lt;pre&gt;
+include(&quot;../../main.inc.php)&quot;;
+&lt;/pre&gt;
+soit correct, en fonction de la profondeur de répertoire dans laquelle se trouve le fichier '''pre.inc.php''' (Enlever ou supprimer des &quot;../&quot;).
+C'est dans le main qu'est chargé l'environnement technique ainsi que les habilitations. Les variables objets suivantes sont alors positionnées:
+
+* $user    L'objet qui contient les caractéristiques de l'utilisateur + ses droits.
+* $conf    L'objet qui contient la configuration de Dolibarr.
+* $db      L'objet qui contient le handler de connexion ouvert à la base de donnée.
+* $langs   L'objet qui contient la langue de l'utilisateur.
+
+Saisissez ensuite votre code pour afficher la page.
+
+=== Accès à la base ===
+Si vous avez besoin de réaliser des modifications en base, pensez à suivre cet exemple:
+
+&lt;pre&gt;
+$db-&gt;begin();   // Debut transaction
+$db-&gt;query(&quot;Ma requete insert, update ou delete&quot;);
+$db-&gt;commit();       // Valide
+ou $db-&gt;rollback()  // Annule
+&lt;/pre&gt;
+
+Pour une lecture:
+
+&lt;pre&gt;
+$resql=$db-&gt;query(&quot;Ma requete select&quot;);
+if ($resql)
+{
+	$num = $db-&gt;num_rows($resql);
+	$i = 0;
+	if ($num)
+	{
+		while ($i &lt; $num)
+		{
+			$obj = $db-&gt;fetch_object($resql);
+			if ($obj)
+			{
+				// You can use here results
+				print $obj-&gt;field1;
+				print $obj-&gt;field2;
+			}
+			$i++;
+		}
+	}
+}
+&lt;/pre&gt;
+
+=== Définition du style ===
+Pour que le look de la page soit aligné avec le thème Dolibarr, il est nécessaire d'utiliser les styles des CSS de Dolibarr.
+
+Par exemple:
+
+* class=&quot;'''liste_titre'''&quot; sur les balises ''tr'' et ''td'' pour une ligne de titre de tableau.
+* class=&quot;'''pair'''&quot; ou class=&quot;'''impair'''&quot; sur les balises ''tr'' et ''td'' des lignes de donnees de tableau.
+* class=&quot;'''flat'''&quot; sur tous les champs de saisie (''input, select, textarea''...).
+* class=&quot;'''button'''&quot; sur les objets de type ''input type=&quot;submit&quot;''.
 
 == Définir votre page de configuration (optionnel)  ==
 '''Quand''': Si votre module offre plusieurs options paramétrables.
 
-Si votre module offre plusieurs options paramétrables, il est nécessaire de créer une page PHP pour editer les options (qui sont stockées dans la table '''llx_const''').
+Si votre module offre plusieurs options paramétrables, il est nécessaire de créer une page PHP pour éditer les options (qui sont stockées dans la table '''llx_const''').
 Créer une page PHP nommée '''monmodule_setupapage.php''' qui offre les options possibles et les met à jour, sur le modèle des pages dans '''/admin'''. Placer cette page de configuration dans le répertoire '''/admin''' également.
 Ensuite dans le descripteur de module, modifier la variable pour indiquer le nom de cette page
 &lt;pre&gt;
@@ -1218,10 +1137,14 @@ $this-&gt;config_page_url = array(&quot;monmodule_setupapage.php&quot;);
 Aller sur la page '''Configuration-&gt;module''', vous devez voir apparaitre un icone qui permet d'accéder à la page de configuration.
 
 == Définir vos entrées de menu (optionnel) ==
-'''Quand''': Si vous avez créer des pages PHP, il est nécessaire que ces écrans soient accessible depuis le menu Dolibarr.
+'''Quand''': Si vous avez créé des pages PHP, il est nécessaire que ces écrans soient accessibles depuis le menu Dolibarr.
 
-Cette fonctionnalité n'est pas encore possible. Il faut modifier le code Dolibarr pour l'instant.
-
+Pour cela, il vous faut définir dans le fichier descripteur de menu le tableau
+&lt;pre&gt;
+$this-&gt;menu
+&lt;/pre&gt;
+Ce tableau contient toutes les entrées qui apparaitront dans les menus une fois le module activé.
+Rem: Pour l'instant seul le menu haut est géré.
 
 == Définir vos propres permissions (optionnel) ==
 '''Quand''': Si vous voulez ajouter de nouvelles permissions.
@@ -1232,15 +1155,15 @@ Modifier la ligne $this-&gt;rights_class = 'facture' par
 $this-&gt;rights_class = 'monmodule'
 &lt;/pre&gt;
 
-Ensuite remplisser le tableau $this-&gt;rights avec autant d'entrée que de permissions différentes à gérer.
+Ensuite remplissez le tableau $this-&gt;rights avec autant d'entrée que de permissions différentes à gérer.
 
 &lt;pre&gt;
-$r++;
 $this-&gt;rights[$r][0] = 9999;
-$this-&gt;rights[$r][1] = 'Libelle par defaut de ma permission';
+$this-&gt;rights[$r][1] = 'Libelle par défaut de ma permission';
 $this-&gt;rights[$r][3] = 1;
 $this-&gt;rights[$r][4] = 'action';
 $this-&gt;rights[$r][5] = 'sousaction';
+$r++;
 &lt;/pre&gt;
 
 Dans $this-&gt;rights[$r][0], mettre un id de permission non déjà pris (Voir dans le menu '''Infos Système''' sur une installation de Dolibarr opérationnelle pour connaitre les id déjà utilisés.
@@ -1253,12 +1176,20 @@ $user-&gt;getrights('monmodule');
 if ($user-&gt;rights-&gt;action-&gt;sousaction)
 &lt;/pre&gt;
 
-
 == Définir vos propres box (optionnel) ==
 '''Quand''': Si votre module amène avec lui une ou plusieurs Boxes.
 
 Pour cela, modifier les tableaux $this-&gt;boxes du fichier descripteur de module.
+Il suffit d'ajouter une ligne par fichier box qui se trouve dans le répertoire '''htdocs/includes/box'''
 
+''Exemple:''
+&lt;pre&gt;
+this-&gt;boxes[0][1]='mabox0.php'
+this-&gt;boxes[1][1]='mabox1.php'
+this-&gt;boxes[2][1]='mabox2.php'
+...
+this-&gt;boxes[n][1]='maboxn.php'
+&lt;/pre&gt;
 
 == Définir vos propres exports (optionnel) ==
 '''Quand''': Si votre module amène avec lui des exports prédéfini de données (pour ces propres tables ou des tables déjà existante d'un autre module de Dolibarr).
@@ -1267,36 +1198,37 @@ Pour cela, modifier les tableaux $this-&gt;export_xxx du fichier descripteur de 
 
 
 == Définir vos styles CSS (optionnel) ==
-'''Quand''': Si dans vos écrans PHP, vous utiliser des classes de styles qui ne sont pas celle des themes de Dolibarr (non recommendé).
+'''Quand''': Si dans vos écrans PHP, vous utiliser des classes de styles qui ne sont pas celle des thèmes de Dolibarr (non recommandé).
 
 Cette fonctionnalité n'est pas encore possible.
 
 
 == Définir vos fonctions Javascript (optionnel) ==
-'''Quand''': Si dans vos écrans PHP, vous utiliser des fonctions javascript.
+'''Quand''': Si dans vos écrans PHP, vous utiliser des fonctions javascript non dispo en standard (fichier lib_head.js)
 
-Si dans vos écrans PHP, vous utiliser des fonctions javascript, il est nécessaire de faire en sorte que vos fonctions déclarés dans un fichiers javascript '''monmodule.js''' soit chargées dans l'entete head html.
+Si dans vos écrans PHP, vous utilisez des fonctions javascript, il est nécessaire de faire en sorte que vos fonctions déclarées dans un fichiers javascript '''monmodule.js''' soit chargées dans l'entête head html.
 Pour demander à Dolibarr qui gère la génération de la section header d'inclure un de vos fichiers javascript, il est nécessaire de déclarer votre fichier javascript dans le descripteur de module.
 
 Cette fonctionnalité n'est pas encore possible.
 
-
-
-== Déclencher du code sur un evenement Dolibarr (optionnel) ==
-'''Quand''': Si vous voulez que des actions particulières s'exécutent suite au déclenchement d'action s standards de Dolibarr (exemple: je veux mettre à jour une table de mon module quand une facture se crée dans Dolibarr), il vous faut créer un fichier trigger.
+== Déclencher du code sur un évènement Dolibarr (optionnel) ==
+'''Quand''': Si vous voulez que des actions particulières s'exécutent suite au déclenchement d'action s standards de Dolibarr (exemple: je veux mettre à jour une table de mon module quand une facture se crée dans Dolibarr), il vous faut créer un fichier de '''triggers'''.
 
 Voir aussi [http://www.dolibarr.com/wikidev/index.php/Interfaces_Dolibarr_vers_exterieur Interfaces_Dolibarr_vers_exterieur]
 et [http://www.dolibarr.com/wikidev/index.php/Interfaces_Exterieur_vers_Dolibarr Interfaces_Exterieur_vers_Dolibarr]
 
-
 == Créer un package pour livrer et installer mon module ==
-* Aller dans le répertoire '''/build''' et modifier le fichier '''makepack-dolibarrmodules.conf''' afin de saisir la liste des nouveaux noms de fichiers que vous avez créé pour votre module (descripteur de module, nouveaux fichiers sql de tables, page php, etc...)
-* Lancer le script via perl (besoin de la version Perl 5.0 ou +):
+
+* Aller dans le répertoire '''/build''' et recopier le fichier '''makepack-dolibarrmodules.conf''' en '''makepack-monmodule.conf'''. Saisissez dans ce fichier la liste des noms des nouveaux fichiers que vous avez créé pour votre module (descripteur de module, nouveaux fichiers sql de tables, page php, images, etc...)
+
+* Lancer le script via Perl (besoin de la version Perl 5.0 ou +):
 &lt;pre&gt;
 perl makepack-dolibarrmodule.pl
 &lt;/pre&gt;
-Un fichier '''monmodule.tgz''' va alors etre fabriqué contenant votre module prêt pour être déployé.
-* La personne qui recoit votre module doit alors placer le fichier dans son répertoire racine d'installation de dolibarr et réaliser la commande:
+Le script vous demande le nom de votre module, sa version majeure et mineure.
+Un fichier '''monmodule.tgz''' va alors être fabriqué contenant votre module prêt pour être déployé.
+
+* La personne qui reçoit votre module doit alors placer le fichier dans son répertoire racine d'installation de Dolibarr et réaliser la commande:
 &lt;pre&gt;
 tar -xvf monmodule.tgz
 &lt;/pre&gt;
@@ -1304,14 +1236,17 @@ tar -xvf monmodule.tgz
 == Règles ==
 Voici quelques règles à suivre dans la réalisation d'un module
 
-* Ne pas créer de table dynamiquement, c'est-à-dire à la première '''utilisation''' du module. Si vous créez un module qui utilise des tables qui ne sont pas encore intégrées en standard dans le code de Dolibarr, veillez à créer vos tables à l'installation ou l'upgrade de Dolibarr, ou mieux à l''''activation''' du module.</text>
+* Ne pas créer de table à l'utilisation, c'est-à-dire à la '''première utilisation''' du module.
+Si vous créez un module qui utilise des tables qui ne sont pas intégrées en standard dans le code de Dolibarr, veillez à suivre ce didacticiel (voir plus haut).
+* Ajouter des traces dans le code avec la fonction
+dolibarr_syslog($yourmessage, LOG_INFO|LOG_DEBUG|LOG_ERR);</text>
     </revision>
   </page>
   <page>
     <title>Developpement script</title>
     <revision>
-      <timestamp>2007-11-21T10:24:19Z</timestamp>
-      <contributor><username>Grandoc</username></contributor>
+      <timestamp>2008-04-21T11:29:06Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <comment>/* Exemple insertion d'un produit */</comment>
       <text>== Localisation ==
 Les scripts en ligne de commande de Dolibarr doivent etre situés dans le répertoire '''scripts''' de Dolibarr. Les scripts sont ensuite répartis dans des sous-répertoire en fonction de leur vocation.
@@ -1351,11 +1286,18 @@ L'objet $conf qui contient la configuration Dolibarr est également disponible.
 ==== Exemple insertion d'un produit ====
 Par exemple pour insérer un produit dans la base dolibarr, vous pouvez y placer le code suivant:
 &lt;pre&gt;
-// Inclusion classe métier product
+// Inclusion classe métier utilisateur et product
+require_once(DOL_DOCUMENT_ROOT.&quot;/user.class.php&quot;);
 require_once(DOL_DOCUMENT_ROOT.&quot;/product.class.php&quot;);
+
+// Création d'une instance utilisateur
+$user=new User($db);
 
 // Création d'une instance de product
 $myproduct=new Product($db);
+
+// Définition des propriétés de l'instance utilisateur
+$user-&gt;id = 0;
 
 // Définition des propriétés de l'instance product
 $product-&gt;ref                = '1234'
@@ -1367,9 +1309,11 @@ $product-&gt;type               = 0;
 $product-&gt;status             = 1;
 $product-&gt;description        = 'Description';
 $product-&gt;note               = 'Note';
+$product-&gt;weight             = 10; 
+$product-&gt;weight_units       = 0; 
 
 // Création du produit en base
-$idproduct = $product-&gt;create('');
+$idproduct = $product-&gt;create($user);
 
 // Gestion erreur
 if ($idproduct &lt; 0) dolibarr_print_error($db,$product-&gt;error);
@@ -1385,6 +1329,65 @@ else print &quot;Produit $idproduct cree.\n&quot;;
       <comment>Devenir développeur déplacé vers Outils et principe</comment>
       <text>#REDIRECT [[Outils et principe]]
 </text>
+    </revision>
+  </page>
+  <page>
+    <title>Développement</title>
+    <revision>
+      <timestamp>2008-05-17T20:31:01Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Download */</comment>
+      <text>==Download==
+* Télécharger la [http://www.dolibarr.org/component/option,com_docman/task,cat_view/gid,62/Itemid,36/lang,en/ version stable]
+* Télécharger le snapshot de la [http://www.dolibarr.org/component/option,com_docman/task,cat_view/gid,64/Itemid,36/lang,en/ version CVS]
+
+==Ressources==
+* [[Documentation développeur]]
+* [[Documentation traducteur]]
+* [[Customisation des documents dolibarr]]
+* [http://lists.nongnu.org/mailman/listinfo/dolibarr-dev Liste de discussion] des développeurs
+* [http://lists.nongnu.org/mailman/listinfo/dolibarr-user Liste de discussion] des utilisateurs
+* [https://savannah.nongnu.org/projects/dolibarr Page du projet sur Savannah]
+* [https://savannah.nongnu.org/task/?group=dolibarr Gestionnaire de tâches]
+* [https://savannah.nongnu.org/bugs/?group=dolibarr Bug tracker]
+* Licence : le projet Dolibarr est sous [http://www.gnu.org/licenses/gpl.html licence GPL]
+* [http://www.destailleur.fr/dolibarr/cvschangelogbuilder_dolibarr.html Statistiques du repository CVS]
+* Voir le [http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/ Repository CVS]
+* Les [[Roadmap]]
+
+==Démo en ligne==
+Une demo de la version CVS est accessible à l'adresse suivante:
+
+[http://demo.dolibarr.fr/ Demo Dolibarr CVS]
+
+Pour vous connecter, utiliser le compte suivant:
+
+&lt;b&gt;Login/Mot de passe:&lt;/b&gt; demo/demo
+
+==Développeurs officiels==
+
+* [http://www.lafrere.net Rodolphe Quiédeville] - Créateur / Mainteneur
+* Jean-Louis Bergammo - Contributeur
+* [http://www.ryxeo.com Eric Seigne] - Contributeur
+* [http://www.destailleur.fr Laurent Destailleur] - Contributeur
+* [[Benoit Mortier]] - Contributeur
+* Yannick Warnier - Contributeur
+* Gaëtan Frenoy - Contributeur
+* Régis Houssin - Contributeur
+
+Si vous souhaitez discuter du développement de Dolibarr avec les développeurs officiels, nous vous invitons à rejoindre la liste de discussions dolibarr-dev. Si vous le souhaitez vous pouvez aussi devenir développeur en lisant la [[Documentation Développeur]] dédiée à cela
+
+IRC
+
+Il nous arrive de nous retrouver sur le canal #dolibarr sur le réseau IRC Freenode.
+
+==Remerciements==
+
+Je tiens à remercier pour leur contribution au code et leurs conseils avisés :
+
+* Jean-Louis Bergamo
+* Emmanuel Raviart de la société Entr'ouvert spécialisée dans l'E-démocratie et le Logiciel Libre
+* Eric Seigne de la société RyXéo spécialiste Bordelais en Logiciel Libre.</text>
     </revision>
   </page>
   <page>
@@ -1542,19 +1545,30 @@ Plus de documentation au sujet de la génération des modèles elle-même est di
   <page>
     <title>Documentation Développeur</title>
     <revision>
-      <timestamp>2007-11-22T17:02:02Z</timestamp>
+      <timestamp>2008-05-18T15:27:37Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Interfaces et liens avec d'autres applications */</comment>
+      <comment>/* Général */</comment>
       <text>== Général ==
-# [[Outils et principe]]
-# [[Langages|Langage et normes de développement]]
-# [[Fichier de configuration]]
+# [[Outils et principe|A savoir avant de commencer]]
+# [[Outils de développement]]
 # [[Librairies externes et dépendances]]
+# [[Langages|Langage et normes de développement]]
+
+== Le fichier de configuration Dolibarr ==
+Voir [[Fichier de configuration]]
 
 == Base de données ==
 # [[Charte de nommage]]
 # [[Liste des tables]]
 # [[Mise à jour du format de la base]]
+
+== Développer un nouveau module / une extension ==
+Pour développer votre propre module, aller sur le didacticiel: [[Developpement module]]
+
+La liste des modules standard est définie sur la page [[Modules]]
+
+== Développer un script ==
+Pour développer un script quelqu'il soit, comme un script de traitement cron ou encore un script d'import de données issus d'un autre système, se référrer à la page: [[Developpement script]]
 
 == Le [[Permissions|Système des permissions]] ==
 A compléter
@@ -1573,19 +1587,11 @@ Voir la page [[Themes]]
 == Le [[Système des boites]] ==
 Voir la page [[Système des boites]]
 
-== Le Système d'authentification ==
+== Le [[Authentification|Système d'authentification]] ==
 Voir la page [[Authentification]]
 
 == Le [[Système de traduction]] ==
 Voir la page [[Système de traduction]]
-
-== Développer un nouveau module / une extension ==
-Pour développer votre propre module, aller sur le didacticiel: [[Developpement module]]
-
-La liste des modules standard est définie sur la page [[Modules]]
-
-== Développer un script d'import ==
-Pour développer un script d'import de données issus d'un autre système: [[Developpement script]]
 
 == La [[Gestion d'erreur]] ==
 
@@ -1599,9 +1605,6 @@ Voir la page [[Document générés]]
 # [[Interfaces Dolibarr vers exterieur]] (Triggers Dolibarr)
 # [[Interfaces Exterieur vers Dolibarr]]
 # [[Imports de masse]]
-
-== Scripts cron ==
-# [[Scripts cron]]
 
 == FAQ ==
 # [[FAQ Développeur]]</text>
@@ -1708,8 +1711,8 @@ Quand vous avez créer une nouvelle langue, si elle n'est pas intégré dans Dol
   <page>
     <title>Documentation utilisateur</title>
     <revision>
-      <timestamp>2007-09-14T14:25:45Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
+      <timestamp>2008-02-03T11:00:55Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
       <text>* Fonctionnalités
 # [[Ce que fait Dolibarr]]
 # [[Ce que ne fait pas Dolibarr]]
@@ -1737,7 +1740,7 @@ Quand vous avez créer une nouvelle langue, si elle n'est pas intégré dans Dol
 # [[Mailing|EMailing]]
 # [[Calendrier]]
 # [[Exports]]
-# [[Adherents]]
+# [[Adherents|Adhérents]]
 # [[Téléphonie]]
 # [[Stock]]
 
@@ -1805,13 +1808,12 @@ Contains the list of activated modules, with the activation date and the activat
   <page>
     <title>Développement</title>
     <revision>
-      <timestamp>2007-08-24T14:49:53Z</timestamp>
-      <contributor><username>Hregis</username></contributor>
-      <comment>/* Développeurs officiels */</comment>
+      <timestamp>2008-05-17T20:31:01Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Download */</comment>
       <text>==Download==
-* Télécharger la [http://www.dolibarr.org/en/index.php?module=documents&amp;JAS_DocumentManager_op=downloadFile&amp;JAS_File_id=17 dernière version stable]
-* Télécharger le snapshot de la [http://forum.dolibarr.com/files/dolibarr_snapshot.tgz version CVS]
-* La procedure manuelle pour le CVs est ici : http://forum.dolibarr.com/viewtopic.php?t=24
+* Télécharger la [http://www.dolibarr.org/component/option,com_docman/task,cat_view/gid,62/Itemid,36/lang,en/ version stable]
+* Télécharger le snapshot de la [http://www.dolibarr.org/component/option,com_docman/task,cat_view/gid,64/Itemid,36/lang,en/ version CVS]
 
 ==Ressources==
 * [[Documentation développeur]]
@@ -1828,9 +1830,9 @@ Contains the list of activated modules, with the activation date and the activat
 * Les [[Roadmap]]
 
 ==Démo en ligne==
-Une demo de la version 2.1alpha est accessible à l'adresse suivante:
+Une demo de la version CVS est accessible à l'adresse suivante:
 
-[http://www.dolibarr.org/demo/htdocs/ Demo Dolibarr 2.1alpha]
+[http://demo.dolibarr.fr/ Demo Dolibarr CVS]
 
 Pour vous connecter, utiliser le compte suivant:
 
@@ -2024,12 +2026,12 @@ Les lignes a exporter sont fournies par un tableau de la forme
   <page>
     <title>Exports</title>
     <revision>
-      <timestamp>2007-08-09T15:46:11Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
+      <timestamp>2008-02-03T10:54:05Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
-La fonction Exports permet de réaliser des exports personalisés des données via un assistant qui évite d'avoir des connaissances techniques de Dolibarr.
+La fonction Exports permet de réaliser des exports personnalisés des données via un assistant qui évite d'avoir des connaissances techniques de Dolibarr.
 La première étape est de choisir un des lots de données prédéfinis, ensuite de choisir les champs que vous voulez dans votre fichier résultat, et dans quel ordre. Une fois les données sélectionnées, il est possible de choisir le format du fichier export généré.
 
 Les formats existants sont csv (Fichier texte) ou xls (Format Excel natif)</text>
@@ -2048,9 +2050,9 @@ Les formats existants sont csv (Fichier texte) ou xls (Format Excel natif)</text
   <page>
     <title>FAQ Développeur</title>
     <revision>
-      <timestamp>2007-08-24T15:07:23Z</timestamp>
-      <contributor><username>Hregis</username></contributor>
-      <comment>/* Récupérer/mettre à jour la version CVS développeur */</comment>
+      <timestamp>2008-06-05T16:27:44Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Comment devenir développeur officiel */</comment>
       <text>== Récupérer/mettre à jour la version CVS développeur ==
 
 '''Utilisation du CVS'''
@@ -2069,9 +2071,8 @@ Cette procédure de migration/mise à jour est conçue pour fonctionner quel que
 
 == Démarrer le développement ==
 
-Consulter '''intégralement''' la [[Documentation Développeur]] pour assimiler toutes les regles et principes imposees aux developpeurs.
+Consulter '''intégralement''' la [[Documentation Développeur]] pour assimiler toutes les règles et principes imposées aux développeurs.
 Vous pouvez aussi consulter les FAQ suivantes.
-
 
 == Comment créer un nouveau theme ==
 Voir pour cela la page [[Themes]]
@@ -2105,10 +2106,10 @@ where facnumber like 'FA%' and facnumber not like '%-%';
 &lt;/pre&gt;
 
 
-== Soumettre une modification ou participer au développement ==
+== Soumettre un patch, amelioration ou participer au développement ==
 
 * '''Avec accès CVS en écriture '''
-A ce jour, les accès en écriture au CVS sont restreints (le nombre de commit étant déjà suffisamment dynamique). Il n'est pas exclu d'accueillir d'autres développeurs en modification à d'autres horizons. Si vous bénéficiez donc à l'heure actuelle d'un accès CVS en écriture, utilisez-le. Sinon, il est nécessaire de suivre la procédure qui suit (Modification du code, sans accès CVS en ecriture)
+A ce jour, les accès en écriture au CVS sont restreints (le nombre de commit étant déjà suffisamment dynamique). Il n'est pas exclu d'accueillir d'autres développeurs en modification à d'autres horizons. Si vous bénéficiez donc à l'heure actuelle d'un accès CVS en écriture, utilisez-le. Sinon, il est nécessaire de suivre la procédure qui suit (Modification du code, sans accès CVS en écriture)
 
 * '''Sans accès CVS en écriture'''
 Si vous n'avez pas de compte développeur, il est nécessaire de fournir par mail, votre fichier patch. 
@@ -2117,13 +2118,13 @@ Sous tout OS:
 
 Voici la ''méthode Pro'' selon laquelle travailler pour pouvoir générer un tel fichier patch:
 
-- Avoir un répertoire qui contient la version de Dolibarr de référence (résultat de la mise à jour CVS ou bien tout simplement l'arborescence résultant de la décompression d'un snapshot tgz de Dolibarr). On appelera ce répertoire '''ancien_rep'''. Vous pouvez récuperer le snapshot de la version de dev en cours en cliquant [http://forum.dolibarr.com/files/dolibarr_snapshot.tgz ce lien].
+- Avoir un répertoire qui contient la version de Dolibarr de référence (résultat de la mise à jour CVS ou bien tout simplement l'arborescence résultant de la décompression d'un snapshot tgz de Dolibarr). On appellera ce répertoire '''ancien_rep'''. Vous pouvez récupérer le snapshot de la version de dev en cours sur le  [http://www.dolibarr.org/component/option,com_docman/task,cat_view/gid,50/Itemid,36/lang,en/ site officiel de Dolibarr].
 
-- Avoir un autre répertoire qui contient l'arborescence de Dolibarr mais dans laquelle vous faites ou avez fait vos modifications. On appelera ce répertoire '''nouveau_rep'''.
+- Avoir un autre répertoire qui contient l'arborescence de Dolibarr mais dans laquelle vous faites ou avez fait vos modifications. On appellera ce répertoire '''nouveau_rep'''.
 
-Pour générer le fichier patch, il suffit alors de lancer la commande ''diff'' (en standard sous Linux, fourni dans cygwin sous Windows) de la manière suivante:
+Pour générer le fichier patch, il suffit alors de lancer la commande '''diff''' (en standard sous Linux, fourni dans [http://www.cygwin.org cygwin] sous Windows) de la manière suivante:
 &lt;pre&gt;
-diff -Naur --exclude=CVS --exclude=&quot;.#*&quot; --exclude=&quot;*~&quot; --exclude=documents  ancien_rep  nouveau_rep  &gt; fichier.patch
+diff -Naur --exclude=CVS --exclude=&quot;.#*&quot; --exclude=&quot;*~&quot; --exclude=&quot;*.bak&quot; --exclude=conf.php --exclude=documents  ancien_rep  nouveau_rep  &gt; fichier.patch
 &lt;/pre&gt;
 Envoyer votre patch sur la ML.
 L'intégration de votre patch n'est toutefois pas garantie, pas plus que le délai.
@@ -2136,10 +2137,31 @@ Au final, on obtient un beau fichier ''resultat.patch'' qui contient toutes les 
 
 Au lieu de rechercher manuellement vos fichiers, si vous avez installé conjointement ''TortoiseCVS'' et ''Winmerge'', vous pouvez vous contenter de votre version modifiée sur votre ordinateur, et de la version CVS en ligne. Sous l'explorateur Windows, faites un clic droit sur le fichier qui doit être patché, et choisissez &quot;CVS comparer&quot; (pas WinMerge qui se trouve quelques lignes plus bas). Tortoise va lui-même lancer WinMerge. Puis reprenez la procédure décrite ci-dessus.
 
-
 == Comment devenir développeur officiel ==
 
-Voir pour cela la page [[Documentation Développeur]]</text>
+Ceci passe par plusieurs étapes.
+
+'''Membre de l'alliance'''
+
+Il faut d'abord se familiariser avec les règles et normes de développements.
+En lisant toute la documentation développeur, vous devenez ainsi membre de l'alliance.
+
+'''Chasseur de l'alliance'''
+
+L'étape suivante consiste à soumettre des patch, en commençant par des simples, sur la ML (voir chapitre précédent). A votre première soumission, vous entrez alors dans la famille des Chasseurs de l'alliance.
+
+'''Jedi'''
+
+Ce n'est qu'au bout d'un temps variable, qui peut être très long, et si la qualité des patch
+qui ont été envoyée est satisfaisante que l'équipe en place offrira un accès CVS direct.
+Vous êtes devenu un Jedi. Ce titre ne se demande pas, il s'obtient par proposition d'un autre Jedi.
+Ce privilège est toutefois exceptionnel. La qualité de Dolibarr ne pouvant être atteindre 
+que par un nombre de commiteur très réduit, ce qui n'empêche pas d'avoir un nombre de
+développeur (chasseurs) très important (grâce au système de patch).
+
+'''Maitre Yoda'''
+
+Au nombre de 1 à 3, c'est le role de chef de projet.</text>
     </revision>
   </page>
   <page>
@@ -2228,13 +2250,13 @@ Si cela ne marche toujours pas, essayer de positionner dans Accueil - Configurat
   <page>
     <title>FAQ Utilisateur</title>
     <revision>
-      <timestamp>2006-04-01T19:56:01Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>/* FAQ sur ce Wiki */</comment>
+      <timestamp>2008-05-14T07:09:47Z</timestamp>
+      <contributor><username>Raphaelb</username></contributor>
+      <comment>/* FAQ sur le Forum */</comment>
       <text>== FAQ sur le Forum ==
 De nombreuses Questions-Réponses sont disponibles sur le forum Dolibarr
 
-[http://forum.dolibarr.com/ Forum Dolibarr]
+[http://www.dolibarr.fr/component/option,com_fireboard/Itemid,32/ Forum Dolibarr]
 
 == FAQ sur ce Wiki ==
 
@@ -2252,7 +2274,7 @@ D'autres sont recensées ici. N'hésitez pas à compléter.
   <page>
     <title>Facturation</title>
     <revision>
-      <timestamp>2007-12-16T19:49:41Z</timestamp>
+      <timestamp>2008-02-13T16:33:47Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <comment>/* Cas d'utilisations */</comment>
       <text>{{Navigation documentation}}
@@ -2297,7 +2319,7 @@ Pour chaque ligne de la facture vous définissez aussi une quantité et éventue
 Une fois la facture prête vous devez la valider. '''Attention''' cette opération est irréversible. Quand vous validez la facture un numéro lui est attribué selon le modèle de numérotation que vous avez choisi dans la configuration du module Facture.
 Si une erreur est détectée après avoir validé la facture, il faudra soit faire une facture de remplacement, soit faire une facture d'avoir.
 
-== Generation PDF, Impression ==
+== Génération PDF, Impression ==
 
 A compléter...
 Lorsqu'un document est généré, il est fabriqué suivant un modèle choisi parmi une liste activée dans les écrans Accueil - Configuration - Modules - Facture
@@ -2311,11 +2333,11 @@ A compléter...
 
 == Classer la facture ==
 
-Une facture validée peut etre définitivement classer à l'état:
+Une facture validée peut être définitivement classée à l'état:
 * Payé
 Si la somme des paiements est supérieure ou égale au montant réclamé.
 * Payé partiellement
-Si la somme des paiements et supérieure à 0 mais strictement inférieure au montant réclamé.
+Si la somme des paiements est supérieure à 0 mais strictement inférieure au montant réclamé.
 * Abandonné
 Si aucun paiement n'a eu lieu.
 
@@ -2336,8 +2358,8 @@ Je valide.
 Je me rend compte de l'erreur après validation.
 
 '''Actions correctives''':
-Je classe la facture abandonnée pour motif 'autre' (opération non obligatoire car automatique avec étape suivante).
-Je crée une nouvelle facture en choisissant '''facture de remplacement''' et en selectionnant la facture remplacée comme facture.
+Je classe la facture abandonnée pour motif 'Autre' (opération non obligatoire car automatique avec étape suivante).
+Je crée une nouvelle facture en choisissant '''Facture de remplacement''' et en selectionnant la facture remplacée comme facture.
 
 
 '''UCIN00b: Erreur sur le client détecté avant envoi facture'''
@@ -2348,11 +2370,28 @@ Je valide.
 Je me rend compte que la facture a été crée sur le mauvais client.
 
 '''Actions correctives''':
-Je classe la facture abandonnée pour motif 'autre' et je renseigne le motif &quot;Erreur saisi sur mauvais client&quot;.
+Je classe la facture abandonnée pour motif 'Autre' et je renseigne le motif &quot;Erreur saisie sur mauvais client&quot;.
 Je crée une nouvelle facture sur le bon client.
 
+TODO: Faire confirmer par expert que possible si c'est fait avant envoi.
+Si pas possible, interdire la possibilité et utiliser le cas suivant.
 
-'''UCIN00c: Erreur sur le libellé client détecté après paiement'''
+
+'''UCIN00c: Erreur sur le client (ou facture saisie 2 fois) détecté après envoi facture mais avant paiement'''
+
+'''Situation''':
+Je crée une facture.
+Je valide et l'envoie au client.
+Je me rend compte que la facture a été crée sur le mauvais client ou facture en doublon avec une autre deja envoyée.
+
+'''Actions correctives''':
+Je crée un avoir sur la facture qui n'a pas encore de paiement (TODO: Pas possible actuellement) du montant inverse exacte.
+Je convertit l'avoir en reduc. L'avoir se retrouve ainsi &quot;traité&quot; et je l'envoie.
+J'applique la reduc sur la facture en erreur. 
+Le du devient alors zero et je classe la facture à '''Payée complètement'''.
+
+
+'''UCIN00d: Erreur sur le libellé client détecté après saisie de paiement'''
 
 '''Situation''':
 Je crée une facture sur le client de libellé X.
@@ -2409,6 +2448,21 @@ Je saisi un avoir sur cette facture.
 Cet avoir peut etre converti en réduction pour la prochaine facture ou rembourser en monétaire.
 
 
+'''UCIN03b: Facturation et paiement intégral puis erreur sur produit détecté'''
+
+'''Situation''':
+Je crée une facture.
+Je reçois l'intégralité des paiements. Je les saisis et le solde devient 0.
+Je clos la facture à l'état '''Payé'''.
+Plus tard, je découvre une erreur de produit.
+
+'''Actions correctives''':
+Je saisi un avoir sur cette facture qui contient le produit en erreur.
+Je converti cet avoir en réduction. 
+Je crée une nouvelle facture avec le bon produit. J'intègre l'avoir dans cette nouvelle facture.
+Enventuellement si j'utilise le module stock, je corrige le stock en manuel.
+
+
 '''UCIN04: Facturation et paiement partiel car anticipé (escompte)'''
 
 '''Situation''':
@@ -2420,23 +2474,24 @@ Je saisi le paiment reçu de la valeur reçue.
 Je classe la facture à '''Payé partiellement''' et renseigne le motif &quot;Le manque est un '''Escompte'''&quot;.
 
 
-'''UCIN06: Facturation et paiement partiel car retour produit ou attente correction anomalie'''
+'''UCIN06: Facturation et paiement partiel ou nul puis retour produit et attente correction anomalie ou erreur infine tolerable'''
 
 '''Situation''':
 Je crée une facture.
-Je reçois un paiement partiel, je le saisi.
-Je reçois un retour d'une partie des produits (retractation du client).
-Le client attend un avoir pour payer la fin de la facture.
+Si je reçois un paiement partiel, je le saisi.
+Je reçois un retour d'une partie des produits (retractation du client) ou ne reçois plus les quelques centimes manquant.
+Eventuellement, le client attend un avoir pour payer la fin de la facture.
 
 '''Action''':
-Je saisie un avoir sur la facture dont le réglement a commencé.
-TODO: Quand l'avoir est fait sur une facture à ce statut 'Réglement commencé', il faut mettre un message disant &quot;Attention, ne créer un avoir sur une facture en cours de paiement que si le client a cessé le paiement et attend cet avoir pour poursuivre la suite&quot;.
-Ensuite il faut vérifier que le montant de l'avoir est inférieur au montant de la facture auquel il s'applique - montant deja reçu. Sinon, refuser création avoir.
+Je saisi un avoir sur la facture (TODO pas possible actuellement si aucun réglement commencé).
 J'envoie l'avoir.
 Ensuite, je convertit cet avoir en reduction pour le client.
-Je saisi la suite des paiements reçus.
+Je saisi eventuellement la suite des paiements reçus.
 Eventuellement j'inclus l'avoir dans la liste des paiements de la facture (sinon il pourra etre inclus dans une autre facture).
 Je classe la facture à l'état '''Payé'''.
+
+TODO Controle a inclure en plus: Quand l'avoir est fait sur une facture au statut 'Réglement commencé', il faut mettre un message disant &quot;Attention, ne créer un avoir sur une facture en cours de paiement que si le client a cessé le paiement et attend cet avoir pour poursuivre la suite ou parceque vous fermez la facture&quot;.
+Ensuite il faut vérifier que le montant de l'avoir est inférieur au montant de la facture auquel il s'applique - montant deja reçu. Sinon, refuser création avoir.
 
 
 '''UCIN05: Facturation et paiement partiel car mauvais payeur'''
@@ -2458,17 +2513,6 @@ Après une longue attente, la suite des paiements n'est pas reçu et j'abandonne
 
 '''Actions''':
 Je classe la facture à l'état '''Abandonnée''' et renseigne le motif '''Mauvais payeur'''.
-
-
-'''UCIN08: Facturation et aucun paiement reçu car facture saisie par erreur'''
-
-'''Situation''':
-Je crée une facture.
-Je me rend compte qu'il s'agit d'une erreur (par exemple, déjà saisi par un autre utilisateur)
-
-'''Actions correctives''':
-Je classe la facture à l'état '''Abandonnée''' et renseigne le motif '''Autre'''.
-Eventuellement, je peux saisir tout de suite ou plus tard une facture de remplacement qui remplace celle-ci.
 
 == Factures récurrentes ==
 
@@ -2542,9 +2586,9 @@ Pour visualiser les modèles de facture actuellement disponible, suivez ce lien 
   <page>
     <title>FactureFournisseur</title>
     <revision>
-      <timestamp>2007-07-30T08:48:09Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>Page facture fournisseurs</comment>
+      <timestamp>2008-05-20T20:16:39Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Cas d'utilisations */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
@@ -2552,11 +2596,13 @@ Pour visualiser les modèles de facture actuellement disponible, suivez ce lien 
 
 '''UCSIN02: Facturation fournisseur puis reception avoir suite erreur facture'''
 
-Je saisi la facture fournisseur (facture de doit).
-Je reçois l'avoir fournisseur (facture avoir), aussi je saisi une facture fournisseur normal mais avec montant négatif.
-Je paie.
-Je saisi le paiement sur facture fournisseur et un paiement négatif sur facture avoir fournisseur.
-Un paiement supérieur et un autre négatif pour corriger apparaitront dans le relevé bancaire.</text>
+* Je saisi la facture fournisseur (facture de doit).
+* Je reçois l'avoir fournisseur (facture avoir/note de crédit), et je saisis une facture fournisseur normale mais avec montant négatif.
+* Je paie (Émettre paiement).
+* Je saisi le paiement sur facture fournisseur et un paiement négatif sur facture avoir fournisseur.
+* Je classe les deux factures comme &quot;payées&quot;
+
+Un paiement positif et un autre négatif pour corriger apparaitront dans le relevé bancaire.</text>
     </revision>
   </page>
   <page>
@@ -2675,12 +2721,9 @@ Contains the lines of customer invoices.
   <page>
     <title>Fichier de configuration</title>
     <revision>
-      <timestamp>2006-05-13T11:54:09Z</timestamp>
+      <timestamp>2008-06-05T16:05:41Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Fichier de configuration */</comment>
-      <text>== Fichier de configuration ==
-
-Le fichier de configuration de Dolibarr est conf/conf.php il est écrit par la procédure d'installation automatisée.
+      <text>Le fichier de configuration de Dolibarr est '''conf/conf.php'''. Il est écrit par la procédure d'installation automatisée.
 Le contenu du fichier standard est :
 
      $dolibarr_main_document_root=&quot;/home/www/dolibarr/htdocs&quot;;
@@ -2691,13 +2734,9 @@ Le contenu du fichier standard est :
      $dolibarr_main_db_user=&quot;dolibarr&quot;;
      $dolibarr_main_db_pass=&quot;&quot;;
 
-=== Paramètres optionnels supplémentaires ===
-
-Vous pouvez ajouter le paramètre supplémentaire optionnel :
-
-     $dolibarr_auto_user=&quot;demo&quot;;
-
-Si vous souhaitez utiliser Dolibarr en mono-utilisateur, il faut quand même que cet utilisateur existe dans la base de données.</text>
+Ce fichier ne doit pas jamais être ni modifié, ni lu, par une fonctionnalité de Dolibarr.
+Il est crée par la procédure d'installation ou de mise a jour de Dolibarr (install/index.php) qui est la seule habilitée à effectuer des actions sur ce fichier.
+Le contenu de ce fichier est accessible au développement à travers de l'objet''' $conf''' ou de constantes ('''DOL_URL_ROOT''' ou '''DOL_DOCUMENT_ROOT''').</text>
     </revision>
   </page>
   <page>
@@ -2755,13 +2794,14 @@ Contains the turnover generated for the providers by our company, as calculated 
   <page>
     <title>Gestion d'erreur</title>
     <revision>
-      <timestamp>2007-03-16T19:41:10Z</timestamp>
+      <timestamp>2008-01-29T22:56:57Z</timestamp>
       <contributor><username>Eldy</username></contributor>
+      <comment>/* Les fonctions */</comment>
       <text>== Les fonctions ==
 
+dolibarr_syslog($message, LOG_INFO|LOG_DEBUG|LOG_ERR);
+
 dolibarr_print_error($db,texte)
-
-
 
 == Gestion d'erreur dans les classes ==
 
@@ -2865,9 +2905,9 @@ Des exemples sont fournis sur des cas de chargement de données.</text>
   <page>
     <title>Installation / Mise a jour</title>
     <revision>
-      <timestamp>2006-06-13T23:25:58Z</timestamp>
-      <contributor><username>Jwarnier</username></contributor>
-      <comment>/* Procédure installation manuelle */</comment>
+      <timestamp>2008-05-12T15:45:59Z</timestamp>
+      <contributor><username>Manou26</username></contributor>
+      <comment>/* Procédure d'installation manuelle */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
@@ -2881,11 +2921,14 @@ Elle est applicable pour toute version de Dolibarr &gt;= 2.0.0
 * Placez-vous dans le répertoire dans lequel installer Dolibarr (le répertoire racine de votre serveur web, par exemple /var/www sous Debian)
  $ cd /var/www
 
-* Récupérez l'archive de l'application (lien ci-dessous par exemple)
- $ wget http://dolibarrint.jexiste.fr/en/index.php?module=documents&amp;JAS_DocumentManager_op=downloadFile&amp;JAS_File_id=17
+* Récupérez l'archive de l'application (lien ci-dessous par exemple : le lien telecharge l'archive sous le nom index.html mais il s'agit bien de l'application)
+ $ wget http://www.dolibarr.fr/component/option,com_docman/task,doc_download/gid,9/Itemid,36/lang,fr/
+
+* Renommer index.html en dolibarr.tgz
+ $ mv index.html dolibarr.tgz
 
 * Décompressez l'archive
- $ tar xvfz dolibarr-2.0.1.tgz
+ $ tar xvfz dolibarr.tgz
 
 * Renommer le répertoire dolibarr-2.0.1 en dolibarr afin d'avoir un nom de répertoire indépendant de la version
  $ mv dolibarr-2.0.1 dolibarr
@@ -2904,7 +2947,7 @@ Elle est applicable pour toute version de Dolibarr &gt;= 2.0.0
 
 * Pointez votre navigateur sur la page principale
 
- http://127.0.0.1/dolibarr/
+ http://127.0.0.1/dolibarr/htdocs/
 
 * Suivez les instructions de l'installation
 
@@ -3124,18 +3167,43 @@ Ce qui peut être testé est écrit ''en italique'' :
   <page>
     <title>Interfaces Dolibarr vers exterieur</title>
     <revision>
-      <timestamp>2006-08-05T17:36:37Z</timestamp>
+      <timestamp>2007-12-27T21:07:56Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Gérer de nouveaux évènements */</comment>
-      <text>== Ajouter son code sur un événement ==
+      <comment>/* Ajouter son code sur un événement Dolibarr */</comment>
+      <text>== Ajouter son code sur un événement Dolibarr ==
 
-Pour permettre de déclencher du code personnalisé en réaction à un évènement Dolibarr (création/modification/suppression d'une société/facture/produit), Dolibarr propose un mécanisme de triggers. Ce mécanisme vous permet de personnaliser un workflow afin que les événements de gestion Dolibarr soient répercutés dans une autre application. Rien n'empèche également de l'utiliser pour modifier le comportement de Dolibarr même: par exemple, pour que la validation d'une facture provoque la création d'un contrat automatiquement.
+Pour permettre de déclencher du code personnalisé en réaction à un évènement Dolibarr (création/modification/suppression d'une société/facture/produit/utilisateur ou autre), Dolibarr propose un mécanisme de triggers métiers. Ce mécanisme vous permet de personnaliser un workflow afin que les évènements de gestion Dolibarr soient répercutés dans une autre application par exemple.
+Rien n'empêche également de l'utiliser pour modifier le comportement de Dolibarr même: par exemple, pour que la validation d'une facture provoque la création d'un contrat automatiquement.
+
+Donc, pour ajouter son propre code qui sera déclenché par trigger, la procédure est la suivante:
 
 
-Donc, pour ajouter son propre code à déclencher par trigger, la procédure est la suivante:
-# Copier le fichier ''includes/triggers/interface_demo.class.php'' sous le nom ''interface_xxx.class.php'' (ou xxx est une chaine de votre choix), en laissant ce nouveau fichier dans le même répertoire. Par exemple ''includes/triggers/interface_monworkflow.class.php''
-# Editer ce fichier ''interface_monworkflow.class.php'' afin de renommer la classe ''InterfaceDemo'' par ''InterfaceMonWorkflow'' et ajouter votre code dans la fonction ''run_trigger''. Cette fonction est appelée à chaque événement Dolibarr. Placer votre code en fonction du ou des événements sur lesquels vous voulez réagir, chaque événement étant identifié par un test sur la variable $action:
+1) Copier le fichier '''htdocs/includes/triggers/interface_all_Demo.class.php''' sous le nom:
+* '''interface_all_''xxx''.class.php'''
+ou bien
+* '''interface_mod''MonModule_xxx''.class.php'''
+où ''xxx'' est une chaine de votre choix et ''MonModule'' est le nom du module si votre trigger ne doit être activé que si le module MonModule est actif.
+Il faut laisser ce nouveau fichier dans le même répertoire.
 
+Par exemple: 
+''htdocs/includes/triggers/interface_modFacture_Monworkflow.class.php''
+
+Les triggers seront déclenchés a chaque évènement Dolibarr a condition que le module Facture soit actif.
+
+
+2) Editer ce fichier ''interface_modMonModule_Monworkflow.class.php'' afin de renommer la classe ''InterfaceDemo'' par ''InterfaceMonworkflow''
+
+
+3) Editer ce fichier afin de renseigner dans '''$this-&gt;name''' la valeur ''Monworkflow''.
+
+Ensuite, accéder à la page Accueil-&gt; Infos Systèmes -&gt; Dolibarr -&gt; Triggers.
+Votre fichier trigger doit apparaitre dans la liste sans erreur indiquant que les opérations précédentes ont été réalisées avec succès.
+
+
+4) Revenez maintenant à l'édition du fichier trigger afin d'ajouter votre code dans la fonction ''run_trigger''.
+Cette fonction est appelée à chaque évènement Dolibarr. Placer votre code en fonction du ou des évènements sur lesquels vous voulez réagir, chaque évènement pouvant être identifié par un test sur la variable '''$action''':
+
+&lt;pre&gt;
   function run_trigger($action,$object,$user,$lang,$conf)
   {
         // Mettre ici le code à exécuter en réaction de l'action
@@ -3153,12 +3221,24 @@ Donc, pour ajouter son propre code à déclencher par trigger, la procédure est
         elseif ($action == 'COMPANY_DELETE')
         ...
   }
+&lt;/pre&gt;
 
-Il n'y a plus qu'à tester, en provoquant l'événement déclencheur dans Dolibarr.
+Vous pouvez faire ce que vous voulez dans cette portion de code du moment que la fonction run_trigger renvoi un code retour sur le principe suivant:
 
-== Gérer de nouveaux évènements ==
+&lt;0 si ko, 0 si aucune action faite, &gt;0 si ok
 
-Les évènements Dolibarr qui provoquent un appel de triggers sont, pour l'instant, identifiés par les codes évènements suivants:
+Vous pouvez de plus dans cette fonction utiliser les objets suivant:
+* '''$object''' est l'objet sur lequel porte l'action (voir chapitre suivant)
+* '''$user''' est l'objet de l'utilisateur Dolibarr qui réalise l'action
+* '''$langs''' est l'objet qui contient la langue de l'utilisateur Dolibarr
+* '''$conf''' est l'objet qui contient toute la configuration de Dolibarr.
+
+Une fois le code réalisé, il n'y a plus qu'à tester, en provoquant l'évènement déclencheur dans Dolibarr. Attention, l'appel au '''run_trigger''' et encapsuler dans un transaction. Si votre trigger renvoie un code ko, la fonction appelante peut annuler la transaction (ceci dépend de la fonction appelante).
+Ajouter des traces dans la fonction '''run_trigger''' afin de vous assurer que le code s'exécute bien.
+
+== Liste des évènements connus ==
+
+Les évènements Dolibarr qui provoquent un appel de triggers sont, pour l'instant, identifiés par les codes '''$action''' évènements suivants:
 
 * USER_CREATE
 * USER_MODIFY
@@ -3224,6 +3304,7 @@ Dans ce cas, la variable $object contient un objet de type ficheinter.class.php
 Dans ces cas, la variable $object contient un objet de type adherent.class.php
 
 
+== Gérer de nouveau évènements ==
 
 Pour gérer d'autre évènements que ceux ci-dessus, il faut modifier le code Dolibarr pour y ajouter la séquence suivante dans les méthodes métiers des classes utilisées pour gérer les évenements:
 
@@ -3264,8 +3345,8 @@ Il sera alors possible d'ajouter dans la méthode run_trigger, un if qui permet 
   <page>
     <title>Interfaces Exterieur vers Dolibarr</title>
     <revision>
-      <timestamp>2006-05-24T22:55:30Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
+      <timestamp>2008-01-28T21:23:25Z</timestamp>
+      <contributor><username>Hl</username></contributor>
       <comment>/* Utilisation des classes PHP */</comment>
       <text>Il y a 2 méthodes pour permettre à une application extérieure d'insérer des données dans Dolibarr. Les 2 techniques possibles sont les suivantes:
 
@@ -3281,7 +3362,7 @@ De plus, en utilisant cette méthode, vous passer outre les règles de validatio
 Il est possible d'utiliser les objets métiers de dolibarr (Les fichiers xxx.class.php).
 Chacun de ces fichiers offre un classe munie de methodes pour:
 * la récupération d'une entité (la méthode fetch)
-* l'insertion en base d'un entité (la méthode create ou insert)
+* l'insertion en base d'une entité (la méthode create ou insert)
 * la mise à jour d'une entité (la méthode update)
 * la suppression d'une entité (la méthode delete) si applicable à l'objet
 * d'autres méthodes diverses propre à l'entité manipulée.
@@ -3305,9 +3386,9 @@ Cette technique est préférable à la précédente.
   <page>
     <title>Langages et normes</title>
     <revision>
-      <timestamp>2007-09-15T16:41:40Z</timestamp>
+      <timestamp>2008-04-03T11:22:01Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Normes PHP */</comment>
+      <comment>/* Communication Logique métier - Données (ORM) */</comment>
       <text>Voici les quelques règles sur le langage, la syntaxe et normes de développement en vigueur pour le projet Dolibarr:
 
 
@@ -3315,9 +3396,8 @@ Cette technique est préférable à la précédente.
 
 * Dolibarr doit fonctionner sur:
 # Tous OS (Windows, Linux, MACOS...)
-# PHP 4.1 ou + (Doit fonctionner sans aucun module PHP complémentaire hors les modules d'accès base de donnée).
+# PHP 4.3 ou + (Doit fonctionner sans aucun module PHP complémentaire hors les modules d'accès base de donnée).
 # Mysql 3.1 ou +
-
 
 == Normes PHP ==
 
@@ -3380,7 +3460,7 @@ A ce jour, très peu de fonctions respectent ce standard mais c'est celui vers l
 
  INSERT INTO table_1 (field_txt, field_num) VALUES ('txt','1234')
 
-
+* Dolibarr doit fonctionner meme avec l'option '''strict''' de Mysql.
 
 == Normes HTML ==
 
@@ -3404,14 +3484,51 @@ if ($conf-&gt;use_javascript)
 
 * Les scripts externes sont écrits en Perl s'ils ne peuvent l'être en php, l'utilisation d'un autre langage n'est pas interdit mais doit être discuté au préalable dans la mailing list des développeurs. Le langage devra être maitrisé par au moins 2 développeurs pour en assurer la maintenance.
 
-
 == Squelettes de code ==
 
-Afin d'uniformiser le code et d'accélérer le développement de nouveaux composants dans Dolibarr, se trouve dans le répertoire '''dev/skeletons''', 3 squelettes de code tout préparé.
+Afin d'uniformiser le code et d'accélérer le développement de nouveaux composants dans Dolibarr, se trouvent dans le répertoire '''dev/skeletons''', 4 squelettes de code tout préparés.
 
+* 1 qui sert d'exemple de descripteur de module: '''myModule.class.php'''
 * 1 qui sert d'exemple de code pour faire une nouvelle classe: '''skeleton_class.class.php'''
 * 1 qui sert d'exemple de code pour faire une nouvelle page: '''skeleton_page.php'''
-* 1 qui sert d'exemple de code pour faire un script à exécuter en ligne de commande: '''skeleton_script.php'''</text>
+* 1 qui sert d'exemple de code pour faire un script à exécuter en ligne de commande: '''skeleton_script.php'''
+
+== Programmation Objet ==
+
+=== Motifs d'organisation du code: ===
+
+'''Martin Fowler''' a identifié 3 méthodes d'organisation du code appelées '''motifs''':
+* Le '''Transaction Script''' (Le code est linéraire en fonction d'une action utilisateur).
+C'est le motif à l'ancienne utilisé dans les langages procéduraux.
+Inconvénient: Redondance du code. Nécessité de connaitre le modèle physique pour développer.
+* Le '''Domain Model'''
+C'est un concept possible depuis les langages objets. Ce sont les procédures métiers (qui doivent être identifiés avant) qui servent de bases pour les classes objets.
+Inconvénient: Motif complexe à maintenir.
+* Le '''Table Module'''
+Un intermédiaire entre les 2 précédents où l'on a une instance unique de classe par table de la base de donnée.
+
+Comme le montre les squelettes de code (voir point précédent), Dolibarr se base sur le principe du '''Table Module'''.
+
+=== Communication Logique métier - Données (ORM): ===
+
+Il existe 3 modes de liaisons:
+* Le Table And Row Data Gateway
+C'est le plus simple. On crée une table par classe et chaque classe est un pont avec la table correspondante, voir une classe par ligne de table. Une instance de classe étant alors un enregistrement de la table. La classe ne contient que du code d'accès aux lignes ou colonnes de tables.
+
+Exemple: C'est le mode mis en oeuvre quand on utilise certains Frameworks d'ORM comme '''iBatis''' (http://ibatis.apache.org/).
+
+* Le Active Record
+Identique au précédent, mais on se permet d'ajouter quelques fonctions métiers sur la classe, à conditions que ces fonctions soient propres a la table ou à l'enregistrement.
+
+Exemple: C'est le mode choisi pour les développements Dolibarr et de nombreuses autres applications PHP qui ont leur propre framework et pratiques de développements.
+
+* Le Data Mapper
+Les classes représentent les entités du problème et non les données. Il faut donc doubler, tripler... ces classes avec des classes Mapper pour accéder aux données.
+
+Exemple: C'est le choix si on utilise le Framework d'ORM '''Propel''' (http://propel.phpdb.org/trac/).
+
+
+Pour les développements Dolibarr, il est recommandé d'utiliser le mode de liaison '''Active Record''' qui offre les avantages d'un modèle proche du métier sans en avoir la complexité et sans trop masquer non plus la technique. C'est dans ce mode que le développement, la compréhension du code et la maintenance technique et/ou fonctionnelle) est la plus productiove.</text>
     </revision>
   </page>
   <page>
@@ -3491,23 +3608,34 @@ Régis ''(votez pour lui si vous ne votez pas pour moi)'', Rodolphe, etc...
   <page>
     <title>Librairies externes et dépendances</title>
     <revision>
-      <timestamp>2007-02-08T11:25:22Z</timestamp>
+      <timestamp>2008-05-18T15:36:06Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Librairies embarquées dans le code source */</comment>
-      <text>== Librairies embarquées dans le code source ==
-Toutes les librairies embarqués Dolibarr sont situées dans le répertoire htdocs/includes
-* Librairies fckeditor
-* Librairies de génération de pdf
-http://www.fpdf.org/
-* Librairies magpierss
-* Librairies nusoap
-* Librairies pear (authentification)
-* Librairie d'export au format tableur Excel
-http://www.bettina-attack.de/jonny/view.php/projects/php_writeexcel/
-* Librairies phplot4 et phplot5
-* Librairies scriptaculous
-* Librairies treemenu
-* Librairies xmlrpc
+      <comment>/* Librairies embarquées dans le code source (valable pour la version 2.4) */</comment>
+      <text>== Librairies embarquées dans le code source (valable pour la version 2.4) ==
+
+Toutes les librairies embarqués Dolibarr sont situées, soit dans le répertoire '''htdocs/includes''':
+* Librairies AdoDb-Date
+* Librairies PHP-barcode
+* Librairies Fckeditor (http://www.fckeditor.net)
+* Librairies de génération de pdf FPDF (http://www.fpdf.org)
+* Librairies de génération de pdf FPDI
+* Librairies chargement RSS Magpierss
+* Librairies Nusoap modifié pour ne pas avoir de conflit avec PHP5
+* Librairies PHP_WriteExcel
+* Librairies Prototype
+* Librairies Scriptaculous
+* Librairies PWC
+* Librairies Treemenu
+* Librairies VCard
+
+Soit dans le répertoire '''external-libs''':
+* Librairies Artichow pour les graphismes
+* Librairies Smarty (non utilisé)
+
+
+Toutes ces librairies embarquées doivent respecter les règles suivantes:
+* Elles doivent être compatibles avec la licence de Dolibarr. Le fichier '''COPYRIGHT''' dans la racine de Dolibarr liste toutes les librairies embarquée avec leur licence en vigueur.
+* Si une modification est faite sur le livrable de la librairie, il doit etre notifié dans le fichier '''htdocs/includes/dolibarr_changes.txt'''
 
 == Librairies externes ==
 
@@ -3756,17 +3884,14 @@ Si le résultat et la liste des destinataires lui conviennent, il passe le maili
   <page>
     <title>Mise à jour du format de la base</title>
     <revision>
-      <timestamp>2006-02-21T10:32:55Z</timestamp>
-      <contributor><ip>83.195.47.241</ip></contributor>
-      <comment>/* La solution automatique */</comment>
+      <timestamp>2008-01-13T22:17:35Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <text>Cette méthode de migration de la base est valable aussi bien pour un passage:
 * D'une ancienne version stable ou CVS à une version stable.
 * D'une ancienne version stable ou CVS vers la version CVS actuelle.
 
 
-Pour mettre a jour son modèle de données (sans perdre les données), il y a 2 solutions:
-
-== La solution automatique ==
+Pour mettre a jour son modèle de données (sans perdre les données), il n'y a qu'une solution:
 
 Après avoir écrasé les anciens fichiers Dolibarr par les nouveaux, appeler la page install.
 Exemple:
@@ -3774,19 +3899,16 @@ Exemple:
 http://localhost/dolibarr/install/
 &lt;/pre&gt;
 
-== La solution manuelle ==
+Et choisir l'option '''migration'''.
 
-Il faut juste passer le script de migration, exemple  1.1.0-2.0.0.sql
-Le script peut etre passé plusieurs fois même sur une version déjà 
-bonne. Il faut cependant ignorer toutes les erreurs (le script n'aura 
-aucune erreur si on vient d'une version stable mais, si on était deja avancé, il 
-faut ignorer les erreurs). À l'issue de ce script la base est en 
-dernière version CVS...
-
-La commande mysql pour ne pas tenir compte des erreurs :
-&lt;pre&gt;
-mysql -f -uuser -ppassword -Dnom_base_dolibarr &lt; nomscript.sql
-&lt;/pre&gt;</text>
+Remarque:
+il est techniquement possible de passer le script de migration en manuel mais de nombreuses erreurs seront alors affichés.
+Seul l'intelligence de la procédure d'installation est capable de dire quelles sont les erreurs à ignorer (du a un deuxieme
+lancement par exemple) et quelles erreurs necessitent une analyse.
+De plus le passage de ce script ne realise qu'une partie de la migration (la partie mise a jour du modele physique et 
+quelques mise a jour des données). Mais certaines opérations complexes sur les données sont
+codées directement dans les pages de mises a jour. 
+Aussi, seule une mise a jour par la procédure automatisée garantie une état stable final.</text>
     </revision>
   </page>
   <page>
@@ -4782,6 +4904,32 @@ Nous utilisons quotidiennement [[Dolibarr]] pour nos propres besoins, et envisag
     </revision>
   </page>
   <page>
+    <title>Outils de développement</title>
+    <revision>
+      <timestamp>2008-05-18T17:43:48Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Pour tous */</comment>
+      <text>Tout environnement de développement peut être utilisé.
+Toutefois voici une liste d'outils fortement recommandés pour leur complétude, leur qualité et la productivité du développement qu'ils apportent. Il est utilisé par certains des développeurs principaux de Dolibarr. Notons que toutes ces solutions sont gratuites et OpenSource.
+
+== Pour tous ==
+
+* Eclipse avec le module PHPClipse pour Eclipse.
+
+* Firefox 2.0 ou plus avec les plugins: Tamper Data, HTMLValidator, Phplangeditor, Firebug + Firecookie.
+
+* SquirrelSql (pour l'administration de base)
+
+== Et si vous êtes sous Windows ==
+
+* WampServer 2 (pour le base Mysql, Apache et PHP tout clé en main). Ce serveur WAMP offre le trio MySql+Apache+PHP installé en clé en main, avec possibilité de basculer de version pour n'importe lequel des ces composants d'un simple clic). Un must !
+
+* Notepad++ (pour ceux qui ne supportent pas java ou utilisent un vieux coucou trop faible pour Eclipse).
+
+* WinMerge (pour la comparaison de fichiers ou répertoires)</text>
+    </revision>
+  </page>
+  <page>
     <title>Permissions</title>
     <revision>
       <timestamp>2006-11-11T17:53:33Z</timestamp>
@@ -4954,9 +5102,9 @@ Un produit associés est un [[Produits|produit]] à part entière. Le fait d'ass
   <page>
     <title>Projet</title>
     <revision>
-      <timestamp>2007-05-15T16:23:37Z</timestamp>
-      <contributor><username>Grandoc</username></contributor>
-      <comment>/* Présentation */</comment>
+      <timestamp>2008-03-17T14:45:45Z</timestamp>
+      <contributor><username>Tdeme</username></contributor>
+      <comment>/* Créer un projet */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
@@ -4965,7 +5113,7 @@ Un projet permet de regrouper des [[Proposition commerciale|propositions commerc
 
 == Créer un projet ==
 
-La création d'un nouveau projet se fait depuis la fiche client ou prospect d'une société via le bouton &quot;Créer projet&quot;</text>
+La création d'un nouveau projet se fait depuis la fiche client ou prospect (à partir de l'onglet &quot;Tiers&quot;) d'une société via le bouton &quot;Créer projet&quot;</text>
     </revision>
   </page>
   <page>
@@ -5096,9 +5244,12 @@ Si le fonctionnement avec l'option mode=STRICT renvoie des warnings ou erreur me
   <page>
     <title>Rapports TVA</title>
     <revision>
-      <timestamp>2007-03-05T23:05:08Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
-      <text>Les rapports TVA actuellement disponibles sont utilisables mais encore imparfaits. Il vaut mieux vérifier les calculs/totaux avant de les utiliser pour remplir une déclaration.
+      <timestamp>2008-02-03T10:00:36Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
+      <text>{{Navigation documentation}}
+{{TemplateDocUtil}}
+
+Les rapports TVA actuellement disponibles sont utilisables mais encore imparfaits. Il vaut mieux vérifier les calculs/totaux avant de les utiliser pour remplir une déclaration.
 
 Par exemple, dans le rapport TVA *quadri*, les totaux calculés:
 * ne font pas de distinction entre produits et services, 
@@ -5113,13 +5264,12 @@ Il existe désormais (version 2.1) un rapport '''quadri détail''' qui permet d'
   <page>
     <title>Roadmap</title>
     <revision>
-      <timestamp>2007-10-29T13:45:34Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
+      <timestamp>2007-12-27T21:17:59Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <text>* [[Roadmap 2.0.0]] - Disponible depuis février 2005
-* [[Roadmap 2.1.0]] - Abandonnée car mauvaise gestion des arrondis bloquant
-* [[Roadmap 2.2.0]]
-* [[Roadmap 2.3.0]]
-* [[Roadmap 2.4.0]]
+* [[Roadmap 2.1.0]] - Abandonnée car mauvaise gestion des arrondis bloquant et gestion avoir clients incomplete
+* [[Roadmap 2.2.0]] - Disponible depuis le 26/12/2007
+* [[Roadmap 2.4.0]] - C'est en cours...
 * [[Roadmap 2.6.0]]</text>
     </revision>
   </page>
@@ -5335,15 +5485,16 @@ pluton: non opérationnel
   <page>
     <title>Roadmap 2.2.0</title>
     <revision>
-      <timestamp>2007-10-29T13:44:58Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
-      <comment>/* Autre */</comment>
+      <timestamp>2007-12-27T21:20:26Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Features (english version) */</comment>
       <text>[[Roadmap]] Dolibarr pour la version 2.2.0
 
 
 == Fonctionnalités ==
 
 * &lt;strike&gt;Corrections des retours de la 2.1.0&lt;/strike&gt;
+* &lt;strike&gt;Correction pb avoir client&lt;/strike&gt;
 * &lt;strike&gt;
 - Add more statistics on main page.
 - Add option to add message on login page.
@@ -5368,13 +5519,11 @@ pluton: non opérationnel
 - Better support of vcard export format.
 - Themes are full CSS compliant.
 &lt;/strike&gt;
-* Correction pb avoir client
 
 == Features (english version) ==
 
 * Fix bug reports of 2.1.0
 * Reported to 2.3.0 &lt;strike&gt;Addition of multi-currencies management, only in informative mode at first (Yannick Warnier)&lt;/strike&gt;
-* Addition of documents history (if invoice generated and sent to the client, keep that precise invoice in this form at all costs - with date)
 * Better database input filtering (prevent easy attacks by disatisfied employees) (continual effort)
 * Reported to 2.3.0 &lt;strike&gt;Improvements of invoice-related e-mail sending: configurable default fields, automatical CC to a specified e-mail address, drop-down, title and body language in the contact info (introduce concept of contact language)&lt;/strike&gt;
 * Reported to 2.3.0 &lt;strike&gt;Improvements in the commercial management features. Introduce dated notes, contacts belonging to more than one company, notion of &quot;referral&quot; (a client refers us to another - to keep track of worthy clients)&lt;/strike&gt;
@@ -5425,26 +5574,19 @@ Tous les themes sont opérationnels sauf 'rodolphe' qui n'a aucun picto.
   <page>
     <title>Roadmap 2.3.0</title>
     <revision>
-      <timestamp>2007-10-29T13:46:49Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
-      <text>[[Roadmap]] Dolibarr pour la version 2.3.0
-
-* La possibilité d'utiliser les librairies présentes sur le système d'exploitation (BenoitMortier)
-
-
-* Addition of multi-currencies management, only in informative mode at first (Yannick Warnier)
-* Improvements of invoice-related e-mail sending: configurable default fields, automatical CC to a specified e-mail address, drop-down, title and body language in the contact info (introduce concept of contact language)
-* Improvements in the commercial management features. Introduce dated notes, contacts belonging to more than one company, notion of &quot;referral&quot; (a client refers us to another - to keep track of worthy clients)
-* Manage members language (e-mail sending)</text>
+      <timestamp>2007-12-27T21:21:00Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text></text>
     </revision>
   </page>
   <page>
     <title>Roadmap 2.4.0</title>
     <revision>
-      <timestamp>2007-08-08T13:59:31Z</timestamp>
+      <timestamp>2007-12-27T21:21:27Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <text>[[Roadmap]] Dolibarr pour la version 2.4.0
 
+* Nettoyage des librairies incluses.
 * Ajout de la gestion multi-devise en mode informatif seulement dans un premier temps (Yannick Warnier)
 * Ajout d'historique de documents générés pour les factures (si une facture est générée et envoyée au client, la conserver à tout prix sous cette forme - avec date)
 * Meilleur filtrage des données à l'insertion dans la DB (effort continu)
@@ -5454,18 +5596,24 @@ Tous les themes sont opérationnels sauf 'rodolphe' qui n'a aucun picto.
 * La gestion des produits (BenoitMortier)
 * La gestion du stock (BenoitMortier)
 * Création d'un package debian (BenoitMortier)
-* La notion de Projets doit pouvoir contenir plusieurs sociétés et ne pas etre propre à une société (LaurentDestailleur)</text>
+* La notion de Projets doit pouvoir contenir plusieurs sociétés et ne pas etre propre à une société (LaurentDestailleur)
+* Addition of documents history (if invoice generated and sent to the client, keep that precise invoice in this form at all costs - with date)
+* La possibilité d'utiliser les librairies présentes sur le système d'exploitation (BenoitMortier)
+* Addition of multi-currencies management, only in informative mode at first (Yannick Warnier)
+* Improvements of invoice-related e-mail sending: configurable default fields, automatical CC to a specified e-mail address, drop-down, title and body language in the contact info (introduce concept of contact language)
+* Improvements in the commercial management features. Introduce dated notes, contacts belonging to more than one company, notion of &quot;referral&quot; (a client refers us to another - to keep track of worthy clients)
+* Manage members language (e-mail sending)</text>
     </revision>
   </page>
   <page>
     <title>Roadmap 2.6.0</title>
     <revision>
-      <timestamp>2005-05-14T13:20:29Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
+      <timestamp>2007-12-18T11:00:12Z</timestamp>
+      <contributor><username>Hregis</username></contributor>
       <text>[[Roadmap]] Dolibarr pour la version 2.6.0
 
 * Un module de vrai compta: Paramétrage du plan de compte et du schéma de ventilation des évènements de gestion dans ces comptes + Les rapports comptables: bilan, compte de résultat, grand livre, etc (LaurentDestailleur)
-* Outils de gestion de parc informatique (BenoitMortier)
+* Outils de gestion de parc informatique (BenoitMortier) (connecteur avec GLPI - Régis Houssin)
 * Gestion de projets (BenoitMortier)
 * Lien avec les système bancaire belge (BenoitMortier)</text>
     </revision>
@@ -5747,7 +5895,7 @@ Ce script doit être éxécuté une fois par jour, il remplit la [[entrepot_valo
   <page>
     <title>Système de menus</title>
     <revision>
-      <timestamp>2006-08-17T22:32:17Z</timestamp>
+      <timestamp>2008-01-15T08:39:37Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <comment>/* Développer son propre système de menu */</comment>
       <text>
@@ -5764,7 +5912,11 @@ Et si cela ne vous convient toujours pas, rien ne vous empêche de développer l
 
 == Développer son propre système de menu ==
 
-Le plus simple est de prendre exemple sur les gestionnaires de menu &quot;eldybackoffice&quot;.
+Le but de cet article est de décrire comment créer un nouveau système de menu dans son intégralité (remplacement de l'intégralité des entrées menus).
+Si vous désirez juste savoir comment ajouter des entrées menus au sein d'un gestionnaire de menu existant, dans le cadre du développement d'une extension par exemple, reporter vous a la page [[Developpement module]].
+
+Si vous voulez remplacer intégralement un systeme de menu par le votre, le plus simple est de prendre exemple sur le gestionnaire de menu &quot;eldy_backoffice&quot;.
+
 * Pour développer son '''système de menu haut''', il suffit de
 # Copier le fichier htdocs/includes/menus/barre_top/eldybackoffice.php sous un autre nom comme htdocs/includes/menus/barre_top/monmenu.php
 # Editer ensuite le fichier monmenu.php. La fonction showmenu() est la fonction appelée par Dolibarr lorsqu'il génère une page pour afficher ce menu haut. On peut y mettre le code que l'on veut, cette fonction ne modifie aucune variable extérieur et doit juste afficher par des &quot;print&quot; le menu que l'on veut voir. On peut ainsi récupérer le menu à afficher depuis un fichier de configuration, une base de donnée et le personnaliser par rapport à l'environnement. L'environnement Dolibarr étant stocké dans les 3 objets global suivant: $user, $conf, $langs.

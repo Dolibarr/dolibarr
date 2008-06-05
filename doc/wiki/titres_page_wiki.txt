@@ -29,6 +29,7 @@ Customisation des documents dolibarr
 Developpement module
 Developpement script
 Devenir développeur
+Développement
 Diagramme_Dolibarr_2.2
 Diagramme_des_base_de_données
 DocUtilisateur
@@ -117,6 +118,7 @@ Modules
 Nomination chef de projet
 OpenXtrem
 Outils et principes
+Outils de développement
 Permissions
 PhpLangEditor
 Premiers paramétrages
