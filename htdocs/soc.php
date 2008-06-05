@@ -662,7 +662,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $soc->fournisseur=$_POST["fournisseur"];
             $soc->code_fournisseur=$_POST["code_fournisseur"];
             $soc->adresse=$_POST["adresse"];
-            $soc->zip=$_POST["zip"];
+            $soc->cp=$_POST["cp"];
             $soc->ville=$_POST["ville"];
             $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:$conf->global->MAIN_INFO_SOCIETE_PAYS;
             $soc->departement_id=$_POST["departement_id"];
@@ -677,8 +677,10 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $soc->idprof4=$_POST["idprof4"];
             $soc->typent_id=$_POST["typent_id"];
             $soc->effectif_id=$_POST["effectif_id"];
-
-			      $soc->tva_assuj = $_POST["assujtva_value"];
+            
+            $soc->forme_juridique_code=$_POST["forme_juridique_code"];
+            
+			$soc->tva_assuj = $_POST["assujtva_value"];
             $soc->tva_intra_code=$_POST["tva_intra_code"];
             $soc->tva_intra_num=$_POST["tva_intra_num"];
 
