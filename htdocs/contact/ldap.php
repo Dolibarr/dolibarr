@@ -28,6 +28,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 $langs->load("companies");
 $langs->load("ldap");
