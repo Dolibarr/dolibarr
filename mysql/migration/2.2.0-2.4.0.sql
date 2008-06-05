@@ -329,3 +329,4 @@ insert into llx_c_type_fees (code,libelle,active) values ('TF_OTHER',    'Other'
 insert into llx_c_type_fees (code,libelle,active) values ('TF_TRIP',     'Trip',   1);
 insert into llx_c_type_fees (code,libelle,active) values ('TF_LUNCH',    'Lunch',  1);
 
+drop table llx_comfourn_facfourn;
