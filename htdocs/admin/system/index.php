@@ -15,14 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
    \file       htdocs/admin/system/index.php
    \brief      Page accueil infos système
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -35,6 +33,10 @@ $langs->load("install");
 if (!$user->admin)
   accessforbidden();
 
+  
+/*
+ * View
+ */
 
 llxHeader();
 
