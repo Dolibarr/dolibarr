@@ -330,3 +330,6 @@ insert into llx_c_type_fees (code,libelle,active) values ('TF_TRIP',     'Trip',
 insert into llx_c_type_fees (code,libelle,active) values ('TF_LUNCH',    'Lunch',  1);
 
 drop table llx_comfourn_facfourn;
+
+alter table llx_element_element modify sourcetype		varchar(16) NOT NULL;
+alter table llx_element_element modify targettype		varchar(16) NOT NULL;

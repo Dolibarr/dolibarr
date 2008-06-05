@@ -82,17 +82,6 @@ alter table llx_cond_reglement add (decalage smallint(6) default 0);
 alter table llx_commande add fk_cond_reglement int(11) DEFAULT NULL;
 alter table llx_commande add fk_mode_reglement int(11) DEFAULT NULL;
 
-create table llx_comfourn_facfourn
-(
-  rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  fk_commande integer NOT NULL,
-  fk_facture  integer NOT NULL,
-
-  key(fk_commande),
-  key(fk_facture)
-)type=innodb;
-
-
 
 alter table llx_categorie drop column fk_statut;
 alter table llx_categorie add visible tinyint DEFAULT 1 NOT NULL;

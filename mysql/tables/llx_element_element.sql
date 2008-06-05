@@ -25,8 +25,8 @@ create table llx_element_element
 (
   rowid           	integer AUTO_INCREMENT PRIMARY KEY,  
   sourceid			integer NOT NULL,
-  sourcetype		varchar(12) NOT NULL,
+  sourcetype		varchar(16) NOT NULL,
   targetid			integer NOT NULL,
-  targettype		varchar(12) NOT NULL
+  targettype		varchar(16) NOT NULL
 ) type=innodb;
 
