@@ -137,6 +137,7 @@ if ($socid > 0)
 	// Country
     print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
 	if ($societe->isInEEC()) print $form->textwithhelp($societe->pays,$langs->trans("CountryIsInEEC"),1,0);
+	else print $societe->pays;
 	print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel,$societe->pays_code).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax,$societe->pays_code).'&nbsp;</td></tr>';
