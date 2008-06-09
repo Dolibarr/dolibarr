@@ -177,7 +177,7 @@ if ($_GET["action"] == 'create')
 {
 	print_fiche_titre($langs->trans("NewSocialContribution"));
 	print "<br>\n";
-
+	
 	if ($mesg) print $mesg.'<br>';
 	
     $var=false;
@@ -207,12 +207,12 @@ if ($_GET["action"] == 'create')
     print '<tr '.$bc[$var].' valign="top">';
     print '<td>&nbsp;</td>';
     print '<td>';
-	print $html->select_date('-1', 'ech', 0, 0, 0, 'charge', 1);
+    print $html->select_date('-1', 'ech', 0, 0, 0, 'charge', 1);
 	print '</td>';
     print '<td><input type="text" size="8" name="period"><br>YYYYMMDD</td>';
 
-    print '<td align="left"><select class="flat" name="type">';
-	$html->select_type_socialcontrib();
+    print '<td align="left">';
+    $html->select_type_socialcontrib();
     print '</td>';
 
     print '<td align="left"><input type="text" size="34" name="label" class="flat"></td>';

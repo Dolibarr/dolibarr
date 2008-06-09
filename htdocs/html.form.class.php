@@ -586,16 +586,20 @@ class Form
 	{
 		global $db,$langs,$user;
 
-	    print '<select class="flat" name="'.$htmlname.'">';
-		$sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-	    $sql .= " ORDER BY lower(c.libelle) ASC";
-	    $resql=$db->query($sql);
+		$sql = "SELECT c.id, c.libelle as type";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+	    $sql.= " WHERE active = 1";
+		$sql.= " ORDER BY c.libelle ASC";
+
+		dolibarr_syslog("Form::select_type_socialcontrib sql=".$sql, LOG_DEBUG);
+		$resql=$db->query($sql);
 		if ($resql)
 	    {
-	      $num = $db->num_rows($resql);
-	      $i = 0;
+	    	print '<select class="flat" name="'.$htmlname.'">';
+	    	$num = $db->num_rows($resql);
+	      	$i = 0;
 
-	      while ($i < $num)
+	      	while ($i < $num)
 	        {
 	          $obj = $db->fetch_object($resql);
 	          print '<option value="'.$obj->id.'"';
@@ -603,9 +607,13 @@ class Form
 	          print '>'.$obj->type;
 	          $i++;
 	        }
+	    	print '</select>';
+	    	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 	    }
-	    print '</select>';
-	    if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+	    else
+	    {
+	    	dolibarr_print_error($db,$db->lasterror());
+	    }
 	}
 	
 	/**
