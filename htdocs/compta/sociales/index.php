@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
     	\file       htdocs/compta/sociales/index.php
 		\ingroup    tax
 		\brief      Ecran des charges sociales
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -54,7 +51,7 @@ $filtre=$_GET["filtre"];
 
 
 /*
- *  Affichage liste et formulaire des charges.
+ *	View
  */
 
 llxHeader();
@@ -127,31 +124,40 @@ if ($resql)
 
 		$var = !$var;
 		print "<tr $bc[$var]>";
+		
 		print '<td width="60">';
 		print '<a href="charges.php?id='.$obj->id.'">'.img_file().' '.$obj->id.'</a>';
 		print '</td>';
 
-		print '<td width="110">'.dolibarr_print_date($obj->de).'</td>';
-		print '<td>';
-		if ($obj->periode) {
+		print '<td width="110">'.dolibarr_print_date($obj->de, 'day').'</td>';
+		
+		print '<td align="center">';
+		if ($obj->periode) 
+		{
 			print '<a href="index.php?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a>';
-			} else {
-				print '&nbsp;';
-			}
-			print '</td>';
-			print '<td>'.$obj->type_lib.'</td><td>'.dolibarr_trunc($obj->libelle,36).'</td>';
-			print '<td align="right" width="100">'.price($obj->amount).'</td>';
-
-			print '<td align="right" nowrap="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
-
-			print '</tr>';
-			$i++;
 		}
+		else 
+		{
+			print '&nbsp;';
+		}
+		print '</td>';
+
+		print '<td>'.dolibarr_trunc($obj->type_lib,16).'</td>';
+		
+		print '<td>'.dolibarr_trunc($obj->libelle,36).'</td>';
+		
+		print '<td align="right" width="100">'.price($obj->amount).'</td>';
+
+		print '<td align="right" nowrap="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
+
+		print '</tr>';
+		$i++;
 	}
-	else
-	{
-		dolibarr_print_error($db);
-	}
+}
+else
+{
+	dolibarr_print_error($db);
+}
 
 print '</table>';
 
