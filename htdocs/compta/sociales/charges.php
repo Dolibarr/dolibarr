@@ -112,7 +112,7 @@ if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 	{
 		$chargesociales=new ChargeSociales($db);
 		
-		$chargesociales->type=$_POST["type"];
+		$chargesociales->type=$_POST["actioncode"];
 		$chargesociales->lib=$_POST["label"];
 		$chargesociales->date_ech=$dateech;
 		$chargesociales->periode=$_POST["period"];
