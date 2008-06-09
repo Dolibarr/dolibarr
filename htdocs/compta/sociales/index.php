@@ -69,7 +69,7 @@ print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("Ref"),"index.php","id","","","",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateDue"),"index.php","de","","","",$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Period"),"index.php","periode","","","",$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Period"),"index.php","periode","","",'align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Type"),"index.php","type","","",'align="left"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","","",'align="left"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","","",'align="right"',$sortfield,$sortorder);
