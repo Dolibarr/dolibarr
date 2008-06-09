@@ -235,6 +235,7 @@ InvoiceNote=Invoice note
 InvoicePayed=Invoice payed
 PaymentNumber=Payment number
 RemoveDiscount=Remove discount
+WatermarkOnDraftBill=Watermark on draft invoices (nothing if empty)
 
 # PaymentConditions
 PaymentConditionShortRECEP=Immediate

@@ -234,6 +234,7 @@ InvoiceNote=Note facture
 InvoicePayed=Facture payée
 PaymentNumber=Numéro paiement
 RemoveDiscount=Supprimer remise
+WatermarkOnDraftBill=Filigrane sur les brouillons de factures (aucun si vide)
 
 # PaymentConditions
 PaymentConditionShortRECEP=A réception
