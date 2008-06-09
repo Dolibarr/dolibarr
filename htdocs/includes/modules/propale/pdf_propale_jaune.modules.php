@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +17,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**	    \file       htdocs/includes/modules/propale/pdf_propale_jaune.modules.php
 		\ingroup    propale
 		\brief      Fichier de la classe permettant de générer les propales au modèle Jaune
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
@@ -54,6 +53,8 @@ class pdf_propale_jaune extends ModelePDFPropales
         $this->page_largeur = 210;
         $this->page_hauteur = 297;
         $this->format = array($this->page_largeur,$this->page_hauteur);
+		
+		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
         $this->error = "";
 
@@ -284,6 +285,26 @@ class pdf_propale_jaune extends ModelePDFPropales
 
   function _pagehead(&$pdf, $propale)
     {
+	//Affiche le filigrane brouillon - Print Draft Watermark
+		if($propale->statut==0 && defined("PROPALE_DRAFT_WATERMARK") )		
+		{
+			$watermark_angle=deg2rad(55);
+			$watermark_x=5;
+			$watermark_y=$this->page_hauteur-50;
+			$watermark_width=300;
+			$pdf->SetFont('Arial','B',50);
+			$pdf->SetTextColor(255,192,203);
+			//rotate
+			$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$pdf->k,($pdf->h-$watermark_y)*$pdf->k,-$watermark_x*$pdf->k,-($pdf->h-$watermark_y)*$pdf->k));
+			//print watermark
+			$pdf->SetXY($watermark_x,$watermark_y);
+			$pdf->Cell($watermark_width,25,clean_html(PROPALE_DRAFT_WATERMARK),0,2,"C",0);
+			//antirotate
+			$pdf->_out('Q');
+		}
+		
+	//print Content
+	
       $pdf->SetXY(12,42);
       if (defined("FAC_PDF_INTITULE"))
 	{

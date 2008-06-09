@@ -642,6 +642,7 @@ EnableEditDeleteValidInvoice=Enable the possibility to edit/delete valid invoice
 SuggestPaymentByRIBOnAccount=Suggest payment by withdraw on account
 SuggestPaymentByChequeToAddress=Suggest payment by cheque to
 FreeLegalTextOnInvoices=Free text on invoices
+WatermarkOnDraftInvoices=Watermark on draft invoices (any if empty)
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms
@@ -657,6 +658,7 @@ AddShippingDateAbility=Add shipping date ability
 AddDeliveryAddressAbility=Add delivery date ability
 UseOptionLineIfNoQuantity=A line of product/service with a zero amount is considered as an option
 FreeLegalTextOnProposal=Free text on commercial proposals
+WatermarkOnDraftProposal=Watermark on draft commercial proposals (any if empty)
 ##### Orders #####
 OrdersSetup=Orders' management setup
 OrdersNumberingModules=Orders numbering modules
@@ -664,9 +666,11 @@ OrdersModelModule=Order documents models
 HideTreadedOrders=Hide the treated or canceled orders in the list
 ValidOrderAfterPropalClosed=To validate the order after proposal closer, makes it possible not to step by the provisional order
 FreeLegalTextOnOrders=Free text on orders
+WatermarkOnDraftOrders=Watermark on draft orders (any if empty)
 ##### Fiche inter #####
 FicheinterNumberingModules=Intervention numbering modules
 TemplatePDFInterventions=Intervention card documents models
+WatermarkOnDraftInterventionCards=Watermark on intervention card documents (any if empty)
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
 ClickToDialUrlDesc=Url called when a click on phone picto is done.<br>Complete url will be: URL?login=...&password=...&caller=...&called=phonecalled

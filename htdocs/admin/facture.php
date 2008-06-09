@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008 	Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,6 +144,11 @@ if ($_POST["action"] == 'setribchq')
 {
     dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"]);
     dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"]);
+}
+
+if ($_POST["action"] == 'set_FACTURE_DRAFT_WATERMARK')
+{
+    dolibarr_set_const($db, "FACTURE_DRAFT_WATERMARK",trim($_POST["FACTURE_DRAFT_WATERMARK"]));
 }
 
 if ($_POST["action"] == 'set_FACTURE_FREE_TEXT')
@@ -427,6 +433,12 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte,1,1);
     	$htmltooltip.='<br><b>'.$langs->trans("CreditNote").'</b>: '.yn($module->option_credit_note,1,1);
     	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang,1,1);
+		//TODO : $htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte); 
+		$htmltooltip.='<br><b>'.$langs->trans("CreditNote").'</b>: '.yn($module->option_credit_note);
+		$htmltooltip.='<br><b>'.$langs->trans("FreeLegalTextOnInvoices").'</b>: '.yn($module->option_freetext);
+		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftInvoices").'</b>: '.yn($module->option_draft_watermark);
+		
+		
     	print '<td align="center">';
     	print $html->textwithhelp('',$htmltooltip,1,0);
     	print '</td>';
@@ -603,6 +615,17 @@ print '<input type="hidden" name="action" value="set_FACTURE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnInvoices").'<br>';
 print '<textarea name="FACTURE_FREE_TEXT" class="flat" cols="100">'.$conf->global->FACTURE_FREE_TEXT.'</textarea>';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+$var=!$var;
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print "<input type=\"hidden\" name=\"action\" value=\"set_FACTURE_DRAFT_WATERMARK\">";
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("WatermarkOnDraftBill").'<br>';
+print '<input size="50" class="flat" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

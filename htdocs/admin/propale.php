@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +76,11 @@ if ($_GET["action"] == 'specimen')
 			return;
 		}
 	}
+}
+
+if ($_POST["action"] == 'set_PROPALE_DRAFT_WATERMARK')
+{
+    dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK",trim($_POST["PROPALE_DRAFT_WATERMARK"]));
 }
 
 if ($_POST["action"] == 'set_PROPALE_FREE_TEXT')
@@ -378,6 +384,13 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
     	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
     	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
+		//TODO : $htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte); 
+		$htmltooltip.='<br><b>'.$langs->trans("CreditNote").'</b>: '.yn($module->option_credit_note);
+		$htmltooltip.='<br><b>'.$langs->trans("FreeLegalTextOnProposal").'</b>: '.yn($module->option_freetext);
+		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftProposal").'</b>: '.yn($module->option_draft_watermark);
+		
+		
+		
     	print '<td align="center">';
     	print $html->textwithhelp('',$htmltooltip,1,0);
     	print '</td>';
@@ -483,6 +496,17 @@ print '<input type="hidden" name="action" value="set_PROPALE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnProposal").'<br>';
 print '<textarea name="PROPALE_FREE_TEXT" class="flat" cols="100">'.$conf->global->PROPALE_FREE_TEXT.'</textarea>';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+$var=!$var;
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print "<input type=\"hidden\" name=\"action\" value=\"set_PROPALE_DRAFT_WATERMARK\">";
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("WatermarkOnDraftProposal").'<br>';
+print '<input size="50" class="flat" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.$conf->global->PROPALE_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

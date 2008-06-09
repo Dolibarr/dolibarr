@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008 	Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,11 @@ if ($_POST["action"] == 'updateMask')
 	$maskconst=$_POST['maskconst'];
 	$maskvalue=$_POST['maskvalue'];
 	if ($maskconst) dolibarr_set_const($db,$maskconst,$maskvalue);
+}
+
+if ($_POST["action"] == 'set_FICHINTER_DRAFT_WATERMARK')
+{
+    dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($_POST["FICHINTER_DRAFT_WATERMARK"]));
 }
 
 if ($_GET["action"] == 'specimen')
@@ -327,6 +333,10 @@ while (($file = readdir($handle))!==false)
     	$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
     	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
     	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
+		$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
+    	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
+		$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
+		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftOrders").'</b>: '.yn($module->option_draft_watermark);
     	print '<td align="center">';
     	print $html->textwithhelp('',$htmltooltip,1,0);
     	print '</td>';
@@ -341,6 +351,34 @@ closedir($handle);
 
 print '</table>';
 
+//Autres Options
+print "<br>";
+print_titre($langs->trans("OtherOptions"));
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print "<td>&nbsp;</td>\n";
+print "</tr>\n";
+$var=true;
+
+//Use draft Watermark
+$var=!$var;
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERMARK\">";
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("WatermarkOnDraftInterventionCards").'<br>';
+print '<input size="50" class="flat" type="text" name="FICHINTER_DRAFT_WATERMARK" value="'.$conf->global->FICHINTER_DRAFT_WATERMARK.'">';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+
+print '</table>';
+
+print '<br>';
 
 $db->close();
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008 	Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,7 @@ class pdf_edison extends ModelePDFCommandes
         $this->format = array($this->page_largeur,$this->page_hauteur);
 
         $this->option_multilang = 0;               // Dispo en plusieurs langues
+		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
         $this->error = "";
     }
@@ -309,9 +311,28 @@ class pdf_edison extends ModelePDFCommandes
 
 	function _pagehead(&$pdf, $com)
 	{
-		global $langs,$mysoc;
+		global $conf,$langs,$mysoc;
 		$langs->load("orders");
 
+	  //Affiche le filigrane brouillon - Print Draft Watermark
+	  if($com->statut==0 && (! empty($conf->global->COMMANDE_DRAFT_WATERMARK)) )		
+	  {
+		$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
+		$watermark_x=5;
+		$watermark_y=$this->page_hauteur-25; //Set to $this->page_hauteur-50 or less if problems
+		$watermark_width=$this->page_hauteur;
+		$pdf->SetFont('Arial','B',50);
+		$pdf->SetTextColor(255,192,203);
+		//rotate
+		$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$pdf->k,($pdf->h-$watermark_y)*$pdf->k,-$watermark_x*$pdf->k,-($pdf->h-$watermark_y)*$pdf->k));
+		//print watermark
+		$pdf->SetXY($watermark_x,$watermark_y);
+		$pdf->Cell($watermark_width,25,clean_html($conf->global->COMMANDE_DRAFT_WATERMARK),0,2,"C",0);
+		//antirotate
+		$pdf->_out('Q');
+	  }
+	  //Print content
+		
 		$pdf->SetXY(10,8);
 		if (defined("MAIN_INFO_SOCIETE_NOM"))
 		{

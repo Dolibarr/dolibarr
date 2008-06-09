@@ -640,6 +640,7 @@ EnableEditDeleteValidInvoice=Activer la possibilité d'éditer/supprimer une factu
 SuggestPaymentByRIBOnAccount=Proposer paiement par RIB sur le compte
 SuggestPaymentByChequeToAddress=Proposer paiement par chèque à l'ordre et adresse de
 FreeLegalTextOnInvoices=Mention complémentaire sur les factures
+WatermarkOnDraftInvoices=Filigrane sur les brouillons de factures (aucun si vide)
 ##### Proposals #####
 PropalSetup=Configuration du module Propositions Commerciales
 CreateForm=Création formulaire
@@ -655,6 +656,7 @@ AddShippingDateAbility=Possibilité de déterminer une date de livraison
 AddDeliveryAddressAbility=Possibilité de sélectionner une adresse de livraison
 UseOptionLineIfNoQuantity=Une ligne de produit/service ayant une quantité nulle est considérée comme une option
 FreeLegalTextOnProposal=Mention complémentaire sur les propositions
+WatermarkOnDraftProposal=Filigrane sur les brouillons de propositions (aucun si vide)
 ##### Orders #####
 OrdersSetup=Configuration du module Commandes
 OrdersNumberingModules=Modules de numérotation des commandes
@@ -662,9 +664,11 @@ OrdersModelModule=Modèles de document des commandes
 HideTreadedOrders=Cacher les commandes traitées ou annulées de la liste
 ValidOrderAfterPropalClosed=Valider la commande après la clôture de la propale, permet de ne pas passer par la commande provisoire
 FreeLegalTextOnOrders=Mention complémentaire sur les commandes
+WatermarkOnDraftOrders=Filigrane sur les brouillons de commandes (aucun si vide)
 ##### Fiche inter #####
 FicheinterNumberingModules=Modules de numérotation des fiches interventions
 TemplatePDFInterventions=Modèle de documents des fiches d'interventions
+WatermarkOnDraftInterventionCards=Filigrane sur les brouillons des fiches d'interventions (aucun si vide)
 ##### Clicktodial #####
 ClickToDialSetup=Configuration du module Click To Dial
 ClickToDialUrlDesc=Url appelée lors dun clic sur le picto téléphone.<br>L'url complète appelée sera: URL?login=...&password=...&caller=...&called=telappelé

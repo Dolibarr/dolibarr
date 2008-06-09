@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Sylvain SCATTOLINI   <sylvain@s-infoservices.com>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2008 	Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +73,7 @@ class pdf_oursin extends ModelePDFFactures
 	$this->option_multilang = 1;               // Dispo en plusieurs langues
 	$this->option_escompte = 0;                // Affiche si il y a eu escompte
     $this->option_credit_note = 1;             // Gère les avoirs
+	$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       $this->franchise=1;
@@ -639,6 +641,25 @@ class pdf_oursin extends ModelePDFFactures
     $langs->load("bills");
     $langs->load("propal");
     $langs->load("companies");
+	
+	//Affiche le filigrane brouillon - Print Draft Watermark
+	if($fac->statut==0 && (! empty($conf->global->FACTURE_DRAFT_WATERMARK)) )		
+	{
+		$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
+		$watermark_x=5;
+		$watermark_y=$this->page_hauteur-50;
+		$watermark_width=$this->page_hauteur;
+		$pdf->SetFont('Arial','B',50);
+		$pdf->SetTextColor(255,192,203);
+		//rotate
+		$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$pdf->k,($pdf->h-$watermark_y)*$pdf->k,-$watermark_x*$pdf->k,-($pdf->h-$watermark_y)*$pdf->k));
+		//print watermark
+		$pdf->SetXY($watermark_x,$watermark_y);
+		$pdf->Cell($watermark_width,25,clean_html($conf->global->FACTURE_DRAFT_WATERMARK),0,2,"C",0);
+		//antirotate
+		$pdf->_out('Q');
+	}
+	//Print content
 
     $pdf->SetTextColor(0,0,60);
     $pdf->SetFont('Arial','B',13);

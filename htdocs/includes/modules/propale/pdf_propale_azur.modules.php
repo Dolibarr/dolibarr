@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,8 @@ class pdf_propale_azur extends ModelePDFPropales
         $this->option_multilang = 1;               // Dispo en plusieurs langues
         $this->option_escompte = 1;                // Affiche si il y a eu escompte
         $this->option_credit_note = 1;             // Gère les avoirs
-		$this->option_freetext = 1;					// Support add of a personalised text
+		$this->option_freetext = 1;				   // Support add of a personalised text
+		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       		$this->franchise=1;
@@ -786,7 +788,26 @@ class pdf_propale_azur extends ModelePDFPropales
         $outputlangs->load("bills");
         $outputlangs->load("propal");
         $outputlangs->load("companies");
-
+		
+		//Affiche le filigrane brouillon - Print Draft Watermark
+		if($object->statut==0 && (! empty($conf->global->PROPALE_DRAFT_WATERMARK)) )		
+		{
+			$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
+			$watermark_x=5;
+			$watermark_y=$this->page_hauteur-25;  //Set to $this->page_hauteur-50 or less if problems
+			$watermark_width=$this->page_hauteur;
+			$pdf->SetFont('Arial','B',50);
+			$pdf->SetTextColor(255,192,203);
+			//rotate
+			$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$pdf->k,($pdf->h-$watermark_y)*$pdf->k,-$watermark_x*$pdf->k,-($pdf->h-$watermark_y)*$pdf->k));
+			//print watermark
+			$pdf->SetXY($watermark_x,$watermark_y);
+			$pdf->Cell($watermark_width,25,clean_html($conf->global->PROPALE_DRAFT_WATERMARK),0,2,"C",0);
+			//antirotate
+			$pdf->_out('Q');
+		}
+		
+		//Prepare la suite
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',13);
 
@@ -919,15 +940,12 @@ class pdf_propale_azur extends ModelePDFPropales
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
-				$posy+=4;
 				
 				// Nom client
-				$pdf->SetXY(102,$posy+4);
-				$pdf->SetFont('Arial','',9);
-				$pdf->MultiCell(106,4, $object->contact->getFullName($outputlangs,1), 0, 'L');
+				$carac_client = "\n".$object->contact->getFullName($outputlangs,1);
 
 				// Caractéristiques client
-				$carac_client=$object->contact->adresse;
+				$carac_client.="\n".$object->contact->adresse;
 				$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
 				if ($this->emetteur->pays_code != $object->contact->pays_code)
 				{
