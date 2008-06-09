@@ -995,6 +995,7 @@ else
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
 	if ($soc->isInEEC()) print $form->textwithhelp($soc->pays,$langs->trans("CountryIsInEEC"),1,0);
+	else print $soc->pays;
 	print '</td></tr>';
 
     print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">'.$soc->departement.'</td>';
