@@ -141,21 +141,59 @@ function run_sql($sqlfile,$silent=1)
 	}
 
 	// Loop on each request
-	foreach($arraysql as $i=>$sql)
+	$cursorinsert=0;
+	$listofinsertedrowid=array();
+	foreach($arraysql as $i => $sql)
 	{
 		if ($sql)
 		{
+			$newsql=$sql;
+			
 			// Ajout trace sur requete (eventuellement ? commenter si beaucoup de requetes)
-			if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$sql."'</td></tr>\n";
-			dolibarr_syslog('Admin.lib::run_sql Request '.($i+1)." sql='".$sql);
-
-			if ($db->query($sql))
+			if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$newsql."'</td></tr>\n";
+			dolibarr_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+			
+			if (eregi('insert into ([^ ]+)',$newsql,$reg))
+			{	
+				// It's an insert
+				$cursorinsert++;
+			}
+			
+			// Replace __x__ with rowid of insert nb x
+			while (eregi('__([0-9]+)__',$newsql,$reg))
 			{
+				$cursor=$reg[1];
+				if (empty($listofinsertedrowid[$cursor]))
+				{
+					if (! $silent) print '<tr><td valign="top" colspan="2">';
+					if (! $silent) print '<div class="error">'.$langs->trans("FileIsNotCorrect")."</div></td>";
+					if (! $silent) print '</tr>';
+					$error++;
+					break;
+				}
+				$from='__'.$cursor.'__';
+				$to=$listofinsertedrowid[$cursor];
+				$newsql=str_replace($from,$to,$newsql);
+				dolibarr_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+			}
+			
+			$result=$db->query($newsql);
+			if ($result)
+			{
+				if (eregi('insert into ([^ ]+)',$newsql,$reg))
+				{	
+					// It's an insert
+					$table=eregi_replace('[^a-zA-Z_]+','',$reg[1]);
+					$insertedrowid=$db->last_insert_id($table);
+					$listofinsertedrowid[$cursorinsert]=$insertedrowid;
+					dolibarr_syslog('Admin.lib::run_sql Insert nb '.$cursorinsert.', done in table '.$table.', rowid is '.$listofinsertedrowid[$cursorinsert], LOG_DEBUG);
+				}
 				// 	          print '<td align="right">OK</td>';
 			}
 			else
 			{
 				$errno=$db->errno();
+				
 				$okerror=array( 'DB_ERROR_TABLE_ALREADY_EXISTS',
 				'DB_ERROR_COLUMN_ALREADY_EXISTS',
 				'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
@@ -174,9 +212,9 @@ function run_sql($sqlfile,$silent=1)
 				else
 				{
 					if (! $silent) print '<tr><td valign="top" colspan="2">';
-					if (! $silent) print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$sql."<br>".$db->error()."</font></td>";
+					if (! $silent) print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$newsql."<br>".$db->error()."</div></td>";
 					if (! $silent) print '</tr>';
-					dolibarr_syslog('Admin.lib::run_sql Request '.($i+1)." Error ".$db->errno()." ".$sql."<br>".$db->error());
+					dolibarr_syslog('Admin.lib::run_sql Request '.($i+1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
 					$error++;
 				}
 			}
@@ -203,9 +241,9 @@ function run_sql($sqlfile,$silent=1)
 
 
 /**
-	\brief		Effacement d'une constante dans la base de données
+	\brief		Effacement d'une constante dans la base de donnees
 	\sa			dolibarr_get_const, dolibarr_sel_const
-	\param	    db          Handler d'accés base
+	\param	    db          Handler d'acces base
 	\param	    name		Nom ou rowid de la constante
 	\return     int         <0 si ko, >0 si ok
 */
@@ -230,9 +268,9 @@ function dolibarr_del_const($db, $name)
 }
 
 /**
-		\brief      Récupére une constante depuis la base de données.
+		\brief      Recupere une constante depuis la base de donnees.
 		\sa			dolibarr_del_const, dolibarr_set_const
-		\param	    db          Handler d'accés base
+		\param	    db          Handler d'acces base
 		\param	    name		Nom de la constante
 		\return     string      Valeur de la constante
 */
