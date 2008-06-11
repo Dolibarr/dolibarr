@@ -919,7 +919,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$carac_client = "\n".$object->contact->getFullName($outputlangs,1);
 					
 					// Caractéristiques client
-					$carac_client.=$object->contact->adresse;
+					$carac_client.="\n".$object->contact->adresse;
 					$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
 					if ($this->emetteur->pays_code != $object->contact->pays_code)
 					{
