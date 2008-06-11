@@ -913,7 +913,7 @@ class pdf_einstein extends ModelePDFCommandes
 					// Nom societe
 					$pdf->SetXY(102,$posy+3);
 					$pdf->SetFont('Arial','B',11);
-					$pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
+					$pdf->MultiCell(96,4, $object->client->nom, 0, 'L');
 					
 					// Nom client
 					$carac_client = "\n".$object->contact->getFullName($outputlangs,1);
