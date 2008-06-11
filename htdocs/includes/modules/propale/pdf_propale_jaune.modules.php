@@ -348,7 +348,7 @@ class pdf_propale_jaune extends ModelePDFPropales
       $pdf->SetXY(102,42);
       $pdf->MultiCell(96,5, $propale->client->nom);
       $pdf->SetFont('Arial','B',11);
-      $pdf->SetXY(102,47);
+      $pdf->SetXY(102,$pdf->GetY());
       $pdf->MultiCell(96,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
       $pdf->rect(100, 40, 100, 40);
 

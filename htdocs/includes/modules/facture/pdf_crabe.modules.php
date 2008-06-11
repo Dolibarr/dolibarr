@@ -1106,7 +1106,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Nom societe
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
+				$pdf->MultiCell(96,4, $object->client->nom, 0, 'L');
 				
 				// Nom client
 				$carac_client = "\n".$object->contact->getFullName($outputlangs,1);
@@ -1114,6 +1114,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Caractéristiques client
 				$carac_client.="\n".$object->contact->adresse;
 				$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
+				//Pays si definit et different de l'emetteur
 				if ($this->emetteur->pays_code != $object->contact->pays_code)
 				{
 					$carac_client.=$object->contact->pays."\n";
@@ -1124,7 +1125,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Nom client
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
+				$pdf->MultiCell(96,4, $object->client->nom, 0, 'L');
 				
 				// Nom du contact facturation si c'est une société
 				$arrayidcontact = $object->getIdContact('external','BILLING');
@@ -1142,8 +1143,8 @@ class pdf_crabe extends ModelePDFFactures
 				$carac_client.="\n".$object->client->adresse;
 				$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
 
-					//Pays si différent de l'émetteur
-					if ($this->emetteur->pays_code != $object->client->pays_code)
+					//Pays si defini et different de l'emetteur
+					if ( (!empty( $object->client->pays_code )) && ($this->emetteur->pays_code != $object->client->pays_code) )
 					{
 						$carac_client.=$object->client->pays."\n";
 					}
@@ -1151,6 +1152,7 @@ class pdf_crabe extends ModelePDFFactures
 			// Numéro TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
 		  	$pdf->SetFont('Arial','',9);
+			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
 			$pdf->SetXY(102,$posy+6);
 			$pdf->MultiCell(86,4, $carac_client);
 		}

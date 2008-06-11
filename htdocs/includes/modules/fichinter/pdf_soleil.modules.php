@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
         \file       htdocs/includes/modules/fichinter/pdf_soleil.modules.php
         \ingroup    ficheinter
         \brief      Fichier de la classe permettant de générer les fiches d'intervention au modèle Soleil
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
@@ -230,9 +228,9 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetFont('Arial','B',12);
 				$fichinter->fetch_client();
 				$pdf->SetXY(102,42);
-				$pdf->MultiCell(66,5, $fichinter->client->nom);
+				$pdf->MultiCell(86,5, $fichinter->client->nom);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->SetXY(102,47);
+				$pdf->SetXY(102,$pdf->GetY());
 				$pdf->MultiCell(66,5, $fichinter->client->adresse . "\n" . $fichinter->client->cp . " " . $fichinter->client->ville);
 				$pdf->rect(100, 40, 100, 40);
 

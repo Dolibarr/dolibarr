@@ -17,8 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
@@ -26,7 +24,7 @@
    \ingroup    facture
    \brief      Fichier de la classe permettant de générer les factures au modèle Huitre
    \author	    Laurent Destailleur
-   \version    $Revision$
+   \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
@@ -607,7 +605,7 @@ class pdf_huitre extends ModelePDFFactures
     $pdf->SetXY(102,42);
     $pdf->MultiCell(96,5, $fac->client->nom, 0, 'C');
     $pdf->SetFont('Arial','B',11);
-    $pdf->SetXY(102,50);
+    $pdf->SetXY(102,$pdf->GetY()+3);
     $pdf->MultiCell(96,5, $fac->client->adresse . "\n\n" . $fac->client->cp . " " . $fac->client->ville ,  0, 'C');
 	
 	
