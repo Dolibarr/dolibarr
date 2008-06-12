@@ -36,6 +36,34 @@ $contactid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contact', $contactid, 'socpeople');
 
+/*
+ * Action
+ */
+
+if ($user->rights->societe->contact->creer)
+{
+	if ($_POST["action"] == 'update' && ! $_POST["cancel"])
+	{
+		$contact = new Contact($db);
+		$contact->fetch($_POST["contactid"]);
+		
+		$contact->birthday = dolibarr_mktime(12,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
+		$contact->birthday_alert = $_POST["birthday_alert"];
+		 
+		$result = $contact->update_perso($_POST["contactid"], $user);
+	
+		if ($result > 0)
+		{
+			$contact->old_name='';
+			$contact->old_firstname='';
+		}
+		else
+		{
+			$error = $contact->error;
+		}
+	}
+}
+
 
 /*
 *	View
