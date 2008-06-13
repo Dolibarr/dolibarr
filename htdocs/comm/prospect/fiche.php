@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,7 +166,7 @@ if ($socid > 0)
 		$propal_static=new Propal($db);
 
 	    print '<table class="noborder" width="100%">';
-	    $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ";
+	    $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 	    $sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite,";
 	    $sql.= " c.label as statut, c.id as statutid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
@@ -200,7 +201,7 @@ if ($socid > 0)
 	                print " ".img_warning();
 	            }
 	            print "</td><td align=\"right\">".dolibarr_print_date($objp->dp,"day")."</td>\n";
-	            print "<td align=\"right\">".price($objp->price)."</td>\n";
+	            print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 	            print "<td align=\"right\">".$propal_static->LibStatut($objp->fk_statut,5)."</td></tr>\n";
 	            $i++;
 	        }
