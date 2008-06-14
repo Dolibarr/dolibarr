@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/product/stock/user.php
    \ingroup    stock
-   \brief      Fiche gestion des utilisateurs des entrepots
-   \version    $Revision$
+   \brief      Page to link dolibarr users with warehouses
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -144,7 +141,8 @@ $form=new Form($db);
 	  print "<div class=\"tabsAction\">\n";
 	  
 	  print "</div>";
-	  	  
+
+	  
 	  /* ************************************************************************** */
 	  /*                                                                            */
 	  /* Affichage des utilisateurs de l'entrepot                                   */

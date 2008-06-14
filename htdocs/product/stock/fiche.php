@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/product/stock/fiche.php
         \ingroup    stock
         \brief      Page fiche entrepot
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -225,9 +222,15 @@ else
 	          $head[$h][1] = $langs->trans("EnhancedValue");
 	          $h++;
 
-	          $head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
-	          $head[$h][1] = $langs->trans("Users");
-	          $h++;
+	          if ($conf->global->STOCK_USE_WAREHOUSE_BY_USER)
+	          {
+	          	// Add the constant STOCK_USE_WAREHOUSE_BY_USER in cont table to use this feature.
+	          	// Should not be enabled by defaut because does not work yet correctly because
+	          	// there is no way to add values in the table llx_user_entrepot
+	          	$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
+	          	$head[$h][1] = $langs->trans("Users");
+	          	$h++;
+	          }
 
             $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
             $head[$h][1] = $langs->trans("Info");
