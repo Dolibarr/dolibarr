@@ -829,7 +829,7 @@ class CommandeFournisseur extends Commande
     
     dolibarr_syslog("CommandeFournisseur::DispatchProduct");
 
-    if ( ($this->statut == 3 || $this->statut == 4) && $qty > 0)
+    if ( ($this->statut == 3 || $this->statut == 4 || $this->statut == 5) && $qty > 0)
       {
 	$this->db->begin();
 	

@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59	Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file      htdocs/fourn/commande/fiche.php
    \ingroup   commande
    \brief     Fiche de ventilation des commandes fournisseurs
-   \version   $Revision$
+   \version   $Id$
 */
 
 require('./pre.inc.php');
@@ -85,15 +82,16 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
   exit;
 }
 
+
+
+/*
+ * View
+ */
+
 llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
 $html =	new Form($db);
 
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode	vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
 
 $id = $_GET['id'];
 if ($id	> 0)
@@ -184,7 +182,7 @@ if ($id	> 0)
       /*
        * Lignes de commandes
        */
-      if ($commande->statut == 3 || $commande->statut == 4)
+      if ($commande->statut == 3 || $commande->statut == 4 || $commande->statut == 5)
 	{
 	  print '<form method="POST" action="dispatch.php?id='.$commande->id.'">';
 	  print '<input type="hidden" name="action" value="dispatch">';
@@ -232,10 +230,9 @@ if ($id	> 0)
 	    	print "</tr>\n";
 	    }
 	    
-	    $var=false;
-	    
 	    $entrepot = new Entrepot($db);
 	    
+	    $var=true;
 	    while ($i < $num)
 	    {
 	    	$objp = $db->fetch_object($resql);
@@ -243,7 +240,7 @@ if ($id	> 0)
 	    	if ($objp->fk_product)
 	    	{
 	    		$var=!$var;
-	    		print "<tr $bc[$var]>";
+	    		print "<tr ".$bc[$var].">";
 	    		print '<td>';
 	    		print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
 	    		print ' - '.$objp->label;
@@ -281,10 +278,12 @@ if ($id	> 0)
 	  }
 		
 	  print "</table>\n";
-	  print '<center><input type="submit" value="'.$langs->trans("Save").'"></center></form>';
-	}
       print "<br/>\n";
-      print '<table class="noborder" width="100%">';
+	  print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center></form>';
+	}
+	
+      print "<br/>\n";
+	print '<table class="noborder" width="100%">';
 	
 
       $sql = "SELECT p.ref,cfd.fk_product, cfd.qty";
