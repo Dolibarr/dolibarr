@@ -243,10 +243,10 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
                    	$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $libelleproduitservice, 0, 1);
 
                    	$pdf->SetXY (160, $curY);
-					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_commande);
+					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_asked);
 			
                    	$pdf->SetXY (186, $curY);
-					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_expedition);
+					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_shipped);
 				}
                 $pdf->AliasNbPages();
 

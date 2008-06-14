@@ -724,7 +724,8 @@ class Expedition extends CommonObject
 			$ligne->desc=$langs->trans("Description")." ".$xnbp;
 			$ligne->libelle=$langs->trans("Description")." ".$xnbp;
 			$ligne->qty=10;
-			$ligne->qty_expedition=5;
+			$ligne->qty_asked=5;
+			$ligne->qty_shipped=4;
 			$prodid = rand(1, $num_prods);
 			$ligne->fk_product=$prodids[$prodid];
 			$xnbp++;
@@ -743,11 +744,11 @@ class ExpeditionLigne
 
 	// From llx_expeditiondet
 	var $qty;
-	var $qty_expedition;
+	var $qty_shipped;
 	var $fk_product;
 
 	// From llx_commandedet or llx_propaldet
-	var $qty_asking;
+	var $qty_asked;
 	var $libelle;       // Label produit
 	var $product_desc;  // Description produit
 	var $ref;

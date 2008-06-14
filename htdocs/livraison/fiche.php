@@ -500,7 +500,7 @@ else
           }
           
           print '<td align="center">'.$livraison->lignes[$i]->qty_asked.'</td>';
-          print '<td align="center">'.$livraison->lignes[$i]->qty_delivered.'</td>';
+          print '<td align="center">'.$livraison->lignes[$i]->qty_shipped.'</td>';
     
           print "</tr>";
     

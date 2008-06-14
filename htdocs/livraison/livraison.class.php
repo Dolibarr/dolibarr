@@ -619,8 +619,8 @@ class Livraison extends CommonObject
 		$this->lignes = array();
 	
 		$sql = "SELECT p.label, p.ref,";
-		$sql.= " l.description, l.fk_product, l.subprice, l.total_ht, l.qty as qtyliv";
-		//$sql.= ", c.qty as qtycom";
+		$sql.= " l.description, l.fk_product, l.subprice, l.total_ht, l.qty as qty_shipped";
+		//$sql.= ", c.qty as qty_asked";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as l";
 		//$sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = l.fk_product";	
@@ -640,8 +640,8 @@ class Livraison extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 	
 				$ligne->fk_product     = $obj->fk_product;
-				$ligne->qty_asked      = $obj->qtycom;
-				$ligne->qty_delivered  = $obj->qtyliv;
+				$ligne->qty_asked      = $obj->qty_asked;
+				$ligne->qty_shipped    = $obj->qty_shipped;
 				$ligne->ref            = $obj->ref;
 				$ligne->label          = stripslashes(nl2br($obj->label));
 				$ligne->description    = stripslashes(nl2br($obj->description));

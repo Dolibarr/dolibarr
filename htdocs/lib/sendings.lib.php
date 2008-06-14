@@ -34,7 +34,7 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 {
 	global $db, $conf, $langs, $bc;
 	
-	$sql = "SELECT obj.rowid, obj.fk_product, obj.description, obj.qty as qty_asking";
+	$sql = "SELECT obj.rowid, obj.fk_product, obj.description, obj.qty as qty_asked";
 	$sql.= ", ed.qty as qty_shipped, ed.fk_expedition as expedition_id";
 	$sql.= ", e.ref, ".$db->pdate("e.date_expedition")." as date_expedition";
     if ($conf->livraison_bon->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
