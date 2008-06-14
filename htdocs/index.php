@@ -45,11 +45,17 @@ llxHeader();
 
 print_fiche_titre($langs->trans("HomeArea"));
 
-if (defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
+if (! empty($conf->global->MAIN_MOTD))
 {
-    print '<table width="100%" class="notopnoleftnoright"><tr><td>';
-    print nl2br(MAIN_MOTD);
-    print '</td></tr></table><br>';
+	$conf->global->MAIN_MOTD=eregi_replace('<br[ /]*>','',$conf->global->MAIN_MOTD);
+	if (! empty($conf->global->MAIN_MOTD))
+	{
+		print "\n<!-- Start of welcome text -->\n";
+		print '<table width="100%" class="notopnoleftnoright"><tr><td>';
+	    print dol_htmlentitiesbr($conf->global->MAIN_MOTD);
+	    print '</td></tr></table><br>';
+	    print "\n<!-- End of welcome text -->\n";
+	}
 }
 
 // Affiche warning répertoire install existe (si utilisateur admin)
