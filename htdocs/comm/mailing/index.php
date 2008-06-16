@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/comm/mailing/index.php
         \ingroup    mailing
         \brief      Page accueil de la zone mailing
-        \version    $Revision$
+        \version    $Id$
 */
  
 require("./pre.inc.php");
@@ -36,12 +33,11 @@ if (! $user->rights->mailing->lire || $user->societe_id > 0)
   accessforbidden();
 	  
 
-
-llxHeader('','Mailing');
-
 /*
- *
+ *	View
  */
+  
+llxHeader('','Mailing');
 
 print_fiche_titre($langs->trans("MailingArea"));
 
@@ -171,7 +167,7 @@ if ($result)
 	  
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';
-	  print '<td>'.$obj->titre.'</td>';
+	  print '<td>'.dolibarr_trunc($obj->titre,40).'</td>';
 	  print '<td align="center">'.($obj->nbemail?$obj->nbemail:"0").'</td>';
 	  $mailstatic=new Mailing($db);
 	  print '<td align="right">'.$mailstatic->LibStatut($obj->statut,5).'</td>';
