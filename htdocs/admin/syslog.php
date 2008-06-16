@@ -18,64 +18,70 @@
  */
 
 /**
-   \file       htdocs/admin/syslog.php
-   \ingroup    syslog
-   \brief      Page de configuration du module syslog
-   \version    $Id$
-*/
+ *	\file       htdocs/admin/syslog.php
+ *	\ingroup    syslog
+ *	\brief      Setup page for syslog module
+ *	\version    $Id$
+ */
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 $langs->load("admin");
 $langs->load("other");
 
 
 /*
- * Actions 
+ * Actions
  */
 if ($_POST["action"] == 'setlevel')
 {
-    dolibarr_set_const($db,"SYSLOG_LEVEL",$_POST["level"]);
-    dolibarr_syslog("admin/syslog: level ".$_POST["level"]);
+	dolibarr_set_const($db,"SYSLOG_LEVEL",$_POST["level"]);
+	dolibarr_syslog("admin/syslog: level ".$_POST["level"]);
 }
 
 if ($_POST["action"] == 'set')
 {
 	$optionlogoutput=$_POST["optionlogoutput"];
-	if ($optionlogoutput == "syslog") 
+	if ($optionlogoutput == "syslog")
 	{
-	  if (defined($_POST["facility"])) 
-	    {
-	      dolibarr_del_const($db,"SYSLOG_FILE");
-	      dolibarr_set_const($db,"SYSLOG_FACILITY",$_POST["facility"]);
-	      dolibarr_syslog("admin/syslog: facility ".$_POST["facility"]);
-	    } 
-	  else
-	    {
-	      print '<div class="error">'.$langs->trans("ErrorUnknownSyslogConstant",$_POST["facility"]).'</div>';
-	    }
+		if (defined($_POST["facility"]))
+		{
+			dolibarr_del_const($db,"SYSLOG_FILE");
+			dolibarr_set_const($db,"SYSLOG_FACILITY",$_POST["facility"]);
+			dolibarr_syslog("admin/syslog: facility ".$_POST["facility"]);
+		}
+		else
+		{
+			print '<div class="error">'.$langs->trans("ErrorUnknownSyslogConstant",$_POST["facility"]).'</div>';
+		}
 	}
 	if ($optionlogoutput == "file")
 	{
-	  $file=fopen($_POST["filename"],"a+");
-	  if ($file)
-	    {
-	      fclose($file);
-	      dolibarr_del_const($db,"SYSLOG_FACILITY");
-	      dolibarr_set_const($db,"SYSLOG_FILE",$_POST["filename"]);
-	      dolibarr_syslog("admin/syslog: file ".$_POST["filename"]);
-	    }
-	  else
-	    {
-	      print '<div class="error">'.$langs->trans("ErrorFailedToOpenFile",$_POST["filename"]).'</div>';
-	    }
+		$filelog=$_POST["filename"];
+		$filelog=eregi_replace('DOL_DATA_ROOT',DOL_DATA_ROOT,$filelog);
+		$file=fopen($filelog,"a+");
+		if ($file)
+		{
+			fclose($file);
+			dolibarr_del_const($db,"SYSLOG_FACILITY");
+			dolibarr_set_const($db,"SYSLOG_FILE",$_POST["filename"]);
+			dolibarr_syslog("admin/syslog: file ".$_POST["filename"]);
+		}
+		else
+		{
+			print '<div class="error">'.$langs->trans("ErrorFailedToOpenFile",$_POST["filename"]).'</div>';
+		}
 	}
 }
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -91,9 +97,7 @@ $syslogfile=$defaultsyslogfile=dolibarr_get_const($db,"SYSLOG_FILE");
 if (! $defaultsyslogfacility) $defaultsyslogfacility='LOG_USER';
 if (! $defaultsyslogfile) $defaultsyslogfile='dolibarr.log';
 
-/*
- *  Mode de sortie
- */
+// Output mode
 print_titre($langs->trans("SyslogOutput"));
 
 // Mode
