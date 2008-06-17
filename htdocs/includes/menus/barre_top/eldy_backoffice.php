@@ -183,7 +183,10 @@ class MenuTop {
 	            $class = 'class="tmenu"';
 	        }
         
-        	print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
+			if($user->rights->societe->lire)
+				print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
+			else
+				print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Commercial").'</font></td>';
         }
 
         // Financial
