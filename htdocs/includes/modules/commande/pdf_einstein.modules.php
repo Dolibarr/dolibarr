@@ -916,7 +916,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->MultiCell(96,4, $object->client->nom, 0, 'L');
 					
 					// Nom client
-					$carac_client = "\n".$object->contact->getFullName($outputlangs,1);
+					$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
 					
 					// Caractéristiques client
 					$carac_client.="\n".$object->contact->adresse;
@@ -941,7 +941,7 @@ class pdf_einstein extends ModelePDFCommandes
 						// On vérifie si c'est une société ou un particulier
 						if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 						{
-							$carac_client .= "\n".$object->contact->getFullName($outputlangs,1);
+							$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
 						}
 					}
 					
