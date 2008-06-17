@@ -180,8 +180,8 @@ class MouvementStock
 
 
     /**
-     *      \brief      Crée un mouvement en base
-     *      \return     int     <0 si ko, >0 si ok
+     *      \brief      Calcul ???
+     *      \return     int    		<0 si ko, >0 si ok
      */
     function CalculateEntrepotValoPmp($user, $entrepot_id, $valo_mouvement)
     {
@@ -277,8 +277,10 @@ class MouvementStock
 	  return 0;
 	}
     }
+    
+    
     /**
-     * \brief  Crée un mouvement en base
+     * \brief  ???
      * \param  mvid         int    Id du mouvement
      * \param  fk_product   int    Id produit
      * \param  qty          float  Quantité     
@@ -383,6 +385,8 @@ class MouvementStock
 	  return 0;
 	}
     }
+    
+    
     /*
      *
      *
@@ -391,6 +395,8 @@ class MouvementStock
     {    
       return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2);    
     }
+    
+    
     /*
      *
      *
