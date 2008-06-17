@@ -16,22 +16,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/public/adherents/new.php
         \ingroup    adherent
-        \brief      formulaire exemple pour inscription publique d'un nouveau membre
-        \version    $Revision$
+        \brief      Form example to add a new member
+        \version    $Id$
 */
 
-require("./pre.inc.php");
+require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.form.class.php");
+
+function llxHeaderVierge($title, $head = "")
+{
+	global $user, $conf, $langs;
+
+    print "<html>\n";
+    print "<head>\n";
+    print "<title>".$title."</title>\n";
+    if ($head) print $head."\n";
+    print "</head>\n";
+	print "<body>\n";
+}
+
+function llxFooter()
+{
+	print "</body>\n";	
+	print "</html>\n";	
+}
+
 
 $adho = new AdherentOptions($db);
 $errmsg='';
@@ -139,7 +156,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'added' && $conf->global->MEMBE
 
 
 
-llxHeaderVierge();
+llxHeaderVierge("New member form");
 $html = new Form($db);
 
 print_titre("Nouvel adhérent");
@@ -185,11 +202,11 @@ print '<li> Les champs Commencant par un <FONT COLOR="red">*</FONT> sont obligat
 print '<li> Les champs Commencant par un <FONT COLOR="blue">*</FONT> seront affiche sur la liste publique des membres. Si vous ne souhaite pas cela <b>DECOCHEZ</b> la case public ci dessous'; 
 print "<li> Les login et password vous serviront a editer vos coordonnees ulterieurement<BR>\n";
 print "</ul><BR>\n";
-print "<form action=\"new.php\" method=\"POST\">\n";
-print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
+print "<form action=\"new.php\" method=\"POST\">\n";
 print '<input type="hidden" name="action" value="add">';
 
+print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
 print '<tr><td width="15%">'.$langs->trans("Type").'</td><td width="35%">';
 $html->select_array("type",  $adht->liste_array());
@@ -224,11 +241,11 @@ foreach($adho->attribute_label as $key=>$value){
   print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
 }
 print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
-print "</form>\n";
 print "</table>\n";
 
-      
+print "</form>\n";
+
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

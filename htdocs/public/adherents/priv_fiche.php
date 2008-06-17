@@ -16,27 +16,49 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
- 
-require("./pre.inc.php");
+
+/**
+        \file       htdocs/lib/datepicker.php
+        \brief      Fichier de gestion de la popup de selection de date eldy
+        \version    $Id$
+*/
+
+require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 
+function llxHeaderVierge($title, $head = "")
+{
+	global $user, $conf, $langs;
+
+    print "<html>\n";
+    print "<head>\n";
+    print "<title>".$title."</title>\n";
+    if ($head) print $head."\n";
+    print "</head>\n";
+	print "<body>\n";
+}
+
+function llxFooter()
+{
+	print "</body>\n";	
+	print "</html>\n";	
+}
+
+$rowid=$_GET["id"];
 $adho = new AdherentOptions($db);
 
-llxHeader();
 
-/* ************************************************************************** */
-/*                                                                            */
-/* Edition de la fiche                                                        */
-/*                                                                            */
-/*************************************************************************** */
+/*
+ * View
+ */
+
+llxHeaderVierge("Member edit");
+
 // fetch optionals attributes and labels
 $adho->fetch_optionals();
 if ($rowid > 0)

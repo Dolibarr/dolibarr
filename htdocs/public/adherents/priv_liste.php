@@ -16,12 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
-require("./pre.inc.php");
+/**
+        \file       htdocs/lib/datepicker.php
+        \brief      Fichier de gestion de la popup de selection de date eldy
+        \version    $Id$
+*/
+
+require("../../master.inc.php");
+
+function llxHeaderVierge($title, $head = "")
+{
+	global $user, $conf, $langs;
+
+    print "<html>\n";
+    print "<head>\n";
+    print "<title>".$title."</title>\n";
+    if ($head) print $head."\n";
+    print "</head>\n";
+	print "<body>\n";
+}
+
+function llxFooter()
+{
+	print "</body>\n";	
+	print "</html>\n";	
+}
+
 
 $langs->load("members");
 
@@ -40,7 +62,11 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-llxHeaderVierge();
+/*
+ * View
+ */
+
+llxHeaderVierge("List of members");
 
 
 $sql = "select rowid,prenom,nom, societe, cp,ville,email,naiss,photo";

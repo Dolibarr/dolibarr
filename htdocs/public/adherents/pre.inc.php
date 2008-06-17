@@ -14,13 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
+/**
+        \file       htdocs/lib/datepicker.php
+        \brief      Fichier de gestion de la popup de selection de date eldy
+        \version    $Id$
+*/
+
 require("../../main.inc.php");
+
 
 function llxHeader($head = "")
 {
@@ -37,16 +40,6 @@ function llxHeader($head = "")
   $menu->add_submenu("priv_liste.php","Liste des adherents");
 
   left_menu($menu->liste);
-}
-
-
-function llxHeaderVierge($head = "")
-{
-	global $user, $conf, $langs;
-
-	top_htmlhead('');
-    print '<body>';
-	
 }
 
 ?>

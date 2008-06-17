@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,9 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**
@@ -25,18 +22,35 @@
 		\ingroup    member
 		\brief      Fichier de la page de l'espace publique adherent
 		\author	    Laurent Destailleur
-		\version    $Revision$
+		\version    $Id$
 */
 
-require("./pre.inc.php");
+require("../../master.inc.php");
 
+function llxHeaderVierge($title, $head = "")
+{
+	global $user, $conf, $langs;
+
+    print "<html>\n";
+    print "<head>\n";
+    print "<title>".$title."</title>\n";
+    if ($head) print $head."\n";
+    print "</head>\n";
+	print "<body>\n";
+}
+
+function llxFooter()
+{
+	print "</body>\n";	
+	print "</html>\n";	
+}
 
 
 /*
  * Afffichage page
  */
  
-llxHeader();
+llxHeaderVierge("Index public");
 
 print_fiche_titre($langs->trans("PublicMembersArea"));
 
@@ -51,8 +65,8 @@ print '<br>';
 print '<table class="border" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("URL").'</td></tr>';
 print '<tr><td>'.$langs->trans("BlankSubscriptionForm").'</td><td><a target="_blank" href="'.DOL_URL_ROOT.'/public/adherents/new.php'.'">'.$dolibarr_main_url_root.DOL_URL_ROOT.'/public/adherents/new.php'.'</a></td></tr>';
-print '<tr><td>'.$langs->trans("BlankSubscriptionEditForm").'</td><td>'.$dolibarr_main_url_root.DOL_URL_ROOT.'/public/adherents/priv_edit.php?id=xxx'.'</td></tr>';
 print '<tr><td>'.$langs->trans("PublicMemberList").'</td><td><a target="_blank" href="'.DOL_URL_ROOT.'/public/adherents/priv_liste.php'.'">'.$dolibarr_main_url_root.DOL_URL_ROOT.'/public/adherents/priv_liste.php'.'</a></td></tr>';
+print '<tr><td>'.$langs->trans("PublicMemberCard").'</td><td>'.$dolibarr_main_url_root.DOL_URL_ROOT.'/public/adherents/priv_fiche.php?id=xxx'.'</td></tr>';
 print '</table>';
 
 
