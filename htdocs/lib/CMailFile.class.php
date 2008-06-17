@@ -125,7 +125,7 @@ class CMailFile
 		// Corps message dans $text_body
         $text_body = $this->write_body($msg, $filename_list);
         
-        // Corps message suite (fichiers attach�s) dans $text_encoded
+        // Corps message suite (fichiers attaches) dans $text_encoded
         if ($this->atleastonefile)
         {
             $text_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
@@ -369,7 +369,7 @@ class CMailFile
             \param 		filename_list		Tableau
             \param 		mimetype_list		Tableau
             \param 		mimefilename_list	Tableau
-            \return		out					Chaine fichiers encod�s
+            \return		out					Chaine fichiers encodes
     */
     function write_files($filename_list,$mimetype_list,$mimefilename_list)
     {
