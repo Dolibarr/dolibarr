@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -744,9 +745,10 @@ class Contact extends CommonObject
 	 *    	\brief      Return full name (name+' '+lastname)
 	 *		\param		langs			Lang for output
 	 *		\param		option			0=No option, 1=Add civility	
-	 *		\return		string			String with full name
+	 * 		\param		nameorder		0=Lastname+Firstname, 1=Firstname+Lastname	
+	 * 		\return		string			String with full name
 	 */
-	function getFullName($langs,$option=0)
+	function getFullName($langs,$option=0,$nameorder=0)
 	{
 		$ret='';
 		if ($option && $this->civilite_id)
@@ -754,8 +756,17 @@ class Contact extends CommonObject
 			if ($langs->transnoentities("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentities("Civility".$this->civilite_id).' ';
 			else $ret.=$this->civilite_id.' ';
 		}
-		if ($this->name)      $ret.=$this->name.' ';
-		if ($this->firstname) $ret.=$this->firstname.' ';
+		
+		if ($nameorder)
+		{
+			if ($this->firstname) $ret.=$this->firstname.' ';
+			if ($this->name)      $ret.=$this->name.' ';
+		}
+		else
+		{
+			if ($this->name)      $ret.=$this->name.' ';
+			if ($this->firstname) $ret.=$this->firstname.' ';
+		}
 		return trim($ret);
 	}
 

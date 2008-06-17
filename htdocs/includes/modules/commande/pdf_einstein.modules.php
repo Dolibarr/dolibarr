@@ -921,9 +921,10 @@ class pdf_einstein extends ModelePDFCommandes
 					// Caractéristiques client
 					$carac_client.="\n".$object->contact->adresse;
 					$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
+					//Pays si different de l'emetteur
 					if ($this->emetteur->pays_code != $object->contact->pays_code)
 					{
-						$carac_client.=$object->contact->pays."\n";
+						dol_entity_decode($carac_client.=$object->contact->pays)."\n";
 					}
 				}
 				else
@@ -949,10 +950,10 @@ class pdf_einstein extends ModelePDFCommandes
 					$carac_client.="\n".$object->client->adresse;
 					$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
 
-					//Pays si defini et different de l'emetteur
+					//Pays si different de l'emetteur
 					if ($this->emetteur->pays_code != $object->client->pays_code)
 					{
-						$carac_client.=$object->client->pays."\n";
+						$carac_client.=dol_entity_decode($object->client->pays)."\n";
 					}
 				}
 				// Numéro TVA intracom

@@ -1114,10 +1114,10 @@ class pdf_crabe extends ModelePDFFactures
 				// Caractéristiques client
 				$carac_client.="\n".$object->contact->adresse;
 				$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
-				//Pays si definit et different de l'emetteur
+				//Pays si different de l'emetteur
 				if ($this->emetteur->pays_code != $object->contact->pays_code)
 				{
-					$carac_client.=$object->contact->pays."\n";
+					$carac_client.=dol_entity_decode($object->contact->pays)."\n";
 				}
 			}
 			else
@@ -1143,10 +1143,10 @@ class pdf_crabe extends ModelePDFFactures
 				$carac_client.="\n".$object->client->adresse;
 				$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
 
-					//Pays si defini et different de l'emetteur
-					if ( (!empty( $object->client->pays_code )) && ($this->emetteur->pays_code != $object->client->pays_code) )
+					//Pays si different de l'emetteur
+					if ($this->emetteur->pays_code != $object->client->pays_code)
 					{
-						$carac_client.=$object->client->pays."\n";
+						$carac_client.=dol_entity_decode($object->client->pays)."\n";
 					}
 			}
 			// Numéro TVA intracom
