@@ -21,7 +21,7 @@
 
 /**
 		\defgroup   mailing  Module mailing
-		\brief      Module pour g�rer les mailings
+		\brief      Module pour gerer les mailings
 */
 
 /**
@@ -43,7 +43,7 @@ class modMailing extends DolibarrModules
 
    /**
     *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
+    *   \param      DB      handler d'acces base
     */
   function modMailing($DB)
   {
@@ -81,12 +81,12 @@ class modMailing extends DolibarrModules
 
     $this->rights[1][0] = 221; // id de la permission
     $this->rights[1][1] = 'Consulter les mailings'; // libelle de la permission
-    $this->rights[1][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
+    $this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
     $this->rights[1][3] = 1; // La permission est-elle une permission par d�faut
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 222;
-    $this->rights[2][1] = 'Cr�er/modifier les mailings (sujet, destinataires...)';
+    $this->rights[2][1] = 'Creer/modifier les mailings (sujet, destinataires...)';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
     $this->rights[2][4] = 'creer';
@@ -107,8 +107,8 @@ class modMailing extends DolibarrModules
 
 
    /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+    *               Definit egalement les repertoires de donnees a creer pour ce module.
     */
   function init()
   {
@@ -119,7 +119,7 @@ class modMailing extends DolibarrModules
   }
 
   /**
-    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+    \brief      Fonction appelee lors de la desactivation d'un module.
     Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
