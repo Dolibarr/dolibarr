@@ -149,7 +149,7 @@ class Product extends CommonObject
   }
 
   /**
-     \brief    Ins�re le produit en base
+     \brief    Insert product in database
      \param    user        Utilisateur qui effectue l'insertion
      \return   int     id du produit ou numero d'erreur < 0
    */
@@ -236,7 +236,7 @@ class Product extends CommonObject
 								}
 								else
 								{
-									$this->_setErrNo("Create",260);
+									$this->_setErrNo("Create",260,$this->error);
 								}
 							}
 							else
@@ -277,7 +277,7 @@ class Product extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				dolibarr_syslog("Product::Create ROLLBACK ERRNO (".$this->errno.")");
+				$this->_setErrNo("Create",265);
 				return -1;
 			}       
 		}
@@ -292,14 +292,15 @@ class Product extends CommonObject
 	}
   
   /**
-     \brief      Positionne le numero d'erreur
-     \param      func Nom de la fonction
-     \param      num Numero de l'erreur
+    \brief      Positionne le numero d'erreur
+    \param      func Nom de la fonction
+    \param      num Numero de l'erreur
+	\param		error string
   */
-  function _setErrNo($func, $num)
+  function _setErrNo($func, $num, $error='')
   {
     $this->errno = $num;
-    dolibarr_syslog("Product::".$func." - ".get_class($this) ." ERRNO (".$this->errno.")");
+    dolibarr_syslog(get_class($this)."::".$func." - ERRNO(".$this->errno.")".($error?' - '.$error:''), LOG_ERR);
   }
 
   /**
@@ -344,9 +345,9 @@ class Product extends CommonObject
 		$sql .= ",tva_tx = " . $this->tva_tx;
 		$sql .= ",envente = " . $this->status;
 		$sql .= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
-		$sql .= ",weight_units = '" . $this->weight_units."'";
+		$sql .= ",weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 		$sql .= ",volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
-		$sql .= ",volume_units = '" . $this->volume_units."'";
+		$sql .= ",volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
 		$sql .= ",seuil_stock_alerte = '" . $this->seuil_stock_alerte."'";
 		$sql .= ",description = '" . addslashes($this->description) ."'";
 		$sql .= ",stock_loc   = '" . addslashes($this->stock_loc) ."'";
@@ -355,7 +356,8 @@ class Product extends CommonObject
 		$sql .= " WHERE rowid = " . $id;
 
 		dolibarr_syslog("Product::update sql=".$sql);
-		if ( $this->db->query($sql) )
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			// Multilangs
 			if($conf->global->MAIN_MULTILANGS)

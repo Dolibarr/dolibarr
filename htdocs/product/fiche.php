@@ -111,15 +111,15 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 	// $_POST n'est pas utilise dans la classe Product
 	// mais dans des classes qui hérite de Product
 	$id = $product->create($user, $_POST);
-
+	
 	if ($id > 0)
 	{
-		Header("Location: fiche.php?id=$id");
+		Header("Location: fiche.php?id=".$id);
 		exit;
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans($product->error()).'</div>';
+		$mesg='<div class="error">'.$langs->trans($product->error).'</div>';
 		$_GET["action"] = "create";
 		$_GET["canvas"] = $product->canvas;
 		$_GET["type"] = $_POST["type"];
