@@ -25,32 +25,15 @@
 		\version    $Id$
 */
 
-require("../../master.inc.php");
+require("./pre.inc.php");
 
-function llxHeaderVierge($title, $head = "")
-{
-	global $user, $conf, $langs;
-
-    print "<html>\n";
-    print "<head>\n";
-    print "<title>".$title."</title>\n";
-    if ($head) print $head."\n";
-    print "</head>\n";
-	print "<body>\n";
-}
-
-function llxFooter()
-{
-	print "</body>\n";	
-	print "</html>\n";	
-}
 
 
 /*
- * Afffichage page
+ * View
  */
  
-llxHeaderVierge("Index public");
+llxHeader();
 
 print_fiche_titre($langs->trans("PublicMembersArea"));
 
