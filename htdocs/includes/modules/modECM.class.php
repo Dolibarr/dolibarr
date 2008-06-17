@@ -131,7 +131,7 @@ class modECM extends DolibarrModules
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
 							  'position'=>100,
-							  'perms'=>'',
+							  'perms'=>'$user->rights->ecm->create || $user->rights->ecm->read || $user->rights->ecm->setup',
 							  'target'=>'',
 							  'user'=>0);
 		$r++;
