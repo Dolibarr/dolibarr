@@ -61,9 +61,9 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("DolibarrTZ")."</td><td>".$_ENV["TZ"]."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ServerTZ")."</td><td>".$_ENV["TZ"]."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("OffsetWithGreenwich")."</td><td>".(- dolibarr_mktime(0,0,0,1,1,1970))."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(- dolibarr_mktime(0,0,0,1,1,1970))."</td></tr>\n";
 print '</table>';
 print '<br>';
 
