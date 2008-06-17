@@ -328,7 +328,7 @@ else
               $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
             }
             $sql .= " WHERE ps.fk_product = p.rowid ";
-            $sql .= " AND ps.reel >0";
+            $sql .= " AND ps.reel <> 0";	// We do not show if stock is 0 (no product in this warehouse)
             $sql .= " AND ps.fk_entrepot = ".$entrepot->id;
             if ($conf->categorie->enabled && !$user->rights->categorie->voir)
             {
