@@ -84,7 +84,7 @@ if ( $resql )
       $row = $db->fetch_row( $resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$row[1].'">'.img_object($langs->trans("ShowProject"),"project")." ".$row[0].'</a></td>';
+      print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$row[1].'">'.img_object($langs->trans("ShowProject"),"project")." ".$row[0].'</a></td>';
       print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";
     
@@ -137,7 +137,7 @@ if ( $resql )
       $row = $db->fetch_row( $resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$row[1].'">'.img_object($langs->trans("ShowCompany"),"company")." ".$row[0].'</a></td>';
+      print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$row[1].'">'.img_object($langs->trans("ShowCompany"),"company")." ".$row[0].'</a></td>';
       print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";
     

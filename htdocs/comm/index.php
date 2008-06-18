@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,8 +162,8 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
             {
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
-                print '<tr '.$bc[$var].'><td nowrap>'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref.'</a></td>';
-                print '<td><a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
+                print '<tr '.$bc[$var].'><td  nowrap="nowrap">'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref.'</a></td>';
+                print '<td nowrap="nowrap"><a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
                 print '<td align="right" nowrap="nowrap">'.price($obj->total_ht).'</td></tr>';
                 $i++;
                 $total += $obj->price;
@@ -213,8 +214,8 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
             {
                 $var=!$var;
                 $obj = $db->fetch_object($resql);
-                print "<tr $bc[$var]><td nowrap><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
-                print '<td><a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
+                print '<tr $bc[$var]><td nowrap="nowrap"><a href="../commande/fiche.php?id=$obj->rowid">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
+                print '<td nowrap="nowrap"><a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
                 print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
                 $i++;
                 $total += $obj->total_ttc;

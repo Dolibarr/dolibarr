@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,13 +157,13 @@ if ($canedit)
 	print '<input type="hidden" name="month" value="'.$month.'">';
 	print '<table class="border" width="100%">';
 	print '<tr>';
-	print '<td>';
+	print '<td nowrap="nowrap">';
 	//print '<input type="checkbox" name="userasked" '.($canedit?'':'disabled="true" ').($filtera?'checked="true"':'').'> ';
 	print $langs->trans("ActionsAskedBy");
-	print '</td><td>';
+	print '</td><td nowrap="nowrap">';
 	print $form->select_users($filtera,'userasked',1,'',!$canedit);
 	print '</td>';
-	print '<td rowspan="3" align="center" valign="middle">';
+	print '<td rowspan="3" align="center" valign="middle" nowrap="nowrap">';
 	print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'" '.($canedit?'':'disabled="true"') .'>';
 	print '<br>';
 	print '<br>';
@@ -171,18 +172,18 @@ if ($canedit)
 	print '</tr>';
 
 	print '<tr>';
-	print '<td>';
+	print '<td nowrap="nowrap">';
 	//print '<input type="checkbox" name="usertodo" '.($canedit?'':'disabled="true" ').($filtert?'checked="true"':'').'> ';
 	print $langs->trans("ActionsToDoBy");
-	print '</td><td>';
+	print '</td><td nowrap="nowrap">';
 	print $form->select_users($filtert,'usertodo',1,'',!$canedit);
 	print '</td></tr>';
 	
 	print '<tr>';
-	print '<td>';
+	print '<td nowrap="nowrap">';
 	//print '<input type="checkbox" name="userdone" '.($canedit?'':'disabled="true" ').($filterd?'checked="true"':'').'> ';
 	print $langs->trans("ActionsDoneBy");
-	print '</td><td>';
+	print '</td><td nowrap="nowrap">';
 	print $form->select_users($filterd,'userdone',1,'',!$canedit);
 	print '</td></tr>';
 
@@ -305,7 +306,7 @@ for($iter_week = 0; $iter_week < 6 ; $iter_week++)
 		if($day <= 0)
 		{
 			$style='cal_other_month';
-			echo '  <td class="'.$style.'" width="14%" valign="top">';
+			echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
 			show_day_events ($db, $max_day_in_prev_month + $day, $prev_month, $prev_year, $style, $actionarray);
 			echo "  </td>\n";
 		}
@@ -321,7 +322,7 @@ for($iter_week = 0; $iter_week < 6 ; $iter_week++)
 			else
 			$style='cal_current_month';
 			
-			echo '  <td class="'.$style.'" width="14%" valign="top">';
+			echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
 			show_day_events ($db, $day, $month, $year, $style, $actionarray);
 			echo "  </td>\n";
 		}
@@ -329,7 +330,7 @@ for($iter_week = 0; $iter_week < 6 ; $iter_week++)
 		else
 		{
 			$style='cal_other_month';
-			echo '  <td class="'.$style.'" width="14%" valign="top">';
+			echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
 			show_day_events ($db, $day - $max_day_in_month, $next_month, $next_year, $style, $actionarray);
 			echo "</td>\n";
 		}
@@ -357,14 +358,14 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray)
 	$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
 
 	print '<table class="nobordernopadding" width="100%">';
-	print '<tr style="background: #EEEEEE"><td align="left">';
+	print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
 	print dolibarr_print_date($curtime,'%a %d');
-	print '</td><td align="right">';
+	print '</td><td align="right" nowrap="nowrap">';
 	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).'">';
 	print img_picto($langs->trans("NewAction"),'edit_add.png');
 	print '</a>';
 	print '</td></tr>';
-	print '<tr height="60"><td valign="top" colspan="2">';	// Minimum 60px height
+	print '<tr height="60"><td valign="top" colspan="2" nowrap="nowrap">';	// Minimum 60px height
 
 	//$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
 	$i=0;
@@ -384,7 +385,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray)
 				$color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
 				//print "x".$color;
 				print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; " width="100%"><tr>';
-				print '<td>';
+				print '<td nowrap="nowrap">';
 				$tmpyearstart  = date('Y',$action->date_start_in_calendar);
 				$tmpmonthstart = date('m',$action->date_start_in_calendar);
 				$tmpdaystart   = date('d',$action->date_start_in_calendar);
@@ -419,7 +420,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray)
 				print '<br>';
 				print $action->getNomUrl(0,14,'cal_event');
 				print '</td>';
-				print '<td align="right">'.$action->getLibStatut(3);
+				print '<td align="right" nowrap="nowrap">'.$action->getLibStatut(3);
 				print '</td></tr></table>';
 				$i++;
 			}
