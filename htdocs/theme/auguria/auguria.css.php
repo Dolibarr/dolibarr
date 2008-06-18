@@ -167,7 +167,7 @@ div.tmenu  .tmenudisabled
 table.tmenu
 {
     padding: 0px 0px 0px 0px;
-    margin: -2px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 
 a.tmenu:link
@@ -189,7 +189,6 @@ a.tmenu:visited
 	padding-right:10px;
 	padding-top: 2px;
 	height: 21px;
-	display: block;
 	font-weight: normal;
 }
 
@@ -201,7 +200,6 @@ a.tmenu#sel
 	padding-right:10px;
 	padding-top: 2px;
 	height: 21px;
-	display: block;
 	font-weight: normal;
 	background: #FFFFFF;
 }
@@ -213,22 +211,18 @@ a.tmenu:hover
 	padding-right:10px;
 	padding-top: 2px;
 	height: 21px;
-	display: block;
 	font-weight: normal;
 	background: #FFFFFF;
 }
 
 a.tmenu:active
 {
-  padding: 0px 5px 0px 5px;
-  margin: 0px 0px 0px 0px;
 	background:#4F9EC9;
 	text-decoration:none;
 	padding-left:10px;
 	padding-right:10px;
 	padding-top: 2px;
 	height: 21px;
-	display: block;
   font-weight: normal;
 }
 
