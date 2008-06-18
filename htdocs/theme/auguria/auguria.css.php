@@ -195,7 +195,7 @@ a.tmenu:visited
 
 a.tmenu#sel
 {
-	 color:#234046;
+	color:#234046;
 	text-decoration:none;
 	padding-left:10px;
 	padding-right:10px;
@@ -207,7 +207,7 @@ a.tmenu#sel
 }
 a.tmenu:hover
 {
-	 color:#234046;
+	color:#234046;
 	text-decoration:none;
 	padding-left:10px;
 	padding-right:10px;
@@ -223,8 +223,13 @@ a.tmenu:active
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 0px 0px;
 	background:#4F9EC9;
+	text-decoration:none;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top: 2px;
+	height: 21px;
+	display: block;
   font-weight: normal;
-  font-size: 12px;	
 }
 
 font.tmenudisabled
