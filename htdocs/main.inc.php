@@ -1063,19 +1063,13 @@ function left_menu($menu_array, $helppagename='', $form_search='')
     print "</div>\n";
     print "<!-- Fin left vertical menu -->\n";
 
-	// Cas special pour auguria. 
-	// On le met pour tous les autres styles sinon ko avec IE6 et resolution autre que 1024x768
-	if ($conf->theme != 'auguria')
-	{
-	    print "\n";
+    print "\n";
 
-	    print '<!-- fin de zone gauche, debut zone droite -->'."\n";
+    print '<!-- fin de zone gauche, debut zone droite -->'."\n";
 //	    print '</div>'."\n";
 //		print '<div class="vmenuplusfiche">'."\n";
-		print '</td><td valign="top">'."\n";
+	print '</td><td valign="top">'."\n";
 
-		print "\n";
-	}
     
 	print "\n";
     print '<div class="fiche"> <!-- begin fiche area -->'."\n";
