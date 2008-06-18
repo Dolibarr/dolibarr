@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
@@ -52,10 +49,10 @@ print '<tr><td valign="top" width="100%" colspan="2" class="notopnoleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td>';
-print '<td align=right width="80">'.$langs->trans("MembersStatusToValid").'</td>';
-print '<td align=right width="80">'.$langs->trans("MenuMembersNotUpToDate").'</td>';
-print '<td align=right width="80">'.$langs->trans("MenuMembersUpToDate").'</td>';
-print '<td align=right width="80">'.$langs->trans("MembersStatusResiliated").'</td>';
+print '<td align=right>'.$langs->trans("MembersStatusToValid").'</td>';
+print '<td align=right>'.$langs->trans("MenuMembersNotUpToDate").'</td>';
+print '<td align=right>'.$langs->trans("MenuMembersUpToDate").'</td>';
+print '<td align=right>'.$langs->trans("MembersStatusResiliated").'</td>';
 print "</tr>\n";
 
 $var=True;
