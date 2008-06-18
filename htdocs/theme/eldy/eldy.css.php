@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C)      2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -140,41 +140,20 @@ form
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-div.vmenuplusfiche
+/* Removed div.vmenuplusfiche, replaced div.vmenu by td.vmenu, removed div.fiche */
+
+td.vmenu
 {
-    top: auto;
-    left: auto;
-
-	position: static;
-    float: left;
-
-    display: block;
-    margin-right: 6px;
-    margin-left: 1px;
-    margin-top: 2px;
-}
-
-div.vmenu
-{
-    float: left;
-
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 162px;
+    width: 164px;
 }
 
 div.fiche
 {
-	float: right;
-<?php
-	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
-	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
-?>
-    display: block;
-	margin-left: 2px;
+	margin-left: 4px;
 	margin-right: 2px;
-    width:auto;
 }
 
 /* ============================================================================== */
@@ -204,9 +183,9 @@ div.tmenu  .tmenudisabled
 {
 	color: #757575;
 	font-size: 12px;
-	padding-left:10px;
-	padding-right:10px;
-	padding-top:3px;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 3px;
 	cursor: not-allowed;
 }
 
@@ -244,7 +223,6 @@ a.tmenu#sel
   font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
   background: #F4F4F4;
-/*  background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu_inverse.jpg' ?>); */
   border-right: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
   border-left: 1px solid #D8D8D8;
@@ -266,16 +244,6 @@ a.tmenu:hover
   border-bottom: 2px solid #dee7ec;
 }
 
-font.tmenudisabled
-{
-  color: #93a5aa;
-  padding: 0px 5px 0px 5px;
-  margin: 0px 0px 2px 0px;
-  font-weight: normal;
-  font-size: 12px;
-  cursor: not-allowed;
-}
-
 a.tmenu:active
 {
   padding: 0px 5px 0px 5px;
@@ -291,6 +259,15 @@ a.tmenu:active
   border-bottom: 2px solid #dee7ec;
 }
 
+font.tmenudisabled
+{
+  color: #93a5aa;
+  padding: 0px 5px 0px 5px;
+  margin: 0px 0px 2px 0px;
+  font-weight: normal;
+  font-size: 12px;
+  cursor: not-allowed;
+}
 
 
 /* Pour menu TOP auguria uniquement */

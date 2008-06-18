@@ -898,7 +898,7 @@ class MenuLeft {
 		{
 			print '<div class="blockvmenuimpair">'."\n";
 			print $langs->trans("NoMenu");
-			print '</div>';
+			print '</div>'."\n";
 		}
 		else
 		{
@@ -935,11 +935,11 @@ class MenuLeft {
 					if ($contenu == 1) print '<div class="menu_fin"></div>'."\n";
 					if ($this->menu_array[$i]['enabled'])
 					{
-						print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>';
+						print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a></div>'."\n";
 					}
 					else
 					{
-						print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font></div>';
+						print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font></div>'."\n";
 					}
 				}
 				// Menu niveau > 0
@@ -954,13 +954,13 @@ class MenuLeft {
 						print '</a>';
 						// If title is not pure text and contains a table, no carriage return added
 						if (! strstr($this->menu_array[$i]['titre'],'<table')) print '<br>';
-						print '</div>';
+						print '</div>'."\n";
 					}
 					else
 					{
 						print '<div class="menu_contenu">';
 						print $tabstring.'<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-						print '</div>';
+						print '</div>'."\n";
 					}
 				}
 

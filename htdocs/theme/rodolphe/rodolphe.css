@@ -85,42 +85,29 @@ form
 }
 
 
-div.vmenuplusfiche
-{
-    top: auto;
-    left: auto;
-    display: block;
-    margin-right: 13px;
-    margin-left: 1px;
-    margin-top: 10px;
-    
-}
+/* ============================================================================== */
+/* Styles de positionnement des zones                                             */
+/* ============================================================================== */
 
-div.vmenu
+/* Removed div.vmenuplusfiche, replaced div.vmenu by td.vmenu, removed div.fiche */
+
+td.vmenu
 {
-    float: left;
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 160px;
+    width: 164px;
 }
 
 div.fiche
 {
-    display: block;
-    margin-left: 180px;
-    width:auto;
+	margin-left: 4px;
+	margin-right: 2px;
 }
 
-* html div.fiche
-{
-	width:800px;	
-}
-
-
-/*
- *   Menu superieur et 1ere ligne tableau
- */
+/* ============================================================================== */
+/* Menu top et 1ere ligne tableau                                                 */
+/* ============================================================================== */
 
 div.tmenu
 {

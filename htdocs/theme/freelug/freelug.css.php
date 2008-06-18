@@ -138,41 +138,18 @@ form
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-div.vmenuplusfiche
+td.vmenu
 {
-    top: auto;
-    left: auto;
-	position: static;
-    float: left;
-    display: block;
-    margin-right: 6px;
-    margin-left: 1px;
-    margin-top: 2px;
-    
-}
-
-div.vmenu
-{
-    float: left;
-    margin-right: 0px;
+    padding-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 174px;
+    width: 180px;
 }
 
 div.fiche
 {
-<?php
-	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
-	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
-?>
-    display: block;
-	margin-left: 2px;
-	margin-right: 2px;
-    width:auto;
+	margin-left: 5px;
 }
-
-
 
 /* ============================================================================== */
 /* Menu superieur et 1ere ligne tableau                                           */

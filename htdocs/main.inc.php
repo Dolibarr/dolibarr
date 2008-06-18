@@ -968,7 +968,9 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 {
     global $user, $conf, $langs, $db;
 
-    print '<div class="vmenuplusfiche">'."\n";
+//    print '<div class="vmenuplusfiche">'."\n";
+    print '<table width="100%" class="notopnoleftnoright"><tr><td class="vmenu" valign="top">'; 
+    
     print "\n";
 
     // Colonne de gauche
@@ -1066,14 +1068,17 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 	if ($conf->theme != 'auguria')
 	{
 	    print "\n";
-	    print '</div>'."\n";
-	    print '<!-- fin de zone gauche, debut zon droite -->';
-		print '<div class="vmenuplusfiche">'."\n";
-	    print "\n";
+
+	    print '<!-- fin de zone gauche, debut zone droite -->'."\n";
+//	    print '</div>'."\n";
+//		print '<div class="vmenuplusfiche">'."\n";
+		print '</td><td valign="top">'."\n";
+
+		print "\n";
 	}
     
-    print '<!-- fiche -->'."\n";
-    print '<div class="fiche">'."\n";
+	print "\n";
+    print '<div class="fiche"> <!-- begin fiche area -->'."\n";
 
 }
 
@@ -1114,8 +1119,10 @@ function llxFooter($foot='',$limitIEbug=1)
 {
     global $conf, $dolibarr_auto_user, $micro_start_time;
     
-    print "\n</div>\n".'<!-- end div class="fiche" -->'."\n";
-    print "\n</div>\n".'<!-- end div class="vmenuplusfiche" -->'."\n";
+    print "\n".'</div> <!-- end div class="fiche" -->'."\n";
+
+//    print "\n".'</div> <!-- end div class="vmenuplusfiche" -->'."\n";
+	print "\n".'</td></tr></table> <!-- end right area -->'."\n";
     
     if (! empty($_SERVER['DOL_TUNING']))
     {

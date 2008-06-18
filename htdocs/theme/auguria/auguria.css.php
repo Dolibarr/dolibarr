@@ -122,76 +122,35 @@ form
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-div.vmenuplusfiche
+/* Removed div.vmenuplusfiche, replaced div.vmenu by td.vmenu, removed div.fiche */
+
+td.vmenu
 {
-    top: auto;
-    left: auto;
-
-	position: static;
-    float: left;
-
-    display: block;
-    margin-right: 10px;
-    margin-left: 1px;
-}
-
-div.vmenu
-{
-    float: left;
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 165px;
+    width: 164px;
 }
 
 div.fiche
 {
-	float: right;
-<?php
-	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
-	if (eregi('MSIE 6\.0',$_SERVER['HTTP_USER_AGENT']))
-	{ 
-		// If position is relative, IE6 put the div under the leftmenu, so we force to absolute
-		print "    position: absolute;\n";
-		// If position is abolute, we must not include the leftmenu in value
-		print "    margin-left: 20px;";
-	}
-	elseif (eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT']))
-	{ 
-		// We do nothing
-	}
-	else
-	{
-		//  Firefox
-		print "    position: absolute;\n";
-   		print "    margin-left: 180px;\n";
-	}
-?>
-    display: block;
-    margin-top: 8px;
+	margin-left: 4px;
 	margin-right: 2px;
-    width:auto;
 }
-
-* html div.fiche
-{
-	width:800px;	
-}
-
 
 /* ============================================================================== */
-/* Menu superieur et 1ere ligne tableau                                           */
+/* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
 div.tmenu
 {
     position: relative;
+	display: block;
     white-space: nowrap;
     border-left: 0px;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 2px 0px;
     font-size: 12px;
-    height: 19px;
     background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/nav.jpg' ?>) ;
     height: 22px;
 }
@@ -199,9 +158,9 @@ div.tmenu  .tmenudisabled
 {
 	color: #757575;
 	font-size: 12px;
-	padding-left:10px;
-	padding-right:10px;
-	padding-top:3px;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 3px;
 	cursor: not-allowed;
 }
 
@@ -219,7 +178,6 @@ a.tmenu:link
 	padding-right:10px;
 	padding-top: 2px;
 	height: 21px;
-	display: block;
 	font-weight: normal;
 }
 
@@ -234,7 +192,6 @@ a.tmenu:visited
 	display: block;
 	font-weight: normal;
 }
-
 
 a.tmenu#sel
 {
@@ -261,21 +218,22 @@ a.tmenu:hover
 	background: #FFFFFF;
 }
 
+a.tmenu:active
+{
+  padding: 0px 5px 0px 5px;
+  margin: 0px 0px 0px 0px;
+	background:#4F9EC9;
+  font-weight: normal;
+  font-size: 12px;	
+}
+
 font.tmenudisabled
 {
   color: #93a5aa;
-  padding: 0px 5px 0px 5px;
-  margin: 0px 0px 2px 0px;
   font-weight: normal;
   font-size: 12px;
   cursor: not-allowed;  
 }
-
-a.tmenu:active
-{
-	background:#4F9EC9;
-}
-
 
 
 /* Pour menu TOP auguria uniquement */
@@ -297,8 +255,8 @@ div.tmenu li a{
   	font-size: 13px;
 	color:#FFFFFF;
 	text-decoration:none;
-	padding-left:10px;
-	padding-right:10px;
+	padding-left: 6px;
+	padding-right: 6px;
 	padding-top: 2px;
 	height: 22px;
 	display: block;
@@ -388,26 +346,28 @@ a.help:active       { font-size: 10px; font-weight: bold; background: #FFFFFF; b
 a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
-div.blockvmenuimpair
-{
-	margin: 0px;
-	border-spacing: 0px;
-	padding: 0px;
-/*	width: 166px;*/
-    border : 0px solid #68ACCF;	
-}
 div.blockvmenupair
 {
 	margin: 0px;
 	border-spacing: 0px;
 	padding: 0px;
-/*	width: 166px; */
+	width: 166px;
+    border : 0px solid #68ACCF;	
+}
+div.blockvmenuimpair
+{
+	margin: 0px;
+	border-spacing: 0px;
+	padding: 0px;
+	width: 166px;
     border : 0px solid #68ACCF;	
 }
 
+
 div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
 {
-	display: block;
+	width: 166px;
+
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
@@ -419,6 +379,7 @@ div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
 
 div.help
 {
+	width: 166px;
     margin-left:5px;
     margin-top:15px;
     text-align: center;
@@ -496,7 +457,6 @@ div.tabs {
 }
 
 div.tabBar {
-    width:auto;
     color: #234046;
     padding-top: 12px;
     padding-left: 12px;
@@ -625,12 +585,15 @@ a.tabimage {
     white-space: nowrap;
 }
 
+td.tab {
+    background: #dee7ec;
+}
 
 /* ============================================================================== */
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-/* Nouvelle syntaxe à utiliser */
+/* Nouvelle syntaxe a utiliser */
 
 a.butAction:link    {
                       font-weight: bold;
@@ -733,7 +696,6 @@ margin: 0px 0px;
 
 table.border {
 border: 0px solid #9CACBB;
-border: 0px;
 border-collapse: collapse;
 }
 table.border td {
@@ -743,22 +705,9 @@ border: 1px solid #9CACBB;
 border-collapse: collapse;
 }
 
-table.list {
-border: 0px solid #9CACBB;
-border-collapse: collapse;
-}
-table.list td {
-padding: 2px 2px;
-padding-left: 4px;
-padding-top:0px;
-padding-bottom:0px;
-border: 0px solid;
-border-collapse: collapse;
-}
-
 
 table.noborder {
-border: 6px;
+border: 2px;
 }
 table.noborder td {
 border: 0px;

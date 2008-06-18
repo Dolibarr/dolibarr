@@ -123,38 +123,20 @@ form
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-div.vmenuplusfiche
-{
-    top: auto;
-    left: auto;
-	position: static;
-    float: left;
-    display: block;
-    margin-right: 6px;
-    margin-left: 1px;
-    margin-top: 4px;
-    
-}
+/* Removed div.vmenuplusfiche, replaced div.vmenu by td.vmenu, removed div.fiche */
 
-div.vmenu
+td.vmenu
 {
-    float: left;
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 160px;
+    width: 164px;
 }
 
 div.fiche
 {
-<?php
-	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
-	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
-?>
-    display: block;
-	margin-left: 2px;
-	margin-right: 4px;
-    width:auto;
+	margin-left: 4px;
+	margin-right: 2px;
 }
 
 

@@ -575,7 +575,9 @@ if (sizeof($boxarray))
 	
 	// Affichage colonne gauche
 	print "\n<!-- Box container -->\n";
-	print '<div id="left" style="position: absolute; display: block; width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
+	print '<table width="100%"><tr><td width="50%" valign="top">'."\n";
+	print '<div id="left">'."\n";
+	
 	$ii=0;
 	foreach ($boxarray as $key => $box)
 	{
@@ -602,13 +604,16 @@ if (sizeof($boxarray))
 	}
 	
 	print "</div>\n";
+	print '</td>';
 	print "<!-- End box container -->\n";
     print "\n";
   
 	// Affichage colonne droite
 	print "\n<!-- Box container -->\n";
-//	print '<div id="right" style="position: absolute; display: block; width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
-	print '<div id="right" style="width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
+	print '<td width="50%" valign="top">';
+	//	print '<div id="right" style="position: absolute; display: block; width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
+	print '<div id="right">'."\n";
+	
 	$ii=0;
 	$boxarray=$infobox->listboxes("0",$user);       // on régénère la liste pour éviter les erreurs avec les empty box
 	foreach ($boxarray as $key => $box)
@@ -635,9 +640,10 @@ if (sizeof($boxarray))
 		$box->showBox();
 	}
 	
-  print "</div>\n";
+	print "</div>\n";
+	print "</td></tr></table>\n";
 	print "<!-- End box container -->\n";
-  print "\n";
+	print "\n";
 
 	print "</td></tr>";
 	print "</table>";
