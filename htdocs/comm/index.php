@@ -214,7 +214,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
             {
                 $var=!$var;
                 $obj = $db->fetch_object($resql);
-                print '<tr $bc[$var]><td nowrap="nowrap"><a href="../commande/fiche.php?id=$obj->rowid">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
+                print '<tr '.$bc[$var].'><td nowrap="nowrap"><a href="../commande/fiche.php?id=$obj->rowid">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
                 print '<td nowrap="nowrap"><a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
                 print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
                 $i++;
