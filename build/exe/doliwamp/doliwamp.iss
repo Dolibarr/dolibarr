@@ -25,7 +25,7 @@ OutputBaseFilename=DoliWamp 2.4-dev
 SourceDir=E:\Mes Developpements\dolibarr
 ; ----- End of change
 AppId=doliwamp
-AppPublisher=Laurent Destailleur - NLTechno
+AppPublisher=NLTechno
 AppPublisherURL=http://www.nltechno.com
 AppSupportURL=http://www.dolibarr.org
 AppUpdatesURL=http://www.dolibarr.org
