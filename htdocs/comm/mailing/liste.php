@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/comm/mailing/liste.php
         \ingroup    mailing
         \brief      Liste des mailings
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -81,7 +78,7 @@ if ($result)
   print_liste_field_titre($langs->trans("Status"),"liste.php","m.statut",$addu,"",'align="right"',$sortfield,$sortorder);
   print "</tr>\n";
 
-  print '<form method="get" action="clients.php">';
+  print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
   print '<tr class="liste_titre">';
   print '<td class="liste_titre" valign="right">';
   print '<input type="text" class="flat" name="sref" value="'.$sref.'" size="6">';
