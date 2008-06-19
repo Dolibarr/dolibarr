@@ -336,11 +336,11 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         }
         else
         {
-	        print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"mc.date_envoi",$addu,'','align="center"',$sortfield);
+	        print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"mc.date_envoi",$addu,'','align="center"',$sortfield,$sortorder);
         }        
 
 		// Statut
-        print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$addu,'','align="right"',$sortfield);
+        print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$addu,'','align="right"',$sortfield,$sortorder);
 
         print '</tr>';
 
