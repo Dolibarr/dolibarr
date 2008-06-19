@@ -153,7 +153,7 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
           print '<td>'.$objp->libelle.'</td>';
           print '<td align="center">'.yn($objp->cotisation).'</td>';
           print '<td align="center">'.yn($objp->vote).'</td>';
-          print '<td><a href="type.php?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</td>';
+          print '<td><a href="type.php?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
           print "</tr>";
           $i++;
         }

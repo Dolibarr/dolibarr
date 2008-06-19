@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -176,7 +176,7 @@ if ($result)
 	  
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print '<td nowrap="nowrap"><a href="fiche.php?id='.$objp->rowid.'">';
+	  print '<td nowrap="nowrap">';
 	  $staticproduct->id=$objp->rowid;
 	  $staticproduct->ref=$objp->ref;
 	  $staticproduct->type=$objp->fk_product_type;
