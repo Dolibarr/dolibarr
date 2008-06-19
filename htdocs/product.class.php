@@ -179,6 +179,13 @@ class Product extends CommonObject
 			}
 		}
 		
+		// Check parameters
+		if (empty($this->libelle)) 
+		{
+			$this->error='ErrorWrongParameters';
+			return -1;
+		}
+		
 		dolibarr_syslog("Product::Create ref=".$this->ref." price=".$this->price." tva_tx=".$this->tva_tx." Categorie : ".$this->catid);
 		
 		if ($this->ref)
@@ -198,11 +205,11 @@ class Product extends CommonObject
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product";
 					$sql.= " (datec, ";
 					if ($this->ref) $sql.= "ref, ";
-					if ($this->libelle) $sql.= "label, ";
+					$sql.= "label, ";
 					$sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas)";
 					$sql.= " VALUES (now(), ";
-					if ($this->ref) $sql.= "'".$this->ref."', ";
-					if ($this->libelle) $sql.= "'".addslashes($this->libelle)."', ";
+					if ($this->ref) $sql.= "'".$this->ref."',";
+					$sql.= " ".($this->libelle?"'".addslashes($this->libelle)."'":"null").",";
 					$sql.= $user->id.",";
 					$sql.= " ".$this->type.",";
 					$sql.= price2num($price_ht).",";
@@ -241,7 +248,8 @@ class Product extends CommonObject
 							}
 							else
 							{
-								$this->_setErrNo("Create",264);
+								$this->error=$this->db->error();
+								$this->_setErrNo("Create",264,$this->error);
 							}
 						}
 						else
@@ -251,7 +259,8 @@ class Product extends CommonObject
 					}
 					else
 					{
-						$this->_setErrNo("Create",258);
+						$this->error=$this->db->error();
+						$this->_setErrNo("Create",258,$this->error);
 					}
 				}
 				else
