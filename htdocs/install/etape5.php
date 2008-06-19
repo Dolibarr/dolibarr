@@ -187,7 +187,7 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	// If upgrade
     if ($_POST["action"] == "upgrade")
     {
-		dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_UPGRADE const', LOG_ERR);
+		dolibarr_install_syslog('install/etape5.php set MAIN_VERSION_LAST_UPGRADE const', LOG_DEBUG);
 	    $db->query("DELETE FROM llx_const WHERE name='MAIN_VERSION_LAST_UPGRADE'");
 		$db->query("INSERT INTO llx_const(name,value,type,visible,note) values('MAIN_VERSION_LAST_UPGRADE','".DOL_VERSION."','chaine',0,'Dolibarr version for last upgrade')");
 	}
