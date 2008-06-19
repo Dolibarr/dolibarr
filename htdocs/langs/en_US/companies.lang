@@ -180,7 +180,7 @@ VATIntraCheck=Check
 VATIntraCheckDesc=The link <b>%s</b> allows to ask the european VAT checker service. An external internet access from server is required for this service to work.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Check Intracomunnautary VAT on European commision site
-VATIntraManualCheck=You can also check manually from european web site <a href="%s" target="_new">%s</a>
+VATIntraManualCheck=You can also check manually from european web site <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Check not possible. Check service is not provided by the member state (%s).
 NorProspectNorCustomer=Nor prospect, nor customer
 JuridicalStatus=Juridical status

@@ -180,7 +180,7 @@ VATIntraCheck=Vérifier
 VATIntraCheckDesc=Le lien <b>%s</b> permet d'interroger le service européen de contrôle des numéro de TVA intracommunautaire. Un accès au monde internet exterieur depuis le serveur est requis pour que ce service fonctionne.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Vérifier sur le site de la Commission Européenne
-VATIntraManualCheck=Vous pouvez aussi vérifier manuellement via le site européen <a href="%s" target="_new">%s</a>
+VATIntraManualCheck=Vous pouvez aussi vérifier manuellement via le site européen <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Vérification impossible. Le service de vérification n'est pas fourni par ce pays membre (%s).
 NorProspectNorCustomer=Ni client, ni prospect
 JuridicalStatus=Forme juridique

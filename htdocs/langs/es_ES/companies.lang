@@ -183,7 +183,7 @@ VATIntraCheck=Verificar
 VATIntraCheckDesc=El link <b>%s</b> permite consultar al servicio europeo de control de números de IVA intracomunitario. Se requiere acceso a internet para que el servicio funcione
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/lang.do?fromWhichPage=vieshome&selectedLanguage=ES
 VATIntraCheckableOnEUSite=Verificar en la web de la Comisión Europea
-VATIntraManualCheck=Puede también realizar una verificación manual en la web europea <a href="%s" target="_new">%s</a>
+VATIntraManualCheck=Puede también realizar una verificación manual en la web europea <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Comprobación imposible. El servicio de comprobación no es prestado por el país país miembro (%s).
 NorProspectNorCustomer=Ni cliente, ni cliente potencial
 JuridicalStatus=Forma jurídica

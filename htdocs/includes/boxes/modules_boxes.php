@@ -134,7 +134,7 @@ class ModeleBoxes
 			}
 	        if (! empty($head['sublink']))
 	        {
-	            print ' <a href="'.$head['sublink'].'" target="_new">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
+	            print ' <a href="'.$head['sublink'].'" target="_blank">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
 	        }
 			if ($conf->use_javascript_ajax)
 	        {

@@ -147,7 +147,7 @@ VATIntraCheck=Controleer
 VATIntraCheckDesc=De verbinding <b>%s</b> laat toe de europeese BTW testservice te bevragen. Een toegang tot het internet vanaf de server is vereist om deze dienst te laten werken.
 VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/vieshome.do
 VATIntraCheckableOnEUSite=Check Intracomunnautary VAT on European commision site
-VATIntraManualCheck=U kan ook zelf de test doen via de europese website <a href="%s" target="_new">%s</a>
+VATIntraManualCheck=U kan ook zelf de test doen via de europese website <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Test niet mogelijk. Testservice wordt niet voorzien door de lidstaat (%s).
 NorProspectNorCustomer=Geen prospect of klant
 JuridicalStatus=Juridische status
