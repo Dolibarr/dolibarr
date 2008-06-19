@@ -35,6 +35,7 @@ For users:
 - Several enhancements to make addon development easier.
 - Changes in wizard installer to allow building autoexe installer for
   Windows with Apache and Mysql included.
+- Added compatibility with Firefox 3.
 
 For developers:
 - Update code skeletons examples.
