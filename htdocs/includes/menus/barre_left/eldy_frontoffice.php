@@ -814,8 +814,8 @@ class MenuLeft {
 					$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&amp;mainmenu=members",$langs->trans("Exports"),0,$user->rights->adherent->export);
 					if ($conf->export->enabled && $leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
 					if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->adherent->export);
-					if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export,'_new');
-					if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export",$langs->trans("MembersTickets"),1,$user->rights->adherent->export,'_new');
+					if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export,'_blank');
+					if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export",$langs->trans("MembersTickets"),1,$user->rights->adherent->export,'_blank');
 
 					$newmenu->add(DOL_URL_ROOT."/public/adherents/index.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
 					/*
