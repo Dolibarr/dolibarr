@@ -4,7 +4,7 @@
 
 -- ===================================================================
 -- Copyright (C) 2000-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_bank.sql,v 1.11 2007/12/02 21:53:28 eldy Exp 
+-- Id: llx_bank.sql,v 1.12 2008/05/02 23:09:44 eldy Exp 
 -- ===================================================================
 
 create table llx_bank
@@ -36,7 +36,7 @@ create table llx_bank
   "fk_user_rappro"  integer,
   "fk_type"         varchar(4),     -- CB, Virement, cheque
   "num_releve"      varchar(50),
-  "num_chq"         int,
+  "num_chq"         varchar(50),
   "rappro"          smallint default 0,
   "note"            text,
   "fk_bordereau"    integer DEFAULT 0,

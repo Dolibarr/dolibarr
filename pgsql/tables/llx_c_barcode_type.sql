@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_c_barcode_type.sql,v 1.3 2007/12/02 21:57:09 eldy Exp 
+-- Id: llx_c_barcode_type.sql,v 1.4 2008/01/03 18:41:34 eldy Exp 
 -- ========================================================================
 
 create table llx_c_barcode
@@ -27,6 +27,6 @@ create table llx_c_barcode
   rowid SERIAL PRIMARY KEY,
   "code"     varchar(16)        NOT NULL,
   "libelle"  varchar(50)        NOT NULL,
-  "coder"    integer            NOT NULL DEFAULT 0,
+  "coder"    varchar(16)        NOT NULL,
   "example"  varchar(16)        NOT NULL
 );

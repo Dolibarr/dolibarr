@@ -29,7 +29,7 @@
    \version    $Id$
 */
 
-define('DOL_VERSION','2.4-dev');	// Also defined in inc.php
+define('DOL_VERSION','2.4-beta');	// Also defined in htdocs/install/inc.php
 define('EURO',chr(128)); 
 
 // La fonction clearstatcache ne doit pas etre appelée de manière globale car ralenti.

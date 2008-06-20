@@ -4,6 +4,7 @@
 
 -- ============================================================================
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_socpeople.sql,v 1.18 2007/12/02 21:37:47 eldy Exp 
+-- Id: llx_socpeople.sql,v 1.19 2008/03/30 22:25:42 eldy Exp 
 -- ============================================================================
 
 create table llx_socpeople
@@ -43,6 +44,7 @@ create table llx_socpeople
   "fax"            varchar(30),
   "email"          varchar(255),
   "jabberid"       varchar(255),
+  "priv"           smallint NOT NULL DEFAULT 0,
   "fk_user_creat"  integer DEFAULT 0, -- user qui a créé l'enregistrement
   "fk_user_modif"  integer,
   "note"           text

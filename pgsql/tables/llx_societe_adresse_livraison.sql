@@ -20,7 +20,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_societe_adresse_livraison.sql,v 1.7 2007/12/02 21:37:46 eldy Exp 
+-- Id: llx_societe_adresse_livraison.sql,v 1.8 2007/12/27 19:02:28 hregis Exp 
 -- ========================================================================
 
 create table llx_societe_adresse_livraison
@@ -35,6 +35,8 @@ create table llx_societe_adresse_livraison
   "cp"                 varchar(10),                         -- zipcode
   "ville"              varchar(50),                         -- town
   "fk_pays"            integer        DEFAULT 0,            --
+  "tel"                varchar(20),                         -- phone number
+  "fax"                varchar(20),                         -- fax number
   "note"               text,                                --
   "fk_user_creat"      integer,                             -- utilisateur qui a créé l'info
   "fk_user_modif"      integer                              -- utilisateur qui a modifié l'info

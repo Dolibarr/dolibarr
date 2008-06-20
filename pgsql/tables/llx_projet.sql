@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_projet.sql,v 1.5 2007/12/02 21:37:45 eldy Exp 
+-- Id: llx_projet.sql,v 1.6 2008/03/02 22:20:47 eldy Exp 
 -- ===========================================================================
 
 
@@ -27,7 +27,7 @@
 create table llx_projet
 (
   rowid SERIAL PRIMARY KEY,
-  "fk_soc"           integer  NOT NULL,
+  "fk_soc"           integer,
   "fk_statut"        smallint NOT NULL,
   "tms"              timestamp,
   "dateo"            date,         -- date d'ouverture du projet

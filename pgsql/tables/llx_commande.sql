@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_commande.sql,v 1.15 2007/12/02 22:03:23 eldy Exp 
+-- Id: llx_commande.sql,v 1.16 2008/01/21 19:17:56 hregis Exp 
 -- ===================================================================
 
 
@@ -55,7 +55,7 @@ create table llx_commande
   "facture"               smallint   default 0,
   "fk_cond_reglement"     integer,                       -- condition de réglement
   "fk_mode_reglement"     integer,                       -- mode de réglement
-  "date_livraison" 	    date 	  default NULL,
+  "date_livraison" 	      date 	  default NULL,
   "fk_adresse_livraison"  integer,                       -- adresse de livraison
   UNIQUE(ref)
 );

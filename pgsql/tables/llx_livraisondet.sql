@@ -4,6 +4,7 @@
 
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,16 +20,18 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_livraisondet.sql,v 1.3 2007/12/02 21:37:40 eldy Exp 
+-- Id: llx_livraisondet.sql,v 1.6 2008/01/31 12:16:25 hregis Exp 
 -- ===================================================================
 
 create table llx_livraisondet
 (
   rowid SERIAL PRIMARY KEY,
   "fk_livraison"      integer,
-  "fk_commande_ligne" integer NOT NULL,
-  "qty"               real              -- quantité
+  "fk_origin_line"    integer,                         -- Correspondance de la ligne avec le document d'origine (propal, commande)
+  "fk_product"        integer,
+  "description"       text,
+  "qty"               real,                            -- quantité
+  "subprice"          real(24,8) DEFAULT 0,          -- prix unitaire
+  "total_ht"          real(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantité
+  "rang"              integer      DEFAULT 0
 );
-
-CREATE INDEX idx_llx_livraisondet_fk_livraison ON llx_livraisondet (fk_livraison);
-CREATE INDEX idx_llx_livraisondet_fk_commande_ligne ON llx_livraisondet (fk_commande_ligne);

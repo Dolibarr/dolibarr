@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_societe.key.sql,v 1.5 2007/12/02 21:37:46 eldy Exp 
+-- Id: llx_societe.key.sql,v 1.6 2008/03/01 01:13:17 eldy Exp 
 -- ===================================================================
 
 
@@ -28,3 +28,5 @@ ALTER TABLE llx_societe ADD UNIQUE uk_societe_code_client(code_client);
 
 ALTER TABLE llx_societe ADD INDEX idx_societe_user_creat(fk_user_creat);
 ALTER TABLE llx_societe ADD INDEX idx_societe_user_modif(fk_user_modif);
+
+--ALTER TABLE llx_societe ADD FOREIGN KEY fk_prospectlevel llx_c_prospectlevel(code);

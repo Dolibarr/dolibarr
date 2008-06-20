@@ -4,6 +4,7 @@
 
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,31 +20,26 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_livraison.sql,v 1.6 2007/12/02 21:37:40 eldy Exp 
+-- Id: llx_livraison.sql,v 1.8 2008/01/21 19:17:56 hregis Exp 
 -- ===================================================================
-
 
 create table llx_livraison
 (
   rowid SERIAL PRIMARY KEY,
   "tms"                   timestamp,
-  "fk_commande"           integer DEFAULT 0,             -- commande auquel est rattache le bon de livraison
+  "ref"                   varchar(30)  NOT NULL,         -- delivery number
+  "ref_client"            varchar(30),                   -- customer number
+  "fk_soc"                integer      NOT NULL,
   "fk_expedition"         integer,                       -- expedition auquel est rattache le bon de livraison
-  "ref"                   varchar(30) NOT NULL,          -- delivery number
-  "date_creation"         timestamp,                      -- date de creation 
-  "date_valid"            timestamp,                      -- date de validation
+  "date_creation"         timestamp,                      -- date de creation
   "fk_user_author"        integer,                       -- createur du bon de livraison
+  "date_valid"            timestamp,                      -- date de validation
   "fk_user_valid"         integer,                       -- valideur du bon de livraison
-  "fk_statut"             smallint  default 0,
-  "total_ht"              real      default 0,
-  "total_ttc"             real      default 0,
+  "date_livraison" 	      date 	       default NULL,     -- date de livraison
+  "fk_adresse_livraison"  integer,                       -- adresse de livraison
+  "fk_statut"             smallint     default 0,
+  "total_ht"              real(24,8) default 0,
   "note"                  text,
   "note_public"           text,
-  "model_pdf"             varchar(50),
-  "date_livraison" 	      date 	  default NULL,
-  "fk_adresse_livraison"  integer,                       -- adresse de livraison
-  UNIQUE(ref)
+  "model_pdf"             varchar(50)
 );
-
-CREATE INDEX idx_llx_livraison_ref ON llx_livraison (ref);
-CREATE INDEX idx_llx_livraison_fk_commande ON llx_livraison (fk_commande);

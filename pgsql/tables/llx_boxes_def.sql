@@ -19,13 +19,13 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_boxes_def.sql,v 1.5 2007/12/02 21:53:29 eldy Exp 
+-- Id: llx_boxes_def.sql,v 1.6 2008/01/08 19:54:55 eldy Exp 
 -- ===========================================================================
 
 create table llx_boxes_def
 (
   rowid SERIAL PRIMARY KEY,
-  "name"        varchar(255) NOT NULL,
   "file"        varchar(255) NOT NULL,
+  "tms"         timestamp,
   "note"        text
 );

@@ -19,9 +19,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_facture_fourn_det.sql,v 1.8 2007/12/02 21:37:38 eldy Exp 
+-- Id: llx_facture_fourn_det.sql,v 1.9 2008/02/17 22:49:20 eldy Exp 
 -- ===================================================================
-
 
 create table llx_facture_fourn_det
 (
@@ -35,5 +34,6 @@ create table llx_facture_fourn_det
   "tva_taux"          real(24,8) DEFAULT 0,
   "total_ht"          real(24,8) DEFAULT 0,
   "tva"               real(24,8) DEFAULT 0,
-  "total_ttc"         real(24,8) DEFAULT 0
+  "total_ttc"         real(24,8) DEFAULT 0,
+  "product_type"		integer      DEFAULT 0
 );

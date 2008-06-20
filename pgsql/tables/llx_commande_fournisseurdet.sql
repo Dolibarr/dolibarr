@@ -20,7 +20,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_commande_fournisseurdet.sql,v 1.9 2007/12/14 19:44:05 hregis Exp 
+-- Id: llx_commande_fournisseurdet.sql,v 1.10 2008/05/09 09:08:52 hregis Exp 
 -- ===================================================================
 
 create table llx_commande_fournisseurdet
@@ -35,7 +35,6 @@ create table llx_commande_fournisseurdet
   "qty"                        real,                      -- quantité
   "remise_percent"             real         DEFAULT 0,    -- pourcentage de remise
   "remise"                     real         DEFAULT 0,    -- montant de la remise
-  "price"                      real,                      -- prix final
   "subprice"                   real(24,8) DEFAULT 0,    -- prix unitaire
   "total_ht"                   real(24,8) DEFAULT 0,    -- Total HT de la ligne toute quantité et incluant remise ligne et globale
   "total_tva"                  real(24,8) DEFAULT 0,	  -- Total TVA de la ligne toute quantité et incluant remise ligne et globale

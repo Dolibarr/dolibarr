@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_tva.sql,v 1.8 2007/12/02 21:37:47 eldy Exp 
+-- Id: llx_tva.sql,v 1.9 2008/04/03 19:35:48 eldy Exp 
 -- ===================================================================
 
 create table llx_tva
@@ -31,7 +31,7 @@ create table llx_tva
   "amount"          real NOT NULL DEFAULT 0,
   "label"           varchar(255),
   "note"            text,
-  "fk_bank"         integer NOT NULL,  
+  "fk_bank"         integer,  
   "fk_user_creat"   integer,            -- utilisateur qui a créé l'info
   "fk_user_modif"   integer             -- utilisateur qui a modifié l'info
 );

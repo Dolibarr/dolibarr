@@ -23,17 +23,7 @@
 -- Id: llx_c_typent.sql,v 1.6 2007/12/02 21:57:10 eldy Exp 
 -- ========================================================================
 
-CREATE TABLE llx_surveys_answers_summary (
-  fk_question       integer PRIMARY KEY,
-  "nb_rep1"           decimal(10,0) NOT NULL default '0',
-  "nb_rep2"           decimal(10,0) default NULL,
-  "nb_rep3"           decimal(10,0) default NULL,
-  "nb_rep4"           decimal(10,0) default NULL,
-  "tot_rep1"          decimal(10,0) NOT NULL default '0',
-  "tot_rep2"          decimal(10,0) default NULL,
-  "tot_rep3"          decimal(10,0) default NULL,
-  "tot_rep4"          decimal(10,0) default NULL
-")""create" table llx_c_typent
+create table llx_c_typent
 (
   id        integer      PRIMARY KEY,
   "code"      varchar(12)  UNIQUE NOT NULL,

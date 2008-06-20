@@ -20,7 +20,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_paiement.sql,v 1.15 2007/12/07 21:27:26 hregis Exp 
+-- Id: llx_paiement.sql,v 1.16 2008/01/27 00:16:02 eldy Exp 
 -- ===================================================================
 
 
@@ -39,7 +39,7 @@ create table llx_paiement
   "fk_paiement"      integer NOT NULL,
   "num_paiement"     varchar(50),
   "note"             text,
-  "fk_bank"          integer NOT NULL,
+  "fk_bank"          integer NOT NULL DEFAULT 0,
   "fk_user_creat"    integer,            -- utilisateur qui a créé l'info
   "fk_user_modif"    integer,            -- utilisateur qui a modifié l'info
   "statut"           smallint DEFAULT 0 NOT NULL,

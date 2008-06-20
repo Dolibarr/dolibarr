@@ -20,7 +20,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_commandedet.sql,v 1.15 2007/12/02 22:03:23 eldy Exp 
+-- Id: llx_commandedet.sql,v 1.16 2008/01/09 09:48:23 hregis Exp 
 -- ===================================================================
 
 create table llx_commandedet
@@ -51,4 +51,5 @@ create table llx_commandedet
 --
 -- 1 : frais de port
 -- 2 : ecotaxe
+-- 3 : produit/service propose en option
 --

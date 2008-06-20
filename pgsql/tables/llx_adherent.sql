@@ -21,7 +21,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_adherent.sql,v 1.21 2007/12/02 21:51:12 eldy Exp 
+-- Id: llx_adherent.sql,v 1.22 2008/05/17 22:17:29 eldy Exp 
 -- ===================================================================
 --
 -- statut
@@ -57,8 +57,8 @@ create table llx_adherent
   "datec"            timestamp,  -- date de creation
   "tms"              timestamp, -- date de modification
   "fk_user_author"   integer NOT NULL,
-  "fk_user_mod"      integer NOT NULL,
-  "fk_user_valid"    integer NOT NULL, 
+  "fk_user_mod"      integer,
+  "fk_user_valid"    integer, 
   UNIQUE(login)
 );
 

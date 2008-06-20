@@ -4,7 +4,8 @@
 
 -- ============================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+-- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+-- Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,13 +21,12 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_const.sql,v 1.8 2007/12/02 22:03:23 eldy Exp 
+-- Id: llx_const.sql,v 1.10 2008/04/20 11:35:36 eldy Exp 
 -- ===========================================================================
 
 --
--- Definitions des constantes utilisés comme parametres de configuration
+-- Table for constants used to store Dolibarr setup
 --
-
 
 create table llx_const
 (
@@ -36,6 +36,7 @@ create table llx_const
   "type" varchar(6) CHECK (type IN ('yesno','texte','chaine')) ,
   "visible"     smallint DEFAULT 1 NOT NULL,
   "note"        text,
+  "tms"         timestamp,
   UNIQUE(name)
 );
 

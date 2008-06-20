@@ -4,6 +4,7 @@
 
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,29 +20,23 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_expedition.sql,v 1.4 2007/12/02 21:58:49 eldy Exp 
+-- Id: llx_expedition.sql,v 1.6 2008/01/21 19:17:56 hregis Exp 
 -- ===================================================================
-
 
 create table llx_expedition
 (
   rowid SERIAL PRIMARY KEY,
   "tms"                   timestamp,
   "ref"                   varchar(30) NOT NULL,
-  "fk_commande"           integer,
-  "date_creation"         timestamp,              -- date de creation 
-  "date_valid"            timestamp,              -- date de validation
-  "date_expedition"       date,                  -- date de l'expedition
-  "fk_user_author"        integer,               -- createur
-  "fk_user_valid"         integer,               -- valideur
-  "fk_entrepot"           integer,
+  "fk_soc"                integer     NOT NULL,
+  "date_creation"         timestamp,                -- date de creation
+  "fk_user_author"        integer,                 -- createur
+  "date_valid"            timestamp,                -- date de validation
+  "fk_user_valid"         integer,                 -- valideur
+  "date_expedition"       date,                    -- date de l'expedition
+  "fk_adresse_livraison"  integer   DEFAULT NULL,  -- adresse de livraison
   "fk_expedition_methode" integer,
   "fk_statut"             smallint  DEFAULT 0,
   "note"                  text,
-  "model_pdf"             varchar(50),
-  UNIQUE(ref)
+  "model_pdf"             varchar(50)
 );
-
-CREATE INDEX idx_llx_expedition_ref ON llx_expedition (ref);
-CREATE INDEX idx_llx_expedition_fk_expedition_methode ON llx_expedition (fk_expedition_methode);
-CREATE INDEX idx_llx_expedition_fk_commande ON llx_expedition (fk_commande);

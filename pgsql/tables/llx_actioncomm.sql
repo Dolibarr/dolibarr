@@ -20,7 +20,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_actioncomm.sql,v 1.11 2007/12/02 21:51:12 eldy Exp 
+-- Id: llx_actioncomm.sql,v 1.13 2008/02/11 15:51:04 eldy Exp 
 --
 -- Actions commerciales
 -- ========================================================================
@@ -29,23 +29,27 @@
 
 
 
+
+
 create table llx_actioncomm
 (
   id SERIAL PRIMARY KEY,
-  "datec"          timestamp,             -- date creation
   "datep"          timestamp,             -- date debut planifiee
   "datep2"         timestamp,             -- date fin planifiee si action non ponctuelle
   "datea"          timestamp,             -- date debut realisation
   "datea2"         timestamp,             -- date fin realisation si action non ponctuelle
-  "tms"            timestamp,            -- date modif
   "fk_action"      integer,              -- type de l'action
   "label"          varchar(50) NOT NULL, -- libelle de l'action
+  "datec"          timestamp,             -- date creation
+  "tms"            timestamp,            -- date modif
+  "fk_user_author" integer,              -- id user qui a cree l'action
+  "fk_user_mod"    integer,              -- id dernier user qui a modifier l'action
   "fk_project"     integer,
   "fk_soc"         integer,
   "fk_contact"     integer,
   "fk_parent"      integer NOT NULL default 0,
   "fk_user_action" integer,              -- id de la personne qui doit effectuer l'action
-  "fk_user_author" integer,              -- id de la personne qui a effectuer l'action
+  "fk_user_done"   integer,              -- id de la personne qui a effectue l'action
   "priority"       smallint,
   "punctual"       smallint NOT NULL default 1,
   "percent"        smallint NOT NULL default 0,
