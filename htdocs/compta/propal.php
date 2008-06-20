@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -466,7 +467,6 @@ if ($_GET["propalid"] > 0)
     
 	if ($propal->statut <> 4 && $user->societe_id == 0)
 	{
-
 		if ($propal->statut == 2 && $user->rights->facture->creer)
 		{
 			print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BuildBill")."</a>";
@@ -543,18 +543,47 @@ if ($_GET["propalid"] > 0)
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= ", ".MAIN_DB_PREFIX."fa_pr as fp";
 	$sql.= " WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
-	$sql.= " UNION ";
+	//$sql.= " UNION ";
 	// Cas des factures lier via la commande
-	$sql.= "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.fk_statut, f.paye";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql.= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
-	$sql.= " WHERE cp.fk_propale = ".$propal->id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
+	$sql2= "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.fk_statut, f.paye";
+	$sql2.= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql2.= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
+	$sql2.= " WHERE cp.fk_propale = ".$propal->id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
 
 	dolibarr_syslog("propal.php::liste factures sql=".$sql);
-	$resql = $db->query($sql);
-	if ($resql)
+    $resql=$db->query($sql);
+	$resql2=null;
+    if ($resql) 
+		{
+			dolibarr_syslog("propal.php::liste factures sql2=".$sql2);
+			$resql2=$db->query($sql2);
+		}
+	if ($resql2)
     {
-		$num_fac_asso = $db->num_rows($resql);
+		$tab_sqlobj=array();
+		
+        $num_fac_asso = $db->num_rows($resql);
+		for ($i = 0;$i < $num_fac_asso;$i++)
+			{
+			$sqlobj = $db->fetch_object($resql);
+			$tab_sqlobj[] = $sqlobj;
+			//$tab_sqlobjOrder[]= $sqlobj->dc;
+			}
+		$db->free($resql);	
+		
+		$num_fac_asso = $db->num_rows($resql2);
+		for ($i = 0;$i < $num_fac_asso;$i++)
+			{
+			$sqlobj = $db->fetch_object($resql2);
+			$tab_sqlobj[] = $sqlobj;
+			//$tab_sqlobjOrder[]= $sqlobj->dc;
+			}
+		$db->free($resql2);
+		
+		//array_multisort ($tab_sqlobjOrder,$tab_sqlobj);
+		
+		$num_fac_asso = sizeOf($tab_sqlobj);
+		//$num_fac_asso = $db->num_rows($resql);
 		$i = 0; $total = 0;
 		if ($somethingshown) { print '<br>'; $somethingshown=1; }
 		if ($num_fac_asso > 1) print_titre($langs->trans("RelatedBills"));
@@ -573,7 +602,8 @@ if ($_GET["propalid"] > 0)
 		$var=True;
 		while ($i < $num_fac_asso)
 		{
-			$objp = $db->fetch_object($resql);
+			//$objp = $db->fetch_object($resql);
+			$objp = array_shift($tab_sqlobj);
 			$var=!$var;
 			print "<tr $bc[$var]>";
 			print '<td><a href="../compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
@@ -588,7 +618,7 @@ if ($_GET["propalid"] > 0)
 		print "<td align=\"right\">".price($total)."</td>";
 		print "<td>&nbsp;</td></tr>\n";
 		print "</table>";
-		$db->free();
+		//$db->free();
 	}
 
 
