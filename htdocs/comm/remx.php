@@ -1,7 +1,8 @@
 <?PHP
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- *
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2008 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -246,7 +247,7 @@ if ($_socid > 0)
      * Liste ristournes appliquées (=liees a une ligne de facture ou facture)
      */
     // Remises liees a lignes de factures
-    $sql = "(SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+    $sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
 	$sql.= $db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
     $sql.= " rc.fk_facture_source,";
 	$sql.= " u.login, u.rowid as user_id,";
@@ -260,28 +261,31 @@ if ($_socid > 0)
     $sql.= " WHERE rc.fk_soc =". $objsoc->id;
     $sql.= " AND rc.fk_facture_line = fc.rowid";
     $sql.= " AND fc.fk_facture = f.rowid";
-    $sql.= " AND rc.fk_user = u.rowid)";
-	$sql.= " UNION ";
+    $sql.= " AND rc.fk_user = u.rowid";
+	$sql.= " ORDER BY dc DESC";
+	//$sql.= " UNION ";
     // Remises liees a factures
-	$sql.= "(SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
-	$sql.= $db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
-    $sql.= " rc.fk_facture_source,";
-	$sql.= " u.login, u.rowid as user_id,";
-    $sql.= " f.rowid, f.facnumber,";
-	$sql.= " fa.facnumber as ref, fa.type as type";
-    $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-    $sql.= " , ".MAIN_DB_PREFIX."user as u";
-    $sql.= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-    $sql.= " WHERE rc.fk_soc =". $objsoc->id;
-    $sql.= " AND rc.fk_facture = f.rowid";
-    $sql.= " AND rc.fk_user = u.rowid)";
-
-    $sql.= " ORDER BY dc DESC";
+	$sql2= "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+	$sql2.= $db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
+    $sql2.= " rc.fk_facture_source,";
+	$sql2.= " u.login, u.rowid as user_id,";
+    $sql2.= " f.rowid, f.facnumber,";
+	$sql2.= " fa.facnumber as ref, fa.type as type";
+    $sql2.= " FROM ".MAIN_DB_PREFIX."facture as f";
+    $sql2.= " , ".MAIN_DB_PREFIX."user as u";
+    $sql2.= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
+    $sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
+    $sql2.= " WHERE rc.fk_soc =". $objsoc->id;
+    $sql2.= " AND rc.fk_facture = f.rowid";
+    $sql2.= " AND rc.fk_user = u.rowid";
+	
+	$sql2.= " ORDER BY dc DESC";
 
     $resql=$db->query($sql);
-    if ($resql)
-    {
+	$resql2=null;
+    if ($resql) $resql2=$db->query($sql2);
+	if ($resql2)
+    { 
         print_titre($langs->trans("DiscountAlreadyCounted"));
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre"><td width="120">'.$langs->trans("Date").'</td>';
@@ -295,11 +299,32 @@ if ($_socid > 0)
         print '</tr>';
 
         $var = true;
-        $i = 0 ;
+		$tab_sqlobj=array();
+		$tab_sqlobjOrder=array();
         $num = $db->num_rows($resql);
+		for ($i = 0;$i < $num;$i++)
+			{
+			$sqlobj = $db->fetch_object($resql);
+			$tab_sqlobj[] = $sqlobj;
+			$tab_sqlobjOrder[]=$sqlobj->dc;
+			}
+		$db->free($resql);	
+		
+		$num = $db->num_rows($resql2);
+		for ($i = 0;$i < $num;$i++)
+			{
+			$sqlobj = $db->fetch_object($resql2);
+			$tab_sqlobj[] = $sqlobj;
+			$tab_sqlobjOrder[]= $sqlobj->dc;
+			}
+		$db->free($resql2);
+		array_multisort ($tab_sqlobjOrder,SORT_DESC,$tab_sqlobj);
+		
+		$num = sizeOf($tab_sqlobj);
+		$i = 0 ;
         while ($i < $num )
         {
-            $obj = $db->fetch_object($resql);
+            $obj = array_shift($tab_sqlobj);
             $var = !$var;
             print "<tr $bc[$var]>";
             print '<td>'.dolibarr_print_date($obj->dc,'dayhour').'</td>';
@@ -327,7 +352,6 @@ if ($_socid > 0)
             print '</tr>';
             $i++;
         }
-        $db->free($resql);
         print "</table>";
     }
     else

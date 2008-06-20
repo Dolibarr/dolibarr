@@ -1,5 +1,6 @@
 <?php
-/* Copytight (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+/* Copytight (C) 2005-2007 Regis Houssin               <regis@dolibarr.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,25 +151,66 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 	$sql.= " WHERE f.paye = 0 AND fk_statut = 1";
-	$sql.= " UNION DISTINCT";
-	$sql.= " SELECT ff.rowid as facid, ff.facnumber, (-1*ff.total_ttc), ff.type, ".$db->pdate("ff.date_lim_reglement")." as dlr,";
-	$sql.= " s.rowid as socid, s.nom, s.fournisseur";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
-	$sql.= " WHERE ff.paye = 0 AND fk_statut = 1";
 	$sql.= " ORDER BY dlr ASC";
+	//$sql.= " UNION DISTINCT";
+	$sql2= " SELECT ff.rowid as facid, ff.facnumber, (-1*ff.total_ttc), ff.type, ".$db->pdate("ff.date_lim_reglement")." as dlr,";
+	$sql2.= " s.rowid as socid, s.nom, s.fournisseur";
+	$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
+	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
+	$sql2.= " WHERE ff.paye = 0 AND fk_statut = 1";
+	$sql2.= " ORDER BY dlr ASC";
+	
 
 	$result = $db->query($sql);
-	if ($result)
+	$result2=false;
+	if ($result) 
 	{
-		$var=False;
+		$result2=$db->query($sql2);
+	}
+	if ($result2)
+	{
+		$tab_sqlobj=array();
+
 		$num = $db->num_rows($result);
+		for ($i = 0;$i < $num;$i++)
+			{
+			$sqlobj = $db->fetch_object($result);
+			$tab_sqlobj[] = $sqlobj;
+			$tab_sqlobjOrder[]= $sqlobj->dlr;
+			}
+		$db->free($result);	
+		
+		$num = $db->num_rows($result2);
+		for ($i = 0;$i < $num;$i++)
+			{
+			$sqlobj = $db->fetch_object($result2);
+			$tab_sqlobj[] = $sqlobj;
+			$tab_sqlobjOrder[]= $sqlobj->dlr;
+			}
+		$db->free($result2);
+
+		array_multisort ($tab_sqlobjOrder,$tab_sqlobj);
+		
+		//Apply distinct filter
+		foreach ($tab_sqlobj as $key=>$value) { 
+		  $tab_sqlobj[$key] = "'" . serialize($value) . "'"; 
+		} 
+		$tab_sqlobj = array_unique($tab_sqlobj); 
+		foreach ($tab_sqlobj as $key=>$value) { 
+		  $tab_sqlobj[$key] = unserialize(trim($value, "'")); 
+		} 
+		
+		$num = sizeOf($tab_sqlobj);
+	
+		$var=False;
+		//$num = $db->num_rows($result);
 		$i = 0;
 		while ($i < $num)
 		{
 			$paiement = '';
 			$var=!$var;
-			$obj = $db->fetch_object($result);
+			//$obj = $db->fetch_object($result);
+			$obj = array_shift($tab_sqlobj);
 			
 			$societestatic->id = $obj->socid;
 			$societestatic->nom = $obj->nom;
@@ -225,7 +267,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			print "</tr>";
 			$i++;
 		}
-		$db->free($result);
+		//$db->free($result);
 	}
 	else
 	{
