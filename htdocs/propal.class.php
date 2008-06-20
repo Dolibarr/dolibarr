@@ -5,6 +5,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
+ * Copyright (C) 2008 Raphael Bertrand (Resultic)   <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1337,27 +1338,56 @@ class Propal extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."fa_pr as fp";
 		$sql.= " WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$id;
-		$sql.= " UNION ";
-		// Cas des factures lier via la commande
-		$sql.= "SELECT f.rowid, f.facnumber";
-		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-		$sql.= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
-		$sql.= " WHERE cp.fk_propale = ".$id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
+		//$sql.= " UNION ";
+		// Cas des factures liees via la commande
+		$sql2= "SELECT f.rowid, f.facnumber";
+		$sql2.= " FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql2.= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
+		$sql2.= " WHERE cp.fk_propale = ".$id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
 
         //$sql = "SELECT fk_facture FROM ".MAIN_DB_PREFIX."fa_pr as fp";
         //$sql .= " WHERE fk_propal = " . $id;
         dolibarr_syslog("Propal::InvoiceArrayList sql=".$sql);
 		$resql=$this->db->query($sql);
-		if ($resql)
+		$resql2=null;
+	    if ($resql) 
+		{
+			dolibarr_syslog("Propal::InvoiceArrayList sql2=".$sql2);
+			$resql2=$this->db->query($sql2);
+		}
+		if ($resql2)
         {
-            $nump = $this->db->num_rows($resql);
-
+			$tab_sqlobj=array();
+			$nump = $this->db->num_rows($resql);
+			for ($i = 0;$i < $nump;$i++)
+				{
+				$sqlobj = $this->db->fetch_object($resql);
+				$tab_sqlobj[] = $sqlobj;
+				//$tab_sqlobjOrder[]= $sqlobj->dc;
+				}
+			$this->db->free($resql);	
+					$nump = $this->db->num_rows($resql2);
+					
+			for ($i = 0;$i < $nump;$i++)
+				{
+				$sqlobj = $this->db->fetch_object($resql2);
+				$tab_sqlobj[] = $sqlobj;
+				//$tab_sqlobjOrder[]= $sqlobj->dc;
+				}
+			$this->db->free($resql2);
+			//array_multisort ($tab_sqlobjOrder,$tab_sqlobj);
+			
+            //$nump = $this->db->num_rows($resql);
+			$nump = sizeOf($tab_sqlobj);
+			
             if ($nump)
             {
                 $i = 0;
                 while ($i < $nump)
                 {
-                    $obj = $this->db->fetch_object($resql);
+                    //$obj = $this->db->fetch_object($resql);
+					$obj = array_shift($tab_sqlobj);
+					
                     $ga[$obj->rowid] = $obj->facnumber;
                     $i++;
                 }
