@@ -3,6 +3,7 @@
 - Update files in root directory (README*.txt, ChangeLog...)
 - Update version number in doc files
 - Update version number in makepack-dolibarr.pl file
+- Update version number in htdocs/build/exe/doliwamp/doliwamp.iss
 - Update version number in htdocs/master.inc.php
 - Update version number in htdocs/install/inc.php
 - Run dolibarr_mysql2pgsql.pl
@@ -10,7 +11,7 @@
 - Commit all changes and add a CVS Tag
 
 - Build packages with makepack-dolibarr.pl
-- Build DoliWamp with dolibarr*.iss file.
+- Build DoliWamp with doliwamp.iss file.
 - Check content of built packages.
 - Move build files into Dolibarr web site repository.
 - Update NLTechno web site page dolibarrwinbin.php
