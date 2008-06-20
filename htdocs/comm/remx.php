@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/comm/remx.php
         \ingroup    commercial, invoice
 		\brief      Onglet de définition des avoirs
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once("./pre.inc.php");
@@ -106,7 +104,7 @@ llxHeader();
 
 if ($_socid > 0)
 {
-	if ($mesg) print "$mesg<br>";
+	if ($mesg) print $mesg."<br>";
 	
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
@@ -167,7 +165,6 @@ if ($_socid > 0)
         
     print "</table></form>";
 
-    print "</td>\n";    
     print "</div>\n";    
 
     print '<br>';        
@@ -243,7 +240,7 @@ if ($_socid > 0)
     	dolibarr_print_error($db);
     }
 
-    print '<br />';
+    print '<br>';
 
     /*
      * Liste ristournes appliquées (=liees a une ligne de facture ou facture)
