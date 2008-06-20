@@ -2531,7 +2531,12 @@ function dol_nl2br($stringtoencode,$nl2brmode=0)
  */
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0)
 {
-	if (dol_textishtml($stringtoencode)) return $stringtoencode;
+	if (dol_textishtml($stringtoencode)) 
+	{
+		// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
+		$stringtoencode=eregi_replace('<br( [ a-zA-Z_="]*)?/?>','<br>',$stringtoencode);
+		return $stringtoencode;
+	}
 	else {
 		$newstring=dol_nl2br(htmlentities($stringtoencode),$nl2brmode);
 		// Other substitutions that htmlentities does not do
@@ -2547,30 +2552,30 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0)
 function dol_htmlentitiesbr_decode($stringtodecode)
 {
 	$ret=html_entity_decode($stringtodecode);
-	$ret=eregi_replace("\r\n".'<br ?/?>',"<br>",$ret);
-	$ret=eregi_replace('<br ?/?>'."\r\n","\r\n",$ret);
-	$ret=eregi_replace('<br ?/?>'."\n","\n",$ret);
-	$ret=eregi_replace('<br ?/?>',"\n",$ret);
+	$ret=eregi_replace("\r\n".'<br( [ a-zA-Z_="]*)?/?>',"<br>",$ret);
+	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>'."\r\n","\r\n",$ret);
+	$ret=eregi_replace('<br( [ a-zA-Z_="]*)??/?>'."\n","\n",$ret);
+	$ret=eregi_replace('<br( [ a-zA-Z_="]*)??/?>',"\n",$ret);
 	return $ret;
 }
 
 /**
- \brief   Decode le code html
- \param   string      StringHtml
- \return  string	    DecodeString
+ * 	\brief   Decode le code html
+ * 	\param   string      stringhtml
+ * 	\return  string	  decodestring
  */
-function dol_entity_decode($StringHtml)
+function dol_entity_decode($stringhtml)
 {
-	$DecodeString = html_entity_decode($StringHtml);
-	return $DecodeString;
+	$decodedstring = html_entity_decode($stringhtml);
+	return $decodedstring;
 }
 
 /**
  \brief		Check if a string is a correct iso string
- If not, it will we considered not HTML encoded even if it is by FPDF.
+ 			If not, it will we considered not HTML encoded even if it is by FPDF.
  \remarks	Example, if string contains euro symbol that has ascii code 128.
  \param		s		String to check
- \return		int		0 if bad iso, 1 if good iso
+ \return	int		0 if bad iso, 1 if good iso
  */
 function dol_string_is_good_iso($s)
 {

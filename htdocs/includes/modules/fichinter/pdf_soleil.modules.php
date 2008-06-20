@@ -245,7 +245,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetFont('Arial','',12);
 
 				$tab_top = 100;
-				$tab_height = 110;
+				$tab_height = 16;
 
 				$pdf->SetXY (10, $tab_top);
 				$pdf->MultiCell(190,8,$langs->transnoentities("Description"),0,'L',0);
@@ -256,8 +256,34 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetFont('Arial','', 10);
 
 				$pdf->SetXY (10, $tab_top + 8 );
-				$pdf->MultiCell(190, 5, $fichinter->description, 0, 'J', 0);
+				$pdf->writeHTMLCell(190, 5, 10, $tab_top + 8, dol_htmlentitiesbr($fichinter->description), 0, 'J', 0);
 				
+				//dolibarr_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
+                $fichinter->fetch_lines();
+				$num = sizeof($fichinter->lignes);
+				$i=0;
+				if ($num)
+				{
+					while ($i < $num)
+    				{
+						$fichinterligne = $fichinter->lignes[$i];
+
+						$valide = $fichinterligne->fetch($fichinterligne->id);
+						if ($valide>0)
+						{
+							$pdf->SetXY (20, $tab_top + 16 + $i * 20); 
+	                        $pdf->writeHTMLCell(190, 8, 20, $tab_top + 16 + $i * 20,
+	                         dol_htmlentitiesbr("Date : ".dolibarr_print_date($fichinterligne->datei)." - Durée : ".ConvertSecondToTime($fichinterligne->duration)), 0, 'J', 0); 
+	                         
+	                        $pdf->SetXY (20, $tab_top + 22 + $i * 20); 
+	                        $pdf->writeHTMLCell(170, 8, 20, $tab_top + 22 + $i * 20,
+	                         dol_htmlentitiesbr($fichinterligne->desc,1), 0, 'L', 0);
+							$tab_height+=20;
+						}
+						$i++;
+					}
+				}
+				$pdf->Rect(10, $tab_top, 190, $tab_height);
 				$pdf->SetXY (10, $pdf->GetY() + 20 );
 		    $pdf->MultiCell(60, 5, '', 0, 'J', 0);
 
