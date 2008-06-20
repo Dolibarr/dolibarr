@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -560,7 +561,7 @@ class Contrat extends CommonObject
      *      \brief      Supprime l'objet de la base
      *      \param      user        Utilisateur qui supprime
      *      \param      langs       Environnement langue de l'utilisateur
-     *      \param      conf        Environnement de configuration lors de l'op�ration
+     *      \param      conf        Environnement de configuration lors de l'operation
      *      \return     int         < 0 si erreur, > 0 si ok
      */
     function delete($user,$langs='',$conf='')
@@ -572,34 +573,91 @@ class Contrat extends CommonObject
         if (! $error)
         {
 			// Delete element_contact
+			/*
 			$sql = "DELETE ec";
 			$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
 	        $sql.= " WHERE ec.fk_c_type_contact = tc.rowid";
 			$sql.= " AND tc.element='".$this->element."'";
 			$sql.= " AND ec.element_id=".$this->id;
-
+			*/
+			
+			$sql = "SELECT ec.rowid as ecrowid";
+			$sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc";
+	        $sql.= " WHERE ec.fk_c_type_contact = tc.rowid";
+			$sql.= " AND tc.element='".$this->element."'";
+			$sql.= " AND ec.element_id=".$this->id;
+			
 			dolibarr_syslog("Contrat::delete element_contact sql=".$sql,LOG_DEBUG);
-	        $resql=$this->db->query($sql);
+			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
 				$this->error=$this->db->error();
 				$error++;
+			}
+			$numressql=$this->db->num_rows($resql);
+			if (! $error && $numressql )
+			{
+				$tab_resql=array();
+				for($i=0;$i<$numressql;$i++)
+				{
+					$objresql=$this->db->fetch_object($resql);
+					$tab_resql[]= $objresql->ecrowid;
+				}
+				$this->db->free($resql);
+				
+				$sql= "DELETE FROM ".MAIN_DB_PREFIX."element_contact ";
+				$sql.= " WHERE ".MAIN_DB_PREFIX."element_contact.rowid IN (".implode(",",$tab_resql).")";
+				
+				dolibarr_syslog("Contrat::delete element_contact sql=".$sql,LOG_DEBUG);
+		        $resql=$this->db->query($sql);
+				if (! $resql)
+				{
+					$this->error=$this->db->error();
+					$error++;
+				}
 			}
 		}
 		
         if (! $error)
         {
 			// Delete contratdet_log
+			/*
 			$sql = "DELETE cdl";
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
+			$sql.= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".$this->id;
+			*/
+			$sql = "SELECT cdl.rowid as cdlrowid ";
+			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
 	        $sql.= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".$this->id;
-
+			
 			dolibarr_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
-	        $resql=$this->db->query($sql);
+			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
 				$this->error=$this->db->error();
 				$error++;
+			}
+			$numressql=$this->db->num_rows($resql);
+			if (! $error && $numressql )
+			{
+				$tab_resql=array();
+				for($i=0;$i<$numressql;$i++)
+				{
+					$objresql=$this->db->fetch_object($resql);
+					$tab_resql[]= $objresql->cdlrowid;
+				}
+				$this->db->free($resql);
+				
+				$sql= "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
+				$sql.= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",",$tab_resql).")";
+			
+				dolibarr_syslog("Contrat::delete contratdet_log sql=".$sql, LOG_DEBUG);
+		        $resql=$this->db->query($sql);
+				if (! $resql)
+				{
+					$this->error=$this->db->error();
+					$error++;
+				}
 			}
 		}
 		
