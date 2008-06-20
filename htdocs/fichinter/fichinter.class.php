@@ -19,87 +19,89 @@
  */
 
 /**	    \file       htdocs/fichinter/fichinter.class.php
-		\ingroup    ficheinter
-		\brief      Fichier de la classe des gestion des fiches interventions
-		\version    $Id$
-*/
+ \ingroup    ficheinter
+ \brief      Fichier de la classe des gestion des fiches interventions
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 
 
-/**	    \class      Ficheinter
-		\brief      Classe des gestion des fiches interventions
-*/
+/**
+ * 	\class      Ficheinter
+ *	\brief      Classe des gestion des fiches interventions
+ */
 class Fichinter extends CommonObject
 {
-    var $db;
+	var $db;
 	var $element='fichinter';
 	var $table_element='fichinter';
 	var $fk_element='fk_fichinter';
 	var $table_element_line='fichinterdet';
 
-    var $id;
-    
+	var $id;
+
 	var $socid;		// Id client
 	var $client;		// Objet societe client (a charger par fetch_client)
 
-    var $author;
-    var $ref;
-    var $date;
-    var $date_delivery;
-    var $duree;
-    var $description;
-    var $note_private;
-    var $note_public;
-    var $projet_id;
-    var $modelpdf;
+	var $author;
+	var $ref;
+	var $date;
+	var $date_delivery;
+	var $duree;
+	var $description;
+	var $note_private;
+	var $note_public;
+	var $projet_id;
+	var $modelpdf;
+
+	var $lignes = array();
+
+	/**
+	 *    \brief      Constructeur de la classe
+	 *    \param      DB            Handler acces base de donnees
+	 *    \param      socid			Id societe
+	 */
+	function Fichinter($DB, $socid="")
+	{
+		global $langs;
+
+		$this->db = $DB ;
+		$this->socid = $socid;
+		$this->products = array();
+		$this->projet_id = 0;
+
+		// Statut 0=brouillon, 1=valide
+		$this->statuts[0]=$langs->trans("Draft");
+		$this->statuts[1]=$langs->trans("Validated");
+		$this->statuts_short[0]=$langs->trans("Draft");
+		$this->statuts_short[1]=$langs->trans("Validated");
+	}
 
 
-    /**
-     *    \brief      Constructeur de la classe
-     *    \param      DB            Handler acces base de donnees
-     *    \param      socid			Id societe
-     */
-    function Fichinter($DB, $socid="")
-    {
-        global $langs;
-
-        $this->db = $DB ;
-        $this->socid = $socid;
-        $this->products = array();
-        $this->projet_id = 0;
-
-        // Statut 0=brouillon, 1=valide
-        $this->statuts[0]=$langs->trans("Draft");
-        $this->statuts[1]=$langs->trans("Validated");
-        $this->statuts_short[0]=$langs->trans("Draft");
-        $this->statuts_short[1]=$langs->trans("Validated");
-    }
-
-
-    /*
-     *    	\brief      Cree une fiche intervention en base
-     *		\return		int		<0 if KO, >0 if OK
-     */
-    function create()
+	/*
+	 *    	\brief      Cree une fiche intervention en base
+	 *		\return		int		<0 if KO, >0 if OK
+	 */
+	function create()
 	{
 		dolibarr_syslog("Fichinter.class::create ref=".$this->ref);
 
 		if (! is_numeric($this->duree)) { $this->duree = 0; }
-		if ($this->socid <= 0) 
+		if ($this->socid <= 0)
 		{
 			$this->error='ErrorBadParameterForFunc';
 			dolibarr_syslog("Fichinter::create ".$this->error,LOG_ERR);
 			return -1;
 		}
-		
+
 		$this->db->begin();
 
 		// on verifie si la ref n'est pas utilisee
 		$soc = new Societe($this->db);
 		$result=$soc->fetch($this->socid);
 		$this->verifyNumRef($soc);
-		
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, description, model_pdf";
 		if ($this->projet_id) $sql.=  ", fk_projet";
 		$sql.= ") ";
@@ -129,175 +131,175 @@ class Fichinter extends CommonObject
 
 	}
 
-    /*
-     *	\brief		Met a jour une intervention
-     *	\return		int		<0 si ko, >0 si ok
-     */
-    function update($id)
-    {
-        if (! is_numeric($this->duree)) { $this->duree = 0; }
-        if (! strlen($this->projet_id))
-        {
-            $this->projet_id = 0;
-        }
+	/*
+	 *	\brief		Met a jour une intervention
+	 *	\return		int		<0 si ko, >0 si ok
+	 */
+	function update($id)
+	{
+		if (! is_numeric($this->duree)) { $this->duree = 0; }
+		if (! strlen($this->projet_id))
+		{
+			$this->projet_id = 0;
+		}
 
-        /*
-         *  Insertion dans la base
-         */
-        $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
-        $sql .= " datei = ".$this->date;
-        $sql .= ", description  = '".addslashes($this->description)."'";
-        $sql .= ", duree = ".$this->duree;
-        $sql .= ", fk_projet = ".$this->projet_id;
-        $sql .= " WHERE rowid = ".$id;
+		/*
+		 *  Insertion dans la base
+		 */
+		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
+		$sql .= " datei = ".$this->date;
+		$sql .= ", description  = '".addslashes($this->description)."'";
+		$sql .= ", duree = ".$this->duree;
+		$sql .= ", fk_projet = ".$this->projet_id;
+		$sql .= " WHERE rowid = ".$id;
 
 		dolibarr_syslog("Fichinter::update sql=".$sql);
-        if (! $this->db->query($sql))
-        {
+		if (! $this->db->query($sql))
+		{
 			$this->error=$this->db->error();
 			dolibarr_syslog("Fichinter::update error ".$this->error,LOG_ERR);
 			return -1;
-        }
+		}
 
-        return 1;
-    }
+		return 1;
+	}
 
-    /**
-     *		\brief		Charge en memoire la fiche intervention
-     *		\param		rowid		Id de la fiche a charger
-     *		\return		int			<0 si ko, >0 si ok
-     */
-    function fetch($rowid)
-    {
-        $sql = "SELECT ref, description, fk_soc, fk_statut,";
-        $sql.= " ".$this->db->pdate(datei)." as di, duree, fk_projet, note_public, note_private, model_pdf";
-        $sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
-        $sql.= " WHERE rowid=".$rowid;
+	/**
+	 *		\brief		Charge en memoire la fiche intervention
+	 *		\param		rowid		Id de la fiche a charger
+	 *		\return		int			<0 si ko, >0 si ok
+	 */
+	function fetch($rowid)
+	{
+		$sql = "SELECT ref, description, fk_soc, fk_statut,";
+		$sql.= " ".$this->db->pdate(datei)." as di, duree, fk_projet, note_public, note_private, model_pdf";
+		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
+		$sql.= " WHERE rowid=".$rowid;
 
 		dolibarr_syslog("Fichinter::fetch sql=".$sql);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
 
-                $this->id           = $rowid;
-                $this->ref          = $obj->ref;
-                $this->description  = $obj->description;
-                $this->socid        = $obj->fk_soc;
-                $this->statut       = $obj->fk_statut;
-                $this->date         = $obj->di;
-                $this->duree        = $obj->duree;
-                $this->projetidp    = $obj->fk_projet;
-                $this->note_public  = $obj->note_public;
-                $this->note_private = $obj->note_private;
-                $this->modelpdf     = $obj->model_pdf;
-                
-                if ($this->statut == 0) $this->brouillon = 1;
-                
-                $this->db->free($resql);
-                return 1;
-            }
-        }
-        else
-        {
+				$this->id           = $rowid;
+				$this->ref          = $obj->ref;
+				$this->description  = $obj->description;
+				$this->socid        = $obj->fk_soc;
+				$this->statut       = $obj->fk_statut;
+				$this->date         = $obj->di;
+				$this->duree        = $obj->duree;
+				$this->projetidp    = $obj->fk_projet;
+				$this->note_public  = $obj->note_public;
+				$this->note_private = $obj->note_private;
+				$this->modelpdf     = $obj->model_pdf;
+
+				if ($this->statut == 0) $this->brouillon = 1;
+
+				$this->db->free($resql);
+				return 1;
+			}
+		}
+		else
+		{
 			$this->error=$this->db->error();
 			dolibarr_syslog("Fichinter::update error ".$this->error,LOG_ERR);
-            return -1;
-        }
-    }
+			return -1;
+		}
+	}
 
-    /**
-     *		\brief		Valide une fiche intervention
-     *		\param		user		User qui valide
-     *		\return		int			<0 si ko, >0 si ok
-     */
-    function valid($user, $outputdir)
-    {
+	/**
+	 *		\brief		Valide une fiche intervention
+	 *		\param		user		User qui valide
+	 *		\return		int			<0 si ko, >0 si ok
+	 */
+	function valid($user, $outputdir)
+	{
 		global $langs, $conf;
-		
-        $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
-        $sql.= " SET fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
-        $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+		$sql.= " SET fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
+		$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 		dolibarr_syslog("Fichinter::valid sql=".$sql);
 		$resql=$this->db->query($sql);
-        if ($resql)
-        {
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('FICHEINTER_VALIDATE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+		if ($resql)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('FICHEINTER_VALIDATE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
 
-            return 1;
-        }
-        else
-        {
+			return 1;
+		}
+		else
+		{
 			$this->error=$this->db->error();
 			dolibarr_syslog("Fichinter::update error ".$this->error,LOG_ERR);
-            return -1;
-        }
-    }
-
-    /**
-     *    \brief      Retourne le libelle du statut de l'intervantion
-     *    \return     string      Libelle
-     */
-    function getLibStatut($mode=0)
-    {
-		return $this->LibStatut($this->statut,$mode);
-    }
-
-    /**
-     *    \brief      Renvoi le libelle d'un statut donne
-     *    \param      statut      id statut
-     *    \return     string      Libelle
-     */
-    function LibStatut($statut,$mode=0)
-    {
-        if ($mode == 0)
-        {
-	        return $this->statuts[$statut];
+			return -1;
 		}
-        if ($mode == 1)
-        {
-        	return $this->statuts_short[$statut];
-        }
-        if ($mode == 2)
-        {
-        	if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0').' '.$this->statuts_short[$statut];
-        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6').' '.$this->statuts_short[$statut];
-        }
-        if ($mode == 3)
-        {
-        	if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0');
-        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6');
-        }
-        if ($mode == 4)
-        {
-        	if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0').' '.$this->statuts[$statut];
-        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6').' '.$this->statuts[$statut];
-        }
-        if ($mode == 5)
-        {
-        	if ($statut==0) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut0');
-        	if ($statut==1) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut6');
-        }
-    }
+	}
 
- /**
-   *      \brief      Verifie si la ref n'est pas deja utilisee
-   *      \param	    soc  		            objet societe
-   */
-  function verifyNumRef($soc)
-  {
-  	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."fichinter";
-  	$sql.= " WHERE ref = '".$this->ref."'";
+	/**
+	 *    \brief      Retourne le libelle du statut de l'intervantion
+	 *    \return     string      Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
 
-  	$result = $this->db->query($sql);
+	/**
+	 *    \brief      Renvoi le libelle d'un statut donne
+	 *    \param      statut      id statut
+	 *    \return     string      Libelle
+	 */
+	function LibStatut($statut,$mode=0)
+	{
+		if ($mode == 0)
+		{
+			return $this->statuts[$statut];
+		}
+		if ($mode == 1)
+		{
+			return $this->statuts_short[$statut];
+		}
+		if ($mode == 2)
+		{
+			if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0').' '.$this->statuts_short[$statut];
+			if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6').' '.$this->statuts_short[$statut];
+		}
+		if ($mode == 3)
+		{
+			if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0');
+			if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6');
+		}
+		if ($mode == 4)
+		{
+			if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0').' '.$this->statuts[$statut];
+			if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6').' '.$this->statuts[$statut];
+		}
+		if ($mode == 5)
+		{
+			if ($statut==0) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut0');
+			if ($statut==1) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut6');
+		}
+	}
+
+	/**
+	 *      \brief      Verifie si la ref n'est pas deja utilisee
+	 *      \param	    soc  		            objet societe
+	 */
+	function verifyNumRef($soc)
+	{
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."fichinter";
+		$sql.= " WHERE ref = '".$this->ref."'";
+
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
@@ -307,99 +309,99 @@ class Fichinter extends CommonObject
 			}
 		}
 	}
-  	
-	
- /**
-   *      \brief      Renvoie la reference de fiche intervention suivante non utilisee en fonction du module
-   *                  de numerotation actif defini dans FICHEINTER_ADDON
-   *      \param	    soc  		            objet societe
-   *      \return     string              reference libre pour la fiche intervention
-   */
-  function getNextNumRef($soc)
-  {
-    global $db, $langs;
-    $langs->load("interventions");
+	 
 
-    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/fichinter/";
-
-    if (defined("FICHEINTER_ADDON") && FICHEINTER_ADDON)
-    {
-    	$file = FICHEINTER_ADDON.".php";
-
-	    // Chargement de la classe de numerotation
-	    $classname = FICHEINTER_ADDON;
-	    require_once($dir.$file);
-
-	    $obj = new $classname();
-
-	    $numref = "";
-	    $numref = $obj->getNumRef($soc,$this);
-
-	    if ( $numref != "")
-	    {
-	      return $numref;
-	    }
-	    else
-	    {
-	      dolibarr_print_error($db,"Fichinter::getNextNumRef ".$obj->error);
-	      return "";
-	    }
-     }
-     else
-     {
-	     print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
-	     return "";
-     }
-  }
-  
 	/**
-	*      \brief      Information sur l'objet fiche intervention
-	*      \param      id      id de la fiche d'intervention
-	*/
+	 *      \brief      Renvoie la reference de fiche intervention suivante non utilisee en fonction du module
+	 *                  de numerotation actif defini dans FICHEINTER_ADDON
+	 *      \param	    soc  		            objet societe
+	 *      \return     string              reference libre pour la fiche intervention
+	 */
+	function getNextNumRef($soc)
+	{
+		global $db, $langs;
+		$langs->load("interventions");
+
+		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/fichinter/";
+
+		if (defined("FICHEINTER_ADDON") && FICHEINTER_ADDON)
+		{
+			$file = FICHEINTER_ADDON.".php";
+
+			// Chargement de la classe de numerotation
+			$classname = FICHEINTER_ADDON;
+			require_once($dir.$file);
+
+			$obj = new $classname();
+
+			$numref = "";
+			$numref = $obj->getNumRef($soc,$this);
+
+			if ( $numref != "")
+			{
+				return $numref;
+			}
+			else
+			{
+				dolibarr_print_error($db,"Fichinter::getNextNumRef ".$obj->error);
+				return "";
+			}
+		}
+		else
+		{
+			print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
+			return "";
+		}
+	}
+
+	/**
+	 *      \brief      Information sur l'objet fiche intervention
+	 *      \param      id      id de la fiche d'intervention
+	 */
 	function info($id)
 	{
-    $sql = "SELECT f.rowid, ";
-    $sql.= $this->db->pdate("f.datec")." as datec, ".$this->db->pdate("f.date_valid")." as datev";
-    $sql.= ", f.fk_user_author, f.fk_user_valid";
-    $sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-    $sql.= " WHERE f.rowid = ".$id;
+		$sql = "SELECT f.rowid, ";
+		$sql.= $this->db->pdate("f.datec")." as datec, ".$this->db->pdate("f.date_valid")." as datev";
+		$sql.= ", f.fk_user_author, f.fk_user_valid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+		$sql.= " WHERE f.rowid = ".$id;
 
-    $result = $this->db->query($sql);
-    
-    if ($result)
-    {
-    	if ($this->db->num_rows($result))
-    	{
-    		$obj = $this->db->fetch_object($result);
+		$result = $this->db->query($sql);
 
-	      $this->id                = $obj->rowid;
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
 
-	      $this->date_creation     = $obj->datec;
-	      $this->date_validation   = $obj->datev;
+				$this->id                = $obj->rowid;
 
-	      $cuser = new User($this->db, $obj->fk_user_author);
-	      $cuser->fetch();
-	      $this->user_creation     = $cuser;
+				$this->date_creation     = $obj->datec;
+				$this->date_validation   = $obj->datev;
 
-	      if ($obj->fk_user_valid)
-	      {
-		      $vuser = new User($this->db, $obj->fk_user_valid);
-		      $vuser->fetch();
-		      $this->user_validation     = $vuser;
-	      }
-	    }
-	    $this->db->free($result);
-	  }
-    else
-    {
-    	dolibarr_print_error($this->db);
-    }
-  }
-  
-  /**
-   *      \brief     Classe la fiche d'intervention dans un projet
-   *      \param     project_id       Id du projet dans lequel classer la facture
-   */
+				$cuser = new User($this->db, $obj->fk_user_author);
+				$cuser->fetch();
+				$this->user_creation     = $cuser;
+
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db, $obj->fk_user_valid);
+					$vuser->fetch();
+					$this->user_validation     = $vuser;
+				}
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+
+	/**
+	 *      \brief     Classe la fiche d'intervention dans un projet
+	 *      \param     project_id       Id du projet dans lequel classer la facture
+	 */
 	function set_project($user, $project_id)
 	{
 		if ($user->rights->ficheinter->creer)
@@ -420,22 +422,22 @@ class Fichinter extends CommonObject
 			}
 			else
 			{
-	
+
 				dolibarr_syslog("Fichinter::set_project Erreur SQL");
 			}
 		}
 	}
-	
+
 	/**
-	*    \brief      Efface fiche intervention
-	*    \param      user        Objet du user qui efface
-	*/
+	 *    \brief      Efface fiche intervention
+	 *    \param      user        Objet du user qui efface
+	 */
 	function delete($user)
 	{
 		global $conf;
-	
+
 		$this->db->begin();
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE fk_fichinter = ".$this->id;
 		dolibarr_syslog("Fichinter::delete sql=".$sql);
 		if ( $this->db->query($sql) )
@@ -444,7 +446,7 @@ class Fichinter extends CommonObject
 			dolibarr_syslog("Fichinter::delete sql=".$sql);
 			if ( $this->db->query($sql) )
 			{
-	
+
 				// Remove directory with files
 				$fichinterref = sanitize_string($this->ref);
 				if ($conf->fichinter->dir_output)
@@ -454,7 +456,7 @@ class Fichinter extends CommonObject
 					if (file_exists($file))
 					{
 						fichinter_delete_preview($this->db, $this->id, $this->ref);
-	
+
 						if (!dol_delete_file($file))
 						{
 							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
@@ -470,7 +472,7 @@ class Fichinter extends CommonObject
 						}
 					}
 				}
-	
+
 				$this->db->commit();
 				return 1;
 			}
@@ -488,108 +490,108 @@ class Fichinter extends CommonObject
 			return -1;
 		}
 	}
-	
-/**
- *      \brief      Definit une date de livraison du bon d'intervention
- *      \param      user        		Objet utilisateur qui modifie
- *      \param      date_creation   date de livraison
- *      \return     int         		<0 si ko, >0 si ok
- */
- function set_date_delivery($user, $date_delivery)
- {
-   if ($user->rights->ficheinter->creer)
-   {
-     $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-     $sql.= " SET datei = ".$this->db->idate($date_delivery);
-     $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-     if ($this->db->query($sql))
-     {
-       $this->date_delivery = $date_delivery;
-       return 1;
-     }
-     else
-     {
-       $this->error=$this->db->error();
-       dolibarr_syslog("Fichinter::set_date_delivery Erreur SQL");
-       return -1;
-     }
-   }
- }
- 
-/**
- *      \brief      Definit le label de l'intervention
- *      \param      user        		Objet utilisateur qui modifie
- *      \param      description     description
- *      \return     int         		<0 si ko, >0 si ok
- */
- function set_description($user, $description)
- {
-   if ($user->rights->ficheinter->creer)
-   {
-     $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-     $sql.= " SET description = '".addslashes($description)."'";
-     $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+	/**
+	 *      \brief      Definit une date de livraison du bon d'intervention
+	 *      \param      user        		Objet utilisateur qui modifie
+	 *      \param      date_creation   date de livraison
+	 *      \return     int         		<0 si ko, >0 si ok
+	 */
+	function set_date_delivery($user, $date_delivery)
+	{
+		if ($user->rights->ficheinter->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+			$sql.= " SET datei = ".$this->db->idate($date_delivery);
+			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-     if ($this->db->query($sql))
-     {
-       $this->description = $description;
-       return 1;
-     }
-     else
-     {
-       $this->error=$this->db->error();
-       dolibarr_syslog("Fichinter::set_description Erreur SQL");
-       return -1;
-     }
-   }
- }
- 
- /**
-   *  	\brief     	Ajout d'une ligne d'intervention, en base
+			if ($this->db->query($sql))
+			{
+				$this->date_delivery = $date_delivery;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Fichinter::set_date_delivery Erreur SQL");
+				return -1;
+			}
+		}
+	}
+
+	/**
+	 *      \brief      Definit le label de l'intervention
+	 *      \param      user        		Objet utilisateur qui modifie
+	 *      \param      description     description
+	 *      \return     int         		<0 si ko, >0 si ok
+	 */
+	function set_description($user, $description)
+	{
+		if ($user->rights->ficheinter->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+			$sql.= " SET description = '".addslashes($description)."'";
+			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+
+			if ($this->db->query($sql))
+			{
+				$this->description = $description;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Fichinter::set_description Erreur SQL");
+				return -1;
+			}
+		}
+	}
+
+	/**
+	 *  	\brief     	Ajout d'une ligne d'intervention, en base
 	 * 		\param    	fichinterid      	  Id de la fiche d'intervention
 	 * 		\param    	desc            	  Description de la ligne
 	 *    \param      date_intervention   Date de l'intervention
 	 *    \param      duration            Duree de l'intervention
-   *    	\return    	int             	>0 si ok, <0 si ko
-   */
-    function addline($fichinterid, $desc, $date_intervention, $duration)
-    {
-    	dolibarr_syslog("Fichinter::Addline $fichinterid, $desc, $date_intervention, $duration");
-    	
-    	if ($this->statut == 0)
-      {
-      	$this->db->begin();
-      	
-      	// Insertion ligne
-      	$ligne=new FichinterLigne($this->db);
-      	
-      	$ligne->fk_fichinter = $fichinterid;
-      	$ligne->desc         = $desc;
-      	$ligne->datei        = $date_intervention;
-      	$ligne->duration     = $duration;
-      	
-      	$result=$ligne->insert();			
-      	if ($result > 0)
-      	{
-			$this->db->commit();
-			return 1;
-        }
-        else
-        {
-        	$this->error=$this->db->error();
-	        dolibarr_syslog("Error sql=$sql, error=".$this->error);
-					$this->db->rollback();
-					return -1;
-        }
-      }
-    }
+	 *    	\return    	int             	>0 si ok, <0 si ko
+	 */
+	function addline($fichinterid, $desc, $date_intervention, $duration)
+	{
+		dolibarr_syslog("Fichinter::Addline $fichinterid, $desc, $date_intervention, $duration");
+		 
+		if ($this->statut == 0)
+		{
+			$this->db->begin();
+			 
+			// Insertion ligne
+			$ligne=new FichinterLigne($this->db);
+			 
+			$ligne->fk_fichinter = $fichinterid;
+			$ligne->desc         = $desc;
+			$ligne->datei        = $date_intervention;
+			$ligne->duration     = $duration;
+			 
+			$result=$ligne->insert();
+			if ($result > 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Error sql=$sql, error=".$this->error);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+	}
 
-	
+
 	/**
-	*		\brief		Initialise la fiche intervention avec valeurs fictives aleatoire
-	*					Sert a generer une fiche intervention pour l'aperu des modeles ou demo
-	*/
+	 *		\brief		Initialise la fiche intervention avec valeurs fictives aleatoire
+	 *					Sert a generer une fiche intervention pour l'aperu des modeles ou demo
+	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs;
@@ -659,26 +661,63 @@ class Fichinter extends CommonObject
 		$this->total_tva      = $xnbp*19.6;
 		$this->total_ttc      = $xnbp*119.6;
 	}
+
+	/**
+	 *		\brief		Initialise la fiche intervention avec valeurs fictives aleatoire
+	 *					Sert a generer une fiche intervention pour l'aperu des modeles ou demo
+	 * 		\return		int		<0 OK,	>0 KO
+	 */
+	function fetch_lines()
+	{
+		$sql = 'SELECT rowid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
+		$sql.= ' where fk_fichinter = '.$this->id;
+
+		dolibarr_syslog("Fichinter::fetch_lines sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			while ($i < $num)
+			{
+				$objp = $this->db->fetch_object($result);
+
+				$fichinterligne = new FichinterLigne($this->db);
+				$fichinterligne->id = $objp->rowid;
+				//...
+
+				$this->lignes[$i] = $fichinterligne;
+
+				$i++;
+			}
+			$this->db->free($result);
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 }
 
-
 /**
-		\class      FichinterLigne
-		\brief      Classe permettant la gestion des lignes d'intervention
-*/
-
+ \class      FichinterLigne
+ \brief      Classe permettant la gestion des lignes d'intervention
+ */
 class FichinterLigne
 {
 	var $db;
 	var $error;
 
-  // From llx_fichinterdet
+	// From llx_fichinterdet
 	var $rowid;
 	var $fk_fichinter;
-  var $desc;          	// Description ligne
-  var $datei;           // Date intervention
-  var $duration;        // Duree de l'intervention
-  var $rang = 0;
+	var $desc;          	// Description ligne
+	var $datei;           // Date intervention
+	var $duration;        // Duree de l'intervention
+	var $rang = 0;
 
 
 	/**
@@ -723,7 +762,7 @@ class FichinterLigne
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *      \brief     	Insere l'objet ligne d'intervention en base
 	 *		\return		int		<0 si ko, >0 si ok
@@ -732,7 +771,7 @@ class FichinterLigne
 	{
 		dolibarr_syslog("FichinterLigne::insert rang=".$this->rang);
 		$this->db->begin();
-		
+
 		$rangToUse=$this->rang;
 		if ($rangToUse == -1)
 		{
@@ -751,7 +790,7 @@ class FichinterLigne
 				$this->db->rollback();
 				return -1;
 			}
-		}	
+		}
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
@@ -788,8 +827,8 @@ class FichinterLigne
 			return -1;
 		}
 	}
-	
-	
+
+
 	/**
 	 *      \brief     	Mise a jour de l'objet ligne d'intervention en base
 	 *		\return		int		<0 si ko, >0 si ok
@@ -830,7 +869,7 @@ class FichinterLigne
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *      \brief     	Mise a jour duree total dans table llx_fichinter
 	 *		\return		int		<0 si ko, >0 si ok
@@ -848,7 +887,7 @@ class FichinterLigne
 			$obj=$this->db->fetch_object($resql);
 			$total_duration=0;
 			if ($obj) $total_duration = $obj->total_duration;
-			
+				
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " SET duree = ".$total_duration;
 			$sql.= " WHERE rowid = ".$this->fk_fichinter;
@@ -876,51 +915,50 @@ class FichinterLigne
 			return -1;
 		}
 	}
-	
-	  /**
-     *      \brief      Supprime une ligne d'intervention
-     *      \return     int         >0 si ok, <0 si ko
-     */
-    function delete_line()
-    {
-    	if ($this->statut == 0)
-      {
-      	dolibarr_syslog("FichinterLigne::delete_line lineid=".$this->rowid);
-        $this->db->begin();
-           
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->rowid;
-        $resql = $this->db->query($sql);
-        dolibarr_syslog("FichinterLigne::delete_line sql=".$sql);
 
-        if ($resql)
-        {
-        	$result = $this->update_total();
-          if ($result > 0)
-          {
-          	$this->db->commit();
-            return $result;
-          }
-          else
-          {
-          	$this->db->rollback();
-            return -1;
-          }
-        }
-        else
-        {
-        	$this->error=$this->db->error()." sql=".$sql;
-        	dolibarr_syslog("FichinterLigne::delete_line Error ".$this->error);
-        	$this->db->rollback();
-        	return -1;
-        }
-      }
-      else
-      {
-      	return -2;
-      }
-    }
-	
+	/**
+	 *      \brief      Supprime une ligne d'intervention
+	 *      \return     int         >0 si ok, <0 si ko
+	 */
+	function delete_line()
+	{
+		if ($this->statut == 0)
+		{
+			dolibarr_syslog("FichinterLigne::delete_line lineid=".$this->rowid);
+			$this->db->begin();
+			 
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->rowid;
+			$resql = $this->db->query($sql);
+			dolibarr_syslog("FichinterLigne::delete_line sql=".$sql);
+
+			if ($resql)
+			{
+				$result = $this->update_total();
+				if ($result > 0)
+				{
+					$this->db->commit();
+					return $result;
+				}
+				else
+				{
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error=$this->db->error()." sql=".$sql;
+				dolibarr_syslog("FichinterLigne::delete_line Error ".$this->error);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
+		}
+	}
+
 }
 
-  
 ?>
