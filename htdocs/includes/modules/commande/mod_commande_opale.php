@@ -15,95 +15,95 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
- *
  */
 
-/** 
-    \file       htdocs/includes/modules/commande/mod_commande_opale.php
-    \ingroup    commande
-    \brief      Fichier contenant la classe du modèle de numérotation de référence de commande Opale
-    \version    $Revision$
-*/
+/**
+ \file       htdocs/includes/modules/commande/mod_commande_opale.php
+ \ingroup    commande
+ \brief      Fichier contenant la classe du modèle de numérotation de référence de commande Opale
+ \version    $Id$
+ */
 
 include_once("modules_commande.php");
 
 
 /**
-   \class      mod_commande_opale
-   \brief      Classe du modèle de numérotation de référence de commande Opale
-*/
+ \class      mod_commande_opale
+ \brief      Classe du modèle de numérotation de référence de commande Opale
+ */
 
 class mod_commande_opale extends ModeleNumRefCommandes
 {
+	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+	var $error = '';
+	var $nom = 'Opale';
 
-  /**   \brief      Constructeur
-   */
-  function mod_commande_opale()
-  {
-    $this->nom = "Opale";
-  }
+	
+	/**   \brief      Constructeur
+	 */
+	function mod_commande_opale()
+	{
+		$this->nom = "Opale";
+	}
 
 
-  /**     \brief      Renvoi la description du modele de numérotation
-   *      \return     string      Texte descripif
-   */
-  function info()
-  {
-    return "Renvoie le numéro sous la forme numérique COMhexa, où hexa représente un incrément global codé en héxadécimal. (COM-000-001 à COM-FFF-FFF)";
-  }
-  
-  /**     \brief      Renvoi un exemple de numérotation
-   *      \return     string      Example
-   */
-    function getExample()
-    {
-        return "COM-000-001";
-    }
+	/**     \brief      Renvoi la description du modele de numérotation
+	 *      \return     string      Texte descripif
+	 */
+	function info()
+	{
+		return "Renvoie le numéro sous la forme numérique COMhexa, où hexa représente un incrément global codé en héxadécimal. (COM-000-001 à COM-FFF-FFF)";
+	}
 
-  
-    /**     \brief      Renvoi prochaine valeur attribuée
-     *      \return     string      Valeur
-     */
-    function getNextValue()
-    {
-        global $db;
+	/**     \brief      Renvoi un exemple de numérotation
+	 *      \return     string      Example
+	 */
+	function getExample()
+	{
+		return "COM-000-001";
+	}
 
-        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $com='';
-        $sql = "SELECT MAX(ref)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."commande";
-        $sql.= " WHERE ref like 'COM%'";
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-            $row = $db->fetch_row($resql);
-            if ($row)
-            {
-            	//on extrait la valeur max et on la passe en décimale
-            	$max = hexdec((substr($row[0],4,3)).(substr($row[0],8,3)));
-            }
-        }
-        else
-        {
-            $max=0;
-        }        
-        $yy = strftime("%y",time());
-        $hex = strtoupper(dechex($max+1));
-        $ref = substr("000000".($hex),-6);
-        
-        return 'COM-'.substr($ref,0,3)."-".substr($ref,3,3);
-    }
-    
-   /**     \brief      Renvoie la référence de commande suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \return     string      Texte descripif
-     */
-    function commande_get_num($objsoc=0)
-    {
-        return $this->getNextValue();
-    }
+
+	/**     \brief      Renvoi prochaine valeur attribuée
+	 *      \return     string      Valeur
+	 */
+	function getNextValue()
+	{
+		global $db;
+
+		// D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+		$com='';
+		$sql = "SELECT MAX(ref)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
+		$sql.= " WHERE ref like 'COM%'";
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			if ($row)
+			{
+				//on extrait la valeur max et on la passe en décimale
+				$max = hexdec((substr($row[0],4,3)).(substr($row[0],8,3)));
+			}
+		}
+		else
+		{
+			$max=0;
+		}
+		$yy = strftime("%y",time());
+		$hex = strtoupper(dechex($max+1));
+		$ref = substr("000000".($hex),-6);
+
+		return 'COM-'.substr($ref,0,3)."-".substr($ref,3,3);
+	}
+
+	/**     \brief      Renvoie la référence de commande suivante non utilisée
+	 *      \param      objsoc      Objet société
+	 *      \return     string      Texte descripif
+	 */
+	function commande_get_num($objsoc=0)
+	{
+		return $this->getNextValue();
+	}
 }
 ?>

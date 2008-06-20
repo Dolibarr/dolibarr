@@ -382,22 +382,15 @@ if ($_GET["action"] == 'create')
 	$modFicheinter = new $obj;
 	$numpr = $modFicheinter->getNextValue($societe,$ficheinter);
 
+	if ($_GET["socid"])
+	{
 	print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
 
 	print '<table class="border" width="100%">';
 
-	if ($_GET["socid"])
-	{
 		print '<input type="hidden" name="socid" value='.$_GET["socid"].'>';
 		print "<tr><td>".$langs->trans("Company")."</td><td>".$societe->getNomUrl(1)."</td></tr>";
-	}
-	else
-	{
-		print "<tr><td>".$langs->trans("Company")."</td><td>";
-		$html->select_societes('','socid','',1);
-		print "</td></tr>";
-	}
-
+	
 	print "<tr><td>".$langs->trans("Date")."</td><td>";
 	$html->select_date(time(),"p",'','','','fichinter');
 	print "</td></tr>";
@@ -407,7 +400,7 @@ if ($_GET["action"] == 'create')
 	print "<tr><td>".$langs->trans("Ref")."</td>";
 	print "<td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
 
-	if ($conf->projet->enabled && $_GET["socid"])
+	if ($conf->projet->enabled)
 	{
 		// Projet associe
 		$langs->load("project");
@@ -466,6 +459,22 @@ if ($_GET["action"] == 'create')
 
 	print '</table>';
 	print '</form>';
+	}
+	else
+	{
+		print "<form name='fichinter' action=\"fiche.php\" method=\"get\">";
+		print '<table class="border" width="100%">';
+		print "<tr><td>".$langs->trans("Company")."</td><td>";
+		$html->select_societes('','socid','',1);
+		print "</td></tr>";
+		print '<tr><td colspan="2" align="center">';
+		print "<input type=\"hidden\" name=\"action\" value=\"create\">";
+		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
+		print '</td></tr>';
+		print '</table>';
+		print '</form>';
+	}
+
 }
 elseif ($_GET["id"] > 0)
 {
