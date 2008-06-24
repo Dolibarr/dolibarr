@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
- * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Regis Houssin         <regis@dolibarr.fr>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
+ * Copyright (C) 2004-2008 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin               <regis@dolibarr.fr>
+ * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -374,11 +374,13 @@ class Contact extends CommonObject
         $sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
         $sql.= " c.birthday,";
         $sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
-		$sql.= " c.priv, c.note,";
-        $sql.= " u.rowid as user_id, u.login as user_login";
+        $sql.= " c.priv, c.note,";
+        $sql.= " u.rowid as user_id, u.login as user_login,";
+        $sql.= " s.nom as socname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
         $sql.= " WHERE c.rowid = ". $id;
     
     	dolibarr_syslog("Contact::fetch sql=".$sql);
@@ -407,6 +409,7 @@ class Contact extends CommonObject
     
                 $this->societeid      = $obj->fk_soc;
                 $this->socid          = $obj->fk_soc;
+                $this->socname        = $obj->socname;
                 $this->poste          = $obj->poste;
     
                 $this->phone_pro      = trim($obj->phone);

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@dolibarr.fr>
- * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
+/* Copyright (C) 2004-2008 Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin          <regis.houssin@dolibarr.fr>
+ * Copyright (C) 2008 Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -755,7 +755,7 @@ class pdf_crabe extends ModelePDFFactures
             $index = 0;
         }
 
-        // Affichage des totaux de TVA par taux (conformément a la réglementation)
+        // Affichage des totaux de TVA par taux (conformement a la reglementation)
         $pdf->SetFillColor(248,248,248);
 
         foreach( $this->tva as $tvakey => $tvaval )
@@ -1054,7 +1054,7 @@ class pdf_crabe extends ModelePDFFactures
             if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');	// deprecated
             else $pdf->MultiCell(80, 4, $this->emetteur->nom, 0, 'L');
 
-            // Caractéristiques emetteur
+            // Caracteristiques emetteur
             $carac_emetteur = '';
             if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;	// deprecated
             else {
@@ -1106,12 +1106,21 @@ class pdf_crabe extends ModelePDFFactures
 				// Nom societe
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->MultiCell(96,4, $object->client->nom, 0, 'L');
+				// On peut utiliser le nom de la societe du contact facturation
+				if ($conf->global->FACTURE_USE_COMPANY_NAME_OF_BILL_CONTACT)
+				{
+					$socname = $object->contact->socname;
+				}
+				else
+				{
+					$socname = $object->client->nom;
+				}
+				$pdf->MultiCell(96,4, $socname, 0, 'L');
 				
 				// Nom client
 				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
 
-				// Caractéristiques client
+				// Caracteristiques client
 				$carac_client.="\n".$object->contact->adresse;
 				$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
 				//Pays si different de l'emetteur
@@ -1127,19 +1136,19 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(96,4, $object->client->nom, 0, 'L');
 				
-				// Nom du contact facturation si c'est une société
+				// Nom du contact facturation si c'est une societe
 				$arrayidcontact = $object->getIdContact('external','BILLING');
 				if (sizeof($arrayidcontact) > 0)
 				{
 					$object->fetch_contact($arrayidcontact[0]);
-					// On vérifie si c'est une société ou un particulier
+					// On verifie si c'est une societe ou un particulier
 					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 					{
 						$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
 					}
 				}
 
-				// Caractéristiques client
+				// Caracteristiques client
 				$carac_client.="\n".$object->client->adresse;
 				$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
 
@@ -1149,7 +1158,7 @@ class pdf_crabe extends ModelePDFFactures
 						$carac_client.=dol_entity_decode($object->client->pays)."\n";
 					}
 			}
-			// Numéro TVA intracom
+			// Numero TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
 		  	$pdf->SetFont('Arial','',9);
 			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
