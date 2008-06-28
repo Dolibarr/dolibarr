@@ -2554,8 +2554,8 @@ function dol_htmlentitiesbr_decode($stringtodecode)
 	$ret=html_entity_decode($stringtodecode);
 	$ret=eregi_replace("\r\n".'<br( [ a-zA-Z_="]*)?/?>',"<br>",$ret);
 	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>'."\r\n","\r\n",$ret);
-	$ret=eregi_replace('<br( [ a-zA-Z_="]*)??/?>'."\n","\n",$ret);
-	$ret=eregi_replace('<br( [ a-zA-Z_="]*)??/?>',"\n",$ret);
+	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>'."\n","\n",$ret);
+	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>',"\n",$ret);
 	return $ret;
 }
 
