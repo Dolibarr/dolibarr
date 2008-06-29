@@ -293,7 +293,7 @@ class Societe extends CommonObject
 	}
 
     /**
-     *      \brief      Mise a jour des param�tres de la soci�t�
+     *      \brief      Update parameters of third party 
      *      \param      id              			id societe
      *      \param      user            			Utilisateur qui demande la mise � jour
      *      \param      call_trigger    			0=non, 1=oui
@@ -381,7 +381,7 @@ class Societe extends CommonObject
         
             $sql .= ",fk_effectif = ".($this->effectif_id?"'".$this->effectif_id."'":"null");
         
-            $sql .= ",fk_typent = ".($this->typent_id?"'".$this->typent_id."'":"null");
+            $sql .= ",fk_typent = ".($this->typent_id?"'".$this->typent_id."'":"0");
         
             $sql .= ",fk_forme_juridique = ".($this->forme_juridique_code?"'".$this->forme_juridique_code."'":"null");
         
