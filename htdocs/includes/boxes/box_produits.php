@@ -15,18 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
     \file       htdocs/includes/boxes/box_produits.php
     \ingroup    produits,services
     \brief      Module de génération de l'affichage de la box produits
+    \version	$Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
+include_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
 class box_produits extends ModeleBoxes {
