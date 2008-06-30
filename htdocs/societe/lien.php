@@ -23,7 +23,7 @@
         \brief      Page of links to other third parties
         \version    $Id$
 */
- 
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
@@ -180,10 +180,11 @@ if($_GET["socid"])
     
             $title=$langs->trans("CompanyList");
     
-            $sql = "SELECT s.rowid as socid, s.nom, s.ville, s.prefix_comm, s.client, s.fournisseur, te.libelle";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-            $sql .= " , ".MAIN_DB_PREFIX."c_typent as te";
-            $sql .= "  WHERE s.fk_typent = te.id";
+            $sql = "SELECT s.rowid as socid, s.nom, s.ville, s.prefix_comm, s.client, s.fournisseur,";
+            $sql.= " te.code, te.libelle";
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
+            $sql.= " ".MAIN_DB_PREFIX."c_typent as te";
+            $sql.= " WHERE s.fk_typent = te.id";
     
             if (strlen(trim($_GET["search_nom"])))
             {
@@ -192,10 +193,10 @@ if($_GET["socid"])
     
             $sql .= " ORDER BY s.nom ASC " . $db->plimit($conf->liste_limit+1, $offset);
     
-            $result = $db->query($sql);
-            if ($result)
+            $resql = $db->query($sql);
+            if ($resql)
             {
-                $num = $db->num_rows();
+                $num = $db->num_rows($resql);
                 $i = 0;
     
                 $params = "&amp;socid=".$_GET["socid"];
@@ -227,12 +228,12 @@ if($_GET["socid"])
     
                 while ($i < min($num,$conf->liste_limit))
                 {
-                    $obj = $db->fetch_object();
+                    $obj = $db->fetch_object($resql);
                     $var=!$var;
                     print "<tr $bc[$var]><td>";
-                    print stripslashes($obj->nom)."</td>\n";
+                    print $obj->nom."</td>\n";
                     print "<td>".$obj->ville."&nbsp;</td>\n";
-                    print "<td>".$obj->libelle."&nbsp;</td>\n";
+                    print "<td>".$langs->getLabelFromKey($db,$obj->code,'c_typent','code','libelle')."</td>\n";
                     print '<td align="center">';
                     if ($obj->client==1)
                     {
@@ -267,7 +268,7 @@ if($_GET["socid"])
     
                 print "</table>";
                 print '<br>';
-                $db->free();
+                $db->free($resql);
             }
             else
             {

@@ -195,6 +195,7 @@ PL_UNKNOWN=Unknown
 PL_LOW=Low
 PL_MEDIUM=Medium
 PL_HIGH=High
+TE_UNKNOWN=-
 TE_STARTUP=Startup
 TE_GROUP=Large company
 TE_MEDIUM=Medium company

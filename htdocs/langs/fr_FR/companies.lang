@@ -195,6 +195,7 @@ PL_UNKNOWN=Indéterminé
 PL_LOW=Faible
 PL_MEDIUM=Moyen
 PL_HIGH=Elevé
+TE_UNKNOWN=-
 TE_STARTUP=Startup
 TE_GROUP=Grand compte
 TE_MEDIUM=PME/PMI
