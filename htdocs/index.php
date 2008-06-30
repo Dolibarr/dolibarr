@@ -571,11 +571,11 @@ if (sizeof($boxarray))
 	print '<br>';
 	print_fiche_titre($langs->trans("OtherInformationsBoxes"));
 	print '<table width="100%" class="notopnoleftnoright">';
-	print '<tr><td>'."\n";
+	print '<tr><td class="notopnoleftnoright">'."\n";
 	
 	// Affichage colonne gauche
 	print "\n<!-- Box container -->\n";
-	print '<table width="100%"><tr><td width="50%" valign="top">'."\n";
+	print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr><td width="50%" valign="top">'."\n";
 	print '<div id="left">'."\n";
 	
 	$ii=0;

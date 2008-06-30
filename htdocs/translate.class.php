@@ -66,10 +66,10 @@ class Translate {
 
 
 	/**
-	 *	\brief		Renvoie la chaine traduite pour une cl� donn�e.
-	 *				Le tableau des traductions doit avoir �t� charg�.
-	 *	\param		key			Cl� de traduction
-	 *	\return		string		Chaine de traduction
+	 *	\brief		Return string translated for a key
+	 *				Translation array must have been loaded before.
+	 *	\param		key			Key to translate
+	 *	\return		string		Translated string
 	 */
 	function getTransFromTab($key)
 	{
@@ -85,8 +85,8 @@ class Translate {
 
 	/**
 	 *	\brief		Positionne la chaine traduite pour une cl� donn�e.
-	 *	\param		key			Cl� de traduction
-	 *	\param		value		Chaine de traduction
+	 *	\param		key			Key to translate
+	 *	\return		string		Translated string
 	 */
 	function setTransFromTab($key,$value)
 	{
@@ -96,7 +96,7 @@ class Translate {
 
     /**
      *  \brief      Accesseur de this->defaultlang
-     *  \param      srclang     	Langue � utiliser
+     *  \param      srclang     	Language to use
      */
     function setDefaultLang($srclang='fr_FR')
     {
@@ -494,10 +494,16 @@ class Translate {
      */
     function getLabelFromKey($db,$key,$tablename,$fieldkey,$fieldlabel)
     {
-		// If key empty
+    	// If key empty
 		if ($key == '') return '';
+
+		// Check in language array
+        if ($this->transnoentities($key) != $key)
+        {
+        	return $this->transnoentities($key);    // Found in language array
+        }
 		
-    	// Check in cache
+		// Check in cache
         if (! empty($this->cache_labels[$tablename][$key]))
         {
         	return $this->cache_labels[$tablename][$key];    // Found in cache
@@ -512,6 +518,7 @@ class Translate {
         {
             $obj = $db->fetch_object($resql);
             $this->cache_labels[$tablename][$key]=$obj->label;
+            $db->free($resql);
             return $this->cache_labels[$tablename][$key];
         }
         else
