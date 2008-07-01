@@ -264,6 +264,7 @@ PaymentTypeVAD=Paiement en ligne
 PaymentTypeShortVAD=Paiement en ligne
 PaymentTypeTRA=Paiement par traite
 PaymentTypeShortTRA=Traite
+
 BankDetails=Coordonnées bancaires
 BankCode=Code banque
 DeskCode=Code guichet
