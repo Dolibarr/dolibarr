@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
@@ -17,8 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
@@ -26,7 +24,7 @@
 		\ingroup    livraison
 		\brief      Fichier de la classe permettant de générer les bons de livraison au modèle Typhon
 		\author	    Laurent Destailleur
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
@@ -111,7 +109,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
       $langs->load("products");
       $langs->load("deliveries");
 
-      if ($conf->livraison->dir_output)
+      if ($conf->livraison_bon->dir_output)
       {
       	// If $delivery is id instead of object
       	if (! is_object($delivery))
@@ -430,7 +428,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         }
         else
         {
-            $this->error=$langs->transnoentities("ErrorConstantNotDefined","PROP_OUTPUTDIR");
+            $this->error=$langs->transnoentities("ErrorConstantNotDefined","LIVRAISON_OUTPUTDIR");
             return 0;
         }
         $this->error=$langs->transnoentities("ErrorUnknown");

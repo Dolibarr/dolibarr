@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
@@ -18,15 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /** 
-        \file       htdocs/includes/modules/commande/pdf_sirocco.modules.php
+        \file       htdocs/livraison/mods/pdf/pdf_sirocco.modules.php
         \ingroup    livraison
         \brief      Fichier de la classe permettant de générer les bons de livraison au modèle Sirocco
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
@@ -82,7 +80,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
         $langs->load("products");
         $langs->load("deliveries");
 
-		if ($conf->livraison->dir_output)
+		if ($conf->livraison_bon->dir_output)
 		{
 			// If $delivery is id instead of object
 			if (! is_object($delivery))
