@@ -480,7 +480,7 @@ a:hover {
 	$projectContents
 	</ul>
 	<ul id="foot">
-		<li>DoliWamp was built from idea of WampServer from Anaska</li>
+		<li>DoliWamp was built from modified sources of <a href="wampserver.com">WampServer project</a> from Anaska</li>
 	</ul>
 </body>
 </html>
