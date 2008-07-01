@@ -135,7 +135,8 @@ if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted
 $title=$langs->trans("ListOfThirdParties");
 
 $sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
-$sql.= ", st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.siren";
+$sql.= ", st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur,";
+$sql.= " s.siren as idprof1, s.siret as idprof2, ape as idprof3, idprof4 as idprof4";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -173,10 +174,21 @@ if ($search_ville)
 {
 	$sql .= " AND s.ville LIKE '%".addslashes($search_ville)."%'";
 }
-
-if ($_POST["search_siren"])
+if ($_POST["search_idprof1"])
 {
-	$sql .= " AND s.siren LIKE '%".$_POST["search_siren"]."%'";
+	$sql .= " AND s.siren LIKE '%".$_POST["search_idprof1"]."%'";
+}
+if ($_POST["search_idprof2"])
+{
+	$sql .= " AND s.siret LIKE '%".$_POST["search_idprof2"]."%'";
+}
+if ($_POST["search_idprof3"])
+{
+	$sql .= " AND s.ape LIKE '%".$_POST["search_idprof3"]."%'";
+}
+if ($_POST["search_idprof4"])
+{
+	$sql .= " AND s.idprof4 LIKE '%".$_POST["search_idprof4"]."%'";
 }
 
 // Count total nb of records
@@ -204,7 +216,10 @@ if ($result)
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params,"&search_nom=$search_nom&search_ville=$search_ville","",$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("SIREN"),"societe.php","s.siren",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("ProfId1"),"societe.php","s.siren",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("ProfId2"),"societe.php","s.siret",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("ProfId3"),"societe.php","s.ape",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("ProfId4"),"societe.php","s.idprof4",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
   print '<td class="liste_titre" colspan="2" align="center">&nbsp;</td>';
   print "</tr>\n";
 
@@ -214,12 +229,27 @@ if ($result)
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<tr class="liste_titre">';
   print '<td class="liste_titre" valign="right">';
-  print '<input class="flat" type="text" name="search_nom" value="'.stripslashes($search_nom).'">';
+  print '<input class="flat" type="text" name="search_nom" value="'.$search_nom.'">';
   print '</td><td class="liste_titre" valign="right">';
-  print '<input class="flat" type="text" name="search_ville" value="'.stripslashes($search_ville).'">';
-  print '</td><td class="liste_titre" valign="right">';
-  print '<input class="flat" size="10" type="text" name="search_siren" value="'.$_POST["search_siren"].'">';
-  print '</td><td class="liste_titre" colspan="2" align="right">';
+  print '<input class="flat" size="10" type="text" name="search_ville" value="'.$search_ville.'">';
+  print '</td>';
+	// IdProf1
+  print '<td class="liste_titre" valign="right">';
+  print '<input class="flat" size="8" type="text" name="search_idprof1" value="'.$_POST["search_idprof1"].'">';
+  print '</td>';
+  	// IdProf2
+  print '<td class="liste_titre" valign="right">';
+  print '<input class="flat" size="8" type="text" name="search_idprof2" value="'.$_POST["search_idprof2"].'">';
+  print '</td>';
+  	// IdProf3
+  print '<td class="liste_titre" valign="right">';
+  print '<input class="flat" size="8" type="text" name="search_idprof3" value="'.$_POST["search_idprof3"].'">';
+  print '</td>';
+  	// IdProf4
+  print '<td class="liste_titre" valign="right">';
+  print '<input class="flat" size="8" type="text" name="search_idprof4" value="'.$_POST["search_idprof4"].'">';
+  print '</td>';
+  print '<td class="liste_titre" colspan="2" align="right">';
   print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
   print '&nbsp; ';
   print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
@@ -237,8 +267,11 @@ if ($result)
       print "<a href=\"".DOL_URL_ROOT."/soc.php?socid=".$obj->rowid."\">";
       print img_object($langs->trans("ShowCompany"),"company");
       print "</a>&nbsp;<a href=\"".DOL_URL_ROOT."/soc.php?socid=".$obj->rowid."\">".$obj->nom."</a></td>\n";
-      print "<td>".$obj->ville."&nbsp;</td>\n";
-      print "<td>".$obj->siren."&nbsp;</td>\n";
+      print "<td>".$obj->ville."</td>\n";
+      print "<td>".$obj->idprof1."</td>\n";
+      print "<td>".$obj->idprof2."</td>\n";
+      print "<td>".$obj->idprof3."</td>\n";
+      print "<td>".$obj->idprof4."</td>\n";
       print '<td align="center">';
       if ($obj->client==1)
 	{
