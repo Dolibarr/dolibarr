@@ -382,21 +382,29 @@ class Categorie
 	}
 
 	/**
-	* Retourne les produits de la catégorie
+	* 	\brief	Retourne les produits de la catégorie
+	* 	\param	field	Field name for select in table. Full field name will be fk_field.
+	* 	\param	class	PHP Class of object to store entity
+	* 	\param	table	Table name for select in table. Full table name will be PREFIX_categorie_table.
 	*/
-	function get_type($type,$class)
+	function get_type($field,$class,$table='')
 	{
-		$sql  = "SELECT fk_".$type." FROM ".MAIN_DB_PREFIX."categorie_".$type." ";
-		$sql .= "WHERE fk_categorie = ".$this->id;
+		$objs = array();
+		
+		// Clean parameters
+		if (empty($table)) $table=$field;
+		
+		
+		$sql  = "SELECT fk_".$field." FROM ".MAIN_DB_PREFIX."categorie_".$table;
+		$sql .= " WHERE fk_categorie = ".$this->id;
 
+		dolibarr_syslog("Categorie::get_type sql=".$sql);
 		$res  = $this->db->query($sql);
-
 		if ($res)
 		{
-			$obj = array();
 			while ($rec = $this->db->fetch_array ($res))
 			{
-				$obj = new $class ($this->db, $rec['fk_'.$type]);
+				$obj = new $class ($this->db, $rec['fk_'.$field]);
 				$obj->fetch ($obj->id);
 				$objs[] = $obj;
 			}
@@ -405,6 +413,7 @@ class Categorie
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
+			dolibarr_syslog("Categorie::get_type ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

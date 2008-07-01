@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2007 Regis Houssin	  	  <regis@dolibarr.fr>
  *
@@ -69,10 +69,10 @@ if ($user->rights->categorie->supprimer && $_POST["action"] == 'confirm_delete' 
 
 
 /*
- * Affichage fiche categorie
+ * View
  */
+
 llxHeader ("","",$langs->trans("Categories"));
-$html=new Form($db);
 
 if ($mesg) print $mesg.'<br>';
 
@@ -190,7 +190,7 @@ else
 }
 
 
-if($c->type == 0)
+if ($c->type == 0)
 {
 
 	$prods = $c->get_type ("product","Product");
@@ -230,9 +230,9 @@ if($c->type == 0)
 	}
 }
 
-if($c->type == 1)
+if ($c->type == 1)
 {
-	$socs = $c->get_type ("societe","Fournisseur");
+	$socs = $c->get_type ("societe","Fournisseur","fournisseur");
 	if ($socs < 0)
 	{
 	  dolibarr_print_error();
