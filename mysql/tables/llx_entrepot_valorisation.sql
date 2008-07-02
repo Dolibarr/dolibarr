@@ -23,8 +23,7 @@ create table llx_entrepot_valorisation
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,      -- date technique mise à jour automatiquement
   date_calcul     date,           -- date auquel a ete calcule la valeur
-  fk_entrepot     integer UNSIGNED NOT NULL ,
-  valo_pmp        float(12,4),    -- valoristaion du stock en PMP
-  key(fk_entrepot)
+  fk_entrepot     integer UNSIGNED NOT NULL,
+  valo_pmp        float(12,4)    -- valoristaion du stock en PMP
 )type=innodb;
 

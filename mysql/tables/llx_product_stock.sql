@@ -24,9 +24,6 @@ create table llx_product_stock
   tms             timestamp,
   fk_product      integer NOT NULL,
   fk_entrepot     integer NOT NULL,
-  reel            integer,          -- stock réel
-
-  key(fk_product),
-  key(fk_entrepot)
+  reel            integer          -- stock réel
 )type=innodb;
 

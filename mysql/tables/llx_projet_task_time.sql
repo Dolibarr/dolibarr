@@ -25,9 +25,5 @@ create table llx_projet_task_time
   task_date        date,
   task_duration    double,
   fk_user          integer,
-  note             text,
-
-  key(fk_task),
-  key(fk_user)
-
+  note             text
 )type=innodb;

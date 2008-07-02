@@ -27,10 +27,5 @@ create table llx_projet_task
   duration_effective real NOT NULL,
   fk_user_creat      integer,      -- createur
   statut             enum('open','closed') DEFAULT 'open',
-  note               text,
-
-  key(fk_projet),
-  key(statut),
-  key(fk_user_creat)
-  
+  note               text
 )type=innodb;

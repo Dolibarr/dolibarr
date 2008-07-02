@@ -30,8 +30,6 @@ create table llx_stock_valorisation
   price_pmp          float(12,4),           -- valeur PMP de l'operation
   qty_stock          float(9,3) DEFAULT 0,  -- qunatite en stock
   valo_pmp           float(12,4),           -- valorisation du stock en PMP
-  fk_stock_mouvement integer,               -- id du mouvement de stock
-
-  key(fk_product)
+  fk_stock_mouvement integer               -- id du mouvement de stock
 )type=innodb;
 

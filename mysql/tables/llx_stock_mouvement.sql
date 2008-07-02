@@ -28,9 +28,6 @@ create table llx_stock_mouvement
   value           integer,
   price           float(13,4) DEFAULT 0,
   type_mouvement  smallint,
-  fk_user_author  integer,
-
-  key(fk_product),
-  key(fk_entrepot)
+  fk_user_author  integer
 )type=innodb;
 

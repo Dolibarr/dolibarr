@@ -1,5 +1,6 @@
--- ===========================================================================
--- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- ============================================================================
+-- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,13 +17,9 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- ===========================================================================
+-- ============================================================================
 
-create table llx_projet_task_actors
-(
-  fk_projet_task integer NOT NULL,
-  fk_user        integer NOT NULL,
-  role           enum ('admin','read','acto','info') DEFAULT 'admin',
 
-  UNIQUE (fk_projet_task, fk_user)
-)type=innodb;
+ALTER TABLE llx_product_stock ADD INDEX idx_product_stock_fk_product (fk_product);
+
+ALTER TABLE llx_product_stock ADD INDEX idx_product_stock_fk_entrepot (fk_entrepot);
