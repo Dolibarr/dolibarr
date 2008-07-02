@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_entrepot_valorisation.sql,v 1.3 2007/12/02 21:58:49 eldy Exp 
+-- Id: llx_entrepot_valorisation.sql,v 1.4 2008/07/02 22:37:52 eldy Exp 
 -- ============================================================================
 
 create table llx_entrepot_valorisation
@@ -27,9 +27,7 @@ create table llx_entrepot_valorisation
   rowid SERIAL PRIMARY KEY,
   "tms"             timestamp,      -- date technique mise à jour automatiquement
   "date_calcul"     date,           -- date auquel a ete calcule la valeur
-  "fk_entrepot"     integer NOT NULL ,
+  "fk_entrepot"     integer NOT NULL,
   "valo_pmp"        float(12,4)    -- valoristaion du stock en PMP
 );
-
-CREATE INDEX idx_llx_entrepot_valorisation_fk_entrepot ON llx_entrepot_valorisation (fk_entrepot);
 

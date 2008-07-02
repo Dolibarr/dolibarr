@@ -3,7 +3,8 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,15 +20,10 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_product_stock.sql,v 1.8 2008/07/02 22:37:52 eldy Exp 
+-- Id: llx_product_stock.key.sql,v 1.1 2008/07/02 22:37:52 eldy Exp 
 -- ============================================================================
 
-create table llx_product_stock
-(
-  rowid SERIAL PRIMARY KEY,
-  "tms"             timestamp,
-  "fk_product"      integer NOT NULL,
-  "fk_entrepot"     integer NOT NULL,
-  "reel"            integer          -- stock réel
-);
 
+ALTER TABLE llx_product_stock ADD INDEX idx_product_stock_fk_product (fk_product);
+
+ALTER TABLE llx_product_stock ADD INDEX idx_product_stock_fk_entrepot (fk_entrepot);

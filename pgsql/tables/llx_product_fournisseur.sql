@@ -19,9 +19,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_product_fournisseur.sql,v 1.5 2007/12/02 21:37:45 eldy Exp 
+-- Id: llx_product_fournisseur.sql,v 1.6 2008/07/02 22:37:52 eldy Exp 
 -- ============================================================================
-
 
 create table llx_product_fournisseur
 (
@@ -33,7 +32,4 @@ create table llx_product_fournisseur
   "ref_fourn"       varchar(30),
   "fk_user_author"  integer
 );
-
-CREATE INDEX idx_llx_product_fournisseur_fk_product ON llx_product_fournisseur (fk_product);
-CREATE INDEX idx_llx_product_fournisseur_fk_soc ON llx_product_fournisseur (fk_soc);
 

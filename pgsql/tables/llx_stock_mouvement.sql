@@ -19,9 +19,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_stock_mouvement.sql,v 1.7 2007/12/02 21:37:47 eldy Exp 
+-- Id: llx_stock_mouvement.sql,v 1.8 2008/07/02 22:37:52 eldy Exp 
 -- ============================================================================
-
 
 create table llx_stock_mouvement
 (
@@ -35,7 +34,4 @@ create table llx_stock_mouvement
   "type_mouvement"  smallint,
   "fk_user_author"  integer
 );
-
-CREATE INDEX idx_llx_stock_mouvement_fk_product ON llx_stock_mouvement (fk_product);
-CREATE INDEX idx_llx_stock_mouvement_fk_entrepot ON llx_stock_mouvement (fk_entrepot);
 

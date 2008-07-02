@@ -19,9 +19,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_projet_task_actors.sql,v 1.2 2007/12/02 21:37:45 eldy Exp 
+-- Id: llx_projet_task_actors.sql,v 1.3 2008/07/02 22:37:52 eldy Exp 
 -- ===========================================================================
-
 
 
 create table llx_projet_task_actors
@@ -33,4 +32,3 @@ create table llx_projet_task_actors
 );
 
 CREATE INDEX idx_llx_projet_task_actors_fk_projet_task_fk_user ON llx_projet_task_actors (fk_projet_task, fk_user);
-CREATE INDEX idx_llx_projet_task_actors_role ON llx_projet_task_actors (role);

@@ -19,9 +19,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_stock_valorisation.sql,v 1.2 2007/12/02 21:37:47 eldy Exp 
+-- Id: llx_stock_valorisation.sql,v 1.3 2008/07/02 22:37:52 eldy Exp 
 -- ============================================================================
-
 
 create table llx_stock_valorisation
 (
@@ -37,6 +36,4 @@ create table llx_stock_valorisation
   "valo_pmp"           float(12,4),           -- valorisation du stock en PMP
   "fk_stock_mouvement" integer               -- id du mouvement de stock
 );
-
-CREATE INDEX idx_llx_stock_valorisation_fk_product ON llx_stock_valorisation (fk_product);
 

@@ -19,10 +19,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_projet_task_time.sql,v 1.4 2007/12/02 21:37:45 eldy Exp 
+-- Id: llx_projet_task_time.sql,v 1.5 2008/07/02 22:37:52 eldy Exp 
 -- ===========================================================================
-
-
 
 create table llx_projet_task_time
 (
@@ -33,6 +31,3 @@ create table llx_projet_task_time
   "fk_user"          integer,
   "note"             text
 );
-
-CREATE INDEX idx_llx_projet_task_time_fk_task ON llx_projet_task_time (fk_task);
-CREATE INDEX idx_llx_projet_task_time_fk_user ON llx_projet_task_time (fk_user);

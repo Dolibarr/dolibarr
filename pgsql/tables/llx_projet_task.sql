@@ -19,9 +19,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_projet_task.sql,v 1.2 2007/12/02 21:37:45 eldy Exp 
+-- Id: llx_projet_task.sql,v 1.3 2008/07/02 22:37:51 eldy Exp 
 -- ===========================================================================
-
 
 create table llx_projet_task
 (
@@ -33,9 +32,4 @@ create table llx_projet_task
   "fk_user_creat"      integer,      -- createur
   "statut" varchar(6) CHECK (statut IN ('open','closed'))  DEFAULT 'open',
   "note"               text
-  
 );
-
-CREATE INDEX idx_llx_projet_task_fk_projet ON llx_projet_task (fk_projet);
-CREATE INDEX idx_llx_projet_task_statut ON llx_projet_task (statut);
-CREATE INDEX idx_llx_projet_task_fk_user_creat ON llx_projet_task (fk_user_creat);
