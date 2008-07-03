@@ -374,7 +374,7 @@ if ($user->rights->societe->contact->creer)
 		print $form->select_civilite($contact->civilite_id);
 		print '</td></tr>';
 
-		print '<tr><td>Poste/Fonction</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td></tr>';
+		print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="address" type="text" size="50" maxlength="80" value="'.$contact->address.'"></td>';
 
@@ -511,7 +511,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print $contact->getCivilityLabel();
 	print '</td></tr>';
 
-	print '<tr><td>Poste/Fonction</td><td colspan="3">'.$contact->poste.'</td>';
+	print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3">'.$contact->poste.'</td>';
 
 	print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.$contact->address.'</td></tr>';
 
