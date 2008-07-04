@@ -415,6 +415,10 @@ if ($_GET["action"]	== 'create')
 }
 
 
+/*
+ * View
+ */
+
 llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
 
@@ -951,7 +955,7 @@ if ($id > 0)
 	  $relativepath =	$comfournref.'/'.$comfournref.'.pdf';
 	  $filedir = $conf->fournisseur->commande->dir_output	. '/' .	$comfournref;
 	  $urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
-	  $genallowed=($commande->statut == 0 ? $user->rights->fournisseur->commande->creer : 0);
+	  $genallowed=$user->rights->fournisseur->commande->creer;
 	  $delallowed=$user->rights->fournisseur->commande->supprimer;
 	
 	  $somethingshown=$formfile->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
