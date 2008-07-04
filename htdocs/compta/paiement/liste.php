@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**
    \file       htdocs/compta/paiement/liste.php
     \ingroup    compta
      \brief      Page liste des paiements des factures clients
-      \version    $Revision$
+      \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -65,6 +62,7 @@ $sql.= " p.statut, p.num_paiement,";
 $sql.= " c.code as paiement_code,"; 
 $sql.= " ba.rowid as bid, ba.label,";
 $sql.= " s.rowid as socid, s.nom";
+//$sql.= " f.facnumber";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
@@ -89,7 +87,7 @@ if ($_GET["search_montant"])
   $sql .=" AND p.amount=".price2num($_GET["search_montant"]);
 }
 
-if ($_GET["orphelins"])     // Option qui ne sert qu'au debogage
+if ($_GET["orphelins"])     // Option for debugging purpose only
 {
   // Paiements liés à aucune facture (pour aide au diagnostic)
   $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
@@ -103,8 +101,9 @@ if ($_GET["orphelins"])     // Option qui ne sert qu'au debogage
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
   $sql.= " WHERE p.fk_paiement = c.id AND pf.rowid IS NULL";
 }
-$sql .= " ORDER BY $sortfield $sortorder";
-$sql .= $db->plimit( $limit+1 ,$offset);
+$sql.= " ORDER BY ".$sortfield." ".$sortorder;
+//$sql.= ", facnumber ASC";
+$sql.= $db->plimit( $limit+1 ,$offset);
 //print "$sql";
 
 $resql = $db->query($sql);
@@ -122,10 +121,11 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ThirdParty"),"liste.php","c.libelle","",$paramlist,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"),"liste.php","c.nom","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
+	//print_liste_field_titre($langs->trans("Invoices"),"","","",$paramlist,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 

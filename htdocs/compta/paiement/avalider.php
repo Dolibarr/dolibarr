@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**
         \file       htdocs/compta/paiement/avalider.php
         \ingroup    compta
         \brief      Page liste des paiements a valider des factures clients
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -99,7 +96,7 @@ if ($resql)
         $var=!$var;
         print "<tr $bc[$var]>";
         print '<td>'.'<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").' '.$objp->rowid.'</a></td>';
-        print '<td width="80" align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
+        print '<td width="80" align="center">'.dolibarr_print_date($objp->dp,'day')."</td>\n";
         print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
         print '<td align="right">'.price($objp->amount).'</td>';
         print '<td align="center">';
