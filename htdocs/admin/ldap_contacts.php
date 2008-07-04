@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**
     	\file       htdocs/admin/ldap_contacts.php
 		\ingroup    ldap
 		\brief      Page d'administration/configuration du module Ldap
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -255,15 +252,21 @@ print info_admin($langs->trans("LDAPDescValues"));
 /*
  * Test de la connexion
  */
+print '<br>';
+if (! function_exists("ldap_connect"))
+{
+	print '<a class="butActionRefused" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$langs->trans("LDAPTestSynchroContact").'</a>';
+}
+else if (empty($conf->global->LDAP_SERVER_HOST))
+{
+	print '<a class="butActionRefused" href="#" title="'.$langs->trans('SetupNotComplete').'">'.$langs->trans("LDAPTestSynchroContact").'</a>';
+}
+else print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestSynchroContact").'</a>';
+print '<br><br>';
+
+
 if (function_exists("ldap_connect"))
 {
-	if ($conf->global->LDAP_SERVER_HOST)
-	{
-		print '<br>';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestSynchroContact").'</a>';
-		print '<br><br>';
-	}
-
 	if ($_GET["action"] == 'test')
 	{
 		// Creation objet

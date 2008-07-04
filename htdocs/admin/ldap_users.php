@@ -18,16 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**
     	\file       htdocs/admin/ldap_users.php
 		\ingroup    ldap
 		\brief      Page d'administration/configuration du module Ldap
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -267,15 +264,23 @@ print info_admin($langs->trans("LDAPDescValues"));
 /*
  * Test de la connexion
  */
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+{
+	print '<br>';
+	if (! function_exists("ldap_connect"))
+	{
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$langs->trans("LDAPTestSynchroUser").'</a>';
+	}
+	else if (empty($conf->global->LDAP_SERVER_HOST))
+	{
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans('SetupNotComplete').'">'.$langs->trans("LDAPTestSynchroUser").'</a>';
+	}
+	else print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testuser">'.$langs->trans("LDAPTestSynchroUser").'</a>';
+	print '<br><br>';	
+}
+
 if (function_exists("ldap_connect"))
 {
-	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
-	{
-		print '<br>';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testuser">'.$langs->trans("LDAPTestSynchroUser").'</a>';
-		print '<br><br>';
-	}
-
 	if ($_GET["action"] == 'testuser')
 	{
 		// Creation objet
