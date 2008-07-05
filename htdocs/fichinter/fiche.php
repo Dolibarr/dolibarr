@@ -217,7 +217,7 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
 }
 
 /*
- *  Mise � jour d'une ligne d'intervention
+ *  Mise a jour d'une ligne d'intervention
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_POST["save"] == $langs->trans("Save"))
 {
@@ -344,8 +344,9 @@ if ($_GET['action'] == 'down' && $user->rights->ficheinter->creer)
 
 
 /*
- * Affichage page
+ * View
  */
+
 $html = new Form($db);
 $formfile = new FormFile($db);
 
@@ -374,7 +375,8 @@ if ($_GET["action"] == 'create')
 	}
 
 	$ficheinter = new Fichinter($db);
-	$result=$ficheinter->fetch($fichinterid);
+	$ficheinter->date = time();
+	if ($fichinterid) $result=$ficheinter->fetch($fichinterid);
 
 	$obj = $conf->global->FICHEINTER_ADDON;
 	$obj = "mod_".$obj;
