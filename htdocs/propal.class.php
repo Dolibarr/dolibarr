@@ -61,7 +61,10 @@ class Propal extends CommonObject
 	var $ref;
 	var $ref_client;
 	var $statut;					// 0, 1, 2, 3, 4
-	var $datep;
+	var $date;						// Date of proposal
+	var $datep;						// Duplicate with date
+	var $date_livraison;
+	
 	var $fin_validite;
 	var $price;						// Total HT
 	var $tva;						// Total TVA
@@ -75,7 +78,6 @@ class Propal extends CommonObject
 	var $remise_absolue;
 	var $note;
 	var $note_public;
-	var $date_livraison;
 	var $adresse_livraison_id;
 	var $adresse;
 
@@ -685,9 +687,9 @@ class Propal extends CommonObject
 
                 $this->id                   = $rowid;
 
+                $this->date                 = $obj->dp;
                 $this->datep                = $obj->dp;
                 $this->fin_validite         = $obj->dfv;
-                $this->date                 = $obj->dp;
                 $this->ref                  = $obj->ref;
                 $this->ref_client           = $obj->ref_client;
                 $this->remise               = $obj->remise;
@@ -1693,8 +1695,7 @@ class Propal extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise la propale avec valeurs fictives al�atoire
-	 *					Sert � g�n�rer une facture pour l'aperu des mod�les ou demo
+	 *		\brief		Initialise object with default value to be used as example
 	 */
 	function initAsSpecimen()
 	{

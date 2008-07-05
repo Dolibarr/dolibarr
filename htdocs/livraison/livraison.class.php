@@ -47,6 +47,11 @@ class Livraison extends CommonObject
 	var $origin_id;
 	var $socid;
 
+	var $date_livraison;
+	var $date_creation;
+	var $date_valid;
+	
+	
 	/**
 	* Initialisation
 	*
@@ -241,6 +246,7 @@ class Livraison extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				
 				$this->id                   = $obj->rowid;
+				$this->date_livraison       = $obj->date_livraison;
 				$this->date_creation        = $obj->date_creation;
 				$this->date_valid           = $obj->date_valid;
 				$this->ref                  = $obj->ref;
@@ -251,7 +257,6 @@ class Livraison extends CommonObject
 				$this->expedition_id        = $obj->fk_expedition;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->user_valid_id        = $obj->fk_user_valid;
-				$this->date_livraison       = $obj->date_livraison;
 				$this->adresse_livraison_id = $obj->fk_adresse_livraison;
 				$this->note                 = $obj->note;
 				$this->note_public          = $obj->note_public;
@@ -695,7 +700,58 @@ class Livraison extends CommonObject
         	if ($statut==1) return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
 		  }
     }
+
     
+	/**
+	 *		\brief		Initialise object with default value to be used as example
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs;
+
+		// Charge tableau des id de soci�t� socids
+		$socids = array();
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_socs = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_socs)
+			{
+				$i++;
+
+				$row = $this->db->fetch_row($resql);
+				$socids[$i] = $row[0];
+			}
+		}
+
+		// Charge tableau des produits prodids
+		$prodids = array();
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_prods = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_prods)
+			{
+				$i++;
+				$row = $this->db->fetch_row($resql);
+				$prodids[$i] = $row[0];
+			}
+		}
+
+		// Initialise parametres
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+		$socid = rand(1, $num_socs);
+		$this->socid = $socids[$socid];
+		$this->date_livraison = time();
+		$this->note_public='SPECIMEN';
+	}
+	    
 }
 
 

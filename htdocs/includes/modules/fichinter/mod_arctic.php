@@ -116,20 +116,20 @@ class mod_arctic extends ModeleNumRefFicheinter
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'fichinter','ref','',$objsoc->code_client);
+		$numFinal=get_next_value($db,$mask,'fichinter','ref','',$objsoc->code_client,$ficheinter->date);
 		
 		return  $numFinal;
   }
     
   
-    /**     \brief      Renvoie la référence de fichinter suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \param      fichinter	Objet fichinter
-     *      \return     string      Texte descripif
-     */
-    function getNumRef($objsoc=0,$ficheinter='')
+	/**		\brief      Return next free value
+    *      	\param      objsoc      Object third party
+	* 		\param		objforref	Object for number to search
+    *   	\return     string      Next free value
+    */
+    function getNumRef($objsoc,$objforref)
     {
-        return $this->getNextValue($objsoc,$ficheinter);
+        return $this->getNextValue($objsoc,$objforref);
     }
 
 }    

@@ -92,7 +92,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 
 	/**		\brief      Return next value
 	*      	\param      objsoc      Object third party
-	*      	\param      livraison	Object proposal
+	*      	\param      livraison	Object delivery
 	*      	\return     string      Value if OK, 0 if KO
 	*/
     function getNextValue($objsoc=0,$livraison='')
@@ -110,15 +110,26 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'livraison','ref','',$objsoc->code_client);
+		$numFinal=get_next_value($db,$mask,'livraison','ref','',$objsoc->code_client,$livraison->date_livraison);
 		
 		return  $numFinal;
     }
-   
+
   
-    /**     \brief      Renvoie la référence de commande suivante non utilisée
+	/**		\brief      Return next free value
+    *      	\param      objsoc      Object third party
+	* 		\param		objforref	Object for number to search
+    *   	\return     string      Next free value
+    */
+    function getNumRef($objsoc,$objforref)
+    {
+        return $this->getNextValue($objsoc,$objforref);
+    }
+    
+
+	/**     \brief      Renvoie la référence de commande suivante non utilisée
      *      \param      objsoc      Objet société
-     *      \param      commande		Objet commande
+     *      \param      livraison	Objet livraison
      *      \return     string      Texte descripif
      */
     function livraison_get_num($objsoc=0,$livraison='')

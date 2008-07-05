@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
     \file       htdocs/includes/modules/fichinter/mod_pacific.php
-		\ingroup    fiche intervention
-		\brief      Fichier contenant la classe du modèle de numérotation de référence de fiche intervention Pacific
-		\version    $Revision$
+	\ingroup    fiche intervention
+	\brief      Fichier contenant la classe du modèle de numérotation de référence de fiche intervention Pacific
+	\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
@@ -100,11 +97,13 @@ class mod_pacific extends ModeleNumRefFicheinter
 		}
 	}
 
-    /**     \brief      Renvoi prochaine valeur attribuée
-     *      \return     string      Valeur
-     */
-    function getNextValue()
-    {
+	/**		\brief      Renvoi prochaine valeur attribuée
+	*      	\param      objsoc      Objet société
+	*      	\param      ficheinter	Object ficheinter
+	*      	\return     string      Valeur
+	*/
+    function getNextValue($objsoc=0,$ficheinter='')
+	{
         global $db;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
@@ -123,9 +122,9 @@ class mod_pacific extends ModeleNumRefFicheinter
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
+            $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice."))";
             $sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
-            $sql.= " WHERE ref like '${fayymm}%'";
+            $sql.= " WHERE ref like '".$fayymm."%'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -137,19 +136,21 @@ class mod_pacific extends ModeleNumRefFicheinter
         {
             $max=0;
         }        
-        $yymm = strftime("%y%m",time());
+        //$yymm = strftime("%y%m",time());
+        $yymm = strftime("%y%m",$ficheinter->date);
         $num = sprintf("%04s",$max+1);
         
-        return $this->prefix."$yymm-$num";
+        return $this->prefix.$yymm."-".$num;
     }
     
-    /**     \brief      Renvoie la référence de fiche d'intervention suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \return     string      Texte descripif
-     */
-    function getNumRef($objsoc=0)
-    { 
-        return $this->getNextValue();
+	/**		\brief      Return next free value
+    *      	\param      objsoc      Object third party
+	* 		\param		objforref	Object for number to search
+    *   	\return     string      Next free value
+    */
+    function getNumRef($objsoc,$objforref)
+    {
+        return $this->getNextValue($objsoc,$objforref);
     }
     
 }

@@ -96,7 +96,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	*		\param		commande	Object order
 	*      	\return     string      Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc=0,$commande)
+    function getNextValue($objsoc,$commande)
     {
 		global $db,$conf;
 
@@ -111,22 +111,22 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'commande','ref','',$objsoc->code_client);
+		$numFinal=get_next_value($db,$mask,'commande','ref','',$objsoc->code_client,$commande->date);
 		
 		return  $numFinal;
 	}
     
   
-    /**     \brief      Renvoie la référence de commande suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \param      commande		Objet commande
-     *      \return     string      Texte descripif
-     */
-    function commande_get_num($objsoc=0,$commande)
+	/**		\brief      Return next free value
+    *      	\param      objsoc      Object third party
+	* 		\param		objforref	Object for number to search
+    *   	\return     string      Next free value
+    */
+    function commande_get_num($objsoc,$objforref)
     {
-        return $this->getNextValue($objsoc,$commande);
+        return $this->getNextValue($objsoc,$objforref);
     }
-
+	
 }    
 
 ?>

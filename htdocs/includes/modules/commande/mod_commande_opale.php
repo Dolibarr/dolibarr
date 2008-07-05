@@ -64,11 +64,13 @@ class mod_commande_opale extends ModeleNumRefCommandes
 	}
 
 
-	/**     \brief      Renvoi prochaine valeur attribuée
-	 *      \return     string      Valeur
-	 */
-	function getNextValue()
-	{
+	/**		\brief      Return next value
+	*      	\param      objsoc      Objet third party
+	*		\param		commande	Object order
+	*      	\return     string      Value if OK, 0 if KO
+	*/
+    function getNextValue($objsoc,$commande)
+    {
 		global $db;
 
 		// D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
@@ -90,20 +92,24 @@ class mod_commande_opale extends ModeleNumRefCommandes
 		{
 			$max=0;
 		}
-		$yy = strftime("%y",time());
+		//$date=time();
+		$date=$commande->date;
+		$yy = strftime("%y",$date);
 		$hex = strtoupper(dechex($max+1));
 		$ref = substr("000000".($hex),-6);
 
 		return 'COM-'.substr($ref,0,3)."-".substr($ref,3,3);
 	}
 
-	/**     \brief      Renvoie la référence de commande suivante non utilisée
-	 *      \param      objsoc      Objet société
-	 *      \return     string      Texte descripif
-	 */
-	function commande_get_num($objsoc=0)
-	{
-		return $this->getNextValue();
-	}
+	/**		\brief      Return next free value
+    *      	\param      objsoc      Object third party
+	* 		\param		objforref	Object for number to search
+    *   	\return     string      Next free value
+    */
+    function commande_get_num($objsoc,$objforref)
+    {
+        return $this->getNextValue($objsoc,$objforref);
+    }
+
 }
 ?>

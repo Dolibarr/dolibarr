@@ -281,7 +281,8 @@ while (($file = readdir($handle))!==false)
 	        print '</td>';
 
 			$facture=new Facture($db);
-
+			$facture->initAsSpecimen();
+			
 			// Example for standard invoice
 			$htmltooltip='';
 			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';

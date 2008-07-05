@@ -96,7 +96,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	* 		\param		propal		Object commercial proposal
 	*      	\return     string      Value if OK, 0 if KO
 	*/
-	function getNextValue($objsoc,$propal='')
+	function getNextValue($objsoc,$propal)
 	{
 		global $db,$conf;
 
@@ -111,7 +111,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc->code_client);
+		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc->code_client,$propal->date);
 		
 		return  $numFinal;
 	}

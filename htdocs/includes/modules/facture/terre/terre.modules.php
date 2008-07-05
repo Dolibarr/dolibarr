@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/includes/modules/facture/terre/terre.modules.php
 		\ingroup    facture
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Terre
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
@@ -145,9 +142,9 @@ class mod_facture_terre extends ModeleNumRefFactures
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
+            $sql = "SELECT MAX(0+SUBSTRING(facnumber,".$posindice."))";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-            $sql.= " WHERE facnumber like '${fayymm}%'";
+            $sql.= " WHERE facnumber like '".$fayymm."%'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -159,21 +156,24 @@ class mod_facture_terre extends ModeleNumRefFactures
         {
             $max=0;
         }        
-        $yymm = strftime("%y%m",time());
+
+        //$date=time();
+        $date=$facture->date;
+        $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
         
-        dolibarr_syslog("mod_facture_terre::getNextValue return ".$prefix."$yymm-$num");
-        return $prefix."$yymm-$num";
+        dolibarr_syslog("mod_facture_terre::getNextValue return ".$prefix.$yymm."-".$num);
+        return $prefix.$yymm."-".$num;
     }
     
-    /**     \brief      Renvoie la référence de facture suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \param      facture		Objet facture
-     *      \return     string      Texte descripif
-     */
-    function getNumRef($objsoc=0,$facture)
-    { 
-        return $this->getNextValue($objsoc,$facture);
+	/**		\brief      Return next free value
+    *      	\param      objsoc      Object third party
+	* 		\param		objforref	Object for number to search
+    *   	\return     string      Next free value
+    */
+    function getNumRef($objsoc,$objforref)
+    {
+        return $this->getNextValue($objsoc,$objforref);
     }
     
 }

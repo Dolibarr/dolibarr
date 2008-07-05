@@ -111,7 +111,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc->code_client);
+		$numFinal=get_next_value($db,$mask,'commande_fournisseur','ref','',$objsoc->code_client,$commande->date_commande);
 		
 		return  $numFinal;
 	}

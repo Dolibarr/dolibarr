@@ -57,10 +57,12 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         return "BL0600001";
     }
   
-  /**     \brief      Renvoi prochaine valeur attribuée
-     *      \return     string      Valeur
-     */
-    function getNextValue()
+	/**		\brief      Return next value
+	*      	\param      objsoc      Object third party
+	*      	\param      livraison	Object delivery
+	*      	\return     string      Value if OK, 0 if KO
+	*/
+    function getNextValue($objsoc=0,$livraison='')
     {
         global $db;
 
@@ -82,7 +84,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
             $posindice=5;
             $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
-            $sql.= " WHERE ref like '${blyy}%'";
+            $sql.= " WHERE ref like '".$blyy."%'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -94,7 +96,9 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         {
             $max=0;
         }        
-        $yy = strftime("%y",time());
+        //$date=time();
+        $date=$livraison->date_livraison;
+        $yy = strftime("%y",$date);
         $num = sprintf("%05s",$max+1);
         
         return  "BL$yy$num";
@@ -103,11 +107,12 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
   
     /**     \brief      Renvoie la référence de commande suivante non utilisée
      *      \param      objsoc      Objet société
+     *      \param      livraison	Objet livraison
      *      \return     string      Texte descripif
      */
-    function livraison_get_num($objsoc=0)
+    function livraison_get_num($objsoc=0,$livraison='')
     {
-        return $this->getNextValue();
+        return $this->getNextValue($objsoc,$livraison);
     }
 }
 ?>

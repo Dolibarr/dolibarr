@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,11 +85,12 @@ class mod_propale_marbre extends ModeleNumRefPropales
         }
     }
 
-    /**     \brief      Renvoi prochaine valeur attribuée
-     *      \param      objsoc      Objet société
-     *      \return     string      Valeur
-     */
-    function getNextValue($objsoc=0)
+	/**		\brief      Return next value
+    *      	\param      objsoc      Object third party
+	* 		\param		propal		Object commercial proposal
+    *   	\return     string      Valeur
+    */
+	function getNextValue($objsoc,$propal)
     {
         global $db;
 
@@ -114,9 +115,9 @@ class mod_propale_marbre extends ModeleNumRefPropales
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
+            $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice."))";
             $sql.= " FROM ".MAIN_DB_PREFIX."propal";
-            $sql.= " WHERE ref like '${pryymm}%'";
+            $sql.= " WHERE ref like '".$pryymm."%'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -128,20 +129,22 @@ class mod_propale_marbre extends ModeleNumRefPropales
         {
             $max=0;
         }        
-        $yymm = strftime("%y%m",time());
+        //$yymm = strftime("%y%m",time());
+        $yymm = strftime("%y%m",$propal->date);
         $num = sprintf("%04s",$max+1);
         
-        dolibarr_syslog("mod_propale_marbre::getNextValue return ".$this->prefix."$yymm-$num");
-        return $this->prefix."$yymm-$num";
+        dolibarr_syslog("mod_propale_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
+        return $this->prefix.$yymm."-".$num;
     }
 
-    /**     \brief      Renvoie la référence de propale suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \return     string      Texte descripif
-     */
-    function getNumRef($objsoc=0)
-    { 
-        return $this->getNextValue();
+	/**		\brief      Return next free value
+    *      	\param      objsoc      Object third party
+	* 		\param		objforref	Object for number to search
+    *   	\return     string      Next free value
+    */
+    function getNumRef($objsoc,$objforref)
+    {
+        return $this->getNextValue($objsoc,$objforref);
     }
         
 }

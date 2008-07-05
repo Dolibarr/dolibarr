@@ -32,10 +32,16 @@
  * @param 	$mask
  * @param unknown_type $table
  * @param unknown_type $field
+ * @param unknown_type $where
+ * @param unknown_type $valueforccc
+ * @param unknown_type $date
  * @return 	string		New value
  */
-function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='')
+function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date='')
 {
+	// Clean parameters
+	if ($date == '') $date=time();
+	
 	// Extract value for mask counter, mask raz and mask offset
 	if (! eregi('\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}',$mask,$reg)) return 'ErrorBadMask';
 	$masktri=$reg[1].$reg[2].$reg[3];
@@ -92,10 +98,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='')
 		$monthcomp=$maskraz;
 		$yearoffset=0;
 		$yearcomp=0;
-		if (date("m") < $maskraz) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
-		if (strlen($reg[2]) == 4) $yearcomp=sprintf("%04d",date("Y")+$yearoffset);
-		if (strlen($reg[2]) == 2) $yearcomp=sprintf("%02d",date("y")+$yearoffset);
-		if (strlen($reg[2]) == 1) $yearcomp=substr(date("y"),2,1)+$yearoffset;
+		if (date("m",$date) < $maskraz) { $yearoffset=-1; }	// If current month lower that month of return to zero, year is previous year
+		if (strlen($reg[2]) == 4) $yearcomp=sprintf("%04d",date("Y",$date)+$yearoffset);
+		if (strlen($reg[2]) == 2) $yearcomp=sprintf("%02d",date("y",$date)+$yearoffset);
+		if (strlen($reg[2]) == 1) $yearcomp=substr(date("y",$date),2,1)+$yearoffset;
 			
 		$sqlwhere='';
 		$sqlwhere.='SUBSTRING('.$field.', '.(strlen($reg[1])+1).', '.strlen($reg[2]).') >= '.$yearcomp;
@@ -191,11 +197,11 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='')
 	$numFinal = $mask;
 
 	// We replace special codes except refclient
-	$numFinal = str_replace('{yyyy}',date("Y"),$numFinal);
-	$numFinal = str_replace('{yy}',date("y"),$numFinal);
-	$numFinal = str_replace('{y}' ,substr(date("y"),2,1),$numFinal);
-	$numFinal = str_replace('{mm}',date("m"),$numFinal);
-	$numFinal = str_replace('{dd}',date("d"),$numFinal);
+	$numFinal = str_replace('{yyyy}',date("Y",$date),$numFinal);
+	$numFinal = str_replace('{yy}',date("y",$date),$numFinal);
+	$numFinal = str_replace('{y}' ,substr(date("y",$date),2,1),$numFinal);
+	$numFinal = str_replace('{mm}',date("m",$date),$numFinal);
+	$numFinal = str_replace('{dd}',date("d",$date),$numFinal);
 	if ($maskclientcode) $numFinal = str_replace(('{'.$maskclientcode.'}'),$clientcode,$numFinal);
 
 	// Now we replace the counter

@@ -121,21 +121,21 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		if ($facture->type == 2) $where.= " AND type = 2";
 		else $where.=" AND type != 2";
 		
-		$numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc->code_client);
+		$numFinal=get_next_value($db,$mask,'facture','facnumber',$where,$objsoc->code_client,$facture->date);
 		
 		return  $numFinal;
 	}
     
   
-    /**     \brief      Renvoie la reference de commande suivante non utilisee
-     *      \param      objsoc      Objet societe
-     *      \param      facture		Objet facture
-     *      \return     string      Texte descripif
-     */
-    function getNumRef($objsoc=0,$facture)
+	/**		\brief      Return next free value
+    *      	\param      objsoc      Object third party
+	* 		\param		objforref	Object for number to search
+    *   	\return     string      Next free value
+    */
+    function getNumRef($objsoc,$objforref)
     {
-        return $this->getNextValue($objsoc,$facture);
+        return $this->getNextValue($objsoc,$objforref);
     }
-    
+	
 }    
 ?>

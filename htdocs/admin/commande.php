@@ -159,7 +159,7 @@ if ($_POST["action"] == 'set_use_customer_contact_as_recipient')
 
 
 /*
- * Affichage page
+ * View
  */
 
 llxHeader();
@@ -225,7 +225,8 @@ if ($handle)
             print '</td>';
             
             $commande=new Commande($db);
-
+			$commande->initAsSpecimen();
+			
 			// Info
 			$htmltooltip='';
 			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';

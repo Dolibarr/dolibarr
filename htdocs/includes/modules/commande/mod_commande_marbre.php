@@ -88,9 +88,9 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	*		\param		commande	Object order
 	*      	\return     string      Value if OK, 0 if KO
 	*/
-    function getNextValue($objsoc=0,$commande)
+    function getNextValue($objsoc,$commande)
     {
-        global $db;
+    	global $db;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
         $coyymm='';
@@ -129,22 +129,25 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         {
             $max=0;
         }        
-        $yymm = strftime("%y%m",time());
+		//$date=time();
+		$date=$commande->date;
+        $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
         
-        dolibarr_syslog("mod_commande_marbre::getNextValue return ".$this->prefix."$yymm-$num");
-        return $this->prefix."$yymm-$num";
+        dolibarr_syslog("mod_commande_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
+        return $this->prefix.$yymm."-".$num;
     }
 
 
-    /**     \brief      Renvoie la référence de commande suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \return     string      Texte descripif
-     */
-    function commande_get_num($objsoc=0)
+	/**		\brief      Return next free value
+    *      	\param      objsoc      Object third party
+	* 		\param		objforref	Object for number to search
+    *   	\return     string      Next free value
+    */
+    function commande_get_num($objsoc,$objforref)
     {
-        return $this->getNextValue($objsoc);
+        return $this->getNextValue($objsoc,$objforref);
     }
+    
 }
-
 ?>

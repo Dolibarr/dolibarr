@@ -57,7 +57,10 @@ class Facture extends CommonObject
 	var $client;
 	var $number;
 	var $author;
+	//! Invoice date
 	var $date;
+	var $date_creation;
+	var $date_validation;
 	var $ref;
 	var $ref_client;
 	//! 0=Facture normale, 1=Facture remplacement, 2=Facture avoir, 3=Facture récurrente
@@ -423,11 +426,13 @@ class Facture extends CommonObject
 		dolibarr_syslog("Facture::Fetch rowid=".$rowid.", societe_id=".$societe_id, LOG_DEBUG);
 
 		$sql = 'SELECT f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
-		$sql.= ','.$this->db->pdate('f.datef').' as df, f.fk_projet';
+		$sql.= ','.$this->db->pdate('f.datef').' as df';
 		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
+		$sql.= ','.$this->db->pdate('f.datec').' as datec';
+		$sql.= ','.$this->db->pdate('f.date_valid').' as datev';
 		$sql.= ', f.note, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.model_pdf';
 		$sql.= ', f.fk_facture_source';
-		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
+		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_facture';
 		$sql.= ', cf.fk_commande';
@@ -453,6 +458,8 @@ class Facture extends CommonObject
 				$this->ref_client             = $obj->ref_client;
 				$this->type                   = $obj->type;
 				$this->date                   = $obj->df;
+				$this->date_creation          = $obj->datec;
+				$this->date_validation        = $obj->datev;
 				$this->amount                 = $obj->amount;
 				$this->remise_percent         = $obj->remise_percent;
 				$this->remise_absolue         = $obj->remise_absolue;
@@ -995,11 +1002,11 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *      	\brief     	Tag la facture comme validée + appel trigger BILL_VALIDATE
-	 *      	\param     	user            Utilisateur qui valide la facture
-	 *      	\param     	soc             Ne sert plus \\TODO A virer
-	 *      	\param     	force_number	Référence à forcer de la facture
-	 *		\return		int				<0 si ko, >0 si ok
+	 *      \brief     	Tag la facture comme validée + appel trigger BILL_VALIDATE
+	 *      \param     	user            Utilisateur qui valide la facture
+	 *      \param     	soc             Ne sert plus. \\TODO A virer
+	 *      \param     	force_number	Référence à forcer de la facture
+	 *	    \return		int				<0 si ko, >0 si ok
 	 */
 	function set_valid($user, $soc='', $force_number='')
 	{

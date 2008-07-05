@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,7 +195,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
 
 /*
- *  Module num�rotation
+ *  Module numerotation
  */
 print "<br>";
 print_titre($langs->trans("ProposalsNumberingModules"));
@@ -249,6 +249,7 @@ if ($handle)
             print '</td>';
             
             $propale=new Propal($db);
+			$propale->initAsSpecimen();
 			     
 			// Info
 			$htmltooltip='';
