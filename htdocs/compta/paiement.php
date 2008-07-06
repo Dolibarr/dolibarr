@@ -130,6 +130,11 @@ if ($_POST['action'] == 'add_paiement')
  */
 if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 {
+	$datepaye = dolibarr_mktime(12, 0 , 0,
+	$_POST['remonth'],
+	$_POST['reday'],
+	$_POST['reyear']);
+	
 	if (! $error)
 	{
 		$db->begin();
@@ -273,8 +278,10 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 
 		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
 
+		// Date payment
+		$datepaye = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		print '<tr><td>'.$langs->trans('Date').'</td><td>';
-		$html->select_date(-1,'','','',0,"add_paiement");
+		$html->select_date((! empty($datepaye) ? $datepaye : -1),'','','',0,"add_paiement");
 		print '</td>';
 		print '<td>'.$langs->trans('Comments').'</td></tr>';
 
