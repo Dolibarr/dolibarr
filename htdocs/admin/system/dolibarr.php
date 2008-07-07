@@ -61,9 +61,13 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ServerTZ")."</td><td>".$_ENV["TZ"]."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("PHPTZ")." (date.timezone)</td><td>".ini_get("date.timezone")."</td></tr>\n";	// date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ServerTZ")." (TZ)</td><td>".$_ENV["TZ"]."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(- dolibarr_mktime(0,0,0,1,1,1970))."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentHour")."</td><td>".dolibarr_print_date(time(),'dayhour')."</td></tr>\n";
 print '</table>';
 print '<br>';
 
