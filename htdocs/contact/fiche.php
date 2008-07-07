@@ -670,9 +670,10 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	// Recherche histo sur mailing
 	$sql = "SELECT m.rowid as id, ".$db->pdate("mc.date_envoi")." as da, m.titre as note, '100' as percentage,";
 	$sql.= " 'AC_EMAILING' as acode,";
-	$sql.= " u.rowid as user_id, u.login";
-	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u ";
-	$sql.= " WHERE mc.email = '".addslashes($contact->email)."'";
+	$sql.= " u.rowid as user_id, u.login";	// User that valid action
+	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
+	$sql.= " ,".MAIN_DB_PREFIX."socpeople as sp";
+	$sql.= " WHERE mc.email = '".addslashes($contact->email)."'";	// Search is done on email.
 	$sql.= " AND mc.statut = 1";
 	$sql.= " AND u.rowid = m.fk_user_valid";
 	$sql.= " AND mc.fk_mailing=m.rowid";
@@ -689,7 +690,8 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 			$obj = $db->fetch_object($resql);
 			$histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percentage,
 			'acode'=>$obj->acode,'libelle'=>$obj->libelle,
-			'userid'=>$obj->user_id,'login'=>$obj->login);
+			'userid'=>$obj->user_id,'login'=>$obj->login,
+			'contact_id'=>$obj->contact_id);
 			$numaction++;
 			$i++;
 		}
