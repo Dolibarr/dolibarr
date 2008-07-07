@@ -32,7 +32,7 @@
  * @param 	$mask
  * @param unknown_type $table
  * @param unknown_type $field
- * @param unknown_type $where
+ * @param unknown_type $where			To add a filter on selection (for exemple to filter for invoice types)
  * @param unknown_type $valueforccc
  * @param unknown_type $date
  * @return 	string		New value
@@ -178,6 +178,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		$maskrefclient_sql.= " FROM ".MAIN_DB_PREFIX.$table;
 		//$sql.= " WHERE ".$field." not like '(%'";
 		$maskrefclient_sql.= " WHERE ".$field." like '".$maskrefclient_maskLike."'";
+		if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
 		if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
 		$maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
 			
