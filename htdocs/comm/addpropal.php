@@ -17,18 +17,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/comm/addpropal.php
         \ingroup    propal
 		\brief      Page d'ajout d'une proposition commmercial
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
 if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
 {
@@ -41,8 +40,12 @@ if ($conf->projet->enabled) $langs->load("projects");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("orders");
+$langs->load("deliveries");
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -72,9 +75,12 @@ if ($_GET["action"] == 'create')
         exit;
     }
 
+    $propal = new Propal($db);
+    $propal->date=time();
+    
     $obj = $conf->global->PROPALE_ADDON;
     $modPropale = new $obj;
-    $numpr = $modPropale->getNextValue($soc);
+    $numpr = $modPropale->getNextValue($soc,$propal);
 
 	// Fix pour modele numerotation qui deconne
 	// Si numero deja pris (ne devrait pas arriver), on incremente par .num+1
