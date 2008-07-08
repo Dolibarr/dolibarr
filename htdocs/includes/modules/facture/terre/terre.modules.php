@@ -120,42 +120,23 @@ class mod_facture_terre extends ModeleNumRefFactures
 		else $prefix=$this->prefixinvoice;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $fayymm='';
-        $sql = "SELECT MAX(facnumber)";
+        $posindice=8;
+        $sql = "SELECT MAX(facnumber+SUBSTRING(facnumber,".$posindice.")) as ref";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber like '".$prefix."%'";
 
         $resql=$db->query($sql);
         if ($resql)
         {
-            $row = $db->fetch_row($resql);
-            if ($row) $fayymm = substr($row[0],0,6);
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = $obj->ref;
+            else $max=0;
         }
         else
         {
         	dolibarr_syslog("mod_facture_terre::getNextValue sql=".$sql);
         	return -1;
         }
-
-        // Si champ respectant le modèle a été trouvée
-        if (eregi('^'.$prefix.'[0-9][0-9][0-9][0-9]',$fayymm))
-        {
-            // Recherche rapide car restreint par un like sur champ indexé
-            $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTRING(facnumber,".$posindice."))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-            $sql.= " WHERE facnumber like '".$fayymm."%'";
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $row = $db->fetch_row($resql);
-                $max = $row[0];
-            }
-        }
-        else
-        {
-            $max=0;
-        }        
 
         //$date=time();
         $date=$facture->date;
