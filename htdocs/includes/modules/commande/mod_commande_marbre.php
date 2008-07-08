@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -93,16 +93,17 @@ class mod_commande_marbre extends ModeleNumRefCommandes
     	global $db;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $coyymm='';
-        $sql = "SELECT MAX(ref)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+        $posindice=8;
+        $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."commande";
 		$sql.= " WHERE ref like '".$this->prefix."%'";
 
         $resql=$db->query($sql);
         if ($resql)
         {
-            $row = $db->fetch_row($resql);
-            if ($row) $coyymm = substr($row[0],0,6);
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = $obj->max;
+            else $max=0;
         }
         else
         {
@@ -110,25 +111,6 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         	return -1;
         }
     
-        // Si champ respectant le modèle a été trouvée
-        if (eregi('^'.$this->prefix.'[0-9][0-9][0-9][0-9]',$coyymm))
-        {
-            // Recherche rapide car restreint par un like sur champ indexé
-            $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."commande";
-            $sql.= " WHERE ref like '${coyymm}%'";
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $row = $db->fetch_row($resql);
-                $max = $row[0];
-            }
-        }
-        else
-        {
-            $max=0;
-        }        
 		//$date=time();
 		$date=$commande->date;
         $yymm = strftime("%y%m",$date);

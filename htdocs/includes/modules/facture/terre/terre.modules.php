@@ -121,7 +121,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
         $posindice=8;
-        $sql = "SELECT MAX(facnumber+SUBSTRING(facnumber,".$posindice.")) as ref";
+        $sql = "SELECT MAX(0+SUBSTRING(facnumber,".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber like '".$prefix."%'";
 
@@ -129,7 +129,7 @@ class mod_facture_terre extends ModeleNumRefFactures
         if ($resql)
         {
             $obj = $db->fetch_object($resql);
-            if ($obj) $max = $obj->ref;
+            if ($obj) $max = $obj->max;
             else $max=0;
         }
         else

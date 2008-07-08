@@ -95,14 +95,17 @@ class mod_propale_marbre extends ModeleNumRefPropales
         global $db;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $pryymm='';
-        $sql = "SELECT MAX(ref)";
+        $posindice=8;
+        $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        $sql.= " WHERE ref like '".$this->prefix."%'";
+        
         $resql=$db->query($sql);
         if ($resql)
         {
-            $row = $db->fetch_row($resql);
-            if ($row) $pryymm = substr($row[0],0,6);
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = $obj->max;
+            else $max=0;
         }
         else
         {
@@ -110,27 +113,9 @@ class mod_propale_marbre extends ModeleNumRefPropales
         	return -1;
         }
 
-        // Si champ respectant le modèle a été trouvée
-        if (eregi('^'.$this->prefix.'[0-9][0-9][0-9][0-9]',$pryymm))
-        {
-            // Recherche rapide car restreint par un like sur champ indexé
-            $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice."))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."propal";
-            $sql.= " WHERE ref like '".$pryymm."%'";
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $row = $db->fetch_row($resql);
-                $max = $row[0];
-            }
-        }
-        else
-        {
-            $max=0;
-        }        
+        $date=$propal->date;
         //$yymm = strftime("%y%m",time());
-        $yymm = strftime("%y%m",$propal->date);
+        $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
         
         dolibarr_syslog("mod_propale_marbre::getNextValue return ".$this->prefix.$yymm."-".$num);
