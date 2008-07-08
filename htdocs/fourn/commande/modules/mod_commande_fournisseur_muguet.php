@@ -19,7 +19,7 @@
  */
 
 /**
-     	\file       htdocs/four/commande/modules/mod_commande_fournisseur_muguet.php
+     	\file       htdocs/fourn/commande/modules/mod_commande_fournisseur_muguet.php
 		\ingroup    commande
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de commande fournisseur Muguet
 		\version    $Id$
@@ -84,57 +84,46 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         }
     }
 
-    /**     \brief      Renvoi prochaine valeur attribuée
-     *      \return     string      Valeur
-     */
-    function getNextValue()
+    /**     \brief      Return next value
+	*      	\param      objsoc      Object third party
+	*      	\param      object		Object
+	*       \return     string      Valeur
+    */
+    function getNextValue($objsoc=0,$object='')
     {
         global $db;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $coyymm='';
-        $sql = "SELECT MAX(ref)";
+        $posindice=8;
+        $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-        $resql=$db->query($sql);
+		$sql.= " WHERE ref like '".$this->prefix."%'";
+
+		$resql=$db->query($sql);
         if ($resql)
         {
-            $row = $db->fetch_row($resql);
-            if ($row) $coyymm = substr($row[0],0,6);
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = $obj->max;
+            else $max=0;
         }
     
-        // Si champ respectant le modèle a été trouvée
-        if (eregi('^'+$this->prefix+'[0-9][0-9][0-9][0-9]',$coyymm))
-        {
-            // Recherche rapide car restreint par un like sur champ indexé
-            $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-            $sql.= " WHERE ref like '${coyymm}%'";
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $row = $db->fetch_row($resql);
-                $max = $row[0];
-            }
-        }
-        else
-        {
-            $max=0;
-        }        
-        $yymm = strftime("%y%m",time());
+		//$date=time();
+        $date=$object->date_commande;
+        $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
         
-        return $this->prefix."$yymm-$num";
+        return $this->prefix.$yymm."-".$num;
     }
 
 
     /**     \brief      Renvoie la référence de commande suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \return     string      Texte descripif
-     */
-    function commande_get_num($objsoc=0)
+	*      	\param      objsoc      Object third party
+	*      	\param      object		Object
+    *      	\return     string      Texte descripif
+    */
+    function commande_get_num($objsoc=0,$object='')
     {
-        return $this->getNextValue();
+        return $this->getNextValue($objsoc,$object);
     }
 }
 

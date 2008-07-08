@@ -215,12 +215,13 @@ if ($handle)
             print '</td>';
             
             $commande=new CommandeFournisseur($db);
-	    
+	    	$commande->initAsSpecimen();
+	    	
 			// Info
 			$htmltooltip='';
 			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
 			$facture->type=0;
-	        $nextval=$module->getNextValue($mysoc,$propale);
+	        $nextval=$module->getNextValue($mysoc,$commande);
 			if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 			{
 				$htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: ';

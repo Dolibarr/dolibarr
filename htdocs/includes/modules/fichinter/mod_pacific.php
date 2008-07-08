@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -107,37 +107,22 @@ class mod_pacific extends ModeleNumRefFicheinter
         global $db;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $fayymm='';
-        $sql = "SELECT MAX(ref)";
+        $posindice=8;
+        $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
-        $resql=$db->query($sql);
+		$sql.= " WHERE ref like '".$this->prefix."%'";
+        
+		$resql=$db->query($sql);
         if ($resql)
         {
-            $row = $db->fetch_row($resql);
-            if ($row) $fayymm = substr($row[0],0,6);
+            $obj = $db->fetch_object($resql);
+            if ($obj) $max = $obj->max;
+            else $max=0;
         }
 
-        // Si champ respectant le modèle a été trouvée
-        if (eregi('^'.$this->prefix.'[0-9][0-9][0-9][0-9]',$fayymm))
-        {
-            // Recherche rapide car restreint par un like sur champ indexé
-            $posindice=8;
-            $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice."))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
-            $sql.= " WHERE ref like '".$fayymm."%'";
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $row = $db->fetch_row($resql);
-                $max = $row[0];
-            }
-        }
-        else
-        {
-            $max=0;
-        }        
-        //$yymm = strftime("%y%m",time());
-        $yymm = strftime("%y%m",$ficheinter->date);
+		//$date=time();
+        $date=$ficheinter->date;
+        $yymm = strftime("%y%m",$date);
         $num = sprintf("%04s",$max+1);
         
         return $this->prefix.$yymm."-".$num;

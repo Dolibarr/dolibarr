@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -446,7 +446,7 @@ class CommandeFournisseur extends Commande
 	  	}
 	  	else
 	  	{
-	  		dolibarr_print_error($db,"Facture::getNextNumRef ".$obj->error);
+	  		dolibarr_print_error($db,"CommandeFournisseur::getNextNumRef ".$obj->error);
 	  		return -1;
 	  	}
 	  }
