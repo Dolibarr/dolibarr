@@ -115,8 +115,9 @@ else
 }
 print '</table>';    
 
-
+//Todo : Requete obsolete pointant sur une table inexistante
 // Affiche les profils d'exports
+/*
 $sql  = "SELECT rowid, label, public, fk_user, ".$db->pdate("datec");
 $sql .= " FROM ".MAIN_DB_PREFIX."export as e";
 $result=$db->query($sql);
@@ -149,7 +150,7 @@ if ($result)
 
     print "</table>";
 }
-
+*/
 
 print '</td></tr>';
 print '</table>';
