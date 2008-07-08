@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,11 @@ if (! $user->societe_id == 0)
 $export=new Export($db);
 $export->load_arrays($user);
 
- 
+
+/*
+ * View
+ */
+
 llxHeader('',$langs->trans("ExportsArea"));
 
 print_fiche_titre($langs->trans("ExportsArea"));
@@ -115,43 +119,6 @@ else
 }
 print '</table>';    
 
-//Todo : Requete obsolete pointant sur une table inexistante
-// Affiche les profils d'exports
-/*
-$sql  = "SELECT rowid, label, public, fk_user, ".$db->pdate("datec");
-$sql .= " FROM ".MAIN_DB_PREFIX."export as e";
-$result=$db->query($sql);
-if ($result) 
-{
-    print '<br>';
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("ExportProfiles").'</td>';
-    print '<td align="right">'.$langs->trans("Public").'</td></tr>';
-
-    $num = $db->num_rows($result);
-    if ($num > 0)
-    {
-        $var = true;
-        $i = 0;
-
-        while ($i < $num )
-        {
-            $obj = $db->fetch_object($result);
-            $var=!$var;
-
-            print "<tr $bc[$var]>";
-            print '<td>'.$obj->label.'</td>';
-            print '<td align="center">'.$yn($obj->public).'</td>';
-            print '</tr>';
-            $i++;
-        }
-    }
-
-    print "</table>";
-}
-*/
-
 print '</td></tr>';
 print '</table>';
 
@@ -159,5 +126,4 @@ $db->close();
 
 
 llxFooter('$Date$ - $Revision$');
-
 ?>
