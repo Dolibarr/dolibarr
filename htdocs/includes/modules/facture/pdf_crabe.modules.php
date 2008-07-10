@@ -591,117 +591,141 @@ class pdf_crabe extends ModelePDFFactures
             $posy=$pdf->GetY()+3;
 		}
 
-        /*
-        *	Check si absence mode reglement
-        */
-        if ($object->type != 2 && (! $conf->global->FACTURE_CHQ_NUMBER && ! $conf->global->FACTURE_RIB_NUMBER))
-		{
-            $pdf->SetXY($this->marge_gauche, $posy);
-            $pdf->SetTextColor(200,0,0);
-            $pdf->SetFont('Arial','B',8);
-            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
-            $pdf->SetTextColor(0,0,0);
 
-            $posy=$pdf->GetY()+1;
+        if ($object->type != 2)
+        {
+	        /*
+	        *	Check si absence mode reglement
+	        */
+	        if (empty($object->mode_reglement_code) 
+	        	&& ! $conf->global->FACTURE_CHQ_NUMBER
+	        	&& ! $conf->global->FACTURE_RIB_NUMBER)
+			{
+	            $pdf->SetXY($this->marge_gauche, $posy);
+	            $pdf->SetTextColor(200,0,0);
+	            $pdf->SetFont('Arial','B',8);
+	            $pdf->MultiCell(90, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
+	            $pdf->SetTextColor(0,0,0);
+	
+	            $posy=$pdf->GetY()+1;
+	        }
+        	
+        	// Sown payment mode
+        	if ($object->mode_reglement_code
+        		 && $object->mode_reglement_code != 'CHQ'
+           		 && $object->mode_reglement_code != 'VIR')
+           		 {
+		            $pdf->SetFont('Arial','B',8);
+		            $pdf->SetXY($this->marge_gauche, $posy);
+		            $titre = $outputlangs->transnoentities("PaymentMode").':';
+		            $pdf->MultiCell(80, 5, $titre, 0, 'L');
+		
+		            $pdf->SetFont('Arial','',8);
+		            $pdf->SetXY(50, $posy);
+		            $lib_mode_reg=$outputlangs->transnoentities("PaymentMode".$object->mode_reglement_code)!=('PaymentMode'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentMode".$object->mode_reglement_code):$object->mode_reglement;
+		            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
+           		 	
+		            $posy=$pdf->GetY()+2;
+           		 }
+	
+			/*
+	         * Propose mode reglement par CHQ
+	         */
+	        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'CHQ')
+	        {
+	        	// Si mode reglement non force ou si force a CHQ
+		        if ($conf->global->FACTURE_CHQ_NUMBER)
+		        {
+		            if ($conf->global->FACTURE_CHQ_NUMBER > 0)
+		            {
+		                $account = new Account($this->db);
+		                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
+		
+		                $pdf->SetXY($this->marge_gauche, $posy);
+		                $pdf->SetFont('Arial','B',8);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
+			            $posy=$pdf->GetY()+1;
+		
+		                $pdf->SetXY($this->marge_gauche, $posy);
+		                $pdf->SetFont('Arial','',8);
+		                $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
+		
+			            $posy=$pdf->GetY()+2;
+		            }
+		            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
+		            {
+		                $pdf->SetXY($this->marge_gauche, $posy);
+		                $pdf->SetFont('Arial','B',8);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$this->emetteur->nom.' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
+			            $posy=$pdf->GetY()+1;
+		
+		                $pdf->SetXY($this->marge_gauche, $posy);
+		                $pdf->SetFont('Arial','',8);
+		                $pdf->MultiCell(80, 6, $this->emetteur->adresse_full, 0, 'L', 0);
+		
+			            $posy=$pdf->GetY()+2;
+		            }
+		        }
+			}
+			
+	        /*
+	         * Propose mode reglement par RIB
+	         */
+	        if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR')
+	        {
+	        	// Si mode reglement non force ou si force a VIR
+		        if ($conf->global->FACTURE_RIB_NUMBER)
+		        {
+		            if ($conf->global->FACTURE_RIB_NUMBER)
+		            {
+		                $account = new Account($this->db);
+		                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
+		
+		                $this->marges['g']=$this->marge_gauche;
+		
+		                $cury=$posy;
+		                $pdf->SetXY ($this->marges['g'], $cury);
+		                $pdf->SetFont('Arial','B',8);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
+		                $cury+=4;
+		                $pdf->SetFont('Arial','B',6);
+		                $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
+		                $pdf->SetXY ($this->marges['g'], $cury);
+		                $pdf->MultiCell(18, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
+		                $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
+		                $pdf->SetXY ($this->marges['g']+18, $cury);
+		                $pdf->MultiCell(18, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
+		                $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
+		                $pdf->SetXY ($this->marges['g']+36, $cury);
+		                $pdf->MultiCell(24, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
+		                $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
+		                $pdf->SetXY ($this->marges['g']+60, $cury);
+		                $pdf->MultiCell(13, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
+		                $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
+		
+		                $pdf->SetFont('Arial','',8);
+		                $pdf->SetXY ($this->marges['g'], $cury+5);
+		                $pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
+		                $pdf->SetXY ($this->marges['g']+18, $cury+5);
+		                $pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
+		                $pdf->SetXY ($this->marges['g']+36, $cury+5);
+		                $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
+		                $pdf->SetXY ($this->marges['g']+60, $cury+5);
+		                $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
+		
+		                $pdf->SetXY ($this->marges['g'], $cury+12);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
+		                $pdf->SetXY ($this->marges['g'], $cury+22);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
+		                $pdf->SetXY ($this->marges['g'], $cury+25);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("BIC").' : ' . $account->bic, 0, 'L', 0);
+		
+			            $posy=$pdf->GetY()+2;
+		            }
+		        }
+			}
         }
-
-        /*
-         * Propose mode reglement par CHQ
-         */
-        if ($object->type != 2 && (! $object->mode_reglement_code || $object->mode_reglement_code == 'CHQ'))
-        {
-        	// Si mode reglement non force ou si force a CHQ
-	        if ($conf->global->FACTURE_CHQ_NUMBER)
-	        {
-	            if ($conf->global->FACTURE_CHQ_NUMBER > 0)
-	            {
-	                $account = new Account($this->db);
-	                $account->fetch($conf->global->FACTURE_CHQ_NUMBER);
-	
-	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('Arial','B',8);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$account->proprio).':',0,'L',0);
-		            $posy=$pdf->GetY()+1;
-	
-	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('Arial','',8);
-	                $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
-	
-		            $posy=$pdf->GetY()+2;
-	            }
-	            if ($conf->global->FACTURE_CHQ_NUMBER == -1)
-	            {
-	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('Arial','B',8);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedToShort').' '.$this->emetteur->nom.' '.$outputlangs->transnoentities('SendTo').':',0,'L',0);
-		            $posy=$pdf->GetY()+1;
-	
-	                $pdf->SetXY($this->marge_gauche, $posy);
-	                $pdf->SetFont('Arial','',8);
-	                $pdf->MultiCell(80, 6, $this->emetteur->adresse_full, 0, 'L', 0);
-	
-		            $posy=$pdf->GetY()+2;
-	            }
-	        }
-		}
-		
-        /*
-         * Propose mode reglement par RIB
-         */
-        if ($object->type != 2 && (! $object->mode_reglement_code || $object->mode_reglement_code == 'VIR'))
-        {
-        	// Si mode reglement non force ou si force a VIR
-	        if ($conf->global->FACTURE_RIB_NUMBER)
-	        {
-	            if ($conf->global->FACTURE_RIB_NUMBER)
-	            {
-	                $account = new Account($this->db);
-	                $account->fetch($conf->global->FACTURE_RIB_NUMBER);
-	
-	                $this->marges['g']=$this->marge_gauche;
-	
-	                $cury=$posy;
-	                $pdf->SetXY ($this->marges['g'], $cury);
-	                $pdf->SetFont('Arial','B',8);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
-	                $cury+=4;
-	                $pdf->SetFont('Arial','B',6);
-	                $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
-	                $pdf->SetXY ($this->marges['g'], $cury);
-	                $pdf->MultiCell(18, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
-	                $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
-	                $pdf->SetXY ($this->marges['g']+18, $cury);
-	                $pdf->MultiCell(18, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
-	                $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
-	                $pdf->SetXY ($this->marges['g']+36, $cury);
-	                $pdf->MultiCell(24, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
-	                $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
-	                $pdf->SetXY ($this->marges['g']+60, $cury);
-	                $pdf->MultiCell(13, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
-	                $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
-	
-	                $pdf->SetFont('Arial','',8);
-	                $pdf->SetXY ($this->marges['g'], $cury+5);
-	                $pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
-	                $pdf->SetXY ($this->marges['g']+18, $cury+5);
-	                $pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
-	                $pdf->SetXY ($this->marges['g']+36, $cury+5);
-	                $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
-	                $pdf->SetXY ($this->marges['g']+60, $cury+5);
-	                $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
-	
-	                $pdf->SetXY ($this->marges['g'], $cury+12);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
-	                $pdf->SetXY ($this->marges['g'], $cury+22);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
-	                $pdf->SetXY ($this->marges['g'], $cury+25);
-	                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("BIC").' : ' . $account->bic, 0, 'L', 0);
-	
-		            $posy=$pdf->GetY()+2;
-	            }
-	        }
-		}
-		
+        
         return $posy;
     }
 
