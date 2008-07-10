@@ -72,12 +72,12 @@ if ($_POST["sendit"] && $conf->upload)
 
 	if ($propal->fetch($propalid))
     {
-        $upload_dir = $conf->propal->dir_output . "/" . $propal->ref;
+        $upload_dir = $conf->propal->dir_output . "/" . sanitize_string($propal->ref);
         if (! is_dir($upload_dir)) create_exdir($upload_dir);
     
         if (is_dir($upload_dir))
         {
-            if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0))
+            if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
             {
                 $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
                 //print_r($_FILES);
@@ -100,7 +100,7 @@ if ($action=='delete')
 	$propalid=$_GET["id"];
 	if ($propal->fetch($propalid))
     {
-        $upload_dir = $conf->propal->dir_output . "/" . $propal->ref;
+        $upload_dir = $conf->propal->dir_output . "/" . sanitize_string($propal->ref);
     	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
     	dol_delete_file($file);
         $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -117,12 +117,9 @@ llxHeader();
 if ($propalid > 0)
 {
 	$propal = new Propal($db);
-
 	if ($propal->fetch($propalid))
     {
-		$propref = sanitize_string($propal->ref);
-
-		$upload_dir = $conf->propal->dir_output.'/'.$propref;
+		$upload_dir = $conf->propal->dir_output.'/'.sanitize_string($propal->ref);
 
         $societe = new Societe($db);
         $societe->fetch($propal->socid);

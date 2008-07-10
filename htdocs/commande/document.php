@@ -74,12 +74,12 @@ if (!$commande->fetch($id)) {
 // Envoi fichier
 if ($_POST["sendit"] && $conf->upload)
 {
-  $upload_dir = $conf->commande->dir_output . "/" . $commande->ref;
+  $upload_dir = $conf->commande->dir_output . "/" . sanitize_string($commande->ref);
   if (! is_dir($upload_dir)) create_exdir($upload_dir);
   
   if (is_dir($upload_dir))
     {
-      if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0))
+      if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
 	{
 	  $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 	  //print_r($_FILES);
@@ -96,7 +96,7 @@ if ($_POST["sendit"] && $conf->upload)
 // Delete
 if ($action=='delete')
 {
-  $upload_dir = $conf->commande->dir_output . "/" . $commande->ref;
+  $upload_dir = $conf->commande->dir_output . "/" . sanitize_string($commande->ref);
   $file = $upload_dir . '/' . urldecode($_GET['urlfile']);
   dol_delete_file($file);
   $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -110,9 +110,7 @@ if ($id > 0)
 {
   llxHeader();
 
-  $commanderef = sanitize_string($commande->ref);
-
-  $upload_dir = $conf->commande->dir_output.'/'.$commanderef;
+  $upload_dir = $conf->commande->dir_output.'/'.sanitize_string($commande->ref);
   
   $societe = new Societe($db);
   $societe->fetch($commande->socid);

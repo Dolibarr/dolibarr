@@ -21,9 +21,9 @@
  */
  
 /**
-        \file       htdocs/product/document.php
-        \ingroup    product
-        \brief      Page des documents joints sur les produits
+        \file       htdocs/comm/action/document.php
+        \ingroup    agenda
+        \brief      Page des documents joints sur les actions
         \version    $Id$
 */
 
@@ -40,7 +40,7 @@ $langs->load("other");
 $langs->load("bills");
 
 if (isset($_GET["error"])) $error=$_GET["error"];
-$upload_dir = $conf->actions->dir_output.'/'.$_GET['id'];
+$objectid = isset($_GET["id"])?$_GET["id"]:'';
 
 // Security check
 if ($user->societe_id > 0) 
@@ -71,11 +71,12 @@ if ( $_POST["sendit"] && $conf->upload )
     /*
      * Creation répertoire si n'existe pas
      */
-    if (! is_dir($upload_dir)) create_exdir($upload_dir);
+	$upload_dir = $conf->actions->dir_output.'/'.sanitize_string($objectid);
+	if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
     if (is_dir($upload_dir))
     {
-        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0))
+        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
         {
             $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
             //print_r($_FILES);
@@ -94,6 +95,7 @@ if ( $_POST["sendit"] && $conf->upload )
  */
 if ($_GET["action"] == 'delete')
 {
+	$upload_dir = $conf->actions->dir_output.'/'.sanitize_string($objectid);
 	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
 	dol_delete_file($file);
 }
@@ -106,86 +108,93 @@ if ($_GET["action"] == 'delete')
 llxHeader();
 
 
-if ($_GET["id"] > 0)
+if ($objectid > 0)
 {
 	$act = new ActionComm($db);
-	$act->fetch($_GET["id"]);
-	$res=$act->societe->fetch($act->societe->id);
-	$res=$act->author->fetch();     // Le paramètre est le login, hors seul l'id est chargé.
-	$res=$act->contact->fetch($act->contact->id);
-
-	$h=0;
-
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans("CardAction");
-	$hselected=$h;
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans('Documents');
-	$hselected=$h;
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans('Info');
-	$h++;
-	
-	dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
-
-	// Affichage fiche action en mode visu
-	print '<table class="border" width="100%"';
-
-	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
-
-	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-
-	// Libelle
-	print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
-
-	// Societe - contact
-	print '<tr><td>'.$langs->trans("Company").'</td><td>'.$act->societe->getNomUrl(1).'</td>';
-	print '<td>'.$langs->trans("Contact").'</td>';
-	print '<td>';
-	if ($act->contact->id > 0)
+	if ($act->fetch($objectid))
 	{
-		print $act->contact->getNomUrl(1);
+		$upload_dir = $conf->actions->dir_output.'/'.sanitize_string($objectid);
+		
+		$res=$act->societe->fetch($act->societe->id);
+		$res=$act->author->fetch();     // Le paramètre est le login, hors seul l'id est chargé.
+		$res=$act->contact->fetch($act->contact->id);
+	
+		$h=0;
+	
+		$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objectid;
+		$head[$h][1] = $langs->trans("CardAction");
+		$hselected=$h;
+		$h++;
+	
+		$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$objectid;
+		$head[$h][1] = $langs->trans('Documents');
+		$hselected=$h;
+		$h++;
+	
+		$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$objectid;
+		$head[$h][1] = $langs->trans('Info');
+		$h++;
+		
+		dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
+	
+		// Affichage fiche action en mode visu
+		print '<table class="border" width="100%"';
+	
+		// Ref
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
+	
+		// Type
+		print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+	
+		// Libelle
+		print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
+	
+		// Societe - contact
+		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$act->societe->getNomUrl(1).'</td>';
+		print '<td>'.$langs->trans("Contact").'</td>';
+		print '<td>';
+		if ($act->contact->id > 0)
+		{
+			print $act->contact->getNomUrl(1);
+		}
+		else
+		{
+			print $langs->trans("None");
+		}
+		
+		print '</td></tr>';
+		
+		// Construit liste des fichiers
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$totalsize=0;
+		foreach($filearray as $key => $file)
+		{
+			$totalsize+=$file['size'];
+		}
+		
+		
+		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+		print '</table>';
+	
+		print '</div>';
+	
+		if ($mesg) { print $mesg."<br>"; }
+	
+		
+		// Affiche formulaire upload
+	   	$formfile=new FormFile($db);
+		$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id);
+		
+		
+		// List of document
+		$param='&id='.$act->id;
+		$formfile->list_of_documents($filearray,$act,'actions',$param);
 	}
 	else
 	{
-		print $langs->trans("None");
-	}
-	
-	print '</td></tr>';
-	
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
-	
-	
-	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-	print '</table>';
-
-	print '</div>';
-
-	if ($mesg) { print $mesg."<br>"; }
-
-	
-	// Affiche formulaire upload
-   	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id);
-	
-	
-	// List of document
-	$param='&id='.$act->id;
-	$formfile->list_of_documents($filearray,$act,'actions',$param);
-	
+		dolibarr_print_error($db);
+	}	
 }
 else
 {

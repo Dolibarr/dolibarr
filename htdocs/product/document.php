@@ -68,8 +68,7 @@ if ($_GET['id'] || $_GET["ref"])
     if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-    $prodref = sanitize_string($product->ref);
-    $upload_dir = $conf->produit->dir_output.'/'.$prodref;
+    $upload_dir = $conf->produit->dir_output.'/'.sanitize_string($product->ref);
 }
 $modulepart='produit';
 
@@ -86,7 +85,7 @@ if ($_POST["sendit"] && $conf->upload)
 
     if (is_dir($upload_dir))
     {
-        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0))
+        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
         {
             $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
             //print_r($_FILES);

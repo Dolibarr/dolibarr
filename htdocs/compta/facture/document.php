@@ -20,11 +20,11 @@
  */
 
 /**
-   \file       htdocs/compta/facture/document.php
-   \ingroup    facture
-   \brief      Page de gestion des documents attachées à une facture
-   \version    $Id$
-*/
+ \file       htdocs/compta/facture/document.php
+ \ingroup    facture
+ \brief      Page de gestion des documents attachées à une facture
+ \version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -37,16 +37,16 @@ $langs->load('compta');
 $langs->load('other');
 
 if (!$user->rights->facture->lire)
-  accessforbidden();
+accessforbidden();
 
 $facid=empty($_GET['facid']) ? 0 : intVal($_GET['facid']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
 // Security check
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
 	unset($_GET["action"]);
-	$action=''; 
+	$action='';
 	$socid = $user->societe_id;
 }
 
@@ -66,107 +66,103 @@ $pagenext = $page + 1;
 /*
  * Actions
  */
- 
+
 // Envoi fichier
 if ($_POST["sendit"] && $conf->upload)
 {
-  $facture = new Facture($db);
-	
-  if ($facture->fetch($facid))
-    {
-      $upload_dir = $conf->facture->dir_output . "/" . $facture->ref;
-      if (! is_dir($upload_dir)) create_exdir($upload_dir);
-      
-      if (is_dir($upload_dir))
-        {
-	  if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0))
-            {
-	      $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-	      //print_r($_FILES);
-            }
-	  else
-            {
-	      // Echec transfert (fichier dépassant la limite ?)
-	      $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-	      // print_r($_FILES);
-            }
-        }
-    }
+	$facture = new Facture($db);
+	if ($facture->fetch($facid))
+	{
+		$upload_dir = $conf->facture->dir_output . "/" . sanitize_string($facture->ref);
+		if (! is_dir($upload_dir)) create_exdir($upload_dir);
+
+		if (is_dir($upload_dir))
+		{
+			if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
+			{
+		  		$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+		  		//print_r($_FILES);
+			}
+			else
+			{
+		  		// Echec transfert (fichier dépassant la limite ?)
+		  		$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+		  		// print_r($_FILES);
+			}
+		}
+	}
 }
 
 // Delete
 if ($action=='delete')
 {
-  	$facture = new Facture($db);
-  
-   	$facid=$_GET["id"];
-  	if ($facture->fetch($facid))
-    {
-      $upload_dir = $conf->facture->dir_output . "/" . $facture->ref;
-      $file = $upload_dir . '/' . urldecode($_GET['urlfile']);
-      dol_delete_file($file);
-      $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
-    }
+	$facture = new Facture($db);
+
+	$facid=$_GET["id"];
+	if ($facture->fetch($facid))
+	{
+		$upload_dir = $conf->facture->dir_output . "/" . sanitize_string($facture->ref);
+		$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
+		dol_delete_file($file);
+		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+	}
 }
 
 /*
  * Affichage
  */
- 
+
 llxHeader();
 
 if ($facid > 0)
 {
 	$facture = new Facture($db);
-
 	if ($facture->fetch($facid))
 	{
-		$facref = sanitize_string($facture->ref);
-		
-		$upload_dir = $conf->facture->dir_output.'/'.$facref;
-		
+		$upload_dir = $conf->facture->dir_output.'/'.sanitize_string($facture->ref);
+
 		$societe = new Societe($db);
 		$societe->fetch($facture->socid);
 
 		$head = facture_prepare_head($facture);
 		dolibarr_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'));
 
-		
-	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
-	{
-		$totalsize+=$file['size'];
-	}
-		
-		
-		
+
+		// Construit liste des fichiers
+		$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolower($sortorder)=='desc'?SORT_ASC:SORT_DESC),1);
+		$totalsize=0;
+		foreach($filearray as $key => $file)
+		{
+			$totalsize+=$file['size'];
+		}
+
+
+
 		print '<table class="border"width="100%">';
-		
+
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$facture->ref.'</td></tr>';
-		
+
 		// Société
 		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
-		
+
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';      
-		print "</table>\n";      
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+		print "</table>\n";
 		print "</div>\n";
-		
+
 		if ($mesg) { print $mesg."<br>"; }
 
-		
+
 		// Affiche formulaire upload
-       	$formfile=new FormFile($db);
+		$formfile=new FormFile($db);
 		$formfile->form_attach_new_file(DOL_URL_ROOT.'/compta/facture/document.php?facid='.$facture->id);
 
-		
+
 		// List of document
-		$param='&facid='.$facture->id;		
+		$param='&facid='.$facture->id;
 		$formfile->list_of_documents($filearray,$facture,'facture',$param);
-		
+
 	}
 	else
 	{
@@ -175,7 +171,7 @@ if ($facid > 0)
 }
 else
 {
-  print $langs->trans("UnkownError");
+	print $langs->trans("UnkownError");
 }
 
 $db->close();

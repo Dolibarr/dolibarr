@@ -62,12 +62,13 @@ $sortfield=$_GET["sortfield"];
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
+$upload_dir = $conf->societe->dir_output . "/" . $socid ;
+$courrier_dir = $conf->societe->dir_output . "/courrier/" . get_exdir($socid) ;
+
 
 /*
  * Actions
  */
-$upload_dir = $conf->societe->dir_output . "/" . $socid ;
-$courrier_dir = $conf->societe->dir_output . "/courrier/" . get_exdir($socid) ;
 
 // Envoie fichier
 if ( $_POST["sendit"] && $conf->upload != 0)

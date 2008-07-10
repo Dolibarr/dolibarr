@@ -73,16 +73,15 @@ $pagenext = $page + 1;
 if ($_POST['sendit'] && $conf->upload)
 {
 	$facture = new FactureFournisseur($db);
-
 	if ($facture->fetch($facid))
     {
-		$ref = sanitize_string($facture->ref);
         $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
+
         if (! is_dir($upload_dir)) create_exdir($upload_dir);
     
         if (is_dir($upload_dir))
         {
-            if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . '/' . $_FILES['userfile']['name'],0))
+            if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . '/' . $_FILES['userfile']['name'],0) > 0)
             {
                 $mesg = '<div class="ok">'.$langs->trans('FileTransferComplete').'</div>';
                 //print_r($_FILES);
@@ -100,14 +99,14 @@ if ($_POST['sendit'] && $conf->upload)
 // Delete
 if ($action=='delete')
 {
-	$facture = new FactureFournisseur($db);
-
    	$facid=$_GET["id"];
+
+   	$facture = new FactureFournisseur($db);
 	if ($facture->fetch($facid))
     {
-		$ref = sanitize_string($facture->ref);
         $upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
-    	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
+
+        $file = $upload_dir . '/' . urldecode($_GET['urlfile']);
     	dol_delete_file($file);
         $mesg = '<div class="ok">'.$langs->trans('FileWasRemoved').'</div>';
     }
@@ -123,13 +122,12 @@ llxHeader();
 if ($facid > 0)
 {
 	$facture = new FactureFournisseur($db);
-
 	if ($facture->fetch($facid))
     {
         $facture->fetch_fournisseur();
 
-		$facref = sanitize_string($facture->ref);
 		$upload_dir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($facture->id,2).$facture->id;
+
 		$head = facturefourn_prepare_head($facture);
 		dolibarr_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'));
 

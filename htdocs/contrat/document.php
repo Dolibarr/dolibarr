@@ -63,8 +63,7 @@ $pagenext = $page + 1;
 $contrat = new Contrat($db);
 $contrat->fetch($_GET["id"]);
 
-$contratref = sanitize_string($contrat->ref);
-$upload_dir = $conf->contrat->dir_output.'/'.$contratref;
+$upload_dir = $conf->contrat->dir_output.'/'.sanitize_string($contrat->ref);
 $modulepart='contract';
 
 
@@ -80,7 +79,7 @@ if ($_POST["sendit"] && $conf->upload)
 
     if (is_dir($upload_dir))
     {
-        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0))
+        if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],0) > 0)
         {
             $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
             //print_r($_FILES);
