@@ -1,5 +1,6 @@
 <?php
 /* Copytight (C) 2005-2007 Regis Houssin               <regis@dolibarr.fr>
+ * Copyright (C) 2008      Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -153,7 +154,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " WHERE f.paye = 0 AND fk_statut = 1";
 	$sql.= " ORDER BY dlr ASC";
 	//$sql.= " UNION DISTINCT";
-	$sql2= " SELECT ff.rowid as facid, ff.facnumber, (-1*ff.total_ttc), ff.type, ".$db->pdate("ff.date_lim_reglement")." as dlr,";
+	$sql2= " SELECT ff.rowid as facid, ff.facnumber, (-1*ff.total_ttc) as total_ttc, ff.type, ".$db->pdate("ff.date_lim_reglement")." as dlr,";
 	$sql2.= " s.rowid as socid, s.nom, s.fournisseur";
 	$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
@@ -261,6 +262,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			print "<td>".$facture."</td>";
 			print "<td>".$societestatic->getNomUrl(0,'',16)."</td>";
 			print "<td>".dolibarr_print_date($obj->dlr,"day")."</td>";
+
 			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price($total_ttc)."</td><td>&nbsp;</td>"; };
 			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($total_ttc)."</td>"; };			
 			print "<td align=\"right\">".price($solde)."</td>";
