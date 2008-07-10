@@ -932,14 +932,15 @@ class Form
     
     
   /**
-     \brief      Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
-     \param      selected        Produit pré-sélectionné
-     \param      htmlname        Nom de la zone select
-     \param      filtretype      Pour filtre sur type de produit
-     \param      limit           Limite sur le nombre de lignes retournées
-     \param      price_level     Niveau de prix en fonction du client
+     \brief     Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
+     \param     selected        Produit pré-sélectionné
+     \param     htmlname        Nom de la zone select
+     \param     filtretype      Pour filtre sur type de produit
+     \param     limit           Limite sur le nombre de lignes retournées
+     \param     price_level     Niveau de prix en fonction du client
+	 \param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
   */
-  function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
+  function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$status=1)
   {
     global $langs,$conf;
 	
@@ -956,13 +957,13 @@ class Form
 		print '</tr>';
 		print '<tr class="nocellnopadd">';
 		print '<td class="nobordernopadding" colspan="3">';
-		print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type=1','');
+		print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtretype.'&status='.$status,'');
 		print '</td></tr>';
 		print '</table>';
 	}
     else
     {
-    	$this->select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level);
+    	$this->select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level,'',$status);
     }    
   }
 	
@@ -974,8 +975,9 @@ class Form
 		\param      limit           Limite sur le nombre de lignes retournées
 		\param      price_level     Niveau de prix en fonction du client
 		\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
+		\param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
 	*/
-	function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeysearch='')
+	function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeysearch='',$status=1)
 	{
 		global $langs,$conf,$user;
 		
@@ -991,13 +993,14 @@ class Form
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 		}
-		$sql.= " WHERE p.envente = 1";
+		if ($status >= 0)  $sql.= " WHERE p.envente = ".$status;
+		else $sql.= " WHERE 1 = 1";
 		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
 		{
 			$sql.= ' AND IFNULL(c.visible,1)=1';
 		}
 		if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%'";
+		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
 		$sql.= " ORDER BY p.nbvente DESC";
 		if ($limit) $sql.= " LIMIT $limit";
 		
@@ -1128,7 +1131,7 @@ class Form
 		\param      selected        Produit pré-sélectionné
 		\param      htmlname        Nom de la zone select
 		\param      filtretype      Pour filtre sur type de produit
-		\param      limit           Limite sur le nombre de lignes retournées
+		\param      filtre          Pour filtre sql
 	*/
 	function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='')
 	{
@@ -1136,7 +1139,7 @@ class Form
 		if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
 		{
 			print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
-			print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&socid='.$socid.'&type=2','working');
+			print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&socid='.$socid.'&type='.$filtretype,'working');
 		}
 		else
 		{
@@ -1150,7 +1153,7 @@ class Form
 		\param      selected        Produit pré-sélectionné
 		\param      htmlname        Nom de la zone select
 		\param      filtretype      Pour filtre sur type de produit
-		\param      filtre          Pour filtre
+		\param      filtre          Pour filtre sql
 		\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
 	*/
 	function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='',$ajaxkeysearch='')
@@ -1169,8 +1172,8 @@ class Form
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
 		$sql.= " WHERE p.envente = 1";
 		if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
-		if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-		if ($filtre) $sql.="$filtre";
+		if (! empty($filtretype)) $sql.=" AND p.fk_product_type=".$filtretype;
+		if (! empty($filtre)) $sql.=" ".$filtre;
 		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
 		$sql.= " ORDER BY pf.ref_fourn DESC";
 

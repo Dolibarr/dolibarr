@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/product/ajaxproducts.php
         \brief      Fichier de reponse sur evenement Ajax
-        \version    $Revision$
+        \version    $Id$
 */
 
 require('../main.inc.php');
@@ -37,19 +34,22 @@ top_htmlhead("", "", 1);
 print '<body class="nocellnopadd">'."\n";
 
 // Generation liste de produits
-if(isset($_GET['keysearch']) && !empty($_GET['keysearch']))
+if (! empty($_GET['keysearch']))
 {
+	$status=-1;
+	if (isset($_GET['status'])) $status=$_GET['status'];
+
 	$form = new Form($db);
 	if ($_GET['type'] == 1)
 	{
-		$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keysearch"]);
+		$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keysearch"],$status);
 	}
-	else if ($_GET['type'] == 2)
+	if ($_GET['type'] == 2)
 	{
 		$form->select_produits_fournisseurs_do($_GET["socid"],"",$_GET["htmlname"],"","",$_GET["keysearch"]);
 	}
 }
-else if(isset($_GET['markup']) && !empty($_GET['markup']))
+else if (! empty($_GET['markup']))
 {
 	print $_GET['markup'];
 	//print $_GET['count'];
@@ -57,7 +57,7 @@ else if(isset($_GET['markup']) && !empty($_GET['markup']))
 	//print '<input size="10" type="text" class="flat" id="sellingdata_ht'.$_GET['count'].'" name="sellingdata_ht'.$_GET['count'].'" value="'.$field.'">';
 	//print $field;
 }
-else if(isset($_GET['selling']) && !empty($_GET['selling']))
+else if (! empty($_GET['selling']))
 {
 	//print $_GET['markup'];
 	//print $_GET['count'];
