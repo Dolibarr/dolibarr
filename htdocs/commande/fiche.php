@@ -1477,7 +1477,7 @@ else
 						{
 							print '<td>&nbsp;</td>';
 						}
-						print '<td align="right nowrap="nowrap"">'.price($objp->total_ht).'</td>';
+						print '<td align="right" nowrap="nowrap">'.price($objp->total_ht).'</td>';
 
 						// Icone d'edition et suppression
 						if ($commande->statut == 0  && $user->rights->commande->creer)
