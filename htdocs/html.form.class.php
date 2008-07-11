@@ -935,12 +935,12 @@ class Form
      \brief     Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
      \param     selected        Produit pré-sélectionné
      \param     htmlname        Nom de la zone select
-     \param     filtretype      Pour filtre sur type de produit
+     \param     filtretype      Filter on product type (1=customer, 2=supplier)
      \param     limit           Limite sur le nombre de lignes retournées
      \param     price_level     Niveau de prix en fonction du client
 	 \param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
   */
-  function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$status=1)
+  function select_produits($selected='',$htmlname='productid',$filtretype=1,$limit=20,$price_level=0,$status=1)
   {
     global $langs,$conf;
 	
@@ -971,13 +971,13 @@ class Form
 		\brief      Retourne la liste des produits
 		\param      selected        Produit pré-sélectionné
 		\param      htmlname        Nom de la zone select
-		\param      filtretype      Pour filtre sur type de produit
+	    \param		filtretype      Filter on product type (1=customer, 2=supplier)
 		\param      limit           Limite sur le nombre de lignes retournées
 		\param      price_level     Niveau de prix en fonction du client
 		\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
 		\param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
 	*/
-	function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeysearch='',$status=1)
+	function select_produits_do($selected='',$htmlname='productid',$filtretype=1,$limit=20,$price_level=0,$ajaxkeysearch='',$status=1)
 	{
 		global $langs,$conf,$user;
 		

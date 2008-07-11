@@ -27,11 +27,11 @@ function ajax_indicator($htmlname,$indicator='working')
 }
 
 /**
-   \brief     Récupére la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
+   \brief     Recupere la valeur d'un champ, effectue un traitement Ajax et affiche le resultat
    \param	  htmlname            nom et id du champ
-   \param     keysearch           nom et id complémentaire du champ de collecte
-   \param	  url                 chemin du fichier de réponse : /chemin/fichier.php
-   \param     option              champ supplémentaire de recherche dans les paramétres
+   \param     keysearch           nom et id complementaire du champ de collecte
+   \param	  url                 chemin du fichier de reponse : /chemin/fichier.php
+   \param     option              champ supplementaire de recherche dans les parametres
    \param     indicator           Nom de l'image gif sans l'extension
    \return    script              script complet
 */

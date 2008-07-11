@@ -40,7 +40,7 @@ if (! empty($_GET['keysearch']))
 	if (isset($_GET['status'])) $status=$_GET['status'];
 
 	$form = new Form($db);
-	if ($_GET['type'] == 1)
+	if (empty($_GET['type']) || $_GET['type'] == 1)
 	{
 		$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keysearch"],$status);
 	}
