@@ -114,23 +114,26 @@ if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes
 }
 
 // Validation de la propale
-if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
+if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->propale->valider)
 {
-    if ($user->rights->propale->valider)
-    {
-        $propal = new Propal($db);
-        $propal->fetch($_GET['propalid']);
-        $result=$propal->update_price();
-		if ($_REQUEST['lang_id'])
+    $propal = new Propal($db);
+    $propal->fetch($_GET['propalid']);
+	$propal->fetch_client();
+	
+    $result=$propal->valid($user);
+	if ($result >= 0)
+	{
+        if ($_REQUEST['lang_id'])
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
         propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
-        $result=$propal->valid($user);
     }
-    Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
-    exit;
+	else
+	{
+		$mesg='<div class="error">'.$fac->error.'</div>';
+	}
 }
 
 if ($_POST['action'] == 'setecheance')
