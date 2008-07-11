@@ -112,12 +112,12 @@ class FormFile
 	 *      \param      modulepart          propal=propal, facture=facture, ...
 	 *      \param      filename            Sous rep à scanner (vide si filedir deja complet)
 	 *      \param      filedir             Repertoire à scanner
-	 *      \param      urlsource           Url page origine
+	 *      \param      urlsource           Url page origine (pour retour)
 	 *      \param      genallowed          Génération autorisée (1/0 ou array des formats)
 	 *      \param      delallowed          Suppression autorisée (1/0)
 	 *      \param      modelselected       Modele à pré-sélectionner par défaut
-	 *      \param      modelliste			    Tableau des modeles possibles
-	 *      \param      forcenomultilang	  N'affiche pas option langue meme si MAIN_MULTILANGS défini
+	 *      \param      modelliste			Tableau des modeles possibles
+	 *      \param      forcenomultilang	N'affiche pas option langue meme si MAIN_MULTILANGS défini
 	 *      \param      iconPDF             N'affiche que l'icone PDF avec le lien (1/0)
 	 *      \remarks    Le fichier de facture détaillée est de la forme
 	 *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse

@@ -137,6 +137,22 @@ class FormMail
 	}
 
 	/**
+	 * Return list of attached files (stored in SECTION array)
+	 *
+	 * @return	unknown_type $type
+	 */
+	function get_attached_files()
+	{
+		$listofpaths=array();
+		$listofnames=array();
+		$listofmimes=array();
+		if (! empty($_SESSION["listofpaths"])) $listofpaths=split(';',$_SESSION["listofpaths"]);
+		if (! empty($_SESSION["listofnames"])) $listofnames=split(';',$_SESSION["listofnames"]);
+		if (! empty($_SESSION["listofmimes"])) $listofmimes=split(';',$_SESSION["listofmimes"]);
+		return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
+	}
+		
+	/**
 	 *	\brief  	Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
 	 * 	\remarks	this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
 	 */

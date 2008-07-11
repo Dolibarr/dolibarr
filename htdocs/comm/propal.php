@@ -323,6 +323,7 @@ if ($_POST['addfile'])
 
 				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
 				$formmail = new FormMail($db);
+				// Add file in list of files in session
 				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
 	        }
 	        else
@@ -399,16 +400,15 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
                 }
 
-                $filepath[0] = $file;
-                $filename[0] = $propal->ref.'.pdf';
-                $mimetype[0] = 'application/pdf';
-                if ($_FILES['addedfile']['tmp_name'])
-                {
-                    $filepath[1] = $_FILES['addedfile']['tmp_name'];
-                    $filename[1] = $_FILES['addedfile']['name'];
-                    $mimetype[1] = $_FILES['addedfile']['type'];
-                }
+				// Create form object
+				include_once('../html.formmail.class.php');
+				$formmail = new FormMail($db);
 
+				$attachedfiles=$formmail->get_attached_files();
+                $filepath = $attachedfiles['paths'];
+                $filename = $attachedfiles['names'];
+                $mimetype = $attachedfiles['mimes'];
+                
                 // Envoi de la propal
 				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
@@ -445,8 +445,9 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 	                    }
 	                    else
 	                    {
-	                        // Renvoie sur la fiche
-	                        Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&msg='.urlencode($mesg));
+							// Redirect here
+							// This avoid sending mail twice if going out and then back to page
+	                    	Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&msg='.urlencode($mesg));
 	                        exit;
 	                    }
 					}
@@ -1782,9 +1783,10 @@ if ($_GET['propalid'] > 0)
 		$formmail->withto=$liste;
 		$formmail->withtocc=1;
 		$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
-		$formmail->withfile=1;
+		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
+		$formmail->withcancel=1;
 		// Tableau des substitutions
 		$formmail->substit['__PROPREF__']=$propal->ref;
 		// Tableau des parametres complementaires

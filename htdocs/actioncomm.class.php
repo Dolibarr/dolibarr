@@ -266,7 +266,7 @@ class ActionComm
 				$this->fk_propal = $obj->propalrowid;
 				if ($this->fk_propal)
 				{
-					$this->objet_url = img_object($langs->trans("ShowPropal"),'propal').' '.'<a href="'. DOL_URL_ROOT . '/propal/fiche.php?rowid='.$this->fk_propal.'">'.$langs->trans("Propal").'</a>';
+					$this->objet_url = img_object($langs->trans("ShowPropal"),'propal').' '.'<a href="'. DOL_URL_ROOT . '/comm/propal.php?propalid='.$this->fk_propal.'">'.$langs->trans("Propal").'</a>';
 					$this->objet_url_type = 'propal';
 				}
 

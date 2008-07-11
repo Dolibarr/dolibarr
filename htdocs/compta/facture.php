@@ -1084,16 +1084,15 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 				}
 
-				$filepath[0] = $file;
-				$filename[0] = $fac->ref.'.pdf';
-				$mimetype[0] = 'application/pdf';
-				if ($_FILES['addedfile']['tmp_name'])
-				{
-					$filepath[1] = $_FILES['addedfile']['tmp_name'];
-					$filename[1] = $_FILES['addedfile']['name'];
-					$mimetype[1] = $_FILES['addedfile']['type'];
-				}
+				// Create form object
+				include_once('../html.formmail.class.php');
+				$formmail = new FormMail($db);
 
+				$attachedfiles=$formmail->get_attached_files();
+                $filepath = $attachedfiles['paths'];
+                $filename = $attachedfiles['names'];
+                $mimetype = $attachedfiles['mimes'];
+				
 				// Envoi de la facture
 				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
@@ -1130,7 +1129,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
 						}
 						else
 						{
-							// Renvoie sur la fiche
+							// Redirect here
+							// This avoid sending mail twice if going out and then back to page
 							Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&mesg='.urlencode($mesg));
 							exit;
 						}
@@ -3079,7 +3079,7 @@ else
 				$formmail->withtocc=1;
 				$formmail->withtoccc=$conf->global->FACTURE_EMAIL_USECCC;
 				$formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
-				$formmail->withfile=1;
+				$formmail->withfile=2;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
 				$formmail->withcancel=1;
@@ -3142,7 +3142,7 @@ else
 				$formmail->withto=$liste;
 				$formmail->withtocc=1;
 				$formmail->withtopic=$langs->trans('SendReminderBillRef','__FACREF__');
-				$formmail->withfile=1;
+				$formmail->withfile=2;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
 				$formmail->withcancel=1;

@@ -461,7 +461,7 @@ class Societe extends CommonObject
     /**
      *    \brief      Load a third party from database into memory
      *    \param      socid       Id third party to load
-     *    \param      user        User object
+     *    \param      user        User object (\deprecated)
      *    \return     int         >0 si ok, <0 si ko
      */
     function fetch($socid, $user=0)
@@ -1154,8 +1154,8 @@ class Societe extends CommonObject
 
   /**
    *    \brief      Renvoie le nom d'une societe a partir d'un id
-   *    \param      id      	id de la soci�t� recherch�e
-   *	\return		string		Nom de la soci�t�
+   *    \param      id      	id company we search for name
+   *	\return		string		Third party name
    */
   function get_nom($id)
   {
