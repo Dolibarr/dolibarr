@@ -1,7 +1,14 @@
-This directory contains files that make Dolibarr a server of web services.
+README (english)
+---------------------------------------------------------
+This directory contains files to make Dolibarr a server
+of SOAP Web Services.
 
-To see all Webservices provided by Dolibarr, just call following Url:
+* To see all Webservices provided by Dolibarr, just call following Url:
 http://mydomain.com/dolibarr/webservices/server.php
 
-This page will return the WSDL of Web services provided by Dolibarr.
+* WSDL file of Web services provided by Dolibarr can be obtained at:
+http://mydomain.com/dolibarr/webservices/server.php?wsdl
+and is also saved in file:
+server.wsdl 
+
 Note, you can test this Webservices by calling the page client.php.
