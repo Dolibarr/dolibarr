@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,63 +19,63 @@
  */
 
 /**
-       	\file       htdocs/expedition/mods/pdf/pdf_expedition_rouget.modules.php
-		\ingroup    expedition
-		\brief      Fichier de la classe permettant de générer les bordereaux envoi au modèle Rouget
-		\version    $Id$
-*/
+ \file       htdocs/expedition/mods/pdf/pdf_expedition_rouget.modules.php
+ \ingroup    expedition
+ \brief      Fichier de la classe permettant de générer les bordereaux envoi au modèle Rouget
+ \version    $Id$
+ */
 
 require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php";
 
 
 /**
-	    \class      pdf_expedition_dorade
-		\brief      Classe permettant de générer les borderaux envoi au modèle Rouget
-*/
+ \class      pdf_expedition_dorade
+ \brief      Classe permettant de générer les borderaux envoi au modèle Rouget
+ */
 
 Class pdf_expedition_rouget extends ModelePdfExpedition
 {
 	var $emetteur;	// Objet societe qui emet
 
-	
-    /**
-    		\brief  Constructeur
-    		\param	db		Handler accès base de donnée
-    */
+
+	/**
+	 \brief  Constructeur
+	 \param	db		Handler accès base de donnée
+	 */
 	function pdf_expedition_rouget($db=0)
 	{
-        global $conf,$langs,$mysoc;
+		global $conf,$langs,$mysoc;
 
 		$this->db = $db;
 		$this->name = "rouget";
 		$this->description = "Modèle simple.";
-		
-        $this->type = 'pdf';
-        $this->page_largeur = 210;
-        $this->page_hauteur = 297;
-        $this->format = array($this->page_largeur,$this->page_hauteur);
-        $this->marge_gauche=10;
-        $this->marge_droite=10;
-        $this->marge_haute=10;
-        $this->marge_basse=10;
 
-        $this->option_logo = 0;
+		$this->type = 'pdf';
+		$this->page_largeur = 210;
+		$this->page_hauteur = 297;
+		$this->format = array($this->page_largeur,$this->page_hauteur);
+		$this->marge_gauche=10;
+		$this->marge_droite=10;
+		$this->marge_haute=10;
+		$this->marge_basse=10;
 
-        // Recupere emmetteur
-        $this->emetteur=$mysoc;
-        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		$this->option_logo = 0;
+
+		// Recupere emmetteur
+		$this->emetteur=$mysoc;
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 	}
-	
+
 	/*
-     *   	\param      pdf     		Objet PDF
-     *   	\param      exp     		Objet expedition
-     *      \param      showadress      0=non, 1=oui
-     *      \param      outputlang		Objet lang cible
-     */
-    function _pagehead(&$pdf, $exp, $showadress=1, $outputlangs)
+	 *   	\param      pdf     		Objet PDF
+	 *   	\param      exp     		Objet expedition
+	 *      \param      showadress      0=non, 1=oui
+	 *      \param      outputlang		Objet lang cible
+	 */
+	function _pagehead(&$pdf, $exp, $showadress=1, $outputlangs)
 	{
 		global $conf;
-		
+
 		if ($conf->barcode->enabled)
 		{
 			$posx=105;
@@ -84,69 +84,69 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		{
 			$posx=$this->marge_gauche+3;
 		}
-		
+
 		$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-	
+
 		if ($this->barcode->enabled)
 		{
 			$pdf->Code39($this->marge_gauche+3, $this->marge_haute+3, $this->expe->ref);
 		}
-		
-        $pdf->SetDrawColor(128,128,128);
+
+		$pdf->SetDrawColor(128,128,128);
 
 		$pdf->SetFont('Arial','', 14);
 		$pdf->Text($posx, 16, $outputlangs->transnoentities("SendingSheet"));	// Bordereau expedition
 		$pdf->Text($posx, 22, $outputlangs->transnoentities("Ref") ." : ".$this->expe->ref);
 		$pdf->Text($posx, 28, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date($this->expe->date,"%d %b %Y"));
 		$pdf->Text($posx, 34, $outputlangs->transnoentities("Page")." : ".$pdf->PageNo() ."/{nb}", 0);
-	
+
 		if ($this->barcode->enabled)
 		{
 			$pdf->Code39($this->marge_gauche+3, 44, $this->expe->commande->ref);
 		}
-		
+
 		$pdf->SetFont('Arial','', 14);
 		$pdf->Text($posx, 48, $outputlangs->transnoentities("Order"));
 		$pdf->Text($posx, 54, $outputlangs->transnoentities("Ref") ." : ".$this->expe->commande->ref);
 		$pdf->Text($posx, 60, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date($this->expe->commande->date,"%d %b %Y"));
 	}
-	
 
-    /**
-     *		\brief      Fonction générant le document sur le disque
-     *		\param	    obj		Objet expedition à générer (ou id si ancienne methode)
-     *		\return	    int     1=ok, 0=ko
-     */
+
+	/**
+	 *		\brief      Fonction générant le document sur le disque
+	 *		\param	    obj		Objet expedition à générer (ou id si ancienne methode)
+	 *		\return	    int     1=ok, 0=ko
+	 */
 	function write_file(&$obj, $outputlangs='')
 	{
 		global $user,$conf,$langs;
-	
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
-        $outputlangs->load("companies");
-        $outputlangs->load("bills");
-        $outputlangs->load("propal");
-        $outputlangs->load("products");
+		$outputlangs->load("companies");
+		$outputlangs->load("bills");
+		$outputlangs->load("propal");
+		$outputlangs->load("products");
 
 		$outputlangs->setPhpLang();
 
-		if ($conf->expedition->dir_output)
+		if ($conf->expedition_bon->dir_output)
 		{
 			$this->expe = $obj;
-		
+
 			// Définition de $dir et $file
 			if ($this->expe->specimen)
 			{
-				$dir = $conf->expedition->dir_output;
+				$dir = $conf->expedition_bon->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$expref = sanitize_string($this->expe->ref);
-				$dir = $conf->expedition->dir_output . "/" . $expref;
+				$dir = $conf->expedition_bon->dir_output . "/" . $expref;
 				$file = $dir . "/" . $expref . ".pdf";
 			}
-	
+
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
@@ -155,41 +155,41 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					return 0;
 				}
 			}
-			
-            if (file_exists($dir))
-            {
-                $pdf=new ModelePdfExpedition();
+				
+			if (file_exists($dir))
+			{
+				$pdf=new ModelePdfExpedition();
 				//$this = new ModelePdfExpedition();
 				//$this->expe = &$this->expe;
-			
+					
 				$pdf->Open();
 				$pdf->AliasNbPages();
 				$pdf->AddPage();
-			
+					
 				$pdf->SetTitle($this->expe->ref);
 				$pdf->SetSubject($langs->transnoentities("Sending"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				//$this->pdf->SetAuthor($user->fullname);
-			
-                $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
-                $pdf->SetAutoPageBreak(1,0);
+					
+				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+				$pdf->SetAutoPageBreak(1,0);
 
 				$this->_pagehead($pdf,$this->exp,0,$outputlangs);
-			
+					
 				$pdf->SetFont('Arial','', 14);
 				$pdf->SetTextColor(0,0,0);
-			
-		        $tab_top = 90;
+					
+				$tab_top = 90;
 				$height_note = 200;
 				$pdf->Rect($this->marge_gauche, 80, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 210);
-		        $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note);
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note);
 				if ($this->barcode->enabled)
 				{
-			        $this->posxdesc=$this->marge_gauche+35;
+					$this->posxdesc=$this->marge_gauche+35;
 				}
 				else
 				{
-			        $this->posxdesc=$this->marge_gauche+1;
+					$this->posxdesc=$this->marge_gauche+1;
 				}
 				$this->tableau_top = 80;
 
@@ -205,74 +205,74 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
 				{
 					$curY = $this->tableau_top + 14 + ($i * 7);
-			
+						
 					if ($this->barcode->enabled)
 					{
 						$pdf->i25($this->marge_gauche+3, ($curY - 2), "000000".$this->expe->lignes[$i]->fk_product, 1, 8);
 					}
-					
-                    // Description de la ligne produit
-                    $libelleproduitservice=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
-                    if ($this->expe->lignes[$i]->description&&$this->expe->lignes[$i]->description!=$com->lignes[$i]->libelle)
-                    {
-                        if ($libelleproduitservice) $libelleproduitservice.="<br>";
-                        $libelleproduitservice.=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
-                    }
-                    // Si ligne associée à un code produit
-                    if ($this->expe->lignes[$i]->fk_product)
-                    {
-                        $prodser = new Product($this->db);
-                        $prodser->fetch($this->expe->lignes[$i]->fk_product);
+						
+					// Description de la ligne produit
+					$libelleproduitservice=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
+					if ($this->expe->lignes[$i]->description&&$this->expe->lignes[$i]->description!=$com->lignes[$i]->libelle)
+					{
+						if ($libelleproduitservice) $libelleproduitservice.="<br>";
+						$libelleproduitservice.=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
+					}
+					// Si ligne associée à un code produit
+					if ($this->expe->lignes[$i]->fk_product)
+					{
+						$prodser = new Product($this->db);
+						$prodser->fetch($this->expe->lignes[$i]->fk_product);
 
 						// On ajoute la ref
-                        if ($prodser->ref)
+						if ($prodser->ref)
 						{
 							$prefix_prodserv = "";
-                        	if($prodser->isservice())
-                        		$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-                        	else
-                        		$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
+							if($prodser->isservice())
+							$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
+							else
+							$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
 
-                            $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
-                        }
+							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
+						}
 
-                    }
+					}
 
-                    $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-                   	$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $libelleproduitservice, 0, 1);
+					$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $libelleproduitservice, 0, 1);
 
-                   	$pdf->SetXY (160, $curY);
+					$pdf->SetXY (160, $curY);
 					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_asked);
-			
-                   	$pdf->SetXY (186, $curY);
+						
+					$pdf->SetXY (186, $curY);
 					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_shipped);
 				}
-                $pdf->AliasNbPages();
+				$pdf->AliasNbPages();
 
-                $pdf->Close();
-			
+				$pdf->Close();
+					
 				$pdf->Output($file);
-	
+
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}
-            else
-            {
-                $this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
+			else
+			{
+				$this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
 				$langs->setPhpLang();	// On restaure langue session
-                return 0;
-            }
+				return 0;
+			}
 		}
-        else
-        {
-            $this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
+		else
+		{
+			$this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
-            return 0;
-        }
-        $this->error=$outputlangs->transnoentities("ErrorUnknown");
+			return 0;
+		}
+		$this->error=$outputlangs->transnoentities("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
-        return 0;   // Erreur par defaut
+		return 0;   // Erreur par defaut
 	}
 }
 

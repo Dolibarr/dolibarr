@@ -552,7 +552,7 @@ else
        */
             
       $livraisonref = sanitize_string($livraison->ref);
-      $filedir = $conf->livraison->dir_output . '/' . $livraisonref;            
+      $filedir = $conf->livraison_bon->dir_output . '/' . $livraisonref;            
       $urlsource = $_SERVER["PHP_SELF"]."?id=".$livraison->id;
             
       $genallowed=$user->rights->expedition->livraison->creer;

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,32 +20,32 @@
  */
 
 /**
-       	\file       htdocs/expedition/mods/pdf/pdf_expedition_dorade.modules.php
-		\ingroup    expedition
-		\brief      Fichier de la classe permettant de générer les bordereaux envoi au modèle Merou
-		\version    $Id$
-*/
+ \file       htdocs/expedition/mods/pdf/pdf_expedition_merou.modules.php
+ \ingroup    expedition
+ \brief      Fichier de la classe permettant de générer les bordereaux envoi au modèle Merou
+ \version    $Id$
+ */
 
 require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php";
 require_once DOL_DOCUMENT_ROOT."/contact.class.php";
 
 /**
-	    \class      pdf_expedition_dorade
-		\brief      Classe permettant de générer les borderaux envoi au modèle Merou
-*/
+ \class      pdf_expedition_dorade
+ \brief      Classe permettant de générer les borderaux envoi au modèle Merou
+ */
 
 Class pdf_expedition_merou extends ModelePdfExpedition
 {
 	var $emetteur;	// Objet societe qui emet
 
 
-    /**
-    		\brief  Constructeur
-    		\param	db		Handler accès base de donnée
-    */
+	/**
+	 \brief  Constructeur
+	 \param	db		Handler accès base de donnée
+	 */
 	function pdf_expedition_merou($db=0)
-	{ 
-        global $conf,$langs,$mysoc;
+	{
+		global $conf,$langs,$mysoc;
 
 		$this->db = $db;
 		$this->name = "Merou";
@@ -57,35 +57,35 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	 |element->commande,source->external,code->DESTINATAIRE \n
 ";
 
-        $this->type = 'pdf';
-        $this->page_largeur = 148.5;
-        $this->page_hauteur = 210;
-        $this->format = array($this->page_largeur,$this->page_hauteur);
-        
-        $this->option_logo = 1;                    // Affiche logo
-        
-        // Recupere emmetteur
-        $this->emetteur=$mysoc;
-        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		$this->type = 'pdf';
+		$this->page_largeur = 148.5;
+		$this->page_hauteur = 210;
+		$this->format = array($this->page_largeur,$this->page_hauteur);
+
+		$this->option_logo = 1;                    // Affiche logo
+
+		// Recupere emmetteur
+		$this->emetteur=$mysoc;
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 	}
 
 
-    /**
-     *		\brief      Fonction générant le document sur le disque
-     *		\param	    obj		Objet expedition à générer (ou id si ancienne methode)
-     *		\return	    int     1=ok, 0=ko
-     */
+	/**
+	 *		\brief      Fonction générant le document sur le disque
+	 *		\param	    obj		Objet expedition à générer (ou id si ancienne methode)
+	 *		\return	    int     1=ok, 0=ko
+	 */
 	function write_file(&$obj, $outputlangs='')
 	{
 		global $user,$conf,$langs;
-		
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
-        $outputlangs->load("companies");
-        $outputlangs->load("bills");
-        $outputlangs->load("propal");
-        $outputlangs->load("products");
-        $outputlangs->load("sendings");
+		$outputlangs->load("companies");
+		$outputlangs->load("bills");
+		$outputlangs->load("propal");
+		$outputlangs->load("products");
+		$outputlangs->load("sendings");
 
 		$outputlangs->setPhpLang();
 
@@ -93,40 +93,40 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$this->expe = $obj;
 
 		//Verification de la configuration
-        if ($conf->expedition->dir_output)
-        {
+		if ($conf->expedition_bon->dir_output)
+		{
 			//Creation du Client
 			$soc = new Societe($this->db);
 			$soc->fetch($this->expe->commande->socid);
-	
+
 			//Creation de l expediteur
 			$this->expediteur = $soc;
 			//Creation du destinataire
 			$this->destinataire = new Contact($this->db);
-	//		$pdf->expe->commande->fetch($pdf->commande->id);
-	//print_r($pdf->expe);
+			//		$pdf->expe->commande->fetch($pdf->commande->id);
+			//print_r($pdf->expe);
 			$idcontact = $this->expe->commande->getIdContact('external','DESTINATAIRE');
 			$this->destinataire->fetch($idcontact[0]);
-	
+
 			//Creation du livreur
 			$idcontact = $this->expe->commande->getIdContact('internal','LIVREUR');
 			$this->livreur = new User($this->db,$idcontact[0]);
 			if ($idcontact[0]) $this->livreur->fetch();
-			
+				
 
 			// Définition de $dir et $file
 			if ($this->expe->specimen)
 			{
-				$dir = $conf->expedition->dir_output;
+				$dir = $conf->expedition_bon->dir_output;
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$expref = sanitize_string($this->expe->ref);
-				$dir = $conf->expedition->dir_output . "/" . $expref;
+				$dir = $conf->expedition_bon->dir_output . "/" . $expref;
 				$file = $dir . "/" . $expref . ".pdf";
 			}
-	
+
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
@@ -135,21 +135,21 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					return 0;
 				}
 			}
-			
+				
 			//Si le dossier existe
 			if (file_exists($dir))
 			{
-        // Initialisation Bon vierge
+				// Initialisation Bon vierge
 				$pdf = new FPDI_Protection('l','mm',$this->format);
-						
-		    // Protection et encryption du pdf
-        if ($conf->global->PDF_SECURITY_ENCRYPTION)
-        {
-     	    $pdfrights = array('print'); // Ne permet que l'impression du document
-    	    $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-     	    $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
-     	    $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-        }
+
+				// Protection et encryption du pdf
+				if ($conf->global->PDF_SECURITY_ENCRYPTION)
+				{
+					$pdfrights = array('print'); // Ne permet que l'impression du document
+					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+				}
 
 				$pdf->Open();
 				$pdf->AddPage();
@@ -191,19 +191,19 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					$pdf->rect(20+3, $curY+1, 3, 3);
 					//Insertion de la reference du produit
 					$pdf->SetXY (30, $curY );
-					$pdf->SetFont('Arial','B', 7);			
+					$pdf->SetFont('Arial','B', 7);
 					$pdf->MultiCell(20, 5, $Prod->ref, 0, 'L', 0);
 					//Insertion du libelle
-					$pdf->SetFont('Arial','', 7);			
+					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (50, $curY );
 					$pdf->MultiCell(130, 5, $Prod->libelle, 0, 'L', 0);
 					//Insertion de la quantite
-					$pdf->SetFont('Arial','', 7);			
+					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (180, $curY );
 					$pdf->MultiCell(20, 5, $Produits[$i]->qty, 0, 'L', 0);
 					//Generation de la page 2
 					$curY += 4;
-					$nexY = $curY; 
+					$nexY = $curY;
 					if ($nexY > ($tab_top+$tab_height-10) && $i < $nblignes - 1){
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 						$this->_pagefoot($pdf);
@@ -223,26 +223,26 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->Close();
 
 				$pdf->Output($file);
-	
+
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}
-            else
-            {
-                $this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
+			else
+			{
+				$this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
 				$langs->setPhpLang();	// On restaure langue session
-                return 0;
-            }
+				return 0;
+			}
 		}
-        else
-        {
-            $this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
+		else
+		{
+			$this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
-            return 0;
-        }
-        $this->error=$outputlangs->transnoentities("ErrorUnknown");
+			return 0;
+		}
+		$this->error=$outputlangs->transnoentities("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
-        return 0;   // Erreur par defaut
+		return 0;   // Erreur par defaut
 
 	}
 
@@ -252,10 +252,10 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
 	{
 		global $langs;
-		
+
 		$langs->load("main");
 		$langs->load("bills");
-		
+
 		$pdf->SetFont('Arial','B',8);
 		$pdf->SetXY(10,$tab_top);
 		$pdf->MultiCell(10,5,"LS",0,'C',1);
@@ -295,32 +295,32 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	function _pagehead(&$pdf, $exp)
 	{
 		global $conf, $langs;
-		
+
 		$tab4_top = 60;
 		$tab4_hl = 6;
 		$tab4_sl = 4;
 		$ligne = 2;
 
 		//*********************LOGO****************************
-        $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
-        if ($this->emetteur->logo)
-        {
-            if (is_readable($logo))
-            {
-                $pdf->Image($logo,10, 5, 0, 24);
-            }
-            else
-            {
-                $pdf->SetTextColor(200,0,0);
-                $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
-                $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
-            }
-        }
-        else if(defined("MAIN_INFO_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) 
-        {
-            $pdf->MultiCell(100, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
-        }
+		$logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
+		if ($this->emetteur->logo)
+		{
+			if (is_readable($logo))
+			{
+				$pdf->Image($logo,10, 5, 0, 24);
+			}
+			else
+			{
+				$pdf->SetTextColor(200,0,0);
+				$pdf->SetFont('Arial','B',8);
+				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
+			}
+		}
+		else if(defined("MAIN_INFO_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)
+		{
+			$pdf->MultiCell(100, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+		}
 
 		//*********************Entete****************************
 		//Nom du Document
@@ -332,7 +332,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Num Expedition
 		$Yoff = $Yoff+7;
 		$Xoff = 140;
-//		$pdf->rect($Xoff, $Yoff, 85, 8);
+		//		$pdf->rect($Xoff, $Yoff, 85, 8);
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
@@ -340,7 +340,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Num Commande
 		$Yoff = $Yoff+4;
-//		$pdf->rect($Xoff, $Yoff, 85, 8);
+		//		$pdf->rect($Xoff, $Yoff, 85, 8);
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
@@ -365,49 +365,49 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$pdf->SetXY($blSocX,$blSocY+3);
 			$pdf->MultiCell($blSocW, 3, FAC_PDF_ADRESSE, '' , 'L');
 		}
-		
+
 		if (defined("FAC_PDF_ADRESSE2")){
 			$pdf->SetFont('Arial','',7);
 			$pdf->SetXY($blSocX,$blSocY+6);
 			$pdf->MultiCell($blSocW, 3, FAC_PDF_ADRESSE2, '' , 'L');
 		}
-		
+
 		if (defined("FAC_PDF_TEL")){
 			$pdf->SetFont('Arial','',7);
 			$pdf->SetXY($blSocX,$blSocY+10);
 			$pdf->MultiCell($blSocW, 3, "Tel : " . FAC_PDF_TEL, '' , 'L');
 		}
-		
+
 		if (defined("FAC_PDF_MEL")){
 			$pdf->SetFont('Arial','',7);
 			$pdf->SetXY($blSocX,$blSocY+13);
 			$pdf->MultiCell(40, 3, "Email : " . FAC_PDF_MEL, '' , 'L');
 		}
-		
+
 		if (defined("FAC_PDF_FAX")){
 			$pdf->SetFont('Arial','',7);
 			$pdf->SetXY($blSocX,$blSocY+16);
 			$pdf->MultiCell(40, 3, "Fax : " . FAC_PDF_FAX, '' , 'L');
 		}
-		
+
 		if (defined("MAIN_INFO_SIRET")){
 			$pdf->SetFont('Arial','',7);
 			$pdf->SetXY($blSocX2,$blSocY+10);
 			$pdf->MultiCell($blSocW, 3, "SIRET : " . MAIN_INFO_SIRET, '' , 'L');
 		}
-		
+
 		if (defined("MAIN_INFO_APE")){
 			$pdf->SetFont('Arial','',7);
 			$pdf->SetXY($blSocX2,$blSocY+13);
 			$pdf->MultiCell($blSocW, 3, "APE : " . MAIN_INFO_APE, '' , 'L');
 		}
-		
+
 		if (defined("MAIN_INFO_TVAINTRA")){
 			$pdf->SetFont('Arial','',7);
 			$pdf->SetXY($blSocX2,$blSocY+16);
 			$pdf->MultiCell($blSocW, 3, "ICOMM : " . MAIN_INFO_TVAINTRA, '' , 'L');
 		}
-	
+
 		//Date Expedition
 		$Yoff = $Yoff+7;
 		$pdf->SetXY($blSocX,$blSocY+20);
@@ -455,7 +455,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blExpX,$Yoff+$blSocY);
 		$pdf->SetFont('Arial','',7);
 		$pdf->MultiCell($blW,3, "Tel : ".$this->expediteur->tel, 0, 'L');
-	
+
 		/**********************************/
 		//Emplacement Informations Destinataire (Contact livraison)
 		/**********************************/

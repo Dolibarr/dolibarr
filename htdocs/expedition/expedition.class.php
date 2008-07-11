@@ -662,6 +662,8 @@ class Expedition extends CommonObject
 	{
 		global $user,$langs;
 
+		dolibarr_syslog("Expedition::initAsSpecimen");
+		
 		// Charge tableau des id de société socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
