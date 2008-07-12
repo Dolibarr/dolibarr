@@ -393,6 +393,9 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 
 
 
+/*
+ * View
+ */
 
 llxHeader('',$langs->trans("ContractCard"),"Contrat");
 

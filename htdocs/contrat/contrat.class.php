@@ -979,8 +979,8 @@ class Contrat extends CommonObject
 
 	/**
 	 *    	\brief      Retourne le libelle du statut du contrat
-	 *    	\param      mode          	0=libell� long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-   	 *    	\return     string      	Libell�
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+   	 *    	\return     string      	Label
    	 */
     function getLibStatut($mode)
     {

@@ -202,7 +202,7 @@ if ($socid > 0)
 	print '</td>';
 	print '</tr>';
 
-	// Conditions de r�glement par d�faut
+	// Conditions de reglement par defaut
 	$langs->load('bills');
 	$html = new Form($db);
 	print '<tr><td nowrap>';
@@ -223,7 +223,7 @@ if ($socid > 0)
 	print "</td>";
 	print '</tr>';
 
-	// Mode de r�glement
+	// Mode de reglement
 	print '<tr><td nowrap>';
 	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
 	print $langs->trans('PaymentMode');
@@ -242,7 +242,7 @@ if ($socid > 0)
 	print "</td>";
 	print '</tr>';
 
-    // R�ductions relative (Remises-Ristournes-Rabbais)
+    // Reductions relative (Remises-Ristournes-Rabbais)
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
     print $langs->trans("CustomerRelativeDiscountShort");
@@ -255,7 +255,7 @@ if ($socid > 0)
     print '</td><td colspan="3">'.($objsoc->remise_client?$objsoc->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
     print '</tr>';
     
-    // R�ductions absolues (Remises-Ristournes-Rabbais)
+    // Reductions absolues (Remises-Ristournes-Rabbais)
     print '<tr><td nowrap>';
     print '<table width="100%" class="nobordernopadding">';
     print '<tr><td nowrap>';
@@ -275,7 +275,7 @@ if ($socid > 0)
     print '</td>';
     print '</tr>';
 
-	// multiprix
+	// Multiprix
 	if ($conf->global->PRODUIT_MULTIPRICES)
 	{
 		print '<tr><td nowrap>';
@@ -332,7 +332,7 @@ if ($socid > 0)
 
     print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
-    // Nbre max d'�l�ments des petites listes
+    // Nbre max d'elements des petites listes
     $MAXLIST=4;
 
     // Lien recap
@@ -475,14 +475,22 @@ if ($socid > 0)
             $i = 0;
             while ($i < $num && $i < $MAXLIST)
             {
+            	$contrat=new Contrat($db);
+            	
                 $objp = $db->fetch_object($resql);
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowContract"),"contract").' '
-                .(!isset($objp->ref) ? $objp->id : $objp->ref) ."</a></td>\n";
+                print '<td>';
+                $contrat->id=$objp->id;
+                $contrat->ref=$objp->ref;
+                print $contrat->getNomUrl(1);
+                print "</td>\n";
                 print '<td align="right" width="80">'.dolibarr_print_date($objp->dc)."</td>\n";
                 print '<td width="20">&nbsp;</td>';
-                print '<td align="right" nowrap="nowrap">'.$contratstatic->LibStatut($objp->statut,5)."</td>\n";
+                print '<td align="right" nowrap="nowrap">';
+                $contrat->fetch_lignes();
+                print $contrat->getLibStatut(4);
+                print "</td>\n";
                 print '</tr>';
                 $i++;
             }
