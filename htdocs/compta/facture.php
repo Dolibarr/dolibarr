@@ -1100,7 +1100,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['a
                 $filename = $attachedfiles['names'];
                 $mimetype = $attachedfiles['mimes'];
 				
-				// Envoi de la facture
+				// Send mail
 				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 				if ($mailfile->error)

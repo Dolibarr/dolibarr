@@ -314,9 +314,9 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		{
 			$prod = new Product($db, $_POST['idprod']);
 			$prod->fetch($_POST['idprod']);
-				
+
 			$tva_tx = get_default_tva($mysoc,$commande->client,$prod->tva_tx);
-				
+
 			// multiprix
 			if ($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
@@ -330,7 +330,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 				$pu_ttc = $prod->price_ttc;
 				$price_base_type = $prod->price_base_type;
 			}
-				
+
 			// On reevalue prix selon taux tva car taux tva transaction peut etre different
 			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
 			if ($tva_tx != $prod->tva_tx)
@@ -480,9 +480,9 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 	$commande = new Commande($db);
 	$commande->fetch($_GET['id']);
 	$commande->set_draft($user);
-	
+
 	$result = $commande->set_draft($user);
-  	if ($result	>= 0)
+	if ($result	>= 0)
 	{	//regeneration pdf
 		if ($_REQUEST['lang_id'])
 		{
@@ -674,23 +674,18 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
 				}
 
-				// Get list of attached files
-				$listofpaths=array();
-				$listofnames=array();
-				$listofmimes=array();
-				if (! empty($_SESSION["listofpaths"])) $listofpaths=split(';',$_SESSION["listofpaths"]);
-				if (! empty($_SESSION["listofnames"])) $listofnames=split(';',$_SESSION["listofnames"]);
-				if (! empty($_SESSION["listofmimes"])) $listofmimes=split(';',$_SESSION["listofmimes"]);
-				if (! empty($_FILES['addedfile']['tmp_name']))
-				{
-					$listofpaths[] = $_FILES['addedfile']['tmp_name'];
-					$listofnames[] = $_FILES['addedfile']['name'];
-					$listofmimes[] = $_FILES['addedfile']['type'];
-				}
+				// Create form object
+				include_once('../html.formmail.class.php');
+				$formmail = new FormMail($db);
 
+				$attachedfiles=$formmail->get_attached_files();
+                $filepath = $attachedfiles['paths'];
+                $filename = $attachedfiles['names'];
+                $mimetype = $attachedfiles['mimes'];
+				
 				// Send mail
 				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
-				$mailfile = new CMailFile($subject,$sendto,$from,$message,$listofpaths,$listofmimes,$listofnames,$sendtocc,'',$deliveryreceipt);
+				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 				if ($mailfile->error)
 				{
 					$mesg='<div class="error">'.$mailfile->error.'</div>';
@@ -815,38 +810,38 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 		if ($num)
 		{
 			$obj = $db->fetch_object($resql);
-				
+
 			$soc = new Societe($db);
 			$soc->fetch($obj->rowid);
-				
+
 			$nbrow=10;
-				
+
 			print '<form name="crea_commande" action="fiche.php" method="post">';
 			print '<input type="hidden" name="action" value="add">';
 			print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
 			print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
 			print '<input name="facnumber" type="hidden" value="provisoire">';
-				
+
 			print '<table class="border" width="100%">';
-				
+
 			// Reference
 			print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td></tr>';
-				
+
 			// Reference client
 			print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 			print '<input type="text" name="ref_client" value=""></td>';
 			print '</tr>';
-				
+
 			// Client
 			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
-				
+
 			/*
 			 * Contact de la commande
 			 */
 			print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 			$html->select_contacts($soc->id,$setcontact,'contactidp',1);
 			print '</td></tr>';
-				
+
 			// Ligne info remises tiers
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
@@ -857,12 +852,12 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 			print '.';
 			print '</td></tr>';
-				
+
 			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td><td>';
 			$html->select_date('','re','','','',"crea_commande");
 			print '</td></tr>';
-				
+
 			// Date de livraison
 			print "<tr><td>".$langs->trans("DeliveryDate")."</td><td>";
 			if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
@@ -886,17 +881,17 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			}
 
 			print '</td></tr>';
-				
+
 			// Conditions de reglement
 			print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 			$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
 			print '</td></tr>';
-				
+
 			// Mode de reglement
 			print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 			$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 			print '</td></tr>';
-				
+
 			// Projet
 			if ($conf->projet->enabled)
 			{
@@ -913,7 +908,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<tr><td>'.$langs->trans('Source').'</td><td colspan="2">';
 			$html->selectSourcesCommande('','source_id',1);
 			print '</td></tr>';
-				
+
 			print '<tr><td>'.$langs->trans('Model').'</td>';
 			print '<td colspan="2">';
 			// pdf
@@ -922,14 +917,14 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			$liste=$model->liste_modeles($db);
 			$html->select_array('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
 			print "</td></tr>";
-				
+
 			// Note publique
 			print '<tr>';
 			print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
 			print '<td valign="top" colspan="2">';
 			print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 			print '</textarea></td></tr>';
-				
+
 			// Note privée
 			if (! $user->societe_id)
 			{
@@ -939,7 +934,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 				print '</textarea></td></tr>';
 			}
-				
+
 			if ($propalid > 0)
 			{
 				$amount = ($obj->price);
@@ -963,9 +958,9 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 					 * Services/produits predefinis
 					 */
 					$NBLINES=8;
-						
+
 					print '<tr><td colspan="3">';
-						
+
 					print '<table class="noborder">';
 					print '<tr><td>'.$langs->trans('ProductsAndServices').'</td>';
 					print '<td>'.$langs->trans('Qty').'</td>';
@@ -1083,14 +1078,14 @@ else
 		{
 	  $soc = new Societe($db);
 	  $soc->fetch($commande->socid);
-	   
+
 	  $author = new User($db);
 	  $author->id = $commande->user_author_id;
 	  $author->fetch();
-	   
+
 	  $head = commande_prepare_head($commande);
 	  dolibarr_fiche_head($head, 'order', $langs->trans("CustomerOrder"));
-	   
+
 	  /*
 	   * Confirmation de la suppression de la commande
 	   */
@@ -1099,7 +1094,7 @@ else
 	  	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete');
 	  	print '<br />';
 	  }
-	   
+
 	  /*
 	   * Confirmation de la validation
 	   */
@@ -1120,7 +1115,7 @@ else
 	  	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_validate');
 	  	print '<br />';
 	  }
-	   
+
 	  /*
 	   * Confirmation de la cloture
 	   */
@@ -1129,7 +1124,7 @@ else
 	  	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close');
 	  	print '<br />';
 	  }
-	   
+
 	  /*
 	   * Confirmation de l'annulation
 	   */
@@ -1138,7 +1133,7 @@ else
 	  	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel');
 	  	print '<br />';
 	  }
-	   
+
 	  /*
 	   * Confirmation de la suppression d'une ligne produit
 	   */
@@ -1147,20 +1142,20 @@ else
 	  	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
 	  	print '<br>';
 	  }
-	   
+
 	  /*
 	   *   Commande
 	   */
 	  $nbrow=8;
 	  if ($conf->projet->enabled) $nbrow++;
-	   
+
 	  print '<table class="border" width="100%">';
-	   
+
 	  // Ref
 	  print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
 	  print '<td colspan="3">'.$commande->ref.'</td>';
 	  print '</tr>';
-	   
+
 	  // Ref commande client
 	  print '<tr><td>';
 	  print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
@@ -1183,7 +1178,7 @@ else
 	  }
 	  print '</td>';
 	  print '</tr>';
-	   
+
 
 	  // Societe
 	  print '<tr><td>'.$langs->trans('Company').'</td>';
@@ -1301,7 +1296,7 @@ else
 				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'none');
 			}
 			print '</td>';
-				
+
 			//Note public lorsque le module expedition n'est pas active
 			if (!$conf->projet->enabled) $nbrow--;
 			if (!$conf->expedition->enabled)
@@ -1312,7 +1307,7 @@ else
 				print nl2br($commande->note_public);
 				print '</td>';
 			}
-				
+
 			print '</tr>';
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -1687,7 +1682,7 @@ else
 					print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
 					print '<td colspan="4">&nbsp;</td>';
 					print '</tr>';
-						
+
 					print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'#add" method="post">';
 					print '<input type="hidden" name="id" value="'.$id.'">';
 					print '<input type="hidden" name="action" value="addligne">';
@@ -1731,7 +1726,7 @@ else
 			print '</table>';
 			print '</div>';
 
-				
+
 			/*
 			 * Boutons actions
 			 */
@@ -1869,7 +1864,7 @@ else
 				print '<br>';
 			}
 
-				
+
 			if ($_GET['action'] != 'presend')
 			{
 				print '<table width="100%"><tr><td width="50%" valign="top">';
@@ -1935,7 +1930,7 @@ else
 				include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
 				$formactions=new FormActions($db);
 				$somethingshown=$formactions->showactions($commande,'order',$socid);
-				 
+					
 				print '</td></tr></table>';
 			}
 
@@ -1972,7 +1967,7 @@ else
 				$formmail->withto=$liste;
 				$formmail->withtocc=1;
 				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
-				$formmail->withfile=1;
+				$formmail->withfile=2;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
 				$formmail->withcancel=1;
