@@ -290,6 +290,13 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
 	if ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0)
 	{
 		$fac->set_draft($user);
+		//regénération PDF
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
 }
 

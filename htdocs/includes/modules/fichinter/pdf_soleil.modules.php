@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,7 +87,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("interventions");
-		
+
 		$outputlangs->setPhpLang();
 
 		if ($conf->fichinter->dir_output)
@@ -117,7 +117,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					return 0;
 				}
 			}
-
+			
 			if (file_exists($dir))
 			{
 				// Protection et encryption du pdf
@@ -259,7 +259,6 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->writeHTMLCell(190, 5, 10, $tab_top + 8, dol_htmlentitiesbr($fichinter->description), 0, 'J', 0);
 				
 				//dolibarr_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
-                $fichinter->fetch_lines();
 				$num = sizeof($fichinter->lignes);
 				$i=0;
 				if ($num)
@@ -268,12 +267,12 @@ class pdf_soleil extends ModelePDFFicheinter
     				{
 						$fichinterligne = $fichinter->lignes[$i];
 
-						$valide = $fichinterligne->fetch($fichinterligne->id);
+						$valide = $fichinterligne->id ? $fichinterligne->fetch($fichinterligne->id) : 0;
 						if ($valide>0)
 						{
 							$pdf->SetXY (20, $tab_top + 16 + $i * 20); 
 	                        $pdf->writeHTMLCell(190, 8, 20, $tab_top + 16 + $i * 20,
-	                         dol_htmlentitiesbr("Date : ".dolibarr_print_date($fichinterligne->datei)." - Durée : ".ConvertSecondToTime($fichinterligne->duration)), 0, 'J', 0); 
+	                         dol_htmlentitiesbr($langs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei)." - ".$langs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration)), 0, 'J', 0); 
 	                         
 	                        $pdf->SetXY (20, $tab_top + 22 + $i * 20); 
 	                        $pdf->writeHTMLCell(170, 8, 20, $tab_top + 22 + $i * 20,

@@ -174,7 +174,8 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 		}
 		else
 		{
-			print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined");
+			dolibarr_syslog("Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined"), LOG_ERR);
+			print "Error ".$langs->trans("Error_FICHEINTER_ADDON_PDF_NotDefined");
 			return 0;
 		}
 	}
@@ -188,6 +189,7 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 	
 		$obj = new $classname($db);
 	
+		dolibarr_syslog("fichinter_create build PDF", LOG_DEBUG);
 		if ($obj->write_file($object,$outputlangs) > 0)
 		{
 			return 1;

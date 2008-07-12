@@ -147,7 +147,7 @@ class Fichinter extends CommonObject
 		 *  Insertion dans la base
 		 */
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
-		$sql .= " datei = ".$this->date;
+		$sql .= " datei = ".$this->db->idate($this->date);
 		$sql .= ", description  = '".addslashes($this->description)."'";
 		$sql .= ", duree = ".$this->duree;
 		$sql .= ", fk_projet = ".$this->projet_id;
@@ -219,6 +219,8 @@ class Fichinter extends CommonObject
 	{
 		global $langs, $conf;
 
+		$this->db->begin();
+		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 		$sql.= " SET fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
@@ -234,12 +236,24 @@ class Fichinter extends CommonObject
 			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
-			return 1;
+			if (! $error)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=join(',',$this->errors);
+				dolibarr_syslog("Fichinter::update ".$this->error,LOG_ERR);
+				return -1;
+			}
 		}
 		else
 		{
-			$this->error=$this->db->error();
-			dolibarr_syslog("Fichinter::update error ".$this->error,LOG_ERR);
+			$this->db->rollback();
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("Fichinter::update ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}

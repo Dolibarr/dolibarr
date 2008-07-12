@@ -22,11 +22,11 @@
  */
 
 /**
-   \file       	htdocs/comm/propal.php
-   \ingroup    	propale
-   \brief      	Page liste des propales (vision commercial)
-   \version		$Id$
-*/
+ \file       	htdocs/comm/propal.php
+ \ingroup    	propale
+ \brief      	Page liste des propales (vision commercial)
+ \version		$Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
@@ -79,57 +79,57 @@ $NBLINES=4;
 // Suppression de la propale
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
-  if ($user->rights->propale->supprimer)
-  {
-  	$propal = new Propal($db, 0, $_GET['propalid']);
-    $propal->fetch($_GET['propalid']);
-    $propal->delete($user);
-    $propalid = 0;
-    $brouillon = 1;
-  }
-  Header('Location: '.$_SERVER["PHP_SELF"]);
-  exit;
+	if ($user->rights->propale->supprimer)
+	{
+		$propal = new Propal($db, 0, $_GET['propalid']);
+		$propal->fetch($_GET['propalid']);
+		$propal->delete($user);
+		$propalid = 0;
+		$brouillon = 1;
+	}
+	Header('Location: '.$_SERVER["PHP_SELF"]);
+	exit;
 }
 
 /*
  *  Supprime une ligne produit AVEC OU SANS confirmation
  */
 if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-     || ($_GET['action'] == 'deleteline' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE))
+|| ($_GET['action'] == 'deleteline' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE))
 {
 	if ($user->rights->propale->creer)
-  {
-  	$propal = new Propal($db);
-  	$propal->fetch($_GET['propalid']);
-  	$result = $propal->delete_product($_GET['lineid']);
-  	if ($_REQUEST['lang_id'])
-  	{
-  		$outputlangs = new Translate("",$conf);
-  		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-  	}
-  	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	{
+		$propal = new Propal($db);
+		$propal->fetch($_GET['propalid']);
+		$result = $propal->delete_product($_GET['lineid']);
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	}
 	Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
-  exit;
+	exit;
 }
 
 // Validation de la propale
 if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->propale->valider)
 {
-    $propal = new Propal($db);
-    $propal->fetch($_GET['propalid']);
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
 	$propal->fetch_client();
-	
-    $result=$propal->valid($user);
+
+	$result=$propal->valid($user);
 	if ($result >= 0)
 	{
-        if ($_REQUEST['lang_id'])
+		if ($_REQUEST['lang_id'])
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
-        propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
-    }
+		propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	}
 	else
 	{
 		$mesg='<div class="error">'.$fac->error.'</div>';
@@ -139,14 +139,14 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 if ($_POST['action'] == 'setecheance')
 {
 	$propal = new Propal($db);
-    $propal->fetch($_GET['propalid']);
+	$propal->fetch($_GET['propalid']);
 	$result=$propal->set_echeance($user,dolibarr_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 if ($_POST['action'] == 'setdate_livraison')
 {
 	$propal = new Propal($db);
-    $propal->fetch($_GET['propalid']);
+	$propal->fetch($_GET['propalid']);
 	$result=$propal->set_date_livraison($user,dolibarr_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
@@ -175,9 +175,9 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	$propal = new Propal($db);
 	$propal->socid=$_POST['socid'];
 	$propal->fetch_client();
-	
+
 	$db->begin();
-	
+
 	// Si on a selectionne une propal a copier, on realise la copie
 	if($_POST['createmode']=='copy' && $_POST['copie_propal'])
 	{
@@ -199,7 +199,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$propal->note      = $_POST['note'];
 			$propal->ref       = $_POST['ref'];
 			$propal->statut    = 0;
-			
+				
 			$id = $propal->create_from($user);
 		}
 		else
@@ -215,7 +215,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$propal->duree_validite = $_POST['duree_validite'];
 		$propal->cond_reglement_id = $_POST['cond_reglement_id'];
 		$propal->mode_reglement_id = $_POST['mode_reglement_id'];
-	
+
 		$propal->contactid  = $_POST['contactidp'];
 		$propal->projetidp  = $_POST['projetidp'];
 		$propal->modelpdf   = $_POST['model'];
@@ -223,7 +223,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$propal->note       = $_POST['note'];
 		$propal->ref_client = $_POST['ref_client'];
 		$propal->ref        = $_POST['ref'];
-	
+
 		for ($i = 1 ; $i <= $conf->global->PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
 		{
 			if ($_POST['idprod'.$i])
@@ -234,10 +234,10 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 				$propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
 			}
 		}
-	
+
 		$id = $propal->create();
 	}
-	
+
 	if ($id > 0)
 	{
 		$error=0;
@@ -291,15 +291,15 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
  */
 if ($_REQUEST['action'] == 'setstatut' && $user->rights->propale->cloturer)
 {
-    if (! $_POST['cancel'])
-    {
-        $propal = new Propal($db);
-        $propal->fetch($_GET['propalid']);
+	if (! $_POST['cancel'])
+	{
+		$propal = new Propal($db);
+		$propal->fetch($_GET['propalid']);
 		// prevent browser refresh from closing proposal several times
-		if ($propal->statut==1) 
+		if ($propal->statut==1)
 		{
-    	    $propal->cloture($user, $_REQUEST['statut'], $_REQUEST['note']);
-    	}
+			$propal->cloture($user, $_REQUEST['statut'], $_REQUEST['note']);
+		}
 	}
 }
 
@@ -312,30 +312,30 @@ if ($_POST['addfile'])
 	// Set tmp user directory
 	$conf->users->dir_tmp=DOL_DATA_ROOT."/users/".$user->id;
 	$upload_dir = $conf->users->dir_tmp.'/temp/';
-	
+
 	if (! empty($_FILES['addedfile']['tmp_name']))
 	{
-	    if (! is_dir($upload_dir)) create_exdir($upload_dir);
-	
-	    if (is_dir($upload_dir))
-	    {
-	        if (dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0) > 0)
-	        {
-	            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-	            //print_r($_FILES);
+		if (! is_dir($upload_dir)) create_exdir($upload_dir);
+
+		if (is_dir($upload_dir))
+		{
+			if (dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0) > 0)
+			{
+				$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+				//print_r($_FILES);
 
 				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
 				$formmail = new FormMail($db);
 				// Add file in list of files in session
 				$formmail->add_attached_files($upload_dir . "/" . $_FILES['addedfile']['name'],$_FILES['addedfile']['name'],$_FILES['addedfile']['type']);
-	        }
-	        else
-	        {
-	            // Echec transfert (fichier dépassant la limite ?)
-	            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-	            // print_r($_FILES);
-	        }
-	    }
+			}
+			else
+			{
+				// Echec transfert (fichier dépassant la limite ?)
+				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+				// print_r($_FILES);
+			}
+		}
 	}
 	$_GET["action"]='presend';
 }
@@ -345,18 +345,18 @@ if ($_POST['addfile'])
  */
 if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 {
-    $langs->load('mails');
+	$langs->load('mails');
 
-    $propal= new Propal($db);
-    if ( $propal->fetch($_POST['propalid']) )
-    {
-        $propalref = sanitize_string($propal->ref);
-        $file = $conf->propal->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
-        
-        if (is_readable($file))
-        {
-            $propal->fetch_client();
-            
+	$propal= new Propal($db);
+	if ( $propal->fetch($_POST['propalid']) )
+	{
+		$propalref = sanitize_string($propal->ref);
+		$file = $conf->propal->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
+
+		if (is_readable($file))
+		{
+			$propal->fetch_client();
+
 			if ($_POST['sendto'])
 			{
 				// Le destinataire a ete fourni via le champ libre
@@ -378,22 +378,22 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 				}
 			}
 
-            if (strlen($sendto))
-            {
+			if (strlen($sendto))
+			{
 				$langs->load("commercial");
 
-                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
-                $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
-                $message = $_POST['message'];
-                $sendtocc = $_POST['sendtocc'];
-                $deliveryreceipt = $_POST['deliveryreceipt'];
+				$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+				$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+				$message = $_POST['message'];
+				$sendtocc = $_POST['sendtocc'];
+				$deliveryreceipt = $_POST['deliveryreceipt'];
 
-                if ($_POST['action'] == 'send')
-                {
-                	if (strlen($_POST['subject'])) $subject = $_POST['subject'];
-                	else $subject = $langs->transnoentities('Propal').' '.$propal->ref;
+				if ($_POST['action'] == 'send')
+				{
+					if (strlen($_POST['subject'])) $subject = $_POST['subject'];
+					else $subject = $langs->transnoentities('Propal').' '.$propal->ref;
 					$actiontypecode='AC_PROP';
-                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
+					$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
 					if ($message)
 					{
 						$actionmsg.=$langs->transnoentities('MailTopic').": ".$subject."\n";
@@ -401,20 +401,20 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 						$actionmsg.=$message;
 					}
 					$actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
-                }
+				}
 
 				// Create form object
 				include_once('../html.formmail.class.php');
 				$formmail = new FormMail($db);
 
 				$attachedfiles=$formmail->get_attached_files();
-                $filepath = $attachedfiles['paths'];
-                $filename = $attachedfiles['names'];
-                $mimetype = $attachedfiles['mimes'];
-                
-                // Envoi de la propal
+				$filepath = $attachedfiles['paths'];
+				$filename = $attachedfiles['names'];
+				$mimetype = $attachedfiles['mimes'];
+
+				// Envoi de la propal
 				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
+				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 				if ($mailfile->error)
 				{
 					$mesg='<div class="error">'.$mailfile->error.'</div>';
@@ -424,17 +424,17 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 					$result=$mailfile->sendfile();
 					if ($result)
 					{
-	                    $mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
-						
+						$mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+
 						$error=0;
-						
-			            // Initialisation donnees
+
+						// Initialisation donnees
 						$propal->sendtoid=$sendtoid;
 						$propal->actiontypecode=$actiontypecode;
 						$propal->actionmsg = $actionmsg;
 						$propal->actionmsg2= $actionmsg2;
 						$propal->propalrowid=$propal->id;
-						
+
 						// Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 						$interface=new Interfaces($db);
@@ -442,23 +442,23 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 						// Fin appel triggers
 
-	                    if ($error)
-	                    {
-	                        dolibarr_print_error($db);
-	                    }
-	                    else
-	                    {
+						if ($error)
+						{
+							dolibarr_print_error($db);
+						}
+						else
+						{
 							// Redirect here
 							// This avoid sending mail twice if going out and then back to page
-	                    	Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&msg='.urlencode($mesg));
-	                        exit;
-	                    }
+							Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&msg='.urlencode($mesg));
+							exit;
+						}
 					}
-	                else
-	                {
+					else
+					{
 						$langs->load("other");
 						$mesg='<div class="error">';
-						if ($mailfile->error) 
+						if ($mailfile->error)
 						{
 							$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
 							$mesg.='<br>'.$mailfile->error;
@@ -469,57 +469,65 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 						}
 						$mesg.='</div>';
 					}
-	            }
-            }
-            else
-            {
+				}
+			}
+			else
+			{
 				$langs->load("other");
-                $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
+				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
 				dolibarr_syslog('Recipient email is empty');
-            }
-        }
-        else
-        {
+			}
+		}
+		else
+		{
 			$langs->load("other");
 			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
 			dolibarr_syslog('Failed to read file: '.$file);
-        }
-    }
-    else
-    {
+		}
+	}
+	else
+	{
 		$langs->load("other");
 		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Proposal")).'</div>';
 		dolibarr_syslog('Impossible de lire les donnees de la facture. Le fichier propal n\'a peut-etre pas ete genere.');
-    }
+	}
 }
 
 if ($_GET['action'] == 'commande')
 {
-  /*
-   *  Cloture de la propale
-   */
-  $propal = new Propal($db);
-  $propal->fetch($propalid);
-  $propal->create_commande($user);
+	/*
+	 *  Cloture de la propale
+	 */
+	$propal = new Propal($db);
+	$propal->fetch($propalid);
+	$propal->create_commande($user);
 }
 
 if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 {
-  /*
-   *  Repasse la propale en mode brouillon
-   */
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
-  $propal->set_draft($user);
+	/*
+	 *  Repasse la propale en mode brouillon
+	 */
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
+	$propal->set_draft($user);
+
+	//regénération pdf
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 }
 
 if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 {
 	if ($_POST["remise_id"])
 	{
-	    $prop = new Propal($db);
-	    $prop->id=$_GET['propalid'];
-	    $ret=$prop->fetch($_GET['propalid']);
+		$prop = new Propal($db);
+		$prop->id=$_GET['propalid'];
+		$ret=$prop->fetch($_GET['propalid']);
 		if ($ret > 0)
 		{
 			$result=$prop->insert_discount($_POST["remise_id"]);
@@ -550,7 +558,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			exit;
 		}
 		$ret=$propal->fetch_client();
-		
+
 		$price_base_type = 'HT';
 
 		// Ecrase $pu par celui du produit
@@ -560,10 +568,10 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 		{
 			$prod = new Product($db, $_POST['idprod']);
 			$prod->fetch($_POST['idprod']);
-			
+				
 			$tva_tx = get_default_tva($mysoc,$propal->client,$prod->tva_tx);
 			$tva_npr = get_default_npr($mysoc,$propal->client,$prod->tva_tx);
-			
+				
 			// On defini prix unitaire
 			if ($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
@@ -591,7 +599,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
 				}
 			}
-			
+				
 			$desc = $prod->description;
 			$desc.= ($prod->description && $_POST['np_desc']) ? "\n" : "";
 			$desc.= $_POST['np_desc'];
@@ -599,26 +607,26 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 		else
 		{
 			$pu_ht=$_POST['np_price'];
-	        $tva_tx=eregi_replace('\*','',$_POST['np_tva_tx']);
+			$tva_tx=eregi_replace('\*','',$_POST['np_tva_tx']);
 			$tva_npr=eregi('\*',$_POST['np_tva_tx'])?1:0;
 			$desc=$_POST['dp_desc'];
 		}
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
-		
+
 		// Insert line
 		$result=$propal->addline(
-			$_POST['propalid'],
-			$desc,
-			$pu_ht,
-			$_POST['qty'],
-			$tva_tx,
-			$_POST['idprod'],
-			$_POST['remise_percent'],
-			$price_base_type,
-			$pu_ttc,
-			$info_bits
+		$_POST['propalid'],
+		$desc,
+		$pu_ht,
+		$_POST['qty'],
+		$tva_tx,
+		$_POST['idprod'],
+		$_POST['remise_percent'],
+		$price_base_type,
+		$pu_ttc,
+		$info_bits
 		);
 
 		if ($result > 0)
@@ -632,9 +640,9 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 		}
 		else
 		{
-            $mesg='<div class="error">'.$propal->error.'</div>';
+			$mesg='<div class="error">'.$propal->error.'</div>';
 		}
-		
+
 	}
 }
 
@@ -643,7 +651,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
-    $propal = new Propal($db);
+	$propal = new Propal($db);
 	if (! $propal->fetch($_POST['propalid']) > 0) dolibarr_print_error($db);
 
 	// Define info_bits
@@ -653,22 +661,22 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	// Define vat_rate
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
-	
+
 	$result = $propal->updateline($_POST['lineid'],
-    	$_POST['subprice'],
-    	$_POST['qty'],
-    	$_POST['remise_percent'],
-    	$vat_rate,
-    	$_POST['desc'],
+	$_POST['subprice'],
+	$_POST['qty'],
+	$_POST['remise_percent'],
+	$vat_rate,
+	$_POST['desc'],
 		'HT',
-		$info_bits);
+	$info_bits);
 
 	if ($_REQUEST['lang_id'])
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-    propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 }
 
 /*
@@ -676,13 +684,13 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
  */
 if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 {
-    $propal = new Propal($db);
-    $propal->fetch($_GET['propalid']);
-    if ($_REQUEST['model'])
-    {
-    	$propal->setDocModel($user, $_REQUEST['model']);
-    }
-    
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
+	if ($_REQUEST['model'])
+	{
+		$propal->setDocModel($user, $_REQUEST['model']);
+	}
+
 	if ($_REQUEST['lang_id'])
 	{
 		$outputlangs = new Translate("",$conf);
@@ -698,7 +706,7 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 	{
 		Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#builddoc');
 		exit;
-	} 
+	}
 }
 
 if ($_POST['action'] == 'classin')
@@ -756,7 +764,7 @@ if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-  propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET["propalid"].'#'.$_GET['rowid']);
 }
 
@@ -770,15 +778,15 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-  	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET["propalid"].'#'.$_GET['rowid']);
 	exit;
 }
 
 
 /*
-* Affichage page
-*/
+ * Affichage page
+ */
 
 llxHeader('',$langs->trans('Proposal'),'Proposition');
 
@@ -791,86 +799,86 @@ if ($_GET['propalid'] > 0)
 	 * Affichage fiche propal en mode visu
 	 *
 	 */
-  
-  if ($mesg) print "$mesg<br>";
-  
-  $propal = new Propal($db);
-  $propal->fetch($_GET['propalid']);
 
-  $societe = new Societe($db);
-  $societe->fetch($propal->socid);
-  
-  $head = propal_prepare_head($propal);
-  dolibarr_fiche_head($head, 'comm', $langs->trans('Proposal'));
-    
-  /*
-   * Confirmation de la suppression de la propale
-   */
-  if ($_GET['action'] == 'delete')
-    {
-      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
-      print '<br>';
-    }
-  
-  /*
-   * Confirmation de la suppression d'une ligne produit/service
-   */
-  if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-    {
-      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
-      print '<br>';
-    }
-  
-  /*
-   * Confirmation de la validation de la propale
-   */
-  if ($_GET['action'] == 'validate')
-    {
-      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate');
-      print '<br>';
-    }
-  
-  
-  /*
-   * Fiche propal
-   *
-   */
-  
-  print '<table class="border" width="100%">';
-  
-  // Ref
-  print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
-  
-  // Ref client
-  print '<tr><td>';
-  print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-  print $langs->trans('RefCustomer').'</td><td align="left">';
-  print '</td>';
-  if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
-  print '</tr></table>';
-  print '</td><td colspan="5">';
-  if ($user->rights->propale->creer && $_GET['action'] == 'refclient')
-    {
-      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-      print '<input type="hidden" name="action" value="set_ref_client">';
-      print '<input type="text" class="flat" size="20" name="ref_client" value="'.$propal->ref_client.'">';
-      print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-      print '</form>';
-    }
-  else
-    {
-      print $propal->ref_client;
-    }
-  print '</td>';
-  print '</tr>';
-  
-  $rowspan=8;
-  
-  // Societe
-  print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td>';
-  print '</tr>';
-  
-  // Ligne info remises tiers
+	if ($mesg) print "$mesg<br>";
+
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
+
+	$societe = new Societe($db);
+	$societe->fetch($propal->socid);
+
+	$head = propal_prepare_head($propal);
+	dolibarr_fiche_head($head, 'comm', $langs->trans('Proposal'));
+
+	/*
+	 * Confirmation de la suppression de la propale
+	 */
+	if ($_GET['action'] == 'delete')
+	{
+		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
+		print '<br>';
+	}
+
+	/*
+	 * Confirmation de la suppression d'une ligne produit/service
+	 */
+	if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+	{
+		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
+		print '<br>';
+	}
+
+	/*
+	 * Confirmation de la validation de la propale
+	 */
+	if ($_GET['action'] == 'validate')
+	{
+		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate');
+		print '<br>';
+	}
+
+
+	/*
+	 * Fiche propal
+	 *
+	 */
+
+	print '<table class="border" width="100%">';
+
+	// Ref
+	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
+
+	// Ref client
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+	print $langs->trans('RefCustomer').'</td><td align="left">';
+	print '</td>';
+	if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="5">';
+	if ($user->rights->propale->creer && $_GET['action'] == 'refclient')
+	{
+		print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+		print '<input type="hidden" name="action" value="set_ref_client">';
+		print '<input type="text" class="flat" size="20" name="ref_client" value="'.$propal->ref_client.'">';
+		print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	}
+	else
+	{
+		print $propal->ref_client;
+	}
+	print '</td>';
+	print '</tr>';
+
+	$rowspan=8;
+
+	// Societe
+	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td>';
+	print '</tr>';
+
+	// Ligne info remises tiers
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 	if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
@@ -909,7 +917,7 @@ if ($_GET['propalid'] > 0)
 		if ($conf->global->PROPALE_ADD_SHIPPING_DATE || !$conf->commande->enabled) $rowspan++;
 		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS || !$conf->commande->enabled) $rowspan++;
 	}
-	
+
 	// Notes
 	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
 	print '</tr>';
@@ -1102,7 +1110,7 @@ if ($_GET['propalid'] > 0)
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
 	print '<td align="right" colspan="2" nowrap>'.price($propal->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-	
+
 	// Amount TTC
 	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
 	print '<td align="right" colspan="2" nowrap>'.price($propal->total_ttc).'</td>';
@@ -1158,7 +1166,7 @@ if ($_GET['propalid'] > 0)
 			if ($_GET['action'] != 'editline' || $_GET['lineid'] != $objp->rowid)
 			{
 				print '<tr '.$bc[$var].'>';
-				
+
 				// Produit
 				if ($objp->fk_product > 0)
 				{
@@ -1178,7 +1186,7 @@ if ($_GET['propalid'] > 0)
 					{
 						print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 					}
-					
+						
 					print '</td>';
 				}
 				else
@@ -1237,14 +1245,14 @@ if ($_GET['propalid'] > 0)
 					//$formMarkup.= ' &nbsp; <input onClick="Dialog.closeInfo()" type="button" class="button" name="cancel" value="'.$langs->trans('Cancel').'">'."\n";
 					$formMarkup.= '</td></tr></table></form>'."\n";
 					$formMarkup.= ajax_updaterWithID("rate".$i,"markup","sellingprice_ht".$i,"/product/ajaxproducts.php","&count=".$i,"working")."\n";
-						
+
 
 					print '<td align="right">'."\n";
-					
+						
 					print '<div id="calc_markup'.$i.'" style="display:none">'."\n";
 					print $formMarkup."\n";
 					print '</div>'."\n";
-						
+
 
 					print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
 					print '<td class="nobordernopadding" nowrap="nowrap" align="left">';
@@ -1260,14 +1268,14 @@ if ($_GET['propalid'] > 0)
 						print $html->textwithtooltip($picto,$langs->trans("ToCalculateMarkup"),3,'','',$i);
 					}
 					print '</td>';
-				  print '<td class="nobordernopadding" nowrap="nowrap" align="right">'.vatrate($objp->marge_tx).'% </td>';
+					print '<td class="nobordernopadding" nowrap="nowrap" align="right">'.vatrate($objp->marge_tx).'% </td>';
 					print '</tr></table>';
 					print '</td>';
 				}
-				
+
 				// VAT Rate
 				print '<td align="right" nowrap="nowrap">'.vatrate($objp->tva_tx,'%',$objp->info_bits).'</td>';
-				
+
 				// U.P HT
 				print '<td align="right" nowrap="nowrap">'.price($objp->subprice)."</td>\n";
 
@@ -1279,7 +1287,7 @@ if ($_GET['propalid'] > 0)
 				}
 				else print '&nbsp;';
 				print '</td>';
-				
+
 				// Remise %
 				if ($objp->remise_percent > 0 && $objp->special_code != 3)
 				{
@@ -1289,7 +1297,7 @@ if ($_GET['propalid'] > 0)
 				{
 					print '<td>&nbsp;</td>';
 				}
-				
+
 				// Montant total HT
 				if ($objp->special_code == 3)
 				{
@@ -1395,7 +1403,7 @@ if ($_GET['propalid'] > 0)
 					}
 				}
 				print '</td>';
-				if ($conf->global->PRODUIT_USE_MARKUP) 
+				if ($conf->global->PRODUIT_USE_MARKUP)
 				{
 					print '<td align="right">'.vatrate($objp->marge_tx).'%</td>';
 				}
@@ -1421,17 +1429,17 @@ if ($_GET['propalid'] > 0)
 				print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 				print '</tr>' . "\n";
 				/*
-				if ($conf->service->enabled)
-				{
-				print "<tr $bc[$var]>";
-				print '<td colspan="5">Si produit de type service a duree limitee: Du ';
-				print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
-				print ' au ';
-				print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
-				print '</td>';
-				print '</tr>' . "\n";
-				}
-				*/
+				 if ($conf->service->enabled)
+				 {
+				 print "<tr $bc[$var]>";
+				 print '<td colspan="5">Si produit de type service a duree limitee: Du ';
+				 print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
+				 print ' au ';
+				 print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
+				 print '</td>';
+				 print '</tr>' . "\n";
+				 }
+				 */
 				print "</form>\n";
 			}
 
@@ -1446,8 +1454,8 @@ if ($_GET['propalid'] > 0)
 	}
 
 	/*
-	* Ajouter une ligne
-	*/
+	 * Ajouter une ligne
+	 */
 	if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] <> 'editline')
 	{
 		if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
@@ -1513,20 +1521,20 @@ if ($_GET['propalid'] > 0)
 				$colspan = 'colspan="3"';
 			}
 			print '<tr class="liste_titre">';
-		  print '<td '.$colspan.'>';
-		  if ($conf->service->enabled)
-		  {
-		  	print $langs->trans('RecordedProductsAndServices');
-		  }
-		  else
-		  {
-		  	print $langs->trans('RecordedProducts');
-		  }
-		  print '</td>';
-		  print '<td align="right">'.$langs->trans('Qty').'</td>';
-		  print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-		  print '<td colspan="4">&nbsp;</td>';
-		  print '</tr>';
+			print '<td '.$colspan.'>';
+			if ($conf->service->enabled)
+			{
+				print $langs->trans('RecordedProductsAndServices');
+			}
+			else
+			{
+				print $langs->trans('RecordedProducts');
+			}
+			print '</td>';
+			print '<td align="right">'.$langs->trans('Qty').'</td>';
+			print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
+			print '<td colspan="4">&nbsp;</td>';
+			print '</tr>';
 			print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
 			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 			print '<input type="hidden" name="action" value="addligne">';
@@ -1545,7 +1553,7 @@ if ($_GET['propalid'] > 0)
 				$html->select_produits('','idprod','',$conf->produit->limit_size);
 			}
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
-			
+				
 			// editeur wysiwyg
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 			{
@@ -1575,8 +1583,8 @@ if ($_GET['propalid'] > 0)
 	print "\n";
 
 	/*
-	* Formulaire cloture (signe ou non)
-	*/
+	 * Formulaire cloture (signe ou non)
+	 */
 	$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
 	$form_close.= '<table class="border" width="100%">';
 	$form_close.= '<tr><td width="150" align="left">'.$langs->trans('Note').'</td><td align="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
@@ -1602,7 +1610,7 @@ if ($_GET['propalid'] > 0)
 	}
 	$form_close.= '</td>';
 	$form_close.= '</tr></table></form>';
-	
+
 	if ($_GET['action'] == 'statut')
 	{
 		print $form_close;
@@ -1610,15 +1618,15 @@ if ($_GET['propalid'] > 0)
 
 
 	/*
-	* Boutons Actions
-	*/
+	 * Boutons Actions
+	 */
 	if ($_GET['action'] != 'presend')
 	{
 		print '<div class="tabsAction">';
-	
+
 		if ($_GET['action'] != 'statut' && $_GET['action'] <> 'editline')
 		{
-	
+
 			// Valid
 			if ($propal->statut == 0 && $propal->total_ttc > 0 && $user->rights->propale->valider)
 			{
@@ -1634,13 +1642,13 @@ if ($_GET['propalid'] > 0)
 				}
 				print '>'.$langs->trans('Validate').'</a>';
 			}
-	
+
 			// Edit
 			if ($propal->statut == 1 && $user->rights->propale->creer)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
 			}
-	
+
 			// Send
 			if ($propal->statut == 1 && $user->rights->propale->envoyer)
 			{
@@ -1651,14 +1659,14 @@ if ($_GET['propalid'] > 0)
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
 				}
 			}
-	
+
 			// Close
 			if ($propal->statut == 1 && $user->rights->propale->cloturer)
 			{
 				print '<div id="confirm_close" style="display:none">';
 				print $form_close."\n";
 				print '</div>'."\n";
-				
+
 				print '<a class="butAction" ';
 				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 				{
@@ -1670,7 +1678,7 @@ if ($_GET['propalid'] > 0)
 				}
 				print '>'.$langs->trans('Close').'</a>';
 			}
-	
+
 			// Delete
 			if ($propal->statut == 0 && $user->rights->propale->supprimer)
 			{
@@ -1686,9 +1694,9 @@ if ($_GET['propalid'] > 0)
 				}
 				print '>'.$langs->trans('Delete').'</a>';
 			}
-	
+
 		}
-	
+
 		print '</div>';
 		print "<br>\n";
 	}
@@ -1697,25 +1705,25 @@ if ($_GET['propalid'] > 0)
 	{
 		print '<table width="100%"><tr><td width="50%" valign="top">';
 		print '<a name="builddoc"></a>'; // ancre
-	
-	
+
+
 		/*
-		* Documents generes
-		*/
+		 * Documents generes
+		 */
 		$filename=sanitize_string($propal->ref);
 		$filedir=$conf->propal->dir_output . "/" . sanitize_string($propal->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?propalid=".$propal->id;
 		$genallowed=$user->rights->propale->creer;
 		$delallowed=$user->rights->propale->supprimer;
-	
+
 		$var=true;
-	
+
 		$somethingshown=$formfile->show_documents('propal',$filename,$filedir,$urlsource,$genallowed,$delallowed,$propal->modelpdf);
-	
-	
+
+
 		/*
-		* Commandes rattachees
-		*/
+		 * Commandes rattachees
+		 */
 		if($conf->commande->enabled)
 		{
 			$propal->loadOrders();
@@ -1745,25 +1753,25 @@ if ($_GET['propalid'] > 0)
 				print '</table>';
 			}
 		}
-	
+
 		print '</td><td valign="top" width="50%">';
-	
+
 		// List of actions on element
 		include_once(DOL_DOCUMENT_ROOT.'/html.formactions.class.php');
 		$formactions=new FormActions($db);
 		$somethingshown=$formactions->showactions($propal,'propal',$socid);
-	
-	    print '</td></tr></table>';
+
+		print '</td></tr></table>';
 	}
-	
+
 
 	/*
-	* Action presend
-	*
-	*/
+	 * Action presend
+	 *
+	 */
 	if ($_GET['action'] == 'presend')
 	{
-    	$ref = sanitize_string($propal->ref);
+		$ref = sanitize_string($propal->ref);
 		$file = $conf->propal->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 		print '<br>';
@@ -1804,7 +1812,7 @@ if ($_GET['propalid'] > 0)
 			$formmail->clear_attached_files();
 			$formmail->add_attached_files($file,$propal->ref.'.pdf','application/pdf');
 		}
-				
+
 		$formmail->show_form();
 
 		print '<br>';
@@ -1813,187 +1821,187 @@ if ($_GET['propalid'] > 0)
 }
 else
 {
-  /****************************************************************************
-   *                                                                          *
-   *                         Mode Liste des propales                          *
-   *                                                                          *
-   ****************************************************************************/
-  
-  $sortorder=$_GET['sortorder'];
-  $sortfield=$_GET['sortfield'];
-  $page=$_GET['page'];
-  $viewstatut=$_GET['viewstatut'];
+	/****************************************************************************
+	 *                                                                          *
+	 *                         Mode Liste des propales                          *
+	 *                                                                          *
+	 ****************************************************************************/
 
-  if (! $sortfield) $sortfield='p.datep';
-  if (! $sortorder) $sortorder='DESC';
-  $limit = $conf->liste_limit;
-  $offset = $limit * $page ;
-  $pageprev = $page - 1;
-  $pagenext = $page + 1;
+	$sortorder=$_GET['sortorder'];
+	$sortfield=$_GET['sortfield'];
+	$page=$_GET['page'];
+	$viewstatut=$_GET['viewstatut'];
 
-  $sql = 'SELECT s.nom, s.rowid, s.client, ';
-  $sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
-  if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-  $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
-  if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-  if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
-  $sql.= ' WHERE p.fk_soc = s.rowid';
+	if (! $sortfield) $sortfield='p.datep';
+	if (! $sortorder) $sortorder='DESC';
+	$limit = $conf->liste_limit;
+	$offset = $limit * $page ;
+	$pageprev = $page - 1;
+	$pagenext = $page + 1;
 
-  if (!$user->rights->societe->client->voir && !$socid) //restriction
-    {
-	    $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    }
-  if (!empty($_GET['search_ref']))
-    {
-      $sql .= " AND p.ref LIKE '%".addslashes($_GET['search_ref'])."%'";
-    }
-  if (!empty($_GET['search_societe']))
-    {
-      $sql .= " AND s.nom LIKE '%".addslashes($_GET['search_societe'])."%'";
-    }
-  if (!empty($_GET['search_montant_ht']))
-    {
-      $sql .= " AND p.total_ht='".addslashes($_GET['search_montant_ht'])."'";
-    }
-  if ($sall) $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%' OR pd.description like '%".addslashes($sall)."%')";
-  if ($socid) $sql .= ' AND s.rowid = '.$socid;
-  if ($_GET['viewstatut'] <> '')
-    {
-      $sql .= ' AND p.fk_statut in ('.$_GET['viewstatut'].')';
-    }
-  if ($month > 0)
-    {
-      $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
-    }
-  if ($year > 0)
-    {
-      $sql .= " AND date_format(p.datep, '%Y') = $year";
-    }
-  if (strlen($_POST['sf_ref']) > 0)
-    {
-      $sql .= " AND p.ref like '%".addslashes($_POST["sf_ref"]) . "%'";
-    }
+	$sql = 'SELECT s.nom, s.rowid, s.client, ';
+	$sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
+	$sql.= ' WHERE p.fk_soc = s.rowid';
 
-  $sql .= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
-  $sql .= $db->plimit($limit + 1,$offset);
-  $result=$db->query($sql);
+	if (!$user->rights->societe->client->voir && !$socid) //restriction
+	{
+		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	}
+	if (!empty($_GET['search_ref']))
+	{
+		$sql .= " AND p.ref LIKE '%".addslashes($_GET['search_ref'])."%'";
+	}
+	if (!empty($_GET['search_societe']))
+	{
+		$sql .= " AND s.nom LIKE '%".addslashes($_GET['search_societe'])."%'";
+	}
+	if (!empty($_GET['search_montant_ht']))
+	{
+		$sql .= " AND p.total_ht='".addslashes($_GET['search_montant_ht'])."'";
+	}
+	if ($sall) $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%' OR pd.description like '%".addslashes($sall)."%')";
+	if ($socid) $sql .= ' AND s.rowid = '.$socid;
+	if ($_GET['viewstatut'] <> '')
+	{
+		$sql .= ' AND p.fk_statut in ('.$_GET['viewstatut'].')';
+	}
+	if ($month > 0)
+	{
+		$sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+	}
+	if ($year > 0)
+	{
+		$sql .= " AND date_format(p.datep, '%Y') = $year";
+	}
+	if (strlen($_POST['sf_ref']) > 0)
+	{
+		$sql .= " AND p.ref like '%".addslashes($_POST["sf_ref"]) . "%'";
+	}
 
-  if ($result)
-    {
-      $num = $db->num_rows($result);
-      $propalstatic=new Propal($db);
-      print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
-      $i = 0;
-      print '<table class="liste" width="100%">';
-      print '<tr class="liste_titre">';
-      print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.total_ht','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
-      print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield,$sortorder);
-      print "</tr>\n";
-      // Lignes des champs de filtre
-      print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+	$sql .= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
+	$sql .= $db->plimit($limit + 1,$offset);
+	$result=$db->query($sql);
 
-      print '<tr class="liste_titre">';
-      print '<td class="liste_titre" valign="right">';
-      print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
-      print '</td>';
-      print '<td class="liste_titre" align="left">';
-      print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
-      print '</td>';
-      print '<td class="liste_titre" colspan="2">&nbsp;</td>';
-      print '<td class="liste_titre" align="right">';
-      print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
-      print '</td>';
-      print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-      print '</td>';
-      print "</tr>\n";
-      print '</form>';
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		$propalstatic=new Propal($db);
+		print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
+		$i = 0;
+		print '<table class="liste" width="100%">';
+		print '<tr class="liste_titre">';
+		print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.total_ht','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield,$sortorder);
+		print "</tr>\n";
+		// Lignes des champs de filtre
+		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
-      $var=true;
+		print '<tr class="liste_titre">';
+		print '<td class="liste_titre" valign="right">';
+		print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
+		print '</td>';
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
+		print '</td>';
+		print '<td class="liste_titre" colspan="2">&nbsp;</td>';
+		print '<td class="liste_titre" align="right">';
+		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
+		print '</td>';
+		print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+		print '</td>';
+		print "</tr>\n";
+		print '</form>';
 
-      while ($i < min($num,$limit))
-        {
-            $objp = $db->fetch_object($result);
-            $now = time();
-            $var=!$var;
-            print '<tr '.$bc[$var].'>';
-            print '<td nowrap="nowrap">';
-            
-            $propalstatic->id=$objp->propalid;
-            $propalstatic->ref=$objp->ref;
-                
-            print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-            print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
-            print $propalstatic->getNomUrl(1);
-            print '</td>';
-      
-            print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-            if ($objp->fk_statut == 1 && $objp->dfv < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-            print '</td>';
-                
-            print '<td width="16" align="right" class="nobordernopadding">';
-                
-            $filename=sanitize_string($objp->ref);
-            $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
-            $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
-            $formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
-                
-            print '</td></tr></table>';
+		$var=true;
 
-            if ($objp->client == 1)
-            {
-                $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
-            }
-            else
-            {
-                $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->rowid;
-            }
+		while ($i < min($num,$limit))
+		{
+			$objp = $db->fetch_object($result);
+			$now = time();
+			$var=!$var;
+			print '<tr '.$bc[$var].'>';
+			print '<td nowrap="nowrap">';
+
+			$propalstatic->id=$objp->propalid;
+			$propalstatic->ref=$objp->ref;
+
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+			print $propalstatic->getNomUrl(1);
+			print '</td>';
+
+			print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+			if ($objp->fk_statut == 1 && $objp->dfv < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+			print '</td>';
+
+			print '<td width="16" align="right" class="nobordernopadding">';
+
+			$filename=sanitize_string($objp->ref);
+			$filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
+			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
+			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+
+			print '</td></tr></table>';
+
+			if ($objp->client == 1)
+			{
+				$url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
+			}
+			else
+			{
+				$url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->rowid;
+			}
 
 			// Societe
-            print '<td><a href="'.$url.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+			print '<td><a href="'.$url.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 
-            // Date propale
-            print '<td align="center">';
-            $y = strftime('%Y',$objp->dp);
-            $m = strftime('%m',$objp->dp);
+			// Date propale
+			print '<td align="center">';
+			$y = strftime('%Y',$objp->dp);
+			$m = strftime('%m',$objp->dp);
 
-            print strftime('%d',$objp->dp)."\n";
-            print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
-            print dolibarr_print_date($objp->dp,'%b')."</a>\n";
-            print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
-            print strftime('%Y',$objp->dp)."</a></td>\n";
+			print strftime('%d',$objp->dp)."\n";
+			print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
+			print dolibarr_print_date($objp->dp,'%b')."</a>\n";
+			print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
+			print strftime('%Y',$objp->dp)."</a></td>\n";
 
-            // Date fin validite
-            if ($objp->dfv)
-            {
-                print '<td align="center">'.dolibarr_print_date($objp->dfv);
-                print '</td>';
-            }
-            else
-            {
-                print '<td>&nbsp;</td>';
-            }
+			// Date fin validite
+			if ($objp->dfv)
+			{
+				print '<td align="center">'.dolibarr_print_date($objp->dfv);
+				print '</td>';
+			}
+			else
+			{
+				print '<td>&nbsp;</td>';
+			}
 
-            print '<td align="right">'.price($objp->total_ht)."</td>\n";
-            $propal=New Propal($db);
-            print '<td align="right">'.$propal->LibStatut($objp->fk_statut,5)."</td>\n";
-            print "</tr>\n";
+			print '<td align="right">'.price($objp->total_ht)."</td>\n";
+			$propal=New Propal($db);
+			print '<td align="right">'.$propal->LibStatut($objp->fk_statut,5)."</td>\n";
+			print "</tr>\n";
 
-            $total = $total + $objp->total_ht;
-            $subtotal = $subtotal + $objp->total_ht;
+			$total = $total + $objp->total_ht;
+			$subtotal = $subtotal + $objp->total_ht;
 
-            $i++;
-        }
-      print '</table>';
-      $db->free($result);
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
+			$i++;
+		}
+		print '</table>';
+		$db->free($result);
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
 }
 $db->close();
 
