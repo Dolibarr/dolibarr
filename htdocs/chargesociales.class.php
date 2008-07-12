@@ -363,10 +363,13 @@ class PaiementCharge
 
 		if ($total > 0)
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_user_creat)";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,"; 
+			$sql.= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
 			$sql.= " VALUES ($this->chid, now(), ";
 			$sql.= $this->db->idate($this->datepaye).", ";
-			$sql.= price2num($total).", $this->paiementtype, '$this->num_paiement', '".addslashes($this->note)."', $user->id)";
+			$sql.= price2num($total);
+			$sql.= ", ".$this->paiementtype.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.",";
+			$sql.= "0)";
 
 			dolibarr_syslog("PaiementCharge::create sql=".$sql);
 			$resql=$this->db->query($sql);
@@ -389,7 +392,7 @@ class PaiementCharge
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("PaiementCharges::create ".$this->error);
+			dolibarr_syslog("PaiementCharges::create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -403,6 +406,8 @@ class PaiementCharge
     function update_fk_bank($id_bank)
 	{
         $sql = "UPDATE llx_paiementcharge set fk_bank = ".$id_bank." where rowid = ".$this->id;
+		
+        dolibarr_syslog("PaiementCharge::update_fk_bank sql=".$sql);
         $result = $this->db->query($sql);
         if ($result) 
         {	    
@@ -410,8 +415,9 @@ class PaiementCharge
         }
         else
         {
-            $this->error=$this->db->error()." sql=".$sql;
-        	return 0;
+            $this->error=$this->db->error();
+			dolibarr_syslog("PaiementCharges::update_fk_bank ".$this->error, LOG_ERR);
+            return 0;
         }
     }
 }

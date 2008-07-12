@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,12 +50,25 @@ if ($_POST["action"] == 'add_paiement')
         Header("Location: $loc");
 		exit;
 	}
-	
-    if ($_POST["paiementtype"] > 0)
-    {
-        $datepaye = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
+    $datepaye = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	
+    if (! $_POST["paiementtype"] > 0)
+    {
+        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+        $error++;
+    }
+	if ($datepaye == '')
+    {
+        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Date"));
+        $error++;
+    }
+	
+    if (! $error)
+    {
         $paiement_id = 0;
+
+        // Read possible payments
         $amounts = array();
         foreach ($_POST as $key => $value)
         {
@@ -125,10 +138,7 @@ if ($_POST["action"] == 'add_paiement')
             $mesg = "Echec de la création du paiement: paiement_id=$paiement_id ".$db->error();
         }
     }
-    else
-    {
-        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
-    }
+    
 	$_GET["action"]='create';
 }
 
@@ -171,10 +181,10 @@ if ($_GET["action"] == 'create')
 
       print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">';
       print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
-	  print '<tr><td>'.$langs->trans("Type")."</td><td colspan=\"2\">$charge->type_libelle</td></tr>\n";
-	  print '<tr><td>'.$langs->trans("Period")."</td><td colspan=\"2\">$charge->periode</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("Type")."</td><td colspan=\"2\">".$charge->type_libelle."</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("Period")."</td><td colspan=\"2\">".dolibarr_print_date($charge->periode,'day')."</td></tr>\n";
 	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$charge->lib."</td></tr>\n";
-	  print '<tr><td>'.$langs->trans("DateDue")."</td><td colspan=\"2\">".dolibarr_print_date($charge->date_ech)."</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("DateDue")."</td><td colspan=\"2\">".dolibarr_print_date($charge->date_ech,'day')."</td></tr>\n";
 
       print '<tr><td>'.$langs->trans("AmountTTC")."</td><td colspan=\"2\"><b>".price($charge->amount).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 	  
@@ -196,7 +206,7 @@ if ($_GET["action"] == 'create')
 	  print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
 	  
 	  print '<tr><td>'.$langs->trans("Date").'</td><td>';
-	  $html->select_date('','','','','',"add_paiement");
+	  $html->select_date(-1,'','','','',"add_paiement");
 	  print "</td>";
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  
