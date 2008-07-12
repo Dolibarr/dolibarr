@@ -27,7 +27,7 @@ create table llx_deplacement
   fk_user	        integer NOT NULL,
   fk_user_author  integer,
   type            varchar(12) NOT NULL,
-  km              smallint,
+  km              real,
   fk_soc          integer,
   note            text
 )type=innodb;

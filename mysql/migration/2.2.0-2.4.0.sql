@@ -324,6 +324,7 @@ create table llx_c_type_fees
 
 
 alter table llx_deplacement modify type varchar(12) NOT NULL;
+alter table llx_deplacement modify km real;
 
 insert into llx_c_type_fees (code,libelle,active) values ('TF_OTHER',    'Other',  1);
 insert into llx_c_type_fees (code,libelle,active) values ('TF_TRIP',     'Trip',   1);
