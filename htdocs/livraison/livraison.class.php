@@ -71,9 +71,9 @@ class Livraison extends CommonObject
     }
 
 	/**
-	*    \brief      Créé bon de livraison en base
-	*    \param      user        Objet du user qui crée
-	*    \return     int         <0 si erreur, id livraison créée si ok
+	*    \brief      Crï¿½ï¿½ bon de livraison en base
+	*    \param      user        Objet du user qui crï¿½e
+	*    \return     int         <0 si erreur, id livraison crï¿½ï¿½e si ok
 	*/
 	function create($user)
 	{
@@ -308,7 +308,7 @@ class Livraison extends CommonObject
 	}
 	
 	/**
-	*        \brief      Valide l'expedition, et met a jour le stock si stock gér
+	*        \brief      Valide l'expedition, et met a jour le stock si stock gï¿½r
 	*        \param      user        Objet de l'utilisateur qui valide
 	*        \return     int
 	*/
@@ -338,15 +338,15 @@ class Livraison extends CommonObject
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 	
-					// on vérifie si le bon de livraison est en numérotation provisoire
+					// on vï¿½rifie si le bon de livraison est en numï¿½rotation provisoire
 					$livref = substr($this->ref, 1, 4);
 					if ($livref == 'PROV')
 					{
 						$this->ref = $objMod->livraison_get_num($soc,$this);
 					}
 	
-					// Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
-          // de décrémenter 2 fois le stock.
+					// Tester si non dejï¿½ au statut validï¿½. Si oui, on arrete afin d'ï¿½viter
+          // de dï¿½crï¿½menter 2 fois le stock.
           $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."livraison where ref='".$this->ref."' AND fk_statut <> 0";
           $resql=$this->db->query($sql);
           if ($resql)
@@ -364,7 +364,7 @@ class Livraison extends CommonObject
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
-						// Si module stock géré et que expedition faite depuis un entrepot
+						// Si module stock gï¿½rï¿½ et que expedition faite depuis un entrepot
 						if (!$conf->expedition->enabled && $conf->stock->enabled && $this->entrepot_id && $conf->global->STOCK_CALCULATE_ON_SHIPMENT == 1)
 						{
 	
@@ -411,7 +411,7 @@ class Livraison extends CommonObject
 							}
 						}
 	
-						// On efface le répertoire de pdf provisoire
+						// On efface le rï¿½pertoire de pdf provisoire
 						$livraisonref = sanitize_string($this->ref);
 						if ($conf->expedition->dir_output)
 						{
@@ -459,9 +459,9 @@ class Livraison extends CommonObject
 		return 1;
 	}
 	
-	/**     \brief      Créé le bon de livraison depuis une expédition existante
-	\param      user            Utilisateur qui crée
-	\param      sending_id      Id de l'expédition qui sert de modèle
+	/**     \brief      Crï¿½ï¿½ le bon de livraison depuis une expï¿½dition existante
+	\param      user            Utilisateur qui crï¿½e
+	\param      sending_id      Id de l'expï¿½dition qui sert de modï¿½le
 	*/
 	function create_from_sending($user, $sending_id)
 	{
@@ -550,7 +550,7 @@ class Livraison extends CommonObject
 			{
 				$this->db->commit();
 	
-				// On efface le répertoire de pdf provisoire
+				// On efface le rï¿½pertoire de pdf provisoire
 				$livref = sanitize_string($this->ref);
 				if ($conf->livraison->dir_output)
 				{
@@ -591,7 +591,7 @@ class Livraison extends CommonObject
 	
 
 	/*
-	* Lit le document associé
+	* Lit le document associï¿½
 	*
 	*/
 	function fetch_object()
@@ -663,8 +663,8 @@ class Livraison extends CommonObject
 
 
     /**
-     *    \brief      Retourne le libellé du statut d'une expedition
-     *    \return     string      Libellé
+     *    \brief      Retourne le libellï¿½ du statut d'une expedition
+     *    \return     string      Libellï¿½
      */
     function getLibStatut($mode=0)
     {
@@ -672,10 +672,10 @@ class Livraison extends CommonObject
     }
     
 	/**
-	 *		\brief      Renvoi le libellé d'un statut donné
+	 *		\brief      Renvoi le libellï¿½ d'un statut donnï¿½
 	 *    	\param      statut      Id statut
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string		Libellé
+	 *    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string		Libellï¿½
 	 */
     function LibStatut($statut,$mode)
     {
@@ -766,8 +766,8 @@ class LivraisonLigne
 	
 	// From llx_expeditiondet
 	var $qty;
-	var $qty_commande;
-	var $qty_livre;
+	var $qty_asked;
+	var $qty_shipped;
 	var $price;
 	var $fk_product;
 	var $commande_ligne_id;

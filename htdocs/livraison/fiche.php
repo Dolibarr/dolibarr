@@ -42,7 +42,7 @@ if (!$user->rights->expedition->livraison->lire)
   accessforbidden();
 
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -70,8 +70,8 @@ if ($_POST["action"] == 'add')
     	$expedition->entrepot_id     = $_POST["entrepot_id"];
     }
     
-    // On boucle sur chaque ligne de commande pour compléter objet livraison
-    // avec qté à livrer
+    // On boucle sur chaque ligne de commande pour complï¿½ter objet livraison
+    // avec qtï¿½ ï¿½ livrer
     $commande = new Commande($db);
     $commande->fetch($livraison->commande_id);
     $commande->fetch_lines();
@@ -129,7 +129,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 }
 
 /*
- * Générer ou regénérer le PDF
+ * Gï¿½nï¿½rer ou regï¿½nï¿½rer le PDF
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
@@ -246,7 +246,7 @@ if ($_GET["action"] == 'create')
       
       $lignes = $commande->fetch_lines(1);
       
-      /* Lecture des livraisons déjà effectuées */
+      /* Lecture des livraisons dï¿½jï¿½ effectuï¿½es */
       $commande->livraison_array();
       
       $num = sizeof($commande->lignes);
@@ -256,9 +256,9 @@ if ($_GET["action"] == 'create')
 	{
 	  print '<tr class="liste_titre">';
 	  print '<td width="54%">'.$langs->trans("Description").'</td>';
-	  print '<td align="center">Quan. commandée</td>';
-	  print '<td align="center">Quan. livrée</td>';
-	  print '<td align="center">Quan. à livrer</td>';
+	  print '<td align="center">Quan. commandï¿½e</td>';
+	  print '<td align="center">Quan. livrï¿½e</td>';
+	  print '<td align="center">Quan. ï¿½ livrer</td>';
 	  if ($conf->stock->enabled)
 	    {
 	      print '<td width="12%" align="center">'.$langs->trans("Stock").'</td>';
@@ -301,9 +301,9 @@ if ($_GET["action"] == 'create')
         if ($conf->stock->enabled)
         {
             $stock = $product->stock_entrepot[$_GET["entrepot_id"]];
-            $stock+=0;  // Convertit en numérique
+            $stock+=0;  // Convertit en numï¿½rique
             
-            // Quantité à livrer
+            // Quantitï¿½ ï¿½ livrer
             print '<td align="center">';
             print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
             print '<input name="qtyl'.$i.'" type="text" size="6" value="'.min($quantite_a_livrer, $stock).'">';
@@ -321,7 +321,7 @@ if ($_GET["action"] == 'create')
         }
         else
         {
-            // Quantité à livrer
+            // Quantitï¿½ ï¿½ livrer
             print '<td align="center">';
             print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
             print '<input name="qtyl'.$i.'" type="text" size="6" value="'.$quantite_a_livrer.'">';
@@ -392,7 +392,7 @@ else
       if ($_GET["action"] == 'delete')
       {
       	$expedition_id = $_GET["expid"];
-      	$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id.'&amp;expid='.$expedition_id,'Supprimer le bon de livraison','Etes-vous sûr de vouloir supprimer ce bon de livraison ?','confirm_delete');
+      	$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id.'&amp;expid='.$expedition_id,'Supprimer le bon de livraison','Etes-vous sï¿½r de vouloir supprimer ce bon de livraison ?','confirm_delete');
       	print '<br>';
       }
       
@@ -402,7 +402,7 @@ else
        */
       if ($_GET["action"] == 'valid')
       {
-      	$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id,'Valider le bon de livraison','Etes-vous sûr de vouloir valider ce bon de livraison ?','confirm_valid');
+      	$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id,'Valider le bon de livraison','Etes-vous sï¿½r de vouloir valider ce bon de livraison ?','confirm_valid');
       	print '<br>';
       }
       
@@ -548,7 +548,7 @@ else
 	    print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 	    
 	    /*
-       * Documents générés
+       * Documents gï¿½nï¿½rï¿½s
        */
             
       $livraisonref = sanitize_string($livraison->ref);
@@ -561,9 +561,9 @@ else
       $somethingshown=$formfile->show_documents('livraison',$livraisonref,$filedir,$urlsource,$genallowed,$delallowed,$livraison->modelpdf);
     
       /*
-       * Déjà livre
+       * Dï¿½jï¿½ livre
        */
-      $sql = "SELECT ld.fk_product, ld.description, ld.qty as qty_livre, ld.fk_livraison as livraison_id";
+      $sql = "SELECT ld.fk_product, ld.description, ld.qty as qty_shipped, ld.fk_livraison as livraison_id";
       $sql.= ", l.ref, ".$db->pdate("l.date_livraison")." as date_livraison";
       $sql.= ", cd.rowid, cd.qty as qty_commande";
       $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
@@ -614,7 +614,7 @@ else
             {
             	print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
             }
-            print '<td align="center">'.$objp->qty_livre.'</td>';
+            print '<td align="center">'.$objp->qty_shipped.'</td>';
             print '<td align="center">'.dolibarr_print_date($objp->date_livraison,"dayhour").'</td>';
             print '</tr>';
             $i++;
@@ -631,20 +631,20 @@ else
       
       print '</td><td valign="top" width="50%">';
 
-			// Rien à droite
+			// Rien ï¿½ droite
 			
 			print '</td></tr></table>';
 		}
 		else
 		{
-			/* Expedition non trouvée */
-			print "Expedition inexistante ou accés refusé";
+			/* Expedition non trouvï¿½e */
+			print "Expedition inexistante ou accï¿½s refusï¿½";
 		}
 	}
 	else
   {
-  	/* Expedition non trouvée */
-  	print "Expedition inexistante ou accés refusé";
+  	/* Expedition non trouvï¿½e */
+  	print "Expedition inexistante ou accï¿½s refusï¿½";
   }
 }
 

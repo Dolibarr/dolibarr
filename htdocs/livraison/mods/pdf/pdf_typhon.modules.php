@@ -22,7 +22,7 @@
 /**
  \file       htdocs/livraison/mods/pdf/pdf_typhon.modules.php
  \ingroup    livraison
- \brief      Fichier de la classe permettant de générer les bons de livraison au modèle Typhon
+ \brief      Fichier de la classe permettant de gï¿½nï¿½rer les bons de livraison au modï¿½le Typho
  \author	    Laurent Destailleur
  \version    $Id$
  */
@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  \class      pdf_typhon
- \brief      Classe permettant de générer les bons de livraison au modèle Typhon
+ \brief      Classe permettant de gï¿½nï¿½rer les bons de livraison au modï¿½le Typho
  */
 
 class pdf_typhon extends ModelePDFDeliveryOrder
@@ -42,7 +42,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 	/**
 	 \brief      Constructeur
-	 \param	    db		Handler accès base de donnée
+	 \param	    db		Handler accï¿½s base de donnï¿½e
 	 */
 	function pdf_typhon($db)
 	{
@@ -50,7 +50,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		$this->db = $db;
 		$this->name = "typhon";
-		$this->description = "Modèle de bon de livraison complet (logo...)";
+		$this->description = "Modï¿½le de bon de livraison complet (logo...)";
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -64,13 +64,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
+		$this->option_modereg = 1;                 // Gere choix mode rï¿½glement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
 		$this->franchise=1;
 
 		// Recupere code pays de l'emmetteur
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 
 		$this->tva=array();
 
@@ -81,14 +81,14 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->posxqty=151;
 		$this->posxdiscount=162;
 		$this->postotalht=177;
-		 
+			
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
 	}
 
 	/**
-	 *	\brief      Renvoi dernière erreur
-	 *	\return     string      Dernière erreur
+	 *	\brief      Renvoi derniï¿½re erreur
+	 *	\return     string      Derniï¿½re erreur
 	 */
 	function pdferror()
 	{
@@ -96,10 +96,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 	/**
-		\brief      	Fonction générant le bon de livraison sur le disque
-	 	\param	    	delivery		Object livraison à générer
+		\brief      	Fonction gï¿½nï¿½rant le bon de livraison sur le disque
+		\param	    	delivery		Object livraison ï¿½ gï¿½nï¿½rer
 		\param			outputlangs		Output language
-	 	\return	    	int         	1 if OK, <=0 if KO
+		\return	    	int         	1 if OK, <=0 if KO
 	 */
 	function write_file($delivery,$outputlangs='')
 	{
@@ -149,7 +149,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -194,7 +194,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
-					 
+
 					// Description de la ligne produit
 					$libelleproduitservice=dol_htmlentitiesbr($delivery->lignes[$i]->label,1);
 					if ($delivery->lignes[$i]->description && $delivery->lignes[$i]->description!=$delivery->lignes[$i]->label)
@@ -202,7 +202,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						if ($libelleproduitservice) $libelleproduitservice.="<br>";
 						$libelleproduitservice.=dol_htmlentitiesbr($delivery->lignes[$i]->description,1);
 					}
-					// Si ligne associée à un code produit
+					// Si ligne associï¿½e ï¿½ un code produit
 					if ($delivery->lignes[$i]->fk_product)
 					{
 						$prodser = new Product($this->db);
@@ -212,7 +212,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 							$prefix_prodserv = "";
 							if($prodser->isservice())
 							{
-								// Un service peur aussi être livré
+								// Un service peur aussi ï¿½tre livrï¿½
 								$prefix_prodserv = $langs->transnoentities("Service")." ";
 							}
 							else
@@ -224,15 +224,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					}
 					if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
 					{
-						// Affichage durée si il y en a une
+						// Affichage duree si il y en a une
 						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$langs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")",1);
 					}
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gï¿½rer multi-page
 
 					$pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par dï¿½faut
 
 					$nexY = $pdf->GetY();
 					/*
@@ -244,9 +244,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					 $pdf->SetXY ($this->posxup, $curY);
 					 $pdf->MultiCell(18, 4, price($delivery->lignes[$i]->subprice), 0, 'R', 0);
 					 */
-					// Quantité
+					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell(10, 4, $delivery->lignes[$i]->qty_livre, 0, 'R');
+					$pdf->MultiCell(10, 4, $delivery->lignes[$i]->qty_shipped, 0, 'R');
 					/*
 					 // Remise sur ligne
 					 $pdf->SetXY ($this->posxdiscount, $curY);
@@ -307,7 +307,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				 }
 				 */
 				/*
-				 * Mode de règlement
+				 * Mode de rï¿½glement
 				 */
 				/*
 				 if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
@@ -321,7 +321,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				 }
 				 */
 				/*
-				 * Propose mode règlement par CHQ
+				 * Propose mode rï¿½glement par CHQ
 				 */
 				/*
 				 if (defined("FACTURE_CHQ_NUMBER"))
@@ -333,7 +333,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				 $pdf->SetXY ($this->marge_gauche, 227);
 				 $pdf->SetFont('Arial','B',8);
-				 $pdf->MultiCell(90, 3, "Règlement par chèque à l'ordre de ".$account->proprio." envoyé à:",0,'L',0);
+				 $pdf->MultiCell(90, 3, "Rï¿½glement par chï¿½que ï¿½ l'ordre de ".$account->proprio." envoyï¿½ ï¿½:",0,'L',0);
 				 $pdf->SetXY ($this->marge_gauche, 231);
 				 $pdf->SetFont('Arial','',8);
 				 $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
@@ -342,7 +342,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				 */
 
 				/*
-				 * Propose mode règlement par RIB
+				 * Propose mode rï¿½glement par RIB
 				 */
 				/*
 				 if (defined("FACTURE_RIB_NUMBER"))
@@ -357,7 +357,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				 $cury=242;
 				 $pdf->SetXY ($this->marges['g'], $cury);
 				 $pdf->SetFont('Arial','B',8);
-				 $pdf->MultiCell(90, 3, "Règlement par virement sur le compte bancaire suivant:", 0, 'L', 0);
+				 $pdf->MultiCell(90, 3, "Rï¿½glement par virement sur le compte bancaire suivant:", 0, 'L', 0);
 				 $cury+=4;
 				 $pdf->SetFont('Arial','B',6);
 				 $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
@@ -368,10 +368,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				 $pdf->MultiCell(18, 3, "Code guichet", 0, 'C', 0);
 				 $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
 				 $pdf->SetXY ($this->marges['g']+36, $cury);
-				 $pdf->MultiCell(24, 3, "Numéro compte", 0, 'C', 0);
+				 $pdf->MultiCell(24, 3, "Numï¿½ro compte", 0, 'C', 0);
 				 $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
 				 $pdf->SetXY ($this->marges['g']+60, $cury);
-				 $pdf->MultiCell(13, 3, "Clé RIB", 0, 'C', 0);
+				 $pdf->MultiCell(13, 3, "Clï¿½ RIB", 0, 'C', 0);
 				 $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
 
 				 $pdf->SetFont('Arial','',8);
@@ -383,7 +383,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				 $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
 				 $pdf->SetXY ($this->marges['g']+60, $cury+5);
 				 $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
-				  
+
 				 $pdf->SetXY ($this->marges['g'], $cury+12);
 				 $pdf->MultiCell(90, 3, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
 				 $pdf->SetXY ($this->marges['g'], $cury+22);
@@ -396,13 +396,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				 */
 
 				/*
-				 * Conditions de règlements
+				 * Conditions de rï¿½glements
 				 */
-				/* Pour l'instant les conditions de règlement ne sont pas gérées sur les propales */
+				/* Pour l'instant les conditions de rï¿½glement ne sont pas gï¿½rï¿½es sur les propales */
 				/*
 				 $pdf->SetFont('Arial','B',10);
 				 $pdf->SetXY($this->marge_gauche, 217);
-				 $titre = "Conditions de réglement:";
+				 $titre = "Conditions de rï¿½glement:";
 				 $pdf->MultiCell(80, 5, $titre, 0, 'L');
 				 $pdf->SetFont('Arial','',10);
 				 $pdf->SetXY(54, 217);
@@ -433,7 +433,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 	/*
-	 *   \brief      Affiche le total à payer
+	 *   \brief      Affiche le total ï¿½ payer
 	 *   \param      pdf         	Objet PDF
 	 *   \param      prop         	Objet propale
 	 *   \param      deja_regle  	Montant deja regle
@@ -478,7 +478,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->MultiCell($largcol2, $tab2_hl, "-".$delivery->remise_percent."%", 0, 'R', 1);
 
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT après remise", 0, 'L', 1);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT aprï¿½s remise", 0, 'L', 1);
 
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($delivery->total_ht), 0, 'R', 0);
@@ -490,7 +490,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$index = 0;
 		}
 
-		// Affichage des totaux de TVA par taux (conformément à réglementation)
+		// Affichage des totaux de TVA par taux (conformï¿½ment ï¿½ rï¿½glementation)
 		$pdf->SetFillColor(248,248,248);
 		foreach( $this->tva as $tvakey => $tvaval )
 		{
@@ -566,7 +566,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$langs->load("main");
 		$langs->load("bills");
 
-		// Montants exprimés en     (en tab_top - 1)
+		// Montants exprimï¿½s en     (en tab_top - 1
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
 		//$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
@@ -613,7 +613,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 	/*
-	 *   	\brief      Affiche en-tête propale
+	 *   	\brief      Affiche en-tï¿½te propale
 	 *   	\param      pdf     objet PDF
 	 *   	\param      fac     objet propale
 	 *      \param      showadress      0=non, 1=oui
@@ -707,7 +707,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
 			else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
 
-			// Caractéristiques emetteur
+			// Caractï¿½ristiques emetteur
 			$carac_emetteur = '';
 			if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
 			else {
@@ -758,16 +758,16 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(106,4, $delivery->client->nom, 0, 'L');
 
-			// Caractéristiques client
+			// Caractï¿½ristiques client
 			$carac_client=$delivery->client->adresse."\n";
 			$carac_client.=$delivery->client->cp . " " . $delivery->client->ville."\n";
 
-			// Pays si différent de l'émetteur
+			// Pays si diffï¿½rent de l'ï¿½metteur
 			if ($this->emetteur->pays_code != $delivery->client->pays_code)
 			{
 				$carac_client.=$delivery->client->pays."\n";
 			}
-	   
+
 			// Tva intracom
 			if ($delivery->client->tva_intra) $carac_client.="\n".$langs->transnoentities("VATIntraShort").': '.$delivery->client->tva_intra;
 			$pdf->SetFont('Arial','',9);
@@ -788,7 +788,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$langs->load("bills");
 		$langs->load("companies");
 
-		// Premiere ligne d'info réglementaires
+		// Premiere ligne d'info rï¿½glementaires
 		$ligne1="";
 		if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
 		{
@@ -811,7 +811,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->pays_code).": ".MAIN_INFO_APE;
 		}
 
-		// Deuxieme ligne d'info réglementaires
+		// Deuxieme ligne d'info rï¿½glementaires
 		$ligne2="";
 		if ($conf->global->MAIN_INFO_RCS)
 		{
