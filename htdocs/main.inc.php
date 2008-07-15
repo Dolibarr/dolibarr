@@ -408,7 +408,7 @@ if ($user->admin)
  * Overwrite configs global par configs perso
  * ------------------------------------------
  */
-// Set liste_limite
+// Set liste_limit
 if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	// Can be 0
 {
     $conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;
@@ -417,20 +417,22 @@ if (isset($user->conf->PRODUIT_LIMIT_SIZE))		// Can be 0
 {
     $conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
 }
+
+// If user has choosed its own language
 if (! empty($user->conf->MAIN_LANG_DEFAULT))
 {
+	// If different than current language
     if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
     {
-        // Si on a un langage perso different du langage courant global
         $langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
-        $langs->setPhpLang($user->conf->MAIN_LANG_DEFAULT);
+        $langs->setPhpLang();
     }
 }
-// Cas de forcage de la langue
+// If language was forced on URL
 if (! empty($_GET["lang"]))
 {
     $langs->setDefaultLang($_GET["lang"]);
-    $langs->setPhpLang($_GET["lang"]);
+    $langs->setPhpLang();
 }
 
 

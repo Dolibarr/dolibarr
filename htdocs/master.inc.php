@@ -200,12 +200,12 @@ if (! defined('NOREQUIREDB'))
 }
 
 /*
- * Chargement langage par défaut (must be after the setValues of $conf)
+ * Set default language (must be after the setValues of $conf)
  */
 if (! defined('NOREQUIRETRAN')) 
 {
 	$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
-	$langs->setPhpLang($conf->global->MAIN_LANG_DEFAULT);
+	$langs->setPhpLang();
 }
 
 /*

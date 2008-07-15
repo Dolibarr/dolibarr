@@ -95,12 +95,14 @@ class Translate {
 
 
     /**
-     *  \brief      Accesseur de this->defaultlang
+     *  \brief      Set accessor for this->defaultlang
      *  \param      srclang     	Language to use
      */
     function setDefaultLang($srclang='fr_FR')
     {
-		$this->origlang=$srclang;
+        //dolibarr_syslog("Translate::setDefaultLang ".$this->defaultlang,LOG_DEBUG);
+    	
+    	$this->origlang=$srclang;
 		
         if ($srclang == 'auto')
         {
@@ -121,8 +123,8 @@ class Translate {
 
     
     /**
-     *  \brief      Accesseur de this->defaultlang
-     *  \return     string      Langue utilis�e
+     *  \brief      Get accessor for this->defaultlang
+     *  \return     string      Language used
      */
     function getDefaultLang()
     {
@@ -132,12 +134,12 @@ class Translate {
     
     /**
     		\brief      Positionne environnement PHP en fonction du langage
-    		\remarks    Le code langue long (fr_FR, en_US, ...) doit �tre positionn�
+    		\remarks    Le code langue long (fr_FR, en_US, ...) doit avoir etre positionne par setDefaultLang
     		\return     int             >0 si ok, <0 so ko
     */
     function setPhpLang()
     {
-        //dolibarr_syslog("Translate::set_php_lang: ".$this->defaultlang,LOG_DEBUG);
+        //dolibarr_syslog("Translate::setPhpLang ".$this->defaultlang,LOG_DEBUG);
        
         $code_lang_tiret=ereg_replace('_','-',$this->defaultlang);
         setlocale(LC_ALL, $this->defaultlang);    // Compenser pb de locale avec windows
@@ -351,11 +353,11 @@ class Translate {
 
 
     /**
-     *  \brief       Retourne la version traduite du texte passe en parametre
+     *  \brief       Retourne la version traduite du texte pass� en param�tre
      *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-     *               et si toujours pas trouvee, il est retourne tel quel.
-     *               Les parametres de cette methode ne doivent pas contenir de balises HTML.
-     *  \param       key         cle de chaine a traduire
+     *               et si toujours pas trouv�, il est retourn� tel quel.
+     *               Les param�tres de cette m�thode ne doivent pas contenir de balises HTML.
+     *  \param       key         cl� de chaine a traduire
      *  \param       param1      chaine de param1
      *  \param       param2      chaine de param1
      *  \param       param3      chaine de param1
