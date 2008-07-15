@@ -351,11 +351,11 @@ class Translate {
 
 
     /**
-     *  \brief       Retourne la version traduite du texte pass� en param�tre
+     *  \brief       Retourne la version traduite du texte passe en parametre
      *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-     *               et si toujours pas trouv�, il est retourn� tel quel.
-     *               Les param�tres de cette m�thode ne doivent pas contenir de balises HTML.
-     *  \param       key         cl� de chaine a traduire
+     *               et si toujours pas trouvee, il est retourne tel quel.
+     *               Les parametres de cette methode ne doivent pas contenir de balises HTML.
+     *  \param       key         cle de chaine a traduire
      *  \param       param1      chaine de param1
      *  \param       param2      chaine de param1
      *  \param       param3      chaine de param1

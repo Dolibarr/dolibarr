@@ -895,7 +895,7 @@ elseif ($_GET["id"] > 0)
 			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 			{
 				$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_validate&confirm=yes';
-				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmValidateIntervention').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateIntervention')).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
 			}
 			else
 			{

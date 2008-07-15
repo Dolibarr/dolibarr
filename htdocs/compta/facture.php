@@ -233,7 +233,7 @@ if ($_POST['action'] == 'set_ref_client')
 }
 
 // Classe à "validée"
-if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->rights->facture->valider)
+if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $user->rights->facture->valider)
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
@@ -2791,7 +2791,27 @@ else
 					{
 						if ($user->rights->facture->valider)
 						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
+							print '<a class="butAction" ';
+							if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+							{
+								// on verifie si la commande est en numerotation provisoire
+								$ref = substr($fac->ref, 1, 4);
+								if ($ref == 'PROV')
+								{
+									$num = $fac->getNextNumRef($soc);
+								}
+								else
+								{
+									$num = $fac->ref;
+								}
+								$url = $_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=confirm_valid&confirm=yes';
+							 	print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateBill',$num)).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+							}
+							else
+							{
+								print 'href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid"';
+							}
+							print '>'.$langs->trans('Validate').'</a>';
 						}
 					}
 						

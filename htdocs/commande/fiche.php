@@ -601,7 +601,7 @@ if ($_POST['addfile'])
 			}
 			else
 			{
-				// Echec transfert (fichier dépassant la limite ?)
+				// Echec transfert (fichier dï¿½passant la limite ?)
 				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				// print_r($_FILES);
 			}
@@ -925,7 +925,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
 			print '</textarea></td></tr>';
 
-			// Note privée
+			// Note privï¿½e
 			if (! $user->societe_id)
 			{
 				print '<tr>';
@@ -1753,7 +1753,7 @@ else
 								$num = $commande->ref;
 							}
 							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_validate&confirm=yes';
-							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmValidateOrder',$num).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+						 	print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateOrder',$num)).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
 						}
 						else
 						{

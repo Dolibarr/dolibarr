@@ -331,7 +331,7 @@ if ($_POST['addfile'])
 			}
 			else
 			{
-				// Echec transfert (fichier dépassant la limite ?)
+				// Echec transfert (fichier dï¿½passant la limite ?)
 				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				// print_r($_FILES);
 			}
@@ -512,7 +512,7 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 	$propal->fetch($_GET['propalid']);
 	$propal->set_draft($user);
 
-	//regénération pdf
+	//regï¿½nï¿½ration pdf
 	if ($_REQUEST['lang_id'])
 	{
 		$outputlangs = new Translate("",$conf);
@@ -1634,7 +1634,7 @@ if ($_GET['propalid'] > 0)
 				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 				{
 					$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_validate&confirm=yes';
-					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmValidateProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateProp')).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
 				}
 				else
 				{

@@ -29,7 +29,7 @@
  \version		$Id$
  */
 
-// Pour compatibilité lors de l'upgrade
+// Pour compatibilitï¿½ lors de l'upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '..');
 if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
@@ -56,7 +56,7 @@ function ValidEmail($address)
 }
 
 /**
- \brief      Renvoi vrai si l'email a un nom de domaine qui résoud via dns
+ \brief      Renvoi vrai si l'email a un nom de domaine qui rï¿½soud via dns
  \param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
  \return     boolean     true si email valide, false sinon
  */
@@ -115,16 +115,30 @@ function sanitize_string($str)
 
 
 /**
+ *  \brief       Returns text escaped for inclusion in javascript code
+ *  \param       $stringtoescape	String to escape
+ *  \return      string      		Escaped string
+ */
+function dol_escape_js($stringtoescape)
+{
+    // escape quotes and backslashes, newlines, etc.
+    return strtr($stringtoescape, array('\\'=>'\\\\',"'"=>"\\'",'"'=>'\\"',"\r"=>'\\r',"\n"=>'\\n','</'=>'<\/'));			
+}
+
+    
+
+
+/**
  \brief      Envoi des messages dolibarr dans un fichier ou dans syslog
- Pour fichier:   fichier défini par SYSLOG_FILE
- Pour syslog:    facility défini par SYSLOG_FACILITY
+ Pour fichier:   fichier defini par SYSLOG_FILE
+ Pour syslog:    facility defini par SYSLOG_FACILITY
  \param      message		    Message a tracer. Ne doit pas etre traduit si level = LOG_ERR
  \param      level           Niveau de l'erreur
- \remarks	Cette fonction n'a un effet que si le module syslog est activé.
- Warning, les fonctions syslog sont buggués sous Windows et générent des
- fautes de protection mémoire. Pour résoudre, utiliser le loggage fichier,
+ \remarks	Cette fonction n'a un effet que si le module syslog est activï¿½.
+ Warning, les fonctions syslog sont bugguï¿½s sous Windows et gï¿½nï¿½rent des
+ fautes de protection mï¿½moire. Pour rï¿½soudre, utiliser le loggage fichier,
  au lieu du loggage syslog (configuration du module).
- Si SYSLOG_FILE_NO_ERROR défini, on ne gére pas erreur ecriture log
+ Si SYSLOG_FILE_NO_ERROR dï¿½fini, on ne gï¿½re pas erreur ecriture log
  \remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
  On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  */
@@ -185,7 +199,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 		}
 		else
 		{
-			//define_syslog_variables(); déja définit dans master.inc.php
+			//define_syslog_variables(); dï¿½ja dï¿½finit dans master.inc.php
 			if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
 			{
 				$facility = MAIN_SYSLOG_FACILITY;
@@ -269,11 +283,11 @@ function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
 
 /**
  \brief      Sauvegarde parametrage personnel
- \param	    db          Handler d'accés base
+ \param	    db          Handler d'accï¿½s base
  \param	    user        Objet utilisateur
- \param	    url         Si defini, on sauve parametre du tableau tab dont clé = (url avec sortfield, sortorder, begin et page)
+ \param	    url         Si defini, on sauve parametre du tableau tab dont clï¿½ = (url avec sortfield, sortorder, begin et page)
  Si non defini on sauve tous parametres du tableau tab
- \param	    tab         Tableau (clé=>valeur) des paramétres a sauvegarder
+ \param	    tab         Tableau (clï¿½=>valeur) des paramï¿½tres a sauvegarder
  \return     int         <0 si ko, >0 si ok
  */
 function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
@@ -283,7 +297,7 @@ function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 
 	$db->begin();
 
-	// On efface anciens paramétres pour toutes les clé dans $tab
+	// On efface anciens paramï¿½tres pour toutes les clï¿½ dans $tab
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
 	$sql.= " WHERE fk_user = ".$user->id;
 	if ($url) $sql.=" AND page='".$url."'";
@@ -309,7 +323,7 @@ function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 
 	foreach ($tab as $key => $value)
 	{
-		// On positionne nouveaux paramétres
+		// On positionne nouveaux paramï¿½tres
 		if ($value && (! $url || in_array($key,array('sortfield','sortorder','begin','page'))))
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value)";
@@ -339,7 +353,7 @@ function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 /**
  \brief  Formattage des nombres
  \param	ca			valeur a formater
- \return	int			valeur formatée
+ \return	int			valeur formatï¿½e
  */
 function dolibarr_print_ca($ca)
 {
@@ -367,10 +381,10 @@ function dolibarr_print_ca($ca)
 
 
 /**
- \brief      Effectue un décalage de date par rapport a une durée
+ \brief      Effectue un dï¿½calage de date par rapport a une durï¿½e
  \param	    time                Date timestamp ou au format YYYY-MM-DD
- \param	    duration_value      Valeur de la durée a ajouter
- \param	    duration_unit       Unité de la durée a ajouter (d, m, y)
+ \param	    duration_value      Valeur de la durï¿½e a ajouter
+ \param	    duration_unit       Unitï¿½ de la durï¿½e a ajouter (d, m, y)
  \return     int                 Nouveau timestamp
  */
 function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
@@ -393,13 +407,13 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
  "%d/%m/%Y %H:%M",
  "%d/%m/%Y %H:%M:%S",
  "day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
- \return     string      Date formatée ou '' si time null
+ \return     string      Date formatï¿½e ou '' si time null
  */
 function dolibarr_print_date($time,$format='')
 {
 	global $conf;
 
-	// Si format non défini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
+	// Si format non dï¿½fini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
 	if (! $format) $format=(isset($conf->format_date_text_short) ? $conf->format_date_text_short : '%Y-%m-%d %H:%M:%S');
 
 	if ($format == 'day')          $format=$conf->format_date_short;
@@ -435,8 +449,8 @@ function dolibarr_print_date($time,$format='')
 
 
 /**
- \brief  	Retourne une date fabriquée depuis une chaine
- \param		string			Date formatée en chaine
+ \brief  	Retourne une date fabriquï¿½e depuis une chaine
+ \param		string			Date formatï¿½e en chaine
  YYYYMMDD
  YYYYMMDDHHMMSS
  DD/MM/YY ou DD/MM/YYYY
@@ -515,14 +529,14 @@ function dolibarr_getdate($timestamp,$fast=false)
 }
 
 /**
- \brief  	Retourne une date fabriquée depuis infos.
- Remplace la fonction mktime non implémentée sous Windows si année < 1970
+ \brief  	Retourne une date fabriquï¿½e depuis infos.
+ Remplace la fonction mktime non implï¿½mentï¿½e sous Windows si annï¿½e < 1970
  \param		hour			Heure
  \param		minute			Minute
  \param		second			Seconde
  \param		month			Mois
  \param		day				Jour
- \param		year			Année
+ \param		year			Annï¿½e
  \param		gm				Time gm
  \param		check			No check on parameters (Can use day 32, etc...)
  \return		timestamp		Date en timestamp, '' if error
@@ -551,7 +565,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 	{
 		/*
 		 // On peut utiliser strtotime pour obtenir la traduction.
-		 // strtotime is ok for range: Vendredi 13 Décembre 1901 20:45:54 GMT au Mardi 19 Janvier 2038 03:14:07 GMT.
+		 // strtotime is ok for range: Vendredi 13 Dï¿½cembre 1901 20:45:54 GMT au Mardi 19 Janvier 2038 03:14:07 GMT.
 		 $montharray=array(1=>'january',2=>'february',3=>'march',4=>'april',5=>'may',6=>'june',
 		 7=>'july',8=>'august',9=>'september',10=>'october',11=>'november',12=>'december');
 		 $string=$day." ".$montharray[0+$month]." ".$year." ".$hour.":".$minute.":".$second." GMT";
@@ -636,10 +650,10 @@ function dolibarr_print_object_info($object)
 }
 
 /**
- \brief      Formatage des numéros de telephone en fonction du format d'un pays
- \param	    phone			Numéro de telephone a formater
+ \brief      Formatage des numï¿½ros de telephone en fonction du format d'un pays
+ \param	    phone			Numï¿½ro de telephone a formater
  \param	    country			Pays selon lequel formatter
- \return     string			Numéro de téléphone formaté
+ \return     string			Numï¿½ro de tï¿½lï¿½phone formatï¿½
  */
 function dolibarr_print_phone($phone,$country="FR")
 {
@@ -712,7 +726,7 @@ function dol_phone_link($phone,$option=0)
 }
 
 /**
- \brief      Tronque une chaine a une taille donnée en ajoutant les points de suspension si cela dépasse
+ \brief      Tronque une chaine a une taille donnï¿½e en ajoutant les points de suspension si cela dï¿½passe
  \param      string				String to truncate
  \param      size				Max string size. 0 for no limit.
  \param		trunc				Where to trunc: right, left, middle
@@ -758,12 +772,12 @@ function dolibarr_trunc($string,$size=40,$trunc='right')
 }
 
 /**
- \brief      Compléte une chaine a une taille donnée par des espaces
- \param      string		Chaine a compléter
+ \brief      Complï¿½te une chaine a une taille donnï¿½e par des espaces
+ \param      string		Chaine a complï¿½ter
  \param      size		Longueur de la chaine.
- \param      side		0=Complétion a droite, 1=Complétion a gauche
- \param		char		Chaine de complétion
- \return     string		Chaine complétée
+ \param      side		0=Complï¿½tion a droite, 1=Complï¿½tion a gauche
+ \param		char		Chaine de complï¿½tion
+ \return     string		Chaine complï¿½tï¿½e
  */
 function dolibarr_pad($string,$size,$side,$char=' ')
 {
@@ -779,7 +793,7 @@ function dolibarr_pad($string,$size,$side,$char=' ')
 }
 
 /**
- \brief      Affiche picto propre a une notion/module (fonction générique)
+ \brief      Affiche picto propre a une notion/module (fonction gï¿½nï¿½rique)
  \param      alt         Texte sur le alt de l'image
  \param      object      Objet pour lequel il faut afficher le logo (exemple: user, group, action, bill, contract, propal, product, ...)
  \return     string      Retourne tag img
@@ -791,10 +805,10 @@ function img_object($alt, $object)
 }
 
 /**
- \brief      Affiche picto (fonction générique)
+ \brief      Affiche picto (fonction gï¿½nï¿½rique)
  \param      alt         		Texte sur le alt de l'image
  \param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
- \param		options				Attribut supplémentaire a la balise img
+ \param		options				Attribut supplï¿½mentaire a la balise img
  \param		pictoisfullpath		If 1, image path is a full path
  \return     string      		Retourne tag img
  */
@@ -952,7 +966,7 @@ function img_delete($alt = "default")
 }
 
 /**
- \brief      Affiche logo désactiver
+ \brief      Affiche logo dï¿½sactiver
  \param      alt         Texte sur le alt de l'image
  \return     string      Retourne tag img
  */
@@ -1055,7 +1069,7 @@ function img_alerte($alt = "default")
 }
 
 /**
- \brief      Affiche logo téléphone
+ \brief      Affiche logo tï¿½lï¿½phone
  \param      alt         Texte sur le alt de l'image
  \param		option		Choose of logo
  \return     string      Retourne tag img
@@ -1086,7 +1100,7 @@ function img_next($alt = "default")
 }
 
 /**
- \brief      Affiche logo précédent
+ \brief      Affiche logo prï¿½cï¿½dent
  \param      alt     Texte sur le alt de l'image
  \return     string      Retourne tag img
  */
@@ -1365,7 +1379,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 			else
 			{
-				if (!$dbtablename) $dbtablename = $feature;	// Si dbtable non défini, meme nom que le module
+				if (!$dbtablename) $dbtablename = $feature;	// Si dbtable non dï¿½fini, meme nom que le module
 					
 				$sql = "SELECT dbt.fk_soc";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1384,7 +1398,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 			else
 			{
-				if (!$dbtablename) $dbtablename = $feature;	// Si dbtable non défini, meme nom que le module
+				if (!$dbtablename) $dbtablename = $feature;	// Si dbtable non dï¿½fini, meme nom que le module
 
 				$sql = "SELECT sc.fk_soc";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1451,12 +1465,12 @@ function accessforbidden($message='',$printheader=1)
 
 
 /**
- \brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remontée des bugs.
- On doit appeler cette fonction quand une erreur technique bloquante est rencontrée.
+ \brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remontï¿½e des bugs.
+ On doit appeler cette fonction quand une erreur technique bloquante est rencontrï¿½e.
  Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
- renvoyer leur erreur par l'intermédiaire de leur propriété "error".
- \param      db      Handler de base utilisé
- \param      error	Chaine erreur ou tableau de chaines erreur complémentaires a afficher
+ renvoyer leur erreur par l'intermï¿½diaire de leur propriï¿½tï¿½ "error".
+ \param      db      Handler de base utilisï¿½
+ \param      error	Chaine erreur ou tableau de chaines erreur complï¿½mentaires a afficher
  */
 function dolibarr_print_error($db='',$error='')
 {
@@ -1539,7 +1553,7 @@ function dolibarr_print_error($db='',$error='')
 
 
 /**
- *	\brief  Deplacer les fichiers telechargés, apres quelques controles divers
+ *	\brief  Deplacer les fichiers telechargï¿½s, apres quelques controles divers
  *	\param	src_file			Source filename
  *	\param	dest_file			Target filename
  * 	\param	allowoverwrite		Overwrite if exists
@@ -1568,7 +1582,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	}
 
 	// Security:
-	// On interdit les remontées de repertoire ainsi que les pipes dans
+	// On interdit les remontï¿½es de repertoire ainsi que les pipes dans
 	// les noms de fichiers.
 	if (eregi('\.\.',$src_file) || eregi('[<>|]',$src_file))
 	{
@@ -1577,7 +1591,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	}
 
 	// Security:
-	// On interdit les remontées de repertoire ainsi que les pipe dans
+	// On interdit les remontï¿½es de repertoire ainsi que les pipe dans
 	// les noms de fichiers.
 	if (eregi('\.\.',$dest_file) || eregi('[<>|]',$dest_file))
 	{
@@ -1618,7 +1632,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
  \param	    begin       ("" par defaut)
  \param	    options     ("" par defaut)
  \param      td          options de l'attribut td ("" par defaut)
- \param      sortfield   nom du champ sur lequel est effectué le tri du tableau
+ \param      sortfield   nom du champ sur lequel est effectuï¿½ le tri du tableau
  \param      sortorder   ordre du tri
  */
 function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="", $sortorder="")
@@ -1626,7 +1640,7 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 	global $conf;
 	//print "$name, $file, $field, $begin, $options, $td, $sortfield, $sortorder<br>\n";
 
-	// Le champ de tri est mis en évidence.
+	// Le champ de tri est mis en ï¿½vidence.
 	// Exemple si (sortfield,field)=("nom","xxx.nom") ou (sortfield,field)=("nom","nom")
 	if ($sortfield == $field || $sortfield == ereg_replace("^[^\.]+\.","",$field))
 	{
@@ -1681,9 +1695,9 @@ function print_titre($titre)
 }
 
 /**
- \brief  Affichage d'un titre d'une fiche, aligné a gauche
+ \brief  Affichage d'un titre d'une fiche, alignï¿½ a gauche
  \param	titre				Le titre a afficher
- \param	mesg				Message suplémentaire a afficher a droite
+ \param	mesg				Message suplï¿½mentaire a afficher a droite
  \param	picto				Picto pour ligne de titre
  \param	pictoisfullpath		1=Picto is a full absolute url of image
  */
@@ -1720,8 +1734,8 @@ function dol_delete_file($file)
 }
 
 /**
- \brief  	Effacement d'un répertoire
- \param		file			Répertoire a effacer
+ \brief  	Effacement d'un rï¿½pertoire
+ \param		file			Rï¿½pertoire a effacer
  */
 function dol_delete_dir($dir)
 {
@@ -1729,10 +1743,10 @@ function dol_delete_dir($dir)
 }
 
 /**
- \brief  	Effacement d'un répertoire $dir et de son arborescence
- \param		file			Répertoire a effacer
- \param		count			Compteur pour comptage nb elements supprimés
- \return		int				Nombre de fichier+repértoires supprimés
+ \brief  	Effacement d'un rï¿½pertoire $dir et de son arborescence
+ \param		file			Rï¿½pertoire a effacer
+ \param		count			Compteur pour comptage nb elements supprimï¿½s
+ \return		int				Nombre de fichier+repï¿½rtoires supprimï¿½s
  */
 function dol_delete_dir_recursive($dir,$count=0)
 {
@@ -1767,7 +1781,7 @@ function dol_delete_dir_recursive($dir,$count=0)
 /**
  \brief  Scan les fichiers avec un anti-virus
  \param	 file			Fichier a scanner
- \return	 malware	Nom du virus si infecté sinon retourne "null"
+ \return	 malware	Nom du virus si infectï¿½ sinon retourne "null"
  */
 function dol_avscan_file($file)
 {
@@ -1792,7 +1806,7 @@ function dol_avscan_file($file)
 /**
  \brief  Fonction print_barre_liste
  \param	titre				Titre de la page
- \param	page				numéro de la page
+ \param	page				numï¿½ro de la page
  \param	file				lien
  \param	options         	parametres complementaires lien ('' par defaut)
  \param	sortfield       	champ de tri ('' par defaut)
@@ -1887,7 +1901,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 /**
  \brief  	Fonction servant a afficher les fleches de navigation dans les pages de listes
- \param	page				Numéro de la page
+ \param	page				Numï¿½ro de la page
  \param	file				Lien
  \param	options         	Autres parametres d'url a propager dans les liens ("" par defaut)
  \param	nextpage	    	Faut-il une page suivante
@@ -1909,12 +1923,12 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
 
 
 /**
- *		\brief      Fonction qui retourne un taux de tva formaté pour visualisation
- *		\remarks    Fonction utilisée dans les pdf et les pages html
+ *		\brief      Fonction qui retourne un taux de tva formatï¿½ pour visualisation
+ *		\remarks    Fonction utilisï¿½e dans les pdf et les pages html
  *		\param	    rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
  *		\param		foundpercent	Add a percent % sign in output
  *		\param		info_bits		Miscellanous information on vat
- *		\return		string			Chaine avec montant formaté (19,6 ou 19,6% ou 8.5% *)
+ *		\return		string			Chaine avec montant formatï¿½ (19,6 ou 19,6% ou 8.5% *)
  */
 function vatrate($rate,$addpercent=false,$info_bits=0)
 {
@@ -1937,14 +1951,14 @@ function vatrate($rate,$addpercent=false,$info_bits=0)
 
 
 /**
- *		\brief      Fonction qui retourne un montant monétaire formaté pour visualisation
- *		\remarks    Fonction utilisée dans les pdf et les pages html
+ *		\brief      Fonction qui retourne un montant monï¿½taire formatï¿½ pour visualisation
+ *		\remarks    Fonction utilisï¿½e dans les pdf et les pages html
  *		\param	    amount			Montant a formater
  *		\param	    html			Formatage html ou pas (0 par defaut)
  *		\param	    outlangs		Objet langs pour formatage text
- *		\param		trunc			1=Tronque affichage si trop de décimales,0=Force le non troncage
+ *		\param		trunc			1=Tronque affichage si trop de dï¿½cimales,0=Force le non troncage
  *		\param		nbdecimal		Nbre decimals minimum.
- *		\return		string			Chaine avec montant formaté
+ *		\return		string			Chaine avec montant formatï¿½
  *		\seealso	price2num		Fonction inverse de price
  */
 function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
@@ -1966,11 +1980,11 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
 	//print $amount."-";
 	$datas = split('\.',$amount);
 	$decpart = $datas[1];
-	$decpart = eregi_replace('0+$','',$decpart);	// Supprime les 0 de fin de partie décimale
+	$decpart = eregi_replace('0+$','',$decpart);	// Supprime les 0 de fin de partie dï¿½cimale
 	//print "decpart=".$decpart."<br>";
 	$end='';
 
-	// On augmente au besoin si il y a plus de 2 décimales
+	// On augmente au besoin si il y a plus de 2 dï¿½cimales
 	if (strlen($decpart) > $nbdecimal) $nbdecimal=strlen($decpart);
 	// Si on depasse max
 	if ($trunc && $nbdecimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN)
@@ -1978,7 +1992,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
 		$nbdecimal=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
 		if (eregi('\.\.\.',$conf->global->MAIN_MAX_DECIMALS_SHOWN))
 		{
-			// Si un affichage est tronqué, on montre des ...
+			// Si un affichage est tronquï¿½, on montre des ...
 			$end='...';
 		}
 	}
@@ -1998,7 +2012,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
 }
 
 /**
- \brief     		Fonction qui retourne un numérique conforme PHP et SQL, depuis un montant au
+ \brief     		Fonction qui retourne un numï¿½rique conforme PHP et SQL, depuis un montant au
  format utilisateur.
  \remarks   		Fonction a appeler sur montants saisis avant un insert en base
  \param	    	amount		Montant a formater
@@ -2006,7 +2020,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
  'MT'=Round to Max with Tax (MAIN_MAX_DECIMALS_TOT)
  'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
  ''=No rounding
- \return			string		Montant au format numérique PHP et SQL (Exemple: '99.99999')
+ \return			string		Montant au format numï¿½rique PHP et SQL (Exemple: '99.99999')
  \seealso		price		Fonction inverse de price2num
  */
 function price2num($amount,$rounding='')
@@ -2049,17 +2063,17 @@ function get_product_vat_for_country($idprod, $countrycode)
 
 /**
  \brief      	Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
- \remarks    	Si vendeur non assujeti a TVA, TVA par défaut=0. Fin de régle.
- Si le (pays vendeur = pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de régle.
- Si (vendeur et acheteur dans Communauté européenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par défaut=0 (La TVA doit étre payé par acheteur au centre d'impots de son pays et non au vendeur). Fin de régle.
- Si (vendeur et acheteur dans Communauté européenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par défaut=TVA du produit vendu. Fin de régle.
- Si (vendeur et acheteur dans Communauté européenne) et (acheteur = entreprise avec num TVA) intra alors TVA par défaut=0. Fin de régle.
- Sinon TVA proposée par défaut=0. Fin de régle.
- \param      	societe_vendeuse    	Objet société vendeuse
- \param      	societe_acheteuse   	Objet société acheteuse
+ \remarks    	Si vendeur non assujeti a TVA, TVA par dï¿½faut=0. Fin de rï¿½gle.
+ Si le (pays vendeur = pays acheteur) alors TVA par dï¿½faut=TVA du produit vendu. Fin de rï¿½gle.
+ Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par dï¿½faut=0 (La TVA doit ï¿½tre payï¿½ par acheteur au centre d'impots de son pays et non au vendeur). Fin de rï¿½gle.
+ Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par dï¿½faut=TVA du produit vendu. Fin de rï¿½gle.
+ Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et (acheteur = entreprise avec num TVA) intra alors TVA par dï¿½faut=0. Fin de rï¿½gle.
+ Sinon TVA proposï¿½e par dï¿½faut=0. Fin de rï¿½gle.
+ \param      	societe_vendeuse    	Objet sociï¿½tï¿½ vendeuse
+ \param      	societe_acheteuse   	Objet sociï¿½tï¿½ acheteuse
  \param      	taux_produit        	Taux par defaut du produit vendu (old way to get product vat rate)
  \param      	idprod					Id product (new way to get product vat rate)
- \return     	float               	Taux de tva a appliquer, -1 si ne peut etre déterminé
+ \return     	float               	Taux de tva a appliquer, -1 si ne peut etre dï¿½terminï¿½
  */
 function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $idprod=0)
 {
@@ -2072,49 +2086,49 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
 	if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise') return 0;
 
-	// Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de régle.
+	// Si le (pays vendeur = pays acheteur) alors la TVA par dï¿½faut=TVA du produit vendu. Fin de rï¿½gle.
 	//if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && ($societe_acheteuse->tva_assuj == 1 || $societe_acheteuse->tva_assuj == 'reel'))
-	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concercné si le test suivant n'est pas suffisant.
+	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concercnï¿½ si le test suivant n'est pas suffisant.
 	if ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id)
 	{
 		if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
-		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut déterminer taux tva
+		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut dï¿½terminer taux tva
 		return $taux_produit;
 	}
 
-	// Si (vendeur et acheteur dans Communauté européenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par défaut=0 (La TVA doit étre payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de régle.
-	// Non géré
+	// Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par dï¿½faut=0 (La TVA doit ï¿½tre payï¿½ par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de rï¿½gle.
+	// Non gï¿½rï¿½
 
-	// Si (vendeur et acheteur dans Communauté européenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par défaut=TVA du produit vendu. Fin de régle.
+	// Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par dï¿½faut=TVA du produit vendu. Fin de rï¿½gle.
 	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && ! $societe_acheteuse->tva_intra)
 	{
 		if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
-		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut déterminer taux tva
+		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut dï¿½terminer taux tva
 		return $taux_produit;
 	}
 
-	// Si (vendeur et acheteur dans Communauté européenne) et (acheteur = entreprise avec num TVA intra) alors TVA par défaut=0. Fin de régle.
+	// Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et (acheteur = entreprise avec num TVA intra) alors TVA par dï¿½faut=0. Fin de rï¿½gle.
 	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_intra)
 	{
 		return 0;
 	}
 
-	// Sinon la TVA proposée par défaut=0. Fin de régle.
-	// Rem: Cela signifie qu'au moins un des 2 est hors Communauté européenne et que le pays différe
+	// Sinon la TVA proposï¿½e par dï¿½faut=0. Fin de rï¿½gle.
+	// Rem: Cela signifie qu'au moins un des 2 est hors Communautï¿½ europï¿½enne et que le pays diffï¿½re
 	return 0;
 }
 
 
 /**
- \brief      	Fonction qui renvoie si tva doit etre tva percue récupérable
- \remarks    	Si vendeur non assujeti a TVA, TVA par défaut=0. Fin de régle.
- Si le (pays vendeur = pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de régle.
- Si (vendeur et acheteur dans Communauté européenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par défaut=0 (La TVA doit étre payé par acheteur au centre d'impots de son pays et non au vendeur). Fin de régle.
- Si (vendeur et acheteur dans Communauté européenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par défaut=TVA du produit vendu. Fin de régle.
- Si (vendeur et acheteur dans Communauté européenne) et (acheteur = entreprise avec num TVA) intra alors TVA par défaut=0. Fin de régle.
- Sinon TVA proposée par défaut=0. Fin de régle.
- \param      	societe_vendeuse    	Objet société vendeuse
- \param      	societe_acheteuse   	Objet société acheteuse
+ \brief      	Fonction qui renvoie si tva doit etre tva percue rï¿½cupï¿½rable
+ \remarks    	Si vendeur non assujeti a TVA, TVA par dï¿½faut=0. Fin de rï¿½gle.
+ Si le (pays vendeur = pays acheteur) alors TVA par dï¿½faut=TVA du produit vendu. Fin de rï¿½gle.
+ Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par dï¿½faut=0 (La TVA doit ï¿½tre payï¿½ par acheteur au centre d'impots de son pays et non au vendeur). Fin de rï¿½gle.
+ Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par dï¿½faut=TVA du produit vendu. Fin de rï¿½gle.
+ Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et (acheteur = entreprise avec num TVA) intra alors TVA par dï¿½faut=0. Fin de rï¿½gle.
+ Sinon TVA proposï¿½e par dï¿½faut=0. Fin de rï¿½gle.
+ \param      	societe_vendeuse    	Objet sociï¿½tï¿½ vendeuse
+ \param      	societe_acheteuse   	Objet sociï¿½tï¿½ acheteuse
  \param      	taux_produit        	Taux par defaut du produit vendu
  \return     	float               	0 or 1
  */
@@ -2152,8 +2166,8 @@ function yn($yesno, $case=1, $color=0)
 
 /**
  \brief  Fonction pour qui retourne le rowid d'un departement par son code
- \param  db          handler d'accés base
- \param	code		Code région
+ \param  db          handler d'accï¿½s base
+ \param	code		Code rï¿½gion
  \param	pays_id		Id du pays
  */
 function departement_rowid($db,$code, $pays_id)
@@ -2184,9 +2198,9 @@ function departement_rowid($db,$code, $pays_id)
 }
 
 /**
- \brief      Renvoi un chemin de classement répertoire en fonction d'un id
+ \brief      Renvoi un chemin de classement rï¿½pertoire en fonction d'un id
  \remarks    Examples: 1->"0/0/1/", 15->"0/1/5/"
- \param      $num        	Id a décomposer
+ \param      $num        	Id a dï¿½composer
  \param      $level		Niveau de decoupage (1, 2 ou 3 niveaux)
  */
 function get_exdir($num,$level=3)
@@ -2200,9 +2214,9 @@ function get_exdir($num,$level=3)
 }
 
 /**
- \brief      Création de répertoire recursive
- \param      $dir        Répertoire a créer
- \return     int         < 0 si erreur, >= 0 si succés
+ \brief      Crï¿½ation de rï¿½pertoire recursive
+ \param      $dir        Rï¿½pertoire a crï¿½er
+ \return     int         < 0 si erreur, >= 0 si succï¿½s
  */
 function create_exdir($dir)
 {
@@ -2221,7 +2235,7 @@ function create_exdir($dir)
 		else $ccdir = $cdir[$i];
 		if (eregi("^.:$",$ccdir,$regs)) continue;	// Si chemin Windows incomplet, on poursuit par rep suivant
 
-		// Attention, le is_dir() peut échouer bien que le rep existe.
+		// Attention, le is_dir() peut ï¿½chouer bien que le rep existe.
 		// (ex selon config de open_basedir)
 		if ($ccdir)
 		{
@@ -2232,20 +2246,20 @@ function create_exdir($dir)
 		  umask(0);
 		  if (! @mkdir($ccdir, 0755))
 		  {
-		  	// Si le is_dir a renvoyé une fausse info, alors on passe ici.
+		  	// Si le is_dir a renvoyï¿½ une fausse info, alors on passe ici.
 		  	dolibarr_syslog("functions.lib.php::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
 		  	$nberr++;
 		  }
 		  else
 		  {
 		  	dolibarr_syslog("functions.lib.php::create_exdir: Directory '".$ccdir."' created",LOG_DEBUG);
-		  	$nberr=0;	// On remet a zéro car si on arrive ici, cela veut dire que les échecs précédents peuvent etre ignorés
+		  	$nberr=0;	// On remet a zï¿½ro car si on arrive ici, cela veut dire que les ï¿½checs prï¿½cï¿½dents peuvent etre ignorï¿½s
 		  	$nbcreated++;
 		  }
 			}
 			else
 			{
-				$nberr=0;	// On remet a zéro car si on arrive ici, cela veut dire que les échecs précédents peuvent etre ignorés
+				$nberr=0;	// On remet a zï¿½ro car si on arrive ici, cela veut dire que les ï¿½checs prï¿½cï¿½dents peuvent etre ignorï¿½s
 			}
 		}
 	}
@@ -2256,9 +2270,9 @@ function create_exdir($dir)
 
 
 /**
- \brief   Retourne le numéro de la semaine par rapport a une date
+ \brief   Retourne le numï¿½ro de la semaine par rapport a une date
  \param   time   	Date au format 'timestamp'
- \return  int		Numéro de semaine
+ \return  int		Numï¿½ro de semaine
  */
 function numero_semaine($time)
 {
@@ -2274,12 +2288,12 @@ function numero_semaine($time)
 
 	/*
 	 * Norme ISO-8601:
-	 * - La semaine 1 de toute année est celle qui contient le 4 janvier ou que la semaine 1 de toute année est celle qui contient le 1er jeudi de janvier.
-	 * - La majorité des années ont 52 semaines mais les années qui commence un jeudi et les années bissextiles commenéant un mercredi en posséde 53.
+	 * - La semaine 1 de toute annï¿½e est celle qui contient le 4 janvier ou que la semaine 1 de toute annï¿½e est celle qui contient le 1er jeudi de janvier.
+	 * - La majoritï¿½ des annï¿½es ont 52 semaines mais les annï¿½es qui commence un jeudi et les annï¿½es bissextiles commenï¿½ant un mercredi en possï¿½de 53.
 	 * - Le 1er jour de la semaine est le Lundi
 	 */
 
-	// Définition du Jeudi de la semaine
+	// Dï¿½finition du Jeudi de la semaine
 	if (date("w",mktime(12,0,0,$mois,$jour,$annee))==0) // Dimanche
 	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-3*24*60*60;
 	else if (date("w",mktime(12,0,0,$mois,$jour,$annee))<4) // du Lundi au Mercredi
@@ -2289,7 +2303,7 @@ function numero_semaine($time)
 	else // Jeudi
 	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee);
 
-	// Définition du premier Jeudi de l'année
+	// Dï¿½finition du premier Jeudi de l'annï¿½e
 	if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==0) // Dimanche
 	{
 		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+4*24*60*60;
@@ -2307,7 +2321,7 @@ function numero_semaine($time)
 		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine));
 	}
 
-	// Définition du numéro de semaine: nb de jours entre "premier Jeudi de l'année" et "Jeudi de la semaine";
+	// Dï¿½finition du numï¿½ro de semaine: nb de jours entre "premier Jeudi de l'annï¿½e" et "Jeudi de la semaine";
 	$numeroSemaine =     (
 	(
 	date("z",mktime(12,0,0,date("m",$jeudiSemaine),date("d",$jeudiSemaine),date("Y",$jeudiSemaine)))
@@ -2319,7 +2333,7 @@ function numero_semaine($time)
 	// Cas particulier de la semaine 53
 	if ($numeroSemaine==53)
 	{
-		// Les années qui commence un Jeudi et les années bissextiles commenéant un Mercredi en posséde 53
+		// Les annï¿½es qui commence un Jeudi et les annï¿½es bissextiles commenï¿½ant un Mercredi en possï¿½de 53
 		if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==4 || (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==3 && date("z",mktime(12,0,0,12,31,date("Y",$jeudiSemaine)))==365))
 		{
 			$numeroSemaine = 53;
@@ -2382,13 +2396,13 @@ function weight_convert($weight,&$from_unit,$to_unit)
  \param   int                 Unit
  \param   measuring_style     Le style de mesure : weight, volume,...
  \return  string	            Unite
- \todo    gerer les autres unités de mesure comme la livre, le gallon, le litre, ...
+ \todo    gerer les autres unitï¿½s de mesure comme la livre, le gallon, le litre, ...
  */
 function measuring_units_string($unit,$measuring_style='')
 {
 	/* Note Rodo aux dev :)
-	 * Ne pas insérer dans la base de données ces valeurs
-	 * cela surchagerait inutilement d'une requete supplémentaire
+	 * Ne pas insï¿½rer dans la base de donnï¿½es ces valeurs
+	 * cela surchagerait inutilement d'une requete supplï¿½mentaire
 	 * pour quelque chose qui est somme toute peu variable
 	 */
 
@@ -2488,7 +2502,7 @@ function binhex($bin, $pad=false, $upper=false){
 }
 
 /**
- \brief   Convertir de l'héxadécimal en binaire
+ \brief   Convertir de l'hï¿½xadï¿½cimal en binaire
  \param   string      hexa
  \return  string	    bin
  */
@@ -2707,7 +2721,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 
 /**
  \brief     Fonction retournant le nombre de jour entre deux dates
- \param	    timestampStart      Timestamp de début
+ \param	    timestampStart      Timestamp de dï¿½but
  \param	    timestampEnd        Timestamp de fin
  \param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
  \return    nbjours             Nombre de jours
@@ -2730,8 +2744,8 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 }
 
 /**
- \brief     Fonction retournant le nombre de jour entre deux dates sans les jours fériés (jours ouvrés)
- \param	    timestampStart      Timestamp de début
+ \brief     Fonction retournant le nombre de jour entre deux dates sans les jours fï¿½riï¿½s (jours ouvrï¿½s)
+ \param	    timestampStart      Timestamp de dï¿½but
  \param	    timestampEnd        Timestamp de fin
  \param     inhour              0: sort le nombre de jour , 1: sort le nombre d'heure (72 max)
  \param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
@@ -2757,7 +2771,7 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 }
 
 /**
- \brief     Fonction retournant le nombre de lignes dans un texte formaté
+ \brief     Fonction retournant le nombre de lignes dans un texte formatï¿½
  \param	    texte      Texte
  \return    nblines    Nombre de lignes
  */
@@ -2815,10 +2829,10 @@ function dol_textishtml($msg,$option=0)
 }
 
 /*
- *    \brief      Effectue les substitutions des mots clés par les données en fonction du tableau
+ *    \brief      Effectue les substitutions des mots clï¿½s par les donnï¿½es en fonction du tableau
  *    \param      chaine      			Chaine dans laquelle faire les substitutions
- *    \param      substitutionarray		Tableau clé substitution => valeur a mettre
- *    \return     string      			Chaine avec les substitutions effectuées
+ *    \param      substitutionarray		Tableau clï¿½ substitution => valeur a mettre
+ *    \return     string      			Chaine avec les substitutions effectuï¿½es
  */
 function make_substitutions($chaine,$substitutionarray)
 {
@@ -2831,8 +2845,8 @@ function make_substitutions($chaine,$substitutionarray)
 
 
 /*
- *    \brief      Formate l'affichage de date de début et de fin
- *    \param      date_start    date de début
+ *    \brief      Formate l'affichage de date de dï¿½but et de fin
+ *    \param      date_start    date de dï¿½but
  *    \param      date_end      date de fin
  */
 function print_date_range($date_start,$date_end)
@@ -2873,8 +2887,8 @@ function make_alpha_from_numbers($number)
 
 
 /**
- \brief   Retourne un tableau des mois ou le mois sélectionné
- \param   selected			Mois à sélectionner ou -1
+ \brief   Retourne un tableau des mois ou le mois sï¿½lectionnï¿½
+ \param   selected			Mois ï¿½ sï¿½lectionner ou -1
  \return  string or array		Month string or array if selected < 0
  */
 function monthArrayOrSelected($selected=0)
