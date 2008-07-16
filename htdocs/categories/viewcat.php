@@ -72,7 +72,10 @@ if ($user->rights->categorie->supprimer && $_POST["action"] == 'confirm_delete' 
  * View
  */
 
+$html = new Form($db);
+
 llxHeader ("","",$langs->trans("Categories"));
+
 
 if ($mesg) print $mesg.'<br>';
 
