@@ -927,11 +927,11 @@ DeleteLine=Delete line
 ConfirmDeleteLine=Are you sure you want to delete this line ?
 ##### Tax #####
 TaxSetup=Taxes, social contributions and dividends module setup
-OptionVatMode=Option d'exigibilitï¿½ de TVA
+OptionVatMode=Option d'exigibilité de TVA
 OptionVATDefault=Standard
 OptionVATDebitOption=Option services sur debit
-OptionVatDefaultDesc=L'exigibilitï¿½ de la TVA est:<br>- sur livraison pour les biens<br>- sur paiement pour les services
-OptionVatDebitOptionDesc=L'exigibilitï¿½ de la TVA est:<br>- sur livraison pour les biens<br>- sur facturation (dï¿½bit) pour les services
+OptionVatDefaultDesc=L'exigibilité de la TVA est:<br>- sur livraison pour les biens<br>- sur paiement pour les services
+OptionVatDebitOptionDesc=L'exigibilité de la TVA est:<br>- sur livraison pour les biens<br>- sur facturation (dï¿½bit) pour les services
 ##### Agenda #####
 AgendaSetup=Actions and agenda module setup
 PasswordTogetVCalExport=Key to authorize vcal export link
