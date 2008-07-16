@@ -60,7 +60,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 /*
  * Add file
  */
-if ($_POST['addfile'])
+if ($_POST['addfile'] || $_POST['addfilehtml'])
 {
 	// Set tmp user directory
 	$conf->users->dir_tmp=DOL_DATA_ROOT."/users/".$user->id;
@@ -72,9 +72,9 @@ if ($_POST['addfile'])
 	
 	    if (is_dir($upload_dir))
 	    {
-	        if (dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0) > 0)
+	    	if (dol_move_uploaded_file($_FILES['addedfile']['tmp_name'], $upload_dir . "/" . $_FILES['addedfile']['name'],0) > 0)
 	        {
-	            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+	        	$message = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 	            //print_r($_FILES);
 
 				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
@@ -84,18 +84,20 @@ if ($_POST['addfile'])
 	        else
 	        {
 	            // Echec transfert (fichier dépassant la limite ?)
-	            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+	            $message = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 	            // print_r($_FILES);
 	        }
 	    }
 	}
-	$_GET["action"]='test';
+	if ($_POST['addfile'])     $_GET["action"]='test';
+	if ($_POST['addfilehtml']) $_GET["action"]='testhtml';
 }
 
 /*
  * Send mail
  */
-if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
+if (($_POST['action'] == 'send' || $_POST['action'] == 'sendhtml')
+	 && ! $_POST['addfile'] && ! $_POST['addfilehtml'] && ! $_POST['cancel'])
 {
 	$error=0;
 	
@@ -108,20 +110,15 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 	$subject    = $_POST['subject'];
 	$body       = $_POST['message'];
 
-	// Get list of attached files
-	$listofpaths=array();
-	$listofnames=array();
-	$listofmimes=array();
-	if (! empty($_SESSION["listofpaths"])) $listofpaths=split(';',$_SESSION["listofpaths"]);
-	if (! empty($_SESSION["listofnames"])) $listofnames=split(';',$_SESSION["listofnames"]);
-	if (! empty($_SESSION["listofmimes"])) $listofmimes=split(';',$_SESSION["listofmimes"]);
-	if (! empty($_FILES['addedfile']['tmp_name']))
-	{
-		$listofpaths[] = $_FILES['addedfile']['tmp_name'];
-		$listofnames[] = $_FILES['addedfile']['name'];
-		$listofmimes[] = $_FILES['addedfile']['type'];
-	}	
+	// Create form object
+	include_once('../html.formmail.class.php');
+	$formmail = new FormMail($db);
 
+	$attachedfiles=$formmail->get_attached_files();
+    $filepath = $attachedfiles['paths'];
+    $filename = $attachedfiles['names'];
+    $mimetype = $attachedfiles['mimes'];
+	
 	if (empty($_POST["frommail"]))
 	{
 		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom")).'</div>';
@@ -137,16 +134,16 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
     if (! $error)
     {
 		// Le message est-il en html
-		$msgishtml=-1;	// Unknown by default
-		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
-
+		$msgishtml=0;	// Message is not HTML
+		if ($_POST['action'] == 'sendhtml') $msgishtml=1;	// Force message to HTML 
+		
         // Pratique les substitutions sur le sujet et message
 		$subject=make_substitutions($subject,$substitutionarrayfortest);
 		$body=make_substitutions($body,$substitutionarrayfortest);
 		
         require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
-        							$listofpaths,$listofmimes,$listofnames,
+        							$filepath,$mimetype,$filename,
         							'', '', 0, $msgishtml,$errors_to);
         
 		$result=$mailfile->sendfile();
@@ -253,7 +250,11 @@ else
 	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
-    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	if ($conf->fckeditor->enabled)
+	{
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
+	}
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
     print '</div>';
 	
 	
@@ -277,7 +278,7 @@ else
 			  print '<br>';
 	}
 
-	// Affichage formulaire de TEST
+	// Affichage formulaire de TEST simple
 	if ($_GET["action"] == 'test')
 	{	
 		  print '<br>';
@@ -315,11 +316,54 @@ else
 				$formmail->clear_attached_files();
 			}
 		  
-		  $formmail->show_form();
+		  $formmail->show_form('addfile');
 		  
 		  print '<br>';
 	}
-	
+
+	// Affichage formulaire de TEST HTML
+	if ($_GET["action"] == 'testhtml')
+	{	
+		  print '<br>';
+		  print_titre($langs->trans("DoTestSendHTML"));
+		  
+		  // Cree l'objet formulaire mail
+		  include_once(DOL_DOCUMENT_ROOT."/html.formmail.class.php");
+		  $formmail = new FormMail($db);	    
+		  $formmail->fromname = $conf->global->MAIN_MAIL_EMAIL_FROM;
+		  $formmail->frommail = $conf->global->MAIN_MAIL_EMAIL_FROM;
+		  $formmail->withfromreadonly=0;
+		  $formmail->withsubstit=0;
+		  $formmail->withfrom=1;
+		  $formmail->witherrorsto=1;
+		  $formmail->withto=$user->email?$user->email:1;
+		  $formmail->withtocc=1;
+		  $formmail->withtopic=$langs->trans("Test");
+		  $formmail->withtopicreadonly=0;
+		  $formmail->withfile=2;
+		  $formmail->withbody=$langs->trans("Test");
+		  $formmail->withbodyreadonly=0;
+		  $formmail->withcancel=1;
+		  $formmail->withdeliveryreceipt=1;
+		  $formmail->withfckeditor=1;
+		  // Tableau des substitutions
+		  $formmail->substit=$substitutionarrayfortest;
+		  // Tableau des parametres complementaires du post
+		  $formmail->param["action"]="sendhtml";
+		  $formmail->param["models"]="body";
+		  $formmail->param["mailid"]=$mil->id;
+		  $formmail->param["returnurl"]=DOL_URL_ROOT."/admin/mails.php";
+		
+			// Init list of files
+			if (! empty($_REQUEST["mode"]) && $_REQUEST["mode"]=='init')
+			{
+				$formmail->clear_attached_files();
+			}
+		  
+		  $formmail->show_form('addfilehtml');
+		  
+		  print '<br>';
+	}
 }
 
 

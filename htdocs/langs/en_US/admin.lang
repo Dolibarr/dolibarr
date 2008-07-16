@@ -198,6 +198,7 @@ ServerAvailableOnIPOrPort=Server is available at address <b>%s</b> on port <b>%s
 ServerNotAvailableOnIPOrPort=Server is not available at address <b>%s</b> on port <b>%s</b>
 DoTestServerAvailability=Test server connectivity
 DoTestSend=Test sending
+DoTestSendHTML=Test sending HTML
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, can't user option @ if sequence {yy}{mm} or {yyyy}{mm} is not in mask.
 
 # Modules

@@ -73,6 +73,8 @@ class CMailFile
     {
         dolibarr_syslog("CMailFile::CMailfile: from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to");
         dolibarr_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml");
+
+        // Define if there is at least one file
         foreach ($filename_list as $i => $val)
         {
         	if ($filename_list[$i])
@@ -90,7 +92,7 @@ class CMailFile
 		if (eregi('^win',PHP_OS)) $this->eol="\r\n";
 		if (eregi('^mac',PHP_OS)) $this->eol="\r";
 
-		// Detect if message is HTML
+		// Detect if message is HTML (use fast method)
 		if ($msgishtml == -1)
 		{
 			$this->msgishtml = 0;
@@ -132,11 +134,10 @@ class CMailFile
         }
 
 		// On defini $this->headers et $this->message
-		//$this->headers = $smtp_headers . $mime_headers . $this->eol;
-		//$this->message = $text_body . $text_encoded . $this->eol;
         $this->headers = $smtp_headers . $mime_headers;
         $this->message = $text_body . $text_encoded;
-		// On nettoie le header pour qu'il ne se termine pas un retour chariot.
+
+        // On nettoie le header pour qu'il ne se termine pas par un retour chariot.
 		// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees 
 		// comme des injections mail par les serveurs de messagerie.
 		$this->headers = eregi_replace("[\r\n]+$","",$this->headers);
@@ -177,7 +178,7 @@ class CMailFile
 		dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject);
 		dolibarr_syslog("CMailFile::sendfile header=\n".$this->headers);
 		//dolibarr_syslog("CMailFile::sendfile message=\n".$message);
-		//$this->dump_mail();
+		$this->dump_mail();
 
 		$errorlevel=error_reporting();
 		error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
@@ -245,10 +246,13 @@ class CMailFile
      */
     function dump_mail()
     {
-    	if (@is_writeable("/tmp"))	// Avoid fatal error on fopen with open_basedir
+    	global $dolibarr_main_data_root;
+    	
+    	if (@is_writeable($dolibarr_main_data_root))	// Avoid fatal error on fopen with open_basedir
     	{
-        	$fp = fopen("/tmp/dolibarr_mail","w");
+        	$fp = fopen($dolibarr_main_data_root."/dolibarr_mail","w");
         	fputs($fp, $this->headers);
+        	fputs($fp, $this->eol);			// This eol is added by the mail function, so we add it in log
         	fputs($fp, $this->message);
         	fclose($fp);
     	}
@@ -282,12 +286,13 @@ class CMailFile
        
         if ($this->msgishtml)
         {
-        	$out.= "Content-Type: text/html; charset=".$conf->character_set_client.$this->eol;
+        	if (! $this->atleastonefile) $out.= "Content-Type: text/html; charset=".$conf->character_set_client.$this->eol;
         	$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
         }
         else
         {
-			$out.= "Content-Transfer-Encoding: 7bit".$this->eol;
+        	if (! $this->atleastonefile) $out.= "Content-Type: text/plain; charset=".$conf->character_set_client.$this->eol;
+        	$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
 		}
 
         dolibarr_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
@@ -338,11 +343,11 @@ class CMailFile
             $out.= "--" . $this->mime_boundary . $this->eol;
 	        if ($this->msgishtml)
 	        {
-	        	$out.= "Content-Type: text/html; charset=".$conf->charset_output.$this->eol;
+	        	$out.= "Content-Type: text/html; charset=".$conf->character_set_client.$this->eol;
 	        }
 	        else
 	        {
-	        	$out.= "Content-Type: text/plain; charset=".$conf->charset_output.$this->eol;	        	
+	        	$out.= "Content-Type: text/plain; charset=".$conf->character_set_client.$this->eol;	        	
 	        }
             $out.= $this->eol;
         }

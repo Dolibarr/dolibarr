@@ -153,10 +153,11 @@ class FormMail
 	}
 		
 	/**
-	 *	\brief  	Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
-	 * 	\remarks	this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
+	 *	\brief  		Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
+	 *	\param			addfileaction		Name of action when posting file attachments	
+	 * 	\remarks		this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
 	 */
-	function show_form()
+	function show_form($addfileaction='addfile')
 	{
 		global $conf, $langs, $user;
 	
@@ -391,7 +392,7 @@ class FormMail
 				//print '<td><td align="right">';
 				print "<input type=\"file\" class=\"flat\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
 				print ' ';
-				print '<input type="submit" class="button" name="addfile" value="'.$langs->trans("MailingAddFile").'">';
+				print '<input type="submit" class="button" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'">';
 				//print '</td></tr></table>';
 			}
 			print "</td></tr>\n";
@@ -421,9 +422,20 @@ class FormMail
 			}
 			else
 			{
-				print '<textarea cols="72" rows="8" name="message">';
-				print $defaultmessage;
-				print '</textarea>';
+				if ($this->withfckeditor)
+				{
+				    // Editeur wysiwyg
+					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+					$doleditor=new DolEditor('message',$defaultmessage,280,'dolibarr_notes','In',true);
+					$doleditor->Create();
+				}
+				else
+				{
+					print '<textarea cols="72" rows="8" name="message">';
+					print $defaultmessage;
+					print '</textarea>';
+				}
+				
 			}
 			print "</td></tr>\n";
 		}
