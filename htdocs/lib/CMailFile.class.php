@@ -350,7 +350,7 @@ class CMailFile
         {
 			// Check if html header already in message
 			$htmlalreadyinmsg=0;
-			if (eregi('^[ \t]*<html>',$msgtext)) $htmlalreadyinmsg=1;
+			if (eregi('^[ \t]*<html',$msgtext)) $htmlalreadyinmsg=1;
 			
 			if (! $htmlalreadyinmsg) $out .= "<html><head><title></title></head><body>";
 			$out.= $msgtext;
