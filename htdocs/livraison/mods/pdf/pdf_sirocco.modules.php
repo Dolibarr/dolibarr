@@ -204,19 +204,20 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 			  $pdf->MultiCell(20, 5, $delivery->lignes[$i]->ref, 0, 'C');
 
 			  // \TODO Field not yet saved in database
-			  $pdf->SetXY (133, $curY );
-			  $pdf->MultiCell(10, 5, $delivery->lignes[$i]->tva_tx, 0, 'C');
+			  //$pdf->SetXY (133, $curY );
+			  //$pdf->MultiCell(10, 5, $delivery->lignes[$i]->tva_tx, 0, 'C');
 
 			  $pdf->SetXY (145, $curY );
 			  $pdf->MultiCell(10, 5, $delivery->lignes[$i]->qty_shipped, 0, 'C');
 
 			  // \TODO Field not yet saved in database
-			  $pdf->SetXY (156, $curY );
-			  $pdf->MultiCell(18, 5, price($delivery->lignes[$i]->price), 0, 'R', 0);
+			  //$pdf->SetXY (156, $curY );
+			  //$pdf->MultiCell(18, 5, price($delivery->lignes[$i]->price), 0, 'R', 0);
 
-			  $pdf->SetXY (174, $curY );
-			  $total = price($delivery->lignes[$i]->price * $delivery->lignes[$i]->qty_shipped);
-			  $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+			  // \TODO Field not yet saved in database
+			  //$pdf->SetXY (174, $curY );
+			  //$total = price($delivery->lignes[$i]->price * $delivery->lignes[$i]->qty_shipped);
+			  //$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 
 			  $pdf->line(10, $curY, 200, $curY );
 
@@ -232,54 +233,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				}
 
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-				/*
-				 *
-				 */
-				$tab2_top = 241;
-				$tab2_lh = 7;
-				$tab2_height = $tab2_lh * 4;
-
-				$pdf->SetFont('Arial','', 11);
-
-				$pdf->Rect(132, $tab2_top, 68, $tab2_height);
-
-				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*3), 200, $tab2_top + $tab2_height - ($tab2_lh*3) );
-				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*2), 200, $tab2_top + $tab2_height - ($tab2_lh*2) );
-				$pdf->line(132, $tab2_top + $tab2_height - $tab2_lh, 200, $tab2_top + $tab2_height - $tab2_lh );
-
-				$pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
-
-				$pdf->SetXY (132, $tab2_top + 0);
-				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalHT"), 0, 'R', 0);
-
-				$pdf->SetXY (132, $tab2_top + $tab2_lh);
-				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("Discount"), 0, 'R', 0);
-
-				$pdf->SetXY (132, $tab2_top + $tab2_lh*2);
-				$pdf->MultiCell(42, $tab2_lh, "Total HT apr�s remise", 0, 'R', 0);
-
-				$pdf->SetXY (132, $tab2_top + $tab2_lh*3);
-				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalVAT"), 0, 'R', 0);
-
-				$pdf->SetXY (132, $tab2_top + ($tab2_lh*4));
-				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalTTC"), 1, 'R', 1);
-
-				$pdf->SetXY (174, $tab2_top + 0);
-				$pdf->MultiCell(26, $tab2_lh, price($delivery->total_ht + $delivery->remise), 0, 'R', 0);
-
-				$pdf->SetXY (174, $tab2_top + $tab2_lh);
-				$pdf->MultiCell(26, $tab2_lh, price($delivery->remise), 0, 'R', 0);
-
-				$pdf->SetXY (174, $tab2_top + $tab2_lh*2);
-				$pdf->MultiCell(26, $tab2_lh, price($delivery->total_ht), 0, 'R', 0);
-
-				$pdf->SetXY (174, $tab2_top + $tab2_lh*3);
-				$pdf->MultiCell(26, $tab2_lh, price($delivery->total_tva), 0, 'R', 0);
-
-				$pdf->SetXY (174, $tab2_top + ($tab2_lh*4));
-				$pdf->MultiCell(26, $tab2_lh, price($delivery->total_ttc), 1, 'R', 1);
-
-
+	
 				$pdf->Output($file);
 				return 1;
 			}
@@ -305,17 +259,17 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$pdf->Text(30,$tab_top + 5,$langs->transnoentities("Designation"));
 
-		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-		$pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
+//		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
+//		$pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
 
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
 		$pdf->Text(147,$tab_top + 5,$langs->transnoentities("Qty"));
 
-		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-		$pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
+//		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
+//		$pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
 
-		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-		$pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
+//		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
+//		$pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
 
 		//      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
@@ -323,13 +277,13 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',10);
-		$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
-		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
+//		$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
+//		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 
 	}
 
 	/*
-	 *   	\brief      Affiche en-t�te propale
+	 *   	\brief      Affiche en-tete propale
 	 *   	\param      pdf     objet PDF
 	 *   	\param      fac     objet propale
 	 *      \param      showadress      0=non, 1=oui
@@ -355,7 +309,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	 if (defined("FAC_PDF_TEL"))
 	 {
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, "T�l : ".FAC_PDF_TEL);
+	  $pdf->MultiCell(76, 5, "Tel : ".FAC_PDF_TEL);
 	 }
 	 if (defined("MAIN_INFO_SIREN"))
 	 {
