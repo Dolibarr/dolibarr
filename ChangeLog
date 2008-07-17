@@ -4,15 +4,10 @@ English Dolibarr changelog
 ***** Changelog for 2.4 compared to 2.2 *****
 
 For users:
-- Add a calendar module (module agenda)
-- Removed useless code:
-  Replaced phplot and phplot5 librairies by artichow.
-  Removed cryptograph library replaced by artichow.
-- Login functions are now externalised as modules.
+- Add a calendar module (module agenda) with ical/vcal/rss export.
 - Look enhancement in graphics (thanks artichow).
 - Add tel and fax on delivery addresses.
 - Add a tool to edit personalized menu.
-- Changes for compatibility with PHP6/Mysql6.
 - Add an ical and vcal export link in agenda and webcalendar module.
 - Reduce memory usage.
 - Now triggers are enabled/disabled according to module they refers to.
@@ -30,18 +25,28 @@ For users:
 - Add feature to log security events (logon, change of users, passwords).
 - Can link all documents (included supplier invoices and orders) to a 
   project.
+- Can attach several files to email when sending an invoice, order or
+  proposal by email.
+- More informations reported in system information pages.
 - New translation: Added spanish language.
+- Added a security audit report.
 - Other minor changes (features, look, fixes)
-- Several enhancements to make addon development easier.
-- Changes in wizard installer to allow building autoexe installer for
-  Windows with Apache and Mysql included.
 - Added compatibility with Firefox 3.
+- Changes for compatibility with PHP6/Mysql6.
+- Some bug fixes.
 
 For developers:
+- Removed useless code:
+  Replaced phplot and phplot5 librairies by artichow.
+  Removed cryptograph library replaced by artichow.
+- Login functions are now externalised as modules.
 - Update code skeletons examples.
+- Several enhancements to make addon development easier.
 - Add a tool to generate PHP classes completely mapped to a table.
-- Added a check to enable external modules only if dolibarr version is high
-  enough.
+- Added a check to enable external modules only if dolibarr version is
+  high enough.
+- Changes in wizard installer to allow building autoexe installer for
+  Windows with Apache and Mysql included.
 
 
 ***** Changelog for 2.2 compared to 2.1 *****
