@@ -510,7 +510,7 @@ a.onglet_inf {
 
 
 a.tabTitle {
-    background: #FFFFFF;
+    background: #EEEEEE;
     color: #6198BA;
     font-weight: bold;
     padding: 0px 6px;
