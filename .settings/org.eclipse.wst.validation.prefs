@@ -1,6 +1,6 @@
-#Tue Nov 27 06:48:14 GMT 2007
-DELEGATES_PREFERENCE=delegateValidatorListorg.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator\=org.eclipse.wst.wsdl.validation.internal.eclipse.Validator;org.eclipse.wst.xsd.core.internal.validation.eclipse.XSDDelegatingValidator\=org.eclipse.wst.xsd.core.internal.validation.eclipse.Validator;
+#Thu Jul 17 02:14:17 CEST 2008
+DELEGATES_PREFERENCE=delegateValidatorListorg.eclipse.wst.xsd.core.internal.validation.eclipse.XSDDelegatingValidator\=org.eclipse.wst.xsd.core.internal.validation.eclipse.Validator;org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator\=org.eclipse.wst.wsdl.validation.internal.eclipse.Validator;
 USER_BUILD_PREFERENCE=enabledBuildValidatorListorg.eclipse.wst.wsi.ui.internal.WSIMessageValidator;org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator;org.eclipse.wst.dtd.core.internal.validation.eclipse.Validator;
-USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.eclipse.wst.wsi.ui.internal.WSIMessageValidator;org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator;org.eclipse.wst.html.internal.validation.HTMLValidator;org.eclipse.wst.xml.core.internal.validation.eclipse.Validator;org.eclipse.wst.dtd.core.internal.validation.eclipse.Validator;org.eclipse.wst.xsd.core.internal.validation.eclipse.XSDDelegatingValidator;
-USER_PREFERENCE=overrideGlobalPreferencestruedisableAllValidationfalseversion1.1.5.v200708011330
+USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.eclipse.wst.xsd.core.internal.validation.eclipse.XSDDelegatingValidator;org.eclipse.wst.xml.core.internal.validation.eclipse.Validator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;org.eclipse.wst.html.internal.validation.HTMLValidator\:org.eclipse.php.core.phpsource;org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator;org.eclipse.wst.html.internal.validation.HTMLValidator;org.eclipse.wst.dtd.core.internal.validation.eclipse.Validator;
+USER_PREFERENCE=overrideGlobalPreferencestruedisableAllValidationfalseversion1.1.102.v200709122200
 eclipse.preferences.version=1
