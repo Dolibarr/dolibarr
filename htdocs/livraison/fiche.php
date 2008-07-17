@@ -402,7 +402,7 @@ else
        */
       if ($_GET["action"] == 'valid')
       {
-      	$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id,'Valider le bon de livraison','Etes-vous s�r de vouloir valider ce bon de livraison ?','confirm_valid');
+      	$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$livraison->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm"),'confirm_valid');
       	print '<br>';
       }
       

@@ -591,7 +591,7 @@ class Livraison extends CommonObject
 	
 
 	/*
-	* Lit le document associ�
+	* Lit le document associe
 	*
 	*/
 	function fetch_object()
@@ -606,7 +606,6 @@ class Livraison extends CommonObject
 	*
 	*
 	*/
-	
 	function fetch_adresse_livraison($id)
 	{
 		$idadresse = $id;
@@ -648,10 +647,11 @@ class Livraison extends CommonObject
 				$ligne->qty_asked      = $obj->qty_asked;
 				$ligne->qty_shipped    = $obj->qty_shipped;
 				$ligne->ref            = $obj->ref;
-				$ligne->label          = stripslashes(nl2br($obj->label));
-				$ligne->description    = stripslashes(nl2br($obj->description));
+				$ligne->label          = $obj->label;
+				$ligne->description    = $obj->description;
 				$ligne->price          = $obj->price;
-	
+				$ligne->total_ht       = $obj->total_ht;
+				
 				$this->lignes[$i] = $ligne;
 				$i++;
 			}

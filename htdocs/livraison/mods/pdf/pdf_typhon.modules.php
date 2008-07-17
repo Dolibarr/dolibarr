@@ -50,7 +50,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		$this->db = $db;
 		$this->name = "typhon";
-		$this->description = "Mod�le de bon de livraison complet (logo...)";
+		$this->description = "Modele de bon de livraison complet (logo...)";
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -64,7 +64,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Gere choix mode r�glement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
+		$this->option_modereg = 1;                 // Gere choix mode reglement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
 		$this->franchise=1;
@@ -149,7 +149,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -202,7 +202,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						if ($libelleproduitservice) $libelleproduitservice.="<br>";
 						$libelleproduitservice.=dol_htmlentitiesbr($delivery->lignes[$i]->description,1);
 					}
-					// Si ligne associ�e � un code produit
+					// Si ligne associee a un code produit
 					if ($delivery->lignes[$i]->fk_product)
 					{
 						$prodser = new Product($this->db);
@@ -212,7 +212,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 							$prefix_prodserv = "";
 							if($prodser->isservice())
 							{
-								// Un service peur aussi �tre livr�
+								// Un service peur aussi etre livre
 								$prefix_prodserv = $langs->transnoentities("Service")." ";
 							}
 							else
@@ -228,11 +228,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$langs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")",1);
 					}
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
 					$pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par d�faut
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 
 					$nexY = $pdf->GetY();
 					/*

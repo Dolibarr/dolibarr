@@ -23,7 +23,7 @@
 /**
  \file       htdocs/livraison/mods/pdf/pdf_sirocco.modules.php
  \ingroup    livraison
- \brief      Fichier de la classe permettant de générer les bons de livraison au modèle Sirocco
+ \brief      Fichier de la classe permettant de gï¿½nï¿½rer les bons de livraison au modï¿½le Sirocco
  \version    $Id$
  */
 
@@ -32,33 +32,37 @@ require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
 
 /**
  \class      pdf_sirocco
- \brief      Classe permettant de générer les bons de livraison au modèle Sirocco
+ \brief      Classe permettant de gï¿½nï¿½rer les bons de livraison au modï¿½le Sirocco
  */
 
 class pdf_sirocco extends ModelePDFDeliveryOrder
 {
 
 	/**	\brief      Constructeur
-	 \param	    db	    handler accès base de donnée
+	 \param	    db	    handler accï¿½s base de donnï¿½e
 	 */
 	function pdf_sirocco($db=0)
 	{
 		$this->db = $db;
 		$this->name = "sirocco";
-		$this->description = "Modèle de bon de livraison simple";
+		$this->description = "Modele de bon de livraison simple";
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
 		$this->page_largeur = 210;
 		$this->page_hauteur = 297;
 		$this->format = array($this->page_largeur,$this->page_hauteur);
+		$this->marge_gauche=10;
+		$this->marge_droite=10;
+		$this->marge_haute=10;
+		$this->marge_basse=10;
 
 		$this->error = "";
 	}
 
 
-	/**		\brief      Renvoi dernière erreur
-	 *		\return     string      Dernière erreur
+	/**		\brief      Renvoi derniere erreur
+	 *		\return     string      Derniere erreur
 	 */
 	function pdferror()
 	{
@@ -67,10 +71,10 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 
 	/**
-		\brief      Fonction générant le bon de livraison sur le disque
-		\param	    delivery		Object livraison à générer
+		\brief      Fonction gï¿½nï¿½rant le bon de livraison sur le disque
+		\param	    delivery		Object livraison ï¿½ gï¿½nï¿½rer
 		\param		outputlangs		Output language
-	 	\return	    int         	1 if OK, <=0 if KO
+		\return	    int         	1 if OK, <=0 if KO
 	 */
 	function write_file($delivery,$outputlangs='')
 	{
@@ -118,7 +122,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdfownerpass = NULL; // Mot de passe du proprietaire, cree aleatoirement si pas defini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -136,13 +140,9 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 				$this->_pagehead($pdf, $delivery);
 
-				/*
-				 */
+				$pagenb = 1;
 				$tab_top = 100;
 				$tab_height = 140;
-				/*
-				 *
-				 */
 
 				$pdf->SetFillColor(220,220,220);
 
@@ -158,32 +158,66 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
+			  		$curY = $nexY;
 
-			  $curY = $nexY;
+					// Description de la ligne produit
+					$libelleproduitservice=dol_htmlentitiesbr($delivery->lignes[$i]->label,1);
+					if ($delivery->lignes[$i]->description && $delivery->lignes[$i]->description!=$delivery->lignes[$i]->label)
+					{
+						if ($libelleproduitservice) $libelleproduitservice.="<br>";
+						$libelleproduitservice.=dol_htmlentitiesbr($delivery->lignes[$i]->description,1);
+					}
+					// Si ligne associee a un code produit
+					if ($delivery->lignes[$i]->fk_product)
+					{
+						$prodser = new Product($this->db);
+						$prodser->fetch($delivery->lignes[$i]->fk_product);
+						if ($prodser->ref)
+						{
+							$prefix_prodserv = "";
+							if($prodser->isservice())
+							{
+								// Un service peur aussi etre livre
+								$prefix_prodserv = $langs->transnoentities("Service")." ";
+							}
+							else
+							{
+								$prefix_prodserv = $langs->transnoentities("Product")." ";
+							}
+							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
+						}
+					}
+					if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
+					{
+						// Affichage duree si il y en a une
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$langs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")",1);
+					}
+			  
+			  	$pdf->SetXY (30, $curY );
+					
+				$pdf->MultiCell(100, 5, $libelleproduitservice, 0, 'J', 0);
 
-			  $pdf->SetXY (30, $curY );
-
-			  $pdf->MultiCell(100, 5, $delivery->lignes[$i]->desc, 0, 'J', 0);
-
-			  $nexY = $pdf->GetY();
+			  	$nexY = $pdf->GetY();
 
 			  $pdf->SetXY (10, $curY );
 
 			  $pdf->MultiCell(20, 5, $delivery->lignes[$i]->ref, 0, 'C');
 
+			  // \TODO Field not yet saved in database
 			  $pdf->SetXY (133, $curY );
 			  $pdf->MultiCell(10, 5, $delivery->lignes[$i]->tva_tx, 0, 'C');
-			  	
-			  $pdf->SetXY (145, $curY );
-			  $pdf->MultiCell(10, 5, $delivery->lignes[$i]->qty, 0, 'C');
 
+			  $pdf->SetXY (145, $curY );
+			  $pdf->MultiCell(10, 5, $delivery->lignes[$i]->qty_shipped, 0, 'C');
+
+			  // \TODO Field not yet saved in database
 			  $pdf->SetXY (156, $curY );
 			  $pdf->MultiCell(18, 5, price($delivery->lignes[$i]->price), 0, 'R', 0);
 
 			  $pdf->SetXY (174, $curY );
-			  $total = price($delivery->lignes[$i]->price * $delivery->lignes[$i]->qty);
+			  $total = price($delivery->lignes[$i]->price * $delivery->lignes[$i]->qty_shipped);
 			  $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
-			  	
+
 			  $pdf->line(10, $curY, 200, $curY );
 
 			  if ($nexY > 240 && $i < $nblignes - 1)
@@ -222,7 +256,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("Discount"), 0, 'R', 0);
 
 				$pdf->SetXY (132, $tab2_top + $tab2_lh*2);
-				$pdf->MultiCell(42, $tab2_lh, "Total HT après remise", 0, 'R', 0);
+				$pdf->MultiCell(42, $tab2_lh, "Total HT aprï¿½s remise", 0, 'R', 0);
 
 				$pdf->SetXY (132, $tab2_top + $tab2_lh*3);
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalVAT"), 0, 'R', 0);
@@ -295,7 +329,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	}
 
 	/*
-	 *   	\brief      Affiche en-tête propale
+	 *   	\brief      Affiche en-tï¿½te propale
 	 *   	\param      pdf     objet PDF
 	 *   	\param      fac     objet propale
 	 *      \param      showadress      0=non, 1=oui
@@ -321,7 +355,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	 if (defined("FAC_PDF_TEL"))
 	 {
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, "Tél : ".FAC_PDF_TEL);
+	  $pdf->MultiCell(76, 5, "Tï¿½l : ".FAC_PDF_TEL);
 	 }
 	 if (defined("MAIN_INFO_SIREN"))
 	 {

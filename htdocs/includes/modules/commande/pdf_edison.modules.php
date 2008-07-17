@@ -22,7 +22,7 @@
 /** 
         \file       htdocs/includes/modules/commande/pdf_edison.modules.php
         \ingroup    commande
-        \brief      Fichier de la classe permettant de générer les commandes au modèle Edison
+        \brief      Fichier de la classe permettant de gï¿½nï¿½rer les commandes au modï¿½le Edison
         \version    $Id$
 */
 
@@ -31,20 +31,20 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php
 
 /**
         \class      pdf_edison
-        \brief      Classe permettant de générer les commandes au modèle Edison
+        \brief      Classe permettant de gï¿½nï¿½rer les commandes au modï¿½le Edison
 */
 
 class pdf_edison extends ModelePDFCommandes
 {
 
   /**	\brief      Constructeur
-        \param	    db	    handler accès base de donnée
+        \param	    db	    handler accï¿½s base de donnï¿½e
   */
   function pdf_edison($db=0)
     { 
         $this->db = $db;
         $this->name = "edison";
-        $this->description = "Modèle de commande simple";
+        $this->description = "Modele de commande simple";
 
         // Dimension page pour format A4
         $this->type = 'pdf';
@@ -59,8 +59,8 @@ class pdf_edison extends ModelePDFCommandes
     }
   
 
-  /**	\brief      Renvoi dernière erreur
-        \return     string      Dernière erreur
+  /**	\brief      Renvoi derniï¿½re erreur
+        \return     string      Derniï¿½re erreur
   */
   function pdferror() 
   {
@@ -69,8 +69,8 @@ class pdf_edison extends ModelePDFCommandes
   
   
 	/**
-			\brief      Fonction générant la commande sur le disque
-			\param	    id		id de la propale à générer
+			\brief      Fonction gï¿½nï¿½rant la commande sur le disque
+			\param	    id		id de la propale ï¿½ gï¿½nï¿½rer
 			\return	    int     1=ok, 0=ko
 	*/
 	function write_file($com,$outputlangs='')
@@ -85,7 +85,7 @@ class pdf_edison extends ModelePDFCommandes
 		
 		$outputlangs->setPhpLang();
 		
-		// Définition de l'objet $com (pour compatibilite ascendante)
+		// Dï¿½finition de l'objet $com (pour compatibilite ascendante)
     	if (! is_object($com))
     	{
             $id = $com;
@@ -95,7 +95,7 @@ class pdf_edison extends ModelePDFCommandes
 
         if ($conf->commande->dir_output)
         {
-			// Définition de $dir et $file
+			// Dï¿½finition de $dir et $file
 			if ($com->specimen)
 			{
 				$dir = $conf->commande->dir_output;
@@ -126,7 +126,7 @@ class pdf_edison extends ModelePDFCommandes
 					$pdf=new FPDI_Protection('P','mm',$this->format);
      	           $pdfrights = array('print'); // Ne permet que l'impression du document
     	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-     	           $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+     	           $pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
      	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
                }
 			   else
@@ -232,7 +232,7 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("Reduction"), 0, 'R', 0);
 	
 				$pdf->SetXY (132, $tab2_top + $tab2_lh*2);
-				$pdf->MultiCell(42, $tab2_lh, "Total HT après remise", 0, 'R', 0);
+				$pdf->MultiCell(42, $tab2_lh, "Total HT aprï¿½s remise", 0, 'R', 0);
 	
 				$pdf->SetXY (132, $tab2_top + $tab2_lh*3);
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalVAT"), 0, 'R', 0);
@@ -348,7 +348,7 @@ class pdf_edison extends ModelePDFCommandes
 		if (defined("FAC_PDF_TEL"))
 		{
 			$pdf->SetFont('Arial','',10);
-			$pdf->MultiCell(76, 5, "Tél : ".FAC_PDF_TEL);
+			$pdf->MultiCell(76, 5, "Tï¿½l : ".FAC_PDF_TEL);
 		}
 		if (defined("MAIN_INFO_SIREN"))
 		{

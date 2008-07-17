@@ -7,3 +7,5 @@ DeliveryOrders=Delivery orders
 DeliveryDate=Delivery date
 CreateDeliveryOrder=Generate delivery order
 SetDeliveryDate=Set shipping date
+ValidateDeliveryReceipt=Validate delivery receipt
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt ?
