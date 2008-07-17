@@ -867,7 +867,8 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			}
 			else
 			{
-				$html->select_date(-1,'liv_','','',1,"crea_commande");
+				$dateorder=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+				$html->select_date($dateorder,'liv_','','',1,"crea_commande");
 			}
 			print "</td></tr>";
 

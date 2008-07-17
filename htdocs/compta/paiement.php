@@ -279,9 +279,10 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$facture->client->getNomUrl(4)."</td></tr>\n";
 
 		// Date payment
-		$datepaye = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		print '<tr><td>'.$langs->trans('Date').'</td><td>';
-		$html->select_date((! empty($datepaye) ? $datepaye : -1),'','','',0,"add_paiement");
+		$datepayment = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0) : $datepayment);
+		$html->select_date($datepayment,'','','',0,"add_paiement");
 		print '</td>';
 		print '<td>'.$langs->trans('Comments').'</td></tr>';
 

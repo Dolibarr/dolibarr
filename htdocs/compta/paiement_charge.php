@@ -206,7 +206,8 @@ if ($_GET["action"] == 'create')
 	  print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
 	  
 	  print '<tr><td>'.$langs->trans("Date").'</td><td>';
-	  $html->select_date(-1,'','','','',"add_paiement");
+	  $datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+	  $html->select_date($datepayment,'','','','',"add_paiement");
 	  print "</td>";
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  

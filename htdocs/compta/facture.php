@@ -1291,7 +1291,7 @@ if ($_GET['action'] == 'create')
 		$mode_reglement_id = $soc->mode_reglement;
 		$remise_percent = $soc->remise_client;
 		$remise_absolue = 0;
-		$dateinvoice=-1;
+		$dateinvoice=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
 

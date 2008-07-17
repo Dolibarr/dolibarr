@@ -529,17 +529,17 @@ function dolibarr_getdate($timestamp,$fast=false)
 }
 
 /**
- \brief  	Retourne une date fabriqu�e depuis infos.
- Remplace la fonction mktime non impl�ment�e sous Windows si ann�e < 1970
- \param		hour			Heure
+ \brief  	Retourne une date fabriquee depuis infos.
+ Remplace la fonction mktime non implementee sous Windows si annee < 1970
+ \param		hour			Hour
  \param		minute			Minute
- \param		second			Seconde
- \param		month			Mois
- \param		day				Jour
- \param		year			Ann�e
+ \param		second			Second
+ \param		month			Month
+ \param		day				Day
+ \param		year			Year
  \param		gm				Time gm
  \param		check			No check on parameters (Can use day 32, etc...)
- \return		timestamp		Date en timestamp, '' if error
+ \return	timestamp		Date en timestamp, '' if error
  \remarks	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  */
 function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
