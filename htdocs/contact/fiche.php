@@ -294,7 +294,8 @@ if ($user->rights->societe->contact->creer)
 
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td>';
 
-		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="address" type="text" size="50" maxlength="80" value="'.$contact->address.'"></td>';
+		// Address
+		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.$contact->address.'</textarea></td>';
 
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.$contact->cp.'">&nbsp;';
 		print '<input name="ville" type="text" size="20" value="'.$contact->ville.'" maxlength="80"></td></tr>';
@@ -376,7 +377,8 @@ if ($user->rights->societe->contact->creer)
 
 		print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="address" type="text" size="50" maxlength="80" value="'.$contact->address.'"></td>';
+		// Address
+		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><textarea class="flat" name="address" cols="70">'.$contact->address.'</textarea></td>';
 
 		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80" value="'.$contact->cp.'">&nbsp;';
 		print '<input name="ville" type="text" size="20" value="'.$contact->ville.'" maxlength="80"></td></tr>';
@@ -513,7 +515,8 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 
 	print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3">'.$contact->poste.'</td>';
 
-	print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.$contact->address.'</td></tr>';
+	// Address
+	print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($contact->address).'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="3">'.$contact->cp.'&nbsp;';
 	print $contact->ville.'</td></tr>';
