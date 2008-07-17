@@ -110,14 +110,15 @@ $sql.= " ut.login as logintodo, ut.rowid as useridtodo,";
 $sql.= " ud.login as logindone, ud.rowid as useriddone,";
 $sql.= " sp.name, sp.firstname";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s,";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON a.fk_user_author = ua.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
-$sql.= " WHERE a.fk_soc = s.rowid AND c.id = a.fk_action";
+$sql.= " WHERE c.id = a.fk_action";
 if ($_GET["type"])
 {
   $sql .= " AND c.id = ".$_GET["type"];
@@ -146,6 +147,7 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 }
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit( $limit + 1, $offset);
+//print $sql;
 
 dolibarr_syslog("comm/action/listactions.php sql=".$sql);
 $resql=$db->query($sql);
@@ -279,12 +281,16 @@ if ($resql)
 		print dolibarr_print_date($obj->dp2,"day");
 		print '</td>';
 
-        // Société
+        // Third party
         print '<td>';
-        $societestatic->id=$obj->socid;
-		$societestatic->client=$obj->client;
-		$societestatic->nom=$obj->societe;
-        print $societestatic->getNomUrl(1,'',6);
+        if ($obj->socid)
+        {
+        	$societestatic->id=$obj->socid;
+			$societestatic->client=$obj->client;
+			$societestatic->nom=$obj->societe;
+        	print $societestatic->getNomUrl(1,'',6);
+        }
+        else print '&nbsp;';
 		print '</td>';
 
         // Contact

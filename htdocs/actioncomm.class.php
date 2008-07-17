@@ -68,7 +68,7 @@ class ActionComm
 	
     /**
      *      \brief      Constructeur
-     *      \param      db      Handler d'accès base de donnée
+     *      \param      db      Handler d'accï¿½s base de donnï¿½e
      */
     function ActionComm($db)
     {
@@ -88,7 +88,7 @@ class ActionComm
      *    \brief      Ajout d'une action en base
      *    \param      user      	auteur de la creation de l'action
  	 *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
-     *    \return     int         	id de l'action créée, < 0 si erreur
+     *    \return     int         	id de l'action crï¿½ï¿½e, < 0 si erreur
      */
     function add($user,$notrigger=0)
     {
@@ -198,7 +198,7 @@ class ActionComm
 
 	/**
 	*    \brief      Charge l'objet action depuis la base
-	*    \param      id      id de l'action a récupérer
+	*    \param      id      id de l'action a rï¿½cupï¿½rer
 	*/
 	function fetch($id)
 	{
@@ -446,9 +446,9 @@ class ActionComm
 
 
 	/**
-	 *    	\brief      Retourne le libellé du statut de la commande
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string      Libellé
+	 *    	\brief      Retourne le libellï¿½ du statut de la commande
+	 *    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string      Libellï¿½
 	 */
 	function getLibStatut($mode)
 	{
@@ -456,10 +456,10 @@ class ActionComm
 	}
 
 	/**
-	 *		\brief      Renvoi le libellé d'un statut donné
+	 *		\brief      Renvoi le libellï¿½ d'un statut donnï¿½
 	 *    	\param      percent     Pourcentage avancement
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string		Libellé
+	 *    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string		Libellï¿½
 	 */
 	function LibStatut($percent,$mode)
 	{
@@ -506,7 +506,7 @@ class ActionComm
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 * 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *		\param		maxlength		Nombre de caractères max dans libellé
+	 *		\param		maxlength		Nombre de caractï¿½res max dans libellï¿½
 	 *		\param		class			Force style class on a link
 	 *		\return		string			Chaine avec URL
 	 *		\remarks	Utilise $this->id, $this->code et $this->libelle
@@ -596,10 +596,38 @@ class ActionComm
 			$sql.= " c.id as type_id, c.code as type_code, c.libelle";
 			$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
 			$sql.= " WHERE a.fk_action=c.id";
-			foreach($filters as $key => $value)
+			foreach ($filters as $key => $value)
 			{
 				if ($key == 'year')     $sql.=' AND ';
 				if ($key == 'idaction') $sql.=' AND a.id='.$value;
+				if ($key == 'login')    
+				{
+					$userforfilter=new User($this->db);
+					$userforfilter->fetch($value);
+					$sql.= " AND (";
+					$sql.= " a.fk_user_author = ".$userforfilter->id;
+					$sql.= " OR a.fk_user_action = ".$userforfilter->id;
+					$sql.= " OR a.fk_user_done = ".$userforfilter->id;
+					$sql.= ")";
+				}
+				if ($key == 'logina')    
+				{
+					$userforfilter=new User($this->db);
+					$userforfilter->fetch($value);
+					$sql.= " AND a.fk_user_author = ".$userforfilter->id;
+				}
+				if ($key == 'logint')    
+				{
+					$userforfilter=new User($this->db);
+					$userforfilter->fetch($value);
+					$sql.= " AND a.fk_user_action = ".$userforfilter->id;
+				}
+				if ($key == 'logind')    
+				{
+					$userforfilter=new User($this->db);
+					$userforfilter->fetch($value);
+					$sql.= " AND a.fk_user_done = ".$userforfilter->id;
+				}
 			}
 			$sql.= " ORDER by datec";
 

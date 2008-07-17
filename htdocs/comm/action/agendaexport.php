@@ -19,6 +19,7 @@
 /**	    \file       htdocs/comm/action/agendaexport.php
         \ingroup    agenda
 		\brief      Page export agenda
+					http://127.0.0.1/dolibarr/comm/action/agendaexport.php?format=rss&exportkey=cle&filter=mine
 		\version    $Id$
 */
 
@@ -40,6 +41,11 @@ if (! empty($_GET["type"]))   $type=$_GET["type"];
 $filters=array();
 if (! empty($_GET["year"])) 	$filters['year']=$_GET["year"];
 if (! empty($_GET["idaction"])) $filters['idaction']=$_GET["idaction"];
+if (! empty($_GET["login"]))    $filters['login']=$_GET["login"];
+if (! empty($_GET["logina"]))   $filters['logina']=$_GET["logina"];
+if (! empty($_GET["logint"]))   $filters['logint']=$_GET["logint"];
+if (! empty($_GET["logind"]))   $filters['logind']=$_GET["logind"];
+
 
 // C'est un wrapper, donc header vierge
 function llxHeader() { print '<html><title>Export agenda cal</title><body>'; }
