@@ -87,8 +87,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	}
 
 	/**
-	 *	\brief      Renvoi derni�re erreur
-	 *	\return     string      Derni�re erreur
+	 *	\brief      Renvoi dernere erreur
+	 *	\return     string      Derniere erreur
 	 */
 	function pdferror()
 	{
@@ -246,7 +246,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					 */
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell(10, 4, $delivery->lignes[$i]->qty_shipped, 0, 'R');
+					$pdf->MultiCell(40, 4, $delivery->lignes[$i]->qty_shipped, 0, 'R');
 					/*
 					 // Remise sur ligne
 					 $pdf->SetXY ($this->posxdiscount, $curY);
@@ -285,7 +285,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 				}
 
-
 				// Affiche cadre tableau
 				if ($pagenb == 1)
 				{
@@ -297,117 +296,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY);
 					$bottomlasttab=$tab_top_newpage + $tab_height + 1;
 				}
-				/*
-				 $deja_regle = "";
-
-				 $posy=$this->_tableau_tot($pdf, $delivery, $deja_regle, $bottomlasttab);
-
-				 if ($deja_regle) {
-				 $this->_tableau_versements($pdf, $fac, $posy);
-				 }
-				 */
-				/*
-				 * Mode de r�glement
-				 */
-				/*
-				 if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
-				 {
-				 $pdf->SetXY ($this->marge_gauche, 228);
-				 $pdf->SetTextColor(200,0,0);
-				 $pdf->SetFont('Arial','B',8);
-				 $pdf->MultiCell(90, 3, $langs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
-				 $pdf->MultiCell(90, 3, $langs->transnoentities("ErrorCreateBankAccount"),0,'L',0);
-				 $pdf->SetTextColor(0,0,0);
-				 }
-				 */
-				/*
-				 * Propose mode r�glement par CHQ
-				 */
-				/*
-				 if (defined("FACTURE_CHQ_NUMBER"))
-				 {
-				 if (FACTURE_CHQ_NUMBER > 0)
-				 {
-				 $account = new Account($this->db);
-				 $account->fetch(FACTURE_CHQ_NUMBER);
-
-				 $pdf->SetXY ($this->marge_gauche, 227);
-				 $pdf->SetFont('Arial','B',8);
-				 $pdf->MultiCell(90, 3, "R�glement par ch�que � l'ordre de ".$account->proprio." envoy� �:",0,'L',0);
-				 $pdf->SetXY ($this->marge_gauche, 231);
-				 $pdf->SetFont('Arial','',8);
-				 $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
-				 }
-				 }
-				 */
-
-				/*
-				 * Propose mode r�glement par RIB
-				 */
-				/*
-				 if (defined("FACTURE_RIB_NUMBER"))
-				 {
-				 if (FACTURE_RIB_NUMBER > 0)
-				 {
-				 $account = new Account($this->db);
-				 $account->fetch(FACTURE_RIB_NUMBER);
-
-				 $this->marges['g']=$this->marge_gauche;
-
-				 $cury=242;
-				 $pdf->SetXY ($this->marges['g'], $cury);
-				 $pdf->SetFont('Arial','B',8);
-				 $pdf->MultiCell(90, 3, "R�glement par virement sur le compte bancaire suivant:", 0, 'L', 0);
-				 $cury+=4;
-				 $pdf->SetFont('Arial','B',6);
-				 $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
-				 $pdf->SetXY ($this->marges['g'], $cury);
-				 $pdf->MultiCell(18, 3, "Code banque", 0, 'C', 0);
-				 $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
-				 $pdf->SetXY ($this->marges['g']+18, $cury);
-				 $pdf->MultiCell(18, 3, "Code guichet", 0, 'C', 0);
-				 $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
-				 $pdf->SetXY ($this->marges['g']+36, $cury);
-				 $pdf->MultiCell(24, 3, "Num�ro compte", 0, 'C', 0);
-				 $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
-				 $pdf->SetXY ($this->marges['g']+60, $cury);
-				 $pdf->MultiCell(13, 3, "Cl� RIB", 0, 'C', 0);
-				 $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
-
-				 $pdf->SetFont('Arial','',8);
-				 $pdf->SetXY ($this->marges['g'], $cury+5);
-				 $pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
-				 $pdf->SetXY ($this->marges['g']+18, $cury+5);
-				 $pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
-				 $pdf->SetXY ($this->marges['g']+36, $cury+5);
-				 $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
-				 $pdf->SetXY ($this->marges['g']+60, $cury+5);
-				 $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
-
-				 $pdf->SetXY ($this->marges['g'], $cury+12);
-				 $pdf->MultiCell(90, 3, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
-				 $pdf->SetXY ($this->marges['g'], $cury+22);
-				 $pdf->MultiCell(90, 3, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
-				 $pdf->SetXY ($this->marges['g'], $cury+25);
-				 $pdf->MultiCell(90, 3, "BIC : " . $account->bic, 0, 'L', 0);
-
-				 }
-				 }
-				 */
-
-				/*
-				 * Conditions de r�glements
-				 */
-				/* Pour l'instant les conditions de r�glement ne sont pas g�r�es sur les propales */
-				/*
-				 $pdf->SetFont('Arial','B',10);
-				 $pdf->SetXY($this->marge_gauche, 217);
-				 $titre = "Conditions de r�glement:";
-				 $pdf->MultiCell(80, 5, $titre, 0, 'L');
-				 $pdf->SetFont('Arial','',10);
-				 $pdf->SetXY(54, 217);
-				 $pdf->MultiCell(80, 5, $prop->cond_reglement_facture,0,'L');
-				 */
 
 				/*
 				 * Pied de page
@@ -432,129 +320,6 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		return 0;
 	}
 
-	/*
-	 *   \brief      Affiche le total � payer
-	 *   \param      pdf         	Objet PDF
-	 *   \param      prop         	Objet propale
-	 *   \param      deja_regle  	Montant deja regle
-	 *   \return     y              Position pour suite
-	 */
-	function _tableau_tot(&$pdf, $delivery, $deja_regle, $posy)
-	{
-		global $langs;
-		$langs->load("main");
-		$langs->load("bills");
-
-		$tab2_top = $posy;
-		$tab2_hl = 5;
-		$tab2_height = $tab2_hl * 4;
-		$pdf->SetFont('Arial','', 9);
-
-		// Affiche la mention TVA non applicable selon option
-		$pdf->SetXY ($this->marge_gauche, $tab2_top + 0);
-		if ($this->franchise==1)
-		{
-			$pdf->MultiCell(100, $tab2_hl, "* TVA non applicable art-293B du CGI", 0, 'L', 0);
-		}
-
-		// Tableau total
-		$lltot = 200; $col1x = 120; $col2x = 182; $largcol2 = $lltot - $col2x;
-
-		// Total HT
-		$pdf->SetFillColor(255,255,255);
-		$pdf->SetXY ($col1x, $tab2_top + 0);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalHT"), 0, 'L', 1);
-
-		$pdf->SetXY ($col2x, $tab2_top + 0);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($delivery->total_ht +$delivery->remise), 0, 'R', 1);
-
-		// Remise globale
-		if ($delivery->remise > 0)
-		{
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("GlobalDiscount"), 0, 'L', 1);
-
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
-			$pdf->MultiCell($largcol2, $tab2_hl, "-".$delivery->remise_percent."%", 0, 'R', 1);
-
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT apr�s remise", 0, 'L', 1);
-
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($delivery->total_ht), 0, 'R', 0);
-
-			$index = 2;
-		}
-		else
-		{
-			$index = 0;
-		}
-
-		// Affichage des totaux de TVA par taux (conform�ment � r�glementation)
-		$pdf->SetFillColor(248,248,248);
-		foreach( $this->tva as $tvakey => $tvaval )
-		{
-			if ($tvakey)    // On affiche pas taux 0
-			{
-				$this->atleastoneratenotnull++;
-
-				$index++;
-				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-				$tvacompl = ( (float)$tvakey < 0 ) ? " (".$langs->transnoentities("NonPercuRecuperable").")" : '' ;
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
-
-				$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval * abs((float)$tvakey) / 100 ), 0, 'R', 1);
-			}
-		}
-		if (! $this->atleastoneratenotnull)
-		{
-			$index++;
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalVAT"), 0, 'L', 1);
-
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($delivery->total_tva), 0, 'R', 1);
-		}
-
-		$useborder=0;
-
-		$index++;
-		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->SetTextColor(0,0,60);
-		$pdf->SetFillColor(224,224,224);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalTTC"), $useborder, 'L', 1);
-
-		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($largcol2, $tab2_hl, price($delivery->total_ttc), $useborder, 'R', 1);
-		$pdf->SetFont('Arial','', 9);
-		$pdf->SetTextColor(0,0,0);
-
-		if ($deja_regle > 0)
-		{
-			$index++;
-
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("AlreadyPayed"), 0, 'L', 0);
-
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
-
-			$index++;
-			$pdf->SetTextColor(0,0,60);
-			//$pdf->SetFont('Arial','B', 9);
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
-
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($delivery->total_ttc - $deja_regle), $useborder, 'R', 1);
-			$pdf->SetFont('Arial','', 9);
-			$pdf->SetTextColor(0,0,0);
-		}
-
-		$index++;
-		return ($tab2_top + ($tab2_hl * $index));
-	}
 
 	/*
 	 *   \brief      Affiche la grille des lignes de propales
@@ -566,7 +331,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$langs->load("main");
 		$langs->load("bills");
 
-		// Montants exprim�s en     (en tab_top - 1
+		// Montants exprimes en     (en tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
 		//$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
@@ -583,37 +348,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
 		$pdf->MultiCell(108,2, $langs->transnoentities("Designation"),'','L');
-		/*
-		 $pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
-		 $pdf->SetXY ($this->posxtva-1, $tab_top+2);
-		 $pdf->MultiCell(12,2, $langs->transnoentities("VAT"),'','C');
-
-		 $pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
-		 $pdf->SetXY ($this->posxup-1, $tab_top+2);
-		 $pdf->MultiCell(18,2, $langs->transnoentities("PriceUHT"),'','C');
-		 */
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
-		$pdf->MultiCell(11,2, $langs->transnoentities("Qty"),'','C');
-		/*
-		 $pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
-		 if ($this->atleastonediscount)
-		 {
-		 $pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
-		 $pdf->MultiCell(16,2, $langs->transnoentities("ReductionShort"),'','C');
-		 }
-
-		 if ($this->atleastonediscount)
-		 {
-		 $pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
-		 }
-		 $pdf->SetXY ($this->postotalht-1, $tab_top+2);
-		 $pdf->MultiCell(23,2, $langs->transnoentities("TotalHT"),'','C');
-		 */
+		$pdf->MultiCell(40, 2, $langs->transnoentities("QtyShipped"),'','R');
 	}
 
 	/*
-	 *   	\brief      Affiche en-t�te propale
+	 *   	\brief      Affiche en-tete bon livraison
 	 *   	\param      pdf     objet PDF
 	 *   	\param      fac     objet propale
 	 *      \param      showadress      0=non, 1=oui

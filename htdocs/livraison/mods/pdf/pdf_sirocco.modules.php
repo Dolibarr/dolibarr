@@ -38,8 +38,8 @@ require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
 class pdf_sirocco extends ModelePDFDeliveryOrder
 {
 
-	/**	\brief      Constructeur
-	 \param	    db	    handler acc�s base de donn�e
+	/**		\brief      Constructor
+	 *		\param	    db	    Database handler
 	 */
 	function pdf_sirocco($db=0)
 	{
@@ -263,7 +263,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 //		$pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
 
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-		$pdf->Text(147,$tab_top + 5,$langs->transnoentities("Qty"));
+		$pdf->Text(147,$tab_top + 5,$langs->transnoentities("QtyShipped"));
 
 //		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
 //		$pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
