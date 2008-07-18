@@ -194,12 +194,12 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$this->tableau_top = 80;
 
 				$pdf->SetFont('Arial','', 10);
-				$curY = $this->tableau_top + 5;
-				$pdf->Text(12,  $curY+2, $outputlangs->transnoentities("Description"));
-				$pdf->Text(160, $curY, $outputlangs->transnoentities("Qty"));
-				$pdf->Text(160, $curY+4, "Commandée");
-				$pdf->Text(186, $curY, $outputlangs->transnoentities("Qty"));
-				$pdf->Text(186, $curY+4, "Livrée");
+				$curY = $this->tableau_top + 4;
+				$pdf->writeHTMLCell(100, 3, 12,  $curY, $outputlangs->trans("Description"), 0, 0);
+				$curY = $this->tableau_top + 4;
+				$pdf->writeHTMLCell(30, 3, 140, $curY, $outputlangs->trans("QtyShipped"), 0, 0);
+				$curY = $this->tableau_top + 4;
+				$pdf->writeHTMLCell(30, 3, 170, $curY, $outputlangs->trans("QtyToShip"), 0, 0);
 
 				$this->expe->fetch_lines();
 				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
