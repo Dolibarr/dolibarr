@@ -741,7 +741,8 @@ if ($_GET["id"])
 
 		// Input by
 		print '<tr><td width="30%" nowrap>'.$langs->trans("ActionAskedBy").'</td><td colspan="3">';
-		print $act->author->getNomUrl(1);
+		if ($act->author->id > 0) print $act->author->getNomUrl(1);
+		else print '&nbsp;';
 		print '</td></tr>';
 
 		// Affecte a

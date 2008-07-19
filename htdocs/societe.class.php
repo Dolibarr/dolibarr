@@ -22,25 +22,25 @@
  */
 
 /**
-        \file       htdocs/societe.class.php
-        \ingroup    societe
-        \brief      Fichier de la classe des societes
-        \version    $Id$
-*/
+ \file       htdocs/societe.class.php
+ \ingroup    societe
+ \brief      Fichier de la classe des societes
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 
 
 /**
-        \class 		Societe
-        \brief 		Classe permettant la gestion des societes
-*/
+ \class 		Societe
+ \brief 		Classe permettant la gestion des societes
+ */
 class Societe extends CommonObject
 {
 	var $db;
 	var $error;
 	var $errors=array();
-    var $table_element = 'societe';
+	var $table_element = 'societe';
 
 	var $id;
 	var $nom;
@@ -63,171 +63,174 @@ class Societe extends CommonObject
 	var $siret;		// IdProf2
 	var $ape;		// IdProf3
 	var $idprof4;	// IdProf4
-	
+
 	var $prefix_comm;
-	
+
 	var $tva_assuj;
 	var $tva_intra;
-	
+
 	var $capital;
 	var $typent_id;
 	var $effectif_id;
 	var $forme_juridique_code;
 	var $forme_juridique;
-	
+
 	var $remise_client;
 	var $mode_reglement;
 	var $cond_reglement;
-	
+
 	var $client;
 	var $prospect;
 	var $fournisseur;
-	
+
 	var $prefixCustomerIsRequired;
 	var $prefixSupplierIsRequired;
 	var $code_client;
 	var $code_fournisseur;
 	var $code_compta;
 	var $code_compta_fournisseur;
-	
+
 	var $note;
-  	//! code statut prospect
-  	var $stcomm_id;
-  	var $statut_commercial;
-  
-  	var $price_level;
-  
-  	var $commercial_id; //Id du commercial affecte
+	//! code statut prospect
+	var $stcomm_id;
+	var $statut_commercial;
+
+	var $price_level;
+
+	var $commercial_id; //Id du commercial affecte
 
 
-  /**
-   *    \brief  Constructeur de la classe
-   *    \param  DB     handler acc�s base de donn�es
-   *    \param  id     id societe (0 par defaut)
-   */
-  function Societe($DB, $id=0)
-  {
-    global $conf;
-	
-    $this->db = $DB;
+	/**
+	 *    \brief  Constructeur de la classe
+	 *    \param  DB     handler acc�s base de donn�es
+	 *    \param  id     id societe (0 par defaut)
+	 */
+	function Societe($DB, $id=0)
+	{
+		global $conf;
 
-    $this->id = $id;
-    $this->client = 0;
-    $this->prospect = 0;
-    $this->fournisseur = 0;
-    $this->typent_id  = 0;
-    $this->effectif_id  = 0;
-    $this->forme_juridique_code  = 0;
-    $this->prefixCustomerIsRequired = 0;
-    $this->prefixSupplierIsRequired = 0;
-    $this->tva_assuj = 1;
+		$this->db = $DB;
 
-    return 1;
-  }
+		$this->id = $id;
+		$this->client = 0;
+		$this->prospect = 0;
+		$this->fournisseur = 0;
+		$this->typent_id  = 0;
+		$this->effectif_id  = 0;
+		$this->forme_juridique_code  = 0;
+		$this->prefixCustomerIsRequired = 0;
+		$this->prefixSupplierIsRequired = 0;
+		$this->tva_assuj = 1;
 
-  /**
-   *    \brief      Cree la societe en base
-   *    \param      user        Objet utilisateur qui demande la cr�ation
-   *    \return     int         0 si ok, < 0 si erreur
-   */
+		return 1;
+	}
 
-    function create($user='')
-    {
-        global $langs,$conf;
 
-        // Nettoyage param�tres
-        $this->nom=trim($this->nom);
+	/**
+	 *    \brief      Create third party in database
+	 *    \param      user        Object of user that ask creation
+	 *    \return     int         >= 0 if OK, < 0 if KO
+	 */
+	function create($user='')
+	{
+		global $langs,$conf;
+		
+		// clean parameters
+		$this->nom=trim($this->nom);
 
-        dolibarr_syslog("Societe::create ".$this->nom);
+		dolibarr_syslog("Societe::create ".$this->nom);
 
-        $this->db->begin();
-        
-        // Pour code automatique
-        if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
-        if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
+		$this->db->begin();
 
-        $result = $this->verify();
+		// Pour code automatique
+		if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
+		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
 
-        if ($result >= 0)
-        {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat) ";
-            $sql .= " VALUES ('".addslashes($this->nom)."', now(), now(), '".$user->id."')";
+		$result = $this->verify();
 
-            $result=$this->db->query($sql);
-            if ($result)
-            {
-                $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
+		if ($result >= 0)
+		{
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat)";
+			$sql.= " VALUES ('".addslashes($this->nom)."', now(), now(),";
+			$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null");
+			$sql.= ")";
 
-                $ret = $this->update($this->id,$user,0,1,1);
-                
-                // si un commercial cree un client il lui est affecte automatiquement
-                if (!$user->rights->societe->client->voir)
-                {
-                	$this->add_commercial($user, $user->id);
-                }
-                // Ajout du commercial affecte
-                else if ($this->commercial_id != '' && $this->commercial_id != -1)
-                {
-                	$this->add_commercial($user, $this->commercial_id);
-                }
+			dolibarr_syslog("Societe::create sql=".$sql);
+			$result=$this->db->query($sql);
+			if ($result)
+			{
+				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
+
+				$ret = $this->update($this->id,$user,0,1,1);
+
+				// si un commercial cree un client il lui est affecte automatiquement
+				if (!$user->rights->societe->client->voir)
+				{
+					$this->add_commercial($user, $user->id);
+				}
+				// Ajout du commercial affecte
+				else if ($this->commercial_id != '' && $this->commercial_id != -1)
+				{
+					$this->add_commercial($user, $this->commercial_id);
+				}
 
 				// si le fournisseur est classe on l'ajoute
 				$this->AddFournisseurInCategory($this->fournisseur_categorie);
 
-                if ($ret >= 0)
-                {
-                    $this->use_webcal=($conf->global->PHPWEBCALENDAR_COMPANYCREATE=='always'?1:0);
+				if ($ret >= 0)
+				{
+					$this->use_webcal=($conf->global->PHPWEBCALENDAR_COMPANYCREATE=='always'?1:0);
 
-                    // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('COMPANY_CREATE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                    // Fin appel triggers
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('COMPANY_CREATE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
 
-                    dolibarr_syslog("Societe::Create success id=".$this->id);
-                    $this->db->commit();
-		            return 0;
-                }
-                else
-                {
-                    dolibarr_syslog("Societe::Create echec update");
-                    $this->db->rollback();
-                    return -3;
-                }
-            }
-            else
-            {
-                if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-                {
+					dolibarr_syslog("Societe::Create success id=".$this->id);
+					$this->db->commit();
+					return 0;
+				}
+				else
+				{
+					dolibarr_syslog("Societe::Create echec update");
+					$this->db->rollback();
+					return -3;
+				}
+			}
+			else
+			{
+				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+				{
 
-                    $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
-                }
-                else
-                {
-                    dolibarr_syslog("Societe::Create echec insert sql=".$sql);
-                }
-                $this->db->rollback();
-                return -2;
-            }
+					$this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
+				}
+				else
+				{
+					dolibarr_syslog("Societe::Create echec insert sql=".$sql);
+				}
+				$this->db->rollback();
+				return -2;
+			}
 
-        }
-        else
-        {
-            $this->db->rollback();
-            dolibarr_syslog("Societe::Create echec verify sql=".$sql);
-            return -1;
-        }
-    }
+		}
+		else
+		{
+			$this->db->rollback();
+			dolibarr_syslog("Societe::Create echec verify sql=".$sql);
+			return -1;
+		}
+	}
 
 	/**
-	*    \brief      Verification lors de la modification
-	*    \return     int		0 si OK, <0 si KO
-	*/
+	 *    \brief      Verification lors de la modification
+	 *    \return     int		0 si OK, <0 si KO
+	 */
 	function verify()
 	{
 		$this->errors=array();
-		
+
 		$result = 0;
 		$this->nom=trim($this->nom);
 
@@ -287,188 +290,188 @@ class Societe extends CommonObject
 				}
 				$result = -3;
 			}
-		}		
+		}
 
 		return $result;
 	}
 
-    /**
-     *      \brief      Update parameters of third party 
-     *      \param      id              			id societe
-     *      \param      user            			Utilisateur qui demande la mise � jour
-     *      \param      call_trigger    			0=non, 1=oui
+	/**
+	 *      \brief      Update parameters of third party
+	 *      \param      id              			id societe
+	 *      \param      user            			Utilisateur qui demande la mise a jour
+	 *      \param      call_trigger    			0=non, 1=oui
 	 *		\param		allowmodcodeclient			Autorise modif code client
 	 *		\param		allowmodcodefournisseur		Autorise modif code fournisseur
-     *      \return     int             			<0 si ko, >=0 si ok
-     */
-    function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
-    {
-        global $langs,$conf;
+	 *      \return     int             			<0 si ko, >=0 si ok
+	 */
+	function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
+	{
+		global $langs,$conf;
 
-        dolibarr_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
+		dolibarr_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
-		// Nettoyage des param�tres
-        $this->id=$id;
-        $this->capital=trim($this->capital);
-        $this->nom=trim($this->nom);
-        $this->adresse=trim($this->adresse);
-        $this->cp=trim($this->cp);
-        $this->ville=trim($this->ville);
-        $this->departement_id=trim($this->departement_id);
-        $this->pays_id=trim($this->pays_id);
-        $this->tel=trim($this->tel);
-        $this->fax=trim($this->fax);
-		    $this->tel = ereg_replace(" ","",$this->tel);
-		    $this->tel = ereg_replace("\.","",$this->tel);
-		    $this->fax = ereg_replace(" ","",$this->fax);
-		    $this->fax = ereg_replace("\.","",$this->fax);
-        $this->email=trim($this->email);
-        $this->url=$this->url?clean_url($this->url,0):'';
-        $this->siren=trim($this->siren);
-        $this->siret=trim($this->siret);
-        $this->ape=trim($this->ape);
-        $this->idprof4=trim($this->idprof4);
-        $this->prefix_comm=trim($this->prefix_comm);
+		// Clean parameters
+		$this->id=$id;
+		$this->capital=trim($this->capital);
+		$this->nom=trim($this->nom);
+		$this->adresse=trim($this->adresse);
+		$this->cp=trim($this->cp);
+		$this->ville=trim($this->ville);
+		$this->departement_id=trim($this->departement_id);
+		$this->pays_id=trim($this->pays_id);
+		$this->tel=trim($this->tel);
+		$this->fax=trim($this->fax);
+		$this->tel = ereg_replace(" ","",$this->tel);
+		$this->tel = ereg_replace("\.","",$this->tel);
+		$this->fax = ereg_replace(" ","",$this->fax);
+		$this->fax = ereg_replace("\.","",$this->fax);
+		$this->email=trim($this->email);
+		$this->url=$this->url?clean_url($this->url,0):'';
+		$this->siren=trim($this->siren);
+		$this->siret=trim($this->siret);
+		$this->ape=trim($this->ape);
+		$this->idprof4=trim($this->idprof4);
+		$this->prefix_comm=trim($this->prefix_comm);
 
-		    $this->tva_assuj=trim($this->tva_assuj);
-        $this->tva_intra=trim($this->tva_intra);
+		$this->tva_assuj=trim($this->tva_assuj);
+		$this->tva_intra=trim($this->tva_intra);
 
-        $this->capital=trim($this->capital);
-        if (strlen($this->capital) == 0) $this->capital = 0;
+		$this->capital=trim($this->capital);
+		if (strlen($this->capital) == 0) $this->capital = 0;
 
-        $this->effectif_id=trim($this->effectif_id);
-        $this->forme_juridique_code=trim($this->forme_juridique_code);
-        
-        // Pour code client/fournisseur automatique
-        if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
-        if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
+		$this->effectif_id=trim($this->effectif_id);
+		$this->forme_juridique_code=trim($this->forme_juridique_code);
 
-        // Check name is required and codes are ok or unique.
+		// Pour code client/fournisseur automatique
+		if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
+		if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
+
+		// Check name is required and codes are ok or unique.
 		// If error, this->errors[] is filled
 		$result = $this->verify();
 
-        if ($result >= 0)
-        {
-            dolibarr_syslog("Societe::Update verify ok");
-        
-            $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-            $sql.= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
-            $sql.= ",datea = now()";
-            $sql.= ",address = '" . addslashes($this->adresse) ."'";
-        
-            $sql.= ",cp = ".($this->cp?"'".$this->cp."'":"null");
-            $sql.= ",ville = ".($this->ville?"'".addslashes($this->ville)."'":"null");
-        
-            $sql .= ",fk_departement = '" . ($this->departement_id?$this->departement_id:'0') ."'";
-            $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
-        
-            $sql .= ",tel = ".($this->tel?"'".addslashes($this->tel)."'":"null");
-            $sql .= ",fax = ".($this->fax?"'".addslashes($this->fax)."'":"null");
-            $sql .= ",email = ".($this->email?"'".addslashes($this->email)."'":"null");
-            $sql .= ",url = ".($this->url?"'".addslashes($this->url)."'":"null");
-        
-            $sql .= ",siren   = '". addslashes($this->siren)   ."'";
-            $sql .= ",siret   = '". addslashes($this->siret)   ."'";
-            $sql .= ",ape     = '". addslashes($this->ape)     ."'";
-            $sql .= ",idprof4 = '". addslashes($this->idprof4) ."'";
-        
+		if ($result >= 0)
+		{
+			dolibarr_syslog("Societe::Update verify ok");
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+			$sql.= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
+			$sql.= ",datea = now()";
+			$sql.= ",address = '" . addslashes($this->adresse) ."'";
+
+			$sql.= ",cp = ".($this->cp?"'".$this->cp."'":"null");
+			$sql.= ",ville = ".($this->ville?"'".addslashes($this->ville)."'":"null");
+
+			$sql .= ",fk_departement = '" . ($this->departement_id?$this->departement_id:'0') ."'";
+			$sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
+
+			$sql .= ",tel = ".($this->tel?"'".addslashes($this->tel)."'":"null");
+			$sql .= ",fax = ".($this->fax?"'".addslashes($this->fax)."'":"null");
+			$sql .= ",email = ".($this->email?"'".addslashes($this->email)."'":"null");
+			$sql .= ",url = ".($this->url?"'".addslashes($this->url)."'":"null");
+
+			$sql .= ",siren   = '". addslashes($this->siren)   ."'";
+			$sql .= ",siret   = '". addslashes($this->siret)   ."'";
+			$sql .= ",ape     = '". addslashes($this->ape)     ."'";
+			$sql .= ",idprof4 = '". addslashes($this->idprof4) ."'";
+
 			$sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
-            $sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
+			$sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
 
-            $sql .= ",capital = '" .   addslashes($this->capital) ."'";
-       
-            $sql .= ",prefix_comm = ".($this->prefix_comm?"'".addslashes($this->prefix_comm)."'":"null");
-        
-            $sql .= ",fk_effectif = ".($this->effectif_id?"'".$this->effectif_id."'":"null");
-        
-            $sql .= ",fk_typent = ".($this->typent_id?"'".$this->typent_id."'":"0");
-        
-            $sql .= ",fk_forme_juridique = ".($this->forme_juridique_code?"'".$this->forme_juridique_code."'":"null");
-        
-            $sql .= ",client = " . $this->client;
-            $sql .= ",fournisseur = " . $this->fournisseur;
-        
-            if ($allowmodcodeclient)
-            {
-                // Attention check_codeclient peut modifier le code suivant le module utilise
-                $this->check_codeclient();
-        
-                $sql .= ", code_client = ".($this->code_client?"'".addslashes($this->code_client)."'":"null");
-        
-                // Attention get_codecompta peut modifier le code suivant le module utilise
-                $this->get_codecompta('customer');
-        
-                $sql .= ", code_compta = ".($this->code_compta?"'".addslashes($this->code_compta)."'":"null");
-            }
-        
-            if ($allowmodcodefournisseur)
-            {
-                // Attention check_codefournisseur peut modifier le code suivant le module utilise
-                $this->check_codefournisseur();
-        
-                $sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".addslashes($this->code_fournisseur)."'":"null");
-        
-                // Attention get_codecompta peut modifier le code suivant le module utilise
-                $this->get_codecompta('supplier');
-        
-                $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".addslashes($this->code_compta_fournisseur)."'":"null");
-            }
-            if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
-            $sql .= " WHERE rowid = '" . $id ."'";
+			$sql .= ",capital = '" .   addslashes($this->capital) ."'";
+			 
+			$sql .= ",prefix_comm = ".($this->prefix_comm?"'".addslashes($this->prefix_comm)."'":"null");
 
-        	
+			$sql .= ",fk_effectif = ".($this->effectif_id?"'".$this->effectif_id."'":"null");
+
+			$sql .= ",fk_typent = ".($this->typent_id?"'".$this->typent_id."'":"0");
+
+			$sql .= ",fk_forme_juridique = ".($this->forme_juridique_code?"'".$this->forme_juridique_code."'":"null");
+
+			$sql .= ",client = " . $this->client;
+			$sql .= ",fournisseur = " . $this->fournisseur;
+
+			if ($allowmodcodeclient)
+			{
+				// Attention check_codeclient peut modifier le code suivant le module utilise
+				$this->check_codeclient();
+
+				$sql .= ", code_client = ".($this->code_client?"'".addslashes($this->code_client)."'":"null");
+
+				// Attention get_codecompta peut modifier le code suivant le module utilise
+				$this->get_codecompta('customer');
+
+				$sql .= ", code_compta = ".($this->code_compta?"'".addslashes($this->code_compta)."'":"null");
+			}
+
+			if ($allowmodcodefournisseur)
+			{
+				// Attention check_codefournisseur peut modifier le code suivant le module utilise
+				$this->check_codefournisseur();
+
+				$sql .= ", code_fournisseur = ".($this->code_fournisseur?"'".addslashes($this->code_fournisseur)."'":"null");
+
+				// Attention get_codecompta peut modifier le code suivant le module utilise
+				$this->get_codecompta('supplier');
+
+				$sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".addslashes($this->code_compta_fournisseur)."'":"null");
+			}
+			$sql .= ", fk_user_modif = ".($user->id > 0 ? "'".$user->id."'":"null");
+			$sql .= " WHERE rowid = '" . $id ."'";
+
+			 
 			dolibarr_syslog("Societe::update sql=".$sql);
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
 				// Si le fournisseur est classe on l'ajoute
 				$this->AddFournisseurInCategory($this->fournisseur_categorie);
 
-                if ($call_trigger)
-                {
-                    // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('COMPANY_MODIFY',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                    // Fin appel triggers
-                }
-        
-                $result = 1;
-            }
-            else
-            {
-                if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-                {
-                    // Doublon
-                    $this->error = $langs->trans("ErrorDuplicateField");
-                    $result =  -1;
-                }
-                else
-                {
-        
-                    $this->error = $langs->trans("Error sql=".$sql);
-                    dolibarr_syslog("Societe::Update echec sql=".$sql);
-                    $result =  -2;
-                }
-            }
-        }
+				if ($call_trigger)
+				{
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('COMPANY_MODIFY',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+				}
 
-        return $result;
+				$result = 1;
+			}
+			else
+			{
+				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+				{
+					// Doublon
+					$this->error = $langs->trans("ErrorDuplicateField");
+					$result =  -1;
+				}
+				else
+				{
 
-    }
+					$this->error = $langs->trans("Error sql=".$sql);
+					dolibarr_syslog("Societe::Update echec sql=".$sql);
+					$result =  -2;
+				}
+			}
+		}
 
-    /**
-     *    \brief      Load a third party from database into memory
-     *    \param      socid       Id third party to load
-     *    \param      user        User object (\deprecated)
-     *    \return     int         >0 si ok, <0 si ko
-     */
-    function fetch($socid, $user=0)
-    {
+		return $result;
+
+	}
+
+	/**
+	 *    \brief      Load a third party from database into memory
+	 *    \param      socid       Id third party to load
+	 *    \param      user        User object (\deprecated)
+	 *    \return     int         >0 si ok, <0 si ko
+	 */
+	function fetch($socid, $user=0)
+	{
 		global $langs;
 		global $conf;
-		
+
 		// Init data for telephonie module
 		if ($conf->telephonie->enabled && $user && $user->id)
 		{
@@ -572,7 +575,7 @@ class Societe extends CommonObject
 
 				$this->typent_id      = $obj->typent_id;
 				$this->typent_code    = $obj->typent_code;
-				
+
 				$this->effectif_id    = $obj->effectif_id;
 				$this->effectif       = $obj->effectif_id?$obj->effectif:'';
 
@@ -593,7 +596,7 @@ class Societe extends CommonObject
 				$this->note = $obj->note;
 				// multiprix
 				if($conf->global->PRODUIT_MULTIPRICES == 1)
-					$this->price_level = $obj->price_level;
+				$this->price_level = $obj->price_level;
 
 				$result = 1;
 			}
@@ -616,178 +619,178 @@ class Societe extends CommonObject
 
 		return $result;
 	}
-	
-	/** 
-   *
-   * Lit une adresse de livraison
-   *
-   */
-    function fetch_adresse_livraison($id)
-    {
-        global $conf,$langs;
 
-        $sql = "SELECT l.rowid, l.label, l.fk_societe, l.nom, l.address, l.cp";
-        $sql .= ", ".$this->db->pdate("l.tms")."as dm, ".$this->db->pdate("l.datec")."as dc";
-        $sql .= ", l.ville, l.fk_pays, l.note, l.tel, l.fax";
-        $sql .= ", p.libelle as pays, p.code as pays_code, s.nom as socname";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison as l";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON l.fk_pays = p.rowid";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON l.fk_societe = s.rowid";
-        $sql .= " WHERE l.rowid = ".$id;
+	/**
+	 *
+	 * Lit une adresse de livraison
+	 *
+	 */
+	function fetch_adresse_livraison($id)
+	{
+		global $conf,$langs;
 
-        $result = $this->db->query($sql) ;
-    
-        if ( $result )
-        {
-            $obj = $this->db->fetch_object($result);
-    
-            $this->id             = $obj->rowid;
-            $this->datec          = $obj->dc;
-            $this->datem          = $obj->dm;
-            $this->label          = $obj->label;
-            $this->socid          = $obj->fk_societe;
-            $this->societe        = $obj->socname;
-            $this->nom            = $obj->nom;
-            $this->address        = $obj->address;
-            $this->adresse        = $obj->address; //Todo: uniformiser le nom des champs
-            $this->cp             = $obj->cp;
-            $this->ville          = $obj->ville;
-            $this->pays_id        = $obj->fk_pays;
-            $this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
-            $this->pays           = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?strtoupper(clean_html($langs->trans('Country'.$obj->pays_code))):$obj->pays):'';
-            $this->tel            = $obj->tel;
-            $this->fax            = $obj->fax;
-            $this->note           = $obj->note;
+		$sql = "SELECT l.rowid, l.label, l.fk_societe, l.nom, l.address, l.cp";
+		$sql .= ", ".$this->db->pdate("l.tms")."as dm, ".$this->db->pdate("l.datec")."as dc";
+		$sql .= ", l.ville, l.fk_pays, l.note, l.tel, l.fax";
+		$sql .= ", p.libelle as pays, p.code as pays_code, s.nom as socname";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison as l";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON l.fk_pays = p.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON l.fk_societe = s.rowid";
+		$sql .= " WHERE l.rowid = ".$id;
+
+		$result = $this->db->query($sql) ;
+
+		if ( $result )
+		{
+			$obj = $this->db->fetch_object($result);
+
+			$this->id             = $obj->rowid;
+			$this->datec          = $obj->dc;
+			$this->datem          = $obj->dm;
+			$this->label          = $obj->label;
+			$this->socid          = $obj->fk_societe;
+			$this->societe        = $obj->socname;
+			$this->nom            = $obj->nom;
+			$this->address        = $obj->address;
+			$this->adresse        = $obj->address; //Todo: uniformiser le nom des champs
+			$this->cp             = $obj->cp;
+			$this->ville          = $obj->ville;
+			$this->pays_id        = $obj->fk_pays;
+			$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
+			$this->pays           = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?strtoupper(clean_html($langs->trans('Country'.$obj->pays_code))):$obj->pays):'';
+			$this->tel            = $obj->tel;
+			$this->fax            = $obj->fax;
+			$this->note           = $obj->note;
 
 
-            $this->db->free($result);
-            
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
+			$this->db->free($result);
 
-    /**
-     *    \brief      Suppression d'une societe de la base avec ses d�pendances (contacts, rib...)
-     *    \param      id      id de la societe � supprimer
-     */
-    function delete($id)
-    {
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+	 *    \brief      Suppression d'une societe de la base avec ses d�pendances (contacts, rib...)
+	 *    \param      id      id de la societe � supprimer
+	 */
+	function delete($id)
+	{
 		global $user,$langs,$conf;
-		
-        dolibarr_syslog("Societe::Delete");
-        $sqr = 0;
+
+		dolibarr_syslog("Societe::Delete");
+		$sqr = 0;
 
 		// \Todo
 		// Check if third party can be deleted
-		
-		
-		
-		
-        if ( $this->db->begin())
-        {
-            $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
-            $sql.= " WHERE fk_soc = " . $id;
-            if ($this->db->query($sql))
-            {
-                $sqr++;
-            }
-            else
-            {
-                $this->error .= $this->db->lasterror();
-                dolibarr_syslog("Societe::Delete erreur -1 ".$this->error);
-            }
-
-            $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
-            $sql.= " WHERE fk_soc = " . $id;
-            if ($this->db->query($sql))
-            {
-                $sqr++;
-            }
-            else
-            {
-                $this->error = $this->db->lasterror();
-                dolibarr_syslog("Societe::Delete erreur -2 ".$this->error);
-            }
-
-            $sql = "DELETE from ".MAIN_DB_PREFIX."societe";
-            $sql.= " WHERE rowid = " . $id;
-            if ($this->db->query($sql))
-            {
-                $sqr++;
-            }
-            else
-            {
-                $this->error = $this->db->lasterror();
-                dolibarr_syslog("Societe::Delete erreur -3 ".$this->error);
-            }
-
-            if ($sqr == 3)
-            {
-                // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('COMPANY_DELETE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
-
-                $this->db->commit();
-
-                // Suppression du r�pertoire document
-                $docdir = $conf->societe->dir_output . "/" . $id;
-                if (file_exists ($docdir))
-                {
-                    dol_delete_dir_recursive($docdir);
-                }
-
-                return 0;
-            }
-            else
-            {
-                $this->db->rollback();
-                return -1;
-            }
-        }
-
-    }
 
 
-  /**
-   *    \brief     Retournes les factures impay�es de la soci�t�
-   *    \return    array   tableau des id de factures impay�es
-   *
-   */
-  function factures_impayes()
-  {
-    $facimp = array();
-    /*
-     * Lignes
-     */
-    $sql = "SELECT f.rowid";
-    $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = '".$this->id . "'";
-    $sql .= " AND f.fk_statut = '1' AND f.paye = '0'";
 
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
 
-	while ($i < $num)
+		if ( $this->db->begin())
+		{
+			$sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
+			$sql.= " WHERE fk_soc = " . $id;
+			if ($this->db->query($sql))
+			{
+				$sqr++;
+			}
+			else
+			{
+				$this->error .= $this->db->lasterror();
+				dolibarr_syslog("Societe::Delete erreur -1 ".$this->error);
+			}
+
+			$sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib";
+			$sql.= " WHERE fk_soc = " . $id;
+			if ($this->db->query($sql))
+			{
+				$sqr++;
+			}
+			else
+			{
+				$this->error = $this->db->lasterror();
+				dolibarr_syslog("Societe::Delete erreur -2 ".$this->error);
+			}
+
+			$sql = "DELETE from ".MAIN_DB_PREFIX."societe";
+			$sql.= " WHERE rowid = " . $id;
+			if ($this->db->query($sql))
+			{
+				$sqr++;
+			}
+			else
+			{
+				$this->error = $this->db->lasterror();
+				dolibarr_syslog("Societe::Delete erreur -3 ".$this->error);
+			}
+
+			if ($sqr == 3)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('COMPANY_DELETE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+
+				$this->db->commit();
+
+				// Suppression du r�pertoire document
+				$docdir = $conf->societe->dir_output . "/" . $id;
+				if (file_exists ($docdir))
+				{
+					dol_delete_dir_recursive($docdir);
+				}
+
+				return 0;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+	}
+
+
+	/**
+	 *    \brief     Retournes les factures impay�es de la soci�t�
+	 *    \return    array   tableau des id de factures impay�es
+	 *
+	 */
+	function factures_impayes()
+	{
+		$facimp = array();
+		/*
+		 * Lignes
+		 */
+		$sql = "SELECT f.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = '".$this->id . "'";
+		$sql .= " AND f.fk_statut = '1' AND f.paye = '0'";
+
+		if ($this->db->query($sql))
+		{
+			$num = $this->db->num_rows();
+			$i = 0;
+
+			while ($i < $num)
 	  {
-	    $objp = $this->db->fetch_object();
-	    $array_push($facimp, $objp->rowid);
-	    $i++;
-	    print $i;
+	  	$objp = $this->db->fetch_object();
+	  	$array_push($facimp, $objp->rowid);
+	  	$i++;
+	  	print $i;
 	  }
 
-	$this->db->free();
-      }
-    return $facimp;
-  }
+	  $this->db->free();
+		}
+		return $facimp;
+	}
 
 	/**
 	 *    \brief      Attribut le prefix de la soci�t� en base
@@ -804,9 +807,9 @@ class Societe extends CommonObject
 				$obj=$this->db->fetch_object($resql);
 				$nom = preg_replace("/[[:punct:]]/","",$obj->nom);
 				$this->db->free();
-	
+
 				$prefix = $this->genprefix($nom,4);
-	
+
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
 				$resql=$this->db->query($sql);
 				if ($resql)
@@ -816,10 +819,10 @@ class Societe extends CommonObject
 					if (! $obj->nb)
 					{
 						$sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='".$prefix."' WHERE rowid='".$this->id."'";
-	
+
 						if ( $this->db->query( $sql) )
 						{
-	
+
 						}
 						else
 						{
@@ -874,21 +877,21 @@ class Societe extends CommonObject
 		return $retour;
 	}
 
-  /**
-   *    \brief     D�finit la soci�t� comme un client
-   *
-   */
-  function set_as_client()
-  {
-    if ($this->id)
-      {
-	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-	$sql .= " SET client = 1";
-	$sql .= " WHERE rowid = " . $this->id .";";
+	/**
+	 *    \brief     D�finit la soci�t� comme un client
+	 *
+	 */
+	function set_as_client()
+	{
+		if ($this->id)
+		{
+			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+			$sql .= " SET client = 1";
+			$sql .= " WHERE rowid = " . $this->id .";";
 
-	return $this->db->query($sql);
-      }
-  }
+			return $this->db->query($sql);
+		}
+	}
 
 	/**
 	 *    	\brief      D�finit la soci�t� comme un client
@@ -900,7 +903,7 @@ class Societe extends CommonObject
 	function set_remise_client($remise, $note, $user)
 	{
 		global $langs;
-		
+
 		// Nettoyage parametres
 		$note=trim($note);
 		if (! $note)
@@ -914,7 +917,7 @@ class Societe extends CommonObject
 		if ($this->id)
 		{
 			$this->db->begin();
-			
+				
 			// Positionne remise courante
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
 			$sql.= " SET remise_client = '".$remise."'";
@@ -926,7 +929,7 @@ class Societe extends CommonObject
 				$this->error=$this->db->error();
 				return -1;
 			}
-		
+
 			// Ecrit trace dans historique des remises
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
 			$sql.= " (datec, fk_soc, remise_client, note, fk_user_author)";
@@ -942,7 +945,7 @@ class Societe extends CommonObject
 				$this->error=$this->db->error();
 				return -1;
 			}
-		
+
 			$this->db->commit();
 			return 1;
 		}
@@ -958,11 +961,11 @@ class Societe extends CommonObject
 	function set_remise_except($remise, $user, $desc, $tva_tx=0)
 	{
 		global $langs;
-		
+
 		// Nettoyage des parametres
 		$remise = price2num($remise);
 		$desc = trim($desc);
-		
+
 		// Check parameters
 		if (! $remise > 0)
 		{
@@ -974,7 +977,7 @@ class Societe extends CommonObject
 			$this->error=$langs->trans("ErrorWrongValueForParameter","3");
 			return -2;
 		}
-		
+
 		if ($this->id)
 		{
 			require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
@@ -1010,7 +1013,7 @@ class Societe extends CommonObject
 		if ($this->id)
 		{
 			require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
-			
+				
 			$discount = new DiscountAbsolute($this->db);
 			$result=$discount->fetch($id);
 			$result=$discount->delete();
@@ -1030,7 +1033,7 @@ class Societe extends CommonObject
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
-        $discountstatic=new DiscountAbsolute($this->db);
+		$discountstatic=new DiscountAbsolute($this->db);
 		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter);
 		if ($result >= 0)
 		{
@@ -1045,70 +1048,70 @@ class Societe extends CommonObject
 
 	function set_price_level($price_level, $user)
 	{
-    if ($this->id)
-      {
-	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-	$sql .= " SET price_level = '".$price_level."'";
-	$sql .= " WHERE rowid = " . $this->id .";";
+		if ($this->id)
+		{
+			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+			$sql .= " SET price_level = '".$price_level."'";
+			$sql .= " WHERE rowid = " . $this->id .";";
 
-	$this->db->query($sql);
+			$this->db->query($sql);
 
-	$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices ";
-	$sql .= " ( datec, fk_soc, price_level, fk_user_author )";
-	$sql .= " VALUES (now(),".$this->id.",'".$price_level."',".$user->id.")";
+			$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices ";
+			$sql .= " ( datec, fk_soc, price_level, fk_user_author )";
+			$sql .= " VALUES (now(),".$this->id.",'".$price_level."',".$user->id.")";
 
-	if (! $this->db->query($sql) )
+			if (! $this->db->query($sql) )
 	  {
-	    dolibarr_print_error($this->db);
+	  	dolibarr_print_error($this->db);
 	  }
 
-      }
-  }
+		}
+	}
 
-  /**
-   *
-   *
-   */
-  function add_commercial($user, $commid)
-  {
-    if ($this->id > 0 && $commid > 0)
-      {
-	$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
-	$sql .= " WHERE fk_soc = " . $this->id ." AND fk_user =".$commid;
+	/**
+	 *
+	 *
+	 */
+	function add_commercial($user, $commid)
+	{
+		if ($this->id > 0 && $commid > 0)
+		{
+			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
+			$sql .= " WHERE fk_soc = " . $this->id ." AND fk_user =".$commid;
 
-	$this->db->query($sql);
+			$this->db->query($sql);
 
-	$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux ";
-	$sql .= " ( fk_soc, fk_user )";
-	$sql .= " VALUES (".$this->id.",".$commid.")";
+			$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_commerciaux ";
+			$sql .= " ( fk_soc, fk_user )";
+			$sql .= " VALUES (".$this->id.",".$commid.")";
 
-	if (! $this->db->query($sql) )
+			if (! $this->db->query($sql) )
 	  {
-	    dolibarr_syslog("Societe::add_commercial Erreur");
+	  	dolibarr_syslog("Societe::add_commercial Erreur");
 	  }
 
-      }
-  }
+		}
+	}
 
-  /**
-   *
-   *
-   *
-   */
-  function del_commercial($user, $commid)
-  {
-    if ($this->id > 0 && $commid > 0)
-      {
-	$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
-	$sql .= " WHERE fk_soc = " . $this->id ." AND fk_user =".$commid;
+	/**
+	 *
+	 *
+	 *
+	 */
+	function del_commercial($user, $commid)
+	{
+		if ($this->id > 0 && $commid > 0)
+		{
+			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";
+			$sql .= " WHERE fk_soc = " . $this->id ." AND fk_user =".$commid;
 
-	if (! $this->db->query($sql) )
+			if (! $this->db->query($sql) )
 	  {
-	    dolibarr_syslog("Societe::del_commercial Erreur");
+	  	dolibarr_syslog("Societe::del_commercial Erreur");
 	  }
 
-      }
-  }
+		}
+	}
 
 
 	/**
@@ -1121,9 +1124,9 @@ class Societe extends CommonObject
 	function getNomUrl($withpicto=0,$option='',$maxlen=0)
 	{
 		global $langs;
-		
+
 		$result='';
-		
+
 		if ($this->client == 1)
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">';
@@ -1152,42 +1155,42 @@ class Societe extends CommonObject
 	}
 
 
-  /**
-   *    \brief      Renvoie le nom d'une societe a partir d'un id
-   *    \param      id      	id company we search for name
-   *	\return		string		Third party name
-   */
-  function get_nom($id)
-  {
+	/**
+	 *    \brief      Renvoie le nom d'une societe a partir d'un id
+	 *    \param      id      	id company we search for name
+	 *	\return		string		Third party name
+	 */
+	function get_nom($id)
+	{
 
-    $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$id."';";
+		$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$id."';";
 
-    $result = $this->db->query($sql);
+		$result = $this->db->query($sql);
 
-    if ($result)
-      {
-    	if ($this->db->num_rows())
-    	  {
-    	    $obj = $this->db->fetch_object($result);
-    	    return $obj->nom;
-    	  }
-    	$this->db->free();
-      }
-    else {
-      dolibarr_print_error($this->db);
-    }
+		if ($result)
+		{
+			if ($this->db->num_rows())
+			{
+				$obj = $this->db->fetch_object($result);
+				return $obj->nom;
+			}
+			$this->db->free();
+		}
+		else {
+			dolibarr_print_error($this->db);
+		}
 
-  }
+	}
 
 
 	/**
-	*    \brief      Renvoie la liste des contacts emails existant pour la soci�t�
-	*    \return     array       tableau des contacts emails
-	*/
+	 *    \brief      Renvoie la liste des contacts emails existant pour la soci�t�
+	 *    \return     array       tableau des contacts emails
+	 */
 	function thirdparty_and_contact_email_array()
 	{
 		global $langs;
-		
+
 		$contact_email = $this->contact_email_array();
 		if ($this->email)
 		{
@@ -1196,15 +1199,15 @@ class Societe extends CommonObject
 		}
 		return $contact_email;
 	}
-	
+
 	/**
-	*    \brief      Renvoie la liste des contacts emails existant pour la soci�t�
-	*    \return     array       tableau des contacts emails
-	*/
+	 *    \brief      Renvoie la liste des contacts emails existant pour la soci�t�
+	 *    \return     array       tableau des contacts emails
+	 */
 	function contact_email_array()
 	{
 		$contact_email = array();
-	
+
 		$sql = "SELECT rowid, email, name, firstname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql.= " WHERE fk_soc = '".$this->id."'";
@@ -1229,16 +1232,16 @@ class Societe extends CommonObject
 		}
 		return $contact_email;
 	}
-	
-	
+
+
 	/**
-	*    \brief      Renvoie la liste des contacts de cette soci�t�
-	*    \return     array      tableau des contacts
-	*/
+	 *    \brief      Renvoie la liste des contacts de cette soci�t�
+	 *    \return     array      tableau des contacts
+	 */
 	function contact_array()
 	{
 		$contacts = array();
-	
+
 		$sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1262,41 +1265,41 @@ class Societe extends CommonObject
 		return $contacts;
 	}
 
-    /**
-     *    \brief      Renvoie l'email d'un contact depuis son id
-     *    \param      rowid       id du contact
-     *    \return     string      email du contact
-     */
-    function contact_get_email($rowid)
-    {
+	/**
+	 *    \brief      Renvoie l'email d'un contact depuis son id
+	 *    \param      rowid       id du contact
+	 *    \return     string      email du contact
+	 */
+	function contact_get_email($rowid)
+	{
 
-        $sql = "SELECT rowid, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE rowid = '".$rowid."'";
+		$sql = "SELECT rowid, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE rowid = '".$rowid."'";
 
-        if ($this->db->query($sql) )
-        {
-            $nump = $this->db->num_rows();
+		if ($this->db->query($sql) )
+		{
+			$nump = $this->db->num_rows();
 
-            if ($nump)
-            {
+			if ($nump)
+			{
 
-                $obj = $this->db->fetch_object();
+				$obj = $this->db->fetch_object();
 
-                $contact_email = "$obj->firstname $obj->name <$obj->email>";
+				$contact_email = "$obj->firstname $obj->name <$obj->email>";
 
-            }
-            return $contact_email;
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-        }
+			}
+			return $contact_email;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
 
-    }
+	}
 
 
 	/**
-	*    \brief      Affiche le rib
-	*/
+	 *    \brief      Affiche le rib
+	 */
 	function display_rib()
 	{
 		global $langs;
@@ -1337,7 +1340,7 @@ class Societe extends CommonObject
 		return $this->bank_account->verif();
 	}
 
-  /**
+	/**
 	 *    \brief      Attribut un code client � partir du module de controle des codes.
 	 *    \return     code_client		Code client automatique
 	 */
@@ -1349,14 +1352,14 @@ class Societe extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
 			$var = $conf->global->SOCIETE_CODECLIENT_ADDON;
 			$mod = new $var;
-			
+				
 			$this->code_client = $mod->getNextValue($objsoc,$type);
 			$this->prefixCustomerIsRequired = $mod->prefixIsRequired;
 
 			dolibarr_syslog("Societe::get_codeclient code_client=".$this->code_client." module=".$var);
 		}
 	}
-	
+
 	/**
 	 *    \brief      Attribut un code fournisseur � partir du module de controle des codes.
 	 *    \return     code_fournisseur		Code fournisseur automatique
@@ -1369,10 +1372,10 @@ class Societe extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
 			$var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
 			$mod = new $var;
-			
+				
 			$this->code_fournisseur = $mod->getNextValue($objsoc,$type);
 			$this->prefixSupplierIsRequired = $mod->prefixIsRequired;
-			
+				
 			dolibarr_syslog("Societe::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
 		}
 	}
@@ -1388,13 +1391,13 @@ class Societe extends CommonObject
 		if ($conf->global->SOCIETE_CODECLIENT_ADDON)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
-	
+
 			$var = $conf->global->SOCIETE_CODECLIENT_ADDON;
-	
+
 			$mod = new $var;
-	
+
 			dolibarr_syslog("Societe::codeclient_modifiable code_client=".$this->code_client." module=".$var);
-			if ($mod->code_modifiable_null && ! $this->code_client) return 1;			
+			if ($mod->code_modifiable_null && ! $this->code_client) return 1;
 			if ($mod->code_modifiable_invalide && $this->check_codeclient() < 0) return 1;
 			if ($mod->code_modifiable) return 1;	// A mettre en dernier
 			return 0;
@@ -1416,13 +1419,13 @@ class Societe extends CommonObject
 		if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
-	
+
 			$var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
-	
+
 			$mod = new $var;
-	
+
 			dolibarr_syslog("Societe::codefournisseur_modifiable code_founisseur=".$this->code_fournisseur." module=".$var);
-			if ($mod->code_modifiable_null && ! $this->code_fournisseur) return 1;			
+			if ($mod->code_modifiable_null && ! $this->code_fournisseur) return 1;
 			if ($mod->code_modifiable_invalide && $this->check_codefournisseur() < 0) return 1;
 			if ($mod->code_modifiable) return 1;	// A mettre en dernier
 			return 0;
@@ -1444,11 +1447,11 @@ class Societe extends CommonObject
 		if ($conf->global->SOCIETE_CODECLIENT_ADDON)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
-	
+
 			$var = $conf->global->SOCIETE_CODECLIENT_ADDON;
-	
+
 			$mod = new $var;
-	
+
 			dolibarr_syslog("Societe::check_codeclient code_client=".$this->code_client." module=".$var);
 			$result = $mod->verif($this->db, $this->code_client, $this, 0);
 			return $result;
@@ -1458,7 +1461,7 @@ class Societe extends CommonObject
 			return 0;
 		}
 	}
-	
+
 	/**
 	 *    \brief      Verifie code fournisseur
 	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilis�
@@ -1469,9 +1472,9 @@ class Societe extends CommonObject
 		if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
-	
+
 			$var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
-	
+
 			$mod = new $var;
 
 			dolibarr_syslog("Societe::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
@@ -1494,21 +1497,21 @@ class Societe extends CommonObject
 	function get_codecompta($type)
 	{
 		global $conf;
-	
+
 		if ($conf->global->SOCIETE_CODECOMPTA_ADDON)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECOMPTA_ADDON.'.php';
-	
+
 			$var = $conf->global->SOCIETE_CODECOMPTA_ADDON;
-	
+
 			$mod = new $var;
-	
+
 			// Defini code compta dans $mod->code
 			$result = $mod->get_code($this->db, $this, $type);
-			
+				
 			if ($type == 'customer') $this->code_compta = $mod->code;
 			if ($type == 'supplier') $this->code_compta_fournisseur = $mod->code;
-	
+
 			return $result;
 		}
 		else
@@ -1519,213 +1522,213 @@ class Societe extends CommonObject
 			return 0;
 		}
 	}
-	
-    /**
-     *    \brief      D�fini la soci�t� m�re pour les filiales
-     *    \param      id      id compagnie m�re � positionner
-     *    \return     int     <0 si ko, >0 si ok
-     */
-    function set_parent($id)
-    {
-        if ($this->id)
-        {
-            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-            $sql .= " SET parent = ".$id;
-            $sql .= " WHERE rowid = " . $this->id .";";
-
-            if ( $this->db->query($sql) )
-            {
-                return 1;
-            }
-            else
-            {
-                return -1;
-            }
-        }
-    }
-
-    /**
-     *    \brief      Supprime la soci�t� m�re
-     *    \param      id      id compagnie m�re � effacer
-     *    \return     int     <0 si ko, >0 si ok
-     */
-    function remove_parent($id)
-    {
-        if ($this->id)
-        {
-            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-            $sql .= " SET parent = null";
-            $sql .= " WHERE rowid = " . $this->id .";";
-
-            if ( $this->db->query($sql) )
-            {
-                return 1;
-            }
-            else
-            {
-                return -1;
-            }
-        }
-    }
-
-    /**
-     *      \brief      Verifie la validite d'un identifiant professionnel en
-     *                  fonction du pays de la societe (siren, siret, ...)
-     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *      \param      soc             Objet societe
-     *      \return     int             <0 si ko, >0 si ok
-     */
-    function id_prof_check($idprof,$soc)
-    {
-        $ok=1;
-
-        // Verifie SIREN si pays FR
-        if ($idprof == 1 && $soc->pays_code == 'FR')
-        {
-            $chaine=trim($this->siren);
-            $chaine=eregi_replace(' ','',$chaine);
-
-            if (strlen($chaine) != 9) return -1;
-
-            $sum = 0;
-
-            for ($i = 0 ; $i < 10 ; $i = $i+2)
-            {
-                $sum = $sum + substr($this->siren, (8 - $i), 1);
-            }
-
-            for ($i = 1 ; $i < 9 ; $i = $i+2)
-            {
-                $ps = 2 * substr($this->siren, (8 - $i), 1);
-
-                if ($ps > 9)
-                {
-                    $ps = substr($ps, 0,1) + substr($ps, 1 ,1);
-                }
-                $sum = $sum + $ps;
-            }
-
-            if (substr($sum, -1) != 0) return -1;
-        }
-
-        // Verifie SIRET si pays FR
-        if ($idprof == 2 && $soc->pays_code == 'FR')
-        {
-            $chaine=trim($this->siret);
-            $chaine=eregi_replace(' ','',$chaine);
-
-            if (strlen($chaine) != 14) return -1;
-        }
-
-        return $ok;
-    }
-
-    /**
-     *      \brief      Renvoi url de v�rification d'un identifiant professionnal
-     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *      \param      soc             Objet societe
-     *      \return     string          url ou chaine vide si aucune url connue
-     */
-    function id_prof_url($idprof,$soc)
-    {
-        global $langs;
-
-        $url='';
-        if ($idprof == 1 && $soc->pays_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren;
-        if ($idprof == 1 && $soc->pays_code == 'GB') $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
-
-        if ($url) return '<a target="_blank" href="'.$url.'">['.$langs->trans("Check").']</a>';
-        return '';
-    }
-
-    /**
-     *      \brief      Indique si la soci�t� a des projets
-     *      \return     bool	   true si la soci�t� a des projets, false sinon
-     */
-    function has_projects()
-    {
-        $sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = ' . $this->id;
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $nump = $this->db->num_rows($resql);
-            $obj = $this->db->fetch_object();
-            $count = $obj->numproj;
-        }
-        else
-        {
-            $count = 0;
-            print $this->db->error();
-        }
-        $this->db->free($resql);
-        return ($count > 0);
-    }
-
-
-    function AddPerms($user_id, $read, $write, $perms)
-    {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perms";
-        $sql .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
-        $sql .= " VALUES (".$this->id.",".$user_id.",".$read.",".$write.",".$perms.");";
-
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-
-        }
-    }
 
 	/**
-    *       \brief     Charge les informations d'ordre info dans l'objet societe
-    *       \param     id     id de la societe a charger
-    */
-    function info($id)
-    {
-        $sql = "SELECT s.rowid, s.nom, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("datea")." as datea,";
-        $sql.= " fk_user_creat, fk_user_modif";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE s.rowid = ".$id;
+	 *    \brief      D�fini la soci�t� m�re pour les filiales
+	 *    \param      id      id compagnie m�re � positionner
+	 *    \return     int     <0 si ko, >0 si ok
+	 */
+	function set_parent($id)
+	{
+		if ($this->id)
+		{
+			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+			$sql .= " SET parent = ".$id;
+			$sql .= " WHERE rowid = " . $this->id .";";
 
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
-                $obj = $this->db->fetch_object($result);
-
-                $this->id = $obj->rowid;
-
-                if ($obj->fk_user_creat) {
-                    $cuser = new User($this->db, $obj->fk_user_creat);
-                    $cuser->fetch();
-                    $this->user_creation     = $cuser;
-                }
-
-                if ($obj->fk_user_modif) {
-                    $muser = new User($this->db, $obj->fk_user_modif);
-                    $muser->fetch();
-                    $this->user_modification = $muser;
-                }
-			    $this->ref			     = $obj->nom;
-                $this->date_creation     = $obj->datec;
-                $this->date_modification = $obj->datea;
-            }
-
-            $this->db->free($result);
-
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-        }
-    }
+			if ( $this->db->query($sql) )
+			{
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+	}
 
 	/**
-    *       \brief     Renvoi si pays appartient � CEE
-    *       \param     boolean		true = pays dans CEE, false= pays hors CEE
-    */
-    function isInEEC()
-    {
+	 *    \brief      Supprime la soci�t� m�re
+	 *    \param      id      id compagnie m�re � effacer
+	 *    \return     int     <0 si ko, >0 si ok
+	 */
+	function remove_parent($id)
+	{
+		if ($this->id)
+		{
+			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+			$sql .= " SET parent = null";
+			$sql .= " WHERE rowid = " . $this->id .";";
+
+			if ( $this->db->query($sql) )
+			{
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+	}
+
+	/**
+	 *      \brief      Verifie la validite d'un identifiant professionnel en
+	 *                  fonction du pays de la societe (siren, siret, ...)
+	 *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+	 *      \param      soc             Objet societe
+	 *      \return     int             <0 si ko, >0 si ok
+	 */
+	function id_prof_check($idprof,$soc)
+	{
+		$ok=1;
+
+		// Verifie SIREN si pays FR
+		if ($idprof == 1 && $soc->pays_code == 'FR')
+		{
+			$chaine=trim($this->siren);
+			$chaine=eregi_replace(' ','',$chaine);
+
+			if (strlen($chaine) != 9) return -1;
+
+			$sum = 0;
+
+			for ($i = 0 ; $i < 10 ; $i = $i+2)
+			{
+				$sum = $sum + substr($this->siren, (8 - $i), 1);
+			}
+
+			for ($i = 1 ; $i < 9 ; $i = $i+2)
+			{
+				$ps = 2 * substr($this->siren, (8 - $i), 1);
+
+				if ($ps > 9)
+				{
+					$ps = substr($ps, 0,1) + substr($ps, 1 ,1);
+				}
+				$sum = $sum + $ps;
+			}
+
+			if (substr($sum, -1) != 0) return -1;
+		}
+
+		// Verifie SIRET si pays FR
+		if ($idprof == 2 && $soc->pays_code == 'FR')
+		{
+			$chaine=trim($this->siret);
+			$chaine=eregi_replace(' ','',$chaine);
+
+			if (strlen($chaine) != 14) return -1;
+		}
+
+		return $ok;
+	}
+
+	/**
+	 *      \brief      Renvoi url de v�rification d'un identifiant professionnal
+	 *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+	 *      \param      soc             Objet societe
+	 *      \return     string          url ou chaine vide si aucune url connue
+	 */
+	function id_prof_url($idprof,$soc)
+	{
+		global $langs;
+
+		$url='';
+		if ($idprof == 1 && $soc->pays_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren;
+		if ($idprof == 1 && $soc->pays_code == 'GB') $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
+
+		if ($url) return '<a target="_blank" href="'.$url.'">['.$langs->trans("Check").']</a>';
+		return '';
+	}
+
+	/**
+	 *      \brief      Indique si la soci�t� a des projets
+	 *      \return     bool	   true si la soci�t� a des projets, false sinon
+	 */
+	function has_projects()
+	{
+		$sql = 'SELECT COUNT(*) as numproj FROM '.MAIN_DB_PREFIX.'projet WHERE fk_soc = ' . $this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+			$obj = $this->db->fetch_object();
+			$count = $obj->numproj;
+		}
+		else
+		{
+			$count = 0;
+			print $this->db->error();
+		}
+		$this->db->free($resql);
+		return ($count > 0);
+	}
+
+
+	function AddPerms($user_id, $read, $write, $perms)
+	{
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_perms";
+		$sql .= " (fk_soc, fk_user, pread, pwrite, pperms) ";
+		$sql .= " VALUES (".$this->id.",".$user_id.",".$read.",".$write.",".$perms.");";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+
+		}
+	}
+
+	/**
+	 *       \brief     Charge les informations d'ordre info dans l'objet societe
+	 *       \param     id     id de la societe a charger
+	 */
+	function info($id)
+	{
+		$sql = "SELECT s.rowid, s.nom, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("datea")." as datea,";
+		$sql.= " fk_user_creat, fk_user_modif";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql.= " WHERE s.rowid = ".$id;
+
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+
+				$this->id = $obj->rowid;
+
+				if ($obj->fk_user_creat) {
+					$cuser = new User($this->db, $obj->fk_user_creat);
+					$cuser->fetch();
+					$this->user_creation     = $cuser;
+				}
+
+				if ($obj->fk_user_modif) {
+					$muser = new User($this->db, $obj->fk_user_modif);
+					$muser->fetch();
+					$this->user_modification = $muser;
+				}
+				$this->ref			     = $obj->nom;
+				$this->date_creation     = $obj->datec;
+				$this->date_modification = $obj->datea;
+			}
+
+			$this->db->free($result);
+
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+
+	/**
+	 *       \brief     Renvoi si pays appartient � CEE
+	 *       \param     boolean		true = pays dans CEE, false= pays hors CEE
+	 */
+	function isInEEC()
+	{
 		// List of all country codes that are in europe for european vat rules
 		$country_code_in_EEC=array(
 			'AT',	// Austria
@@ -1757,92 +1760,92 @@ class Societe extends CommonObject
 			'ES',	// Spain
 			'SE',	// Sweden
 			'CH',	// Switzerland 		
-		);	
+		);
 		//print "dd".$this->pays_code;
 		return in_array($this->pays_code,$country_code_in_EEC);
-    }
-	
+	}
+
 	/**
-    *  	\brief     Charge la liste des categories fournisseurs
-    *   \return    0 in success, <> 0 in error
-    */
-    function LoadSupplierCateg()
-    {
-      $this->SupplierCategories = array();
-      $sql = "SELECT rowid, label";
-      $sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-	  $sql.= " WHERE type = 1";
-      
-      $resql=$this->db->query($sql);
-      if ($resql)
-        {
-	  while ($obj = $this->db->fetch_object($resql) )
-	    {
-	      $this->SupplierCategories[$obj->rowid] = $obj->label;
-	    }
-	  return 0;
-	}
-      else
+	 *  	\brief     Charge la liste des categories fournisseurs
+	 *   \return    0 in success, <> 0 in error
+	 */
+	function LoadSupplierCateg()
 	{
-	  return -1;
-	}
-    }
-	
-  /*
-   *  \brief     Charge la liste des categories fournisseurs
-   *   \return    0 in success, <> 0 in error
-   */
-  function AddFournisseurInCategory($categorie_id)
-  {
-    if ($categorie_id > 0)
-      {
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_societe) ";
-	$sql.= " VALUES ('".$categorie_id."','".$this->id."');";
-	
-	if ($resql=$this->db->query($sql))
+		$this->SupplierCategories = array();
+		$sql = "SELECT rowid, label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
+		$sql.= " WHERE type = 1";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+	  while ($obj = $this->db->fetch_object($resql) )
+	  {
+	  	$this->SupplierCategories[$obj->rowid] = $obj->label;
+	  }
 	  return 0;
-      }
-    else
-      {
-	return 0;
-      }
-    return -1;
-  }
- 
+		}
+		else
+		{
+	  return -1;
+		}
+	}
+
+	/*
+	 *  \brief     Charge la liste des categories fournisseurs
+	 *   \return    0 in success, <> 0 in error
+	 */
+	function AddFournisseurInCategory($categorie_id)
+	{
+		if ($categorie_id > 0)
+		{
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_societe) ";
+			$sql.= " VALUES ('".$categorie_id."','".$this->id."');";
+
+			if ($resql=$this->db->query($sql))
+	  return 0;
+		}
+		else
+		{
+			return 0;
+		}
+		return -1;
+	}
+
 
 
 	function set_status($id_status)
-	{ 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_log (datel, fk_soc, fk_statut, fk_user, author, label)";
-        $sql.= " VALUES ('$dateaction', $socid, $id_status,";
+	{
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_log (datel, fk_soc, fk_statut, fk_user, author, label)";
+		$sql.= " VALUES ('$dateaction', $socid, $id_status,";
 		$sql.= "'".$user->id."',";
 		$sql.= "'".addslashes($user->login)."',";
 		$sql.= "'Change statut from $oldstcomm to $stcommid'";
 		$sql.= ")";
-        $result = $db->query($sql);
-        if ($result)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE rowid=".$socid;
-            $result = $db->query($sql);
-        }
-        else
-        {
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE rowid=".$socid;
+			$result = $db->query($sql);
+		}
+		else
+		{
 			$errmesg = $db->error;
-        }
+		}
 	}
-		
+
 	/**
-     *      \brief      Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
-     *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *      \param      htmlname        Nom de la zone input
-     * 		\param		preselected		Default value to show
-     */
-    function show_input_id_prof($idprof,$htmlname,$preselected)
-    {
-        global $langs;
-		
-        $formlength=16;
-        if ($this->pays_code == 'FR')
+	 *      \brief      Retourne le formulaire de saisie d'un identifiant professionnel (siren, siret, etc...)
+	 *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
+	 *      \param      htmlname        Nom de la zone input
+	 * 		\param		preselected		Default value to show
+	 */
+	function show_input_id_prof($idprof,$htmlname,$preselected)
+	{
+		global $langs;
+
+		$formlength=16;
+		if ($this->pays_code == 'FR')
 		{
 			if ($idprof==1) $formlength=9;
 			if ($idprof==2) $formlength=14;
@@ -1850,13 +1853,13 @@ class Societe extends CommonObject
 			if ($idprof==4) $formlength=12;
 		}
 		$selected=$preselected;
-        if (! $selected && $idprof==1) $selected=$this->siren;
-        if (! $selected && $idprof==2) $selected=$this->siret;
-        if (! $selected && $idprof==3) $selected=$this->ape;
-        if (! $selected && $idprof==4) $selected=$this->idprof4;
+		if (! $selected && $idprof==1) $selected=$this->siren;
+		if (! $selected && $idprof==2) $selected=$this->siret;
+		if (! $selected && $idprof==3) $selected=$this->ape;
+		if (! $selected && $idprof==4) $selected=$this->idprof4;
 
-        print '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
-    }
+		print '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
+	}
 }
 
 ?>

@@ -80,9 +80,9 @@ class Contact extends CommonObject
     }
 
     /**
-     *      \brief      Ajout d'un contact en base
-     *      \param      user        Utilisateur qui effectue l'ajout
-     *      \return     int         <0 si ko, >0 si ok
+     *      \brief      Add a contact in database
+     *      \param      user        Object user that create
+     *      \return     int         <0 if KO, >0 if OK
      */
     function create($user)
     {
@@ -98,7 +98,7 @@ class Contact extends CommonObject
         if ($this->socid > 0) $sql.= " ".$this->socid.",";
         else $sql.= "null,";
         $sql.= "'".addslashes($this->name)."',";
-        $sql.= $user->id.",";
+		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
         $sql.= $this->priv;
         $sql.= ")";
         
@@ -178,7 +178,7 @@ class Contact extends CommonObject
         $sql .= ", phone_mobile = '".addslashes($this->phone_mobile)."'";
         $sql .= ", jabberid = '".addslashes($this->jabberid)."'";
         $sql .= ", priv = '".$this->priv."'";
-        if ($user) $sql .= ", fk_user_modif=".$user->id;
+        $sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"null");
         $sql .= " WHERE rowid=".$id;
 
         dolibarr_syslog("Contact::update sql=".$sql,LOG_DEBUG);

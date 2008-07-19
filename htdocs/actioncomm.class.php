@@ -88,7 +88,7 @@ class ActionComm
      *    \brief      Ajout d'une action en base
      *    \param      user      	auteur de la creation de l'action
  	 *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
-     *    \return     int         	id de l'action cr��e, < 0 si erreur
+     *    \return     int         	id de l'action creee, < 0 si erreur
      */
     function add($user,$notrigger=0)
     {
@@ -159,7 +159,7 @@ class ActionComm
         $sql.= ($this->durationa >= 0?"'".$this->durationa."'":"null").",";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id > 0?"'".$this->contact->id."'":"null").",";
-        $sql.= "'".$user->id."',";
+        $sql.= ($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= ($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
 		$sql.= ($this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
 		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."','".$this->punctual."',";
