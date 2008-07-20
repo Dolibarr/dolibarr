@@ -67,8 +67,27 @@ $NBLINES=4;
 /*                     Actions                                                */
 /******************************************************************************/
 
+if ($_GET['action'] == 'reopen' && $user->rights->facture->creer)
+{
+	$fac = new Facture($db);
+	$result = $fac->fetch($_GET['facid']);
+	if ($fac->statut == 3 && ($fac->close_code == 'badcustomer' || $fac->close_code == 'abandon'))
+	{
+		$result = $fac->set_unpayed($user);
+		if ($result > 0)
+		{
+			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
+			exit;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$fac->error.'</div>';
+		}
+	}
+}
+
 // Suppression de la facture
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
+if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->facture->supprimer)
 {
 	if ($user->rights->facture->supprimer)
 	{
@@ -2777,7 +2796,12 @@ else
 						}
 					}
 
-					// Récurrente
+					// Reopen a classified invoice
+					if ($fac->statut == 3 && ($fac->close_code == 'badcustomer' || $fac->close_code == 'abandon'))
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+					}
+										// Récurrente
 					if (! $conf->global->FACTURE_DISABLE_RECUR && $fac->type == 0)
 					{
 						if (! $facidnext)

@@ -80,7 +80,7 @@ class Facture extends CommonObject
 	var $paye;
 	//! id facture source si facture de remplacement ou avoir
 	var $fk_facture_source;
-	//! Fermeture apres paiement partiel: discount_vat, bad_customer, abandon
+	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
 	//! Fermeture alors que aucun paiement: replaced (si remplacé), abandon
 	var $close_code;
 	//! Commentaire si mis a paye sans paiement complet
@@ -169,7 +169,7 @@ class Facture extends CommonObject
 			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;
 			$this->remise		     = $_facrec->remise;
-				
+
 			// Nettoyage parametres
 			if (! $this->type) $this->type = 0;
 			$this->ref_client=trim($this->ref_client);
@@ -225,7 +225,7 @@ class Facture extends CommonObject
 			dolibarr_syslog("Facture::create sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (! $resql) $error++;
-				
+
 			// Mise a jour lien avec propal ou commande
 			if (! $error && $this->id && $this->propalid)
 			{
@@ -338,9 +338,10 @@ class Facture extends CommonObject
 
 
 	/**
-	 \brief      Création de la facture en base depuis une autre
-	 \param      user    Object utilisateur qui crée
-	 \return	 int				<0 si ko, >0 si ok
+	\brief      Create a new invoice in database from current invoice
+	\param      user    		Object user that ask creation
+	\param		invertdetail	Reverse sign of amounts for lines
+	\return		int				<0 si ko, >0 si ok
 	 */
 	function create_clone($user,$invertdetail=0)
 	{
@@ -367,13 +368,13 @@ class Facture extends CommonObject
 		if ($invertdetail)
 		{
 			foreach($facture->lignes as $i => $line)
-	  {
-	  	$facture->lignes[$i]->subprice  = -$facture->lignes[$i]->subprice;
-	  	$facture->lignes[$i]->price     = -$facture->lignes[$i]->price;
-	  	$facture->lignes[$i]->total_ht  = -$facture->lignes[$i]->total_ht;
-	  	$facture->lignes[$i]->total_tva = -$facture->lignes[$i]->total_tva;
-	  	$facture->lignes[$i]->total_ttc = -$facture->lignes[$i]->total_ttc;
-	  }
+			{
+				$facture->lignes[$i]->subprice  = -$facture->lignes[$i]->subprice;
+				$facture->lignes[$i]->price     = -$facture->lignes[$i]->price;
+				$facture->lignes[$i]->total_ht  = -$facture->lignes[$i]->total_ht;
+				$facture->lignes[$i]->total_tva = -$facture->lignes[$i]->total_tva;
+				$facture->lignes[$i]->total_ttc = -$facture->lignes[$i]->total_ttc;
+			}
 		}
 
 		dolibarr_syslog("Facture::create_clone invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".sizeof($facture->lignes));
@@ -383,8 +384,8 @@ class Facture extends CommonObject
 
 		return $facid;
 	}
-		
-		
+
+
 	/**
 	 \brief      Renvoie nom clicable (avec eventuellement le picto)
 	 \param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
@@ -628,7 +629,7 @@ class Facture extends CommonObject
 				$this->db->rollback();
 				return -5;
 			}
-				
+
 			$facligne=new FactureLigne($this->db);
 			$facligne->fk_facture=$this->id;
 			$facligne->fk_remise_except=$remise->id;
@@ -913,8 +914,9 @@ class Facture extends CommonObject
 
 	/**
 	 *      \brief      Tag la facture comme non payée complètement + appel trigger BILL_UNPAYED
-	 *				   Fonction utilisée quand un paiement prélevement est refusé.
-	 *      \param      user        Objet utilisateur qui modifie
+	 *				   	Fonction utilisée quand un paiement prélevement est refusé,
+	 * 					ou quand une facture annulée et réouverte.
+	 *      \param      user        Object user that change status
 	 *      \return     int         <0 si ok, >0 si ok
 	 */
 	function set_unpayed($user)
@@ -923,10 +925,11 @@ class Facture extends CommonObject
 
 		dolibarr_syslog("Facture::set_unpayed rowid=".$this->id, LOG_DEBUG);
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-		$sql.= ' SET paye=0, fk_statut=1';
+		$sql.= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
 		$sql.= ' WHERE rowid = '.$this->id;
 		$resql = $this->db->query($sql);
-
+		
+		dolibarr_syslog("Facture::set_unpayed sql=".$sql);
 		if ($resql)
 		{
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
@@ -1019,7 +1022,7 @@ class Facture extends CommonObject
 
 			$this->fetch_client();
 			$this->fetch_lines();
-			
+
 			// Verification paramètres
 			if ($this->type == 1)		// si facture de remplacement
 			{
@@ -1118,7 +1121,7 @@ class Facture extends CommonObject
 				if (file_exists($dirsource))
 				{
 					dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
-						
+
 					if (@rename($dirsource, $dirdest))
 					{
 						dolibarr_syslog("Renommage ok");
@@ -1156,13 +1159,13 @@ class Facture extends CommonObject
 				if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
-						
+
 					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 					{
 						if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
 						{
 							dolibarr_syslog("Facture::set_valid() correct stock for ".$this->lignes[$i]->rowid);
-							
+
 							// It's a product
 							if ($conf->global->PRODUIT_SOUSPRODUITS)
 							{
@@ -1332,7 +1335,7 @@ class Facture extends CommonObject
 			{
 				$pu=$pu_ttc;
 			}
-				
+
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -1351,7 +1354,7 @@ class Facture extends CommonObject
 				$remise = round(($pu * $remise_percent / 100),2);
 				$price = ($pu - $remise);
 			}
-				
+
 			$product_type=0;
 			if ($fk_product)
 			{
@@ -1482,7 +1485,7 @@ class Facture extends CommonObject
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
 			$ligne->info_bits=$info_bits;
-				
+
 			// A ne plus utiliser
 			$ligne->price=$price;
 			$ligne->remise=$remise;
@@ -1540,7 +1543,7 @@ class Facture extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		 
+			
 		// Efface ligne de facture
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
 		dolibarr_syslog("Facture::Deleteline sql=".$sql);
@@ -1552,18 +1555,18 @@ class Facture extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		 
+			
 		$result=$this->update_price();
-		 
+			
 		// Appel des triggers
 		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		$interface=new Interfaces($this->db);
 		$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
 		if ($result < 0) { $error++; $this->errors=$interface->errors; }
 		// Fin appel triggers
-		 
+			
 		$this->db->commit();
-		 
+			
 		return 1;
 	}
 
@@ -2737,7 +2740,7 @@ class FactureLigne
 					return -3;
 				}
 			}
-				
+
 			if (! $notrigger)
 			{
 				// Appel des triggers
@@ -2747,7 +2750,7 @@ class FactureLigne
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
-				
+
 			$this->db->commit();
 			return $this->rowid;
 
