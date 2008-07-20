@@ -195,7 +195,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$propal->contactid = $_POST['contactidp'];
 			$propal->projetidp = $_POST['projetidp'];
 			$propal->modelpdf  = $_POST['model'];
-			$propal->author    = $user->id;
+			$propal->author    = $user->id;			// deprecated
 			$propal->note      = $_POST['note'];
 			$propal->ref       = $_POST['ref'];
 			$propal->statut    = 0;
@@ -219,7 +219,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		$propal->contactid  = $_POST['contactidp'];
 		$propal->projetidp  = $_POST['projetidp'];
 		$propal->modelpdf   = $_POST['model'];
-		$propal->author     = $user->id;
+		$propal->author     = $user->id;		// deprecated
 		$propal->note       = $_POST['note'];
 		$propal->ref_client = $_POST['ref_client'];
 		$propal->ref        = $_POST['ref'];
@@ -235,7 +235,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			}
 		}
 
-		$id = $propal->create();
+		$id = $propal->create($user);
 	}
 
 	if ($id > 0)

@@ -530,7 +530,8 @@ class Propal extends CommonObject
         $sql.= ") ";
         $sql.= " VALUES (".$this->socid.", 0,";
         $sql.= " ".$this->remise.", ".($this->remise_percent?$this->remise_percent:'null').", ".($this->remise_absolue?$this->remise_absolue:'null').",";
-        $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '".$this->ref."', ".$this->author.",";
+        $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '".$this->ref."', ";
+        $sql.= ($user->id > 0 ? "'".$user->id."'":"null").",";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'".$this->modelpdf."',".$this->db->idate($this->fin_validite).",";

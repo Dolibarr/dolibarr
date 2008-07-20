@@ -134,7 +134,7 @@ class Facture extends CommonObject
 	function create($user,$notrigger=0)
 	{
 		global $langs,$conf,$mysoc;
-unset($user);
+
 		// Nettoyage paramètres
 		if (! $this->type) $this->type = 0;
 		$this->ref_client=trim($this->ref_client);
