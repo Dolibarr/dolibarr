@@ -134,7 +134,7 @@ class Facture extends CommonObject
 	function create($user,$notrigger=0)
 	{
 		global $langs,$conf,$mysoc;
-
+unset($user);
 		// Nettoyage paramètres
 		if (! $this->type) $this->type = 0;
 		$this->ref_client=trim($this->ref_client);
@@ -207,7 +207,7 @@ class Facture extends CommonObject
 		$sql.= ",".($this->note_public?"'".addslashes($this->note_public)."'":"null");
 		$sql.= ",".($this->ref_client?"'".addslashes($this->ref_client)."'":"null");
 		$sql.= ",".($this->fk_facture_source?"'".addslashes($this->fk_facture_source)."'":"null");
-		$sql.= ",".$user->id;
+		$sql.= ",".($user->id > 0 ? "'".$user->id."'":"null");
 		$sql.= ",".($this->projetid?$this->projetid:"null");
 		$sql.= ','.$this->cond_reglement_id;
 		$sql.= ",".$this->mode_reglement_id;
