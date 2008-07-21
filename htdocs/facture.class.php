@@ -1724,7 +1724,7 @@ class Facture extends CommonObject
 	/**
 	 * 	\brief     	Renvoie l'id de la facture qui la remplace
 	 *	\param		option		filtre sur statut ('', 'validated', ...)
-	 *	\return		int			<0 si ko, 0 si aucune facture ne remplace, id facture sinon
+	 *	\return		int			<0 si KO, 0 si aucune facture ne remplace, id facture sinon
 	 */
 	function getIdReplacingInvoice($option='')
 	{

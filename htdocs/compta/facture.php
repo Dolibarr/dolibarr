@@ -450,12 +450,12 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Date")).'</div>';
 		}
 		
-		if (! $_POST['fac_replacement'] > 0)
+		if (! ($_POST['fac_replacement'] > 0))
 		{
 			$error=1;
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReplaceInvoice")).'</div>';
 		}
-		
+
 		if (! $error)
 		{
 			// Si facture remplacement
@@ -2792,16 +2792,33 @@ else
 						if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
 						&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))
 						{
-							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
+							if (! $facidnext)
+							{
+								print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Modify').'</a>';
+							}
+							else
+							{
+								print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Modify').'</span>';
+							}
 						}
 					}
 
 					// Reopen a classified invoice
-					if ($fac->statut == 3 && ($fac->close_code == 'badcustomer' || $fac->close_code == 'abandon'))
+					if ($fac->statut == 3 &&				// A abandonned invoice
+						$fac->getIdReplacingInvoice() == 0 &&	// Not replaced by another invoice 
+						($fac->close_code == 'badcustomer' || $fac->close_code == 'abandon'))
 					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+						if (! $facidnext)
+						{
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a>';
+						}
+						else
+						{
+							print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
+						}
 					}
-										// Récurrente
+					
+					// Récurrente
 					if (! $conf->global->FACTURE_DISABLE_RECUR && $fac->type == 0)
 					{
 						if (! $facidnext)
@@ -2844,7 +2861,7 @@ else
 					{
 						if ($facidnext)
 						{
-							print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendByMail').'</span>';
+							print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendByMail').'</span>';
 						}
 						else
 						{
@@ -2857,7 +2874,7 @@ else
 					{
 						if ($facidnext)
 						{
-							print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendRemindByMail').'</span>';
+							print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendRemindByMail').'</span>';
 						}
 						else
 						{
@@ -2870,13 +2887,13 @@ else
 					{
 						if ($facidnext)
 						{
-							print '<font class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</font>';
+							print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</span>';
 						}
 						else
 						{
 							if ($resteapayer == 0)
 							{
-								print '<font class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</font>';
+								print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span>';
 							}
 							else
 							{
@@ -2919,7 +2936,7 @@ else
 						{
 							if ($facidnext)
 							{
-								print '<a class="butActionRefused">'.$langs->trans('ClassifyCanceled').'</span>';
+								print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ClassifyCanceled').'</span>';
 							}
 							else
 							{
@@ -2933,7 +2950,7 @@ else
 					{
 						if ($facidnext)
 						{
-							print '<span class="butActionDeleteRefused">'.$langs->trans('Delete').'</span>';
+							print '<span class="butActionDeleteRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Delete').'</span>';
 						}
 						else
 						{
