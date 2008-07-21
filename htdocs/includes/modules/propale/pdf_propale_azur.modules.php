@@ -605,27 +605,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $pdf->SetXY ($col2x, $tab2_top + 0);
         $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
 
-        // Remise globale
-        if ($object->remise > 0)
-        {
-            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("GlobalDiscount"), 0, 'L', 1);
-
-            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
-            $pdf->MultiCell($largcol2, $tab2_hl, "-".$object->remise_percent."%", 0, 'R', 1);
-
-            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("WithDiscountTotalHT"), 0, 'L', 1);
-
-            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht), 0, 'R', 1);
-
-            $index = 2;
-        }
-        else
-        {
-            $index = 0;
-        }
+        $index = 0;
 
         // Affichage des totaux de TVA par taux (conformément à réglementation)
         $pdf->SetFillColor(248,248,248);

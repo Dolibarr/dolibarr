@@ -407,26 +407,7 @@ class pdf_huitre extends ModelePDFFactures
     $pdf->SetXY (174, $tab2_top + 0);
     $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
 
-    if ($fac->remise > 0)
-      {
-	$pdf->SetXY (132, $tab2_top + $tab2_hl);
-	$pdf->MultiCell(42, $tab2_hl, $langs->transnoentities("GlobalDiscount"), 0, 'R', 0);
-
-	$pdf->SetXY (174, $tab2_top + $tab2_hl);
-	$pdf->MultiCell(26, $tab2_hl, price($fac->remise), 0, 'R', 0);
-
-	$pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
-	$pdf->MultiCell(42, $tab2_hl, $langs->transnoentities("WithDiscountTotalHT"), 0, 'R', 0);
-
-	$pdf->SetXY (174, $tab2_top + $tab2_hl * 2);
-	$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
-
-	$index = 3;
-      }
-    else
-      {
 	$index = 1;
-      }
 
     $pdf->SetXY (132, $tab2_top + $tab2_hl * $index);
     $pdf->MultiCell(42, $tab2_hl, $langs->transnoentities("TotalVAT"), 0, 'R', 0);
