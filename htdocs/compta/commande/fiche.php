@@ -58,6 +58,50 @@ if ($_GET["action"] == 'facturee')
   $commande->classer_facturee();
 }
 
+// Positionne ref commande client
+if ($_POST['action'] == 'set_ref_client' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$commande->set_ref_client($user, $_POST['ref_client']);
+}
+
+if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
+{
+	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+	$datelivraison=dolibarr_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$result=$commande->set_date_livraison($user,$datelivraison);
+	if ($result < 0)
+	{
+		$mesg='<div class="error">'.$commande->error.'</div>';
+	}
+}
+
+if ($_POST['action'] == 'setdeliveryadress' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$commande->set_adresse_livraison($user,$_POST['adresse_livraison_id']);
+}
+
+if ($_POST['action'] == 'setmode' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$result=$commande->mode_reglement($_POST['mode_reglement_id']);
+	if ($result < 0) dolibarr_print_error($db,$commande->error);
+}
+
+if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
+{
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$result=$commande->cond_reglement($_POST['cond_reglement_id']);
+	if ($result < 0) dolibarr_print_error($db,$commande->error);
+}
 
 
 llxHeader('',$langs->trans("OrderCard"),"Commande");
@@ -229,7 +273,7 @@ if ($_GET["id"] > 0)
 			print '</tr></table>';
 			print '</td><td colspan="2">';
 			if ($_GET['action'] == 'editconditions')
-			{
+			{	
 				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'cond_reglement_id');
 			}
 			else
