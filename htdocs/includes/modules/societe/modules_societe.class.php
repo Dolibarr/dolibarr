@@ -18,15 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/includes/modules/societe/modules_societe.class.php
 		\ingroup    societe
 		\brief      Fichier contenant la classe mère de module de generation societes
-		\version    $Revision$
+		\version    $Id$
 */
 
 
@@ -84,7 +82,21 @@ class ModeleThirdPartyCode
     }
 
     
-    /** 
+	/**     \brief      Renvoi version du module numerotation
+	*      	\return     string      Valeur
+	*/
+	function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		if ($this->version == 'dolibarr') return DOL_VERSION;
+		return $langs->trans("NotAvailable");
+	}	
+
+	/** 
      *      \brief      Renvoi la liste des modèles actifs
      *      \param      db      Handler de base
      */
@@ -122,6 +134,7 @@ class ModeleThirdPartyCode
     function getToolTip($langs,$soc,$type)
     {
 		$s='';
+		$s.=$langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
 		if ($type == 0)  $s.=$langs->trans("CustomerCodeDesc").'<br>';
 		if ($type == 1)  $s.=$langs->trans("SupplierCodeDesc").'<br>';
 		if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';

@@ -17,15 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
         \file       htdocs/includes/modules/societe/mod_codeclient_tigre.class.php
         \ingroup    societe
         \brief      Fichier de la classe des gestion tigre des codes clients
-        \version    $Revision$
+        \version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
