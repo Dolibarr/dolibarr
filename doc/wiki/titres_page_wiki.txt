@@ -1,3 +1,4 @@
+A savoir avant de commencer
 Accueil
 Action def
 Actualités
@@ -25,6 +26,7 @@ CommandeFournisseur
 Comptabilité
 Constantes
 Contrat
+Creer un modele de document
 Customisation des documents dolibarr
 Developpement module
 Developpement script
@@ -117,8 +119,8 @@ Module comptabilité
 Modules
 Nomination chef de projet
 OpenXtrem
-Outils et principes
 Outils de développement
+Outils et principes
 Permissions
 PhpLangEditor
 Premiers paramétrages
@@ -155,6 +157,7 @@ Script mailing-send.php
 Script prelevement-verif.php
 Scripts cron
 Services
+Services Web
 Sociétés
 Sous-Produits
 Stocks

@@ -1,20 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <mediawiki version="0.1" xml:lang="fr">
   <page>
+    <title>A savoir avant de commencer</title>
+    <revision>
+      <timestamp>2008-07-26T14:11:58Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>Si vous souhaitez devenir développeur de Dolibarr vous devez :
+
+# Lire ce wiki et plus particulièrement la [[Documentation Développeur]] dans son intégralité (dont est issue cette page).
+# Créer un compte sur [http://savannah.nongnu.org Savannah] et s'inscrire a la mailing-list ML développeur ([http://savannah.nongnu.org/mail/?group=dolibarr Voir ici])
+# Poster sur cette ML, une courte présentation de vos cursus, attentes ou intentions.
+# Vous pouvez commencer par réaliser des evolutions chez vous et les tester sans géner l'organisation de Dolibarr.
+# Pour soumettre vos premiers travaux ou encore devenir développeur officiel, il est important de savoir que ceci passe par un circuit qui peut etre long mais qui est nécessaire pour garantir la qualité de Dolibarr. Plus d'info sur ces liens:
+* [[FAQ_D%C3%A9veloppeur#Soumettre_un_patch.2C_amelioration_ou_participer_au_d.C3.A9veloppement|FAQ Développeur (soumettre un patch)]]
+* [[FAQ_D%C3%A9veloppeur#Comment_devenir_d.C3.A9veloppeur_officiel|FAQ Développeur (devenir développeur officiel)]]
+
+Ces quelques obligations n'ont pour seul but que le développement se fasse dans les meilleures conditions possibles.</text>
+    </revision>
+  </page>
+  <page>
     <title>Accueil</title>
     <revision>
-      <timestamp>2007-11-25T20:06:24Z</timestamp>
+      <timestamp>2008-07-20T16:49:18Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Utilisateurs */</comment>
-      <text>[http://www.dolibarr.fr Le site officiel francophone Dolibarr]
+      <text>Le site web officiel francophone: http://www.dolibarr.fr
 
-[http://www.dolibarr.org Le site officiel anglophone Dolibarr]
+Le site web officiel anglophone: http://www.dolibarr.org
 
 
 ==News==
-
-[[Nomination chef de projet]]
-
 Prochaines versions [[Roadmap|ici]]
 
 == Utilisateurs ==
@@ -159,27 +173,15 @@ Je clique sur ''Résilier''.</text>
   <page>
     <title>ApercuDesModeles</title>
     <revision>
-      <timestamp>2007-08-16T23:35:46Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
-      <comment>/* English version */</comment>
+      <timestamp>2008-07-04T17:08:22Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Comment modifier un modèle */</comment>
       <text>= Aperçu des modèles de facture disponibles dans Dolibarr =
 La liste suivante est générée à partir de factures elles-mêmes générées avec Dolibar 2.1alpha.
 
 Les marques en gris sur les factures ont été ajoutées pour masquer les données privées figurant sur ces exemples générés à partir de factures réelles.
 
 Une explication sommaire sur la structure des scripts générant les factures en PDF est disponible en bas de page.
-
-== Modèle Bernique ==
-
-[[image:pdf_bernique.png]]
-
-== Modèle Bigorneau ==
-
-[[image:pdf_bigorneau.png]]
-
-== Modèle Bulot ==
-
-[[image:pdf_bulot.png]]
 
 == Modèle Crabe (Modèle par défaut) ==
 
@@ -193,63 +195,8 @@ Une explication sommaire sur la structure des scripts générant les factures en
 
 [[image:pdf_oursin.png]]
 
-== Modèle Tourteau ==
-
-[[image:pdf_tourteau.png]]
-
 = Comment modifier un modèle =
-
-== Librairie de création ==
-
-La librairie utilisée pour la création de documents en PDF se nomme FPDF et peut être trouvée dans htdocs/includes/fpdf/fpdf/fpdf.class.php. C'est également dans cette classe que l'on trouve les nombreuses méthodes utilisées pour générer les différents éléments des documents.
-
-Les modèles eux-même instancient la classe FPDF et utilisent ensuite ses méthodes, combinées avec les données d'une facture, d'une commande ou d'autres types de données.
-
-On retrouve généralement les appels suivants dans les scripts de création de documents:
-* $pdf-&gt;SetFont() - ''Désigne la fonte à utiliser pour le texte qui suivra''
-* $pdf-&gt;SetXY() - ''Désigne le point de départ pour dessiner le prochain texte en coordonnées X,Y qui sont exprimées en millimètres de la page''
-* $pdf-&gt;MultiCell() - ''Dessine une boîte pouvant contenir du texte, et dont on doit d'abord donner la largeur et la hauteur - très utilisée''
-* $pdf-&gt;GetY() - ''Renvoie la position courante en Y''
-* $pdf-&gt;SetDrawColor() - ''Désigne la couleur à utiliser pour le prochain texte à écrire - généralement noir (0,0,0) ou blanc (255,255,255)''
-* $pdf-&gt;Rect() - ''Dessine un rectangle dont le coin supérieur gauche est au point indiqué par les deux premiers paramètres et le coin inférieur droit utilise les deux derniers paramètres en mode relatif aux deux premiers''
-
-=== English version ===
-
-The library used to create PDF documents is called FPDF and can be found in htdocs/includes/fpdf/fpdf/fpdf.class.php. You can also find in this class the numerous methods used to generate the various elements of the documents.
-
-The models themselves instanciate the FPDF class and use its methods, combined with the data of an invoice, an order or any other type of data.
-
-You can generally find the following calls inside the documents creation scripts:
-* $pdf-&gt;SetFont() - ''Sets the font to use for the text that follows''
-* $pdf-&gt;SetXY() - ''Sets the position of the starting point to display the following text in X,Y coordinates, given in millimeters of the page''
-* $pdf-&gt;MultiCell() - ''Displays a box that can contain text. First the width and the height must be given - very used''
-* $pdf-&gt;GetY() - ''Returns the current Y position''
-* $pdf-&gt;SetDrawColor() - ''Sets the color to use in the following text - generally black (0,0,0) or white (255,255,255)''
-* $pdf-&gt;Rect() - ''Displays a rectangle of which the top-left corner is at the point given by the first two parameters, and the bottom-right corner is at the point given by the last two parameters, relatively to the two first parameters (so basically the last parameters are width and height, not coordinates)''
-
-== Structure des scripts ==
-
-Les scripts de génération des documents PDF, au moment du développement de la version 2.2, disposent des méthodes suivantes (prenant pour exemple le modèle &quot;crabe&quot;) au sein de la classe du nom du modèle:
-* pdf_crabe() - ''Constructeur de l'objet pdf''
-* write_pdf_file() - ''Méthode générale pour la génération du fichier. Cette méthode appelle toute les suivantes après avoir initialisé quelques variables''
-* _pagehead() - ''Méthode de dessin de l'en-tête du document, incluant généralement le logo, le titre du document (et la date) ainsi que les cadres de l'émetteur et du destinataire du document''
-* _tableau() - ''Méthode de dessin du tableau de détails (produits, services, etc)''
-* _tableau_info() - ''Méthode de dessin du tableau reprenant une liste d'informations sur la facture''
-* _tableau_tot() - ''Méthode de dessin du tableau des totaux''
-* _tableau_versement() - ''Méthode de dessin du tableau des règles de versement''
-* _pagefoot() - ''Méthode de dessin du pied de page''
-
-=== English version ===
-
-The PDF documents generation scripts, at the time of version 2.2 development, use the following methods (taking as example the &quot;crabe&quot; model) inside the classe of then model name:
-* pdf_crabe() - ''Constructor of the $pdf object''
-* write_pdf_file() - ''Generic method for the file generation. This method calls all the following methods after having initialised some variables''
-* _pagehead() - ''Method to design the header of the document, including the logo, the document title (and date) as well as the sender and receiver details''
-* _tableau() - ''Method to design the large table with the contents of the invoice''
-* _tableau_info() - ''Method to design the table giving information related to the invoice (payment conditions and so on)''
-* _tableau_tot() - ''Method to design the totals table''
-* _tableau_versement() - ''Method to design the payment references table''
-* _pagefoot() - Method to design the footer of the document</text>
+Voir la page [[Creer un modele de document]]</text>
     </revision>
   </page>
   <page>
@@ -980,6 +927,107 @@ La suite de l'article liste toutes les constantes de configurations utilisées p
     </revision>
   </page>
   <page>
+    <title>Creer un modele de document</title>
+    <revision>
+      <timestamp>2008-07-04T17:07:25Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>Ce document décrit comment créer son propre modele de generation de document PDF afin de personnaliser ces documents (propales, factures, etc...)
+Il se base sur les propositions commerciales comme exemple mais s'applique à tout type de document.
+
+
+
+= Tester les modèles existants =
+Dans Dolibarr tester les modèles existants (bleu, jaune, rouge) : créer une propale, la laisser à l'état de brouillon et tester les différentes présentations.
+
+= Trouver le meilleur modèle =
+Noter le modèle le mieux adapté aux besoins. Dans cet exemple, c'est le modèle bleu (correspondant au fichier pdf_propale_bleu.modules.php).
+Rem: Pour info, tous les modèles de propales sont dans \includes\modules\propale si vous etes sous Windows et /includes/modules/propale si vous etes sous Unix.
+
+
+= Créer le nouveau modèle =
+Par sécurité, on conservera les modèles d'origine.
+Créer le modèle 'masocietebleu'
+# copier-coller pdf_propale_bleu.modules.php
+# renommer la copie en pdf_propale_masocietebleu.modules.php
+# l'éditer et faire les modifs suivantes dans le code:
+## Renommer 'Class pdf_propale_bleu { '    en 'Class pdf_propale_masocietebleu { '   (ligne 24)
+## Renommer 'Function pdf_bleu($db=0)' en 'Function pdf_propale_masocietebleu($db=0)'   (ligne 26)
+## Sauvegarder : le modèle 'masocietebleu' est disponible dans la liste des modèles de propales de Dolibarr
+## Tester ce modèle (Voir A)) avant d'aller plus loin...
+
+= Personnaliser =
+Personnaliser le modèle créé.
+Toujours dans pdf_propale_masocietebleu.modules.php, chercher la fonction 'Function _pagehead(&amp;$pdf, $fac)' (vers la ligne 306). C'est elle qui gère l'affichage de l'entête.  
+
+
+== Librairie de création ==
+
+La librairie utilisée pour la création de documents en PDF se nomme FPDF et peut être trouvée dans htdocs/includes/fpdf/fpdf/fpdf.class.php. C'est également dans cette classe que l'on trouve les nombreuses méthodes utilisées pour générer les différents éléments des documents.
+
+Les modèles eux-même instancient la classe FPDF et utilisent ensuite ses méthodes, combinées avec les données d'une facture, d'une commande ou d'autres types de données.
+
+On retrouve généralement les appels suivants dans les scripts de création de documents:
+* $pdf-&gt;SetFont() - ''Désigne la fonte à utiliser pour le texte qui suivra''
+* $pdf-&gt;SetXY() - ''Désigne le point de départ pour dessiner le prochain texte en coordonnées X,Y qui sont exprimées en millimètres de la page''
+* $pdf-&gt;MultiCell() - ''Dessine une boîte pouvant contenir du texte, et dont on doit d'abord donner la largeur et la hauteur - très utilisée''
+* $pdf-&gt;GetY() - ''Renvoie la position courante en Y''
+* $pdf-&gt;SetDrawColor() - ''Désigne la couleur à utiliser pour le prochain texte à écrire - généralement noir (0,0,0) ou blanc (255,255,255)''
+* $pdf-&gt;Rect() - ''Dessine un rectangle dont le coin supérieur gauche est au point indiqué par les deux premiers paramètres et le coin inférieur droit utilise les deux derniers paramètres en mode relatif aux deux premiers''
+
+
+== Structure des scripts ==
+
+Les scripts de génération des documents PDF, au moment du développement de la version 2.2, disposent des méthodes suivantes (prenant pour exemple le modèle &quot;crabe&quot;) au sein de la classe du nom du modèle:
+* pdf_crabe() - ''Constructeur de l'objet pdf''
+* write_pdf_file() - ''Méthode générale pour la génération du fichier. Cette méthode appelle toute les suivantes après avoir initialisé quelques variables''
+* _pagehead() - ''Méthode de dessin de l'en-tête du document, incluant généralement le logo, le titre du document (et la date) ainsi que les cadres de l'émetteur et du destinataire du document''
+* _tableau() - ''Méthode de dessin du tableau de détails (produits, services, etc)''
+* _tableau_info() - ''Méthode de dessin du tableau reprenant une liste d'informations sur la facture''
+* _tableau_tot() - ''Méthode de dessin du tableau des totaux''
+* _tableau_versement() - ''Méthode de dessin du tableau des règles de versement''
+* _pagefoot() - ''Méthode de dessin du pied de page''
+
+     
+== Insertion d'un logo ==
+* Chercher la séquence suivante:
+ $pdf-&gt;SetXY(10,5);
+ if (defined(&quot;FAC_PDF_INTITULE&quot;))
+ {
+    $pdf-&gt;SetTextColor(0,0,200);
+    $pdf-&gt;SetFont('Arial','B',14);
+    $pdf-&gt;MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
+* Ajouter l'instruction:
+    $pdf-&gt;Image('\www\htdocs\dolibarr\document\societe\logo.jpg', 10, 5,60.00);
+* Mettre en commentaire l'instruction d'affichage de la variable FAC_PDF_INTITULE
+
+== Modification des constantes affichées ==
+Principales fonctions utilisées
+     $pdf-&gt;setX(float a); fixe la position x courante
+     $pdf-&gt;setY(float b); fixe la position y courante
+     $pdf-&gt;setXY(float a,float b); fixe les positions x et y courantes
+     (rappel: l'origine est le coin supérieur gauche)
+     $pdf-&gt;SetTextColor(0,0,200); fixe la couleur du texte
+     $pdf-&gt;SetFont('Arial','B',14); fixe la police, le type ( 'B' pour gras, 'I' pour italique, '' pour normal,...)
+     $pdf-&gt;MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L'); imprime la variable  FAC_PDF_INTITULE avec saut de ligne
+(info: Il semble que Dolibarr gère un certain nombre de constantes dans Accueil =&gt; Configuration =&gt; System =&gt; Constantes. Mais ça ne fonctionne pas sur ma config ...).
+
+== Pour plus d'infos ==
+http://www.fpdf.org/?go=script&amp;id=2 et aller sur 'accueil'
+
+== Le résultat ==
+Réalisation ozit: http://www.adytek.com/PR040123.pdf
+
+= Choisir un modèle par défaut dans Dolibarr =
+Dans Accueil =&gt; Configuration =&gt; proposition commerciale:
+* on affiche les modèles,
+* on indique ceux qui doivent etre actifs,
+* on précise le modèle proposé par défaut.
+
+= Merci =
+Merci à David, Florent et surtout ozit pour leur aide.</text>
+    </revision>
+  </page>
+  <page>
     <title>Customisation des documents dolibarr</title>
     <revision>
       <timestamp>2005-08-25T14:34:31Z</timestamp>
@@ -993,9 +1041,9 @@ La suite de l'article liste toutes les constantes de configurations utilisées p
   <page>
     <title>Developpement module</title>
     <revision>
-      <timestamp>2008-03-19T00:02:37Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>/* Créer un descripteur de Module (obligatoire) */</comment>
+      <timestamp>2008-07-17T01:47:42Z</timestamp>
+      <contributor><username>Ncc</username></contributor>
+      <comment>/* Définir vos propres box (optionnel) */</comment>
       <text>Pour créer un nouveau module, il existe plusieurs étapes. Ce didacticiel a pour but de vous décrire chacune d'elle afin d'ajouter un module permettant d'étendre les possibilités de Dolibarr, comme par exemple ajouter une ou plusieurs des fonctionnalités suivantes:
 * Développer de nouvelles permissions
 * Ajouter de nouvelles boites
@@ -1035,10 +1083,15 @@ C'est la valeur de $this-&gt;special qui détermine dans quel onglet se trouve v
 === Créer vos fichiers .sql ===
 Si votre module a vocation à gérer des données bien a lui, il est nécessaire de définir des tables SQL pour stocker ces données.
 
-Créer un sous-répertoire de '''htdocs/mysql/tables''' (si non déjà fait) propre à votre module (Par exemple '''htdocs/mysql/tables/monmodule/''') afin d'y placer les scripts sql que vous aller créer.
+Créer un '''sous-répertoire''' de '''htdocs/mysql/tables''' propre à votre module (Par exemple '''htdocs/mysql/tables/monmodule/''') afin d'y placer les scripts sql que vous aller créer.
+Ensuite dans votre descripteur de module, modifier la ligne
+&lt;pre&gt;$dir = DOL_DOCUMENT_ROOT.'/mysql/tables/mymodule/';&lt;/pre&gt;
+par
+&lt;pre&gt;$dir = DOL_DOCUMENT_ROOT.'/mysql/tables/monmodule/';&lt;/pre&gt;
 
-Ajouter les fichiers d'ordre de création de vos tables sur le principe d'un fichier par table (voir les fichiers existants dans '''htdocs/mysql/tables''' pour exemple). Les fichiers doivent être opérationnel pour la base '''mysql'''.
-Les fichiers des autres bases sont générés, au moment d'une release, à partir de ces derniers via le script:
+''Règle à respecter:''
+Ajouter les fichiers d'ordre de création de vos tables sur le principe d'un fichier par table (voir les fichiers existants dans '''htdocs/mysql/tables''' pour exemple). Les fichiers doivent être opérationnel pour la base de données '''mysql'''.
+Rem: Les fichiers des autres bases ne sont pas maintenus mais sont générés, au moment d'une release, à partir de ces derniers via le script:
 &lt;pre&gt;build/dolibarr_mysql2autrebase.pl&lt;/pre&gt;
 
 === Tester vos fichier .sql ===
@@ -1144,7 +1197,7 @@ Pour cela, il vous faut définir dans le fichier descripteur de menu le tableau
 $this-&gt;menu
 &lt;/pre&gt;
 Ce tableau contient toutes les entrées qui apparaitront dans les menus une fois le module activé.
-Rem: Pour l'instant seul le menu haut est géré.
+Les fichiers de descripteur de module exemple possede un exemple de décalaration de menu haut ainsi que de ces entrées menu gauche correspondantes.
 
 == Définir vos propres permissions (optionnel) ==
 '''Quand''': Si vous voulez ajouter de nouvelles permissions.
@@ -1180,7 +1233,7 @@ if ($user-&gt;rights-&gt;action-&gt;sousaction)
 '''Quand''': Si votre module amène avec lui une ou plusieurs Boxes.
 
 Pour cela, modifier les tableaux $this-&gt;boxes du fichier descripteur de module.
-Il suffit d'ajouter une ligne par fichier box qui se trouve dans le répertoire '''htdocs/includes/box'''
+Il suffit d'ajouter une ligne par fichier box qui se trouve dans le répertoire '''htdocs/includes/boxes'''
 
 ''Exemple:''
 &lt;pre&gt;
@@ -1431,22 +1484,23 @@ Denis FRIMIN</text>
   <page>
     <title>DocumentPropale</title>
     <revision>
-      <timestamp>2006-07-25T17:09:32Z</timestamp>
-      <contributor><username>Marc ocebo</username></contributor>
-      <text>Personnaliser l'entete d'une propale :
+      <timestamp>2008-07-04T17:06:34Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>Ce document décrit comment créer son propre modele de generation de document PDF afin de personnaliser ces documents (propales, factures, etc...)
+Il se base sur les propositions commerciales comme exemple mais s'applique à tout type de document.
 
-Pour info, tous les modèles de propales sont dans \includes\modules\propale si vous etes sous Windows
-et /includes/modules/propale si vous etes sous Unix.
 
-Par sécurité, on conserve les modèles d'origine.
 
 = Tester les modèles existants =
 Dans Dolibarr tester les modèles existants (bleu, jaune, rouge) : créer une propale, la laisser à l'état de brouillon et tester les différentes présentations.
 
 = Trouver le meilleur modèle =
 Noter le modèle le mieux adapté aux besoins. Dans cet exemple, c'est le modèle bleu (correspondant au fichier pdf_propale_bleu.modules.php).
+Rem: Pour info, tous les modèles de propales sont dans \includes\modules\propale si vous etes sous Windows et /includes/modules/propale si vous etes sous Unix.
+
 
 = Créer le nouveau modèle =
+Par sécurité, on conservera les modèles d'origine.
 Créer le modèle 'masocietebleu'
 # copier-coller pdf_propale_bleu.modules.php
 # renommer la copie en pdf_propale_masocietebleu.modules.php
@@ -1459,6 +1513,35 @@ Créer le modèle 'masocietebleu'
 = Personnaliser =
 Personnaliser le modèle créé.
 Toujours dans pdf_propale_masocietebleu.modules.php, chercher la fonction 'Function _pagehead(&amp;$pdf, $fac)' (vers la ligne 306). C'est elle qui gère l'affichage de l'entête.  
+
+
+== Librairie de création ==
+
+La librairie utilisée pour la création de documents en PDF se nomme FPDF et peut être trouvée dans htdocs/includes/fpdf/fpdf/fpdf.class.php. C'est également dans cette classe que l'on trouve les nombreuses méthodes utilisées pour générer les différents éléments des documents.
+
+Les modèles eux-même instancient la classe FPDF et utilisent ensuite ses méthodes, combinées avec les données d'une facture, d'une commande ou d'autres types de données.
+
+On retrouve généralement les appels suivants dans les scripts de création de documents:
+* $pdf-&gt;SetFont() - ''Désigne la fonte à utiliser pour le texte qui suivra''
+* $pdf-&gt;SetXY() - ''Désigne le point de départ pour dessiner le prochain texte en coordonnées X,Y qui sont exprimées en millimètres de la page''
+* $pdf-&gt;MultiCell() - ''Dessine une boîte pouvant contenir du texte, et dont on doit d'abord donner la largeur et la hauteur - très utilisée''
+* $pdf-&gt;GetY() - ''Renvoie la position courante en Y''
+* $pdf-&gt;SetDrawColor() - ''Désigne la couleur à utiliser pour le prochain texte à écrire - généralement noir (0,0,0) ou blanc (255,255,255)''
+* $pdf-&gt;Rect() - ''Dessine un rectangle dont le coin supérieur gauche est au point indiqué par les deux premiers paramètres et le coin inférieur droit utilise les deux derniers paramètres en mode relatif aux deux premiers''
+
+
+== Structure des scripts ==
+
+Les scripts de génération des documents PDF, au moment du développement de la version 2.2, disposent des méthodes suivantes (prenant pour exemple le modèle &quot;crabe&quot;) au sein de la classe du nom du modèle:
+* pdf_crabe() - ''Constructeur de l'objet pdf''
+* write_pdf_file() - ''Méthode générale pour la génération du fichier. Cette méthode appelle toute les suivantes après avoir initialisé quelques variables''
+* _pagehead() - ''Méthode de dessin de l'en-tête du document, incluant généralement le logo, le titre du document (et la date) ainsi que les cadres de l'émetteur et du destinataire du document''
+* _tableau() - ''Méthode de dessin du tableau de détails (produits, services, etc)''
+* _tableau_info() - ''Méthode de dessin du tableau reprenant une liste d'informations sur la facture''
+* _tableau_tot() - ''Méthode de dessin du tableau des totaux''
+* _tableau_versement() - ''Méthode de dessin du tableau des règles de versement''
+* _pagefoot() - ''Méthode de dessin du pied de page''
+
      
 == Insertion d'un logo ==
 * Chercher la séquence suivante:
@@ -1502,8 +1585,8 @@ Merci à David, Florent et surtout ozit pour leur aide.</text>
   <page>
     <title>Document générés</title>
     <revision>
-      <timestamp>2007-09-15T03:36:12Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
+      <timestamp>2008-07-04T17:09:37Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <comment>/* Générer des documents dans de nouveaux outils */</comment>
       <text>Les documents générés sont stockés dans le répertoire définit par la constantes DOL_DATA_ROOT
 
@@ -1539,15 +1622,15 @@ Par ailleurs, il faudra créer un répertoire contenant les documents générés
 Il faut également que le modèle soit inséré dans la base de données, dans la [[Table llx_document_model]] avec pour type le type de document et pour nom le nom de la classe correspondante dans includes/modules (commençant par pdf_).
 
 Plus de documentation au sujet de la génération des modèles elle-même est disponible sur la page d'aperçu des modèles:
-[[ApercuDesModeles#Comment_modifier_un_mod.C3.A8le]]</text>
+[[Creer un modele de document]]</text>
     </revision>
   </page>
   <page>
     <title>Documentation Développeur</title>
     <revision>
-      <timestamp>2008-05-18T15:27:37Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>/* Général */</comment>
+      <timestamp>2008-07-15T09:29:04Z</timestamp>
+      <contributor><username>Kaoul</username></contributor>
+      <comment>/* Interfaces et liens avec d'autres applications */</comment>
       <text>== Général ==
 # [[Outils et principe|A savoir avant de commencer]]
 # [[Outils de développement]]
@@ -1567,36 +1650,40 @@ Pour développer votre propre module, aller sur le didacticiel: [[Developpement 
 
 La liste des modules standard est définie sur la page [[Modules]]
 
-== Développer un script ==
-Pour développer un script quelqu'il soit, comme un script de traitement cron ou encore un script d'import de données issus d'un autre système, se référrer à la page: [[Developpement script]]
+== Les scripts ligne de commande ou batch ==
+Pour développer un script quel qu'il soit, comme un script de traitement cron ou encore un script d'import de données issus d'un autre système, se référer à la page: [[Developpement script]]
 
-== Le [[Permissions|Système des permissions]] ==
-A compléter
-
-== Le [[Constantes|Système de paramétrage]] ==
+== Le Système de paramétrage ==
 Il existe 2 niveau de paramétrage dans Dolibarr.
 Le global est stocké dans la [[Table llx_const]].
 Le paramétrage propre à un utilisateur est stocké dans la [[Table llx_user_param]]
+Voir la page [[Constantes]]
 
-== Le [[Système de menus]] ==
+== Le Système de menus ==
 Voir la page [[Système de menus]]
 
-== Le [[Themes|Système des thèmes]] ==
+== Le Système des thèmes ==
 Voir la page [[Themes]]
 
-== Le [[Système des boites]] ==
+== Le Système des boites ==
 Voir la page [[Système des boites]]
 
-== Le [[Authentification|Système d'authentification]] ==
+== Le Système d'authentification ==
 Voir la page [[Authentification]]
 
-== Le [[Système de traduction]] ==
+== Le Système des permissions ==
+Voir la page [[Permissions]]
+
+== Le Système de traduction ==
 Voir la page [[Système de traduction]]
 
-== La [[Gestion d'erreur]] ==
+== La Gestion d'erreur ==
 
 * Voir la page [[Gestion d'erreur]]
 * Voir la page [[Error reporting|Rapport d'erreur]]
+
+== La Generation de documents ==
+Plus de documentation au sujet de la génération de documents depuis des modèles est disponible sur la page [[Creer un modele de document]]
 
 == Le stockage des fichiers/documents ==
 Voir la page [[Document générés]]
@@ -1604,6 +1691,7 @@ Voir la page [[Document générés]]
 == Interfaces et liens avec d'autres applications ==
 # [[Interfaces Dolibarr vers exterieur]] (Triggers Dolibarr)
 # [[Interfaces Exterieur vers Dolibarr]]
+# [[Services Web]]
 # [[Imports de masse]]
 
 == FAQ ==
@@ -1623,16 +1711,32 @@ Voir la page [[Document générés]]
   <page>
     <title>Documentation traducteur</title>
     <revision>
-      <timestamp>2007-01-08T09:18:29Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
-      <comment>/* Traduire Dolibarr dans une autre langue */</comment>
+      <timestamp>2008-07-20T16:45:47Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Diffusion de votre langue */</comment>
       <text>== Traduire Dolibarr dans une autre langue ==
 Dolibarr est par défaut développé en Français et Anglais
 
+Il existe 3 méthodes pour réaliser la traduction de Dolibarr (phpLangEditor, iniTranslation et la méthode manuelle).
+Les voici par ordre de préférences:
 
-* Traduction par iniTranslator
 
-Des outils libre pour aider les traductions existent, comme [http://initranslator.sf.net iniTranslator] (sous Windows).
+=== Traduction via le plugin phpLangEditor de Firefox ===
+* OS du traducteur: Tous
+* Outil: phpLangEditor (plugin pour Firefox)
+
+# Installer Firefox et la version 2.5 ou plus du plugin phpLangEditor ( http://code.google.com/p/phplangeditor/ )
+# Une étape supplémentaire est requise pour finaliser l'installation. Appeler l'URL '''about:config''' puis dans le champ filtre, saisissez '''phplangeditor'''. Double cliquer sur la ligne phpLangEditor.file.typeOfLangExt et metter '''ini''' a la place de '''php'''. phpLangEditor est maintenant pret pour traduire Dolibarr. 
+# Depuis Firefox, ouvrir phpLangEditor en choisissant le menu '''Outils -&gt; PHP lang editor'''.
+# Cliquez sur &quot;Ouvrir le fichier de référence&quot; et choisissez votre fichier .lang d'origine (par exemple dans votre répertoire Dolibarr, htdocs/langs/en_US/bills.lang
+# Cliquez sur &quot;Ouvrir le fichier de traduction&quot; et sélectionnez le fichier qui contiendra la traduction, si un fichier existe déjà (par exemple htdocs/langs/es_ES/bills.lang).
+# Vous pouvez choisir d'afficher tous les termes à traduire ou uniquement les termes non-traduits. Cliquez sur le terme dans la colonne de gauche pour le traduire dans la case du bas. Vous pouvez aussi utiliser des raccourcis-clavier comme CTRL+N pour passer au suivant
+# Enregistrer le fichier une fois la traduction terminée.
+# Editer le fichier pour supprimer la première ligne de commentaire.En effet, il est impossible de traduire les lignes commentées (commençant par un #), aussi le fichier traduit contient une fois enregsitré la ligne commentaire du fichier source. Une petite édition manuelle est nécessaire pour corriger ou supprimer cette ligne, bien que cela ne suive pas au bon fonctionnement du nouveau fichier .lang.
+
+=== Traduction par iniTranslator ===
+* OS du traducteur: Windows
+* Outil: [http://initranslator.sf.net iniTranslator] (sous Windows).
 
 # Lancer votre application de traduction qui vous demandera le fichier modèle (Par exemple, sous iniTranslator, faire Fichier - Ouvrir Original). Choisir le fichier source modèle dans le répertoire htdocs/langs/en_US ou htdocs/langs/fr_FR, qui sont à jour.
 # Puis choisissez éventuellement le fichier destination, dans le répertoire htdocs/langs/xx_XX ou xx est le code langue à traduire.
@@ -1643,20 +1747,7 @@ Des outils libre pour aider les traductions existent, comme [http://initranslato
 Attention, iniTranslator souffre d'un grave défaut. Il ne conserve pas l'ordre d'origine des paramètres et tri le fichier généré par ordre alphabétique des clés plutot que dans l'ordre du fichier source. De plus, les zones commentaires du fichiers source ne sont pas repercutées dans le fichier destination traduit.
 
 
-* Traduction via l'extension phpLangEditor de Firefox
-
-# Utilisez la version modifiée de [[phpLangEditor]]
-# Lancer Firefox et cliquer sur Outils-&gt;PHP lang editor
-# Cliquez sur &quot;Ouvrir le fichier de référence&quot; et sélectionnez le fichier d'origine (par exemple dans votre répertoire Dolibarr, htdocs/langs/en_US/bills.lang
-# Cliquez sur &quot;Ouvrir le fichier de traduction&quot; et sélectionnez le fichier à traduire (par exemple htdocs/langs/fr_FR/bills.lang)
-# Vous pouvez choisir d'afficher tous les termes à traduire ou uniquement les termes non-traduits. Cliquez sur le terme dans la colonne de gauche pour le traduire dans la case du bas. Vous pouvez aussi utiliser des raccourcis-clavier comme CTRL+N pour passer au suivant
-# Note: il est impossible de traduire les lignes commentées (commençant par un #) ce qui pourrait poser problème pour les commentaires qui indiquent en quelle langue est le fichier. Une petite édition manuelle est nécessaire pour corriger cela
-
-Les modifications apportées à phpLangEditor ont été données à l'auteur de l'extension afin qu'il puisse les intégrer dans une prochaine version. Toutefois, il est peu disponible pour l'instant et il est donc nécessaire de remplacer l'extension par celle fournie sur la page citée plus haut.
-
-
-
-* Traduction manuelle
+=== Traduction manuelle ===
 
 Pour traduire Dolibarr dans une autre langue, il faut aller dans le répertoire langs et créer un répertoire ayant pour nom le code langue à traduire (En suivant le même format que ceux déjà existant, par exemple en_US, fr_FR, es_ES, de_DE, etc...).
 Il faut ensuite recopier les fichiers lang depuis un répertoire déjà traduit (par exemple en_US/main.lang ou fr_FR/bills.lang), les recopier dans le répertoire de la nouvelle langue que l'on vient de créer et traduire le contenu de ces fichiers.
@@ -1705,7 +1796,10 @@ Il est possible d'utiliser indifférement l'une ou l'autre (celle qui arrange) c
 
 == Diffusion de votre langue ==
 
-Quand vous avez créer une nouvelle langue, si elle n'est pas intégré dans Dolibarr, elle peut être malgré tout diffuser pour d'autres utilisateurs. Vous pouvez fabriquer un package pour la distribuer en utilisant le script '''build/makepack-dolibarrlang.pl'''</text>
+Quand vous avez créer une nouvelle langue, si elle n'est pas intégrée dans Dolibarr, elle peut être malgré tout diffuser pour d'autres utilisateurs. Vous pouvez fabriquer un package pour la distribuer en utilisant le script '''build/makepack-dolibarrlang.pl'''
+
+Le fichier .tgz fabriqué doit juste etre dézippé dans le répertoire Dolibarr pour que la langue soit disponible.
+Ce fichier peut être envoyé sur le site web http://www.dolibarr.org dans l'espace '''téléchargement, modules/addon'''.</text>
     </revision>
   </page>
   <page>
@@ -2050,16 +2144,51 @@ Les formats existants sont csv (Fichier texte) ou xls (Format Excel natif)</text
   <page>
     <title>FAQ Développeur</title>
     <revision>
-      <timestamp>2008-06-05T16:27:44Z</timestamp>
+      <timestamp>2008-07-26T14:50:41Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <comment>/* Comment devenir développeur officiel */</comment>
       <text>== Récupérer/mettre à jour la version CVS développeur ==
+'''Effectuer une sauvegarde de ses données et de sa configuration'''
 
 '''Utilisation du CVS'''
 
 La première opération consiste à récupérer les dernières versions des sources CVS.
-Pour cela, voir la [http://forum.dolibarr.com/viewtopic.php?t=263 Version CVS du jour].
+Pour cela, voir la [http://www.dolibarr.fr/component/option,com_docman/task,cat_view/gid,64/Itemid,36/lang,fr/ Version CVS du jour].
 Les nouveaux fichiers doivent écraser les anciens.
+
+Pour récupérer la dernière version CVS, vous pouvez aussi directement utiliser [http://savannah.nongnu.org/cvs/?group=dolibarr le serveur CVS en mode anonyme], si vous disposez d'un client CVS (commande cvs sous linux, ou TortoiseCVS par exemple sous windows)
+La commande script permettant de récupérer un snapshot intégral (sans suivi cvs) dans le répertoire courrant est:
+''
+ CVSROOT=:pserver:anonymous@cvs.savannah.nongnu.org:/sources/dolibarr
+ export CVSROOT
+ cvs -q export -r HEAD -d ./ dolibarr/
+''
+Pour récupérer uniquement les 3 dossiers principaux de Dolibarr:
+''
+ CVSROOT=:pserver:anonymous@cvs.savannah.nongnu.org:/sources/dolibarr
+ export CVSROOT
+ cvs -q export -r HEAD -d ./htdocs dolibarr/htdocs
+ cvs -q export -r HEAD -d ./mysql dolibarr/mysql
+ cvs -q export -r HEAD -d ./external-libs dolibarr/external-libs
+''
+
+La commande permettant de mettre à jour localement la copie de travail CVS :
+''Sous linux (script shell):
+ CVSROOT=:pserver:anonymous@cvs.savannah.nongnu.org:/sources/dolibarr
+ export CVSROOT
+ cvs -q update -P -d
+Sous Windows avec Tortoise cvs
+ &quot;C:\Program Files\CVSNT\cvs.exe&quot; -q update -P -d
+ CVSROOT=:pserver:anonymous@cvs.savannah.nongnu.org:/sources/dolibarr''
+Et pour remettre au propre votre copie locale en annulant vos modifications sur les fichiers intégrés au cvs:
+ &quot;C:\Program Files\CVSNT\cvs.exe&quot; -q update -P -C -d
+ CVSROOT=:pserver:anonymous@cvs.savannah.nongnu.org:/sources/dolibarr
+
+Si besoin, modifiez les droits de propriétaire des dossiers, pour que le serveur y ait accès.
+
+'''Restaurer sa configuration'''
+
+Restaurer le fichier de configuration (./htdocs/conf/conf.php) d'après sa sauvegarde si vous l'avez écrasé.
 
 '''Mise a jour de la base'''
 
@@ -2086,9 +2215,8 @@ Voir pour cela la page [[Système_de_menus]]
 Voir pour cela la page [[Developpement_module]]
 
 
-== Comment ajouter une traduction ==
+== Comment ajouter ou compléter une traduction ==
 Voir pour cela la page [[Documentation_traducteur]]
-
 
 == Changer mon système de numérotation des factures en cours de route ==
 Si le nouveau système de numérotation n'entre pas en conflit avec l'ancien, il suffit d'aller dans le menu Configuration - Modules - Configuration factures et prendre un nouveau modèle dans la liste.
@@ -2137,31 +2265,74 @@ Au final, on obtient un beau fichier ''resultat.patch'' qui contient toutes les 
 
 Au lieu de rechercher manuellement vos fichiers, si vous avez installé conjointement ''TortoiseCVS'' et ''Winmerge'', vous pouvez vous contenter de votre version modifiée sur votre ordinateur, et de la version CVS en ligne. Sous l'explorateur Windows, faites un clic droit sur le fichier qui doit être patché, et choisissez &quot;CVS comparer&quot; (pas WinMerge qui se trouve quelques lignes plus bas). Tortoise va lui-même lancer WinMerge. Puis reprenez la procédure décrite ci-dessus.
 
+'''Appliquer un patch'''
+Si votre patch n'a pas encore été appliqué, mais que vous souhaitez de votre coté l'appliquer sur votre serveur linux fraichement mis à jour depuis la CVS, cela est possible grace à l'utilitaire patch. 
+En admettant que vous avez créé votre patch à partir du répertoire htdocs de votre copie locale du cvs modifiée par vos soins, et que vous avez envoyé votre patch (monfichier.patch) sur le serveur dans le dossier patchs situé au meme niveau que votre dossier htdocs distant, la commande suivante devrait faire l'affaire (executée depuis le dossier patchs):
+ patch -u -p0 -d ../htdocs &lt; monfichier.patch
+&lt;nowiki&gt;Pour information: -p0 permet d'utiliser le chemin entier tel que mentionné dans le fichier de patch (-pn en retire les n premiers niveau de l'arborescence)
+-d permet de préciser le chemin relatif vers le dossier htdocs à patcher.
+&lt; permet de donner le chemin vers le fichier source à utiliser (le patch en mode unifié)
+-u permet de préciser que le patch est en mode unifié&lt;/nowiki&gt;
+
 == Comment devenir développeur officiel ==
 
-Ceci passe par plusieurs étapes.
+Dans la galaxie du projet Dolibarr, il existe plusieurs intervenants de différents niveaux.
+Le cursus d'un développeur Dolibarr passe par ces étapes, que l'on classe par un titre familié aux adeptes de sciences fictions. Voici ces étapes.
 
-'''Membre de l'alliance'''
+
+* '''Membre de l'alliance'''
 
 Il faut d'abord se familiariser avec les règles et normes de développements.
-En lisant toute la documentation développeur, vous devenez ainsi membre de l'alliance.
+En lisant toute la documentation développeur, vous devenez ainsi '''Membre de l'alliance''' Dolibarr. Et tout lire, c'est pas le plus facile...
 
-'''Chasseur de l'alliance'''
 
-L'étape suivante consiste à soumettre des patch, en commençant par des simples, sur la ML (voir chapitre précédent). A votre première soumission, vous entrez alors dans la famille des Chasseurs de l'alliance.
+* '''Chasseur de l'alliance'''
 
-'''Jedi'''
+L'étape suivante consiste à soumettre des patch, en commençant par des simples, sur la ML (voir chapitre précédent). 
 
-Ce n'est qu'au bout d'un temps variable, qui peut être très long, et si la qualité des patch
-qui ont été envoyée est satisfaisante que l'équipe en place offrira un accès CVS direct.
-Vous êtes devenu un Jedi. Ce titre ne se demande pas, il s'obtient par proposition d'un autre Jedi.
-Ce privilège est toutefois exceptionnel. La qualité de Dolibarr ne pouvant être atteindre 
-que par un nombre de commiteur très réduit, ce qui n'empêche pas d'avoir un nombre de
-développeur (chasseurs) très important (grâce au système de patch).
+A votre première soumission accepté et incluse par un Amiral ou Jedi, vous entrez alors automatiquement dans la famille des '''Chasseurs de l'alliance''' Dolibarr.
 
-'''Maitre Yoda'''
+Le nombre de chasseurs n'est pas limité. Plus, il y en aura, plus on sera fort.
+Les chasseurs représentent la force vive principale de l'alliance.
 
-Au nombre de 1 à 3, c'est le role de chef de projet.</text>
+
+* '''Amiral de l'alliance'''
+
+Ce n'est qu'au bout d'un temps variable (qui peut être très long) au rang de Chasseur, et si la qualité des patch qui ont été envoyée est satisfaisante, que le Maitre Yoda en place vous offrira un accès CVS direct.
+Vous êtes devenu un '''Amiral de l'alliance'''.
+
+Ce titre ne se demande pas, il s'obtient par proposition d'un '''Jedi''' qui estime que vous avez soumis suffisamment de patch pour être un sérieux '''Amiral'''.
+L'accès CVS d'un '''Amiral''' doit cependant n'être utilisé que pour commiter des corrections de bugs déclarés sur Savannah ou le forum (que ces corrections soit personnelles ou issu d'un patch soumis par un '''Chasseur'''), ou encore des traductions.
+Tout commit CVS doit ainsi obligatoirement inclure, dans la description, le numéro du bug Savannah corrigé ou le numéro du message du forum signalant le problème. Seul une traduction échappe à cette contrainte (pas de restrictions pour les traductions). Le non respect de cette contrainte, peut provoquer une rétrogradation au rang de '''Chasseur'''.
+Pour la soumission de nouvelles fonctionnalités, il faut donc obligatoirement continuer sur le principe de patchs envoyés sur la ML.
+
+Ce privilège est toutefois exceptionnel. La qualité de Dolibarr ne pouvant être atteinte 
+que par un nombre d'Amiraux contrôlé, ce qui n'empêche pas d'avoir un nombre de
+développeurs (Chasseurs) très important (grâce au système de patch).
+
+
+* '''Jedi'''
+
+C'est encore au bout d'un temps variable (qui peut être très long) au rang d'Amiral, et si la qualité des patch qui ont été envoyée est satisfaisante, que le maitre Yoda vous signalera que vous êtes autorisé à réaliser des commits sans restrictions de fonctionnalités, à condition d'avoir cependant l'aval de principe d'un Maitre Yoda à qui vous aurez expliquer la fonctionnalité.
+Il peut toutefois y avoir une restriction temporaire définie par un Maitre Yoda pour raison de release proche.
+Vous êtes alors devenu un '''Jedi'''.
+
+Ce titre ne se demande pas, il s'obtient par proposition d'un autre Jedi ou d'un Maitre Yoda.
+
+Ce privilège est toutefois exceptionnel. La qualité de Dolibarr ne pouvant être atteinte 
+que par un nombre de Jedi contrôlé, ce qui n'empêche pas d'avoir un nombre de
+développeurs (Chasseurs) très important (grâce au système de patch).
+
+
+* '''Maitre Yoda'''
+
+Au nombre de 1 à 3, être un '''Maitre Yoda''', c'est être un chef de projet. Ce rang s'obtient par succession, suite au départ d'un Maitre Yoda qui se retire, par nomination directe ou vote organisé par le Maitre Yoda partant.
+
+
+
+...Et Dark Vador alors ?
+
+Il existe. Dans la galaxie Dolibarr, on qualifie de Dark Vador, le parasite qui pollue le forum ou la mailing-list de messages ou critiques non constructives, qui ralentissent le développement de Dolibarr plutôt que d'offir des critiques constructives qui aident à progresser. Le mauvais ton est souvent de rigeur chez les Dark Vador...</text>
     </revision>
   </page>
   <page>
@@ -3345,8 +3516,8 @@ Il sera alors possible d'ajouter dans la méthode run_trigger, un if qui permet 
   <page>
     <title>Interfaces Exterieur vers Dolibarr</title>
     <revision>
-      <timestamp>2008-01-28T21:23:25Z</timestamp>
-      <contributor><username>Hl</username></contributor>
+      <timestamp>2008-07-19T16:34:56Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <comment>/* Utilisation des classes PHP */</comment>
       <text>Il y a 2 méthodes pour permettre à une application extérieure d'insérer des données dans Dolibarr. Les 2 techniques possibles sont les suivantes:
 
@@ -3359,8 +3530,8 @@ Cette solution requiert de connaître le modèle physique et les valeurs autoris
 De plus, en utilisant cette méthode, vous passer outre les règles de validation métier, ce qui crée un risque de corrompre les données. Cette méthode nécessite aussi de connaitre la base Dolibarr.
 
 == Utilisation des classes PHP ==
-Il est possible d'utiliser les objets métiers de dolibarr (Les fichiers xxx.class.php).
-Chacun de ces fichiers offre un classe munie de methodes pour:
+Il est possible d'utiliser les objets métiers de Dolibarr (Les fichiers xxx.class.php).
+Chacun de ces fichiers offre un classe munie de méthodes pour:
 * la récupération d'une entité (la méthode fetch)
 * l'insertion en base d'une entité (la méthode create ou insert)
 * la mise à jour d'une entité (la méthode update)
@@ -3368,9 +3539,44 @@ Chacun de ces fichiers offre un classe munie de methodes pour:
 * d'autres méthodes diverses propre à l'entité manipulée.
 Cette technique est préférable à la précédente.
 
-'''Avantages:''' Elle offre l'avantage de passer à travers les couches de validations métiers des données. Le code d'interface ne doit normallement pas etre réécrit en cas de montée de version de Dolibarr.
+'''Avantages:''' Elle offre l'avantage de passer à travers les couches de validations métiers des données. Le code d'interface ne doit normallement pas être réécrit en cas de montée de version de Dolibarr.
 
-'''Inconvénients:''' Elle n'est exploitable qu'en langage PHP.</text>
+'''Inconvénients:''' Elle n'est exploitable qu'en langage PHP.
+
+
+Voici un exemple pour la création d'un tiers (société client par exemple):
+
+&lt;pre&gt;
+// On declare la classe que l'on va manipuler
+include_once('/pathofdolibarrhtdocs/societe.class.php');
+
+// On cree une instance de l'objet à manipuler
+$mycompany = new Societe($db);
+
+// On renseigne ces caractéristiques
+$mycompany-&gt;nom='Big Brother';
+$mycompany-&gt;client=1;
+
+// Si on veut que l'action de creation soit associé a un utilisateur 'loginuser' particulier,
+// il faut decommenter cette ligne pour charger les caractéristiques de cet utilisateur.
+// Si on laisse commenter, Dolibarr mettra null dans les champs du user de création ou mise a jour.
+// $user-&gt;fetch('loginuser');
+
+// On invoque la creation
+$id=$mycompany-&gt;create($user);
+
+// Pour charger l'objet
+$mycompany-&gt;fetch($id);
+
+// Pour mettre a jour
+$mycompany-&gt;update($user);
+&lt;/pre&gt;
+
+Rem: Si on est dans le cas d'un script externe à Dolibarr, il est nécessaire de faire au début,
+avant le include de la classe manipulée
+&lt;pre&gt;include('/pathofdolibarrhtdocs/master.inc.php');&lt;/pre&gt;
+pour que les objets $db, $lang et $user soient créés.
+Si on veut que les actions (creation, mise a jour), soit associées dans le suivi à un utilisateur particulier, il est nécessaire de faire avant</text>
     </revision>
   </page>
   <page>
@@ -4894,31 +5100,51 @@ Nous utilisons quotidiennement [[Dolibarr]] pour nos propres besoins, et envisag
     </revision>
   </page>
   <page>
-    <title>Outils et principes</title>
-    <revision>
-      <timestamp>2007-02-06T02:47:42Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>Outils et principes déplacé vers Poubelle</comment>
-      <text>#REDIRECT [[Poubelle]]
-</text>
-    </revision>
-  </page>
-  <page>
     <title>Outils de développement</title>
     <revision>
-      <timestamp>2008-05-18T17:43:48Z</timestamp>
+      <timestamp>2008-07-14T17:56:06Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Pour tous */</comment>
+      <comment>/* Configuration */</comment>
       <text>Tout environnement de développement peut être utilisé.
 Toutefois voici une liste d'outils fortement recommandés pour leur complétude, leur qualité et la productivité du développement qu'ils apportent. Il est utilisé par certains des développeurs principaux de Dolibarr. Notons que toutes ces solutions sont gratuites et OpenSource.
 
 == Pour tous ==
 
-* Eclipse avec le module PHPClipse pour Eclipse.
+* Installation d'Eclipse 3.2 ou 3.3 ( http://www.eclipse.org/ )
+
+* Installation du module PHPClipse pour Eclipse.
 
 * Firefox 2.0 ou plus avec les plugins: Tamper Data, HTMLValidator, Phplangeditor, Firebug + Firecookie.
 
 * SquirrelSql (pour l'administration de base)
+
+== Optionnel ==
+
+=== Si vous gérez d'autres projets sous SVN ===
+* Installation du module SubClipse ( http://subclipse.tigris.org/install.html )
+
+=== Si vous désirez développer des modules avec le générateur UML2Dolibarr ===
+
+* Vérifier que Eclipse contient le plugin 
+- Si Eclipse 3.2:
+# EMF 2.2.2
+# UML2 2.0.3
+- Si Eclipse 3.3:
+# EMF 2.3.0
+# UML2 2.1.1
+
+Si non, les installer via la procédure '''Find And Install''' et choisir EMF et UML2 End-User.
+
+* Installation de TopCased 1.4
+Pour cela, utiliser la procédure '''Find And Install''' et ajouter l'URL de mise a jour:
+http://topcased-mm.gforge.enseeiht.fr/release/update-site3.3/
+
+* Installation d'acceleo 2.2.1
+Pour cela, utiliser la procédure '''Find And Install''' et ajouter l'URL de mise a jour:
+http://www.acceleo.org/modules/update/
+
+* Installation d'UML2Dolibarr
+svn checkout svn://svn.forge.objectweb.org/svnroot/acceleo/trunk/modules/community/uml21/dolibarr/trunk/
 
 == Et si vous êtes sous Windows ==
 
@@ -4926,7 +5152,27 @@ Toutefois voici une liste d'outils fortement recommandés pour leur complétude,
 
 * Notepad++ (pour ceux qui ne supportent pas java ou utilisent un vieux coucou trop faible pour Eclipse).
 
-* WinMerge (pour la comparaison de fichiers ou répertoires)</text>
+* WinMerge (pour la comparaison de fichiers ou répertoires)
+
+
+== Configuration ==
+Si vous êtes un développeur officiel avec accès CVS en écriture, ajouter dans la configuration CVS de votre Eclipse, une entrée CVS.
+
+:ext:yourlogin@cvs.savannah.nongnu.org:/cvsroot/dolibarr
+
+Sinon
+
+a completer...</text>
+    </revision>
+  </page>
+  <page>
+    <title>Outils et principes</title>
+    <revision>
+      <timestamp>2007-02-06T02:47:42Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>Outils et principes déplacé vers Poubelle</comment>
+      <text>#REDIRECT [[Poubelle]]
+</text>
     </revision>
   </page>
   <page>
@@ -5009,9 +5255,9 @@ Redémarrez Firefox et cliquez sur Outils -&gt; PHP lang editor</text>
   <page>
     <title>Premiers paramétrages</title>
     <revision>
-      <timestamp>2007-05-11T08:56:12Z</timestamp>
-      <contributor><username>Grandoc</username></contributor>
-      <comment>/* Modules */</comment>
+      <timestamp>2008-07-17T21:26:04Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Quelques options cachées */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
@@ -5042,7 +5288,15 @@ Il n'est pas obligatoire de les parcourir.
 == Utilisateurs ==
 La dernière étape consiste à créer les utilisateurs. Pour cela, vous pouvez vous rendre dans la partie &quot;Utilisateurs &amp; Groupes&quot; pour définir les utilisateurs et leurs droits. Attention, pensez à définir les droits utilisateurs, et aussi à les vérifier quand vous ajoutez un module (voir plus loin).
 La liste des droits disponibles dépendant des modules activés (voir plus haut), il est recommandé de configurer cette partie après avoir activé les modules désirés.
-Pour certaines actions, si vous n'avez pas les droits pour faire une action, Dolibarr ne vous la proposera pas. Vous risquez de rater des choses utiles et/ou importantes.</text>
+Pour certaines actions, si vous n'avez pas les droits pour faire une action, Dolibarr ne vous la proposera pas. Vous risquez de rater des choses utiles et/ou importantes.
+
+
+== Quelques options cachées ==
+Quelques options non visibles dans les interfaces (souvent car en beta ou en expérimentation) sont disponibles. Pour les activer il faut définir une constante à 1 dans '''Accueil - Configuration - Divers''':
+
+* MAIN_CONFIRM_AJAX =&gt; Si cette constante est définie (à autre chose que 0), le message de confirmation de suppression de lignes de facture, propal, etc, est une popup Ajax, au lieu d'un formulaire affiché par rechargement de la page.
+
+* MAIN_AUTOFILL_DATE =&gt; Si cette constante est définie (à autre chose que 0), la date de facture, propal, commande ou paiement est prérempli avec la date du jour. Il est fortement recommandé de NE PAS ACTIVER cette option, ceci générant une saisie sans validation de la part des utilisateurs sur les dates, ce qui se traduit par des données incorrectes enregistrés et un beau casse tête lorsqu'il faut faire sa compta ! Toutefois l'option reste disponible, à la demande des certains utilisateurs.</text>
     </revision>
   </page>
   <page>
@@ -5812,6 +6066,14 @@ Voici les caractéristiques qui identifient un service:
     </revision>
   </page>
   <page>
+    <title>Services Web</title>
+    <revision>
+      <timestamp>2008-07-15T09:35:08Z</timestamp>
+      <contributor><username>Kaoul</username></contributor>
+      <text>Dolibarr fournit un serveur et un client de services web dans htdocs/webservices. Le serveur utilise la librairie php nusoap (pas besoin de module php) donc les requêtes y sont faites en SOAP. On peut appeler les méthodes du webservice dolibarr (server.php) avec http://dolibarr.mondomaine.com/webservices/client.php</text>
+    </revision>
+  </page>
+  <page>
     <title>Sociétés</title>
     <revision>
       <timestamp>2007-08-09T15:44:31Z</timestamp>
@@ -5895,7 +6157,7 @@ Ce script doit être éxécuté une fois par jour, il remplit la [[entrepot_valo
   <page>
     <title>Système de menus</title>
     <revision>
-      <timestamp>2008-01-15T08:39:37Z</timestamp>
+      <timestamp>2008-06-29T18:04:01Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <comment>/* Développer son propre système de menu */</comment>
       <text>
@@ -5912,8 +6174,9 @@ Et si cela ne vous convient toujours pas, rien ne vous empêche de développer l
 
 == Développer son propre système de menu ==
 
-Le but de cet article est de décrire comment créer un nouveau système de menu dans son intégralité (remplacement de l'intégralité des entrées menus).
-Si vous désirez juste savoir comment ajouter des entrées menus au sein d'un gestionnaire de menu existant, dans le cadre du développement d'une extension par exemple, reporter vous a la page [[Developpement module]].
+Le but de cet article est de décrire comment créer un nouveau système de menu dans son intégralité (remplacement de l'intégralité des entrées menus, chamboulement complet du concept de navigation).
+
+Cela ne concerne pas le simple ajout d'entrées de menus. Si tel et le cas et que vous désirez juste savoir comment ajouter des entrées menus au sein d'un gestionnaire de menu existant, dans le cadre du développement d'une extension ou d'un nouveau module par exemple, reporter vous plutôt à la page [[Developpement module]].
 
 Si vous voulez remplacer intégralement un systeme de menu par le votre, le plus simple est de prendre exemple sur le gestionnaire de menu &quot;eldy_backoffice&quot;.
 
