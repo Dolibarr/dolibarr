@@ -43,25 +43,25 @@ class ActionComm
     var $id;
     var $label;
 
-    var $datec;			// Date creation enregistrement (datec)
-    var $datem;			// Date modif enregistrement (tms)
+    var $datec;			// Date creation record (datec)
+    var $datem;			// Date modification record (tms)
     var $author;		// Object user that create action
     var $usermod;		// Object user that modified action
 
-    var $datep;			// Date action planifie debut (datep)
-    var $datef;			// Date action planifie fin (datep2)
+    var $datep;			// Date action start (datep)
+    var $datef;			// Date action end (datep2)
     var $durationp = -1;
     //var $date;			// Date action realise debut (datea)	// deprecated
     //var $dateend; 		// Date action realise fin (datea2)		// deprecated
-    var $durationa = -1;	// deprecated
+    //var $durationa = -1;	// deprecated
 	var $priority;
 	var $punctual = 1;
 	
     var $usertodo;		// Object user that must do action
     var $userdone;	 	// Object user that did action
 	
-    var $societe;
-    var $contact;
+    var $societe;		// Company linked to action (optionnal)
+    var $contact;		// Contact linked tot action (optionnal)
     var $note;
     var $percentage;
     
@@ -629,6 +629,7 @@ class ActionComm
 					$sql.= " AND a.fk_user_done = ".$userforfilter->id;
 				}
 			}
+			$sql.= " AND a.datep != 'null' ";	// To exclude corrupted events and avoid errors in lightning/sunbird import
 			$sql.= " ORDER by datec";
 
 			dolibarr_syslog("ActionComm::build_exportfile select events sql=".$sql);
