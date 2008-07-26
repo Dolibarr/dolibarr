@@ -302,7 +302,7 @@ function dolibarr_get_const($db, $name)
    \param	    type		Type de constante (chaine par défaut)
    \param	    visible	    La constante est elle visible (0 par défaut)
    \param	    note		Explication de la constante
-   \return     	int         <0 si ko, >0 si ok
+   \return     	int         -1 if KO, 1 if OK
 */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {

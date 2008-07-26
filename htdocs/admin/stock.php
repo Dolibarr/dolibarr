@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,46 +52,38 @@ elseif ($_POST["action"] == 'stock_userstock_autocreate')
   Header("Location: stock.php");
   exit;
 }
-elseif ($_POST["action"] == 'stock_bill')
+// Mode of stock changement 
+elseif (    $_POST["action"] == 'stock_bill'
+		 || $_POST["action"] == 'stock_validateorder'
+		 || $_POST["action"] == 'stock_shipment')
 {
-  dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", $_POST["stock_bill"]);
-  //Si activ�e on d�sactive la d�cr�mentation du stock � la validation de commande et/ou � l'exp�dition
-  if ($_POST["stock_bill"] == 1)
-  {
-  	if ($conf->commande->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", 0);
-  	if ($conf->expedition->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", 0);
-  }
-  Header("Location: stock.php");
-  exit;
-}
-elseif ($_POST["action"] == 'stock_validateorder')
-{
-  dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", $_POST["stock_validateorder"]);
-  //Si activ�e on d�sactive la d�cr�mentation du stock � la facturation et/ou � l'exp�dition
-  if ($_POST["stock_validateorder"] == 1)
-  {
-  	if ($conf->facture->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", 0);
-  	if ($conf->expedition->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", 0);
-  }
-  Header("Location: stock.php");
-  exit;
-}
-elseif ($_POST["action"] == 'stock_shipment')
-{
-  dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", $_POST["stock_shipment"]);
-  //Si activ�e on d�sactive la d�cr�mentation du stock � la facturation et/ou � la validation de commande
-  if ($_POST["stock_shipment"] == 1)
-  {
-  	if ($conf->facture->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", 0);
-  	if ($conf->commande->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", 0);
-  }
-  Header("Location: stock.php");
-  exit;
-}
+	$count=0;
+	$db->begin();
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", '');
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", '');
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", '');
+	if ($_POST["action"] == 'stock_bill')          $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", $_POST["stock_bill"]);
+	if ($_POST["action"] == 'stock_validateorder') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", $_POST["stock_validateorder"]);
+	if ($_POST["action"] == 'stock_shipment')      $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", $_POST["stock_shipment"]);
+	if ($count == 4)
+	{
+		$db->commit();
+  		Header("Location: stock.php");
+  		exit;
+	}
+	else
+	{	
+		$db->rollback();
+    	dolibarr_print_error("Error in some requests", LOG_ERR);
+	}
+}	
+
+
 
 /*
- * Affiche page
+ * View
  */
+
 llxHeader('',$langs->trans("StockSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -100,10 +93,11 @@ print '<br>';
 $html=new Form($db);
 $var=true;
 print '<table class="noborder" width="100%">';
+
 print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("Parameters")."</td>\n";
 print "  <td align=\"right\" width=\"160\">".$langs->trans("Value")."</td>\n";
-print "  </tr>\n";
+print '</tr>'."\n";
 
 /*
  * Formulaire parametres divers
@@ -137,6 +131,13 @@ if ($conf->global->STOCK_USERSTOCK == 1)
   print "</td>\n";   
   print "</tr>\n";
 }
+
+
+print '<tr class="liste_titre">';
+print "  <td>".$langs->trans("RuleForStockManagement")."</td>\n";
+print "  <td align=\"right\" width=\"160\">".$langs->trans("Value")."</td>\n";
+print '</tr>'."\n";
+$var=true;
 
 if ($conf->facture->enabled)
 {
