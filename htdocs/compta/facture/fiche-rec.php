@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/compta/facture/fiche-rec.php
         \ingroup    facture
 		\brief      Page d'affichage d'une facture récurrent
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -94,7 +91,7 @@ if ($_REQUEST["action"] == 'delete' && $user->rights->facture->supprimer)
 
 
 /*
- *	Affichage page
+ *	View
  */
 
 llxHeader('',$langs->trans("RepeatableInvoices"),'ch-facture.html#s-fac-facture-rec');
@@ -127,10 +124,10 @@ if ($_GET["action"] == 'create')
 		print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$facture->client->nom.'</td>';
 		print '<td>'.$langs->trans("Comment").'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Title").' :</td><td><input type="text" name="titre" size="16"></td>';
+		print '<tr><td>'.$langs->trans("Title").' :</td><td><input class="flat" type="text" name="titre" size="16"></td>';
 
 		print '<td rowspan="4" valign="top">';
-		print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';
+		print '<textarea class="flat" name="note" wrap="soft" cols="60" rows="'.ROWS_4.'"></textarea></td></tr>';
 
 		print "<tr><td>".$langs->trans("Author")." :</td><td>".$user->fullname."</td></tr>";
 
@@ -264,7 +261,7 @@ if ($_GET["action"] == 'create')
 			print '</select>';
 			print '</td></tr>';
 		}
-		print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+		print '<tr><td colspan="3" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
 		print "</form>\n";
 		print "</table>\n";
 
@@ -295,7 +292,8 @@ else
 			$author->fetch();
 
 			print_titre($langs->trans("PredefinedInvoices").': '.$fac->titre);
-
+			print '<br>';
+			
 			/*
 			*   Facture
 			*/
@@ -344,7 +342,8 @@ else
 			print_titre($langs->trans("Products"));
 
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
+			print '<tr class="liste_titre">';
+			print '<td colspan="2">'.$langs->trans("Description").'</td>';
 			print '<td align="right">'.$langs->trans("Price").'</td>';
 			print '<td align="center">'.$langs->trans("ReductionShort").'</td>';
 			print '<td align="center">'.$langs->trans("Qty").'</td></tr>';

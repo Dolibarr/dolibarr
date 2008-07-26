@@ -2012,16 +2012,16 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
 }
 
 /**
- \brief     		Fonction qui retourne un num�rique conforme PHP et SQL, depuis un montant au
- format utilisateur.
- \remarks   		Fonction a appeler sur montants saisis avant un insert en base
- \param	    	amount		Montant a formater
- \param	    	rounding	'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
- 'MT'=Round to Max with Tax (MAIN_MAX_DECIMALS_TOT)
- 'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
- ''=No rounding
- \return			string		Montant au format num�rique PHP et SQL (Exemple: '99.99999')
- \seealso		price		Fonction inverse de price2num
+ *	\brief     		Fonction qui retourne un numerique conforme PHP et SQL, depuis un montant au
+ *					format utilisateur.
+ *	\remarks   		Fonction a appeler sur montants saisis avant un insert en base
+ *	\param	    	amount		Montant a formater
+ *	\param	    	rounding	'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
+ *								'MT'=Round to Max with Tax (MAIN_MAX_DECIMALS_TOT)
+ *								'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
+ *								''=No rounding
+ *	\return			string		Montant au format num�rique PHP et SQL (Exemple: '99.99999')
+ *	\seealso		price		Fonction inverse de price2num
  */
 function price2num($amount,$rounding='')
 {
@@ -2029,6 +2029,7 @@ function price2num($amount,$rounding='')
 
 	// Round PHP function does not allow number like '1,234.5'.
 	// Numbers must be '1234.5'
+	// \TODO If there is already a ".", we remove ",", otherwise replace by "."
 	$amount=ereg_replace(',','.',$amount);
 	$amount=ereg_replace(' ','',$amount);
 	if ($rounding)
