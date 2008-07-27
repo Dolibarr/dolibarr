@@ -1127,13 +1127,14 @@ class Form
 	}
   
 	/**
-		\brief      Retourne la liste des produits fournisseurs en Ajax si ajax activé ou renvoie à select_produits_fournisseurs_do
-		\param      selected        Produit pré-sélectionné
-		\param      htmlname        Nom de la zone select
-		\param      filtretype      Pour filtre sur type de produit
-		\param      filtre          Pour filtre sql
+		\brief     	Retourne la liste des produits fournisseurs en Ajax si ajax activé ou renvoie à select_produits_fournisseurs_do
+		\param		socid			Id third party
+		\param     	selected        Produit pré-sélectionné
+		\param     	htmlname        Nom de la zone select
+		\param     	filtretype      Filter on product type (1=customer, 2=supplier)
+		\param     	filtre          Pour filtre sql
 	*/
-	function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='')
+	function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype=2,$filtre)
 	{
 		global $langs,$conf;
 		if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
@@ -1143,7 +1144,7 @@ class Form
 		}
 		else
 		{
-			$this->select_produits_fournisseurs_do($socid,$selected,$htmlname,$filtretype,$filtre);
+			$this->select_produits_fournisseurs_do($socid,$selected,$htmlname,$filtretype,$filtre,'');
 		}    
 	}
   
@@ -1226,7 +1227,7 @@ class Form
 					{
 						$opt.= strtolower($langs->trans("Units"));
 					}
-					if ($objp->quantity > 1)
+					if ($objp->quantity >= 1)
 					{
 						$opt.=" (";
 						$opt.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
@@ -1255,8 +1256,8 @@ class Form
 	}
 	
 	/**
-		\brief      Retourne la liste des tarifs fournisseurs pour un produit
-		\param		  productid   		    Id du produit
+		\brief		Retourne la liste des tarifs fournisseurs pour un produit
+		\param		productid   		    Id product
 	*/
 	function select_product_fourn_price($productid,$htmlname='productfournpriceid')
 	{

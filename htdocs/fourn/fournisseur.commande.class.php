@@ -673,13 +673,13 @@ class CommandeFournisseur extends Commande
 	 *      \param      fk_product      	Id produit
 	 *      \param      remise_percent  	Remise
 	 *      \param      price_base_type	HT or TTC
-	 *      \param      int             	<0 si ko, >0 si ok
+	 *      \param      int             	<=0 si ko, >0 si ok
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0)
 	{
 		global $langs,$mysoc;
 
-		dolibarr_syslog("Fournisseur.Commande::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
+		dolibarr_syslog("FournisseurCommande::addline $desc, $pu_ht, $qty, $txtva, $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Clean parameters
@@ -726,14 +726,14 @@ class CommandeFournisseur extends Commande
 					{
 						$this->error="Aucun tarif trouvé pour cette quantité. Quantité saisie insuffisante ?";
 						$this->db->rollback();
-						dolibarr_syslog("Fournisseur.commande::addline result=".$result." - ".$this->error);
+						dolibarr_syslog("FournisseurCommande::addline result=".$result." - ".$this->error, LOG_DEBUG);
 						return -1;
 					}
 					if ($result < -1)
 					{
 						$this->error=$prod->error;
 						$this->db->rollback();
-						dolibarr_syslog("Fournisseur.commande::addline result=".$result." - ".$this->error);
+						dolibarr_syslog("Fournisseur.commande::addline result=".$result." - ".$this->error, LOG_ERR);
 						return -1;
 					}
 				}
@@ -754,7 +754,7 @@ class CommandeFournisseur extends Commande
 			$total_ttc = $tabprice[2];
 
 			$subprice = price2num($pu,'MU');
-
+			
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
@@ -777,7 +777,8 @@ class CommandeFournisseur extends Commande
 			$sql.= "'".price2num($total_tva)."',";
 			$sql.= "'".price2num($total_ttc)."'";
 			$sql.= ")";
-			dolibarr_syslog('Fournisseur.commande::addline sql='.$sql);
+
+			dolibarr_syslog('FournisseurCommande::addline sql='.$sql);
 			$resql=$this->db->query($sql);
 			//print $sql;
 			if ($resql)
@@ -791,6 +792,7 @@ class CommandeFournisseur extends Commande
 			{
 				$this->error=$this->db->error();
 				$this->db->rollback();
+				dolibarr_syslog('FournisseurCommande::addline '.$this->error, LOG_ERR);
 				return -1;
 			}
 		}

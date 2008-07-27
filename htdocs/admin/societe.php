@@ -86,8 +86,7 @@ if ($_POST["action"] == 'updateMask')
 
 
 /*
- * 	Affichage page configuration module societe
- *
+ * 	View
  */
 
 $form=new Form($db);
@@ -132,11 +131,11 @@ if ($handle)
 	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
 
 	  $modCodeTiers = new $file;
-	  
+
 	  // Show modules according to features level
 	  if ($modCodeTiers->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 	  if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-	  
+
 	  $var = !$var;
 	  print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeTiers->nom."</td>\n  <td>";
 	  print $modCodeTiers->info($langs);

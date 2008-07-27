@@ -295,7 +295,7 @@ class ProductFournisseur extends Product
 		/**
 	*    \brief      Charge les informations relatives à un prix de fournisseur
 	*    \param      rowid	         id ligne
-	*    \return     int             < 0 si erreur, > 0 si ok
+	*    \return     int             < 0 if KO, 0 if OK but not found, > 0 if OK
 	*/
 	function fetch_product_fournisseur_price($rowid)
 	{
@@ -304,24 +304,32 @@ class ProductFournisseur extends Product
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 		$sql.= " WHERE pfp.rowid = ".$rowid." AND pf.rowid = pfp.fk_product_fournisseur";
 
-		dolibarr_syslog("Product::fetch_product_fournisseur_price sql=".$sql);
+		dolibarr_syslog("Product::fetch_product_fournisseur_price sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql) ;
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
-			$this->product_fourn_price_id = $rowid;
-			$this->product_fourn_id       = $obj->product_fourn_id;
-			$this->fourn_ref              = $obj->ref_fourn;
-			$this->fourn_price            = $obj->price;
-			$this->fourn_qty              = $obj->quantity;
-			$this->fourn_unitprice        = $obj->unitprice;
-			$this->product_id             = $obj->fk_product;
-			return 1;
+			if ($obj)
+			{
+				$this->product_fourn_price_id = $rowid;
+				$this->product_fourn_id       = $obj->product_fourn_id;
+				$this->fourn_ref              = $obj->ref_fourn;
+				$this->fourn_price            = $obj->price;
+				$this->fourn_qty              = $obj->quantity;
+				$this->fourn_unitprice        = $obj->unitprice;
+				$this->product_id             = $obj->fk_product;	// deprecated
+				$this->fk_product             = $obj->fk_product;
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Product::fetch_product_fournisseur_price error=".$this->error);
+			dolibarr_syslog("Product::fetch_product_fournisseur_price error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

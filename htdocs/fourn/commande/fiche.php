@@ -99,62 +99,90 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 			exit;
 		}
 
-		$soc = new Societe($db,	$commande->socid);
-		$result=$soc->fetch($commande->socid);
-		//print $result;
-
 		// Ecrase $pu par celui	du produit
 		// Ecrase $desc	par	celui du produit
 		// Ecrase $txtva  par celui du produit
-		if ($_POST["idprodfournprice"] > 0)
+		if ($_POST["idprodfournprice"])	// >0 or -1
 		{
 			$prodfournprice = new ProductFournisseur($db);
-			$prodfournprice->fetch_product_fournisseur_price($_POST["idprodfournprice"]);
+			$idprod=$prodfournprice->get_buyprice($_POST['idprodfournprice'], $_POST['qty']);
+			if ($idprod > 0)
+			{
+				$prodfournprice->fetch($idprod);
+				
+				// cas special pour lequel on a les meme reference que le fournisseur
+				// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
+				$label = $prodfournprice->libelle;
+	
+				$societe='';
+				if ($commande->socid)
+				{
+					$societe=new Societe($db);
+					$societe->fetch($commande->socid);
+				}
+				
+				$desc = $prodfournprice->description;
+				$desc.= $prodfournprice->description && $_POST['np_desc'] ? "\n" : "";
+				$desc.= $_POST['np_desc'];
+				
+				$tva_tx	= get_default_tva($societe,$mysoc,$prodfournprice->tva_tx,$prodfournprice->id);
 
-			$prod =	new	Product($db, $prodfournprice->product_id);
-			$prod->fetch($prodfournprice->product_id);
+				$result=$commande->addline(
+					$desc,
+					$pu,
+					$_POST['qty'],
+					$tva_tx,
+					$prodfournprice->id,
+					$_POST['idprodfournprice'],
+					$prodfournprice->fourn_ref,
+					$_POST['remise_percent'],
+					'HT'
+				);
 
-			$libelle = $prod->libelle;
-
-			$desc = $prod->description;
-			$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
-			$desc.= $_POST['np_desc'];
-
-			$tva_tx	= get_default_tva($soc,$mysoc,$prod->tva_tx,$prodfournprice->product_id);
+			}
+			if ($idprod == -1)
+			{
+				// Quantity too low
+				$mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
+			}			
 		}
 		else
 		{
-			$pu=$_POST['pu'];
-			$tva_tx=$_POST['tva_tx'];
-			$desc=$_POST['dp_desc'];
+			$tauxtva = price2num($_POST['tva_tx']);
+			if (! $_POST['dp_desc'])
+			{
+				$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+			}
+			else
+			{
+				if (!empty($_POST['pu']))
+				{
+					$ht = price2num($_POST['pu']);
+					$result=$commande->addline($_POST['dp_desc'], $ht, $_POST['qty'], $tauxtva);
+				}
+				else
+				{
+					$ttc = price2num($_POST['amountttc']);
+					$ht = $ttc / (1 + ($tauxtva / 100));
+					$result=$commande->addline($_POST['dp_desc'], $ht, $_POST['qty'], $tauxtva);
+				}
+			}
 		}
+	
 		//print "xx".$tva_tx; exit;
-
-		$result=$commande->addline(
-		$desc,
-		$pu,
-		$_POST['qty'],
-		$tva_tx,
-		$prodfournprice->product_id,
-		$_POST['idprodfournprice'],
-		$prodfournprice->fourn_ref,
-		$_POST['remise_percent'],
-				 'HT'
-				 );
-
-				 if ($result > 0)
-				 {
-				 	if ($_REQUEST['lang_id'])
-				 	{
-	      $outputlangs = new Translate("",$conf);
-	      $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-				 	}
-				 	supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
-				 }
-				 else
-				 {
-				 	$mesg='<div class="error">'.$commande->error.'</div>';
-				 }
+		if ($result > 0)
+		{
+		 	if ($_REQUEST['lang_id'])
+		 	{
+	    		$outputlangs = new Translate("",$conf);
+				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			}
+			supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+		}
+		else
+		{
+		 	$mesg='<div class="error">'.$commande->error.'</div>';
+		}
 	}
 }
 
@@ -217,7 +245,7 @@ if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes
 if ($_POST['action'] ==	'confirm_valid'	&& $_POST['confirm'] ==	'yes' && $user->rights->fournisseur->commande->valider)
 {
 	$commande =	new	CommandeFournisseur($db);
-	
+
 	$commande->fetch($id);
 
 	$commande->date_commande=time();
@@ -437,7 +465,7 @@ if ($id > 0)
 {
 	//if ($mesg) print $mesg.'<br>';
 	$commande =	new	CommandeFournisseur($db);
-	
+
 	if ($commande->fetch($id) >= 0)
 	{
 		$soc = new Societe($db);
@@ -499,10 +527,10 @@ if ($id > 0)
 			$text=$langs->trans('ConfirmValidateOrder',$newref);
 			if ($conf->notification->enabled)
 			{
-			  require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
-			  $notify=new	Notify($db);
-			  $text.='<br>';
-			  $text.=$notify->confirmMessage(3,$commande->socid);
+				require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+				$notify=new	Notify($db);
+				$text.='<br>';
+				$text.=$notify->confirmMessage(3,$commande->socid);
 			}
 
 			$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text,	'confirm_valid');
@@ -665,7 +693,7 @@ if ($id > 0)
 			if ($num)
 			{
 				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans('Description').'</td>';
+				print '<td>'.$langs->trans('Label').'</td>';
 				print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 				print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
@@ -800,7 +828,7 @@ if ($id > 0)
 			print '<tr class="liste_titre">';
 			print '<td>';
 			print '<a name="add"></a>'; // ancre
-			print $langs->trans('Description').'</td>';
+			print $langs->trans('Label').'</td>';
 			print '<td align="right">'.$langs->trans('VAT').'</td>';
 			print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 			print '<td align="right">'.$langs->trans('Qty').'</td>';
@@ -868,7 +896,7 @@ if ($id > 0)
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td colspan="3">';
-				$html->select_produits_fournisseurs($commande->fourn_id,'','idprodfournprice');
+				$html->select_produits_fournisseurs($commande->fourn_id,'','idprodfournprice',2,$filtre);
 
 				if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 

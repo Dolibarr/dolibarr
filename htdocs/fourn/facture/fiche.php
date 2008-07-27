@@ -242,24 +242,30 @@ if ($_REQUEST['action'] == 'update_line')
 if ($_GET['action'] == 'add_ligne')
 {
 	$facfou = new FactureFournisseur($db, '', $_GET['facid']);
-
-	if ($_POST['prodfournpriceid'])
+	$ret=$facfou->fetch($_GET['facid']);
+	if ($ret < 0)
 	{
-		$nv_prod = new Product($db);
+		dolibarr_print_error($db,$facfou->error);
+		exit;
+	}
+	
+	if ($_POST['prodfournpriceid'])	// > 0 or -1
+	{
+		$nv_prod = new ProductFournisseur($db);
 		$idprod=$nv_prod->get_buyprice($_POST['prodfournpriceid'], $_POST['qty']);
 		if ($idprod > 0)
 		{
 			$result=$nv_prod->fetch($idprod);
 			
-			// cas sp�cial pour lequel on a les meme r�f�rence que le fournisseur
+			// cas special pour lequel on a les meme reference que le fournisseur
 			// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
 			$label = $nv_prod->libelle;
 
 			$societe='';
-			if ($_POST['socid'])
+			if ($facfou->socid)
 			{
 				$societe=new Societe($db);
-				$societe->fetch($_POST['socid']);
+				$societe->fetch($facfou->socid);
 			}
 
 			$tvatx=get_default_tva($societe,$mysoc,$nv_prod->tva_tx);
@@ -268,7 +274,7 @@ if ($_GET['action'] == 'add_ligne')
 		}
 		if ($idprod == -1)
 		{
-			// Quantit� insuffisante
+			// Quantity too low
 			$mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
 		}
 	}
@@ -854,7 +860,7 @@ else
 				print '<td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
 				print '</form>';
 
-	            // Ajout de produits/services pr�d�finis
+	            // Ajout de produits/services predefinis
 	            if ($conf->produit->enabled)
 	            {
 	                print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
@@ -864,7 +870,7 @@ else
 	                $var=! $var;
 	                print '<tr '.$bc[$var].'>';
 	                print '<td colspan="4">';
-	                $html->select_produits_fournisseurs($fac->socid,'','prodfournpriceid',$filtre);
+	                $html->select_produits_fournisseurs($fac->socid,'','prodfournpriceid',2,$filtre);
 	                print '</td>';
 	                print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
 	                print '<td>&nbsp;</td>';
