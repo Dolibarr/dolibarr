@@ -226,6 +226,116 @@ function getFormeJuridiqueLabel($code)
 
 
 /**
+ * \brief		Show html area for list of contacts
+ */
+function show_contacts($conf,$langs,$db,$objsoc)
+{
+	global $user;
+	global $bc;
+	
+	$contactstatic = new Contact($db);
+	
+	if ($conf->clicktodial->enabled)
+    {
+        $user->fetch_clicktodial(); // lecture des infos de clicktodial
+    }
+
+	print_titre($langs->trans("ContactsForCompany"));
+    print '<table class="noborder" width="100%">';
+
+    print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
+    print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
+    print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
+    print "<td>&nbsp;</td>";
+    if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+    {
+    	print '<td>&nbsp;</td>';
+    }
+    print "</tr>";
+
+    $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+    $sql .= " WHERE p.fk_soc = ".$objsoc->id;
+    $sql .= " ORDER by p.datec";
+
+    $result = $db->query($sql);
+    $i = 0;
+    $num = $db->num_rows($result);
+    $var=true;
+
+    if ($num)
+    {
+	    while ($i < $num)
+	    {
+	        $obj = $db->fetch_object($result);
+	        $var = !$var;
+	
+	        print "<tr ".$bc[$var].">";
+	        
+	        print '<td>';
+	        $contactstatic->id = $obj->rowid;
+	        $contactstatic->name = $obj->name;
+	        $contactstatic->firstname = $obj->firstname;
+	        print $contactstatic->getNomUrl(1);
+	        print '</td>';
+	
+	        print '<td>'.$obj->poste.'</td>';
+	
+	        // Lien click to dial
+	       	print '<td>';
+	        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+	        	print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+	        print dolibarr_print_phone($obj->phone);
+	        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+	    	    print '</a>';
+			if ($obj->phone) print dol_phone_link($obj->phone);
+	    	print '</td>';
+	        print '<td>';
+	        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+	       		print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+	        print dolibarr_print_phone($obj->fax);
+	        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+	        	print '</a>';
+	        print '&nbsp;</td>';
+	        print '<td>';
+	        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+	        	print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+	        print $obj->email;
+	        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+	        	print '</a>';
+			// \TODO
+			//if ($obj->email) print dol_email_link($obj->email);
+	        print '&nbsp;</td>';
+	
+	        print '<td align="center">';
+	        print "<a href=\"../contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">";
+	        print img_edit();
+	        print '</a></td>';
+	
+	        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
+	        {
+	        	print '<td align="center"><a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+	            print img_object($langs->trans("Rendez-Vous"),"action");
+	        	print '</a></td>';
+	        }
+	        
+	        print "</tr>\n";
+	        $i++;
+	    }
+    }
+    else
+    {
+	    //print "<tr ".$bc[$var].">";
+    	//print '<td>'.$langs->trans("NoContactsYetDefined").'</td>';
+    	//print "</tr>\n";
+    }
+    print "</table>\n";
+
+    print "<br>\n";
+}
+
+
+/**
 *    \brief      Show html area with actions to do
 */
 function show_actions_todo($conf,$langs,$db,$objsoc)
@@ -349,9 +459,9 @@ function show_actions_todo($conf,$langs,$db,$objsoc)
 	    {
 	        dolibarr_print_error($db);
 	    }
-	    print "</table>";
+	    print "</table>\n";
 	
-	    print "<br>";
+	    print "<br>\n";
     }
 }
 
@@ -449,7 +559,7 @@ function show_actions_done($conf,$langs,$db,$objsoc)
 	    		print '</td>';
 	
 				// Libelle
-	      print '<td>'.$obj->label.'</td>';
+	      		print '<td>'.$obj->label.'</td>';
 	
 	            // Contact pour cette action
 	            if ($obj->fk_contact > 0)
@@ -472,7 +582,7 @@ function show_actions_done($conf,$langs,$db,$objsoc)
 				print '</td>';
 	
 				// Statut
-	      print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+	      		print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
 				
 	            print "</tr>\n";
 	            $i++;
@@ -485,7 +595,8 @@ function show_actions_done($conf,$langs,$db,$objsoc)
 	        dolibarr_print_error($db);
 	    }
 	 
-	    print "</table><br>";
+	    print "</table>\n";
+	    print "<br>\n";
     }
 }
 ?>

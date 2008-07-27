@@ -247,118 +247,20 @@ if ($socid > 0)
     print '<br>';
 
 
-
-    if ($conf->clicktodial->enabled)
-    {
-        $user->fetch_clicktodial(); // lecture des infos de clicktodial
-    }
-
-
-        /*
-         *
-         * Liste des contacts
-         *
-         */
-		print '<table class="noborder" width="100%">';
-		
-		print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
-		print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
-		print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
-		print "<td align=\"center\">&nbsp;</td>";
-        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        {
-        	print '<td>&nbsp;</td>';
-        }
-		print "</tr>";
-
-        $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
-        $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-        $sql.= " WHERE p.fk_soc = ".$societe->id;
-        $sql.= " ORDER by p.datec";
-
-        $result = $db->query($sql);
-        $i = 0 ; $num = $db->num_rows($result);
-        $var=1;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($result);
-            $var = !$var;
-
-            print "<tr $bc[$var]>";
-
-            print '<td>';
-            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
-
-            if (trim($obj->note))
-            {
-                print '<br>'.nl2br(trim($obj->note));
-            }
-            print '</td>';
-            print '<td>'.$obj->poste.'&nbsp;</td>';
-            
-            // Phone
-			print '<td>';
-            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-            	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
-            print dolibarr_print_phone($obj->phone,'');
-            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-	        	print '</a>';
-			if ($obj->phone) print dol_phone_link($obj->phone);
-			print '</td>';
-
-        	// Fax
-			print '<td>';
-            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
-        	print dolibarr_print_phone($obj->fax);
-            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        		print '</a>';
-        	print '&nbsp;</td>';
-            print '<td>';
-            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-            	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
-            print $obj->email;
-            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-            	print '</a>';
-            print '&nbsp;</td>';
-    		
-        	print '<td align="center">';
-        	
-           	if ($user->rights->societe->contact->creer)
-    		{
-        		print "<a href=\"".DOL_URL_ROOT."/contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">";
-        	 	print img_edit();
-        	 	print '</a>';
-        	}
-        	else print '&nbsp;';
-        		
-        	print '</td>';
-
-            if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-            {
-	            print '<td align="center">';
-	            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
-	            print img_object($langs->trans("Rendez-Vous"),"action");
-	            print '</a></td>';
-            }
-            
-            print "</tr>\n";
-            $i++;
-            $tag = !$tag;
-        }
-        print "</table>";
-
-        print "<br>";
-
-	    /*
-	     *      Listes des actions a faire
-	     */
-		show_actions_todo($conf,$langs,$db,$societe);
-		
-	    /*
-	     *      Listes des actions effectuees
-	     */
-		show_actions_done($conf,$langs,$db,$societe);
+	/*
+     * 		Liste des contacts
+     */
+	show_contacts($conf,$langs,$db,$societe);
+    
+    /*
+     *      Listes des actions a faire
+     */
+	show_actions_todo($conf,$langs,$db,$societe);
+	
+    /*
+     *      Listes des actions effectuees
+     */
+	show_actions_done($conf,$langs,$db,$societe);
 }
 
 $db->close();

@@ -126,7 +126,6 @@ if ($mode == 'search') {
 
 llxHeader('',$langs->trans('CustomerCard'));
 
-$contactstatic = new Contact($db);
 $userstatic=new User($db);
 
 $form = new Form($db);
@@ -633,98 +632,10 @@ if ($socid > 0)
     print '</div>';
     print '<br>';
 
-    /*
-     *
+	/*
      * Liste des contacts
-     *
      */
-    if ($conf->clicktodial->enabled)
-    {
-        $user->fetch_clicktodial(); // lecture des infos de clicktodial
-    }
-
-	print_titre($langs->trans("ContactsForCompany"));
-    print '<table class="noborder" width="100%">';
-
-    print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
-    print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
-    print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
-    print "<td>&nbsp;</td>";
-    if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-    {
-    	print '<td>&nbsp;</td>';
-    }
-    print "</tr>";
-
-    $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
-    $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-    $sql .= " WHERE p.fk_soc = ".$objsoc->id;
-    $sql .= " ORDER by p.datec";
-
-    $result = $db->query($sql);
-    $i = 0;
-    $num = $db->num_rows($result);
-    $var=true;
-
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($result);
-        $var = !$var;
-
-        print "<tr $bc[$var]>";
-
-        print '<td>';
-        $contactstatic->id = $obj->rowid;
-        $contactstatic->name = $obj->name;
-        $contactstatic->firstname = $obj->firstname;
-        print $contactstatic->getNomUrl(1);
-        print '</td>';
-
-        print '<td>'.$obj->poste.'</td>';
-
-        // Lien click to dial
-       	print '<td>';
-        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        	print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
-        print dolibarr_print_phone($obj->phone);
-        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-    	    print '</a>';
-		if ($obj->phone) print dol_phone_link($obj->phone);
-    	print '</td>';
-        print '<td>';
-        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-       		print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
-        print dolibarr_print_phone($obj->fax);
-        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        	print '</a>';
-        print '&nbsp;</td>';
-        print '<td>';
-        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        	print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
-        print $obj->email;
-        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        	print '</a>';
-        print '&nbsp;</td>';
-
-        print '<td align="center">';
-        print "<a href=\"../contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">";
-        print img_edit();
-        print '</a></td>';
-
-        if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        {
-        	print '<td align="center"><a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
-            print img_object($langs->trans("Rendez-Vous"),"action");
-        	print '</a></td>';
-        }
-        
-        print "</tr>\n";
-        $i++;
-    }
-    print "</table>";
-
-    print "<br>";
-
+	show_contacts($conf,$langs,$db,$objsoc);
 
     /*
      *      Listes des actions a faire

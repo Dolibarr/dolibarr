@@ -277,76 +277,12 @@ if ( $societe->fetch($socid) )
 	}
 
 	print '</div>';
-
+	print '<br>';
 
 	/*
-	 *
-	 * Liste des contacts
-	 *
-	 */
-	$langs->load("companies");
-
-	print '<br>';
-	
-	print_titre($langs->trans("ContactsForCompany"));
-	print '<table class="noborder" width="100%">';
-
-	print '<tr class="liste_titre"><td>'.$langs->trans("Name").'</td>';
-	print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
-	print "<td>".$langs->trans("Fax")."</td><td>".$langs->trans("EMail")."</td>";
-	print "<td align=\"center\">&nbsp;</td>";
-	print '<td>&nbsp;</td>';
-	print "</tr>";
-
-	$sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
-	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-	$sql.= " WHERE p.fk_soc = ".$societe->id;
-	$sql.= "  ORDER by p.datec";
-
-	$result = $db->query($sql);
-
-	$i = 0 ;
-	$num = $db->num_rows($result);
-	$var=true;
-
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($result);
-		$var = !$var;
-
-		print "<tr $bc[$var]>";
-
-		print '<td>';
-		print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->rowid.'">';
-		print img_object($langs->trans("ShowContact"),"contact");
-		print ' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
-
-		if ($obj->note)
-		{
-			print "<br>".nl2br($obj->note);
-		}
-		print "</td>";
-		print "<td>$obj->poste&nbsp;</td>";
-		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->phone.'</a>';
-		if ($obj->phone) print dol_phone_link($obj->phone);
-		print '</td>';
-		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->fax.'</a></td>';
-		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->email.'</a></td>';
-
-		if ($user->rights->societe->contact->creer)
-		{
-			print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">".img_edit()."</a></td>";
-		}
-
-		print '<td align="center"><a href="../comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
-		print img_object($langs->trans("Rendez-Vous"),"action");
-		print '</a></td>';
-
-		print "</tr>\n";
-		$i++;
-	}
-	print '</table>';
-	print '<br>';
+     * Liste des contacts
+     */
+	show_contacts($conf,$langs,$db,$societe);
 
     /*
      *      Listes des actions a faire

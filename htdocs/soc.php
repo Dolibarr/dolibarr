@@ -1201,8 +1201,9 @@ else
     print '</table>';
 	print '</form>';
     print "</div>\n";
+
     /*
-    *
+    *	Actions
     */
     if ($_GET["action"] == '')
     {
@@ -1240,12 +1241,16 @@ else
         }
 
         print '</div>';
+        print '<br>';
     }
     
+	/*
+     * Liste des contacts
+     */
+	show_contacts($conf,$langs,$db,$soc);
 }
 
 $db->close();
-
 
 llxFooter('$Date$ - $Revision$');
 ?>
