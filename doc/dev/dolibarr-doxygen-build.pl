@@ -22,8 +22,13 @@ my $dir = getcwd;
 print "Current dir is: $dir\n";
 print "Running dir for doxygen must be: $DIR/../..\n";
 
-if (! -s "doc/dev/dolibarr-doxygen.conf") {
+if (! -s "doc/dev/dolibarr-doxygen.conf")
+{
     print "Error: current directory for building Dolibarr doxygen documentation is not correct.\n";
+    print "\n";
+	print "Change your current directory then to launch the script, run:\n";
+	print '> perl doc\dev\dolibarr-doxygen-build.pl  (on Windows)'."\n";
+	print '> perl doc/dev/dolibarr-doxygen-build.pl  (on Linux or BSD)'."\n";
     sleep 4;
     exit 1;   
 }
