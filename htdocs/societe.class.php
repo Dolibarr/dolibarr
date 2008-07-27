@@ -464,7 +464,7 @@ class Societe extends CommonObject
 	/**
 	 *    \brief      Load a third party from database into memory
 	 *    \param      socid       Id third party to load
-	 *    \param      user        User object (\deprecated)
+	 *    \param      user        User object
 	 *    \return     int         >0 si ok, <0 si ko
 	 */
 	function fetch($socid, $user=0)
