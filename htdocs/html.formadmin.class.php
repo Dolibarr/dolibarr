@@ -19,14 +19,14 @@
 
 /**
         \file       htdocs/html.formadmin.class.php
-        \brief      Fichier de la classe des fonctions pr�d�finie de composants html pour les pages admin
+        \brief      File of class for html functions for admin pages
 		\version	$Id$
 */
 
 
 /**
         \class      FormAdmin
-        \brief      Classe permettant la g�n�ration de composants html pour les pages admin
+        \brief      Class to generate html code for admin pages
 */
 class FormAdmin
 {

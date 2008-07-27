@@ -17,8 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     \defgroup   ecm		Electronic Content Management
-        \brief      Module for ECM.
+/**     \defgroup   ecm		Module ECM
+        \brief      Module for ECM (Electronic Content Management)
 		\version	$Id$
 */
 
