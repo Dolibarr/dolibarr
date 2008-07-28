@@ -2642,7 +2642,7 @@ class Form
             $shour = $reg[4];
             $smin = $reg[5];
         }
-        elseif ($set_time > 0)
+        elseif (strval($set_time) != '')
         {
             // Date est un timestamps
             $syear = date("Y", $set_time);
@@ -2669,7 +2669,7 @@ class Form
 			if ($conf->use_javascript_ajax && $conf->use_popup_calendar)
 		    {
 				//print "e".$set_time." t ".$conf->format_date_short;
-				if ($set_time > 0)
+				if (strval($set_time) != '')
 				{
 					$formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
 				}

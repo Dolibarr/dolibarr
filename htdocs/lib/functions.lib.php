@@ -402,20 +402,20 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 
 
 /**
- \brief      Formattage de la date en fonction de la langue $conf->langage
- \param	    time        Date 'timestamp' ou format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
- \param	    format      Format d'affichage de la date
- "%d %b %Y",
- "%d/%m/%Y %H:%M",
- "%d/%m/%Y %H:%M:%S",
- "day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
- \return     string      Date format�e ou '' si time null
+ *	\brief      Formattage de la date en fonction de la langue $conf->langage
+ *	\param	    time        Date 'timestamp' ou format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+ *	\param	    format      Format d'affichage de la date
+ *							"%d %b %Y",
+ *							"%d/%m/%Y %H:%M",
+ *							"%d/%m/%Y %H:%M:%S",
+ *							"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
+ *	\return     string      Date formatee ou '' si time null
  */
-function dolibarr_print_date($time,$format='')
+function dolibarr_print_date($time,$format='',$to_gmt=false)
 {
 	global $conf;
 
-	// Si format non d�fini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
+	// Si format non defini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
 	if (! $format) $format=(isset($conf->format_date_text_short) ? $conf->format_date_text_short : '%Y-%m-%d %H:%M:%S');
 
 	if ($format == 'day')          $format=$conf->format_date_short;
@@ -440,24 +440,24 @@ function dolibarr_print_date($time,$format='')
 		$smin = $reg[5];
 		$ssec = $reg[6];
 
-		return adodb_strftime($format,dolibarr_mktime($shour,$smin,$ssec,$smonth,$sday,$syear));
+		return adodb_strftime($format,dolibarr_mktime($shour,$smin,$ssec,$smonth,$sday,$syear),$to_gmt);
 	}
 	else
 	{
 		// Date est un timestamps
-		return adodb_strftime($format,$time);
+		return adodb_strftime($format,$time,$to_gmt);
 	}
 }
 
 
 /**
- \brief  	Retourne une date fabriqu�e depuis une chaine
- \param		string			Date format�e en chaine
- YYYYMMDD
- YYYYMMDDHHMMSS
- DD/MM/YY ou DD/MM/YYYY
- DD/MM/YY HH:MM:SS ou DD/MM/YYYY HH:MM:SS
- \return		date			Date
+ *	\brief  	Retourne une date fabrique depuis une chaine
+ *	\param		string			Date formate en chaine
+ *				YYYYMMDD
+ *				YYYYMMDDHHMMSS
+ *				DD/MM/YY ou DD/MM/YYYY
+ *				DD/MM/YY HH:MM:SS ou DD/MM/YYYY HH:MM:SS
+ *	\return		date			Date
  */
 function dolibarr_stringtotime($string)
 {

@@ -171,13 +171,13 @@ if ($_POST["action"] == 'add_action')
 	$actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
 
 	$usertodo=new User($db,$_POST["affectedto"]);
-	if ($_POST["affectedto"])
+	if ($_POST["affectedto"] > 0)
 	{
 		$usertodo->fetch();
 	}
 	$actioncomm->usertodo = $usertodo;
 	$userdone=new User($db,$_POST["doneby"]);
-	if ($_POST["doneby"])
+	if ($_POST["doneby"] > 0)
 	{
 		$userdone->fetch();
 	}
@@ -243,13 +243,14 @@ if ($_POST["action"] == 'add_action')
                 // Si erreur
                 $db->rollback();
                 $_GET["id"]=$idaction;
-	            $error='<div class="error">'.$actioncomm->error.'</div>';
+	            $error=$actioncomm->error;
             }
         }
         else
         {
             $db->rollback();
-            $error='<div class="error">'.$actioncomm->error.'</div>';
+            $_GET["id"]=$idaction;
+            $error=$actioncomm->error;
         }
     }
 
@@ -299,6 +300,7 @@ if ($_POST["action"] == 'update')
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
+ 
 		$datep2=dolibarr_mktime($_POST["p2hour"],
 	                   $_POST["p2min"],
 	                   0,
@@ -317,19 +319,15 @@ if ($_POST["action"] == 'update')
 	                   $_POST["a2month"],
 	                   $_POST["a2day"],
 	                   $_POST["a2year"]);
-		// Si param incorrects, mktime renvoi false en PHP 5.1, -1 avant
-		if (! ($datep > 0)) $datep='';
-		if (! ($datep2 > 0)) $datep2='';
-		if (! ($datea > 0)) $datea='';
-		if (! ($datea2 > 0)) $datea2='';
 		
 		//print $_POST["apmonth"].",".$_POST["apday"].",".$_POST["apyear"].",".$_POST["aphour"].",".$_POST["apmin"]."<br>\n";
 		//print $actioncomm->datep;
-        $actioncomm->label       = $_POST["label"];
-		$actioncomm->datep = $datep;
-		$actioncomm->datef = $datep2;
-		$actioncomm->date = $datea;
-		$actioncomm->dateend = $datea2;
+	    //print 'dddd'.$datep;
+	    $actioncomm->label       = $_POST["label"];
+		$actioncomm->datep       = $datep;
+		$actioncomm->datef       = $datep2;
+		$actioncomm->date        = $datea;
+		$actioncomm->dateend     = $datea2;
         $actioncomm->percentage  = $_POST["percentage"];
         $actioncomm->priority    = $_POST["priority"];
 		$actioncomm->societe->id = $_POST["socid"];

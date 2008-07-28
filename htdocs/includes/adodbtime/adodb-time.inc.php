@@ -1199,7 +1199,7 @@ global $ADODB_DATE_LOCALE;
 
 		}
 	}
-	
+
 	if (empty($ADODB_DATE_LOCALE)) {
 		$tstr = strtoupper(gmstrftime('%c',31366800)); // 30 Dec 1970, 1 am
 		$sep = substr($tstr,2,1);

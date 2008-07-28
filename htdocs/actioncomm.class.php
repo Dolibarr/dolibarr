@@ -151,12 +151,12 @@ class ActionComm
         $sql.= "fk_facture,propalrowid,fk_commande)";
         $sql.= " VALUES (";
         $sql.= "'".$this->db->idate($now)."',";
-        $sql.= ($this->datep?"'".$this->db->idate($this->datep)."'":"null").",";
-        $sql.= ($this->datef?"'".$this->db->idate($this->datef)."'":"null").",";
-        $sql.= ($this->date?"'".$this->db->idate($this->date)."'":"null").",";
-        $sql.= ($this->dateend?"'".$this->db->idate($this->dateend)."'":"null").",";
-        $sql.= ($this->durationp >= 0?"'".$this->durationp."'":"null").",";
-        $sql.= ($this->durationa >= 0?"'".$this->durationa."'":"null").",";
+        $sql.= ($this->datep!=''?"'".$this->db->idate($this->datep)."'":"null").",";
+        $sql.= ($this->datef!=''?"'".$this->db->idate($this->datef)."'":"null").",";
+        $sql.= ($this->date!=''?"'".$this->db->idate($this->date)."'":"null").",";
+        $sql.= ($this->dateend!=''?"'".$this->db->idate($this->dateend)."'":"null").",";
+        $sql.= ($this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";
+        $sql.= ($this->durationa >= 0 && $this->durationa != ''?"'".$this->durationa."'":"null").",";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id > 0?"'".$this->contact->id."'":"null").",";
         $sql.= ($user->id > 0 ? "'".$user->id."'":"null").",";
@@ -334,13 +334,14 @@ class ActionComm
 			return -1;
 		}
 		
-        $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
+		//print 'eeea'.$this->datep.'-'.(strval($this->datep) != '').'-'.$this->db->idate($this->datep);
+		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
         $sql.= " SET percent='".$this->percentage."'";
         $sql.= ", label = ".($this->label ? "'".addslashes($this->label)."'":"null");
-        $sql.= ", datep = ".($this->datep ? "'".$this->db->idate($this->datep)."'" : 'null');
-        $sql.= ", datep2 = ".($this->datef ? "'".$this->db->idate($this->datef)."'" : 'null');
-        $sql.= ", datea = ".($this->date ? "'".$this->db->idate($this->date)."'" : 'null');
-        $sql.= ", datea2 = ".($this->dateend ? "'".$this->db->idate($this->dateend)."'" : 'null');
+        $sql.= ", datep = ".(strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null');
+        $sql.= ", datep2 = ".(strval($this->datef)!='' ? "'".$this->db->idate($this->datef)."'" : 'null');
+        $sql.= ", datea = ".(strval($this->date)!='' ? "'".$this->db->idate($this->date)."'" : 'null');
+        $sql.= ", datea2 = ".(strval($this->dateend)!='' ? "'".$this->db->idate($this->dateend)."'" : 'null');
         $sql.= ", note = ".($this->note ? "'".addslashes($this->note)."'":"null");
         $sql.= ", fk_soc =". ($this->societe->id > 0 ? "'".$this->societe->id."'":"null");
         $sql.= ", fk_contact =". ($this->contact->id > 0 ? "'".$this->contact->id."'":"null");

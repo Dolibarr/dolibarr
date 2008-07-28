@@ -67,7 +67,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 			if ($eventqualified)
 			{
 				// See http://fr.wikipedia.org/wiki/ICalendar for format
-				//$uid 		= dolibarr_print_date($now,'dayhourxcard').'-'.$event['uid']."-export@".$_SERVER["SERVER_NAME"];
+				//$uid 		= dolibarr_print_date($now,'dayhourxcard',true).'-'.$event['uid']."-export@".$_SERVER["SERVER_NAME"];
 				$uid 		  = $event['uid'];
 				$type         = $event['type'];
 				$startdate	  = $event['startdate'];
@@ -136,11 +136,13 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					if (! empty($location)) fwrite($calfileh,"LOCATION:".$location."\n");
 					//fwrite($calfileh,"TRANSP:".$transparency."\n");
 					//fwrite($calfileh,"CLASS:PUBLIC\n");				// PUBLIC, PRIVATE, CONFIDENTIAL
-					fwrite($calfileh,"DTSTAMP:".dolibarr_print_date($now,'dayhourxcard')."\n");
-					$startdatef = dolibarr_print_date($startdate,'dayhourxcard');
+
+					// Date must be GMT dates 
+					fwrite($calfileh,"DTSTAMP:".dolibarr_print_date($now,'dayhourxcard',true)."\n");
+					$startdatef = dolibarr_print_date($startdate,'dayhourxcard',true);
 					fwrite($calfileh,"DTSTART:".$startdatef."\n");
 					if (empty($enddate)) $enddate=$startdate+$duration;
-					$enddatef = dolibarr_print_date($enddate,'dayhourxcard');
+					$enddatef = dolibarr_print_date($enddate,'dayhourxcard',true);
 					fwrite($calfileh,"DTEND:".$enddatef."\n");
 					fwrite($calfileh,"END:VEVENT\n");
 				}
@@ -171,7 +173,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					fwrite($calfileh,"LOCATION:".$location."\n");
 					fwrite($calfileh,"TRANSP:OPAQUE\n");
 					fwrite($calfileh,"CLASS:CONFIDENTIAL\n");
-					fwrite($calfileh,"DTSTAMP:".dolibarr_print_date($startdatef,'dayhourxcard')."\n");
+					fwrite($calfileh,"DTSTAMP:".dolibarr_print_date($startdatef,'dayhourxcard',true)."\n");
 
 					fwrite($calfileh,"END:VJOURNAL\n");
 				}
