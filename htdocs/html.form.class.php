@@ -3058,6 +3058,40 @@ class Form
       $select_month .= '</select>';
       return $select_month;
     }
+    /**
+     *    \brief      Retourne la liste des années
+     *    \param      selected          Année pré-sélectionné
+     *    \param      htmlname          Nom de la zone select
+     *    \param      useempty          Affiche valeur vide dans liste
+     *    \param      $min_year         Valeur minimum de l'année dans la liste (par défaut année courante -10)
+     *    \param      $max_year         Valeur maximum de l'année dans la liste (par défaut année courante + 5)
+     */
+    function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year='', $max_year='')
+    {
+    	if($max_year == '')
+            $max_year = date("Y") +5;
+        if($min_year == '')
+            $min_year = date("Y") - 10;
+            
+        print '<select class="flat" name="' . $htmlname . '">';
+        if($useempty)
+        {
+            if($selected == '')
+                $selected_html = 'selected="true"';
+            print '<option value="" ' . $selected_html . ' >&nbsp;</option>';
+        }
+        for ($y = $max_year; $y >= $min_year; $y--)
+        {
+            $selected_html='';
+            if ($y == $selected)
+            {
+                $selected_html = 'selected="true"';
+            }
+            print "<option value=\"$y\" $selected_html >$y";
+            print "</option>";
+        }
+        print "</select>\n";
+    }
 
     /**
      *    \brief      Affiche tableau avec ref et bouton navigation pour un objet metier
