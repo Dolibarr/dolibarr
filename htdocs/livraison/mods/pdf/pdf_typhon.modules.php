@@ -541,22 +541,22 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		}
 		if ($conf->global->MAIN_INFO_SIRET)
 		{
-			$ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_SIRET;
+			$ligne1.=($ligne1?" - ":"").$langs->transcountrynoentities("ProfId2",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_SIRET;
 		}
 		if ($conf->global->MAIN_INFO_SIREN && (! $conf->global->MAIN_INFO_SIRET || $this->emetteur->pays_code != 'FR'))
 		{
-			$ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_SIREN;
+			$ligne1.=($ligne1?" - ":"").$langs->transcountrynoentities("ProfId1",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_SIREN;
 		}
 		if ($conf->global->MAIN_INFO_APE)
 		{
-			$ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->pays_code).": ".MAIN_INFO_APE;
+			$ligne1.=($ligne1?" - ":"").$langs->transcountrynoentities("ProfId3",$this->emetteur->pays_code).": ".MAIN_INFO_APE;
 		}
 
-		// Deuxieme ligne d'info r�glementaires
+		// Deuxieme ligne d'info reglementaires
 		$ligne2="";
 		if ($conf->global->MAIN_INFO_RCS)
 		{
-			$ligne2.=($ligne2?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_RCS;
+			$ligne2.=($ligne2?" - ":"").$langs->transcountrynoentities("ProfId4",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_RCS;
 		}
 		if ($conf->global->MAIN_INFO_TVAINTRA != '')
 		{

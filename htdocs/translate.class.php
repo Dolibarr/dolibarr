@@ -73,7 +73,7 @@ class Translate {
 	 */
 	function getTransFromTab($key)
 	{
-		if (isset($this->tab_translate[$key]) && $this->tab_translate[$key])
+		if (! empty($this->tab_translate[$key]))
 		{
 			return $this->tab_translate[$key];
 		}
@@ -299,13 +299,13 @@ class Translate {
      *              Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
      *              et si toujours pas trouve, il est retourne tel quel
      *              Les parametres de cette methode peuvent contenir de balises HTML.
-     *  \param      key         cl� de chaine a traduire
+     *  \param      key         cle de chaine a traduire
      *  \param      param1      chaine de param1
      *  \param      param2      chaine de param2
      *  \param      param3      chaine de param3
      *  \param      param4      chaine de param4
      *	\param		maxsize		taille max
-     *  \return     string      chaine traduite et cod� en HTML
+     *  \return     string      Chaine traduite et code en HTML
      */
     function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
     {
@@ -376,7 +376,7 @@ class Translate {
 
 
     /**
-     *  \brief       Retourne la version traduite du texte pass� en param�tre compl�t� du code pays
+     *  \brief       Retourne la version traduite du texte passe en parametre complete du code pays
      *  \param       str            chaine a traduire
      *  \param       countrycode    code pays (FR, ...)
      *  \return      string         chaine traduite
@@ -384,11 +384,24 @@ class Translate {
     function transcountry($str, $countrycode)
     {
         if ($this->tab_translate["$str$countrycode"]) return $this->trans("$str$countrycode");
-        else return $this->trans("$str");
+        else return $this->trans($str);
     }
 
 
     /**
+     *  \brief       Retourne la version traduite du texte passe en parametre complete du code pays
+     *  \param       str            chaine a traduire
+     *  \param       countrycode    code pays (FR, ...)
+     *  \return      string         chaine traduite
+     */
+    function transcountrynoentities($str, $countrycode)
+    {
+        if ($this->tab_translate["$str$countrycode"]) return $this->transnoentities("$str$countrycode");
+        else return $this->transnoentities($str);
+    }
+
+    
+/**
      *  \brief       Convertit une chaine dans le charset de sortie
      *  \param       str            chaine a convertir
      *  \return      string         chaine traduite

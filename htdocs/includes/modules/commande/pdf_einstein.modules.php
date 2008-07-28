@@ -968,22 +968,22 @@ class pdf_einstein extends ModelePDFCommandes
         }
         if ($this->emetteur->profid2)
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId2",$this->emetteur->pays_code).": ".$this->emetteur->profid2;
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountrynoentities("ProfId2",$this->emetteur->pays_code).": ".$this->emetteur->profid2;
         }
         if ($this->emetteur->profid1 && (! $this->emetteur->profid2 || $this->emetteur->pays_code != 'FR'))
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountrynoentities("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
         }
 
         // Deuxieme ligne d'info réglementaires
         $ligne2="";
         if ($this->emetteur->profid3)
         {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId3",$this->emetteur->pays_code).": ".$this->emetteur->profid3;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountrynoentities("ProfId3",$this->emetteur->pays_code).": ".$this->emetteur->profid3;
         }
         if ($this->emetteur->profid4)
         {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId4",$this->emetteur->pays_code).": ".$this->emetteur->profid4;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountrynoentities("ProfId4",$this->emetteur->pays_code).": ".$this->emetteur->profid4;
         }
         if ($this->emetteur->tva_intra != '')
         {
