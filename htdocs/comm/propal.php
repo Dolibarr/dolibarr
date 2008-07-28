@@ -1830,7 +1830,10 @@ else
 	$sortorder=$_GET['sortorder'];
 	$sortfield=$_GET['sortfield'];
 	$page=$_GET['page'];
-	$viewstatut=$_GET['viewstatut'];
+	$viewstatut=addslashes($_GET['viewstatut']);
+    $propal_statut = addslashes($_GET['propal_statut']);
+    if($propal_statut != '')
+        $viewstatut=$propal_statut;
 
 	if (! $sortfield) $sortfield='p.datep';
 	if (! $sortorder) $sortorder='DESC';
@@ -1865,13 +1868,16 @@ else
 	}
 	if ($sall) $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%' OR pd.description like '%".addslashes($sall)."%')";
 	if ($socid) $sql .= ' AND s.rowid = '.$socid;
-	if ($_GET['viewstatut'] <> '')
+	if ($viewstatut <> '')
 	{
-		$sql .= ' AND p.fk_statut in ('.$_GET['viewstatut'].')';
+		$sql .= ' AND p.fk_statut in ('.$viewstatut.')';
 	}
 	if ($month > 0)
 	{
-		$sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+		if ($year > 0)
+            $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+        else
+            $sql .= " AND date_format(p.datep, '%m') = '$month'";
 	}
 	if ($year > 0)
 	{
@@ -1900,7 +1906,8 @@ else
 		print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.total_ht','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield,$sortorder);
-		print "</tr>\n";
+		print '<td class="liste_titre">&nbsp;</td>';
+        print "</tr>\n";
 		// Lignes des champs de filtre
 		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
@@ -1911,10 +1918,23 @@ else
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
 		print '</td>';
-		print '<td class="liste_titre" colspan="2">&nbsp;</td>';
+        print '<td class="liste_titre" colspan="1" align="right">';
+        print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
+        print '&nbsp;'.$langs->trans('Year').': ';
+        $max_year = date("Y");
+        $form = new Form($db);
+        $syear = $year;
+        if($syear == '')
+            $syear = date("Y");
+       $form->select_year($syear,'year',1, '', $max_year);
+        print '</td>';
+		print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
 		print '</td>';
+        print '<td align="right">';
+        $html->select_propal_statut($viewstatut);
+        print '</td>';
 		print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 		print '</td>';
 		print "</tr>\n";
@@ -1988,6 +2008,7 @@ else
 			print '<td align="right">'.price($objp->total_ht)."</td>\n";
 			$propal=New Propal($db);
 			print '<td align="right">'.$propal->LibStatut($objp->fk_statut,5)."</td>\n";
+            print "<td>&nbsp;</td>";
 			print "</tr>\n";
 
 			$total = $total + $objp->total_ht;

@@ -715,9 +715,15 @@ else
         print '<td align="left">';
         print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
         print '</td>';
-        print '<td colspan="1" align="right">';
-        print $langs->trans('Month').': <input class="flat" type="text" size="1" name="month" value="'.$month.'">';
-        print '&nbsp;'.$langs->trans('Year').': <input class="flat" type="text" size="1" name="year" value="'.$year.'">';
+        print '<td class="liste_titre" colspan="1" align="right">';
+        print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
+        print '&nbsp;'.$langs->trans('Year').': ';
+        $max_year = date("Y");
+        $form = new Form($db);
+        $syear = $year;
+        if($syear == '')
+            $syear = date("Y");
+       $form->select_year($syear,'year',1, '', $max_year);
         print '</td>';
         print '<td align="right">';
         print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
