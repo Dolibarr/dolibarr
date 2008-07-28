@@ -334,7 +334,7 @@ class Societe extends CommonObject
 		$this->prefix_comm=trim($this->prefix_comm);
 
 		$this->tva_assuj=trim($this->tva_assuj);
-		$this->tva_intra=trim($this->tva_intra);
+		$this->tva_intra=sanitize_string($this->tva_intra,'');
 
 		$this->capital=trim($this->capital);
 		if (strlen($this->capital) == 0) $this->capital = 0;

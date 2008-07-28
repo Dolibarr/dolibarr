@@ -29,7 +29,7 @@
  \version		$Id$
  */
 
-// Pour compatibilit� lors de l'upgrade
+// For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '..');
 if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
@@ -100,17 +100,19 @@ function unaccent_isostring($str)
 }
 
 /**
- \brief          Nettoie chaine de caractere de caracteres speciaux
- \remarks		Fonction appelee par exemple pour definir un nom de fichier depuis un identifiant chaine libre
- \param          str             Chaine a nettoyer
- \return         string          Chaine nettoyee (A-Z_)
+ *	\brief          Nettoie chaine de caractere de caracteres speciaux
+ *	\remarks		Fonction appelee par exemple pour definir un nom de fichier depuis un identifiant chaine libre
+ *	\param          str             String to clean
+ * 	\param			newstr			String to replace bad chars by
+ *	\return         string          String cleaned (a-zA-Z_)
  */
-function sanitize_string($str)
+function sanitize_string($str,$newstr='_')
 {
 	$forbidden_chars_to_underscore=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 	//$forbidden_chars_to_remove=array("(",")");
 	$forbidden_chars_to_remove=array();
-	return str_replace($forbidden_chars_to_underscore,"_",str_replace($forbidden_chars_to_remove,"",$str));
+	
+	return str_replace($forbidden_chars_to_underscore,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
 }
 
 
