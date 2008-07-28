@@ -3279,7 +3279,6 @@ else
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		}
 		if ($socid) $sql .= ' AND s.rowid = '.$socid;
-		if ($month > 0) $sql .= ' AND date_format(f.datef, \'%m\') = '.$month;
 		if ($_GET['filtre'])
 		{
 			$filtrearr = split(',', $_GET['filtre']);
@@ -3305,6 +3304,13 @@ else
 		{
 			$sql .= ' AND f.total_ttc = \''.addslashes(trim($_GET['search_montant_ttc'])).'\'';
 		}
+        if ($month > 0)
+        {
+          if ($year > 0)
+              $sql .= " AND date_format(f.datef, '%Y-%m') = '$year-$month'";
+          else
+              $sql .= " AND date_format(f.datef, '%m') = '$month'";
+        }
 		if ($year > 0)
 		{
 			$sql .= ' AND date_format(f.datef, \'%Y\') = '.$year;
@@ -3317,7 +3323,7 @@ else
 		{
 			$sql .= ' AND (s.nom like \'%'.addslashes($sall).'%\' OR f.facnumber like \'%'.addslashes($sall).'%\' OR f.note like \'%'.addslashes($sall).'%\' OR fd.description like \'%'.addslashes($sall).'%\')';
 		}
-
+        
 		$sql .= ' GROUP BY f.rowid';
 
 		$sql .= ' ORDER BY ';
@@ -3345,13 +3351,14 @@ else
 			print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 			print '<table class="liste" width="100%">';
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','','&amp;socid='.$socid,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','','&amp;socid='.$socid,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','','&amp;socid='.$socid,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','','&amp;socid='.$socid,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','','&amp;socid='.$socid,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','','&amp;socid='.$socid,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','','&amp;socid='.$socid,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
+            print '<td class="liste_titre">&nbsp;</td>';
 			print '</tr>';
 
 			// Lignes des champs de filtre
@@ -3359,15 +3366,27 @@ else
 			print '<tr class="liste_titre">';
 			print '<td class="liste_titre" align="left">';
 			print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
-			print '</td><td class="liste_titre">&nbsp;</td>';
+			print '<td class="liste_titre" colspan="1" align="center">';
+            print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
+            print '&nbsp;'.$langs->trans('Year').': ';
+            $max_year = date("Y");
+            $form = new Form($db);
+            $syear = $year;
+            if($syear == '')
+                $syear = date("Y");
+           $form->select_year($syear,'year',1, '', $max_year);
+            print '</td>';
 			print '<td class="liste_titre" align="left">';
 			print '<input class="flat" type="text" name="search_societe" value="'.$_GET['search_societe'].'">';
 			print '</td><td class="liste_titre" align="right">';
 			print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
 			print '</td><td class="liste_titre" align="right">';
 			print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET['search_montant_ttc'].'">';
-			print '</td><td class="liste_titre" colspan="2" align="right">';
-			print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
+			print '</td>';
+            print '<td align="right" colspan="2">';
+            print '&nbsp;';
+            print '</td>';
+			print '<td class="liste_titre"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
 			print "</td></tr>\n";
 
 			if ($num > 0)
@@ -3432,7 +3451,9 @@ else
 					// Affiche statut de la facture
 					print '<td align="right" nowrap="nowrap">';
 					print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am,$objp->type);
-					print "</td></tr>\n";
+					print "</td>";
+                    print "<td>&nbsp;</td>";
+                    print "</tr>\n";
 					$total+=$objp->total;
 					$total_ttc+=$objp->total_ttc;
 					$totalrecu+=$objp->am;
