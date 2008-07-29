@@ -109,11 +109,6 @@ if ($_POST["action"] == 'add_action')
                    $_POST["a2month"],
                    $_POST["a2day"],
                    $_POST["a2year"]);
-	// Si param incorrects, mktime renvoi false en PHP 5.1, -1 avant
-	if (! ($datep > 0)) $datep='';
-	if (! ($datep2 > 0)) $datep2='';
-	if (! ($datea > 0)) $datea='';
-	if (! ($datea2 > 0)) $datea2='';
 	
 	// Initialisation objet cactioncomm
     if (! $_POST["actioncode"])
@@ -151,11 +146,11 @@ if ($_POST["action"] == 'add_action')
 	//$actioncomm->date = $datea;
 	$actioncomm->datef = $datep2;
 	//$actioncomm->dateend = $datea2;
-	if ($_POST["percentage"] < 100 && ! $actioncomm->datep) $actioncomm->datep=$actioncomm->date;
+	//if ($_POST["percentage"] < 100 && strval($actioncomm->datep) != '') $actioncomm->datep=$actioncomm->date;
 	if ($actioncomm->type_code == 'AC_RDV')
 	{
 		// RDV
-		if ($actioncomm->date)
+		if ($actioncomm->datef)
 		{
 			$actioncomm->percentage = 100;
 		}

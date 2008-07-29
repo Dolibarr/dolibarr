@@ -151,10 +151,10 @@ class ActionComm
         $sql.= "fk_facture,propalrowid,fk_commande)";
         $sql.= " VALUES (";
         $sql.= "'".$this->db->idate($now)."',";
-        $sql.= ($this->datep!=''?"'".$this->db->idate($this->datep)."'":"null").",";
-        $sql.= ($this->datef!=''?"'".$this->db->idate($this->datef)."'":"null").",";
-        $sql.= ($this->date!=''?"'".$this->db->idate($this->date)."'":"null").",";
-        $sql.= ($this->dateend!=''?"'".$this->db->idate($this->dateend)."'":"null").",";
+        $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").",";
+        $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").",";
+        $sql.= (strval($this->date)!=''?"'".$this->db->idate($this->date)."'":"null").",";
+        $sql.= (strval($this->dateend)!=''?"'".$this->db->idate($this->dateend)."'":"null").",";
         $sql.= ($this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";
         $sql.= ($this->durationa >= 0 && $this->durationa != ''?"'".$this->durationa."'":"null").",";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";

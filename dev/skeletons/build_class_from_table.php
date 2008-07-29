@@ -225,7 +225,7 @@ foreach($property as $key => $prop)
 		$varprop.="\t\t\$sql.= \" ";
 		if ($prop['istime'])
 		{
-			$varprop.='".(! isset($this->'.$prop['field'].') || $this->'.$prop['field'].'==\'\'?\'NULL\':$this->db->idate(';
+			$varprop.='".(! isset($this->'.$prop['field'].') || strval($this->'.$prop['field'].')==\'\'?\'NULL\':$this->db->idate(';
 			$varprop.="\$this->".$prop['field']."";
 			$varprop.='))."';
 			if ($i < sizeof($property)) $varprop.=",";
@@ -256,15 +256,24 @@ foreach($property as $key => $prop)
 	{
 		$varprop.="\t\t\$sql.= \" ";
 		$varprop.=$prop['field'].'=';
-		if ($prop['istime']) $varprop.='".$this->db->idate(';
-		else $varprop.="'\".";
-		if ($prop['istime']) $varprop.="\$this->".$prop['field'];
-		else if ($prop['ischar']) $varprop.="addslashes(\$this->".$prop['field'].")";
-		else $varprop.="\$this->".$prop['field'];
-		if ($prop['istime']) $varprop.=')."';
-		else $varprop.=".\"'";
-		if ($i < sizeof($property)) $varprop.=",";
-		$varprop.="\";";
+		if ($prop['istime'])
+		{
+			// (strval($this->datep)!='' ? "'".$this->db->idate($this->datep)."'" : 'null')
+			$varprop.='".(strval($this->'.$prop['field'].')!=\'\' ? "\'".$this->db->idate(';
+			$varprop.='$this->'.$prop['field'];
+			$varprop.=')."\'" : \'null\').';
+			$varprop.='"';
+		}
+		else
+		{
+			$varprop.="'\".";
+			if ($prop['ischar']) $varprop.="addslashes(\$this->".$prop['field'].")";
+			else $varprop.="\$this->".$prop['field'];
+			$varprop.=".\"'";
+		}
+
+		if ($i < sizeof($property)) $varprop.=',';
+		$varprop.='";';
 		$varprop.="\n";
 	}
 }
