@@ -787,7 +787,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _pagefoot(&$pdf, $outputlangs)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'FACTURE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+		return pdf_pagefoot($pdf,$outputlangs,'FACTURESUPPLIER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
 	}
 
 }

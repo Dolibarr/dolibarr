@@ -287,7 +287,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		print '<br>';
 		
         print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
-		print_titre($langs->trans("ToClearAllRecipientsClickHere").': <input type="submit" class="button" value="'.$langs->trans("TargetsReset").'">');
+		print_titre($langs->trans("ToClearAllRecipientsClickHere").'<br><input type="submit" class="button" value="'.$langs->trans("TargetsReset").'">');
         print '</form>';
         print '<br>';
     }
