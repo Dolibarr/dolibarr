@@ -422,7 +422,7 @@ class Contact extends CommonObject
                 $this->priv           = $obj->priv;
                 $this->mail           = $obj->email;
     
-                $this->birthday       = $obj->birthday;
+                $this->birthday       = dolibarr_stringtotime($obj->birthday);
                 $this->birthday_alert = $obj->birthday_alert;
                 $this->note           = $obj->note;
 

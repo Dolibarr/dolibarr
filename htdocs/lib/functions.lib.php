@@ -451,8 +451,8 @@ function dolibarr_print_date($time,$format='',$to_gmt=false)
 
 
 /**
- *	\brief  	Retourne une date fabrique depuis une chaine
- *	\param		string			Date formate en chaine
+ *	\brief  	Convert a string date into a TMS date
+ *	\param		string			Date in a string
  *				YYYYMMDD
  *				YYYYMMDDHHMMSS
  *				DD/MM/YY ou DD/MM/YYYY
