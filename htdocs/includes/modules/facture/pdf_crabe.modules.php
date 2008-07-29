@@ -22,7 +22,7 @@
 /**
        	\file       htdocs/includes/modules/facture/pdf_crabe.modules.php
 		\ingroup    facture
-		\brief      Fichier de la classe permettant de gï¿½nï¿½rer les factures au modï¿½le Crabe
+		\brief      File of class to generate invoices from crab model
 		\author	    Laurent Destailleur
 		\version    $Id$
 */
@@ -43,9 +43,9 @@ class pdf_crabe extends ModelePDFFactures
 
 
     /**
-    		\brief  Constructeur
-    		\param	db		Handler accès base de donnï¿½e
-    */
+     *		\brief  Constructor
+     *		\param	db		Database handler
+     */
     function pdf_crabe($db)
     {
         global $conf,$langs,$mysoc;
@@ -384,7 +384,7 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				// Pied de page
-				$this->_pagefoot($pdf,$outputlangs);
+				$this->_pagefoot($pdf,$fac,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -1174,82 +1174,13 @@ class pdf_crabe extends ModelePDFFactures
     /**
      *   	\brief      Show footer of page
      *   	\param      pdf     		Object PDF
+     * 		\param		object			Object invoice
      *      \param      outputlang		Object lang for output
+     * 		\remarks	Need this->emetteur object
      */
-    function _pagefoot(&$pdf,$outputlangs)
+    function _pagefoot(&$pdf,$object,$outputlangs)
     {
-        global $conf;
-
-		// Line of free text
-		$ligne=(! empty($conf->global->FACTURE_FREE_TEXT))?$conf->global->FACTURE_FREE_TEXT:"";
-
-        // Premiere ligne d'info réglementaires
-        $ligne1="";
-        if ($this->emetteur->forme_juridique_code)
-        {
-            $ligne1.=($ligne1?" - ":"").getFormeJuridiqueLabel($this->emetteur->forme_juridique_code);
-        }
-        if ($this->emetteur->capital)
-        {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transnoentities("CapitalOf",$this->emetteur->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
-        }
-        // Prof Id
-        if ($this->emetteur->profid2)
-        {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountrynoentities("ProfId2",$this->emetteur->pays_code).": ".$this->emetteur->profid2;
-        }
-        if ($this->emetteur->profid1 && (! $this->emetteur->profid2 || $this->emetteur->pays_code != 'FR'))
-        {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountrynoentities("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
-        }
-
-        // Deuxieme ligne d'info réglementaires
-        $ligne2="";
-        if ($this->emetteur->profid3)
-        {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountrynoentities("ProfId3",$this->emetteur->pays_code).": ".$this->emetteur->profid3;
-        }
-        if ($this->emetteur->profid4)
-        {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountrynoentities("ProfId4",$this->emetteur->pays_code).": ".$this->emetteur->profid4;
-        }
-        if ($this->emetteur->tva_intra != '')
-        {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$this->emetteur->tva_intra;
-        }
-		
-        $pdf->SetFont('Arial','',7);
-        $pdf->SetDrawColor(224,224,224);
-
-        // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-        $posy=$this->marge_basse + 1 + ($ligne?6:0) + ($ligne1?3:0) + ($ligne2?3:0);
-
-        if ($ligne)
-		{
-			$pdf->SetXY($this->marge_gauche,-$posy);
-			$pdf->MultiCell(190, 3, $ligne, 0, 'L', 0);
-			$posy-=9;	// 6 of ligne + 3 of MultiCell
-		}
-		
-        $pdf->SetY(-$posy);
-        $pdf->line($this->marge_gauche, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);
-        $posy--;
-
-        if ($ligne1)
-        {
-            $pdf->SetXY($this->marge_gauche,-$posy);
-            $pdf->MultiCell(200, 2, $ligne1, 0, 'C', 0);
-        }
-
-        if ($ligne2)
-        {
-            $posy-=3;
-            $pdf->SetXY($this->marge_gauche,-$posy);
-            $pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
-        }
-
-        $pdf->SetXY(-20,-$posy);
-        $pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+		return pdf_pagefoot($pdf,$outputlangs,'FACTURE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
     }
 
 }

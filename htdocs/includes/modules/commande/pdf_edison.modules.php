@@ -19,83 +19,94 @@
  * or see http://www.gnu.org/
  */
 
-/** 
-        \file       htdocs/includes/modules/commande/pdf_edison.modules.php
-        \ingroup    commande
-        \brief      Fichier de la classe permettant de g�n�rer les commandes au mod�le Edison
-        \version    $Id$
-*/
+/**
+ \file       htdocs/includes/modules/commande/pdf_edison.modules.php
+ \ingroup    commande
+ \brief      Fichier de la classe permettant de generer les commandes au modele Edison
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
-
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
-        \class      pdf_edison
-        \brief      Classe permettant de g�n�rer les commandes au mod�le Edison
-*/
+ \class      pdf_edison
+ \brief      Classe permettant de g�n�rer les commandes au mod�le Edison
+ */
 
 class pdf_edison extends ModelePDFCommandes
 {
+	var $emetteur;	// Objet societe qui emet
+	
+	/**
+	 * 	\brief      Constructeur
+	 *	\param	    db	    handler acc�s base de donn�e
+	 */
+	function pdf_edison($db=0)
+	{
+        global $conf,$langs,$mysoc;
 
-  /**	\brief      Constructeur
-        \param	    db	    handler acc�s base de donn�e
-  */
-  function pdf_edison($db=0)
-    { 
+        $langs->load("main");
+        $langs->load("bills");
+		
         $this->db = $db;
-        $this->name = "edison";
-        $this->description = "Modele de commande simple";
+		$this->name = "edison";
+		$this->description = "Modele de commande simple";
 
-        // Dimension page pour format A4
-        $this->type = 'pdf';
-        $this->page_largeur = 210;
-        $this->page_hauteur = 297;
-        $this->format = array($this->page_largeur,$this->page_hauteur);
-
-        $this->option_multilang = 0;               // Dispo en plusieurs langues
+		// Dimension page pour format A4
+		$this->type = 'pdf';
+		$this->page_largeur = 210;
+		$this->page_hauteur = 297;
+		$this->format = array($this->page_largeur,$this->page_hauteur);
+		$this->marge_gauche=10;
+		$this->marge_droite=10;
+		$this->marge_haute=10;
+		$this->marge_basse=10;
+		
+		$this->option_multilang = 0;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
-        $this->error = "";
-    }
-  
+		$this->error = "";
+	}
 
-  /**	\brief      Renvoi derni�re erreur
-        \return     string      Derni�re erreur
-  */
-  function pdferror() 
-  {
-      return $this->error;
-  }
-  
-  
+
+	/**	\brief      Renvoi derni�re erreur
+	 \return     string      Derni�re erreur
+	 */
+	function pdferror()
+	{
+		return $this->error;
+	}
+
+
 	/**
-			\brief      Fonction g�n�rant la commande sur le disque
-			\param	    id		id de la propale � g�n�rer
-			\return	    int     1=ok, 0=ko
-	*/
+	 \brief      	Fonction generant la commande sur le disque
+	 \param	    	com		id de la propale a generer
+	 \return	    int     1=ok, 0=ko
+	 */
 	function write_file($com,$outputlangs='')
 	{
 		global $user,$conf,$langs,$mysco;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
-        $outputlangs->load("companies");
-        $outputlangs->load("bills");
-        $outputlangs->load("products");
-		
+		$outputlangs->load("companies");
+		$outputlangs->load("bills");
+		$outputlangs->load("products");
+
 		$outputlangs->setPhpLang();
-		
-		// D�finition de l'objet $com (pour compatibilite ascendante)
-    	if (! is_object($com))
-    	{
-            $id = $com;
-            $com = new Commande($this->db,"",$id);
-            $ret=$com->fetch($id);
+
+		// Definition de l'objet $com (pour compatibilite ascendante)
+		if (! is_object($com))
+		{
+			$id = $com;
+			$com = new Commande($this->db,"",$id);
+			$ret=$com->fetch($id);
 		}
 
-        if ($conf->commande->dir_output)
-        {
-			// D�finition de $dir et $file
+		if ($conf->commande->dir_output)
+		{
+			// Definition of $dir and $file
 			if ($com->specimen)
 			{
 				$dir = $conf->commande->dir_output;
@@ -107,7 +118,7 @@ class pdf_edison extends ModelePDFCommandes
 				$dir = $conf->commande->dir_output . "/" . $comref;
 				$file = $dir . "/" . $comref . ".pdf";
 			}
-	
+
 			if (! file_exists($dir))
 			{
 				if (create_exdir($dir) < 0)
@@ -117,85 +128,85 @@ class pdf_edison extends ModelePDFCommandes
 					return 0;
 				}
 			}
-	
-            if (file_exists($dir))
-            {
-	           // Protection et encryption du pdf
-               if ($conf->global->PDF_SECURITY_ENCRYPTION)
-               {
+
+			if (file_exists($dir))
+			{
+				// Protection et encryption du pdf
+				if ($conf->global->PDF_SECURITY_ENCRYPTION)
+				{
 					$pdf=new FPDI_Protection('P','mm',$this->format);
-     	           $pdfrights = array('print'); // Ne permet que l'impression du document
-    	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-     	           $pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
-     	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-               }
-			   else
-			   {
-                   $pdf=new FPDI('P','mm',$this->format);
+					$pdfrights = array('print'); // Ne permet que l'impression du document
+					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+					$pdfownerpass = NULL; // Mot de passe du propri�taire, cr�� al�atoirement si pas d�fini
+					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+				}
+				else
+				{
+					$pdf=new FPDI('P','mm',$this->format);
 				}
 
-                
-                $pdf->Open();
-                $pdf->AddPage();
 
-                $pdf->SetDrawColor(128,128,128);
+				$pdf->Open();
+				$pdf->AddPage();
 
-                $pdf->SetTitle($com->ref);
-                $pdf->SetSubject($langs->transnoentities("Order"));
-                $pdf->SetCreator("Dolibarr ".DOL_VERSION);
-                $pdf->SetAuthor($user->fullname);
+				$pdf->SetDrawColor(128,128,128);
 
-                $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
-                $pdf->SetAutoPageBreak(1,0);
+				$pdf->SetTitle($com->ref);
+				$pdf->SetSubject($langs->transnoentities("Order"));
+				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
+				$pdf->SetAuthor($user->fullname);
 
-                $this->_pagehead($pdf, $com, 1, $outputlangs);
+				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+				$pdf->SetAutoPageBreak(1,0);
+
+				$this->_pagehead($pdf, $com, 1, $outputlangs);
 
 
 				$tab_top = 100;
 				$tab_height = 140;
-	
+
 				$pdf->SetFillColor(220,220,220);
-	
+
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('Arial','', 10);
-	
+
 				$pdf->SetXY (10, $tab_top + 10 );
-	
+
 				$iniY = $pdf->GetY();
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
 				$nblignes = sizeof($com->lignes);
-	
+
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
-	
+
 					$curY = $nexY;
-	
+
 					$pdf->SetXY (30, $curY );
-	
+
 					$pdf->MultiCell(100, 5, $com->lignes[$i]->desc, 0, 'J', 0);
-	
+
 					$nexY = $pdf->GetY();
-	
+
 					$pdf->SetXY (10, $curY );
-	
+
 					$pdf->MultiCell(20, 5, $com->lignes[$i]->ref, 0, 'C');
-	
+
 					$pdf->SetXY (133, $curY );
 					$pdf->MultiCell(10, 5, $com->lignes[$i]->tva_tx, 0, 'C');
-	
+
 					$pdf->SetXY (145, $curY );
 					$pdf->MultiCell(10, 5, $com->lignes[$i]->qty, 0, 'C');
-	
+
 					$pdf->SetXY (156, $curY );
 					$pdf->MultiCell(18, 5, price($com->lignes[$i]->price), 0, 'R', 0);
-	
+
 					$pdf->SetXY (174, $curY );
 					$total = price($com->lignes[$i]->total_ht);
 					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
-	
+
 					$pdf->line(10, $curY, 200, $curY );
-	
+
 					if ($nexY > 240 && $i < $nblignes - 1)
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
@@ -206,130 +217,129 @@ class pdf_edison extends ModelePDFCommandes
 						$pdf->SetFont('Arial','', 10);
 					}
 				}
-	
+
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 				/*
-				*
-				*/
+				 *
+				 */
 				$tab2_top = 241;
 				$tab2_lh = 7;
 				$tab2_height = $tab2_lh * 4;
-	
+
 				$pdf->SetFont('Arial','', 11);
-	
+
 				$pdf->Rect(132, $tab2_top, 68, $tab2_height);
-	
+
 				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*3), 200, $tab2_top + $tab2_height - ($tab2_lh*3) );
 				$pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*2), 200, $tab2_top + $tab2_height - ($tab2_lh*2) );
 				$pdf->line(132, $tab2_top + $tab2_height - $tab2_lh, 200, $tab2_top + $tab2_height - $tab2_lh );
-	
+
 				$pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
-	
+
 				$pdf->SetXY (132, $tab2_top + 0);
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalHT"), 0, 'R', 0);
-	
+
 				$pdf->SetXY (132, $tab2_top + $tab2_lh);
-				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("Reduction"), 0, 'R', 0);
-	
-				$pdf->SetXY (132, $tab2_top + $tab2_lh*2);
-				$pdf->MultiCell(42, $tab2_lh, "Total HT apr�s remise", 0, 'R', 0);
-	
-				$pdf->SetXY (132, $tab2_top + $tab2_lh*3);
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalVAT"), 0, 'R', 0);
-	
-				$pdf->SetXY (132, $tab2_top + ($tab2_lh*4));
+
+				$pdf->SetXY (132, $tab2_top + ($tab2_lh*2));
 				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalTTC"), 1, 'R', 1);
-	
+
 				$pdf->SetXY (174, $tab2_top + 0);
 				$pdf->MultiCell(26, $tab2_lh, price($com->total_ht + $com->remise), 0, 'R', 0);
-	
+
 				$pdf->SetXY (174, $tab2_top + $tab2_lh);
 				$pdf->MultiCell(26, $tab2_lh, price($com->remise), 0, 'R', 0);
-	
+
 				$pdf->SetXY (174, $tab2_top + $tab2_lh*2);
 				$pdf->MultiCell(26, $tab2_lh, price($com->total_ht), 0, 'R', 0);
-	
+
 				$pdf->SetXY (174, $tab2_top + $tab2_lh*3);
 				$pdf->MultiCell(26, $tab2_lh, price($com->total_tva), 0, 'R', 0);
-	
+
 				$pdf->SetXY (174, $tab2_top + ($tab2_lh*4));
 				$pdf->MultiCell(26, $tab2_lh, price($com->total_ttc), 1, 'R', 1);
-	
-	
+
+				// Pied de page
+				$this->_pagefoot($pdf,$com,$outputlangs);
+				$pdf->AliasNbPages();
+
+				$pdf->Close();
+
 				$pdf->Output($file);
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}
 		}
-        else
-        {
-            $this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
+		else
+		{
+			$this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
-            return 0;
-        }
+			return 0;
+		}
 			
-        $this->error=$outputlangs->transnoentities("ErrorUnknown");
+		$this->error=$outputlangs->transnoentities("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
-        return 0;   // Erreur par defaut		
+		return 0;   // Erreur par defaut
 	}
 
-  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
-    {
-        global $langs,$conf;
-        $langs->load("main");
-        $langs->load("bills");
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+	{
+		global $langs,$conf;
+		$langs->load("main");
+		$langs->load("bills");
 
-      $pdf->SetFont('Arial','',11);
-            
-      $pdf->Text(30,$tab_top + 5,$langs->transnoentities("Designation"));
-      
-      $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-      $pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
-      
-      $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-      $pdf->Text(147,$tab_top + 5,$langs->transnoentities("Qty"));
-      
-      $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-      $pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
-      
-      $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-      $pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
-      
-      //      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
-      $pdf->Rect(10, $tab_top, 190, $tab_height);
+		$pdf->SetFont('Arial','',11);
+
+		$pdf->Text(30,$tab_top + 5,$langs->transnoentities("Designation"));
+
+		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
+		$pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
+
+		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
+		$pdf->Text(147,$tab_top + 5,$langs->transnoentities("Qty"));
+
+		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
+		$pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
+
+		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
+		$pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
+
+		//      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
+		$pdf->Rect(10, $tab_top, 190, $tab_height);
 
 
-      $pdf->SetTextColor(0,0,0);
-      $pdf->SetFont('Arial','',10);
-      $titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
-      $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('Arial','',10);
+		$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
+		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 
-    }
+	}
 
 	function _pagehead(&$pdf, $com)
 	{
 		global $conf,$langs,$mysoc;
 		$langs->load("orders");
 
-	  //Affiche le filigrane brouillon - Print Draft Watermark
-	  if($com->statut==0 && (! empty($conf->global->COMMANDE_DRAFT_WATERMARK)) )		
-	  {
-		$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
-		$watermark_x=5;
-		$watermark_y=$this->page_hauteur-25; //Set to $this->page_hauteur-50 or less if problems
-		$watermark_width=$this->page_hauteur;
-		$pdf->SetFont('Arial','B',50);
-		$pdf->SetTextColor(255,192,203);
-		//rotate
-		$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$pdf->k,($pdf->h-$watermark_y)*$pdf->k,-$watermark_x*$pdf->k,-($pdf->h-$watermark_y)*$pdf->k));
-		//print watermark
-		$pdf->SetXY($watermark_x,$watermark_y);
-		$pdf->Cell($watermark_width,25,clean_html($conf->global->COMMANDE_DRAFT_WATERMARK),0,2,"C",0);
-		//antirotate
-		$pdf->_out('Q');
-	  }
-	  //Print content
-		
+		//Affiche le filigrane brouillon - Print Draft Watermark
+		if($com->statut==0 && (! empty($conf->global->COMMANDE_DRAFT_WATERMARK)) )
+		{
+			$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
+			$watermark_x=5;
+			$watermark_y=$this->page_hauteur-25; //Set to $this->page_hauteur-50 or less if problems
+			$watermark_width=$this->page_hauteur;
+			$pdf->SetFont('Arial','B',50);
+			$pdf->SetTextColor(255,192,203);
+			//rotate
+			$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$pdf->k,($pdf->h-$watermark_y)*$pdf->k,-$watermark_x*$pdf->k,-($pdf->h-$watermark_y)*$pdf->k));
+			//print watermark
+			$pdf->SetXY($watermark_x,$watermark_y);
+			$pdf->Cell($watermark_width,25,clean_html($conf->global->COMMANDE_DRAFT_WATERMARK),0,2,"C",0);
+			//antirotate
+			$pdf->_out('Q');
+		}
+		//Print content
+
 		$pdf->SetXY(10,8);
 		if (defined("MAIN_INFO_SOCIETE_NOM"))
 		{
@@ -337,8 +347,8 @@ class pdf_edison extends ModelePDFCommandes
 			$pdf->SetFont('Arial','B',14);
 			$pdf->MultiCell(76, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
 		}
-	
-   		$pdf->SetX(10);
+
+		$pdf->SetX(10);
 		$pdf->SetTextColor(70,70,170);
 		if (defined("FAC_PDF_ADRESSE"))
 		{
@@ -355,7 +365,7 @@ class pdf_edison extends ModelePDFCommandes
 			$pdf->SetFont('Arial','',10);
 			$pdf->MultiCell(76, 5, "SIREN : ".MAIN_INFO_SIREN);
 		}
-	
+
 		if (defined("FAC_PDF_INTITULE2"))
 		{
 			$pdf->SetXY(100,5);
@@ -364,8 +374,8 @@ class pdf_edison extends ModelePDFCommandes
 			$pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
 		}
 		/*
-		* Adresse Client
-		*/
+		 * Adresse Client
+		 */
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','B',12);
 		$client = new Societe($this->db);
@@ -377,16 +387,22 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->SetXY(102,$pdf->GetY());
 		$pdf->MultiCell(96,5, $com->client->adresse . "\n" . $com->client->cp . " " . $com->client->ville);
 		$pdf->rect(100, 40, 100, 40);
-	
-	
+
+
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text(11, 88, "Date : " . dolibarr_print_date($com->date,'day'));
 		$pdf->Text(11, 94, $langs->transnoentities("Order")." ".$com->ref);
-	
-	
 	}
-
+	
+    /*
+     *   \brief      Affiche le pied de page
+     *   \param      pdf     objet PDF
+     */
+    function _pagefoot(&$pdf,$object,$outputlangs)
+    {
+		return pdf_pagefoot($pdf,$outputlangs,'COMMANDE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+    }
 }
 
 ?>

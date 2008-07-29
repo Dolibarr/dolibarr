@@ -39,16 +39,20 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 class pdf_typhon extends ModelePDFDeliveryOrder
 {
-
-	/**
-	 \brief      Constructeur
-	 \param	    db		Handler accï¿½s base de donnï¿½e
-	 */
+	var $emetteur;	// Objet societe qui emet
+	
+    /**
+     *		\brief  Constructor
+     *		\param	db		Database handler
+     */
 	function pdf_typhon($db)
 	{
-		global $conf,$langs;
+		global $conf,$langs,$mysoc;
 
-		$this->db = $db;
+        $langs->load("main");
+        $langs->load("bills");
+		
+        $this->db = $db;
 		$this->name = "typhon";
 		$this->description = "Modele de bon de livraison complet (logo...)";
 
@@ -67,10 +71,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->option_modereg = 1;                 // Gere choix mode reglement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
-		$this->franchise=1;
+			$this->franchise=1;
 
-		// Recupere code pays de l'emmetteur
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 
 		$this->tva=array();
 
@@ -271,7 +276,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					if ($nexY > 200 && $i < ($nblignes - 1))
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
-						$this->_pagefoot($pdf);
+						$this->_pagefoot($pdf,$outputlangs);
 
 						// Nouvelle page
 						$pdf->AddPage();
@@ -300,7 +305,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				/*
 				 * Pied de page
 				 */
-				$this->_pagefoot($pdf);
+				$this->_pagefoot($pdf,$outputlangs);
 				$pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -518,76 +523,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 	}
 
-	/*
+	/**
 	 *   \brief      Affiche le pied de page
 	 *   \param      pdf     objet PDF
 	 */
-	function _pagefoot(&$pdf)
+	function _pagefoot(&$pdf,$outputlangs)
 	{
-		global $langs, $conf;
-		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("companies");
-
-		// Premiere ligne d'info rï¿½glementaires
-		$ligne1="";
-		if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
-		{
-			$ligne1.=($ligne1?" - ":"").getFormeJuridiqueLabel($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
-		}
-		if ($conf->global->MAIN_INFO_CAPITAL)
-		{
-			$ligne1.=($ligne1?" - ":"").$langs->transnoentities("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$langs->transnoentities("Currency".$conf->monnaie);
-		}
-		if ($conf->global->MAIN_INFO_SIRET)
-		{
-			$ligne1.=($ligne1?" - ":"").$langs->transcountrynoentities("ProfId2",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_SIRET;
-		}
-		if ($conf->global->MAIN_INFO_SIREN && (! $conf->global->MAIN_INFO_SIRET || $this->emetteur->pays_code != 'FR'))
-		{
-			$ligne1.=($ligne1?" - ":"").$langs->transcountrynoentities("ProfId1",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_SIREN;
-		}
-		if ($conf->global->MAIN_INFO_APE)
-		{
-			$ligne1.=($ligne1?" - ":"").$langs->transcountrynoentities("ProfId3",$this->emetteur->pays_code).": ".MAIN_INFO_APE;
-		}
-
-		// Deuxieme ligne d'info reglementaires
-		$ligne2="";
-		if ($conf->global->MAIN_INFO_RCS)
-		{
-			$ligne2.=($ligne2?" - ":"").$langs->transcountrynoentities("ProfId4",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_RCS;
-		}
-		if ($conf->global->MAIN_INFO_TVAINTRA != '')
-		{
-			$ligne2.=($ligne2?" - ":"").$langs->transnoentities("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
-		}
-
-		$pdf->SetFont('Arial','',8);
-		$pdf->SetDrawColor(224,224,224);
-
-		// On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-		$posy=$this->marge_basse + 1 + ($ligne1?3:0) + ($ligne2?3:0);
-
-		$pdf->SetY(-$posy);
-		$pdf->line($this->marge_gauche, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);
-		$posy--;
-
-		if ($ligne1)
-		{
-			$pdf->SetXY($this->marge_gauche,-$posy);
-			$pdf->MultiCell(200, 2, $ligne1, 0, 'C', 0);
-		}
-
-		if ($ligne2)
-		{
-			$posy-=3;
-			$pdf->SetXY($this->marge_gauche,-$posy);
-			$pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
-		}
-
-		$pdf->SetXY(-20,-$posy);
-		$pdf->MultiCell(10, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+		return pdf_pagefoot($pdf,$outputlangs,'DELIVERY_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
 	}
 
 }

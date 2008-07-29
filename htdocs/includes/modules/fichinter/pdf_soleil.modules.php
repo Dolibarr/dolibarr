@@ -20,68 +20,68 @@
  */
 
 /**
-        \file       htdocs/includes/modules/fichinter/pdf_soleil.modules.php
-        \ingroup    ficheinter
-        \brief      Fichier de la classe permettant de générer les fiches d'intervention au modèle Soleil
-        \version    $Id$
-*/
+ \file       htdocs/includes/modules/fichinter/pdf_soleil.modules.php
+ \ingroup    ficheinter
+ \brief      Fichier de la classe permettant de générer les fiches d'intervention au modèle Soleil
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
-        \class      pdf_soleil
-        \brief      Classe permettant de générer les fiches d'intervention au modèle Soleil
-*/
+ \class      pdf_soleil
+ \brief      Classe permettant de générer les fiches d'intervention au modèle Soleil
+ */
 
 class pdf_soleil extends ModelePDFFicheinter
 {
 
-    /**
-    		\brief      Constructeur
-            \param	    db		Handler accès base de donnée
-    */
-    function pdf_soleil($db=0)
-    {
+	/**
+	 \brief      Constructeur
+	 \param	    db		Handler accès base de donnée
+	 */
+	function pdf_soleil($db=0)
+	{
 		global $conf,$langs,$mysoc;
 
-        $this->db = $db;
-        $this->name = 'soleil';
-        $this->description = "Modèle de fiche d'intervention standard";
+		$this->db = $db;
+		$this->name = 'soleil';
+		$this->description = "Modèle de fiche d'intervention standard";
 
-        // Dimension page pour format A4
-        $this->type = 'pdf';
-        $this->page_largeur = 210;
-        $this->page_hauteur = 297;
-        $this->format = array($this->page_largeur,$this->page_hauteur);
-        $this->marge_gauche=10;
-        $this->marge_droite=10;
-        $this->marge_haute=10;
-        $this->marge_basse=10;
-		
-        $this->option_logo = 1;                    // Affiche logo
-        $this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
-        $this->option_modereg = 0;                 // Affiche mode règlement
-        $this->option_condreg = 0;                 // Affiche conditions règlement
-        $this->option_codeproduitservice = 0;      // Affiche code produit-service
-        $this->option_multilang = 0;               // Dispo en plusieurs langues
+		// Dimension page pour format A4
+		$this->type = 'pdf';
+		$this->page_largeur = 210;
+		$this->page_hauteur = 297;
+		$this->format = array($this->page_largeur,$this->page_hauteur);
+		$this->marge_gauche=10;
+		$this->marge_droite=10;
+		$this->marge_haute=10;
+		$this->marge_basse=10;
+
+		$this->option_logo = 1;                    // Affiche logo
+		$this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
+		$this->option_modereg = 0;                 // Affiche mode règlement
+		$this->option_condreg = 0;                 // Affiche conditions règlement
+		$this->option_codeproduitservice = 0;      // Affiche code produit-service
+		$this->option_multilang = 0;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
-        
-        // Recupere code pays de l'emmetteur
-        $this->emetteur=$mysoc;
-        if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
-    }
 
-    /**
-            \brief      Fonction générant la fiche d'intervention sur le disque
-            \param	    fichinter		Object fichinter
-            \return	    int     		1=ok, 0=ko
-    */
-    function write_file($fichinter,$outputlangs='')
+		// Recupere code pays de l'emmetteur
+		$this->emetteur=$mysoc;
+		if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+	}
+
+	/**
+	 \brief      Fonction générant la fiche d'intervention sur le disque
+	 \param	    fichinter		Object fichinter
+	 \return	    int     		1=ok, 0=ko
+	 */
+	function write_file($fichinter,$outputlangs='')
 	{
 		global $user,$langs,$conf,$mysoc;
-		
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
@@ -103,7 +103,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					dolibarr_print_error($db,$fichinter->error);
 				}
 			}
-			
+				
 			$fichref = sanitize_string($fichinter->ref);
 			$dir = $conf->fichinter->dir_output;
 			if (! eregi('specimen',$fichref)) $dir.= "/" . $fichref;
@@ -117,7 +117,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					return 0;
 				}
 			}
-			
+				
 			if (file_exists($dir))
 			{
 				// Protection et encryption du pdf
@@ -137,12 +137,15 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->Open();
 				$pdf->AddPage();
 
+				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+				$pdf->SetAutoPageBreak(1,0);
+				
 				//Affiche le filigrane brouillon - Print Draft Watermark
-				if($fichinter->statut==0 && (! empty($conf->global->FICHINTER_DRAFT_WATERMARK)) )		
+				if($fichinter->statut==0 && (! empty($conf->global->FICHINTER_DRAFT_WATERMARK)) )
 				{
 					$watermark_angle=atan($this->page_hauteur/$this->page_largeur);
 					$watermark_x=5;
-					$watermark_y=$this->page_hauteur-50; 
+					$watermark_y=$this->page_hauteur-50;
 					$watermark_width=$this->page_hauteur;
 					$pdf->SetFont('Arial','B',50);
 					$pdf->SetTextColor(255,192,203);
@@ -154,10 +157,10 @@ class pdf_soleil extends ModelePDFFicheinter
 					//antirotate
 					$pdf->_out('Q');
 				}
-				//Print content				
-				
+				//Print content
+
 				$posy=$this->marge_haute;
-				
+
 				$pdf->SetXY($this->marge_gauche,$posy);
 
 				// Logo
@@ -222,8 +225,8 @@ class pdf_soleil extends ModelePDFFicheinter
 
 
 				/*
-				* Adresse Client
-				*/
+				 * Adresse Client
+				 */
 				$pdf->SetTextColor(0,0,0);
 				$pdf->SetFont('Arial','B',12);
 				$fichinter->fetch_client();
@@ -257,26 +260,26 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetXY (10, $tab_top + 8 );
 				$pdf->writeHTMLCell(190, 5, 10, $tab_top + 8, dol_htmlentitiesbr($fichinter->description), 0, 'J', 0);
-				
+
 				//dolibarr_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
 				$num = sizeof($fichinter->lignes);
 				$i=0;
 				if ($num)
 				{
 					while ($i < $num)
-    				{
+					{
 						$fichinterligne = $fichinter->lignes[$i];
 
 						$valide = $fichinterligne->id ? $fichinterligne->fetch($fichinterligne->id) : 0;
 						if ($valide>0)
 						{
-							$pdf->SetXY (20, $tab_top + 16 + $i * 20); 
-	                        $pdf->writeHTMLCell(190, 8, 20, $tab_top + 16 + $i * 20,
-	                         dol_htmlentitiesbr($langs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei)." - ".$langs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration)), 0, 'J', 0); 
-	                         
-	                        $pdf->SetXY (20, $tab_top + 22 + $i * 20); 
-	                        $pdf->writeHTMLCell(170, 8, 20, $tab_top + 22 + $i * 20,
-	                         dol_htmlentitiesbr($fichinterligne->desc,1), 0, 'L', 0);
+							$pdf->SetXY (20, $tab_top + 16 + $i * 20);
+							$pdf->writeHTMLCell(190, 8, 20, $tab_top + 16 + $i * 20,
+							dol_htmlentitiesbr($langs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei)." - ".$langs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration)), 0, 'J', 0);
+
+							$pdf->SetXY (20, $tab_top + 22 + $i * 20);
+							$pdf->writeHTMLCell(170, 8, 20, $tab_top + 22 + $i * 20,
+							dol_htmlentitiesbr($fichinterligne->desc,1), 0, 'L', 0);
 							$tab_height+=20;
 						}
 						$i++;
@@ -284,26 +287,30 @@ class pdf_soleil extends ModelePDFFicheinter
 				}
 				$pdf->Rect(10, $tab_top, 190, $tab_height);
 				$pdf->SetXY (10, $pdf->GetY() + 20 );
-		    $pdf->MultiCell(60, 5, '', 0, 'J', 0);
+				$pdf->MultiCell(60, 5, '', 0, 'J', 0);
 
-		    $pdf->SetXY(20,220);
-		    $pdf->MultiCell(66,5, $langs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
+				$pdf->SetXY(20,220);
+				$pdf->MultiCell(66,5, $langs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
 
-        $pdf->SetXY(20,225);
-        $pdf->MultiCell(80,30, '', 1);
+				$pdf->SetXY(20,225);
+				$pdf->MultiCell(80,30, '', 1);
 
-        $pdf->SetXY(110,220);
-        $pdf->MultiCell(80,5, $langs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
+				$pdf->SetXY(110,220);
+				$pdf->MultiCell(80,5, $langs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
 
-        $pdf->SetXY(110,225);
-        $pdf->MultiCell(80,30, '', 1);
+				$pdf->SetXY(110,225);
+				$pdf->MultiCell(80,30, '', 1);
 
 				$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
+				
 				$this->_pagefoot($pdf,$outputlangs);
+				$pdf->AliasNbPages();
+				
 				$pdf->Close();
 
 				$pdf->Output($file);
 
+				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}
 			else
@@ -321,76 +328,14 @@ class pdf_soleil extends ModelePDFFicheinter
 		return 0;   // Erreur par defaut
 	}
 
-    /*
-     *   \brief      Affiche le pied de page
-     *   \param      pdf     objet PDF
-     */
-    function _pagefoot(&$pdf,$outputlangs)
-    {
-        global $conf;
-
-        // Premiere ligne d'info reglementaires
-        $ligne1="";
-        if ($this->emetteur->forme_juridique_code)
-        {
-            $ligne1.=($ligne1?" - ":"").getFormeJuridiqueLabel($this->emetteur->forme_juridique_code);
-        }
-        if ($this->emetteur->capital)
-        {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transnoentities("CapitalOf",$this->emetteur->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
-        }
-        if ($this->emetteur->profid2)
-        {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountrynoentities("ProfId2",$this->emetteur->pays_code).": ".$this->emetteur->profid2;
-        }
-        if ($this->emetteur->profid1 && (! $this->emetteur->profid2 || $this->emetteur->pays_code != 'FR'))
-        {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountrynoentities("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
-        }
-
-        // Deuxieme ligne d'info reglementaires
-        $ligne2="";
-        if ($this->emetteur->profid3)
-        {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountrynoentities("ProfId3",$this->emetteur->pays_code).": ".$this->emetteur->profid3;
-        }
-        if ($this->emetteur->profid4)
-        {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountrynoentities("ProfId4",$this->emetteur->pays_code).": ".$this->emetteur->profid4;
-        }
-        if ($this->emetteur->tva_intra != '')
-        {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$this->emetteur->tva_intra;
-        }
-
-        $pdf->SetFont('Arial','',8);
-        $pdf->SetDrawColor(224,224,224);
-
-        // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-        //Todo: correction provisoire afin de régler le problème du bas de page
-        //$posy=$this->marge_basse + 1 + ($ligne1?3:0) + ($ligne2?3:0);
-        $posy=$this->marge_basse + 11 + ($ligne1?3:0) + ($ligne2?3:0);
-
-        $pdf->SetY(-$posy);
-        $pdf->line($this->marge_gauche, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);
-        $posy--;
-
-        if ($ligne1)
-        {
-            $pdf->SetXY($this->marge_gauche,-$posy);
-            $pdf->MultiCell(200, 2, $ligne1, 0, 'C', 0);
-        }
-
-        if ($ligne2)
-        {
-            $posy-=3;
-            $pdf->SetXY($this->marge_gauche,-$posy);
-            $pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
-        }
-
-        //$pdf->SetXY(-20,-$posy);
-        //$pdf->MultiCell(11, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
-    }
+	/*
+	 *   \brief      Affiche le pied de page
+	 *   \param      pdf     objet PDF
+	 */
+	function _pagefoot(&$pdf,$outputlangs)
+	{
+		return pdf_pagefoot($pdf,$outputlangs,'FICHEINTER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+	}
 
 }
 
