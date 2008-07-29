@@ -548,11 +548,12 @@ class DoliDb
 
 
     /**
-        \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
-                    afin de retourner une donnée toujours au format universel date tms unix.
-                    Fonction à utiliser pour générer les SELECT.
-        \param	    param       Date au format text à convertir
-        \return	    date        Date au format tms.
+    *   \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
+    *               afin de retourner une donnée toujours au format universel date tms unix.
+    *               Fonction à utiliser pour générer les SELECT.
+    *   \param	    param       Date au format text à convertir
+    *   \return	    date        Date au format tms.
+	*	\TODO		Remove unix_timestamp functions
     */
     function pdate($param)
     {

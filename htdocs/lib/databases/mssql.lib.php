@@ -541,11 +541,12 @@ class DoliDb
 
 
     /**
-        \brief      Formatage (par la base de données) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
-                    afin de retourner une donnée toujours au format universel date TMS unix.
-                    Fonction à utiliser pour générer les SELECT.
-        \param	    param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
-        \return	    date        Date au format TMS.
+    *   \brief      Formatage (par la base de données) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
+    *               afin de retourner une donnée toujours au format universel date TMS unix.
+    *               Fonction à utiliser pour générer les SELECT.
+    *   \param	    param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
+    *   \return	    date        Date au format TMS.
+	*	\TODO		Remove unix_timestamp functions
     */
     function pdate($param)
     {
