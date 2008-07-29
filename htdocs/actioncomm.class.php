@@ -631,7 +631,7 @@ class ActionComm
 				}
 			}
 			$sql.= " AND a.datep != 'null' ";	// To exclude corrupted events and avoid errors in lightning/sunbird import
-			$sql.= " ORDER by datec";
+			$sql.= " ORDER by datep";
 
 			dolibarr_syslog("ActionComm::build_exportfile select events sql=".$sql);
 			$resql=$this->db->query($sql);
