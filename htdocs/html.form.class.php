@@ -2631,7 +2631,7 @@ class Form
 		if($empty == '') $empty=0;
 	
         if (! $set_time && $empty == 0) $set_time = time();
-    
+
         // Analyse de la date de pré-selection
         if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg))
         {
@@ -2642,9 +2642,9 @@ class Form
             $shour = $reg[4];
             $smin = $reg[5];
         }
-        elseif (strval($set_time) != '')
+        elseif (strval($set_time) != '' && $set_time != -1)
         {
-            // Date est un timestamps
+            // Date est un timestamps (0 possible)
             $syear = date("Y", $set_time);
             $smonth = date("n", $set_time);
             $sday = date("d", $set_time);
@@ -2653,7 +2653,7 @@ class Form
         }
         else
         {
-            // Date est vide ou vaut -1
+        	// Date est '' ou vaut -1
             $syear = '';
             $smonth = '';
             $sday = '';
@@ -2669,7 +2669,7 @@ class Form
 			if ($conf->use_javascript_ajax && $conf->use_popup_calendar)
 		    {
 				//print "e".$set_time." t ".$conf->format_date_short;
-				if (strval($set_time) != '')
+				if (strval($set_time) != '' && $set_time != -1)
 				{
 					$formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
 				}
@@ -2719,16 +2719,6 @@ class Form
 	         */
 	        if (! $conf->use_javascript_ajax || ! $conf->use_popup_calendar)
 	        {
-	/*          
-				if ($set_time == -1)
-	            {
-	                $sday = 0;
-	                $smonth = 0;
-	                $syear = 0;
-	                $shour = 0;
-	                $smin = 0;
-				}
-	*/
 	            // Jour
 	            print '<select class="flat" name="'.$prefix.'day">';
 	        
