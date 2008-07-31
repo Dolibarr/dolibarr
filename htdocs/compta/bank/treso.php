@@ -118,9 +118,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Invoices").'</td>';
+	print '<td>'.$langs->trans("DateEcheance").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
-	print '<td align="center">'.$langs->trans("DateEcheance").'</td>';
 	print '<td align="right">'.$langs->trans("Debit").'</td>';
 	print '<td align="right">'.$langs->trans("Credit").'</td>';
 	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
@@ -132,18 +132,12 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
 	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
-	print '<td align="right" nowrap>&nbsp;</td>';
-	print '</tr>';
-
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
-	print '<td align="left" colspan="5">&nbsp;</td>';
 	print '<td align="right" nowrap>'.price($solde).'</td>';
 	print '</tr>';
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
-	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").'</td>';
+	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").':</td>';
 	print '<td align="right" nowrap>&nbsp;</td>';
 	print '</tr>';
 
@@ -239,7 +233,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 		$num = sizeOf($tab_sqlobj);
 
-		$var=False;
 		//$num = $db->num_rows($result);
 		$i = 0;
 		while ($i < $num)
@@ -266,7 +259,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 					$societestatic->id = $obj->socid;
 					$societestatic->nom = $obj->nom;
-					$refcomp=$societestatic->getNomUrl(0,'',24);
+					$refcomp=$societestatic->getNomUrl(1,'',24);
 
 					$paiement = -1*$facturefournstatic->getSommePaiement();	// Payment already done
 				}
@@ -280,7 +273,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 				$societestatic->id = $obj->socid;
 				$societestatic->nom = $obj->nom;
-				$refcomp=$societestatic->getNomUrl(0,'',24);
+				$refcomp=$societestatic->getNomUrl(1,'',24);
 
 				$paiement = $facturestatic->getSommePaiement();	// Payment already done
 			}
@@ -299,9 +292,9 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			$solde += $total_ttc;
 
 			print "<tr $bc[$var]>";
+			print '<td>'.dolibarr_print_date($obj->dlr,"day")."</td>";
 			print "<td>".$ref."</td>";
 			print "<td>".$refcomp."</td>";
-			print '<td align="center">'.dolibarr_print_date($obj->dlr,"day")."</td>";
 			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price($total_ttc)."</td><td>&nbsp;</td>"; };
 			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($total_ttc)."</td>"; };
 			print "<td align=\"right\">".price($solde)."</td>";
@@ -314,6 +307,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		dolibarr_print_error($db);
 	}
 
+	// Solde actuel
+	$var=!$var;
+	print '<tr class="liste_total">';
+	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").'</td>';
+	print '<td align="right" nowrap>'.price($solde).'</td>';
+	print '</tr>';
+	
 	print "</table>";
 
 }

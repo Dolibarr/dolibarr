@@ -50,6 +50,14 @@ function bank_prepare_head($obj)
     $head[$h][2] = 'journal';
     $h++;
     
+//    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+//	{
+		$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$obj->id;
+		$head[$h][1] = $langs->trans("PlannedTransactions");
+		$head[$h][2] = 'cash';
+		$h++;
+//	}
+	
     $head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$obj->id;
     $head[$h][1] = $langs->trans("IOMonthlyReporting");
     $head[$h][2] = 'annual';
@@ -60,14 +68,6 @@ function bank_prepare_head($obj)
     $head[$h][2] = 'graph';
     $h++;
     
-//    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
-//	{
-		$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$obj->id;
-		$head[$h][1] = $langs->trans("CashBudget");
-		$head[$h][2] = 'cash';
-		$h++;
-//	}
-	
     if ($obj->courant != 2) 
     {
     	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$obj->id;
