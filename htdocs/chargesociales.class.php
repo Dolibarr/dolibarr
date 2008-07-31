@@ -314,7 +314,7 @@ class ChargeSociales
 	function getSommePaiement()
 	{
 		$table='paiementcharge';
-		$field='amount';
+		$field='fk_charge';
 
 		$sql = 'SELECT sum(amount) as amount';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;

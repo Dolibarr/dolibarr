@@ -1638,7 +1638,7 @@ class Facture extends CommonObject
 
 
 	/**
-	 * 	\brief     	Return amount aof payments already done
+	 * 	\brief     	Return amount of payments already done
 	 *	\return		int		Amount of payment already done, <0 if KO
 	 */
 	function getSommePaiement()
