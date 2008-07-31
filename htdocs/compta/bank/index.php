@@ -94,7 +94,7 @@ foreach ($accounts as $key=>$type)
 		$acc->fetch($key);
 
 		$var = !$var;
-		$solde = $acc->solde();
+		$solde = $acc->solde(1);
 
 		print '<tr '.$bc[$var].'>';
 		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
@@ -148,7 +148,7 @@ foreach ($accounts as $key=>$type)
 		$acc->fetch($key);
 
 		$var = !$var;
-		$solde = $acc->solde();
+		$solde = $acc->solde(1);
 
 		print "<tr ".$bc[$var].">";
 		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
@@ -200,7 +200,7 @@ foreach ($accounts as $key=>$type)
         $acc->fetch($key);
 
         $var = !$var;
-        $solde = $acc->solde();
+        $solde = $acc->solde(1);
 
         print "<tr ".$bc[$var].">";
 		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';

@@ -152,6 +152,7 @@ ConfirmCustomerPayment=Do you confirm this paiement input for <b>%s</b> %s ?
 ValidateBill=Validate invoice
 NumberOfBills=Nb of invoices
 NumberOfBillsByMonth=Nb of invoices by month
+ShowSocialContribution=Show social contribution
 ShowBill=Show invoice
 ShowInvoice=Show invoice
 ShowInvoiceReplace=Show replacing invoice

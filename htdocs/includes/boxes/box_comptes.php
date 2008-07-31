@@ -92,7 +92,7 @@ class box_comptes extends ModeleBoxes {
 					$objp = $db->fetch_object($result);
 					
 					$account_static->id = $objp->rowid;
-					$solde=$account_static->solde();
+					$solde=$account_static->solde(0);
 					
 					$solde_total += $solde;
 

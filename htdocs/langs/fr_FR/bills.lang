@@ -152,6 +152,7 @@ ConfirmCustomerPayment=Confirmez-vous la saisie de ce réglement de <b>%s</b> %s 
 ValidateBill=Valider facture
 NumberOfBills=Nb de factures
 NumberOfBillsByMonth=Nb de factures par mois
+ShowSocialContribution=Afficher charge sociale
 ShowBill=Afficher facture
 ShowInvoice=Afficher facture
 ShowInvoiceReplace=Afficher facture de remplacement

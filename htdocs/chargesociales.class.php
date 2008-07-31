@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/chargesociales.class.php
 		\ingroup    facture
 		\brief      Fichier de la classe des charges sociales
-		\version    $Revision$
+		\version    $Id$
 */
 
 
@@ -304,11 +302,37 @@ class ChargeSociales
 		$lien = '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowBill"),'bill').$lienfin.' ');
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowSocialContribution"),'bill').$lienfin.' ');
 		$result.=$lien.($maxlen?dolibarr_trunc($this->lib,$maxlen):$this->lib).$lienfin;
 		return $result;
 	}
-	
+
+	/**
+	 * 	\brief     	Return amount aof payments already done
+	 *	\return		int		Amount of payment already done, <0 if KO
+	 */
+	function getSommePaiement()
+	{
+		$table='paiementcharge';
+		$field='amount';
+
+		$sql = 'SELECT sum(amount) as amount';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
+		$sql.= ' WHERE '.$field.' = '.$this->id;
+
+		dolibarr_syslog("ChargeSociales::getSommePaiement sql=".$sql, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$this->db->free($resql);
+			return $obj->amount;
+		}
+		else
+		{
+			return -1;
+		}
+	}
 }
 
 

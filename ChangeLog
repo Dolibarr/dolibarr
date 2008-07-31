@@ -28,6 +28,7 @@ For users:
 - Can attach several files to email when sending an invoice, order or
   proposal by email.
 - More informations reported in system information pages.
+- Add a budget report.
 - New translation: Added spanish language.
 - Added a security audit report.
 - Other minor changes (features, look, fixes)

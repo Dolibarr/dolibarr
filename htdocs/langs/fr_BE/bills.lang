@@ -122,6 +122,7 @@ ConfirmClassifyPayedPartiallyAbandon=Ce choix sera celui dans le cas d'un mauvai
 ValidateBill=Valider facture
 NumberOfBills=Nb de factures
 NumberOfBillsByMonth=Nb de factures par mois
+ShowSocialContribution=Afficher charge sociale
 ShowBill=Afficher facture
 ShowInvoice=Afficher la facture
 ShowInvoiceReplace=Afficher la facture de remplacement

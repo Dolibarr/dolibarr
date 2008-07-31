@@ -35,10 +35,9 @@ require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/client.class.php");
 
 /**
- \class      Facture
- \brief      Classe permettant la gestion des factures clients
+ *	\class      Facture
+ *	\brief      Classe permettant la gestion des factures clients
  */
-
 class Facture extends CommonObject
 {
 	var $db;
@@ -1639,8 +1638,8 @@ class Facture extends CommonObject
 
 
 	/**
-	 * 	\brief     	Renvoie la sommes des paiements deja effectués
-	 *	\return		Montant deja versé, <0 si ko
+	 * 	\brief     	Return amount aof payments already done
+	 *	\return		int		Amount of payment already done, <0 if KO
 	 */
 	function getSommePaiement()
 	{
@@ -1661,6 +1660,7 @@ class Facture extends CommonObject
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
+			$this->db->free($resql);
 			return $obj->amount;
 		}
 		else

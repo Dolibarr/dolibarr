@@ -19,25 +19,25 @@
  */
 
 /**
-	    \file       htdocs/compta/bank/treso.php
-		\ingroup    banque
-		\brief      Page de détail du budget de trésorerie
-		\version    $Id$
-*/
+ \file       htdocs/compta/bank/treso.php
+ \ingroup    banque
+ \brief      Page de détail du budget de trésorerie
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
-require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT.'/chargesociales.class.php');
 
 $langs->load("banks");
 $langs->load("bills");
 
 if (!$user->admin && !$user->rights->banque)
-  accessforbidden();
+accessforbidden();
 
-$account=isset($_GET["account"])?$_GET["account"]:$_POST["account"];
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
 
@@ -46,14 +46,15 @@ $mesg='';
 
 
 /*
-* Affichage page
-*/
+ * View
+ */
 
 llxHeader();
 
 $societestatic = new Societe($db);
 $facturestatic=new Facture($db);
 $facturefournstatic=new FactureFournisseur($db);
+$socialcontribstatic=new ChargeSociales($db);
 
 $html = new Form($db);
 
@@ -69,11 +70,11 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	}
 
 	$acct = new Account($db);
-	if ($_GET["account"]) 
+	if ($_GET["account"])
 	{
 		$result=$acct->fetch($_GET["account"]);
 	}
-	if ($_GET["ref"]) 
+	if ($_GET["ref"])
 	{
 		$result=$acct->fetch(0,$_GET["ref"]);
 		$_GET["account"]=$acct->id;
@@ -81,13 +82,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 
 	/*
-	*
-	*
-	*/
+	 *
+	 *
+	 */
 	// Onglets
 	$head=bank_prepare_head($acct);
 	dolibarr_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0);
-	
+
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -103,173 +104,210 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '</table>';
 
 	print '<br>';
-	
-	
+
+
 	if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 
-	/*
-	* Calcul du solde du compte bancaire
-	*/
-	$sql = "SELECT sum( amount ) AS solde";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql.= " WHERE fk_account =".$account;
-
-	$result = $db->query($sql);
-	if ($result)
-	{
-		$obj = $db->fetch_object($result);
-		if ($obj) $solde = $obj->solde;
-	}
+	$solde = $acct->solde(0);
 
 	/*
-	* Affiche tableau des echeances à venir
-	*
-	*/
-
+	 * Affiche tableau des echeances à venir
+	 */
 	print '<table class="notopnoleftnoright" width="100% border="1">';
 
 	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Invoices").'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
-	print '<td>'.$langs->trans("DateEcheance").'</td>';
+	print '<td align="center">'.$langs->trans("DateEcheance").'</td>';
 	print '<td align="right">'.$langs->trans("Debit").'</td>';
 	print '<td align="right">'.$langs->trans("Credit").'</td>';
 	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '</tr>';
 
-	// Solde initial
-	print '<tr class="liste_total"><td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
+	$var=true;
+
+	// Solde actuel
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
+	print '<td align="right" nowrap>&nbsp;</td>';
+	print '</tr>';
+
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td align="left" colspan="5">&nbsp;</td>';
 	print '<td align="right" nowrap>'.price($solde).'</td>';
 	print '</tr>';
 
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").'</td>';
+	print '<td align="right" nowrap>&nbsp;</td>';
+	print '</tr>';
 
 
-	// Recuperation des factures clients et fournisseurs impayes
-	$sql = "SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.type, ".$db->pdate("f.date_lim_reglement")." as dlr,";
+	// Remainder to pay in future
+
+	// Customer invoices
+	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, ".$db->pdate("f.date_lim_reglement")." as dlr,";
 	$sql.= " s.rowid as socid, s.nom, s.fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-	$sql.= " WHERE f.paye = 0 AND fk_statut = 1";
+	$sql.= " WHERE f.paye = 0 AND fk_statut = 1";	// Not payed
 	$sql.= " ORDER BY dlr ASC";
-	//$sql.= " UNION DISTINCT";
-	$sql2= " SELECT ff.rowid as facid, ff.facnumber, (-1*ff.total_ttc) as total_ttc, ff.type, ".$db->pdate("ff.date_lim_reglement")." as dlr,";
+
+	// Supplier invoices
+	$sql2= " SELECT 'supplier_invoice' as family, ff.rowid as objid, ff.facnumber as ref, (-1*ff.total_ttc) as total_ttc, ff.type, ".$db->pdate("ff.date_lim_reglement")." as dlr,";
 	$sql2.= " s.rowid as socid, s.nom, s.fournisseur";
 	$sql2.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
-	$sql2.= " WHERE ff.paye = 0 AND fk_statut = 1";
+	$sql2.= " WHERE ff.paye = 0 AND fk_statut = 1";	// Not payed
 	$sql2.= " ORDER BY dlr ASC";
+
+	// Social contributions
+	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, ".$db->pdate("cs.date_ech")." as dlr";
+	$sql3.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
+	$sql3.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
+	$sql3.= " WHERE cs.paye = 0";	// Not payed
+	$sql3.= " ORDER BY dlr ASC";
+
+	$error=0;
+	$tab_sqlobj=array();
 	
-
+	// List customer invoices
 	$result = $db->query($sql);
-	$result2=false;
-	if ($result) 
+	if ($result)
 	{
-		$result2=$db->query($sql2);
-	}
-	if ($result2)
-	{
-		$tab_sqlobj=array();
-
 		$num = $db->num_rows($result);
 		for ($i = 0;$i < $num;$i++)
-			{
+		{
 			$sqlobj = $db->fetch_object($result);
 			$tab_sqlobj[] = $sqlobj;
 			$tab_sqlobjOrder[]= $sqlobj->dlr;
-			}
-		$db->free($result);	
-		
+		}
+		$db->free($result);
+	}
+	else $error++;
+	
+	// List supplier invoices
+	$result2=$db->query($sql2);
+	if ($result2)
+	{
 		$num = $db->num_rows($result2);
 		for ($i = 0;$i < $num;$i++)
-			{
+		{
 			$sqlobj = $db->fetch_object($result2);
 			$tab_sqlobj[] = $sqlobj;
 			$tab_sqlobjOrder[]= $sqlobj->dlr;
-			}
+		}
 		$db->free($result2);
-
-		array_multisort ($tab_sqlobjOrder,$tab_sqlobj);
-		
-		//Apply distinct filter
-		foreach ($tab_sqlobj as $key=>$value) { 
-		  $tab_sqlobj[$key] = "'" . serialize($value) . "'"; 
-		} 
-		$tab_sqlobj = array_unique($tab_sqlobj); 
-		foreach ($tab_sqlobj as $key=>$value) { 
-		  $tab_sqlobj[$key] = unserialize(trim($value, "'")); 
-		} 
-		
-		$num = sizeOf($tab_sqlobj);
+	}
+	else $error++;
 	
+	// List social contributions
+	$result3=$db->query($sql3);
+	if ($result3)
+	{
+		$num = $db->num_rows($result3);
+
+		for ($i = 0;$i < $num;$i++)
+		{
+			$sqlobj = $db->fetch_object($result3);
+			$tab_sqlobj[] = $sqlobj;
+			$tab_sqlobjOrder[]= $sqlobj->dlr;
+		}
+		$db->free($result3);
+	}
+	else $error++;
+	
+	
+	// Sort array
+	if (! $error)
+	{
+		array_multisort ($tab_sqlobjOrder,$tab_sqlobj);
+
+		//Apply distinct filter
+		foreach ($tab_sqlobj as $key=>$value) {
+			$tab_sqlobj[$key] = "'" . serialize($value) . "'";
+		}
+		$tab_sqlobj = array_unique($tab_sqlobj);
+		foreach ($tab_sqlobj as $key=>$value) {
+			$tab_sqlobj[$key] = unserialize(trim($value, "'"));
+		}
+
+		$num = sizeOf($tab_sqlobj);
+
 		$var=False;
 		//$num = $db->num_rows($result);
 		$i = 0;
 		while ($i < $num)
 		{
 			$paiement = '';
+			$ref = '';
+			$refcomp = '';
+			
 			$var=!$var;
 			//$obj = $db->fetch_object($result);
 			$obj = array_shift($tab_sqlobj);
-			
-			$societestatic->id = $obj->socid;
-			$societestatic->nom = $obj->nom;
-
-			// Todo: Ajouter gestion des avoirs fournisseurs, champ ff.type = 2
-			if ($obj->fournisseur == 1 && ($obj->total_ttc < 0 && $obj->type != 2) || ($obj->total_ttc > 0 && $obj->type == 2))
-			{
-				$facturefournstatic->ref=$obj->facnumber;
-				$facturefournstatic->id=$obj->facid;
-				$facturefournstatic->type=$obj->type;
-				$facture = $facturefournstatic->getNomUrl(1,'');
 				
-				// On recherche les paiements deja effectue pour les deduires
-				$sqlp = "SELECT sum(-1*amount) as paiement";
-				$sqlp.= " FROM ".MAIN_DB_PREFIX.'paiementfourn_facturefourn';
-				$sqlp.= " WHERE fk_facturefourn = ".$obj->facid;
-				$resql = $db->query($sqlp);
-				if ($resql)
+			if ($obj->family == 'supplier_invoice')
+			{
+				// \TODO This code is to avoid to count suppliers credit note (ff.type = 2)
+				// Ajouter gestion des avoirs fournisseurs, champ 
+				if (($obj->total_ttc < 0 && $obj->type != 2)
+				 || ($obj->total_ttc > 0 && $obj->type == 2))
 				{
-					$objp = $db->fetch_object($resql);
-					if ($objp) $paiement = $objp->paiement;
+					$facturefournstatic->ref=$obj->ref;
+					$facturefournstatic->id=$obj->objid;
+					$facturefournstatic->type=$obj->type;
+					$ref = $facturefournstatic->getNomUrl(1,'');
+
+					$societestatic->id = $obj->socid;
+					$societestatic->nom = $obj->nom;
+					$refcomp=$societestatic->getNomUrl(0,'',24);
+
+					$paiement = -1*$facturefournstatic->getSommePaiement();	// Payment already done
 				}
 			}
-			else
+			if ($obj->family == 'invoice')
 			{
-				$facturestatic->ref=$obj->facnumber;
-				$facturestatic->id=$obj->facid;
+				$facturestatic->ref=$obj->ref;
+				$facturestatic->id=$obj->objid;
 				$facturestatic->type=$obj->type;
-				$facture = $facturestatic->getNomUrl(1,'');
-				
-				// On recherche les paiements deja effectue pour les deduires
-				$sqlp = "SELECT sum(amount) as paiement";
-				$sqlp.= " FROM ".MAIN_DB_PREFIX.'paiement_facture';
-				$sqlp.= " WHERE fk_facture = ".$obj->facid;
-				$resql = $db->query($sqlp);
-				if ($resql)
-				{
-					$objp = $db->fetch_object($resql);
-					if ($objp) $paiement = $objp->paiement;
-				}
-			}
+				$ref = $facturestatic->getNomUrl(1,'');
 
+				$societestatic->id = $obj->socid;
+				$societestatic->nom = $obj->nom;
+				$refcomp=$societestatic->getNomUrl(0,'',24);
+
+				$paiement = $facturestatic->getSommePaiement();	// Payment already done
+			}
+			if ($obj->family == 'social_contribution')
+			{
+				$socialcontribstatic->ref=$obj->ref;
+				$socialcontribstatic->id=$obj->objid;
+				$socialcontribstatic->lib=$obj->type;
+				$ref = $socialcontribstatic->getNomUrl(1,24);
+			
+				$paiement = $socialcontribstatic->getSommePaiement();	// Payment already done
+			}
+			
 			$total_ttc = $obj->total_ttc;
 			if ($paiement) $total_ttc = $obj->total_ttc - $paiement;
 			$solde += $total_ttc;
 
 			print "<tr $bc[$var]>";
-			print "<td>".$facture."</td>";
-			print "<td>".$societestatic->getNomUrl(0,'',16)."</td>";
-			print "<td>".dolibarr_print_date($obj->dlr,"day")."</td>";
-
+			print "<td>".$ref."</td>";
+			print "<td>".$refcomp."</td>";
+			print '<td align="center">'.dolibarr_print_date($obj->dlr,"day")."</td>";
 			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price($total_ttc)."</td><td>&nbsp;</td>"; };
-			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($total_ttc)."</td>"; };			
+			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($total_ttc)."</td>"; };
 			print "<td align=\"right\">".price($solde)."</td>";
 			print "</tr>";
 			$i++;
 		}
-		//$db->free($result);
 	}
 	else
 	{
