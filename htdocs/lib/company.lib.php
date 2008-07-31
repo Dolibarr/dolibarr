@@ -615,41 +615,56 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 {
 	global $conf;
 
-	//$paramfreetext='FACTURE_FREE_TEXT';
-
+	$outputlangs->load("dict");
+	
 	// Line of free text
 	$ligne=(! empty($conf->global->$paramfreetext))?$conf->global->$paramfreetext:"";
 
 	// First line of company infos
+
+	// Juridical status
 	$ligne1="";
 	if ($fromcompany->forme_juridique_code)
 	{
 		$ligne1.=($ligne1?" - ":"").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
 	}
+	// Capital
 	if ($fromcompany->capital)
 	{
 		$ligne1.=($ligne1?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
 	}
-	// Prof Id
+	// Prof Id 1
 	if ($fromcompany->profid1 && ($fromcompany->pays_code != 'FR' || ! $fromcompany->profid2))
 	{
-		$ligne1.=($ligne1?" - ":"").$outputlangs->transcountrynoentities("ProfId1",$fromcompany->pays_code).": ".$fromcompany->profid1;
+		$field=$outputlangs->transcountrynoentities("ProfId1",$fromcompany->pays_code);
+		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		$ligne1.=($ligne1?" - ":"").$field.": ".$fromcompany->profid1;
 	}
+	// Prof Id 2
 	if ($fromcompany->profid2)
 	{
-		$ligne1.=($ligne1?" - ":"").$outputlangs->transcountrynoentities("ProfId2",$fromcompany->pays_code).": ".$fromcompany->profid2;
+		$field=$outputlangs->transcountrynoentities("ProfId2",$fromcompany->pays_code);
+		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		$ligne1.=($ligne1?" - ":"").$field.": ".$fromcompany->profid2;
 	}
 
 	// Second line of company infos
 	$ligne2="";
+	// Prof Id 3
 	if ($fromcompany->profid3)
 	{
-		$ligne2.=($ligne2?" - ":"").$outputlangs->transcountrynoentities("ProfId3",$fromcompany->pays_code).": ".$fromcompany->profid3;
+		$field=$outputlangs->transcountrynoentities("ProfId3",$fromcompany->pays_code);
+		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		$ligne2.=($ligne2?" - ":"").$field.": ".$fromcompany->profid3;
 	}
+	// Prof Id 4
 	if ($fromcompany->profid4)
 	{
-		$ligne2.=($ligne2?" - ":"").$outputlangs->transcountrynoentities("ProfId4",$fromcompany->pays_code).": ".$fromcompany->profid4;
+		$field=$outputlangs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
+		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
+		$ligne2.=($ligne2?" - ":"").$field.": ".$fromcompany->profid4;
 	}
+	// IntraCommunautary VAT
 	if ($fromcompany->tva_intra != '')
 	{
 		$ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
