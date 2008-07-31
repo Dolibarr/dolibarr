@@ -721,17 +721,6 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell(80, 4, $langs->transnoentities("Web").": ".FAC_PDF_WWW);
 		}
 
-		$pdf->SetFont('Arial','',7);
-		if (defined("MAIN_INFO_SIREN") && MAIN_INFO_SIREN)
-		{
-			$pdf->MultiCell(80, 4, $langs->transcountrynoentities("ProfId1",$this->emetteur->pays_code).": ".MAIN_INFO_SIREN);
-		}
-		elseif (defined("MAIN_INFO_SIRET") && MAIN_INFO_SIRET)
-		{
-			$pdf->MultiCell(80, 4, $langs->transcountrynoentities("ProfId2",$this->emetteur->pays_code).": ".MAIN_INFO_SIRET);
-		}
-
-
 		/*
 		 * Client
 		 */
