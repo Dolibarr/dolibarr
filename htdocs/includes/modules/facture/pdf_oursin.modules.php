@@ -322,11 +322,11 @@ class pdf_oursin extends ModelePDFFactures
 						$pdf->SetXY ($this->marges['g']+60, $cury+5);
 						$pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
 
-						$pdf->SetXY ($this->marges['g'], $cury+15);
+						$pdf->SetXY ($this->marges['g'], $cury+14);
 						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
-						$pdf->SetXY ($this->marges['g'], $cury+25);
+						$pdf->SetXY ($this->marges['g'], $cury+19);
 						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
-						$pdf->SetXY ($this->marges['g'], $cury+30);
+						$pdf->SetXY ($this->marges['g'], $cury+24);
 						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BIC").' : ' . $account->bic, 0, 'L', 0);
 					}
 				}
@@ -441,7 +441,7 @@ class pdf_oursin extends ModelePDFFactures
 		else
 		{
 			$this->error=$outputlangs->trans("ErrorSQL")." sql=".$sql;
-			dolibarr_syslog($this->db,$this->error);
+			dolibarr_syslog($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -502,7 +502,7 @@ class pdf_oursin extends ModelePDFFactures
 		else
 		{
 			$this->error=$outputlangs->trans("ErrorSQL")." sql=".$sql;
-			dolibarr_syslog($this->db,$this->error);
+			dolibarr_syslog($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 
