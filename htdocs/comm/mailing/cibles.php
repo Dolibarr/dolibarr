@@ -128,6 +128,8 @@ if ($_POST["button_removefilter"])
 	$search_email='';
 }
 
+
+
 /*
  * Liste des destinataires
  */
@@ -164,7 +166,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
     print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from).'</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
-    print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>').'</td></tr>';
+    print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'0').'</td></tr>';
     print '</table>';
     
     print "</div>";
@@ -183,7 +185,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		if ($user->admin) print ' '.info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1);
 		print '</td>';
         print '<td align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
-        print '<td align="center">'.$langs->trans("Filter").'</td>';
+        print '<td align="left">'.$langs->trans("Filter").'</td>';
         print '<td align="center" width="120">&nbsp;</td>';
         print "</tr>\n";
         
@@ -231,7 +233,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	                        $var = !$var;
 	                        print '<tr '.$bc[$var].'>';
 	                        
-	                        if ($mil->statut == 0) print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST">';
+	                        if ($mil->statut == 0) print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 	                        
 	                        print '<td>';
 	                        if (! $obj->picto) $obj->picto='generic';
@@ -255,13 +257,13 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	                        }
 	                        print '</td>';
 	
-	                        print '<td align="center">';
+	                        print '<td align="left">';
 	                        $filter=$obj->formFilter();
 	                        if ($filter) print $filter;
 	                        else print $langs->trans("None");
 	                        print '</td>';
 	        
-	                        print '<td align="center">';
+	                        print '<td align="right">';
 	                        if ($mil->statut == 0)
 	                        {
 	                            print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
@@ -287,8 +289,13 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 		print '<br>';
 		
         print '<form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST">';
-		print_titre($langs->trans("ToClearAllRecipientsClickHere").'<br><input type="submit" class="button" value="'.$langs->trans("TargetsReset").'">');
-        print '</form>';
+		print_titre($langs->trans("ToClearAllRecipientsClickHere"));
+        print '<table class="noborder" width="100%">';
+        print '<tr class="liste_titre">';
+		print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("TargetsReset").'"></td>';
+		print '</tr>';
+		print '</table>';
+		print '</form>';
         print '<br>';
     }
     
@@ -319,7 +326,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         if ($search_nom)    $addu.= "&amp;search_nom=".urlencode($search_nom);
         if ($search_prenom) $addu.= "&amp;search_prenom=".urlencode($search_prenom);
         if ($search_email)  $addu.= "&amp;search_email=".urlencode($search_email);
-        print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$addu,$sortfield,$sortorder,"",$num);
+        print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$addu,$sortfield,$sortorder,"",$num,$mil->nbemail);
 
         if ($page)			$addu.= "&amp;page=".$page;
         print '<table class="noborder" width="100%">';

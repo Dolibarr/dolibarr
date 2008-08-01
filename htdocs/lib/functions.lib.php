@@ -1620,7 +1620,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	}
 	else 
 	{
-		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Failed to mode ".$src_file." to ".$file_name, LOG_ERR);			
+		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);			
 		return -3;
 	}
 }

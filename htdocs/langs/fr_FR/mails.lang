@@ -59,9 +59,11 @@ NoAttachedFiles=Aucun fichier joint
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts des tiers (prospects, clients, fournisseurs...)
-MailingModuleDescDolibarrUsers=Utilisateurs de Dolibarr ayant un e-mail
-MailingModuleDescFundationMembers=Adhérents ayant un e-mail
+MailingModuleDescDolibarrUsers=Utilisateurs de Dolibarr avec e-mail
+MailingModuleDescFundationMembers=Adhérents avec e-mail
+MailingModuleDescEmailsFromFile=EMails issus d'un fichier
 
+LineInFile=Ligne %s du fichier
 RecipientSelectionModules=Modules de sélection des destinataires
 MailSelectedRecipients=Destinataires sélectionnés
 MailingArea=Espace mailings

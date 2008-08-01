@@ -15,20 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- *
- * L'utilisation d'adresses de courriers électroniques dans les opérations
- * de prospection commerciale est subordonnée au recueil du consentement 
- * préalable des personnes concernées.
- *
- * Le dispositif juridique applicable a été introduit par l'article 22 de 
- * la loi du 21 juin 2004  pour la confiance dans l'économie numérique.
- *
- * Les dispositions applicables sont définies par les articles L. 34-5 du 
- * code des postes et des télécommunications et L. 121-20-5 du code de la 
- * consommation. L'application du principe du consentement préalable en 
- * droit français résulte de la transposition de l'article 13 de la Directive 
- * européenne du 12 juillet 2002 « Vie privée et communications électroniques ». 
  */
 
 /**
@@ -129,7 +115,7 @@ class mailing_pomme extends MailingTargets
             $i = 0;
             $j = 0;
 
-            dolibarr_syslog("pomme.modules.php: mailing $num cibles trouvées");
+            dolibarr_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
 
             $old = '';
             while ($i < $num)

@@ -169,7 +169,7 @@ class MailingTargets
             }
         }
 
-        dolibarr_syslog("mailing-prepare: mailing $j cibles ajoutées");
+        dolibarr_syslog("MailingTargets::add_to_target: mailing ".$j." targets added");
 
         $this->update_nb($mailing_id);
 

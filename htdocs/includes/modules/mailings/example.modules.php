@@ -28,7 +28,8 @@ class mailing_example extends MailingTargets
 {
     // CHANGE THIS: Put here a name not already used
     var $name='example';
-    // CHANGE THIS: Put here a description of your selector module
+    // CHANGE THIS: Put here a description of your selector module.
+    // This label is used if no translation for MailingModuleDescXXX where XXX=name is found
     var $desc='Put here a description';
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
     var $require_admin=0;

@@ -350,7 +350,11 @@ class Conf
 		// Module ECM
 		$this->ecm->enabled=defined("MAIN_MODULE_ECM")?MAIN_MODULE_ECM:0;
 		$this->ecm->dir_output=DOL_DATA_ROOT."/ecm";
-
+		// Module emailing
+		$this->mailings->enabled=defined("MAIN_MODULE_MAILING")?MAIN_MODULE_MAILING:0;
+		$this->mailings->dir_temp=DOL_DATA_ROOT."/mailings/temp";
+		
+		
 		/*
 		 * Modification de quelques variable de conf en fonction des Constantes
 		 */

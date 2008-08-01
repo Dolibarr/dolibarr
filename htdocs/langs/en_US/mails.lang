@@ -61,7 +61,9 @@ NoAttachedFiles=No attached files
 MailingModuleDescContactCompanies=Unique contacts of all third parties
 MailingModuleDescDolibarrUsers=All Dolibarr users with emails
 MailingModuleDescFundationMembers=Fundation members with emails
+MailingModuleDescEmailsFromFile=EMails from a file
 
+LineInFile=Line %s in file
 RecipientSelectionModules=Defined requests for recipients' selection
 MailSelectedRecipients=Selected recipients
 MailingArea=EMailings area

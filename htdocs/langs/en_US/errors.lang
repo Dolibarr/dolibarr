@@ -17,6 +17,7 @@ ErrorSupplierCodeRequired=Supplier code required
 ErrorSupplierCodeAlreadyUsed=Supplier code already used
 ErrorBadParameters=Bad parameters
 ErrorFailedToWriteInDir=Failed to write in directory %s
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 UserCannotBeDelete=User can not be deleted. May be it is associated on Dolibarr entities.
 ErrorFieldsRequired=Some required fields were not filled.
 ErrorFailedToCreateDir=Failed to create a directory. Check that Web server user has permissions to write into Dolibarr documents directory. If parameter <b>safe_mode</b> is enabled on this PHP, check that Dolibarr php files owns to web server user (or group).
