@@ -74,8 +74,8 @@ class Skeleton_class // extends CommonObject
 		$error=0;
     	
 		// Clean parameters
-        $this->prop1=trim($this->prop1);
-        $this->prop2=trim($this->prop2);
+        if (isset($this->prop1)) $this->prop1=trim($this->prop1);
+        if (isset($this->prop2)) $this->prop2=trim($this->prop2);
 		//...
 
 		// Check parameters
@@ -134,6 +134,49 @@ class Skeleton_class // extends CommonObject
 		}
     }
 
+    
+    /**
+     *    \brief      Load object in memory from database
+     *    \param      id          id object
+     *    \return     int         <0 if KO, >0 if OK
+     */
+    function fetch($id)
+    {
+    	global $langs;
+        $sql = "SELECT";
+		$sql.= " t.rowid,";
+		$sql.= " t.field1,";
+		$sql.= " t.field2";
+		//...
+        $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
+        $sql.= " WHERE t.rowid = ".$id;
+    
+    	dolibarr_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            if ($this->db->num_rows($resql))
+            {
+                $obj = $this->db->fetch_object($resql);
+    
+                $this->id    = $obj->rowid;
+                $this->prop1 = $obj->field1;
+                $this->prop2 = $obj->field2;
+				//...
+            }
+            $this->db->free($resql);
+            
+            return 1;
+        }
+        else
+        {
+      	    $this->error="Error ".$this->db->lasterror();
+            dolibarr_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+            return -1;
+        }
+    }
+    
+
     /**
      *      \brief      Update database
      *      \param      user        	User that modify
@@ -146,8 +189,8 @@ class Skeleton_class // extends CommonObject
 		$error=0;
     	
 		// Clean parameters
-        $this->prop1=trim($this->prop1);
-        $this->prop2=trim($this->prop2);
+        if (isset($this->prop1)) $this->prop1=trim($this->prop1);
+        if (isset($this->prop2)) $this->prop2=trim($this->prop2);
 		//...
 
 		// Check parameters
@@ -155,8 +198,8 @@ class Skeleton_class // extends CommonObject
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."mytable SET";
-        $sql.= " field1='".addslashes($this->field1)."',";
-        $sql.= " field2='".addslashes($this->field2)."'";
+        $sql.= " field1=".(isset($this->field1)?"'".addslashes($this->field1)."'":"null").",";
+        $sql.= " field2=".(isset($this->field2)?"'".addslashes($this->field2)."'":"null")."";
 		//...
         $sql.= " WHERE rowid=".$this->id;
 
@@ -201,48 +244,6 @@ class Skeleton_class // extends CommonObject
     }
   
   
-    /**
-     *    \brief      Load object in memory from database
-     *    \param      id          id object
-     *    \return     int         <0 if KO, >0 if OK
-     */
-    function fetch($id)
-    {
-    	global $langs;
-        $sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.field1,";
-		$sql.= " t.field2";
-		//...
-        $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
-        $sql.= " WHERE t.rowid = ".$id;
-    
-    	dolibarr_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if ($this->db->num_rows($resql))
-            {
-                $obj = $this->db->fetch_object($resql);
-    
-                $this->id    = $obj->rowid;
-                $this->prop1 = $obj->field1;
-                $this->prop2 = $obj->field2;
-				//...
-            }
-            $this->db->free($resql);
-            
-            return 1;
-        }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
-            return -1;
-        }
-    }
-    
-    
  	/**
 	*   \brief      Delete object in database
     *	\param      user        	User that delete

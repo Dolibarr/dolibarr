@@ -50,7 +50,7 @@ $error=0;
 
 
 // -------------------- START OF YOUR CODE HERE --------------------
-
+@set_time_limit(0);
 print "***** ".$script_file." (".$version.") *****\n";
 
 // Check parameters
@@ -58,53 +58,50 @@ if (! isset($argv[1])) {
     print "Usage: ".$script_file." param1 param2 ...\n";
     exit;
 }
-@set_time_limit(0);
 
 // Show parameters
 print 'Argument 1='.$argv[1]."\n";
 print 'Argument 2='.$argv[2]."\n";
 
 
+// Examples for manipulating class skeleton_class
+require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
+$myobject=new Skeleton_class($db);
+
 // Example for inserting creating object in database
 /*
-require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
 dolibarr_syslog($script_file." CREATE", LOG_DEBUG);
-$myobject=new Skeleton_class($db);
+$myobject->prop1='value_prop1';
+$myobject->prop2='value_prop2';
 $id=$myobject->create($user);
 if ($id < 0) dolibarr_print_error($db,$myobject->error);
+else print "Object created with id=".$id."\n";
 */
-
 
 // Example for reading object from database
 /*
-require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
 dolibarr_syslog($script_file." FETCH", LOG_DEBUG);
-$myobject=new Skeleton_class($db);
-$id=1;
 $result=$myobject->fetch($id);
 if ($result < 0) dolibarr_print_error($db,$myobject->error);
+else print "Object with id=".$id." loaded\n";
 */
 
-
-// Example for updating object in database
+// Example for updating object in database ($myobject must have been loaded by a fetch before)
 /*
-require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
 dolibarr_syslog($script_file." UPDATE", LOG_DEBUG);
-$myobject=new Skeleton_class($db);
 $myobject->prop1='newvalue_prop1';
 $myobject->prop2='newvalue_prop2';
 $result=$myobject->update($user);
 if ($result < 0) dolibarr_print_error($db,$myobject->error);
+else print "Object with id ".$myobject->id." updated\n";
 */
 
-
-// Example for deleting object in database
+// Example for deleting object in database ($myobject must have been loaded by a fetch before)
 /*
-require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
 dolibarr_syslog($script_file." DELETE", LOG_DEBUG);
-$myobject=new Skeleton_class($db);
 $result=$myobject->delete($user);
 if ($result < 0) dolibarr_print_error($db,$myobject->error);
+else print "Object with id ".$myobject->id." deleted\n";
 */
 
 

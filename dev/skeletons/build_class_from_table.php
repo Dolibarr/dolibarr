@@ -181,12 +181,12 @@ foreach($property as $key => $prop)
 {
 	if ($prop['field'] != 'rowid' && ! $prop['istime'])
 	{
-		$varprop.="\t\t\$this->".$prop['field']."=trim(\$this->".$prop['field'].");";
+		$varprop.="\t\tif (isset(\$this->".$prop['field'].")) \$this->".$prop['field']."=trim(\$this->".$prop['field'].");";
 		$varprop.="\n";
 	}
 }
-$targetcontent=preg_replace('/\$this->prop1=trim\(\$this->prop1\);/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/\$this->prop2=trim\(\$this->prop2\);/', '', $targetcontent);
+$targetcontent=preg_replace('/if \(isset\(\$this->prop1\)\) \$this->prop1=trim\(\$this->prop1\);/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/if \(isset\(\$this->prop2\)\) \$this->prop2=trim\(\$this->prop2\);/', '', $targetcontent);
 
 // Substitute insert into parameters
 $varprop="\n";
@@ -267,10 +267,12 @@ foreach($property as $key => $prop)
 		}
 		else
 		{
-			$varprop.="'\".";
-			if ($prop['ischar']) $varprop.="addslashes(\$this->".$prop['field'].")";
-			else $varprop.="\$this->".$prop['field'];
-			$varprop.=".\"'";
+			$varprop.="\".";
+			// $sql.= " field1=".(isset($this->field1)?"'".addslashes($this->field1)."'":"null").",";
+			if ($prop['ischar']) $varprop.='(isset($this->'.$prop['field'].')?"\'".addslashes($this->'.$prop['field'].')."\'":"null")';
+			// $sql.= " field1=".(isset($this->field1)?$this->field1:"null").",";
+			else $varprop.='(isset($this->'.$prop['field'].')?$this->'.$prop['field'].':"null")';
+			$varprop.=".\"";
 		}
 
 		if ($i < sizeof($property)) $varprop.=',';
@@ -278,8 +280,8 @@ foreach($property as $key => $prop)
 		$varprop.="\n";
 	}
 }
-$targetcontent=preg_replace('/\$sql.= " field1=\'".addslashes\(\$this->field1\)."\',";/', $varprop, $targetcontent);
-$targetcontent=preg_replace('/\$sql.= " field2=\'".addslashes\(\$this->field2\)."\'";/', '', $targetcontent);
+$targetcontent=preg_replace('/\$sql.= " field1=".\(isset\(\$this->field1\)\?"\'".addslashes\(\$this->field1\)."\'":"null"\).",";/', $varprop, $targetcontent);
+$targetcontent=preg_replace('/\$sql.= " field2=".\(isset\(\$this->field2\)\?"\'".addslashes\(\$this->field2\)."\'":"null"\)."";/', '', $targetcontent);
 
 // Substitute select parameters
 $varprop="\n";
