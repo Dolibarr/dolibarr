@@ -422,7 +422,7 @@ class Ldap
 		if ($result <= 0)
 		{
 			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection)." ".$this->error;
-			dolibarr_syslog("Ldap::update ".$this->error,LOG_ERROR);
+			dolibarr_syslog("Ldap::update ".$this->error,LOG_ERR);
 			//print_r($info);
 			return -1;
 		}

@@ -518,7 +518,7 @@ class Adherent extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
+					dolibarr_syslog("Adherent::update ".$this->error,LOG_ERR);
 					$this->db->rollback();
 					return -2;
 				}
@@ -568,7 +568,7 @@ class Adherent extends CommonObject
 						if ($result < 0)
 						{
 							$this->error=$luser->error;
-							dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
+							dolibarr_syslog("Adherent::update ".$this->error,LOG_ERR);
 							$error++;
 						}
 					}
@@ -610,7 +610,7 @@ class Adherent extends CommonObject
 			$this->db->rollback();
 
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
+			dolibarr_syslog("Adherent::update ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
@@ -814,7 +814,7 @@ class Adherent extends CommonObject
 						if ($result < 0)
 						{
 							$this->error=$luser->error;
-							dolibarr_syslog("Adherent::password ".$this->error,LOG_ERROR);
+							dolibarr_syslog("Adherent::password ".$this->error,LOG_ERR);
 							$error++;
 						}
 					}

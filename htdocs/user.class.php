@@ -1042,7 +1042,7 @@ class User extends CommonObject
 						if ($result < 0)
 						{
 							$this->error=$luser->error;
-							dolibarr_syslog("User::update ".$this->error,LOG_ERROR);
+							dolibarr_syslog("User::update ".$this->error,LOG_ERR);
 							$error++;
 						}
 					}
@@ -1080,7 +1080,7 @@ class User extends CommonObject
 			$this->db->rollback();
 
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("User::update ".$this->error,LOG_ERROR);
+			dolibarr_syslog("User::update ".$this->error,LOG_ERR);
 			return -1;
 		}
 
@@ -1187,7 +1187,7 @@ class User extends CommonObject
 							if ($result < 0)
 							{
 								$this->error=$adh->error;
-								dolibarr_syslog("User::password ".$this->error,LOG_ERROR);
+								dolibarr_syslog("User::password ".$this->error,LOG_ERR);
 								$error++;
 							}
 						}

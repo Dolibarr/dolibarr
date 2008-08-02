@@ -61,14 +61,14 @@ if (! isset($argv[1])) {
 @set_time_limit(0);
 
 // Show parameters
-// print 'Arg1='.$argv[1]."\n";
-// print 'Arg2='.$argv[2]."\n";
+print 'Argument 1='.$argv[1]."\n";
+print 'Argument 2='.$argv[2]."\n";
 
 
 // Example for inserting creating object in database
 /*
 require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
-dolibarr_syslog($script_file." DELETE", LOG_DEBUG);
+dolibarr_syslog($script_file." CREATE", LOG_DEBUG);
 $myobject=new Skeleton_class($db);
 $id=$myobject->create($user);
 if ($id < 0) dolibarr_print_error($db,$myobject->error);

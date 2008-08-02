@@ -364,6 +364,7 @@ $outfile='out.'.$classmin.'_script.php';
 $targetcontent=$sourcecontent;
 
 // Substitute class name
+$targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
 $targetcontent=preg_replace('/skeleton_script\.php/', $classmin.'_script.php', $targetcontent);
 $targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
 $targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);

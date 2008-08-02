@@ -1420,7 +1420,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 			else
 			{
-				dolibarr_syslog("functions.lib.php::restrictedArea sql=".$sql, LOG_ERROR);
+				dolibarr_syslog("functions.lib.php::restrictedArea sql=".$sql, LOG_ERR);
 				accessforbidden();
 			}
 		}
@@ -1467,12 +1467,12 @@ function accessforbidden($message='',$printheader=1)
 
 
 /**
- \brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remont�e des bugs.
- On doit appeler cette fonction quand une erreur technique bloquante est rencontr�e.
- Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
- renvoyer leur erreur par l'interm�diaire de leur propri�t� "error".
- \param      db      Handler de base utilis�
- \param      error	Chaine erreur ou tableau de chaines erreur compl�mentaires a afficher
+ *	\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostic et la remont�e des bugs.
+ *				On doit appeler cette fonction quand une erreur technique bloquante est rencontree.
+ *				Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
+ *				renvoyer leur erreur par l'intermediaire de leur propriete "error".
+ *				\param      db      Database handler
+ *				\param      error	Chaine erreur ou tableau de chaines erreur complementaires a afficher
  */
 function dolibarr_print_error($db='',$error='')
 {
@@ -1513,19 +1513,19 @@ function dolibarr_print_error($db='',$error='')
 			print "<br>\n";
 			print "<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
 			print "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
-			print "<b>".$langs->trans("ReturnCodeLastAccess").":</b> ".$db->errno()."<br>\n";
-			print "<b>".$langs->trans("InformationLastAccess").":</b> ".$db->error()."<br>\n";
+			print "<b>".$langs->trans("ReturnCodeLastAccess").":</b> ".$db->lasterrno()."<br>\n";
+			print "<b>".$langs->trans("InformationLastAccess").":</b> ".$db->lasterror()."<br>\n";
 		}
 		else                            // Mode CLI
 		{
 			print $langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
 			print $langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
-			print $langs->transnoentities("ReturnCodeLastAccess").":\n".$db->errno()."\n";
-			print $langs->transnoentities("InformationLastAccess").":\n".$db->error()."\n";
+			print $langs->transnoentities("ReturnCodeLastAccess").":\n".$db->lasterrno()."\n";
+			print $langs->transnoentities("InformationLastAccess").":\n".$db->lasterror()."\n";
 
 		}
 		$syslog.=", sql=".$db->lastquery();
-		$syslog.=", db_error=".$db->error();
+		$syslog.=", db_error=".$db->lasterror();
 	}
 
 	if ($error)
@@ -1550,7 +1550,7 @@ function dolibarr_print_error($db='',$error='')
 		}
 	}
 
-	dolibarr_syslog("Error $syslog",LOG_ERROR);
+	dolibarr_syslog("Error ".$syslog, LOG_ERR);
 }
 
 
@@ -1730,7 +1730,7 @@ function dol_delete_file($file)
 	{
 		$ok=unlink($filename);
 		if ($ok) dolibarr_syslog("Removed file $filename",LOG_DEBUG);
-		else dolibarr_syslog("Failed to remove file $filename",LOG_ERROR);
+		else dolibarr_syslog("Failed to remove file $filename",LOG_ERR);
 	}
 	return $ok;
 }
