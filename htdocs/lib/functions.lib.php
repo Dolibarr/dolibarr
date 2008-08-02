@@ -1513,15 +1513,15 @@ function dolibarr_print_error($db='',$error='')
 			print "<br>\n";
 			print "<b>".$langs->trans("DatabaseTypeManager").":</b> ".$db->type."<br>\n";
 			print "<b>".$langs->trans("RequestLastAccessInError").":</b> ".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
-			print "<b>".$langs->trans("ReturnCodeLastAccess").":</b> ".$db->lasterrno()."<br>\n";
-			print "<b>".$langs->trans("InformationLastAccess").":</b> ".$db->lasterror()."<br>\n";
+			print "<b>".$langs->trans("ReturnCodeLastAccessInError").":</b> ".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."<br>\n";
+			print "<b>".$langs->trans("InformationLastAccessInError").":</b> ".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."<br>\n";
 		}
 		else                            // Mode CLI
 		{
 			print $langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
 			print $langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
-			print $langs->transnoentities("ReturnCodeLastAccess").":\n".$db->lasterrno()."\n";
-			print $langs->transnoentities("InformationLastAccess").":\n".$db->lasterror()."\n";
+			print $langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."\n";
+			print $langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."\n";
 
 		}
 		$syslog.=", sql=".$db->lastquery();
