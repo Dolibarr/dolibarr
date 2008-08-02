@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,62 +33,63 @@ if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer $script_file en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    echo "Error: You ar usingr PH for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
 // Include Dolibarr environment
 require_once($path."../../htdocs/master.inc.php");
-// After this $db is a defined handler to database.
+// After this $db is an opened handler to database. We close it at end of file.
 
-// Main
-$version='$Revision$';
-@set_time_limit(0);
-$error=0;
-
+// Load main language strings
 $langs->load("main");
 
-
-print "***** $script_file ($version) *****\n";
+// Global variables
+$version='$Revision$';
+$error=0;
 
 
 // -------------------- START OF YOUR CODE HERE --------------------
 
+print "***** ".$script_file." (".$version.") *****\n";
+
 // Check parameters
 if (! isset($argv[1])) {
-    print "Usage: $script_file param1 param2 ...\n";
+    print "Usage: ".$script_file." param1 param2 ...\n";
     exit;
 }
+@set_time_limit(0);
 
 // Show parameters
 // print 'Arg1='.$argv[1]."\n";
 // print 'Arg2='.$argv[2]."\n";
 
 
-// An example of loading an object
+// Example for inserting creating object in database
 /*
 require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
-dolibarr_syslog("***** $script_file FETCH");
+dolibarr_syslog($script_file." DELETE", LOG_DEBUG);
 $myobject=new Skeleton_class($db);
-$result=$myobject->fetch(1,$user);
+$id=$myobject->create($user);
+if ($id < 0) dolibarr_print_error($db,$myobject->error);
+*/
+
+
+// Example for reading object from database
+/*
+require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
+dolibarr_syslog($script_file." FETCH", LOG_DEBUG);
+$myobject=new Skeleton_class($db);
+$id=1;
+$result=$myobject->fetch($id);
 if ($result < 0) dolibarr_print_error($db,$myobject->error);
 */
 
 
-// An example of inserting an object in database
+// Example for updating object in database
 /*
 require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
-dolibarr_syslog("***** $script_file DELETE");
-$myobject=new Skeleton_class($db);
-$result=$myobject->delete($user);
-if ($result < 0) dolibarr_print_error($db,$myobject->error);
-*/
-
-
-// An example of updating an object in database
-/*
-require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
-dolibarr_syslog("***** $script_file UPDATE");
+dolibarr_syslog($script_file." UPDATE", LOG_DEBUG);
 $myobject=new Skeleton_class($db);
 $myobject->prop1='newvalue_prop1';
 $myobject->prop2='newvalue_prop2';
@@ -97,24 +98,24 @@ if ($result < 0) dolibarr_print_error($db,$myobject->error);
 */
 
 
-// An example of deleting an object in database
+// Example for deleting object in database
 /*
 require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
-dolibarr_syslog("***** $script_file DELETE");
+dolibarr_syslog($script_file." DELETE", LOG_DEBUG);
 $myobject=new Skeleton_class($db);
 $result=$myobject->delete($user);
 if ($result < 0) dolibarr_print_error($db,$myobject->error);
 */
 
 
-// An example of a direct SQL read
+// An example of a direct SQL read without using the fetch method
 /*
 $sql = "SELECT field1, field2";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 $sql.= " WHERE field3 = 'xxx'";
 $sql.= " ORDER BY field1 ASC";
 
-dolibarr_syslog("***** $script_file sql=".$sql);
+dolibarr_syslog($script_file." sql=".$sql, LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -145,6 +146,7 @@ else
 
 // -------------------- END OF YOUR CODE --------------------
 
+$db->close();
 
 return $error;
 ?>

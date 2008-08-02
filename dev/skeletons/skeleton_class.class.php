@@ -20,7 +20,7 @@
 /**
         \file       dev/skeletons/skeleton_class.class.php
         \ingroup    mymodule othermodule1 othermodule2
-        \brief      This file is an example for a class file
+        \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
 		\version    $Id$
 		\author		Put author name here
 		\remarks	Put here some comments
@@ -64,12 +64,14 @@ class Skeleton_class // extends CommonObject
 	
     /**
      *      \brief      Create in database
-     *      \param      user        User that create
-     *      \return     int         <0 si ko, >0 si ok
+     *      \param      user        	User that create
+     *      \param      notrigger	    0=launch triggers after, 1=disable triggers
+     *      \return     int         	<0 if KO, Id of created object if OK
      */
-    function create($user)
+    function create($user, $notrigger=0)
     {
     	global $conf, $langs;
+		$error=0;
     	
 		// Clean parameters
         $this->prop1=trim($this->prop1);
@@ -90,38 +92,58 @@ class Skeleton_class // extends CommonObject
 		//...
 		$sql.= ")";
 
-	   	dolibarr_syslog("Skeleton_class::create sql=".$sql, LOG_DEBUG);
+		$this->db->begin();
+		
+	   	dolibarr_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
-        if ($resql)
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        
+		if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mytable");
     
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+			if (! $notrigger)
+			{
+	            // Uncomment this and change MYOBJECT to your own tag if you
+	            // want this action call a trigger.
+	            
+	            //// Call triggers
+	            //include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            //$interface=new Interfaces($this->db);
+	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
+	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            //// End call triggers
+			}
+        }
 
+        // Commit or rollback
+        if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dolibarr_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}	
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
             return $this->id;
-        }
-        else
-        {
-            $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::create ".$this->error, LOG_ERR);
-            return -1;
-        }
+		}
     }
 
-    /*
+    /**
      *      \brief      Update database
      *      \param      user        	User that modify
-     *      \param      notrigger	    0=no, 1=yes (no update trigger)
+     *      \param      notrigger	    0=launch triggers after, 1=disable triggers
      *      \return     int         	<0 if KO, >0 if OK
      */
     function update($user=0, $notrigger=0)
     {
     	global $conf, $langs;
+		$error=0;
     	
 		// Clean parameters
         $this->prop1=trim($this->prop1);
@@ -138,36 +160,53 @@ class Skeleton_class // extends CommonObject
 		//...
         $sql.= " WHERE rowid=".$this->id;
 
-        dolibarr_syslog("Skeleton_class::update sql=".$sql, LOG_DEBUG);
+		$this->db->begin();
+        
+		dolibarr_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if (! $resql)
-        {
-            $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::update ".$this->error, LOG_ERR);
-            return -1;
-        }
-
-		if (! $notrigger)
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        
+		if (! $error)
 		{
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
-    	}
-
-        return 1;
+			if (! $notrigger)
+			{
+	            // Uncomment this and change MYOBJECT to your own tag if you
+	            // want this action call a trigger.
+				
+	            //// Call triggers
+	            //include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            //$interface=new Interfaces($this->db);
+	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            //// End call triggers
+	    	}
+		}
+		
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dolibarr_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}	
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}		
     }
   
   
-    /*
+    /**
      *    \brief      Load object in memory from database
      *    \param      id          id object
-     *    \param      user        User that load
      *    \return     int         <0 if KO, >0 if OK
      */
-    function fetch($id, $user=0)
+    function fetch($id)
     {
     	global $langs;
         $sql = "SELECT";
@@ -178,7 +217,7 @@ class Skeleton_class // extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
         $sql.= " WHERE t.rowid = ".$id;
     
-    	dolibarr_syslog("Skeleton_class::fetch sql=".$sql, LOG_DEBUG);
+    	dolibarr_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -198,41 +237,64 @@ class Skeleton_class // extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::fetch ".$this->error, LOG_ERR);
+            dolibarr_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
     
     
- 	/*
+ 	/**
 	*   \brief      Delete object in database
-    *	\param      user        User that delete
-	*	\return		int			<0 if KO, >0 if OK
+    *	\param      user        	User that delete
+    *   \param      notrigger	    0=launch triggers after, 1=disable triggers
+	*	\return		int				<0 if KO, >0 if OK
 	*/
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		global $conf, $langs;
-	
+		$error=0;
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mytable";
 		$sql.= " WHERE rowid=".$this->id;
 	
-	   	dolibarr_syslog("Skeleton_class::delete sql=".$sql);
+		$this->db->begin();
+		
+		dolibarr_syslog(get_class($this)."::delete sql=".$sql);
 		$resql = $this->db->query($sql);
-		if (! $resql)
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		
+		if (! $error)
 		{
-			$this->error="Error ".$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::delete ".$this->error, LOG_ERR);
-			return -1;
+			if (! $notrigger)
+			{
+				// Uncomment this and change MYOBJECT to your own tag if you
+		        // want this action call a trigger.
+				
+		        //// Call triggers
+		        //include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		        //$interface=new Interfaces($this->db);
+		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		        //// End call triggers
+			}	
 		}
-	
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-        // Fin appel triggers
-
-		return 1;
+		
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dolibarr_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}	
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
 	}
 
   

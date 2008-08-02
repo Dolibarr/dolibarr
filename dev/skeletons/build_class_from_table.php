@@ -121,6 +121,13 @@ else
 //var_dump($property);
 
 
+// Define working variables
+$table=strtolower($table);
+$tablenollx=eregi_replace('llx_','',$table);
+$class=ucfirst($tablenollx);
+$classmin=strtolower($class);
+
+
 // Read skeleton_class.class.php file
 $skeletonfile='skeleton_class.class.php';
 $sourcecontent=file_get_contents($skeletonfile);
@@ -132,15 +139,9 @@ if (! $sourcecontent)
 	exit;
 }
 
-
-// Define content
-$table=strtolower($table);
-$tablenollx=eregi_replace('llx_','',$table);
-$class=ucfirst($tablenollx);
-$classmin=strtolower($class);
+// Define output variables
 $outfile='out.'.$classmin.'.class.php';
 $targetcontent=$sourcecontent;
-
 
 // Substitute class name
 $targetcontent=preg_replace('/skeleton_class\.class\.php/', $classmin.'.class.php', $targetcontent);
@@ -342,14 +343,52 @@ if ($fp)
 	fclose($fp);
 	print "\n";
 	print "File '".$outfile."' has been built in current directory.\n";
-	return 1;
 }
-else
+else $error++;
+
+
+
+// Read skeleton_class.class.php file
+$skeletonfile='skeleton_script.php';
+$sourcecontent=file_get_contents($skeletonfile);
+if (! $sourcecontent)
 {
-	return -1;
+	print "\n";
+	print "Error: Failed to read skeleton sample '".$skeletonfile."'\n";
+	print "Try to run script from skeletons directory.\n";
+	exit;
 }
+
+// Define output variables
+$outfile='out.'.$classmin.'_script.php';
+$targetcontent=$sourcecontent;
+
+// Substitute class name
+$targetcontent=preg_replace('/skeleton_script\.php/', $classmin.'_script.php', $targetcontent);
+$targetcontent=preg_replace('/\$element=\'skeleton\'/', '\$element=\''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/\$table_element=\'skeleton\'/', '\$table_element=\''.$classmin.'\'', $targetcontent);
+$targetcontent=preg_replace('/Skeleton_class/', $class, $targetcontent);
+
+// Substitute comments
+$targetcontent=preg_replace('/This file is an example to create a new class file/', 'Put here description of this class', $targetcontent);
+$targetcontent=preg_replace('/\s*\/\/\.\.\./', '', $targetcontent);
+$targetcontent=preg_replace('/Put here some comments/','Initialy built by build_class_from_table on '.strftime('%Y-%m-%d %H:%M',mktime()), $targetcontent);
+
+// Substitute table name
+$targetcontent=preg_replace('/MAIN_DB_PREFIX."mytable/', 'MAIN_DB_PREFIX."'.$tablenollx, $targetcontent);
+
+// Build file
+$fp=fopen($outfile,"w");
+if ($fp)
+{
+	fputs($fp, $targetcontent);
+	fclose($fp);
+	print "File '".$outfile."' has been built in current directory.\n";
+}
+else $error++;
 
 // -------------------- END OF BUILD_CLASS_FROM_TABLE SCRIPT --------------------
 
+print "You must rename files by removing the 'out.' prefix in their name.\n";
 return $error;
 ?>
