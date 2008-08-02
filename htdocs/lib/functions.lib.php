@@ -1502,7 +1502,7 @@ function dolibarr_print_error($db='',$error='')
 	}
 	else                              // Mode CLI
 	{
-		print $langs->transnoentities("ErrorInternalErrorDetected").": ".$argv[0]."\n";
+		print '> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
 		$syslog.="pid=".getmypid();
 	}
 
@@ -1518,10 +1518,10 @@ function dolibarr_print_error($db='',$error='')
 		}
 		else                            // Mode CLI
 		{
-			print $langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
-			print $langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
-			print $langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."\n";
-			print $langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."\n";
+			print '> '.$langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
+			print '> '.$langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
+			print '> '.$langs->transnoentities("ReturnCodeLastAccessInError").":\n".($db->lasterrno()?$db->lasterrno():$langs->trans("ErrorNoRequestInError"))."\n";
+			print '> '.$langs->transnoentities("InformationLastAccessInError").":\n".($db->lasterror()?$db->lasterror():$langs->trans("ErrorNoRequestInError"))."\n";
 
 		}
 		$syslog.=", sql=".$db->lastquery();
@@ -1544,7 +1544,7 @@ function dolibarr_print_error($db='',$error='')
 			}
 			else                            // Mode CLI
 			{
-				print $langs->transnoentities("Message").":\n".$msg."\n" ;
+				print '> '.$langs->transnoentities("Message").":\n".$msg."\n" ;
 			}
 			$syslog.=", msg=".$msg;
 		}
