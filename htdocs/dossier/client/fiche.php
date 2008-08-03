@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,12 @@
  */
 
 /**
-        \file       htdocs/dossier/client/fiche.php
-        \brief      Page des dossiers clients
-        \version    $Id$
-*/
+ *       \file       htdocs/dossier/client/fiche.php
+ *       \brief      Page des dossiers clients
+ *       \version    $Id$
+ *		\TODO	Remove dossier directory and link to it on code where a test
+ * 				is made on MAIN_MODULE_DOSSIER.
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/client.class.php');
