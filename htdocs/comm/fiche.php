@@ -82,7 +82,7 @@ if ($_POST["action"] == 'setmode' && $user->rights->societe->creer)
     $result = $db->query($sql);
     if (! $result) dolibarr_print_error($result);
 }
-// assuj�tissement � la TVA
+// assujetissement a la TVA
 if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
 {
 	$societe = new Societe($db, $_GET["socid"]);

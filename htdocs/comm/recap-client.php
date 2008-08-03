@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
     	\file       htdocs/comm/recap-client.php
 		\ingroup    societe
 		\brief      Page de fiche recap client
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -62,7 +59,7 @@ if ($socid > 0)
      */
 	$head = societe_prepare_head($societe);
 	
-    dolibarr_fiche_head($head, 'customer', $societe->nom);
+    dolibarr_fiche_head($head, 'customer', $langs->trans("ThirdParty"));
 
 
     print "<table width=\"100%\">\n";
