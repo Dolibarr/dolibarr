@@ -102,6 +102,9 @@ if ($_POST["action"] == 'sendallconfirmed')
 			}
 		}
 
+		// Warning, we must not use begin-commit transaction here
+		// because we want to save update for each mail sent.
+		
 		$nbok=0; $nbko=0;
 
 		// On choisit les mails non déjà envoyés pour ce mailing (statut=0)
@@ -113,11 +116,12 @@ if ($_POST["action"] == 'sendallconfirmed')
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-		    $num = $db->num_rows($resql);
+		    $num = $db->num_rows($resql);	// nb of possible recipients
 
 		    if ($num) 
 		    {
 		        dolibarr_syslog("mailing-send: nb of targets = ".$num, LOG_DEBUG);
+
 		        // Positionne date debut envoi
 		        $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi=SYSDATE() WHERE rowid=".$id;
 		        $resql2=$db->query($sql);
@@ -210,8 +214,15 @@ if ($_POST["action"] == 'sendallconfirmed')
 		    }
 
 		    // Loop finished, set global statut of mail
-		    $statut=2;	// By default status with error
-		    if (! $nbko) $statut=3;
+			if ($nbko > 0)
+			{
+			    $statut=2;	// Status 'sent partially' (because at least one error)
+			}
+		    else 
+		    {
+		    	if ($nbok >= $num) $statut=3;	// Send to everybody
+		    	else $statut=2;	// Status 'sent partially' (because not send to everybody)	
+		    }
 
 		    $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
 		    dolibarr_syslog("mailing-send: update global status sql=".$sql, LOG_DEBUG);
