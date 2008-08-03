@@ -176,15 +176,13 @@ if ($what == 'mysql')
 		dolibarr_syslog("Failed to open file $outputfile",LOG_ERR);
 		$errormsg=$langs->trans("ErrorFailedToWriteInDir");
 	}
-		
 	// Get errorstring
 	if ($compression == 'none') $handle = fopen($outputfile, 'r');
 	if ($compression == 'gz')   $handle = gzopen($outputfile, 'r');
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'r');
-	if ($hanlde)
+	if ($handle)
 	{
-print 'eeee';
-		$errormsg = fgets($handle,10);
+		$errormsg = fgets($handle,1024);
 		if ($compression == 'none') fclose($handle);
 		if ($compression == 'gz')   gzclose($handle);
 		if ($compression == 'bz')   bzclose($handle);
