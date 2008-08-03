@@ -50,6 +50,10 @@ if ($file && ! $what)
 
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 $html=new Form($db);
@@ -179,6 +183,7 @@ if ($what == 'mysql')
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'r');
 	if ($hanlde)
 	{
+print 'eeee';
 		$errormsg = fgets($handle,10);
 		if ($compression == 'none') fclose($handle);
 		if ($compression == 'gz')   gzclose($handle);
@@ -218,7 +223,7 @@ if ($what)
 	}
 }
 
-$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1);
+$result=$formfile->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1,'',array(),0,0,48);
 
 if ($result == 0)
 {

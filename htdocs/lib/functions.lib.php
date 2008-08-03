@@ -728,7 +728,7 @@ function dol_phone_link($phone,$option=0)
 }
 
 /**
- \brief      Tronque une chaine a une taille donn�e en ajoutant les points de suspension si cela d�passe
+ \brief      Truncate a string to a particular length adding '...' if string larger than length
  \param      string				String to truncate
  \param      size				Max string size. 0 for no limit.
  \param		trunc				Where to trunc: right, left, middle
@@ -1205,9 +1205,10 @@ function img_allow($allow)
 /**
  *	\brief      Show mime picto
  *	\param      file		Filename
+ * 	\param		alt			Alternate text
  *	\return     string     	Return img tag
  */
-function img_mime($file)
+function img_mime($file,$alt='')
 {
 	$mime='other';
 	if (eregi('\.pdf',$file))        { $mime='pdf'; }
@@ -1220,7 +1221,7 @@ function img_mime($file)
 	if (eregi('\.(mp3|ogg|au)',$file))           $mime='audio';
 	if (eregi('\.(avi|mvw|divx|xvid)',$file))    $mime='video';
 	if (eregi('\.(zip|rar|gz|tgz|z|cab)',$file))       $mime='archive';
-	$alt='Mime type: '.$mime;
+	if (empty($alt)) $alt='Mime type: '.$mime;
 	
 	$mime.='.png';
 	return '<img src="'.DOL_URL_ROOT.'/theme/common/mime/'.$mime.'" border="0" alt="'.$alt.'" title="'.$alt.'">';

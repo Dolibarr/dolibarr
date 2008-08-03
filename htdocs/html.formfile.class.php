@@ -119,15 +119,16 @@ class FormFile
 	 *      \param      modelliste			Tableau des modeles possibles
 	 *      \param      forcenomultilang	N'affiche pas option langue meme si MAIN_MULTILANGS défini
 	 *      \param      iconPDF             N'affiche que l'icone PDF avec le lien (1/0)
+	 * 		\param		maxfilenamelength	Max length for filename shown
 	 *      \remarks    Le fichier de facture détaillée est de la forme
 	 *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
 	 *		\return		int					<0 si ko, nbre de fichiers affichés si ok
 	 */
-	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0)
+	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28)
 	{
 		// filedir = conf->...dir_ouput."/".get_exdir(id)
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
-
+		
 		global $langs,$bc,$conf;
 		$var=true;
 
@@ -319,7 +320,7 @@ class FormFile
 			print '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">';
 			if (!$iconPDF)
 			{
-				print img_mime($file["name"]).' '.dolibarr_trunc($file["name"],28);
+				print img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dolibarr_trunc($file["name"],$maxfilenamelength);
 			}
 			else
 			{
@@ -334,7 +335,7 @@ class FormFile
 
 			if ($delallowed)
 			{
-				print '<td><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'&amp;urlsource='.urlencode($urlsource).'">'.img_delete().'</a></td>';
+				print '<td align="right"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'&amp;urlsource='.urlencode($urlsource).'">'.img_delete().'</a></td>';
 			}
 
 			if (!$iconPDF) print '</tr>';
