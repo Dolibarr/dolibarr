@@ -144,7 +144,7 @@ if ($resql)
 
 		print '<td>'.dolibarr_trunc($obj->type_lib,16).'</td>';
 		
-		print '<td>'.dolibarr_trunc($obj->libelle,36).'</td>';
+		print '<td>'.dolibarr_trunc($obj->libelle,42).'</td>';
 		
 		print '<td align="right" width="100">'.price($obj->amount).'</td>';
 
