@@ -182,7 +182,7 @@ if ($what == 'mysql')
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'r');
 	if ($handle)
 	{
-		$errormsg = fgets($handle,1024);
+		$errormsg = fgets($handle,2048);	// Get 2048 first chars of error message.
 		if ($compression == 'none') fclose($handle);
 		if ($compression == 'gz')   gzclose($handle);
 		if ($compression == 'bz')   bzclose($handle);
@@ -193,7 +193,7 @@ if ($what == 'mysql')
 			//print "$outputfile -> $outputerror";
 			dol_delete_file($outputerror);
 			@rename($outputfile,$outputerror);
-			// Si safe_mode on et command hors du parametre exec, on a un fichier out donc errormsg vide
+			// Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
 			if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");	
 		}
 	}
