@@ -54,6 +54,7 @@ else
 	require("./main.inc.php");
 	// master.inc.php is included in main.inc.php
 }
+require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 
 
 // C'est un wrapper, donc header vierge
@@ -64,19 +65,24 @@ $action = $_GET["action"];
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
 $urlsource = urldecode($_GET["urlsource"]);
-// Define type (attachment=1 to force popup 'save as')
-$type = urldecode($_GET["type"]);
+
+// Define mime type
+$type = 'application/octet-stream';
+if (! empty($_GET["type"])) $type=urldecode($_GET["type"]);
+else $type=dol_mimetype($original_file);
+
+// Define attachment (attachment=1 to force popup 'save as')
 $attachment = true;
-if (eregi('\.sql$',$original_file))     { $type='text/plain'; $attachment = true; }
-if (eregi('\.html$',$original_file)) 	{ $type='text/html'; $attachment = false; }
-if (eregi('\.csv$',$original_file))  	{ $type='text/csv'; $attachment = true; }
-if (eregi('\.pdf$',$original_file))  	{ $type='application/pdf'; $attachment = true; }
-if (eregi('\.xls$',$original_file))  	{ $type='application/x-msexcel'; $attachment = true; }
-if (eregi('\.jpg$',$original_file)) 	{ $type='image/jpeg'; $attachment = true; }
-if (eregi('\.png$',$original_file)) 	{ $type='image/jpeg'; $attachment = true; }
-if (eregi('\.tiff$',$original_file)) 	{ $type='image/tiff'; $attachment = true; }
-if (eregi('\.vcs$',$original_file))  	{ $type='text/calendar'; $attachment = true; }
-if (eregi('\.ics$',$original_file))  	{ $type='text/calendar'; $attachment = true; }
+if (eregi('\.sql$',$original_file))     { $attachment = true; }
+if (eregi('\.html$',$original_file)) 	{ $attachment = false; }
+if (eregi('\.csv$',$original_file))  	{ $attachment = true; }
+if (eregi('\.pdf$',$original_file))  	{ $attachment = true; }
+if (eregi('\.xls$',$original_file))  	{ $attachment = true; }
+if (eregi('\.jpg$',$original_file)) 	{ $attachment = true; }
+if (eregi('\.png$',$original_file)) 	{ $attachment = true; }
+if (eregi('\.tiff$',$original_file)) 	{ $attachment = true; }
+if (eregi('\.vcs$',$original_file))  	{ $attachment = true; }
+if (eregi('\.ics$',$original_file))  	{ $attachment = true; }
 
 // Suppression de la chaine de caractere ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");

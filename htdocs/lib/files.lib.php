@@ -153,4 +153,31 @@ function dol_compare_file($a, $b)
 	}
 }
 
+/**
+ *	\brief      Return mime type of a file
+ *	\param      file		Filename
+ *	\return     string     	Return mime type
+ */
+function dol_mimetype($file)
+{
+	$mime='application/octet-stream';
+	if (eregi('\.txt',$file))         $mime='text/plain';
+	if (eregi('\.sql$',$file))        $mime='text/plain';
+	if (eregi('\.(html|htm)$',$file)) $mime='text/html';
+	if (eregi('\.csv$',$file))        $mime='text/csv';
+	if (eregi('\.pdf$',$file))        $mime='application/pdf';
+	if (eregi('\.xls$',$file))        $mime='application/x-msexcel';
+	if (eregi('\.jpg$',$file)) 	      $mime='image/jpeg';
+	if (eregi('\.jpeg$',$file)) 	  $mime='image/jpeg';
+	if (eregi('\.png$',$file)) 	      $mime='image/png';
+	if (eregi('\.gif$',$file)) 	      $mime='image/gif';
+	if (eregi('\.bmp$',$file)) 	      $mime='image/bmp';
+	if (eregi('\.tiff$',$file))       $mime='image/tiff';
+	if (eregi('\.vcs$',$file))        $mime='text/calendar';
+	if (eregi('\.ics$',$file))        $mime='text/calendar';
+	if (eregi('\.(mp3|ogg|au)$',$file))           $mime='audio';
+	if (eregi('\.(avi|mvw|divx|xvid)$',$file))    $mime='video';
+	if (eregi('\.(zip|rar|gz|tgz|z|cab|bz2)$',$file)) $mime='archive';
+	return $mime;
+}
 ?>

@@ -1220,7 +1220,7 @@ function img_mime($file,$alt='')
 	if (eregi('\.(png|bmp|jpg|jpeg|gif)',$file)) $mime='image';
 	if (eregi('\.(mp3|ogg|au)',$file))           $mime='audio';
 	if (eregi('\.(avi|mvw|divx|xvid)',$file))    $mime='video';
-	if (eregi('\.(zip|rar|gz|tgz|z|cab)',$file))       $mime='archive';
+	if (eregi('\.(zip|rar|gz|tgz|z|cab|bz2)',$file))       $mime='archive';
 	if (empty($alt)) $alt='Mime type: '.$mime;
 	
 	$mime.='.png';
