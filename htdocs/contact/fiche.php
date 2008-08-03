@@ -649,6 +649,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	$sql.= " AND c.id=a.fk_action";
 	$sql.= " ORDER BY a.datea DESC, a.id DESC";
 
+	dolibarr_syslog("contact/fiche.php sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -675,13 +676,13 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	$sql.= " 'AC_EMAILING' as acode,";
 	$sql.= " u.rowid as user_id, u.login";	// User that valid action
 	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
-	$sql.= " ,".MAIN_DB_PREFIX."socpeople as sp";
 	$sql.= " WHERE mc.email = '".addslashes($contact->email)."'";	// Search is done on email.
 	$sql.= " AND mc.statut = 1";
 	$sql.= " AND u.rowid = m.fk_user_valid";
 	$sql.= " AND mc.fk_mailing=m.rowid";
 	$sql.= " ORDER BY mc.date_envoi DESC, m.rowid DESC";
 
+	dolibarr_syslog("contact/fiche.php sql=".$sql, LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
