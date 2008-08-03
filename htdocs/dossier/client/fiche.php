@@ -15,16 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
 /**
         \file       htdocs/dossier/client/fiche.php
         \brief      Page des dossiers clients
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -77,12 +73,14 @@ if ($_GET["facid"])
     
     if (file_exists($file_img))
     {
-        print '<br><img src="./image.php?file='.$file_img.'"></img>';
+    	// image.php has been deleted because was a serious security hole
+    	// All image output must be throw wrapper viewimage.php
+        print '<br><img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=todo&file='.urlencode($file_img).'">';
     }
     
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
