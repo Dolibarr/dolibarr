@@ -48,8 +48,8 @@ class Product extends CommonObject
 	var $libelle;
 	var $description;
 	//! Prix de vente
-	var $price;
-	var $price_ttc;
+	var $price;				// Price without tax
+	var $price_ttc;			// Price with tax
 	//! Base de prix (ttc ou ht)
 	var $price_base_type;
 	//! Tableau des prix multiples
@@ -122,14 +122,14 @@ class Product extends CommonObject
 		$this->canvas = '';
 		if ($id>0) $this->fetch($id);
 	}
+
 	/**
-	 *    \brief      V�rifie que la r�f�rence et libell� du produit est non null
-	 *    \return     int         1 si ok, 0 sinon
+	 *    \brief      Check that ref and label are ok
+	 *    \return     int         >1 if OK, <=0 if KO
 	 */
 	function check()
 	{
-		$this->ref = ereg_replace("'","",stripslashes($this->ref));
-		$this->ref = ereg_replace("\"","",stripslashes($this->ref));
+		$this->ref = sanitize_string(stripslashes($this->ref));
 
 		$err = 0;
 		if (strlen(trim($this->ref)) == 0)
@@ -149,9 +149,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 \brief    Insert product in database
-	 \param    user        Utilisateur qui effectue l'insertion
-	 \return   int     id du produit ou numero d'erreur < 0
+	 *	\brief    Insert product in database
+	 *	\param    user     	Utilisateur qui effectue l'insertion
+	 *	\return   int     	id du produit ou numero d'erreur < 0
 	 */
 	function create($user)
 	{
@@ -163,20 +163,18 @@ class Product extends CommonObject
 		if ($this->tva_tx=='') $this->tva_tx = 0;
 		if ($this->price=='')  $this->price = 0;
 		if ($this->status=='') $this->status = 0;
+
 		$price_ht=0;
 		$price_ttc=0;
-		if ($this->price > 0)
+		if ($this->price_base_type == 'TTC' && $this->price_ttc > 0)
 		{
-			if ($this->price_base_type == 'TTC')
-			{
-				$price_ttc = price2num($this->price,'MU');
-				$price_ht = price2num($this->price / (1 + ($this->tva_tx / 100)),'MU');
-			}
-			else
-			{
-				$price_ht = price2num($this->price,'MU');
-				$price_ttc = price2num($this->price * (1 + ($this->tva_tx / 100)),'MU');
-			}
+			$price_ttc = price2num($this->price_ttc,'MU');
+			$price_ht = price2num($this->price_ttc / (1 + ($this->tva_tx / 100)),'MU');
+		}
+		if ($this->price_base_type != 'TTC' && $this->price > 0)
+		{
+			$price_ht = price2num($this->price,'MU');
+			$price_ttc = price2num($this->price * (1 + ($this->tva_tx / 100)),'MU');
 		}
 
 		// Check parameters
@@ -186,15 +184,15 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		dolibarr_syslog("Product::Create ref=".$this->ref." price=".$this->price." tva_tx=".$this->tva_tx." Categorie : ".$this->catid);
+		dolibarr_syslog("Product::Create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type." Categorie : ".$this->catid);
 
 		if ($this->ref)
 		{
 			$this->db->begin();
-				
+
 			$sql = "SELECT count(*)";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
-				
+
 			$result = $this->db->query($sql) ;
 			if ($result)
 			{
@@ -216,7 +214,7 @@ class Product extends CommonObject
 					$sql.= price2num($price_ttc).",";
 					$sql.= "'".$this->price_base_type."',";
 					$sql.= "'".$this->canvas."')";
-						
+
 					dolibarr_syslog("Product::Create sql=".$sql);
 					$result = $this->db->query($sql);
 					if ( $result )
@@ -266,7 +264,7 @@ class Product extends CommonObject
 				else
 				{
 					// Le produit existe deja
-					$this->_setErrNo("Create",257);
+					$this->error='ErrorProductAlreadyExists';
 				}
 			}
 			else
@@ -286,7 +284,6 @@ class Product extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				$this->_setErrNo("Create",265);
 				return -1;
 			}
 		}
@@ -325,7 +322,7 @@ class Product extends CommonObject
 
 
 	/**
-		\brief      Mise � jour du produit en base
+		\brief      Mise a jour du produit en base
 		\param      id          id du produit
 		\param      user        utilisateur qui effectue l'insertion
 		\return     int         1 si ok, -1 si ref deja existante, -2 autre erreur
@@ -393,7 +390,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    \brief      V�rification de l'utilisation du produit en base
+	 *    \brief      Verification de l'utilisation du produit en base
 	 *    \param      id          id du produit
 	 */
 	function verif_prod_use($id)
@@ -802,7 +799,7 @@ class Product extends CommonObject
 				$price_ttc = price2num($newprice) * (1 + ($newvat / 100));
 				$price_ttc = price2num($price_ttc,'MU');
 			}
-				
+
 			// Ne pas mettre de quote sur le num�riques decimaux.
 			// Ceci provoque des sotckage avec arrondis en base au lieu des valeurs exactes.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
@@ -949,16 +946,16 @@ class Product extends CommonObject
 					$result = $this->db->query($sql) ;
 					if ($result)
 					{
-		    $result = $this->db->fetch_array();
-		    $prodid = $result["rowid"];
+						$result = $this->db->fetch_array();
+						$prodid = $result["rowid"];
 					}
 					else
 					{
-		    dolibarr_print_error($this->db);
-		    return -1;
+						dolibarr_print_error($this->db);
+						return -1;
 					}
 				}
-				 
+					
 				$this->multiprices[1] = $this->price;
 				$this->multiprices_ttc[1] = $this->price_ttc;
 				$this->multiprices_base_type[1] = $this->price_base_type;
@@ -974,33 +971,33 @@ class Product extends CommonObject
 					$result = $this->db->query($sql) ;
 					if ( $result )
 					{
-		    $result = $this->db->fetch_array();
-
-		    if($result["price"] != "" && $result["price"] != "0.00")
-		    {
-		    	$this->multiprices[$i]=$result["price"];
-		    	$this->multiprices_ttc[$i]=$result["price_ttc"];
-		    	$this->multiprices_base_type[$i] = $result["price_base_type"];
-		    }
-		    else
-		    {
-		    	$this->multiprices[$i]=$this->price;
-		    	$this->multiprices_ttc[$i]=$this->price_ttc;
-		    	$this->multiprices_base_type[$i] = $this->price_base_type;
-		    }
+						$result = $this->db->fetch_array();
+							
+						if ($result["price"] != "" && $result["price"] != "0.00")
+						{
+							$this->multiprices[$i]=$result["price"];
+							$this->multiprices_ttc[$i]=$result["price_ttc"];
+							$this->multiprices_base_type[$i] = $result["price_base_type"];
+						}
+						else
+						{
+							$this->multiprices[$i]=$this->price;
+							$this->multiprices_ttc[$i]=$this->price_ttc;
+							$this->multiprices_base_type[$i] = $this->price_base_type;
+						}
 					}
 					else
 					{
-		    dolibarr_print_error($this->db);
-		    return -1;
+						dolibarr_print_error($this->db);
+						return -1;
 					}
 				}
-				 
-	  }
+					
+	  		}
 
-	  $res=$this->load_stock();
+	  		$res=$this->load_stock();
 
-	  return $res;
+			return $res;
 		}
 		else
 		{
@@ -1594,7 +1591,7 @@ class Product extends CommonObject
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
 				$sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
 				$sql .= " VALUES (now(), ".$this->id.", ".$id_fourn.", '".$ref_fourn."', ".$user->id.")";
-				 
+					
 				if ($this->db->query($sql))
 				{
 					$this->product_fourn_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur");
@@ -2021,7 +2018,7 @@ class Product extends CommonObject
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
 			$sql .= " VALUES (now(), ".$this->id.", ".$id_entrepot.", ".$nbpiece.", 0, ".$user->id.")";
-				
+
 			dolibarr_syslog("Product::create_stock sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -2106,7 +2103,7 @@ class Product extends CommonObject
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
 			$sql .= " VALUES (now(), ".$this->id.", ".$id_entrepot.", ".$op[$mouvement].", 0, ".$user->id.")";
-				
+
 			dolibarr_syslog("Product::ajust_stock sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -2202,7 +2199,7 @@ class Product extends CommonObject
 					$this->stock_reel = $this->stock_reel + $row[0];
 					$i++;
 				}
-				 
+					
 				$this->no_stock = 0;
 			}
 			else
@@ -2241,7 +2238,7 @@ class Product extends CommonObject
 		if (file_exists($dir))
 		{
 			$originImage = $dir . $file['name'];
-			 
+
 			// Cree fichier en taille origine
 			$result=dol_move_uploaded_file($file['tmp_name'], $originImage, 1);
 
@@ -2294,7 +2291,7 @@ class Product extends CommonObject
 
 			// Cree fichier en taille origine
 			$content = file_get_contents($files);
-				
+
 			$nom = basename($files);
 			$im = fopen($dir.$nom,'wb');
 			fwrite($im, $content);
@@ -2317,7 +2314,7 @@ class Product extends CommonObject
 		if (file_exists($dir))
 		{
 			$handle=opendir($dir);
-			 
+
 			while (($file = readdir($handle)) != false)
 			{
 				if (is_file($dir.$file)) return true;
@@ -2355,7 +2352,7 @@ class Product extends CommonObject
 				{
 					$nbphoto++;
 					$photo = $file;
-					 
+
 					if ($size == 1) {   // Format vignette
 						// On determine nom du fichier vignette
 						$photo_vignette='';
@@ -2427,14 +2424,14 @@ class Product extends CommonObject
 		if (file_exists($dir))
 		{
 			$handle=opendir($dir);
-			 
+
 			while (($file = readdir($handle)) != false)
 			{
 				if (is_file($dir.$file))
 				{
 					$nbphoto++;
 					$photo = $file;
-					 
+
 					// On determine nom du fichier vignette
 					$photo_vignette='';
 					if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs))
@@ -2454,7 +2451,7 @@ class Product extends CommonObject
 					if ($nbmax && $nbphoto >= $nbmax) break;
 				}
 			}
-			 
+
 			closedir($handle);
 		}
 
@@ -2470,10 +2467,10 @@ class Product extends CommonObject
 		$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
 		$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
 		$filename = eregi_replace($dir,'',$file); // Nom du fichier
-		 
+			
 		// On efface l'image d'origine
 		unlink($file);
-		 
+			
 		// Si elle existe, on efface la vignette
 		if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$filename,$regs))
 		{
