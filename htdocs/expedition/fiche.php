@@ -533,15 +533,22 @@ else
             print '<tr><td>';
             if ($conf->commande->enabled)
             {
+				$order=new Commande($db);
+				$order->fetch($expedition->$object->id);
             	print $langs->trans("RefOrder").'</td>';
-            	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$expedition->$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$expedition->$object->ref;
+				print '<td colspan="3">';
+				print $order->getNomUrl(1,4);
+            	print "</td>\n";
             }
             else
             {
+				$propal=new Propal($db);
+				$propal->fetch($livraison->origin_id);
             	print $langs->trans("RefProposal").'</td>';
-            	print '<td colspan="3"><a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$expedition->$object->id.'">'.img_object($langs->trans("ShowProposal"),'propal').' '.$expedition->$object->ref;
+				print '<td colspan="3">';
+				print $propal->getNomUrl(1,'expedition');
+				print "</td>\n";
             }
-            print "</a></td>\n";
             print '</tr>';
 
             // Ref client

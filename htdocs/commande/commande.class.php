@@ -1891,7 +1891,7 @@ class Commande extends CommonObject
 	/**
 		\brief      Renvoie nom clicable (avec eventuellement le picto)
 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-		\param		option			Sur quoi pointe le lien: 0,1,2,4,-1 fiche commande, 3 fiche compta commande
+		\param		option			Sur quoi pointe le lien: 0=fiche commande,3=fiche compta commande,4=fiche expedition commande
 		\return		string			Chaine avec URL
 	*/
 	function getNomUrl($withpicto=0,$option=0)
@@ -1902,6 +1902,7 @@ class Commande extends CommonObject
 		$urlOption='';
 		
 		if ($option == 3) $urlOption = '/compta';
+		if ($option == 4) $urlOption = '/expedition';
 		
 		$lien = '<a href="'.DOL_URL_ROOT.$urlOption.'/commande/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';

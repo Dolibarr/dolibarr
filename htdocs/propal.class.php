@@ -1890,7 +1890,11 @@ class Propal extends CommonObject
         {
           $lien = '<a href="'.DOL_URL_ROOT.'/compta/propal.php?propalid='.$this->id. $get_params .'">';
         }
-		$lienfin='</a>';
+        if($option == 'expedition')
+        {
+          $lien = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?propalid='.$this->id. $get_params .'">';
+        }
+        $lienfin='</a>';
 		
 		$picto='order';
 		$label=$langs->trans("ShowPropal").': '.$this->ref;
