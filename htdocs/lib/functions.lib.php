@@ -6,7 +6,6 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +24,9 @@
  */
 
 /**
- \file			htdocs/lib/functions.lib.php
- \brief			Ensemble de fonctions de base de dolibarr sous forme d'include
- \version		$Id$
+ *	\file			htdocs/lib/functions.lib.php
+ *	\brief			Ensemble de fonctions de base de dolibarr sous forme d'include
+ *	\version		$Id$
  */
 
 // For compatibility during upgrade
@@ -729,12 +728,12 @@ function dol_phone_link($phone,$option=0)
 }
 
 /**
- \brief      Truncate a string to a particular length adding '...' if string larger than length
- \param      string				String to truncate
- \param      size				Max string size. 0 for no limit.
- \param		trunc				Where to trunc: right, left, middle
- \return     string				Truncated string
- \remarks	USE_SHORT_TITLE=0 can disable all truncings
+ *	\brief      Truncate a string to a particular length adding '...' if string larger than length
+ *	\param      string				String to truncate
+ *	\param      size				Max string size. 0 for no limit.
+ *	\param		trunc				Where to trunc: right, left, middle
+ *	\return     string				Truncated string
+ *	\remarks	USE_SHORT_TITLE=0 can disable all truncings
  */
 function dolibarr_trunc($string,$size=40,$trunc='right')
 {
@@ -2780,30 +2779,13 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
  \param	    texte      Texte
  \return    nblines    Nombre de lignes
  */
-function num_lines($texte,$maxlinesize=0)
+function num_lines($texte)
 {
 	$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
 	$texte = strtr($texte, $repTable);
 	$pattern = '/(<[^>]+>)/Uu';
 	$a = preg_split($pattern, $texte, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$nblines = ((count($a)+1)/2);
-	// count possible auto line breaks
-	if($maxlinesize)
-	{
-		 foreach ($a as $line)
-		 {
-			if (strlen($line)>$maxlinesize)
-			{
-				//$line_dec = html_entity_decode(strip_tags($line));
-				$line_dec = html_entity_decode($line);
-				if(strlen($line_dec)>$maxlinesize)
-				{
-				$line_dec=wordwrap($line_dec,$maxlinesize,'\n',true);
-				$nblines+=substr_count($line_dec,'\n');
-				}
-			}
-		 }
-	}
 	return $nblines;
 }
 

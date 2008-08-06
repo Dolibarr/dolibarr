@@ -31,6 +31,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 $langs->load("companies");
 $langs->load("users");
@@ -475,6 +476,8 @@ if ($user->rights->societe->contact->creer)
 
 if ($_GET["id"] && $_GET["action"] != 'edit')
 {
+	$objsoc = new Societe($db);
+
 	/*
 	* Fiche en mode visualisation
 	*
@@ -495,7 +498,6 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	// Company
 	if ($contact->socid > 0)
 	{
-		$objsoc = new Societe($db);
 		$objsoc->fetch($contact->socid);
 
 		print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
@@ -633,143 +635,12 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	}
 
 
-	// Historique des actions sur ce contact
-	print_titre($langs->trans("TasksHistoryForThisContact"));
-	$histo=array();
-	$numaction = 0 ;
+	print show_actions_todo($conf,$langs,$db,$objsoc,$contact);
 
-	// Recherche histo sur actioncomm
-	$sql = "SELECT a.id, ".$db->pdate("a.datep")." as da, a.note, a.percent as percentage,";
-	$sql.= " c.code as acode, c.libelle,";
-	$sql.= " u.rowid as user_id, u.login";
-	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-	$sql.= " WHERE fk_contact = ".$contact->id;
-	$sql.= " AND u.rowid = a.fk_user_author";
-	$sql.= " AND c.id=a.fk_action";
-	$sql.= " ORDER BY a.datea DESC, a.id DESC";
-
-	dolibarr_syslog("contact/fiche.php sql=".$sql, LOG_DEBUG);
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$i = 0 ;
-		$num = $db->num_rows($resql);
-		$var=true;
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-			$histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percentage,
-			'acode'=>$obj->acode,'libelle'=>$obj->libelle,
-			'userid'=>$obj->user_id,'login'=>$obj->login);
-			$numaction++;
-			$i++;
-		}
-	}
-	else
-	{
-		dolibarr_print_error($db);
-	}
-
-	// Recherche histo sur mailing
-	$sql = "SELECT m.rowid as id, ".$db->pdate("mc.date_envoi")." as da, m.titre as note, '100' as percentage,";
-	$sql.= " 'AC_EMAILING' as acode,";
-	$sql.= " u.rowid as user_id, u.login";	// User that valid action
-	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
-	$sql.= " WHERE mc.email = '".addslashes($contact->email)."'";	// Search is done on email.
-	$sql.= " AND mc.statut = 1";
-	$sql.= " AND u.rowid = m.fk_user_valid";
-	$sql.= " AND mc.fk_mailing=m.rowid";
-	$sql.= " ORDER BY mc.date_envoi DESC, m.rowid DESC";
-
-	dolibarr_syslog("contact/fiche.php sql=".$sql, LOG_DEBUG);
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$i = 0 ;
-		$num = $db->num_rows($resql);
-		$var=true;
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-			$histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percentage,
-			'acode'=>$obj->acode,'libelle'=>$obj->libelle,
-			'userid'=>$obj->user_id,'login'=>$obj->login,
-			'contact_id'=>$obj->contact_id);
-			$numaction++;
-			$i++;
-		}
-	}
-	else
-	{
-		dolibarr_print_error($db);
-	}
-
-	// Affichage actions sur contact
-	print '<table width="100%" class="noborder">';
-
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Date").'</td>';
-	print '<td>'.$langs->trans("Actions").'</td>';
-	print '<td>'.$langs->trans("Comments").'</td>';
-	print '<td>'.$langs->trans("Author").'</td>';
-	print '<td align="center">'.$langs->trans("Status").'</td>';
-	print '</tr>';
-
-	foreach ($histo as $key=>$value)
-	{
-		$var=!$var;
-		print "<tr $bc[$var]>";
-
-		// Date
-		print "<td>". dolibarr_print_date($histo[$key]['date'],"dayhour") ."</td>";
-
-		// Action
-		print '<td>';
-		if ($histo[$key]['type']=='action')
-		{
-			print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowTask"),"task").' ';
-			$transcode=$langs->trans("Action".$histo[$key]['acode']);
-			$libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:$histo[$key]['libelle']);
-			print dolibarr_trunc($libelle,30);
-			print '</a>';
-		}
-		if ($histo[$key]['type']=='mailing')
-		{
-			print '<a href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"),"email").' ';
-			$transcode=$langs->trans("Action".$histo[$key]['acode']);
-			$libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:'Send mass mailing');
-			print dolibarr_trunc($libelle,30);
-			print '</a>';
-		}
-		print '</td>';
-
-		// Note
-		print '<td>'.dolibarr_trunc($histo[$key]['note'], 30).'</td>';
-
-		// Author
-		print '<td>';
-		if ($histo[$key]['login'])
-		{
-			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$histo[$key]['userid'].'">'.img_object($langs->trans("ShowUser"),'user').' '.$histo[$key]['login'].'</a>';
-		}
-		else print "&nbsp;";
-		print "</td>";
-
-		// Status/Percent
-		print '<td align="right">';
-		$actionstatic=new ActionComm($db);
-		print $actionstatic->LibStatut($histo[$key]['percent'],5);
-		print '</td>';
-
-		print "</tr>\n";
-	}
-	print "</table>";
-
-	print '<br>';
+	print show_actions_done($conf,$langs,$db,$objsoc,$contact);
 }
 
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

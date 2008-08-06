@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,19 +15,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
-	    \file       htdocs/lib/contact.lib.php
-		\brief      Ensemble de fonctions de base pour les contacts
-		\version    $Revision$
+ *	    \file       htdocs/lib/contact.lib.php
+ *		\brief      Ensemble de fonctions de base pour les contacts
+ *		\version    $Id$ 
+ *
+ *		Ensemble de fonctions de base de dolibarr sous forme d'include
+ */
 
-		Ensemble de fonctions de base de dolibarr sous forme d'include
-*/
-
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $contrat
+ * @return unknown
+ */
 function contact_prepare_head($contrat)
 {
 	global $langs, $conf;
