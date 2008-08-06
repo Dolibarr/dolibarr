@@ -18,6 +18,7 @@ MailTopic=Sujet du mail
 MailText=Message
 MailFile=Fichiers joints
 MailMessage=Message du mail
+ShowEMailing=Afficher emailing
 ListOfEMailings=Liste des mailings
 NewMailing=Nouveau mailing
 EditMailing=Éditer mailing
