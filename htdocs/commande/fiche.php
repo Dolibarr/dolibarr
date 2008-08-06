@@ -21,10 +21,10 @@
  */
 
 /**
- \file       htdocs/commande/fiche.php
- \ingroup    commande
- \brief      Fiche commande client
- \version    $Id$
+ *	\file       htdocs/commande/fiche.php
+ *	\ingroup    commande
+ *	\brief      Fiche commande client
+ *	\version    $Id$
  */
 
 require('./pre.inc.php');
@@ -1218,7 +1218,7 @@ else
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="2">'.dolibarr_print_date($commande->date,'daytext').'</td>';
 			print '<td width="50%">'.$langs->trans('Source').' : '.$commande->getLabelSource();
-			if ($commande->source == 0 && $conf->propal->enabled)
+			if ($commande->source == 0 && $conf->propal->enabled && $commande->propale_id)
 			{
 				// Si source = propal
 				$propal = new Propal($db);

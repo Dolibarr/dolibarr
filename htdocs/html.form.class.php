@@ -932,15 +932,15 @@ class Form
     
     
   /**
-     \brief     Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
-     \param     selected        Produit pré-sélectionné
-     \param     htmlname        Nom de la zone select
-     \param     filtretype      Filter on product type (1=customer, 2=supplier)
-     \param     limit           Limite sur le nombre de lignes retournées
-     \param     price_level     Niveau de prix en fonction du client
-	 \param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
-  */
-  function select_produits($selected='',$htmlname='productid',$filtretype=1,$limit=20,$price_level=0,$status=1)
+   *  \brief    Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
+   *  \param    selected        Produit pré-sélectionné
+   *  \param    htmlname        Nom de la zone select
+   *  \param    filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
+   *  \param    limit           Limite sur le nombre de lignes retournées
+   *  \param    price_level     Niveau de prix en fonction du client
+   *  \param	status			-1=Return all products, 0=Products not on sell, 1=Products on sell
+   */
+  function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1)
   {
     global $langs,$conf;
 	
@@ -957,27 +957,27 @@ class Form
 		print '</tr>';
 		print '<tr class="nocellnopadd">';
 		print '<td class="nobordernopadding" colspan="3">';
-		print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtretype.'&status='.$status,'');
+		print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status,'');
 		print '</td></tr>';
 		print '</table>';
 	}
     else
     {
-    	$this->select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level,'',$status);
+    	$this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status);
     }    
   }
 	
 	/**
-		\brief      Retourne la liste des produits
-		\param      selected        Produit pré-sélectionné
-		\param      htmlname        Nom de la zone select
-	    \param		filtretype      Filter on product type (1=customer, 2=supplier)
-		\param      limit           Limite sur le nombre de lignes retournées
-		\param      price_level     Niveau de prix en fonction du client
-		\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
-		\param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
-	*/
-	function select_produits_do($selected='',$htmlname='productid',$filtretype=1,$limit=20,$price_level=0,$ajaxkeysearch='',$status=1)
+	 *	\brief      Retourne la liste des produits
+	 *	\param      selected        Produit pré-sélectionné
+	 *	\param      htmlname        Nom de la zone select
+	 *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
+	 *	\param      limit           Limite sur le nombre de lignes retournées
+	 *	\param      price_level     Niveau de prix en fonction du client
+	 * 	\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
+	 *	\param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
+	 */
+	function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$ajaxkeysearch='',$status=1)
 	{
 		global $langs,$conf,$user;
 		
@@ -999,7 +999,7 @@ class Form
 		{
 			$sql.= ' AND IFNULL(c.visible,1)=1';
 		}
-		if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
+		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
 		$sql.= " ORDER BY p.nbvente DESC";
 		if ($limit) $sql.= " LIMIT $limit";
@@ -1016,7 +1016,7 @@ class Form
 			$sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
 			$sqld.= " ORDER BY p.nbvente DESC";
 
-			dolibarr_syslog("Form::select_departement sql=".$sql, LOG_DEBUG);
+			dolibarr_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
 			$resultd = $this->db->query($sqld);
 			if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
 		}
@@ -1127,37 +1127,37 @@ class Form
 	}
   
 	/**
-		\brief     	Retourne la liste des produits fournisseurs en Ajax si ajax activé ou renvoie à select_produits_fournisseurs_do
-		\param		socid			Id third party
-		\param     	selected        Produit pré-sélectionné
-		\param     	htmlname        Nom de la zone select
-		\param     	filtretype      Filter on product type (1=customer, 2=supplier)
-		\param     	filtre          Pour filtre sql
-	*/
-	function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype=2,$filtre)
+	 *	\brief     	Retourne la liste des produits fournisseurs en Ajax si ajax activé ou renvoie à select_produits_fournisseurs_do
+	 *	\param		socid			Id third party
+	 *	\param     	selected        Produit pré-sélectionné
+	 *	\param     	htmlname        Nom de la zone select
+	 *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
+	 *	\param     	filtre          Pour filtre sql
+	 */
+	function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtertype='',$filtre)
 	{
 		global $langs,$conf;
 		if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
 		{
 			print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
-			print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&socid='.$socid.'&type='.$filtretype,'working');
+			print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&socid='.$socid.'&type='.$filtertype.'&mode=2','working');
 		}
 		else
 		{
-			$this->select_produits_fournisseurs_do($socid,$selected,$htmlname,$filtretype,$filtre,'');
+			$this->select_produits_fournisseurs_do($socid,$selected,$htmlname,$filtertype,$filtre,'');
 		}    
 	}
   
 	/**
-		\brief      Retourne la liste des produits de fournisseurs
-		\param		socid   		Id société fournisseur (0 pour aucun filtre)
-		\param      selected        Produit pré-sélectionné
-		\param      htmlname        Nom de la zone select
-		\param      filtretype      Pour filtre sur type de produit
-		\param      filtre          Pour filtre sql
-		\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
-	*/
-	function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='',$ajaxkeysearch='')
+	 *	\brief      Retourne la liste des produits de fournisseurs
+	 *	\param		socid   		Id société fournisseur (0 pour aucun filtre)
+	 *	\param      selected        Produit pré-sélectionné
+	 *	\param      htmlname        Nom de la zone select
+	 *  \param		filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
+	 *	\param      filtre          Pour filtre sql
+	 *	\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
+	 */
+	function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$ajaxkeysearch='')
 	{
 		global $langs,$conf;
 		
@@ -1173,7 +1173,7 @@ class Form
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
 		$sql.= " WHERE p.envente = 1";
 		if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
-		if (! empty($filtretype)) $sql.=" AND p.fk_product_type=".$filtretype;
+		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if (! empty($filtre)) $sql.=" ".$filtre;
 		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
 		$sql.= " ORDER BY pf.ref_fourn DESC";

@@ -1119,9 +1119,9 @@ else
 			print '<td colspan="3">';
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES == 1)
-				$form->select_produits('','p_idprod','',$conf->produit->limit_size,$contrat->societe->price_level);
+				$form->select_produits('','p_idprod',1,$conf->produit->limit_size,$contrat->societe->price_level);
 			else
-				$form->select_produits('','p_idprod','',$conf->produit->limit_size);
+				$form->select_produits('','p_idprod',1,$conf->produit->limit_size);
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 			print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea>';
 			print '</td>';

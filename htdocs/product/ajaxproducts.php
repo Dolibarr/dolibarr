@@ -40,13 +40,13 @@ if (! empty($_GET['keysearch']))
 	if (isset($_GET['status'])) $status=$_GET['status'];
 
 	$form = new Form($db);
-	if (empty($_GET['type']) || $_GET['type'] == 1)
+	if (empty($_GET['mode']) || $_GET['mode'] == 1)
 	{
-		$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keysearch"],$status);
+		$form->select_produits_do("",$_GET["htmlname"],$_GET["type"],"",$_GET["price_level"],$_GET["keysearch"],$status);
 	}
-	if ($_GET['type'] == 2)
+	if ($_GET['mode'] == 2)
 	{
-		$form->select_produits_fournisseurs_do($_GET["socid"],"",$_GET["htmlname"],"","",$_GET["keysearch"]);
+		$form->select_produits_fournisseurs_do($_GET["socid"],"",$_GET["htmlname"],$_GET["type"],"",$_GET["keysearch"]);
 	}
 }
 else if (! empty($_GET['markup']))

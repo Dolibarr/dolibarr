@@ -20,10 +20,10 @@
  */
 
 /**
- \file		htdocs/fourn/commande/fiche.php
- \ingroup		commande
- \brief		Fiche commande
- \version		$Id$
+ *	\file		htdocs/fourn/commande/fiche.php
+ *	\ingroup	commande
+ *	\brief		Fiche commande
+ *	\version	$Id$
  */
 
 require('./pre.inc.php');
@@ -109,42 +109,42 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 			if ($idprod > 0)
 			{
 				$prodfournprice->fetch($idprod);
-				
+
 				// cas special pour lequel on a les meme reference que le fournisseur
 				// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
 				$label = $prodfournprice->libelle;
-	
+
 				$societe='';
 				if ($commande->socid)
 				{
 					$societe=new Societe($db);
 					$societe->fetch($commande->socid);
 				}
-				
+
 				$desc = $prodfournprice->description;
 				$desc.= $prodfournprice->description && $_POST['np_desc'] ? "\n" : "";
 				$desc.= $_POST['np_desc'];
-				
+
 				$tva_tx	= get_default_tva($societe,$mysoc,$prodfournprice->tva_tx,$prodfournprice->id);
 
 				$result=$commande->addline(
-					$desc,
-					$pu,
-					$_POST['qty'],
-					$tva_tx,
-					$prodfournprice->id,
-					$_POST['idprodfournprice'],
-					$prodfournprice->fourn_ref,
-					$_POST['remise_percent'],
+				$desc,
+				$pu,
+				$_POST['qty'],
+				$tva_tx,
+				$prodfournprice->id,
+				$_POST['idprodfournprice'],
+				$prodfournprice->fourn_ref,
+				$_POST['remise_percent'],
 					'HT'
-				);
+					);
 
 			}
 			if ($idprod == -1)
 			{
 				// Quantity too low
 				$mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
-			}			
+			}
 		}
 		else
 		{
@@ -168,20 +168,20 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 				}
 			}
 		}
-	
+
 		//print "xx".$tva_tx; exit;
 		if ($result > 0)
 		{
-		 	if ($_REQUEST['lang_id'])
-		 	{
-	    		$outputlangs = new Translate("",$conf);
+			if ($_REQUEST['lang_id'])
+			{
+				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 		}
 		else
 		{
-		 	$mesg='<div class="error">'.$commande->error.'</div>';
+			$mesg='<div class="error">'.$commande->error.'</div>';
 		}
 	}
 }
@@ -896,7 +896,7 @@ if ($id > 0)
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
 				print '<td colspan="3">';
-				$html->select_produits_fournisseurs($commande->fourn_id,'','idprodfournprice',2,$filtre);
+				$html->select_produits_fournisseurs($commande->fourn_id,'','idprodfournprice','',$filtre);
 
 				if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 

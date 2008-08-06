@@ -870,7 +870,7 @@ else
 	                $var=! $var;
 	                print '<tr '.$bc[$var].'>';
 	                print '<td colspan="4">';
-	                $html->select_produits_fournisseurs($fac->socid,'','prodfournpriceid',2,$filtre);
+	                $html->select_produits_fournisseurs($fac->socid,'','prodfournpriceid','',$filtre);
 	                print '</td>';
 	                print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
 	                print '<td>&nbsp;</td>';

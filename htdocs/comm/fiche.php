@@ -382,7 +382,7 @@ if ($socid > 0)
                 {
                     print " ".img_warning();
                 }
-                print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dp)."</td>\n";
+                print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dp,'day')."</td>\n";
                 print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
                 print '<td align="right" nowrap="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
                 $var=!$var;
@@ -431,7 +431,7 @@ if ($socid > 0)
                 $var=!$var;
                 print "<tr $bc[$var]>";
                 print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
-                print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dc)."</td>\n";
+                print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dc,'day')."</td>\n";
                 print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
                 print '<td align="right" width="100">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
                 $i++;
@@ -445,7 +445,7 @@ if ($socid > 0)
     }
 
     /*
-     * Derniers contrats
+     * Last linked contracts
      */
     if($conf->contrat->enabled)
     {
@@ -481,10 +481,10 @@ if ($socid > 0)
                 print "<tr $bc[$var]>";
                 print '<td>';
                 $contrat->id=$objp->id;
-                $contrat->ref=$objp->ref;
+                $contrat->ref=$objp->ref?$objp->ref:$objp->id;
                 print $contrat->getNomUrl(1);
                 print "</td>\n";
-                print '<td align="right" width="80">'.dolibarr_print_date($objp->dc)."</td>\n";
+                print '<td align="right" width="80">'.dolibarr_print_date($objp->dc,'day')."</td>\n";
                 print '<td width="20">&nbsp;</td>';
                 print '<td align="right" nowrap="nowrap">';
                 $contrat->fetch_lignes();
@@ -532,7 +532,7 @@ if ($socid > 0)
                 $objp = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
                 print '<td nowrap><a href="'.DOL_URL_ROOT."/fichinter/fiche.php?id=".$objp->id."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a>\n";
-                print "</td><td align=\"right\">".dolibarr_print_date($objp->di)."</td>\n";
+                print "</td><td align=\"right\">".dolibarr_print_date($objp->di,'day')."</td>\n";
                 print '</tr>';
                 $var=!$var;
                 $i++;
@@ -546,7 +546,7 @@ if ($socid > 0)
     }
     
     /*
-     * Derniers projets associ�s
+     * Last linked projects
      */
     if ($conf->projet->enabled)
     {
