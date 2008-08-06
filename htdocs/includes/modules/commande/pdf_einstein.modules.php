@@ -320,8 +320,8 @@ class pdf_einstein extends ModelePDFCommandes
 					if($i < ($nblignes - 1)){
 						//on récupère la description du produit suivant
 						$follow_descproduitservice = $com->lignes[$i+1]->desc;
-						//on compte le nombre de ligne afin de vérifier la place disponible
-						$nblineFollowDesc = (num_lines($follow_descproduitservice)*4);
+						//on compte le nombre de ligne afin de vérifier la place disponible (largeur de ligne 52 caracteres)
+						$nblineFollowDesc = (num_lines($follow_descproduitservice,52)*4);
 					}
 					else
 						$nblineFollowDesc = 0;

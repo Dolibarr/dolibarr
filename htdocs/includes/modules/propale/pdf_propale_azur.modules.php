@@ -324,11 +324,19 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					$nexY+=2;    // Passe espace entre les lignes
 						
-					//on récupère la description du produit suivant
-					$follow_descproduitservice = $propale->lignes[$i+1]->desc;
 					//on compte le nombre de ligne afin de vérifier la place disponible
 					$nblineFollowDesc = (num_lines($follow_descproduitservice)*4);
-
+					// cherche nombre de lignes a venir pour savoir si place suffisante
+					if($i < ($nblignes - 1)){
+						//on récupère la description du produit suivant
+						$follow_descproduitservice = $propale->lignes[$i+1]->desc;
+						//on compte le nombre de ligne afin de vérifier la place disponible (largeur de ligne 52 caracteres)
+						$nblineFollowDesc = (num_lines($follow_descproduitservice,52)*4);
+					}
+					else
+						$nblineFollowDesc = 0;
+					
+					// test si besoin nouvelle page
 					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
 						if ($pagenb == 1)
