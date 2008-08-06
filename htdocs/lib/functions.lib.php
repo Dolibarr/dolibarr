@@ -6,6 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2775,17 +2776,34 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 }
 
 /**
- \brief     Fonction retournant le nombre de lignes dans un texte format�
- \param	    texte      Texte
- \return    nblines    Nombre de lignes
+ *	\brief     Fonction retournant le nombre de lignes dans un texte formate
+ *	\param	    texte      Texte
+ *	\return    nblines    Nombre de lignes
  */
-function num_lines($texte)
+function num_lines($texte,$maxlinesize=0)
 {
 	$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " ");
 	$texte = strtr($texte, $repTable);
 	$pattern = '/(<[^>]+>)/Uu';
 	$a = preg_split($pattern, $texte, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$nblines = ((count($a)+1)/2);
+    // count possible auto line breaks 	 
+         if($maxlinesize) 	 
+         { 	 
+                  foreach ($a as $line) 	 
+                  { 	 
+                         if (strlen($line)>$maxlinesize) 	 
+                         { 	 
+                                 //$line_dec = html_entity_decode(strip_tags($line)); 	 
+                                 $line_dec = html_entity_decode($line); 	 
+                                 if(strlen($line_dec)>$maxlinesize) 	 
+                                 { 	 
+                                 $line_dec=wordwrap($line_dec,$maxlinesize,'\n',true); 	 
+                                 $nblines+=substr_count($line_dec,'\n'); 	 
+                                 } 	 
+                         } 	 
+                  } 	 
+         }
 	return $nblines;
 }
 
