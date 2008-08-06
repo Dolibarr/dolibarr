@@ -334,7 +334,18 @@ class pdf_crabe extends ModelePDFFactures
 
 					$nexY+=2;    // Passe espace entre les lignes
 
-					if ($nexY > ($tab_top+$tab_height) && $i < ($nblignes - 1))
+					// cherche nombre de lignes a venir pour savoir si place suffisante
+					if($i < ($nblignes - 1)){
+						//on récupère la description du produit suivant
+						$follow_descproduitservice = $fac->lignes[$i+1]->desc;
+						//on compte le nombre de ligne afin de vérifier la place disponible
+						$nblineFollowDesc = (num_lines($follow_descproduitservice)*4);
+					}
+					else
+						$nblineFollowDesc = 0;
+					
+					// test si besoin nouvelle page
+					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
 						if ($pagenb == 1)
 						{
@@ -345,7 +356,7 @@ class pdf_crabe extends ModelePDFFactures
 							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
 						}
 
-						$this->_pagefoot($pdf,$outputlangs);
+						$this->_pagefoot($pdf,$fac,$outputlangs);
 
 						// Nouvelle page
 						$pdf->AddPage();

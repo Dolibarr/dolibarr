@@ -315,8 +315,19 @@ class pdf_einstein extends ModelePDFCommandes
 					$this->tva[$vatrate] += $tvaligne;
 
 					$nexY+=2;    // Passe espace entre les lignes
-
-					if ($nexY > ($tab_top+$tab_height) && $i < ($nblignes - 1))
+					
+					// cherche nombre de lignes a venir pour savoir si place suffisante
+					if($i < ($nblignes - 1)){
+						//on récupère la description du produit suivant
+						$follow_descproduitservice = $com->lignes[$i+1]->desc;
+						//on compte le nombre de ligne afin de vérifier la place disponible
+						$nblineFollowDesc = (num_lines($follow_descproduitservice)*4);
+					}
+					else
+						$nblineFollowDesc = 0;
+					
+					// test si besoin nouvelle page
+					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
 						if ($pagenb == 1)
 						{
