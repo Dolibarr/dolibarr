@@ -21,11 +21,11 @@
  */
 
 /**
-        \file       htdocs/contact/fiche.php
-        \ingroup    societe
-        \brief      Onglet général d'un contact
-        \version    $Id$
-*/
+ *       \file       htdocs/contact/fiche.php
+ *       \ingroup    societe
+ *       \brief      Onglet général d'un contact
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
@@ -227,13 +227,12 @@ if ($_GET["id"] > 0)
 
 /*
 * Confirmation de la suppression du contact
-*
 */
 if ($user->rights->societe->contact->supprimer)
 {
 	if ($_GET["action"] == 'delete')
 	{
-		$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
+		$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],$langs->trans("DeleteContact"),$langs->trans("ConfirmDeleteContact"),"confirm_delete");
 		print '<br>';
 	}
 }
