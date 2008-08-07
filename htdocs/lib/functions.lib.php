@@ -2778,6 +2778,7 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 /**
  *	\brief     Fonction retournant le nombre de lignes dans un texte formate
  *	\param	    texte      Texte
+ *	\param	    maxlinesize      Largeur de ligne en caracteres(ou 0 si pas de limite - defaut)
  *	\return    nblines    Nombre de lignes
  */
 function num_lines($texte,$maxlinesize=0)
