@@ -372,26 +372,31 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					$objp = $db->fetch_object($resql);
 					$var=!$var;
 
-					print '<tr '.$bc[$var].'>';
-
-					print '<td>';
 					$facturestatic->ref=$objp->facnumber;
 					$facturestatic->id=$objp->facid;
 					$facturestatic->type=$objp->type;
+					
+					$creditnote=$facturestatic->getSommeCreditNote();
+					
+					print '<tr '.$bc[$var].'>';
+
+					print '<td>';
 					print $facturestatic->getNomUrl(1,'');
 					print "</td>\n";
 
 					// Date
-					print '<td align="center">'.dolibarr_print_date($objp->df)."</td>\n";
+					print '<td align="center">'.dolibarr_print_date($objp->df,'day')."</td>\n";
 
 					// Prix
 					print '<td align="right">'.price($objp->total_ttc).'</td>';
 						
 					// Recu
-					print '<td align="right">'.price($objp->am).'</td>';
+					print '<td align="right">'.price($objp->am);
+					if ($creditnote) print '+'.price($creditnote);
+					print '</td>';
 						
 					// Reste a payer
-					print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
+					print '<td align="right">'.price($objp->total_ttc - $objp->am - $creditnote).'</td>';
 
 					// Montant
 					print '<td align="right">';

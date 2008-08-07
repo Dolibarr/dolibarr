@@ -2164,13 +2164,13 @@ else
 					}
 						
 					// Already payed
-					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td nowrap="nowrap">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 
-					// Facturé
+					// Billed
 					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 					$resteapayeraffiche=$resteapayer;
 
-					// Boucle sur chaque facture avoir appliquee
+					// Loop on each credit note applied
 					$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 					$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
 					$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
@@ -2239,7 +2239,7 @@ else
 					else print $langs->trans('ExcessReceived');
 					print ' :</td>';
 					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayeraffiche).'</b></td>';
-					print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<td wrap="nowrap">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 				}
 				else
 				{
