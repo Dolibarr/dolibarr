@@ -433,6 +433,8 @@ MenuMembers=Adhérents
 MenuAgendaGoogle=Agenda Google
 ThisLimitIsDefinedInSetup=Limite Dolibarr (Menu accueil-configuration-sécurité): %s Ko, Limite PHP: %s Ko
 NoFileFound=Pas de documents stockés dans cette rubrique
+CurrentUserLanguage=Langue utilisateur actuelle
+CurrentTheme=Theme courant
 # Week day
 Monday=Lundi
 Tuesday=Mardi

@@ -38,7 +38,6 @@ ParameterInDolibarr=Paramètre %s
 LanguageParameter=Paramètre linguistique %s
 LanguageBrowserParameter=Paramètre linguistique %s du navigateur
 LanguageDolibarrParameter=Paramètre linguistique de Dolibarr
-CurrentUserLanguage=Langue utilisateur actuelle
 CurrentDolibarrTZ=Time Zone Dolibarr courante
 OSEnv=Environnement du système d'exploitation
 Box=Boîte

@@ -422,6 +422,8 @@ Color=Color
 MenuECM=Documentos
 MenuAWStats=AWStats
 MenuMembers=Members
+CurrentUserLanguage=Idioma actual
+CurrentTheme=Tema actual
 # Week day
 Monday=Lunes
 Tuesday=Martes

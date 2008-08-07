@@ -431,6 +431,8 @@ MenuMembers=Members
 MenuAgendaGoogle=Google agenda
 ThisLimitIsDefinedInSetup=Dolibarr limit (Menu home-setup-security): %s Kb, PHP limit: %s Kb
 NoFileFound=No documents saved in this directory
+CurrentUserLanguage=Current language
+CurrentTheme=Current theme
 # Week day
 Monday=Monday
 Tuesday=Tuesday
