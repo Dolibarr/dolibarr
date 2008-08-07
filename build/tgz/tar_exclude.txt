@@ -3,6 +3,7 @@ dev/fpdf
 dev/ldap
 dev/purgedemo
 dev/generate*
+dev/skeletons/*socpeople*
 doc/dev/dolibarr-phpdoc
 doc/dev/barcode
 doc/dev/compta
