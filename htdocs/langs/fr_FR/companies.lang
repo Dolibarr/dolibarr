@@ -1,4 +1,4 @@
-# Dolibarr language file - fr_FR - soc
+# Dolibarr language file - fr_FR - companies
 ErrorBadEMail=e-mail %s invalide
 ErrorCompanyNameAlreadyExists=Le nom de société %s existe déjà. Veuillez en choisir un autre.
 ErrorPrefixAlreadyExists=Le préfixe %s existe déjà. Veuillez en choisir un autre.

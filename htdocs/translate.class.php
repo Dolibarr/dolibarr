@@ -258,7 +258,7 @@ class Translate {
 	                // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
 	                if (! $alt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
 	                {
-	                    dolibarr_syslog("Translate::Load loading alternate translation file", LOG_DEBUG);
+	                    dolibarr_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
 	                    $this->load($domain,1);
 	                }
 
