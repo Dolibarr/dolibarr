@@ -18,11 +18,11 @@
  */
  
 /**
-        \file       htdocs/contrat/fiche.php
-        \ingroup    contrat
-        \brief      Fiche contrat
-        \version    $Id$
-*/
+ *       \file       htdocs/contrat/fiche.php
+ *       \ingroup    contrat
+ *       \brief      Fiche contrat
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/contract.lib.php');
@@ -1200,11 +1200,11 @@ else
 				else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a>';
             }
 
-            if ($contrat->statut > 0)
+            if ($conf->facture->enabled && $contrat->statut > 0)
             {
                 $langs->load("bills");
 				if ($user->rights->facture->creer) print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;contratid='.$contrat->id.'&amp;socid='.$contrat->societe->id.'">'.$langs->trans("CreateBill").'</a>';
-				else print '<a class="butAction" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
+				else print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a>';
             }
 
 			if ($contrat->nbofservicesclosed < $nbofservices)
