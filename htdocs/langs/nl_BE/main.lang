@@ -82,6 +82,7 @@ AmountTTC=Bedrag BTW inbegrepen
 Total=totaal
 TotalHT=Totaal zonder BTW
 TotalTTC=Totaal BTW inbegrepen
+TotalTTCToYourCredit=Total TTC to your credit
 Delta=Delta
 Module=Module
 Option=Optie
@@ -97,4 +98,5 @@ RemoveFilter=Verwijder filter
 ChartGenerated=Grafiek gegenereerd
 ChartNotGenerated=Grafiek niet gegenereerd
 Duration=Duurtijd
-
+VAT=BTW
+VATRate=BTW Rate

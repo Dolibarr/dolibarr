@@ -1,8 +1,4 @@
 # Dolibarr language file - es_ES - main
-
-
-
-
 CHARSET=ISO-8859-1
 DatabaseConnection=Conexión a la base de datos
 SeparatorDecimal=,
@@ -221,16 +217,22 @@ AmountTTC=Importe
 AmountVAT=Importe IVA
 AmountTotal=Importe total
 AmountAverage=Importe medio
+PriceQtyHT=Precio para la cantidad total
+PriceQtyMinHT=Precio cantidad min total
+PriceQtyTTC=Precio total para la cantidad
+PriceQtyMinTTC=Precio cantidad min. total
 Percentage=Porcentaje
 Total=Total
 SubTotal=Subtotal
 TotalHT=Importe
 TotalTTC=Totat
+TotalTTCToYourCredit=Total a crédito
 TotalVAT=Total IVA
 IncludedVAT=IVA incluido
 HT=Importe
 TTC=Total
 VAT=IVA
+VATRate=Tasa IVA
 Average=Media
 Sum=Suma
 Delta=Divergencia

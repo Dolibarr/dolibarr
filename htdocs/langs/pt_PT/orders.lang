@@ -10,7 +10,6 @@ OrdersInProcess=Vendas em processamento
 OrdersToProcess=Vendas a processar
 SearchOrder=Ordem de procura
 Sendings=Envios
-VAT=IVA
 Discount=Desconto
 CreateOrder=Criar venda
 RefuseOrder=Recusar venda

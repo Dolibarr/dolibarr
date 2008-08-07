@@ -320,7 +320,6 @@ LawApplicationPart1=Por aplicación de la ley 80.335 de 12/05/80
 LawApplicationPart2=las mercancías permanecen en propiedad de
 LawApplicationPart3=vendedor hasta el completo cobro de
 LawApplicationPart4=sus precios
-VATDischarged=IVA pagado sobre los débitos.
 LimitedLiabilityCompanyCapital=SRL con capital de
 UseDiscount=Aplicar descuento
 UseCreditNoteInInvoicePayment=Reducir el pago con este abono
