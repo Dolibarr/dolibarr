@@ -233,8 +233,10 @@ class DoliDb
     {
 		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
 
-		// With mysqli, port must be in connect parameters
+		$newhost=$host;
 		$newport=$port;
+		
+		// With mysqli, port must be in connect parameters
 		if (! $newport) $newport=3306;
 
         $this->db  = @mysqli_connect($newhost, $login, $passwd, $name, $newport);
