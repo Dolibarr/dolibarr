@@ -3358,7 +3358,7 @@ else
 			print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','','&amp;socid='.$socid.'&amp;month='.$month.'&amp;year=' . $year,'align="right"',$sortfield,$sortorder);
-            print '<td class="liste_titre">&nbsp;</td>';
+            //print '<td class="liste_titre">&nbsp;</td>';
 			print '</tr>';
 
 			// Lignes des champs de filtre
@@ -3367,14 +3367,12 @@ else
 			print '<td class="liste_titre" align="left">';
 			print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
 			print '<td class="liste_titre" colspan="1" align="center">';
-            print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
-            print '&nbsp;'.$langs->trans('Year').': ';
+            print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+            //print '&nbsp;'.$langs->trans('Year').': ';
             $max_year = date("Y");
-            $form = new Form($db);
             $syear = $year;
-            if($syear == '')
-                $syear = date("Y");
-           $form->select_year($syear,'year',1, '', $max_year);
+            //if ($syear == '') $syear = date("Y");
+            $html->select_year($syear,'year',1, '', $max_year);
             print '</td>';
 			print '<td class="liste_titre" align="left">';
 			print '<input class="flat" type="text" name="search_societe" value="'.$_GET['search_societe'].'">';
@@ -3383,10 +3381,10 @@ else
 			print '</td><td class="liste_titre" align="right">';
 			print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET['search_montant_ttc'].'">';
 			print '</td>';
-            print '<td align="right" colspan="2">';
+            print '<td align="right">';
             print '&nbsp;';
             print '</td>';
-			print '<td class="liste_titre"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
+			print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
 			print "</td></tr>\n";
 
 			if ($num > 0)
@@ -3452,7 +3450,7 @@ else
 					print '<td align="right" nowrap="nowrap">';
 					print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am,$objp->type);
 					print "</td>";
-                    print "<td>&nbsp;</td>";
+                    //print "<td>&nbsp;</td>";
                     print "</tr>\n";
 					$total+=$objp->total;
 					$total_ttc+=$objp->total_ttc;
