@@ -1,0 +1,8 @@
+# Dolibarr language file - en_AU - companies
+VATIsUsed=GST is used
+VATIsNotUsed=GST is not used
+VATIntra=GST number
+VATIntraShort=GST number
+VATIntraVeryShort=GST
+VATIntraSyntaxIsValid=Syntax is valid
+VATIntraValueIsValid=Value is valid
