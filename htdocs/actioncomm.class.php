@@ -687,10 +687,10 @@ class ActionComm
 			
 			// Write file
 			$more='';
-			if ($login)  $more=$langs->trans("User").' '.$login;
-			if ($logina) $more=$langs->trans("ActionsAskedBy").' '.$logina;
-			if ($logint) $more=$langs->trans("ActionsToDoBy").' '.$logint;
-			if ($logind) $more=$langs->trans("ActionsDoneBy").' '.$logind;
+			if ($login)  $more=$langs->transnoentities("User").' '.$login;
+			if ($logina) $more=$langs->transnoentities("ActionsAskedBy").' '.$logina;
+			if ($logint) $more=$langs->transnoentities("ActionsToDoBy").' '.$logint;
+			if ($logind) $more=$langs->transnoentities("ActionsDoneBy").' '.$logind;
 			if ($more)
 			{ 
 				$title='Dolibarr actions - '.$more;
@@ -699,7 +699,7 @@ class ActionComm
 			else
 			{
 				$title='Dolibarr actions';
-				$desc=$langs->trans('ListOfActions').' - built by Dolibarr';
+				$desc=$langs->transnoentities('ListOfActions').' - built by Dolibarr';
 			}
 			
 			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
