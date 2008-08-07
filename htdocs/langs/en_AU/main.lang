@@ -1,0 +1,25 @@
+# Dolibarr language file - en_AU - main
+# This file contains only line that must differs from en_US
+CHARSET=ISO-8859-1
+UnitPrice=Unit price
+UnitPriceHT=Unit price (excl GST)
+UnitPriceTTC=Unit price
+PriceU=U.P.
+PriceUHT=U.P. (excl GST)
+PriceUTTC=U.P.
+AmountHT=Amount (excl GST)
+AmountTTC=Amount (incl GST)
+AmountVAT=Amount GST
+PriceQtyHT=Price for this quantity excl GST
+PriceQtyMinHT=Price quantity min. excl GST
+PriceQtyTTC=Price for this quantity incl GST
+PriceQtyMinTTC=Price quantity min. incl GST
+TotalHT=Total (excl GST)
+TotalTTC=Total (incl GST)
+TotalTTCToYourCredit=Total (incl GST) to your credit
+TotalVAT=Total GST
+IncludedVAT=Included GST
+HT=excl GST
+TTC=Incl GST
+VAT=GST
+VATRate=GST Rate
