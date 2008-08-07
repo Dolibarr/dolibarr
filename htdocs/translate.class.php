@@ -19,24 +19,23 @@
  * ************************************************************************* */
 
 /**
-    	\file       htdocs/translate.class.php
-		\brief      Fichier de la classe de traduction
-		\author	    Eric Seigne
-		\author	    Laurent Destailleur
-		\version    $Id$
-*/
+ *   	\file       htdocs/translate.class.php
+ *		\brief      File for tanslation class
+ *		\author	    Eric Seigne
+ *		\author	    Laurent Destailleur
+ *		\version    $Id$
+ */
 
 
 /**
-        \class      Translate
-		\brief      Class to manage translations
-*/
+ *      \class      Translate
+ *		\brief      Class to manage translations
+ */
 class Translate {
 
     var $dir;						// Directory with translation files
     var $dir_bis;					// Second directory with translation files (for development on two workspaces)
 
-    var $origlang;					// Langue origine
     var $defaultlang;				// Langue courante en vigueur de l'utilisateur
 
     var $tab_loaded=array();		// Tableau pour signaler les fichiers deja charges
@@ -123,8 +122,9 @@ class Translate {
 
     
     /**
-     *  \brief      Get accessor for this->defaultlang
-     *  \return     string      Language used
+     *  \brief      Return active language code for current user
+     * 	\remarks	Accessor for this->defaultlang
+     *  \return     string      Language code used (en_US, en_AU, fr_FR, ...)
      */
     function getDefaultLang()
     {

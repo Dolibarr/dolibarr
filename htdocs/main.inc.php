@@ -948,7 +948,9 @@ function top_menu($head, $title="", $target="")
 	$htmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"dayhour");
 	$htmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dolibarr_print_date($user->datepreviouslogin,"dayhour");
     $htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
-
+	$htmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
+	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
+    
 	$html=new Form($db);
 	print $html->textwithtooltip('',$htmltext,2,1,$text);
 

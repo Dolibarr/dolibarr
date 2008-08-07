@@ -18,19 +18,18 @@
  */
 
 /**
-        \file       htdocs/lib/doleditor.class.php
-        \brief      Classe permettant de gérer FCKEditor
-        \version    $Id$
+ *       \file       htdocs/lib/doleditor.class.php
+ *       \brief      Classe permettant de gérer FCKEditor
+ *       \version    $Id$
 */
 
 /**
-        \class      DolEditor
-        \brief      Classe de gestion de FCKEditor
-        \remarks    Usage:
-		\remarks	$doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
-		\remarks	$doleditor->Create();
-*/
-
+ *       \class      DolEditor
+ *       \brief      Classe de gestion de FCKEditor
+ *       \remarks    Usage:
+ *		\remarks	$doleditor=new DolEditor('body',$message,320,'toolbar_mailing');
+ *		\remarks	$doleditor->Create();
+ */
 class DolEditor
 {
 	var $editor;
@@ -81,22 +80,13 @@ class DolEditor
     	{
     		$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
     		$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
-//			if ($langs->origlang!='auto')
-//			{
-//			}
-		  }
-		  else
-		  {
-//			if ($langs->origlang!='auto')
-//			{
-//			}
-		  }
+		}
     }
 
 
     /**
-            \brief Affiche zone édition
-    */
+     *		\brief 	Show edit area
+     */
     function Create()
     {
     	$this->editor->Create();

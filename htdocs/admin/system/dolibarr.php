@@ -18,10 +18,10 @@
  */
 
 /**
-   \file       htdocs/admin/system/dolibarr.php
-   \brief      Fichier page info systemes Dolibarr
-   \version    $Id$
-*/
+ *  \file       htdocs/admin/system/dolibarr.php
+ *  \brief      Fichier page info systemes Dolibarr
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -31,7 +31,11 @@ $langs->load("install");
 if (!$user->admin)
   accessforbidden();
  
-
+  
+/*
+ * View
+ */
+  
 llxHeader();
 
 print_fiche_titre("Dolibarr",'','setup');
@@ -83,7 +87,7 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTopMenuHandle
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentLeftMenuHandler")."</td><td>".$conf->left_menu."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentDolibarrLanguage")."</td><td>".$langs->getDefaultLang()."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentUserLanguage")."</td><td>".$langs->getDefaultLang()."</td></tr>\n";
 print '</table>';
 print '<br>';
 
