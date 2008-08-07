@@ -18,140 +18,140 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
-   \file       htdocs/commande/commande.class.php
-   \ingroup    commande
-   \brief      Fichier des classes de commandes
-   \version    $Id$
-*/
+ *  \file       htdocs/commande/commande.class.php
+ *  \ingroup    commande
+ *  \brief      Fichier des classes de commandes
+ *  \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
- 
+
 /**
-   \class      Commande
-   \brief      Class to manage orders
-*/
+ *  \class      Commande
+ *  \brief      Class to manage orders
+ */
 class Commande extends CommonObject
 {
-  var $db;
-  var $error;
-  var $element='commande';
-  var $table_element='commande';
-  var $table_element_line = 'commandedet';
-  var $fk_element = 'fk_commande';
-  
-  var $id ;
-  
-  var $socid;		// Id client
-  var $client;		// Objet societe client (a charger par fetch_client)
-  
-  var $ref;
-  var $ref_client;
-  var $contactid;
-  var $projet_id;
-  var $statut;		// -1=Annulee, 0=Brouillon, 1=Validee, 2=Acceptee, 3=Recue (facturee ou non)
-  var $facturee;
-  var $brouillon;
-  var $cond_reglement_id;
-  var $cond_reglement_code;
-  var $mode_reglement_id;
-  var $mode_reglement_code;
-  var $adresse_livraison_id;
-  var $adresse;
-  var $date;				// Date commande
-  var $date_livraison;	// Date livraison souhaitee
-  var $fk_remise_except;
-  var $remise_percent;
-  var $remise_absolue;
-  var $modelpdf;
-  var $info_bits;
-  
-  var $lines = array();
-  
-  // Pour board
-  var $nbtodo;
-  var $nbtodolate;
-  
-  
-  /**
-   *        \brief      Constructeur
-   *        \param      DB      Handler d'acces base
-   */
-  function Commande($DB, $socid="", $commandeid=0)
-  {
-    global $langs;
-    $langs->load('orders');
-    $this->db = $DB;
-    $this->socid = $socid;
-    $this->id = $commandeid;
-    
-    $this->remise = 0;
-    $this->remise_percent = 0;
-    
-    $this->products = array();
-  }
-  
-  
-  /**     \brief      Cree la commande depuis une propale existante
-	  \param      user            Utilisateur qui cree
-	  \param      propale_id      id de la propale qui sert de modele
-  */
-  function create_from_propale($user, $propale_id)
-  {
-    dolibarr_syslog("Commande::create_from_propale propale_id=$propale_id");
-    
-    $propal = new Propal($this->db);
-    $propal->fetch($propale_id);
-    
-    $this->lines = array();
-    $this->date_commande = time();
-    $this->source = 0;
-    for ($i = 0 ; $i < sizeof($propal->lignes) ; $i++)
-      {
-      	$CommLigne = new CommandeLigne($this->db);
-	      $CommLigne->libelle           = $propal->lignes[$i]->libelle;
-	      $CommLigne->desc              = $propal->lignes[$i]->desc;
-	      $CommLigne->price             = $propal->lignes[$i]->price;
-	      $CommLigne->subprice          = $propal->lignes[$i]->subprice;
-	      $CommLigne->tva_tx            = $propal->lignes[$i]->tva_tx;
-	      $CommLigne->qty               = $propal->lignes[$i]->qty;
-	      $CommLigne->fk_remise_except  = $propal->lignes[$i]->fk_remise_except;
-	      $CommLigne->remise_percent    = $propal->lignes[$i]->remise_percent;
-	      $CommLigne->fk_product        = $propal->lignes[$i]->fk_product;
-	      $CommLigne->info_bits         = $propal->lignes[$i]->info_bits;
-	      $this->lines[$i] = $CommLigne;
-      }
+	var $db;
+	var $error;
+	var $element='commande';
+	var $table_element='commande';
+	var $table_element_line = 'commandedet';
+	var $fk_element = 'fk_commande';
 
-    $this->socid                = $propal->socid;
-    $this->projetid             = $propal->projetidp;
-    $this->cond_reglement_id    = $propal->cond_reglement_id;
-    $this->mode_reglement_id    = $propal->mode_reglement_id;
-    $this->date_livraison       = $propal->date_livraison;
-    $this->adresse_livraison_id = $propal->adresse_livraison_id;
-    $this->contact_id           = $propal->contactid;
-    $this->ref_client           = $propal->ref_client;
-    $this->note                 = $propal->note;
-    $this->note_public          = $propal->note_public;
-    
-    /* Definit la societe comme un client */
-    $soc = new Societe($this->db);
-    $soc->id = $this->socid;
-    $soc->set_as_client();
-    $this->propale_id = $propal->id;
+	var $id ;
 
-    return $this->create($user);
-  }
+	var $socid;		// Id client
+	var $client;		// Objet societe client (a charger par fetch_client)
+
+	var $ref;
+	var $ref_client;
+	var $contactid;
+	var $projet_id;
+	var $statut;		// -1=Annulee, 0=Brouillon, 1=Validee, 2=Acceptee, 3=Recue (facturee ou non)
+	var $facturee;
+	var $brouillon;
+	var $cond_reglement_id;
+	var $cond_reglement_code;
+	var $mode_reglement_id;
+	var $mode_reglement_code;
+	var $adresse_livraison_id;
+	var $adresse;
+	var $date;				// Date commande
+	var $date_livraison;	// Date livraison souhaitee
+	var $fk_remise_except;
+	var $remise_percent;
+	var $remise_absolue;
+	var $modelpdf;
+	var $info_bits;
+
+	var $lines = array();
+
+	// Pour board
+	var $nbtodo;
+	var $nbtodolate;
 
 
 	/**
-	*      \brief      Renvoie la reference de commande suivante non utilisee en fonction du module
-	*                  de numerotation actif defini dans COMMANDE_ADDON
-	*      \param	    soc  		            objet societe
-	*      \return     string                  reference libre pour la commande
-	*/
+	 *        \brief      Constructeur
+	 *        \param      DB      Handler d'acces base
+	 */
+	function Commande($DB, $socid="", $commandeid=0)
+	{
+		global $langs;
+		$langs->load('orders');
+		$this->db = $DB;
+		$this->socid = $socid;
+		$this->id = $commandeid;
+
+		$this->remise = 0;
+		$this->remise_percent = 0;
+
+		$this->products = array();
+	}
+
+
+	/**     \brief      Cree la commande depuis une propale existante
+	 *		\param      user            Utilisateur qui cree
+	 *		\param      propale_id      id de la propale qui sert de modele
+	 */
+	function create_from_propale($user, $propale_id)
+	{
+		dolibarr_syslog("Commande::create_from_propale propale_id=$propale_id");
+
+		$propal = new Propal($this->db);
+		$propal->fetch($propale_id);
+
+		$this->lines = array();
+		$this->date_commande = time();
+		$this->source = 0;
+		for ($i = 0 ; $i < sizeof($propal->lignes) ; $i++)
+		{
+			$CommLigne = new CommandeLigne($this->db);
+			$CommLigne->libelle           = $propal->lignes[$i]->libelle;
+			$CommLigne->desc              = $propal->lignes[$i]->desc;
+			$CommLigne->price             = $propal->lignes[$i]->price;
+			$CommLigne->subprice          = $propal->lignes[$i]->subprice;
+			$CommLigne->tva_tx            = $propal->lignes[$i]->tva_tx;
+			$CommLigne->qty               = $propal->lignes[$i]->qty;
+			$CommLigne->fk_remise_except  = $propal->lignes[$i]->fk_remise_except;
+			$CommLigne->remise_percent    = $propal->lignes[$i]->remise_percent;
+			$CommLigne->fk_product        = $propal->lignes[$i]->fk_product;
+			$CommLigne->info_bits         = $propal->lignes[$i]->info_bits;
+			$this->lines[$i] = $CommLigne;
+		}
+
+		$this->socid                = $propal->socid;
+		$this->projetid             = $propal->projetidp;
+		$this->cond_reglement_id    = $propal->cond_reglement_id;
+		$this->mode_reglement_id    = $propal->mode_reglement_id;
+		$this->date_livraison       = $propal->date_livraison;
+		$this->adresse_livraison_id = $propal->adresse_livraison_id;
+		$this->contact_id           = $propal->contactid;
+		$this->ref_client           = $propal->ref_client;
+		$this->note                 = $propal->note;
+		$this->note_public          = $propal->note_public;
+
+		/* Definit la societe comme un client */
+		$soc = new Societe($this->db);
+		$soc->id = $this->socid;
+		$soc->set_as_client();
+		$this->propale_id = $propal->id;
+
+		return $this->create($user);
+	}
+
+
+	/**
+	 *      \brief      Renvoie la reference de commande suivante non utilisee en fonction du module
+	 *                  de numerotation actif defini dans COMMANDE_ADDON
+	 *      \param	    soc  		            objet societe
+	 *      \return     string                  reference libre pour la commande
+	 */
 	function getNextNumRef($soc)
 	{
 		global $db, $langs, $conf;
@@ -194,8 +194,8 @@ class Commande extends CommonObject
 			return "";
 		}
 	}
-    
-    
+
+
 	/**
 	 *  \brief   Valide la commande
 	 *  \param   user     Utilisateur qui valide
@@ -207,7 +207,7 @@ class Commande extends CommonObject
 			
 		if ($this->statut == 1)
 		{
-			return 0;	
+			return 0;
 		}
 
 		if (! $user->rights->commande->valider)
@@ -230,11 +230,11 @@ class Commande extends CommonObject
 		$comref = substr($this->ref, 1, 4);
 		if ($comref == 'PROV')
 		{
- 			$num = $this->getNextNumRef($soc);
+			$num = $this->getNextNumRef($soc);
 		}
 		else
 		{
-   			$num = $this->ref;
+			$num = $this->ref;
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
@@ -271,9 +271,9 @@ class Commande extends CommonObject
 							return 0;
 						}
 					}
-    			}
+				}
 			}
-				
+
 			//Si active on decremente le produit principal et ses composants a la validation de command
 			if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
@@ -304,98 +304,98 @@ class Commande extends CommonObject
 				}
 			}
 
-		   // Appel des triggers
-		   include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-		   $interface=new Interfaces($this->db);
-		   $result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
-		   if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		   // Fin appel triggers
-		
-		   $this->db->commit();
-		   return $this->id;
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+
+			$this->db->commit();
+			return $this->id;
 		}
 		else
 		{
-		   $this->db->rollback();
-		   $this->error=$this->db->error();
-		   return -1;
+			$this->db->rollback();
+			$this->error=$this->db->error();
+			return -1;
 		}
 	}
 
 	/**
-	*		\brief		Set draft status
-	*		\param		user		Object user that modify
-	*		\param		int			<0 if KO, >0 if OK
-	*/
+	 *		\brief		Set draft status
+	 *		\param		user		Object user that modify
+	 *		\param		int			<0 if KO, >0 if OK
+	 */
 	function set_draft($user)
 	{
 		global $conf,$langs;
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
-    $sql .= " WHERE rowid = ".$this->id;
-    
-    if ($this->db->query($sql))
-    {
-    	//Si active on incremente le produit principal et ses composants a l'edition de la commande
-	  if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+		$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
+		$sql .= " WHERE rowid = ".$this->id;
+
+		if ($this->db->query($sql))
 		{
-			require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+			//Si active on incremente le produit principal et ses composants a l'edition de la commande
+	  if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+	  {
+	  	require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-		    {
-		    	if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
-		    	{
-		    		$prod = new Product($this->db, $this->lignes[$i]->fk_product);
-		    		$prod -> get_sousproduits_arbo ();
-		    		$prods_arbo = $prod->get_each_prod();
-		        if(sizeof($prods_arbo) > 0)
-		        {
-		    	    foreach($prods_arbo as $key => $value)
-		    	    {
-		    		    // on decompte le stock de tous les sousproduits
-		    		    $mouvS = new MouvementStock($this->db);
-		    		    $entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-		    		    $result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
-		    	    }
-		        }
-		      }
-		     $mouvP = new MouvementStock($this->db);
-		     // on decompte le stock du produit principal
-		     $entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-		    $result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+				{
+					if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
+					{
+						$prod = new Product($this->db, $this->lignes[$i]->fk_product);
+						$prod -> get_sousproduits_arbo ();
+						$prods_arbo = $prod->get_each_prod();
+						if(sizeof($prods_arbo) > 0)
+						{
+							foreach($prods_arbo as $key => $value)
+							{
+								// on decompte le stock de tous les sousproduits
+								$mouvS = new MouvementStock($this->db);
+								$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+								$result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
+							}
+						}
+					}
+					$mouvP = new MouvementStock($this->db);
+					// on decompte le stock du produit principal
+					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+					$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 		  }
+	  }
+	  return 1;
 		}
-    	return 1;
-    }
-    else
-    {
-    	dolibarr_print_error($this->db);
-    }
-  }
-  
-  /**
-   *    \brief      Cloture la commande
-   *    \param      user        Objet utilisateur qui cloture
-   *    \return     int         <0 si ko, >0 si ok
-   */
-  function cloture($user)
-  {
-    global $conf;
-    if ($user->rights->commande->valider)
-    {
-    	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-    	$sql.= ' SET fk_statut = 3,';
-    	$sql.= ' fk_user_cloture = '.$user->id.',';
-    	$sql.= ' date_cloture = now()';
-    	$sql.= " WHERE rowid = $this->id AND fk_statut > 0 ;";
-	
-	if ($this->db->query($sql))
-	{
-		if($conf->stock->enabled && $conf->global->PRODUIT_SOUSPRODUITS == 1 && $conf->global->STOCK_CALCULATE_ON_SHIPMENT == 1)
+		else
 		{
-			require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
-			for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-		  {
+			dolibarr_print_error($this->db);
+		}
+	}
+
+	/**
+	 *    \brief      Cloture la commande
+	 *    \param      user        Objet utilisateur qui cloture
+	 *    \return     int         <0 si ko, >0 si ok
+	 */
+	function cloture($user)
+	{
+		global $conf;
+		if ($user->rights->commande->valider)
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql.= ' SET fk_statut = 3,';
+			$sql.= ' fk_user_cloture = '.$user->id.',';
+			$sql.= ' date_cloture = now()';
+			$sql.= " WHERE rowid = $this->id AND fk_statut > 0 ;";
+
+			if ($this->db->query($sql))
+			{
+				if($conf->stock->enabled && $conf->global->PRODUIT_SOUSPRODUITS == 1 && $conf->global->STOCK_CALCULATE_ON_SHIPMENT == 1)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+					{
 		    $prod = new Product($this->db, $this->lignes[$i]->fk_product);
 		    $prod -> get_sousproduits_arbo ();
 		    $prods_arbo = $prod->get_each_prod();
@@ -411,133 +411,133 @@ class Commande extends CommonObject
 		    }
 		    // on decompte pas le stock du produit principal, ca serait fait manuellement avec l'expedition
 		    // $result=$mouvS->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
-		  }
+					}
+				}
+				return 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				return -1;
+			}
 		}
-		return 1;
 	}
-	else
+
+	/**
+	 * Annule la commande
+	 *
+	 */
+	function cancel($user)
 	{
-		dolibarr_print_error($this->db);
-		return -1;
-	}
- }
-}
-
-  /**
-   * Annule la commande
-   *
-   */
-  function cancel($user)
-  {
-  	global $conf;
-    if ($user->rights->commande->valider)
-    {
-	    $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = -1';
-	    $sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
-	
-	    if ($this->db->query($sql) )
-	    {
-	  //Si active on incremente le produit principal et ses composants a l'edition de la commande
-	  if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+		global $conf;
+		if ($user->rights->commande->valider)
 		{
-			require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = -1';
+			$sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
 
-				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-		    {
-		    	if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
-		    	{
-		    		$prod = new Product($this->db, $this->lignes[$i]->fk_product);
-		    		$prod -> get_sousproduits_arbo ();
-		    		$prods_arbo = $prod->get_each_prod();
-		        if(sizeof($prods_arbo) > 0)
-		        {
-		    	    foreach($prods_arbo as $key => $value)
-		    	    {
-		    		    // on decompte le stock de tous les sousproduits
-		    		    $mouvS = new MouvementStock($this->db);
-		    		    $entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-		    		    $result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
-		    	    }
-		        }
-		      }
-		     $mouvP = new MouvementStock($this->db);
-		     // on decompte le stock du produit principal
-		     $entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+			if ($this->db->query($sql) )
+			{
+				//Si active on incremente le produit principal et ses composants a l'edition de la commande
+				if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
+					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+					{
+						if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
+						{
+							$prod = new Product($this->db, $this->lignes[$i]->fk_product);
+							$prod -> get_sousproduits_arbo ();
+							$prods_arbo = $prod->get_each_prod();
+							if(sizeof($prods_arbo) > 0)
+							{
+								foreach($prods_arbo as $key => $value)
+								{
+									// on decompte le stock de tous les sousproduits
+									$mouvS = new MouvementStock($this->db);
+									$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+									$result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
+								}
+							}
+						}
+						$mouvP = new MouvementStock($this->db);
+						// on decompte le stock du produit principal
+						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
 		    $result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
-		  }
+					}
+				}
+				return 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+			}
 		}
-	      return 1;
-	    }
-	    else
-	    {
-	      dolibarr_print_error($this->db);
-	    }
-    }
-  }
-  
-  /**
-   *  \brief	Cree la commande
-   *  \param	user Objet utilisateur qui cree
-   */
-  function create($user)
-  {
-    global $conf,$langs,$mysoc;
-    
-    // Nettoyage parametres
-    $this->brouillon = 1;		// On positionne en mode brouillon la commande
-    
-    dolibarr_syslog("Commande.class::create");
-    
-    // Verification parametres
-    if ($this->source < 0)
-    {
-    	$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
-	    dolibarr_syslog("Commande.class::create ".$this->error, LOG_ERR);
-	    return -1;
-    }
-    if (! $remise) $remise=0;
-    if (! $this->projetid) $this->projetid = 0;
-    
-    $soc = new Societe($this->db);
-    $result=$soc->fetch($this->socid);
-    if ($result < 0)
-    {
-    	$this->error="Failed to fetch company";
-	    dolibarr_syslog("Commande.class::create ".$this->error, LOG_ERR);
-	    return -2;
-    }
-    
-    $this->db->begin();
-    
-    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
-    $sql.= ' ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client,';
-    $sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
-    $sql.= ' remise_absolue, remise_percent)';
-    $sql.= " VALUES ('".$this->ref."',".$this->socid.', now(), '.$user->id.', '.$this->projetid.',';
-    $sql.= ' '.$this->db->idate($this->date_commande).',';
-    $sql.= ' '.$this->source.', ';
-    $sql.= " '".addslashes($this->note)."', ";
-    $sql.= " '".addslashes($this->note_public)."', ";
-    $sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."',";
-    $sql.= " ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null").",";
-    $sql.= " ".($this->adresse_livraison_id>0?$this->adresse_livraison_id:'NULL').",";
-    $sql.= " ".($this->remise_absolue>0?$this->remise_absolue:'NULL').",";
-    $sql.= " '".$this->remise_percent."')";
-    
-    dolibarr_syslog("Commande::create sql=".$sql);
-    $resql=$this->db->query($sql);
-    if ($resql)
-      {
-	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'commande');
-	
-	if ($this->id)
+	}
+
+	/**
+	 *  \brief	Cree la commande
+	 *  \param	user Objet utilisateur qui cree
+	 */
+	function create($user)
+	{
+		global $conf,$langs,$mysoc;
+
+		// Nettoyage parametres
+		$this->brouillon = 1;		// On positionne en mode brouillon la commande
+
+		dolibarr_syslog("Commande.class::create");
+
+		// Verification parametres
+		if ($this->source < 0)
+		{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
+			dolibarr_syslog("Commande.class::create ".$this->error, LOG_ERR);
+			return -1;
+		}
+		if (! $remise) $remise=0;
+		if (! $this->projetid) $this->projetid = 0;
+
+		$soc = new Societe($this->db);
+		$result=$soc->fetch($this->socid);
+		if ($result < 0)
+		{
+			$this->error="Failed to fetch company";
+			dolibarr_syslog("Commande.class::create ".$this->error, LOG_ERR);
+			return -2;
+		}
+
+		$this->db->begin();
+
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
+		$sql.= ' ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client,';
+		$sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
+		$sql.= ' remise_absolue, remise_percent)';
+		$sql.= " VALUES ('".$this->ref."',".$this->socid.', now(), '.$user->id.', '.$this->projetid.',';
+		$sql.= ' '.$this->db->idate($this->date_commande).',';
+		$sql.= ' '.$this->source.', ';
+		$sql.= " '".addslashes($this->note)."', ";
+		$sql.= " '".addslashes($this->note_public)."', ";
+		$sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."',";
+		$sql.= " ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null").",";
+		$sql.= " ".($this->adresse_livraison_id>0?$this->adresse_livraison_id:'NULL').",";
+		$sql.= " ".($this->remise_absolue>0?$this->remise_absolue:'NULL').",";
+		$sql.= " '".$this->remise_percent."')";
+
+		dolibarr_syslog("Commande::create sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'commande');
+
+			if ($this->id)
 	  {
-	    /*
-	     *  Insertion du detail des produits dans la base
-	     */
-	    for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
-	      {
-		      $resql = $this->addline(
+	  	/*
+	  	 *  Insertion du detail des produits dans la base
+	  	 */
+	  	for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+	  	{
+	  		$resql = $this->addline(
 					$this->id,
 					$this->lines[$i]->desc,
 					$this->lines[$i]->subprice,
@@ -548,97 +548,97 @@ class Commande extends CommonObject
 					$this->lines[$i]->fk_remise_except,
 					$this->lines[$i]->info_bits
 					);
-		
-		if ($resql < 0)
-		  {
+
+					if ($resql < 0)
+					{
 		    $this->error=$this->db->error;
 		    dolibarr_print_error($this->db);
 		    break;
-		  }
-	      }
-	    
-	    // Mise a jour ref
-	    $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
-	    if ($this->db->query($sql))
-	    {
-	    	if ($this->id && $this->propale_id)
-	    	{
-	    		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_pr (fk_commande, fk_propale) VALUES ('.$this->id.','.$this->propale_id.')';
-	    		$this->db->query($sql);
-		    
+					}
+	  	}
+	  	 
+	  	// Mise a jour ref
+	  	$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+	  	if ($this->db->query($sql))
+	  	{
+	  		if ($this->id && $this->propale_id)
+	  		{
+	  			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_pr (fk_commande, fk_propale) VALUES ('.$this->id.','.$this->propale_id.')';
+	  			$this->db->query($sql);
+
 		    // On recupere les differents contact interne et externe
 		    $prop = New Propal($this->db, $this->socid, $this->propale_id);
-		    
+
 		    // On recupere le commercial suivi propale
 		    $this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
-		    
+
 		    if ($this->userid)
-		      {
-			//On passe le commercial suivi propale en commercial suivi commande
-			$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
-		      }
-		    
+		    {
+		    	//On passe le commercial suivi propale en commercial suivi commande
+		    	$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
+		    }
+
 		    // On recupere le contact client suivi propale
 		    $this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
-		    
+
 		    if ($this->contactid)
-		      {
-			//On passe le contact client suivi propale en contact client suivi commande
-			$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
-		      }
-		  }
-		
-		// Appel des triggers
-		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-		$interface=new Interfaces($this->db);
-		$result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
-        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		// Fin appel triggers
-		
-		$this->db->commit();
-		return $this->id;
-	      }
-	    else
-	      {
-		$this->db->rollback();
-		return -1;
-	      }
+		    {
+		    	//On passe le contact client suivi propale en contact client suivi commande
+		    	$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
+		    }
+	  		}
+
+	  		// Appel des triggers
+	  		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	  		$interface=new Interfaces($this->db);
+	  		$result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
+	  		if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	  		// Fin appel triggers
+
+	  		$this->db->commit();
+	  		return $this->id;
+	  	}
+	  	else
+	  	{
+	  		$this->db->rollback();
+	  		return -1;
+	  	}
 	  }
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-	$this->db->rollback();
-	return -1;
-      }
-  }
-  
-  
-  /**
-   *    	\brief     	Ajoute une ligne de produit (associe a un produit/service predefini ou non)
-   * 		\param    	commandeid      	Id de la commande
-   * 		\param    	desc            	Description de la ligne
-   * 		\param    	pu_ht              	Prix unitaire HT
-   * 		\param    	qty             	Quantite
-   * 		\param    	txtva           	Taux de tva force, sinon -1
-   *		\param    	fk_product      	Id du produit/service predefini
-   * 		\param    	remise_percent  	Pourcentage de remise de la ligne
-   * 		\param    	info_bits			Bits de type de lignes
-   *		\param    	fk_remise_exscept	Id remise
-   *		\param		price_base_type		HT or TTC
-   * 		\param    	pu_ttc             	Prix unitaire TTC
-   *    	\return    	int             	>0 si ok, <0 si ko
-   *    	\see       	add_product
-   * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-   *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-   *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
-   *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
-   */
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *    	\brief     	Ajoute une ligne de produit (associe a un produit/service predefini ou non)
+	 * 		\param    	commandeid      	Id de la commande
+	 * 		\param    	desc            	Description de la ligne
+	 * 		\param    	pu_ht              	Prix unitaire HT
+	 * 		\param    	qty             	Quantite
+	 * 		\param    	txtva           	Taux de tva force, sinon -1
+	 *		\param    	fk_product      	Id du produit/service predefini
+	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
+	 * 		\param    	info_bits			Bits de type de lignes
+	 *		\param    	fk_remise_exscept	Id remise
+	 *		\param		price_base_type		HT or TTC
+	 * 		\param    	pu_ttc             	Prix unitaire TTC
+	 *    	\return    	int             	>0 si ok, <0 si ko
+	 *    	\see       	add_product
+	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
+	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
+	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
+	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	 */
 	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0)
 	{
 		dolibarr_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-		
+
 		// Clean parameters
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
@@ -656,20 +656,20 @@ class Commande extends CommonObject
 			$pu=$pu_ttc;
 		}
 		$desc=trim($desc);
-		
+
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
-			
+				
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $info_bits);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-			
+				
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
@@ -679,10 +679,10 @@ class Commande extends CommonObject
 				$remise = round(($pu * $remise_percent / 100), 2);
 				$price = $pu - $remise;
 			}
-			
+				
 			// Insert line
 			$ligne=new CommandeLigne($this->db);
-			
+				
 			$ligne->fk_commande=$commandeid;
 			$ligne->desc=$desc;
 			$ligne->qty=$qty;
@@ -696,12 +696,12 @@ class Commande extends CommonObject
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
-			
+				
 			// \TODO Ne plus utiliser
 			$ligne->price=$price;
 			$ligne->remise=$remise;
-			
-			$result=$ligne->insert();			
+				
+			$result=$ligne->insert();
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la commande meme
@@ -728,261 +728,261 @@ class Commande extends CommonObject
 			}
 		}
 	}
-  
-  
-  /**
-   * 		\brief				Ajoute une ligne dans tableau lines
-   *		\param				idproduct			Id du produit a ajouter
-   *		\param				qty					Quantite
-   *		\remise_percent		remise_percent		Remise relative effectuee sur le produit
-   * 		\return    			void
-   *		\remarks			$this->client doit etre charge
-   *		\TODO	Remplacer les appels a cette fonction par generation objet Ligne 
-   *				insere dans tableau $this->products
-   */
-  function add_product($idproduct, $qty, $remise_percent=0)
-  {
-    global $conf, $mysoc;
-    
-    if (! $qty) $qty = 1;
-    
-    if ($idproduct > 0)
-      {
-	$prod=new Product($this->db);
-	$prod->fetch($idproduct);
-	
-	$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
-	// multiprix
-	if($conf->global->PRODUIT_MULTIPRICES == 1)
+
+
+	/**
+	 * 		\brief				Ajoute une ligne dans tableau lines
+	 *		\param				idproduct			Id du produit a ajouter
+	 *		\param				qty					Quantite
+	 *		\remise_percent		remise_percent		Remise relative effectuee sur le produit
+	 * 		\return    			void
+	 *		\remarks			$this->client doit etre charge
+	 *		\TODO	Remplacer les appels a cette fonction par generation objet Ligne
+	 *				insere dans tableau $this->products
+	 */
+	function add_product($idproduct, $qty, $remise_percent=0)
+	{
+		global $conf, $mysoc;
+
+		if (! $qty) $qty = 1;
+
+		if ($idproduct > 0)
+		{
+			$prod=new Product($this->db);
+			$prod->fetch($idproduct);
+
+			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
+			// multiprix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
 	  $price = $prod->multiprices[$this->client->price_level];
-	else
+	  else
 	  $price = $prod->price;
-	
-	$line=new CommandeLigne($this->db);
-	$line->fk_product=$idproduct;
-	$line->desc=$prod->description;
-	$line->qty=$qty;
-	$line->subprice=$price;
-	$line->remise_percent=$remise_percent;
-	$line->tva_tx=$tva_tx;
-	$line->ref=$prod->ref;
-	$line->libelle=$prod->libelle;
-	$line->product_desc=$prod->description;
-	
-	$this->lines[] = $line;
-	
-	/** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
-	    if($conf->global->PRODUIT_SOUSPRODUITS == 1)
-	    {
-	    $prod = new Product($this->db, $idproduct);
-	    $prod -> get_sousproduits_arbo ();
-	    $prods_arbo = $prod->get_each_prod();
-	    if(sizeof($prods_arbo) > 0)
-	    {
-	    foreach($prods_arbo as $key => $value)
-	    {
-	    // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
-	    if(! in_array($value[1],$this->products))
-	    $this->add_product($value[1], $value[0]);
+
+	  $line=new CommandeLigne($this->db);
+	  $line->fk_product=$idproduct;
+	  $line->desc=$prod->description;
+	  $line->qty=$qty;
+	  $line->subprice=$price;
+	  $line->remise_percent=$remise_percent;
+	  $line->tva_tx=$tva_tx;
+	  $line->ref=$prod->ref;
+	  $line->libelle=$prod->libelle;
+	  $line->product_desc=$prod->description;
+
+	  $this->lines[] = $line;
+
+	  /** POUR AJOUTER AUTOMATIQUEMENT LES SOUSPRODUITS a LA COMMANDE
+	   if($conf->global->PRODUIT_SOUSPRODUITS == 1)
+	   {
+	   $prod = new Product($this->db, $idproduct);
+	   $prod -> get_sousproduits_arbo ();
+	   $prods_arbo = $prod->get_each_prod();
+	   if(sizeof($prods_arbo) > 0)
+	   {
+	   foreach($prods_arbo as $key => $value)
+	   {
+	   // print "id : ".$value[1].' :qty: '.$value[0].'<br>';
+	   if(! in_array($value[1],$this->products))
+	   $this->add_product($value[1], $value[0]);
 	    
-	    }
-	    }
+	   }
+	   }
 	    
-	    }
-	**/
-      }
-  }
-  
-  
-  /**
-   *    \brief      Recupere de la base les caracteristiques d'une commande
-   *    \param      rowid       id de la commande a recuperer
-   */
-  function fetch($id)
-  {
-    $sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
-    $sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement';
-    $sql.= ', '.$this->db->pdate('c.date_commande').' as date_commande';
-    $sql.= ', '.$this->db->pdate('c.date_livraison').' as date_livraison';
-    $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
-    $sql.= ', c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
-    $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-    $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_facture';
-    $sql.= ', cp.fk_propale';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
-    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON (c.fk_cond_reglement = cr.rowid)';
-    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
-    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_pr as cp ON (cp.fk_commande = c.rowid)';
-    $sql.= ' WHERE c.rowid = '.$id;
-    
-    dolibarr_syslog("Commande::fetch sql=$sql");
-    
-    $result = $this->db->query($sql) ;
-    if ($result)
-      {
-	$obj = $this->db->fetch_object($result);
-	if ($obj)
+	   }
+	   **/
+		}
+	}
+
+
+	/**
+	 *    \brief      Recupere de la base les caracteristiques d'une commande
+	 *    \param      rowid       id de la commande a recuperer
+	 */
+	function fetch($id)
+	{
+		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
+		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement';
+		$sql.= ', '.$this->db->pdate('c.date_commande').' as date_commande';
+		$sql.= ', '.$this->db->pdate('c.date_livraison').' as date_livraison';
+		$sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
+		$sql.= ', c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
+		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
+		$sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_facture';
+		$sql.= ', cp.fk_propale';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON (c.fk_cond_reglement = cr.rowid)';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_pr as cp ON (cp.fk_commande = c.rowid)';
+		$sql.= ' WHERE c.rowid = '.$id;
+
+		dolibarr_syslog("Commande::fetch sql=$sql");
+
+		$result = $this->db->query($sql) ;
+		if ($result)
+		{
+			$obj = $this->db->fetch_object($result);
+			if ($obj)
 	  {
-	    $this->id                     = $obj->rowid;
-	    $this->ref                    = $obj->ref;
-	    $this->ref_client             = $obj->ref_client;
-	    $this->socid                  = $obj->fk_soc;
-	    $this->statut                 = $obj->fk_statut;
-	    $this->user_author_id         = $obj->fk_user_author;
-	    $this->total_ht               = $obj->total_ht;
-	    $this->total_tva              = $obj->tva;
-	    $this->total_ttc              = $obj->total_ttc;
-	    $this->date                   = $obj->date_commande;
-	    $this->remise                 = $obj->remise;
-	    $this->remise_percent         = $obj->remise_percent;
-	    $this->remise_absolue         = $obj->remise_absolue;
-	    $this->source                 = $obj->source;
-	    $this->facturee               = $obj->facturee;
-	    $this->note                   = $obj->note;
-	    $this->note_public            = $obj->note_public;
-	    $this->projet_id              = $obj->fk_projet;
-	    $this->modelpdf               = $obj->model_pdf;
-	    $this->mode_reglement_id      = $obj->fk_mode_reglement;
-	    $this->mode_reglement_code    = $obj->mode_reglement_code;
-	    $this->mode_reglement         = $obj->mode_reglement_libelle;
-	    $this->cond_reglement_id      = $obj->fk_cond_reglement;
-	    $this->cond_reglement_code    = $obj->cond_reglement_code;
-	    $this->cond_reglement         = $obj->cond_reglement_libelle;
-	    $this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
-	    $this->date_livraison         = $obj->date_livraison;
-	    $this->adresse_livraison_id   = $obj->fk_adresse_livraison;
-	    $this->propale_id             = $obj->fk_propale;
-	    $this->lignes                 = array();
-	    
-	    if ($this->statut == 0) $this->brouillon = 1;
-		
-	    $this->db->free();
-	    
-	    if ($this->propale_id)
-	    {
-	    	$sqlp = "SELECT ref";
-		    $sqlp.= " FROM ".MAIN_DB_PREFIX."propal";
-		    $sqlp.= " WHERE rowid = ".$this->propale_id;
+	  	$this->id                     = $obj->rowid;
+	  	$this->ref                    = $obj->ref;
+	  	$this->ref_client             = $obj->ref_client;
+	  	$this->socid                  = $obj->fk_soc;
+	  	$this->statut                 = $obj->fk_statut;
+	  	$this->user_author_id         = $obj->fk_user_author;
+	  	$this->total_ht               = $obj->total_ht;
+	  	$this->total_tva              = $obj->tva;
+	  	$this->total_ttc              = $obj->total_ttc;
+	  	$this->date                   = $obj->date_commande;
+	  	$this->remise                 = $obj->remise;
+	  	$this->remise_percent         = $obj->remise_percent;
+	  	$this->remise_absolue         = $obj->remise_absolue;
+	  	$this->source                 = $obj->source;
+	  	$this->facturee               = $obj->facturee;
+	  	$this->note                   = $obj->note;
+	  	$this->note_public            = $obj->note_public;
+	  	$this->projet_id              = $obj->fk_projet;
+	  	$this->modelpdf               = $obj->model_pdf;
+	  	$this->mode_reglement_id      = $obj->fk_mode_reglement;
+	  	$this->mode_reglement_code    = $obj->mode_reglement_code;
+	  	$this->mode_reglement         = $obj->mode_reglement_libelle;
+	  	$this->cond_reglement_id      = $obj->fk_cond_reglement;
+	  	$this->cond_reglement_code    = $obj->cond_reglement_code;
+	  	$this->cond_reglement         = $obj->cond_reglement_libelle;
+	  	$this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
+	  	$this->date_livraison         = $obj->date_livraison;
+	  	$this->adresse_livraison_id   = $obj->fk_adresse_livraison;
+	  	$this->propale_id             = $obj->fk_propale;
+	  	$this->lignes                 = array();
+	  	 
+	  	if ($this->statut == 0) $this->brouillon = 1;
 
-		    $resqlprop = $this->db->query($sqlp);
+	  	$this->db->free();
+	  	 
+	  	if ($this->propale_id)
+	  	{
+	  		$sqlp = "SELECT ref";
+	  		$sqlp.= " FROM ".MAIN_DB_PREFIX."propal";
+	  		$sqlp.= " WHERE rowid = ".$this->propale_id;
 
-		    if ($resqlprop)
-		    {
-		      $objp = $this->db->fetch_object($resqlprop);
-		      $this->propale_ref = $objp->ref;
-		      $this->db->free($resqlprop);
-		    }
-	    }
+	  		$resqlprop = $this->db->query($sqlp);
 
-	    /*
-	     * Lignes
-	     */
-	    $result=$this->fetch_lines();
-	    if ($result < 0)
-	    {
-	    	return -3;
-	    }
-	    return 1;
+	  		if ($resqlprop)
+	  		{
+	  			$objp = $this->db->fetch_object($resqlprop);
+	  			$this->propale_ref = $objp->ref;
+	  			$this->db->free($resqlprop);
+	  		}
+	  	}
+
+	  	/*
+	  	 * Lignes
+	  	 */
+	  	$result=$this->fetch_lines();
+	  	if ($result < 0)
+	  	{
+	  		return -3;
+	  	}
+	  	return 1;
 	  }
 	  else
 	  {
-	    dolibarr_syslog('Commande::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
-	    $this->error='Order with id '.$rowid.' not found sql='.$sql;
-	    return -2;	
+	  	dolibarr_syslog('Commande::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
+	  	$this->error='Order with id '.$rowid.' not found sql='.$sql;
+	  	return -2;
 	  }
-	}
-	else
-  {
-  	dolibarr_syslog('Commande::Fetch Error rowid='.$rowid.' Erreur dans fetch de la commande');
+		}
+		else
+		{
+			dolibarr_syslog('Commande::Fetch Error rowid='.$rowid.' Erreur dans fetch de la commande');
 	  $this->error=$this->db->error();
 	  return -1;
-  }
-}
+		}
+	}
 
-	
-  /**
-   *    \brief     Ajout d'une ligne remise fixe dans la commande, en base
-   *    \param     idremise			Id de la remise fixe
-   *    \return    int          		>0 si ok, <0 si ko
-   */
-  function insert_discount($idremise)
-  {
-    global $langs;
 
-    include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-    include_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+	/**
+	 *    \brief     Ajout d'une ligne remise fixe dans la commande, en base
+	 *    \param     idremise			Id de la remise fixe
+	 *    \return    int          		>0 si ok, <0 si ko
+	 */
+	function insert_discount($idremise)
+	{
+		global $langs;
 
-    $this->db->begin();
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
-    $remise=new DiscountAbsolute($this->db);
-    $result=$remise->fetch($idremise);
+		$this->db->begin();
 
-    if ($result > 0)
-    {
-    	if ($remise->fk_facture)	// Protection against multiple submission
+		$remise=new DiscountAbsolute($this->db);
+		$result=$remise->fetch($idremise);
+
+		if ($result > 0)
+		{
+			if ($remise->fk_facture)	// Protection against multiple submission
 			{
 				$this->error=$langs->trans("ErrorDiscountAlreadyUsed");
 				$this->db->rollback();
 				return -5;
 			}
-    	
-    	$comligne=new CommandeLigne($this->db);
-    	$comligne->fk_commande=$this->id;
-    	$comligne->fk_remise_except=$remise->id;
-    	$comligne->desc=$remise->description;   	// Description ligne
-    	$comligne->tva_tx=$remise->tva_tx;
-    	$comligne->subprice=-$remise->amount_ht;
-    	$comligne->price=-$remise->amount_ht;
-    	$comligne->fk_product=0;					// Id produit predefini
-    	$comligne->qty=1;
-    	$comligne->remise=0;
-    	$comligne->remise_percent=0;
-    	$comligne->rang=-1;
-    	$comligne->info_bits=2;
-    	
-    	$comligne->total_ht  = -$remise->amount_ht;
+			 
+			$comligne=new CommandeLigne($this->db);
+			$comligne->fk_commande=$this->id;
+			$comligne->fk_remise_except=$remise->id;
+			$comligne->desc=$remise->description;   	// Description ligne
+			$comligne->tva_tx=$remise->tva_tx;
+			$comligne->subprice=-$remise->amount_ht;
+			$comligne->price=-$remise->amount_ht;
+			$comligne->fk_product=0;					// Id produit predefini
+			$comligne->qty=1;
+			$comligne->remise=0;
+			$comligne->remise_percent=0;
+			$comligne->rang=-1;
+			$comligne->info_bits=2;
+			 
+			$comligne->total_ht  = -$remise->amount_ht;
 			$comligne->total_tva = -$remise->amount_tva;
 			$comligne->total_ttc = -$remise->amount_ttc;
-    	
-    	$result=$comligne->insert();
-    	if ($result > 0)
-    	{
-    		$result=$this->update_price();
-    		if ($result > 0)
-    		{
-    			$this->db->commit();
-    			return 1;
-	      }
-	      else
-	      {
-	      	$this->db->rollback();	
-	      	return -1;
-	      }
-	    }
-	    else
-	    {
-	    	$this->error=$comligne->error;
-	    	$this->db->rollback();	
-	    	return -2;
-	    }
-	  }
-    else
-    {
-    	$this->db->rollback();
-    	return -2;
-    }
-  }
-	
-	
-  /**
-   *      \brief      Reinitialise le tableau lignes
-   *		\param		only_product	Ne renvoie que ligne liees a des produits physiques predefinis
-   *		\return		array			Tableau de CommandeLigne
-   */
+			 
+			$result=$comligne->insert();
+			if ($result > 0)
+			{
+				$result=$this->update_price();
+				if ($result > 0)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error=$comligne->error;
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			$this->db->rollback();
+			return -2;
+		}
+	}
+
+
+	/**
+	 *      \brief      Reinitialise le tableau lignes
+	 *		\param		only_product	Ne renvoie que ligne liees a des produits physiques predefinis
+	 *		\return		array			Tableau de CommandeLigne
+	 */
 	function fetch_lines($only_product=0)
 	{
 		$this->lignes=array();
-		
+
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
 		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
 		$sql.= ' l.total_ht, l.total_ttc, l.total_tva,';
@@ -1026,7 +1026,7 @@ class Commande extends CommonObject
 				$ligne->info_bits        = $objp->info_bits;
 
 				$ligne->ref              = $objp->product_ref;
-				$ligne->libelle          = $objp->label;	
+				$ligne->libelle          = $objp->label;
 				$ligne->product_desc     = $objp->product_desc; 		// Description produit
 				$ligne->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 
@@ -1045,30 +1045,30 @@ class Commande extends CommonObject
 	}
 
 
-  /**
-   *      \brief      Renvoie nombre de lignes de type produits. Doit etre appele apres fetch_lines
-   *		\return		int		<0 si ko, Nbre de lignes produits sinon
-   */
-  function getNbOfProductsLines()
-  {
-    $nb=0;
-    foreach($this->lignes as $ligne)
-      {
-	if ($ligne->fk_product_type == 0) $nb++;
-      }
-    return $nb;
-  }
+	/**
+	 *      \brief      Renvoie nombre de lignes de type produits. Doit etre appele apres fetch_lines
+	 *		\return		int		<0 si ko, Nbre de lignes produits sinon
+	 */
+	function getNbOfProductsLines()
+	{
+		$nb=0;
+		foreach($this->lignes as $ligne)
+		{
+			if ($ligne->fk_product_type == 0) $nb++;
+		}
+		return $nb;
+	}
 
-    /**
-     *      \brief      Charge tableau avec les expeditions par ligne
-     *      \param      filtre_statut       Filtre sur statut
-     *      \return     int                	<0 if KO, Nb of records if OK
-     */
+	/**
+	 *      \brief      Charge tableau avec les expeditions par ligne
+	 *      \param      filtre_statut       Filtre sur statut
+	 *      \return     int                	<0 if KO, Nb of records if OK
+	 */
 	function loadExpeditions($filtre_statut=-1)
 	{
 		$num=0;
 		$this->expeditions = array();
-		
+
 		$sql = 'SELECT fk_product, sum(ed.qty)';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed, '.MAIN_DB_PREFIX.'expedition as e, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql.=' WHERE ed.fk_expedition = e.rowid AND ed.fk_origin_line = cd.rowid AND cd.fk_commande = c.rowid';
@@ -1096,13 +1096,13 @@ class Commande extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-	
+
 	}
-	
+
 	/**
-	* Renvoie un tableau avec nombre de lignes d'expeditions
-	*
-	*/
+	 * Renvoie un tableau avec nombre de lignes d'expeditions
+	 *
+	 */
 	function nb_expedition()
 	{
 		$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'expedition as e';
@@ -1115,12 +1115,12 @@ class Commande extends CommonObject
 			return $row[0];
 		}
 	}
-	
+
 	/**
-     *      \brief      Renvoie un tableau avec les livraisons par ligne
-     *      \param      filtre_statut       Filtre sur statut
-     *      \return     int                 0 si OK, <0 si KO
-     */
+	 *      \brief      Renvoie un tableau avec les livraisons par ligne
+	 *      \param      filtre_statut       Filtre sur statut
+	 *      \return     int                 0 si OK, <0 si KO
+	 */
 	function livraison_array($filtre_statut=-1)
 	{
 		$this->livraisons = array();
@@ -1143,29 +1143,29 @@ class Commande extends CommonObject
 			}
 			$this->db->free();
 		}
-	
-	    return 0;
+
+		return 0;
 	}
-	
-    /**
-     *      \brief      Renvoie un tableau avec les stocks restant par produit
-     *      \param      filtre_statut       Filtre sur statut
-     *      \return     int                 0 si OK, <0 si KO
-     *		\todo		FONCTION NON FINIE A FINIR
-     */
+
+	/**
+	 *      \brief      Renvoie un tableau avec les stocks restant par produit
+	 *      \param      filtre_statut       Filtre sur statut
+	 *      \return     int                 0 si OK, <0 si KO
+	 *		\todo		FONCTION NON FINIE A FINIR
+	 */
 	function stock_array($filtre_statut=-1)
 	{
 		$this->stocks = array();
 
 		// Tableau des id de produit de la commande
-		
-		
+
+
 		// Recherche total en stock pour chaque produit
 		if (sizeof($array_of_product))
 		{
-	        $sql = "SELECT fk_product, sum(ps.reel) as total";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
-	        $sql.= " WHERE ps.fk_product in (".join(',',$array_of_product).")";
+			$sql = "SELECT fk_product, sum(ps.reel) as total";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+			$sql.= " WHERE ps.fk_product in (".join(',',$array_of_product).")";
 			$sql.= ' GROUP BY fk_product ';
 			$result = $this->db->query($sql);
 			if ($result)
@@ -1181,31 +1181,31 @@ class Commande extends CommonObject
 				$this->db->free();
 			}
 		}
-	    return 0;
+		return 0;
 	}
-  
+
 	/**
-	*  \brief      Supprime une ligne de la commande
-	*  \param      idligne     Id de la ligne a supprimer
-	*  \return     int         >0 si ok, 0 si rien a supprimer, <0 si ko
-	*/
+	 *  \brief      Supprime une ligne de la commande
+	 *  \param      idligne     Id de la ligne a supprimer
+	 *  \return     int         >0 si ok, 0 si rien a supprimer, <0 si ko
+	 */
 	function delete_line($idligne)
 	{
 		global $user;
-		
+
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
-			
+				
 			$sql = "SELECT fk_product, qty";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
 			$sql.= " WHERE rowid = '$idligne'";
-			
+				
 			$result = $this->db->query($sql);
 			if ($result)
 			{
 				$obj = $this->db->fetch_object($result);
-				
+
 				if ($obj)
 				{
 					$product = new Product($this->db);
@@ -1218,11 +1218,11 @@ class Commande extends CommonObject
 					$ligne->id = $idligne;
 					$ligne->fk_commande = $this->id; // On en a besoin dans les triggers
 					$result=$ligne->delete($user);
-		
+
 					if ($result > 0)
 					{
 						$result=$this->update_price();
-					
+							
 						if ($result > 0)
 						{
 							$this->db->commit();
@@ -1261,80 +1261,80 @@ class Commande extends CommonObject
 		}
 	}
 
-  /**
-   * 	\brief     	Applique une remise relative
-   * 	\param     	user		User qui positionne la remise
-   * 	\param     	remise
-   *	\return		int 		<0 si ko, >0 si ok
-   */
-  function set_remise($user, $remise)
-  {
-    $remise=trim($remise)?trim($remise):0;
-    
-    if ($user->rights->commande->creer)
-      {
-	$remise=price2num($remise);
-	
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-	$sql.= ' SET remise_percent = '.$remise;
-	$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
-	
-	if ($this->db->query($sql))
-	  {
-	    $this->remise_percent = $remise;
-	    $this->update_price();
-	    return 1;
-	  }
-	else
-	  {
-	    $this->error=$this->db->error();
-	    return -1;
-	  }
-      }
-  }
-  
-  
-  /**
-   * 		\brief     	Applique une remise absolue
-   * 		\param     	user 		User qui positionne la remise
-   * 		\param     	remise
-   *		\return		int 		<0 si ko, >0 si ok
-   */
-  function set_remise_absolue($user, $remise)
-  {
-    $remise=trim($remise)?trim($remise):0;
-    
-    if ($user->rights->commande->creer)
-      {
-	$remise=price2num($remise);
-	
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-	$sql.= ' SET remise_absolue = '.$remise;
-	$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
-	
-	dolibarr_syslog("Commande::set_remise_absolue sql=$sql");
-	
-	if ($this->db->query($sql))
-	  {
-	    $this->remise_absolue = $remise;
-	    $this->update_price();
-	    return 1;
-	  }
-	else
-	  {
-	    $this->error=$this->db->error();
-	    return -1;
-	  }
-      }
-  }
-
-	
 	/**
-     *      \brief      Definit une date de livraison
-     *      \param      user        		Objet utilisateur qui modifie
-     *      \param      date_livraison      Date de livraison  
-     *      \return     int         		<0 si ko, >0 si ok
-     */
+	 * 	\brief     	Applique une remise relative
+	 * 	\param     	user		User qui positionne la remise
+	 * 	\param     	remise
+	 *	\return		int 		<0 si ko, >0 si ok
+	 */
+	function set_remise($user, $remise)
+	{
+		$remise=trim($remise)?trim($remise):0;
+
+		if ($user->rights->commande->creer)
+		{
+			$remise=price2num($remise);
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql.= ' SET remise_percent = '.$remise;
+			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+
+			if ($this->db->query($sql))
+	  {
+	  	$this->remise_percent = $remise;
+	  	$this->update_price();
+	  	return 1;
+	  }
+	  else
+	  {
+	  	$this->error=$this->db->error();
+	  	return -1;
+	  }
+		}
+	}
+
+
+	/**
+	 * 		\brief     	Applique une remise absolue
+	 * 		\param     	user 		User qui positionne la remise
+	 * 		\param     	remise
+	 *		\return		int 		<0 si ko, >0 si ok
+	 */
+	function set_remise_absolue($user, $remise)
+	{
+		$remise=trim($remise)?trim($remise):0;
+
+		if ($user->rights->commande->creer)
+		{
+			$remise=price2num($remise);
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+			$sql.= ' SET remise_absolue = '.$remise;
+			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+
+			dolibarr_syslog("Commande::set_remise_absolue sql=$sql");
+
+			if ($this->db->query($sql))
+	  {
+	  	$this->remise_absolue = $remise;
+	  	$this->update_price();
+	  	return 1;
+	  }
+	  else
+	  {
+	  	$this->error=$this->db->error();
+	  	return -1;
+	  }
+		}
+	}
+
+
+	/**
+	 *      \brief      Definit une date de livraison
+	 *      \param      user        		Objet utilisateur qui modifie
+	 *      \param      date_livraison      Date de livraison
+	 *      \return     int         		<0 si ko, >0 si ok
+	 */
 	function set_date_livraison($user, $date_livraison)
 	{
 		if ($user->rights->commande->creer)
@@ -1342,7 +1342,7 @@ class Commande extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 			$sql.= " SET date_livraison = ".($date_livraison ? $this->db->idate($date_livraison) : 'null');
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-			
+				
 			dolibarr_syslog("Commande::set_date_livraison sql=$sql",LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -1362,87 +1362,87 @@ class Commande extends CommonObject
 			return -2;
 		}
 	}
-  
-    /**
-     *      \brief      Definit une adresse de livraison
-     *      \param      user        		Objet utilisateur qui modifie
-     *      \param      adresse_livraison      Adresse de livraison  
-     *      \return     int         		<0 si ko, >0 si ok
-     */
-    function set_adresse_livraison($user, $adresse_livraison)
-    {
-        if ($user->rights->commande->creer)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$adresse_livraison."'";
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-    
-            if ($this->db->query($sql) )
-            {
-                $this->adresse_livraison_id = $adresse_livraison;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                dolibarr_syslog("Commande::set_adresse_livraison Erreur SQL");
-                return -1;
-            }
-        }
-    }
-    
+
+	/**
+	 *      \brief      Definit une adresse de livraison
+	 *      \param      user        		Objet utilisateur qui modifie
+	 *      \param      adresse_livraison      Adresse de livraison
+	 *      \return     int         		<0 si ko, >0 si ok
+	 */
+	function set_adresse_livraison($user, $adresse_livraison)
+	{
+		if ($user->rights->commande->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_adresse_livraison = '".$adresse_livraison."'";
+			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+
+			if ($this->db->query($sql) )
+			{
+				$this->adresse_livraison_id = $adresse_livraison;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Commande::set_adresse_livraison Erreur SQL");
+				return -1;
+			}
+		}
+	}
+
 	/**
 	 *    \brief      Renvoi la liste des commandes (eventuellement filtree sur un user) dans un tableau
 	 *    \param      brouillon       0=non brouillon, 1=brouillon
 	 *    \param      user            Objet user de filtre
 	 *    \return     int             -1 si erreur, tableau resultat si ok
 	 */
-    function liste_array ($brouillon=0, $user='')
-    {
-        $ga = array();
-    
-        $sql = "SELECT rowid, ref FROM ".MAIN_DB_PREFIX."commande";
-    
-        if ($brouillon)
-        {
-            $sql .= " WHERE fk_statut = 0";
-            if ($user)
-            {
-                $sql .= " AND fk_user_author".$user;
-            }
-        }
-        else
-        {
-            if ($user)
-            {
-                $sql .= " WHERE fk_user_author".$user;
-            }
-        }
-    
-        $sql .= " ORDER BY date_commande DESC";
+	function liste_array ($brouillon=0, $user='')
+	{
+		$ga = array();
 
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            $numc = $this->db->num_rows($result);
-    
-            if ($numc)
-            {
-                $i = 0;
-                while ($i < $numc)
-                {
-                    $obj = $this->db->fetch_object($result);
-    
-                    $ga[$obj->rowid] = $obj->ref;
-                    $i++;
-                }
-            }
-            return $ga;
-        }
-        else
-        {
-            return -1;
-        }
-    }
+		$sql = "SELECT rowid, ref FROM ".MAIN_DB_PREFIX."commande";
+
+		if ($brouillon)
+		{
+			$sql .= " WHERE fk_statut = 0";
+			if ($user)
+			{
+				$sql .= " AND fk_user_author".$user;
+			}
+		}
+		else
+		{
+			if ($user)
+			{
+				$sql .= " WHERE fk_user_author".$user;
+			}
+		}
+
+		$sql .= " ORDER BY date_commande DESC";
+
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			$numc = $this->db->num_rows($result);
+
+			if ($numc)
+			{
+				$i = 0;
+				while ($i < $numc)
+				{
+					$obj = $this->db->fetch_object($result);
+
+					$ga[$obj->rowid] = $obj->ref;
+					$i++;
+				}
+			}
+			return $ga;
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
 	/**
 	 *   \brief      Change les conditions de reglement de la commande
@@ -1511,17 +1511,17 @@ class Commande extends CommonObject
 		}
 	}
 
-    /**
-     *      \brief      Positionne numero reference commande client
-     *      \param      user            Utilisateur qui modifie
-     *      \param      ref_client      Reference commande client
-     *      \return     int             <0 si ko, >0 si ok
-     */
+	/**
+	 *      \brief      Positionne numero reference commande client
+	 *      \param      user            Utilisateur qui modifie
+	 *      \param      ref_client      Reference commande client
+	 *      \return     int             <0 si ko, >0 si ok
+	 */
 	function set_ref_client($user, $ref_client)
 	{
 		if ($user->rights->commande->creer)
 		{
-    		dolibarr_syslog('Commande::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
+			dolibarr_syslog('Commande::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET ref_client = '.(empty($ref_client) ? 'NULL' : '\''.addslashes($ref_client).'\'');
 			$sql.= ' WHERE rowid = '.$this->id;
@@ -1532,14 +1532,14 @@ class Commande extends CommonObject
 			}
 			else
 			{
-                $this->error=$this->db->error();
+				$this->error=$this->db->error();
 				dolibarr_syslog('Commande::set_ref_client Erreur '.$this->error.' - '.$sql);
-			    return -2;
+				return -2;
 			}
 		}
 		else
 		{
-		    return -1;
+			return -1;
 		}
 	}
 
@@ -1551,7 +1551,7 @@ class Commande extends CommonObject
 	function classer_facturee()
 	{
 		global $conf;
-		
+
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ;';
 		if ($this->db->query($sql) )
@@ -1560,7 +1560,7 @@ class Commande extends CommonObject
 			{
 				$propal = new Propal($this->db);
 				$propal->fetch($this->propale_id);
-				$propal->classer_facturee();				
+				$propal->classer_facturee();
 			}
 			return 1;
 		}
@@ -1571,203 +1571,203 @@ class Commande extends CommonObject
 	}
 
 
-  /**
-   *  \brief    Mets a jour une ligne de commande
-   *  \param    rowid            	Id de la ligne de facture
-   *  \param    desc             	Description de la ligne
-   *  \param    pu               	Prix unitaire
-   *  \param    qty              	Quantity
-   *  \param    remise_percent   	Pourcentage de remise de la ligne
-   *  \param    tva_tx           	Taux TVA
-   *  \param    price_base_type		HT or TTC
-   *  \param    info_bits        	Miscellanous informations on line
-   *  \return   int              	< 0 si erreur, > 0 si ok
-   */
-  function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0)
-  {
-    dolibarr_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits");
-    include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-    
-    if ($this->brouillon)
-      {
-	$this->db->begin();
+	/**
+	 *  \brief    Mets a jour une ligne de commande
+	 *  \param    rowid            	Id de la ligne de facture
+	 *  \param    desc             	Description de la ligne
+	 *  \param    pu               	Prix unitaire
+	 *  \param    qty              	Quantity
+	 *  \param    remise_percent   	Pourcentage de remise de la ligne
+	 *  \param    tva_tx           	Taux TVA
+	 *  \param    price_base_type		HT or TTC
+	 *  \param    info_bits        	Miscellanous informations on line
+	 *  \return   int              	< 0 si erreur, > 0 si ok
+	 */
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0)
+	{
+		dolibarr_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits");
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
-	// Nettoyage parametres
-	$remise_percent=price2num($remise_percent);
-	$qty=price2num($qty);
-	if (! $qty) $qty=1;
-	$pu = price2num($pu);
-	$txtva=price2num($txtva);
-	
-	// Calcul du total TTC et de la TVA pour la ligne a partir de
-	// qty, pu, remise_percent et txtva
-	// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
-	// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-	$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $info_bits);
-	$total_ht  = $tabprice[0];
-	$total_tva = $tabprice[1];
-	$total_ttc = $tabprice[2];
-	
-	// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
-	$price = $pu;
-	$subprice = $pu;
-	$remise = 0;
-	if ($remise_percent > 0)
+		if ($this->brouillon)
+		{
+			$this->db->begin();
+
+			// Nettoyage parametres
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			if (! $qty) $qty=1;
+			$pu = price2num($pu);
+			$txtva=price2num($txtva);
+
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $info_bits);
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
+
+			// Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
+			$price = $pu;
+			$subprice = $pu;
+			$remise = 0;
+			if ($remise_percent > 0)
 	  {
-	    $remise = round(($pu * $remise_percent / 100),2);
-	    $price = ($pu - $remise);
+	  	$remise = round(($pu * $remise_percent / 100),2);
+	  	$price = ($pu - $remise);
 	  }
-	$price    = price2num($price);
-	$subprice  = price2num($subprice);
+	  $price    = price2num($price);
+	  $subprice  = price2num($subprice);
 
 
-	$LigneOld = new CommandeLigne($this->db);
-	$LigneOld->fetch($rowid);
-	
-	// Mise a jour ligne en base
-	$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
-	$sql.= " description='".addslashes($desc)."'";
-	$sql.= ",price='".price2num($price)."'";
-	$sql.= ",subprice='".price2num($subprice)."'";
-	$sql.= ",remise='".price2num($remise)."'";
-	$sql.= ",remise_percent='".price2num($remise_percent)."'";
-	$sql.= ",tva_tx='".price2num($txtva)."'";
-	$sql.= ",qty='".price2num($qty)."'";
-	//if ($date_end) { $sql.= ",date_start='$date_end'"; }
-	//else { $sql.=',date_start=null'; }
-	//if ($date_end) { $sql.= ",date_end='$date_end'"; }
-	//else { $sql.=',date_end=null'; }
-	$sql.= ",info_bits='".$info_bits."'";
-	$sql.= ",total_ht='".price2num($total_ht)."'";
-	$sql.= ",total_tva='".price2num($total_tva)."'";
-	$sql.= ",total_ttc='".price2num($total_ttc)."'";
-	$sql.= " WHERE rowid = ".$rowid;
-	
-	$result = $this->db->query($sql);
-	if ($result > 0)
+	  $LigneOld = new CommandeLigne($this->db);
+	  $LigneOld->fetch($rowid);
+
+	  // Mise a jour ligne en base
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
+	  $sql.= " description='".addslashes($desc)."'";
+	  $sql.= ",price='".price2num($price)."'";
+	  $sql.= ",subprice='".price2num($subprice)."'";
+	  $sql.= ",remise='".price2num($remise)."'";
+	  $sql.= ",remise_percent='".price2num($remise_percent)."'";
+	  $sql.= ",tva_tx='".price2num($txtva)."'";
+	  $sql.= ",qty='".price2num($qty)."'";
+	  //if ($date_end) { $sql.= ",date_start='$date_end'"; }
+	  //else { $sql.=',date_start=null'; }
+	  //if ($date_end) { $sql.= ",date_end='$date_end'"; }
+	  //else { $sql.=',date_end=null'; }
+	  $sql.= ",info_bits='".$info_bits."'";
+	  $sql.= ",total_ht='".price2num($total_ht)."'";
+	  $sql.= ",total_tva='".price2num($total_tva)."'";
+	  $sql.= ",total_ttc='".price2num($total_ttc)."'";
+	  $sql.= " WHERE rowid = ".$rowid;
+
+	  $result = $this->db->query($sql);
+	  if ($result > 0)
 	  {
-	    // Mise a jour info denormalisees au niveau facture
-	    $this->update_price();
+	  	// Mise a jour info denormalisees au niveau facture
+	  	$this->update_price();
 
-	    if ($LigneOld->qty <> $qty && $LigneOld->produit_id)
-	      {
-		$delta = $qty - $LigneOld->qty;
-		$op = ($delta > 0) ? 0 : 1; 
+	  	if ($LigneOld->qty <> $qty && $LigneOld->produit_id)
+	  	{
+	  		$delta = $qty - $LigneOld->qty;
+	  		$op = ($delta > 0) ? 0 : 1;
 
-		$product = new Product($this->db);
-		$product->id = $LigneOld->produit_id;
-		$product->ajust_stock_commande(abs($delta), $op);
-	      }
+	  		$product = new Product($this->db);
+	  		$product->id = $LigneOld->produit_id;
+	  		$product->ajust_stock_commande(abs($delta), $op);
+	  	}
 
-	    $this->db->commit();
-	    return $result;
+	  	$this->db->commit();
+	  	return $result;
 	  }
-	else
+	  else
 	  {
-	    $this->error=$this->db->error();
-	    $this->db->rollback();
-	    return -1;
+	  	$this->error=$this->db->error();
+	  	$this->db->rollback();
+	  	return -1;
 	  }
-      }
-    else
-      {
-	$this->error="Commande::updateline Order status makes operation forbidden";
-	return -2;
-      }
-  }
-  
-  
-  /**
-   *	\brief		Delete the customer order
-   *	\user		User object	
-   * 	\return		int		<=0 if KO, >0 if OK
-   */
-  function delete($user)
-  {
-    global $conf, $lang;
-    
-    $err = 0;
-	
-    $this->db->begin();
-    
-    $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = $this->id ;";
-    if (! $this->db->query($sql) )
-      {
-	$err++;
-      }
-    
-    $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = $this->id;";
-    if (! $this->db->query($sql) )
-      {
-	$err++;
-      }
-    
-    $sql = 'DELETE FROM '.MAIN_DB_PREFIX."co_pr WHERE fk_commande = $this->id;";
-    if (! $this->db->query($sql) )
-      {
-	$err++;
-      }
-    
-    // On efface le repertoire de pdf provisoire
-    $comref = sanitize_string($this->ref);
-    if ($conf->commande->dir_output)
-      {
-	$dir = $conf->commande->dir_output . "/" . $comref ;
-	$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
-	if (file_exists($file))
+		}
+		else
+		{
+			$this->error="Commande::updateline Order status makes operation forbidden";
+			return -2;
+		}
+	}
+
+
+	/**
+	 *	\brief		Delete the customer order
+	 *	\user		User object
+	 * 	\return		int		<=0 if KO, >0 if OK
+	 */
+	function delete($user)
+	{
+		global $conf, $lang;
+
+		$err = 0;
+
+		$this->db->begin();
+
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = $this->id ;";
+		if (! $this->db->query($sql) )
+		{
+			$err++;
+		}
+
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande WHERE rowid = $this->id;";
+		if (! $this->db->query($sql) )
+		{
+			$err++;
+		}
+
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."co_pr WHERE fk_commande = $this->id;";
+		if (! $this->db->query($sql) )
+		{
+			$err++;
+		}
+
+		// On efface le repertoire de pdf provisoire
+		$comref = sanitize_string($this->ref);
+		if ($conf->commande->dir_output)
+		{
+			$dir = $conf->commande->dir_output . "/" . $comref ;
+			$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+			if (file_exists($file))
 	  {
-	    commande_delete_preview($this->db, $this->id, $this->ref);
-	    
-	    if (!dol_delete_file($file))
-	      {
-		$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-		$this->db->rollback();
-		return 0;
-	      }
+	  	commande_delete_preview($this->db, $this->id, $this->ref);
+	  	 
+	  	if (!dol_delete_file($file))
+	  	{
+	  		$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+	  		$this->db->rollback();
+	  		return 0;
+	  	}
 	  }
-	if (file_exists($dir))
+	  if (file_exists($dir))
 	  {
-	    if (!dol_delete_dir($dir))
-	      {
-		$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-		$this->db->rollback();
-		return 0;
-	      }
+	  	if (!dol_delete_dir($dir))
+	  	{
+	  		$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+	  		$this->db->rollback();
+	  		return 0;
+	  	}
 	  }
-      }
-    
-    if ($err == 0)
-      {
-	// Appel des triggers
-	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	$interface=new Interfaces($this->db);
-	$result=$interface->run_triggers('ORDER_DELETE',$this,$user,$langs,$conf);
-    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	// Fin appel triggers
-	
-	$this->db->commit();
-	return 1;
-      }
-    else
-      {
-	$this->db->rollback();
-	return -1;
-      }
-  }
-  
-	
-    /**
-     *      \brief          Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
-     *      \param          user    Objet user
-     *      \return         int     <0 si ko, >0 si ok
-     */
+		}
+
+		if ($err == 0)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('ORDER_DELETE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+
+	/**
+	 *      \brief          Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+	 *      \param          user    Objet user
+	 *      \return         int     <0 si ko, >0 si ok
+	 */
 	function load_board($user)
 	{
 		global $conf, $user;
 
 		$this->nbtodo=$this->nbtodolate=0;
 		$clause = "WHERE";
-		
+
 		$sql = 'SELECT c.rowid,'.$this->db->pdate('c.date_creation').' as datec';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
@@ -1776,7 +1776,7 @@ class Commande extends CommonObject
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= ' '.$clause.' c.fk_statut BETWEEN 1 AND 2';
+		$sql.= ' '.$clause.' (c.fk_statut BETWEEN 1 AND 2 or (c.fk_statut = 3 AND c.facture = 0))';
 		if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1790,7 +1790,7 @@ class Commande extends CommonObject
 		}
 		else
 		{
-			 $this->error=$this->db->error();
+			$this->error=$this->db->error();
 			return -1;
 		}
 	}
@@ -1802,14 +1802,14 @@ class Commande extends CommonObject
 	function getLabelSource()
 	{
 		global $langs;
-		
+
 		$label=$langs->trans('OrderSource'.$this->source);
 		// \TODO Si libelle non trouve, on va chercher en base dans dictionnaire
-		
-		
+
+
 		return $label;
 	}
-	
+
 	/**
 	 *    	\brief      Retourne le libelle du statut de la commande
 	 *    	\param      mode        0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
@@ -1830,61 +1830,61 @@ class Commande extends CommonObject
 	function LibStatut($statut,$facturee,$mode)
 	{
 		global $langs;
-		
-        if ($mode == 0)
-        {
-        	if ($statut==-1) return $langs->trans('StatusOrderCanceled');
-        	if ($statut==0) return $langs->trans('StatusOrderDraft');
-        	if ($statut==1) return $langs->trans('StatusOrderValidated');
-        	if ($statut==2) return $langs->trans('StatusOrderOnProcess');
-        	if ($statut==3 && ! $facturee) return $langs->trans('StatusOrderToBill');
-        	if ($statut==3 && $facturee) return $langs->trans('StatusOrderProcessed');
+
+		if ($mode == 0)
+		{
+			if ($statut==-1) return $langs->trans('StatusOrderCanceled');
+			if ($statut==0) return $langs->trans('StatusOrderDraft');
+			if ($statut==1) return $langs->trans('StatusOrderValidated');
+			if ($statut==2) return $langs->trans('StatusOrderOnProcess');
+			if ($statut==3 && ! $facturee) return $langs->trans('StatusOrderToBill');
+			if ($statut==3 && $facturee) return $langs->trans('StatusOrderProcessed');
 		}
-        if ($mode == 1)
-        {
-        	if ($statut==-1) return $langs->trans('StatusOrderCanceledShort');
-        	if ($statut==0) return $langs->trans('StatusOrderDraftShort');
-        	if ($statut==1) return $langs->trans('StatusOrderValidatedShort');
-        	if ($statut==2) return $langs->trans('StatusOrderOnProcessShort');
-        	if ($statut==3 && ! $facturee) return $langs->trans('StatusOrderToBillShort');
-        	if ($statut==3 && $facturee) return $langs->trans('StatusOrderProcessed');
-        }
-        if ($mode == 2)
-        {
-        	if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceledShort'),'statut5').' '.$langs->trans('StatusOrderCanceled');
-        	if ($statut==0) return img_picto($langs->trans('StatusOrderDraftShort'),'statut0').' '.$langs->trans('StatusOrderDraft');
-        	if ($statut==1) return img_picto($langs->trans('StatusOrderValidatedShort'),'statut1').' '.$langs->trans('StatusOrderValidated');
-        	if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcessShort'),'statut3').' '.$langs->trans('StatusOrderOnProcess');
-        	if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBillShort'),'statut4').' '.$langs->trans('StatusOrderToBill');
-        	if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessedShort'),'statut6').' '.$langs->trans('StatusOrderProcessed');
-        }
-        if ($mode == 3)
-        {
-        	if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut5');
-        	if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0');
-        	if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1');
-        	if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3');
-        	if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut4');
-        	if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessed'),'statut6');
-        }
-        if ($mode == 4)
-        {
-        	if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut5').' '.$langs->trans('StatusOrderCanceled');
-        	if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraft');
-        	if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$langs->trans('StatusOrderValidated');
-        	if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3').' '.$langs->trans('StatusOrderOnProcess');
-        	if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut4').' '.$langs->trans('StatusOrderToBill');
-        	if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessed');
-        }
-        if ($mode == 5)
-        {
-        	if ($statut==-1) return $langs->trans('StatusOrderCanceledShort').' '.img_picto($langs->trans('StatusOrderCanceledShort'),'statut5');
-        	if ($statut==0) return $langs->trans('StatusOrderDraftShort').' '.img_picto($langs->trans('StatusOrderDraftShort'),'statut0');
-        	if ($statut==1) return $langs->trans('StatusOrderValidatedShort').' '.img_picto($langs->trans('StatusOrderValidatedShort'),'statut1');
-        	if ($statut==2) return $langs->trans('StatusOrderOnProcessShort').' '.img_picto($langs->trans('StatusOrderOnProcessShort'),'statut3');
-        	if ($statut==3 && ! $facturee) return $langs->trans('StatusOrderToBillShort').' '.img_picto($langs->trans('StatusOrderToBillShort'),'statut4');
-        	if ($statut==3 && $facturee) return $langs->trans('StatusOrderProcessedShort').' '.img_picto($langs->trans('StatusOrderProcessedShort'),'statut6');
-        }
+		if ($mode == 1)
+		{
+			if ($statut==-1) return $langs->trans('StatusOrderCanceledShort');
+			if ($statut==0) return $langs->trans('StatusOrderDraftShort');
+			if ($statut==1) return $langs->trans('StatusOrderValidatedShort');
+			if ($statut==2) return $langs->trans('StatusOrderOnProcessShort');
+			if ($statut==3 && ! $facturee) return $langs->trans('StatusOrderToBillShort');
+			if ($statut==3 && $facturee) return $langs->trans('StatusOrderProcessed');
+		}
+		if ($mode == 2)
+		{
+			if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceledShort'),'statut5').' '.$langs->trans('StatusOrderCanceled');
+			if ($statut==0) return img_picto($langs->trans('StatusOrderDraftShort'),'statut0').' '.$langs->trans('StatusOrderDraft');
+			if ($statut==1) return img_picto($langs->trans('StatusOrderValidatedShort'),'statut1').' '.$langs->trans('StatusOrderValidated');
+			if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcessShort'),'statut3').' '.$langs->trans('StatusOrderOnProcess');
+			if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBillShort'),'statut4').' '.$langs->trans('StatusOrderToBill');
+			if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessedShort'),'statut6').' '.$langs->trans('StatusOrderProcessed');
+		}
+		if ($mode == 3)
+		{
+			if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut5');
+			if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0');
+			if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1');
+			if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3');
+			if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut4');
+			if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessed'),'statut6');
+		}
+		if ($mode == 4)
+		{
+			if ($statut==-1) return img_picto($langs->trans('StatusOrderCanceled'),'statut5').' '.$langs->trans('StatusOrderCanceled');
+			if ($statut==0) return img_picto($langs->trans('StatusOrderDraft'),'statut0').' '.$langs->trans('StatusOrderDraft');
+			if ($statut==1) return img_picto($langs->trans('StatusOrderValidated'),'statut1').' '.$langs->trans('StatusOrderValidated');
+			if ($statut==2) return img_picto($langs->trans('StatusOrderOnProcess'),'statut3').' '.$langs->trans('StatusOrderOnProcess');
+			if ($statut==3 && ! $facturee) return img_picto($langs->trans('StatusOrderToBill'),'statut4').' '.$langs->trans('StatusOrderToBill');
+			if ($statut==3 && $facturee) return img_picto($langs->trans('StatusOrderProcessed'),'statut6').' '.$langs->trans('StatusOrderProcessed');
+		}
+		if ($mode == 5)
+		{
+			if ($statut==-1) return $langs->trans('StatusOrderCanceledShort').' '.img_picto($langs->trans('StatusOrderCanceledShort'),'statut5');
+			if ($statut==0) return $langs->trans('StatusOrderDraftShort').' '.img_picto($langs->trans('StatusOrderDraftShort'),'statut0');
+			if ($statut==1) return $langs->trans('StatusOrderValidatedShort').' '.img_picto($langs->trans('StatusOrderValidatedShort'),'statut1');
+			if ($statut==2) return $langs->trans('StatusOrderOnProcessShort').' '.img_picto($langs->trans('StatusOrderOnProcessShort'),'statut3');
+			if ($statut==3 && ! $facturee) return $langs->trans('StatusOrderToBillShort').' '.img_picto($langs->trans('StatusOrderToBillShort'),'statut4');
+			if ($statut==3 && $facturee) return $langs->trans('StatusOrderProcessedShort').' '.img_picto($langs->trans('StatusOrderProcessedShort'),'statut6');
+		}
 	}
 
 
@@ -1893,23 +1893,23 @@ class Commande extends CommonObject
 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 		\param		option			Sur quoi pointe le lien: 0=fiche commande,3=fiche compta commande,4=fiche expedition commande
 		\return		string			Chaine avec URL
-	*/
+		*/
 	function getNomUrl($withpicto=0,$option=0)
 	{
 		global $langs;
-		
+
 		$result='';
 		$urlOption='';
-		
+
 		if ($option == 3) $urlOption = '/compta';
 		if ($option == 4) $urlOption = '/expedition';
-		
+
 		$lien = '<a href="'.DOL_URL_ROOT.$urlOption.'/commande/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
-		
+
 		$picto='order';
 		$label=$langs->trans("ShowOrder").': '.$this->ref;
-		
+
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		$result.=$lien.$this->ref.$lienfin;
@@ -1918,9 +1918,9 @@ class Commande extends CommonObject
 
 
 	/**
-     *      \brief     Charge les informations d'ordre info dans l'objet commande
-     *      \param     id       Id de la commande a charger
-     */
+	 *      \brief     Charge les informations d'ordre info dans l'objet commande
+	 *      \param     id       Id de la commande a charger
+	 */
 	function info($id)
 	{
 		$sql = 'SELECT c.rowid, '.$this->db->pdate('date_creation').' as datec,';
@@ -2053,9 +2053,9 @@ class Commande extends CommonObject
 
 
 	/**
-	*      \brief      Charge indicateurs this->nb de tableau de bord
-	*      \return     int         <0 si ko, >0 si ok
-	*/
+	 *      \brief      Charge indicateurs this->nb de tableau de bord
+	 *      \return     int         <0 si ko, >0 si ok
+	 */
 	function load_state_board()
 	{
 		global $conf, $user;
@@ -2114,7 +2114,7 @@ class CommandeLigne
 	var $marge_tx;
 	var $marque_tx;
 	var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-							// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
+	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 	var $total_ht;			// Total HT  de la ligne toute quantite et incluant la remise ligne
 	var $total_tva;			// Total TVA  de la ligne toute quantite et incluant la remise ligne
 	var $total_ttc;			// Total TTC de la ligne toute quantite et incluant la remise ligne
@@ -2130,18 +2130,18 @@ class CommandeLigne
 
 
 	/**
-	*      \brief     Constructeur d'objets ligne de commande
-	*      \param     DB      handler d'acces base de donnee
-	*/
+	 *      \brief     Constructeur d'objets ligne de commande
+	 *      \param     DB      handler d'acces base de donnee
+	 */
 	function CommandeLigne($DB)
 	{
 		$this->db= $DB;
 	}
 
 	/**
-	*  \brief     Load line order
-	*  \param     rowid           id line order
-	*/
+	 *  \brief     Load line order
+	 *  \param     rowid           id line order
+	 */
 	function fetch($rowid)
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.description, cd.price, cd.qty, cd.tva_tx,';
@@ -2173,11 +2173,11 @@ class CommandeLigne
 			$this->marge_tx         = $objp->marge_tx;
 			$this->marque_tx        = $objp->marque_tx;
 			$this->rang             = $objp->rang;
-			
+				
 			$this->ref	            = $objp->product_ref;
 			$this->product_libelle  = $objp->product_libelle;
 			$this->product_desc     = $objp->product_desc;
-			
+				
 			$this->db->free($result);
 		}
 		else
@@ -2187,10 +2187,10 @@ class CommandeLigne
 	}
 
 	/**
-	*    	\brief     	Supprime la ligne de commande en base
-	*		\user		User object
-	*		\return		int <0 si ko, >0 si ok
-	*/
+	 *    	\brief     	Supprime la ligne de commande en base
+	 *		\user		User object
+	 *		\return		int <0 si ko, >0 si ok
+	 */
 	function delete($user)
 	{
 		global $langs, $conf;
@@ -2205,7 +2205,7 @@ class CommandeLigne
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('LINEORDER_DELETE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			// Fin appel triggers
 
 			return 1;
@@ -2215,21 +2215,21 @@ class CommandeLigne
 			$this->error=$this->db->lasterror();
 			dolibarr_syslog("CommandeLigne::delete ".$this->error);
 			return -1;
-		}   
+		}
 	}
 
 	/**
-	*   \brief     	Insere l'objet ligne de commande en base
-	*   \param      notrigger		1 ne declenche pas les triggers, 0 sinon
-	*	\return		int				<0 si ko, >0 si ok
-	*/
+	 *   \brief     	Insere l'objet ligne de commande en base
+	 *   \param      notrigger		1 ne declenche pas les triggers, 0 sinon
+	 *	\return		int				<0 si ko, >0 si ok
+	 */
 	function insert($notrigger=0)
 	{
 		global $langs, $conf, $user;
 
 		dolibarr_syslog("CommandeLigne::insert rang=".$this->rang);
 		$this->db->begin();
-		
+
 		$rangtouse=$this->rang;
 		if ($rangtouse == -1)
 		{
@@ -2249,7 +2249,7 @@ class CommandeLigne
 				return -1;
 			}
 		}
-		
+
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql.= ' (fk_commande, description, qty, tva_tx,';
@@ -2278,8 +2278,8 @@ class CommandeLigne
 		$sql.= " '".price2num($this->total_tva)."',";
 		$sql.= " '".price2num($this->total_ttc)."'";
 		$sql.= ')';
-		
-		if ($this->fk_product) 
+
+		if ($this->fk_product)
 		{
 			$product = new Product($this->db);
 			$product->id = $this->fk_product;
@@ -2292,16 +2292,16 @@ class CommandeLigne
 		{
 			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
 
-            if (! $notrigger)
-            {
+			if (! $notrigger)
+			{
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('LINEORDER_INSERT',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
-			
+				
 			$this->db->commit();
 			return $this->rowid;
 		}
@@ -2316,27 +2316,27 @@ class CommandeLigne
 
 
 	/**
-	*      \brief     	Mise a jour de l'objet ligne de commande en base
-	*		\return		int		<0 si ko, >0 si ok
-	*/
+	 *      \brief     	Mise a jour de l'objet ligne de commande en base
+	 *		\return		int		<0 si ko, >0 si ok
+	 */
 	function update_total()
 	{
 		$this->db->begin();
-		
+
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
 		$sql.= " total_ht='".price2num($this->total_ht)."'";
 		$sql.= ",total_tva='".price2num($this->total_tva)."'";
 		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
-		
+
 		dolibarr_syslog("CommandeLigne.class.php::update_total sql=$sql");
-		
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$this->db->commit();
-			return 1;	
+			return 1;
 		}
 		else
 		{
@@ -2345,7 +2345,7 @@ class CommandeLigne
 			$this->db->rollback();
 			return -2;
 		}
-	}  
+	}
 }
 
 ?>
