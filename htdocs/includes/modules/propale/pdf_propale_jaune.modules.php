@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,11 @@
  * or see http://www.gnu.org/
  */
 
-/**	    \file       htdocs/includes/modules/propale/pdf_propale_jaune.modules.php
- \ingroup    propale
- \brief      Fichier de la classe permettant de générer les propales au modèle Jaune
- \version    $Id$
+/**
+ * 	\file       htdocs/includes/modules/propale/pdf_propale_jaune.modules.php
+ *	\ingroup    propale
+ *	\brief      Fichier de la classe permettant de générer les propales au modèle Jaune
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
@@ -33,7 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
  * 	    \class      pdf_propale_jaune
  *		\brief      Classe permettant de générer les propales au modèle Jaune
  */
-
 class pdf_propale_jaune extends ModelePDFPropales
 {
 	var $emetteur;	// Objet societe qui emet
@@ -243,13 +243,13 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
 
 				$pdf->SetXY (132, $tab2_top + 0);
-				$pdf->MultiCell(42, $tab2_lh, $outputlangs->trans("TotalHT"), 0, 'R', 0);
+				$pdf->MultiCell(42, $tab2_lh, $outputlangs->transnoentities("TotalHT"), 0, 'R', 0);
 
 				$pdf->SetXY (132, $tab2_top + $tab2_lh);
-				$pdf->MultiCell(42, $tab2_lh, $outputlangs->trans("TotalTVA"), 0, 'R', 0);
+				$pdf->MultiCell(42, $tab2_lh, $outputlangs->transnoentities("TotalVAT"), 0, 'R', 0);
 
 				$pdf->SetXY (132, $tab2_top + ($tab2_lh*2));
-				$pdf->MultiCell(42, $tab2_lh, $outputlangs->trans("TotalTTC"), 1, 'R', 1);
+				$pdf->MultiCell(42, $tab2_lh, $outputlangs->transnoentities("TotalTTC"), 1, 'R', 1);
 
 				$pdf->SetXY (174, $tab2_top + 0);
 				$pdf->MultiCell(26, $tab2_lh, price($propale->total_ht), 0, 'R', 0);
@@ -386,9 +386,9 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->rect(110, 90, 90, 10);
 
 		$pdf->SetXY(10,90);
-		$pdf->MultiCell(110, 10, $outputlangs->trans("Ref")." : ".$propale->ref);
+		$pdf->MultiCell(110, 10, $outputlangs->transnoentities("Ref")." : ".$propale->ref);
 		$pdf->SetXY(110,90);
-		$pdf->MultiCell(100, 10, $outputlangs->trans("Date")." : " . dolibarr_print_date($propale->date,'day'));
+		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($propale->date,'day'));
 	}
 
 	/*
