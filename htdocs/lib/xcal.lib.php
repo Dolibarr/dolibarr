@@ -90,6 +90,8 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				// Format
 				$summary=format_cal($format,$summary);
 				$description=format_cal($format,$description);
+				$category=format_cal($format,$category);
+				$location=format_cal($format,$location);
 				
 				$encoding='';
 				if ($format == 'vcal') $encoding='ENCODING=QUOTED-PRINTABLE:';
@@ -132,8 +134,8 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				                / "CANCELLED"           ;Indicates journal is removed.
 							;Status values for "VJOURNAL".
 					*/
-					if (! empty($category)) fwrite($calfileh,"CATEGORIES:".$category."\n");
-					if (! empty($location)) fwrite($calfileh,"LOCATION:".$location."\n");
+					if (! empty($category)) fwrite($calfileh,"CATEGORIES:".$encoding.$category."\n");
+					if (! empty($location)) fwrite($calfileh,"LOCATION:".$encoding.$location."\n");
 					//fwrite($calfileh,"TRANSP:".$transparency."\n");
 					//fwrite($calfileh,"CLASS:PUBLIC\n");				// PUBLIC, PRIVATE, CONFIDENTIAL
 

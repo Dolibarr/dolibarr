@@ -571,6 +571,8 @@ class ActionComm
 		$result=0;
 
 		$buildfile=true;
+		$login='';$logina='';$logind='';$logint='';
+		
 		if ($cachedelay)
 		{
 			// \TODO Check cache
@@ -603,6 +605,7 @@ class ActionComm
 				if ($key == 'idaction') $sql.=' AND a.id='.$value;
 				if ($key == 'login')    
 				{
+					$login=$value;
 					$userforfilter=new User($this->db);
 					$userforfilter->fetch($value);
 					$sql.= " AND (";
@@ -613,18 +616,21 @@ class ActionComm
 				}
 				if ($key == 'logina')    
 				{
+					$logina=$value;
 					$userforfilter=new User($this->db);
 					$userforfilter->fetch($value);
 					$sql.= " AND a.fk_user_author = ".$userforfilter->id;
 				}
 				if ($key == 'logint')    
 				{
+					$logint=$value;
 					$userforfilter=new User($this->db);
 					$userforfilter->fetch($value);
 					$sql.= " AND a.fk_user_action = ".$userforfilter->id;
 				}
 				if ($key == 'logind')    
 				{
+					$logind=$value;
 					$userforfilter=new User($this->db);
 					$userforfilter->fetch($value);
 					$sql.= " AND a.fk_user_done = ".$userforfilter->id;
@@ -677,9 +683,25 @@ class ActionComm
 				return -1;
 			}
 			
+			$langs->load("agenda");
+			
 			// Write file
-			$title='Dolibarr actions';
-			$desc='List of actions - built by Dolibarr';
+			$more='';
+			if ($login)  $more=$langs->trans("User").' '.$login;
+			if ($logina) $more=$langs->trans("ActionsAskedBy").' '.$logina;
+			if ($logint) $more=$langs->trans("ActionsToDoBy").' '.$logint;
+			if ($logind) $more=$langs->trans("ActionsDoneBy").' '.$logind;
+			if ($more)
+			{ 
+				$title='Dolibarr actions - '.$more;
+				$desc=$more.' - built by Dolibarr';
+			}
+			else
+			{
+				$title='Dolibarr actions';
+				$desc=$langs->trans('ListOfActions').' - built by Dolibarr';
+			}
+			
 			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
 			if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
 			if ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfile);
