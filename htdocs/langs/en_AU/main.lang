@@ -1,5 +1,5 @@
 # Dolibarr language file - en_AU - main
-# This file contains only line that must differs from en_US
+# This file contains only line that must differs from en_US file
 CHARSET=ISO-8859-1
 UnitPrice=Unit price
 UnitPriceHT=Unit price (excl GST)
