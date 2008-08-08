@@ -1955,14 +1955,14 @@ function vatrate($rate,$addpercent=false,$info_bits=0)
 
 
 /**
- *		\brief      Fonction qui retourne un montant mon�taire format� pour visualisation
- *		\remarks    Fonction utilis�e dans les pdf et les pages html
+ *		\brief      Fonction qui formate un montant pour visualisation
+ *		\remarks    Fonction utilisee dans les pdf et les pages html
  *		\param	    amount			Montant a formater
- *		\param	    html			Formatage html ou pas (0 par defaut)
+ *		\param	    html			Type de formatage, html ou pas (par defaut)
  *		\param	    outlangs		Objet langs pour formatage text
- *		\param		trunc			1=Tronque affichage si trop de d�cimales,0=Force le non troncage
+ *		\param		trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
  *		\param		nbdecimal		Nbre decimals minimum.
- *		\return		string			Chaine avec montant format�
+ *		\return		string			Chaine avec montant formate
  *		\seealso	price2num		Fonction inverse de price
  */
 function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
@@ -2021,7 +2021,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
  *	\remarks   		Fonction a appeler sur montants saisis avant un insert en base
  *	\param	    	amount		Montant a formater
  *	\param	    	rounding	'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
- *								'MT'=Round to Max with Tax (MAIN_MAX_DECIMALS_TOT)
+ *								'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *								'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
  *								''=No rounding
  *	\return			string		Montant au format num�rique PHP et SQL (Exemple: '99.99999')

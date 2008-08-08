@@ -81,7 +81,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 
 
 /*
- * Affichage page
+ * View
  */
 
 $html = new Form($db);

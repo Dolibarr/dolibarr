@@ -18,18 +18,17 @@
  */
 
 /**
-		\file       htdocs/discount.class.php
-		\ingroup    propal facture commande
-		\brief      Fichier de la classe de gestion des remises
-		\version    $Id$
-*/
+ *		\file       htdocs/discount.class.php
+ * 		\ingroup    propal facture commande
+ *		\brief      Fichier de la classe de gestion des remises
+ *		\version    $Id$
+ */
 
 
 /**
-		\class      DiscountAbsolute
-		\brief      Classe permettant la gestion des remises fixes
-*/
-
+ *		\class      DiscountAbsolute
+ *		\brief      Classe permettant la gestion des remises fixes
+ */
 class DiscountAbsolute
 {
 	var $db;
@@ -145,8 +144,8 @@ class DiscountAbsolute
 		$sql.= " amount_ht, amount_tva, amount_ttc, tva_tx,";
 		$sql.= " fk_facture_source";
 		$sql.= ")";
-		$sql.= " VALUES (now(),".$this->fk_soc.",".$user->id.",'".addslashes($this->desc)."',";
-		$sql.= " '".$this->amount_ht."','".$this->amount_tva."','".$this->amount_ttc."','".$this->tva_tx."',";
+		$sql.= " VALUES (now(), ".$this->fk_soc.", ".$user->id.", '".addslashes($this->desc)."',";
+		$sql.= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
 		$sql.= " ".($this->fk_facture_source?"'".$this->fk_facture_source."'":"null");
 		$sql.= ")";
 
@@ -289,26 +288,34 @@ class DiscountAbsolute
 
 
 	/**
-	 *    	\brief      Renvoie montant TTC des avoirs en cours disponibles
-	 *		\param		fk_soc		Filtre sur une societe
+	 *    	\brief      Renvoie montant TTC des reductions/avoirs en cours disponibles
+	 *		\param		company		Object third party for filter
 	 *		\param		user		Filtre sur un user auteur des remises
 	 * 		\param		filter		Filtre autre
-	 *		\return		int			<0 si ko, montant avoir sinon
+	 * 		\param		maxvalue	Filter on max value for discount
+	 * 		\return		int			<0 si ko, montant avoir sinon
 	 */
-	function getAvailableDiscounts($company='', $user='',$filter='')
+	function getAvailableDiscounts($company='', $user='',$filter='', $maxvalue=0)
 	{
         $sql  = "SELECT SUM(rc.amount_ttc) as amount";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+//        $sql  = "SELECT rc.amount_ttc as amount";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
         $sql.= " WHERE (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)";	// Available
 		if (is_object($company)) $sql.= " AND rc.fk_soc = ".$company->id;
         if (is_object($user))    $sql.= " AND rc.fk_user = ".$user->id;
-        if ($filter) $sql.=' AND '.$filter;
+        if ($filter)   $sql.=' AND '.$filter;
+        if ($maxvalue) $sql.=' AND rc.amount_ttc <= '.price2num($maxvalue);
 
-        dolibarr_syslog("Discount::getAvailableDiscounts sql=".$sql,LOG_DEBUG);
+        dolibarr_syslog("DiscountAbsolute::getAvailableDiscounts sql=".$sql,LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
+        	//while ($obj)
+            //{
+            	//print 'zz'.$obj->amount;
+            	//$obj = $this->db->fetch_object($resql);
+            //}
             return $obj->amount;
         }
 		return -1;
@@ -325,7 +332,7 @@ class DiscountAbsolute
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
 		$sql.= ' WHERE rc.fk_facture = '.$invoice->id;
 
-        dolibarr_syslog("Discount::getSommeCreditNote sql=".$sql,LOG_DEBUG);
+        dolibarr_syslog("DiscountAbsolute::getSommeCreditNote sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

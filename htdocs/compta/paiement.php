@@ -396,7 +396,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					print '</td>';
 						
 					// Reste a payer
-					print '<td align="right">'.price($objp->total_ttc - $objp->am - $creditnote).'</td>';
+					print '<td align="right">'.price(price2num($objp->total_ttc - $objp->am - $creditnote,'MT')).'</td>';
 
 					// Montant
 					print '<td align="right">';
@@ -430,7 +430,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					print '<td align="right"><b>'.price($totalrecu);
 					if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
 					print '</b></td>';
-					print '<td align="right"><b>'.price($total_ttc - $totalrecu - $totalrecucreditnote).'</b></td>';
+					print '<td align="right"><b>'.price(price2num($total_ttc - $totalrecu - $totalrecucreditnote,'MT')).'</b></td>';
 					print '<td align="center">&nbsp;</td>';
 					print '<td align="center">&nbsp;</td>';
 					print "</tr>\n";

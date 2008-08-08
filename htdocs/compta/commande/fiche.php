@@ -191,7 +191,7 @@ if ($_GET["id"] > 0)
 					// Remise dispo de type non avoir
 					$filter='fk_facture_source IS NULL';
 					print '<br>';
-					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$commande->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
+					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$commande->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
 				}
 			}
 			if ($absolute_creditnote)

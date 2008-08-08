@@ -1024,17 +1024,18 @@ class Societe extends CommonObject
 
 
 	/**
-	 *    	\brief      Renvoie montant TTC des avoirs en cours disponibles de la societe
+	 *    	\brief      Renvoie montant TTC des reductions/avoirs en cours disponibles de la societe
 	 *		\param		user		Filtre sur un user auteur des remises
 	 * 		\param		filter		Filtre autre
+	 * 		\param		maxvalue	Filter on max value for discount
 	 *		\return		int			<0 if KO, Credit note amount otherwise
 	 */
-	function getAvailableDiscounts($user='',$filter='')
+	function getAvailableDiscounts($user='',$filter='',$maxvalue=0)
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
 		$discountstatic=new DiscountAbsolute($this->db);
-		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter);
+		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter,$maxvalue);
 		if ($result >= 0)
 		{
 			return $result;
@@ -1046,6 +1047,13 @@ class Societe extends CommonObject
 		}
 	}
 
+	
+	/**
+	 * Enter description here...
+	 *
+	 * @param unknown_type $price_level
+	 * @param unknown_type $user
+	 */
 	function set_price_level($price_level, $user)
 	{
 		if ($this->id)

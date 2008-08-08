@@ -1809,15 +1809,21 @@ else
 			$soc = new Societe($db, $fac->socid);
 			$soc->fetch($fac->socid);
 
-			$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
-			$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
-
 			$totalpaye  = $fac->getSommePaiement();
 			$totalavoir = $fac->getSommeCreditNote();
-			$resteapayer = $fac->total_ttc - $totalpaye - $totalavoir;
+
+			// We cal also use bcadd to avoid pb with floating points
+			// For example print 239.2 - 229.3 - 9.9; does not return 0.
+			//$resteapayer=bcadd($fac->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
+			//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+			$resteapayer = price2num($fac->total_ttc - $totalpaye - $totalavoir,'MT');
+			
 			if ($fac->paye) $resteapayer=0;
 			$resteapayeraffiche=$resteapayer;
 
+			$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
+			$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
+			
 			$author = new User($db);
 			if ($fac->user_author)
 			{
@@ -2080,7 +2086,7 @@ else
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
 			print '. ';
-			if ($absolute_discount)
+			if ($absolute_discount > 0)
 			{
 				if ($fac->statut > 0 || $fac->type == 2)
 				{
@@ -2091,10 +2097,10 @@ else
 					// Remise dispo de type non avoir
 					$filter='fk_facture_source IS NULL';
 					print '<br>';
-					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
+					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,$absolute_discount,$filter,$resteapayer);
 				}
 			}
-			if ($absolute_creditnote)
+			if ($absolute_creditnote > 0)
 			{
 				// If validated, we show link "add credit note to payment"
 				if ($fac->statut != 1 || $fac->type == 2)
@@ -2106,7 +2112,7 @@ else
 					// Remise dispo de type avoir
 					$filter='fk_facture_source IS NOT NULL';
 					if (! $absolute_discount) print '<br>';
-					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id_for_payment',$soc->id,$absolute_creditnote,$filter);
+					$html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id_for_payment',$soc->id,$absolute_creditnote,$filter,$resteapayer);
 				}
 			}
 			if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
@@ -2143,7 +2149,7 @@ else
 				print '<td>'.($fac->type == 2 ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
 				print '<td>'.$langs->trans('Type').'</td>';
 				print '<td align="right">'.$langs->trans('Amount').'</td>';
-				print '<td>&nbsp;</td>';
+				print '<td width="18">&nbsp;</td>';
 				print '</tr>';
 					
 				if ($fac->type != 2)
@@ -2158,16 +2164,16 @@ else
 						print dolibarr_print_date($objp->dp,'day').'</a></td>';
 						print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
 						print '<td align="right">'.price($objp->amount).'</td>';
-						print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
+						print '<td>&nbsp;</td>';
 						print '</tr>';
 						$i++;
 					}
 
 					// Already payed
-					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td nowrap="nowrap">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>&nbsp;</td></tr>';
 
 					// Billed
-					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>&nbsp;</td></tr>';
 					$resteapayeraffiche=$resteapayer;
 
 					// Loop on each credit note applied
@@ -2189,8 +2195,8 @@ else
 							print $invoice->getNomUrl(0);
 							print ' :</td>';
 							print '<td align="right" style="border: 1px solid;">'.price($obj->amount_ttc).'</td>';
-							print '<td nowrap="nowrap">'.$langs->trans('Currency'.$conf->monnaie);
-							print ' <a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">'.img_delete().'</a>';
+							print '<td align="right">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">'.img_delete().'</a>';
 							print '</td></tr>';
 							$i++;
 						}
@@ -2205,7 +2211,7 @@ else
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
-						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>&nbsp;</td></tr>';
 						$resteapayeraffiche=0;
 					}
 					// Payé partiellement ou Abandon 'badcustomer'
@@ -2213,7 +2219,7 @@ else
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("Abandoned").':',$langs->trans("HelpAbandonBadCustomer"),-1);
-						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>&nbsp;</td></tr>';
 						//$resteapayeraffiche=0;
 					}
 					// Payé partiellement ou Abandon 'product_returned'
@@ -2221,7 +2227,7 @@ else
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("ProductReturned").':',$langs->trans("HelpAbandonProductReturned"),-1);
-						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>&nbsp;</td></tr>';
 						$resteapayeraffiche=0;
 					}
 					// Payé partiellement ou Abandon 'abandon'
@@ -2231,7 +2237,7 @@ else
 						$text=$langs->trans("HelpAbandonOther");
 						if ($fac->close_note) $text.='<br><br><b>'.$langs->trans("Reason").'</b>:'.$fac->close_note;
 						print $html->textwithhelp($langs->trans("Abandoned").':',$text,-1);
-						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>&nbsp;</td></tr>';
 						$resteapayeraffiche=0;
 					}
 					print '<tr><td colspan="2" align="right">';
@@ -2239,13 +2245,13 @@ else
 					else print $langs->trans('ExcessReceived');
 					print ' :</td>';
 					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayeraffiche).'</b></td>';
-					print '<td wrap="nowrap">'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<td wrap="nowrap">&nbsp;</td></tr>';
 				}
 				else
 				{
 					// Solde avoir
 					print '<tr><td colspan="2" align="right">'.$langs->trans('TotalTTCToYourCredit').' :</td>';
-					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($fac->total_ttc)).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($fac->total_ttc)).'</b></td><td>&nbsp;</td></tr>';
 				}
 				print '</table>';
 				$db->free($result);

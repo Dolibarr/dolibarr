@@ -19,11 +19,11 @@
  */
 
 /**
-	    \file       htdocs/comm/remx.php
-        \ingroup    commercial, invoice
-		\brief      Onglet de définition des avoirs
-		\version    $Id$
-*/
+ *	    \file       htdocs/comm/remx.php
+ *      \ingroup    commercial, invoice
+ *		\brief      Onglet de définition des avoirs
+ *		\version    $Id$
+ */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -95,7 +95,7 @@ if ($_GET["action"] == 'remove')
 
 
 /*
- * Affichage fiche des remises fixes
+ * View
  */
 
 $form=new Form($db);

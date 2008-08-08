@@ -748,12 +748,14 @@ class Form
   
   
 	/**
-	 *    \brief      Retourne la liste déroulante des remises fixes
-	 *    \param      selected        Id remise fixe pré-sélectionnée
-	 *    \param      htmlname        Nom champ formulaire
-	 *    \param      filter          Criteres optionnels de filtre
+	 *    	\brief      Retourne la liste déroulante des remises fixes
+	 *    	\param      selected        Id remise fixe pré-sélectionnée
+	 *    	\param      htmlname        Nom champ formulaire
+	 *    	\param      filter          Criteres optionnels de filtre
+     * 		\param		maxvalue		Max value for lines that can be selected
+     * 		\return		int				Return number of qualifed lines in list
 	 */
-	function select_remises($selected='',$htmlname='remise_id',$filter='',$socid)
+	function select_remises($selected='',$htmlname='remise_id',$filter='',$socid, $maxvalue=0)
     {
         global $langs,$conf;
         
@@ -771,6 +773,9 @@ class Form
         {
             print '<select class="flat" name="'.$htmlname.'">';
             $num = $this->db->num_rows($resql);
+
+            $qualifiedlines=$num;
+            
             $i = 0;
             if ($num)
             {
@@ -785,21 +790,27 @@ class Form
 						//$desc.=$obj->fk_facture_source;
 					}
 					
-					if ($selected > 0 && $selected == $obj->rowid)
+					$selectstring='';
+					if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected="true"';
+
+					$disabled='';
+                    if ($maxvalue && $obj->amount_ttc > $maxvalue) 
                     {
-                        print '<option value="'.$obj->rowid.'" selected="true">'.$desc.' ('.price($obj->amount_ht).' '.$langs->trans("HT").' - '.price($obj->amount_ttc).' '.$langs->trans("TTC").')</option>';
+                    	$qualifiedlines--;
+                    	$disabled=' disabled="true"';
                     }
-                    else
-                    {
-                        print '<option value="'.$obj->rowid.'">'.$desc.' ('.price($obj->amount_ht).' '.$langs->trans("HT").' - '.price($obj->amount_ttc).' '.$langs->trans("TTC").')</option>';
-                    }
+
+					print '<option value="'.$obj->rowid.'"'.$selectstring.$disabled.'>'.$desc.' ('.price($obj->amount_ht).' '.$langs->trans("HT").' - '.price($obj->amount_ttc).' '.$langs->trans("TTC").')</option>';
                     $i++;
                 }
             }
             print '</select>';
+            return $qualifiedlines;
         }
-        else {
+        else 
+        {
             dolibarr_print_error($this->db);
+            return -1;
         }
     }
     
@@ -2256,15 +2267,16 @@ class Form
     
         
     /**
-     *    \brief      	Affiche formulaire de selection de la remise fixe
-     *    \param      	page        	Page
-     *    \param      	selected    	Valeur a appliquer
-     *    \param      	htmlname    	Nom du formulaire select. Si none, non modifiable
-     *		\param		socid
-     * 		\param		amount
-     * 	  \param		filter			Filtre
+     *    	\brief      Affiche formulaire de selection de la remise fixe
+     *    	\param      page        	Page URL where form is shown
+     *    	\param      selected    	Value pre-selected
+     *		\param      htmlname    	Nom du formulaire select. Si none, non modifiable
+     *		\param		socid			Third party id
+     * 		\param		amount			Total amount available
+     * 	  	\param		filter			SQL filter on discounts
+     * 	  	\param		maxvalue		Max value for lines that can be selected
      */
-    function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid, $amount, $filter='')
+    function form_remise_dispo($page, $selected='', $htmlname='remise_id',$socid, $amount, $filter='', $maxvalue=0)
     {
         global $conf,$langs;
         if ($htmlname != "none")
@@ -2278,12 +2290,17 @@ class Form
 			//			print $langs->trans("AvailableGlobalDiscounts").': ';
 			$newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
 			if ($filter) $newfilter.=' AND '.$filter;
-			print $this->select_remises('',$htmlname,$newfilter,$socid);
+			$nbqualifiedlines=$this->select_remises('',$htmlname,$newfilter,$socid,$maxvalue);
             print '</td>';
-            print '<td align="left"> <input type="submit" class="button" value="';
-            if (! $filter || $filter=='fk_facture_source IS NULL') print $langs->trans("UseDiscount");
-            else print $langs->trans("UseCreditNoteInInvoicePayment");
-            print '"></td>';
+            print '<td align="left">';
+            if ($nbqualifiedlines > 0)
+            {
+	            print ' <input type="submit" class="button" value="';
+	            if (! $filter || $filter=='fk_facture_source IS NULL') print $langs->trans("UseDiscount");
+	            else print $langs->trans("UseCreditNoteInInvoicePayment");
+	            print '">';
+            }
+            print '</td>';
             print '</tr></table></form>';
         }
         else
