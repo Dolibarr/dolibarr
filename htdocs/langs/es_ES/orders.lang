@@ -30,6 +30,7 @@ StatusOrderProcessedShort=Procesado
 StatusOrderToBillShort=A facturar
 StatusOrderApprovedShort=Aprovado
 StatusOrderRefusedShort=Rechazado
+StatusOrderToProcessShort=A procesar
 StatusOrderReceivedPartiallyShort=Recibido parcialmente
 StatusOrderReceivedAllShort=Recibido
 StatusOrderCanceled=Anulado

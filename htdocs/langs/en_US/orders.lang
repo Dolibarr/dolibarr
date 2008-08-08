@@ -28,6 +28,7 @@ StatusOrderProcessedShort=Processed
 StatusOrderToBillShort=To bill
 StatusOrderApprovedShort=Approved
 StatusOrderRefusedShort=Refused
+StatusOrderToProcessShort=To process
 StatusOrderReceivedPartiallyShort=Partially received
 StatusOrderReceivedAllShort=Everything received
 StatusOrderCanceled=Canceled
