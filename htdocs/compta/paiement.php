@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/compta/paiement.php
- \ingroup    compta
- \brief      Page to create a payment
- \version    $Id$
+ *	\file       htdocs/compta/paiement.php
+ *	\ingroup    compta
+ *	\brief      Page to create a payment
+ *	\version    $Id$
  */
 
 include_once('./pre.inc.php');
@@ -216,7 +216,7 @@ if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 	}
 }
 
-// S�curit� acc�s client
+// Security check
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -418,6 +418,7 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					$total+=$objp->total;
 					$total_ttc+=$objp->total_ttc;
 					$totalrecu+=$objp->am;
+					$totalrecucreditnote+=$creditnote;
 					$i++;
 				}
 				if ($i > 1)
@@ -426,8 +427,11 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 					print '<tr class="liste_total">';
 					print '<td colspan="2" align="left">'.$langs->trans('TotalTTC').':</td>';
 					print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-					print '<td align="right"><b>'.price($totalrecu).'</b></td>';
-					print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
+					print '<td align="right"><b>'.price($totalrecu);
+					if ($totalrecucreditnote) print '+'.price($totalrecucreditnote);
+					print '</b></td>';
+					print '<td align="right"><b>'.price($total_ttc - $totalrecu - $totalrecucreditnote).'</b></td>';
+					print '<td align="center">&nbsp;</td>';
 					print '<td align="center">&nbsp;</td>';
 					print "</tr>\n";
 				}
