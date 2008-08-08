@@ -291,7 +291,7 @@ if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 print "\n";
 }
 
-// Nbre commandes clients à honorer
+// Nbre commandes clients à traiter
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
   include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
@@ -300,9 +300,9 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 
   $var=!$var;
   print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Orders"),"order").'</td><td>'.$langs->trans("OrdersToProcess").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php">'.$board->nbtodo.'</a></td>';
+  print '<td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=-2">'.$board->nbtodo.'</a></td>';
   print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/commande/liste.php">';
+  print '<a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=-2">';
   print $board->nbtodolate;
   print '</a></td><td nowrap align="right">';
   print ' (>'.ceil($conf->commande->traitement->warning_delay/60/60/24).' '.$langs->trans("days").')';

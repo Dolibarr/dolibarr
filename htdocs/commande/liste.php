@@ -48,7 +48,7 @@ $result = restrictedArea($user, 'commande', $orderid,'');
 
 
 /*
- * Affichage page
+ * View
  */
  
 $html = new Form($db);
@@ -91,7 +91,7 @@ if ($socid)
 }
 if ($viewstatut <> '')
 {
-	if ($viewstatut < 4)
+	if ($viewstatut < 4 && $viewstatut > -2)
 	{
 		$sql .= ' AND c.fk_statut ='.$viewstatut; // brouillon, validée, en cours, annulée
 		if ($viewstatut == 3)
@@ -99,9 +99,13 @@ if ($viewstatut <> '')
 			$sql .= ' AND c.facture = 0'; // à facturer
 		}
 	}
-	else if ($viewstatut == 4)
+	if ($viewstatut == 4)
 	{
 		$sql .= ' AND c.facture = 1'; // facturée
+	}
+	if ($viewstatut == -2)
+	{
+		$sql .= ' AND c.fk_statut >= 0 and c.fk_statut <= 3 and c.facture = 0';
 	}
 }
 if ($_GET['month'] > 0)
@@ -142,8 +146,21 @@ if ($resql)
 	{
 		$title = $langs->trans('ListOfOrders');
 	}
-	if ($_GET['status'] == 3)
-		$title.=' - '.$langs->trans('StatusOrderToBill');
+	if (strval($_GET['viewstatut']) == '0')
+		$title.=' - '.$langs->trans('StatusOrderDraftShort');
+	if ($_GET['viewstatut'] == 1)
+		$title.=' - '.$langs->trans('StatusOrderValidatedShort');
+	if ($_GET['viewstatut'] == 2)
+		$title.=' - '.$langs->trans('StatusOrderOnProcessShort');
+	if ($_GET['viewstatut'] == 3)
+		$title.=' - '.$langs->trans('StatusOrderToBillShort');
+	if ($_GET['viewstatut'] == 4)
+		$title.=' - '.$langs->trans('StatusOrderProcessedShort');
+	if ($_GET['viewstatut'] == -1)
+		$title.=' - '.$langs->trans('StatusOrderCanceledShort');
+	if ($_GET['viewstatut'] == -2)
+		$title.=' - '.$langs->trans('StatusOrderToProcessShort');
+		
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $_GET['page'], 'liste.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
 	$i = 0;
