@@ -39,8 +39,8 @@ require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 
 
 /**
- \class      User
- \brief      Classe permettant la gestion d'un utilisateur
+ *	\class      User
+ *	\brief      Classe permettant la gestion d'un utilisateur
  */
 class User extends CommonObject
 {
@@ -817,10 +817,12 @@ class User extends CommonObject
 		if ($result > 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-			$sql.= " SET fk_socpeople=".$contact->id.", fk_societe=".$contact->societeid;
+			$sql.= " SET fk_socpeople=".$contact->id;
+			if ($contact->societeid) $sql.=", fk_societe=".$contact->societeid;
 			$sql.= " WHERE rowid=".$this->id;
 			$resql=$this->db->query($sql);
 
+			dolibarr_syslog("User::create_from_contact sql=".$sql, LOG_DEBUG);
 			if ($resql)
 			{
 				$this->db->commit();
@@ -828,8 +830,8 @@ class User extends CommonObject
 			}
 			else
 			{
-				$this->error=$this->db->error()." - $sql";
-				dolibarr_syslog("User::create_from_contact - 10 - ".$this->error);
+				$this->error=$this->db->error();
+				dolibarr_syslog("User::create_from_contact ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -1;
@@ -878,6 +880,7 @@ class User extends CommonObject
 			$sql.= " WHERE rowid=".$this->id;
 			$resql=$this->db->query($sql);
 
+			dolibarr_syslog("User::create_from_member sql=".$sql, LOG_DEBUG);
 			if ($resql)
 			{
 				$this->db->commit();
@@ -886,7 +889,7 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error()." - ".$sql;
-				dolibarr_syslog("User::create_from_member - 1 - ".$this->error);
+				dolibarr_syslog("User::create_from_member - ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -1;

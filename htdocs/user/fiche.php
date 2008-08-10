@@ -22,10 +22,10 @@
  */
 
 /**     
-        \file       htdocs/user/fiche.php
-        \brief      Onglet user et permissions de la fiche utilisateur
-        \version    $Id$
-*/
+ *       \file       htdocs/user/fiche.php
+ *       \brief      Onglet user et permissions de la fiche utilisateur
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -276,7 +276,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 			if (is_dir($conf->users->dir_output))
 			{
 				$newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
-				if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1))
+				if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1) > 0)
 				{
 					$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
 				}
@@ -912,16 +912,18 @@ else
                 $societe = new Societe($db);
                 $societe->fetch($fuser->societe_id);
                 print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
-                if ($fuser->contact_id)
-                {
-                    $contact = new Contact($db);
-                    $contact->fetch($fuser->contact_id);
-                    print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->getFullName($langs),32).'</a>';
-                }
             }            
             else
             {
                 print $langs->trans("ThisUserIsNot");
+            }
+            if ($fuser->contact_id)
+            {
+                $contact = new Contact($db);
+                $contact->fetch($fuser->contact_id);
+                if ($fuser->societe_id > 0) print ' / ';
+                else print '<br>';
+                print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->getFullName($langs),32).'</a>';
             }
             print '</td>';
             print "</tr>\n";
