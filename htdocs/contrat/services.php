@@ -178,7 +178,8 @@ if ($resql)
         if ($obj->date_fin_validite && $obj->date_fin_validite < (time() - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5) print img_warning($langs->trans("Late"));
         else print '&nbsp;&nbsp;&nbsp;&nbsp;';
         print '</td>';
-        print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$obj->cid.'&ligne='.$obj->rowid.'">';
+        print '<td align="right">';
+        print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->cid.'&line='.$obj->rowid.'">';
 		print $staticcontratligne->LibStatut($obj->statut,5);
         print '</a></td>';
         print "</tr>\n";
