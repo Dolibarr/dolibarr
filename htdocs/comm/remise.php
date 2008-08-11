@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,9 +39,16 @@ $langs->load("bills");
 
 if ($_POST["action"] == 'setremise')
 {
+
+	// Define remise
+	if ($_POST['remise']>0)
+		$remise=$_POST['remise'];
+	else
+		$remise=0;
+		
     $soc = New Societe($db);
     $soc->fetch($_GET["id"]);
-    $result=$soc->set_remise_client($_POST["remise"],$_POST["note"],$user);
+    $result=$soc->set_remise_client($remise,$_POST["note"],$user);
 
 	if ($result > 0)
 	{        
