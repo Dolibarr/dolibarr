@@ -5,7 +5,6 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,15 +203,9 @@ if ($_POST['action'] == 'setconditions')
 
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
 {
-	// Define remise_percent
-	if ($_POST['remise_percent']>0)
-		$remise_percent=$_POST['remise_percent'];
-	else
-		$remise_percent=0;
-
 	$fac = new Facture($db);
 	$fac->fetch($_REQUEST['facid']);
-	$result = $fac->set_remise($user, $remise_percent);
+	$result = $fac->set_remise($user, $_POST['remise_percent']);
 	$_GET['facid']=$_REQUEST['facid'];
 }
 
@@ -445,12 +438,6 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 	$facture->socid=$_POST['socid'];
 	$facture->fetch_client();
 
-	// Define remise_percent
-	if ($_POST['remise_percent']>0)
-		$remise_percent=$_POST['remise_percent'];
-	else
-		$remise_percent=0;
-				
 	$db->begin();
 
 	// Facture remplacement
@@ -484,7 +471,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->cond_reglement_id = $_POST['cond_reglement_id'];
 			$facture->mode_reglement_id = $_POST['mode_reglement_id'];
 			$facture->remise_absolue    = $_POST['remise_absolue'];
-			$facture->remise_percent    = $remise_percent;
+			$facture->remise_percent    = $_POST['remise_percent'];
 
 			// Propriétés particulieres a facture de remplacement
 			$facture->fk_facture_source = $_POST['fac_replacement'];
@@ -516,7 +503,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
 			//$result=$facture->fetch($_POST['fac_avoir']);
-			
+
 			$facture->socid 		 = $_POST['socid'];
 			$facture->number         = $_POST['facnumber'];
 			$facture->date           = $datefacture;
@@ -528,7 +515,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->cond_reglement_id = 0;
 			$facture->mode_reglement_id = $_POST['mode_reglement_id'];
 			$facture->remise_absolue    = $_POST['remise_absolue'];
-			$facture->remise_percent    = $remise_percent;
+			$facture->remise_percent    = $_POST['remise_percent'];
 
 			// Propriétés particulieres a facture avoir
 			$facture->fk_facture_source = $_POST['fac_avoir'];
@@ -585,7 +572,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->mode_reglement_id = $_POST['mode_reglement_id'];
 			$facture->amount            = $_POST['amount'];
 			$facture->remise_absolue    = $_POST['remise_absolue'];
-			$facture->remise_percent    = $remise_percent;
+			$facture->remise_percent    = $_POST['remise_percent'];
 
 			if (! $_POST['propalid'] && ! $_POST['commandeid'] && ! $_POST['contratid'])
 			{
@@ -601,12 +588,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 						if ($_POST['date_end'.$i.'year'] && $_POST['date_end'.$i.'month'] && $_POST['date_end'.$i.'day']) {
 							$endday=$_POST['date_end'.$i.'year'].'-'.$_POST['date_end'.$i.'month'].'-'.$_POST['date_end'.$i.'day'];
 						}
-						// Define remise_percent
-						if ($_POST['remise_percent'.$i]>0)
-							$remise_percent_i=$_POST['remise_percent'.$i];
-						else
-							$remise_percent_i=0;
-						$facture->add_product($_POST['idprod'.$i],$_POST['qty'.$i],$remise_percent_i,$startday,$endday);
+						$facture->add_product($_POST['idprod'.$i],$_POST['qty'.$i],$_POST['remise_percent'.$i],$startday,$endday);
 					}
 				}
 
@@ -895,12 +877,6 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		// Define remise_percent
-		if ($_POST['remise_percent']>0)
-			$remise_percent=$_POST['remise_percent'];
-		else
-			$remise_percent=0;
-		
 		// Insert line
 		$result = $fac->addline(
 		$_POST['facid'],
@@ -909,7 +885,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		$_POST['qty'],
 		$tva_tx,
 		$_POST['idprod'],
-		$remise_percent,
+		$_POST['remise_percent'],
 		$date_start,
 		$date_end,
 		0,
@@ -958,18 +934,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	// Define vat_rate
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
-	
-	// Define remise_percent
-	if ($_POST['remise_percent']>0)
-		$remise_percent=$_POST['remise_percent'];
-	else
-		$remise_percent=0;
 
 	$result = $fac->updateline($_POST['rowid'],
 	$_POST['desc'],
 	$_POST['price'],
 	$_POST['qty'],
-	$remise_percent,
+	$_POST['remise_percent'],
 	$date_start,
 	$date_end,
 	$vat_rate,

@@ -5,7 +5,6 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,10 +189,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$propal->duree_validite = $_POST['duree_validite'];
 			$propal->cond_reglement_id = $_POST['cond_reglement_id'];
 			$propal->mode_reglement_id = $_POST['mode_reglement_id'];
-			if($_POST['remise_percent']>0)
-				$propal->remise_percent = $_POST['remise_percent'];
-			else
-				$propal->remise_percent = 0;
+			$propal->remise_percent = $_POST['remise_percent'];
 			$propal->remise_absolue = $_POST['remise_absolue'];
 			$propal->socid    = $_POST['socid'];
 			$propal->contactid = $_POST['contactidp'];
@@ -618,13 +614,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
-		
-		// Define remise_percent
-		if ($_POST['remise_percent']>0)
-			$remise_percent=$_POST['remise_percent'];
-		else
-			$remise_percent=0;
-		
+
 		// Insert line
 		$result=$propal->addline(
 		$_POST['propalid'],
@@ -633,7 +623,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 		$_POST['qty'],
 		$tva_tx,
 		$_POST['idprod'],
-		$remise_percent,
+		$_POST['remise_percent'],
 		$price_base_type,
 		$pu_ttc,
 		$info_bits
@@ -672,17 +662,10 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
 
-	// Define remise_percent
-	if ($_POST['remise_percent']>0)
-		$remise_percent=$_POST['remise_percent'];
-	else
-		$remise_percent=0;
-		
-	
 	$result = $propal->updateline($_POST['lineid'],
 	$_POST['subprice'],
 	$_POST['qty'],
-	$remise_percent,
+	$_POST['remise_percent'],
 	$vat_rate,
 	$_POST['desc'],
 		'HT',
@@ -744,15 +727,9 @@ if ($_POST["action"] == 'setconditions')
 
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->propale->creer)
 {
-	// Define remise_percent
-	if ($_POST['remise_percent']>0)
-		$remise_percent=$_POST['remise_percent'];
-	else
-		$remise_percent=0;
-		
 	$propal = new Propal($db);
 	$propal->fetch($_REQUEST['propalid']);
-	$result = $propal->set_remise_percent($user, $remise_percent);
+	$result = $propal->set_remise_percent($user, $_POST['remise_percent']);
 	$_GET['propalid']=$_REQUEST['propalid'];
 }
 

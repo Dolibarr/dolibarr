@@ -4,7 +4,6 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2008 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,15 +274,9 @@ if ($_POST['action'] == 'setconditions' && $user->rights->commande->creer)
 
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
 {
-	// Define remise_percent
-	if ($_POST['remise_percent']>0)
-		$remise_percent=$_POST['remise_percent'];
-	else
-		$remise_percent=0;
-		
 	$commande = new Commande($db);
 	$commande->fetch($_REQUEST['id']);
-	$result = $commande->set_remise($user, $remise_percent);
+	$result = $commande->set_remise($user, $_POST['remise_percent']);
 	$_GET['id']=$_REQUEST['id'];
 }
 
@@ -367,12 +360,6 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		// Define remise_percent
-		if ($_POST['remise_percent']>0)
-			$remise_percent=$_POST['remise_percent'];
-		else
-			$remise_percent=0;
-		
 		// Insert line
 		$result = $commande->addline(
 		$_POST['id'],
@@ -381,7 +368,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		$_POST['qty'],
 		$tva_tx,
 		$_POST['idprod'],
-		$remise_percent,
+		$_POST['remise_percent'],
 		$info_bits,
 			'',
 		$price_base_type,
@@ -419,18 +406,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	// Define vat_rate
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
-	
-	// Define elremise_percent
-	if ($_POST['elremise_percent']>0)
-		$elremise_percent=$_POST['elremise_percent'];
-	else
-		$elremise_percent=0;
 
 	$result = $commande->updateline($_POST['elrowid'],
 	$_POST['eldesc'],
 	$_POST['pu'],
 	$_POST['qty'],
-	$elremise_percent,
+	$_POST['elremise_percent'],
 	$vat_rate,
 				  'HT',
 	$info_bits
