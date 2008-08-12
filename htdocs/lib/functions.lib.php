@@ -2024,7 +2024,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
  *								'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *								'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
  *								''=No rounding
- *	\return			string		Montant au format num�rique PHP et SQL (Exemple: '99.99999')
+ *	\return			string		Montant au format numerique PHP et SQL (Exemple: '99.99999')
  *	\seealso		price		Fonction inverse de price2num
  */
 function price2num($amount,$rounding='')
