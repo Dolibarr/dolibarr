@@ -1,5 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2007 Regis Houssin <regis@dolibarr.fr>
+-- Copyright (C) 2007 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 -- $Id$
 -- ========================================================================
 
-create table llx_c_barcode
+create table llx_c_barcode_type
 (
   rowid    integer            AUTO_INCREMENT PRIMARY KEY,
   code     varchar(16)        NOT NULL,
