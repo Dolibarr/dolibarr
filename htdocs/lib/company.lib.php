@@ -549,7 +549,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		$sql.= " AND mc.fk_mailing=m.rowid";
 		$sql.= " ORDER BY mc.date_envoi DESC, m.rowid DESC";
 
-		dolibarr_syslog("compan.lib::show_actions_done sql=".$sql, LOG_DEBUG);
+		dolibarr_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -676,10 +676,6 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		}
 
 		$db->free($result);
-	}
-	else
-	{
-		dolibarr_print_error($db);
 	}
 
 	print "</table>\n";
