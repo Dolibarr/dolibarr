@@ -53,11 +53,13 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 }
 
 /**
-   \brief   Encode\decode database password in config file
-   \param   level    Encode level : 0 no enconding, 1 encoding
-*/
+ *  \brief   	Encode\decode database password in config file
+ *  \param   	level   Encode level : 0 no enconding, 1 encoding
+ *	\return		int		<0 if KO, >0 if OK	
+ */
 function encodedecode_dbpassconf($level=0)
 {
+	dolibarr_syslog("security.lib::encodedecode_dbpassconf level=".$level, LOG_DEBUG);
 	$config = '';
 
 	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','r'))
@@ -95,19 +97,21 @@ function encodedecode_dbpassconf($level=0)
 		}
 		else
 		{
+			dolibarr_syslog("security.lib::encodedecode_dbpassconf Failed to open conf.php file for writing", LOG_WARNING);
 			return -1;
 		}
 	}
 	else
 	{
+		dolibarr_syslog("security.lib::encodedecode_dbpassconf Failed to read conf.php", LOG_ERR);
 		return -2;
 	}
 }
 
 /**
- \brief   Encode une chaine de caractére
- \param   chain    chaine de caractéres a encoder
- \return  string_coded  chaine de caractéres encodée
+ *	\brief   Encode une chaine de caractére
+ *	\param   chaine			chaine de caractères a encoder
+ *	\return  string_coded  	chaine de caractères encodée
  */
 function dol_encode($chain)
 {
@@ -121,9 +125,9 @@ function dol_encode($chain)
 }
 
 /**
- \brief   Decode une chaine de caractére
- \param   chain    chaine de caractéres a decoder
- \return  string_coded  chaine de caractéres decodée
+ *	\brief   Decode une chaine de caractére
+ *	\param   chain    chaine de caractéres a decoder
+ *	\return  string_coded  chaine de caractéres decodée
  */
 function dol_decode($chain)
 {

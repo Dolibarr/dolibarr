@@ -87,12 +87,12 @@ pHeader($langs->trans("SetupEnd"),"etape5");
 
 if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 {
-
+    require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");
+    
     print '<table cellspacing="0" cellpadding="2" width="100%">';
     $error=0;
     
-    // on décode le mot de passe de la base si besoin
-    require_once(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php");
+	// decode database pass if needed
     if (! empty($dolibarr_main_db_encrypted_pass))
     {
 		require_once(DOL_DOCUMENT_ROOT ."/lib/security.lib.php");

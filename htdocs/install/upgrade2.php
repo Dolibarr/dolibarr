@@ -74,7 +74,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 
-	// on decode le mot de passe de la base si besoin
+	// decode database pass if needed
 	if (! empty($dolibarr_main_db_encrypted_pass))
 	{
 		require_once($dolibarr_main_document_root."/lib/security.lib.php");

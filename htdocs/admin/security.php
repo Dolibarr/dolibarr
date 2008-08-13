@@ -18,11 +18,11 @@
  */
 
 /**
-	    \file       htdocs/admin/security.php
-        \ingroup    setup
-        \brief      Page de configuration du module sécurité
-		\version    $Id$
-*/
+ *		\file       htdocs/admin/security.php
+ *      \ingroup    setup
+ *      \brief      Page de configuration du module sécurité
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -95,7 +95,8 @@ if ($_GET["action"] == 'activate_encryptdbpassconf')
 	$result = encodedecode_dbpassconf(1);
 	if ($result > 0)
 	{
-		dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
+		// database value not required
+		//dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
 		Header("Location: security.php");
 		exit;
 	}
@@ -109,7 +110,8 @@ else if ($_GET["action"] == 'disable_encryptdbpassconf')
 	$result = encodedecode_dbpassconf(0);
 	if ($result > 0)
 	{
-		dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED");
+		// database value not required
+		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED");
 		Header("Location: security.php");
 		exit;
 	}
@@ -311,25 +313,30 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
 print '<td align="center" width="60">';
-if($conf->global->MAIN_DATABASE_PWD_CONFIG_ENCRYPTED == 1)
+if (! empty($dolibarr_main_db_encrypted_pass))
 {
 	print img_tick();
 }
 
 print '</td>';
 
-if ($conf->global->MAIN_DATABASE_PWD_CONFIG_ENCRYPTED == 0)
+print '<td align="center" width="100">';
+if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) 
 {
-	print '<td align="center" width="100">';
-	print '<a href="security.php?action=activate_encryptdbpassconf">'.$langs->trans("Activate").'</a>';
-	print "</td>";
+	print img_warning($langs->trans("WarningPassIsEmpty"));
 }
-if($conf->global->MAIN_DATABASE_PWD_CONFIG_ENCRYPTED == 1)
+else
 {
-	print '<td align="center" width="100">';
-	print '<a href="security.php?action=disable_encryptdbpassconf">'.$langs->trans("Disable").'</a>';
-	print "</td>";
+	if (empty($dolibarr_main_db_encrypted_pass))
+	{
+		print '<a href="security.php?action=activate_encryptdbpassconf">'.$langs->trans("Activate").'</a>';
+	}
+	if (! empty($dolibarr_main_db_encrypted_pass))
+	{
+		print '<a href="security.php?action=disable_encryptdbpassconf">'.$langs->trans("Disable").'</a>';
+	}
 }
+print "</td>";
 
 print "</td>";
 print '</tr>';

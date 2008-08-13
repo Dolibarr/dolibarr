@@ -294,13 +294,13 @@ function dolibarr_get_const($db, $name)
 
 
 /**
-   \brief      	Insertion d'une constante dans la base de données.
+   \brief      	Insertion d'une constante dans la base de donnees.
    \sa			dolibarr_del_const, dolibarr_get_const
-   \param	    db          Handler d'accés base
+   \param	    db          Handler d'acces base
    \param	    name		Nom de la constante
    \param	    value		Valeur de la constante
-   \param	    type		Type de constante (chaine par défaut)
-   \param	    visible	    La constante est elle visible (0 par défaut)
+   \param	    type		Type de constante (chaine par defaut)
+   \param	    visible	    La constante est elle visible (0 par defaut)
    \param	    note		Explication de la constante
    \return     	int         -1 if KO, 1 if OK
 */
