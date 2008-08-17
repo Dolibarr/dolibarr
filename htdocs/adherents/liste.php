@@ -21,7 +21,7 @@
 /** 
         \file       htdocs/adherents/liste.php
         \ingroup    adherent
-		\brief      Page listant les adhérents
+		\brief      Page listant les adhï¿½rents
 		\version    $Id$
 */
 
@@ -33,7 +33,7 @@ $langs->load("companies");
 
 
 /*
- * Affiche liste
+ * View
  */
 
 llxHeader();
@@ -54,7 +54,7 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ";
+$sql = "SELECT d.rowid, d.login, d.prenom, d.nom, d.societe, ";
 $sql.= " ".$db->pdate("d.datefin")." as datefin,";
 $sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
 $sql.= " t.libelle as type, t.cotisation";
@@ -72,7 +72,7 @@ if ($_GET["type"])
 }
 if (isset($_GET["statut"]))
 {   
-    $sql.=" AND d.statut in ($statut)";     // Peut valoir un nombre ou liste de nombre séparés par virgules
+    $sql.=" AND d.statut in ($statut)";     // Peut valoir un nombre ou liste de nombre sï¿½parï¿½s par virgules
 }
 if ( $_POST["action"] == 'search')
 {
@@ -83,6 +83,10 @@ if ( $_POST["action"] == 'search')
 if ($_GET["search_nom"])
 {
     $sql.= " AND (d.prenom LIKE '%".$_GET["search_nom"]."%' OR d.nom LIKE '%".$_GET["search_nom"]."%')";
+}
+if ($_GET["search_login"])
+{
+    $sql.= " AND d.login LIKE '%".$_GET["search_login"]."%'";
 }
 if ($_GET["search_email"])
 {
@@ -133,15 +137,18 @@ if ($result)
     }
 
     $param="";
-    if (isset($_GET["statut"]))     $param.="&statut=".$_GET["statut"];
-    if (isset($_GET["search_nom"])) $param.="&search_nom=".$_GET["search_nom"];
-    if (isset($_GET["filter"]))     $param.="&filter=".$_GET["filter"];
+    if (isset($_GET["statut"]))       $param.="&statut=".$_GET["statut"];
+    if (isset($_GET["search_nom"]))   $param.="&search_nom=".$_GET["search_nom"];
+    if (isset($_GET["search_login"])) $param.="&search_login=".$_GET["search_login"];
+    if (isset($_GET["search_email"])) $param.="&search_email=".$_GET["search_email"];
+    if (isset($_GET["filter"]))       $param.="&filter=".$_GET["filter"];
     print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
     print "<table class=\"noborder\" width=\"100%\">";
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Login"),"liste.php","d.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield,$sortorder);
@@ -157,6 +164,9 @@ if ($result)
 	print '<td align="left">';
 	print '<input class="flat" type="text" name="search_nom" value="'.$_REQUEST["search_nom"].'" size="12"></td>';
 
+	print '<td align="left">';
+	print '<input class="flat" type="text" name="search_login" value="'.$_REQUEST["search_login"].'" size="12"></td>';
+	
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -197,6 +207,9 @@ if ($result)
             print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".img_object($langs->trans("ShowAdherent"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
         }
         
+        // Login
+        print "<td>".$objp->login."</td>\n";
+
         // Type
         print '<td><a href="type.php?rowid='.$objp->type_id.'">'.img_object($langs->trans("ShowType"),"group").' '.$objp->type.'</a></td>';
         
@@ -204,7 +217,7 @@ if ($result)
         print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
 
         // EMail
-        print "<td>$objp->email</td>\n";
+        print "<td>".$objp->email."</td>\n";
         
         // Statut
         print "<td>";

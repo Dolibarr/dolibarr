@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo <jlb@j1b.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,17 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/adherents/cotisations.php
-        \ingroup    adherent
-		\brief      Page de consultation et insertion d'une cotisation
-		\version    $Revision$
-*/
+ *      \file       htdocs/adherents/cotisations.php
+ *      \ingroup    adherent
+ *		\brief      Page de consultation et insertion d'une cotisation
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
@@ -147,7 +144,7 @@ llxHeader();
 if ($msg)	print $msg.'<br>';
 
 // Liste des cotisations
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
+$sql = "SELECT d.rowid, d.login, d.prenom, d.nom, d.societe,";
 $sql.= " c.rowid as crowid, c.cotisation,";
 $sql.= " ".$db->pdate("c.dateadh")." as dateadh,";
 $sql.= " ".$db->pdate("c.datef")." as datef,";
@@ -178,6 +175,7 @@ if ($result)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"cotisations.php","c.rowid",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Login"),"cotisations.php","d.login",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"cotisations.php","c.note",$param,"",'align="left"',$sortfield,$sortorder);
     if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
     {
@@ -205,6 +203,7 @@ if ($result)
 
         $adherent->ref=trim($objp->prenom.' '.$objp->nom);
         $adherent->id=$objp->rowid;
+        $adherent->login=$objp->login;
 
         $var=!$var;
 
@@ -219,6 +218,9 @@ if ($result)
         
 		// Nom
 		print '<td>'.$adherent->getNomUrl(1).'</td>';
+        
+		// Login
+		print '<td>'.$adherent->login.'</td>';
         
 		// Libelle
 		print '<td>';
