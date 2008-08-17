@@ -65,6 +65,15 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_TIME")."</td><td>".setlocale(LC_TIME,0)."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
+// Decimals
+$var=!$var;
+$dec=$langs->trans("SeparatorDecimal");
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentValueSeparatorDecimal")."</td><td>".$dec."</td></tr>\n";
+$var=!$var;
+$thousand=$langs->trans("SeparatorThousand");
+if ($thousand == 'SeparatorThousand') $thousand=' ';	// ' ' does not work on trans method
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentValueSeparatorThousand")."</td><td>".$thousand."</td></tr>\n";
+// Timezone
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("DolibarrTZ")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
 $var=!$var;

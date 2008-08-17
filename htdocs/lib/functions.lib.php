@@ -1963,14 +1963,14 @@ function vatrate($rate,$addpercent=false,$info_bits=0)
  *		\param		trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
  *		\param		nbdecimal		Nbre decimals minimum.
  *		\return		string			Chaine avec montant formate
- *		\seealso	price2num		Fonction inverse de price
+ *		\seealso	price2num		Revert function of price
  */
 function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
 {
 	global $langs,$conf;
 
-	// Separateurs par defaut
-	$dec='.'; $thousand=' ';
+	// Output separators by default (french)
+	$dec=','; $thousand=' ';
 
 	// Si $outlangs non force, on prend langue utilisateur
 	if (! is_object($outlangs)) $outlangs=$langs;
@@ -1980,15 +1980,15 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
 	//print "amount=".$amount." html=".$html." trunc=".$trunc." nbdecimal=".$nbdecimal." dec=".$dec." thousand=".$thousand;
 
 	//print "amount=".$amount."-";
-	$amount = ereg_replace(',','.',$amount);
+	$amount = ereg_replace(',','.',$amount);	// should be useless
 	//print $amount."-";
 	$datas = split('\.',$amount);
 	$decpart = $datas[1];
-	$decpart = eregi_replace('0+$','',$decpart);	// Supprime les 0 de fin de partie d�cimale
+	$decpart = eregi_replace('0+$','',$decpart);	// Supprime les 0 de fin de partie decimale
 	//print "decpart=".$decpart."<br>";
 	$end='';
 
-	// On augmente au besoin si il y a plus de 2 d�cimales
+	// On augmente nbdecimal au besoin si il y a plus de decimales que nbdecimal
 	if (strlen($decpart) > $nbdecimal) $nbdecimal=strlen($decpart);
 	// Si on depasse max
 	if ($trunc && $nbdecimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN)
@@ -1996,7 +1996,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
 		$nbdecimal=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
 		if (eregi('\.\.\.',$conf->global->MAIN_MAX_DECIMALS_SHOWN))
 		{
-			// Si un affichage est tronqu�, on montre des ...
+			// Si un affichage est tronque, on montre des ...
 			$end='...';
 		}
 	}
@@ -2029,21 +2029,30 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
  */
 function price2num($amount,$rounding='')
 {
-	global $conf;
+	global $langs,$conf;
 
-	// Round PHP function does not allow number like '1,234.5'.
+	// Round PHP function does not allow number like '1,234.5'
 	// Numbers must be '1234.5'
-	// \TODO If there is already a ".", we remove ",", otherwise replace by "."
-	$amount=ereg_replace(',','.',$amount);
-	$amount=ereg_replace(' ','',$amount);
+	// Decimal delimiter for database SQL request must be '.'
+
+	$dec=','; $thousand=' ';
+	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
+	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
+	
+	if ($thousand != ',') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
+	$amount=str_replace(' ','',$amount);	// To avoid spaces
+	$amount=str_replace($dec,'.',$amount);
+	$amount=str_replace($thousand,'',$amount);
 	if ($rounding)
 	{
 		if ($rounding == 'MU')     $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_UNIT);
 		elseif ($rounding == 'MT') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_TOT);
 		elseif ($rounding == 'MS') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_SHOWN);
 		else $amount='ErrorBadParameterProvidedToFunction';
-		$amount=ereg_replace(',','.',$amount);
-		$amount=ereg_replace(' ','',$amount);
+		if ($thousand != ',') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
+		$amount=str_replace(' ','',$amount);	// To avoid spaces
+		$amount=str_replace($dec,'.',$amount);
+		$amount=str_replace($thousand,'',$amount);
 	}
 	return $amount;
 }
