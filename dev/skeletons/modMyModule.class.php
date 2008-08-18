@@ -219,7 +219,7 @@ class modMyModule extends DolibarrModules
 			{
 				if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) <> '.key.sql')
 				{
-					$result=run_sql($file,1);
+					$result=run_sql($dir.$file,1);
 				}
 			}
 			closedir($handle);
@@ -230,7 +230,7 @@ class modMyModule extends DolibarrModules
 			{
 				if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) == '.key.sql')
 				{
-					$result=run_sql($file,1);
+					$result=run_sql($dir.$file,1);
 				}
 			}
 			closedir($handle);
