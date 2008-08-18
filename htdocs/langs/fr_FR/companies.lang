@@ -72,6 +72,10 @@ CustomerCodeModel=Modèle de code client
 SupplierCodeModel=Modèle de code fournisseur
 Gencod=Code barre
 ##### Professionnal ID #####
+ProfId1Short=Id prof. 1
+ProfId2Short=Id prof. 2
+ProfId3Short=Id prof. 3
+ProfId4Short=Id prof. 4
 ProfId1=Id professionnel 1
 ProfId2=Id professionnel 2
 ProfId3=Id professionnel 3

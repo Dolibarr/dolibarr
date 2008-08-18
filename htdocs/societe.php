@@ -103,6 +103,10 @@ if ($mode == 'search')
 }
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 // As-t-on cliqué sur purge des criètres de recherche
@@ -216,10 +220,10 @@ if ($result)
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params,"&search_nom=$search_nom&search_ville=$search_ville","",$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("ProfId1"),"societe.php","s.siren",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("ProfId2"),"societe.php","s.siret",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("ProfId3"),"societe.php","s.ape",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("ProfId4"),"societe.php","s.idprof4",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("ProfId1Short"),"societe.php","s.siren",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("ProfId2Short"),"societe.php","s.siret",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("ProfId3Short"),"societe.php","s.ape",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("ProfId4Short"),"societe.php","s.idprof4",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
   print '<td class="liste_titre" colspan="2" align="center">&nbsp;</td>';
   print "</tr>\n";
 

@@ -72,6 +72,10 @@ CustomerCodeModel=Customer code model
 SupplierCodeModel=Supplier code model
 Gencod=Bar code
 ##### Professionnal ID #####
+ProfId1Short=Prof. id 1
+ProfId2Short=Prof. id 2
+ProfId3Short=Prof. id 3
+ProfId4Short=Prof. id 4
 ProfId1=Professional ID 1
 ProfId2=Professional ID 2
 ProfId3=Professional ID 3
