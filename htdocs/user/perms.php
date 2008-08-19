@@ -20,10 +20,10 @@
  */
 
 /**
-        \file       htdocs/user/perms.php
-        \brief      Onglet user et permissions de la fiche utilisateur
-        \version    $Id$
-*/
+ *       \file       htdocs/user/perms.php
+ *       \brief      Onglet user et permissions de la fiche utilisateur
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
@@ -210,7 +210,7 @@ print "</tr>\n";
 
 print '</table><br>';
 
-print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
+if ($user->admin) print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
 
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
