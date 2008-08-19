@@ -1363,7 +1363,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		}
 		else if (! empty($feature2))	// This should be used for future changes
 		{
-			if (! $user->rights->$feature->$feature2->write) $readok=0;
+			if (! $user->rights->$feature->$feature2->write) $createok=0;
 		}
 		else if (! empty($feature))		// This is for old permissions
 		{
