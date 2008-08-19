@@ -28,4 +28,4 @@ CREATE TABLE llx_surveys_answers_summary (
   tot_rep2          decimal(10,0) default NULL,
   tot_rep3          decimal(10,0) default NULL,
   tot_rep4          decimal(10,0) default NULL
-)
+)type=innodb;
