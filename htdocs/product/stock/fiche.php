@@ -120,8 +120,7 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 
 
 /*
-* Affichage fiche en mode création
-*
+* View
 */
 
 llxHeader("","",$langs->trans("WarehouseCard"));
@@ -175,8 +174,8 @@ if ($_GET["action"] == 'create')
 
     print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
     print '<select name="statut">';
-    print '<option value="0" selected="true">'.$langs->trans("WarehouseClosed").'</option>';
-    print '<option value="1">'.$langs->trans("WarehouseOpened").'</option>';
+    print '<option value="0">'.$langs->trans("WarehouseClosed").'</option>';
+    print '<option value="1" selected="true">'.$langs->trans("WarehouseOpened").'</option>';
     print '</select>';
     print '</td></tr>';
 
