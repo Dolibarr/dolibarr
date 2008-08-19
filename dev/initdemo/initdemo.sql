@@ -320,39 +320,39 @@ INSERT INTO llx_user_rights (fk_user, fk_id) VALUES (1,229);
 --
 
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,poste,fk_user_creat)
-values (10,1,'Maréchal','Ferdinand','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Administrateur système',0);
+values (10,1,'Maréchal','Ferdinand','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Administrateur système',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (11,5,'Pejat','Jean-Marie','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (11,5,'Pejat','Jean-Marie','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,poste,fk_user_creat)
-values (12,1,'Poulossière','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Directeur technique',0);
+values (12,1,'Poulossière','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Directeur technique',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (13,6,'Myriam','Isabelle','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (13,6,'Myriam','Isabelle','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (20,2,'Corin','Arnaud','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (20,2,'Corin','Arnaud','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (30,3,'Philippine','Sagan','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (30,3,'Philippine','Sagan','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (31,3,'Marie','Jeanne','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (31,3,'Marie','Jeanne','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (41,4,'Alix','Hopper','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (41,4,'Alix','Hopper','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (14,7,'Victoire','Renoir','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (14,7,'Victoire','Renoir','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (15,7,'Baudelaire','Matthias','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (15,7,'Baudelaire','Matthias','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (16,8,'Hugo','Benjamin','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (16,8,'Hugo','Benjamin','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (17,9,'Rembrandt','Stéphanie','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (17,9,'Rembrandt','Stéphanie','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (18,10,'Picasso','Myriam','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (18,10,'Picasso','Myriam','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (19,1,'Beethoven','John','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (19,1,'Beethoven','John','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (22,6,'Dumas','Elisabeth','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (22,6,'Dumas','Elisabeth','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,fk_user_creat)
-values (21,10,'','Joséphine','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',0);
+values (21,10,'','Joséphine','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net',1);
 --
 --
 -- Produits
@@ -416,8 +416,8 @@ values (now(),3,4,'2313784',1);
 --
 --
 
-insert into llx_fichinter (fk_soc, ref, datec, date_valid, datei, fk_user_author, fk_user_valid, fk_statut, duree, note)
-values (1, 'FI-LP-1','2001-12-05','2001-12-05','2001-12-05',1,1,1,4,'Mise à jour de la doc');
+insert into llx_fichinter (fk_soc, ref, datec, date_valid, datei, fk_user_author, fk_user_valid, fk_statut, duree)
+values (1, 'FI-LP-1','2001-12-05','2001-12-05','2001-12-05',1,1,1,4);
 --
 -- Actions commerciales
 --
@@ -479,32 +479,32 @@ insert into llx_compta_account (datec, number, label, fk_user_author) values (no
 -- Charges sociales
 --
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
-('2002-05-15',NULL,'Acompte 1er Trimestre 2002',1,120,0,'2002-1-1');
+insert into llx_chargesociales (date_ech,libelle,fk_type,amount,paye,periode) values 
+('2002-05-15','Acompte 1er Trimestre 2002',1,120,0,'2002-1-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
-('2002-05-15',NULL,'Acompte 1er Trimestre 2002',2,200,0,'2002-1-1');
+insert into llx_chargesociales (date_ech,libelle,fk_type,amount,paye,periode) values 
+('2002-05-15','Acompte 1er Trimestre 2002',2,200,0,'2002-1-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
-('2002-05-15',NULL,'Acompte 1er Trimestre 2002',3,170,0,'2002-1-1');
+insert into llx_chargesociales (date_ech,libelle,fk_type,amount,paye,periode) values 
+('2002-05-15','Acompte 1er Trimestre 2002',3,170,0,'2002-1-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
-('2002-02-15','2002-02-10','Acompte 4ème Trimestre 2001',1,120,1,'2001-10-1');
+insert into llx_chargesociales (date_ech,libelle,fk_type,amount,paye,periode) values 
+('2002-02-15','Acompte 4ème Trimestre 2001',1,120,1,'2001-10-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
-('2002-02-15','2002-02-10','Acompte 4ème Trimestre 2001',2,200,1,'2001-10-1');
+insert into llx_chargesociales (date_ech,libelle,fk_type,amount,paye,periode) values 
+('2002-02-15','Acompte 4ème Trimestre 2001',2,200,1,'2001-10-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
-('2002-02-15','2002-02-10','Acompte 4ème Trimestre 2001',3,170,1,'2001-10-1');
+insert into llx_chargesociales (date_ech,libelle,fk_type,amount,paye,periode) values 
+('2002-02-15','Acompte 4ème Trimestre 2001',3,170,1,'2001-10-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
-('2001-11-15','2001-10-10','Acompte 3ème Trimestre 2001',1,70,1,'2001-7-1');
+insert into llx_chargesociales (date_ech,libelle,fk_type,amount,paye,periode) values 
+('2001-11-15','Acompte 3ème Trimestre 2001',1,70,1,'2001-7-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
-('2001-11-15','2001-10-10','Acompte 3ème Trimestre 2001',2,180,1,'2001-7-1');
+insert into llx_chargesociales (date_ech,libelle,fk_type,amount,paye,periode) values 
+('2001-11-15','Acompte 3ème Trimestre 2001',2,180,1,'2001-7-1');
 
-insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
-('2001-11-15','2001-10-10','Acompte 3ème Trimestre 2001',3,150,1,'2001-7-1');
+insert into llx_chargesociales (date_ech,libelle,fk_type,amount,paye,periode) values 
+('2001-11-15','Acompte 3ème Trimestre 2001',3,150,1,'2001-7-1');
 
 -- MySQL dump 9.09
 --
