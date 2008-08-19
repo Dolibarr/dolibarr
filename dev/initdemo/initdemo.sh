@@ -1,17 +1,20 @@
 #!/bin/sh
-#---------------------------------------------------
+#------------------------------------------------------
+# Script to purge and init a database with demo values.
+# Note: "dialog" tool need to be available.
+#
 # Régis Houssin - regis@dolibarr.fr
 # Laurent Destailleur - eldy@users.sourceforge.net
-#---------------------------------------------------
-# WARNING: This script erase all database DATA
-#---------------------------------------------------
+#------------------------------------------------------
+# WARNING: This script erase all data of database
+#------------------------------------------------------
 
 DIALOG=${DIALOG=dialog}
 DIALOG="$DIALOG --ascii-lines"
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
 $DIALOG --title "Purge de Dolibarr" --clear \
-        --inputbox "Nom de la base Mysql :" 16 51 dolibarrdemo 2> $fichtemp
+        --inputbox "Mysql database name :" 16 51 dolibarrdemo 2> $fichtemp
 valret=$?
 case $valret in
   0)
@@ -26,7 +29,7 @@ DIALOG=${DIALOG=dialog}
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
 $DIALOG --title "Purge de Dolibarr" --clear \
-        --inputbox "Compte Admin Mysql (ex: root):" 16 51 2> $fichtemp
+        --inputbox "Mysql usr login (ex: root):" 16 51 2> $fichtemp
 
 valret=$?
 
@@ -43,7 +46,7 @@ DIALOG=${DIALOG=dialog}
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
 $DIALOG --title "Purge de Dolibarr" --clear \
-        --inputbox "Mot de passe du compte Admin Mysql :" 16 51 2> $fichtemp
+        --inputbox "Password for Mysql user admin :" 16 51 2> $fichtemp
 
 valret=$?
 
@@ -60,7 +63,7 @@ DIALOG=${DIALOG=dialog}
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
 $DIALOG --title "Purge de Dolibarr" --clear \
-        --inputbox "Chemin complet du repertoire documents (ex: /var/www/dolibarr/documents)- pas de / à la fin :" 16 51 2> $fichtemp
+        --inputbox "Full path to documents directory (ex: /var/www/dolibarr/documents)- no / at end :" 16 51 2> $fichtemp
 
 valret=$?
 
@@ -74,14 +77,14 @@ exit;;
 esac
 # ---------------------------- confirmation
 DIALOG=${DIALOG=dialog}
-$DIALOG --title "Purge de Dolibarr" --clear \
-        --yesno "Confirmez-vous ces informations ? \n base Mysql : '$base' \n compte admin : '$admin' \n mot de passe : '$passwd' \n répertoire documents : '$docs'" 15 40
+$DIALOG --title "Init Dolibarr with demo values" --clear \
+        --yesno "Do you confirm ? \n Mysql database : '$base' \n Mysql login: '$admin' \n Mysql password : '$passwd' \n Documents dir : '$docs'" 15 40
 
 case $? in
-        0)      echo "Ok, début du processus...";;
+        0)      echo "Ok, start process...";;
         1)      exit;;
         255)    exit;;
 esac
 
 # ---------------------------- run sql file
-mysql -u$admin -p$passwd $base < data_demo.sql
+mysql -u$admin -p$passwd $base < initdemo.sql
