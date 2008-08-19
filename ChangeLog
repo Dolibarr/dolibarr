@@ -27,14 +27,20 @@ For users:
   project.
 - Can attach several files to email when sending an invoice, order or
   proposal by email.
+- Can choose accuracy (number of decimals) for prices.
+- Localization for decimal and thousand delimiter on number is fully
+  supported.
 - More informations reported in system information pages.
 - Add a budget report.
-- New translation: Added spanish language.
 - Added a security audit report.
 - Other minor changes (features, look, fixes)
 - Added compatibility with Firefox 3.
 - Changes for compatibility with PHP6/Mysql6.
 - Some bug fixes.
+
+For translators:
+- Added spanish es_ES translation.
+- Added en_AU translation.
 
 For developers:
 - Removed useless code:
