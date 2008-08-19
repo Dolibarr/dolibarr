@@ -1334,7 +1334,6 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 	//print "Read access is ok";
 
 	// Check write permission from module
-	// TODO Add after "feature" a param for permission for writing
 	$createok=1;
 	if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 	{
@@ -1362,7 +1361,11 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		{
 			if (! $user->rights->banque->cheque) $createok=0;
 		}
-		else
+		else if (! empty($feature2))	// This should be used for future changes
+		{
+			if (! $user->rights->$feature->$feature2->write) $readok=0;
+		}
+		else if (! empty($feature))		// This is for old permissions
 		{
 			if (! $user->rights->$feature->creer) $createok=0;
 		}
