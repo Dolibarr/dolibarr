@@ -339,3 +339,5 @@ alter table llx_element_element modify targettype		varchar(16) NOT NULL;
 
 update llx_societe set fk_typent = 0 where fk_typent is null;
 
+ALTER TABLE llx_surveys_answers_summary TYPE=INNODB;
+
