@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_deplacement.sql,v 1.5 2008/05/26 00:03:52 eldy Exp 
+-- Id: llx_deplacement.sql,v 1.6 2008/07/12 13:06:11 eldy Exp 
 -- ============================================================================
 
 create table llx_deplacement
@@ -31,7 +31,7 @@ create table llx_deplacement
   "fk_user"	        integer NOT NULL,
   "fk_user_author"  integer,
   "type"            varchar(12) NOT NULL,
-  "km"              smallint,
+  "km"              real,
   "fk_soc"          integer,
   "note"            text
 );

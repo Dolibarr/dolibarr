@@ -3,7 +3,8 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ========================================================================
--- Copyright (C) 2007 Regis Houssin <regis@dolibarr.fr>
+-- Copyright (C) 2007 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,10 +20,10 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_c_barcode_type.sql,v 1.4 2008/01/03 18:41:34 eldy Exp 
+-- Id: llx_c_barcode_type.sql,v 1.5 2008/08/13 11:53:14 eldy Exp 
 -- ========================================================================
 
-create table llx_c_barcode
+create table llx_c_barcode_type
 (
   rowid SERIAL PRIMARY KEY,
   "code"     varchar(16)        NOT NULL,
