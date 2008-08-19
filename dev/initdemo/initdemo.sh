@@ -1,14 +1,17 @@
 #!/bin/sh
-#
+#---------------------------------------------------
 # Régis Houssin - regis@dolibarr.fr
-#
-# ---------------------------- globales
-# ---------------------------- base mysql
+# Laurent Destailleur - eldy@users.sourceforge.net
+#---------------------------------------------------
+# WARNING: This script erase all database DATA
+#---------------------------------------------------
+
 DIALOG=${DIALOG=dialog}
+DIALOG="$DIALOG --ascii-lines"
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
 $DIALOG --title "Purge de Dolibarr" --clear \
-        --inputbox "Nom de la base Mysql :" 16 51 2> $fichtemp
+        --inputbox "Nom de la base Mysql :" 16 51 dolibarrdemo 2> $fichtemp
 valret=$?
 case $valret in
   0)
