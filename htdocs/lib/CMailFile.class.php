@@ -209,10 +209,16 @@ class CMailFile
 				dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
 				//dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
 
-				// le return-path dans les header ne fonctionne pas avec tous les MTA
-				$bounce = $this->addr_from != '' ? "-f {$this->addr_from}" : "";
-
-				$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers, $bounce)
+				$bounce = '';
+				if ($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F)
+				{
+					// le return-path dans les header ne fonctionne pas avec tous les MTA
+					// Le passage par -f est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
+					// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
+					$bounce = $this->addr_from != '' ? "-f {$this->addr_from}" : "";
+				}
+				
+				$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers, $bounce);
 
 				if (! $res) 
 				{
