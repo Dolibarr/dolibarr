@@ -24,7 +24,7 @@
 /**
 *       \file       htdocs/lib/CMailFile.class.php
 *       \brief      Fichier de la classe permettant d'envoyer des mail avec attachements
-*		\version    $Id$
+*	\version    $Id$
 *       \author     Dan Potter.
 *       \author	    Eric Seigne
 *       \author	    Laurent Destailleur.
@@ -38,19 +38,19 @@
 */
 class CMailFile
 {
-    var $subject;
-    var $addr_from;
-    var $errors_to;
-	var $addr_to;
-    var $addr_cc;
-    var $addr_bcc;
-	
-    var $mime_boundary;
-    var $deliveryreceipt;
+  var $subject;
+  var $addr_from;
+  var $errors_to;
+  var $addr_to;
+  var $addr_cc;
+  var $addr_bcc;
+  
+  var $mime_boundary;
+  var $deliveryreceipt;
     
-    var $eol;
-    var $atleastonefile=0;
-    var $error='';
+  var $eol;
+  var $atleastonefile=0;
+  var $error='';
     
 
     /**
@@ -208,7 +208,12 @@ class CMailFile
 			{
 				dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
 				//dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
-				$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers);
+
+				// le return-path dans les header ne fonctionne pas avec tous les MTA
+				$bounce = $this->addr_from != '' ? "-f {$this->addr_from}" : "";
+
+				$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers, $bounce)
+
 				if (! $res) 
 				{
 					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
@@ -534,5 +539,4 @@ function getValidAddress($adresses,$format)
 	
 	return $ret;
 }
-
 ?>
