@@ -91,7 +91,7 @@ if ($conf->global->MAIN_SUBMODULE_EXPEDITION)
 if ($conf->global->MAIN_SUBMODULE_LIVRAISON)
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/livraison.php";
-	$head[$h][1] = $langs->trans("Delivery");
+	$head[$h][1] = $langs->trans("Receivings");
 	$h++;
 }
 
@@ -170,6 +170,9 @@ print '</tr>';
 print '</table>';
 print '</form>';
 
+print '</div>';
+
+print info_admin($langs->trans("NoNeedForDeliveryReceipts"));
 
 $db->close();
 
