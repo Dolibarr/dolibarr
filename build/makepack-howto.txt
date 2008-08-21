@@ -8,7 +8,8 @@
 - Update version number in htdocs/install/inc.php
 - Run dolibarr_mysql2pgsql.pl
 - Update PAD files
-- Commit all changes and add a CVS Tag
+- Commit all changes
+- Add a CVS Tag and create a branch
 
 - Build packages with makepack-dolibarr.pl
 - Build DoliWamp with doliwamp.iss file.
