@@ -180,7 +180,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 
 
 /*
- *
+ * View
  */
 
 llxHeader('',$langs->trans('Sending'),'Expedition');
@@ -358,6 +358,7 @@ if ($_GET["action"] == 'create')
 						$stock = $product->stock_entrepot[$_GET["entrepot_id"]];
 						$stock+=0;  // Convertit en numérique
 						$defaultqty=min($quantityToBeDelivered, $stock);
+						if ($defaultqty < 0) $defaultqty=0;
 					}
 	
 					// Quantité à livrer
