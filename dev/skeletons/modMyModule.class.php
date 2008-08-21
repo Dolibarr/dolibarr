@@ -18,27 +18,24 @@
  */
 
 /**     \defgroup   mymodule     Module MyModule
-        \brief      Example of a module descriptor.
-					Such a file must be copied into htdocs/includes/module directory.
-*/
+ *      \brief      Example of a module descriptor.
+ *					Such a file must be copied into htdocs/includes/module directory.
+ */
 
 /**
-        \file       htdocs/includes/modules/modMyModule.class.php
-        \ingroup    mymodule
-        \brief      Description and activation file for module MyModule
-		\version	$Id$
-*/
-
+ *      \file       htdocs/includes/modules/modMyModule.class.php
+ *      \ingroup    mymodule
+ *      \brief      Description and activation file for module MyModule
+ *		\version	$Id$
+ */
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**     \class      modMyModule
-        \brief      Description and activation class for module MyModule
-*/
-
+ *      \brief      Description and activation class for module MyModule
+ */
 class modMyModule extends DolibarrModules
 {
-
     /**
     *   \brief      Constructor. Define names, constants, directories, boxes, permissions
     *   \param      DB      Database handler
@@ -143,11 +140,11 @@ class modMyModule extends DolibarrModules
 		//							'mainmenu'=>'mymodule',
 		//							'leftmenu'=>'1',		// Use 1 if you also want to add left menu entries using this descriptor. Use 0 if left menu entries are defined in a file pre.inc.php (old school).
 		//							'url'=>'/comm/action/index.php',
-		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module
+		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
 		//							'perms'=>'$user->rights->mymodule->level1->level2',		// Use 'perms'=>'1' if you want your menu with no permission rules
 		//							'target'=>'',
-		//							'user'=>0);				// 0=menu for all users
+		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
 		//
 		// This is to declare a Left Menu entry:
@@ -156,11 +153,11 @@ class modMyModule extends DolibarrModules
 		//							'titre'=>'Title left menu',
 		//							'mainmenu'=>'mymodule',
 		//							'url'=>'/comm/action/index2.php',
-		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module
+		//							'langs'=>'mylangfile',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 		//							'position'=>100,
 		//							'perms'=>'$user->rights->mymodule->level1->level2',		// Use 'perms'=>'1' if you want your menu with no permission rules
 		//							'target'=>'',
-		//							'user'=>0);				// 0=menu for all users
+		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
 		
 	}
