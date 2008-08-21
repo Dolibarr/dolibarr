@@ -54,7 +54,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		
         $this->db = $db;
 		$this->name = "typhon";
-		$this->description = "Modele de bon de livraison complet (logo...)";
+		$this->description = "Modele de bon de réception livraison complet (logo...)";
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';

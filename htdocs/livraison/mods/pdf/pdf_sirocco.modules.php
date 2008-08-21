@@ -45,7 +45,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	{
 		$this->db = $db;
 		$this->name = "sirocco";
-		$this->description = "Modele de bon de livraison simple";
+		$this->description = "Modele de bon de réception livraison simple";
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';

@@ -19,20 +19,19 @@
  */
 
 /**
- \file       htdocs/expedition/mods/pdf/pdf_expedition_rouget.modules.php
- \ingroup    expedition
- \brief      Fichier de la classe permettant de générer les bordereaux envoi au modèle Rouget
- \version    $Id$
+ *	\file       htdocs/expedition/mods/pdf/pdf_expedition_rouget.modules.php
+ *	\ingroup    expedition
+ *	\brief      Fichier de la classe permettant de générer les bordereaux envoi au modèle Rouget
+ *	\version    $Id$
  */
 
 require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php";
 
 
 /**
- \class      pdf_expedition_dorade
- \brief      Classe permettant de générer les borderaux envoi au modèle Rouget
+ *	\class      pdf_expedition_dorade
+ *	\brief      Classe permettant de générer les borderaux envoi au modèle Rouget
  */
-
 Class pdf_expedition_rouget extends ModelePdfExpedition
 {
 	var $emetteur;	// Objet societe qui emet
@@ -197,7 +196,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$curY = $this->tableau_top + 4;
 				$pdf->writeHTMLCell(100, 3, 12,  $curY, $outputlangs->trans("Description"), 0, 0);
 				$curY = $this->tableau_top + 4;
-				$pdf->writeHTMLCell(30, 3, 140, $curY, $outputlangs->trans("QtyShipped"), 0, 0);
+				$pdf->writeHTMLCell(30, 3, 140, $curY, $outputlangs->trans("QtyOrdered"), 0, 0);
 				$curY = $this->tableau_top + 4;
 				$pdf->writeHTMLCell(30, 3, 170, $curY, $outputlangs->trans("QtyToShip"), 0, 0);
 
