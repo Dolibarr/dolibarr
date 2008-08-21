@@ -7,5 +7,5 @@ provided with a standard release.
 
 
 There is also some documentation (in French) on Dolibarr
-Wiki: http://www.dolibarr.com/wikidev/
+Wiki: http://wiki.dolibarr.org/
 
