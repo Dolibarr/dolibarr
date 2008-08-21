@@ -16,6 +16,6 @@
 - Move build files into Dolibarr web site repository.
 - Update NLTechno web site page dolibarrwinbin.php
 - Upload NLTechno web site on web server
-- Upload files on sourceforge
+- Upload files on sourceforge or Dolibarr.org
 - Send mail on mailings-list
 - Send a news on OpenSource web sites
