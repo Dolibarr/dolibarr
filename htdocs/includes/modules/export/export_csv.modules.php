@@ -18,21 +18,20 @@
 */
 
 /**
-       	\file       htdocs/includes/modules/export/export_csv.modules.php
-		\ingroup    export
-		\brief      Fichier de la classe permettant de générer les export au format CSV
-		\author	    Laurent Destailleur
-		\version    $Id$
+ *		\file       htdocs/includes/modules/export/export_csv.modules.php
+ *		\ingroup    export
+ *		\brief      Fichier de la classe permettant de générer les export au format CSV
+ *		\author	    Laurent Destailleur
+ *		\version    $Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/export/modules_export.php");
 
 
 /**
-	    \class      ExportCsv
-		\brief      Classe permettant de générer les factures au modèle Crabe
-*/
-
+ *	    \class      ExportCsv
+ *		\brief      Classe permettant de générer les factures au modèle Crabe
+ */
 class ExportCsv extends ModeleExports
 {
     var $id;
@@ -43,6 +42,8 @@ class ExportCsv extends ModeleExports
     var $label_lib;
     var $version_lib;
 
+    var $separator=',';
+    
     var $handle;    // Handle fichier
 
     
@@ -121,24 +122,37 @@ class ExportCsv extends ModeleExports
 		return $ret;
     }
 
-
+	/**
+	 * 	\brief		Output header into file
+	 * 	\param		langs		Output language
+	 */
     function write_header($langs)
     {
         return 0;
     }
 
 
+	/**
+	 * 	\brief		Output title line into file
+	 * 	\param		langs		Output language
+	 */
     function write_title($array_export_fields_label,$array_selected_sorted,$langs)
     {
         foreach($array_selected_sorted as $code => $value)
         {
-            fwrite($this->handle,$langs->transnoentities($array_export_fields_label[$code]).";");
+            $newvalue=$langs->transnoentities($array_export_fields_label[$code]);
+			$newvalue=$this->csv_clean($newvalue);
+            
+			fwrite($this->handle,$newvalue.$this->separator);
         }
         fwrite($this->handle,"\n");
         return 0;
     }
 
 
+	/**
+	 * 	\brief		Output record line into file
+	 */
     function write_record($array_alias,$array_selected_sorted,$objp)
     {
         global $langs;
@@ -148,36 +162,72 @@ class ExportCsv extends ModeleExports
         {
             $alias=$array_alias[$code];
 			$newvalue=$objp->$alias;
-            // Nettoyage newvalue
-			$newvalue=ereg_replace(';',',',clean_html($newvalue));
-            $newvalue=ereg_replace("\r",'',$newvalue);
-            $newvalue=ereg_replace("\n",'\n',$newvalue);
-			// Traduction newvalue
+
+            // Translation newvalue
 			if (eregi('^\((.*)\)$',$newvalue,$reg))
 			{
 				$newvalue=$langs->transnoentities($reg[1]);
 			}
 			
-			fwrite($this->handle,$newvalue.";");
+			$newvalue=$this->csv_clean($newvalue);
+			
+			fwrite($this->handle,$newvalue.$this->separator);
             $this->col++;
 		}
         fwrite($this->handle,"\n");
         return 0;
     }
 
-
+	/**
+	 * 	\brief		Output footer into file
+	 * 	\param		langs		Output language
+	 */
     function write_footer($langs)
     {
         return 0;
     }
     
-
+	/**
+	 * 	\brief		Close file handle
+	 */
     function close_file()
     {
         fclose($this->handle);
         return 0;
     }
 
+    /**
+     * Clean a cell to respect rules of CSV file cells
+     * @param 	newvalue	String to clean
+     * @return 	string		Value cleaned
+     */
+    function csv_clean($newvalue)
+    {
+    	$addquote=0;
+    	
+		// Rule Dolibarr: No HTML
+		$newvalue=clean_html($newvalue);
+
+		// Rule 1 CSV: No CR, LF in cells
+    	$newvalue=ereg_replace("\r",'',$newvalue);
+        $newvalue=ereg_replace("\n",'\n',$newvalue);
+    	
+        // Rule 2 CSV: If value contains ", we must duplicate ", and add "
+		if (ereg('"',$newvalue))
+		{
+			$addquote=1;
+			$newvalue=ereg_replace('"','""',$newvalue);
+		}
+
+		// Rule 3 CSV: If value contains separator, we must add "
+    	if (ereg($this->separator,$newvalue))
+    	{
+    		$addquote=1;
+    	}
+    	
+    	return ($addquote?'"':'').$newvalue.($addquote?'"':'');
+    }
+    
 }
 
 ?>
