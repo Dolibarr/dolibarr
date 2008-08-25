@@ -165,6 +165,7 @@ function dol_mimetype($file)
 	if (eregi('\.sql$',$file))        $mime='text/plain';
 	if (eregi('\.(html|htm)$',$file)) $mime='text/html';
 	if (eregi('\.csv$',$file))        $mime='text/csv';
+	if (eregi('\.tsv$',$file))        $mime='text/tab-separated-values';
 	if (eregi('\.pdf$',$file))        $mime='application/pdf';
 	if (eregi('\.xls$',$file))        $mime='application/x-msexcel';
 	if (eregi('\.jpg$',$file)) 	      $mime='image/jpeg';

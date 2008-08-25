@@ -2479,10 +2479,10 @@ function clean_url($url,$http=1)
 
 
 /**
- \brief   	Clean a string from all html tags
- \param   	StringHtml			String to clean
- \param		removelinefeed		Replace also all lines feeds by a space
- \return  	string	    		String cleaned
+ *	\brief   	Clean a string from all html tags
+ *	\param   	StringHtml			String to clean
+ *	\param		removelinefeed		Replace also all lines feeds by a space
+ *	\return  	string	    		String cleaned
  */
 function clean_html($StringHtml,$removelinefeed=1)
 {
@@ -2494,9 +2494,9 @@ function clean_html($StringHtml,$removelinefeed=1)
 	if ($removelinefeed) $temp=str_replace("\n"," ",$temp);
 
 	// et les espaces doubles
-	while(STRPOS($temp,"  "))
+	while(strpos($temp,"  "))
 	{
-		$temp = STR_REPLACE("  "," ",$temp);
+		$temp = str_replace("  "," ",$temp);
 	}
 	$CleanString = $temp;
 	return $CleanString;

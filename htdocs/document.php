@@ -76,6 +76,7 @@ $attachment = true;
 if (eregi('\.sql$',$original_file))     { $attachment = true; }
 if (eregi('\.html$',$original_file)) 	{ $attachment = false; }
 if (eregi('\.csv$',$original_file))  	{ $attachment = true; }
+if (eregi('\.tsv$',$original_file))  	{ $attachment = true; }
 if (eregi('\.pdf$',$original_file))  	{ $attachment = true; }
 if (eregi('\.xls$',$original_file))  	{ $attachment = true; }
 if (eregi('\.jpg$',$original_file)) 	{ $attachment = true; }
