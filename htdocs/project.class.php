@@ -280,9 +280,10 @@ class Project extends CommonObject
 		$result = 0;
 		if (trim($title))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (fk_projet, title, fk_user_creat, fk_task_parent) ";
-			$sql .= " VALUES (".$this->id.",'$title', ".$user->id.",".$parent.") ;";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task (fk_projet, title, fk_user_creat, fk_task_parent, duration_effective)";
+			$sql.= " VALUES (".$this->id.",'$title', ".$user->id.",".$parent.", 0)";
 
+			dolibarr_syslog("Project::CreateTask sql=".$sql,LOG_DEBUG);
 			if ($this->db->query($sql) )
 			{
 				$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
@@ -290,26 +291,25 @@ class Project extends CommonObject
 			}
 			else
 			{
-				dolibarr_syslog("Project::CreateTask error -2",LOG_ERR);
-				dolibarr_syslog($this->db->error(),LOG_ERR);
 				$this->error=$this->db->error();
+				dolibarr_syslog("Project::CreateTask error -2 ".$this->error,LOG_ERR);
 				$result = -2;
 			}
 
 			if ($result == 0)
 			{
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_actors (fk_projet_task, fk_user)";
+				$sql.= " VALUES (".$task_id.",".$user->id.")";
 
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_actors (fk_projet_task, fk_user) ";
-				$sql .= " VALUES (".$task_id.",".$user->id.") ;";
-
+				dolibarr_syslog("Project::CreateTask sql=".$sql,LOG_DEBUG);
 				if ($this->db->query($sql) )
 				{
 					$result = 0;
 				}
 				else
 				{
-					dolibarr_syslog("Project::CreateTask error -3",LOG_ERR);
 					$this->error=$this->db->error();
+					dolibarr_syslog("Project::CreateTask error -3 ".$this->error,LOG_ERR);
 					$result = -2;
 				}
 			}

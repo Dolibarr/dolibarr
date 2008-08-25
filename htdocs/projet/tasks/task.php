@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/projet/tasks/task.php
    \ingroup    projet
    \brief      Fiche tâches d'un projet
-   \version    $Revision$
+   \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -32,6 +29,9 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
+/*
+ * View
+ */
 
 llxHeader("",$langs->trans("Task"));
 
@@ -110,7 +110,8 @@ if ($_GET["id"] > 0)
       
       foreach ($tasks as $task_time)
 	{
-	  print "<tr $bc[$var]>";
+		$var=!$var;
+	  print "<tr ".$bc[$var].">";
 	  print '<td>'.dolibarr_print_date($task_time[0]).'</td>';
 	  print '<td>'.$task_time[1].'</td>';
 	  print '<td>'.$task_time[3].'</td>';

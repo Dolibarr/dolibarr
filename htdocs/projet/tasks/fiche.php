@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,11 +19,11 @@
  */
 
 /**
-		\file       htdocs/projet/tasks/fiche.php
-		\ingroup    projet
-		\brief      Fiche taches d'un projet
-		\version    $Id$
-*/
+ \file       htdocs/projet/tasks/fiche.php
+ \ingroup    projet
+ \brief      Fiche taches d'un projet
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
@@ -46,6 +46,8 @@ Function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
 	$form = new Form($db); // $db est null ici mais inutile pour la fonction select_date()
 	global $user, $bc, $langs;
 
+	$var=true;
+	
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
 		if ($parent == 0)
@@ -68,16 +70,18 @@ Function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
 			print '<a href="task.php?id='.$lines[$i]->id.'">'.$lines[$i]->title."</a></td>\n";
 
 			$heure = intval($lines[$i]->duration);
-			$minutes = (($lines[$i]->duration - $heure) * 60);
+			$minutes = round((($lines[$i]->duration - $heure) * 60),0);
 			$minutes = substr("00"."$minutes", -2);
 
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
 			if ($tasksrole[$lines[$i]->id] == 'admin')
 			{
-				print '<td><input size="4" type="text" class="flat" name="task'.$lines[$i]->id.'" value="">';
-				print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
-				print "\n<td>";
+				print '<td>';
+				print '<input size="4" type="text" class="flat" name="task'.$lines[$i]->id.'" value="">';
+				print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+				print '</td>';
+				print "<td>";
 				print $form->select_date('',$lines[$i]->id,'','','',"addtime");
 				print '</td>';
 			}
@@ -128,44 +132,47 @@ Function PLineSelect(&$inc, $parent, $lines, &$level)
 
 if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 {
-  $project = new Project($db);
+	$project = new Project($db);
 
-  $result = $project->fetch($_GET["id"]);
-  
-  if ($result == 0)
-  {
-  	$task_parent = $_POST["task_parent"]?$_POST["task_parent"]:0;
-  	$project->CreateTask($user, $_POST["task_name"], $task_parent);
+	$result = $project->fetch($_GET["id"]);
 
-    Header("Location:fiche.php?id=".$project->id);
-  }
+	if ($result == 0)
+	{
+		$task_parent = $_POST["task_parent"]?$_POST["task_parent"]:0;
+		$project->CreateTask($user, $_POST["task_name"], $task_parent);
+
+		Header("Location:fiche.php?id=".$project->id);
+	}
 }
 
 if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 {
-  $project = new Project($db);
-  $result = $project->fetch($_GET["id"]);
-  
-  if ($result == 0)
-    {
-      foreach ($_POST as $key => $post)
-	{
-	  //$pro->CreateTask($user, $_POST["task_name"]);
-	  if (substr($key,0,4) == 'task')
-	    {
-	      if ($post > 0)
-		{
-		  $id = ereg_replace("task","",$key);
+	$project = new Project($db);
+	$result = $project->fetch($_GET["id"]);
 
-		  $date = mktime(12,12,12,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
-		  $project->TaskAddTime($user, $id , $post, $date);
+	if ($result == 0)
+	{
+		foreach ($_POST as $key => $post)
+		{
+	  		//$pro->CreateTask($user, $_POST["task_name"]);
+	  		if (substr($key,0,4) == 'task')
+	  		{
+			  	if ($post > 0)
+			  	{
+					$post=intval($post)+(($post-intval($post))*(1+2/3));
+					$post=price2num($post);
+			  		
+					$id = ereg_replace("task","",$key);
+		
+			  		$date = dolibarr_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
+			  		$project->TaskAddTime($user, $id , $post, $date);
+			  	}
+			}
 		}
-	    }
+
+		Header("Location:fiche.php?id=".$project->id);
+		exit;
 	}
-      
-      Header("Location:fiche.php?id=".$project->id);
-      exit;
-    }
 }
 
 
@@ -175,36 +182,36 @@ llxHeader("",$langs->trans("Tasks"),"Tasks");
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
-  	print_titre($langs->trans("NewTask"));
+	print_titre($langs->trans("NewTask"));
 
-  if ($mesg) print $mesg;
-  
-  print '<form action="fiche.php?socid='.$_GET["socid"].'" method="post">';
+	if ($mesg) print $mesg;
 
-  print '<table class="border" width="100%">';
-  print '<input type="hidden" name="action" value="add">';
+	print '<form action="fiche.php?socid='.$_GET["socid"].'" method="post">';
 
-  print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="10" type="text" name="ref"></td></tr>';
-  print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title"></td></tr>';
+	print '<table class="border" width="100%">';
+	print '<input type="hidden" name="action" value="add">';
 
-  print '<tr><td>'.$langs->trans("Company").'</td><td>';
-  $societe = new Societe($db);
-  $societe->fetch($_GET["socid"]); 
-  print $societe->getNomUrl(1);
-  print '</td></tr>';
+	print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="10" type="text" name="ref"></td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title"></td></tr>';
 
-  print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td>';
+	$societe = new Societe($db);
+	$societe->fetch($_GET["socid"]);
+	print $societe->getNomUrl(1);
+	print '</td></tr>';
 
-  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
-  print '</table>';
-  print '</form>';
+	print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
+
+	print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
+	print '</table>';
+	print '</form>';
 
 } else {
 
 	/*
-	* Fiche projet en mode visu
-	*
-	*/
+	 * Fiche projet en mode visu
+	 *
+	 */
 
 	$projet = new Project($db);
 	$projet->fetch($_GET["id"]);
@@ -226,8 +233,8 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	$tasksrole=$projet->getTasksRoleForUser($user);
 
 	$tasksarray=$projet->getTasksArray();
-	
-	/* Nouvelle t�che */
+
+	/* Nouvelle tache */
 	print '<tr><td>'.$langs->trans("NewTask").'</td><td colspan="3">';
 	print '<input type="text" size="25" name="task_name" class="flat">&nbsp;';
 	if ($tasksarray)
@@ -240,7 +247,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 	print '</td></tr>';
 
-	print '</table></form><br />';
+	print '</table></form><br>';
 
 	print '<form name="addtime" method="POST" action="fiche.php?id='.$projet->id.'">';
 	print '<input type="hidden" name="action" value="addtime">';
