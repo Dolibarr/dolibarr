@@ -18,10 +18,11 @@
  */
 
 /**
-        \file       scripts/cron/fournisseur-graph.php
-        \ingroup    fournisseur
-        \brief      Script de génération graph fournisseur
-		\version	$Id$
+        \file       	scripts/cron/fournisseur-graph.php
+        \ingroup    	fournisseur
+        \brief      	Script de génération graph ca fournisseur depuis tables fournisseur_ca
+		\deprecated		Ces graph ne sont pas utilises.
+		\version		$Id$
 */
 
 // Test si mode CLI
@@ -39,7 +40,7 @@ $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 
 $error=0;
@@ -63,7 +64,7 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
 /*
  *
  */
-$dir = DOL_DATA_ROOT."/graph/fournisseur";
+$dir = DOL_DATA_ROOT."/fournisseur/temp";
 if (!is_dir($dir) )
 {
   if (! create_exdir($dir,0755))

@@ -18,11 +18,11 @@
  */
 
 /**
-   \file       htdocs/product/stock/fiche.php
-    \ingroup    stock
-     \brief      Page fiche de valorisation du stock dans l'entrepot
-      \version    $Id$
-*/
+ *	\file       htdocs/product/stock/fiche.php
+ *	\ingroup    stock
+ *	\brief      Page fiche de valorisation du stock dans l'entrepot
+ *	\version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -31,105 +31,117 @@ $langs->load("stocks");
 $langs->load("companies");
 $mesg = '';
 
+
+
+/*
+ * View
+ */
+
 llxHeader("","",$langs->trans("WarehouseCard"));
 
 if ($_GET["id"])
 {
-  if ($mesg) print $mesg;
-  
-  $entrepot = new Entrepot($db);
-  $result = $entrepot->fetch($_GET["id"]);
-  if ($result < 0)
-    {
-      dolibarr_print_error($db);
-    }
-  
-  /*
-   * Affichage fiche
-   */
+	if ($mesg) print $mesg;
 
-      /*
-       * Affichage onglets
-       */
-      $h = 0;
-      
-      $head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
-      $head[$h][1] = $langs->trans("WarehouseCard");
-      $h++;
-      
-      $head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
-      $head[$h][1] = $langs->trans("StockMovements");
-      $h++;
-      
-      $head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
-      $head[$h][1] = $langs->trans("EnhancedValue");
-      $hselected=$h;
-      $h++;
-      
-          if ($conf->global->STOCK_USE_WAREHOUSE_BY_USER)
-          {
-          // Add the constant STOCK_USE_WAREHOUSE_BY_USER in cont table to use this feature.
-          // Should not be enabled by defaut because does not work yet correctly because
-          // there is no way to add values in the table llx_user_entrepot
-            $head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
-		    $head[$h][1] = $langs->trans("Users");
-      		$h++;
-          }
-      $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
-      $head[$h][1] = $langs->trans("Info");
-      $h++;
-      
-      dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
-      
-      print '<table class="border" width="100%">';
-      
-      // Ref
-      print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
-      
-      print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
-      
-      // Description
-      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
-      
-      print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
-      print $entrepot->address;
-      print '</td></tr>';
-      
-      print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$entrepot->cp.'</td>';
-      print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->ville.'</td></tr>';
-      
-      print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-      print $entrepot->pays;
-      print '</td></tr>';
-      
-      // Statut
-      print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
-      
-      print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
-      print $entrepot->nb_products();
-      print "</td></tr>";           
-      print "</table>";      
-      print '</div>';
-      
-      
-      /* ************************************************************************** */
-      /*                                                                            */
-      /* Graph                                                                      */
-      /*                                                                            */
-      /* ************************************************************************** */
-            
-      print "<div class=\"graph\">\n";
-      $year = strftime("%Y",time());
-      $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.$year.'.png';
-      print '<img src="'.$url.'" alt="Valorisation du stock année '.($year).'">';
-      
-      if (file_exists(DOL_DATA_ROOT.'/graph/entrepot/entrepot-'.$entrepot->id.'-'.($year-1).'.png'))
+	$entrepot = new Entrepot($db);
+	$result = $entrepot->fetch($_GET["id"]);
+	if ($result < 0)
 	{
-	  $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year-1).'.png';
-	  print '<br /><img src="'.$url.'" alt="Valorisation du stock année '.($year-1).'">';
+		dolibarr_print_error($db);
 	}
 
-      print "</div>";
+	/*
+	 * Affichage onglets
+	 */
+	$h = 0;
+
+	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
+	$head[$h][1] = $langs->trans("WarehouseCard");
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
+	$head[$h][1] = $langs->trans("StockMovements");
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
+	$head[$h][1] = $langs->trans("EnhancedValue");
+	$hselected=$h;
+	$h++;
+
+	if ($conf->global->STOCK_USE_WAREHOUSE_BY_USER)
+	{
+		// Add the constant STOCK_USE_WAREHOUSE_BY_USER in cont table to use this feature.
+		// Should not be enabled by defaut because does not work yet correctly because
+		// there is no way to add values in the table llx_user_entrepot
+		$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
+		$head[$h][1] = $langs->trans("Users");
+		$h++;
+	}
+
+	$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
+	$head[$h][1] = $langs->trans("Info");
+	$h++;
+
+	dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
+
+	print '<table class="border" width="100%">';
+
+	// Ref
+	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
+
+	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
+
+	// Description
+	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($entrepot->description).'</td></tr>';
+
+	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3">';
+	print $entrepot->address;
+	print '</td></tr>';
+
+	print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$entrepot->cp.'</td>';
+	print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->ville.'</td></tr>';
+
+	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+	print $entrepot->pays;
+	print '</td></tr>';
+
+	// Statut
+	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
+
+	print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
+	print $entrepot->nb_products();
+	print "</td></tr>";
+	print "</table>";
+	print '</div>';
+
+
+	/* ************************************************************************** */
+	/*                                                                            */
+	/* Graph                                                                      */
+	/*                                                                            */
+	/* ************************************************************************** */
+
+	print "<div class=\"graph\">\n";
+	$year = strftime("%Y",time());
+
+	if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year).'.png'))
+	{
+		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.$year.'.png';
+		print '<img src="'.$url.'" alt="Valorisation du stock année '.($year).'">';
+	
+		if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year-1).'.png'))
+		{
+			$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year-1).'.png';
+			print '<br /><img src="'.$url.'" alt="Valorisation du stock année '.($year-1).'">';
+		}
+	}
+	else
+	{
+		$langs->load("errors");
+		if ($user->admin) print info_admin($langs->trans("WarningBuildScriptNotRunned",'stock-graph.php'));
+	}
+
+	print "</div>";
 }
 
 $db->close();

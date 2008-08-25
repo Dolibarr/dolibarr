@@ -39,10 +39,16 @@ $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
+
+
+/*
+ * Main
+ */
 
 $error=0;
-$verbose = 0;
 
+$verbose = 0;
 for ($i = 1 ; $i < sizeof($argv) ; $i++)
 {
   if ($argv[$i] == "-v")
@@ -60,7 +66,7 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
 }
 
 
-$dir = DOL_DATA_ROOT."/graph/entrepot";
+$dir = DOL_DATA_ROOT."/entrepot/temp";
 $result=create_exdir($dir);
 
 
@@ -83,9 +89,6 @@ else
   dolibarr_print_error($db,$sql);
 }
 
-/*
- *
- */
 $now = time();
 $year = strftime('%Y',$now);
 $day = strftime('%j', $now);
@@ -100,7 +103,7 @@ for ($i = 0 ; $i < strftime('%j',$now) ; $i++)
 }
 
 /*
- *
+ * Read values
  */
 $sql  = "SELECT date_format(date_calcul,'%j'), valo_pmp, fk_entrepot";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot_valorisation as e";
@@ -153,9 +156,11 @@ for ($i = $max_day + 1 ; $i < ($day + 1) ; $i++)
 }
 
 
+// PMP = (quantités en stock x pmp ancien + nouvelles quantités x prix d'acquisition)/ (anciennes quantités + nouvelles quantités)
 
-require_once(DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php");
-
+/*
+ * For each warehouse
+ */
 foreach ($entrepots as $key => $ent)
 {
   $file = $dir ."/entrepot-".$key."-".$year.".png";
@@ -167,12 +172,12 @@ foreach ($entrepots as $key => $ent)
   if ($verbose)
     print "$file\n";
 }
+
 /*
- * Graph cumulatif
- *
+ * For all warehouses
  */
-$file = DOL_DATA_ROOT."/graph/entrepot/entrepot-".$year.".png";
-$title = "Valorisation PMP du stock global (euros HT) sur l'année ".$year;
+$file = $dir."/entrepot-".$year.".png";
+$title = "Valorisation PMP (Prix Moyen Pondéré) du stock global (euros HT) sur l'année ".$year;
 
 if ($total[$key] > 0)
   graph_datas($file, $title, $values[0], $legends);
@@ -180,7 +185,8 @@ if ($total[$key] > 0)
 if ($verbose)
   print "$file\n";
 
-  
+
+
 /**	\brief	Build graph
 *	\param	file		File
 *	\param	title		Title
@@ -189,44 +195,28 @@ if ($verbose)
 */
 function graph_datas($file, $title, $values, $legends)
 {
-
-  $graph = new Graph(800, 250);
-  $graph->title->set($title);
-  $graph->title->setFont(new Tuffy(10));
-
-  $graph->border->hide();
-    
-  $color = new Color(244,244,244);
-
-  $graph->setAntiAliasing(TRUE);
-  $graph->setBackgroundColor( $color );
-
-  //$plot->yAxis->title->set("euros");
-
-  $plot = new LinePlot($values);
-  $plot->setSize(1, 0.96);
-  $plot->setCenter(0.5, 0.52);
-
-  // Change line color
-  $plot->setColor(new Color(0, 0, 150, 20));
-
-  // Set line background gradient
-  $plot->setFillGradient(
-			 new LinearGradient(
-					    new Color(150, 150, 210),
-					    new Color(230, 230, 255),
-					    90
-					    )
-			 );
-  
-  $plot->xAxis->setLabelText($legends);
-  $plot->xAxis->label->setFont(new Tuffy(7));
-  
-  $plot->grid->hideVertical(TRUE);
-  $plot->xAxis->setLabelInterval(31);
-
-  $graph->add($plot);
-
-  $graph->draw($file);
+	$width=800;
+	$height=230;
+	
+	$newvalues=array();
+	foreach ($values as $abs=>$ord)
+	{
+		$newvalues[]=array($legends[$abs],$ord);
+	}
+	
+	$px = new DolGraph();
+	$px->SetData($newvalues);
+	//$px->SetLegend('');
+    $px->SetMaxValue($px->GetCeilMaxValue());
+    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetTitle($title);
+    $px->SetWidth($width);
+    $px->SetHeight($height);
+	$px->SetType('lines');
+	$px->setBgColor('default');
+  	$px->setBgColorGrid(array(255,255,255));
+	$px->SetHideXGrid(true);
+	$px->SetLabelInterval(31);
+	$px->draw($file);
 }
 ?>

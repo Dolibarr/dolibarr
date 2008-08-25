@@ -253,21 +253,21 @@ if ($modulepart)
     elseif ($modulepart == 'graph_stock')
     {
       $accessallowed=1;
-      $original_file=DOL_DATA_ROOT.'/graph/entrepot/'.$original_file;
+      $original_file=DOL_DATA_ROOT.'/entrepot/temp/'.$original_file;
     }
 
     // Wrapping pour les graph fournisseurs
     elseif ($modulepart == 'graph_fourn')
     {
       $accessallowed=1;
-      $original_file=DOL_DATA_ROOT.'/graph/fournisseur/'.$original_file;
+      $original_file=DOL_DATA_ROOT.'/fournisseur/temp/'.$original_file;
     }
 
     // Wrapping pour les graph des produits
     elseif ($modulepart == 'graph_product')
     {
       $accessallowed=1;
-      $original_file=DOL_DATA_ROOT.'/graph/product/'.$original_file;
+      $original_file=DOL_DATA_ROOT.'/product/temp/'.$original_file;
     }
 
     // Wrapping pour les code barre

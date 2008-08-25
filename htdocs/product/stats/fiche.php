@@ -51,7 +51,7 @@ $mesg = '';
 
 
 /*
- *
+ *	View
  */
 $html = new Form($db);
 
@@ -103,10 +103,11 @@ if ($_GET["id"] || $_GET["ref"])
 		print $product->getLibStatut(2);
 		print '</td></tr>';
 
-		// Graphs additionels generes pas les cron
+		
+		// Graphs additionels generes pas le script product-graph.php
 		$year = strftime('%Y',time());
 		$file = get_exdir($product->id, 3) . "ventes-".$year."-".$product->id.".png";	
-		if (file_exists (DOL_DATA_ROOT.'/graph/product/'.$file) )
+		if (file_exists (DOL_DATA_ROOT.'/product/temp/'.$file) )
 		{
 			print '<tr><td>Ventes</td><td>';
 			
@@ -118,9 +119,9 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</td></tr>';
 		}
 
+		
 		print '</table>';
 		print '</div>';
-
 		
 		
 		print '<table width="100%">';

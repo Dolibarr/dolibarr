@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-		\file       scripts/banque/graph-solde.php
-		\ingroup    banque
-		\brief      Script de génération des images des soldes des comptes
+		\file       	scripts/banque/graph-solde.php
+		\ingroup    	banque
+		\brief      	Script de génération des images des soldes des comptes
+		\deprecated		Ce script n'est pas utilise.
+		\version		$Id$
 */
 
 
@@ -39,7 +38,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 $path=eregi_replace('graph-solde.php','',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
-require_once($path."../../htdocs/core/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 
 $error = 0;

@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       scripts/cron/fournisseur-calcul-ca_genere.php
-        \ingroup    fournisseur
-        \brief      Calcul le CA généré par chaque fournisseur et genere graph
+        \file       	scripts/cron/fournisseur-calcul-ca_genere.php
+        \ingroup    	fournisseur
+        \brief      	Calcul le CA généré par chaque fournisseur et met a jour les tables fournisseur_ca et produit_ca 
+		\deprecated		Ce script et ces tables ne sont pas utilisees.
+		\version		$Id$
 */
 
 // Test si mode CLI

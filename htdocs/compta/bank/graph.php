@@ -210,6 +210,7 @@ if ($_GET["account"] || $_GET["ref"])
 		    $px->SetHeight($height);
 			$px->SetType('lines');
 			$px->setBgColor('onglet');
+			$px->setBgColorGrid(array(255,255,255));
 			$px->SetHorizTickIncrement(1);
 			$px->SetPrecisionY(0);
 		    $px->draw($file);
@@ -283,12 +284,12 @@ if ($_GET["account"] || $_GET["ref"])
 			$xday = substr($textdate,6,2);
 		
 			$i = 0;
-			while ($xyear == $year)
+			while ($xyear == $year && $day <= $datetime)
 			{
 				$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 				if ($day > $now)
 				{
-					$datas[$i] = ''; // Valeur sp�ciale permettant de ne pas tracer le graph
+					$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 				}
 				else
 				{
@@ -327,6 +328,8 @@ if ($_GET["account"] || $_GET["ref"])
 		    $px->SetHeight($height);
 			$px->SetType('lines');
 			$px->setBgColor('onglet');
+			$px->setBgColorGrid(array(255,255,255));
+			$px->SetHideXGrid(true);
 			//$px->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
 			$px->SetPrecisionY(0);
 		    $px->draw($file);
@@ -426,6 +429,7 @@ if ($_GET["account"] || $_GET["ref"])
 		    $px->SetHeight($height);
 			$px->SetType('lines');
 			$px->setBgColor('onglet');
+			$px->setBgColorGrid(array(255,255,255));
 			$px->SetPrecisionY(0);
 		    $px->draw($file);
 		
@@ -525,6 +529,7 @@ if ($_GET["account"] || $_GET["ref"])
 			$px->SetType('bars');
 			$px->SetShading(3);
 			$px->setBgColor('onglet');
+			$px->setBgColorGrid(array(255,255,255));
 			$px->SetHorizTickIncrement(1);
 			$px->SetPrecisionY(0);
 		    $px->draw($file);
@@ -620,6 +625,7 @@ if ($_GET["account"] || $_GET["ref"])
 			$px->SetType('bars');
 			$px->SetShading(3);
 			$px->setBgColor('onglet');
+			$px->setBgColorGrid(array(255,255,255));
 			$px->SetHorizTickIncrement(1);
 			$px->SetPrecisionY(0);
 		    $px->draw($file);

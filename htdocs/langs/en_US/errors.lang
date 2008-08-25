@@ -30,3 +30,4 @@ ErrorFunctionNotAvailableInPHP=Function <b>%s</b> is required for this feature b
 ErrorDirAlreadyExists=A directory with this name already exists.
 WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> must be set to <b>on</b> in filer <b>php.ini</b> for having this module working completely. You must modify this file manually.
 ErrorFieldCanNotContainSpecialCharacters=Field <b>%s</b> must not contains special characters.
+WarningBuildScriptNotRunned=Script <b>%s</b> was not yet ran to build graphics.

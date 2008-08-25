@@ -118,14 +118,14 @@ if ($result)
   print '<br />';
 
 	$file='entrepot-'.$year.'.png';
-	if (file_exists(DOL_DATA_ROOT.'/graph/entrepot/'.$file))
+	if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
 	{
 		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
 		print '<img src="'.$url.'" alt="Valorisation du stock année '.($year).'">';
 	}
 
 	$file='entrepot-'.($year-1).'.png';
-	if (file_exists(DOL_DATA_ROOT.'/graph/entrepot/'.$file))
+	if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/'.$file))
     {
       $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file='.$file;
       print '<br /><img src="'.$url.'" alt="Valorisation du stock année '.($year-1).'">';

@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,28 @@
  */
 
 /**
-        \file       scripts/cron/product-graph.php
-        \ingroup    product
-        \brief      Crée les graphiques pour les produits
-		\version	$Id$
-*/
- 
+ \file       scripts/cron/product-graph.php
+ \ingroup    product
+ \brief      Crée les graphiques pour les produits
+ \version	$Id$
+ */
+
 // Test si mode CLI
 $sapi_type = php_sapi_name();
-$script_file=__FILE__; 
+$script_file=__FILE__;
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
 
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer $script_file en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
-    exit;
+	echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer $script_file en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+	exit;
 }
- 
+
 // Recupere env dolibarr
 $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
 
 $error=0;
@@ -47,18 +47,18 @@ $verbose = 0;
 
 for ($i = 1 ; $i < sizeof($argv) ; $i++)
 {
-  if ($argv[$i] == "-v")
-    {
-      $verbose = 1;
-    }
-  if ($argv[$i] == "-vv")
-    {
-      $verbose = 2;
-    }
-  if ($argv[$i] == "-vvv")
-    {
-      $verbose = 3;
-    }
+	if ($argv[$i] == "-v")
+	{
+		$verbose = 1;
+	}
+	if ($argv[$i] == "-vv")
+	{
+		$verbose = 2;
+	}
+	if ($argv[$i] == "-vvv")
+	{
+		$verbose = 3;
+	}
 }
 
 $now = time();
@@ -67,13 +67,13 @@ $year = strftime('%Y',$now);
 /*
  *
  */
-$dir = DOL_DATA_ROOT."/graph/product";
+$dir = DOL_DATA_ROOT."/product/temp";
 if (!is_dir($dir) )
 {
-  if (! create_exdir($dir,0755))
-    {
-      die ("Can't create $dir\n");
-    }
+	if (! create_exdir($dir,0755))
+	{
+		die ("Can't create $dir\n");
+	}
 }
 /*
  *
@@ -85,77 +85,76 @@ $resql = $db->query($sql) ;
 $products = array();
 if ($resql)
 {
-  while ($row = $db->fetch_row($resql))
-    {
-      $fdir = $dir.'/'.get_exdir($row[0],3);
+	while ($row = $db->fetch_row($resql))
+	{
+		$fdir = $dir.'/'.get_exdir($row[0],3);
 
-      if ($verbose)
-	print $fdir."\n";
-      create_exdir($fdir);
+		if ($verbose) print $fdir."\n";
+		create_exdir($fdir);
 
-      $products[$row[0]] = $fdir;
-    }
-  $db->free($resql);
+		$products[$row[0]] = $fdir;
+	}
+	$db->free($resql);
 }
 else
 {
-  print $sql;
+	print $sql;
 }
 /*
  *
  */
 foreach ( $products as $id => $fdir)
 {
-  $num = array();
-  $ca = array();
-  $legends = array(); 
+	$num = array();
+	$ca = array();
+	$legends = array();
 
-  for ($i = 0 ; $i < 12 ; $i++)
-    {
-      $legends[$i] = strftime('%b',mktime(1,1,1,($i+1),1, $year) );
-      $num[$i]  = 0;
-      $ca[$i]  = 0;
-    }
-  
-  $sql  = "SELECT date_format(f.datef,'%b'), sum(fd.qty), sum(fd.total_ht), date_format(f.datef,'%m')";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as fd";
-  $sql .= " WHERE f.rowid = fd.fk_facture AND date_format(f.datef,'%Y')='".$year."'";
-  $sql .= " AND fd.fk_product ='".$id."'";
-  $sql .= " GROUP BY date_format(f.datef,'%b')";
-  $sql .= " ORDER BY date_format(f.datef,'%m') ASC ;";
-
-  $resql = $db->query($sql) ;
-  
-  if ($resql)
-    {
-      $i = 0;
-      while ($row = $db->fetch_row($resql))
+	for ($i = 0 ; $i < 12 ; $i++)
 	{
+		$legends[$i] = strftime('%b',mktime(1,1,1,($i+1),1, $year) );
+		$num[$i]  = 0;
+		$ca[$i]  = 0;
+	}
+
+	$sql  = "SELECT date_format(f.datef,'%b'), sum(fd.qty), sum(fd.total_ht), date_format(f.datef,'%m')";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as fd";
+	$sql .= " WHERE f.rowid = fd.fk_facture AND date_format(f.datef,'%Y')='".$year."'";
+	$sql .= " AND fd.fk_product ='".$id."'";
+	$sql .= " GROUP BY date_format(f.datef,'%b')";
+	$sql .= " ORDER BY date_format(f.datef,'%m') ASC ;";
+
+	$resql = $db->query($sql) ;
+
+	if ($resql)
+	{
+		$i = 0;
+		while ($row = $db->fetch_row($resql))
+		{
 	  $legends[($row[3] - 1)] = $row[0];
 	  $num[($row[3] - 1)]  = $row[1];
-	  $ca[($row[3] - 1)]  = $row[2];	  
+	  $ca[($row[3] - 1)]  = $row[2];
 	  $i++;
+		}
+		$db->free($resql);
 	}
-      $db->free($resql);
-    }
-  else
-    {
-      print $sql;
-    }
+	else
+	{
+		print $sql;
+	}
 
-  if ($i > 0)
-    {
-      $graph = new DolGraph();
-    
-      $file = $fdir ."ventes-".$year."-".$id.".png";
-      $title = "Ventes";
-      
-      $graph->SetTitle($title);
-      $graph->BarLineOneYearArtichow($file, $ca, $num, $legends);
+	if ($i > 0)
+	{
+		$graph = new DolGraph();
 
-      if ($verbose)
-	print "$file\n";
-    }
+		$file = $fdir ."ventes-".$year."-".$id.".png";
+		$title = "Ventes";
+
+		$graph->SetTitle($title);
+		$graph->BarLineOneYearArtichow($file, $ca, $num, $legends);
+
+		if ($verbose)
+		print "$file\n";
+	}
 }
 /*
  * Ventes annuelles
@@ -163,49 +162,49 @@ foreach ( $products as $id => $fdir)
  */
 foreach ( $products as $id => $fdir)
 {
-  $num = array();
-  $ca = array();
-  $legends = array(); 
-  $sql  = "SELECT date_format(f.datef,'%Y'), sum(fd.qty), sum(fd.total_ht)";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as fd";
-  $sql .= " WHERE f.rowid = fd.fk_facture";
-  $sql .= " AND fd.fk_product ='".$id."'";
-  $sql .= " GROUP BY date_format(f.datef,'%Y')";
-  $sql .= " ORDER BY date_format(f.datef,'%Y') ASC ;";
+	$num = array();
+	$ca = array();
+	$legends = array();
+	$sql  = "SELECT date_format(f.datef,'%Y'), sum(fd.qty), sum(fd.total_ht)";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as fd";
+	$sql .= " WHERE f.rowid = fd.fk_facture";
+	$sql .= " AND fd.fk_product ='".$id."'";
+	$sql .= " GROUP BY date_format(f.datef,'%Y')";
+	$sql .= " ORDER BY date_format(f.datef,'%Y') ASC ;";
 
-  $resql = $db->query($sql) ;
-  
-  if ($resql)
-    {
-      $i = 0;
-      while ($row = $db->fetch_row($resql))
+	$resql = $db->query($sql) ;
+
+	if ($resql)
 	{
+		$i = 0;
+		while ($row = $db->fetch_row($resql))
+		{
 	  $legends[$i] = $row[0];
 	  $num[$i]  = $row[1];
 	  $ca[$i]  = $row[2];
-	  
+	   
 	  $i++;
+		}
+		$db->free($resql);
 	}
-      $db->free($resql);
-    }
-  else
-    {
-      print $sql;
-    }
+	else
+	{
+		print $sql;
+	}
 
-  if ($i > 0)
-    {
-      $graph = new DolGraph();
-  
-      $file = $fdir ."ventes-".$id.".png";
-      $title = "Ventes";
-      
-      $graph->SetTitle($title);
-      $graph->BarLineAnnualArtichow($file, $ca, $num, $legends);
-      
-      if ($verbose)
-	print "$file\n";
-    }
+	if ($i > 0)
+	{
+		$graph = new DolGraph();
+
+		$file = $fdir ."ventes-".$id.".png";
+		$title = "Ventes";
+
+		$graph->SetTitle($title);
+		$graph->BarLineAnnualArtichow($file, $ca, $num, $legends);
+
+		if ($verbose)
+		print "$file\n";
+	}
 }
 
 
