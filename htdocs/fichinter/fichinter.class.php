@@ -107,7 +107,7 @@ class Fichinter extends CommonObject
 		$sql.= ") ";
 		$sql.= " VALUES (".$this->socid.",";
 		$sql.= " ".$this->db->idate($this->date).",";
-		$sql.= " now(), '".$this->ref."', ".$this->author;
+		$sql.= " ".$this->db->idate(mktime()).", '".$this->ref."', ".$this->author;
 		$sql.= ", '".addslashes($this->description)."', '".$this->modelpdf."'";
 		if ($this->projet_id) $sql .= ", ".$this->projet_id;
 		$sql.= ")";
@@ -222,7 +222,7 @@ class Fichinter extends CommonObject
 		$this->db->begin();
 		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
-		$sql.= " SET fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
+		$sql.= " SET fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 		dolibarr_syslog("Fichinter::valid sql=".$sql);

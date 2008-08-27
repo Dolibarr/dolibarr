@@ -90,7 +90,7 @@ class Expedition extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (ref, date_creation, fk_user_author, date_expedition";
 		$sql.= ", fk_soc";
 		$sql.= ")";
-		$sql.= " VALUES ('(PROV)', now(), $user->id, ".$this->db->idate($this->date_expedition);
+		$sql.= " VALUES ('(PROV)', ".$this->db->idate(mktime()).", $user->id, ".$this->db->idate($this->date_expedition);
 		$sql.= ", ".$this->socid;
 		$sql.= ")";
 
@@ -328,7 +328,7 @@ class Expedition extends CommonObject
 			}
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
-			$sql.= " SET ref='".$this->ref."', fk_statut = 1, date_valid = now(), fk_user_valid = ".$user->id;
+			$sql.= " SET ref='".$this->ref."', fk_statut = 1, date_valid = ".$this->db->idate(mktime()).", fk_user_valid = ".$user->id;
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
 			dolibarr_syslog("Expedition::valid update expedition sql=".$sql);

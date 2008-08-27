@@ -180,7 +180,7 @@ class ProductFournisseur extends Product
 
 			// Ajoute prix courant du fournisseur pour cette quantité
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price";
-			$sql.= " SET datec = now()";
+			$sql.= " SET datec = ".$this->db->idate(mktime());
 			$sql.= " ,fk_product_fournisseur = ".$this->product_fourn_id;
 			$sql.= " ,fk_user = ".$user->id;
 			$sql.= " ,price = ".price2num($buyprice);
@@ -197,7 +197,7 @@ class ProductFournisseur extends Product
 			{
 				// Ajoute modif dans table log
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log ";
-				$sql .= " SET datec = now()";
+				$sql .= " SET datec = ".$this->db->idate(mktime());
 				$sql .= " ,fk_product_fournisseur = ".$this->product_fourn_id;
 				$sql .= " ,fk_user = ".$user->id;
 				$sql .= " ,price = ".price2num($buyprice);

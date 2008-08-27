@@ -198,7 +198,7 @@ class Facture extends CommonObject
 		$sql.= ' fk_facture_source, fk_user_author, fk_projet,';
 		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf)';
 		$sql.= ' VALUES (';
-		$sql.= "'(PROV)', '".$this->type."', '".$socid."', now(), '".$totalht."'";
+		$sql.= "'(PROV)', '".$this->type."', '".$socid."', ".$this->db->idate(mktime()).", '".$totalht."'";
 		$sql.= ",".($this->remise_absolue>0?$this->remise_absolue:'NULL');
 		$sql.= ",".($this->remise_percent>0?$this->remise_percent:'NULL');
 		$sql.= ",".$this->db->idate($this->date);
@@ -2259,7 +2259,7 @@ class Facture extends CommonObject
 	  		$sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
 	  		$sql .= ' VALUES ('.$this->id;
 	  		$sql .= ",'".price2num($this->total_ttc)."'";
-	  		$sql .= ',now(),'.$user->id;
+	  		$sql .= ",".$this->db->idate(mktime()).",".$user->id;
 	  		$sql .= ",'".$soc->bank_account->code_banque."'";
 	  		$sql .= ",'".$soc->bank_account->code_guichet."'";
 	  		$sql .= ",'".$soc->bank_account->number."'";

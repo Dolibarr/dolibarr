@@ -141,7 +141,7 @@ class PaiementFourn
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql.= 'datec, datep, amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
-			$sql.= ' VALUES (now(),';
+			$sql.= ' VALUES (".$this->db->idate(mktime()).",';
 			$sql.= " ".$this->db->idate($this->datepaye).", '".$this->total."', ".$this->paiementid.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.", 0)";
 			
 			dolibarr_syslog("PaiementFourn::create sql=".$sql);

@@ -141,7 +141,7 @@ class Paiement
 		if ($this->total <> 0) // On accepte les montants négatifs pour les rejets de prélèvement
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)';
-			$sql.= ' VALUES (now(), '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.addslashes($this->note).'\', '.$user->id.')';
+			$sql.= ' VALUES ('.$this->db->idate(mktime()).', '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.addslashes($this->note).'\', '.$user->id.')';
 			$resql = $this->db->query($sql);
 
 			dolibarr_syslog("Paiement::Create insert paiement sql=".$sql);

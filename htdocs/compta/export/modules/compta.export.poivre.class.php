@@ -127,7 +127,7 @@ class ComptaExportPoivre extends ComptaExport
 	    $this->ref = $dt . substr("000".$cc, -2);
 	    
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."export_compta (ref, date_export, fk_user)";
-	    $sql .= " VALUES ('".$this->ref."', now(),".$this->user->id.")";
+	    $sql .= " VALUES ('".$this->ref."', ".$this->db->idate(mktime()).",".$this->user->id.")";
 	    
 	    if ($this->db->query($sql))
 	      {

@@ -1221,7 +1221,7 @@ class Adherent extends CommonObject
     }
 
 	/**
-	 *		\brief 		Fonction qui verifie que l'utilisateur est valide
+	 *		\brief 		Function that validate a member
 	 *		\param		user		user adherent qui valide
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
@@ -1230,7 +1230,7 @@ class Adherent extends CommonObject
 		global $langs,$conf;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql.= " statut=1, datevalid = now(),";
+		$sql.= " statut=1, datevalid = ".$this->db->idate(mktime()).",";
 		$sql.= " fk_user_valid=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 

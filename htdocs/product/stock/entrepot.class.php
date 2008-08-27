@@ -77,7 +77,7 @@ class Entrepot
 		$this->db->begin();
 		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author, label)";
-		$sql .= " VALUES (now(),".$user->id.",'".addslashes($this->libelle)."')";
+		$sql .= " VALUES (".$this->db->idate(mktime()).",".$user->id.",'".addslashes($this->libelle)."')";
 		
 		dolibarr_syslog("Entrepot::create sql=".$sql);
 		$result=$this->db->query($sql);

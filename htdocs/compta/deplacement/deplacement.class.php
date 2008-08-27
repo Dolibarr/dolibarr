@@ -76,7 +76,7 @@ class Deplacement extends CommonObject
 		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " (datec, fk_user_author, fk_user, type)";
-		$sql.= " VALUES (now(), ".$user->id.", ".$this->fk_user.", '".$this->type."')";
+		$sql.= " VALUES (".$this->db->idate(mktime()).", ".$user->id.", ".$this->fk_user.", '".$this->type."')";
 
 		dolibarr_syslog("Deplacement::create sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);

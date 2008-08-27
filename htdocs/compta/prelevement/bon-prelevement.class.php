@@ -837,7 +837,7 @@ class BonPrelevement
                  */
 
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (ref,datec)";
-                $sql .= " VALUES ('".$ref."',now())";
+                $sql .= " VALUES ('".$ref."',".$this->db->idate(mktime()).")";
 
                 $resql = $this->db->query($sql);
 
@@ -921,7 +921,7 @@ class BonPrelevement
                              */
                             $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
                             $sql .= " SET traite = 1";
-                            $sql .= ", date_traite=now()";
+                            $sql .= ", date_traite=".$this->db->idate(mktime());
                             $sql .= ", fk_prelevement_bons = ".$prev_id;
                             $sql .= " WHERE rowid=".$fac[1];
 

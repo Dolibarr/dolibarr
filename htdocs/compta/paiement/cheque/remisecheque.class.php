@@ -125,7 +125,7 @@ class RemiseCheque extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (datec, date_bordereau, fk_user_author, fk_bank_account, amount, number, nbcheque)";
-		$sql.= " VALUES (now(),now(),".$user->id.",".$account_id.",0,0,0)";
+		$sql.= " VALUES (".$this->db->idate(mktime()).",".$this->db->idate(mktime()).",".$user->id.",".$account_id.",0,0,0)";
 		
 		dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);

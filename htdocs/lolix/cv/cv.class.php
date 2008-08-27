@@ -75,7 +75,7 @@ class Cv {
     $result = $this->db->query($sql);
     
     $sql = "INSERT INTO lolixfr.res_statutlog (datel, fk_cand, fk_statut,author)";
-    $sql .= " VALUES (now(),$this->id,0,'bots')";
+    $sql .= " VALUES (".$this->db->idate(mktime()).",$this->id,0,'bots')";
     $result = $this->db->query($sql);
   
     $header = "From: webmaster@lolix.org\r\nReply-To: webmaster@lolix.org\r\nX-Mailer: Dolibarr";

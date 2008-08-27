@@ -178,7 +178,7 @@ class Contrat extends CommonObject
     function cloture($user,$langs='',$conf='')
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 2";
-        $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
+        $sql .= " , date_cloture = ".$this->db->idate(mktime()).", fk_user_cloture = ".$user->id;
         $sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
     
         $resql = $this->db->query($sql) ;
@@ -243,7 +243,7 @@ class Contrat extends CommonObject
     function annule($user,$langs='',$conf='')
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 0";
-        $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
+        $sql .= " , date_cloture = ".$this->db->idate(mktime()).", fk_user_cloture = ".$user->id;
         $sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
     
         $resql = $this->db->query($sql) ;
@@ -493,7 +493,7 @@ class Contrat extends CommonObject
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat";
         $sql.= ", fk_commercial_signature, fk_commercial_suivi";
         $sql.= " , ref)";
-        $sql.= " VALUES (now(),".$this->socid.",".$user->id;
+        $sql.= " VALUES (".$this->db->idate(mktime()).",".$this->socid.",".$user->id;
         $sql.= ",".$this->db->idate($this->date_contrat);
         $sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
         $sql.= ",".($this->commercial_suivi_id>0?$this->commercial_suivi_id:"NULL");

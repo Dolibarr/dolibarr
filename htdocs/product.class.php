@@ -205,7 +205,7 @@ class Product extends CommonObject
 					if ($this->ref) $sql.= "ref, ";
 					$sql.= "label, ";
 					$sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas)";
-					$sql.= " VALUES (now(), ";
+					$sql.= " VALUES (".$this->db->idate(mktime()).", ";
 					if ($this->ref) $sql.= "'".$this->ref."',";
 					$sql.= " ".($this->libelle?"'".addslashes($this->libelle)."'":"null").",";
 					$sql.= $user->id.",";
@@ -644,8 +644,8 @@ class Product extends CommonObject
 
 					// On ajoute nouveau tarif
 					$sql_multiprix = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price_level,price,price_ttc,price_base_type,tva_tx) ";
-					$sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".price2num($multiprice_ht).",'".price2num($multiprice_ttc)."','".$this->multiprices_base_type["$i"]."',".$this->tva_tx;
-					$sql_multiprix .= ")";
+					$sql_multiprix.= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$i.",".price2num($multiprice_ht).",'".price2num($multiprice_ttc)."','".$this->multiprices_base_type["$i"]."',".$this->tva_tx;
+					$sql_multiprix.= ")";
 					if (! $this->db->query($sql_multiprix) )
 					{
 						$queryError = true;
@@ -656,7 +656,7 @@ class Product extends CommonObject
 			{
 				// On ajoute nouveau tarif
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx) ";
-				$sql .= " VALUES(now(),".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
+				$sql .= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
 				$sql .= ")";
 				if (! $this->db->query($sql) )
 				$queryError = true;
@@ -673,7 +673,7 @@ class Product extends CommonObject
 		{
 			// On ajoute nouveau tarif
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx) ";
-			$sql .= " VALUES(now(),".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
+			$sql .= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
 			$sql .= ")";
 
 			dolibarr_syslog("Product::_log_price sql=".$sql);
@@ -1590,7 +1590,7 @@ class Product extends CommonObject
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
 				$sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
-				$sql .= " VALUES (now(), ".$this->id.", ".$id_fourn.", '".$ref_fourn."', ".$user->id.")";
+				$sql .= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", ".$id_fourn.", '".$ref_fourn."', ".$user->id.")";
 					
 				if ($this->db->query($sql))
 				{
@@ -1740,7 +1740,7 @@ class Product extends CommonObject
 		// les fournisseurs
 		$sql = "insert ".MAIN_DB_PREFIX."product_fournisseur ("
 		. " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
-		. " select now(), ".$toId.", fk_soc, ref_fourn, fk_user_author"
+		. " select '".$this->db->idate(mktime())."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
 		. " from ".MAIN_DB_PREFIX."product_fournisseur "
 		. " where fk_product = ".$fromId .";" ;
 		if ( ! $db->query($sql ) ) {
@@ -1750,7 +1750,7 @@ class Product extends CommonObject
 		// les prix de fournisseurs.
 		$sql = "insert ".MAIN_DB_PREFIX."product_fournisseur_price ("
 		. " datec, fk_product, fk_soc, price, quantity, fk_user )"
-		. " select now(), ".$toId. ", fk_soc, price, quantity, fk_user"
+		. " select '".$this->db->idate(mktime())."', ".$toId. ", fk_soc, price, quantity, fk_user"
 		. " from ".MAIN_DB_PREFIX."product_fournisseur_price"
 		. " where fk_product = ".$fromId.";";
 		if ( ! $db->query($sql ) ) {
@@ -2017,7 +2017,7 @@ class Product extends CommonObject
 		if ($resql)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
-			$sql .= " VALUES (now(), ".$this->id.", ".$id_entrepot.", ".$nbpiece.", 0, ".$user->id.")";
+			$sql .= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", ".$id_entrepot.", ".$nbpiece.", 0, ".$user->id.")";
 
 			dolibarr_syslog("Product::create_stock sql=".$sql);
 			$resql=$this->db->query($sql);
@@ -2102,7 +2102,7 @@ class Product extends CommonObject
 		if ($resql)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
-			$sql .= " VALUES (now(), ".$this->id.", ".$id_entrepot.", ".$op[$mouvement].", 0, ".$user->id.")";
+			$sql .= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", ".$id_entrepot.", ".$op[$mouvement].", 0, ".$user->id.")";
 
 			dolibarr_syslog("Product::ajust_stock sql=".$sql);
 			$resql=$this->db->query($sql);

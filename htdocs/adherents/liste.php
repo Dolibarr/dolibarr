@@ -94,11 +94,11 @@ if ($_GET["search_email"])
 }
 if ($filter == 'uptodate')
 {
-    $sql.=" AND datefin >= sysdate()";
+    $sql.=" AND datefin >= ".$db->idate(mktime());
 }
 if ($filter == 'outofdate')
 {
-    $sql.=" AND datefin < sysdate()";
+    $sql.=" AND datefin < ".$db->idate(mktime());
 }
 // Count total nb of records 
 $nbtotalofrecords = 0; 

@@ -91,7 +91,7 @@ class AdresseLivraison
         if ($result >= 0)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_adresse_livraison (label, fk_societe, nom, datec, fk_user_creat) ";
-            $sql .= " VALUES ('".addslashes($this->label)."', '".$socid."', '".addslashes($this->nom)."', now(), '".$user->id."')";
+            $sql .= " VALUES ('".addslashes($this->label)."', '".$socid."', '".addslashes($this->nom)."', ".$this->db->idate(mktime()).", '".$user->id."')";
 
             $result=$this->db->query($sql);
             if ($result)

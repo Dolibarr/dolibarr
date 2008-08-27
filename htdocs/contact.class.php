@@ -94,7 +94,7 @@ class Contact extends CommonObject
 		if (! $this->priv) $this->priv = 0;
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat, priv)";
-        $sql.= " VALUES (now(),";
+        $sql.= " VALUES (".$this->db->idate(mktime()).",";
         if ($this->socid > 0) $sql.= " ".$this->socid.",";
         else $sql.= "null,";
         $sql.= "'".addslashes($this->name)."',";

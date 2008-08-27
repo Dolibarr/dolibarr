@@ -66,7 +66,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add_bookmark')
     {
       dolibarr_print_error($db);
     }
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$_GET["socid"].", now(),".$user->id.");";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$_GET["socid"].", ".$db->idate(mktime()).",".$user->id.");";
   if (! $db->query($sql) )
     {
       dolibarr_print_error($db);

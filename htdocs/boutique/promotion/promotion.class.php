@@ -61,7 +61,7 @@ class Promotion {
 
     $sql = "INSERT INTO ".OSC_DB_NAME.".specials ";
     $sql .= " (products_id, specials_new_products_price, specials_date_added, specials_last_modified, expires_date, date_status_change, status) ";
-    $sql .= " VALUES ($pid, $newprice, now(),NULL,'$date_exp',NULL,1)";
+    $sql .= " VALUES ($pid, $newprice, ".$this->db->idate(mktime()).", NULL, '$date_exp',NULL,1)";
 
     if ($this->db->query($sql) )
       {

@@ -94,7 +94,7 @@ class Livraison extends CommonObject
 		$sql.= " fk_adresse_livraison";
 		if ($this->expedition_id) $sql.= ", fk_expedition";
 		$sql.= ")";
-		$sql.= " VALUES ('(PROV)', ".$this->socid.", now(), $user->id,";
+		$sql.= " VALUES ('(PROV)', ".$this->socid.", ".$this->db->idate(mktime()).", $user->id,";
 		$sql.= " ".($this->adresse_livraison_id > 0?$this->adresse_livraison_id:"null");
 		if ($this->expedition_id) $sql.= ", $this->expedition_id";
 		$sql.= ")";
@@ -369,7 +369,7 @@ class Livraison extends CommonObject
 					}
 
 					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
-					$sql.= " SET ref='".addslashes($this->ref)."', fk_statut = 1, date_valid = now(), fk_user_valid = ".$user->id;
+					$sql.= " SET ref='".addslashes($this->ref)."', fk_statut = 1, date_valid = ".$this->db->idate(mktime()).", fk_user_valid = ".$user->id;
 					$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 					$resql=$this->db->query($sql);
 					if ($resql)

@@ -355,7 +355,7 @@ class DolibarrModules
     
     $sql ="INSERT INTO ".MAIN_DB_PREFIX."dolibarr_modules (numero,active,active_date,active_version)";
     $sql .= " VALUES (";
-    $sql .= $this->numero.",1,now(),'".$this->version."')";
+    $sql .= $this->numero.",1,".$this->db->idate(mktime()).",'".$this->version."')";
     
     $this->db->query($sql);
     

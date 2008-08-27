@@ -151,7 +151,7 @@ class Societe extends CommonObject
 		if ($result >= 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat)";
-			$sql.= " VALUES ('".addslashes($this->nom)."', now(), now(),";
+			$sql.= " VALUES ('".addslashes($this->nom)."', ".$this->db->idate(mktime()).", ".$this->db->idate(mktime()).",";
 			$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null");
 			$sql.= ")";
 
@@ -356,7 +356,7 @@ class Societe extends CommonObject
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
 			$sql.= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
-			$sql.= ",datea = now()";
+			$sql.= ",datea = ".$this->db->idate(mktime());
 			$sql.= ",address = '" . addslashes($this->adresse) ."'";
 
 			$sql.= ",cp = ".($this->cp?"'".$this->cp."'":"null");
@@ -933,7 +933,7 @@ class Societe extends CommonObject
 			// Ecrit trace dans historique des remises
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
 			$sql.= " (datec, fk_soc, remise_client, note, fk_user_author)";
-			$sql.= " VALUES (now(), ".$this->id.", '".$remise."',";
+			$sql.= " VALUES (".$this->db->idate(mktime()).", ".$this->id.", '".$remise."',";
 			$sql.= " '".addslashes($note)."',";
 			$sql.= " ".$user->id;
 			$sql.= ")";
@@ -1066,7 +1066,7 @@ class Societe extends CommonObject
 
 			$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices ";
 			$sql .= " ( datec, fk_soc, price_level, fk_user_author )";
-			$sql .= " VALUES (now(),".$this->id.",'".$price_level."',".$user->id.")";
+			$sql .= " VALUES (".$this->db->idate(mktime()).",".$this->id.",'".$price_level."',".$user->id.")";
 
 			if (! $this->db->query($sql) )
 	  {

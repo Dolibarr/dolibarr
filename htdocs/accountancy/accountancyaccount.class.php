@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	\file       htdocs/accountancy/accountancyaccount.class.php
   	\ingroup    comptaexpert
   	\brief      Fichier de la classe des comptes comptables
-  	\version    $Revision$
+  	\version    $Id$
 */
 
 
@@ -66,7 +63,7 @@ class AccountancyAccount
 	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accountingaccount";
 		$sql.= " (date_creation, fk_user_author, numero,intitule)";
-		$sql.= " VALUES (now(),".$user->id.",'".$this->numero."','".$this->intitule."')";
+		$sql.= " VALUES (".$this->db->idate(mktime()).",".$user->id.",'".$this->numero."','".$this->intitule."')";
 
 		$resql = $this->db->query($sql);
 		if ($resql)

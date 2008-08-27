@@ -80,7 +80,7 @@ class RejetPrelevement
     $sql .= " , motif , fk_user_creation, date_creation, afacturer)";
     $sql .= " VALUES (".$id;
     $sql .= " ,'".$this->db->idate($date_rejet)."'";
-    $sql .= " ,".$motif.",". $user->id.", now(),".$facturation.");";
+    $sql .= " ,".$motif.",". $user->id.", ".$this->db->idate(mktime()).",".$facturation.");";
     
     $result=$this->db->query($sql);
     

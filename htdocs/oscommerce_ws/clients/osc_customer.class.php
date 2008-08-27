@@ -153,7 +153,7 @@ class Osc_customer
 //            $this->db->rollback();
 //            return -1;
 		}
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_customer VALUES (".$oscid." ,  now() , ".$socid.") ;";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_customer VALUES (".$oscid.", ".$this->db->idate(mktime()).", ".$socid.") ;";
 
 		$result=$this->db->query($sql);
         if ($result)

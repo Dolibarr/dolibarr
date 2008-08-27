@@ -75,7 +75,7 @@ if ($resql)
   while ($row = $db->fetch_row($resql))
     {
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."facture_stats";
-      $sqli .= " VALUES (now(),now(),'paye $row[0]',$row[1])";
+      $sqli .= " VALUES (".$db->idate(mktime()).",".$this->db->idate(mktime()).",'paye $row[0]',$row[1])";
      
       $resqli = $db->query($sqli);
     }
@@ -93,7 +93,7 @@ if ($resql)
   while ($row = $db->fetch_row($resql))
     {
       $sqli = "INSERT INTO ".MAIN_DB_PREFIX."facture_stats";
-      $sqli .= " VALUES (now(),now(),'total $row[0]','$row[1]')";
+      $sqli .= " VALUES (".$this->db->idate(mktime()).",".$this->db->idate(mktime()).",'total $row[0]','$row[1]')";
      
       $resqli = $db->query($sqli);
     }

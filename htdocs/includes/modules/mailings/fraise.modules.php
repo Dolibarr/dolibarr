@@ -130,8 +130,8 @@ class mailing_fraise extends MailingTargets
         foreach($filtersarray as $key)
         {
             if ($key == '-1') $sql.= " AND a.statut=-1";
-            if ($key == '1a')  $sql.= " AND a.statut=1 AND datefin >= sysdate()";
-            if ($key == '1b')  $sql.= " AND a.statut=1 AND datefin < sysdate()";
+            if ($key == '1a')  $sql.= " AND a.statut=1 AND datefin >= ".$this->db->idate(mktime());
+            if ($key == '1b')  $sql.= " AND a.statut=1 AND datefin < ".$this->db->idate(mktime());
             if ($key == '0')  $sql.= " AND a.statut=0";
         }
         $sql.= " ORDER BY a.email";

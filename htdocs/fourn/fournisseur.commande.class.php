@@ -232,7 +232,7 @@ class CommandeFournisseur extends Commande
 	  	$num = $this->ref;
 	  }
 
-	  $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+	  $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur SET ref='$num', fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=$user->id";
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0";
 
 	  $resql=$this->db->query($sql);
@@ -622,7 +622,7 @@ class CommandeFournisseur extends Commande
 		$this->brouillon = 1;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (ref, fk_soc, date_creation, fk_user_author, fk_statut, source, model_pdf) ";
-		$sql .= " VALUES ('',".$this->socid.", now(), ".$user->id.",0,0,'".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."')";
+		$sql .= " VALUES ('',".$this->socid.", ".$this->db->idate(mktime()).", ".$user->id.",0,0,'".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."')";
 
 		if ( $this->db->query($sql) )
 		{
@@ -837,7 +837,7 @@ class CommandeFournisseur extends Commande
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch ";
 			$sql.= " (fk_commande,fk_product, qty, fk_entrepot, fk_user, datec) VALUES ";
-			$sql.= " ('".$this->id."','".$product."','".$qty."','".$entrepot."','".$user->id."',now() );";
+			$sql.= " ('".$this->id."','".$product."','".$qty."','".$entrepot."','".$user->id."',".$this->db->idate(mktime()).")";
 
 			$resql = $this->db->query($sql);
 			if (! $resql)

@@ -717,7 +717,8 @@ class User extends CommonObject
 			}
 			else
 			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid)";
+				$sql.= " VALUES(".$this->db->idate(mktime()).",'".addslashes($this->login)."','".$this->ldap_sid."')";
 				$result=$this->db->query($sql);
 
 				dolibarr_syslog("User::Create sql=".$sql, LOG_DEBUG);

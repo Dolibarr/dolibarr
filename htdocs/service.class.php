@@ -64,7 +64,7 @@ class Service
 	 
   function create($user) {
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."service (datec, fk_user_author) VALUES (now(), ".$user->id.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."service (datec, fk_user_author) VALUES (".$this->db->idate(mktime()).", ".$user->id.")";
 
     if ($this->db->query($sql) ) {
       $id = $this->db->last_insert_id(MAIN_DB_PREFIX."service");
@@ -114,7 +114,7 @@ class Service
     if ($datedeb) {
       $sql .= " SET debut_comm = '$datedeb'";
     } else {
-      $sql .= " SET debut_comm = now()";
+      $sql .= " SET debut_comm = ".$this->db->idate(mktime());
     }
     $sql .= ",fk_user_modif = " . $user->id ;
 
@@ -139,7 +139,7 @@ class Service
     if ($datefin) {
       $sql .= " SET fin_comm = '$datefin'";
     } else {
-      $sql .= " SET fin_comm = now()";
+      $sql .= " SET fin_comm = ".$this->db->idate(mktime());
     }
     $sql .= ",fk_user_modif = " . $user->id ;
 

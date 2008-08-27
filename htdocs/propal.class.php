@@ -530,7 +530,7 @@ class Propal extends CommonObject
         $sql.= ") ";
         $sql.= " VALUES (".$this->socid.", 0,";
         $sql.= " ".$this->remise.", ".($this->remise_percent?$this->remise_percent:'null').", ".($this->remise_absolue?$this->remise_absolue:'null').",";
-        $sql.= " 0,0,".$this->db->idate($this->datep).", now(), '".$this->ref."', ";
+        $sql.= " 0,0,".$this->db->idate($this->datep).", ".$this->db->idate(mktime()).", '".$this->ref."', ";
         $sql.= ($user->id > 0 ? "'".$user->id."'":"null").",";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
@@ -829,7 +829,7 @@ class Propal extends CommonObject
             $this->db->begin();
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-            $sql.= " SET fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
+            $sql.= " SET fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=".$user->id;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
             if ($this->db->query($sql))
@@ -1051,7 +1051,7 @@ class Propal extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-        $sql.= " SET fk_statut = ".$statut.", note = '".addslashes($note)."', date_cloture=now(), fk_user_cloture=".$user->id;
+        $sql.= " SET fk_statut = ".$statut.", note = '".addslashes($note)."', date_cloture=".$this->db->idate(mktime()).", fk_user_cloture=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
         $resql=$this->db->query($sql);

@@ -69,7 +69,7 @@ class Project extends CommonObject
 		$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."',";
 		$sql.= " ".($this->socid > 0?$this->socid:"null").",";
 		$sql.= " ".$user->id.",";
-		$sql.= " ".$this->user_resp_id.", now(), 0)";
+		$sql.= " ".$this->user_resp_id.", ".$this->db->idate(mktime()).", 0)";
 		
 		dolibarr_syslog("Project::create sql=".$sql);
 		$resql=$this->db->query($sql);

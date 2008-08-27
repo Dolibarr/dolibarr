@@ -100,7 +100,7 @@ class Bookmark
         $sql.= " ,title,favicon";
         if ($this->fk_soc) $sql.=",fk_soc";
         $sql.= ")";
-        $sql.= " VALUES ('".$this->fk_user."', sysdate(),";
+        $sql.= " VALUES ('".$this->fk_user."', ".$this->db->idate(mktime()).",";
         $sql.= " '".$this->url."', '".$this->target."',";
         $sql.= " '".addslashes($this->title)."', '".$this->favicon."'";
         if ($this->fk_soc) $sql.=",".$this->fk_soc;

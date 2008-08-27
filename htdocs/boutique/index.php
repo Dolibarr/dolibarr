@@ -55,7 +55,7 @@ print '<td align="right">'.$langs->trans("Total").'</td></tr>';
 $sql = "SELECT sum(t.value) as value, MONTH(o.date_purchased) as mois";
 $sql .= " FROM ".OSC_DB_NAME.".orders_total as t";
 $sql .= " JOIN ".OSC_DB_NAME.".orders as o ON o.orders_id = t.orders_id";
-$sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(now()) ";
+$sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(".$dbosc->idate(mktime()).")";
 $sql .= " GROUP BY mois ORDER BY mois";
 
 $result=$dbosc->query($sql);
@@ -92,7 +92,7 @@ else
 $sql = "SELECT sum(t.value) as value";
 $sql .= " FROM ".OSC_DB_NAME.".orders_total as t";
 $sql .= " JOIN ".OSC_DB_NAME.".orders as o ON o.orders_id = t.orders_id";
-$sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(now()) AND MONTH(o.date_purchased) = MONTH(now())";
+$sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(".$dbosc->db->idate(mktime()).") AND MONTH(o.date_purchased) = MONTH(".$this->db->idate(mktime()).")";
  
 if ( $dbosc->query($sql) )
 {

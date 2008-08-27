@@ -54,7 +54,7 @@ class MouvementStock
     
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
     $sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, price)";
-    $sql.= " VALUES (now(), ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.", ".$user->id;
+    $sql.= " VALUES (".$this->db->idate(mktime()).", ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.", ".$user->id;
     $sql.= ",'".price2num($price)."')";
     
     if ($resql = $this->db->query($sql))
@@ -230,7 +230,7 @@ class MouvementStock
 		{
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot_valorisation";
 		  $sql.= " (date_calcul, fk_entrepot, valo_pmp)";
-		  $sql.= " VALUES (now(), $entrepot_id";
+		  $sql.= " VALUES (".$this->db->idate(mktime()).", ".$entrepot_id;
 		  $sql.= ",'".ereg_replace(",",".",$new_value)."');";
 		}
 	      
@@ -351,13 +351,13 @@ class MouvementStock
 	    {
 	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_valorisation";
 	      $sql.= " (date_valo, fk_product, fk_stock_mouvement, qty_ope, price_ope, valo_ope, price_pmp, qty_stock, valo_pmp)";
-	      $sql.= " VALUES (now(), $fk_product, $mvid";
-	      $sql.= ",'".ereg_replace(",",".",$qty)."'";
-	      $sql.= ",'".ereg_replace(",",".",$price)."'";
-	      $sql.= ",'".ereg_replace(",",".",$value_ope)."'";
-	      $sql.= ",'".ereg_replace(",",".",$new_pmp)."'";
-	      $sql.= ",'".ereg_replace(",",".",$new_stock_qty)."'";
-	      $sql.= ",'".ereg_replace(",",".",$new_stock_value_pmp)."');";
+	      $sql.= " VALUES (".$this->db->idate(mktime()).", $fk_product, $mvid";
+	      $sql.= ",'".price2num($qty)."'";
+	      $sql.= ",'".price2num($price)."'";
+	      $sql.= ",'".price2num($value_ope)."'";
+	      $sql.= ",'".price2num($new_pmp)."'";
+	      $sql.= ",'".price2num($new_stock_qty)."'";
+	      $sql.= ",'".price2num($new_stock_value_pmp)."')";
 	      
 	      if ($this->db->query($sql))
 		{

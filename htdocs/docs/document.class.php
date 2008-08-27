@@ -83,7 +83,7 @@ class Document
     
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document";
     $sql.= " (name,file_name,file_extension,date_generation) VALUES";
-    $sql.= " ('".$obj->name."','".$obj->file."','".$obj->extension."',now());";
+    $sql.= " ('".$obj->name."','".$obj->file."','".$obj->extension."',".$this->db->idate(mktime()).")";
     
     $resql=$this->db->query($sql);
     

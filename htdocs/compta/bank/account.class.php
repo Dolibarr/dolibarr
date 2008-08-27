@@ -226,7 +226,7 @@ class Account extends CommonObject
 		$datev = $date;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq, fk_account, fk_type,emetteur,banque)";
-		$sql.= " VALUES (now(), '".$this->db->idate($date)."', '".$this->db->idate($datev)."', ";
+		$sql.= " VALUES (".$this->db->idate(mktime()).", '".$this->db->idate($date)."', '".$this->db->idate($datev)."', ";
 		$sql.= " '".addslashes($label)."', " . price2num($amount).", '".$user->id."', ";
 		$sql.= " ".($num_chq?"'".$num_chq."'":"null").", ";
 		$sql.= " '".$this->rowid."', ";
@@ -293,7 +293,7 @@ class Account extends CommonObject
 		$sql.= "rappro, min_allowed, min_desired, ";
 		$sql.= "comment";
 		$sql.= ") values (";
-		$sql.= "now(),'" . addslashes($this->ref) . "', '" . addslashes($this->label) . "', ";
+		$sql.= "".$this->db->idate(mktime()).",'" . addslashes($this->ref) . "', '" . addslashes($this->label) . "', ";
 		$sql.= "'".addslashes($this->account_number) . "', '".$this->currency_code."', ";
 		$sql.= $this->rappro.", ".price2num($this->min_allowed).", ".price2num($this->min_desired).", ";
 		$sql.= "'".addslashes($this->comment)."'";
@@ -309,7 +309,7 @@ class Account extends CommonObject
 				if ( $this->update() )
 				{
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account, datev, dateo, fk_type, rappro) ";
-					$sql .= " VALUES (now(),'(".$langs->trans("InitialBankBalance").")'," . price2num($this->solde) . ",'$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
+					$sql .= " VALUES (".$this->db->idate(mktime()).",'(".$langs->trans("InitialBankBalance").")'," . price2num($this->solde) . ",'$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
 					$this->db->query($sql);
 				}
 				return $this->id;

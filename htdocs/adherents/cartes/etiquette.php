@@ -65,7 +65,7 @@ $sql.= " t.libelle as type,";
 $sql.= " p.libelle as pays";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
-$sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1 AND datefin >= now()";
+$sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1 AND datefin >= ".$db->idate(mktime());
 $sql.= " ORDER BY d.rowid ASC";
 
 $result = $db->query($sql);

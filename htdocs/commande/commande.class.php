@@ -237,7 +237,7 @@ class Commande extends CommonObject
 			$num = $this->ref;
 		}
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+		$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=$user->id";
 		$sql .= " WHERE rowid = $this->id AND fk_statut = 0";
 
 		$resql=$this->db->query($sql);
@@ -386,7 +386,7 @@ class Commande extends CommonObject
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 			$sql.= ' SET fk_statut = 3,';
 			$sql.= ' fk_user_cloture = '.$user->id.',';
-			$sql.= ' date_cloture = now()';
+			$sql.= " date_cloture = ".$this->db->idate(mktime());
 			$sql.= " WHERE rowid = $this->id AND fk_statut > 0 ;";
 
 			if ($this->db->query($sql))
@@ -513,7 +513,7 @@ class Commande extends CommonObject
 		$sql.= ' ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client,';
 		$sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
 		$sql.= ' remise_absolue, remise_percent)';
-		$sql.= " VALUES ('".$this->ref."',".$this->socid.', now(), '.$user->id.', '.$this->projetid.',';
+		$sql.= " VALUES ('".$this->ref."',".$this->socid.", ".$this->db->idate(mktime()).", ".$user->id.', '.$this->projetid.',';
 		$sql.= ' '.$this->db->idate($this->date_commande).',';
 		$sql.= ' '.$this->source.', ';
 		$sql.= " '".addslashes($this->note)."', ";

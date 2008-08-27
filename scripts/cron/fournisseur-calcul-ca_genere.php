@@ -194,7 +194,7 @@ foreach($ca_fourns as $key => $value)
   $resqld = $db->query($sqld);
 
   $sqli = "INSERT INTO ".MAIN_DB_PREFIX."fournisseur_ca";
-  $sqli .= " VALUES ($key,now(),$year,'".str_replace(',','.',$value)."'";
+  $sqli .= " VALUES ($key,".$db->idate(mktime()).",$year,'".price2num($value)."'";
   $sqli.=  ",'". $fournisseurs_ca_achat[$key][$year] ."');";
   
   $resqli = $db->query($sqli);
@@ -206,12 +206,12 @@ foreach($ca_fourns as $key => $value)
 foreach($ca_products as $key => $value)
 {
   $sqld = "DELETE FROM ".MAIN_DB_PREFIX."product_ca";
-  $sqld .= " WHERE year = $year AND fk_societe=$key;";
+  $sqld .= " WHERE year = ".$year." AND fk_societe=".$key;
   
   $resqld = $db->query($sqld);
 
   $sqli = "INSERT INTO ".MAIN_DB_PREFIX."product_ca";
-  $sqli .= " VALUES ($key,now(),$year,'".str_replace(',','.',$value)."');";
+  $sqli .= " VALUES (".$key.",".$db->idate(mktime()).",".$year.",'".price2num($value)."')";
   
   $resqli = $db->query($sqli);
 }

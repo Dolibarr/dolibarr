@@ -101,7 +101,7 @@ class FactureRec extends Facture
             $this->brouillon = 1;
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (titre, fk_soc, datec, amount, remise, note, fk_user_author,fk_projet, fk_cond_reglement, fk_mode_reglement) ";
-            $sql.= " VALUES ('$this->titre', '$facsrc->socid', now(), '$facsrc->amount', '$facsrc->remise', '".addslashes($this->note)."','$user->id',";
+            $sql.= " VALUES ('$this->titre', '$facsrc->socid', ".$this->db->idate(mktime()).", '$facsrc->amount', '$facsrc->remise', '".addslashes($this->note)."','$user->id',";
             $sql.= " ".($facsrc->projetid?"'".$facsrc->projetid."'":"null").", ";
             $sql.= " '".$facsrc->cond_reglement_id."',";
             $sql.= " '".$facsrc->mode_reglement_id."')";

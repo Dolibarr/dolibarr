@@ -389,7 +389,7 @@ class PaiementCharge
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,"; 
 			$sql.= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
-			$sql.= " VALUES ($this->chid, now(), ";
+			$sql.= " VALUES ($this->chid, ".$this->db->idate(mktime()).", ";
 			$sql.= $this->db->idate($this->datepaye).", ";
 			$sql.= price2num($total);
 			$sql.= ", ".$this->paiementtype.", '".$this->num_paiement."', '".addslashes($this->note)."', ".$user->id.",";

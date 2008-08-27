@@ -211,7 +211,7 @@ if (sizeof($factures_prev) > 0)
        */
       
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (ref,datec)";
-      $sql .= " VALUES ('".$ref."',now())";
+      $sql .= " VALUES ('".$ref."',".$db->idate(mktime()).")";
       
       if ($db->query($sql))
 	{      
@@ -291,7 +291,7 @@ if (sizeof($factures_prev) > 0)
 		   */
 		  $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
 		  $sql .= " SET traite = 1";
-		  $sql .= ", date_traite=now()";
+		  $sql .= ", date_traite=".$db->idate(mktime());
 		  $sql .= ", fk_prelevement_bons = ".$prev_id;
 		  $sql .= " WHERE rowid=".$fac[1];
 	      

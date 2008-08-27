@@ -51,7 +51,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
 $sql .= " WHERE d.statut = $statut ";
 if ($cotis==1)
 {
-	$sql .= " AND datefin > now() ";
+	$sql .= " AND datefin > ".$db->idate(mktime());
 }
 $sql.= " ORDER BY $sortfield $sortorder";
 //$sql.=$db->plimit($conf->liste_limit, $offset);

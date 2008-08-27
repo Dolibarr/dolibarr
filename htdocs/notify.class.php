@@ -157,7 +157,7 @@ class Notify
                         $sendto = htmlentities($sendto);
 
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id)";
-                        $sql .= " VALUES (now(), ".$action." ,".$obj->rowid." , '".$objet_type."', ".$objet_id.");";
+                        $sql.= " VALUES (".$this->db->idate(mktime()).", ".$action." ,".$obj->rowid." , '".$objet_type."', ".$objet_id.");";
                         if (! $this->db->query($sql) )
                         {
                             dolibarr_print_error($db);

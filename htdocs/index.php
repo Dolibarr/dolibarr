@@ -42,7 +42,6 @@ $infobox=new InfoBox($db);
 
 llxHeader();
 
-
 print_fiche_titre($langs->trans("HomeArea"));
 
 if (! empty($conf->global->MAIN_MOTD))

@@ -96,7 +96,7 @@ class Mailing
 
       $sql = "INSERT INTO ".$this->db_table;
       $sql .= " (date_creat, fk_user_creat)";
-      $sql .= " VALUES (now(), ".$user->id.")";
+      $sql .= " VALUES (".$this->db->idate(mktime()).", ".$user->id.")";
 
       if (! $this->titre)
 	{
@@ -229,8 +229,7 @@ class Mailing
       dolibarr_syslog("Mailing::Valid");
 
       $sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-      $sql .= " SET statut = 1, date_valid = now(), fk_user_valid=".$user->id;
-
+      $sql .= " SET statut = 1, date_valid = ".$this->db->idate(mktime()).", fk_user_valid=".$user->id;
       $sql .= " WHERE rowid = ".$this->id." AND statut = 0 ;";
 
       if ($this->db->query($sql) )
@@ -251,8 +250,7 @@ class Mailing
   function approve($user)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-      $sql .= " SET statut = 2, date_appro = now(), fk_user_appro=".$user->id;
-
+      $sql .= " SET statut = 2, date_appro = ".$this->db->idate(mktime()).", fk_user_appro=".$user->id;
       $sql .= " WHERE rowid = ".$this->id." AND statut = 1 ;";
 
       if ($this->db->query($sql) )

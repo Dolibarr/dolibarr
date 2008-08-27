@@ -170,7 +170,7 @@ class Osc_product
 //            $this->db->rollback();
 //            return -1;
 		}
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_product VALUES (".$oscid." ,  now() , ".$prodid.") ;";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_product VALUES (".$oscid.", ".$this->db->idate(mktime()).", ".$prodid.") ;";
 
 		$result=$this->db->query($sql);
         if ($result)

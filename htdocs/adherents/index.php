@@ -106,7 +106,7 @@ if ($result)
 # Liste les cotisants a jour
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
-$sql.= " WHERE d.statut = 1 AND d.datefin >= now()";
+$sql.= " WHERE d.statut = 1 AND d.datefin >= ".$db->idate(mktime());
 $sql.= " GROUP BY d.fk_adherent_type";
 
 $result = $db->query($sql);

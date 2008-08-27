@@ -212,7 +212,7 @@ class Osc_order
 //            $this->db->rollback();
 //            return -1;
 		}
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_order VALUES (".$osc_orderid." ,  now() , ".$doli_orderid.") ;";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_order VALUES (".$osc_orderid.", ".$this->db->idate(mktime()).", ".$doli_orderid.") ;";
 
 		$result=$this->db->query($sql);
         if ($result)

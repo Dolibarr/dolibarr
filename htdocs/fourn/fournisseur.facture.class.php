@@ -117,7 +117,7 @@ class FactureFournisseur extends Facture
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author, date_lim_reglement) ';
 		$sql .= " VALUES ('".addslashes($number)."','".addslashes($this->libelle)."',";
-		$sql .= $this->socid.", now(),'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
+		$sql .= $this->socid.", ".$this->db->idate(mktime()).",'".$this->db->idate($this->date)."','".addslashes($this->note)."', ".$user->id.",'".$this->db->idate($this->date_echeance)."');";
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

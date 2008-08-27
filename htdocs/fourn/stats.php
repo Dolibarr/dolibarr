@@ -85,7 +85,7 @@ if ($search_ville)
 {
   $sql .= " AND s.ville LIKE '%".$search_ville."%'";
 }
-$sql .= " AND ca.year > (date_format(now(),'%Y') - 5)";
+$sql .= " AND ca.year > (date_format(".$db->idate(mktime()).",'%Y') - 5)";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 

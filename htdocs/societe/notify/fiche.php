@@ -58,7 +58,7 @@ if ($_POST["action"] == 'add')
   if ($db->query($sql))
    {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
-      $sql .= " VALUES (now(),$socid,".$_POST["contactid"].",".$_POST["actionid"].")";
+      $sql .= " VALUES (".$db->idate(mktime()).",".$socid.",".$_POST["contactid"].",".$_POST["actionid"].")";
       
       if ($db->query($sql))
 	{
