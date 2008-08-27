@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auuguria.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,6 +96,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->code_client           = $_POST["code_client"];
 	$soc->code_fournisseur      = $_POST["code_fournisseur"];
 	$soc->capital               = $_POST["capital"];
+	$soc->gencod                = $_POST["gencod"];
 
 	$soc->tva_assuj             = $_POST["assujtva_value"];
 	$soc->tva_intra_code        = $_POST["tva_intra_code"];
@@ -318,6 +320,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		$soc->email=$_POST["email"];
 		$soc->url=$_POST["url"];
 		$soc->capital=$_POST["capital"];
+		$soc->gencod=$_POST["gencod"];
 		$soc->siren=$_POST["idprof1"];
 		$soc->siret=$_POST["idprof2"];
 		$soc->ape=$_POST["idprof3"];
@@ -452,6 +455,13 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 					print '</td></tr>';
 				}
 			}
+		}
+
+		if ($conf->global->MAIN_MODULE_BARCODE)
+		{
+			print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod">';
+			print $soc->gencod;
+			print '</textarea></td></tr>';		
 		}
 
 		print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
@@ -677,7 +687,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $soc->idprof4=$_POST["idprof4"];
             $soc->typent_id=$_POST["typent_id"];
             $soc->effectif_id=$_POST["effectif_id"];
-            
+            $soc->gencod=$_POST["gencod"];
             $soc->forme_juridique_code=$_POST["forme_juridique_code"];
             
 			$soc->tva_assuj = $_POST["assujtva_value"];
@@ -800,6 +810,12 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 	      }
 	  }
 
+		if ($conf->global->MAIN_MODULE_BARCODE)
+		{
+	        print '<tr><td valign="top">'.$langs->trans('Gencod').'</td><td colspan="3"><input type="text" name="gencod" value="'.$soc->gencod.'">';
+    	    print '</td></tr>';	  
+		}
+		
         print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
         print $soc->adresse;
         print '</textarea></td></tr>';
@@ -986,7 +1002,12 @@ else
         if ($soc->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td></tr>';
     }
-    
+
+	if ($conf->global->MAIN_MODULE_BARCODE)
+	{
+	    print '<tr><td>'.$langs->trans('Gencod').'</td><td colspan="3">'.$soc->gencod.'</td></tr>';
+    }
+     
     print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
 
     print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$soc->cp."</td>";

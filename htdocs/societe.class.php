@@ -5,6 +5,7 @@
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +58,7 @@ class Societe extends CommonObject
 	var $fax;
 	var $email;
 	var $url;
+	var $gencod;
 
 	// 4 identifiants professionnels (leur utilisation depend du pays)
 	var $siren;		// IdProf1
@@ -341,6 +343,9 @@ class Societe extends CommonObject
 
 		$this->effectif_id=trim($this->effectif_id);
 		$this->forme_juridique_code=trim($this->forme_juridique_code);
+		
+		//Gencod
+        $this->gencod=trim($this->gencod);
 
 		// Pour code client/fournisseur automatique
 		if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
@@ -390,6 +395,8 @@ class Societe extends CommonObject
 
 			$sql .= ",client = " . $this->client;
 			$sql .= ",fournisseur = " . $this->fournisseur;
+            $sql .= ",gencod = ".($this->gencod?"'".$this->gencod."'":"null");
+			
 
 			if ($allowmodcodeclient)
 			{
@@ -501,7 +508,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
-		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent';
+		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.gencod';
 		$sql .= ', s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
 		$sql .= ', s.fk_prospectlevel';
 		$sql .= ', fj.libelle as forme_juridique';
@@ -567,6 +574,8 @@ class Societe extends CommonObject
 
 				$this->code_compta = $obj->code_compta;
 				$this->code_compta_fournisseur = $obj->code_compta_fournisseur;
+
+				$this->gencod = $obj->gencod;
 
 				$this->tva_assuj      = $obj->tva_assuj;
 				$this->tva_intra      = $obj->tva_intra;
