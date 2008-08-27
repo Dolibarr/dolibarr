@@ -21,10 +21,10 @@
  */
 
 /**
- \file       htdocs/product/stock/product.php
- \ingroup    product
- \brief      Page de la fiche stock d'un produit
- \version    $Id$
+ *	\file       htdocs/product/stock/product.php
+ *	\ingroup    product
+ *	\brief      Page de la fiche stock d'un produit
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -178,33 +178,34 @@ if ($_GET["id"] || $_GET["ref"])
 			print '</td>';
 			print '</tr>';
 	
-			if ($product->stock_theorique != $product->stock_reel)
-			{
-				print '<tr><td>'.$langs->trans("StockDiffPhysicTeoric").'</td>';
-				print '<td>';
-				$found=0;
+			print '<tr><td>';
+			if ($product->stock_theorique != $product->stock_reel) print $langs->trans("StockDiffPhysicTeoric");
+			else print $langs->trans("RunningOrders");
+			print '</td>';
+			print '<td>';
+
+			$found=0;
 				
-				// Nbre de commande clients en cours
-				if ($conf->commande->enabled)
-				{
-					if ($found) print '<br>'; else $found=1;
-					print $langs->trans("CustomersOrdersRunning").': '.$stock_commande_client;
-					$result=$product->load_stats_commande(0,'0,1');
-					if ($result < 0) dolibarr_print_error($db,$product->error);
-					print ' ('.$langs->trans("DraftOrWaitingShipped").': '.$product->stats_commande['qty'].')';
-				}
-	
-				// Nbre de commande fournisseurs en cours
-				if ($conf->fournisseur->enabled)
-				{
-					if ($found) print '<br>'; else $found=1;
-					print $langs->trans("SuppliersOrdersRunning").': '.$stock_commande_fournisseur;
-					$result=$product->load_stats_commande_fournisseur(0,'0,1,2');
-					if ($result < 0) dolibarr_print_error($db,$product->error);
-					print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
-				}
-				print '</td></tr>';
+			// Nbre de commande clients en cours
+			if ($conf->commande->enabled)
+			{
+				if ($found) print '<br>'; else $found=1;
+				print $langs->trans("CustomersOrdersRunning").': '.$stock_commande_client;
+				$result=$product->load_stats_commande(0,'0,1');
+				if ($result < 0) dolibarr_print_error($db,$product->error);
+				print ' ('.$langs->trans("DraftOrWaitingShipped").': '.$product->stats_commande['qty'].')';
 			}
+
+			// Nbre de commande fournisseurs en cours
+			if ($conf->fournisseur->enabled)
+			{
+				if ($found) print '<br>'; else $found=1;
+				print $langs->trans("SuppliersOrdersRunning").': '.$stock_commande_fournisseur;
+				$result=$product->load_stats_commande_fournisseur(0,'0,1,2');
+				if ($result < 0) dolibarr_print_error($db,$product->error);
+				print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
+			}
+			print '</td></tr>';
 		}
 	
 		// Stock
