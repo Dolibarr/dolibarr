@@ -88,6 +88,8 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 		$product->price_base_type    = $_POST["price_base_type"];
 		if ($product->price_base_type == 'TTC') $product->price_ttc = $_POST["price"];
 		else $product->price = $_POST["price"];
+		if ($product->price_base_type == 'TTC') $product->price_min_ttc = $_POST["price_min"];
+		else $product->price_min = $_POST["price_min"];
 		$product->tva_tx             = $_POST["tva_tx"];
 		$product->type               = $_POST["type"];
 		$product->status             = $_POST["statut"];
@@ -687,6 +689,11 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 			print '</td></tr>';
 		}
 
+		// MIN PRICE
+		print '<tr><td>'.$langs->trans("MinPrice").'</td>';
+		print '<td><input name="price_min" size="10" value="'.$product->price_min.'">';
+		print '</td></tr>';
+		
 		// VAT
 		print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
 		print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
@@ -870,6 +877,18 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print '</td></tr>';
 			}
+			
+			// Prix mini
+			print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+			if ($product->price_base_type == 'TTC')
+			{
+				print price($product->price_min_ttc).' '.$langs->trans($product->price_base_type);
+			}
+			else
+			{
+				print price($product->price_min).' '.$langs->trans($product->price_base_type);
+			}
+			print '</td></tr>';
 
 			// TVA
 			print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($product->tva_tx,true).'</td></tr>';

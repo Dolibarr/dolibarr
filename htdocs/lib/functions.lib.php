@@ -1964,14 +1964,16 @@ function vatrate($rate,$addpercent=false,$info_bits=0)
  *		\param	    html			Type de formatage, html ou pas (par defaut)
  *		\param	    outlangs		Objet langs pour formatage text
  *		\param		trunc			1=Tronque affichage si trop de decimales,0=Force le non troncage
- *		\param		nbdecimal		Nbre decimals minimum.
+ *		\param		rounding		Nbre decimals minimum.
  *		\return		string			Chaine avec montant formate
  *		\seealso	price2num		Revert function of price
  */
-function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
+function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 {
 	global $langs,$conf;
 
+	$nbdecimal=$rounding;
+	
 	// Output separators by default (french)
 	$dec=','; $thousand=' ';
 
@@ -2019,7 +2021,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
 }
 
 /**
- *	\brief     		Fonction qui retourne un numerique conforme PHP et SQL, depuis un montant au
+ *	\brief     		Fonction qui retourne un numerique conforme SQL, depuis un montant au
  *					format utilisateur.
  *	\remarks   		Fonction a appeler sur montants saisis avant un insert en base
  *	\param	    	amount		Montant a formater
@@ -2030,28 +2032,33 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
  *	\return			string		Montant au format numerique PHP et SQL (Exemple: '99.99999')
  *	\seealso		price		Fonction inverse de price2num
  */
-function price2num($amount,$rounding='')
+function price2num($amount,$rounding='',$alreadysqlnb=-1)
 {
 	global $langs,$conf;
 
-	// Round PHP function does not allow number like '1,234.5'
+	// Round PHP function does not allow number like '1,234.5' nor '1.234,5' nor '1 234,5'
 	// Numbers must be '1234.5'
 	// Decimal delimiter for database SQL request must be '.'
 
 	$dec=','; $thousand=' ';
 	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
 	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
-	
-	if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
-	$amount=str_replace(' ','',$amount);	// To avoid spaces
-	$amount=str_replace($thousand,'',$amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
-	$amount=str_replace($dec,'.',$amount);
+
+	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
+	{
+		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
+		$amount=str_replace(' ','',$amount);	// To avoid spaces
+		$amount=str_replace($thousand,'',$amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
+		$amount=str_replace($dec,'.',$amount);
+	}
 	if ($rounding)
 	{
 		if ($rounding == 'MU')     $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_UNIT);
 		elseif ($rounding == 'MT') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_TOT);
 		elseif ($rounding == 'MS') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_SHOWN);
 		else $amount='ErrorBadParameterProvidedToFunction';
+		// Always make replace because each math function (like round) replace
+		// with local values and we want a number that has a SQL string format x.y
 		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
 		$amount=str_replace(' ','',$amount);	// To avoid spaces
 		$amount=str_replace($thousand,'',$amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
@@ -3059,4 +3066,59 @@ function dol_sort_array($array, $index, $order='asc', $natsort, $case_sensitive)
 	return $array;
 }
 
+/**
+ * 	\brief	Test if a folder is empty
+ * 	\return true is empty or non-existing, false if it contains files
+ */
+function is_emtpy_folder($folder){
+   if(is_dir($folder) ){
+       $handle = opendir($folder);
+       while( (gettype( $name = readdir($handle)) != "boolean")){
+               $name_array[] = $name;
+       }
+       foreach($name_array as $temp)
+           $folder_content .= $temp;
+
+       if($folder_content == "...")
+           return true;
+       else
+           return false;
+       
+       closedir($handle);
+   }
+   else
+       return true; // Le répertoire n'existe pas
+} 
+
+/**
+ * 	\brief	Return an html table from an array
+ */
+function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdoptions=''){
+	$text='' ;
+	if($tableMarkup) $text = '<table '.$tableoptions.'>' ;
+	foreach($data as $key => $item){
+		if(is_array($item)){
+			$text.=array2tr($item,$troptions,$tdoptions) ;
+		} else {
+			$text.= '<tr '.$troptions.'>' ;
+			$text.= '<td '.$tdoptions.'>'.$key.'</td>' ;
+			$text.= '<td '.$tdoptions.'>'.$item.'</td>' ;
+			$text.= '</tr>' ;
+		}
+	}
+	if($tableMarkup) $text.= '</table>' ;
+	return $text ;
+}
+
+/**
+ * 	\brief	Return lines of an html table from an array
+ */
+function array2tr($data,$troptions='',$tdoptions=''){
+	$text = '<tr '.$troptions.'>' ;
+	foreach($data as $key => $item){
+		$text.= '<td '.$tdoptions.'>'.$item.'</td>' ;
+	}
+	$text.= '</tr>' ;
+	return $text ;
+}
 ?>

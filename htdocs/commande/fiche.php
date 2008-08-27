@@ -360,33 +360,40 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		// Insert line
-		$result = $commande->addline(
-		$_POST['id'],
-		$desc,
-		$pu_ht,
-		$_POST['qty'],
-		$tva_tx,
-		$_POST['idprod'],
-		$_POST['remise_percent'],
-		$info_bits,
-			'',
-		$price_base_type,
-		$pu_ttc
-		);
-
-		if ($result > 0)
+		if($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
 		{
-			if ($_REQUEST['lang_id'])
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+			$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 		}
 		else
 		{
-			$mesg='<div class="error">'.$commande->error.'</div>';
+			// Insert line
+			$result = $commande->addline(
+			$_POST['id'],
+			$desc,
+			$pu_ht,
+			$_POST['qty'],
+			$tva_tx,
+			$_POST['idprod'],
+			$_POST['remise_percent'],
+			$info_bits,
+				'',
+			$price_base_type,
+			$pu_ttc
+			);
+	
+			if ($result > 0)
+			{
+				if ($_REQUEST['lang_id'])
+				{
+					$outputlangs = new Translate("",$conf);
+					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+				}
+				commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+			}
+			else
+			{
+				$mesg='<div class="error">'.$commande->error.'</div>';
+			}
 		}
 	}
 }
@@ -407,31 +414,37 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
 
-	$result = $commande->updateline($_POST['elrowid'],
-	$_POST['eldesc'],
-	$_POST['pu'],
-	$_POST['qty'],
-	$_POST['elremise_percent'],
-	$vat_rate,
-				  'HT',
-	$info_bits
-	);
-
-	if ($result >= 0)
+	if ($pruduct->price_min && ($_POST['productid']!='') && ( price2num($_POST['pu'])*(1-price2num($_POST['elremise_percent'])/100) < price2num($pruduct->price_min)))
 	{
-		if ($_REQUEST['lang_id'])
-		{
-	  $outputlangs = new Translate("",$conf);
-	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-		}
-		commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($pruduct->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 	}
 	else
 	{
-		dolibarr_print_error($db,$commande->error);
-		exit;
+		$result = $commande->updateline($_POST['elrowid'],
+		$_POST['eldesc'],
+		$_POST['pu'],
+		$_POST['qty'],
+		$_POST['elremise_percent'],
+		$vat_rate,
+					  'HT',
+		$info_bits
+		);
+	
+		if ($result >= 0)
+		{
+			if ($_REQUEST['lang_id'])
+			{
+		  $outputlangs = new Translate("",$conf);
+		  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			}
+			commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+		}
+		else
+		{
+			dolibarr_print_error($db,$commande->error);
+			exit;
+		}
 	}
-
 	$_GET['id']=$_POST['id'];   // Pour reaffichage de la fiche en cours d'edition
 }
 
@@ -1557,6 +1570,7 @@ else
 						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 						if ($objp->fk_product > 0)
 						{
+							print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');

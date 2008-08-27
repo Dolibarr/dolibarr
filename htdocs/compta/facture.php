@@ -877,23 +877,32 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		// Insert line
-		$result = $fac->addline(
-		$_POST['facid'],
-		$desc,
-		$pu_ht,
-		$_POST['qty'],
-		$tva_tx,
-		$_POST['idprod'],
-		$_POST['remise_percent'],
-		$date_start,
-		$date_end,
-		0,
-		$info_bits,
-				'',
-		$price_base_type,
-		$pu_ttc
-		);
+		
+		if($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
+		{
+			$fac->error = $langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)) ;
+			$result = -1 ;
+		}
+		else
+		{
+			// Insert line
+			$result = $fac->addline(
+			$_POST['facid'],
+			$desc,
+			$pu_ht,
+			$_POST['qty'],
+			$tva_tx,
+			$_POST['idprod'],
+			$_POST['remise_percent'],
+			$date_start,
+			$date_end,
+			0,
+			$info_bits,
+					'',
+			$price_base_type,
+			$pu_ttc
+			);
+		}
 	}
 
 	if ($result > 0)
@@ -935,25 +944,38 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
 
-	$result = $fac->updateline($_POST['rowid'],
-	$_POST['desc'],
-	$_POST['price'],
-	$_POST['qty'],
-	$_POST['remise_percent'],
-	$date_start,
-	$date_end,
-	$vat_rate,
-		'HT',
-	$info_bits
-	);
-
-	if ($_REQUEST['lang_id'])
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	// On vérifie que le prix minimum est respecté
+	if($_POST['productid']!=''){
+		$productid = $_POST['productid'] ;
+		$pruduct = new Product($db) ;
+		$pruduct->fetch($productid) ;
 	}
-	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
-
+	if($pruduct->price_min && ($_POST['productid']!='') && (price2num($_POST['price'])*(1-price2num($_POST['remise_percent'])/100) < price2num($pruduct->price_min)))
+	{
+		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($pruduct->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
+	}
+	else
+	{
+		$result = $fac->updateline($_POST['rowid'],
+		$_POST['desc'],
+		$_POST['price'],
+		$_POST['qty'],
+		$_POST['remise_percent'],
+		$date_start,
+		$date_end,
+		$vat_rate,
+			'HT',
+		$info_bits
+		);
+	
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+	}
+	
 	$_GET['facid']=$_POST['facid'];   // Pour réaffichage de la fiche en cours d'édition
 }
 
@@ -2582,6 +2604,7 @@ else
 						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 						if ($objp->fk_product > 0)
 						{
+							print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');

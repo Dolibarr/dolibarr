@@ -99,3 +99,4 @@ RulesVATIn=- Pour les services, le rapport inclut les TVA des réglements effecti
 RulesVATDue=- Pour les services, le rapport inclut les TVA des factures dues, payées ou non en se basant sur la date de validation de ces factures.<br>- Pour les biens matériels, il inclut les TVA des factures en se basant sur la date de validation de la facture.
 OptionVatInfoModuleComptabilite=Remarque : Pour les biens matériels, il faudrait utiliser la date de livraison pour être plus juste.
 PercentOfInvoice=%%/facture
+OrderStats=Statistiques sur les commandes

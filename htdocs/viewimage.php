@@ -276,7 +276,13 @@ if ($modulepart)
     	$accessallowed=1;
 		$original_file='';	// No files are built on disk
     }
-
+  	
+    // images des stats du commercial
+    elseif ($modulepart == 'graph_comm')
+    {
+    	$accessallowed=1;
+		$original_file= $conf->commercial->dir_temp . '/' .$original_file ;	// No files are built on disk
+    }
     // Wrapping generique (allows any module to open a file if file is in directory
     // called DOL_DATA_ROOT/modulepart.
     else

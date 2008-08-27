@@ -262,7 +262,7 @@ print "</td>";
 print '</tr>';
 print '</form>';
 
-// Utilisation de l'�cotaxe
+// Utilisation de l'ecotaxe
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"useecotaxe\">";

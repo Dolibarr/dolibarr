@@ -50,6 +50,8 @@ class Product extends CommonObject
 	//! Prix de vente
 	var $price;				// Price without tax
 	var $price_ttc;			// Price with tax
+	var $price_min;
+	var $price_min_ttc;
 	//! Base de prix (ttc ou ht)
 	var $price_base_type;
 	//! Tableau des prix multiples
@@ -155,6 +157,7 @@ class Product extends CommonObject
 	 */
 	function create($user)
 	{
+		global $conf ;
 		$this->errno = 0;
 
 		// Clean parameters
@@ -162,10 +165,13 @@ class Product extends CommonObject
 		$this->libelle = trim($this->libelle);
 		if ($this->tva_tx=='') $this->tva_tx = 0;
 		if ($this->price=='')  $this->price = 0;
+		if ($this->price_min=='')  $this->price_min = 0;
 		if ($this->status=='') $this->status = 0;
 
 		$price_ht=0;
 		$price_ttc=0;
+		$price_min_ht=0;
+		$price_min_ttc=0;
 		if ($this->price_base_type == 'TTC' && $this->price_ttc > 0)
 		{
 			$price_ttc = price2num($this->price_ttc,'MU');
@@ -175,6 +181,17 @@ class Product extends CommonObject
 		{
 			$price_ht = price2num($this->price,'MU');
 			$price_ttc = price2num($this->price * (1 + ($this->tva_tx / 100)),'MU');
+		}
+		
+		if (($this->price_min_ttc > 0)&&($this->price_base_type == 'TTC'))
+		{
+			$price_min_ttc = price2num($this->price_min_ttc,'MU');
+			$price_min_ht = price2num($this->price_min_ttc / (1 + ($this->tva_tx / 100)),'MU');
+		}
+		if (($this->price_min > 0)&&($this->price_base_type != 'TTC'))
+		{
+			$price_min_ht = price2num($this->price_min,'MU');
+			$price_min_ttc = price2num($this->price_min * (1 + ($this->tva_tx / 100)),'MU');
 		}
 
 		// Check parameters
@@ -203,10 +220,13 @@ class Product extends CommonObject
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product";
 					$sql.= " (datec, ";
 					if ($this->ref) $sql.= "ref, ";
+ 					$sql.= "price_min, price_min_ttc, ";
 					$sql.= "label, ";
 					$sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas)";
 					$sql.= " VALUES (".$this->db->idate(mktime()).", ";
 					if ($this->ref) $sql.= "'".$this->ref."',";
+ 					$sql.= price2num($price_min_ht).",";
+ 					$sql.= price2num($price_min_ttc).",";
 					$sql.= " ".($this->libelle?"'".addslashes($this->libelle)."'":"null").",";
 					$sql.= $user->id.",";
 					$sql.= " ".$this->type.",";
@@ -226,7 +246,9 @@ class Product extends CommonObject
 							$this->id = $id;
 							$this->price     = $price_ht;
 							$this->price_ttc = $price_ttc;
-
+							$this->price_min     = $price_min_ht;
+							$this->price_min_ttc = $price_min_ttc;
+							
 							$result = $this->_log_price($user);
 							if ($result > 0)
 							{
@@ -487,6 +509,10 @@ class Product extends CommonObject
 				$sqlb = "DELETE from ".MAIN_DB_PREFIX."product_price";
 				$sqlb.= " WHERE fk_product = ".$id;
 				$resultb = $this->db->query($sqlb);
+				
+				$sqlb = "DELETE from ".MAIN_DB_PREFIX."product_price_min";
+				$sqlb.= " WHERE fk_product = ".$id;
+				$resultb = $this->db->query($sqlb);
 
 				$sqlc = "DELETE from ".MAIN_DB_PREFIX."product_det";
 				$sqlc.= " WHERE fk_product = ".$id;
@@ -655,9 +681,10 @@ class Product extends CommonObject
 			if (strlen(trim($this->price)) > 0 )
 			{
 				// On ajoute nouveau tarif
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx) ";
-				$sql .= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
-				$sql .= ")";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx,price_min,price_min_ttc) ";
+				$sql.= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
+				$sql.= ",".$this->price_min.",".$this->price_min_ttc;
+				$sql.= ")";
 				if (! $this->db->query($sql) )
 				$queryError = true;
 			}
@@ -671,22 +698,28 @@ class Product extends CommonObject
 		}
 		else
 		{
+			$queryError = false;
+			
 			// On ajoute nouveau tarif
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx) ";
-			$sql .= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
-			$sql .= ")";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx,price_min,price_min_ttc) ";
+			$sql.= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
+			$sql.= ",".$this->price_min.",".$this->price_min_ttc;
+			$sql.= ")";
 
 			dolibarr_syslog("Product::_log_price sql=".$sql);
 			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				return 1;
-			}
-			else
+			if (!$resql)
+					$queryError = true;
+					
+			if($queryError)
 			{
 				dolibarr_print_error($this->db);
 				return -1;
 			}
+			else
+			return 1;
+			
+			
 		}
 	}
 
@@ -777,7 +810,7 @@ class Product extends CommonObject
 	 *	\param  	newvat			New VAT Rate
 	 * 	\return		int				<0 if KO, >0 if OK
 	 */
-	function update_price($id, $newprice, $newpricebase, $user, $newvat='')
+	function update_price($id, $newprice, $newpricebase, $user, $newvat='',$newminprice='')
 	{
 		//multiprix
 		global $conf,$langs;
@@ -792,12 +825,24 @@ class Product extends CommonObject
 				$price_ttc = price2num($newprice,'MU');
 				$price = price2num($newprice) / (1 + ($newvat / 100));
 				$price = price2num($price,'MU');
+				
+				if($newminprice!=''){
+					$price_min_ttc = price2num($newminprice,'MU');
+					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
+					$price_min = price2num($price_min,'MU');
+				}
 			}
 			else
 			{
 				$price = price2num($newprice,'MU');
 				$price_ttc = price2num($newprice) * (1 + ($newvat / 100));
 				$price_ttc = price2num($price_ttc,'MU');
+				
+				if($newminprice!=''){
+					$price_min = price2num($newminprice,'MU');
+					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
+					$price_min_ttc = price2num($price_min_ttc,'MU');
+				}
 			}
 
 			// Ne pas mettre de quote sur le num�riques decimaux.
@@ -806,6 +851,8 @@ class Product extends CommonObject
 			$sql.= " price_base_type='".$newpricebase."',";
 			$sql.= " price=".$price.",";
 			$sql.= " price_ttc=".$price_ttc.",";
+			$sql.= " price_min=".$price_min.",";
+			$sql.= " price_min_ttc=".$price_min_ttc.",";	
 			$sql.= " tva_tx='".price2num($newvat)."'";
 			$sql.= " WHERE rowid = " . $id;
 
@@ -815,6 +862,8 @@ class Product extends CommonObject
 			{
 				$this->price = $price;
 				$this->price_ttc = $price_ttc;
+				$this->price_min = $price_min;
+				$this->price_min_ttc = $price_min_ttc;
 				$this->price_base_type = $newpricebase;
 				$this->tva_tx = $newvat;
 
@@ -861,7 +910,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc, price_base_type, tva_tx, envente,";
+		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc, price_min, price_min_ttc, price_base_type, tva_tx, envente,";
 		$sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte,canvas,";
 		$sql.= " stock_commande, stock_loc, weight, weight_units, volume, volume_units, barcode, fk_barcode_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -881,6 +930,8 @@ class Product extends CommonObject
 			$this->note               = $result["note"];
 			$this->price              = $result["price"];
 			$this->price_ttc          = $result["price_ttc"];
+			$this->price_min          = $result["price_min"];
+			$this->price_min_ttc      = $result["price_min_ttc"];
 			$this->price_base_type    = $result["price_base_type"];
 			$this->tva_tx             = $result["tva_tx"];
 			$this->type               = $result["fk_product_type"];

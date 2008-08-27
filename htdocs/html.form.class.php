@@ -1086,25 +1086,25 @@ class Form
 					if ($objp2)
 					{
 					  if ($objp2->price_base_type == 'HT')
-						  $opt.= price2num($objp2->price,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+						  $opt.= price($objp2->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
 					  else
-						  $opt.= price2num($objp2->price_ttc,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+						  $opt.= price($objp2->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
 					}
 					//si il n'y a pas de prix multiple on prend le prix de base du produit/service
 					else
 					{
 						if ($objp->price_base_type == 'HT')
-						  $opt.= price2num($objp->price,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+						  $opt.= price($objp->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
 					  else
-						  $opt.= price2num($objp->price_ttc,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+						  $opt.= price($objp->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
 				  }
 				}
 				else
 				{
 					if ($objp->price_base_type == 'HT')
-						$opt.= price2num($objp->price,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+						$opt.= price($objp->price,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
 					else
-						$opt.= price2num($objp->price_ttc,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+						$opt.= price($objp->price_ttc,1).' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
 				}
 				
 				if ($objp->duration)

@@ -26,6 +26,8 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/report.lib.php");
 
+if (!$user->rights->compta->resultat->lire)
+  accessforbidden();
 
 $year=$_GET["year"];
 if (! $year) { $year = strftime("%Y", time()); }
@@ -75,8 +77,8 @@ $catotal=0;
 if ($modecompta == 'CREANCES-DETTES')
 {
     $sql = "SELECT u.rowid as rowid, u.name as name, u.firstname as firstname, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."user as u,".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE f.fk_statut in (1,2) AND f.fk_user_author = u.rowid";
+    $sql .= " FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
+    $sql .= " WHERE f.fk_statut in (1,2) ";
     if ($year) $sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
 else
@@ -86,9 +88,12 @@ else
      * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
      */
 	$sql = "SELECT u.rowid as rowid, u.name as name, u.firstname as firstname, sum(pf.amount) as amount_ttc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-    $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_user_author = u.rowid";
-    if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+	$sql .= " FROM ".MAIN_DB_PREFIX."user as u" ;
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid ";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_facture = f.rowid";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.rowid = pf.fk_paiement";
+	if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
+    
 }
 if ($socid) $sql .= " AND f.fk_soc = $socid";
 $sql .= " GROUP BY rowid";
@@ -149,6 +154,7 @@ print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"name","",'&amp;year='.($year).'&modecompta='.$modecompta,"",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Percentage"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("OrderStats"),$_SERVER["PHP_SELF"],"","","",'align="center" width="20%"');
 print "</tr>\n";
 $var=true;
 
@@ -189,6 +195,12 @@ if (sizeof($amount))
         print "<td>".$linkname."</td>\n";
         print '<td align="right">'.price($amount[$key]).'</td>';
         print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal,2).'%' : '&nbsp;').'</td>';
+        if($key>0){
+        	print '<td align="center"><a href="comm.php?id='.$key.'">'.img_picto($langs->trans("Show"),"vcard").'</a></td>';
+        } else {
+        	print '<td> &nbsp; </td>' ;
+        }
+        	
         print "</tr>\n";
         $i++;
     }

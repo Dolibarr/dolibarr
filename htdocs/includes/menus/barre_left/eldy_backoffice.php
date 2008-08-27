@@ -356,7 +356,9 @@ class MenuLeft {
 					if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/fichinter/fiche.php?action=create&leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer);
 					if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("List"), 1 ,$user->rights->ficheinter->lire);
 				}
-
+				
+				// Statistiques de vente
+				$newmenu->add(DOL_URL_ROOT."/comm/stats.php", $langs->trans("Stats"), 0 ,1);
 			}
 
 

@@ -29,6 +29,8 @@ create table llx_product
   note               text,
   price              double(24,8) DEFAULT 0,
   price_ttc          double(24,8) DEFAULT 0,
+  price_min          double(24,8) DEFAULT 0,
+  price_min_ttc      double(24,8) DEFAULT 0,
   price_base_type    varchar(3)   DEFAULT 'HT',
   tva_tx             double(6,3),
   fk_user_author     integer,
@@ -49,3 +51,4 @@ create table llx_product
   volume_units       tinyint      DEFAULT NULL,
   canvas             varchar(15)  DEFAULT ''
 )type=innodb;
+

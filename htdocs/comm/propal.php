@@ -615,32 +615,39 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		// Insert line
-		$result=$propal->addline(
-		$_POST['propalid'],
-		$desc,
-		$pu_ht,
-		$_POST['qty'],
-		$tva_tx,
-		$_POST['idprod'],
-		$_POST['remise_percent'],
-		$price_base_type,
-		$pu_ttc,
-		$info_bits
-		);
-
-		if ($result > 0)
+		if ($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
 		{
-			if ($_REQUEST['lang_id'])
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+			$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 		}
 		else
 		{
-			$mesg='<div class="error">'.$propal->error.'</div>';
+			// Insert line
+			$result=$propal->addline(
+			$_POST['propalid'],
+			$desc,
+			$pu_ht,
+			$_POST['qty'],
+			$tva_tx,
+			$_POST['idprod'],
+			$_POST['remise_percent'],
+			$price_base_type,
+			$pu_ttc,
+			$info_bits
+			);
+	
+			if ($result > 0)
+			{
+				if ($_REQUEST['lang_id'])
+				{
+					$outputlangs = new Translate("",$conf);
+					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+				}
+				propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+			}
+			else
+			{
+				$mesg='<div class="error">'.$propal->error.'</div>';
+			}
 		}
 
 	}
@@ -662,21 +669,32 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 	$vat_rate=$_POST['tva_tx'];
 	$vat_rate=eregi_replace('\*','',$vat_rate);
 
-	$result = $propal->updateline($_POST['lineid'],
-	$_POST['subprice'],
-	$_POST['qty'],
-	$_POST['remise_percent'],
-	$vat_rate,
-	$_POST['desc'],
-		'HT',
-	$info_bits);
-
-	if ($_REQUEST['lang_id'])
+	// On vérifie que le prix minimum est respecté
+	$productid = $_POST['productid'] ;
+	$pruduct = new Product($db) ;
+	$pruduct->fetch($productid) ;
+	if ($pruduct->price_min && ($_POST['productid']!='')&&( price2num($_POST['subprice'])*(1-price2num($_POST['remise_percent'])/100) < price2num($pruduct->price_min)))
 	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($pruduct->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 	}
-	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	else
+	{
+		$result = $propal->updateline($_POST['lineid'],
+		$_POST['subprice'],
+		$_POST['qty'],
+		$_POST['remise_percent'],
+		$vat_rate,
+		$_POST['desc'],
+			'HT',
+		$info_bits);
+	
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	}
 }
 
 /*
@@ -1381,6 +1399,7 @@ if ($_GET['propalid'] > 0)
 				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 				if ($objp->fk_product > 0)
 				{
+					print '<input type="hidden" name="productid" value="'.$objp->fk_product.'">';
 					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 					if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
 					else print img_object($langs->trans('ShowProduct'),'product');

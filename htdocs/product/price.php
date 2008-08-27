@@ -91,7 +91,10 @@ if ($_POST["action"] == 'update_price' &&
 		$newvat=$_POST["tva_tx"];
 	}
 	
-	if ($product->update_price($product->id, $newprice, $newpricebase, $user, $newvat) > 0)
+	$newprice_min = '' ;
+	$newprice_min = price2num($_POST["price_min"],'MU');
+	
+	if ($product->update_price($product->id, $newprice, $newpricebase, $user, $newvat,$newprice_min) > 0)
 	{
 		$_GET["action"] = '';
 		$mesg = $langs->trans("RecordSaved");
@@ -175,6 +178,18 @@ else
 	}
 }
 
+// Prix minimum
+print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
+if ($product->price_base_type == 'TTC')
+{
+	print price($product->price_min_ttc).' '.$langs->trans($product->price_base_type);
+}
+else
+{
+	print price($product->price_min).' '.$langs->trans($product->price_base_type);
+}
+print '</td></tr>';
+
 // TVA
 print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">'.vatrate($product->tva_tx,true).'</td></tr>';
 
@@ -237,9 +252,23 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 		{
 			print '<td><input name="price" size="10" value="'.price($product->price).'">';
 		}
+		
+    	print '<tr><td>' ;
+    	$text=$langs->trans('MinPrice') ;
+    	print $html->textwithhelp($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
+		if ($product->price_base_type == 'TTC')
+		{
+			print '<td><input name="price_min" size="10" value="'.price($product->price_min_ttc).'">';
+		}
+		else
+		{
+			print '<td><input name="price_min" size="10" value="'.price($product->price_min).'">';
+		}
+		print '</td>';
+    
 		print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
 		print '</td></tr>';
-
+		
 		// VAT
 		print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
 		print $html->select_tva("tva_tx",$product->tva_tx,$mysoc,'');
@@ -275,6 +304,19 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	      print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
 	      print '</td>';
 
+    	print '<tr><td>' ;
+    	$text=$langs->trans('MinPrice') ;
+    	print $html->textwithhelp($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
+		if ($product->price_base_type == 'TTC')
+		{
+			print '<td><input name="price_min" size="10" value="'.price($product->price_min_ttc).'">';
+		}
+		else
+		{
+			print '<td><input name="price_min" size="10" value="'.price($product->price_min).'">';
+		}
+		print '</td>';
+	    
 	    // VAT
 		print '<td width="20%">'.$langs->trans("VATRate").'</td><td>';
 		print $html->select_tva("tva_tx_".$i,$product->multiprices_tva_tx["$i"],$mysoc,'');
@@ -286,7 +328,6 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	      print '</form>';
 	    }
     }
-  
 }
 
 
@@ -304,9 +345,10 @@ if($conf->global->PRODUIT_MULTIPRICES)
 else
 {
   $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, p.tva_tx,";
+  $sql.= " p.price_min, p.price_min_ttc,";
   $sql.= " ".$db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
-  $sql.= " FROM ".MAIN_DB_PREFIX."product_price as p, ".MAIN_DB_PREFIX."user as u";
-  $sql.= " WHERE fk_product = ".$product->id;
+  $sql.= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."product_price as p ";
+  $sql.= " WHERE p.fk_product = ".$product->id;
   $sql.= " AND p.fk_user_author = u.rowid";
   $sql.= " ORDER BY p.date_price DESC";
 }
@@ -323,7 +365,7 @@ if ($result)
 
         // Il doit au moins y avoir la ligne de prix initial.
         // On l'ajoute donc pour remettre à niveau (pb vieilles versions)
-        $product->update_price($product->id, $product->price, 'HT' ,$user);
+        $product->update_price($product->id, $product->price, 'HT' ,$user,$newprice_min);
 
         $result = $db->query($sql) ;
         $num = $db->num_rows($result);
@@ -347,6 +389,8 @@ if ($result)
 		print '<td align="right">'.$langs->trans("VAT").'</td>';
         print '<td align="right">'.$langs->trans("HT").'</td>';
         print '<td align="right">'.$langs->trans("TTC").'</td>';
+        print '<td align="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
+        print '<td align="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
         print '<td align="right">'.$langs->trans("ChangedBy").'</td>';
         print '</tr>';
 
@@ -370,6 +414,8 @@ if ($result)
 			print '<td align="right">'.vatrate($objp->tva_tx,true)."</td>";
 			print '<td align="right">'.price($objp->price)."</td>";
 			print '<td align="right">'.price($objp->price_ttc)."</td>";
+	        print '<td align="right">'.price($objp->price_min).'</td>';
+	        print '<td align="right">'.price($objp->price_min_ttc).'</td>';
 
 			// User
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';

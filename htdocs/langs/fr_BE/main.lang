@@ -1,7 +1,7 @@
 # Dolibarr language file - fr_BE - main=
 charset=iso-8859-15
 SeparatorDecimal=,
-SeparatorThousand=.
+SeparatorThousand=
 Error=Erreur
 ErrorFieldRequired=Le champ '%s' est obligatoire
 ErrorFieldFormat=Le champ '%s' a une valeur erronée
