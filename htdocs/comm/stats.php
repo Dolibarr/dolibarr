@@ -28,14 +28,20 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
+
+/*
+ * View
+ */
+
 llxHeader('',"Stats");
+
 
 /**************
  * Paramètrage
  *************/
 // Dossier où générer les fichiers
 $dir = $conf->commercial->dir_temp . '/' .$user->id ;
-if(!is_dir($dir)) mkdir($dir,0777,true) ;
+create_exdir($dir);
 
 // graphes 
 $graphwidth = 380 ;
@@ -65,8 +71,8 @@ $sql = "SELECT sum(d.qty * d.price) as CAMois, sum( d.qty * (d.price - p.price_m
 $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as d, ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE c.rowid = d.fk_commande and d.fk_product = p.rowid";
 $sql .= " AND c.fk_user_author = ".$user->id;
-$sql .= " AND c.date_valid > ".$db->idate($date_debut)." AND c.date_valid < NOW()";
-$sql .= " GROUP BY date_format(c.date_valid,'%Y%m') ASC ;";
+$sql .= " AND c.date_valid > ".$db->idate($date_debut)." AND c.date_valid <= ".$db->idate(mktime());
+$sql .= " GROUP BY date_format(c.date_valid,'%Y%m') ASC";
 
 $result = $db->query($sql) ;
 
@@ -87,7 +93,7 @@ if($result){
 			}
 		}
 	} else {
-		$mesg = 'Aucune enregistrmeent retourné pour <br>' ; 
+		$mesg = 'Aucune enregistrement retourné' ; 
 	}
 } else {
 	$mesg = 'erreur sql : '.$db->error().'<br> requète : '.$db->lastquery().'<br>' ; 
@@ -185,7 +191,7 @@ foreach($graphfiles as $graph){
 	$generateOn = (file_exists($dir."/".$graph['file']))? $langs->trans("GeneratedOn",dolibarr_print_date(filemtime($dir."/".$graph['file']),"dayhour")) : "" ;
 	
 	// html
-	print '<table class="border" style="float:left;margin:5px;width:48%;min-width:470px;">
+	print '<table class="border" style="float:left;margin:5px;width:48%;min-width:400px;">
 	<tr class="liste_titre">
 		<td colspan="2">'.$graph['label'].'</td>
 	</tr>
