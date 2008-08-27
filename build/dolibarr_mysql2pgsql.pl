@@ -164,10 +164,11 @@ foreach my $file (keys %filelist) {
     			&output_create;
     			&reset_vars();
     		  next;
-            # LDR Added innodb
+            # LDR Added "innodb" and "engine"
     		}
     		elsif (/(ISAM|innodb)/i) { # end of create table sequence
-    			s/\) *Type=(MyISAM|innodb);/);/i;  
+    			s/\) *type=(MyISAM|innodb);/);/i;  
+    			s/\) *engine=(MyISAM|innodb);/);/i;  
     			$create_sql =~ s/,$//g;	# strip last , inside create table
     			$create_sql .= $_;
     			&output_create;
