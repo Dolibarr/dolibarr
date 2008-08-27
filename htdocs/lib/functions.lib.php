@@ -2042,20 +2042,20 @@ function price2num($amount,$rounding='')
 	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
 	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
 	
-	if ($thousand != ',') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
+	if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
 	$amount=str_replace(' ','',$amount);	// To avoid spaces
+	$amount=str_replace($thousand,'',$amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
 	$amount=str_replace($dec,'.',$amount);
-	$amount=str_replace($thousand,'',$amount);
 	if ($rounding)
 	{
 		if ($rounding == 'MU')     $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_UNIT);
 		elseif ($rounding == 'MT') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_TOT);
 		elseif ($rounding == 'MS') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_SHOWN);
 		else $amount='ErrorBadParameterProvidedToFunction';
-		if ($thousand != ',') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
+		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
 		$amount=str_replace(' ','',$amount);	// To avoid spaces
+		$amount=str_replace($thousand,'',$amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount=str_replace($dec,'.',$amount);
-		$amount=str_replace($thousand,'',$amount);
 	}
 	return $amount;
 }
