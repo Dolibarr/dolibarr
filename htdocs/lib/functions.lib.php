@@ -2238,13 +2238,13 @@ function get_exdir($num,$level=3)
 }
 
 /**
- \brief      Cr�ation de r�pertoire recursive
- \param      $dir        R�pertoire a cr�er
- \return     int         < 0 si erreur, >= 0 si succ�s
+ *	\brief      Creation of a directory (recursive)
+ *	\param      $dir        Directory to create
+ *	\return     int         < 0 if KO, >= 0 if OK
  */
 function create_exdir($dir)
 {
-	dolibarr_syslog("functions.lib.php::create_exdir: dir=$dir",LOG_INFO);
+	dolibarr_syslog("functions.lib.php::create_exdir: dir=".$dir,LOG_INFO);
 
 	if (@is_dir($dir)) return 0;
 
@@ -2259,7 +2259,7 @@ function create_exdir($dir)
 		else $ccdir = $cdir[$i];
 		if (eregi("^.:$",$ccdir,$regs)) continue;	// Si chemin Windows incomplet, on poursuit par rep suivant
 
-		// Attention, le is_dir() peut �chouer bien que le rep existe.
+		// Attention, le is_dir() peut echouer bien que le rep existe.
 		// (ex selon config de open_basedir)
 		if ($ccdir)
 		{
@@ -2270,20 +2270,20 @@ function create_exdir($dir)
 		  umask(0);
 		  if (! @mkdir($ccdir, 0755))
 		  {
-		  	// Si le is_dir a renvoy� une fausse info, alors on passe ici.
+		  	// Si le is_dir a renvoye une fausse info, alors on passe ici.
 		  	dolibarr_syslog("functions.lib.php::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
 		  	$nberr++;
 		  }
 		  else
 		  {
 		  	dolibarr_syslog("functions.lib.php::create_exdir: Directory '".$ccdir."' created",LOG_DEBUG);
-		  	$nberr=0;	// On remet a z�ro car si on arrive ici, cela veut dire que les �checs pr�c�dents peuvent etre ignor�s
+		  	$nberr=0;	// On remet a zero car si on arrive ici, cela veut dire que les �checs pr�c�dents peuvent etre ignor�s
 		  	$nbcreated++;
 		  }
 			}
 			else
 			{
-				$nberr=0;	// On remet a z�ro car si on arrive ici, cela veut dire que les �checs pr�c�dents peuvent etre ignor�s
+				$nberr=0;	// On remet a zero car si on arrive ici, cela veut dire que les �checs pr�c�dents peuvent etre ignor�s
 			}
 		}
 	}

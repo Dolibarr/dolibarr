@@ -42,6 +42,8 @@ $result = restrictedArea($user, 'facture',$facid,'');
  * View
  */
 
+$diroutputpdf=$conf->facture->dir_output . '/impayes/temp';
+
 llxHeader('',$langs->trans("BillsLate"));
 
 $html = new Form($db);
@@ -103,10 +105,10 @@ if ($user->rights->facture->lire)
 			}
 			
 			// vérifie que le chemin d'accès est bien accessible
-			create_exdir($conf->facture->dir_output . '/impayes');
+			create_exdir($diroutputpdf);
 			
 			// enregistre le fichier pdf concaténé
-			$pdf->Output($conf->facture->dir_output . '/impayes/impayes'.dolibarr_date('YmdHis',time()).'.pdf');
+			$pdf->Output($diroutputpdf.'/impayes'.dolibarr_date('YmdHis',time()).'.pdf');
 			
 		} else {
 			print '<div class="error">'.$langs->trans('UnpayedNotChecked').'</div>' ;
@@ -309,7 +311,7 @@ if ($user->rights->facture->lire)
 		/*
 		 * Gestion des documents générés
 		 */
-		$filedir=$conf->facture->dir_output . '/impayes';
+		$filedir=$diroutputpdf;
 		$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
 		$genallowed=$user->rights->facture->creer;
 		$delallowed=$user->rights->facture->supprimer;
