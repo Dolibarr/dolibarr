@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Océbo <marc@ocebo.com>
  *
@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/install/check.php
-        \ingroup    install
-        \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
-        \version    $Id$
-*/
+ \file       htdocs/install/check.php
+ \ingroup    install
+ \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
+ \version    $Id$
+ */
 include_once("./inc.php");
 
 $err = 0;
@@ -44,8 +44,8 @@ dolibarr_install_syslog("check: Dolibarr install/upgrade process started");
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 pHeader($langs->trans("DolibarrWelcome"),"");   // Etape suivante = license
 
@@ -61,12 +61,12 @@ print '<b>'.$langs->trans("MiscellanousChecks")."</b>:<br>\n";
 // Check PHP version
 if (versioncompare(versionphparray(),array(4,1)) < 0)
 {
-    print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.1');
-    $checksok=0;
+	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.1');
+	$checksok=0;
 }
 else
 {
-    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphparray());
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphparray());
 }
 if (empty($force_install_nophpinfo)) print ' (<a href="phpinfo.php" target="_blank">'.$langs->trans("MoreInformation").'</a>)';
 print "<br>\n";
@@ -78,35 +78,35 @@ if (! isset($_GET["testget"]) && ! isset($_POST["testpost"]))
 	print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
 	print "<br>\n";
-    $checksok=0;
+	$checksok=0;
 }
 else
 {
-    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk")."<br>\n";
 }
 
 
 // Check if sessions enabled
 if (! function_exists("session_id"))
 {
-    print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
-    $checksok=0;
+	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
+	$checksok=0;
 }
 else
 {
-    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportSessions")."<br>\n";
-/*
-	// On se fout des warning sur session_start, meme si pas moyen de mettre cookie dans http, car on ne test pas entre 2 pages mais au sein de la meme 
-	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> Test sauvegarde donnée en session.'."<br>\n";;
-	@session_start();		
-	$_SESSION['test']=1;
-	session_write_close();
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportSessions")."<br>\n";
+	/*
+	 // On se fout des warning sur session_start, meme si pas moyen de mettre cookie dans http, car on ne test pas entre 2 pages mais au sein de la meme
+	 print '<img src="../theme/eldy/img/tick.png" alt="Ok"> Test sauvegarde donnée en session.'."<br>\n";;
+	 @session_start();
+	 $_SESSION['test']=1;
+	 session_write_close();
 
-	@session_start();
-    if (! $_SESSION['test']) print '<img src="../theme/eldy/img/error.png" alt="Error"> Echec récupération donnée en session. Votre PHP ne fonctionne pas correctement. Votre répertoire de sauvegarde des sessions est peut-être plein.'."<br>\n";
-	else print '<img src="../theme/eldy/img/tick.png" alt="Ok"> Succès récupération donnée en session.'."<br>\n";
-	session_write_close();
-*/
+	 @session_start();
+	 if (! $_SESSION['test']) print '<img src="../theme/eldy/img/error.png" alt="Error"> Echec récupération donnée en session. Votre PHP ne fonctionne pas correctement. Votre répertoire de sauvegarde des sessions est peut-être plein.'."<br>\n";
+	 else print '<img src="../theme/eldy/img/tick.png" alt="Ok"> Succès récupération donnée en session.'."<br>\n";
+	 session_write_close();
+	 */
 }
 
 
@@ -114,12 +114,12 @@ else
 if (! function_exists("imagecreate"))
 {
 	$langs->load("errors");
-    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
-    // $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
+	// $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
 }
 else
 {
-    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportGD")."<br>\n";
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportGD")."<br>\n";
 }
 
 
@@ -138,11 +138,11 @@ if ($memmaxorig != '')
 	}
 	if ($memmax >= $memrequired)
 	{
-	    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK",$memmaxorig,$memrequiredorig)."<br>\n";
+		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK",$memmaxorig,$memrequiredorig)."<br>\n";
 	}
 	else
-	{ 
-	    print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPMemoryTooLow",$memmaxorig,$memrequiredorig)."<br>\n";
+	{
+		print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPMemoryTooLow",$memmaxorig,$memrequiredorig)."<br>\n";
 	}
 }
 
@@ -152,18 +152,18 @@ clearstatcache();
 if (is_readable($conffile) && filesize($conffile) > 8)
 {
 	dolibarr_install_syslog("check: conf file '$conffile' already exists");
-    $confexists=1;
-    include_once($conffile);
-    
-    // Deja installé, on peut upgrader
-    // \todo Test if database ok
-    $allowupgrade=1;
+	$confexists=1;
+	include_once($conffile);
+
+	// Deja installé, on peut upgrader
+	// \todo Test if database ok
+	$allowupgrade=1;
 }
 else
 {
-    // Si non on le crée        
+	// Si non on le crée 
 	dolibarr_install_syslog("check: we try to creat conf file '$conffile'");
-    $confexists=0;
+	$confexists=0;
 
 	# First we try by copying example
 	if (@copy($conffile.".example", $conffile))
@@ -184,10 +184,10 @@ else
 			@fputs($fp,"?>");
 			fclose($fp);
 		}
-    }
+	}
 
-    // First install, on ne peut pas upgrader
-    $allowupgrade=0;
+	// First install, on ne peut pas upgrader
+	$allowupgrade=0;
 }
 
 
@@ -195,128 +195,100 @@ else
 // Si fichier absent et n'a pu etre créé
 if (! file_exists($conffile))
 {
-    //print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffile);
-    print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",'conf.php');
-    print "<br /><br />";
-    print $langs->trans("YouMustCreateWithPermission",'htdocs/conf/conf.php');
-    print "<br /><br />";
-    
-    print $langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok');
-    $err++;
+	//print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffile);
+	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",'conf.php');
+	print "<br /><br />";
+	print $langs->trans("YouMustCreateWithPermission",'htdocs/conf/conf.php');
+	print "<br /><br />";
+
+	print $langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok');
+	$err++;
 }
 else
 {
-    // Si fichier présent mais ne peut etre modifié
-    if (!is_writable($conffile))
-    {
-        if ($confexists)
-        {
-            print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",'conf.php');
-        }
-        else
-        {
-            print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
-        }
-        print "<br />";
-        print '<img src="../theme/eldy/img/tick.png" alt="Warning"> '.$langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
-        print "<br />\n";
-    
-        $allowinstall=0;
-    }
-    // Si fichier présent et peut etre modifié
-    else
-    {
-        if ($confexists)
-        {
-            print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",'conf.php');
-        }
-        else
-        {
-            print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
-        }
-        print "<br />";
-        print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileIsWritable",'conf.php');
-        print "<br />\n";
-    
-        $allowinstall=1;
-    }
-    print "<br />\n";
-    print "<br />\n";
+	// Si fichier présent mais ne peut etre modifié
+	if (!is_writable($conffile))
+	{
+		if ($confexists)
+		{
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",'conf.php');
+		}
+		else
+		{
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
+		}
+		print "<br />";
+		print '<img src="../theme/eldy/img/tick.png" alt="Warning"> '.$langs->trans("ConfFileIsNotWritable",'htdocs/conf/conf.php');
+		print "<br />\n";
 
-    // Si prerequis ok, on affiche le bouton pour passer à l'étape suivante
+		$allowinstall=0;
+	}
+	// Si fichier présent et peut etre modifié
+	else
+	{
+		if ($confexists)
+		{
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileExists",'conf.php');
+		}
+		else
+		{
+			print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileCouldBeCreated",'conf.php');
+		}
+		print "<br />";
+		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("ConfFileIsWritable",'conf.php');
+		print "<br />\n";
+
+		$allowinstall=1;
+	}
+	print "<br />\n";
+	print "<br />\n";
+
+	// Si prerequis ok, on affiche le bouton pour passer à l'étape suivante
 	if ($checksok)
 	{
-	    print $langs->trans("ChooseYourSetupMode");
-	
-	    print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
-	    
-	    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("FreshInstall").'</b></td><td>';
-	    print $langs->trans("FreshInstallDesc").'</td>';
-	    print '<td align="center">';
-	    if ($allowinstall)
-	    {
-	        print '<a href="licence.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
-	    }
-	    else
-	    {
-	        print $langs->trans("InstallNotAllowed");   
-	    }
-	    print '</td>';
-	    print '</tr>'."\n";
+		print $langs->trans("ChooseYourSetupMode");
 
-	    # Upgrade
- 	    $versionfrom='2.0.0';
-	    $versionto='2.1.0';
-	    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$versionfrom.' -> '.$versionto.'</b></td><td>';
-	    print $langs->trans("UpgradeDesc").'</td>';
-	    print '<td align="center">';
-	    if ($allowupgrade)
-	    {
-	        print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
-	    }
-	    else
-	    {
-	        print $langs->trans("NotAvailable");   
-	    }
-	    print '</td>';
-	    print '</tr>'."\n";
-	   
-	    # Upgrade
- 	    $versionfrom='2.1.0';
-	    $versionto='2.2.0';
-	    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$versionfrom.' -> '.$versionto.'</b></td><td>';
-	    print $langs->trans("UpgradeDesc").'</td>';
-	    print '<td align="center">';
-	    if ($allowupgrade)
-	    {
-	        print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
-	    }
-	    else
-	    {
-	        print $langs->trans("NotAvailable");   
-	    }
-	    print '</td>';
-	    print '</tr>'."\n";
-	   
-            # Upgrade
-            $versionfrom='2.2.0';
-            $versionto='2.4.0';
-            print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$versionfrom.' -> '.$versionto.'</b></td><td>';
-            print $langs->trans("UpgradeDesc").'</td>';
-            print '<td align="center">';
-            if ($allowupgrade)
-            {
-                print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
-            }
-            else
-            {
-                print $langs->trans("NotAvailable");
-            }
-            print '</td>';
-            print '</tr>'."\n";
- 
-	    print '</table>';
-	    print "\n";
+		print '<table width="100%" cellspacing="1" cellpadding="4" border="1">';
+	  
+		print '<tr><td nowrap="nowrap"><b>'.$langs->trans("FreshInstall").'</b></td><td>';
+		print $langs->trans("FreshInstallDesc").'</td>';
+		print '<td align="center">';
+		if ($allowinstall)
+		{
+			print '<a href="licence.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
+		}
+		else
+		{
+			print $langs->trans("InstallNotAllowed");
+		}
+		print '</td>';
+		print '</tr>'."\n";
+
+		$migrationscript=array(array('from'=>'2.0.0', 'to'=>'2.1.0'),
+								array('from'=>'2.1.0', 'to'=>'2.2.0'),
+								array('from'=>'2.2.0', 'to'=>'2.4.0'),
+								array('from'=>'2.4.0', 'to'=>'2.5.0'));
+		# Upgrade lines
+		foreach ($migrationscript as $migarray)
+		{
+			$versionfrom=$migarray['from'];
+			$versionto=$migarray['to'];
+			print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$versionfrom.' -> '.$versionto.'</b></td><td>';
+			print $langs->trans("UpgradeDesc").'</td>';
+			print '<td align="center">';
+			if ($allowupgrade)
+			{
+				print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
+			}
+			else
+			{
+				print $langs->trans("NotAvailable");
+			}
+			print '</td>';
+			print '</tr>'."\n";
+		}
+		print '</table>';
+		print "\n";
 	}
 
 }
