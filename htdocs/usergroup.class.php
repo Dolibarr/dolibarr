@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-	 \file       htdocs/usergroup.class.php
-	 \brief      Fichier de la classe des groupes d'utilisateur
-	 \author     Rodolphe Qiedeville
-	 \version    $Revision$
+ *	 \file       htdocs/usergroup.class.php
+ *	 \brief      Fichier de la classe des groupes d'utilisateur
+ *	 \author     Rodolphe Qiedeville
+ *	 \version    $Id$
 */
 
 if ($conf->ldap->enabled) require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
@@ -60,7 +58,7 @@ class UserGroup
 
 
 	/**
-	*	\brief      Charge un objet user avec toutes ces caractéristiques
+	*	\brief      Charge un objet group avec toutes ces caractéristiques
 	*	\param      id      id du groupe à charger
 	*	\return		int		<0 si KO, >0 si OK
 	*/
@@ -68,9 +66,9 @@ class UserGroup
     {
         $this->id = $id;
 
-        $sql  = "SELECT g.rowid, g.nom, g.note, g.datec, tms as datem";
-        $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-        $sql .= " WHERE g.rowid = ".$this->id;
+        $sql = "SELECT g.rowid, g.nom, g.note, g.datec, tms as datem";
+        $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
+        $sql.= " WHERE g.rowid = ".$this->id;
 
         dolibarr_syslog("Usergroup::fetch sql=".$sql);
 		$result = $this->db->query($sql);
@@ -91,13 +89,55 @@ class UserGroup
         }
         else
         {
-            dolibarr_syslog("UserGroup::Fetch Erreur");
+        	$this->error=$this->db->lasterror();
+        	dolibarr_syslog("UserGroup::Fetch ".$this->error, LOG_ERR);
 			return -1;
         }
 
     }
 
+    /**
+     * 	\brief		Return array of groups of a user
+     *	\param		usertosearch
+     * 	\return		array of groups objects
+     */
+	function listGroupsForUser($usertosearch)
+	{
+        $ret=array();
+        
+		$sql = "SELECT g.rowid, g.nom, g.note, g.datec, tms as datem";
+        $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g,";
+        $sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
+        $sql.= " WHERE ug.fk_usergroup = g.rowid";
+        $sql.= " AND ug.fk_user = ".$usertosearch->id;
+        $sql.= " ORDER BY g.nom";
+        
+        dolibarr_syslog("UserGroup::listGroupsForUser sql=".$sql,LOG_DEBUG);
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            while ($obj = $this->db->fetch_object($result))
+            {
+				$group=new UserGroup($this->db);
+				$group->id=$obj->rowid;
+            	$group->nom=$obj->nom;
+            	$group->note=$obj->note;
+                $group->datec = $obj->datec;
+                $group->datem = $obj->datem;
 
+                $ret[]=$group;
+            }            
+            $this->db->free($result);
+        }
+	    else
+        {
+        	$this->error=$this->db->lasterror();
+        	dolibarr_syslog("UserGroup::listGroupsForUser ".$this->error, LOG_ERR);
+			return -1;
+        }		
+		return $ret;
+	}
+	
   /**
    *    \brief      Ajoute un droit a l'utilisateur
    *    \param      rid         id du droit à ajouter

@@ -1274,7 +1274,7 @@ class User extends CommonObject
 			$mesg.= $langs->trans("Password")." : $password\n\n";
 			$mesg.= "\n";
 			$url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT;
-			$mesg.= '<a href="'.$url.'">Go to Dolibarr</a>'."\n\n";
+			$mesg.= 'Click here to go to Dolibarr: '.$url."\n\n";
 			$mesg.= "--\n";
 			$mesg.= $user->fullname;	// Username that make then sending
 		}
