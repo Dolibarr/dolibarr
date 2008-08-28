@@ -21,13 +21,15 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**     
+/**
  *       \file       htdocs/user/fiche.php
  *       \brief      Onglet user et permissions de la fiche utilisateur
  *       \version    $Id$
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/user.class.php");
+require_once(DOL_DOCUMENT_ROOT."/usergroup.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 if ($conf->ldap->enabled) require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
@@ -42,11 +44,11 @@ $candisableperms=($user->admin || $user->rights->user->user->supprimer);
 // Defini si peux lire/modifier info user ou mot de passe
 if ($_GET["id"])
 {
-  // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edite
-  $caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
-		  || (($user->id != $_GET["id"]) && $user->rights->user->user->creer) );
-  $caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
-		     || (($user->id != $_GET["id"]) && $user->rights->user->user->password) );
+	// $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edite
+	$caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
+	|| (($user->id != $_GET["id"]) && $user->rights->user->user->creer) );
+	$caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
+	|| (($user->id != $_GET["id"]) && $user->rights->user->user->password) );
 }
 if ($user->id <> $_GET["id"] && ! $canreadperms)
 {
@@ -68,59 +70,59 @@ $form = new Form($db);
  */
 if ($_GET["subaction"] == 'addrights' && $caneditperms)
 {
-    $edituser = new User($db,$_GET["id"]);
-    $edituser->addrights($_GET["rights"]);
+	$edituser = new User($db,$_GET["id"]);
+	$edituser->addrights($_GET["rights"]);
 }
 
 if ($_GET["subaction"] == 'delrights' && $caneditperms)
 {
-    $edituser = new User($db,$_GET["id"]);
-    $edituser->delrights($_GET["rights"]);
+	$edituser = new User($db,$_GET["id"]);
+	$edituser->delrights($_GET["rights"]);
 }
 
 if ($_POST["action"] == 'confirm_disable' && $_POST["confirm"] == "yes")
 {
-    if ($_GET["id"] <> $user->id)
-    {
-        $edituser = new User($db);
+	if ($_GET["id"] <> $user->id)
+	{
+		$edituser = new User($db);
 		$edituser->id=$_GET["id"];
-        $edituser->fetch();
-        $edituser->setstatus(0);
+		$edituser->fetch();
+		$edituser->setstatus(0);
 		Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
-        exit;
-    }
+		exit;
+	}
 }
 if ($_POST["action"] == 'confirm_enable' && $_POST["confirm"] == "yes")
 {
-    if ($_GET["id"] <> $user->id)
-    {
-        $edituser = new User($db, $_GET["id"]);
+	if ($_GET["id"] <> $user->id)
+	{
+		$edituser = new User($db, $_GET["id"]);
 		$edituser->id=$_GET["id"];
-        $edituser->fetch();
-        $edituser->setstatus(1);
-        Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
-        exit;
-    }
+		$edituser->fetch();
+		$edituser->setstatus(1);
+		Header("Location: ".DOL_URL_ROOT.'/user/fiche.php?id='.$_GET["id"]);
+		exit;
+	}
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
-    if ($_GET["id"] <> $user->id)
-    {
-        $edituser = new User($db, $_GET["id"]);
-        $edituser->id=$_GET["id"];
-        $result = $edituser->delete();
-        if ($result < 0)
-        {
+	if ($_GET["id"] <> $user->id)
+	{
+		$edituser = new User($db, $_GET["id"]);
+		$edituser->id=$_GET["id"];
+		$result = $edituser->delete();
+		if ($result < 0)
+		{
 			$langs->load("errors");
-        	$message='<div class="error">'.$langs->trans("UserCannotBeDelete").'</div>';
-        }
-        else
-        {
-        	Header("Location: index.php");
-          exit;
-        }
-    }
+			$message='<div class="error">'.$langs->trans("UserCannotBeDelete").'</div>';
+		}
+		else
+		{
+			Header("Location: index.php");
+			exit;
+		}
+	}
 }
 
 // Action ajout user
@@ -153,30 +155,30 @@ if ($_POST["action"] == 'add' && $canadduser)
 		$edituser->phenix_pass   = $_POST["phenix_pass"];
 		$edituser->note          = $_POST["note"];
 		$edituser->ldap_sid      = $_POST["ldap_sid"];
-		
+
 		$db->begin();
-		
+
 		$id = $edituser->create($user);
-		
+
 		if ($id > 0)
 		{
 			if (isset($_POST['password']) && trim($_POST['password']))
 			{
 				$edituser->setPassword($user,trim($_POST['password']),$conf->global->DATABASE_PWD_ENCRYPTED);
 			}
-			
+				
 			$db->commit();
-			
+				
 			Header("Location: fiche.php?id=$id");
 			exit;
 		}
 		else
 		{
 			$db->rollback();
-			
+				
 			//$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
 			$message='<div class="error">'.$edituser->error.'</div>';
-			
+				
 			$action="create";       // Go back to create page
 		}
 
@@ -186,26 +188,26 @@ if ($_POST["action"] == 'add' && $canadduser)
 // Action ajout groupe utilisateur
 if ($_POST["action"] == 'addgroup' && $caneditfield)
 {
-    if ($_POST["group"])
-    {
-        $edituser = new User($db, $_GET["id"]);
-        $edituser->SetInGroup($_POST["group"]);
+	if ($_POST["group"])
+	{
+		$edituser = new User($db, $_GET["id"]);
+		$edituser->SetInGroup($_POST["group"]);
 
-        Header("Location: fiche.php?id=".$_GET["id"]);
-        exit;
-    }
+		Header("Location: fiche.php?id=".$_GET["id"]);
+		exit;
+	}
 }
 
 if ($_GET["action"] == 'removegroup' && $caneditfield)
 {
-    if ($_GET["group"])
-    {
-        $edituser = new User($db, $_GET["id"]);
-        $edituser->RemoveFromGroup($_GET["group"]);
+	if ($_GET["group"])
+	{
+		$edituser = new User($db, $_GET["id"]);
+		$edituser->RemoveFromGroup($_GET["group"]);
 
-        Header("Location: fiche.php?id=".$_GET["id"]);
-        exit;
-    }
+		Header("Location: fiche.php?id=".$_GET["id"]);
+		exit;
+	}
 }
 
 if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
@@ -296,38 +298,38 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 
 // Action modif mot de passe
 if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
-      || $_GET["action"] == 'confirm_passwordsend') && $caneditpassword)
+|| $_GET["action"] == 'confirm_passwordsend') && $caneditpassword)
 {
-    $edituser = new User($db, $_GET["id"]);
-    $edituser->fetch();
+	$edituser = new User($db, $_GET["id"]);
+	$edituser->fetch();
 
-    $newpassword=$edituser->setPassword($user,'');
-    if ($newpassword < 0)
-    {
-        // Echec
-        $message = '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
-    }
-    else 
-    {
-        // Succes
-        if ($_GET["action"] == 'confirm_passwordsend')
-        {
-            if ($edituser->send_password($user,$newpassword) > 0)
-            {
-                $message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
-                //$message.=$newpassword;
-            }
-            else
-            {
-                $message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
-                $message.= '<div class="error">'.$edituser->error.'</div>';
-            }
-        }
-        else
-        {
-            $message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
-        }
-    }
+	$newpassword=$edituser->setPassword($user,'');
+	if ($newpassword < 0)
+	{
+		// Echec
+		$message = '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+	}
+	else
+	{
+		// Succes
+		if ($_GET["action"] == 'confirm_passwordsend')
+		{
+			if ($edituser->send_password($user,$newpassword) > 0)
+			{
+				$message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
+				//$message.=$newpassword;
+			}
+			else
+			{
+				$message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
+				$message.= '<div class="error">'.$edituser->error.'</div>';
+			}
+		}
+		else
+		{
+			$message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
+		}
+	}
 }
 
 // Action initialisation donnees depuis record LDAP
@@ -336,17 +338,17 @@ if ($_POST["action"] == 'adduserldap')
 	$selecteduser = $_POST['users'];
 
 	$required_fields = array(
-		$conf->global->LDAP_FIELD_NAME,
-		$conf->global->LDAP_FIELD_FIRSTNAME,
-		$conf->global->LDAP_FIELD_LOGIN,
-		$conf->global->LDAP_FIELD_LOGIN_SAMBA,
-		$conf->global->LDAP_FIELD_PASSWORD,
-		$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
-		$conf->global->LDAP_FIELD_PHONE,
-		$conf->global->LDAP_FIELD_FAX,
-		$conf->global->LDAP_FIELD_MOBILE,
-		$conf->global->LDAP_FIELD_MAIL,
-		$conf->global->LDAP_FIELD_SID);
+	$conf->global->LDAP_FIELD_NAME,
+	$conf->global->LDAP_FIELD_FIRSTNAME,
+	$conf->global->LDAP_FIELD_LOGIN,
+	$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+	$conf->global->LDAP_FIELD_PASSWORD,
+	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+	$conf->global->LDAP_FIELD_PHONE,
+	$conf->global->LDAP_FIELD_FAX,
+	$conf->global->LDAP_FIELD_MOBILE,
+	$conf->global->LDAP_FIELD_MAIL,
+	$conf->global->LDAP_FIELD_SID);
 
 	$ldap = new Ldap();
 	$result = $ldap->connect_bind();
@@ -399,10 +401,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	/* Affichage fiche en mode creation                                           */
 	/*                                                                            */
 	/* ************************************************************************** */
-	
+
 	print_titre($langs->trans("NewUser"));
 	print "<br>";
-	
+
 	print $langs->trans("CreateInternalUserDesc");
 	print "<br>";
 	print "<br>";
@@ -410,24 +412,24 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 	{
 		/*
-		* Affiche formulaire d'ajout d'un compte depuis LDAP
-		* si on est en synchro LDAP vers Dolibarr
-		*/
+		 * Affiche formulaire d'ajout d'un compte depuis LDAP
+		 * si on est en synchro LDAP vers Dolibarr
+		 */
 
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 		if ($result >= 0)
 		{
 			$required_fields=array($conf->global->LDAP_KEY_USERS,
-							         $conf->global->LDAP_FIELD_FULLNAME,
-							         $conf->global->LDAP_FIELD_NAME,
-							         $conf->global->LDAP_FIELD_FIRSTNAME,
-							         $conf->global->LDAP_FIELD_LOGIN,
-							         $conf->global->LDAP_FIELD_LOGIN_SAMBA);
-			
+			$conf->global->LDAP_FIELD_FULLNAME,
+			$conf->global->LDAP_FIELD_NAME,
+			$conf->global->LDAP_FIELD_FIRSTNAME,
+			$conf->global->LDAP_FIELD_LOGIN,
+			$conf->global->LDAP_FIELD_LOGIN_SAMBA);
+				
 			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 			$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
-			
+				
 			// Get from LDAP database an array of results
 			$ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 1);
 			if (is_array($ldapusers))
@@ -446,7 +448,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 					}
 					$liste[$key] = $label;
 				}
-	
+
 			}
 			else
 			{
@@ -458,16 +460,16 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			$message='<div class="error">'.$ldap->error.'</div>';
 		}
 	}
-	
+
 	if ($message) { print $message.'<br>'; }
-	
+
 	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 	{
 		// Si la liste des users est rempli, on affiche la liste deroulante
 		if (is_array($liste))
 		{
 			print "\n\n<!-- Form liste LDAP debut -->\n";
-	
+
 			print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<table width="100%" class="border"><tr>';
 			print '<td width="160">';
@@ -485,13 +487,13 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			print '<br>';
 		}
 	}
-	
+
 	print '<form action="fiche.php" method="post" name="createuser">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($ldap_sid) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
-	
+
 	print '<table class="border" width="100%">';
-	
+
 	print '<tr>';
 
 	// Nom
@@ -507,7 +509,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '<input size="30" type="text" name="nom" value="">';
 	}
 	print '</td></tr>';
-	
+
 	// Prenom
 	print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
 	print '<td>';
@@ -521,7 +523,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '<input size="30" type="text" name="prenom" value="">';
 	}
 	print '</td></tr>';
-	
+
 	// Login
 	print '<tr><td valign="top">'.$langs->trans("Login").'*</td>';
 	print '<td>';
@@ -540,7 +542,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '<input size="20" maxsize="24" type="text" name="login" value="">';
 	}
 	print '</td></tr>';
-	
+
 	if (!$ldap_sid)
 	{
 		$generated_password='';
@@ -555,7 +557,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		}
 	}
 	$password=$generated_password;
-	
+
 	// Mot de passe
 	print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
 	print '<td>';
@@ -576,7 +578,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		}
 	}
 	print '</td></tr>';
-	
+
 	// Administrateur
 	if ($user->admin)
 	{
@@ -585,13 +587,13 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print $form->selectyesno('admin',0,1);
 		print "</td></tr>\n";
 	}
-	
+
 	// Type
 	print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
 	print '<td>';
 	print $html->textwithhelp($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
 	print '</td></tr>';
-	
+
 	// Tel
 	print '<tr><td valign="top">'.$langs->trans("PhonePro").'</td>';
 	print '<td>';
@@ -605,7 +607,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '<input size="20" type="text" name="office_phone" value="">';
 	}
 	print '</td></tr>';
-	
+
 	// Tel portable
 	print '<tr><td valign="top">'.$langs->trans("PhoneMobile").'</td>';
 	print '<td>';
@@ -619,7 +621,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '<input size="20" type="text" name="user_mobile" value="">';
 	}
 	print '</td></tr>';
-	
+
 	// Fax
 	print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
 	print '<td>';
@@ -633,7 +635,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '<input size="20" type="text" name="office_fax" value="">';
 	}
 	print '</td></tr>';
-	
+
 	// EMail
 	print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
 	print '<td>';
@@ -647,7 +649,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '<input size="40" type="text" name="email" value="">';
 	}
 	print '</td></tr>';
-	
+
 	// Note
 	print '<tr><td valign="top">';
 	print $langs->trans("Note");
@@ -664,16 +666,16 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '</textarea>';
 	}
 	print "</td></tr>\n";
-	
+
 	// Autres caracteristiques issus des autres modules
-	
+
 	// Module Webcalendar
 	if ($conf->webcal->enabled)
 	{
 		print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
 		print '<td><input size="30" type="text" name="webcal_login" value=""></td></tr>';
 	}
-	
+
 	// Module Phenix
 	if ($conf->phenix->enabled)
 	{
@@ -682,770 +684,760 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print "<tr>".'<td valign="top">'.$langs->trans("PassPenix").'</td>';
 		print '<td><input size="30" type="text" name="phenix_pass" value=""></td></tr>';
 	}
-	
+
 	print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
 	print "</table>\n";
 	print "</form>";
 }
 else
 {
-    /* ************************************************************************** */
-    /*                                                                            */
-    /* Visu et edition                                                            */
-    /*                                                                            */
-    /* ************************************************************************** */
+	/* ************************************************************************** */
+	/*                                                                            */
+	/* Visu et edition                                                            */
+	/*                                                                            */
+	/* ************************************************************************** */
 
-    if ($_GET["id"])
-    {
-    	$fuser = new User($db, $_GET["id"]);
-    	$fuser->fetch();
+	if ($_GET["id"])
+	{
+		$fuser = new User($db, $_GET["id"]);
+		$fuser->fetch();
 
-    	// Connexion ldap
-    	// pour recuperer passDoNotExpire et userChangePassNextLogon
-    	if ($conf->ldap->enabled && $fuser->ldap_sid)
-    	{
-    		$ldap = new Ldap();
-    		$result=$ldap->connect_bind();
-    		if ($result > 0)
-    		{
-    			$entries = $ldap->fetch($fuser->login);
-    			if (! $entries)
-    			{
-    				$message .= $ldap->error;
-    			}
-    			
-    			$passDoNotExpire = 0;
-    			$userChangePassNextLogon = 0;
-    			$userDisabled = 0;
-    			$statutUACF = '';
+		// Connexion ldap
+		// pour recuperer passDoNotExpire et userChangePassNextLogon
+		if ($conf->ldap->enabled && $fuser->ldap_sid)
+		{
+			$ldap = new Ldap();
+			$result=$ldap->connect_bind();
+			if ($result > 0)
+			{
+				$entries = $ldap->fetch($fuser->login);
+				if (! $entries)
+				{
+					$message .= $ldap->error;
+				}
+				 
+				$passDoNotExpire = 0;
+				$userChangePassNextLogon = 0;
+				$userDisabled = 0;
+				$statutUACF = '';
 
-	    		//On verifie les options du compte
-	    		if (sizeof($ldap->uacf) > 0)
-	    		{
-	    			foreach ($ldap->uacf as $key => $statut)
-	    			{
-	    				if ($key == 65536)
-	    				{
-	    					$passDoNotExpire = 1;
-	    					$statutUACF = $statut;
-	    				}
-	    			}
-	    		}
-	    		else
-	    		{
-	    			$userDisabled = 1;
-	    			$statutUACF = "ACCOUNTDISABLE";
-	    		}
-	    		
-	    		if ($ldap->pwdlastset == 0)
-	    		{
-	    			$userChangePassNextLogon = 1;
-	    		}
-    		}
-    	}
+				//On verifie les options du compte
+				if (sizeof($ldap->uacf) > 0)
+				{
+					foreach ($ldap->uacf as $key => $statut)
+					{
+						if ($key == 65536)
+						{
+							$passDoNotExpire = 1;
+							$statutUACF = $statut;
+						}
+					}
+				}
+				else
+				{
+					$userDisabled = 1;
+					$statutUACF = "ACCOUNTDISABLE";
+				}
+				 
+				if ($ldap->pwdlastset == 0)
+				{
+					$userChangePassNextLogon = 1;
+				}
+			}
+		}
 
 		/*
 		 * Affichage onglets
 		 */
 		$head = user_prepare_head($fuser);
-	
+
 		dolibarr_fiche_head($head, 'user', $langs->trans("User"));
 
 
-        /*
-         * Confirmation reinitialisation mot de passe
-         */
-        if ($action == 'password')
-        {
-            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password");
-            print '<br>';
-        }
+		/*
+		 * Confirmation reinitialisation mot de passe
+		 */
+		if ($action == 'password')
+		{
+			$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$fuser->login),"confirm_password");
+			print '<br>';
+		}
 
-        /*
-         * Confirmation envoi mot de passe
-         */
-        if ($action == 'passwordsend')
-        {
-            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$fuser->login),"confirm_passwordsend");
-            print '<br>';
-        }
+		/*
+		 * Confirmation envoi mot de passe
+		 */
+		if ($action == 'passwordsend')
+		{
+			$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$fuser->login),"confirm_passwordsend");
+			print '<br>';
+		}
 
-        /*
-         * Confirmation desactivation
-         */
-        if ($action == 'disable')
-        {
-            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable");
-            print '<br>';
-        }
+		/*
+		 * Confirmation desactivation
+		 */
+		if ($action == 'disable')
+		{
+			$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable");
+			print '<br>';
+		}
 
-        /*
-         * Confirmation activation
-         */
-        if ($action == 'enable')
-        {
-            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$fuser->login),"confirm_enable");
-            print '<br>';
-        }
+		/*
+		 * Confirmation activation
+		 */
+		if ($action == 'enable')
+		{
+			$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$fuser->login),"confirm_enable");
+			print '<br>';
+		}
 
-        /*
-         * Confirmation suppression
-         */
-        if ($action == 'delete')
-        {
-            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete");
-            print '<br>';
-        }
+		/*
+		 * Confirmation suppression
+		 */
+		if ($action == 'delete')
+		{
+			$html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete");
+			print '<br>';
+		}
 
 
-        /*
-         * Fiche en mode visu
-         */
-        if ($_GET["action"] != 'edit')
-        {
-            print '<table class="border" width="100%">';
+		/*
+		 * Fiche en mode visu
+		 */
+		if ($_GET["action"] != 'edit')
+		{
+			print '<table class="border" width="100%">';
 
-            // Ref
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
-            print '<td colspan="2">';
+			// Ref
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+			print '<td colspan="2">';
 			print $html->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 			print '</td>';
 			print '</tr>';
 
-            // Nom
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-            print '<td colspan="2">'.$fuser->nom.'</td>';
-            print "</tr>\n";
+			// Nom
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+			print '<td colspan="2">'.$fuser->nom.'</td>';
+			print "</tr>\n";
 
-            // Prenom
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td colspan="2">'.$fuser->prenom.'</td>';
-            print "</tr>\n";
+			// Prenom
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
+			print '<td colspan="2">'.$fuser->prenom.'</td>';
+			print "</tr>\n";
 
-            $rowspan=12;
+			$rowspan=12;
 
 			// Login
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
-            if ($fuser->ldap_sid && $fuser->statut==0)
-            {
-            	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
-            }
-            else
-            {
-            	print '<td width="50%">'.$fuser->login.'</td>';
-            }
-			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
-            {
-                print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
-            }
-            else
-            {
-                print '<img width="100" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
-            }
-            print '</td>';
-            print '</tr>';
-
-            // Password
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Password").'</td>';
-            if ($fuser->ldap_sid)
-            {
-            	if ($passDoNotExpire)
-            	{
-            		print '<td>'.$langs->trans("LdapUacf_".$statutUACF).'</td>';
-            	}
-            	else if($userChangePassNextLogon)
-            	{
-            		print '<td class="warning">'.$langs->trans("UserMustChangePassNextLogon",$ldap->domainFQDN).'</td>';
-            	}
-            	else if($userDisabled)
-            	{
-            		print '<td class="warning">'.$langs->trans("LdapUacf_".$statutUACF,$ldap->domainFQDN).'</td>';
-            	}
-            	else
-            	{
-            		print '<td>'.$langs->trans("DomainPassword").'</td>';
-            	}
-            }
-            else
-            {
-            	print '<td>';
-            	if ($fuser->pass) print eregi_replace('.','*',$fuser->pass);
-            	else
-            	{
-	            	if ($user->admin) print $langs->trans("Crypted").': '.$fuser->pass_indatabase_crypted;
-            		else print $langs->trans("Hidden");
-            	}
-            	print "</td>";
-            }
-            print "</tr>\n";
-
-            // Administrateur
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
-            print '<td>'.yn($fuser->admin);
-            if ($fuser->admin) print ' '.img_picto($langs->trans("Administrator"),"star");
-            print '</td>';
-            print "</tr>\n";
-            
-            // Type
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
-            print '<td>';
-            if ($fuser->societe_id)
-            {
-                print $html->textwithhelp($langs->trans("External"),$langs->trans("InternalExternalDesc"));
-            }
-            else if ($fuser->ldap_sid)
-            {
-            	print $langs->trans("DomainUser",$ldap->domainFQDN);
-            }
-            else
-            {
-                print $html->textwithhelp($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
-            }
-            print '</td></tr>';
-
-            // Company / Contact
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Company").' / '.$langs->trans("Contact").'</td>';
-            print '<td>';
-            if ($fuser->societe_id > 0)
-            {
-                $societe = new Societe($db);
-                $societe->fetch($fuser->societe_id);
-                print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
-            }            
-            else
-            {
-                print $langs->trans("ThisUserIsNot");
-            }
-            if ($fuser->contact_id)
-            {
-                $contact = new Contact($db);
-                $contact->fetch($fuser->contact_id);
-                if ($fuser->societe_id > 0) print ' / ';
-                else print '<br>';
-                print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->getFullName($langs),32).'</a>';
-            }
-            print '</td>';
-            print "</tr>\n";
-
-            // Tel pro
-            print '<tr><td width="25%" valign="top">'.$langs->trans("PhonePro").'</td>';
-            print '<td>'.$fuser->office_phone.'</td>';
-            
-            // Tel mobile
-            print '<tr><td width="25%" valign="top">'.$langs->trans("PhoneMobile").'</td>';
-            print '<td>'.$fuser->user_mobile.'</td>';
-            
-            // Fax
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Fax").'</td>';
-            print '<td>'.$fuser->office_fax.'</td>';
-            
-            // EMail
-            print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
-            print '<td><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
-            print "</tr>\n";
-            
-            // Statut
-            print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
-            print '<td>';
-            print $fuser->getLibStatut(4);
-            print '</td></tr>';
-		
-            print '<tr><td width="25%" valign="top">'.$langs->trans("LastConnexion").'</td>';
-            print '<td>'.dolibarr_print_date($fuser->datelastlogin,"dayhour").'</td>';
-            print "</tr>\n";
-
-            print '<tr><td width="25%" valign="top">'.$langs->trans("PreviousConnexion").'</td>';
-            print '<td>'.dolibarr_print_date($fuser->datepreviouslogin,"dayhour").'</td>';
-            print "</tr>\n";
-
-            // Autres caracteristiques issus des autres modules
-            
-            // Module Webcalendar
-            if ($conf->webcal->enabled)
-            {
-                $langs->load("other");
-                print '<tr><td width="25%" valign="top">'.$langs->trans("LoginWebcal").'</td>';
-                print '<td colspan="2">'.$fuser->webcal_login.'&nbsp;</td>';
-                print "</tr>\n";
-            }
-            
-            // Module Phenix
-            if ($conf->phenix->enabled)
-            {
-                $langs->load("other");
-                print '<tr><td width="25%" valign="top">'.$langs->trans("LoginPhenix").'</td>';
-                print '<td colspan="2">'.$fuser->phenix_login.'&nbsp;</td>';
-                print "</tr>\n";
-                print '<tr><td width="25%" valign="top">'.$langs->trans("PassPhenix").'</td>';
-                print '<td colspan="2">'.eregi_replace('.','*',$fuser->phenix_pass_crypted).'&nbsp;</td>';
-                print "</tr>\n";
-            }
-            
-            // Module Adherent
-            if ($conf->adherent->enabled)
-            {
-            	$langs->load("members");
-            	print '<tr><td width="25%" valign="top">'.$langs->trans("MemberAccount").'</td>';
-            	print '<td colspan="2">';
-            	if ($fuser->fk_member)
-            	{
-            		$adh=new Adherent($db);
-            		$adh->fetch($fuser->fk_member);
-            		$adh->ref=$adh->login;	// Force to show login instead of id
-            		print $adh->getNomUrl(1);
-            	}
-            	else
-            	{
-            		print $langs->trans("UserNotLinkedToMember");
-            	}
-            	print '</td>';
-            	print "</tr>\n";
-            }
-
-            print "</table>\n";
-
-            print "</div>\n";
-
-            if ($message) { print $message; }
-
-
-            /*
-             * Barre d'actions
-             */
-             
-            print '<div class="tabsAction">';
-
-
-            if ($caneditfield)
-            {
-               	print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
-            }
-            elseif ($caneditpassword && ! $fuser->ldap_sid)
-            {
-                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
-            }
-
-	       	// Si on a un gestionnaire de generation de mot de passe actif
-			if ($conf->global->USER_PASSWORD_GENERATED != 'none')
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
+			if ($fuser->ldap_sid && $fuser->statut==0)
 			{
-	            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid)
-	            {
-	                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
-	            }
-			
-	            if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login && !$fuser->ldap_sid)
-	            {
-	                print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
-	            }
+				print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
+			}
+			else
+			{
+				print '<td width="50%">'.$fuser->login.'</td>';
+			}
+			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
+			if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
+			{
+				print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
+			}
+			else
+			{
+				print '<img width="100" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+			}
+			print '</td>';
+			print '</tr>';
+
+			// Password
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Password").'</td>';
+			if ($fuser->ldap_sid)
+			{
+				if ($passDoNotExpire)
+				{
+					print '<td>'.$langs->trans("LdapUacf_".$statutUACF).'</td>';
+				}
+				else if($userChangePassNextLogon)
+				{
+					print '<td class="warning">'.$langs->trans("UserMustChangePassNextLogon",$ldap->domainFQDN).'</td>';
+				}
+				else if($userDisabled)
+				{
+					print '<td class="warning">'.$langs->trans("LdapUacf_".$statutUACF,$ldap->domainFQDN).'</td>';
+				}
+				else
+				{
+					print '<td>'.$langs->trans("DomainPassword").'</td>';
+				}
+			}
+			else
+			{
+				print '<td>';
+				if ($fuser->pass) print eregi_replace('.','*',$fuser->pass);
+				else
+				{
+					if ($user->admin) print $langs->trans("Crypted").': '.$fuser->pass_indatabase_crypted;
+					else print $langs->trans("Hidden");
+				}
+				print "</td>";
+			}
+			print "</tr>\n";
+
+			// Administrateur
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
+			print '<td>'.yn($fuser->admin);
+			if ($fuser->admin) print ' '.img_picto($langs->trans("Administrator"),"star");
+			print '</td>';
+			print "</tr>\n";
+
+			// Type
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
+			print '<td>';
+			if ($fuser->societe_id)
+			{
+				print $html->textwithhelp($langs->trans("External"),$langs->trans("InternalExternalDesc"));
+			}
+			else if ($fuser->ldap_sid)
+			{
+				print $langs->trans("DomainUser",$ldap->domainFQDN);
+			}
+			else
+			{
+				print $html->textwithhelp($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
+			}
+			print '</td></tr>';
+
+			// Company / Contact
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Company").' / '.$langs->trans("Contact").'</td>';
+			print '<td>';
+			if ($fuser->societe_id > 0)
+			{
+				$societe = new Societe($db);
+				$societe->fetch($fuser->societe_id);
+				print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
+			}
+			else
+			{
+				print $langs->trans("ThisUserIsNot");
+			}
+			if ($fuser->contact_id)
+			{
+				$contact = new Contact($db);
+				$contact->fetch($fuser->contact_id);
+				if ($fuser->societe_id > 0) print ' / ';
+				else print '<br>';
+				print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->getFullName($langs),32).'</a>';
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Tel pro
+			print '<tr><td width="25%" valign="top">'.$langs->trans("PhonePro").'</td>';
+			print '<td>'.$fuser->office_phone.'</td>';
+
+			// Tel mobile
+			print '<tr><td width="25%" valign="top">'.$langs->trans("PhoneMobile").'</td>';
+			print '<td>'.$fuser->user_mobile.'</td>';
+
+			// Fax
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Fax").'</td>';
+			print '<td>'.$fuser->office_fax.'</td>';
+
+			// EMail
+			print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
+			print '<td><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
+			print "</tr>\n";
+
+			// Statut
+			print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+			print '<td>';
+			print $fuser->getLibStatut(4);
+			print '</td></tr>';
+
+			print '<tr><td width="25%" valign="top">'.$langs->trans("LastConnexion").'</td>';
+			print '<td>'.dolibarr_print_date($fuser->datelastlogin,"dayhour").'</td>';
+			print "</tr>\n";
+
+			print '<tr><td width="25%" valign="top">'.$langs->trans("PreviousConnexion").'</td>';
+			print '<td>'.dolibarr_print_date($fuser->datepreviouslogin,"dayhour").'</td>';
+			print "</tr>\n";
+
+			// Autres caracteristiques issus des autres modules
+
+			// Module Webcalendar
+			if ($conf->webcal->enabled)
+			{
+				$langs->load("other");
+				print '<tr><td width="25%" valign="top">'.$langs->trans("LoginWebcal").'</td>';
+				print '<td colspan="2">'.$fuser->webcal_login.'&nbsp;</td>';
+				print "</tr>\n";
 			}
 
-            // Activer
-            if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 0)
-            {
-            	print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
-            }
-            // Desactiver
-            if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 1)
-            {
-                print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
-            }
+			// Module Phenix
+			if ($conf->phenix->enabled)
+			{
+				$langs->load("other");
+				print '<tr><td width="25%" valign="top">'.$langs->trans("LoginPhenix").'</td>';
+				print '<td colspan="2">'.$fuser->phenix_login.'&nbsp;</td>';
+				print "</tr>\n";
+				print '<tr><td width="25%" valign="top">'.$langs->trans("PassPhenix").'</td>';
+				print '<td colspan="2">'.eregi_replace('.','*',$fuser->phenix_pass_crypted).'&nbsp;</td>';
+				print "</tr>\n";
+			}
 
-            if ($user->id <> $_GET["id"] && $candisableperms)
-            {
-                print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
-            }
+			// Module Adherent
+			if ($conf->adherent->enabled)
+			{
+				$langs->load("members");
+				print '<tr><td width="25%" valign="top">'.$langs->trans("MemberAccount").'</td>';
+				print '<td colspan="2">';
+				if ($fuser->fk_member)
+				{
+					$adh=new Adherent($db);
+					$adh->fetch($fuser->fk_member);
+					$adh->ref=$adh->login;	// Force to show login instead of id
+					print $adh->getNomUrl(1);
+				}
+				else
+				{
+					print $langs->trans("UserNotLinkedToMember");
+				}
+				print '</td>';
+				print "</tr>\n";
+			}
 
-            print "</div>\n";
-            print "<br>\n";
+			print "</table>\n";
+
+			print "</div>\n";
+
+			if ($message) { print $message; }
+
+
+			/*
+			 * Barre d'actions
+			 */
+			 
+			print '<div class="tabsAction">';
+
+
+			if ($caneditfield)
+			{
+				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
+			}
+			elseif ($caneditpassword && ! $fuser->ldap_sid)
+			{
+				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
+			}
+
+			// Si on a un gestionnaire de generation de mot de passe actif
+			if ($conf->global->USER_PASSWORD_GENERATED != 'none')
+			{
+				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->login && !$fuser->ldap_sid)
+				{
+					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
+				}
+					
+				if (($user->id != $_GET["id"] && $caneditpassword) && $fuser->email && $fuser->login && !$fuser->ldap_sid)
+				{
+					print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
+				}
+			}
+
+			// Activer
+			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 0)
+			{
+				print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
+			}
+			// Desactiver
+			if ($user->id <> $_GET["id"] && $candisableperms && $fuser->statut == 1)
+			{
+				print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
+			}
+
+			if ($user->id <> $_GET["id"] && $candisableperms)
+			{
+				print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
+			}
+
+			print "</div>\n";
+			print "<br>\n";
 
 
 
-            /*
-             * Liste des groupes dans lequel est l'utilisateur
-             */
+			/*
+			 * Liste des groupes dans lequel est l'utilisateur
+			 */
 
-            print_fiche_titre($langs->trans("ListOfGroupsForUser"));
+			print_fiche_titre($langs->trans("ListOfGroupsForUser"));
 
-            // On selectionne les groups
-            $uss = array();
+			// On selectionne les groups
+			$uss = array();
 
-            $sql = "SELECT ug.rowid, ug.nom ";
-            $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
-            #      $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
-            #      $sql .= " WHERE ug.fk_usergroup IS NULL";
-            $sql .= " ORDER BY ug.nom";
+			$sql = "SELECT ug.rowid, ug.nom ";
+			$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as ug ";
+			#      $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
+			#      $sql .= " WHERE ug.fk_usergroup IS NULL";
+			$sql .= " ORDER BY ug.nom";
 
-            $resql = $db->query($sql);
-            if ($resql)
-            {
-                $num = $db->num_rows($resql);
-                $i = 0;
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$num = $db->num_rows($resql);
+				$i = 0;
 
-                while ($i < $num)
-                {
-                    $obj = $db->fetch_object($resql);
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
 
-                    $uss[$obj->rowid] = $obj->nom;
-                    $i++;
-                }
-            }
-            else {
-                dolibarr_print_error($db);
-            }
+					$uss[$obj->rowid] = $obj->nom;
+					$i++;
+				}
+			}
+			else {
+				dolibarr_print_error($db);
+			}
 
-            if ($caneditperms)
-            {
-                $form = new Form($db);
-                print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
-                print '<input type="hidden" name="action" value="addgroup">';
-                print '<table class="noborder" width="100%">'."\n";
-                //	  print '<tr class="liste_titre"><td width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
-                print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
-                print '<td>';
-                print $form->select_array("group",$uss);
-                print ' &nbsp; ';
-                print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-                print '</td></tr>'."\n";
-                print '</table></form>'."\n";
+			if ($caneditperms)
+			{
+				$form = new Form($db);
+				print '<form action="fiche.php?id='.$_GET["id"].'" method="post">'."\n";
+				print '<input type="hidden" name="action" value="addgroup">';
+				print '<table class="noborder" width="100%">'."\n";
+				//	  print '<tr class="liste_titre"><td width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
+				print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
+				print '<td>';
+				print $form->select_array("group",$uss);
+				print ' &nbsp; ';
+				print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+				print '</td></tr>'."\n";
+				print '</table></form>'."\n";
 
-                print '<br>';
-            }
+				print '<br>';
+			}
 
-            /*
-             * Groupes affectes
-             */
-            $sql = "SELECT g.rowid, g.nom ";
-            $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-            $sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-            $sql .= " WHERE ug.fk_usergroup = g.rowid";
-            $sql .= " AND ug.fk_user = ".$_GET["id"];
-            $sql .= " ORDER BY g.nom";
-
-            $result = $db->query($sql);
-            if ($result)
-            {
-                $num = $db->num_rows($result);
-                $i = 0;
-
-                print '<table class="noborder" width="100%">';
-                print '<tr class="liste_titre">';
-                print '<td class="liste_titre" width="25%">'.$langs->trans("Group").'</td>';
-                print "<td>&nbsp;</td></tr>\n";
-
-                if ($num) {
-                    $var=True;
-                    while ($i < $num)
-                    {
-                        $obj = $db->fetch_object($result);
-                        $var=!$var;
-
-                        print "<tr $bc[$var]>";
-                        print '<td>';
-                        if ($canreadperms)
-                        {
-                        	print '<a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
-                        }
-                        else
-                        {
-                        	print img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom;
-                        }
-                        print '</td>';
-                        print '<td>';
-
-                        if ($caneditperms)
-                        {
-                            print '<a href="fiche.php?id='.$_GET["id"].'&amp;action=removegroup&amp;group='.$obj->rowid.'">';
-                            print img_delete($langs->trans("RemoveFromGroup"));
-                        }
-                        else
-                        {
-                            print "-";
-                        }
-                        print "</td></tr>\n";
-                        $i++;
-                    }
-                }
-                else
-                {
-                    print '<tr><td colspan=2>'.$langs->trans("None").'</td></tr>';
-                }
-                print "</table>";
-                print "<br>";
-                $db->free($result);
-            }
-            else {
-                dolibarr_print_error($db);
-            }
-
-        }
-
-        /*
-         * Fiche en mode edition
-         */
-        if ($_GET["action"] == 'edit' && ($caneditperms || ($user->id == $fuser->id)))
-        {
-
-            print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
-            print '<input type="hidden" name="action" value="update">';
-            print '<table width="100%" class="border">';
-
-            $rowspan=10;
-
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
-            print '<td colspan="2">';
-            print $fuser->id;
-            print '</td>';
-            print '</tr>';
-
-            // Nom
-            print "<tr>".'<td valign="top">'.$langs->trans("Name").'*</td>';
-            print '<td colspan="2">';
-            if ($caneditfield && !$fuser->ldap_sid)
-            {
-            	print '<input size="30" type="text" class="flat" name="nom" value="'.$fuser->nom.'">';
-            }
-            else
-            {
-            	print '<input type="hidden" name="nom" value="'.$fuser->nom.'">';
-            	print $fuser->nom;
-            }
-            print '</td></tr>';
-            
-            // Prenom
-            print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td colspan="2">';
-            if ($caneditfield && !$fuser->ldap_sid)
-            {
-            	print '<input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'">';
-            }
-            else
-            {
-            	print '<input type="hidden" name="prenom" value="'.$fuser->prenom.'">';
-            	print $fuser->prenom;
-            }
-            print '</td></tr>';
-
-            // Login
-            print "<tr>".'<td valign="top">'.$langs->trans("Login").'*</td>';
-            print '<td>';
-            if ($user->admin  && !$fuser->ldap_sid)
-            {
-            	print '<input size="12" maxlength="24" type="text" class="flat" name="login" value="'.$fuser->login.'">';
-            }
-            else
-            {
-            	print '<input type="hidden" name="login" value="'.$fuser->login.'">';
-            	print $fuser->login;
-            }
-            print '</td>';
-            print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
-            {
-                print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
-            }
-            else
-            {
-                print '<img src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
-            }
-            if ($caneditfield)
-            {
-	            print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-	            print '<tr><td>';
-	            print '<input type="file" class="flat" name="photo">';
-	            print '</td></tr></table>';
-	          }
-            print '</td>';
-            print '</tr>';
-
-            // Pass
-            print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
-            print '<td>';
-			      if ($fuser->ldap_sid)
-            {
-            	$text=$langs->trans("DomainPassword");
-            }
-            else if ($caneditpassword) 
-            {
-            	$text='<input size="12" maxlength="32" type="password" class="flat" name="pass" value="'.$fuser->pass.'">';
-            	if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
-            	{
-            		$text=$html->textwithwarning($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication));
-            	}
-            }
-            else
-            {
-                $text=eregi_replace('.','*',$fuser->pass);
-            }
-			      print $text;
-            print "</td></tr>\n";
-            
-            // Administrateur
-            print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
-            if ($fuser->societe_id > 0)
-            {
-                print '<td>';
-                print '<input type="hidden" name="admin" value="'.$fuser->admin.'">'.yn($fuser->admin);
-                print '</td></tr>';
-            }
-            else
-            {
-                print '<td>';
-                if ($user->admin)
-                {
-                    print $form->selectyesno('admin',$fuser->admin,1);
-                }
-                else
-                {
-                    print '<input type="hidden" name="admin" value="'.$fuser->admin.'">'.yn($fuser->admin);
-                }
-                print '</td></tr>';
-            }
-
-            // Type
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
-            print '<td>';
-            if ($fuser->societe_id)
-            {
-                print $langs->trans("External");
-            }
-            else if ($fuser->ldap_sid)
-            {
-            	print $langs->trans("DomainUser");
-            }
-            else
-            {
-                print $langs->trans("Internal");
-            }
-            print '</td></tr>';
-
-            // Company / Contact
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Company").' / '.$langs->trans("Contact").'</td>';
-            print '<td>';
-            if ($fuser->societe_id > 0)
-            {
-                $societe = new Societe($db);
-                $societe->fetch($fuser->societe_id);
-                print '<a href="'.DOL_URL_ROOT.'/soc.php?id='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
-                if ($fuser->contact_id)
-                {
-                    $contact = new Contact($db);
-                    $contact->fetch($fuser->contact_id);
-                    print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->getFullName($langs),32).'</a>';
-                }
-            }            
-            else
-            {
-                print $langs->trans("ThisUserIsNot");
-            }
-            print '</td>';
-            print "</tr>\n";
-
-            // Tel pro
-            print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
-            print '<td>';
-            if ($caneditfield  && !$fuser->ldap_sid)
-            {
-            	print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
-            }
-            else
-            {
-            	print '<input type="hidden" name="office_phone" value="'.$fuser->office_phone.'">';
-            	print $fuser->office_phone; 
-            }
-            print '</td></tr>';
-            
-            // Tel mobile
-            print "<tr>".'<td valign="top">'.$langs->trans("PhoneMobile").'</td>';
-            print '<td>';
-            if ($caneditfield && !$fuser->ldap_sid)
-            {
-            	print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
-            }
-            else
-            {
-            	print '<input type="hidden" name="user_mobile" value="'.$fuser->user_mobile.'">';
-            	print $fuser->user_mobile; 
-            }
-            print '</td></tr>';
-            
-            // Fax
-            print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
-            print '<td>';
-            if ($caneditfield  && !$fuser->ldap_sid)
-            {
-            	print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
-            }
-            else
-            {
-            	print '<input type="hidden" name="office_fax" value="'.$fuser->office_fax.'">';
-            	print $fuser->office_fax; 
-            }
-            print '</td></tr>';
+			/*
+			 * Groupes affectes
+			 */
+			$usergroup=new UserGroup($db);
+			$listofgroups=$usergroup->listGroupsForUser($fuser);
+			$num=sizeof($listofgroups);
 			
-            // EMail
-            print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
-            print '<td>';
-            if ($caneditfield  && !$fuser->ldap_sid)
-            {
-            	print '<input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'">';
-            }
-            else
-            {
-            	print '<input type="hidden" name="email" value="'.$fuser->email.'">';
-            	print $fuser->email; 
-            }
-            print '</td></tr>';
-            
-            // Statut
-            print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
-            print '<td>';
-            print $fuser->getLibStatut(4);
-            print '</td></tr>';
-            
-            // Autres caracteristiques issus des autres modules
-            
-            // Module Webcalendar
-            if ($conf->webcal->enabled)
-            {
-            		$langs->load("other");
-            		print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-            		print '<td colspan="2">';
-            		if ($caneditfield) print '<input size="30" type="text" class="flat" name="webcal_login" value="'.$fuser->webcal_login.'">';
-            		else print $fuser->webcal_login;
-            		print '</td></tr>';
-            }
-            
-            // Module Phenix
-            if ($conf->phenix->enabled)
-            {
-            		$langs->load("other");
-            		print "<tr>".'<td valign="top">'.$langs->trans("LoginPhenix").'</td>';
-            		print '<td colspan="2">';
-            		if ($caneditfield) print '<input size="30" type="text" class="flat" name="phenix_login" value="'.$fuser->phenix_login.'">';
-            		else print $fuser->phenix_login;
-            		print '</td></tr>';
-            		print "<tr>".'<td valign="top">'.$langs->trans("PassPhenix").'</td>';
-            		print '<td colspan="2">';
-            		if ($caneditfield) print '<input size="30" type="password" class="flat" name="phenix_pass" value="'.$fuser->phenix_pass_crypted.'">';
-            		else print eregi_replace('.','*',$fuser->phenix_pass_crypted);
-            		print '</td></tr>';
-            }
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td class="liste_titre" width="25%">'.$langs->trans("Groups").'</td>';
+			print "<td>&nbsp;</td></tr>\n";
+			
+			if ($num > 0)
+			{
+				$i = 0;
 
-            print '<tr><td align="center" colspan="3">';
-            print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';
-            print ' &nbsp; ';
-            print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
-            print '</td></tr>';
+				$var=true;
+				while ($i < $num)
+				{
+					$group = $listofgroups[$i];
+					$var=!$var;
 
-            print '</table>';
-            print '</form>';
+					print "<tr ".$bc[$var].">";
+					print '<td>';
+					if ($canreadperms)
+					{
+						print '<a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$group->nom.'</a>';
+					}
+					else
+					{
+						print img_object($langs->trans("ShowGroup"),"group").' '.$group->nom;
+					}
+					print '</td>';
+					print '<td align="right">';
 
-			      print '</div>';
-         }
+					if ($caneditperms)
+					{
+						print '<a href="fiche.php?id='.$_GET["id"].'&amp;action=removegroup&amp;group='.$group->id.'">';
+						print img_delete($langs->trans("RemoveFromGroup"));
+					}
+					else
+					{
+						print "&nbsp;";
+					}
+					print "</td></tr>\n";
+					$i++;
+				}
+			}
+			else
+			{
+				print '<tr '.$bc[false].'><td colspan=2>'.$langs->trans("None").'</td></tr>';
+			}
+			
+			print "</table>";
+			print "<br>";
+			$db->free($result);
+		}
 
-        $ldap->close;
-    }
+		/*
+		 * Fiche en mode edition
+		 */
+		if ($_GET["action"] == 'edit' && ($caneditperms || ($user->id == $fuser->id)))
+		{
+
+			print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
+			print '<input type="hidden" name="action" value="update">';
+			print '<table width="100%" class="border">';
+
+			$rowspan=10;
+
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+			print '<td colspan="2">';
+			print $fuser->id;
+			print '</td>';
+			print '</tr>';
+
+			// Nom
+			print "<tr>".'<td valign="top">'.$langs->trans("Name").'*</td>';
+			print '<td colspan="2">';
+			if ($caneditfield && !$fuser->ldap_sid)
+			{
+				print '<input size="30" type="text" class="flat" name="nom" value="'.$fuser->nom.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="nom" value="'.$fuser->nom.'">';
+				print $fuser->nom;
+			}
+			print '</td></tr>';
+
+			// Prenom
+			print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
+			print '<td colspan="2">';
+			if ($caneditfield && !$fuser->ldap_sid)
+			{
+				print '<input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="prenom" value="'.$fuser->prenom.'">';
+				print $fuser->prenom;
+			}
+			print '</td></tr>';
+
+			// Login
+			print "<tr>".'<td valign="top">'.$langs->trans("Login").'*</td>';
+			print '<td>';
+			if ($user->admin  && !$fuser->ldap_sid)
+			{
+				print '<input size="12" maxlength="24" type="text" class="flat" name="login" value="'.$fuser->login.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="login" value="'.$fuser->login.'">';
+				print $fuser->login;
+			}
+			print '</td>';
+			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
+			if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
+			{
+				print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
+			}
+			else
+			{
+				print '<img src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+			}
+			if ($caneditfield)
+			{
+				print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+				print '<tr><td>';
+				print '<input type="file" class="flat" name="photo">';
+				print '</td></tr></table>';
+			}
+			print '</td>';
+			print '</tr>';
+
+			// Pass
+			print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
+			print '<td>';
+			if ($fuser->ldap_sid)
+			{
+				$text=$langs->trans("DomainPassword");
+			}
+			else if ($caneditpassword)
+			{
+				$text='<input size="12" maxlength="32" type="password" class="flat" name="pass" value="'.$fuser->pass.'">';
+				if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
+				{
+					$text=$html->textwithwarning($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication));
+				}
+			}
+			else
+			{
+				$text=eregi_replace('.','*',$fuser->pass);
+			}
+			print $text;
+			print "</td></tr>\n";
+
+			// Administrateur
+			print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
+			if ($fuser->societe_id > 0)
+			{
+				print '<td>';
+				print '<input type="hidden" name="admin" value="'.$fuser->admin.'">'.yn($fuser->admin);
+				print '</td></tr>';
+			}
+			else
+			{
+				print '<td>';
+				if ($user->admin)
+				{
+					print $form->selectyesno('admin',$fuser->admin,1);
+				}
+				else
+				{
+					print '<input type="hidden" name="admin" value="'.$fuser->admin.'">'.yn($fuser->admin);
+				}
+				print '</td></tr>';
+			}
+
+			// Type
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Type").'</td>';
+			print '<td>';
+			if ($fuser->societe_id)
+			{
+				print $langs->trans("External");
+			}
+			else if ($fuser->ldap_sid)
+			{
+				print $langs->trans("DomainUser");
+			}
+			else
+			{
+				print $langs->trans("Internal");
+			}
+			print '</td></tr>';
+
+			// Company / Contact
+			print '<tr><td width="25%" valign="top">'.$langs->trans("Company").' / '.$langs->trans("Contact").'</td>';
+			print '<td>';
+			if ($fuser->societe_id > 0)
+			{
+				$societe = new Societe($db);
+				$societe->fetch($fuser->societe_id);
+				print '<a href="'.DOL_URL_ROOT.'/soc.php?id='.$fuser->societe_id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.dolibarr_trunc($societe->nom,32).'</a>';
+				if ($fuser->contact_id)
+				{
+					$contact = new Contact($db);
+					$contact->fetch($fuser->contact_id);
+					print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->getFullName($langs),32).'</a>';
+				}
+			}
+			else
+			{
+				print $langs->trans("ThisUserIsNot");
+			}
+			print '</td>';
+			print "</tr>\n";
+
+			// Tel pro
+			print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
+			print '<td>';
+			if ($caneditfield  && !$fuser->ldap_sid)
+			{
+				print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="office_phone" value="'.$fuser->office_phone.'">';
+				print $fuser->office_phone;
+			}
+			print '</td></tr>';
+
+			// Tel mobile
+			print "<tr>".'<td valign="top">'.$langs->trans("PhoneMobile").'</td>';
+			print '<td>';
+			if ($caneditfield && !$fuser->ldap_sid)
+			{
+				print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="user_mobile" value="'.$fuser->user_mobile.'">';
+				print $fuser->user_mobile;
+			}
+			print '</td></tr>';
+
+			// Fax
+			print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
+			print '<td>';
+			if ($caneditfield  && !$fuser->ldap_sid)
+			{
+				print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="office_fax" value="'.$fuser->office_fax.'">';
+				print $fuser->office_fax;
+			}
+			print '</td></tr>';
+				
+			// EMail
+			print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
+			print '<td>';
+			if ($caneditfield  && !$fuser->ldap_sid)
+			{
+				print '<input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="email" value="'.$fuser->email.'">';
+				print $fuser->email;
+			}
+			print '</td></tr>';
+
+			// Statut
+			print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+			print '<td>';
+			print $fuser->getLibStatut(4);
+			print '</td></tr>';
+
+			// Autres caracteristiques issus des autres modules
+
+			// Module Webcalendar
+			if ($conf->webcal->enabled)
+			{
+				$langs->load("other");
+				print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
+				print '<td colspan="2">';
+				if ($caneditfield) print '<input size="30" type="text" class="flat" name="webcal_login" value="'.$fuser->webcal_login.'">';
+				else print $fuser->webcal_login;
+				print '</td></tr>';
+			}
+
+			// Module Phenix
+			if ($conf->phenix->enabled)
+			{
+				$langs->load("other");
+				print "<tr>".'<td valign="top">'.$langs->trans("LoginPhenix").'</td>';
+				print '<td colspan="2">';
+				if ($caneditfield) print '<input size="30" type="text" class="flat" name="phenix_login" value="'.$fuser->phenix_login.'">';
+				else print $fuser->phenix_login;
+				print '</td></tr>';
+				print "<tr>".'<td valign="top">'.$langs->trans("PassPhenix").'</td>';
+				print '<td colspan="2">';
+				if ($caneditfield) print '<input size="30" type="password" class="flat" name="phenix_pass" value="'.$fuser->phenix_pass_crypted.'">';
+				else print eregi_replace('.','*',$fuser->phenix_pass_crypted);
+				print '</td></tr>';
+			}
+
+			print '<tr><td align="center" colspan="3">';
+			print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';
+			print ' &nbsp; ';
+			print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
+			print '</td></tr>';
+
+			print '</table>';
+			print '</form>';
+
+			print '</div>';
+		}
+
+		$ldap->close;
+	}
 }
 
 $db->close();
