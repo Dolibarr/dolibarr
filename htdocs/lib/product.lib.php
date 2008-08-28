@@ -55,7 +55,7 @@ function product_prepare_head($product, $user)
   }
   
   // Affichage onglet code barre
-  if ($product->isproduct() && $conf->barcode->enabled && $user->rights->barcode->lire && $conf->global->PRODUIT_USE_BARCODE)
+  if ($conf->global->MAIN_MODULE_BARCODE && $product->isproduct() && $user->rights->barcode->lire)
   {
   	$head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
 	   $head[$h][1] = $langs->trans("BarCode");

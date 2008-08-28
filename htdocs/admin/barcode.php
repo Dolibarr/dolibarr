@@ -50,13 +50,14 @@ else if ($_POST["action"] == 'setgenbarcodelocation')
 	Header("Location: barcode.php");
 	exit;
 }
+/*
 else if ($_POST["action"] == 'setproductusebarcode')
 {
 	dolibarr_set_const($db, "PRODUIT_USE_BARCODE",$_POST["value"]);
 	Header("Location: barcode.php");
 	exit;
 }
-
+*/
 
 
 $html = new Form($db);
@@ -212,6 +213,7 @@ if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
 }
 
 // Module produits
+/*
 if ($conf->produit->enabled)
 {
 	$var=!$var;
@@ -226,8 +228,10 @@ if ($conf->produit->enabled)
 	print '</tr>';
 	print '</form>';
 }
+*/
 
 print '</table>';
+
 /*
 //EAN13
       $var=!$var;

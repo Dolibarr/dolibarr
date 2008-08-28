@@ -959,7 +959,7 @@ class Product extends CommonObject
 			if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
 
 			// Barcode
-			if ($conf->barcode->enabled && $conf->global->PRODUIT_USE_BARCODE)
+			if ($conf->global->MAIN_MODULE_BARCODE)
 			{
 				if ($this->barcode_type == 0)
 				{
