@@ -1,7 +1,5 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 		\file       htdocs/compta/facture/retardspaiement.php
 		\ingroup    facture
-		\brief      Page de liste des factures clients impayées
+		\brief      Page generation PDF factures clients impayées
 		\version    $Revision$
 */
 
@@ -41,6 +37,10 @@ $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture',$facid,'');
 
+
+/*
+ * View
+ */
 
 llxHeader('',$langs->trans("BillsLate"));
 
@@ -103,10 +103,10 @@ if ($user->rights->facture->lire)
 			}
 			
 			// vérifie que le chemin d'accès est bien accessible
-			if(!is_dir(DOL_DATA_ROOT . '/facture/impayes')) mkdir(DOL_DATA_ROOT . '/facture/impayes') ;
+			create_exdir($conf->facture->dir_output . '/impayes');
 			
 			// enregistre le fichier pdf concaténé
-			$pdf->Output( DOL_DATA_ROOT . '/facture/impayes/impayes '.dolibarr_date('Y-m-d H:i:s',time()).'.pdf');
+			$pdf->Output($conf->facture->dir_output . '/impayes/impayes'.dolibarr_date('YmdHis',time()).'.pdf');
 			
 		} else {
 			print '<div class="error">'.$langs->trans('UnpayedNotChecked').'</div>' ;
@@ -296,7 +296,7 @@ if ($user->rights->facture->lire)
 			}
 
 			print '<tr class="liste_total">';
-			print "<td colspan=\"4\" align=\"left\">".$langs->trans("Total").": </td>";
+			print "<td colspan=\"5\" align=\"left\">".$langs->trans("Total").": </td>";
 			print "<td align=\"right\"><b>".price($total_ht)."</b></td>";
 			print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 			print "<td align=\"right\"><b>".price($total_payed)."</b></td>";
@@ -322,9 +322,9 @@ if ($user->rights->facture->lire)
 
 		print '<br>' ;
 		print_titre($langs->trans("Documents"));
-		print '<table class="border" width="60%">';
+		print '<table class="border" width="70%">';
 			print '<tr class="liste_titre">' ;
-				print '<td align="center">'.$langs->trans("File").'</td><td align="center" width="20%">'.$langs->trans("Size").'</td><td align="center" width="20%">'.$langs->trans("Date").'</td><td align="center" width="20%"><input type="submit" value="'.$langs->trans("Generate").'"></td>' ;
+				print '<td align="center">'.$langs->trans("File").'</td><td align="center">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Generate").'"></td>' ;
 			print '</tr>' ;
 			// Pour chaque fichier on affiche une ligne
 			foreach($file_list as $file){
@@ -334,11 +334,11 @@ if ($user->rights->facture->lire)
 					// Nom du fichier
 					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=impayes&amp;file='.urlencode($filepath).'">'.img_pdf($file["name"],2)."&nbsp;".$file["name"].'</td>' ;
 					// Taille
-					print '<td align="center" width="20%">'.filesize($filepath). ' bytes</td>' ;
+					print '<td align="center">'.filesize($filepath). ' bytes</td>' ;
 					// Date
-					print '<td align="center" width="20%">'.dolibarr_print_date(filemtime($filepath),'dayhour').'</td>' ;
+					print '<td align="center">'.dolibarr_print_date(filemtime($filepath),'dayhour').'</td>' ;
 					// Suppression
-					print '<td align="center" width="20%"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart=impayes&amp;file='.urlencode($filepath).'&amp;urlsource='.urlencode($urlsource).'">'.img_delete().'</a></td>' ;
+					print '<td align="center"><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart=impayes&amp;file='.urlencode($filepath).'&amp;urlsource='.urlencode($urlsource).'">'.img_delete().'</a></td>' ;
 				print '</tr>' ;
 			}
 			
