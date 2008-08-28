@@ -552,8 +552,8 @@ LDAPFieldMobileExample=Attribut par défault: mobile
 ProductSetup=Configuration du module Produits
 NumberOfProductShowInSelect=Nombre maximum de produits dans les listes déroulantes à sélection multiple (0=pas de limite)
 ConfirmDeleteProductLineAbility=Confirmation de suppression d'une ligne produite dans les formulaires
-ModifyProductDescAbility=Personnalisation des descriptions produites dans les formulaires
-ViewProductDescInFormAbility=Visualisation des description produites dans les formulaires
+ModifyProductDescAbility=Personnalisation des descriptions de produits dans les formulaires
+ViewProductDescInFormAbility=Visualisation des descriptions de produits dans les formulaires
 ##### Syslog #####=
 SyslogSetup=Configuration du module de logs système
 SyslogOutput=Sortie du log
