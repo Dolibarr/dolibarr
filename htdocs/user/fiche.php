@@ -298,7 +298,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 
 // Action modif mot de passe
 if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
-|| $_GET["action"] == 'confirm_passwordsend') && $caneditpassword)
+|| $_POST["action"] == 'confirm_passwordsend') && $caneditpassword)
 {
 	$edituser = new User($db, $_GET["id"]);
 	$edituser->fetch();
@@ -312,7 +312,7 @@ if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
 	else
 	{
 		// Succes
-		if ($_GET["action"] == 'confirm_passwordsend')
+		if ($_POST["action"] == 'confirm_passwordsend')
 		{
 			if ($edituser->send_password($user,$newpassword) > 0)
 			{
