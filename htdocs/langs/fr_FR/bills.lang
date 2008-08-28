@@ -7,6 +7,7 @@ BillsCustomersUnpayed=Factures clients impayées
 BillsCustomersUnpayedForCompany=Factures clients impayées pour %s
 BillsSuppliersUnpayed=Factures fournisseurs impayées
 BillsUnpayed=Impayées
+BillsLate=Retards de paiement
 BillsStatistics=Statistiques factures
 InvoiceStandard=Facture standard
 InvoiceStandardAsk=Facture standard
@@ -233,6 +234,7 @@ InvoicePayed=Facture payée
 PaymentNumber=Numéro paiement
 RemoveDiscount=Supprimer remise
 WatermarkOnDraftBill=Filigrane sur les brouillons de factures (aucun si vide)
+UnpayedNotChecked=Aucune facture impayées n'a été sélectionnée
 
 # PaymentConditions
 PaymentConditionShortRECEP=A réception

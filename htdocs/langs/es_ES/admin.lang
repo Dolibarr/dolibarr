@@ -930,7 +930,7 @@ ModifyProductDescAbility=Personalización de las descripciones de los productos e
 ViewProductDescInFormAbility=Visualización de las descripciones de los productos en los formularios
 UseSearchToSelectProduct=Utilizar un formulario de búsqueda para la selección de un producto (en vez de la lista desplegable)
 UseEcoTaxeAbility=Asumir ecotasa (DEEE)
-SetDefaultBarcodeType=tipo códigos de barra utiliazdos por defecto para los productos
+SetDefaultBarcodeTypeProducts=tipo códigos de barra utiliazdos por defecto para los productos
 ##### Suppliers #####
 
 

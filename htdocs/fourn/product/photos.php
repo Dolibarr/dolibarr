@@ -111,7 +111,7 @@ if ($_GET["id"])
        * Ajouter une photo
        *
        */
-      if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer  && $product->isproduct() && $conf->upload)
+      if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer && $conf->upload)
 	{
 	  print_titre($langs->trans("AddPhoto"));
 	  
@@ -195,7 +195,7 @@ if ($_GET["id"])
   
   if ($_GET["action"] == '')
     {            
-      if ( $user->rights->produit->creer && $product->isproduct() && $conf->upload)
+      if ( $user->rights->produit->creer && $conf->upload)
 	{
 	  print '<a class="butAction" href="photos.php?action=ajout_photo&amp;id='.$product->id.'">';
 	  print $langs->trans("AddPhoto").'</a>';

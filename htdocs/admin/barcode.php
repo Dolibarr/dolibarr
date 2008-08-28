@@ -18,12 +18,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-/**	
-        \file       htdocs/admin/barcode.php
-		\ingroup    barcode
-		\brief      Page d'administration/configuration du module Code barre
-		\version    $Id$
-*/
+/**
+ \file       htdocs/admin/barcode.php
+ \ingroup    barcode
+ \brief      Page d'administration/configuration du module Code barre
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -34,7 +34,7 @@ $dir = DOL_DOCUMENT_ROOT."/includes/modules/barcode/";
 $langs->load("admin");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 if ($_POST["action"] == 'setcoder')
 {
@@ -47,17 +47,23 @@ if ($_POST["action"] == 'setcoder')
 else if ($_POST["action"] == 'setgenbarcodelocation')
 {
 	dolibarr_set_const($db, "GENBARCODE_LOCATION",$_POST["genbarcodelocation"]);
-	Header("Location: barcode.php");
-	exit;
+}
+else if ($_POST["action"] == 'setdefaultbarcodetype')
+{
+	dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $_POST["coder_id"]);
+}
+else if ($_POST["action"] == 'GENBARCODE_BARCODETYPE_THIRDPARTY')
+{
+	dolibarr_set_const($db, "GENBARCODE_BARCODETYPE_THIRDPARTY", $_POST["coder_id"]);
 }
 /*
-else if ($_POST["action"] == 'setproductusebarcode')
-{
-	dolibarr_set_const($db, "PRODUIT_USE_BARCODE",$_POST["value"]);
-	Header("Location: barcode.php");
-	exit;
-}
-*/
+ else if ($_POST["action"] == 'setproductusebarcode')
+ {
+ dolibarr_set_const($db, "PRODUIT_USE_BARCODE",$_POST["value"]);
+ Header("Location: barcode.php");
+ exit;
+ }
+ */
 
 
 $html = new Form($db);
@@ -80,21 +86,21 @@ $var=true;
 while (($file = readdir($handle))!==false)
 {
 	if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-  {
+	{
 		if (is_readable($dir.$file))
 		{
 			if (eregi('(.*)\.modules\.php',$file,$reg))
 			{
 				$filebis=$reg[1];
-				
+
 				// Chargement de la classe de codage
-		    require_once($dir.$file);
-		    $classname = "mod".ucfirst($filebis);
-		    $module = new $classname($db);
+				require_once($dir.$file);
+				$classname = "mod".ucfirst($filebis);
+				$module = new $classname($db);
 
 				// Show modules according to features level
-			  if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-			  if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+				if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+				if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 				$barcodelist[$filebis]=$module->info();
 			}
@@ -126,7 +132,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$var=true;
-	
+
 	while ($i <	$num)
 	{
 		$obj = $db->fetch_object($resql);
@@ -134,7 +140,7 @@ if ($resql)
 		print '<tr '.$bc[$var].'><td width="100">';
 		print $obj->libelle;
 		print "</td><td>\n";
-		print $langs->trans('BarcodeDesc'.$obj->encoding);  
+		print $langs->trans('BarcodeDesc'.$obj->encoding);
 		//print "L'EAN se compose de 8 caract�res, 7 chiffres plus une cl� de contr�le.<br>";
 		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement aupr�s d'organisme tel que GENCOD.<br>";
 		//print "Codes num�riques utilis�s exclusivement � l'identification des produits susceptibles d'�tre vendus au grand public.";
@@ -153,7 +159,7 @@ if ($resql)
 			{
 				$url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($obj->coder).'&code='.urlencode($obj->example).'&encoding='.urlencode($obj->encoding);
 				//print $url;
-				print '<img src="'.$url.'" border="0">';
+				print '<img src="'.$url.'" title="'.$obj->example.'" border="0">';
 			}
 			else
 			{
@@ -213,137 +219,153 @@ if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
 }
 
 // Module produits
-/*
-if ($conf->produit->enabled)
+if ($conf->societe->enabled)
 {
 	$var=!$var;
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="action" value="setproductusebarcode">';
-	print '<tr '.$bc[$var].'>';
-	print '<td>'.$langs->trans("UseBarcodeInProductModule").'</td>';
+	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+	print "<input type=\"hidden\" name=\"action\" value=\"setdefaultbarcodetype\">";
+	print "<tr ".$bc[$var].">";
+	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" align="right">';
-	print $html->selectyesno('value',$conf->global->PRODUIT_USE_BARCODE,1);
-	print '</td>';
-	print '<td width="60" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+	print $formbarcode->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"coder_id",1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td>";
 	print '</tr>';
 	print '</form>';
 }
-*/
+
+// Module produits
+if ($conf->produit->enabled)
+{
+	$var=!$var;
+	print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+	print "<input type=\"hidden\" name=\"action\" value=\"GENBARCODE_BARCODETYPE_THIRDPARTY\">";
+	print "<tr ".$bc[$var].">";
+	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
+	print '<td width="60" align="right">';
+	print $formbarcode->select_barcode_type($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY,"coder_id",1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td>";
+	print '</tr>';
+	print '</form>';
+}
 
 print '</table>';
 
 /*
-//EAN13
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td width="100">';
-      print "EAN13";
-      print "</td><td>\n";
-      
-      print "L'EAN se compose de 13 caract�res, 12 chiffres plus une cl� de contr�le. Il fonctionne de la m�me mani�re que l'UPC, avec lequel il est compatible.<br>";
-      print "L'utilisation des symbologies EAN13 impose la souscription et l'abonnement aupr�s d'organisme tel que GENCOD.<br>";
-      print "Codes num�riques utilis�s exclusivement � l'identification des produits susceptibles d'�tre vendus au grand public.";
-      print '</td>';
+ //EAN13
+ $var=!$var;
+ print '<tr '.$bc[$var].'><td width="100">';
+ print "EAN13";
+ print "</td><td>\n";
 
-      // Affiche exemple
-      print '<td align="center"><img src="'.dol_genbarcode('123456789012','EAN',1).'"></td>';
-      
-      print '<td align="center">';
-      print $formbarcode->setBarcodeEncoder('EAN13','form'.$i);
-	    print "</td></tr>\n";
-	    $i++;
+ print "L'EAN se compose de 13 caract�res, 12 chiffres plus une cl� de contr�le. Il fonctionne de la m�me mani�re que l'UPC, avec lequel il est compatible.<br>";
+ print "L'utilisation des symbologies EAN13 impose la souscription et l'abonnement aupr�s d'organisme tel que GENCOD.<br>";
+ print "Codes num�riques utilis�s exclusivement � l'identification des produits susceptibles d'�tre vendus au grand public.";
+ print '</td>';
 
-//UPC
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td width="100">';
-      print "UPC";
-      print "</td><td>\n";
-      print "L'UPC est l'�quivalent de l'EAN8/13 pour des pays codificateurs autre que l'Europe.<br>";
-      print "Il ne comporte que 11 chiffres plus la cl�.<br>";
-      print "C'est en r�alit� un code EAN13 dont le premier chiffre serait z�ro et dont la pr�sentation serait l�g�rement diff�rente.<br>";
-      print "Codes num�riques utilis�s exclusivement � l'identification des produits susceptibles d'�tre vendus au grand public.";
-      print '</td>';
+ // Affiche exemple
+ print '<td align="center"><img src="'.dol_genbarcode('123456789012','EAN',1).'"></td>';
 
-      // Affiche exemple
-      print '<td align="center"><img src="'.dol_genbarcode('123456789012','UPC',1).'"></td>';
-      
-      print '<td align="center">';
-      print $formbarcode->setBarcodeEncoder('UPC','form'.$i);
-	    print "</td></tr>\n";
-	    $i++;
-	    
-//ISBN
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td width="100">';
-      print "ISBN";
-      print "</td><td>\n";
-      print "Le code ISBN est un code d�di� au milieu de la presse �crite.";
-      print '</td>';
+ print '<td align="center">';
+ print $formbarcode->setBarcodeEncoder('EAN13','form'.$i);
+ print "</td></tr>\n";
+ $i++;
 
-      // Affiche exemple
-      print '<td align="center"><img src="'.dol_genbarcode('123456789','ISBN',1).'"></td>';
-      
-      print '<td align="center">';
-      print $formbarcode->setBarcodeEncoder('ISBN','form'.$i);
-	    print "</td></tr>\n";
-	    $i++;
-	    
-//code 39
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td width="100">';
-      print "Code 39";
-      print "</td><td>\n";
-      print "Premier code alpha num�rique utilis� massivement dans l'Industrie pour sa capacit� d'encodage (chiffres et lettres)<br>";
-      print "ainsi que par son degr� de s�curit� � l'encodage (clef de contr�le).<br>";
-      print "Il met a disposition les 10 chiffres, les 26 lettres de l'alphabet et sept symboles.<br>";
-			print "l'ast�risque (*) sert de caract�re de bornage. La lecture est bidirectionnelle.<br>";
-			print "La longueur est variable mais en g�n�ral ne d�passe pas 32 caract�res.";
-      print '</td>';
+ //UPC
+ $var=!$var;
+ print '<tr '.$bc[$var].'><td width="100">';
+ print "UPC";
+ print "</td><td>\n";
+ print "L'UPC est l'�quivalent de l'EAN8/13 pour des pays codificateurs autre que l'Europe.<br>";
+ print "Il ne comporte que 11 chiffres plus la cl�.<br>";
+ print "C'est en r�alit� un code EAN13 dont le premier chiffre serait z�ro et dont la pr�sentation serait l�g�rement diff�rente.<br>";
+ print "Codes num�riques utilis�s exclusivement � l'identification des produits susceptibles d'�tre vendus au grand public.";
+ print '</td>';
 
-      // Affiche exemple
-      print '<td align="center"><img src="'.dol_genbarcode('1234567890','39',1).'"></td>';
-      
-      print '<td align="center">';
-      print $formbarcode->setBarcodeEncoder('C39','form'.$i);
-	    print "</td></tr>\n";
-	    $i++;
-	    
-	    
-//code 128
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td width="100">';
-      print "Code 128";
-      print "</td><td>\n";
-      print "Ce code \"derni�re g�n�ration\" alpha num�rique est susceptible d'encoder les 128 caract�res de la table ASCII ( chiffres + lettres + symboles ).<br>";
-			print "Le code 128 poss�de des algorithmes de cryptage s�curis�s assez avanc�s.<br>";
-      print "C'est le plus complet des codes � barres, il propose 3 jeux de 128 caract�res.<br>";
-			print "La lecture est bidirectionnelle.<br>";
-			print "La longueur est variable mais en g�n�ral ne d�passe pas 20 caract�res.";
-      print '</td>';
+ // Affiche exemple
+ print '<td align="center"><img src="'.dol_genbarcode('123456789012','UPC',1).'"></td>';
 
-      // Affiche exemple
-      print '<td align="center"><img src="'.dol_genbarcode('ABCD1234567890','128',1).'"></td>';
-      
-      print '<td align="center">';
-      print $formbarcode->setBarcodeEncoder('C128','form'.$i);
-	    print "</td></tr>\n";
-	    $i++;
-	    
-//I25
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td width="100">';
-      print "I25";
-      print "</td><td>\n";
-      print "information";
-      print '</td>';
+ print '<td align="center">';
+ print $formbarcode->setBarcodeEncoder('UPC','form'.$i);
+ print "</td></tr>\n";
+ $i++;
+  
+ //ISBN
+ $var=!$var;
+ print '<tr '.$bc[$var].'><td width="100">';
+ print "ISBN";
+ print "</td><td>\n";
+ print "Le code ISBN est un code d�di� au milieu de la presse �crite.";
+ print '</td>';
 
-      // Affiche exemple
-      print '<td align="center"><img src="'.dol_genbarcode('1234567890','I25',1).'"></td>';
-      
-      print '<td align="center">';
-      print $formbarcode->setBarcodeEncoder('I25','form'.$i);
-	    print "</td></tr>\n";
-	    $i++;
-*/
+ // Affiche exemple
+ print '<td align="center"><img src="'.dol_genbarcode('123456789','ISBN',1).'"></td>';
+
+ print '<td align="center">';
+ print $formbarcode->setBarcodeEncoder('ISBN','form'.$i);
+ print "</td></tr>\n";
+ $i++;
+  
+ //code 39
+ $var=!$var;
+ print '<tr '.$bc[$var].'><td width="100">';
+ print "Code 39";
+ print "</td><td>\n";
+ print "Premier code alpha num�rique utilis� massivement dans l'Industrie pour sa capacit� d'encodage (chiffres et lettres)<br>";
+ print "ainsi que par son degr� de s�curit� � l'encodage (clef de contr�le).<br>";
+ print "Il met a disposition les 10 chiffres, les 26 lettres de l'alphabet et sept symboles.<br>";
+ print "l'ast�risque (*) sert de caract�re de bornage. La lecture est bidirectionnelle.<br>";
+ print "La longueur est variable mais en g�n�ral ne d�passe pas 32 caract�res.";
+ print '</td>';
+
+ // Affiche exemple
+ print '<td align="center"><img src="'.dol_genbarcode('1234567890','39',1).'"></td>';
+
+ print '<td align="center">';
+ print $formbarcode->setBarcodeEncoder('C39','form'.$i);
+ print "</td></tr>\n";
+ $i++;
+  
+  
+ //code 128
+ $var=!$var;
+ print '<tr '.$bc[$var].'><td width="100">';
+ print "Code 128";
+ print "</td><td>\n";
+ print "Ce code \"derni�re g�n�ration\" alpha num�rique est susceptible d'encoder les 128 caract�res de la table ASCII ( chiffres + lettres + symboles ).<br>";
+ print "Le code 128 poss�de des algorithmes de cryptage s�curis�s assez avanc�s.<br>";
+ print "C'est le plus complet des codes � barres, il propose 3 jeux de 128 caract�res.<br>";
+ print "La lecture est bidirectionnelle.<br>";
+ print "La longueur est variable mais en g�n�ral ne d�passe pas 20 caract�res.";
+ print '</td>';
+
+ // Affiche exemple
+ print '<td align="center"><img src="'.dol_genbarcode('ABCD1234567890','128',1).'"></td>';
+
+ print '<td align="center">';
+ print $formbarcode->setBarcodeEncoder('C128','form'.$i);
+ print "</td></tr>\n";
+ $i++;
+  
+ //I25
+ $var=!$var;
+ print '<tr '.$bc[$var].'><td width="100">';
+ print "I25";
+ print "</td><td>\n";
+ print "information";
+ print '</td>';
+
+ // Affiche exemple
+ print '<td align="center"><img src="'.dol_genbarcode('1234567890','I25',1).'"></td>';
+
+ print '<td align="center">';
+ print $formbarcode->setBarcodeEncoder('I25','form'.$i);
+ print "</td></tr>\n";
+ $i++;
+ */
 
 print "<br>";
 

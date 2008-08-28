@@ -826,7 +826,8 @@ ViewProductDescInFormAbility=Visualisation des descriptions produits dans les fo
 UseSearchToSelectProduct=Utiliser un formulaire de recherche pour choix d'un produit (plutôt que liste déroulante)
 UseEcoTaxeAbility=Prise en charge des éco-taxes (DEEE)
 UseMinPrice=Utilisation d'un prix minimum de vente
-SetDefaultBarcodeType=Type de code barre utilisé par défaut pour les produits
+SetDefaultBarcodeTypeProducts=Type de code barre utilisé par défaut pour les produits
+SetDefaultBarcodeTypeThirdParties=Type de code barre utilisé par défaut pour les tiers
 ##### Suppliers #####
 SuppliersSetup=Configuration du module Fournisseur
 ##### Syslog #####
