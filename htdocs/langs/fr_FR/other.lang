@@ -85,6 +85,7 @@ BackToLoginPage=Retour page de connexion
 AuthenticationDoesNotAllowSendNewPassword=Le mode d'authentification de Dolibarr est configuré à "<b>%s</b>".<br>Dans ce mode, Dolibarr n'a pas la possibilité de connaitre ni modifier votre mot de passe.<br>Contacter votre administrateur pour connaitre les modalités de changement.
 EnableGDLibraryDesc=Vous devez activer ou installer la librairie GD avec votre PHP pour pouvoir activer cette option.
 EnablePhpAVModuleDesc=Vous devez installer un module PHP compatible avec votre anti-virus. (Clamav : php4-clamavlib ou php5-clamavlib)
+ProfIdShortDesc=<b>Id prof. %s</b> est une information qui dépend du pays du tiers.<br>Par exemple, pour le pays <b>%s</b>, il s'agit du code <b>%s</b>. 
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
 ErrorWebcalLoginNotDefined=Le login Webcalendar associé à votre login Dolibarr <b>%s</b> n'est pas défini.

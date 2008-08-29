@@ -19,12 +19,12 @@
  */
 
 /**
-	    \file       htdocs/societe.php
-        \ingroup    societe
-		\brief      Page des societes
-		\version    $Id$
-*/
- 
+ *	\file       htdocs/societe.php
+ *	\ingroup    societe
+ *	\brief      Page des societes
+ *	\version    $Id$
+ */
+
 require_once("./pre.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
@@ -42,6 +42,10 @@ $socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+$search_idprof1=$_REQUEST['search_idprof1'];
+$search_idprof2=$_REQUEST['search_idprof2'];
+$search_idprof3=$_REQUEST['search_idprof3'];
+$search_idprof4=$_REQUEST['search_idprof4'];
 
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
@@ -57,49 +61,49 @@ $pagenext = $page + 1;
  * Actions
  *
  */
- 
+
 // Recherche
 $mode=isset($_GET["mode"])?$_GET["mode"]:$_POST["mode"];
 $modesearch=isset($_GET["mode-search"])?$_GET["mode-search"]:$_POST["mode-search"];
 
 if ($mode == 'search')
 {
-    $_POST["search_nom"]=$socname;
+	$_POST["search_nom"]=$socname;
 
-    $sql = "SELECT s.rowid";
-    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-    if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql.= " WHERE (";
-    $sql.= "s.nom like '%".addslashes($socname)."%'";
+	$sql = "SELECT s.rowid";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE (";
+	$sql.= "s.nom like '%".addslashes($socname)."%'";
 	$sql.= " OR s.code_client LIKE '%".addslashes($socname)."%'";
 	$sql.= " OR s.email like '%".addslashes($socname)."%'";
 	$sql.= " OR s.url like '%".addslashes($socname)."%'";
-    $sql.= ")";
-    if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql.= ")";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if (! $user->rights->societe->lire || ! $user->rights->fournisseur->lire)
 	{
 		if (! $user->rights->fournisseur->lire) $sql.=" AND s.fourn != 1";
 	}
-	
-    $result=$db->query($sql);
-    if ($result)
-    {
-        if ($db->num_rows($result) == 1)
-        {
-            $obj = $db->fetch_object($result);
-            $socid = $obj->rowid;
-            header("Location: ".DOL_URL_ROOT."/soc.php?socid=".$socid);
-            exit;
-        }
-        $db->free($result);
-    }
-    // Sécurité accès client
-    if ($user->societe_id > 0) 
-    {
-        $action = '';
-        $socid = $user->societe_id;
-    }
+
+	$result=$db->query($sql);
+	if ($result)
+	{
+		if ($db->num_rows($result) == 1)
+		{
+			$obj = $db->fetch_object($result);
+			$socid = $obj->rowid;
+			header("Location: ".DOL_URL_ROOT."/soc.php?socid=".$socid);
+			exit;
+		}
+		$db->free($result);
+	}
+	// Sécurité accès client
+	if ($user->societe_id > 0)
+	{
+		$action = '';
+		$socid = $user->societe_id;
+	}
 }
 
 
@@ -109,17 +113,23 @@ if ($mode == 'search')
 
 llxHeader();
 
-// As-t-on cliqué sur purge des criètres de recherche
+$form=new Form($db);
+
+// Do we click on purge search criteria ?
 if (isset($_POST["button_removefilter_x"]))
 {
-    $socname="";
-    $search_nom="";
-    $search_ville="";
+	$socname="";
+	$search_nom="";
+	$search_ville="";
+	$search_idprof1='';
+	$search_idprof2='';
+	$search_idprof3='';
+	$search_idprof4='';
 }
 
 if ($socname)
 {
-  $search_nom=$socname;
+	$search_nom=$socname;
 }
 
 // Affiche la confirmation de suppression d'un tiers
@@ -129,13 +139,13 @@ if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted
  * Mode Liste
  */
 /*
-	REM: Regle sur droits "Voir tous les clients"
-	REM: Exemple, voir la page societe.php dans le mode liste.
-	Utilisateur interne socid=0 + Droits voir tous clients        => Voit toute société
-	Utilisateur interne socid=0 + Pas de droits voir tous clients => Ne voit que les sociétés liées comme commercial
-	Utilisateur externe socid=x + Droits voir tous clients        => Ne voit que lui meme
-	Utilisateur externe socid=x + Pas de droits voir tous clients => Ne voit que lui meme
-*/ 
+ REM: Regle sur droits "Voir tous les clients"
+ REM: Exemple, voir la page societe.php dans le mode liste.
+ Utilisateur interne socid=0 + Droits voir tous clients        => Voit toute société
+ Utilisateur interne socid=0 + Pas de droits voir tous clients => Ne voit que les sociétés liées comme commercial
+ Utilisateur externe socid=x + Droits voir tous clients        => Ne voit que lui meme
+ Utilisateur externe socid=x + Pas de droits voir tous clients => Ne voit que lui meme
+ */
 $title=$langs->trans("ListOfThirdParties");
 
 $sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
@@ -178,21 +188,21 @@ if ($search_ville)
 {
 	$sql .= " AND s.ville LIKE '%".addslashes($search_ville)."%'";
 }
-if ($_POST["search_idprof1"])
+if ($search_idprof1)
 {
-	$sql .= " AND s.siren LIKE '%".$_POST["search_idprof1"]."%'";
+	$sql .= " AND s.siren LIKE '%".addslashes($search_idprof1)."%'";
 }
-if ($_POST["search_idprof2"])
+if ($search_idprof2)
 {
-	$sql .= " AND s.siret LIKE '%".$_POST["search_idprof2"]."%'";
+	$sql .= " AND s.siret LIKE '%".addslashes($search_idprof2)."%'";
 }
-if ($_POST["search_idprof3"])
+if ($search_idprof3)
 {
-	$sql .= " AND s.ape LIKE '%".$_POST["search_idprof3"]."%'";
+	$sql .= " AND s.ape LIKE '%".addslashes($search_idprof3)."%'";
 }
-if ($_POST["search_idprof4"])
+if ($search_idprof4)
 {
-	$sql .= " AND s.idprof4 LIKE '%".$_POST["search_idprof4"]."%'";
+	$sql .= " AND s.idprof4 LIKE '%".addslashes($search_idprof4)."%'";
 }
 
 // Count total nb of records
@@ -208,107 +218,128 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
+	$num = $db->num_rows($result);
+	$i = 0;
 
-  $params = "&amp;socname=$socname";
+	$params = "&amp;socname=".$socname."&amp;search_nom=".$search_nom."&amp;search_ville=".$search_ville;
+	$params.= '&amp;search_idprof1='.$search_idprof1;
+	$params.= '&amp;search_idprof2='.$search_idprof2;
+	$params.= '&amp;search_idprof3='.$search_idprof3;
+	$params.= '&amp;search_idprof4='.$search_idprof4;
+		
+	print_barre_liste($title, $page, "societe.php",$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
-  print_barre_liste($title, $page, "societe.php",$params,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-    
-  // Lignes des titres
-  print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params,"&search_nom=$search_nom&search_ville=$search_ville","",$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("ProfId1Short"),"societe.php","s.siren",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("ProfId2Short"),"societe.php","s.siret",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("ProfId3Short"),"societe.php","s.ape",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("ProfId4Short"),"societe.php","s.idprof4",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield,$sortorder);
-  print '<td class="liste_titre" colspan="2" align="center">&nbsp;</td>';
-  print "</tr>\n";
+	$langs->load("other");
+	$textprofid=array();
+	foreach(array(1,2,3,4) as $key)
+	{
+		$label=$langs->transnoentities("ProfId".$key.$mysoc->pays_code);
+		$textprofid[$key]='';
+		if ($label != "ProfId".$key.$mysoc->pays_code)
+		{	// Get only text between ()
+			if (eregi('\((.*)\)',$label,$reg)) $label=$reg[1];
+			$textprofid[$key]=$langs->trans("ProfIdShortDesc",$key,$mysoc->pays_code,$label);
+		}
+	}
 
-  // Lignes des champs de filtre
-  print '<form method="post" action="societe.php" name="formfilter">';
-  print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-  print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-  print '<tr class="liste_titre">';
-  print '<td class="liste_titre" valign="right">';
-  print '<input class="flat" type="text" name="search_nom" value="'.$search_nom.'">';
-  print '</td><td class="liste_titre" valign="right">';
-  print '<input class="flat" size="10" type="text" name="search_ville" value="'.$search_ville.'">';
-  print '</td>';
+	print '<form method="post" action="societe.php" name="formfilter">';
+	
+	// Lignes des titres
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom","",$params,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville","",$params,'',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId1Short"),$textprofid[1],1,0),"societe.php","s.siren","",$params,'',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId2Short"),$textprofid[2],1,0),"societe.php","s.siret","",$params,'',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId3Short"),$textprofid[3],1,0),"societe.php","s.ape","",$params,'',$sortfield,$sortorder);
+	print_liste_field_titre($form->textwithhelp($langs->trans("ProfId4Short"),$textprofid[4],1,0),"societe.php","s.idprof4","",$params,'',$sortfield,$sortorder);
+	print '<td class="liste_titre" colspan="2" align="center">&nbsp;</td>';
+	print "</tr>\n";
+
+	// Lignes des champs de filtre
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input class="flat" type="text" name="search_nom" value="'.$search_nom.'">';
+	print '</td><td class="liste_titre">';
+	print '<input class="flat" size="10" type="text" name="search_ville" value="'.$search_ville.'">';
+	print '</td>';
 	// IdProf1
-  print '<td class="liste_titre" valign="right">';
-  print '<input class="flat" size="8" type="text" name="search_idprof1" value="'.$_POST["search_idprof1"].'">';
-  print '</td>';
-  	// IdProf2
-  print '<td class="liste_titre" valign="right">';
-  print '<input class="flat" size="8" type="text" name="search_idprof2" value="'.$_POST["search_idprof2"].'">';
-  print '</td>';
-  	// IdProf3
-  print '<td class="liste_titre" valign="right">';
-  print '<input class="flat" size="8" type="text" name="search_idprof3" value="'.$_POST["search_idprof3"].'">';
-  print '</td>';
-  	// IdProf4
-  print '<td class="liste_titre" valign="right">';
-  print '<input class="flat" size="8" type="text" name="search_idprof4" value="'.$_POST["search_idprof4"].'">';
-  print '</td>';
-  print '<td class="liste_titre" colspan="2" align="right">';
-  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-  print '&nbsp; ';
-  print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
-  print '</td>';
-  print "</tr>\n";
-  print '</form>';
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="8" type="text" name="search_idprof1" value="'.$search_idprof1.'">';
+	print '</td>';
+	// IdProf2
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="8" type="text" name="search_idprof2" value="'.$search_idprof2.'">';
+	print '</td>';
+	// IdProf3
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="8" type="text" name="search_idprof3" value="'.$search_idprof3.'">';
+	print '</td>';
+	// IdProf4
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="8" type="text" name="search_idprof4" value="'.$search_idprof4.'">';
+	print '</td>';
+	print '<td class="liste_titre" colspan="2" align="right">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+	print '&nbsp; ';
+	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
+	print '</td>';
+	print "</tr>\n";
 
-  $var=True;
+	$var=True;
 
-  while ($i < min($num,$conf->liste_limit))
-    {
-      $obj = $db->fetch_object();    
-      $var=!$var;    
-      print "<tr $bc[$var]><td>";
-      print "<a href=\"".DOL_URL_ROOT."/soc.php?socid=".$obj->rowid."\">";
-      print img_object($langs->trans("ShowCompany"),"company");
-      print "</a>&nbsp;<a href=\"".DOL_URL_ROOT."/soc.php?socid=".$obj->rowid."\">".$obj->nom."</a></td>\n";
-      print "<td>".$obj->ville."</td>\n";
-      print "<td>".$obj->idprof1."</td>\n";
-      print "<td>".$obj->idprof2."</td>\n";
-      print "<td>".$obj->idprof3."</td>\n";
-      print "<td>".$obj->idprof4."</td>\n";
-      print '<td align="center">';
-      if ($obj->client==1)
+	while ($i < min($num,$conf->liste_limit))
 	{
+		$obj = $db->fetch_object();
+		$var=!$var;
+		print "<tr $bc[$var]><td>";
+		print "<a href=\"".DOL_URL_ROOT."/soc.php?socid=".$obj->rowid."\">";
+		print img_object($langs->trans("ShowCompany"),"company");
+		print "</a>&nbsp;<a href=\"".DOL_URL_ROOT."/soc.php?socid=".$obj->rowid."\">".$obj->nom."</a></td>\n";
+		print "<td>".$obj->ville."</td>\n";
+		print "<td>".$obj->idprof1."</td>\n";
+		print "<td>".$obj->idprof2."</td>\n";
+		print "<td>".$obj->idprof3."</td>\n";
+		print "<td>".$obj->idprof4."</td>\n";
+		print '<td align="center">';
+		if ($obj->client==1)
+		{
 	  print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Customer")."</a>\n";
-	}
-      elseif ($obj->client==2)
-	{
+		}
+		elseif ($obj->client==2)
+		{
 	  print "<a href=\"".DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
-	}
-      else
-	{
+		}
+		else
+		{
 	  print "&nbsp;";
-	}
-      print "</td><td align=\"center\">";
-      if ($obj->fournisseur)
-	{
+		}
+		print "</td><td align=\"center\">";
+		if ($obj->fournisseur)
+		{
 	  print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
-	}
-      else
-	{
+		}
+		else
+		{
 	  print "&nbsp;";
-	}
-      
-      print '</td></tr>'."\n";
-      $i++;
-    }
+		}
 
-  print "</table>";
-  $db->free();
+		print '</td></tr>'."\n";
+		$i++;
+	}
+	
+	$db->free();
+	
+	print "</table>";
+	
+	print '</form>';
+	
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 $db->close();
