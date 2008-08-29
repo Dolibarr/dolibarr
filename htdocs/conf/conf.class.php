@@ -428,11 +428,10 @@ class Conf
 		
 		// $this->email_from = email pour envoi par dolibarr des mails automatiques
 		$this->email_from = "dolibarr-robot@domain.com";
-		if (! empty($conf->global->MAIN_MAIL_EMAIL_FROM))
+		if (! empty($this->global->MAIN_MAIL_EMAIL_FROM))
 		{
-			$this->email_from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$this->email_from = $this->global->MAIN_MAIL_EMAIL_FROM;
 		}
-		
 		// $this->notification->email_from = email pour envoi par Dolibarr des notifications
 	    $this->notification->email_from=$this->email_from;
 		if (! empty($conf->global->NOTIFICATION_EMAIL_FROM))
