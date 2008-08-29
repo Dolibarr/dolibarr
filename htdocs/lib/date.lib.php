@@ -78,7 +78,7 @@ function dol_get_prev_month($month, $year)
 /**	\brief		Return next month
  *	\param		month	Month
  *	\param		year	Year
- *	\return		array	Next year,mont
+ *	\return		array	Next year,month
  */
 function dol_get_next_month ($month, $year)
 {
