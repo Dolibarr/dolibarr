@@ -470,7 +470,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 				}
 				else if($ok)
 				{
-					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$month.'&year='.$year.'">'.img_picto("all","1downarrow_selected.png").'</a>';
+					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$month.'&year='.$year.'">'.img_picto("all","1downarrow_selected.png").' ...</a>';
 					$ok=false;
 				}
 			}
