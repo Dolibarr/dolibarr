@@ -434,16 +434,16 @@ class Conf
 		}
 		// $this->notification->email_from = email pour envoi par Dolibarr des notifications
 	    $this->notification->email_from=$this->email_from;
-		if (! empty($conf->global->NOTIFICATION_EMAIL_FROM))
+		if (! empty($this->global->NOTIFICATION_EMAIL_FROM))
 		{
-		    $this->notification->email_from=$conf->global->NOTIFICATION_EMAIL_FROM;
+		    $this->notification->email_from=$this->global->NOTIFICATION_EMAIL_FROM;
 		}
 
 		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
 		$this->mailing->email_from=$this->email_from;;
-		if (! empty($conf->global->MAILING_EMAIL_FROM))
+		if (! empty($this->global->MAILING_EMAIL_FROM))
 		{
-		    $this->mailing->email_from=$conf->global->MAILING_EMAIL_FROM;
+		    $this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
 		}
 
 		// Defini MAIN_GRAPH_LIBRARY
