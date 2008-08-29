@@ -80,9 +80,9 @@ if ($result)
 
   print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
   print '<tr class="liste_titre">';
-  print '<td class="liste_titre" valign="right">';
+  print '<td class="liste_titre">';
   print '<input type="text" class="flat" name="sref" value="'.$sref.'" size="6">';
-  print '</td><td class="liste_titre" valign="right">';
+  print '</td><td class="liste_titre">';
   print '<input type="text" class="flat" name="sall" value="'.$sall.'" size="40">';
   print '</td>';
   print '<td class="liste_titre">&nbsp;</td>';

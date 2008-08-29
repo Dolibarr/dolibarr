@@ -202,7 +202,7 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
     print '</td>';
-    print '<td class="liste_titre" valign="right">';
+    print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
     print '</td>';
     if ($conf->service->enabled && $type == 1) 

@@ -1931,7 +1931,7 @@ else
 		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" valign="right">';
+		print '<td class="liste_titre">';
 		print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
 		print '</td>';
 		print '<td class="liste_titre" align="left">';

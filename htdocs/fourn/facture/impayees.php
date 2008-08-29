@@ -160,9 +160,9 @@ if ($user->rights->fournisseur->facture->lire)
 		// Lignes des champs de filtre
 		print '<form method="get" action="impayees.php">';
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" valign="right">';
+		print '<td class="liste_titre">';
 		print '<input class="flat" size="8" type="text" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
-		print '<td class="liste_titre" valign="right">';
+		print '<td class="liste_titre">';
 		print '<input class="flat" size="8" type="text" name="search_ref_supplier" value="'.$_GET["search_ref_supplier"].'"></td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		print '<td class="liste_titre">&nbsp;</td>';

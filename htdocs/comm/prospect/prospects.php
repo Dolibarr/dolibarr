@@ -138,7 +138,7 @@ if ($resql)
 
     print '<form method="get" action="prospects.php">';
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre" valign="right">';
+    print '<td class="liste_titre">';
     print '<input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'">';
     print '</td><td class="liste_titre">';
     print '<input type="text" class="flat" name="search_ville" size="12" value="'.$_GET["search_ville"].'">';

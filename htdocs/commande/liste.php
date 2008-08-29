@@ -175,7 +175,7 @@ if ($resql)
 	// Lignes des champs de filtre
 	print '<form method="get" action="liste.php">';
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" valign="right">';
+	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="sref" value="'.$sref.'">';
 	print '</td><td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';

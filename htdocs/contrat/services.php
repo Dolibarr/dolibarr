@@ -132,7 +132,7 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="18" name="search_service" value="'.stripslashes($search_service).'">';
     print '</td>';
-    print '<td class="liste_titre" valign="right">';
+    print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="24" name="search_nom" value="'.stripslashes($search_nom).'">';
     print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';

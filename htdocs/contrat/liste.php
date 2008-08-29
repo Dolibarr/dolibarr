@@ -111,7 +111,7 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="3" name="search_contract" value="'.$search_contract.'">';
     print '</td>';
-    print '<td class="liste_titre" valign="right">';
+    print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="24" name="search_nom" value="'.$search_nom.'">';
     print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';

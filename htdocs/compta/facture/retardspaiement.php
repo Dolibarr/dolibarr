@@ -208,7 +208,7 @@ if ($user->rights->facture->lire)
 		// Lignes des champs de filtre
 		print '<form method="get" action="retardspaiement.php">';
 		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" valign="right">';
+		print '<td class="liste_titre">';
 		print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
 		print '<td class="liste_titre" align="center"><input type="checkbox" onclick="checkall(this.checked);"></td>';
 		print '<td class="liste_titre">&nbsp;</td>';
