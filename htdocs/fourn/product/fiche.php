@@ -151,7 +151,7 @@ if ($_GET["action"] == 'remove_fourn')
 	$product = new ProductFournisseur($db);
 	if( $product->fetch($_GET["id"]) )
 	{
-		if ($product->remove_fournisseur($user, $_GET["id_fourn"]) > 0)
+		if ($product->remove_fournisseur($_GET["id_fourn"]) > 0)
 		{
 	  $_GET["action"] = '';
 	  $mesg = $langs->trans("SupplierRemoved");
@@ -194,8 +194,14 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 }
 
 
-// Le produit n'est pas encore chargé a ce stade
+
+/*
+ * View
+ */
+
 llxHeader("","",$langs->trans("CardProduct0"));
+
+// Le produit n'est pas encore chargé a ce stade
 
 /*
  * Création du produit

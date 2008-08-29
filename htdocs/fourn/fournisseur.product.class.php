@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file       htdocs/fourn/fournisseur.product.class.php
 		\ingroup    produit
 		\brief      Fichier de la classe des produits prédéfinis
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once DOL_DOCUMENT_ROOT."/product.class.php";
@@ -55,26 +52,70 @@ class ProductFournisseur extends Product
 
 
 	/**
-	*    \brief    Délie un fournisseur au produit/service
-	*    \param    user        utilisateur qui défait le lien
+	*    \brief    Remove all prices for this couple supplier-product
 	*    \param    id_fourn    id du fournisseur
 	*    \return   int         < 0 si erreur, > 0 si ok
 	*/
 	function remove_fournisseur($id_fourn)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur ";
+		$ok=1;
+		
+		$this->db->begin();
+		
+		// Search all links
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
 		$sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
 
 		dolibarr_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			return 1;
+			// For each link, delete price line
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+				$sql.= " WHERE fk_product_fournisseur = ".$obj->rowid;
+				
+				dolibarr_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
+				$resql2=$this->db->query($sql);
+				if (! $resql2)
+				{
+					$this->error=$this->db->lasterror();
+					dolibarr_syslog("ProductFournisseur::remove_fournisseur ".$this->error, LOG_ERR);
+					$ok=0;
+				}
+			}
+			
+			// Now delete all link supplier-product (they have no more childs)
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur";
+			$sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
+			
+			dolibarr_syslog("ProductFournisseur::remove_fournisseur sql=".$sql);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$this->error=$this->db->lasterror();
+				dolibarr_syslog("ProductFournisseur::remove_fournisseur ".$this->error, LOG_ERR);
+				$ok=0;
+			}
+			
+			if ($ok)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
 		}
 		else
 		{
+			$this->db->rollback();
 			dolibarr_print_error($this->db);
-			return -1;
+			return -2;
 		}
 	}
 
@@ -96,23 +137,72 @@ class ProductFournisseur extends Product
 		}
 	}
 
-	/*
-	*	\return		int		<0 si KO, 0 si non trouve, >0 si efface
-	*/
+	/**
+	 * 	\brief		Remove a price for a couple supplier-product
+	 * 	\param		rowid	Line id of price
+	 *	\return		int		<0 if KO, >0 if OK
+	 */
 	function remove_product_fournisseur_price($rowid)
 	{
+		$this->db->begin();
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE rowid = ".$rowid;
-
 		dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
 		$resql = $this->db->query($sql);  
-		if ($resql)
+		if ($resql) 
 		{
-			if ($this->db->affected_rows() > 0) return 1;
-			else return 0;
+			// Remove all entries with no childs
+			$sql = "SELECT pf.rowid";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur as pf";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pfp.fk_product_fournisseur = pf.rowid";
+			$sql.= " WHERE pfp.rowid IS NULL";
+			dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
+			$resql = $this->db->query($sql);  
+			if ($resql)
+			{
+				$ok=1;
+	
+				while ($obj=$this->db->fetch_object($resql))
+				{			
+					$rowidpf=$obj->rowid;
+	
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur";
+					$sql.= " WHERE rowid = ".$rowidpf;
+					dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price sql=".$sql);
+					$resql2 = $this->db->query($sql);  
+					if (! $resql2)
+					{
+						$this->error=$this->db->lasterror();
+						dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
+						$ok=0;
+					}
+				}
+							
+				if ($ok)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					return -3;
+				}
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
+				$this->db->rollback();
+				return -2;
+			}
 		}
 		else
 		{
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("ProductFournisseur::remove_product_fournisseur_price ".$this->error,LOG_ERR);
+			$this->db->rollback();
 			return -1;
 		}
 	}

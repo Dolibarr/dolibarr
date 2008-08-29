@@ -57,13 +57,15 @@ if ($_GET["action"] == 'remove_pf')
     $product = new ProductFournisseur($db);
     if ($product->fetch($_GET["id"]) > 0)
     {
-        if ($_GET["rowid"] && $product->remove_product_fournisseur_price($_GET["rowid"]) > 0)
+        if ($_GET["rowid"])
         {
+			$result=$product->remove_product_fournisseur_price($_GET["rowid"]);
             $_GET["action"] = '';
             $mesg = '<div class="ok">'.$langs->trans("PriceRemoved").'.</div>';
 		}
         else
-        {
+        {	
+        	// Deprecated. Should not occurs
             if ($product->remove_fournisseur($_GET["socid"]) > 0)
             {
                 $_GET["action"] = '';
@@ -141,6 +143,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 		if (! $error)
 		{
 			$db->commit();
+			$_POST['action']='';
 		}
 		else
 		{
@@ -225,7 +228,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 
 			// Form to add or update a price
-			if ($_GET["action"] == 'add_price' && $user->rights->produit->creer)
+			if (($_GET["action"] == 'add_price' || $_POST["action"] == 'updateprice' )&& $user->rights->produit->creer)
 			{
 				$langs->load("suppliers");
 				
