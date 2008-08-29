@@ -20,9 +20,8 @@
  *
  *
  * Generation des graphiques clients
- *
- *
  */
+
 require ("../../master.inc.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
@@ -51,11 +50,11 @@ class ProcessGraphClients
   
   function ProcessGraphClients( $ident , $cpc)
   {
-    global $conf;
+    global $db;
 
     $this->ident = $ident;
     $this->cpc = $cpc;
-    $this->db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $this->db = $db;
   }
   
   function go($id=0)

@@ -38,11 +38,11 @@ class ProcessGraphContrats
   
   function ProcessGraphContrats( $ident=0 , $cpc=0)
   {
-    global $conf;
+    global $db;
     
     $this->ident = $ident;
     $this->cpc = $cpc;
-    $this->db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
+    $this->db = $db;
     $this->messages = array();
   }
 
