@@ -224,7 +224,7 @@ if ($_GET["id"] || $_GET["ref"])
 			if ($mesg) print($mesg);
 
 
-			// Formulaire ajout prix
+			// Form to add or update a price
 			if ($_GET["action"] == 'add_price' && $user->rights->produit->creer)
 			{
 				$langs->load("suppliers");
