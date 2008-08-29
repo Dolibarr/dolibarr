@@ -14,36 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
-/*
- * Gestion du retour du syst�me de Cyberpaiement
- * Cette page est appell�e par le serveur de la BPLC lors de l'utilisation
- * su syst�me RSTS
- *
+/**
+ * 	\brief		Gestion du retour du systeme de Cyberpaiement
+ * 				Cette page est appellee par le serveur de la BPLC lors de l'utilisation
+ * 				au systeme RSTS
+ * 	\version	$Id$
  */
 
-require("../../conf/conf.class.php");
-require("./retourbplc.class.php");
-require("../../don.class.php");
+require("../../main.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/public/bplc/retourbplc.class.php");
+require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 
-$conf = new Conf();
-$conf->db->type = $dolibarr_main_db_type;
-$conf->db->port = $dolibarr_main_db_port;
-$conf->db->host = $dolibarr_main_db_host;
-$conf->db->name = $dolibarr_main_db_name;
-$conf->db->user = $dolibarr_main_db_user;
-$conf->db->pass = $dolibarr_main_db_pass;
-
-// Si type non d�fini (pour compatibilit� avec ancienne install), on
-// travail avec mysql
-if (! $conf->db->type) { $conf->db->type = 'mysql'; }
-
-require_once(DOL_DOCUMENT_ROOT ."/lib/".$dolibarr_main_db_type.".lib.php");
-
-$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,$conf->db->port);
 
 $retbplc = new Retourbplc($db);
 

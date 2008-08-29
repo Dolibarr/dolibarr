@@ -31,3 +31,4 @@ AddCustomerOrder=Créer commande client
 AddCustomerInvoice=Créer facture/avoir client
 AddSupplierOrder=Créer commande fournisseur
 AddSupplierInvoice=Créer facture fournisseur
+ListOfSupplierProductForSupplier=Liste des produits et prix du fournisseurs <b>%s</b>

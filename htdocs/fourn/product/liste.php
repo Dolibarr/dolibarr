@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file       htdocs/fourn/product/liste.php
 		\ingroup    produit
 		\brief      Page liste des produits ou services
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -74,6 +71,12 @@ if (isset($_REQUEST['catid']))
 */
 
 $title=$langs->trans("ProductsAndServices");
+
+if ($fourn_id)
+{
+	$supplier = new Fournisseur($db);
+	$supplier->fetch($fourn_id);
+}
 
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type";
 $sql .= ", pf.fk_soc, pf.ref_fourn";
@@ -143,9 +146,12 @@ if ($resql)
 		exit;
 	}
 
-	$texte = $langs->trans("List");
+	if (! empty($supplier->id)) $texte = $langs->trans("ListOfSupplierProductForSupplier",$supplier->nom);
+	else $texte = $langs->trans("List"); 
+
 	llxHeader("","",$texte);
 
+	
 	$param="&envente=$envente&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"");
 	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
 

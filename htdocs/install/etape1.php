@@ -285,7 +285,7 @@ if ($_POST["action"] == "set")
 		{
 			dolibarr_install_syslog("etape1: Creation de l'utilisateur: ".$dolibarr_main_db_user);
 
-			//print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->pass." , ".$conf->db->port;
+			//print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->port;
 			$databasefortest=$conf->db->name;
 			if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 			{
@@ -502,7 +502,7 @@ if ($_POST["action"] == "set")
 				print "</td></tr>";
 
 				// Affiche aide diagnostique
-				print '<tr><td colspan="2"><br>Le serveur "<b>'.$conf->db->host.'</b>", nom de base "<b>'.$conf->db->name.'</b>", login "<b>'.$conf->db->user.'</b>", ou mot de passe <b>"'.$conf->db->pass.'</b>" de la base de donnée est peut-être incorrect ou la version du client PHP trop ancienne par rapport à la version de la base de donnée.<br>';
+				print '<tr><td colspan="2"><br>Le serveur "<b>'.$conf->db->host.'</b>", nom de base "<b>'.$conf->db->name.'</b>", login "<b>'.$conf->db->user.'</b>", ou mot de passe de la base de donnée est peut-être incorrect ou la version du client PHP trop ancienne par rapport à la version de la base de donnée.<br>';
 				print 'Si le login n\'existe pas encore, vous devez cocher l\'option "Créer l\'utilisateur".<br>';
 				print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 				print '</td></tr>';

@@ -76,7 +76,6 @@ print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
 print "port=".$conf->db->port."\n";
 print "login=".$conf->db->user."\n";
-print "pass=".eregi_replace('.','*',$conf->db->pass)."\n";
 print "database=".$conf->db->name."\n";
 print "\n";
 print "Press a key to confirm...\n";

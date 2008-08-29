@@ -181,6 +181,9 @@ if (! defined('NOREQUIREDB'))
 		exit;   
 	}
 }
+// Now database connexion is known we can forget password
+$dolibarr_main_db_pass='';
+$conf->db->pass='';
 
 /*
  * Creation objet $user

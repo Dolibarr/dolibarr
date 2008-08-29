@@ -31,3 +31,4 @@ AddCustomerOrder=Create customer order
 AddCustomerInvoice=Create customer invoice
 AddSupplierOrder=Create supplier order
 AddSupplierInvoice=Create supplier invoice
+ListOfSupplierProductForSupplier=List of products and prices for supplier <b>%s</b>

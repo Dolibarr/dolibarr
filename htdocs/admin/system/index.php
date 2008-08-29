@@ -89,10 +89,10 @@ print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" . $db
 print "<tr $bc[1]><td>".$langs->trans("DatabaseServer")."</td><td>" . $conf->db->host . "</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("Password")."</td><td>" . ereg_replace(".","*",$conf->db->pass) . "&nbsp;</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("DBStoringCharset")."</td><td>" . $db->getDefaultCharacterSetDatabase() . "&nbsp;</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DBSortingCharset")."</td><td>" . $db->getDefaultCollationDatabase() . "&nbsp;</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("Password")."</td><td>" . $langs->trans("NotAvailable") . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("DBStoringCharset")."</td><td>" . $db->getDefaultCharacterSetDatabase() . "</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("DBSortingCharset")."</td><td>" . $db->getDefaultCollationDatabase() . "</td></tr>\n";
 print '</table>';
 print '<br>';
 
