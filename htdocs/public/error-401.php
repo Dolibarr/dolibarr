@@ -1,14 +1,14 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <title>Dolibarr 404 error page</title>
+    <title>Dolibarr 401 error page</title>
   </head>
 
   <body>
-    <h2>Error</h2>
+    <h1>Error</h1>
 
     <br>
-    You requested a page that does not exists.
+    Sorry. You are not allowed to access this resource.
 
     <br>
     You come from <?php print $_SERVER["HTTP_REFERER"] ?>.
