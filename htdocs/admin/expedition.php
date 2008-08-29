@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
@@ -130,68 +130,76 @@ if ($_GET["action"] == 'setdoc')
 // \todo A quoi servent les methode d'expedition ?
 if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 {
-	$module=$_GET["module"];
-  $moduleid=$_GET["moduleid"];
-  $statut=$_GET["statut"];
+
+
+ $module=$_GET["module"];
+ $moduleid=$_GET["moduleid"];
+ $statut=$_GET["statut"];
+
+ require_once(DOL_DOCUMENT_ROOT."/expedition/mods/methode_expedition_$module.modules.php");
+
+ $class = "methode_expedition_$module";
+ $expem = new $class($db);
   
   $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE rowid = ".$moduleid;
   $resql = $db->query($sql);
   if ($resql && ($statut == 1 || $_GET["action"] == 'setmod'))
   {
-  	$db->begin();
-  	
-  	$sqlu = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
-  	$sqlu.= " SET statut=1";
-  	$sqlu.= " WHERE rowid=".$moduleid;
-  	$result=$db->query($sqlu);
-  	if ($result) 
-    {
-		$db->commit();
-    }
+    $db->begin();
+    
+    $sqlu = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
+    $sqlu.= " SET statut=1";
+    $sqlu.= " WHERE rowid=".$moduleid;
+    $result=$db->query($sqlu);
+    if ($result) 
+      {
+	$db->commit();
+      }
     else
-    {
+      {
     	$db->rollback();
-    }
+      }
   }
   
   if ($statut == 1 || $_GET["action"] == 'setmod')
   {
-  	$db->begin();
-    
+    $db->begin();
+
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle,description,statut)";
-    $sql.= " VALUES (".$moduleid.",'".$module."','".$module."','',1)";
+    $sql.= " VALUES (".$moduleid.",'".$expem->code."','".$expem->name."','".$expem->description."',1)";
     $result=$db->query($sql);
     if ($result) 
     {
-		$db->commit();
+      $db->commit();
     }
     else
     {
-    	$db->rollback();
+      print $sql;
+      $db->rollback();
     }
   }
   else if ($statut == 0)
   {
-  	$db->begin();
-  	
-  	$sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
-  	$sql.= " SET statut=0";
-  	$sql.= " WHERE rowid=".$moduleid;
-  	$result=$db->query($sql);
-  	if ($result) 
-    {
-		$db->commit();
-    }
+    $db->begin();
+    
+    $sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
+    $sql.= " SET statut=0";
+    $sql.= " WHERE rowid=".$moduleid;
+    $result=$db->query($sql);
+    if ($result) 
+      {
+	$db->commit();
+      }
     else
-    {
+      {
     	$db->rollback();
-    }
+      }
   }
 }
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activ�
+    // \todo Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
 	dolibarr_set_const($db, "EXPEDITION_ADDON",$_GET["module"]);
