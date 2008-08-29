@@ -225,7 +225,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 
 			// Formulaire ajout prix
-			if (($_GET["action"] == 'add_price' || $_POST["action"] == 'updateprice') && $user->rights->produit->creer)
+			if ($_GET["action"] == 'add_price' && $user->rights->produit->creer)
 			{
 				$langs->load("suppliers");
 				
