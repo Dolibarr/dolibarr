@@ -88,10 +88,10 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 	require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
 	require_once ARTICHOW."/AntiSpam.class.php";
 	
-	// On créé l'objet anti-spam
+	// We create anti-spam object
 	$object = new AntiSpam();
 	
-	// Verifie code
+	// Verify code
 	if (! $object->check('dol_antispam_value',$_POST['code'],true))
 	{
 		$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
@@ -99,7 +99,7 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 	else
 	{
 	    $edituser = new User($db);
-	    $result=$edituser->fetch($_POST["username"]);
+	    $result=$edituser->fetch($_POST["username"],'',1);
 		if ($result <= 0 && $edituser->error == 'USERNOTFOUND')
 		{
 	        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists",$_POST["username"]).'</div>';
@@ -116,12 +116,12 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 				$newpassword=$edituser->setPassword($user,'',1);
 			    if ($newpassword < 0)
 			    {
-			        // Echec
+			        // Failed
 			        $message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 			    }
 			    else 
 			    {
-			        // Succes
+			        // Success
 			        if ($edituser->send_password($user,$newpassword,1) > 0)
 			        {
 			        	$message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent",$edituser->login,$edituser->email).'</div>';

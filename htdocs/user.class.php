@@ -119,11 +119,12 @@ class User extends CommonObject
 
 	/**
 	 *	\brief      Charge un objet user avec toutes ces caracteristiques depuis un id ou login
-	 *	\param      login       Si defini, login a utiliser pour recherche
-	 *	\param      sid			Si defini, sid a utiliser pour recherche
-	 * 	\return		int			<0 if KO, 0 not found, >0 if OK
+	 *	\param      login       		Si defini, login a utiliser pour recherche
+	 *	\param      sid					Si defini, sid a utiliser pour recherche
+	 * 	\param		$loadpersonalconf	Also load personal conf of user (in $user->conf->xxx)
+	 * 	\return		int					<0 if KO, 0 not found, >0 if OK
 	 */
-	function fetch($login='',$sid='')
+	function fetch($login='',$sid='',$loadpersonalconf=1)
 	{
 		global $conf;
 
@@ -217,60 +218,32 @@ class User extends CommonObject
 		}
 
 		// Recupere parametrage global propre a l'utilisateur
-		// \todo a stocker/recuperer en session pour eviter ce select a chaque page
-		$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
-		$sql.= " WHERE fk_user = ".$this->id;
-		$sql.= " AND page = ''";
-		$result=$this->db->query($sql);
-		if ($result)
-		{
-			$num = $this->db->num_rows($result);
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($result);
-				$p=$obj->param;
-				if ($p) $this->conf->$p = $obj->value;
-				$i++;
-			}
-			$this->db->free($result);
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			dolibarr_syslog("User::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql, LOG_ERR);
-			return -2;
-		}
-
-		// Recupere parametrage propre a la page et a l'utilisateur
-		// \todo SCRIPT_URL non defini sur tous serveurs
-		// Parametrage par page desactive pour l'instant
-		if (1==2 && isset($_SERVER['SCRIPT_URL']))
+		// \TODO a stocker/recuperer en session pour eviter ce select a chaque page
+		// \TODO Remove where on page and remove page field in databse (not used)
+		if ($loadpersonalconf)
 		{
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 			$sql.= " WHERE fk_user = ".$this->id;
-			$sql.= " AND page='".$_SERVER['SCRIPT_URL']."'";
+			$sql.= " AND page = ''";
 			$result=$this->db->query($sql);
 			if ($result)
 			{
 				$num = $this->db->num_rows($result);
 				$i = 0;
-				$page_param_url = '';
-				$this->page_param = array();
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					$this->page_param[$obj->param] = $obj->value;
-					$page_param_url .= $obj->param."=".$obj->value."&amp;";
+					$p=$obj->param;
+					if ($p) $this->conf->$p = $obj->value;
 					$i++;
 				}
-				$this->page_param_url = $page_param_url;
 				$this->db->free($result);
 			}
 			else
 			{
 				$this->error=$this->db->error();
-				return -1;
+				dolibarr_syslog("User::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql, LOG_ERR);
+				return -2;
 			}
 		}
 
@@ -656,7 +629,7 @@ class User extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".$this->contact_id;
 			if ($this->db->query($sql))
 			{
-				 
+					
 			}
 		}
 
@@ -708,7 +681,7 @@ class User extends CommonObject
 		{
 			$num = $this->db->num_rows($resql);
 			$this->db->free($resql);
-				
+
 			if ($num)
 			{
 				$this->error = 'ErrorLoginAlreadyExists';
@@ -726,7 +699,7 @@ class User extends CommonObject
 				{
 					$table =  "".MAIN_DB_PREFIX."user";
 					$this->id = $this->db->last_insert_id($table);
-						
+
 					// Set default rights
 					if ($this->set_default_rights() < 0)
 					{
@@ -734,7 +707,7 @@ class User extends CommonObject
 						$this->db->rollback();
 						return -5;
 					}
-						
+
 					// Update minor fields
 					$result = $this->update($user,1,1);
 					if ($result < 0)
@@ -762,7 +735,7 @@ class User extends CommonObject
 						if ($result < 0) { $error++; $this->errors=$interface->errors; }
 						// Fin appel triggers
 					}
-						
+
 					if (! $error)
 					{
 						$this->db->commit();
@@ -1001,7 +974,7 @@ class User extends CommonObject
 		if ($resql)
 		{
 			$nbrowsaffected+=$this->db->affected_rows($resql);
-			 
+
 			// Mise a jour mot de passe
 			if ($this->pass)
 			{
@@ -1009,22 +982,22 @@ class User extends CommonObject
 				{
 					// Si mot de passe saisi et different de celui en base
 					$result=$this->setPassword($user,$this->pass,0,$notrigger);
-	     
+
 					if (! $nbrowsaffected) $nbrowsaffected++;
 				}
 			}
-			 
+
 			if ($nbrowsaffected)
 			{
 				if ($this->fk_member && ! $nosyncmember)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-						
+
 					// This user is linked with a member, so we also update members informations
 					// if this is an update.
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
-						
+
 					if ($result >= 0)
 					{
 						$adh->prenom=$this->prenom;
@@ -1211,7 +1184,7 @@ class User extends CommonObject
 						if ($result < 0) $this->errors=$interface->errors;
 						// Fin appel triggers
 					}
-						
+
 					return $this->pass;
 				}
 				else
@@ -1251,8 +1224,8 @@ class User extends CommonObject
 	/**
 	 *   \brief     	Envoie mot de passe par mail
 	 *   \param     	user            Object user de l'utilisateur qui fait l'envoi
-	 *   \param		password        Nouveau mot de passe
-	 *	\param		changelater		1=Change password only after clicking on confirm email
+	 *   \param			password        Nouveau mot de passe
+	 *	 \param			changelater		1=Change password only after clicking on confirm email
 	 *   \return    	int             < 0 si erreur, > 0 si ok
 	 */
 	function send_password($user, $password='', $changelater=0)
@@ -1266,6 +1239,19 @@ class User extends CommonObject
 
 		// Define $msg
 		$mesg = '';
+
+		$outputlangs=new Translate($db,$conf);
+		if (isset($this->conf->MAIN_LANG_DEFAULT)
+		&& $this->conf->MAIN_LANG_DEFAULT != 'auto')
+		{	// If user has defined its own language (rare because in most cases, auto is used)
+			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
+		}
+		else
+		{	// If user has not defined its own language, we used current language
+			$outputlangs=$langs;
+		}
+		
+		// \TODO Use outputlangs to translate messages
 		if (! $changelater)
 		{
 			$mesg.= "A request to change your Dolibarr password has been received.\n";
@@ -1292,8 +1278,7 @@ class User extends CommonObject
 			dolibarr_syslog("User::send_password url=".$url);
 		}
 		$mailfile = new CMailFile($subject,$this->email,$conf->notification->email_from,$mesg,
-		array(),array(),array(),
-        							'', '', 0, $msgishtml);
+		array(),array(),array(),'', '', 0, $msgishtml);
 
 		if ($mailfile->sendfile())
 		{
