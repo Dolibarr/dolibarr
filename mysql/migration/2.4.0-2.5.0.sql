@@ -13,4 +13,6 @@ alter table llx_product_price   add column price_min_ttc          double(24,8) d
 
 alter table llx_societe add column gencod			 varchar(255);
 
+delete from llx_user_param where page <> '';
+
 
