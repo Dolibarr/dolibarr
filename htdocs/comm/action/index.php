@@ -20,11 +20,11 @@
  */
 
 /**
-	    \file       htdocs/comm/action/index.php
-        \ingroup    agenda
-		\brief      Page accueil des rapports des actions
-		\version    $Id$
-*/
+ \file       htdocs/comm/action/index.php
+ \ingroup    agenda
+ \brief      Page accueil des rapports des actions
+ \version    $Id$
+ */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -141,7 +141,7 @@ if ($_GET["type"]) $param.="&type=".$_REQUEST["type"];
 // Show navigation bar
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
 $nav.=" <span id=\"month_name\">".dolibarr_print_date(dolibarr_mktime(0,0,0,$month,1,$year),"%b");
-$nav.=" $year";
+$nav.=" ".$year;
 $nav.=" </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 
@@ -178,7 +178,7 @@ if ($canedit)
 	print '</td><td nowrap="nowrap">';
 	print $form->select_users($filtert,'usertodo',1,'',!$canedit);
 	print '</td></tr>';
-	
+
 	print '<tr>';
 	print '<td nowrap="nowrap">';
 	//print '<input type="checkbox" name="userdone" '.($canedit?'':'disabled="true" ').($filterd?'checked="true"':'').'> ';
@@ -200,9 +200,14 @@ $sql.= ' '.$db->pdate('a.datea').' as datea,';
 $sql.= ' '.$db->pdate('a.datea2').' as datea2,';
 $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';	
+$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 $sql.= ' WHERE 1=1';
-if ($filtera > 0 || $filtert > 0 || $filterd > 0) 
+if ($_GET["action"] == 'show_day')
+{
+	$sql.= ' AND datep BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$month,$_GET["day"],$year));
+	$sql.= ' AND '.$db->idate(dolibarr_mktime(23,59,59,$month,$_GET["day"],$year));
+}
+if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
 	$sql.= " AND (";
 	if ($filtera > 0) $sql.= " a.fk_user_author = ".$filtera;
@@ -212,11 +217,12 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
+$sql .= ' ORDER BY datep';
 // \TODO Add filters on dates
 //print $sql;
 
 $actionarray=array();
-$resql=$db->query($sql); 	
+$resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -234,8 +240,10 @@ if ($resql)
 		$action->author->id=$obj->fk_user_author;
 		$action->usertodo->id=$obj->fk_user_action;
 		$action->userdone->id=$obj->fk_user_done;
-		
+
 		// Defined date_start_in_calendar and date_end_in_calendar property
+		// They are date start and end of action but modified to not be outside
+		// calendar view.
 		if ($action->percentage <= 0)
 		{
 			$action->date_start_in_calendar=$action->datep;
@@ -248,20 +256,20 @@ if ($resql)
 			if ($action->datef != '' && $action->datef >= $action->datep) $action->date_end_in_calendar=$action->datef;
 			else $action->date_end_in_calendar=$action->datep;
 		}
-		// Define ponctuel property
+		// Define ponctual property
 		if ($action->date_start_in_calendar == $action->date_end_in_calendar)
 		{
 			$action->ponctuel=1;
 		}
 
 		// Add an entry in actionarray for each day
-		// \TODO
 		$daycursor=$action->date_start_in_calendar;
 		$annee = date('Y',$daycursor);
 		$mois = date('m',$daycursor);
 		$jour = date('d',$daycursor);
-		$daykey=dolibarr_mktime(0,0,0,$mois,$jour,$annee);
+
 		$loop=true;
+		$daykey=dolibarr_mktime(0,0,0,$mois,$jour,$annee);
 		do
 		{
 			$actionarray[$daykey][]=$action;
@@ -285,60 +293,80 @@ if (is_readable($color_file))
 }
 if (! is_array($theme_datacolor)) $theme_datacolor=array(array(120,130,150), array(200,160,180), array(190,190,220));
 
-echo '<table width="100%" class="nocellnopadd">';
-echo ' <tr class="liste_titre">';
-echo '  <td align="center">'.$langs->trans("Monday")."</td>\n";
-echo '  <td align="center">'.$langs->trans("Tuesday")."</td>\n";
-echo '  <td align="center">'.$langs->trans("Wednesday")."</td>\n";
-echo '  <td align="center">'.$langs->trans("Thursday")."</td>\n";
-echo '  <td align="center">'.$langs->trans("Friday")."</td>\n";
-echo '  <td align="center">'.$langs->trans("Saturday")."</td>\n";
-echo '  <td align="center">'.$langs->trans("Sunday")."</td>\n";
-echo " </tr>\n";
-
-for($iter_week = 0; $iter_week < 6 ; $iter_week++)
+if ($_GET["action"] != 'show_day')
 {
-	echo " <tr>\n";
-	for($iter_day = 0; $iter_day < 7; $iter_day++)
-	{
-		/* Show days before the beginning of the current month
-		(previous month)  */
-		if($day <= 0)
-		{
-			$style='cal_other_month';
-			echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-			show_day_events ($db, $max_day_in_prev_month + $day, $prev_month, $prev_year, $style, $actionarray);
-			echo "  </td>\n";
-		}
-		/* Show days of the current month */
-		elseif(($day <= $max_day_in_month))
-		{
-			$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
-
-			if ($curtime < $now)
-			$style='cal_current_month';
-			else if($curtime == $now)
-			$style='cal_today';
-			else
-			$style='cal_current_month';
-			
-			echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-			show_day_events ($db, $day, $month, $year, $style, $actionarray);
-			echo "  </td>\n";
-		}
-		/* Show days after the current month (next month) */
-		else
-		{
-			$style='cal_other_month';
-			echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-			show_day_events ($db, $day - $max_day_in_month, $next_month, $next_year, $style, $actionarray);
-			echo "</td>\n";
-		}
-		$day++;
-	}
+	echo '<table width="100%" class="nocellnopadd">';
+	echo ' <tr class="liste_titre">';
+	echo '  <td align="center">'.$langs->trans("Monday")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Tuesday")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Wednesday")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Thursday")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Friday")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Saturday")."</td>\n";
+	echo '  <td align="center">'.$langs->trans("Sunday")."</td>\n";
 	echo " </tr>\n";
+	for($iter_week = 0; $iter_week < 6 ; $iter_week++)
+	{
+		echo " <tr>\n";
+		for($iter_day = 0; $iter_day < 7; $iter_day++)
+		{
+			/* Show days before the beginning of the current month
+			 (previous month)  */
+			if($day <= 0)
+			{
+				$style='cal_other_month';
+				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+				show_day_events ($db, $max_day_in_prev_month + $day, $prev_month, $prev_year, $style, $actionarray,3);
+				echo "  </td>\n";
+			}
+			/* Show days of the current month */
+			elseif(($day <= $max_day_in_month))
+			{
+				$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
+
+				if ($curtime < $now)
+				$style='cal_current_month';
+				else if($curtime == $now)
+				$style='cal_today';
+				else
+				$style='cal_current_month';
+
+				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+				show_day_events($db, $day, $month, $year, $style, $actionarray, 3);
+				echo "  </td>\n";
+			}
+			/* Show days after the current month (next month) */
+			else
+			{
+				$style='cal_other_month';
+				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+				show_day_events($db, $day - $max_day_in_month, $next_month, $next_year, $style, $actionarray, 3);
+				echo "</td>\n";
+			}
+			$day++;
+		}
+		echo " </tr>\n";
+	}
+	echo "</table>\n";
 }
-echo "</table>\n";
+else
+{
+	
+	$style='cal_current_month';
+	$timestamp=dolibarr_mktime(12,0,0,$month,$_GET["day"],$year);
+	$arraytimestamp=adodb_getdate(dolibarr_mktime(12,0,0,$month,$_GET["day"],$year));
+	$dayname=array('0'=>'Sunday','1'=>'Monday','2'=>'Tuesday','3'=>'Wednesday','4'=>'Thursday','5'=>'Friday','6'=>'Saturday');
+	echo '<table width="100%" class="nocellnopadd">';
+	echo ' <tr class="liste_titre">';
+	echo '  <td align="center">'.$langs->trans($dayname[$arraytimestamp['wday']])."</td>\n";
+	echo " </tr>\n";
+	echo " <tr>\n";
+	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
+	show_day_events ($db, $_GET["day"], $month, $year, $style, $actionarray);
+	echo "</td>\n";
+	echo " </tr>\n";
+	echo '</table>';
+}
 
 
 $db->close();
@@ -346,20 +374,31 @@ $db->close();
 llxFooter('$Date$ - $Revision$');
 
 
-
-/**	\brief	Show event of a particular day
-*/
-function show_day_events($db, $day, $month, $year, $style, $actionarray)
+/**
+ * \brief	Show event of a particular day
+ *
+ * @param unknown_type $db				Database handler
+ * @param unknown_type $day				Day
+ * @param unknown_type $month			Month
+ * @param unknown_type $year			Year
+ * @param unknown_type $style			Style to use for this day
+ * @param unknown_type $actionarray		Array of actions
+ * @param unknown_type $maxPrint		Nb of actions to show each day on month view
+ */
+function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPrint=-1)
 {
 	global $user, $conf, $langs;
 	global $filtera, $filtert, $filted;
 	global $theme_datacolor;
-	
+	if ($_GET["action"] == 'maxPrint')
+	{
+		$maxPrint=-1;
+	}
 	$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
 
 	print '<table class="nobordernopadding" width="100%">';
 	print '<tr style="background: #EEEEEE"><td align="left" nowrap="nowrap">';
-	print dolibarr_print_date($curtime,'%a %d');
+	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.$month.'&year='.$year.'">'.dolibarr_print_date($curtime,'%a %d').'</a>';
 	print '</td><td align="right" nowrap="nowrap">';
 	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).'">';
 	print img_picto($langs->trans("NewAction"),'edit_add.png');
@@ -369,6 +408,8 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray)
 
 	//$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
 	$i=0;
+	$ok=true;
+
 	foreach ($actionarray as $daykey => $notused)
 	{
 		$annee = date('Y',$daykey);
@@ -378,51 +419,60 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray)
 		{
 			foreach ($actionarray[$daykey] as $index => $action)
 			{
-		   		$ponct=($action->date_start_in_calendar == $action->date_end_in_calendar);
-				// Show rect of event
-				$colorindex=0;
-				if ($action->author->id == $user->id || $action->usertodo->id == $user->id || $action->userdone->id == $user->id) $colorindex=1;
-				$color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
-				//print "x".$color;
-				print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; " width="100%"><tr>';
-				print '<td nowrap="nowrap">';
-				$tmpyearstart  = date('Y',$action->date_start_in_calendar);
-				$tmpmonthstart = date('m',$action->date_start_in_calendar);
-				$tmpdaystart   = date('d',$action->date_start_in_calendar);
-				$tmpyearend    = date('Y',$action->date_end_in_calendar);
-				$tmpmonthend   = date('m',$action->date_end_in_calendar);
-				$tmpdayend     = date('d',$action->date_end_in_calendar);
-				// Hour start
-				if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
+					
+				if ($i < $maxPrint || $maxPrint == -1)
 				{
-					print dolibarr_print_date($action->date_start_in_calendar,'%H:%M');
+					$ponct=($action->date_start_in_calendar == $action->date_end_in_calendar);
+					// Show rect of event
+					$colorindex=0;
+					if ($action->author->id == $user->id || $action->usertodo->id == $user->id || $action->userdone->id == $user->id) $colorindex=1;
+					$color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
+					//print "x".$color;
+					print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; " width="100%"><tr>';
+					print '<td nowrap="nowrap">';
+					$tmpyearstart  = date('Y',$action->date_start_in_calendar);
+					$tmpmonthstart = date('m',$action->date_start_in_calendar);
+					$tmpdaystart   = date('d',$action->date_start_in_calendar);
+					$tmpyearend    = date('Y',$action->date_end_in_calendar);
+					$tmpmonthend   = date('m',$action->date_end_in_calendar);
+					$tmpdayend     = date('d',$action->date_end_in_calendar);
+					// Hour start
+					if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
+					{
+						print dolibarr_print_date($action->date_start_in_calendar,'%H:%M');
+						if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
+						{
+							if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend)
+							print '-';
+							//else
+							//print '...';
+						}
+					}
 					if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
 					{
-						if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend)
-							print '-';
-						//else
-							//print '...';
+						if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend)
+						{
+							print '...';
+						}
 					}
-				}
-				if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
-				{
-					if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend)
+					// Hour end
+					if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
 					{
-						print '...';
-					}
-				}
-				// Hour end
-				if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
-				{
-					if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
+						if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
 						print dolibarr_print_date($action->date_end_in_calendar,'%H:%M');
+					}
+					print '<br>';
+					print $action->getNomUrl(0,14,'cal_event');
+					print '</td>';
+					print '<td align="right" nowrap="nowrap">'.$action->getLibStatut(3);
+					print '</td></tr></table>';
+					$i++;
 				}
-				print '<br>';
-				print $action->getNomUrl(0,14,'cal_event');
-				print '</td>';
-				print '<td align="right" nowrap="nowrap">'.$action->getLibStatut(3);
-				print '</td></tr></table>';
-				$i++;
+				else if($ok)
+				{
+					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$month.'&year='.$year.'">'.img_picto("all","1downarrow_selected.png").'</a>';
+					$ok=false;
+				}
 			}
 		}
 	}
