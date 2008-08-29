@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/comm/action/index.php
- \ingroup    agenda
- \brief      Page accueil des rapports des actions
- \version    $Id$
+ *	\file       htdocs/comm/action/index.php
+ *	\ingroup    agenda
+ *	\brief      Page accueil des rapports des actions
+ *	\version    $Id$
  */
 
 require_once("./pre.inc.php");
