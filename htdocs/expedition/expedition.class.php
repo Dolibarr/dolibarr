@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2006      Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+/* Copyright (C) 2003-2008 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Régis Houssin         <regis@dolibarr.fr>
+ * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2006      Laurent Destailleur   <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,38 +37,38 @@ if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande
  */
 class Expedition extends CommonObject
 {
-	var $db;
-	var $error;
-	var $element="expedition";
-	var $table_element="expedition";
-
-	var $id;
-	var $socid;
-	var $brouillon;
-	var $entrepot_id;
-	var $modelpdf;
-	var $origin;
-	var $origin_id;
-
-
-	/**
-	 * Initialisation
-	 *
-	 */
-	function Expedition($DB)
-	{
-		global $langs;
-
-		$this->db = $DB;
-		$this->lignes = array();
-
-		$this->statuts[-1] = $langs->trans("Canceled");
-		$this->statuts[0]  = $langs->trans("Draft");
-		$this->statuts[1]  = $langs->trans("Validated");
-
-		$this->products = array();
-	}
-
+  var $db;
+  var $error;
+  var $element="expedition";
+  var $table_element="expedition";
+  
+  var $id;
+  var $socid;
+  var $brouillon;
+  var $entrepot_id;
+  var $modelpdf;
+  var $origin;
+  var $origin_id;
+  
+  var $meths;
+  /**
+   * Initialisation
+   *
+   */
+  function Expedition($DB)
+  {
+    global $langs;
+    
+    $this->db = $DB;
+    $this->lignes = array();
+    
+    $this->statuts[-1] = $langs->trans("Canceled");
+    $this->statuts[0]  = $langs->trans("Draft");
+    $this->statuts[1]  = $langs->trans("Validated");
+    
+    $this->products = array();
+  }
+  
 	/**
 	 *    \brief      Créé expédition en base
 	 *    \param      user        Objet du user qui cré
@@ -732,6 +732,26 @@ class Expedition extends CommonObject
 			$ligne->fk_product=$prodids[$prodid];
 			$xnbp++;
 		}
+	}
+	/*
+	  Fecth deliveries method and return an array
+	*/		
+	function fetch_delivery_methods()
+	{
+	  $meths = array();
+
+	  $sql = "SELECT em.rowid, em.libelle";
+	  $sql.= " FROM ".MAIN_DB_PREFIX."expedition_methode as em";
+	  $sql.= " WHERE em.statut = 1";	  
+
+	  $resql = $this->db->query($sql);
+	  if ($resql)
+	    {
+	      while ($obj = $this->db->fetch_object($resql))
+		{
+		  $this->meths[$obj->rowid] = $obj->libelle;
+		}
+	    }
 	}
 }
 
