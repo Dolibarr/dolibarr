@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2008 Bearstech - http://bearstech.com/
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 include_once "methode_expedition.modules.php";
@@ -38,6 +38,5 @@ Class methode_expedition_colsui extends methode_expedition
       return sprintf("http://www.coliposte.net/particulier/suivi_particulier.jsp?colispart=%s",$tracking_number);
     }
 }
-
 
 ?>
