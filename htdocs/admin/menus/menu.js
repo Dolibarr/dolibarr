@@ -104,7 +104,7 @@ function processULEL(ul) {
             subul = "";
             for (var sitemi=0;sitemi<item.childNodes.length;sitemi++) {
                 // Uniquement pour moz-firefox
-                if (MOZ) {item.style.background = "url(./images/arbre-trait.png) repeat-y 0 0";}
+                if (MOZ) {item.style.background = "";}
                 // Enfants des li : balise ou sous-ul
                 var sitem = item.childNodes[sitemi];
                 switch (sitem.nodeName) {

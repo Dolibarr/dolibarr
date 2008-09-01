@@ -966,16 +966,16 @@ ul.arbre strong {
     font-weight: normal;
     padding: 0 0 0 20px;
     margin: 0 0 0 -7px;
-    background-image: url(<?php echo $dolibarr_main_url_root.'/admin/menus/images/img/arbre-puce.png' ?>);
+    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/branch.gif' ?>);
     background-repeat: no-repeat;
     background-position: 1px 50%;
 }
 ul.arbre strong.arbre-plier {
-    background-image: url(<?php echo $dolibarr_main_url_root.'/admin/menus/images/arbre-plier.png' ?>);
+    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/plus.gif' ?>);
     cursor: pointer;
 }
 ul.arbre strong.arbre-deplier {
-    background-image: url(<?php echo $dolibarr_main_url_root.'/admin/menus/images/arbre-deplier.png' ?>);
+    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/minus.gif' ?>);
     cursor: pointer;
 }
 ul.arbre ul {
@@ -993,7 +993,7 @@ ul.arbre li li {
 /* Uniquement pour les navigateurs a  moteur gecko */
 ul.arbre li:last-child {
     border-left: 0;
-    background: url(<?php echo $dolibarr_main_url_root.'/admin/mens/images/arbre-trait.png' ?>) no-repeat 0 0;
+    background: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/line.gif' ?>) no-repeat 0 0;
 }
 /* Classe pour masquer */
 .hide {

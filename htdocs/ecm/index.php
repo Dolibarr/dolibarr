@@ -236,6 +236,7 @@ if (empty($action) || $action == 'refresh')
 			print '&nbsp;';
 		}
 		print '</td>';
+		print '<td class="liste_titre" width="16px">&nbsp;</td>';
 		print '</tr>';
 		
 		$sectionauto=dol_sort_array($sectionauto,'label',$sortorder,true,false);
@@ -267,6 +268,10 @@ if (empty($action) || $action == 'refresh')
 				$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
 				print $form->textwithhelp('',$htmltooltip,1,0);
 				print '</td>';
+
+				// Edit link
+				print '<td align="right">&nbsp;</td>';
+				
 				print "</tr>\n";
 			}
 		}
@@ -323,7 +328,12 @@ if (empty($action) || $action == 'refresh')
 		$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dolibarr_print_date($val['date_c'],"dayhour").'<br>';
 		$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'];
 		print $form->textwithhelp('',$htmltooltip,1,0);
-		print "</td></tr>\n";
+		print "</td>";
+		
+		// Edit link
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_edit().'</a></td>';
+		
+		print "</tr>\n";
 		
 		$nbofentries++;
 	}
