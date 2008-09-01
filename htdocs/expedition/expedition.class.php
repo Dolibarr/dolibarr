@@ -250,11 +250,7 @@ class Expedition extends CommonObject
 	    $this->modelpdf             = $obj->model_pdf;
 	    $this->expedition_method_id = $obj->fk_expedition_methode;
 	    $this->tracking_number      = $obj->tracking_number;
-	    
-	    if (strlen($this->tracking_number) && strlen($this->expedition_method_id)) {
-	      $this->GetUrlTrackingStatus();
-	    }
-	    
+	    	    
 	    if ($conf->commande->enabled)
 	      {
 		$this->origin = "commande";
@@ -429,7 +425,7 @@ class Expedition extends CommonObject
       }
     
     $this->db->commit();
-    //dolibarr_syslog("expedition.class.php::valid commit");
+    //dolibarr_syslog("Expedition::valid commit");
     return 1;
   }
   
