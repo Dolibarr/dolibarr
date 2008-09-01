@@ -15,4 +15,4 @@ alter table llx_societe add column gencod			 varchar(255);
 
 delete from llx_user_param where page <> '';
 
-
+alter table llx_expedition add tracking_number varchar(50) after fk_expedition_methode;
