@@ -11,3 +11,4 @@ SetDeliveryDate=Définir la date de livraison
 ValidateDeliveryReceipt=Valider le bon de livraison
 ValidateDeliveryReceiptConfirm=Etes-vous sur de vouloir valider ce bon de livraison ?
 DeliveryMethod=Methode de livraison
+TrackingNumber=Numero de suivi
