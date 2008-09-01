@@ -33,7 +33,7 @@ Class methode_expedition_colsui extends methode_expedition
       $this->description = "Colissimo Suivi";
     }
 
-  Function provider_url_status()
+  Function provider_url_status($tracking_number)
     {
       return sprintf("http://www.coliposte.net/particulier/suivi_particulier.jsp?colispart=%s",$tracking_number);
     }
