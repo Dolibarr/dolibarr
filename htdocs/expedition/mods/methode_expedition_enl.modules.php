@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,9 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- * or see http://www.gnu.org/
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * $Id$
  * $Source$
@@ -22,13 +20,13 @@
  */
 include_once "methode_expedition.modules.php";
 
-Class methode_expedition_enlevement extends methode_expedition
+Class methode_expedition_enl extends methode_expedition
 {
 
-  Function methode_expedition_enlevement($db=0)
+  Function methode_expedition_enl($db=0)
     { 
       $this->db = $db;
-      $this->id = 1; // Ne pas changer cette valeur
+      $this->id = 1; // Do not change this value
       $this->name = "Enlèvement";
       $this->code = "ENL";
       $this->description = "Enlèvement sur place par le client";
