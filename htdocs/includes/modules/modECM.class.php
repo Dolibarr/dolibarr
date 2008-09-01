@@ -163,6 +163,18 @@ class modECM extends DolibarrModules
 		
 		$this->menu[$r]=array('fk_menu'=>'r=1',
 							  'type'=>'left',
+							  'titre'=>'Search',
+							  'mainmenu'=>'ecm',
+							  'url'=>'/ecm/index.php?action=search_form',
+							  'langs'=>'ecm',
+							  'position'=>100,
+							  'perms'=>'$user->rights->ecm->read',
+							  'target'=>'',
+							  'user'=>0);
+		$r++;
+
+		$this->menu[$r]=array('fk_menu'=>'r=1',
+							  'type'=>'left',
 							  'titre'=>'ECMNewSection',
 							  'mainmenu'=>'ecm',
 							  'url'=>'/ecm/docdir.php?action=create',

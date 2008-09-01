@@ -143,13 +143,11 @@ print "<br>\n";
 
 // Tool bar
 $colspan=3;
-print '<table class="notopnoleftnoright" width="100%"><tr class="liste_titre"><td colspan="'.$colspan.'">';
-print $langs->trans("Toolbar").'</td></tr>';
+print '<table class="notopnoleftnoright" width="100%">';
 print '<tr '.$bc[0].'>';
 print '<td>'.img_picto('','object_list').' <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ECMFileManager").'</td>';
 print '<td align="right">'.img_picto('','search').' <a href="'.$_SERVER["PHP_SELF"].'?action=search_form">'.$langs->trans("Search").'</td>';
 print '</tr></table>';
-print '<br>';
 
 
 if (eregi('search',$action))
@@ -226,7 +224,7 @@ if (empty($action) || $action == 'refresh')
 		print '<td class="liste_titre" align="left">'.$langs->trans("ECMSectionOfDocuments").'</td>';
 		print '<td class="liste_titre" align="left">'.$langs->trans("Type").'</td>';
 		print '<td class="liste_titre" align="right">'.$langs->trans("ECMNbOfDocsSmall").' <a href="'.$_SERVER["PHP_SELF"].'?action=refresh">'.img_picto($langs->trans("Refresh"),'refresh').'</a></td>';
-		print '<td class="liste_titre" width="16px">';
+		print '<td class="liste_titre" width="16px" align="center">';
 		if ($user->rights->ecm->setup)
 		{
 			print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_picto($langs->trans("ECMNewSection"),'edit_add').'</a>';
@@ -261,6 +259,10 @@ if (empty($action) || $action == 'refresh')
 				// Type
 				print '<td align="left">'.$langs->trans('ECMTypeAuto').'</td>';
 				print '<td align="right">?</td>';
+
+				// Edit link
+				print '<td align="right">&nbsp;</td>';
+				
 				print '<td align="right">';
 				$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMAutoOrg").'<br>';
@@ -269,9 +271,6 @@ if (empty($action) || $action == 'refresh')
 				print $form->textwithhelp('',$htmltooltip,1,0);
 				print '</td>';
 
-				// Edit link
-				print '<td align="right">&nbsp;</td>';
-				
 				print "</tr>\n";
 			}
 		}
@@ -319,6 +318,9 @@ if (empty($action) || $action == 'refresh')
 		//print '<td align="right">'.$obj->cachenbofdoc.'</td>';
 		print '<td align="right">'.$val['cachenbofdoc'].'</td>';
 		
+		// Edit link
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_edit().'</a></td>';
+		
 		print '<td align="right">';
 		$userstatic->id=$val['fk_user_c'];
 		$userstatic->nom=$val['login_c'];
@@ -329,9 +331,6 @@ if (empty($action) || $action == 'refresh')
 		$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'];
 		print $form->textwithhelp('',$htmltooltip,1,0);
 		print "</td>";
-		
-		// Edit link
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_edit().'</a></td>';
 		
 		print "</tr>\n";
 		
