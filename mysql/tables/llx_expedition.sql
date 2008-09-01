@@ -1,6 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2008 Regis Houssin        <regis@dolibarr.fr>
+-- Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2008      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ create table llx_expedition
   date_expedition       date,                    -- date de l'expedition
   fk_adresse_livraison  integer   DEFAULT NULL,  -- adresse de livraison
   fk_expedition_methode integer,
+  tracking_number       varchar(50),
   fk_statut             smallint  DEFAULT 0,
   note                  text,
   model_pdf             varchar(50)
