@@ -471,6 +471,10 @@ else
 	{
 	  $object = $expedition->origin;
 	  $expedition->fetch_object();
+
+	  if (strlen($expedition->tracking_number) && strlen($expedition->expedition_method_id)) {
+	    $expedition->GetUrlTrackingStatus();
+	  }
 	  
 	  $soc = new Societe($db);
 	  $soc->fetch($expedition->socid);
