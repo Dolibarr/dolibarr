@@ -27,7 +27,7 @@ require ("../main.inc.php");
 
 $user->getrights('ecm');
 
-function llxHeader($head = "", $title="", $help_url='')
+function llxHeader($head = "", $title="", $help_url='', $morehtml='')
 {
 	global $conf,$langs,$user;
 	$langs->load("ecm");
@@ -50,6 +50,6 @@ function llxHeader($head = "", $title="", $help_url='')
 	if ($conf->commande->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsOrders"),2);
 	if ($conf->facture->enabled) $menu->add_submenu(DOL_URL_ROOT."/ecm/docother.php?mainmenu=ecm&idmenu=".$_SESSION["idmenu"], $langs->trans("DocsInvoices"),2);
 */	
-	left_menu($menu->liste, $help_url);
+	left_menu($menu->liste, $help_url, $morehtml);
 }
 ?>

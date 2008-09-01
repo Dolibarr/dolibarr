@@ -18,14 +18,15 @@
  */
 
 /**
-   \file       htdocs/admin/menus/index.php
-   \ingroup    core
-   \brief      Index page for menu editor
-   \version    $Id$
-*/
+ *  \file       htdocs/admin/menus/index.php
+ *  \ingroup    core
+ *  \brief      Index page for menu editor
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/treeview.lib.php");
 
 $langs->load("other");
 $langs->load("admin");
@@ -250,7 +251,7 @@ $rangLast = 0;
 $idLast = -1;
 if ($conf->use_javascript_ajax)
 {
-	print '<script src="menu.js" type="text/javascript"></script>';
+	tree_addjs();
 
 	/*-------------------- MAIN -----------------------
 	tableau des éléments de l'arbre:
@@ -289,12 +290,10 @@ if ($conf->use_javascript_ajax)
 		}
 	}
 
-	//appelle de la fonction récursive (ammorce)
-	//avec recherche depuis la racine.
-	print '<ul class="arbre">';
-	recur($data,0,0);
-	print '<script type="text/javascript">imgDel('.$idLast.')</script>';
-	print '</ul>';
+	// Appelle de la fonction récursive (ammorce)
+	// avec recherche depuis la racine.
+	// array($menu['rowid'],$menu['fk_menu'],$titre);
+	tree_recur($data,0,0);
 
 	print '</td>';
 
@@ -324,101 +323,5 @@ $db->close();
 print '<br>';
 
 llxFooter('$Date$ - $Revision$');
-
-
-
-/* cette fonction gère le décallage des éléments
-   suivant leur position dans l'arborescence
-*/
-function affiche($tab,$rang) 
-{
-	global $conf, $rangLast, $idLast, $menu_handler;
-	
-	if ($conf->use_javascript_ajax)
-	{
-		if($rang == $rangLast)
-		{
-			print '<script type="text/javascript">imgDel('.$idLast.');</script>';
-			//print '<a href="'.DOL_URL_ROOT.'/admin/menus/index.php?menu_handler=eldy&action=delete&menuId='.$idLast.'">aa</a>';
-		}
-		elseif($rang > $rangLast)
-		{
-			
-			print '<li><ul>';
-
-		}
-		elseif($rang < $rangLast)
-		{
-			print '<script type="text/javascript">imgDel('.$idLast.')</script>';
-			
-			for($i=$rang; $i < $rangLast; $i++)
-			{
-				print '</ul></li>';
-				echo "\n";
-			}
-
-		}
-	}
-	else
-	{
-		if($rang > $rangLast)
-		{
-			
-			print '<li><ul>';
-
-		}
-		elseif($rang < $rangLast)
-		{
-			
-			for($i=$rang; $i < $rangLast; $i++)
-			{
-				print '</ul></li>';
-				echo "\n";
-			}
-
-		}		
-	}
-	 
-	print '<li id=li'.$tab[0].'>';
-	print '<strong>';
-	print '<a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab[0].'">'.$tab[2].'</a></strong>';
-	print '<div class="menuEdit"><a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab[0].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$tab[0].'"').'</a></div>';
-	print '<div class="menuNew"><a href="edit.php?menu_handler='.$menu_handler.'&action=create&menuId='.$tab[0].'">'.img_edit_add('default',0,'class="menuNew" id="new'.$tab[0].'"').'</a></div>';
-	print '<div class="menuDel"><a href="index.php?menu_handler='.$menu_handler.'&action=delete&menuId='.$tab[0].'">'.img_delete('default',0,'class="menuDel" id="del'.$tab[0].'"').'</a></div>';
-	print '<div class="menuFleche"><a href="index.php?menu_handler='.$menu_handler.'&action=up&menuId='.$tab[0].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler.'&action=down&menuId='.$tab[0].'">'.img_picto("Descendre","1downarrow").'</a></div>';
-	print '</li>';
-	echo "\n";	
-	
-  	$rangLast = $rang;
-  	$idLast = $tab[0];				
-}
-
-
-/*fonction récursive d'affichage de l'arbre
-    $tab  :tableau des éléments
-    $pere :index de l'élément courrant
-    $rang :décallage de l'élément
-*/
-function recur($tab,$pere,$rang) {
-
-	if ($rang > 10)	return;	// Protection contre boucle infinie
-	
-	//ballayage du tableau
-	for ($x=0;$x<count($tab);$x++)
-	{
-		//si un élément a pour père : $pere
-		if ($tab[$x][1]==$pere) {
-
-		   //on l'affiche avec le décallage courrant
-			affiche($tab[$x],$rang);
-			
-		   /*et on recherche ses fils
-			 en rappelant la fonction recur()
-		   (+ incrémentation du décallage)*/
-		   recur($tab,$tab[$x][0],$rang+1);
-		}
-	}
-}
-
 ?>
 

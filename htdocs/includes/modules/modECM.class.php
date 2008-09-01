@@ -139,7 +139,7 @@ class modECM extends DolibarrModules
 		// Left menu linked to top menu
 		$this->menu[$r]=array('fk_menu'=>'r=0',
 							  'type'=>'left',
-							  'titre'=>'ECMArea',
+							  'titre'=>'ECMFileManager',
 							  'mainmenu'=>'ecm',
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',

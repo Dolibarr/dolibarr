@@ -43,6 +43,7 @@ $user->getrights('ecm');
 
 // Get parameters
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$action = isset($_GET["action"])?$_GET["action"]:$_POST['action'];
 
 $section=$_GET["section"];
 if (! $section) $section='misc';
@@ -140,204 +141,203 @@ print $langs->trans("ECMAreaDesc")."<br>";
 print $langs->trans("ECMAreaDesc2")."<br>";
 print "<br>\n";
 
-print '<table class="notopnoleftnoright" width="100%"><tr><td width="50%" valign="top">';
+// Tool bar
+$colspan=3;
+print '<table class="notopnoleftnoright" width="100%"><tr class="liste_titre"><td colspan="'.$colspan.'">';
+print $langs->trans("Toolbar").'</td></tr>';
+print '<tr '.$bc[0].'>';
+print '<td>'.img_picto('','object_list').' <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ECMFileManager").'</td>';
+print '<td align="right">'.img_picto('','search').' <a href="'.$_SERVER["PHP_SELF"].'?action=search_form">'.$langs->trans("Search").'</td>';
+print '</tr></table>';
+print '<br>';
 
-//print_fiche_titre($langs->trans("ECMManualOrg"));
 
-print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
-print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print '<td colspan="3">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
-print "<tr $bc[0]><td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
-print '<td rowspan="3"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "<tr $bc[0]><td>".$langs->trans("Title").':</td><td><input type="text" name="search_title" class="flat" size="18"></td></tr>';
-print "<tr $bc[0]><td>".$langs->trans("Keyword").':</td><td><input type="text" name="search_keyword" class="flat" size="18"></td></tr>';
-print "</table></form><br>";
-//print $langs->trans("ECMManualOrgDesc");
-	
-print '</td><td width="50%" valign="top">';
-
-//print_fiche_titre($langs->trans("ECMAutoOrg"));
-
-print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
-print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print '<td colspan="4">'.$langs->trans("ECMSearchByEntity").'</td></tr>';
-
-$buthtml='<td rowspan="'.$rowspan.'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-$butshown=0;
-foreach($sectionauto as $section)
+if (eregi('search',$action))
 {
-	if (! $section['test']) continue;
-	if ($butshown % 2 == 0) print '<tr '. $bc[0].'>';
-	print "<td>".$section['label'].':</td>';
-	print '<td';
-	if ($butshown % 2 == 1) print ' align="right"';
-	print '>';
-	print '<input type="text" name="search_'.$section['module'].'" class="flat" size="6">';
-	print '</td>';
-	if ($butshown % 2 == 1) print '</tr>';
-	$butshown++;
-}
-if ($butshown % 2 == 1) print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
-
-print '<tr '. $bc[0].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-print "</table></form><br>";
-//print $langs->trans("ECMAutoOrgDesc");
+	print '<table class="notopnoleftnoright" width="100%"><tr><td width="50%" valign="top">';
 	
-print '</td></tr>';
-print '</table>';
-
-
-//***********************
-// Files
-//***********************
-print_fiche_titre($langs->trans("ECMSectionOfDocuments"));
-//print '<br>';
-
-// Confirmation de la suppression d'une ligne categorie
-if ($_GET['action'] == 'delete_section')
-{
-	$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urldecode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
-	print '<br>';
-}
-
-if ($mesg) { print $mesg."<br>"; }
-
-
-// Construit liste des répertoires
-print '<table width="100%" class="noborder">';
-
-if (sizeof($sectionauto))
-{
-	// Automatic sections
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" align="left">'.$langs->trans("ECMSectionAuto").'</td>';
-	print '<td class="liste_titre" align="left">'.$langs->trans("Description").'</td>';
-	print '<td class="liste_titre" align="right">'.$langs->trans("ECMNbOfDocsSmall").'</td>';
-	print '<td class="liste_titre">';
-	print '&nbsp;';
-	print '</td>';
-	print '</tr>';
+	//print_fiche_titre($langs->trans("ECMManualOrg"));
 	
-	$sectionauto=dol_sort_array($sectionauto,'label',$sortorder,true,false);
+	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
+	print '<table class="noborder" width="100%">';
+	print "<tr class=\"liste_titre\">";
+	print '<td colspan="3">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
+	print "<tr $bc[0]><td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
+	print '<td rowspan="3"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+	print "<tr $bc[0]><td>".$langs->trans("Title").':</td><td><input type="text" name="search_title" class="flat" size="18"></td></tr>';
+	print "<tr $bc[0]><td>".$langs->trans("Keyword").':</td><td><input type="text" name="search_keyword" class="flat" size="18"></td></tr>';
+	print "</table></form><br>";
+	//print $langs->trans("ECMManualOrgDesc");
+		
+	print '</td><td width="50%" valign="top">';
 	
-	$var=true;
-	foreach ($sectionauto as $key => $val)
+	//print_fiche_titre($langs->trans("ECMAutoOrg"));
+	
+	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
+	print '<table class="noborder" width="100%">';
+	print "<tr class=\"liste_titre\">";
+	print '<td colspan="4">'.$langs->trans("ECMSearchByEntity").'</td></tr>';
+	
+	$buthtml='<td rowspan="'.$rowspan.'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+	$butshown=0;
+	foreach($sectionauto as $section)
 	{
-		if ($val['test'])
-		{
-			$var=! $var;
+		if (! $section['test']) continue;
+		if ($butshown % 2 == 0) print '<tr '. $bc[0].'>';
+		print "<td>".$section['label'].':</td>';
+		print '<td';
+		if ($butshown % 2 == 1) print ' align="right"';
+		print '>';
+		print '<input type="text" name="search_'.$section['module'].'" class="flat" size="6">';
+		print '</td>';
+		if ($butshown % 2 == 1) print '</tr>';
+		$butshown++;
+	}
+	if ($butshown % 2 == 1) print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+	
+	print '<tr '. $bc[0].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+	print "</table></form><br>";
+	//print $langs->trans("ECMAutoOrgDesc");
+		
+	print '</td></tr>';
+	print '</table>';
+}
 
-			print '<tr '.$bc[$var].'>';
-				
-			// Section
-			print '<td align="left">';
-			print img_picto('','object_dir').' ';
-			print '<a href="'.DOL_URL_ROOT.'/ecm/docother.php">';
-			print $val['label'];
-			print '</a>';
-			print "</td>\n";
-				
-			// Description
-			print '<td align="left">'.$val['desc'].'</td>';
-			print '<td align="right">?</td>';
-			print '<td align="right">';
-			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMAutoOrg").'<br>';
-			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto");
-			print $form->textwithhelp('',$htmltooltip,1,0);
-			print '</td>';
-			print "</tr>\n";
+
+if (empty($action) || $action == 'refresh')
+{
+	// Confirmation de la suppression d'une ligne categorie
+	if ($_GET['action'] == 'delete_section')
+	{
+		$form->form_confirm($_SERVER["PHP_SELF"].'?section='.urldecode($_GET["section"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection');
+		print '<br>';
+	}
+	
+	if ($mesg) { print $mesg."<br>"; }
+	
+	
+	// Construit liste des répertoires
+	print '<table width="100%" class="noborder">';
+	
+	if (sizeof($sectionauto))
+	{
+		// Automatic sections
+		print '<tr class="liste_titre">';
+		print '<td class="liste_titre" align="left">'.$langs->trans("ECMSectionOfDocuments").'</td>';
+		print '<td class="liste_titre" align="left">'.$langs->trans("Type").'</td>';
+		print '<td class="liste_titre" align="right">'.$langs->trans("ECMNbOfDocsSmall").' <a href="'.$_SERVER["PHP_SELF"].'?action=refresh">'.img_picto($langs->trans("Refresh"),'refresh').'</a></td>';
+		print '<td class="liste_titre" width="16px">';
+		if ($user->rights->ecm->setup)
+		{
+			print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_picto($langs->trans("ECMNewSection"),'edit_add').'</a>';
+		}
+		else
+		{
+			print '&nbsp;';
+		}
+		print '</td>';
+		print '</tr>';
+		
+		$sectionauto=dol_sort_array($sectionauto,'label',$sortorder,true,false);
+		
+		$var=true;
+		foreach ($sectionauto as $key => $val)
+		{
+			if ($val['test'])
+			{
+				$var=! $var;
+	
+				print '<tr '.$bc[$var].'>';
+					
+				// Section
+				print '<td align="left">';
+				print img_picto('','object_dir').' ';
+				print '<a href="'.DOL_URL_ROOT.'/ecm/docother.php">';
+				print $val['label'];
+				print '</a>';
+				print "</td>\n";
+					
+				// Type
+				print '<td align="left">'.$langs->trans('ECMTypeAuto').'</td>';
+				print '<td align="right">?</td>';
+				print '<td align="right">';
+				$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
+				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMAutoOrg").'<br>';
+				$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
+				$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
+				print $form->textwithhelp('',$htmltooltip,1,0);
+				print '</td>';
+				print "</tr>\n";
+			}
 		}
 	}
-}
-
-
-// Manual sections
-
-print '<tr class="liste_titre">';
-$param='&amp;socid='.$socid;
-
-print '<td class="liste_titre" align="left">'.$langs->trans("ECMSectionManual").'</td>';
-print '<td class="liste_titre" align="left">'.$langs->trans("Description").'</td>';
-print '<td class="liste_titre" align="right">'.$langs->trans("ECMNbOfDocsSmall");
-print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshauto">'.img_picto($langs->trans("Refresh"),'refresh').'</a>';
-print '</td>';
-print '<td class="liste_titre" align="right">';
-if ($user->rights->ecm->setup)
-{
-	print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_picto($langs->trans("ECMNewSection"),'edit_add').'</a>';
-}
-else
-{
-	print '&nbsp;';
-}
-print '</td>';
-print '</tr>';
-
-$ecmdirstatic = new ECMDirectory($db);
-$rub=$ecmdirstatic->get_full_arbo();
-
-$userstatic = new User($db);
-
-$nbofentries=0;
-$var=true;
-foreach($rub as $key => $val)
-{
-	$var=!$var;
-		
-	$ecmdirstatic->id=$val['id'];
-	$ecmdirstatic->ref=$val['label'];
-
-	// Refresh cache
-	if ($_GET['action'] == 'refreshauto')
+	
+	
+	// Manual sections
+	$ecmdirstatic = new ECMDirectory($db);
+	$rub=$ecmdirstatic->get_full_arbo();
+	
+	$userstatic = new User($db);
+	
+	$nbofentries=0;
+	$var=true;
+	foreach($rub as $key => $val)
 	{
-		$result=$ecmdirstatic->fetch($val['id']);
-		$ecmdirstatic->ref=$ecmdirstatic->label;
-
-		$result=$ecmdirstatic->refreshcachenboffile();
-		$val['cachenbofdoc']=$result;
+		$var=!$var;
+			
+		$ecmdirstatic->id=$val['id'];
+		$ecmdirstatic->ref=$val['label'];
+	
+		// Refresh cache
+		if ($_GET['action'] == 'refreshauto')
+		{
+			$result=$ecmdirstatic->fetch($val['id']);
+			$ecmdirstatic->ref=$ecmdirstatic->label;
+	
+			$result=$ecmdirstatic->refreshcachenboffile();
+			$val['cachenbofdoc']=$result;
+		}
+		
+	
+		print '<tr '.$bc[$var].'>';
+			
+		// Section
+		print '<td align="left">';
+		print str_repeat(' &nbsp; &nbsp; ',$val['level']-1);
+		print $ecmdirstatic->getNomUrl(1);
+		print "</td>\n";
+	
+		// Description
+		print '<td align="left">'.$langs->trans("ECMTypeManual").'</td>';
+			
+		// Nb of docs
+		//print '<td align="right">'.$obj->cachenbofdoc.'</td>';
+		print '<td align="right">'.$val['cachenbofdoc'].'</td>';
+		
+		print '<td align="right">';
+		$userstatic->id=$val['fk_user_c'];
+		$userstatic->nom=$val['login_c'];
+		$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
+		$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMManualOrg").'<br>';
+		$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';
+		$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dolibarr_print_date($val['date_c'],"dayhour").'<br>';
+		$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'];
+		print $form->textwithhelp('',$htmltooltip,1,0);
+		print "</td></tr>\n";
+		
+		$nbofentries++;
 	}
 	
-
-	print '<tr '.$bc[$var].'>';
-		
-	// Section
-	print '<td align="left">';
-	print str_repeat(' &nbsp; &nbsp; ',$val['level']-1);
-	print $ecmdirstatic->getNomUrl(1);
-	print "</td>\n";
-
-	// Description
-	print '<td align="left">'.dolibarr_trunc($val['description'],48).'</td>';
-		
-	// Nb of docs
-	//print '<td align="right">'.$obj->cachenbofdoc.'</td>';
-	print '<td align="right">'.$val['cachenbofdoc'].'</td>';
+	// If nothing to show	
+	if ($nbofentries == 0)
+	{
+		print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("ECMNoDirecotyYet").'</td></tr>';
+	}
 	
-	print '<td align="right">';
-	$userstatic->id=$val['fk_user_c'];
-	$userstatic->nom=$val['login_c'];
-	$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-	$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMManualOrg").'<br>';
-	$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';
-	$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dolibarr_print_date($val['date_c'],"dayhour");
-	print $form->textwithhelp('',$htmltooltip,1,0);
-	print "</td></tr>\n";
-	
-	$nbofentries++;
+	print "</table>";
+	// Fin de zone Ajax
+
 }
-
-// If nothing to show	
-if ($nbofentries == 0)
-{
-	print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("ECMNoDirecotyYet").'</td></tr>';
-}
-
-print "</table>";
-// Fin de zone Ajax
-
 
 // Actions buttons
 /*

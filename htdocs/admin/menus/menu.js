@@ -11,7 +11,7 @@ function arbre() {
     // Choix de la balise contenant le texte. <strong> par defaut.
     balise = "STRONG";
     // Presentation de l'arbre au depart : deployee ('yes') ou fermee ('no')
-    extend = "yes";
+    extend = "no";
     // Textes du lien plier / deplier
     plier_text = 'Replier tout';
     plier_title = 'Replier tous les noeuds de l\'arbre'
@@ -27,6 +27,7 @@ function arbre() {
     }
     
 }
+
 // -------------------------------------------------------
 // Creation des liens plier /deplier tout
 function linkSwitch(ul) {
@@ -165,7 +166,7 @@ function imgDel(id)
 	var delId='del'+id;
 
 		var imgDel = document.getElementById('del'+id);
-		imgDel.style.display='block';
+		if (imgDel != null) imgDel.style.display='block';
 
 	return true;
 }
