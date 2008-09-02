@@ -110,10 +110,15 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	{
 		global $user,$langs,$conf;
 
-		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("products");
-		$langs->load("deliveries");
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		$outputlangs->load("main");
+		$outputlangs->load("dict");
+		$outputlangs->load("companies");
+		$outputlangs->load("bills");
+		$outputlangs->load("products");
+		$outputlangs->load("deliveries");
+		
+		$outputlangs->setPhpLang();
 
 		if ($conf->livraison_bon->dir_output)
 		{
@@ -184,7 +189,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				 }
 				 }
 				 */
-				$this->_pagehead($pdf, $delivery);
+				$this->_pagehead($pdf, $delivery, 1, $outputlangs);
 
 				$pagenb = 1;
 				$tab_top = 90;
@@ -218,11 +223,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 							if($prodser->isservice())
 							{
 								// Un service peur aussi etre livre
-								$prefix_prodserv = $langs->transnoentities("Service")." ";
+								$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
 							}
 							else
 							{
-								$prefix_prodserv = $langs->transnoentities("Product")." ";
+								$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
 							}
 							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
 						}
@@ -230,7 +235,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
 					{
 						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$langs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")",1);
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")",1);
 					}
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
@@ -275,13 +280,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 					if ($nexY > 200 && $i < ($nblignes - 1))
 					{
-						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
-						$this->_pagefoot($pdf,$outputlangs);
+						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+						$this->_pagefoot($pdf, $outputlangs);
 
 						// Nouvelle page
 						$pdf->AddPage();
 						$pagenb++;
-						$this->_pagehead($pdf, $delivery, 0);
+						$this->_pagehead($pdf, $delivery, 0, $outputlangs);
 
 						$nexY = $tab_top_newpage + 8;
 						$pdf->SetTextColor(0,0,0);
@@ -293,12 +298,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				// Affiche cadre tableau
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+					$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 					$bottomlasttab=$tab_top + $tab_height + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY);
+					$this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY, $outputlangs);
 					$bottomlasttab=$tab_top_newpage + $tab_height + 1;
 				}
 
@@ -330,16 +335,14 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *   \brief      Affiche la grille des lignes de propales
 	 *   \param      pdf     objet PDF
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
-		global $langs,$conf;
-		$langs->load("main");
-		$langs->load("bills");
+		global $conf;
 
 		// Montants exprimes en     (en tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
-		//$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
+		//$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentities("Currency".$conf->monnaie));
 		//$pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
 
 		$pdf->SetDrawColor(128,128,128);
@@ -352,10 +355,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetFont('Arial','',10);
 
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
-		$pdf->MultiCell(108,2, $langs->transnoentities("Designation"),'','L');
+		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
-		$pdf->MultiCell(40, 2, $langs->transnoentities("QtyShipped"),'','R');
+		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
 	}
 
 	/*
@@ -364,14 +367,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 *   	\param      fac     objet propale
 	 *      \param      showadress      0=non, 1=oui
 	 */
-	function _pagehead(&$pdf, $delivery, $showadress=1)
+	function _pagehead(&$pdf, $delivery, $showadress=1, $outputlangs)
 	{
-		global $langs,$conf,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("orders");
-		$langs->load("companies");
+		global $conf,$mysoc;
 
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('Arial','B',13);
@@ -404,7 +402,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $langs->transnoentities("DeliveryOrder")." ".$delivery->ref, '' , 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryOrder")." ".$delivery->ref, '' , 'R');
 		$pdf->SetFont('Arial','',12);
 
 		$posy+=6;
@@ -412,12 +410,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0,0,60);
 		if ($delivery->date_valid)
 		{
-			$pdf->MultiCell(100, 4, $langs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"), '', 'R');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"), '', 'R');
 		}
 		else
 		{
 			$pdf->SetTextColor(255,0,0);
-			$pdf->MultiCell(100, 4, $langs->transnoentities("DeliveryNotValidated"), '', 'R');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DeliveryNotValidated"), '', 'R');
 			$pdf->SetTextColor(0,0,60);
 		}
 
@@ -426,7 +424,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0,0,60);
 		$commande = new Commande ($this->db);
 		if ($commande->fetch($delivery->commande_id) >0) {
-			$pdf->MultiCell(100, 4, $langs->transnoentities("RefOrder")." : ".$commande->ref, '' , 'R');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$commande->ref, '' , 'R');
 		}
 
 		if ($showadress)
@@ -437,7 +435,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY($this->marge_gauche,$posy-5);
-			$pdf->MultiCell(66,5, $langs->transnoentities("BillFrom").":");
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
 
 
 			$pdf->SetXY($this->marge_gauche,$posy);
@@ -462,17 +460,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			}
 			$carac_emetteur .= "\n";
 			// Tel
-			if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Phone").": ".FAC_PDF_TEL;
-			elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Phone").": ".$mysoc->tel;
+			if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
+			elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$mysoc->tel;
 			// Fax
-			if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Fax").": ".FAC_PDF_FAX;
-			elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Fax").": ".$mysoc->fax;
+			if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
+			elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$mysoc->fax;
 			// EMail
-			if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Email").": ".FAC_PDF_MEL;
-			elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Email").": ".$mysoc->email;
+			if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
+			elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$mysoc->email;
 			// Web
-			if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Web").": ".FAC_PDF_WWW;
-			elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Web").": ".$mysoc->url;
+			if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
+			elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$mysoc->url;
 
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);
@@ -483,7 +481,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('Arial','',8);
 			$pdf->SetXY(102,$posy-5);
-			$pdf->MultiCell(80,5, $langs->transnoentities("DeliveryAddress").":");
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("DeliveryAddress").":");
 
 			/*
 			 * if a delivery address is used, use that, else use the client address
@@ -515,7 +513,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			}
 
 			// Tva intracom
-			if ($delivery->client->tva_intra) $carac_client.="\n".$langs->transnoentities("VATIntraShort").': '.$delivery->client->tva_intra;
+			if ($delivery->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$delivery->client->tva_intra;
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY(102,$posy+8);
 			$pdf->MultiCell(86,4, $carac_client);
