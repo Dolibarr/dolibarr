@@ -451,7 +451,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
 			else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
 
-			// Caract�ristiques emetteur
+			// Caracteristiques emetteur
 			$carac_emetteur = '';
 			if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
 			else {
@@ -502,11 +502,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(106,4, $delivery->client->nom, 0, 'L');
 
-			// Caract�ristiques client
+			// Caracteristiques client
 			$carac_client=$delivery->client->adresse."\n";
 			$carac_client.=$delivery->client->cp . " " . $delivery->client->ville."\n";
 
-			// Pays si diff�rent de l'�metteur
+			// Pays si different de l'emetteur
 			if ($this->emetteur->pays_code != $delivery->client->pays_code)
 			{
 				$carac_client.=$delivery->client->pays."\n";

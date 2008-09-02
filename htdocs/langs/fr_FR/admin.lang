@@ -875,6 +875,7 @@ NoNeedForDeliveryReceipts=Dans la plupart des cas, ce sont les bons d'expédition
 DeliveryOrderNumberingModules=Module de numérotation des bons de réception client
 DeliveryOrderModel=Modèle de bon de réception client
 DeliveriesOrderAbility=Prise en charge des bons de réception client
+FreeLegalTextOnDeliveryReceipts=Mention complémentaire sur les bons de réception
 ##### FCKeditor #####
 ActivateFCKeditor=Activer FCKeditor pour :
 FCKeditorForUsers=Création/édition WYSIWIG de la description et note des utilisateurs

@@ -869,6 +869,7 @@ SendingsSetup=Sending module setup
 SendingsReceiptModel=Sending receipt model
 SendingsAbility=Support sendings sheets for customer deliveries
 NoNeedForDeliveryReceipts=In most cases, sendings receipts are used both as sheets for customer deliveries (list of products to send) and sheets that is recevied and signed by customer. So product deliveries receipts is a duplicated feature and is rarely activated.
+FreeLegalTextOnDeliveryReceipts=Free text on delivery receipts
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Products deliveries receipt numbering module
 DeliveryOrderModel=Products deliveries receipt model
