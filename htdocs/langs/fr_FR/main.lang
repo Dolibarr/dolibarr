@@ -435,6 +435,8 @@ ThisLimitIsDefinedInSetup=Limite Dolibarr (Menu accueil-configuration-sécurité):
 NoFileFound=Pas de documents stockés dans cette rubrique
 CurrentUserLanguage=Langue utilisateur actuelle
 CurrentTheme=Theme courant
+For=Pour
+ForCustomer=Pour le client
 # Week day
 Monday=Lundi
 Tuesday=Mardi

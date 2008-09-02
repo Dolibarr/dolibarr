@@ -337,7 +337,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
-		global $conf;
+		global $conf,$mysoc;
 
 		// Montants exprimes en     (en tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
@@ -359,6 +359,18 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
 		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
+
+		// Modif Seb cadres signatures
+		$pdf->SetFont('Arial','',10);
+		$larg_sign = ($this->page_largeur-$this->marge_gauche-$this->marge_droite)/3;
+		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
+		$pdf->SetXY ($this->marge_gauche + 2, $tab_top + $tab_height + 5);
+		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$mysoc->nom.":",'','L');
+		
+		$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
+		$pdf->SetXY (2*$larg_sign+$this->marge_gauche + 2, $tab_top + $tab_height + 5);
+		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("ForCustomer").':','','L');
+		
 	}
 
 	/*
@@ -423,7 +435,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
 		$commande = new Commande ($this->db);
-		if ($commande->fetch($delivery->commande_id) >0) {
+		if ($commande->fetch($delivery->origin_id) >0) {
 			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefOrder")." : ".$commande->ref, '' , 'R');
 		}
 
