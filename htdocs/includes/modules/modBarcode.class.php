@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,7 +52,7 @@ class modBarcode extends DolibarrModules
     $this->family = "other";
     $this->name = "Codes barres";
     $this->description = "Gestion des codes barres";
-    $this->version = 'experimental';		// 'development' or 'experimental' or 'dolibarr' or version
+    $this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_BARCODE';
     $this->special = 2;
     $this->picto='barcode';
