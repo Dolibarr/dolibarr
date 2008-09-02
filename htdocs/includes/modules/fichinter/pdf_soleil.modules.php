@@ -22,7 +22,7 @@
 /**
  \file       htdocs/includes/modules/fichinter/pdf_soleil.modules.php
  \ingroup    ficheinter
- \brief      Fichier de la classe permettant de générer les fiches d'intervention au modèle Soleil
+ \brief      Fichier de la classe permettant de gï¿½nï¿½rer les fiches d'intervention au modï¿½le Soleil
  \version    $Id$
  */
 
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  \class      pdf_soleil
- \brief      Classe permettant de générer les fiches d'intervention au modèle Soleil
+ \brief      Classe permettant de gï¿½nï¿½rer les fiches d'intervention au modï¿½le Soleil
  */
 
 class pdf_soleil extends ModelePDFFicheinter
@@ -40,7 +40,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 	/**
 	 \brief      Constructeur
-	 \param	    db		Handler accès base de donnée
+	 \param	    db		Handler accï¿½s base de donnï¿½e
 	 */
 	function pdf_soleil($db=0)
 	{
@@ -48,7 +48,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		$this->db = $db;
 		$this->name = 'soleil';
-		$this->description = "Modèle de fiche d'intervention standard";
+		$this->description = "Modele de fiche d'intervention standard";
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -62,19 +62,19 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		$this->option_logo = 1;                    // Affiche logo
 		$this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 0;                 // Affiche mode règlement
-		$this->option_condreg = 0;                 // Affiche conditions règlement
+		$this->option_modereg = 0;                 // Affiche mode reglement
+		$this->option_condreg = 0;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
 		$this->option_multilang = 0;               // Dispo en plusieurs langues
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 		// Recupere code pays de l'emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // By default, if not defined
 	}
 
 	/**
-	 \brief      Fonction générant la fiche d'intervention sur le disque
+	 \brief      Fonction gï¿½nï¿½rant la fiche d'intervention sur le disque
 	 \param	    fichinter		Object fichinter
 	 \return	    int     		1=ok, 0=ko
 	 */
@@ -126,7 +126,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -256,14 +256,16 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->Rect(10, $tab_top, 190, $tab_height);
 
-				$pdf->SetFont('Arial','', 10);
+				$pdf->SetFont('Arial','', 9);
 
 				$pdf->SetXY (10, $tab_top + 8 );
-				$pdf->writeHTMLCell(190, 5, 10, $tab_top + 8, dol_htmlentitiesbr($fichinter->description), 0, 'J', 0);
+				$desc=dol_htmlentitiesbr($fichinter->description,1);
+				//print $desc; exit;
+				$pdf->writeHTMLCell(190, 4, 10, $tab_top + 8, dol_htmlentitiesbr($desc,1), 0, 0, 0);
 
 				//dolibarr_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
 				$num = sizeof($fichinter->lignes);
-				$i=0;
+				$i=0;$j=0;
 				if ($num)
 				{
 					while ($i < $num)
@@ -273,16 +275,18 @@ class pdf_soleil extends ModelePDFFicheinter
 						$valide = $fichinterligne->id ? $fichinterligne->fetch($fichinterligne->id) : 0;
 						if ($valide>0)
 						{
-							$pdf->SetXY (20, $tab_top + 16 + $i * 20);
-							$pdf->writeHTMLCell(190, 8, 20, $tab_top + 16 + $i * 20,
-							dol_htmlentitiesbr($langs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei)." - ".$langs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration)), 0, 'J', 0);
+							$pdf->SetXY (10, $tab_top + 16 + $j * 20);
+							$pdf->writeHTMLCell(0, 4, 20, $tab_top + 16 + $j * 20,
+							dol_htmlentitiesbr($langs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei)." - ".$langs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration), 1), 0, 0, 0);
 
-							$pdf->SetXY (20, $tab_top + 22 + $i * 20);
-							$pdf->writeHTMLCell(170, 8, 20, $tab_top + 22 + $i * 20,
-							dol_htmlentitiesbr($fichinterligne->desc,1), 0, 'L', 0);
+							$pdf->SetXY (10, $tab_top + 22 + $j * 20);
+							$pdf->writeHTMLCell(0, 4, 20, $tab_top + 22 + $j * 20,
+							dol_htmlentitiesbr($fichinterligne->desc,1), 0, 0, 0);
 							$tab_height+=20;
+							
+							$j++;
 						}
-						$i++;
+						$i++; 
 					}
 				}
 				$pdf->Rect(10, $tab_top, 190, $tab_height);
