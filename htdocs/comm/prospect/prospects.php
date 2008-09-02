@@ -186,7 +186,7 @@ if ($resql)
         {
             if ($value <> $obj->fk_stcomm)
             {
-                print '<a href="prospects.php?socid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$urladd.'">';
+                print '<a href="prospects.php?socid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.'">';
                 print img_action(0,$value);
                 print '</a>&nbsp;';
             }
@@ -197,7 +197,7 @@ if ($resql)
         $i++;
     }
     
-    if ($num > $conf->liste_limit || $page > 0) print_barre_liste('', $page, $_SERVER["PHP_SELF"],$urladd,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+    if ($num > $conf->liste_limit || $page > 0) print_barre_liste('', $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
     
     print "</table>";
     $db->free($resql);
