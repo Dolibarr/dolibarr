@@ -30,7 +30,7 @@ $langs->load("shop");
 $langs->load("orders");
 
 
-llxHeader("",$langs->trans("OSCOmmerceShop"));
+llxHeader("",$langs->trans("OSCommerceShop"));
 
 print_fiche_titre($langs->trans("OSCommerceShop"));
 

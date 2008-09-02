@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
     \file       htdocs/includes/boxes/box_osc_client.php
     \ingroup    osc
     \brief      Module de génération de l'affichage de la box osc client
+	\version	$Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -66,7 +64,7 @@ class box_osc_clients extends ModeleBoxes {
 
         if ($user->rights->boutique->lire)
         {
-            $sql = "SELECT count(*) as cus FROM ".OSC_DB_NAME.".customers";
+            $sql = "SELECT count(*) as cus FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."customers";
     
             $result = $db->query($sql);
             if ($result)

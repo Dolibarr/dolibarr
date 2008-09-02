@@ -44,7 +44,7 @@ class Promotion {
   function create($user, $pid, $percent) {
 
     $sql = "SELECT products_price ";
-    $sql .= " FROM ".OSC_DB_NAME.".products as p";
+    $sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products as p";
     $sql .= " WHERE p.products_id = $pid";
 
     $result = $this->db->query($sql) ;
@@ -59,7 +59,7 @@ class Promotion {
 
     $date_exp = "2003-05-01";
 
-    $sql = "INSERT INTO ".OSC_DB_NAME.".specials ";
+    $sql = "INSERT INTO ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."specials ";
     $sql .= " (products_id, specials_new_products_price, specials_date_added, specials_last_modified, expires_date, date_status_change, status) ";
     $sql .= " VALUES ($pid, $newprice, ".$this->db->idate(mktime()).", NULL, '$date_exp',NULL,1)";
 
@@ -100,7 +100,7 @@ class Promotion {
    */
   function set_active($id)
   {
-    $sql = "UPDATE ".OSC_DB_NAME.".specials";
+    $sql = "UPDATE ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."specials";
     $sql .= " SET status = 1";
 
     $sql .= " WHERE products_id = " . $id;
@@ -116,7 +116,7 @@ class Promotion {
    */
   function set_inactive($id)
   {
-    $sql = "UPDATE ".OSC_DB_NAME.".specials";
+    $sql = "UPDATE ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."specials";
     $sql .= " SET status = 0";
 
     $sql .= " WHERE products_id = " . $id;
@@ -135,7 +135,7 @@ class Promotion {
   function fetch ($id) {
     
     $sql = "SELECT c.categories_id, cd.categories_name, c.parent_id";
-    $sql .= " FROM ".OSC_DB_NAME.".categories as c,".OSC_DB_NAME.".categories_description as cd";
+    $sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."categories as c,".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."categories_description as cd";
     $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
     $sql .= " AND c.categories_id = $id";
     $result = $this->db->query($sql) ;
@@ -162,15 +162,12 @@ class Promotion {
    */
   function delete($user) {
 
-    $sql = "DELETE FROM ".OSC_DB_NAME.".products WHERE products_id = $idosc ";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products WHERE products_id = $idosc ";
 
-    $sql = "DELETE FROM ".OSC_DB_NAME.".products_to_categories WHERE products_id = $idosc";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_to_categories WHERE products_id = $idosc";
 
-    $sql = "DELETE FROM ".OSC_DB_NAME.".products_description WHERE products_id = $idosc";
+    $sql = "DELETE FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_description WHERE products_id = $idosc";
 	      
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."album WHERE rowid = $id";
-	    
-    
   }
 
 

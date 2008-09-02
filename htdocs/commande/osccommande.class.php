@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
- *
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,10 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
+ */
+
+/**
+ * 	\brief		Class order OSCommerce
+ *	\version	$Id$
  */
 
 class OscCommande
@@ -43,7 +45,7 @@ class OscCommande
 	 */
 	function fetch ($id)
 	{
-		$sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".OSC_DB_NAME.".orders as o";
+		$sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders as o";
 		$sql .= " WHERE o.orders_id = $id";
 	
 		$result = $this->db->query($sql) ;

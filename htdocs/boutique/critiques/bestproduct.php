@@ -48,7 +48,7 @@ $offset = $limit * $page ;
 print_barre_liste("Liste des produits classés pas critiques", $page, "bestproduct.php");
 
 $sql = "SELECT sum(r.reviews_rating)/count(r.reviews_rating) as rat, r.products_id, p.products_model, p.products_quantity, p.products_status";
-$sql .= " FROM ".OSC_DB_NAME.".reviews as r,".OSC_DB_NAME.".products as p ";
+$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."reviews as r,".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products as p ";
 $sql .= " WHERE r.products_id = p.products_id";
 $sql .= " GROUP BY r.products_id, p.products_model, p.products_quantity, p.products_status";
 

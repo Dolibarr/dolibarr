@@ -277,7 +277,7 @@ Module600Desc=Send notifications (by email) on Dolibarr business events
 Module700Name=Donations
 Module700Desc=Donations' management
 Module800Name=OSCommerce direct
-Module800Desc=Interface to show an OSCommerce shop via direct database access
+Module800Desc=Interface to show an OSCommerce or OSCSS shop via direct database access
 Module900Name=OSCommerce by WS
 Module900Desc=Interface to show an OSCommerce shop via Web services.\nThis module requiere you to install components from /oscommerce_ws/ws_server into your OSCommerce server. See README file in /oscommerce_ws/ws_server.
 Module1200Name=Mantis
@@ -883,7 +883,7 @@ FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines fo
 FCKeditorForProductDetailsPerso=WYSIWIG creation/edition of products personalized details lines for all entities (proposals, orders, invoices, etc...)
 FCKeditorForMailing=WYSIWIG creation/edition of mailings
 ##### OSCommerce 1 #####
-OSCommerceErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be an OSCommerce database.
+OSCommerceErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be an OSCommerce database (Key %s not found in table %s).
 OSCommerceTestOk=Connection to server '%s' on database '%s' with user '%s' successfull.
 OSCommerceTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
 OSCommerceTestKo2=Connection to server '%s' with user '%s' failed.

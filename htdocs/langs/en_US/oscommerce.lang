@@ -2,6 +2,7 @@
 OSCommerce=OS Commerce
 OSCommerceSetup=OS Commerce module setup
 OSCommerceSetupSaved=OS Commerce setup saved
-OSCOmmerceServer=OS Commerce server host/ip
-OSCOmmerceDatabaseName=OS Commerce database name
-OSCOmmerceUser=OS Commerce database login
+OSCommerceServer=OS Commerce server host/ip
+OSCommerceDatabaseName=OS Commerce database name
+OSCommercePrefix=OS Commerce tables prefix
+OSCommerceUser=OS Commerce database login

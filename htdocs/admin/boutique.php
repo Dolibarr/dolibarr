@@ -53,7 +53,9 @@ if ($_POST["save"])
     $i+=dolibarr_set_const($db,'OSC_DB_NAME',trim($_POST["oscommerce_dbname"]),'chaine',0);
     $i+=dolibarr_set_const($db,'OSC_DB_USER',trim($_POST["oscommerce_dbuser"]),'chaine',0);
     $i+=dolibarr_set_const($db,'OSC_DB_PASS',trim($_POST["oscommerce_dbpass"]),'chaine',0);
-
+	$i+=dolibarr_set_const($db,'OSC_DB_TABLE_PREFIX',trim($_POST["oscommerce_db_table_prefix"]),'chaine',0); 
+  	$i+=dolibarr_set_const($db,'OSC_LANGUAGE_ID',1,'chaine',0);
+  
     if ($i >= 4)
     {
         $db->commit();
@@ -88,7 +90,7 @@ elseif ($_POST["test"])
     {
         // V�rifie si bonne base par requete sur une table OSCommerce
         $sql ="SELECT configuration_value";
-        $sql.=" FROM configuration";
+        $sql.=" FROM ".$_POST["oscommerce_db_table_prefix"]."configuration";
         $sql.=" WHERE configuration_key='STORE_NAME'";
         $resql=$oscommercedb->query($sql);
         if ($resql) {
@@ -96,7 +98,7 @@ elseif ($_POST["test"])
             $mesg.="</div>";
         }
         else {
-            $mesg ="<div class=\"error\">".$langs->trans("OSCommerceErrorConnectOkButWrongDatabase");
+            $mesg ="<div class=\"error\">".$langs->trans("OSCommerceErrorConnectOkButWrongDatabase",'STORE_NAME',$_POST["oscommerce_db_table_prefix"]."configuration");
             $mesg.="</div>";
         }
 
@@ -139,13 +141,13 @@ $var=true;
 print '<form name="oscommerceconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
-print "<td width=\"30%\">".$langs->trans("Parameter")."</td>";
+print "<td width=\"40%\">".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Value")."</td>";
 print "<td>".$langs->trans("Examples")."</td>";
 print "</tr>";
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print "<td>".$langs->trans("OSCOmmerceServer")."</td>";
+print "<td>".$langs->trans("OSCommerceServer")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_dbhost\" value=\"". ($_POST["oscommerce_dbhost"]?$_POST["oscommerce_dbhost"]:$conf->global->OSC_DB_HOST) . "\" size=\"30\"></td>";
 print "<td>localhost";
 //print "<br>__dolibarr_main_db_host__ <i>(".$dolibarr_main_db_host.")</i>"
@@ -153,15 +155,22 @@ print "</td>";
 print "</tr>";
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print "<td>".$langs->trans("OSCOmmerceDatabaseName")."</td>";
+print "<td>".$langs->trans("OSCommerceDatabaseName")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_dbname\" value=\"". ($_POST["oscommerce_dbname"]?$_POST["oscommerce_dbname"]:$conf->global->OSC_DB_NAME) . "\" size=\"30\"></td>";
 print "<td>oscommerce";
 //print "<br>__dolibarr_main_db_name__ <i>(".$dolibarr_main_db_name.")</i>";
 print "</td>";
 print "</tr>";
 $var=!$var;
+print "<tr ".$bc[$var].">"; 
+print "<td>".$langs->trans("OSCommercePrefix")."</td>"; 
+print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_db_table_prefix\" value=\"". ($_POST["oscommerce_db_table_prefix"]?$_POST["oscommerce_db_table_prefix"]:$conf->global->DB_TABLE_PREFIX) . "\" size=\"30\"></td>"; 
+print "<td>osc_"; 
+print "</td>"; 
+print "</tr>"; 
+$var=!$var;
 print "<tr ".$bc[$var].">";
-print "<td>".$langs->trans("OSCOmmerceUser")."</td>";
+print "<td>".$langs->trans("OSCommerceUser")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"oscommerce_dbuser\" value=\"". ($_POST["oscommerce_dbuser"]?$_POST["oscommerce_dbuser"]:$conf->global->OSC_DB_USER) . "\" size=\"30\"></td>";
 print "<td>oscommerceuser";
 //print "<br>__dolibarr_main_db_user__ <i>(".$dolibarr_main_db_user.")</i>";

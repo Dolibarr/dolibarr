@@ -276,7 +276,7 @@ Module600Desc=Envoi de notifications (par mail) sur les évênements métiers Dolib
 Module700Name=Dons
 Module700Desc=Gestion des dons
 Module800Name=OSCommerce direct
-Module800Desc=Interface de visualisation d'une boutique OSCommerce par accès direct en base.
+Module800Desc=Interface de visualisation d'une boutique OSCommerce ou OSCSS par accès direct en base.
 Module900Name=OSCommerce by WS
 Module900Desc=Interface de visualisation d'une boutique OSCommerce par accès via des Web services.\nCe module requiert d'installer les fichiers de /oscommerce_ws/ws_server sur OSCommerce. Voir fichier README dans /oscommerce_ws/ws_server.
 Module1200Name=Mantis
@@ -885,7 +885,7 @@ FCKeditorForProductDetails=Création/édition WYSIWIG des lignes details produits 
 FCKeditorForProductDetailsPerso=Création/édition WYSIWIG des lignes details produits personnalisées (sur commandes, propales, factures, etc...)
 FCKeditorForMailing=Création/édition WYSIWIG des mailings
 ##### OSCommerce 1 #####
-OSCommerceErrorConnectOkButWrongDatabase=La connexion a réussie mais la base ne semble pas etre une base OSCommerce.
+OSCommerceErrorConnectOkButWrongDatabase=La connexion a réussie mais la base ne semble pas etre une base OSCommerce (clé %s  non trouvée dans la table %s).
 OSCommerceTestOk=La connexion au serveur '%s' sur la base '%s' par l'utilisateur '%s' a réussi.
 OSCommerceTestKo1=La connexion au serveur '%s' a réussi mais la base '%s' n'a pu être atteinte.
 OSCommerceTestKo2=La connexion au serveur '%s' par l'utilisateur '%s' à échoué.

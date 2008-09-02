@@ -2,6 +2,7 @@
 OSCommerce=OS Commerce
 OSCommerceSetup=Configuration du module OS Commerce
 OSCommerceSetupSaved=Configuration OS Commerce sauvegardée
-OSCOmmerceServer=Nom hote/ip serveur base de donnée OS Commerce
-OSCOmmerceDatabaseName=Nom base de donnée OS Commerce
-OSCOmmerceUser=Compte accès base de donnée OS Commerce 
+OSCommerceServer=Nom hote/ip serveur base de donnée OS Commerce
+OSCommerceDatabaseName=Nom base de donnée OS Commerce
+OSCommercePrefix=Prefix tables base de donnée OS Commerce
+OSCommerceUser=Compte accès base de donnée OS Commerce 

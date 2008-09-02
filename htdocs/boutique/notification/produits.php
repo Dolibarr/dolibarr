@@ -47,7 +47,7 @@ $offset = $limit * $page ;
 print_barre_liste("Liste des produits suivis", $page, "produits.php");
 
 $sql = "SELECT p.products_name, p.products_id, count(p.products_id) as nb";
-$sql .= " FROM ".OSC_DB_NAME.".products_notifications as n,".OSC_DB_NAME.".products_description as p";
+$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_notifications as n,".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_description as p";
 $sql .= " WHERE p.products_id=n.products_id";
 $sql .= " AND p.language_id = ".OSC_LANGUAGE_ID;
 $sql .= " GROUP BY p.products_name, p.products_id";

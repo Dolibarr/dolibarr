@@ -53,8 +53,8 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td>';
 print '<td align="right">'.$langs->trans("Total").'</td></tr>';
 
 $sql = "SELECT sum(t.value) as value, MONTH(o.date_purchased) as mois";
-$sql .= " FROM ".OSC_DB_NAME.".orders_total as t";
-$sql .= " JOIN ".OSC_DB_NAME.".orders as o ON o.orders_id = t.orders_id";
+$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_total as t";
+$sql .= " JOIN ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders as o ON o.orders_id = t.orders_id";
 $sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(".$dbosc->idate(mktime()).")";
 $sql .= " GROUP BY mois ORDER BY mois";
 
@@ -90,8 +90,8 @@ else
 /* mensuel
 
 $sql = "SELECT sum(t.value) as value";
-$sql .= " FROM ".OSC_DB_NAME.".orders_total as t";
-$sql .= " JOIN ".OSC_DB_NAME.".orders as o ON o.orders_id = t.orders_id";
+$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_total as t";
+$sql .= " JOIN ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders as o ON o.orders_id = t.orders_id";
 $sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(".$dbosc->db->idate(mktime()).") AND MONTH(o.date_purchased) = MONTH(".$this->db->idate(mktime()).")";
  
 if ( $dbosc->query($sql) )
@@ -128,7 +128,7 @@ from orders_total as t
 join orders as o on o.orders_id = t.orders_id where t.class = 'ot_subtotal' order by o.date_purchased desc
  */
 $sql = "SELECT o.orders_id, o.customers_name, o.date_purchased, t.value, o.payment_method";
-$sql .= " FROM ".OSC_DB_NAME.".orders_total as t JOIN ".OSC_DB_NAME.".orders as o on o.orders_id = t.orders_id ";
+$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
 $sql .= " WHERE t.class = 'ot_subtotal' ORDER BY o.date_purchased desc";
 
 if ( $dbosc->query($sql) ) 
@@ -162,7 +162,7 @@ else
  * 5 dernières commandes en attente
 */
 $sql = "SELECT o.orders_id, o.customers_name, o.date_purchased, t.value, o.payment_method";
-$sql .= " FROM ".OSC_DB_NAME.".orders_total as t JOIN ".OSC_DB_NAME.".orders as o on o.orders_id = t.orders_id ";
+$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
 $sql .= " WHERE t.class = 'ot_subtotal' and o.orders_status = 5 order by o.date_purchased desc";
 
 if ( $dbosc->query($sql) ) 
@@ -196,7 +196,7 @@ else
  * Commandes à traiter
  */
 $sql = "SELECT o.orders_id, o.customers_name, o.date_purchased, t.value, o.payment_method";
-$sql .= " FROM ".OSC_DB_NAME.".orders_total as t JOIN ".OSC_DB_NAME.".orders as o on o.orders_id = t.orders_id ";
+$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
 $sql .= " WHERE t.class = 'ot_subtotal' and o.orders_status = 2 order by o.date_purchased desc";
 
 if ( $dbosc->query($sql) ) 
@@ -232,8 +232,8 @@ print '</td></tr><tr>';
 * Derniers clients qui ont commandé
 */
 $sql = "SELECT o.orders_id, o.customers_name, o.delivery_country, o.date_purchased, t.value, s.orders_status_name as statut";
-$sql .= " FROM ".OSC_DB_NAME.".orders_total as t JOIN ".OSC_DB_NAME.".orders as o on o.orders_id = t.orders_id ";
-$sql .= " JOIN ".OSC_DB_NAME.".orders_status as s on o.orders_status = s.orders_status_id and s.language_id = 1";
+$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
+$sql .= " JOIN ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."orders_status as s on o.orders_status = s.orders_status_id and s.language_id = 1";
 $sql .= " WHERE t.class = 'ot_subtotal' order by o.date_purchased desc";
 
 if ( $dbosc->query($sql) ) 

@@ -61,7 +61,7 @@ $urladd = "&sortorder=$sortorder&sortfield=$sortfield";
 
 $sql = "SELECT pd.products_name, s.specials_new_products_price, p.products_price, p.products_model, s.status, p.products_id";
 $sql .= ",".$dbosc->pdate("expires_date")." as fin";
-$sql .= " FROM ".OSC_DB_NAME.".specials as s,".OSC_DB_NAME.".products_description as pd,".OSC_DB_NAME.".products as p";
+$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."specials as s,".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_description as pd,".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products as p";
 $sql .= " WHERE s.products_id = pd.products_id AND pd.products_id = p.products_id AND pd.language_id = ".OSC_LANGUAGE_ID;
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $dbosc->plimit( $limit ,$offset);

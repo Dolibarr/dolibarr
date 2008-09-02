@@ -52,7 +52,7 @@ class modBoutique extends DolibarrModules
 
 		$this->family = "products";
 		$this->name = "OSCommerce direct";
-		$this->description = "Interface de visualisation d'une boutique OSCommerce";
+		$this->description = "Interface de visualisation d'une boutique OSCommerce ou OSCSS";
 		$this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_BOUTIQUE';
 		$this->special = 1;

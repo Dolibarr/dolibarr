@@ -46,7 +46,7 @@ $offset = $limit * $page ;
 print_barre_liste("Liste des produits oscommerce", $page, "osc-liste.php");
 
 $sql = "SELECT p.products_id, p.products_model, p.products_quantity, p.products_status, d.products_name, m.manufacturers_name, m.manufacturers_id";
-$sql .= " FROM ".OSC_DB_NAME.".products as p, ".OSC_DB_NAME.".products_description as d, ".OSC_DB_NAME.".manufacturers as m";
+$sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products as p, ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_description as d, ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."manufacturers as m";
 $sql .= " WHERE p.products_id = d.products_id AND d.language_id =" . OSC_LANGUAGE_ID;
 $sql .= " AND p.manufacturers_id=m.manufacturers_id";
 if ($reqstock=='epuise')

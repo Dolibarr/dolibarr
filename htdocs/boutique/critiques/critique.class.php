@@ -52,8 +52,8 @@ class Critique {
     
     $sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name";
 
-    $sql .= " FROM ".OSC_DB_NAME.".reviews as r, ".OSC_DB_NAME.".reviews_description as d";
-    $sql .= " ,".OSC_DB_NAME.".products_description as p";
+    $sql .= " FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."reviews as r, ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."reviews_description as d";
+    $sql .= " ,".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."products_description as p";
 
     $sql .= " WHERE r.reviews_id = d.reviews_id AND r.products_id=p.products_id";
     $sql .= " AND p.language_id = ".OSC_LANGUAGE_ID. " AND d.languages_id=".OSC_LANGUAGE_ID;
