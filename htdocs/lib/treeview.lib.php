@@ -25,6 +25,40 @@
  */
 
 /**
+ * Show picto of a tree view
+ *
+ * @param unknown_type $tab		Array of entries in correct order
+ * @param unknown_type $key		Key of value	
+ */
+function tree_showpad(&$tab,$key)
+{
+	$pos=1;
+	while ($pos <= $tab[$key]['level'] && $tab[$key]['level'] > 0)
+	{
+		// Process picto for column $pos
+		// \TODO If at least one of this level
+		$atleastonofthislevelafter=1;
+		if ($atleastonofthislevelafter)
+		{
+			if ($tab[$key]['level'] == $pos) print img_picto_common('','treemenu/branch.gif');
+			else print img_picto_common('','treemenu/line.gif');
+		}
+		else
+		{
+			if ($tab[$key]['level'] == $pos) print img_picto_common('','treemenu/branchbottom.gif');
+			else print img_picto_common('','treemenu/linebottom.gif');
+		}
+		$pos++;
+	}
+}
+
+
+
+
+
+// ------------------------------- Used by enu editor -----------------
+
+/**
  * 	\brief		Ad javascript tree functions
  */
 function tree_addjs()

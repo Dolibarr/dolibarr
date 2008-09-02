@@ -18,11 +18,11 @@
  */
 
 /**
- \file      htdoc/ecm/docdir.php
- \ingroup   ecm
- \brief     Main page for ECM section area
- \version   $Id$
- \author	Laurent Destailleur
+ *	\file      	htdoc/ecm/docdir.php
+ *	\ingroup   	ecm
+ *	\brief     	Main page for ECM section area
+ *	\version   	$Id$
+ *	\author		Laurent Destailleur
  */
 
 require("./pre.inc.php");
@@ -103,7 +103,7 @@ if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
 	
 		if ($id > 0)
 		{
-			Header("Location: ".DOL_URL_ROOT.'/ecm/index.php');
+			Header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
 			exit;
 		}
 		else
@@ -154,7 +154,7 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.$ecmdir->label.'"></td></tr>'."\n";
 
 	print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
-	print $formecm->select_all_sections($ecmdir->fk_parent,'catParent');
+	print $formecm->select_all_sections(! empty($_GET["catParent"])?$_GET["catParent"]:$ecmdir->fk_parent,'catParent');
 	print '</td></tr>'."\n";
 
 	// Description

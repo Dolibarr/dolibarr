@@ -153,7 +153,7 @@ class modECM extends DolibarrModules
 							  'type'=>'left',
 							  'titre'=>'ECMFileManager',
 							  'mainmenu'=>'ecm',
-							  'url'=>'/ecm/index.php',
+							  'url'=>'/ecm/index.php?action=file_manager',
 							  'langs'=>'ecm',
 							  'position'=>100,
 							  'perms'=>'$user->rights->ecm->read',

@@ -26,6 +26,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/treeview.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
 
 // Load traductions files
@@ -122,14 +123,14 @@ $userstatic = new User($db);
 // Ajout rubriques automatiques
 $rowspan=0;
 $sectionauto=array();
-if ($conf->produit->enabled)     { $rowspan++; $sectionauto[]=array('module'=>'product', 'test'=>$conf->produit->enabled, 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
-if ($conf->societe->enabled)     { $rowspan++; $sectionauto[]=array('module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
-if ($conf->propal->enabled)      { $rowspan++; $sectionauto[]=array('module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
-if ($conf->contrat->enabled)     { $rowspan++; $sectionauto[]=array('module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
-if ($conf->commande->enabled)    { $rowspan++; $sectionauto[]=array('module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("CustomersOrders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
-if ($conf->fournisseur->enabled) { $rowspan++; $sectionauto[]=array('module'=>'supplier_order', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
-if ($conf->facture->enabled)     { $rowspan++; $sectionauto[]=array('module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
-if ($conf->fournisseur->enabled) { $rowspan++; $sectionauto[]=array('module'=>'supplier_invoice', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersOrders"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
+if ($conf->produit->enabled)     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'product', 'test'=>$conf->produit->enabled, 'label'=>$langs->trans("ProductsAndServices"),     'desc'=>$langs->trans("ECMDocsByProducts")); }
+if ($conf->societe->enabled)     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'company', 'test'=>$conf->societe->enabled, 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsByThirdParties")); }
+if ($conf->propal->enabled)      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'propal',  'test'=>$conf->propal->enabled,  'label'=>$langs->trans("Prop"),    'desc'=>$langs->trans("ECMDocsByProposals")); }
+if ($conf->contrat->enabled)     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'contract','test'=>$conf->contrat->enabled, 'label'=>$langs->trans("Contracts"),    'desc'=>$langs->trans("ECMDocsByContracts")); }
+if ($conf->commande->enabled)    { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'order',   'test'=>$conf->commande->enabled,'label'=>$langs->trans("CustomersOrders"),       'desc'=>$langs->trans("ECMDocsByOrders")); }
+if ($conf->fournisseur->enabled) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'supplier_order', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersInvoices"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
+if ($conf->facture->enabled)     { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'invoice', 'test'=>$conf->facture->enabled, 'label'=>$langs->trans("CustomersInvoices"),     'desc'=>$langs->trans("ECMDocsByInvoices")); }
+if ($conf->fournisseur->enabled) { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'supplier_invoice', 'test'=>$conf->fournisseur->enabled, 'label'=>$langs->trans("SuppliersOrders"),     'desc'=>$langs->trans("ECMDocsByOrders")); }
 
 
 //***********************
@@ -145,7 +146,7 @@ print "<br>\n";
 $colspan=3;
 print '<table class="notopnoleftnoright" width="100%">';
 print '<tr '.$bc[0].'>';
-print '<td>'.img_picto('','object_list').' <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("ECMFileManager").'</td>';
+print '<td>'.img_picto('','object_list').' <a href="'.$_SERVER["PHP_SELF"].'?action=file_manager">'.$langs->trans("ECMFileManager").'</td>';
 print '<td align="right">'.img_picto('','search').' <a href="'.$_SERVER["PHP_SELF"].'?action=search_form">'.$langs->trans("Search").'</td>';
 print '</tr></table>';
 
@@ -202,7 +203,7 @@ if (eregi('search',$action))
 }
 
 
-if (empty($action) || $action == 'refresh')
+if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 {
 	// Confirmation de la suppression d'une ligne categorie
 	if ($_GET['action'] == 'delete_section')
@@ -215,54 +216,52 @@ if (empty($action) || $action == 'refresh')
 	
 	
 	// Construit liste des répertoires
-	print '<table width="100%" class="noborder">';
+	print '<table width="100%" class="nobordernopadding">';
+	
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre" colspan="5" align="left">'.$langs->trans("ECMSectionOfDocuments").'</td>';
+	print '</tr>';
 	
 	if (sizeof($sectionauto))
 	{
-		// Automatic sections
-		print '<tr class="liste_titre">';
-		print '<td class="liste_titre" align="left">'.$langs->trans("ECMSectionOfDocuments").'</td>';
-		print '<td class="liste_titre" align="left">'.$langs->trans("Type").'</td>';
-		print '<td class="liste_titre" align="right">'.$langs->trans("ECMNbOfDocsSmall").' <a href="'.$_SERVER["PHP_SELF"].'?action=refresh">'.img_picto($langs->trans("Refresh"),'refresh').'</a></td>';
-		print '<td class="liste_titre" width="16px" align="center">';
-		if ($user->rights->ecm->setup)
-		{
-			print '<a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_picto($langs->trans("ECMNewSection"),'edit_add').'</a>';
-		}
-		else
-		{
-			print '&nbsp;';
-		}
+		// Automatic sections title line
+		print '<tr '.$bc[true].'><td>';
+		print '<table class="nobordernopadding"><tr class="nobordernopadding">';
+		print '<td align="left" width="24px">';
+		print img_picto_common('','treemenu/base.gif');
+		print '</td><td align="left">'.$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionAuto").')';
 		print '</td>';
-		print '<td class="liste_titre" width="16px">&nbsp;</td>';
+		print '</tr></table>';
+		print '<td align="right" colspan="3">&nbsp;</td>';
+		print '<td align="right">&nbsp;</td>';
+		//print '<td align="right">'.$langs->trans("ECMNbOfDocsSmall").' <a href="'.$_SERVER["PHP_SELF"].'?action=refreshauto">'.img_picto($langs->trans("Refresh"),'refresh').'</a></td>';
 		print '</tr>';
 		
 		$sectionauto=dol_sort_array($sectionauto,'label',$sortorder,true,false);
 		
-		$var=true;
+		$nbofentries=0;
+		$oldvallevel=0;
 		foreach ($sectionauto as $key => $val)
 		{
 			if ($val['test'])
 			{
-				$var=! $var;
+				$var=false;
 	
 				print '<tr '.$bc[$var].'>';
 					
 				// Section
 				print '<td align="left">';
-				print img_picto('','object_dir').' ';
-				print '<a href="'.DOL_URL_ROOT.'/ecm/docother.php">';
+				print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
+				print tree_showpad($sectionauto,$key);
+				print '</td><td valign="top">';
+				print img_picto('','object_dir');
+				print '</td><td>';
+				print '&nbsp; <a href="'.DOL_URL_ROOT.'/ecm/docother.php">';
 				print $val['label'];
-				print '</a>';
+				print '</a></td></tr></table>';
 				print "</td>\n";
 					
-				// Type
-				print '<td align="left">'.$langs->trans('ECMTypeAuto').'</td>';
-				print '<td align="right">?</td>';
-
-				// Edit link
-				print '<td align="right">&nbsp;</td>';
-				
+				// Info
 				print '<td align="right">';
 				$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMAutoOrg").'<br>';
@@ -270,24 +269,48 @@ if (empty($action) || $action == 'refresh')
 				$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
 				print $form->textwithhelp('',$htmltooltip,1,0);
 				print '</td>';
+				
+				// Edit link
+				print '<td align="right">&nbsp;</td>';
+				
+				// Add link
+				print '<td align="right">&nbsp;</td>';
+				
+				// Nb of doc
+				print '<td align="right">?</td>';
 
 				print "</tr>\n";
+				
+				$oldvallevel=$val['level'];
+				$nbofentries++;				
 			}
 		}
 	}
 	
+	// Manual sections title line
+	print '<tr '.$bc[true].'><td>';
+	print '<table class="nobordernopadding"><tr class="nobordernopadding">';
+	print '<td align="left" width="24px">';
+	print img_picto_common('','treemenu/base.gif');
+	print '</td><td align="left">'.$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionManual").')';
+	print '</td>';
+	print '</tr></table>';
+	print '<td align="right" colspan="2">&nbsp;</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_edit_add().'</a></td>';
+	print '<td align="right">'.$langs->trans("ECMNbOfDocsSmall").' <a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual">'.img_picto($langs->trans("Refresh"),'refresh').'</a></td>';
+	print '</tr>';
 	
-	// Manual sections
 	$ecmdirstatic = new ECMDirectory($db);
 	$rub=$ecmdirstatic->get_full_arbo();
 	
 	$userstatic = new User($db);
 	
 	$nbofentries=0;
+	$oldvallevel=0;
 	$var=true;
 	foreach($rub as $key => $val)
 	{
-		$var=!$var;
+		$var=false;
 			
 		$ecmdirstatic->id=$val['id'];
 		$ecmdirstatic->ref=$val['label'];
@@ -307,20 +330,16 @@ if (empty($action) || $action == 'refresh')
 			
 		// Section
 		print '<td align="left">';
-		print str_repeat(' &nbsp; &nbsp; ',$val['level']-1);
+		print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
+		print tree_showpad($rub,$key);
+		print '</td><td valign="top">';
 		print $ecmdirstatic->getNomUrl(1);
+		print '</td><td>';
+		print '&nbsp; <a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">';
+		print '</a></td></tr></table>';
 		print "</td>\n";
 	
-		// Description
-		print '<td align="left">'.$langs->trans("ECMTypeManual").'</td>';
-			
-		// Nb of docs
-		//print '<td align="right">'.$obj->cachenbofdoc.'</td>';
-		print '<td align="right">'.$val['cachenbofdoc'].'</td>';
-		
-		// Edit link
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_edit().'</a></td>';
-		
+		// Info
 		print '<td align="right">';
 		$userstatic->id=$val['fk_user_c'];
 		$userstatic->nom=$val['login_c'];
@@ -332,8 +351,19 @@ if (empty($action) || $action == 'refresh')
 		print $form->textwithhelp('',$htmltooltip,1,0);
 		print "</td>";
 		
+		// Edit link
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_edit().'</a></td>';
+		
+		// Add link
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
+		
+		// Nb of docs
+		//print '<td align="right">'.$obj->cachenbofdoc.'</td>';
+		print '<td align="right">'.$val['cachenbofdoc'].'</td>';
+		
 		print "</tr>\n";
 		
+		$oldvallevel=$val['level'];
 		$nbofentries++;
 	}
 	
