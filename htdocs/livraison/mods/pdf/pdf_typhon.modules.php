@@ -369,7 +369,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 */
 	function _pagehead(&$pdf, $delivery, $showadress=1, $outputlangs)
 	{
-		global $conf,$mysoc;
+		global $langs,$conf,$mysoc;
 
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('Arial','B',13);
