@@ -513,7 +513,7 @@ class Livraison extends CommonObject
 	function addline( $id, $qty )
 	{
 		$num = sizeof($this->lignes);
-		$ligne = new livraisonLigne($this->db);
+		$ligne = new LivraisonLigne($this->db);
 	
 		$ligne->commande_ligne_id = $id;
 		$ligne->qty = $qty;
@@ -716,7 +716,7 @@ class Livraison extends CommonObject
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de soci�t� socids
+		// Charge tableau des id de societe socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
 		$resql = $this->db->query($sql);
@@ -757,6 +757,18 @@ class Livraison extends CommonObject
 		$this->socid = $socids[$socid];
 		$this->date_livraison = time();
 		$this->note_public='SPECIMEN';
+
+		$i=0;
+		$ligne=new LivraisonLigne($this->db);
+		$ligne->fk_product     = $prodids[0];
+		$ligne->qty_asked      = 10;
+		$ligne->qty_shipped    = 9;
+		$ligne->ref            = 'REFPROD';
+		$ligne->label          = 'Specimen';
+		$ligne->description    = 'Description';
+		$ligne->price          = 100;
+		$ligne->total_ht       = 100;
+		$this->lignes[$i] = $ligne;
 	}
 	    
 }

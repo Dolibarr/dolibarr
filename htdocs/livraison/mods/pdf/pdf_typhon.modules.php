@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- *
+ * Copyright (C) 2008      Chiptronik            
+ 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,11 +21,11 @@
  */
 
 /**
- \file       htdocs/livraison/mods/pdf/pdf_typhon.modules.php
- \ingroup    livraison
- \brief      Fichier de la classe permettant de g�n�rer les bons de livraison au mod�le Typho
- \author	    Laurent Destailleur
- \version    $Id$
+ *	\file       htdocs/livraison/mods/pdf/pdf_typhon.modules.php
+ *	\ingroup    livraison
+ *	\brief      Fichier de la classe permettant de g�n�rer les bons de livraison au mod�le Typho
+ *	\author	    Laurent Destailleur
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
@@ -33,8 +34,8 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
- \class      pdf_typhon
- \brief      Classe permettant de g�n�rer les bons de livraison au mod�le Typho
+ *	\class      pdf_typhon
+ *	\brief      Classe permettant de g�n�rer les bons de livraison au mod�le Typho
  */
 
 class pdf_typhon extends ModelePDFDeliveryOrder
@@ -81,9 +82,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
+		$this->posxcomm=120;
 		$this->posxtva=121;
 		$this->posxup=132;
-		$this->posxqty=151;
+		$this->posxqty=168;
 		$this->posxdiscount=162;
 		$this->postotalht=177;
 			
@@ -256,7 +258,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					 */
 					// Quantity
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell(40, 4, $delivery->lignes[$i]->qty_shipped, 0, 'R');
+					$pdf->MultiCell(30, 4, $delivery->lignes[$i]->qty_shipped, 0, 'R');
 					/*
 					 // Remise sur ligne
 					 $pdf->SetXY ($this->posxdiscount, $curY);
@@ -355,10 +357,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetFont('Arial','',10);
 
 		$pdf->SetXY ($this->posxdesc-1, $tab_top+2);
-		$pdf->MultiCell(108,2, $outputlangs->transnoentities("Designation"),'','L');
+		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Designation"),'','L');
+
+		// Modif SEB pour avoir une col en plus pour les commentaires clients
+		$pdf->line($this->posxcomm, $tab_top, $this->posxcomm, $tab_top + $tab_height);
+		$pdf->SetXY ($this->posxcomm, $tab_top+2);
+		$pdf->MultiCell(80,2, $outputlangs->transnoentities("Comments"),'','L');
+
+		// Qty
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		$pdf->SetXY ($this->posxqty-1, $tab_top+2);
-		$pdf->MultiCell(40, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
+		$pdf->MultiCell(30, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
 
 		// Modif Seb cadres signatures
 		$pdf->SetFont('Arial','',10);
