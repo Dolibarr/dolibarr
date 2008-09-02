@@ -55,9 +55,9 @@ if ($_GET["action"] == 'specimen')
 {
 	$modele=$_GET["module"];
 
-	$exp = new Expedition($db);
-	$exp->initAsSpecimen();
-	//$exp->fetch_commande();
+	$sending = new Livraison($db);
+	$sending->initAsSpecimen();
+	//$sending->fetch_commande();
 
 	// Charge le modele
 	$dir = DOL_DOCUMENT_ROOT . "/livraison/mods/pdf/";
@@ -69,7 +69,7 @@ if ($_GET["action"] == 'specimen')
 
 		$obj = new $classname($db);
 
-		if ($obj->write_file($exp,$langs) > 0)
+		if ($obj->write_file($sending,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=livraison&file=SPECIMEN.pdf");
 			return;
