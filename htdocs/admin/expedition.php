@@ -22,11 +22,11 @@
  */
 
 /**
-        \file       htdocs/admin/expedition.php
-        \ingroup    expedition
-        \brief      Page d'administration/configuration du module Expedition
-        \version    $Id$
-*/
+ \file       htdocs/admin/expedition.php
+ \ingroup    expedition
+ \brief      Page d'administration/configuration du module Expedition
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -83,124 +83,122 @@ if ($_GET["action"] == 'specimen')
 if ($_GET["action"] == 'set')
 {
 	$type='shipping';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
-    if ($db->query($sql))
-    {
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+	if ($db->query($sql))
+	{
 
-    }
+	}
 }
 
 if ($_GET["action"] == 'del')
 {
-    $type='shipping';
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-    if ($db->query($sql))
-    {
+	$type='shipping';
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	if ($db->query($sql))
+	{
 
-    }
+	}
 }
 
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
-	
-    if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF",$_GET["value"]))
-    {
-        $conf->global->EXPEDITION_ADDON_PDF = $_GET["value"];
-    }
 
-    // On active le modele
-    $type='shipping';
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-    $result1=$db->query($sql_del);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
-    $result2=$db->query($sql);
-    if ($result1 && $result2) 
-    {
+	if (dolibarr_set_const($db, "EXPEDITION_ADDON_PDF",$_GET["value"]))
+	{
+		$conf->global->EXPEDITION_ADDON_PDF = $_GET["value"];
+	}
+
+	// On active le modele
+	$type='shipping';
+	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	$result1=$db->query($sql_del);
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+	$result2=$db->query($sql);
+	if ($result1 && $result2)
+	{
 		$db->commit();
-    }
-    else
-    {
-    	$db->rollback();
-    }
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
 // \todo A quoi servent les methode d'expedition ?
 if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 {
+	$module=$_GET["module"];
+	$moduleid=$_GET["moduleid"];
+	$statut=$_GET["statut"];
 
+	require_once(DOL_DOCUMENT_ROOT."/expedition/mods/methode_expedition_$module.modules.php");
 
- $module=$_GET["module"];
- $moduleid=$_GET["moduleid"];
- $statut=$_GET["statut"];
+	$class = "methode_expedition_$module";
+	$expem = new $class($db);
 
- require_once(DOL_DOCUMENT_ROOT."/expedition/mods/methode_expedition_$module.modules.php");
+	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE rowid = ".$moduleid;
+	$resql = $db->query($sql);
+	if ($resql && ($statut == 1 || $_GET["action"] == 'setmod'))
+	{
+		$db->begin();
 
- $class = "methode_expedition_$module";
- $expem = new $class($db);
-  
-  $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE rowid = ".$moduleid;
-  $resql = $db->query($sql);
-  if ($resql && ($statut == 1 || $_GET["action"] == 'setmod'))
-  {
-    $db->begin();
-    
-    $sqlu = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
-    $sqlu.= " SET statut=1";
-    $sqlu.= " WHERE rowid=".$moduleid;
-    $result=$db->query($sqlu);
-    if ($result) 
-      {
-	$db->commit();
-      }
-    else
-      {
-    	$db->rollback();
-      }
-  }
-  
-  if ($statut == 1 || $_GET["action"] == 'setmod')
-  {
-    $db->begin();
+		$sqlu = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
+		$sqlu.= " SET statut=1";
+		$sqlu.= " WHERE rowid=".$moduleid;
+		$result=$db->query($sqlu);
+		if ($result)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle,description,statut)";
-    $sql.= " VALUES (".$moduleid.",'".$expem->code."','".$expem->name."','".$expem->description."',1)";
-    $result=$db->query($sql);
-    if ($result) 
-    {
-      $db->commit();
-    }
-    else
-    {
-      print $sql;
-      $db->rollback();
-    }
-  }
-  else if ($statut == 0)
-  {
-    $db->begin();
-    
-    $sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
-    $sql.= " SET statut=0";
-    $sql.= " WHERE rowid=".$moduleid;
-    $result=$db->query($sql);
-    if ($result) 
-      {
-	$db->commit();
-      }
-    else
-      {
-    	$db->rollback();
-      }
-  }
+	if ($statut == 1 || $_GET["action"] == 'setmod')
+	{
+		$db->begin();
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle,description,statut)";
+		$sql.= " VALUES (".$moduleid.",'".$expem->code."','".$expem->name."','".$expem->description."',1)";
+		$result=$db->query($sql);
+		if ($result)
+		{
+			$db->commit();
+		}
+		else
+		{
+			//dolibarr_print_error($db);
+			$db->rollback();
+		}
+	}
+	else if ($statut == 0)
+	{
+		$db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
+		$sql.= " SET statut=0";
+		$sql.= " WHERE rowid=".$moduleid;
+		$result=$db->query($sql);
+		if ($result)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
 }
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre active
-    // par appel methode canBeActivated
+	// \todo Verifier si module numerotation choisi peut etre active
+	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "EXPEDITION_ADDON",$_GET["module"]);
 }
@@ -250,14 +248,14 @@ $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE statut = 1"
 $resql = $db->query($sql);
 if ($resql)
 {
-    $i = 0;
-    $num = $db->num_rows($resql);
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($resql);
-        $mods[$i]=$obj->rowid;
-        $i++;
-    }
+	$i = 0;
+	$num = $db->num_rows($resql);
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		$mods[$i]=$obj->rowid;
+		$i++;
+	}
 }
 
 print '<table class="noborder" width="100%">';
@@ -325,10 +323,10 @@ if(is_dir($dir))
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;module='.$name.'&amp;moduleid='.$module->id.'">'.$langs->trans("Default").'</a>';
 			}
 			print '</td>';
-			
+				
 			// Info
 			print '<td>&nbsp;</td>';
-			
+				
 			print '</tr>';
 		}
 	}
@@ -446,12 +444,12 @@ if(is_dir($dir))
 			$htmltooltip.='<br><b>'.$langs->trans("Width").'/'.$langs->trans("Height").'</b>: '.$module->page_largeur.'/'.$module->page_hauteur;
 			$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
 			$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
-	    	print '<td align="center">';
-	    	print $html->textwithhelp('',$htmltooltip,1,0);
-	    	print '</td>';
-	    	print '<td align="center">';
-	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'sending').'</a>';
-	    	print '</td>';
+			print '<td align="center">';
+			print $html->textwithhelp('',$htmltooltip,1,0);
+			print '</td>';
+			print '<td align="center">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'sending').'</a>';
+			print '</td>';
 
 			print '</tr>';
 		}
@@ -465,9 +463,9 @@ else
 print '</table>';
 
 /*
-*
-*
-*/
+ *
+ *
+ */
 
 $db->close();
 
