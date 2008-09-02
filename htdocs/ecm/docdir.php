@@ -83,6 +83,11 @@ if (! empty($_GET["section"]))
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->ecm->setup)
 {
+	if (! empty($_POST["cancel"]))
+	{
+		Header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
+		exit;
+	}
 	$ecmdir->ref                = trim($_POST["ref"]);
 	$ecmdir->label              = trim($_POST["label"]);
 	$ecmdir->description        = trim($_POST["desc"]);
@@ -164,7 +169,11 @@ if ($_GET["action"] == 'create')
 	print '</textarea>';
 	print '</td></tr>'."\n";
 
-	print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>'."\n";
+	print '<tr><td colspan="3" align="center">';
+	print '<input type="submit" class="button" name="create" value="'.$langs->trans("Create").'">';
+	print ' &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</td></tr>'."\n";
 
 	print '</table>';
 	print '</form>';

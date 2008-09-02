@@ -26,6 +26,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ecm.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/treeview.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
 
@@ -142,34 +143,35 @@ print $langs->trans("ECMAreaDesc")."<br>";
 print $langs->trans("ECMAreaDesc2")."<br>";
 print "<br>\n";
 
-// Tool bar
-$colspan=3;
-print '<table class="notopnoleftnoright" width="100%">';
-print '<tr '.$bc[0].'>';
-print '<td>'.img_picto('','object_list').' <a href="'.$_SERVER["PHP_SELF"].'?action=file_manager">'.$langs->trans("ECMFileManager").'</td>';
-print '<td align="right">'.img_picto('','search').' <a href="'.$_SERVER["PHP_SELF"].'?action=search_form">'.$langs->trans("Search").'</td>';
-print '</tr></table>';
 
+print '<table class="notopnoleftnoright" width="100%"><tr><td width="50%">';
+
+// Left area
+
+
+// Tool bar
+$selected='file_manager';
+if (eregi('search',$action)) $selected='search_form';
+$head = ecm_prepare_head_fm($fac);
+dolibarr_fiche_head($head, $selected, '', 1);
+
+print '<table class="noborder" width="100%"><tr><td>';
 
 if (eregi('search',$action))
 {
-	print '<table class="notopnoleftnoright" width="100%"><tr><td width="50%" valign="top">';
-	
 	//print_fiche_titre($langs->trans("ECMManualOrg"));
 	
 	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
 	print '<td colspan="3">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
-	print "<tr $bc[0]><td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
+	print "<tr ".$bc[false]."><td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
 	print '<td rowspan="3"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "<tr $bc[0]><td>".$langs->trans("Title").':</td><td><input type="text" name="search_title" class="flat" size="18"></td></tr>';
-	print "<tr $bc[0]><td>".$langs->trans("Keyword").':</td><td><input type="text" name="search_keyword" class="flat" size="18"></td></tr>';
-	print "</table></form><br>";
+	print "<tr ".$bc[false]."><td>".$langs->trans("Title").':</td><td><input type="text" name="search_title" class="flat" size="18"></td></tr>';
+	print "<tr ".$bc[false]."><td>".$langs->trans("Keyword").':</td><td><input type="text" name="search_keyword" class="flat" size="18"></td></tr>';
+	print "</table></form>";
 	//print $langs->trans("ECMManualOrgDesc");
 		
-	print '</td><td width="50%" valign="top">';
-	
 	//print_fiche_titre($langs->trans("ECMAutoOrg"));
 	
 	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
@@ -182,7 +184,7 @@ if (eregi('search',$action))
 	foreach($sectionauto as $section)
 	{
 		if (! $section['test']) continue;
-		if ($butshown % 2 == 0) print '<tr '. $bc[0].'>';
+		if ($butshown % 2 == 0) print '<tr '. $bc[false].'>';
 		print "<td>".$section['label'].':</td>';
 		print '<td';
 		if ($butshown % 2 == 1) print ' align="right"';
@@ -194,12 +196,9 @@ if (eregi('search',$action))
 	}
 	if ($butshown % 2 == 1) print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 	
-	print '<tr '. $bc[0].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-	print "</table></form><br>";
+	print '<tr '. $bc[false].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+	print "</table></form>";
 	//print $langs->trans("ECMAutoOrgDesc");
-		
-	print '</td></tr>';
-	print '</table>';
 }
 
 
@@ -219,21 +218,28 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 	print '<table width="100%" class="nobordernopadding">';
 	
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" colspan="5" align="left">'.$langs->trans("ECMSectionOfDocuments").'</td>';
+	print '<td class="liste_titre" colspan="5" align="right">';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual">'.$langs->trans("Refresh").' '.img_picto($langs->trans("Refresh"),'refresh').'</a>';
+	print '</td>';
 	print '</tr>';
 	
 	if (sizeof($sectionauto))
 	{
 		// Automatic sections title line
-		print '<tr '.$bc[true].'><td>';
+		print '<tr '.$bc[false].'><td>';
 		print '<table class="nobordernopadding"><tr class="nobordernopadding">';
 		print '<td align="left" width="24px">';
 		print img_picto_common('','treemenu/base.gif');
 		print '</td><td align="left">'.$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionAuto").')';
 		print '</td>';
-		print '</tr></table>';
-		print '<td align="right" colspan="3">&nbsp;</td>';
+		print '</tr></table></td>';
 		print '<td align="right">&nbsp;</td>';
+		print '<td align="right">&nbsp;</td>';
+		print '<td align="right">&nbsp;</td>';
+		print '<td align="center">';
+		$htmltooltip=$langs->trans("ECMAreaDesc2");
+		print $form->textwithhelp('',$htmltooltip,1,0);
+		print '</td>';
 		//print '<td align="right">'.$langs->trans("ECMNbOfDocsSmall").' <a href="'.$_SERVER["PHP_SELF"].'?action=refreshauto">'.img_picto($langs->trans("Refresh"),'refresh').'</a></td>';
 		print '</tr>';
 		
@@ -261,8 +267,17 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 				print '</a></td></tr></table>';
 				print "</td>\n";
 					
+				// Nb of doc
+				print '<td align="right">&nbsp;</td>';
+
+				// Edit link
+				print '<td align="right">&nbsp;</td>';
+				
+				// Add link
+				print '<td align="right">&nbsp;</td>';
+				
 				// Info
-				print '<td align="right">';
+				print '<td align="center">';
 				$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
 				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMAutoOrg").'<br>';
 				$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
@@ -270,15 +285,6 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 				print $form->textwithhelp('',$htmltooltip,1,0);
 				print '</td>';
 				
-				// Edit link
-				print '<td align="right">&nbsp;</td>';
-				
-				// Add link
-				print '<td align="right">&nbsp;</td>';
-				
-				// Nb of doc
-				print '<td align="right">?</td>';
-
 				print "</tr>\n";
 				
 				$oldvallevel=$val['level'];
@@ -288,16 +294,21 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 	}
 	
 	// Manual sections title line
-	print '<tr '.$bc[true].'><td>';
+	print '<tr '.$bc[false].'><td>';
 	print '<table class="nobordernopadding"><tr class="nobordernopadding">';
 	print '<td align="left" width="24px">';
 	print img_picto_common('','treemenu/base.gif');
 	print '</td><td align="left">'.$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionManual").')';
 	print '</td>';
-	print '</tr></table>';
-	print '<td align="right" colspan="2">&nbsp;</td>';
+	print '</tr></table></td>';
+	print '<td align="right">';
+	print '</td>';
+	print '<td align="right">&nbsp;</td>';
 	print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_edit_add().'</a></td>';
-	print '<td align="right">'.$langs->trans("ECMNbOfDocsSmall").' <a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual">'.img_picto($langs->trans("Refresh"),'refresh').'</a></td>';
+	print '<td align="center">';
+	$htmltooltip=$langs->trans("ECMAreaDesc2");
+	print $form->textwithhelp('',$htmltooltip,1,0);
+	print '</td>';
 	print '</tr>';
 	
 	$ecmdirstatic = new ECMDirectory($db);
@@ -333,14 +344,22 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 		print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
 		print tree_showpad($rub,$key);
 		print '</td><td valign="top">';
-		print $ecmdirstatic->getNomUrl(1);
+		print $ecmdirstatic->getNomUrl(1,'index');
 		print '</td><td>';
-		print '&nbsp; <a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">';
-		print '</a></td></tr></table>';
+		print '&nbsp;</td></tr></table>';
 		print "</td>\n";
 	
+		// Nb of docs
+		print '<td align="right">'.$val['cachenbofdoc'].'</td>';
+		
+		// Edit link
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_edit().'</a></td>';
+		
+		// Add link
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
+		
 		// Info
-		print '<td align="right">';
+		print '<td align="center">';
 		$userstatic->id=$val['fk_user_c'];
 		$userstatic->nom=$val['login_c'];
 		$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
@@ -350,16 +369,6 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 		$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'];
 		print $form->textwithhelp('',$htmltooltip,1,0);
 		print "</td>";
-		
-		// Edit link
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_edit().'</a></td>';
-		
-		// Add link
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create&amp;catParent='.$val['id'].'">'.img_edit_add().'</a></td>';
-		
-		// Nb of docs
-		//print '<td align="right">'.$obj->cachenbofdoc.'</td>';
-		print '<td align="right">'.$val['cachenbofdoc'].'</td>';
 		
 		print "</tr>\n";
 		
@@ -376,21 +385,33 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 	print "</table>";
 	// Fin de zone Ajax
 
-}
-
 // Actions buttons
-/*
 print '<div class="tabsAction">';
 if ($user->rights->ecm->setup)
 {
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create">'.$langs->trans('ECMAddSection').'</a>';
+	print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.$langs->trans('ECMAddSection').'</a>';
 }
 else
 {
 	print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 }
 print '</div>';
-*/
+	
+
+}
+
+print '</td></tr></table>';
+
+print '</td><td>';
+
+// Right area
+
+
+
+
+
+print '</td></tr></table>';
+
 
 print '<br>';
 

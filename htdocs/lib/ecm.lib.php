@@ -38,4 +38,31 @@ function ecm_prepare_head($obj)
 	return $head;
 }
 
+/**
+	    \file       htdocs/lib/invoice.lib.php
+		\brief      Ensemble de fonctions de base pour le module factures
+		\version    $Id$
+
+		Ensemble de fonctions de base de dolibarr sous forme d'include
+*/
+
+function ecm_prepare_head_fm($fac)
+{
+	global $langs, $conf;
+	$h = 0;
+	$head = array();
+	
+	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php?action=file_manager';
+	$head[$h][1] = $langs->trans('ECMFileManager');
+	$head[$h][2] = 'file_manager';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php?action=search_form';
+	$head[$h][1] = $langs->trans('Search');
+	$head[$h][2] = 'search_form';
+	$h++;
+
+	return $head;
+}
+
 ?>
