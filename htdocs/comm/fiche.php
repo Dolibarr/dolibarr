@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +35,14 @@ if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/facture.class.php"
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) require_once(DOL_DOCUMENT_ROOT."/chronodocs/chronodocs_entries.class.php");
 
 $langs->load("companies");
 $langs->load("orders");
 $langs->load("bills");
 $langs->load("contracts");
 if ($conf->fichinter->enabled) $langs->load("interventions");
+if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) $langs->load("chronodocs");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -584,6 +587,43 @@ if ($socid > 0)
         }
         print "</table>";
     }
+	
+	/*
+	 * Last linked chronodocs
+	 */
+	if(!empty($conf->global->MAIN_MODULE_CHRONODOCS) && $user->rights->chronodocs->entries->read)
+	{
+		print '<table class="noborder" width=100%>';
+		$chronodocs_static=new Chronodocs_entries($db);
+		$result=$chronodocs_static->get_list($MAXLIST,0,"f.date_c","DESC",$objsoc->id);
+		if (is_array($result))
+		{
+		    $var=true;
+            $i = 0 ;
+			//$num = sizeOf($result);
+			$num=$chronodocs_static->get_nb_chronodocs($objsoc->id);
+			
+			if ($num > 0) {
+                print '<tr class="liste_titre">';
+                print '<td colspan="3"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastChronodocs",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/chronodocs/index.php?socid='.$objsoc->id.'">'.$langs->trans("AllChronodocs").' ('.$num.')</td></tr></table></td>';
+                print '</tr>';
+            }
+            while ($i < $num && $i < $MAXLIST) {
+                $obj = array_shift($result);
+                $var = !$var;
+                print "<tr $bc[$var]>";
+                print '<td><a href="'.DOL_URL_ROOT.'/chronodocs/fiche.php?id='.$obj->fichid.'">'.img_object($langs->trans("ShowChronodocs"),"generic")." ".$obj->ref.'</a></td>';
+
+                print "<td align=\"left\">".dolibarr_trunc($obj->title,30) ."</td>";
+				print "<td align=\"right\">".dolibarr_print_date($obj->dp,'day')."</td>\n";
+				print "</tr>";
+				
+                $i++;
+            }
+		}
+		
+		print "</table>";
+	}
 
     print "</td></tr>";
     print "</table></div>\n";
@@ -627,6 +667,11 @@ if ($socid > 0)
 	if ($user->rights->societe->contact->creer)
 	{
 	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+	}
+	
+	if(!empty($conf->global->MAIN_MODULE_CHRONODOCS) && $user->rights->chronodocs->entries->write)
+	{
+	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/chronodocs/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddChronodoc").'</a>';
 	}
 	
     print '</div>';
