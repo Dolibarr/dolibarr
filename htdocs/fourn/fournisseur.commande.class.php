@@ -71,7 +71,8 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 * Lit une commande
+	 * 	\brief		Load a supplier order
+	 * 	\param		Id of order to load
 	 */
 	function fetch($id)
 	{
@@ -115,21 +116,20 @@ class CommandeFournisseur extends Commande
 			$this->db->free();
 				
 			if ($this->statut == 0) $this->brouillon = 1;
-				
-			// export pdf -----------
-				
+
+			// Now load lines
 			$this->lignes = array();
-			$sql = 'SELECT l.fk_product, l.description, l.total_ht, l.total_tva, l.total_ttc, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice';
-			$sql.= ', p.label, p.description as product_desc, p.rowid as prodid';
-			$sql.= ', pf.ref_fourn';
-			$sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as l';
-				
-			//Todo: revoir le fonctionnement de la base produit fournisseurs
-				
-			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON l.fk_product = pf.fk_product AND l.ref = pf.ref_fourn';
+			
+			$sql = "SELECT l.rowid, l.ref as ref_fourn, l.fk_product, l.label, l.description, l.qty,";
+			$sql.= " l.tva_tx, l.remise_percent, l.subprice,";
+			$sql.= " l.total_ht, l.total_tva, l.total_ttc,";
+			$sql.= " p.rowid as product_id, p.ref, p.label as product, p.description as product_desc";
+			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-			$sql.= ' WHERE l.fk_commande = '.$this->id;
-			$sql.= ' ORDER BY l.rowid';
+			$sql.= " WHERE l.fk_commande = ".$this->id;
+			$sql.= " ORDER BY l.rowid";
+			
+			dolibarr_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -151,12 +151,13 @@ class CommandeFournisseur extends Commande
 					$ligne->total_tva           = $objp->total_tva;
 					$ligne->total_ttc           = $objp->total_ttc;
 						
-					$ligne->fk_product          = $objp->fk_product;   // Id du produit
+					$ligne->fk_product          = $objp->product_id;   // Id du produit
 					$ligne->libelle             = $objp->label;        // Label produit
 					$ligne->product_desc        = $objp->product_desc; // Description produit
 
+					$ligne->ref                 = $objp->ref;          // Reference
 					$ligne->ref_fourn           = $objp->ref_fourn;    // Reference supplier
-						
+					
 					$this->lignes[$i]      = $ligne;
 					//dolibarr_syslog("1 ".$ligne->desc);
 					//dolibarr_syslog("2 ".$ligne->product_desc);
@@ -169,14 +170,14 @@ class CommandeFournisseur extends Commande
 			else
 			{
 				$this->error=$this->db->error()." sql=".$sql;
-				dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error);
+				dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->error()." sql=".$sql;
-			dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error);
+			dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

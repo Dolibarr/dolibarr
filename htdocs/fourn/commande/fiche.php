@@ -671,153 +671,135 @@ if ($id > 0)
 		else print '<br>';
 
 		/*
-		 * Lignes de	commandes
+		 * Lignes de commandes
 		 */
 		print '<table class="noborder" width="100%">';
 
-		$sql = "SELECT l.ref as ref_fourn, l.fk_product, l.description, l.qty";
-		$sql.= ", l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-		$sql.= ", l.total_ht, l.total_tva, l.total_ttc";
-		$sql.= ", p.rowid as product_id, p.label as product, p.ref";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-		$sql.= " WHERE l.fk_commande = ".$commande->id;
-		$sql.= " ORDER BY l.rowid";
+		$num = sizeof($commande->lignes);
+		$i = 0;	$total = 0;
 
-		$resql = $db->query($sql);
-		if ($resql)
+		if ($num)
 		{
-			$num = $db->num_rows($resql);
-			$i = 0;	$total = 0;
+			print '<tr class="liste_titre">';
+			print '<td>'.$langs->trans('Label').'</td>';
+			print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+			print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+			print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+			print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+			print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
+			print '<td width="48" colspan="3">&nbsp;</td>';
+			print "</tr>\n";
+		}
+		$var=true;
+		while ($i <	$num)
+		{
+			$objp =	$commande->lignes[$i];
+			$var=!$var;
 
-			if ($num)
+			// Ligne en mode visu
+			if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
 			{
-				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans('Label').'</td>';
-				print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
-				print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-				print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-				print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-				print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-				print '<td width="48" colspan="3">&nbsp;</td>';
-				print "</tr>\n";
-			}
-			$var=true;
-			while ($i <	$num)
-			{
-				$objp =	$db->fetch_object($resql);
-				$var=!$var;
-
-				// Ligne en mode visu
-				if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
+				print '<tr '.$bc[$var].'>';
+				if ($objp->fk_product > 0)
 				{
-					print '<tr '.$bc[$var].'>';
-					if ($objp->fk_product > 0)
-					{
-						print '<td>';
-						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-
-						// Affiche ligne produit
-						$text = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->product_id.'">';
-						$text.= img_object($langs->trans('ShowProduct'),'product');
-						$text.= ' '.$objp->ref_fourn.'</a>';
-						$text.= ' ('.$objp->ref.')';
-						$text.= ' - '.$objp->product;
-						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
-						print $html->textwithtooltip($text,$description,3,'','',$i);
-						if ($conf->global->PRODUIT_DESC_IN_FORM)
-						{
-							print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-						}
-
-						print "</td>";
-					}
-					else
-					{
-						print '<td>';
-						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-						print nl2br($objp->description);
-						print '</td>';
-					}
-					print '<td align="right" nowrap="nowrap">'.vatrate($objp->tva_tx).'%</td>';
-					print '<td align="right" nowrap="nowrap">'.price($objp->subprice)."</td>\n";
-					print '<td align="right" nowrap="nowrap">'.$objp->qty.'</td>';
-					if ($objp->remise_percent >	0)
-					{
-						print '<td align="right" nowrap="nowrap">'.dolibarr_print_reduction($objp->remise_percent)."</td>\n";
-					}
-					else
-					{
-						print '<td>&nbsp;</td>';
-					}
-					//Todo: Modifier la classe pour utiliser le champ total_ttc
-					print '<td align="right" nowrap="nowrap">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100).'</td>';
-					if ($commande->statut == 0	&& $user->rights->fournisseur->commande->creer)
-					{
-						print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
-						print img_edit();
-						print '</a></td>';
-
-						print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
-						print img_delete();
-						print '</a></td>';
-					}
-					else
-					{
-						print '<td>&nbsp;</td><td>&nbsp;</td>';
-					}
-					print "</tr>";
-				}
-
-				// Ligne en mode update
-				if ($_GET["action"]	== 'editline' && $user->rights->fournisseur->commande->creer && $_GET["rowid"]	== $objp->rowid)
-				{
-					print '<form action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
-					print '<input type="hidden" name="action" value="updateligne">';
-					print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
-					print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
-					print '<tr '.$bc[$var].'>';
 					print '<td>';
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-					if ($objp->fk_product > 0)
+
+					// Affiche ligne produit
+					$text = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">';
+					$text.= img_object($langs->trans('ShowProduct'),'product');
+					$text.= ' '.$objp->ref_fourn.'</a>';
+					$text.= ' ('.$objp->ref.')';
+					$text.= ' - '.$objp->libelle;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->product_desc));
+					print $html->textwithtooltip($text,$description,3,'','',$i);
+					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
-						print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->product_id.'">';
-						print img_object($langs->trans('ShowProduct'),'product');
-						print ' '.$objp->ref_fourn.'</a>';
-						print ' ('.$objp->ref.')';
-						print ' - '.nl2br($objp->product);
-						print '<br>';
+						print ($objp->product_desc && $objp->product_desc!=$objp->libelle)?'<br>'.dol_htmlentitiesbr($objp->product_desc):'';
 					}
-					// editeur wysiwyg
-					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-					{
-						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-						$doleditor=new DolEditor('eldesc',$objp->description,200,'dolibarr_details');
-						$doleditor->Create();
-					}
-					else
-					{
-						print '<textarea name="eldesc" class="flat" cols="70" rows="1">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
-					}
-					print '</td>';
-					print '<td>';
-					$html->select_tva('tva_tx',$objp->tva_tx);
-					print '</td>';
-					print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($objp->subprice).'"></td>';
-					print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
-					print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
-					print '<td align="center" colspan="2"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-					print '<br /><input	type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
-					print '</tr>' .	"\n";
-					print "</form>\n";
+
+					print "</td>";
 				}
-		  $i++;
+				else
+				{
+					print '<td>';
+					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+					print nl2br($objp->product_desc);
+					print '</td>';
+				}
+				print '<td align="right" nowrap="nowrap">'.vatrate($objp->tva_tx).'%</td>';
+				print '<td align="right" nowrap="nowrap">'.price($objp->subprice)."</td>\n";
+				print '<td align="right" nowrap="nowrap">'.$objp->qty.'</td>';
+				if ($objp->remise_percent >	0)
+				{
+					print '<td align="right" nowrap="nowrap">'.dolibarr_print_reduction($objp->remise_percent)."</td>\n";
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				//Todo: Modifier la classe pour utiliser le champ total_ttc
+				print '<td align="right" nowrap="nowrap">'.price($objp->total_ht).'</td>';
+				if ($commande->statut == 0	&& $user->rights->fournisseur->commande->creer)
+				{
+					print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
+					print img_edit();
+					print '</a></td>';
+
+					print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
+					print img_delete();
+					print '</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td><td>&nbsp;</td>';
+				}
+				print "</tr>";
 			}
-			$db->free();
-		}
-		else
-		{
-			dolibarr_print_error($db);
+
+			// Ligne en mode update
+			if ($_GET["action"]	== 'editline' && $user->rights->fournisseur->commande->creer && $_GET["rowid"]	== $objp->rowid)
+			{
+				print '<form action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
+				print '<input type="hidden" name="action" value="updateligne">';
+				print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
+				print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
+				print '<tr '.$bc[$var].'>';
+				print '<td>';
+				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+				if ($objp->fk_product > 0)
+				{
+					print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->product_id.'">';
+					print img_object($langs->trans('ShowProduct'),'product');
+					print ' '.$objp->ref_fourn.'</a>';
+					print ' ('.$objp->ref.')';
+					print ' - '.nl2br($objp->product);
+					print '<br>';
+				}
+				// editeur wysiwyg
+				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+					$doleditor=new DolEditor('eldesc',$objp->description,200,'dolibarr_details');
+					$doleditor->Create();
+				}
+				else
+				{
+					print '<textarea name="eldesc" class="flat" cols="70" rows="1">'.dol_htmlentitiesbr_decode($objp->description).'</textarea>';
+				}
+				print '</td>';
+				print '<td>';
+				$html->select_tva('tva_tx',$objp->tva_tx);
+				print '</td>';
+				print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($objp->subprice).'"></td>';
+				print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
+				print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
+				print '<td align="center" colspan="2"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+				print '<br /><input	type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
+				print '</tr>' .	"\n";
+				print "</form>\n";
+			}
+	  		$i++;
 		}
 
 		/*
