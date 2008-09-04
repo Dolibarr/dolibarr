@@ -33,11 +33,12 @@ Miscellanous=Divers
 NbOfActiveNotifications=Nombre de notifications
 WarningInstallDirExists=Attention, le répertoire install (%s) existe toujours. Une fois l'install terminée, sa présence n'est plus nécessaire et représente une faille sérieuse de sécurité. Vous devriez l'effacer dès que possible.
 WarningUntilDirRemoved=Cette alerte restera active tant que le répertoire existera (alerte visible pour les utilisateurs admin uniquement).
+##### Bookmark #####
 Bookmark=Marque page
 Bookmarks=Marque pages
 NewBookmark=Nouveau marque page
 ShowBookmark=Afficher marque page
-BookmarkThisPage=Marquer cette page dans ces favoris
+BookmarkThisPage=Marquer cette page dans ses favoris Dolibarr
 OpenANewWindow=Ouvrir une nouvelle fenêtre
 ReplaceWindow=Remplacer fenêtre courante
 BookmarkTargetNewWindowShort=Nouvelle fenêtre
@@ -51,6 +52,7 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink=Saisir une URL http externe ou une U
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
 BookmarksManagement=Gestion des marque-pages
 ListOfBookmarks=Liste des marque-pages
+##### Export #####
 NoExportableData=Pas de données exportables (pas de modules avec données exportables chargés, ou manque de permissions)
 ToExport=Exporter
 NewExport=Nouvel export
