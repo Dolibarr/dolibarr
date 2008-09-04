@@ -142,6 +142,7 @@ class CommandeFournisseur extends Commande
 						
 					$ligne                 = new CommandeFournisseurLigne($this->db);
 						
+					$ligne->id                  = $objp->rowid;
 					$ligne->desc                = $objp->description;  // Description ligne
 					$ligne->qty                 = $objp->qty;
 					$ligne->tva_tx              = $objp->tva_tx;

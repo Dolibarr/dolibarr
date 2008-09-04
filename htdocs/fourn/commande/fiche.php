@@ -738,15 +738,15 @@ if ($id > 0)
 				{
 					print '<td>&nbsp;</td>';
 				}
-				//Todo: Modifier la classe pour utiliser le champ total_ttc
+
 				print '<td align="right" nowrap="nowrap">'.price($objp->total_ht).'</td>';
 				if ($commande->statut == 0	&& $user->rights->fournisseur->commande->creer)
 				{
-					print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
+					print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->id.'#'.$objp->id.'">';
 					print img_edit();
 					print '</a></td>';
 
-					print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
+					print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete_product_line&amp;lineid='.$objp->id.'">';
 					print img_delete();
 					print '</a></td>';
 				}
