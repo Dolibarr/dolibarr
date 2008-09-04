@@ -18,11 +18,11 @@
  */
 
 /**
-    	\file       htdocs/compta/fiche.php
-		\ingroup    compta
-		\brief      Page de fiche compta
-		\version    $Id$
-*/
+ *   	\file       htdocs/compta/fiche.php
+ *		\ingroup    compta
+ *		\brief      Page de fiche compta
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -71,7 +71,7 @@ if ($mode == 'search')
 
 
 /*
- * Mode fiche
+ * View
  */
 
 llxHeader();
@@ -198,7 +198,7 @@ if ($socid > 0)
 
     print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
-    // Nbre max d'�l�ments des petites listes
+    // Nbre max d'elements des petites listes
     $MAXLIST=5;
     $tableaushown=1;
 
@@ -333,7 +333,7 @@ if ($socid > 0)
 
 	if ($user->societe_id == 0)
 	{
-		// Si soci�t� cliente ou prospect, on affiche bouton "Cr�er facture client"
+		// Si societe cliente ou prospect, on affiche bouton "Creer facture client"
 		if ($societe->client != 0 && $conf->facture->enabled && $user->rights->facture->creer) {
 			$langs->load("bills");
 			print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/facture.php?action=create&socid=$societe->id\">".$langs->trans("AddBill")."</a>";

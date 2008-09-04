@@ -238,6 +238,10 @@ function getFormeJuridiqueLabel($code)
 
 /**
  * 		\brief		Show html area for list of contacts
+ *		\param		conf		Object conf
+ * 		\param		lang		Object lang
+ * 		\param		db			Database handler
+ * 		\param		objsoc		Third party object 
  */
 function show_contacts($conf,$langs,$db,$objsoc)
 {
@@ -295,7 +299,7 @@ function show_contacts($conf,$langs,$db,$objsoc)
 			// Lien click to dial
 			print '<td>';
 			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-			print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+			print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
 			print dolibarr_print_phone($obj->phone);
 			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 			print '</a>';
@@ -303,14 +307,14 @@ function show_contacts($conf,$langs,$db,$objsoc)
 			print '</td>';
 			print '<td>';
 			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-			print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+			print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
 			print dolibarr_print_phone($obj->fax);
 			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 			print '</a>';
 			print '&nbsp;</td>';
 			print '<td>';
 			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-			print '<a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+			print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
 			print $obj->email;
 			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 			print '</a>';
@@ -319,13 +323,13 @@ function show_contacts($conf,$langs,$db,$objsoc)
 			print '&nbsp;</td>';
 
 			print '<td align="center">';
-			print "<a href=\"../contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">";
+			print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?action=edit&amp;id='.$obj->rowid.'">';
 			print img_edit();
 			print '</a></td>';
 
 			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 			{
-				print '<td align="center"><a href="action/fiche.php?action=create&backtopage=1&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
+				print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
 				print img_object($langs->trans("Rendez-Vous"),"action");
 				print '</a></td>';
 			}
