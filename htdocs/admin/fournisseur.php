@@ -148,8 +148,9 @@ if ($_POST["action"] == 'updatePrefixCommande') dolibarr_set_const($db, "COMMAND
 if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_DELTA",$_POST["offset"]);
 if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
 
+
 /*
- * Affichage page
+ * View
  */
  
 llxHeader();
@@ -191,55 +192,58 @@ if ($handle)
 
             $module = new $file;
 
-			// Show modules according to features level
-		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-            $var=!$var;
-            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-            print $module->info();
-            print '</td>';
-
-            // Examples
-            print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
-
-            print '<td align="center">';
-            if ($conf->global->COMMANDE_SUPPLIER_ADDON == "$file")
-            {
-                print img_tick($langs->trans("Activated"));
-            }
-            else
-            {
-                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
-            }
-            print '</td>';
-            
-            $commande=new CommandeFournisseur($db);
-	    	$commande->initAsSpecimen();
-	    	
-			// Info
-			$htmltooltip='';
-			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
-			$facture->type=0;
-	        $nextval=$module->getNextValue($mysoc,$commande);
-			if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+			if ($module->isEnabled())
 			{
-				$htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: ';
-		        if ($nextval)
+	            // Show modules according to features level
+			    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+			    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+	
+	            $var=!$var;
+	            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+	            print $module->info();
+	            print '</td>';
+	
+	            // Examples
+	            print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+	
+	            print '<td align="center">';
+	            if ($conf->global->COMMANDE_SUPPLIER_ADDON == "$file")
+	            {
+	                print img_tick($langs->trans("Activated"));
+	            }
+	            else
+	            {
+	                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
+	            }
+	            print '</td>';
+	            
+	            $commande=new CommandeFournisseur($db);
+		    	$commande->initAsSpecimen();
+		    	
+				// Info
+				$htmltooltip='';
+				$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
+				$facture->type=0;
+		        $nextval=$module->getNextValue($mysoc,$commande);
+				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 				{
-					$htmltooltip.=$nextval.'<br>';
+					$htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: ';
+			        if ($nextval)
+					{
+						$htmltooltip.=$nextval.'<br>';
+					}
+					else
+					{
+						$htmltooltip.=$langs->trans($module->error).'<br>';
+					}
 				}
-				else
-				{
-					$htmltooltip.=$langs->trans($module->error).'<br>';
-				}
+	
+			    print '<td align="center">';
+			    print $html->textwithhelp('',$htmltooltip,1,0);
+			    print '</td>';
+		    
+	            print '</tr>';
 			}
-
-		    print '<td align="center">';
-		    print $html->textwithhelp('',$htmltooltip,1,0);
-		    print '</td>';
-	    
-            print '</tr>';
         }
     }
     closedir($handle);

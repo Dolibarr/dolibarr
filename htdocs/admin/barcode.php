@@ -101,8 +101,11 @@ while (($file = readdir($handle))!==false)
 				// Show modules according to features level
 				if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 				if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-				$barcodelist[$filebis]=$module->info();
+	
+				if ($module->isEnabled())
+				{
+					$barcodelist[$filebis]=$module->info();
+				}
 			}
 		}
 	}

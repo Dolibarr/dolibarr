@@ -208,11 +208,17 @@ print '</tr>';
 
 foreach ($arrayhandler as $key => $module)
 {
+	// Show modules according to features level
+    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+
+	if ($module->isEnabled())
+	{
         $var = !$var;
         print '<tr '.$bc[$var].'><td width="100">';
         print ucfirst($key);
         print "</td><td>\n";
-        print $arrayhandler[$key]->getDescription();
+        print $module->getDescription();
         print '</td>';
 
         // Affiche example
@@ -229,6 +235,7 @@ foreach ($arrayhandler as $key => $module)
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=setgeneraterule&amp;value='.$key.'">'.$langs->trans("Activate").'</a>';
         }
         print "</td></tr>\n";
+	}
 }
 print '</table>';
 print '</form>';

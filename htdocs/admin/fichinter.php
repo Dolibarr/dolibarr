@@ -22,11 +22,11 @@
  */
 
 /**
-    	\file       htdocs/admin/fichinter.php
-		\ingroup    fichinter
-		\brief      Page d'administration/configuration du module FicheInter
-		\version    $Id$
-*/
+ \file       htdocs/admin/fichinter.php
+ \ingroup    fichinter
+ \brief      Page d'administration/configuration du module FicheInter
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -38,7 +38,7 @@ $langs->load("other");
 $langs->load("interventions");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 /*
@@ -53,7 +53,7 @@ if ($_POST["action"] == 'updateMask')
 
 if ($_POST["action"] == 'set_FICHINTER_DRAFT_WATERMARK')
 {
-    dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($_POST["FICHINTER_DRAFT_WATERMARK"]));
+	dolibarr_set_const($db, "FICHINTER_DRAFT_WATERMARK",trim($_POST["FICHINTER_DRAFT_WATERMARK"]));
 }
 
 if ($_GET["action"] == 'specimen')
@@ -88,56 +88,56 @@ if ($_GET["action"] == 'specimen')
 if ($_GET["action"] == 'set')
 {
 	$type='ficheinter';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
-    if ($db->query($sql))
-    {
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+	if ($db->query($sql))
+	{
 
-    }
+	}
 }
 
 if ($_GET["action"] == 'del')
 {
-    $type='ficheinter';
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-    if ($db->query($sql))
-    {
+	$type='ficheinter';
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	if ($db->query($sql))
+	{
 
-    }
+	}
 }
 
 if ($_GET["action"] == 'setdoc')
 {
 	$db->begin();
-	
-    if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF",$_GET["value"]))
-    {
-        // La constante qui a �t� lue en avant du nouveau set
-        // on passe donc par une variable pour avoir un affichage coh�rent
-        $conf->global->FICHEINTER_ADDON_PDF = $_GET["value"];
-    }
 
-    // On active le modele
-    $type='ficheinter';
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-    $result1=$db->query($sql_del);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
-    $result2=$db->query($sql);
-    if ($result1 && $result2) 
-    {
+	if (dolibarr_set_const($db, "FICHEINTER_ADDON_PDF",$_GET["value"]))
+	{
+		// La constante qui a �t� lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coh�rent
+		$conf->global->FICHEINTER_ADDON_PDF = $_GET["value"];
+	}
+
+	// On active le modele
+	$type='ficheinter';
+	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	$result1=$db->query($sql_del);
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+	$result2=$db->query($sql);
+	if ($result1 && $result2)
+	{
 		$db->commit();
-    }
-    else
-    {
-    	$db->rollback();
-    }
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activ�
-    // par appel methode canBeActivated
+	// \todo Verifier si module numerotation choisi peut etre activ�
+	// par appel methode canBeActivated
 
 	dolibarr_set_const($db, "FICHEINTER_ADDON",$_GET["value"]);
 }
@@ -180,56 +180,63 @@ clearstatcache();
 $handle = opendir($dir);
 if ($handle)
 {
-    $var=true;
-    
-    while (($file = readdir($handle))!==false)
-    {
-        if (eregi('^(mod_.*)\.php$',$file,$reg))
-        {
-            $file = $reg[1];
-            $className = substr($file,4);
+	$var=true;
 
-            require_once($dir.$file.".php");
+	while (($file = readdir($handle))!==false)
+	{
+		if (eregi('^(mod_.*)\.php$',$file,$reg))
+		{
+			$file = $reg[1];
+			$className = substr($file,4);
 
-            $module = new $file;
+			require_once($dir.$file.".php");
 
-            $var=!$var;
-            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-            print $module->info();
-            print '</td>';
+			$module = new $file;
 
-            // Examples
-            print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+			// Show modules according to features level
+			if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-            print '<td align="center">';
-            if ($conf->global->FICHEINTER_ADDON == $className)
-            {
-                print img_tick($langs->trans("Activated"));
-            }
-            else
-            {
-                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$className.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
-            }
-            print '</td>';
+			if ($module->isEnabled())
+			{
+				$var=!$var;
+				print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+				print $module->info();
+				print '</td>';
 
-			    $ficheinter=new Fichinter($db);
-			    $ficheinter->initAsSpecimen();
-			    
-			    // Info
-			    $htmltooltip='';
-	        $nextval=$module->getNextValue($mysoc,$ficheinter);
-	        if ($nextval != $langs->trans("NotAvailable"))
-	        {
-	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
-	        }
-	    	print '<td align="center">';
-	    	print $html->textwithhelp('',$htmltooltip,1,0);
-	    	print '</td>';
+				// Examples
+				print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
 
-            print '</tr>';
-        }
-    }
-    closedir($handle);
+				print '<td align="center">';
+				if ($conf->global->FICHEINTER_ADDON == $className)
+				{
+					print img_tick($langs->trans("Activated"));
+				}
+				else
+				{
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$className.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+				}
+				print '</td>';
+
+				$ficheinter=new Fichinter($db);
+				$ficheinter->initAsSpecimen();
+
+				// Info
+				$htmltooltip='';
+				$nextval=$module->getNextValue($mysoc,$ficheinter);
+				if ($nextval != $langs->trans("NotAvailable"))
+				{
+					$htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+				}
+				print '<td align="center">';
+				print $html->textwithhelp('',$htmltooltip,1,0);
+				print '</td>';
+
+				print '</tr>';
+			}
+		}
+	}
+	closedir($handle);
 }
 
 print '</table><br>';
@@ -278,26 +285,26 @@ $var=true;
 $handle=opendir($dir);
 while (($file = readdir($handle))!==false)
 {
-  if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
-    {
-      $name = substr($file, 4, strlen($file) -16);
-      $classname = substr($file, 0, strlen($file) -12);
+	if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
+	{
+		$name = substr($file, 4, strlen($file) -16);
+		$classname = substr($file, 0, strlen($file) -12);
 
-      $var=!$var;
+		$var=!$var;
 
-      print '<tr '.$bc[$var].'><td>';
-      echo "$name";
-      print "</td><td>\n";
-      require_once($dir.$file);
-      $module = new $classname();
-      print $module->description;
-      print '</td>';
+		print '<tr '.$bc[$var].'><td>';
+		echo "$name";
+		print "</td><td>\n";
+		require_once($dir.$file);
+		$module = new $classname();
+		print $module->description;
+		print '</td>';
 
 		// Activ�
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";
-			if ($conf->global->FICHEINTER_ADDON_PDF != "$name") 
+			if ($conf->global->FICHEINTER_ADDON_PDF != "$name")
 			{
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
 				print img_tick($langs->trans("Disable"));
@@ -327,26 +334,26 @@ while (($file = readdir($handle))!==false)
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
 		}
 		print '</td>';
-		
+
 		// Info
-    	$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-    	$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
-    	$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
-    	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
+		$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
+		$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
+		$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
+		$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
+		$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
 		$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
+		$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
 		$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
 		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftOrders").'</b>: '.yn($module->option_draft_watermark);
-    	print '<td align="center">';
-    	print $html->textwithhelp('',$htmltooltip,1,0);
-    	print '</td>';
-    	print '<td align="center">';
-    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'intervention').'</a>';
-    	print '</td>';
+		print '<td align="center">';
+		print $html->textwithhelp('',$htmltooltip,1,0);
+		print '</td>';
+		print '<td align="center">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'intervention').'</a>';
+		print '</td>';
 
 		print '</tr>';
-    }
+	}
 }
 closedir($handle);
 

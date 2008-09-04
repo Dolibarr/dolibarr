@@ -36,6 +36,14 @@ class ModeleGenPassword
 {
 	var $error='';
 
+	/**     \brief     	Return if a module can be used or not
+	*      	\return		boolean     true if module can be used
+	*/
+	function isEnabled()
+	{
+		return true;
+	}
+
 	/**		\brief		Renvoi la description par defaut du modele
 	*      	\return     string      Texte descripif
 	*/

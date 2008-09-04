@@ -205,51 +205,54 @@ if ($handle)
 		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-            $var=!$var;
-            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-            print $module->info();
-            print '</td>';
-
-            // Examples
-            print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
-
-            print '<td align="center">';
-            if ($conf->global->COMMANDE_ADDON == "$file")
-            {
-                print img_tick($langs->trans("Activated"));
-            }
-            else
-            {
-                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
-            }
-            print '</td>';
-            
-            $commande=new Commande($db);
-			$commande->initAsSpecimen();
-			
-			// Info
-			$htmltooltip='';
-			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
-			$facture->type=0;
-	        $nextval=$module->getNextValue($mysoc,$commande);
-			if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-			{
-				$htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: ';
-		        if ($nextval)
+		    if ($module->isEnabled())
+		    {
+	            $var=!$var;
+	            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+	            print $module->info();
+	            print '</td>';
+	
+	            // Examples
+	            print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+	
+	            print '<td align="center">';
+	            if ($conf->global->COMMANDE_ADDON == "$file")
+	            {
+	                print img_tick($langs->trans("Activated"));
+	            }
+	            else
+	            {
+	                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
+	            }
+	            print '</td>';
+	            
+	            $commande=new Commande($db);
+				$commande->initAsSpecimen();
+				
+				// Info
+				$htmltooltip='';
+				$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
+				$facture->type=0;
+		        $nextval=$module->getNextValue($mysoc,$commande);
+				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 				{
-					$htmltooltip.=$nextval.'<br>';
+					$htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: ';
+			        if ($nextval)
+					{
+						$htmltooltip.=$nextval.'<br>';
+					}
+					else
+					{
+						$htmltooltip.=$langs->trans($module->error).'<br>';
+					}
 				}
-				else
-				{
-					$htmltooltip.=$langs->trans($module->error).'<br>';
-				}
-			}
-
-	    	print '<td align="center">';
-	    	print $html->textwithhelp('',$htmltooltip,1,0);
-	    	print '</td>';
-
-            print '</tr>';
+	
+		    	print '<td align="center">';
+		    	print $html->textwithhelp('',$htmltooltip,1,0);
+		    	print '</td>';
+	
+	            print '</tr>';
+		    }
         }
     }
     closedir($handle);

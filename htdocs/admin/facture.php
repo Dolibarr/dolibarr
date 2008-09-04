@@ -257,70 +257,73 @@ while (($file = readdir($handle))!==false)
 		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 			
-	        $var = !$var;
-	        print '<tr '.$bc[$var].'><td width="100">';
-	        echo "$file";
-	        print "</td><td>\n";
-
-	        print $module->info();
-
-	        print '</td>';
-
-	        // Affiche example
-	        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
-
-	        print '<td align="center">';
-	        if ($conf->global->FACTURE_ADDON == "$file")
-	        {
-	            print img_tick($langs->trans("Activated"));
-	        }
-	        else
-	        {
-	            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
-	        }
-	        print '</td>';
-
-			$facture=new Facture($db);
-			$facture->initAsSpecimen();
-			
-			// Example for standard invoice
-			$htmltooltip='';
-			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
-			$facture->type=0;
-	        $nextval=$module->getNextValue($mysoc,$facture);
-			if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-			{
-				$htmltooltip.='<b>'.$langs->trans("NextValueForInvoices").'</b>: ';
-		        if ($nextval)
+		    if ($module->isEnabled())
+		    {
+		        $var = !$var;
+		        print '<tr '.$bc[$var].'><td width="100">';
+		        echo "$file";
+		        print "</td><td>\n";
+	
+		        print $module->info();
+	
+		        print '</td>';
+	
+		        // Affiche example
+		        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
+	
+		        print '<td align="center">';
+		        if ($conf->global->FACTURE_ADDON == "$file")
+		        {
+		            print img_tick($langs->trans("Activated"));
+		        }
+		        else
+		        {
+		            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+		        }
+		        print '</td>';
+	
+				$facture=new Facture($db);
+				$facture->initAsSpecimen();
+				
+				// Example for standard invoice
+				$htmltooltip='';
+				$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
+				$facture->type=0;
+		        $nextval=$module->getNextValue($mysoc,$facture);
+				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 				{
-					$htmltooltip.=$nextval.'<br>';
+					$htmltooltip.='<b>'.$langs->trans("NextValueForInvoices").'</b>: ';
+			        if ($nextval)
+					{
+						$htmltooltip.=$nextval.'<br>';
+					}
+					else
+					{
+						$htmltooltip.=$langs->trans($module->error).'<br>';
+					}
 				}
-				else
+				// Example for credit invoice
+				$facture->type=2;
+		        $nextval=$module->getNextValue($mysoc,$facture);
+				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 				{
-					$htmltooltip.=$langs->trans($module->error).'<br>';
+					$htmltooltip.='<b>'.$langs->trans("NextValueForCreditNotes").'</b>: ';
+					if ($nextval)
+					{
+						$htmltooltip.=$nextval;
+					}
+					else
+					{
+						$htmltooltip.=$langs->trans($module->error);
+					}
 				}
-			}
-			// Example for credit invoice
-			$facture->type=2;
-	        $nextval=$module->getNextValue($mysoc,$facture);
-			if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-			{
-				$htmltooltip.='<b>'.$langs->trans("NextValueForCreditNotes").'</b>: ';
-				if ($nextval)
-				{
-					$htmltooltip.=$nextval;
-				}
-				else
-				{
-					$htmltooltip.=$langs->trans($module->error);
-				}
-			}
-			
-	    	print '<td align="center">';
-	    	print $html->textwithhelp('',$htmltooltip,1,0);
-	    	print '</td>';
-
-	        print "</tr>\n";
+				
+		    	print '<td align="center">';
+		    	print $html->textwithhelp('',$htmltooltip,1,0);
+		    	print '</td>';
+	
+		        print "</tr>\n";
+		    }
 		}
     }
 }

@@ -88,6 +88,14 @@ class ModeleNumRefDons
 {
     var $error='';
 
+	/**     \brief     	Return if a module can be used or not
+	*      	\return		boolean     true if module can be used
+	*/
+	function isEnabled()
+	{
+		return true;
+	}
+
     /**     \brief      Renvoi la description par defaut du modele de numérotation
      *      \return     string      Texte descripif
      */

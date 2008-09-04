@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-208 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**	
         \file       htdocs/admin/dons.php
 		\ingroup    dons
 		\brief      Page d'administration/configuration du module Dons
-		\version    $Revision$
+		\version    $Id$
 */
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -180,64 +178,70 @@ while (($file = readdir($handle))!==false)
 		require_once($dir.'/'.$file);
 		$module=new $classname($db);
 
-        print '<tr '.$bc[$var].'><td width=\"100\">';
-        echo $module->name;
-        print '</td>';
-        print '<td>';
-        print $module->description;
-        print '</td>';
+		// Show modules according to features level
+	    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+	    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-		// Activ�
-		if (in_array($name, $def))
-		{
-	        print "<td align=\"center\">\n";
-			if ($conf->global->DON_ADDON_MODEL == $name)
-	        {
-	            print img_tick($langs->trans("Enabled"));
-	        }
-	        else
-	        {
-	            print '&nbsp;';
-	            print '</td><td align="center">';
-	            print '<a href="dons.php?action=setdoc&value='.$name.'">'.$langs->trans("Activate").'</a>';
-	        }
+	    if ($module->isEnabled())
+	    {
+	        print '<tr '.$bc[$var].'><td width=\"100\">';
+	        echo $module->name;
 	        print '</td>';
-		}
-		else
-		{
-			print "<td align=\"center\">\n";
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-			print "</td>";
-		}
-
-		// Defaut
-		print "<td align=\"center\">";
-		if ($conf->global->DON_ADDON_MODEL == "$name")
-		{
-			print img_tick($langs->trans("Default"));
-		}
-		else
-		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
-		}
-		print '</td>';
-		
-		// Info
-    	$htmltooltip =    '<b>'.$langs->trans("Name").'</b>: '.$module->name;
-    	$htmltooltip.='<br><b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-    	$htmltooltip.='<br><b>'.$langs->trans("Height").'/'.$langs->trans("Width").'</b>: '.$module->page_hauteur.'/'.$module->page_largeur;
-    	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
-    	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
-    	print '<td align="center">';
-    	print $html->textwithhelp('',$htmltooltip,1,0);
-    	print '</td>';
-    	print '<td align="center">';
-    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
-    	print '</td>';
-    	
-        print "</tr>\n";
-
+	        print '<td>';
+	        print $module->description;
+	        print '</td>';
+	
+			// Active
+			if (in_array($name, $def))
+			{
+		        print "<td align=\"center\">\n";
+				if ($conf->global->DON_ADDON_MODEL == $name)
+		        {
+		            print img_tick($langs->trans("Enabled"));
+		        }
+		        else
+		        {
+		            print '&nbsp;';
+		            print '</td><td align="center">';
+		            print '<a href="dons.php?action=setdoc&value='.$name.'">'.$langs->trans("Activate").'</a>';
+		        }
+		        print '</td>';
+			}
+			else
+			{
+				print "<td align=\"center\">\n";
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+				print "</td>";
+			}
+	
+			// Defaut
+			print "<td align=\"center\">";
+			if ($conf->global->DON_ADDON_MODEL == "$name")
+			{
+				print img_tick($langs->trans("Default"));
+			}
+			else
+			{
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+			}
+			print '</td>';
+			
+			// Info
+	    	$htmltooltip =    '<b>'.$langs->trans("Name").'</b>: '.$module->name;
+	    	$htmltooltip.='<br><b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
+	    	$htmltooltip.='<br><b>'.$langs->trans("Height").'/'.$langs->trans("Width").'</b>: '.$module->page_hauteur.'/'.$module->page_largeur;
+	    	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
+	    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
+	    	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
+	    	print '<td align="center">';
+	    	print $html->textwithhelp('',$htmltooltip,1,0);
+	    	print '</td>';
+	    	print '<td align="center">';
+	    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
+	    	print '</td>';
+	    	
+	        print "</tr>\n";
+	    }
     }
 }
 closedir($handle);
