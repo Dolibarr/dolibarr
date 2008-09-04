@@ -196,6 +196,7 @@ Billed=Facturado
 RepeatableInvoice=Factura recurrente
 RepeatableInvoices=Facturas recurrentes
 Repeatable=Recurrente
+Repeatables=Recurrentes
 ChangeIntoRepeatableInvoice=Modificar en recurrente
 CreateRepeatableInvoice=Crear factura recurrente
 CreateFromRepeatableInvoice=Crear despues factura recurrente

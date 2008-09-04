@@ -37,6 +37,11 @@ if (!$user->rights->banque->lire)
 $statut=isset($_GET["statut"])?$_GET["statut"]:'';
 
 
+
+/*
+ * View
+ */
+
 llxHeader();
 
 

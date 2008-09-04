@@ -17,15 +17,15 @@
  */
 
 /**
- \file       htdocs/html.formfile.class.php
- \brief      Fichier de la classe des fonctions prédéfinie de composants html fichiers
- \version	$Id$
+ *	\file       htdocs/html.formfile.class.php
+ *	\brief      Fichier de la classe des fonctions prédéfinie de composants html fichiers
+ *	\version	$Id$
  */
 
 
 /**
- \class      FormFile
- \brief      Classe permettant la génération de composants html fichiers
+ *	\class      FormFile
+ *	\brief      Classe permettant la génération de composants html fichiers
  */
 class FormFile
 {
@@ -116,15 +116,16 @@ class FormFile
 	 *      \param      genallowed          Génération autorisée (1/0 ou array des formats)
 	 *      \param      delallowed          Suppression autorisée (1/0)
 	 *      \param      modelselected       Modele à pré-sélectionner par défaut
-	 *      \param      modelliste			Tableau des modeles possibles
+	 *      \param      modelliste			Tableau des modeles possibles. Use '' to hide combo select list.
 	 *      \param      forcenomultilang	N'affiche pas option langue meme si MAIN_MULTILANGS défini
 	 *      \param      iconPDF             N'affiche que l'icone PDF avec le lien (1/0)
 	 * 		\param		maxfilenamelength	Max length for filename shown
+	 * 		\param		noform				Do not output html form start and end 
 	 *      \remarks    Le fichier de facture détaillée est de la forme
 	 *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
 	 *		\return		int					<0 si ko, nbre de fichiers affichés si ok
 	 */
-	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28)
+	function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0)
 	{
 		// filedir = conf->...dir_ouput."/".get_exdir(id)
 		include_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
@@ -144,6 +145,9 @@ class FormFile
 		$filename = sanitize_string($filename);
 		$headershown=0;
 		$i=0;
+
+		print "\n".'<!-- Start show_document -->'."\n";
+		//print 'filedir='.$filedir;
 
 		// Affiche en-tete tableau
 		if ($genallowed)
@@ -247,6 +251,10 @@ class FormFile
 					// ??
 				}
 			}
+			else if ($modulepart == 'unpayed')
+			{
+				$modellist='';
+			}			
 			else
 			{
 				dolibarr_print_error($this->db,'Bad value for modulepart');
@@ -256,17 +264,26 @@ class FormFile
 			$headershown=1;
 
 			$html = new Form($db);
-			 
-			print '<form action="'.$urlsource.'#builddoc" method="post">';
+			$texte=$langs->trans('Generate');
+			
+			if (empty($noform)) print '<form action="'.$urlsource.'#builddoc" method="post">';
 			print '<input type="hidden" name="action" value="builddoc">';
 			 
 			print_titre($langs->trans("Documents"));
 			print '<table class="border" width="100%">';
 
 			print '<tr '.$bc[$var].'>';
-			print '<td align="center">'.$langs->trans('Model').' ';
-			$html->select_array('model',$modellist,$modelselected,0,0,1);
-			$texte=$langs->trans('Generate');
+			if (! empty($modellist))
+			{
+				print '<td align="center">';
+				print $langs->trans('Model').' ';
+				$html->select_array('model',$modellist,$modelselected,0,0,1);
+			}
+			else
+			{
+				print '<td align="left">';
+				print $langs->trans("Files");
+			}
 			print '</td>';
 			print '<td align="center">';
 			if($conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
@@ -350,10 +367,10 @@ class FormFile
 			print "</table>\n";
 			if ($genallowed)
 			{
-				print '</form>';
+				if (empty($noform)) print '</form>'."\n";
 			}
 		}
-
+		print '<!-- End show_document -->'."\n";
 		return ($i?$i:$headershown);
 	}
 

@@ -421,11 +421,11 @@ class MenuLeft {
 					}
 					if (! $conf->global->FACTURE_DISABLE_RECUR)
 					{
-						if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatable"),2,$user->rights->facture->lire);
+						if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatables"),2,$user->rights->facture->lire);
 					}
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php?leftmenu=customers_bills",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
 
-					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/retardspaiement.php?leftmenu=customers_bills",$langs->trans("BillsLate"),2,$user->rights->facture->lire);
+					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php?option=late&amp;leftmenu=customers_bills",$langs->trans("Unpayed").' ('.$langs->trans("Late").')',2,$user->rights->facture->lire);
 					
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php?leftmenu=customers_bills_payments",$langs->trans("Payments"),2,$user->rights->facture->lire);
 

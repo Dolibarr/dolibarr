@@ -195,6 +195,7 @@ Billed=Billed
 RepeatableInvoice=Repeatable invoice
 RepeatableInvoices=Repeatable invoices
 Repeatable=Repeatable
+Repeatables=Repeatable
 ChangeIntoRepeatableInvoice=Change into repeatable
 CreateRepeatableInvoice=Create repeatable invoice
 CreateFromRepeatableInvoice=Create from repeatable invoice

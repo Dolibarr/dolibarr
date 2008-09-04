@@ -424,6 +424,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false)
 	if ($format == 'daytext')      $format=$conf->format_date_text_short;
 	if ($format == 'dayhour')      $format=$conf->format_date_hour_short;
 	if ($format == 'dayhourtext')  $format=$conf->format_date_hour_text_short;
+	if ($format == 'dayhourlog')   $format='%Y%m%d%H%M%S';
 	if ($format == 'dayhourldap')  $format='%Y%m%d%H%M%SZ';
 	if ($format == 'dayhourxcard') $format='%Y%m%dT%H%M%SZ';
 
@@ -1829,7 +1830,7 @@ function dol_avscan_file($file)
 /**
  \brief  Fonction print_barre_liste
  \param	titre				Titre de la page
- \param	page				num�ro de la page
+ \param	page				numero de la page
  \param	file				lien
  \param	options         	parametres complementaires lien ('' par defaut)
  \param	sortfield       	champ de tri ('' par defaut)

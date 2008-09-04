@@ -351,6 +351,7 @@ Legend=Légende
 FillTownFromZip=Renseigner ville
 ShowLog=Afficher historique
 File=Fichier
+Files=Fichiers
 ReadPermissionNotAllowed=Lecture non autorisée
 AmountInCurrency=Montants exprimés en %s
 Example=Exemple
