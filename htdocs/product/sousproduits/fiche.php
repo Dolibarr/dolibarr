@@ -18,17 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-   \file       htdocs/product/sousproduits/fiche.php
-   \ingroup    product
-   \brief      Page de la fiche produit
-   \version    $Revision$
-*/
+ *  \file       htdocs/product/sousproduits/fiche.php
+ *  \ingroup    product
+ *  \brief      Page de la fiche produit
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -264,7 +261,7 @@ if ($id || $ref)
 				print '<table class="border">';
 				print '<tr>';
 				print '<td><b>'.$langs->trans("Ref").'</b></td><td><b>'.$langs->trans("Label").'</b></td><td><b>'.$langs->trans("AddDel").'</b></td><td><b>'.$langs->trans("Quantity").'</b></td>';
-				print '<form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post"';
+				print '<form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post">';
 				print '<input type="hidden" name="action" value="add_prod"';
 				print '<input type="hidden" name="id" value="'.$id.'"';
 				if ($resql)
