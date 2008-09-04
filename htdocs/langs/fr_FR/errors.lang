@@ -18,7 +18,7 @@ ErrorSupplierCodeAlreadyUsed=Code fournisseur deja utilise
 ErrorBadParameters=Parametres incorrects
 ErrorFailedToWriteInDir=Impossible d'écrire dans le répertoire %s
 ErrorFoundBadEmailInFile=Syntaxe de mail incorrecte trouvée pour %s lignes dans le fichier (exemple line %s avec email=%s)
-UserCannotBeDelete=L'utilisateur ne peut pas etre supprimée. Peut-être est-il associé à des éléments de Dolibarr.
+ErrorUserCannotBeDelete=L'utilisateur ne peut pas etre supprimée. Peut-être est-il associé à des éléments de Dolibarr.
 ErrorFieldsRequired=Des champs obligatoires n'ont pas été renseignés
 ErrorFailedToCreateDir=Echec a la creation d'un repertoire. Verifiez que le user du serveur Web a bien les droits d'ecriture dans les repertoires documents de Dolibarr. Si le parametre <b>safe_mode</b> a été activé sur ce PHP, vérifier que les fichiers php dolibarr appartiennent à l'utilisateur du serveur Web.
 ErrorNoMailDefinedForThisUser=EMail non defini pour cet utilisateur
@@ -28,6 +28,7 @@ ErrorLeftMenuMustHaveAParentId=Un menu de type 'Left' doit avoir un id de père.
 ErrorGenbarCodeNotfound=Fichier introuvable (Mauvais chemin, permissions incorrectes ou accès interdit par le paramètre openbasedir) 
 ErrorFunctionNotAvailableInPHP=La fonction <b>%s</b> est requise pour cette fonctionnalité mais n'est pas disponible dans cette version/installation de PHP.
 ErrorDirAlreadyExists=Un répertoire portant ce nom existe déjà.
-WarningAllowUrlFopenMustBeOn=Attention, le paramètre <b>allow_url_fopen</b> doit etre positionné à <b>on</b> dans le fichier <b>php.ini</b> pour que ce module soit pleinement opérationnel. Vous devez modifier ce fichier manuellement.
 ErrorFieldCanNotContainSpecialCharacters=Le champ <b>%s</b> ne peut contenir de caractères spéciaux.
+WarningAllowUrlFopenMustBeOn=Attention, le paramètre <b>allow_url_fopen</b> doit etre positionné à <b>on</b> dans le fichier <b>php.ini</b> pour que ce module soit pleinement opérationnel. Vous devez modifier ce fichier manuellement.
 WarningBuildScriptNotRunned=Le script <b>%s</b> n'a pas encore été lancé pour générer les graphiques.
+WarningBookmarkAlreadyExists=Un marque-page avec ce titre ou cette destination (URL) existe déjà.

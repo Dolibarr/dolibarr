@@ -40,31 +40,45 @@ $target=isset($_GET["target"])?$_GET["target"]:$_POST["target"];
  * Actions
  */
 
-if ($action == 'add')
+if ($action == 'add' || $action == 'addproduct')
 {
     $mesg='';
     
     $bookmark=new Bookmark($db);
     $bookmark->fk_user=$user->id;
-    if ($_GET["socid"])    // Lien vers fiche comm société
+    $bookmark->title=$title;
+    $bookmark->url=$url;
+    $bookmark->target=$target;
+    
+    if ($action == 'add' && $_GET["socid"])    // Link to third party card
     {
         require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+        $langs->load("companies");
         $societe=new Societe($db);
         $societe->fetch($_GET["socid"]);
-        $bookmark->fk_soc=$societe->id;
         $bookmark->url=DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
         $bookmark->target='0';
-        $bookmark->title=$societe->nom;
+        $bookmark->title=$langs->trans("ThirdParty").' '.$societe->nom;
+        //$bookmark->title=$societe->nom;
+        $title=$bookmark->title;
+       	$url=$bookmark->url;
     }
-    else
+    if ($action == 'addproduct' && $_GET["id"])    // Link to product card
     {
-        if (! $title) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle"));
-        if (! $url) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink"));
-
-        $bookmark->title=$title;
-        $bookmark->url=$url;
-        $bookmark->target=$target;
+        require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+        $langs->load("products");
+        $product=new Product($db);
+        $product->fetch($_GET["id"]);
+        $bookmark->url=DOL_URL_ROOT.'/product/fiche.php?id='.$product->id;
+        $bookmark->target='0';
+        $bookmark->title=($product->type != 1 ?$langs->trans("Product"):$langs->trans("Service")).' '.$product->ref;
+        //$bookmark->title=$product->ref;
+        $title=$bookmark->title;
+       	$url=$bookmark->url;
     }
+    
+    if (! $title) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle"));
+    if (! $url) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink"));
 
     if (! $mesg)
     {
@@ -89,8 +103,6 @@ if ($action == 'add')
             	$mesg='<div class="error">'.$bookmark->error.'</div>';
         	}
         	$action='create';
-        	$title=$bookmark->title;
-        	$url=$bookmark->url;
         }
     }
     else
@@ -160,7 +172,7 @@ if ($action == 'create')
 }
 
 
-if ($_GET["id"] > 0)
+if ($_GET["id"] > 0 && ! eregi('^add',$_GET["action"]))
 {
     /*
      * Fiche bookmark en mode edition
@@ -200,5 +212,4 @@ $db->close();
 
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

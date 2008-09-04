@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur       <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,18 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**
-        \file       htdocs/bookmarks/liste.php
-        \brief      Page affichage des bookmarks
-        \ingroup    bookmark
-        \version    $Revision$
-*/
- 
+ *       \file       htdocs/bookmarks/liste.php
+ *       \brief      Page affichage des bookmarks
+ *       \ingroup    bookmark
+ *       \version    $Id$
+ */
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/bookmarks/bookmark.class.php");
 
@@ -54,6 +51,7 @@ if ($_GET["action"] == 'delete')
     if ($res > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
     }
     else
     {
@@ -63,7 +61,7 @@ if ($_GET["action"] == 'delete')
 
 
 /*
- * Affichage liste
+ * View
  */
 
 llxHeader();
@@ -124,7 +122,7 @@ if ($resql)
             $lien="Dolibarr";
             if (! $obj->title)
             {
-                // Pour compatibilite avec anciens bookmarks
+                // For compatibility with old Dolibarr bookmarks
                 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
                 $societe=new Societe($db);
                 $societe->fetch($obj->rowid);
@@ -150,11 +148,11 @@ if ($resql)
         if ($obj->target == 1) print $langs->trans("BookmarkTargetNewWindowShort");
         print "</td>\n";
         
-        // Auteur
+        // Author
         print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login."</a></td>\n";
 
         // Date creation
-        print '<td align="center">'.dolibarr_print_date($obj->dateb) ."</td>";
+        print '<td align="center">'.dolibarr_print_date($obj->dateb,'day') ."</td>";
 
         // Actions
         print "<td>";

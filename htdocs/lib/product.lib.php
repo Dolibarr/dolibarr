@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- \file       htdocs/lib/product.lib.php
- \brief      Ensemble de fonctions de base pour le module produit et service
- \version    $Id$
+ *	\file       htdocs/lib/product.lib.php
+ *	\brief      Ensemble de fonctions de base pour le module produit et service
+ *	\version    $Id$
  */
 
 function product_prepare_head($product, $user)
@@ -45,7 +45,7 @@ function product_prepare_head($product, $user)
 	$head[$h][2] = 'photos';
 	$h++;
 
-	//affichage onglet cat�gorie
+	// Show category tab
 	if ($conf->categorie->enabled)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$product->id;
@@ -54,7 +54,7 @@ function product_prepare_head($product, $user)
 		$h++;
 	}
 
-	// Affichage onglet code barre
+	// Show barcode tab
 	if ($conf->global->MAIN_MODULE_BARCODE)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
@@ -72,7 +72,7 @@ function product_prepare_head($product, $user)
 		$h++;
 	}
 
-	// sousproduits
+	// Sub products
 	if($conf->global->PRODUIT_SOUSPRODUITS == 1)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
@@ -122,9 +122,17 @@ function product_prepare_head($product, $user)
 	{
 		foreach ($product->onglets as $onglet)
 		{
-	  $head[$h] = $onglet;
-	  $h++;
+	  		$head[$h] = $onglet;
+	  		$h++;
 		}
+	}
+
+	if ($conf->bookmark->enabled && $user->rights->bookmark->creer)
+	{
+		$head[$h][0] = DOL_URL_ROOT."/bookmarks/fiche.php?action=addproduct&amp;id=".$product->id."&amp;urlsource=".$_SERVER["PHP_SELF"]."?id=".$product->id;
+		$head[$h][1] = img_object($langs->trans("BookmarkThisPage"),'bookmark');
+		$head[$h][2] = 'image';
+		$h++;
 	}
 
 	return $head;

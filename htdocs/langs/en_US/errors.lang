@@ -18,7 +18,7 @@ ErrorSupplierCodeAlreadyUsed=Supplier code already used
 ErrorBadParameters=Bad parameters
 ErrorFailedToWriteInDir=Failed to write in directory %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
-UserCannotBeDelete=User can not be deleted. May be it is associated on Dolibarr entities.
+ErrorUserCannotBeDelete=User can not be deleted. May be it is associated on Dolibarr entities.
 ErrorFieldsRequired=Some required fields were not filled.
 ErrorFailedToCreateDir=Failed to create a directory. Check that Web server user has permissions to write into Dolibarr documents directory. If parameter <b>safe_mode</b> is enabled on this PHP, check that Dolibarr php files owns to web server user (or group).
 ErrorNoMailDefinedForThisUser=No mail defined for this user
@@ -28,6 +28,7 @@ ErrorLeftMenuMustHaveAParentId=A menu of type 'Left' must have a parent id.
 ErrorGenbarCodeNotfound=File not found (Bad path, wrong permissions or access denied by openbasedir parameter)
 ErrorFunctionNotAvailableInPHP=Function <b>%s</b> is required for this feature but is not available in this version/setup of PHP.
 ErrorDirAlreadyExists=A directory with this name already exists.
-WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> must be set to <b>on</b> in filer <b>php.ini</b> for having this module working completely. You must modify this file manually.
 ErrorFieldCanNotContainSpecialCharacters=Field <b>%s</b> must not contains special characters.
+WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> must be set to <b>on</b> in filer <b>php.ini</b> for having this module working completely. You must modify this file manually.
 WarningBuildScriptNotRunned=Script <b>%s</b> was not yet ran to build graphics.
+WarningBookmarkAlreadyExists=A bookmark with this title or this target (URL) already exists.

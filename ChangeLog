@@ -1,5 +1,18 @@
 English Dolibarr changelog
 
+***** Changelog for 2.5 compared to 2.4 *****
+
+For users:
+- Support bookmark add of product cards.
+- New view in ecm module.
+
+For translators:
+- The errors language file contains only error or warning messages with 
+  prefix Error or Warning.
+
+For developers:
+- Update skeletons.
+
 
 ***** Changelog for 2.4 compared to 2.2 *****
 
