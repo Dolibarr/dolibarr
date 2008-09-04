@@ -17,16 +17,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
- \file       htdocs/fourn/commande/modules/pdf_muscadet.modules.php
- \ingroup    fournisseur
- \brief      Fichier de la classe permettant de générer les commandes fournisseurs au modèle Muscadet
- \author	    Regis Houssin
- \version    $Revision$
+ *	\file       htdocs/fourn/commande/modules/pdf_muscadet.modules.php
+ *	\ingroup    fournisseur
+ *	\brief      Fichier de la classe permettant de générer les commandes fournisseurs au modèle Muscadet
+ *	\author	    Regis Houssin
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/fourn/commande/modules/modules_commandefournisseur.php");
@@ -36,16 +34,15 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
- \class      pdf_muscadet
- \brief      Classe permettant de générer les commandes fournisseurs au modèle Muscadet
+ *	\class      pdf_muscadet
+ *	\brief      Classe permettant de générer les commandes fournisseurs au modèle Muscadet
  */
-
 class pdf_muscadet extends ModelePDFSuppliersOrders
 {
 
 	/**
-	 \brief      Constructeur
-	 \param	    db		Handler accès base de donnée
+	 *	\brief      Constructeur
+	 *	\param	    db		Handler accès base de donnée
 	 */
 	function pdf_muscadet($db)
 	{
@@ -105,8 +102,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	}
 
 	/**
-	 \brief      Fonction générant la commande sur le disque
-	 \param	    id	        Id de la commande à générer
+	 \brief      	Fonction générant la commande sur le disque
+	 \param	    	id	        Id de la commande à générer
 	 \return	    int         1=ok, 0=ko
 	 */
 	function write_file($com,$outputlangs='')
@@ -160,7 +157,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			if (file_exists($dir))
 			{
 				$nblignes = sizeof($com->lignes);
-
 
 				// Protection et encryption du pdf
 				if ($conf->global->PDF_SECURITY_ENCRYPTION)
