@@ -63,7 +63,7 @@ class Interfaces
 	
 		while (($file = readdir($handle))!==false)
 		{
-			if (is_readable($this->dir."/".$file) && eregi('^interface_([^_]+)_(.+)\.class\.php',$file,$reg))
+			if (is_readable($this->dir."/".$file) && eregi('^interface_([^_]+)_(.+)\.class\.php$',$file,$reg))
 			{
 				$nbfile++;
 				
@@ -95,7 +95,7 @@ class Interfaces
 					dolibarr_syslog("Interfaces::run_triggers Triggers for file '".$file."' need module to be enabled",LOG_INFO);
 					continue;
 				}
-
+dolibarr_syslog("Interfaces::run_triggers Launch triggers for file '".$file."'",LOG_INFO);
 				include_once($this->dir."/".$file);
 				$objMod = new $modName($this->db);
 				if ($objMod)
