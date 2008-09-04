@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**
-        \file       htdocs/bookmarks/fiche.php
-        \brief      Page affichage/creation des bookmarks
-        \ingroup    bookmark
-        \version    $Revision$
-*/
+ *       \file       htdocs/bookmarks/fiche.php
+ *       \brief      Page affichage/creation des bookmarks
+ *       \ingroup    bookmark
+ *       \version    $Id$
+ */
 
  
 require("./pre.inc.php");
@@ -55,7 +52,7 @@ if ($action == 'add')
         $societe=new Societe($db);
         $societe->fetch($_GET["socid"]);
         $bookmark->fk_soc=$societe->id;
-        $bookmark->url=DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
+        $bookmark->url=DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
         $bookmark->target='0';
         $bookmark->title=$societe->nom;
     }
@@ -71,18 +68,29 @@ if ($action == 'add')
 
     if (! $mesg)
     {
-        $bookmark->favicon='xxx';
+        $bookmark->favicon='none';
         
         $res=$bookmark->create();
         if ($res > 0)
         {
             $urlsource=isset($_GET["urlsource"])?$_GET["urlsource"]:DOL_URL_ROOT.'/bookmarks/liste.php';
             header("Location: ".$urlsource);
+            exit;
         }
         else
         {
-            $mesg='<div class="error">'.$bookmark->error.'</div>';
-            $action='create';
+        	if ($bookmark->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+        	{
+        		$langs->load("errors");
+            	$mesg='<div class="warning">'.$langs->trans("WarningBookmarkAlreadyExists").'</div>';
+        	}
+        	else
+        	{
+            	$mesg='<div class="error">'.$bookmark->error.'</div>';
+        	}
+        	$action='create';
+        	$title=$bookmark->title;
+        	$url=$bookmark->url;
         }
     }
     else
@@ -106,6 +114,7 @@ if ($_GET["action"] == 'delete')
     if ($res > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
+        exit;
     }
     else
     {
@@ -114,6 +123,9 @@ if ($_GET["action"] == 'delete')
 }
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -136,7 +148,7 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
     print '<tr><td width="20%">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td>'.$langs->trans("SetHereATitleForLink").'</td></tr>';
-    print '<tr><td width="20%">'.$langs->trans("UrlOrLink").'</td><td><input class="flat" name="url" size="50" value=""></td><td>'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("UrlOrLink").'</td><td><input class="flat" name="url" size="50" value="'.$url.'"></td><td>'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</td></tr>';
     print '<tr><td width="20%">'.$langs->trans("BehaviourOnClick").'</td><td>';
     $liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
     $html->select_array('target',$liste,1);

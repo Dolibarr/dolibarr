@@ -96,6 +96,8 @@ class Bookmark
      */
     function create()
     {
+    	$this->db->begin();
+    	
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_user,dateb,url,target";
         $sql.= " ,title,favicon";
         if ($this->fk_soc) $sql.=",fk_soc";
@@ -109,22 +111,26 @@ class Bookmark
 
         if ($resql)
         {
-            $id = $this->db->last_insert_id (MAIN_DB_PREFIX."bookmark");
-
+            $id = $this->db->last_insert_id(MAIN_DB_PREFIX."bookmark");
             if ($id > 0)
             {
                 $this->id = $id;
+                $this->db->commit();
                 return $id;
             }
             else
             {
-                $this->error=$this->db->error();
+                $this->error=$this->db->lasterror();
+                $this->errno=$this->db->lasterrno();
+                $this->db->rollback();
                 return -2;
             }
         }
         else
         {
-            dolibarr_print_error ($this->db);
+            $this->error=$this->db->lasterror();
+            $this->errno=$this->db->lasterrno();
+            $this->db->rollback();
             return -1;
         }
     }
