@@ -618,6 +618,7 @@ class DolibarrModules
 					dolibarr_syslog("DolibarrModules::insert_const sql=".$sql);
                     if (! $this->db->query($sql) )
                     {
+                    	dolibarr_syslog("DolibarrModules::insert_const ".$this->db->lasterror(), LOG_ERR);
                         $err++;
                     }
                 }
@@ -660,6 +661,8 @@ class DolibarrModules
                     $r_subperms = $this->rights[$key][5];
                     $r_modul    = $this->rights_class;
         
+                    if (empty($r_type)) $r_type='w';
+                    
                     if (strlen($r_perms) )
                     {
                         if (strlen($r_subperms) )
