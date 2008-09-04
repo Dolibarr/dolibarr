@@ -1224,7 +1224,7 @@ class Form
 				$opt = '<option value="'.$objp->idprodfournprice.'"';
 				if ($selected == $objp->idprodfournprice) $opt.= ' selected="true"';
 				if ($objp->fprice == '') $opt.=' disabled="disabled"';
-				$opt.= '>'.$objp->ref_fourn.' - ';
+				$opt.= '>'.$objp->ref.' ('.$objp->ref_fourn.') - ';
 				$opt.= dolibarr_trunc($objp->label,18).' - ';
 				if ($objp->fprice != '') 	// Keep != ''
 				{
