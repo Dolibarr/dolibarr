@@ -5,6 +5,7 @@ English Dolibarr changelog
 For users:
 - Support bookmark add of product cards.
 - New view in ecm module.
+- Look enhancements for graphics (add transparency).
 
 For translators:
 - The errors language file contains only error or warning messages with 
