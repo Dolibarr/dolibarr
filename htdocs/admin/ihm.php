@@ -104,13 +104,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-
-    // Taille max des listes
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
-	print '<td width="20">&nbsp;</td>';
-	print '</tr>';
-
+	// Multilangual GUI
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
     print $html->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
@@ -118,7 +112,13 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    /*
+    // Taille max des listes
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+	
+	/*
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
     print $html->selectyesno('main_show_bugtrack_link',$conf->global->MAIN_SHOW_BUGTRACK_LINK,1);
