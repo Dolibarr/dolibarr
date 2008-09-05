@@ -59,8 +59,9 @@ $staticcontratligne=new ContratLigne($db);
 
 
 /*
- * Affichage page
+ * View
  */
+
 llxHeader();
 
 $sql = "SELECT s.rowid as socid, s.nom, c.rowid as cid,";
@@ -82,7 +83,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc
 if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
-if ($filter == "expired") $sql.= " AND date_fin_validite < ".$this->db->idate(mktime());
+if ($filter == "expired") $sql.= " AND date_fin_validite < ".$db->idate(mktime());
 if ($search_nom)      $sql.= " AND s.nom like '%".addslashes($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".addslashes($search_contract)."'";
 if ($search_service)  $sql.= " AND (p.ref like '%".addslashes($search_service)."%' OR p.description like '%".addslashes($search_service)."%')";
