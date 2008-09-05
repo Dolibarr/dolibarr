@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,15 +37,80 @@ $langs->load("bills");
 $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 $option = $_REQUEST["option"];
 
+$diroutputpdf=$conf->facture->dir_output . '/unpayed/temp';
+
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture',$facid,'');
 
 
 /*
+ * Action
+ */
+
+if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
+{
+	if (is_array($_POST['toGenerate']))
+	{
+		
+		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('\.pdf|',$_POST['toGenerate']).'\.pdf','\.meta$|\.png','date',SORT_DESC) ;
+
+		// liste les fichiers
+		$files = array() ;
+		$factures_bak = $factures ;
+		foreach($_POST['toGenerate'] as $basename){
+			foreach($factures as $facture){
+				if(strstr($facture["name"],$basename)){
+					$files[] = $conf->facture->dir_output.'/'.$basename.'/'.$facture["name"] ;
+				}
+			}
+		}
+		
+		// Create empty PDF
+		$pdf=new FPDI('P','mm','A4');
+		//$pdf->Open();
+		//$pdf->AddPage();
+		//$pdf->SetXY(100,100);
+		//$title=$langs->trans("BillsCustomersUnpayed");
+		//if ($option=='late') $title=$langs->trans("BillsCustomersUnpayed");
+		//$pdf->MultiCell(100, 3, $title, 0, 'J');
+		
+		// Add all others
+		foreach($files as $file)
+		{
+			// Charge un document PDF depuis un fichier.
+			$pagecount = $pdf->setSourceFile($file); 
+            for ($i = 1; $i <= $pagecount; $i++)
+            { 
+                 $tplidx = $pdf->ImportPage($i); 
+                 $s = $pdf->getTemplatesize($tplidx); 
+                 $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L'); 
+                 $pdf->useTemplate($tplidx); 
+            } 
+		}
+		
+		// Create output dir if not exists
+		create_exdir($diroutputpdf);
+
+		// enregistre le fichier pdf concatene
+		$filename=sanitize_string(strtolower($langs->transnoentities("Unpayed")));
+		if ($option=='late') $filename.='_'.sanitize_string(strtolower($langs->transnoentities("Late")));
+		if ($pagecount) $pdf->Output($diroutputpdf.'/'.$filename.'_'.dolibarr_print_date(mktime(),'dayhourlog').'.pdf');
+		else $mesg='<div class="error">'.$langs->trans('NoPDFAvailableForChecked').'</div>';
+	} 
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans('UnpayedNotChecked').'</div>' ;
+	}
+}
+
+
+
+
+
+/*
  * View
  */
-$diroutputpdf=$conf->facture->dir_output . '/unpayed/temp';
 
 $title=$langs->trans("BillsCustomersUnpayed");
 if ($option=='late') $title=$langs->trans("BillsCustomersUnpayed");
@@ -76,52 +141,6 @@ $sortfield=$_GET["sortfield"];
 $sortorder=$_GET["sortorder"];
 if (! $sortfield) $sortfield="f.date_lim_reglement";
 if (! $sortorder) $sortorder="ASC";
-
-if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
-{
-	if (is_array($_POST['toGenerate']))
-	{
-		
-		$factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('\.pdf|',$_POST['toGenerate']).'\.pdf','\.meta$|\.png','date',SORT_DESC) ;
-
-		// liste les fichiers
-		$files = array() ;
-		$factures_bak = $factures ;
-		foreach($_POST['toGenerate'] as $basename){
-			foreach($factures as $facture){
-				if(strstr($facture["name"],$basename)){
-					$files[] = $conf->facture->dir_output.'/'.$basename.'/'.$facture["name"] ;
-				}
-			}
-		}
-		
-		// génère le PDF à partir de tous les autres fichiers
-		$pdf=new FPDI();
-		foreach($files as $file){
-			// Charge un document PDF depuis un fichier.
-			$pagecount = $pdf->setSourceFile($file); 
-            for ($i = 1; $i <= $pagecount; $i++) { 
-                 $tplidx = $pdf->ImportPage($i); 
-                 $s = $pdf->getTemplatesize($tplidx); 
-                 $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L'); 
-                 $pdf->useTemplate($tplidx); 
-            } 
-		}
-		
-		// vérifie que le chemin d'accès est bien accessible
-		create_exdir($diroutputpdf);
-		
-		// enregistre le fichier pdf concaténé
-		$filename=sanitize_string(strtolower($langs->transnoentities("Unpayed")));
-		if ($option=='late') $filename.='_'.sanitize_string(strtolower($langs->transnoentities("Late")));
-		$pdf->Output($diroutputpdf.'/'.$filename.'_'.dolibarr_print_date(mktime(),'dayhourlog').'.pdf');
-		
-	} 
-	else
-	{
-		$mesg='<div class="error">'.$langs->trans('UnpayedNotChecked').'</div>' ;
-	}
-}
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
