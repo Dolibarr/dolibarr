@@ -70,7 +70,6 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		$pdf=new FPDI('P','mm','A4');
 		//$pdf->Open();
 		//$pdf->AddPage();
-		//$pdf->SetXY(100,100);
 		//$title=$langs->trans("BillsCustomersUnpayed");
 		//if ($option=='late') $title=$langs->trans("BillsCustomersUnpayed");
 		//$pdf->MultiCell(100, 3, $title, 0, 'J');
