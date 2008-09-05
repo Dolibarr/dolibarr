@@ -141,7 +141,12 @@ if ($_POST["action"] == "set")
                         $buf = fgets($fp, 4096);
                         if (substr($buf, 0, 2) <> '--')
                         {
-                            $buffer .= $buf;
+							if ($choix != 1)	// All databases except Mysql
+							{
+								$buf=$db->convertSQLFromMysql($buf);
+							}
+                        	
+                        	$buffer .= $buf;
                         }
                     }
                     fclose($fp);
@@ -154,17 +159,7 @@ if ($_POST["action"] == "set")
 						$buffer=utf8_encode ($buffer);
 					}
 					
-					if ($choix == 1)	// If database is Mysql 
-					{
-						dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
-					}
-					else	// All databases except Mysql
-					{
-						dolibarr_install_syslog("Request (mysql syntax): ".$buffer,LOG_DEBUG);
-						$buffer=$db->convertSQLFromMysql($buffer);
-						dolibarr_install_syslog("Request (converted): ".$buffer,LOG_DEBUG);
-					}
-					
+					dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
 					if ($db->query($buffer))
 	                {
 	                   // print "<td>OK requete ==== $buffer</td></tr>";
