@@ -207,7 +207,7 @@ if ($result)
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
         print '<td>';
-		$staticcompany->id=$obj->fk_soc;
+		$staticcompany->id=$obj->socid;
 		$staticcompany->nom=$obj->nom;
 		print $staticcompany->getNomUrl(1,'',20);
 		print '</td>';
