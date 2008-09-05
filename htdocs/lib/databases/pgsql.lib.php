@@ -22,17 +22,17 @@
 
 /**
 	    \file       htdocs/lib/databases/pgsql.lib.php
-		\brief      Fichier de la classe permettant de gérér une base pgsql
+		\brief      Fichier de la classe permettant de gï¿½rï¿½r une base pgsql
 		\version	$Id$
 */
-// Pour compatibilité lors de l'upgrade
+// For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
 if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 
 /**
         \class      DoliDb
-        \brief      Classe permettant de gérér la database de dolibarr
+        \brief      Classe permettant de gï¿½rï¿½r la database de dolibarr
 */
 class DoliDb
 {
@@ -42,11 +42,11 @@ class DoliDb
     var $forcecharset='latin1';
 	var $versionmin=array(8,1,0);	// Version min database
 
-    var $results;                 // Resultset de la dernière requete
+    var $results;                 // Resultset de la derniï¿½re requete
 
-    var $connected;               // 1 si connecté, 0 sinon
-    var $database_selected;       // 1 si base sélectionné, 0 sinon
-    var $database_name;			  // Nom base sélectionnée
+    var $connected;               // 1 si connectï¿½, 0 sinon
+    var $database_selected;       // 1 si base sï¿½lectionnï¿½, 0 sinon
+    var $database_name;			  // Nom base sï¿½lectionnï¿½e
     var $database_user;	   //! Nom user base
     var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
     var $lastquery;
@@ -60,30 +60,18 @@ class DoliDb
 
     /**
         \brief      Ouverture d'une connexion vers le serveur et une database.
-        \param		type		type de base de données (mysql ou pgsql)
-        \param		host		addresse de la base de données
-    	\param	    user		nom de l'utilisateur autorisé
+        \param		type		type de base de donnï¿½es (mysql ou pgsql)
+        \param		host		addresse de la base de donnï¿½es
+    	\param	    user		nom de l'utilisateur autorisï¿½
         \param		pass		mot de passe
         \param		name		nom de la database
 		\param	    port		Port of database server
-        \return		int			1 en cas de succès, 0 sinon
+        \return		int			1 en cas de succï¿½s, 0 sinon
     */
     function DoliDb($type='pgsql', $host, $user, $pass, $name='', $port=0)
     {
     	global $conf,$langs;
 
-        /* Ce test est inutile. En effet, si DOL_DOCUMENT_ROOT est défini, cela signifie      */
-		/* obligatoirement que le fichier conf a deja été chargée puisque cette constante est */
-		/* definie a partir du contenu du fichier conf.php                                    */
-		/* Et toutes les infos sont chargés dans l'objet conf                                 */
-		/*
-        if (file_exists($conffile)) {
-	    	include($conffile);
-	    	$this->forcecharset=$character_set_database;
-	    	$this->forcecollate=$dolibarr_main_db_collation;
-	    	$this->db_user=$dolibarr_main_db_user;
-		}
-		*/
 		$this->forcecharset=$conf->character_set_client;
 	    $this->forcecollate=$conf->db->dolibarr_main_db_collation;
 	    $this->database_user=$user;
@@ -127,7 +115,7 @@ class DoliDb
             dolibarr_syslog("DoliDB::DoliDB : Erreur Connect ".$this->error,LOG_ERR);
         }
 
-        // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
+        // Si connexion serveur ok et si connexion base demandï¿½e, on essaie connexion base
         if ($this->connected && $name)
         {
             if ($this->select_db($name))
@@ -147,19 +135,30 @@ class DoliDb
         }
         else
         {
-            // Pas de selection de base demandée, ok ou ko
+            // Pas de selection de base demandee, ok ou ko
             $this->database_selected = 0;
         }
 
         return $this->ok;
     }
 
+    
+    /**
+	 *	\brief		Convert a SQL request in mysql syntax to database syntax
+	 * 	\param		request		SQL request to convert
+	 * 	\return		string		SQL request converted
+	 */
+	function convertSQLFromMysql($request)
+	{
+		return $request;
+	}
+        
     /**
         \brief      Selectionne une database.
         \param		database		nom de la database
         \return		boolean         true si ok, false si ko
         \remarks 	Ici postgresql n'a aucune fonction equivalente de mysql_select_db
-        \remarks 	On compare juste manuellement si la database choisie est bien celle activée par la connexion
+        \remarks 	On compare juste manuellement si la database choisie est bien celle activï¿½e par la connexion
     */
     function select_db($database)
     {
@@ -171,12 +170,12 @@ class DoliDb
 
     /**
         \brief      Connection vers le serveur
-        \param		host		addresse de la base de données
+        \param		host		addresse de la base de donnï¿½es
         \param		login		nom de l'utilisateur autoris
         \param		passwd		mot de passe
         \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
 		\param		port		Port of database server
-        \return		resource	handler d'accès à la base
+        \return		resource	handler d'accï¿½s ï¿½ la base
     */
     function connect($host, $login, $passwd, $name, $port=0)
     {
@@ -308,7 +307,7 @@ class DoliDb
 
 
     /**
-        \brief      Effectue une requete et renvoi le resultset de réponse de la base
+        \brief      Effectue une requete et renvoi le resultset de rï¿½ponse de la base
         \param		query		Contenu de la query
         \return	    resource    Resultset de la reponse
     */
@@ -343,31 +342,31 @@ class DoliDb
     */
     function fetch_object($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilisï¿½ sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_fetch_object($resultset);
     }
 
     /**
-        \brief      Renvoie les données dans un tableau.
+        \brief      Renvoie les donnï¿½es dans un tableau.
         \param      resultset   Curseur de la requete voulue
         \return		array
     */
     function fetch_array($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilisï¿½ sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_fetch_array($resultset);
     }
 
     /**
-        \brief      Renvoie les données comme un tableau.
+        \brief      Renvoie les donnï¿½es comme un tableau.
         \param      resultset   Curseur de la requete voulue
         \return	    array
     */
     function fetch_row($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilisï¿½ sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_fetch_row($resultset);
     }
@@ -380,7 +379,7 @@ class DoliDb
     */
     function num_rows($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilisï¿½ sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         return pg_num_rows($resultset);
     }
@@ -393,7 +392,7 @@ class DoliDb
     */
     function affected_rows($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilisï¿½ sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
         // pgsql necessite un resultset pour cette fonction contrairement
         // a mysql qui prend un link de base
@@ -402,22 +401,22 @@ class DoliDb
 
 
     /**
-        \brief      Libère le dernier resultset utilisé sur cette connexion.
+        \brief      Libï¿½re le dernier resultset utilisï¿½ sur cette connexion.
         \param      resultset   Curseur de la requete voulue
     */
     function free($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
+        // Si le resultset n'est pas fourni, on prend le dernier utilisï¿½ sur cette connexion
         if (! is_resource($resultset)) { $resultset=$this->results; }
-        // Si resultset en est un, on libere la mémoire
+        // Si resultset en est un, on libere la mï¿½moire
         if (is_resource($resultset)) pg_free_result($resultset);
     }
 
 
     /**
-        \brief      Défini les limites de la requète.
-        \param	    limit       nombre maximum de lignes retournées
-        \param	    offset      numéro de la ligne à partir de laquelle recupérer les lignes
+        \brief      Dï¿½fini les limites de la requï¿½te.
+        \param	    limit       nombre maximum de lignes retournï¿½es
+        \param	    offset      numï¿½ro de la ligne ï¿½ partir de laquelle recupï¿½rer les lignes
         \return	    string      chaine exprimant la syntax sql de la limite
     */
     function plimit($limit=0,$offset=0)
@@ -430,7 +429,7 @@ class DoliDb
 
 
 	/**
-        \brief      Défini le tri de la requète.
+        \brief      Dï¿½fini le tri de la requï¿½te.
         \param	    sortfield   liste des champ de tri
         \param	    sortorder   ordre du tri
         \return	    string      chaine exprimant la syntax sql de l'ordre de tri
@@ -471,10 +470,10 @@ class DoliDb
 
 
     /**
-    *   \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
-    *               afin de retourner une donnée toujours au format universel date tms unix.
-    *               Fonction à utiliser pour générer les SELECT.
-    *   \param	    param       Date au format text à convertir
+    *   \brief      Formatage (par la base de donnï¿½es) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
+    *               afin de retourner une donnï¿½e toujours au format universel date tms unix.
+    *               Fonction ï¿½ utiliser pour gï¿½nï¿½rer les SELECT.
+    *   \param	    param       Date au format text ï¿½ convertir
     *   \return	    date        Date au format tms.
     */
     function pdate($param)
@@ -484,8 +483,8 @@ class DoliDb
 
     /**
         \brief      Formatage (par PHP) de la date en texte qui s'insere dans champ date.
-                    Fonction à utiliser pour générer les INSERT.
-        \param	    param       Date tms à convertir
+                    Fonction ï¿½ utiliser pour gï¿½nï¿½rer les INSERT.
+        \param	    param       Date tms ï¿½ convertir
         \return	    date        Date au format text YYYYMMDDHHMMSS.
     */
     function idate($param)
@@ -499,7 +498,7 @@ class DoliDb
         \param		test            chaine test
         \param		resok           resultat si test egal
         \param		resko           resultat si test non egal
-        \return		string          chaine formaté SQL
+        \return		string          chaine formatï¿½ SQL
     */
     function ifsql($test,$resok,$resko)
     {
@@ -549,8 +548,8 @@ class DoliDb
     */
     function errno()
     {
-        static $error_regexps;
-        if (empty($error_regexps)) {
+        if (empty($error_regexps))
+        {
             $error_regexps = array(
                 '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/' => 'DB_ERROR_NOSUCHTABLE',
                 '/table [\"\'].*[\"\'] does not exist/' => 'DB_ERROR_NOSUCHTABLE',
@@ -581,8 +580,8 @@ class DoliDb
     }
 
     /**
-        \brief      Récupère l'id genéré par le dernier INSERT.
-        \param     	tab     Nom de la table concernée par l'insert. Ne sert pas sous MySql mais requis pour compatibilité avec Postgresql
+        \brief      Rï¿½cupï¿½re l'id genï¿½rï¿½ par le dernier INSERT.
+        \param     	tab     Nom de la table concernï¿½e par l'insert. Ne sert pas sous MySql mais requis pour compatibilitï¿½ avec Postgresql
         \return     int     id
     */
     function last_insert_id($tab)
@@ -609,9 +608,9 @@ class DoliDb
 
 
     /**
-            \brief          Création d'une nouvelle base de donnée
-            \param	        database		nom de la database à créer
-            \return	        resource		resource définie si ok, null si ko
+            \brief          Crï¿½ation d'une nouvelle base de donnï¿½e
+            \param	        database		nom de la database ï¿½ crï¿½er
+            \return	        resource		resource dï¿½finie si ok, null si ko
             \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
     */
     function DDLCreateDb($database)
@@ -635,8 +634,8 @@ class DoliDb
 	/**
 			\brief      Create a user
 			\param	    dolibarr_main_db_host 		Ip serveur
-			\param	    dolibarr_main_db_user 		Nom user à créer
-			\param	    dolibarr_main_db_pass 		Mot de passe user à créer
+			\param	    dolibarr_main_db_user 		Nom user ï¿½ crï¿½er
+			\param	    dolibarr_main_db_pass 		Mot de passe user ï¿½ crï¿½er
 			\param		dolibarr_main_db_name		Database name where user must be granted
 			\return	    int							<0 si KO, >=0 si OK
 	*/
