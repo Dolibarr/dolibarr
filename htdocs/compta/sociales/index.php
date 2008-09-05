@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,8 @@ if (! $sortorder) $sortorder="DESC";
 
 $year=$_GET["year"];
 $filtre=$_GET["filtre"];
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
 //if (! $year) { $year=date("Y", time()); }
 
 
@@ -55,26 +57,6 @@ $filtre=$_GET["filtre"];
  */
 
 llxHeader();
-
-print_fiche_titre($langs->trans("SocialContributions"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
-print "<br>\n";
-
-if ($mesg)
-{
-    print $mesg."<br>";
-}
-
-print "<table class=\"noborder\" width=\"100%\">";
-
-print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans("Ref"),"index.php","id","","","",$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("DateDue"),"index.php","de","","","",$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Period"),"index.php","periode","","",'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Type"),"index.php","type","","",'align="left"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","","",'align="left"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","","",'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","","",'align="center"',$sortfield,$sortorder);
-print "</tr>\n";
 
 
 $sql = "SELECT s.rowid as id, s.fk_type as type, ";
@@ -107,6 +89,7 @@ if ($_GET["sortorder"]) {
 else {
     $sql .= " DESC";
 }
+$sql .= $db->plimit($limit+1,$offset);
 
 
 $chargesociale_static=new ChargeSociales($db);
@@ -118,7 +101,35 @@ if ($resql)
 	$i = 0;
 	$var=true;
 
-	while ($i < $num)
+	if ($year)
+	{
+		print_fiche_titre($langs->trans("SocialContributions"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
+	}
+	else
+	{
+		print_barre_liste($langs->trans("SocialContributions"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
+	}
+	print "<br>\n";
+	
+	if ($mesg)
+	{
+	    print $mesg."<br>";
+	}
+	
+	print "<table class=\"noborder\" width=\"100%\">";
+	
+	print "<tr class=\"liste_titre\">";
+	print_liste_field_titre($langs->trans("Ref"),"index.php","id","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateDue"),"index.php","de","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Period"),"index.php","periode","","",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Type"),"index.php","type","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","","",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","","",'align="center"',$sortfield,$sortorder);
+	print "</tr>\n";
+		
+
+	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
 
