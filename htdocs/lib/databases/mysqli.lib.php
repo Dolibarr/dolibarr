@@ -169,18 +169,18 @@ class DoliDb
 
 	/**
 	 *	\brief		Convert a SQL request in mysql syntax to database syntax
-	 * 	\param		request		SQL request to convert
-	 * 	\return		string		SQL request converted
+	 * 	\param		line		SQL request line to convert
+	 * 	\return		string		SQL request line converted
 	 */
-	function convertSQLFromMysql($request)
+	function convertSQLFromMysql($line)
 	{
-		return $request;
+		return $line;
 	}
 
 	/**
-	 \brief      Selectionne une database.
-	 \param	    database		Nom de la database
-	 \return	    boolean         true si ok, false si ko
+	 *	\brief      Selectionne une database.
+	 *	\param	    database		Nom de la database
+	 *	\return	    boolean         true si ok, false si ko
 	 */
 	function select_db($database)
 	{

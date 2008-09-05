@@ -145,12 +145,189 @@ class DoliDb
     
     /**
 	 *	\brief		Convert a SQL request in mysql syntax to database syntax
-	 * 	\param		request		SQL request to convert
-	 * 	\return		string		SQL request converted
+	 * 	\param		line		SQL request line to convert
+	 * 	\return		string		SQL request line converted
 	 */
-	function convertSQLFromMysql($request)
+	function convertSQLFromMysql($line)
 	{
-		return $request;
+		# comments or empty lines
+    	if (eregi('^-- \$Id',$line)) { 
+    		return '';
+		}
+		# comments or empty lines
+    	if (eregi('^#',$line) || eregi('^$',$line) || eregi('^--',$line))
+    	{
+    		return $line;
+    	}
+    	if ($create_sql != "")
+    	{ 		# we are inside create table statement so lets process datatypes
+    		if (eregi('(ISAM|innodb)',$line)) { # end of create table sequence
+    			$line=eregi_replace('\) *type=(MyISAM|innodb);',');');  
+    			$line=eregi_replace('\) *engine=(MyISAM|innodb);',');');  
+    		} 
+
+            # int, auto_increment -> serial
+//    		} elsif (/^[\s\t]*(\w*)\s*.*int.*auto_increment/i) { 		
+//    			$seq = qq~${table}_${1}_seq~;
+//    			s/[\s\t]*([a-zA-Z_0-9]*)\s*.*int.*auto_increment[^,]*/  $1 SERIAL PRIMARY KEY/ig;
+//    			$create_sql.=$_;
+
+    		# int type conversion
+/*    		} elsif (/(\w*)int\(\d+\)/i) {
+    			$size=$1;
+    			$size =~ tr [A-Z] [a-z];
+    			if ($size eq "tiny" || $size eq "small") {
+    				$out = "int2";
+    			} elsif ($size eq "big") {
+    				$out = "int8";
+    			} else {
+    				$out = "int4";
+    			}
+    			s/\w*int\(\d+\)/$out/g;
+    		}
+*/
+    		$line=eregi_replace('tinyint','smallint');  
+    
+    		# nuke unsigned
+    		if (eregi_replace('(int\w+|smallint)\s+unsigned','smallint',$reg))
+    		{
+    			$line=eregi_replace('(int\w+|smallint)\s+unsigned',$reg[1]);  
+    		}
+
+    
+    		# blob -> text
+   			$line=eregi_replace('\w*blob','text');  
+
+    		# tinytext/mediumtext -> text
+   			$line=eregi_replace('tinytext','text');  
+   			$line=eregi_replace('mediumtext','text');  
+    
+    		# char -> varchar
+    		# PostgreSQL would otherwise pad with spaces as opposed
+    		# to MySQL! Your user interface may depend on this!
+//    		s/(\s+)char/${1}varchar/gi;
+    
+    		# nuke date representation (not supported in PostgreSQL)
+//    		s/datetime default '[^']+'/datetime/i;
+//    		s/date default '[^']+'/datetime/i;
+//    		s/time default '[^']+'/datetime/i;
+    
+    		# change not null datetime field to null valid ones
+    		# (to support remapping of "zero time" to null
+   			$line=eregi_replace('datetime not null','datetime');  
+   			$line=eregi_replace('datetime','timestamp');  
+    
+    		# nuke size of timestamp
+//    		s/timestamp\([^)]*\)/timestamp/i;
+    
+    		# double -> real
+//    		s/^double/real/i;
+//    		s/(\s*)double/${1}real/i;
+    
+    		# unique key(field1,field2)
+/*    		if (/unique key\s*\((\w+\s*,\s*\w+)\)/i) {
+    		    s/unique key\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
+                $create_sql.=$_;
+    		    next;
+    		}
+*/
+    		# unique index(field1,field2)
+/*    		if (/unique index\s*\((\w+\s*,\s*\w+)\)/i) {
+                s/unique index\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
+                $create_sql.=$_;
+    		    next;
+    		}
+*/    
+            # unique key [name] (field)
+/*            if (/unique key\s*(\w*)\s*\((\w+)\)/i) {
+                s/unique key\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
+                my $idxname=($1?"$1":"idx_${table}_$2");
+                $create_sql.=$_;
+                $create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
+                next;
+            }
+*/
+            # unique index [name] (field)
+/*            if (/unique index\s*(\w*)\s*\((\w+)\)/i) {
+                s/unique index\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
+                my $idxname=($1?"$1":"idx_${table}_$2");
+                $create_sql.=$_;
+                $create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
+                next;
+            }
+*/
+            # unique (field) et unique (field1, field2 ...)
+/*            if (/unique\s*\(([\w,\s]+)\)/i) {
+                s/unique\s*\(([\w,\s]+)\)/UNIQUE\($1\)/i;
+                my $fieldlist="$1";
+                my $idxname="idx_${table}_${fieldlist}";
+                $idxname =~ s/\W/_/g; $idxname =~ tr/_/_/s;
+                $create_sql.=$_;
+                $create_index .= "CREATE INDEX $idxname ON $table ($fieldlist);\n";
+                next;
+            }
+*/            
+            # index(field)
+/*            if (/index\s*(\w*)\s*\((\w+)\)/i) {
+                my $idxname=($1?"$1":"idx_${table}_$2");
+                $create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
+                next;
+            }
+*/            
+            # primary key
+/*    		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
+    			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key
+    		}
+*/    
+            # key(xxx)
+/*            if (/key\s*\((\w+)\)/i) {
+                my $idxname="idx_${table}_$1";
+                $create_index .= "CREATE INDEX $idxname ON $table ($1);\n";
+                next;
+            }
+*/            
+    		# Quote column names
+/*    		s/(^\s*)([^\s\-\(]+)(\s*)/$1"$2"$3/gi if (!/\bkey\b/i);
+*/  
+    		# Remap colums with names of existing system attribute 
+/*    		if (/"oid"/i) {
+    			s/"oid"/"_oid"/g;
+    			print STDERR "WARNING: table $table uses column \"oid\" which is renamed to \"_oid\"\nYou should fix application manually! Press return to continue.";
+    			my $wait=<STDIN>;
+    		}
+    		s/oid/_oid/i if (/key/i && /oid/i); # fix oid in key
+    		$create_sql.=$_;
+*/
+    	} #  END of if ($create_sql ne "") i.e. were inside create table statement so processed datatypes
+    	else {	# not inside create table
+    		#---- fix data in inserted data: (from MS world)
+    		# FIX: disabled for now
+/*    		if (00 && /insert into/i) {
+    			s!\x96!-!g;	# --
+    			s!\x93!"!g;	# ``
+    			s!\x94!"!g;	# ''
+    			s!\x85!... !g;	# \ldots
+    			s!\x92!`!g;
+    		}
+*/    
+    		# fix dates '0000-00-00 00:00:00' (should be null)
+/*    		s/'0000-00-00 00:00:00'/null/gi;
+    		s/'0000-00-00'/null/gi;
+    		s/'00:00:00'/null/gi;
+    		s/([12]\d\d\d)([01]\d)([0-3]\d)([0-2]\d)([0-6]\d)([0-6]\d)/'$1-$2-$3 $4:$5:$6'/;
+    
+    		if (/create\s+table\s+(\w+)/i) {
+    			$create_sql = $_;
+    			/create\s*table\s*(\w+)/i;
+    			$table=$1 if (defined($1));
+    		} else {
+    			print OUT $_;
+    		}
+*/
+    	} # end of if inside create_table
+		
+		
+		return $line;
 	}
         
     /**

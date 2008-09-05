@@ -153,12 +153,12 @@ class DoliDb
 
 	/**
 	 *	\brief		Convert a SQL request in mysql syntax to database syntax
-	 * 	\param		request		SQL request to convert
-	 * 	\return		string		SQL request converted
+	 * 	\param		line		SQL request line to convert
+	 * 	\return		string		SQL request line converted
 	 */
-	function convertSQLFromMysql($request)
+	function convertSQLFromMysql($line)
 	{
-		return $request;
+		return $line;
 	}
 
 	/**
