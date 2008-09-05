@@ -615,9 +615,9 @@ class DoliDb
 			1451 => 'DB_ERROR_CHILD_EXISTS'
 		     );
 			
-			if (isset($this->errorcode_map[mysql_errno($this->db)]))
+			if (isset($errorcode_map[mysql_errno($this->db)]))
 			{
-				return $this->errorcode_map[mysql_errno($this->db)];
+				return $errorcode_map[mysql_errno($this->db)];
 			}
 			$errno=mysql_errno($this->db);
 			return ($errno?'DB_ERROR_'.$errno:'0');
