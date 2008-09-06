@@ -36,3 +36,8 @@ DateActionDoneStart = Real start date
 DateActionDoneEnd = Real end date
 DateActionStart = Start date
 DateActionEnd = End date
+AgendaUrlOptions1=You can also add following parameters to filter output:
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by, affected to or done by user <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions created by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions affected to user <b>%s</b>.
+AgendaUrlOptions5=<b>logind=%s</b> to restrict output to actions done by user <b>%s</b>.

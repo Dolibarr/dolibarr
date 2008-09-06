@@ -164,10 +164,10 @@ if ($canedit)
 	print $form->select_users($filtera,'userasked',1,'',!$canedit);
 	print '</td>';
 	print '<td rowspan="3" align="center" valign="middle" nowrap="nowrap">';
-	print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'" '.($canedit?'':'disabled="true"') .'>';
+	print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'">';
 	print '<br>';
 	print '<br>';
-	print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'" '.($canedit?'':'disabled="true"') .'>';
+	print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'" disabled="true">';
 	print '</td>';
 	print '</tr>';
 

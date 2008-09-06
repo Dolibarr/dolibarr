@@ -121,6 +121,13 @@ $message.=$langs->trans("WebCalUrlForVCalExport",'ical',$urlical);
 $message.='<br>';
 $urlrss='<a href="'.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=rss&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'...').'" target="_blank">'.$urlwithouturlroot.DOL_URL_ROOT.'/comm/action/agendaexport.php?format=rss&exportkey='.($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY?urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY):'KEYNOTDEFINED').'</a>';
 $message.=$langs->trans("WebCalUrlForVCalExport",'rss',$urlrss);
+$message.='<br>';
+$message.='<br>';
+$message.=$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
+$message.=$langs->trans("AgendaUrlOptions2",$user->login,$user->login).'<br>';
+$message.=$langs->trans("AgendaUrlOptions3",$user->login,$user->login).'<br>';
+$message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
+$message.=$langs->trans("AgendaUrlOptions5",$user->login,$user->login);
 print info_admin($message);
 
 $db->close();
