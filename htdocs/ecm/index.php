@@ -327,7 +327,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 		$ecmdirstatic->ref=$val['label'];
 	
 		// Refresh cache
-		if ($_GET['action'] == 'refreshauto')
+		if (eregi('refresh',$_GET['action']))
 		{
 			$result=$ecmdirstatic->fetch($val['id']);
 			$ecmdirstatic->ref=$ecmdirstatic->label;
