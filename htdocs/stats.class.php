@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,169 +15,231 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
-class Stats 
+/**
+ *       \file       htdocs/stats.class.php
+ *       \ingroup    core
+ *       \brief      Common class to manage statistics reports
+ *       \version    $Id$
+ */
+class Stats
 {
-  var $db ;
+	var $db ;
 
-  function Stats($DB)
-    {
-      $this->db = $DB;
-    }
-
-  function getNbByMonthWithPrevYear($endyear,$startyear)
-  {
-  	$datay=array();
-  	
-    $year=$startyear;
-	while($year <= $endyear)
+	function Stats($DB)
 	{
-  		$datay[$year] = $this->getNbByMonth($year);
-		$year++;
+		$this->db = $DB;
 	}
 
-    $data = array();
-
-    for ($i = 0 ; $i < 12 ; $i++)
-      {
-		$data[$i][]=$datay[$endyear][$i][0];
+	/**
+	 * Return nb of entity by month for several years
+	 *
+	 * @param 	endyear		Start year
+	 * @param 	startyear	End year
+	 * @return 	array		Array of values
+	 */
+	function getNbByMonthWithPrevYear($endyear,$startyear)
+	{
+		$datay=array();
+			
 		$year=$startyear;
 		while($year <= $endyear)
 		{
-			$data[$i][]=$datay[$year][$i][1];
+			$datay[$year] = $this->getNbByMonth($year);
 			$year++;
 		}
-      }
-    return $data;
-  }
+
+		$data = array();
+
+		for ($i = 0 ; $i < 12 ; $i++)
+		{
+			$data[$i][]=$datay[$endyear][$i][0];
+			$year=$startyear;
+			while($year <= $endyear)
+			{
+				$data[$i][]=$datay[$year][$i][1];
+				$year++;
+			}
+		}
+		
+		// return array(array('Month',val1,val2,val3),...)		
+		return $data;
+	}
+
+	/**
+	 * Return amount of entity by month for several years
+	 *
+	 * @param 	endyear		Start year
+	 * @param 	startyear	End year
+	 * @return 	array		Array of values
+	 */
+	function getAmountByMonthWithPrevYear($endyear,$startyear)
+	{
+		$datay=array();
+			
+		$year=$startyear;
+		while($year <= $endyear)
+		{
+			$datay[$year] = $this->getAmountByMonth($year);
+			$year++;
+		}
+
+		$data = array();
+
+		for ($i = 0 ; $i < 12 ; $i++)
+		{
+			$data[$i][]=$datay[$endyear][$i][0];
+			$year=$startyear;
+			while($year <= $endyear)
+			{
+				$data[$i][]=$datay[$year][$i][1];
+				$year++;
+			}
+		}
+
+		return $data;
+	}
+
+
+	/**
+	 * \brief  Renvoie le nombre d'element par ann�e
+	 *
+	 */
+	function _getNbByYear($sql)
+	{
+		$result = array();
+		
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row($resql);
+				$result[$i] = $row;
+				$i++;
+			}
+			$this->db->free($resql);
+		}
+		else {
+			dolibarr_print_error($this->db);
+		}
+		return $result;
+	}
+
 	
-  /**
-   * \brief  Renvoie le nombre de proposition par mois pour une annee donnee
-   *
-   */
-    function _getNbByMonth($year, $sql)
-    {
-        $result = array();
-    
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $this->db->fetch_row($resql);
-                $j = $row[0] * 1;
-                $result[$j] = $row[1];
-                $i++;
-            }
-            $this->db->free($resql);
-        }
-    
-        for ($i = 1 ; $i < 13 ; $i++)
-        {
-            $res[$i] = $result[$i] + 0;
-        }
-    
-        $data = array();
-    
-        for ($i = 1 ; $i < 13 ; $i++)
-        {
-            $data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,0,0,$i,1,$year)),0,3)), $res[$i]);
-        }
-    
-        return $data;
-    }
+	/**
+	 * \brief  Renvoie le nombre de proposition par mois pour une annee donnee
+	 *
+	 */
+	function _getNbByMonth($year, $sql)
+	{
+		$result = array();
+
+		$resql=$this->db->query($sql);
+		dolibarr_syslog("Stats::_getNbByMonth sql=".$sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0; $j = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row($resql);
+				$j = $row[0] * 1;
+				$result[$j] = $row[1];
+				$i++;
+			}
+			$this->db->free($resql);
+		}
+
+		for ($i = 1 ; $i < 13 ; $i++)
+		{
+			$res[$i] = $result[$i] + 0;
+		}
+
+		$data = array();
+
+		for ($i = 1 ; $i < 13 ; $i++)
+		{
+			$data[$i-1] = array(ucfirst(substr(strftime("%b",dolibarr_mktime(12,0,0,$i,1,$year)),0,3)), $res[$i]);
+		}
+
+		return $data;
+	}
 
 
-  /**
-   * \brief  Renvoie le nombre d'element par ann�e
-   *
-   */
-    function _getNbByYear($sql)
-    {
-        $result = array();
-    
-        if ($this->db->query($sql))
-        {
-            $num = $this->db->num_rows();
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $this->db->fetch_row($i);
-                $result[$i] = $row;
-                $i++;
-            }
-            $this->db->free();
-        }
-        else {
-            dolibarr_print_error($this->db);
-        }
-        return $result;
-    }
+	/**
+	 * \brief  Renvoie le nombre d'element par mois pour une annee donnee
+	 *
+	 */
+	function _getAmountByMonth($year, $sql)
+	{
+		$result = array();
 
-  /**
-   * \brief  Renvoie le nombre d'element par mois pour une ann�e donn�e
-   *
-   */
-	 
-  function _getAmountByMonth($year, $sql)
-  {
-    $result = array();
+		dolibarr_syslog("Stats::_getAmountByMonth sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+		  	{
+		  		$row = $this->db->fetch_row($resql);
+		  		$j = $row[0] * 1;
+		  		$result[$j] = $row[1];
+		  		$i++;
+		  	}
+		  	$this->db->free($resql);
+		}
 
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $j = $row[0] * 1;
-	    $result[$j] = $row[1];
-	    $i++;
-	  }
-	$this->db->free();
-      }
-    
-    for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$res[$i] = $result[$i] + 0;
-      }
+		for ($i = 1 ; $i < 13 ; $i++)
+		{
+			$res[$i] = (int) round($result[$i]) + 0;
+		}
 
-    return $res;
-  }
-  /**
-   * 
-   *
-   */
-  function _getAverageByMonth($year, $sql)
-  {
-    $result = array();
+		$data = array();
 
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $j = $row[0] * 1;
-	    $result[$j] = $row[1];
-	    $i++;
-	  }
-	$this->db->free();
-      }
-    
-    for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$res[$i] = $result[$i] + 0;
-      }
+		for ($i = 1 ; $i < 13 ; $i++)
+		{
+			$data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,0,0,$i,1,$year)),0,3)), $res[$i]);
+		}
 
-    return $res;
-  }
+		return $data;
+	}
+
+	/**
+	 *
+	 *
+	 */
+	function _getAverageByMonth($year, $sql)
+	{
+		$result = array();
+
+		dolibarr_syslog("Stats::_getAmountByMonth sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0; $j = 0;
+			while ($i < $num)
+			{
+		  		$row = $this->db->fetch_row($resql);
+		  		$j = $row[0] * 1;
+		  		$result[$j] = $row[1];
+		  		$i++;
+		  	}
+		  	$this->db->free($resql);
+		}
+
+		for ($i = 1 ; $i < 13 ; $i++)
+		{
+			$res[$i] = $result[$i] + 0;
+		}
+
+		return $res;
+	}
 }
 
 ?>

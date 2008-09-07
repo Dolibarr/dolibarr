@@ -18,11 +18,11 @@
  */
 
 /**
-	    \file       htdocs/compta/facture/stats/month.php
-        \ingroup    facture
-		\brief      Page des stats factures par mois
-		\version    $Id$
-*/
+ *	    \file       htdocs/compta/facture/stats/month.php
+ *      \ingroup    facture
+ *		\brief      Page des stats factures par mois
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
@@ -38,6 +38,10 @@ if ($user->societe_id > 0)
 }
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 $year = isset($_GET["year"])?$_GET["year"]:date("Y",time());
@@ -49,9 +53,10 @@ $mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
 print_fiche_titre($langs->trans("BillsStatistics"), $mesg);
 
 $stats = new FactureStats($db, $socid);
-$data = $stats->getNbByMonth($year);
-
 create_exdir($conf->facture->dir_temp);
+
+
+$data = $stats->getNbByMonth($year);
 
 $filename = $conf->facture->dir_temp."/facture".$year.".png";
 $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=facture'.$year.'.png';
@@ -62,7 +67,8 @@ if (! $mesg)
 {
     $px->SetData($data);
     $px->SetMaxValue($px->GetCeilMaxValue());
-	$px->SetPrecisionY(0);
+    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetPrecisionY(0);
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
     $px->SetShading(3);
@@ -71,14 +77,9 @@ if (! $mesg)
     $px->draw($filename);
 }
 
-$res = $stats->getAmountByMonth($year);
 
-$data = array();
 
-for ($i = 1 ; $i < 13 ; $i++)
-{
-  $data[$i-1] = array(ucfirst(substr(strftime("%b",dolibarr_mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
-}
+$data = $stats->getAmountByMonth($year);
 
 $filename_amount = $conf->facture->dir_temp."/factureamount".$year.".png";
 $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureamount'.$year.'.png';
@@ -90,7 +91,8 @@ if (! $mesg)
     $px->SetData($data);
     $px->SetYLabel($langs->trans("AmountTotal"));
     $px->SetMaxValue($px->GetCeilMaxValue());
-	$px->SetPrecisionY(0);
+    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetPrecisionY(0);
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
     $px->SetShading(3);
@@ -98,6 +100,9 @@ if (! $mesg)
 	$px->SetPrecisionY(0);
     $px->draw($filename_amount);
 }
+
+
+
 $res = $stats->getAverageByMonth($year);
 
 $data = array();
@@ -118,6 +123,7 @@ if (! $mesg)
 	$px->SetPrecisionY(0);
     $px->SetYLabel($langs->trans("AmountAverage"));
     $px->SetMaxValue($px->GetCeilMaxValue());
+    $px->SetMinValue($px->GetFloorMinValue());
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
     $px->SetShading(5);

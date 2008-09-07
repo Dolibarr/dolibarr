@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,97 +15,101 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-        \file       htdocs/compta/facture/stats/facturestats.class.php
-        \ingroup    factures
-        \brief      Fichier de la classe de gestion des stats des factures
-        \version    $Revision$
-*/
-
+ *       \file       htdocs/compta/facture/stats/facturestats.class.php
+ *       \ingroup    factures
+ *       \brief      Fichier de la classe de gestion des stats des factures
+ *       \version    $Id$
+ */
 include_once DOL_DOCUMENT_ROOT . "/stats.class.php";
 
-
 /**
-        \class      FactureStats
-        \brief      Classe permettant la gestion des stats des factures
-*/
-
+ *       \class      FactureStats
+ *       \brief      Classe permettant la gestion des stats des factures
+ */
 class FactureStats extends Stats
 {
-  var $db ;
+	var $db ;
 
-  function FactureStats($DB, $socid=0)
-    {
-      $this->db = $DB;
-      $this->socid = $socid;
-    }
-
-
-  /**
-   * Renvoie le nombre de facture par mois pour une année donnée
-   *
-   */
-  function getNbByMonth($year)
-  {
-    $sql = "SELECT date_format(datef,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."facture";
-    $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
-    if ($this->socid)
-      {
-	$sql .= " AND fk_soc = ".$this->socid;
-      }
-    $sql .= " GROUP BY dm DESC";
-    
-    return $this->_getNbByMonth($year, $sql);
-  }
+	function FactureStats($DB, $socid=0)
+	{
+		$this->db = $DB;
+		$this->socid = $socid;
+	}
 
 
-  /**
-   * Renvoie le nombre de facture par année
-   *
-   */
-  function getNbByYear()
-  {
-    $sql = "SELECT date_format(datef,'%Y') as dm, count(*) FROM ".MAIN_DB_PREFIX."facture GROUP BY dm DESC WHERE fk_statut > 0";
+	/**
+	 * 	\brief		Renvoie le nombre de facture par année
+	 *	\return		array	Array of values
+	 */
+	function getNbByYear()
+	{
+		$sql = "SELECT date_format(datef,'%Y') as dm, count(*) FROM ".MAIN_DB_PREFIX."facture GROUP BY dm DESC WHERE fk_statut > 0";
 
-    return $this->_getNbByYear($sql);
-  }
-  
-  /**
-   * Renvoie le nombre de facture par mois pour une année donnée
-   *
-   */
-  function getAmountByMonth($year)
-  {
-    $sql = "SELECT date_format(datef,'%m') as dm, sum(total)  FROM ".MAIN_DB_PREFIX."facture";
-    $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
-    if ($this->socid)
-      {
-	$sql .= " AND fk_soc = ".$this->socid;
-      }
-    $sql .= " GROUP BY dm DESC";
+		return $this->_getNbByYear($sql);
+	}
 
-    return $this->_getAmountByMonth($year, $sql);
-  }
-  /**
-   * 
-   *
-   */
-  function getAverageByMonth($year)
-  {
-    $sql = "SELECT date_format(datef,'%m') as dm, avg(total) FROM ".MAIN_DB_PREFIX."facture";
-    $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
-    if ($this->socid)
-      {
-	$sql .= " AND fk_soc = ".$this->socid;
-      }
-    $sql .= " GROUP BY dm DESC";
+	
+	/**
+	 * 	\brief	Renvoie le nombre de facture par mois pour une année donnée
+	 *	\param	year	Year to scan
+	 *	\return	array	Array of values
+	 */
+	function getNbByMonth($year)
+	{
+		$sql = "SELECT date_format(datef,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."facture";
+		$sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
+		if ($this->socid)
+		{
+			$sql .= " AND fk_soc = ".$this->socid;
+		}
+		$sql .= " GROUP BY dm DESC";
 
-    return $this->_getAverageByMonth($year, $sql);
-  }
+		$res=$this->_getNbByMonth($year, $sql);
+		//var_dump($res);print '<br>';
+		return $res;
+	}
+
+
+	/**
+	 * 	\brief	Renvoie le montant de facture par mois pour une année donnée
+	 *	\param	year	Year to scan
+	 *	\return	array	Array of values
+	 */
+	function getAmountByMonth($year)
+	{
+		$sql = "SELECT date_format(datef,'%m') as dm, sum(total)  FROM ".MAIN_DB_PREFIX."facture";
+		$sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
+		if ($this->socid)
+		{
+			$sql .= " AND fk_soc = ".$this->socid;
+		}
+		$sql .= " GROUP BY dm DESC";
+
+		$res=$this->_getAmountByMonth($year, $sql);
+		//var_dump($res);print '<br>';
+		return $res;
+	}
+
+	/**
+	 *	\brief	Return average amount	
+	 *	\param	year	Year to scan
+	 *	\return	array	Array of values
+	 */
+	function getAverageByMonth($year)
+	{
+		$sql = "SELECT date_format(datef,'%m') as dm, avg(total) FROM ".MAIN_DB_PREFIX."facture";
+		$sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
+		if ($this->socid)
+		{
+			$sql .= " AND fk_soc = ".$this->socid;
+		}
+		$sql .= " GROUP BY dm DESC";
+
+		return $this->_getAverageByMonth($year, $sql);
+	}
 }
 
 ?>

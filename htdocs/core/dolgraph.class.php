@@ -347,6 +347,11 @@ class DolGraph
 		return $vals[0];
 	}
 
+	/**
+	 * Return max value of all data
+	 *
+	 * @return 	int		Max value of all data
+	 */
 	function GetCeilMaxValue()
 	{
 		$max = $this->GetMaxValueInData();
@@ -357,12 +362,19 @@ class DolGraph
 		{
 			$factor*=10;
 		}
-		$res=ceil($max/$factor)*$factor;
+
+		$res=0;
+		if (is_numeric($max)) $res=ceil($max/$factor)*$factor;
 
 		//print "max=".$max." res=".$res;
 		return $res;
 	}
 
+	/**
+	 * Return min value of all data
+	 *
+	 * @return 	int		Max value of all data
+	 */
 	function GetFloorMinValue()
 	{
 		$min = $this->GetMinValueInData();
@@ -373,6 +385,7 @@ class DolGraph
 		{
 			$factor*=10;
 		}
+		
 		$res=floor($min/$factor)*$factor;
 
 		//print "min=".$min." res=".$res;
