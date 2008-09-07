@@ -303,8 +303,6 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 				fwrite ($fichier, "<guid isPermaLink=\"true\"><![CDATA[".$uid."]]></guid>\n");
 				fwrite ($fichier, "<source><![CDATA[Dolibarr]]></source>\n");
 				fwrite ($fichier, "</item>\n");	
-				
-				//chmod($fichierout, 0664);				
 			}
 		}
 
@@ -313,6 +311,11 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 		fwrite($fichier, '</rss>');
 
 		fclose($fichier);
+
+		// We change mod to allow file to be overwritten if dump is launched
+		// from command line or a web session.
+		// 0662 = rw-rw--w-
+		@chmod($fichier, 0662);
 	}
 }
 
