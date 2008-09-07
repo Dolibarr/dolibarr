@@ -18,8 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 
@@ -30,7 +28,7 @@
 		\author		Benoit Mortier
 		\author		Regis Houssin
 		\author		Laurent Destailleur
-		\version 	$Revision$
+		\version 	$Id$
 */
 class Ldap
 {
@@ -599,6 +597,10 @@ class Ldap
 		{
 			fputs($fp, $content);
 			fclose($fp);
+			// We change mod to allow file to be overwritten if dump is launched
+			// from command line or a web session.
+			// 0662 = rw-rw--w-
+			@chmod($file, 0662);
 			return 1;
 		}
 		else
