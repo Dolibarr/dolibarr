@@ -599,8 +599,8 @@ class Ldap
 			fclose($fp);
 			// We change mod to allow file to be overwritten if dump is launched
 			// from command line or a web session.
-			// 0662 = rw-rw--w-
-			@chmod($file, 0662);
+			// 0662 = rw-rw-rw-
+			@chmod($file, 0666);
 			return 1;
 		}
 		else
