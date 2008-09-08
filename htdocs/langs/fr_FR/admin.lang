@@ -155,6 +155,7 @@ ProtectAndEncryptPdfFiles=Protection et encryption des pdf générés
 ProtectAndEncryptPdfFilesDesc=La protection d'un document pdf laisse le document libre à la lecture et à l'impression avec tout logiciel de lecture PDF. Par contre, la modification et la copie deviennent impossible.
 DolibarrLicense=Licence
 DolibarrProjectLeader=Chef de projet
+Developpers=Développeurs/contributeurs
 OtherDeveloppers=Autres développeurs/contributeurs
 OfficialWebSite=Site web officiel internationnal
 OfficialWebSiteFr=Site web officiel francophone

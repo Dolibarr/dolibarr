@@ -51,17 +51,11 @@ print '</ul>';
 
 print "<br>\n";
 
-print $langs->trans("DolibarrProjectLeader").':';
+print $langs->trans("Developpers").':';
 print '<ul>';
-print '<li><a target="blank" href="http://rodolphe.quiedeville.org">Rodolphe Quiédeville</a>';
-print '</ul>';
-
-print "<br>\n";
-
-print $langs->trans("OtherDeveloppers").':';
-print '<ul>';
+print '<li><a target="blank" href="http://rodolphe.quiedeville.org">Rodolphe Quiédeville</a> ('.$langs->trans("Author").')';
 print '<li><a target="blank" href="http://www.ipsyn.net">Jean-Louis Bergamo</a></li>';
-print '<li><a target="blank" href="http://www.destailleur.fr/">Laurent Destailleur</a></li>';
+print '<li><a target="blank" href="http://www.destailleur.fr/">Laurent Destailleur</a> ('.$langs->trans("DolibarrProjectLeader").')</li>';
 print '<li>Eric Seigne</li>';
 print '<li>Benoit Mortier</li>';
 print '<li>Régis Houssin</li>';
@@ -82,7 +76,7 @@ if (eregi('^fr_',$langs->getDefaultLang()))
 	print '<a target="blank" href="http://www.dolibarr.fr/">'.$langs->trans("OfficialWebSiteFr").'</a>';
 	print '</li>';
 	print '<li>';
-	print '<a target="blank" href="http://www.dolibarr.com/wikidev/">'.$langs->trans("OfficialWikiFr").'</a>';
+	print '<a target="blank" href="http://wiki.dolibarr.org/">'.$langs->trans("OfficialWikiFr").'</a>';
 	print '</li>';
 }
 print '<li>';

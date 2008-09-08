@@ -156,6 +156,7 @@ ProtectAndEncryptPdfFilesDesc=Protection of a PDF document keeps it available to
 Feature=Feature
 DolibarrLicense=License
 DolibarrProjectLeader=Project leader
+Developpers=Developers/contributors
 OtherDeveloppers=Other developers/contributors
 OfficialWebSite=International official web site
 OfficialWebSiteFr=French official web site
