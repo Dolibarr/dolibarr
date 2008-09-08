@@ -160,9 +160,7 @@ $oldyear=0;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	$nbproduct = $val['nb'];
-	$total = price($val['total']);
-	$avg = price($val['avg']);
+	print $avg;
 	while ($oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
@@ -175,9 +173,9 @@ foreach ($data as $val)
 	}
 	print '<tr height="24">';
 	print '<td align="center"><a href="month.php?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
-	print '<td align="right">'.$nbproduct.'</td>';
-	print '<td align="right">'.$total.'</td>';
-	print '<td align="right">'.$avg.'</td>';
+	print '<td align="right">'.$val['nb'].'</td>';
+	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
 	print '</tr>';
 	$oldyear=$year;
 }

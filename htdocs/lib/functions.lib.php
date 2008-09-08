@@ -1994,7 +1994,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 	// Output separators by default (french)
 	$dec=','; $thousand=' ';
 
-	// Si $outlangs non force, on prend langue utilisateur
+	// If $outlangs not forced, we use use language
 	if (! is_object($outlangs)) $outlangs=$langs;
 
 	if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
@@ -2010,7 +2010,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 	//print "decpart=".$decpart."<br>";
 	$end='';
 
-	// On augmente nbdecimal au besoin si il y a plus de decimales que nbdecimal
+	// We increase nbdecimal if there is more decimal than asked (to not loose information)
 	if (strlen($decpart) > $nbdecimal) $nbdecimal=strlen($decpart);
 	// Si on depasse max
 	if ($trunc && $nbdecimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN)
@@ -2023,7 +2023,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 		}
 	}
 
-	// Formate nombre
+	// Format number
 	if ($html)
 	{
 		$output=ereg_replace(' ','&nbsp;',number_format($amount, $nbdecimal, $dec, $thousand));
