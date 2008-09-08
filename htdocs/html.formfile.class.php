@@ -46,12 +46,12 @@ class FormFile
 
 
 	/**
-	 *    	\brief      Affiche formulaire ajout fichier
+	 *    	\brief      Show file add form
 	 *    	\param      url				Url
 	 *    	\param      titre			Titre zone
 	 *    	\param      addcancel		1=Ajoute un bouton 'Annuler'
 	 *		\param		sectionid		If upload must be done inside a particular ECM section
-	 *		\return		int				<0 si ko, >0 si ok
+	 * 		\return		int				<0 si ko, >0 si ok
 	 */
 	function form_attach_new_file($url,$titre='',$addcancel=0, $sectionid=0)
 	{
@@ -98,7 +98,7 @@ class FormFile
 			print "</table>";
 
 			print '</form>';
-			print '<br>';
+			if (empty($sectionid)) print '<br>';
 				
 			print "\n<!-- End form attach new file -->\n\n";
 		}
@@ -384,17 +384,18 @@ class FormFile
 	 * 		\param		forcedownload		Mime type is forced to 'application/binary' to have a download
 	 * 		\param		relativepath		Relative path of docs (autodefined if not provided)
 	 * 		\param		permtodelete		Permission to delete
-	 *		\return		int					<0 if KO, nb of files shown if OK
+	 * 		\param		useinecm			Change output for use in ecm module
+	 * 		\return		int					<0 if KO, nb of files shown if OK
 	 */
-	function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1)
+	function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0)
 	{
 		global $user, $conf, $langs;
 		global $bc;
 		global $sortfield, $sortorder;
 		 
 		// Affiche liste des documents existant
-		print_titre($langs->trans("AttachedFiles"));
-
+		if (empty($useinecm)) print_titre($langs->trans("AttachedFiles"));
+		else { $bc[true]=''; $bc[false]=''; };
 		$url=$_SERVER["PHP_SELF"];
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';

@@ -24,13 +24,14 @@
  *  \version    $Id$
  */
 
+
 /**
  * Show picto of a tree view
  *
  * @param unknown_type $tab		Array of entries in correct order
- * @param unknown_type $key		Key of value	
+ * @param unknown_type $key		Key of value to show picto
  */
-function tree_showpad(&$tab,$key)
+function tree_showpad(&$tab,$key,$selected=0)
 {
 	$pos=1;
 	while ($pos <= $tab[$key]['level'] && $tab[$key]['level'] > 0)
@@ -51,8 +52,6 @@ function tree_showpad(&$tab,$key)
 		$pos++;
 	}
 }
-
-
 
 
 

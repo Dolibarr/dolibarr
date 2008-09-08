@@ -431,7 +431,7 @@ class EcmDirectory // extends CommonObject
   	}
   	
   	/**
-	* 	\brief		Load this->motherof array
+	* 	\brief		Load this->motherof that is array(id_son=>id_parent, ...)
 	*	\return		int		<0 if KO, >0 if OK
 	*/
 	function load_motherof()
@@ -469,9 +469,14 @@ class EcmDirectory // extends CommonObject
 	*				id_mere = id de la categorie mere
 	*				id_children = tableau des id enfant
 	*				label = nom de la categorie
-	*				fulllabel = nom avec chemin complet de la categorie
-	*				fullpath = chemin complet compose des id
-	* 	\param		force		Force reload of full arbo even if already loaded
+	*				cachenbofdoc = nb of documents
+	*				date_c = date creation
+	* 				fk_user_c = user creation
+	*  				login_c = login creation
+	* 				fullpath	Full path (Added by build_path_from_id_categ call)
+	* 				fulllabel	Full label (Added by build_path_from_id_categ call)
+	* 				level		Level of line (Added by build_path_from_id_categ call)
+	*  	\param		force		Force reload of full arbo even if already loaded
 	*	\return		array		Tableau de array
 	*/
 	function get_full_arbo($force=0)
@@ -481,8 +486,8 @@ class EcmDirectory // extends CommonObject
 			return $this->cats;
 		}
 		
-		// Init this->motherof array
-		$this->load_motherof();
+		// Init this->motherof that is array(id_son=>id_parent, ...)
+		$this->load_motherof();	
 
 		// Charge tableau des categories
 		$sql = "SELECT c.rowid as rowid, c.label as label,";
