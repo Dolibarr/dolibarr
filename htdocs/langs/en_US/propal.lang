@@ -25,6 +25,7 @@ LastProposals=Last proposals
 SearchAProposal=Search a proposal
 ProposalsStatistics=Commercial proposals' statistics
 NumberOfProposalsByMonth=Number by month
+AmountOfProposalsByMonthHT=Amount by month (net of tax)
 NbOfProposals=Number of commercial proposals
 ShowPropal=Show proposal
 PropalsDraft=Drafts

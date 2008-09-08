@@ -95,7 +95,7 @@ if (! $mesg)
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
 	$px->mode='depth';
-	$px->SetTitle($langs->trans("NbOfProposals"));
+	$px->SetTitle($langs->trans("NumberOfProposalsByMonth"));
 
     $px->draw($filenamenb);
 }

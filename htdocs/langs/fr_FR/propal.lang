@@ -25,6 +25,7 @@ LastProposals=Dernières propositions
 SearchAProposal=Rechercher une propale
 ProposalsStatistics=Statistiques des propositions commerciales
 NumberOfProposalsByMonth=Nombre par mois
+AmountOfProposalsByMonthHT=Montant par mois (HT)
 NbOfProposals=Nombre de propositions commerciales
 ShowPropal=Afficher proposition
 PropalsDraft=Brouillons
