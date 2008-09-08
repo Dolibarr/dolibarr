@@ -73,9 +73,9 @@ $stats = new FactureStats($db, $socid, $mode);
 
 $data = $stats->getNbByMonth($year);
 
-$filename = $dir."/invoices-".$year.".png";
-if ($mode == 'customer') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoices-'.$year.'.png';
-if ($mode == 'supplier') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoices-'.$year.'.png';
+$filename = $dir."/invoicesnb-".$year.".png";
+if ($mode == 'customer') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesnb-'.$year.'.png';
+if ($mode == 'supplier') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicesnb-'.$year.'.png';
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
@@ -84,7 +84,6 @@ if (! $mesg)
     $px->SetData($data);
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue());
-    $px->SetPrecisionY(0);
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
     $px->SetShading(3);
@@ -109,7 +108,6 @@ if (! $mesg)
     $px->SetYLabel($langs->trans("AmountTotal"));
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue());
-    $px->SetPrecisionY(0);
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
     $px->SetShading(3);
@@ -144,7 +142,7 @@ if (! $mesg)
     $px->SetMinValue($px->GetFloorMinValue());
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
-    $px->SetShading(5);
+    $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
     $px->draw($filename_avg);

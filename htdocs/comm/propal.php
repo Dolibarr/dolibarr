@@ -659,7 +659,11 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
 	$propal = new Propal($db);
-	if (! $propal->fetch($_POST['propalid']) > 0) dolibarr_print_error($db);
+	if (! $propal->fetch($_POST['propalid']) > 0) 
+	{
+		dolibarr_print_error($db,$propal->error);
+		exit;
+	}
 
 	// Define info_bits
 	$info_bits=0;
@@ -671,9 +675,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 
 	// On vérifie que le prix minimum est respecté
 	$productid = $_POST['productid'] ;
-	$pruduct = new Product($db) ;
-	$pruduct->fetch($productid) ;
-	if ($pruduct->price_min && ($_POST['productid']!='')&&( price2num($_POST['subprice'])*(1-price2num($_POST['remise_percent'])/100) < price2num($pruduct->price_min)))
+	if ($productid)
+	{
+		$pruduct = new Product($db) ;
+		$res=$pruduct->fetch($productid) ;
+	}
+	if ($productid && $pruduct->price_min && ( price2num($_POST['subprice'])*(1-price2num($_POST['remise_percent'])/100) < price2num($pruduct->price_min)))
 	{
 		$mesg = '<div class="error">'.$langs->trans("CantBeLessThanMinPrice",price2num($pruduct->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)).'</div>' ;
 	}
@@ -1913,18 +1920,24 @@ else
 
 	if ($result)
 	{
-		$num = $db->num_rows($result);
 		$propalstatic=new Propal($db);
-		print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
+		
+		$num = $db->num_rows($result);
+		
+		$param='&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut;
+		if ($month) $param.='&amp;month='.$month;
+		if ($year) $param.='&amp;year='.$year;
+		print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php',$param,$sortfield,$sortorder,'',$num);
+		
 		$i = 0;
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.total_ht','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 		print '<td class="liste_titre">&nbsp;</td>';
         print "</tr>\n";
 		// Lignes des champs de filtre
@@ -1938,12 +1951,11 @@ else
 		print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
 		print '</td>';
         print '<td class="liste_titre" colspan="1" align="right">';
-        print $langs->trans('Month').': <input class="flat" type="text" size="2" maxlength="2" name="month" value="'.$month.'">';
+        print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
         print '&nbsp;'.$langs->trans('Year').': ';
         $max_year = date("Y");
         $syear = $year;
-        if($syear == '')
-            $syear = date("Y");
+        //if($syear == '') $syear = date("Y");
         $html->select_year($syear,'year',1, '', $max_year);
         print '</td>';
 		print '<td class="liste_titre" colspan="1">&nbsp;</td>';
@@ -2015,7 +2027,7 @@ else
 			// Date fin validite
 			if ($objp->dfv)
 			{
-				print '<td align="center">'.dolibarr_print_date($objp->dfv);
+				print '<td align="center">'.dolibarr_print_date($objp->dfv,'day');
 				print '</td>';
 			}
 			else

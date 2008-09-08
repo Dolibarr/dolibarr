@@ -69,14 +69,14 @@ create_exdir($dir);
 $stats = new FactureStats($db, $socid, $mode);
 
 
-// Build graphic number of invoices
+// Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-$filenamenbinvoices = $dir."/invoicesnbinyear-".$year.".png";
-if ($mode == 'customer') $fileurlnbinvoices = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
-if ($mode == 'supplier') $fileurlnbinvoices = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesnbinyear-'.$year.'.png';
+$filenamenb = $dir."/invoicesnbinyear-".$year.".png";
+if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
+if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesnbinyear-'.$year.'.png';
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
@@ -101,17 +101,17 @@ if (! $mesg)
 	$px->mode='depth';
 	$px->SetTitle($langs->trans("NumberOfBillsByMonth"));
 
-	$px->draw($filenamenbinvoices);
+	$px->draw($filenamenb);
 }
 
-// Build graphic amount of invoices
+// Build graphic amount of object
 $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-$filenameamountinvoices = $dir."/invoicesamountinyear-".$year.".png";
-if ($mode == 'customer') $fileurlamountinvoices = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
-if ($mode == 'supplier') $fileurlamountinvoices = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesamountinyear-'.$year.'.png';
+$filenameamount = $dir."/invoicesamountinyear-".$year.".png";
+if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
+if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesamountinyear-'.$year.'.png';
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
@@ -137,7 +137,7 @@ if (! $mesg)
 	$px->mode='depth';
 	$px->SetTitle($langs->trans("AmountOfBillsByMonthHT"));
 
-	$px->draw($filenameamountinvoices);
+	$px->draw($filenameamount);
 }
 
 
@@ -192,9 +192,9 @@ print '<td align="center" valign="top">';
 print '<table class="border" width="100%"><tr valign="top"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
-	print '<img src="'.$fileurlnbinvoices.'" title="'.$langs->trans("NumberOfBills").'" alt="'.$langs->trans("NumberOfBills").'">';
+	print '<img src="'.$fileurlnb.'" title="'.$langs->trans("NumberOfBills").'" alt="'.$langs->trans("NumberOfBills").'">';
 	print "<br>\n";
-	print '<img src="'.$fileurlamountinvoices.'" title="'.$langs->trans("AmountOfBills").'" alt="'.$langs->trans("AmountOfBills").'">';
+	print '<img src="'.$fileurlamount.'" title="'.$langs->trans("AmountOfBills").'" alt="'.$langs->trans("AmountOfBills").'">';
 }
 print '</td></tr></table>';
 

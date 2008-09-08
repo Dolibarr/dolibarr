@@ -28,39 +28,48 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/propal/stats/propalestats.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 
+$GRAPHWIDTH=500;
+$GRAPHHEIGHT=200;
 
-llxHeader();
+// Check security access
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
 
 $year = isset($_GET["year"])?$_GET["year"]:date("Y",time());
+
+
+/*
+ * View
+ */
+ 
+llxHeader();
+
+$dir=$conf->propal->dir_temp;
 
 $mesg = '<a href="month.php?year='.($year - 1).'">'.img_previous().'</a> ';
 $mesg.= $langs->trans("Year")." $year";
 $mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
-
-$WIDTH=500;
-$HEIGHT=200;
-
-/*
- *
- *
- */
-
 print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
 
-$stats = new PropaleStats($db);
-$data = $stats->getNbByMonth($year);
+create_exdir($dir);
 
-create_exdir($conf->propal->dir_temp);
+$stats = new PropaleStats($db, $socid);
+
+
+$data = $stats->getNbByMonth($year);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-	$filename = $conf->propal->dir_temp.'/propale-'.$user->id.'-'.$year.'.png';
-	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propale-'.$user->id.'-'.$year.'.png';
+	$filename = $dir.'/proposalsnb-'.$user->id.'-'.$year.'.png';
+	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnb-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename = $conf->propal->dir_temp.'/propale'.$year.'.png';
-	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propale'.$year.'.png';
+	$filename = $dir.'/proposalsnb-'.$year.'.png';
+	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnb-'.$year.'.png';
 }
 
 $px = new DolGraph();
@@ -68,34 +77,29 @@ $mesg = $px->isGraphKo();
 if (! $mesg)
 {
     $px->SetData($data);
-	$px->SetPrecisionY(0);
     $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetWidth($WIDTH);
-    $px->SetHeight($HEIGHT);
+    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetWidth($GRAPHWIDTH);
+    $px->SetHeight($GRAPHHEIGHT);
     $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
     $px->draw($filename);
 }
 
-$res = $stats->getAmountByMonth($year);
 
-$data = array();
 
-for ($i = 1 ; $i < 13 ; $i++)
-{
-  $data[$i-1] = array(ucfirst(substr(strftime("%b",dolibarr_mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
-}
+$data = $stats->getAmountByMonth($year);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-	$filename_amount = $conf->propal->dir_temp.'/propaleamount-'.$user->id.'-'.$year.'.png';
-	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleamount-'.$user->id.'-'.$year.'.png';
+	$filename_amount = $dir.'/proposalsamount-'.$user->id.'-'.$year.'.png';
+	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamount-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename_amount = $conf->propal->dir_temp.'/propaleamount'.$year.'.png';
-	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleamount'.$year.'.png';
+	$filename_amount = $dir.'/proposalsamount-'.$year.'.png';
+	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamount-'.$year.'.png';
 }
 
 $px = new DolGraph();
@@ -103,16 +107,18 @@ $mesg = $px->isGraphKo();
 if (! $mesg)
 {
     $px->SetData($data);
-	$px->SetPrecisionY(0);
     $px->SetYLabel($langs->trans("AmountTotal"));
     $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetWidth($WIDTH);
-    $px->SetHeight($HEIGHT);
+    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetWidth($GRAPHWIDTH);
+    $px->SetHeight($GRAPHHEIGHT);
     $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
-    $px->draw($filename_amount, $data, $year);
+    $px->draw($filename_amount);
 }
+
+
 $res = $stats->getAverageByMonth($year);
 
 $data = array();
@@ -124,13 +130,13 @@ for ($i = 1 ; $i < 13 ; $i++)
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-	$filename_avg = $conf->propal->dir_temp.'/propaleaverage-'.$user->id.'-'.$year.'.png';
-	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleaverage-'.$user->id.'-'.$year.'.png';
+	$filename_avg = $dir.'/proposalsaverage-'.$user->id.'-'.$year.'.png';
+	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsaverage-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename_avg = $conf->propal->dir_temp.'/propaleaverage'.$year.'.png';
-	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleaverage'.$year.'.png';
+	$filename_avg = $dir.'/proposalsaverage-'.$year.'.png';
+	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsaverage-'.$year.'.png';
 }
 
 $px = new DolGraph();
@@ -141,8 +147,9 @@ if (! $mesg)
 	$px->SetPrecisionY(0);
     $px->SetYLabel($langs->trans("AmountAverage"));
     $px->SetMaxValue($px->GetCeilMaxValue());
-    $px->SetWidth($WIDTH);
-    $px->SetHeight($HEIGHT);
+    $px->SetMinValue($px->GetFloorMinValue());
+    $px->SetWidth($GRAPHWIDTH);
+    $px->SetHeight($GRAPHHEIGHT);
     $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);

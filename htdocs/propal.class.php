@@ -37,10 +37,9 @@ require_once(DOL_DOCUMENT_ROOT ."/contact.class.php");
 
 
 /**
- \class      Propal
- \brief      Classe permettant la gestion des propales
+ *	\class      Propal
+ *	\brief      Classe permettant la gestion des propales
  */
-
 class Propal extends CommonObject
 {
 	var $db;
@@ -95,9 +94,9 @@ class Propal extends CommonObject
 
 	/**
 	 *		\brief      Constructeur
-	 *      \param      DB          Handler d'acc�s base
-	 *      \param      socid		Id de la soci�t�
-	 *      \param      propalid    Id de la propal
+	 *      \param      DB          Database handler
+	 *      \param      socid		Id third party
+	 *      \param      propalid    Id proposal
 	 */
 	function Propal($DB, $socid="", $propalid=0)
 	{

@@ -111,6 +111,7 @@ class Stats
 	{
 		$result = array();
 		
+		dolibarr_syslog("Stats::_getNbByYear sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -139,6 +140,7 @@ class Stats
 	{
 		$result = array();
 		
+		dolibarr_syslog("Stats::_getAllByYear sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -169,8 +171,8 @@ class Stats
 	{
 		$result = array();
 
-		$resql=$this->db->query($sql);
 		dolibarr_syslog("Stats::_getNbByMonth sql=".$sql);
+		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
@@ -248,7 +250,7 @@ class Stats
 	{
 		$result = array();
 
-		dolibarr_syslog("Stats::_getAmountByMonth sql=".$sql);
+		dolibarr_syslog("Stats::_getAverageByMonth sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

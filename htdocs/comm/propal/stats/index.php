@@ -31,28 +31,46 @@ require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 $WIDTH=500;
 $HEIGHT=200;
 
+// Sécurité accés client
+if ($user->societe_id > 0)
+{
+	$action = '';
+	$socid = $user->societe_id;
+}
 
+$year = strftime("%Y", time());
+$startyear=$year-2;
+$endyear=$year;
+
+/*
+ * View
+ */
+ 
 llxHeader();
 
 print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
 
-$stats = new PropaleStats($db);
-$year = strftime("%Y", time());
-$startyear=$year-2;
-$endyear=$year;
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+$dir=$conf->propal->dir_temp;
 
-create_exdir($conf->propal->dir_temp);
+create_exdir($dir);
+
+$stats = new PropaleStats($db, $socid);
+
+// Build graphic number of object
+$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+//var_dump($data);
+// $data = array(array('Lib',val1,val2,val3),...)
+
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-	$filename = $conf->propal->dir_temp.'/nbpropale2year-'.$user->id.'-'.$year.'.png';
-	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$user->id.'-'.$year.'.png';
+	$filenamenb = $conf->propal->dir_temp.'/proposalsnbinyear-'.$user->id.'-'.$year.'.png';
+	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename = $conf->propal->dir_temp.'/nbpropale2year-'.$year.'.png';
-	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$year.'.png';
+	$filenamenb = $conf->propal->dir_temp.'/proposalsnbinyear-'.$year.'.png';
+	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$year.'.png';
 }
 
 $px = new DolGraph();
@@ -69,6 +87,7 @@ if (! $mesg)
 	}
     $px->SetLegend($legend);
     $px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetMinValue(min(0,$px->GetFloorMinValue()));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
 	$px->SetYLabel($langs->trans("NbOfProposals"));
@@ -76,60 +95,109 @@ if (! $mesg)
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
 	$px->mode='depth';
-    $px->draw($filename);
+	$px->SetTitle($langs->trans("NbOfProposals"));
+
+    $px->draw($filenamenb);
 }
 
-$sql = "SELECT count(*) as nb, date_format(p.datep,'%Y') as dm, sum(p.total) as total_ttc";
-if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
-if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE fk_statut > 0";
-if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-if($user->societe_id)
-{
-   $sql .= " AND p.fk_soc = ".$user->societe_id;
-}
-$sql.= " GROUP BY dm DESC ";
-$result=$db->query($sql);
-if ($result)
-{
-  $num = $db->num_rows($result);
+// Build graphic amount of object
+$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+//var_dump($data);
+// $data = array(array('Lib',val1,val2,val3),...)
 
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-  print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NbOfProposals").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
-  print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-  
-  if ($mesg)
-  {
-  	print "$mesg";
-  }
-  else
-  {
-  	print '<img src="'.$fileurl.'" alt="Nombre de proposition par mois">';
-  }
-  
-  print '</td></tr>';
-  $i = 0;
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object($result);
-      $nbproduct = $obj->nb;
-      $year = $obj->dm;
-      print "<tr>";
-      print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td>';
-      print '<td align="center">'.$nbproduct.'</td>';
-      print '<td align="center">'.price($obj->total_ttc).'</td></tr>';
-      $i++;
-    }
-
-  print '</table>';
-  $db->free($result);
+if (!$user->rights->societe->client->voir || $user->societe_id)
+{
+	$filenameamount = $conf->propal->dir_temp.'/proposalsamountinyear-'.$user->id.'-'.$year.'.png';
+	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-  dolibarr_print_error($db);
+	$filenameamount = $conf->propal->dir_temp.'/proposalsamountinyear-'.$year.'.png';
+	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$year.'.png';
 }
 
+$px = new DolGraph();
+$mesg = $px->isGraphKo();
+if (! $mesg)
+{
+	$px->SetData($data);
+	$px->SetPrecisionY(0);
+	$i=$startyear;
+	while ($i <= $endyear)
+	{
+		$legend[]=$i;
+		$i++;
+	}
+	$px->SetLegend($legend);
+	$px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetMinValue(min(0,$px->GetFloorMinValue()));
+	$px->SetWidth($WIDTH);
+	$px->SetHeight($HEIGHT);
+	$px->SetYLabel($langs->trans("AmountOfProposals"));
+	$px->SetShading(3);
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
+	$px->mode='depth';
+	$px->SetTitle($langs->trans("AmountOfProposalsByMonthHT"));
+
+	$px->draw($filenameamount);
+}
+
+print '<table class="notopnoleftnopadd" width="100%"><tr>';
+print '<td align="center" valign="top">';
+
+// Show array
+$data = $stats->getAllByYear();
+
+print '<table class="border" width="100%">';
+print '<tr height="24">';
+print '<td align="center">'.$langs->trans("Year").'</td>';
+print '<td align="center">'.$langs->trans("NbOfProposals").'</td>';
+print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '</tr>';
+  
+$oldyear=0;
+foreach ($data as $val)
+{
+	$year = $val['year'];
+	print $avg;
+	while ($oldyear > $year+1)
+	{	// If we have empty year
+		$oldyear--;
+		print '<tr height="24">';
+		print '<td align="center"><a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+		print '<td align="right">0</td>';
+		print '<td align="right">0</td>';
+		print '<td align="right">0</td>';
+		print '</tr>';
+	}
+	print '<tr height="24">';
+    print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td>';
+	print '<td align="right">'.$val['nb'].'</td>';
+	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+	print '</tr>';
+	$oldyear=$year;
+}
+
+print '</table>';
+
+
+print '</td>';
+print '<td align="center" valign="top">';
+
+// Show graphs
+print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+if ($mesg) { print $mesg; }
+else {
+	print '<img src="'.$fileurlnb.'" title="'.$langs->trans("NbOfProposals").'" alt="'.$langs->trans("NbOfProposals").'">';
+	print "<br>\n";
+	print '<img src="'.$fileurlamount.'" title="'.$langs->trans("AmountTotal").'" alt="'.$langs->trans("AmountTotal").'">';
+}
+print '</td></tr></table>';
+
+print '</td></tr></table>';
 
 $db->close();
 

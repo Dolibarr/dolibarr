@@ -41,6 +41,14 @@ class FactureStats extends Stats
 	var $table_element;
 	var $field;
 	
+	/**
+	 * Constructor
+	 *
+	 * @param 	$DB		Database handler
+	 * @param 	$socid	Id third party
+	 * @param 	$mode	Option
+	 * @return FactureStats
+	 */
 	function FactureStats($DB, $socid=0, $mode)
 	{
 		$this->db = $DB;
