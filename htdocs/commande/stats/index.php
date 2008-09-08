@@ -41,36 +41,39 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+$year = strftime("%Y", time());
+$startyear=$year-2;
+$endyear=$year;
 
+/*
+ * View
+ */
+ 
 llxHeader();
 
 print_fiche_titre($langs->trans("OrdersStatistics"), $mesg);
 
-$stats = new CommandeStats($db, $socid);
-$year = strftime("%Y", time());
-$startyear=$year-2;
-$endyear=$year;
-$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
-
-// Création répertoire pour images générées
 $dir=$conf->commande->dir_temp;
-if (! file_exists($dir))
-{
-    if (create_exdir($dir) < 0)
-    {
-        $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
-    }
-}
+
+create_exdir($dir);
+
+$stats = new CommandeStats($db, $socid);
+
+// Build graphic number of object
+$data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
+//var_dump($data);
+// $data = array(array('Lib',val1,val2,val3),...)
+
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-	$filename = $conf->commande->dir_temp.'/nbcommande2year-'.$user->id.'-'.$year.'.png';
-	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$user->id.'-'.$year.'.png';
+	$filenamenb = $dir.'/ordersnbinyear-'.$user->id.'-'.$year.'.png';
+	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filename = $conf->commande->dir_temp.'/nbcommande2year-'.$year.'.png';
-	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$year.'.png';
+	$filenamenb = $dir.'/ordersnbinyear-'.$year.'.png';
+	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$year.'.png';
 }
 
 $px = new DolGraph();
@@ -87,6 +90,7 @@ if (! $mesg)
 	}
     $px->SetLegend($legend);
     $px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetMinValue(min(0,$px->GetFloorMinValue()));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("NbOfOrder"));
@@ -94,30 +98,108 @@ if (! $mesg)
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
     $px->mode='depth';
-	$px->draw($filename);
+	$px->SetTitle($langs->trans("NumberOfOrdersByMonth"));
+	$px->draw($filenamenb);
 }      
-$rows = $stats->getNbByYear();
-$num = sizeof($rows);
+
+// Build graphic amount of object
+$data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
+//var_dump($data);
+// $data = array(array('Lib',val1,val2,val3),...)
+
+if (!$user->rights->societe->client->voir || $user->societe_id)
+{
+	$filenameamount = $dir.'/ordersamountinyear-'.$user->id.'-'.$year.'.png';
+	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
+}
+else
+{
+	$filenameamount = $dir.'/ordersamountinyear-'.$year.'.png';
+	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$year.'.png';
+}
+
+$px = new DolGraph();
+$mesg = $px->isGraphKo();
+if (! $mesg)
+{
+	$px->SetData($data);
+	$px->SetPrecisionY(0);
+	$i=$startyear;
+	while ($i <= $endyear)
+	{
+		$legend[]=$i;
+		$i++;
+	}
+	$px->SetLegend($legend);
+	$px->SetMaxValue($px->GetCeilMaxValue());
+	$px->SetMinValue(min(0,$px->GetFloorMinValue()));
+	$px->SetWidth($WIDTH);
+	$px->SetHeight($HEIGHT);
+	$px->SetYLabel($langs->trans("AmountOfOrders"));
+	$px->SetShading(3);
+	$px->SetHorizTickIncrement(1);
+	$px->SetPrecisionY(0);
+	$px->mode='depth';
+	$px->SetTitle($langs->trans("AmountOfOrdersByMonthHT"));
+
+	$px->draw($filenameamount);
+}
+
+print '<table class="notopnoleftnopadd" width="100%"><tr>';
+print '<td align="center" valign="top">';
+
+// Show array
+$data = $stats->getAllByYear();
 
 print '<table class="border" width="100%">';
-print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NbOfOrders").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-if ($px->isGraphKo()) { print '<font class="error">'.$px->isGraphKo().'</div>'; }
-else { print '<img src="'.$fileurl.'" alt="Nombre de commande par mois">'; }
-print '</td></tr>';
-$i = 0;
-while (list($key, $value) = each ($rows))
+print '<tr height="24">';
+print '<td align="center">'.$langs->trans("Year").'</td>';
+print '<td align="center">'.$langs->trans("NbOfOrders").'</td>';
+print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '</tr>';
+  
+$oldyear=0;
+foreach ($data as $val)
 {
-  $year = $value[0];
-  $nbproduct = $value[1];
-  $price = $value[2];
-  print "<tr>";
-  print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td align="center">'.price($price).'</td></tr>';
-  $i++;
+	$year = $val['year'];
+	print $avg;
+	while ($oldyear > $year+1)
+	{	// If we have empty year
+		$oldyear--;
+		print '<tr height="24">';
+		print '<td align="center"><a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+		print '<td align="right">0</td>';
+		print '<td align="right">0</td>';
+		print '<td align="right">0</td>';
+		print '</tr>';
+	}
+	print '<tr height="24">';
+    print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td>';
+	print '<td align="right">'.$val['nb'].'</td>';
+	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
+	print '</tr>';
+	$oldyear=$year;
 }
 
 print '</table>';
 
+
+print '</td>';
+print '<td align="center" valign="top">';
+
+// Show graphs
+print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+if ($mesg) { print $mesg; }
+else {
+	print '<img src="'.$fileurlnb.'" title="'.$langs->trans("NbOfOrders").'" alt="'.$langs->trans("NbOfProposals").'">';
+	print "<br>\n";
+	print '<img src="'.$fileurlamount.'" title="'.$langs->trans("AmountTotal").'" alt="'.$langs->trans("AmountTotal").'">';
+}
+print '</td></tr></table>';
+
+print '</td></tr></table>';
 
 $db->close();
 

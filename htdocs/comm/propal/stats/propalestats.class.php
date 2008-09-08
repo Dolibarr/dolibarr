@@ -80,14 +80,10 @@ class PropaleStats extends Stats
 
 		$sql = "SELECT date_format(p.datep,'%m') as dm, count(*)";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE date_format(p.datep,'%Y') = $year AND p.fk_statut > 0";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-		if($user->societe_id)
-		{
-			$sql .= " AND p.fk_soc = ".$user->societe_id;
-		}
+		$sql .= " WHERE date_format(p.datep,'%Y') = ".$year;
+		$sql.= " AND ".$this->where;
 		$sql .= " GROUP BY dm DESC";
 
 		return $this->_getNbByMonth($year, $sql);
@@ -103,15 +99,10 @@ class PropaleStats extends Stats
 		 
 		$sql = "SELECT date_format(p.datep,'%Y') as dm, count(*)";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE p.fk_statut > 0";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-		if($user->societe_id)
-		{
-			$sql .= " AND p.fk_soc = ".$user->societe_id;
-		}
-		$sql .= " GROUP BY dm DESC";
+		$sql.= " WHERE ".$this->where;
+		$sql.= " GROUP BY dm DESC";
 
 		return $this->_getNbByYear($sql);
 	}
@@ -125,15 +116,11 @@ class PropaleStats extends Stats
 		 
 		$sql = "SELECT date_format(p.datep,'%m') as dm, sum(p.total_ht)";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE date_format(p.datep,'%Y') = $year AND p.fk_statut > 0";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-		if($user->societe_id)
-		{
-			$sql .= " AND p.fk_soc = ".$user->societe_id;
-		}
-		$sql .= " GROUP BY dm DESC";
+		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
+		$sql.= " AND ".$this->where;
+		$sql.= " GROUP BY dm DESC";
 
 		return $this->_getAmountByMonth($year, $sql);
 	}
@@ -146,16 +133,12 @@ class PropaleStats extends Stats
 		global $user;
 		 
 		$sql = "SELECT date_format(p.datep,'%m') as dm, avg(p.total_ht)";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE date_format(p.datep,'%Y') = $year AND p.fk_statut > 0";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
-		if($user->societe_id)
-		{
-			$sql .= " AND p.fk_soc = ".$user->societe_id;
-		}
-		$sql .= " GROUP BY dm DESC";
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", sc.fk_soc, sc.fk_user";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE date_format(p.datep,'%Y') = ".$year;
+		$sql.= " AND ".$this->where;
+		$sql.= " GROUP BY dm DESC";
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -170,9 +153,9 @@ class PropaleStats extends Stats
 		global $user;
 		
 		$sql = "SELECT date_format(p.datep,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", sc.fk_soc, sc.fk_user";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
+		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year DESC";
 

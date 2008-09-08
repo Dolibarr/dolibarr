@@ -69,6 +69,7 @@ AllOrders=All orders
 NbOfOrders=Number of orders
 OrdersStatistics=Orders' statistics
 NumberOfOrdersByMonth=Number of orders by month
+AmountOfOrdersByMonthHT=amount of orders by month (net of tax)
 ListOfOrders=List of orders
 CloseOrder=Close order
 ConfirmCloseOrder=Are you sure you want to close this order ? Once an order is closed, it can only be billed.

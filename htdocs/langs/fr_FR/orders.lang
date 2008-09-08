@@ -69,6 +69,7 @@ AllOrders=Toutes les commandes
 NbOfOrders=Nombre de commandes
 OrdersStatistics=Statistiques des commandes
 NumberOfOrdersByMonth=Nombre de commandes par mois
+AmountOfOrdersByMonthHT=Montant total de commandes par mois (HT)
 ListOfOrders=Liste des commandes
 CloseOrder=Cloturer commande
 ConfirmCloseOrder=Êtes-vous sur de vouloir cloturer cette commande ? Une fois une commande cloturée, elle doit être facturée.
