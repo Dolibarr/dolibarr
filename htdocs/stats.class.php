@@ -103,8 +103,9 @@ class Stats
 
 
 	/**
-	 * \brief  Renvoie le nombre d'element par ann�e
-	 *
+	 * 	\brief  	Return nb of elements by year
+	 *	\param		sql		SQL request
+	 * 	\return		array
 	 */
 	function _getNbByYear($sql)
 	{
@@ -129,6 +130,36 @@ class Stats
 		return $result;
 	}
 
+	/**
+	 * 	\brief  	Return nb of elements, total amount and avg amount by year
+	 *	\param		sql		SQL request
+	 * 	\return		array
+	 */
+	function _getAllByYear($sql)
+	{
+		$result = array();
+		
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_object($resql);
+				$result[$i]['year'] = $row->year;
+				$result[$i]['nb'] = $row->nb;
+				$result[$i]['total'] = $row->total;
+				$result[$i]['avg'] = $row->avg;
+				$i++;
+			}
+			$this->db->free($resql);
+		}
+		else {
+			dolibarr_print_error($this->db);
+		}
+		return $result;
+	}	
 	
 	/**
 	 * \brief  Renvoie le nombre de proposition par mois pour une annee donnee
@@ -203,7 +234,7 @@ class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$data[$i-1] = array(ucfirst(substr(strftime("%b",mktime(12,0,0,$i,1,$year)),0,3)), $res[$i]);
+			$data[$i-1] = array(ucfirst(substr(strftime("%b",dolibarr_mktime(12,0,0,$i,1,$year)),0,3)), $res[$i]);
 		}
 
 		return $data;

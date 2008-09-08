@@ -167,7 +167,16 @@ if ($modulepart)
         }
         $original_file=$conf->facture->dir_temp.'/'.$original_file;
     }
-
+    elseif ($modulepart == 'billstatssupplier')
+    {
+        $user->getrights('fourn');
+        if ($user->rights->fournisseur->facture->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->fournisseur->facture->dir_temp.'/'.$original_file;
+    }
+    
     // Wrapping pour les images des stats expeditions
     elseif ($modulepart == 'expeditionstats')
     {

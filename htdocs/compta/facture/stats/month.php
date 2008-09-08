@@ -30,12 +30,18 @@ require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
 $GRAPHWIDTH=500;
 $GRAPHHEIGHT=200;
 
-// Sécurité accés client
+// Check security access
 if ($user->societe_id > 0) 
 {
   $action = '';
   $socid = $user->societe_id;
 }
+
+$year = isset($_GET["year"])?$_GET["year"]:date("Y",time());
+
+$mode='customer';
+if (isset($_GET["mode"])) $mode=$_GET["mode"];
+
 
 
 /*
@@ -44,22 +50,32 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-$year = isset($_GET["year"])?$_GET["year"]:date("Y",time());
+if ($mode == 'customer') 
+{
+	$title=$langs->trans("BillsStatistics");
+	$dir=$conf->facture->dir_temp;
+}
+if ($mode == 'supplier') 
+{
+	$title=$langs->trans("BillsStatisticsSuppliers");
+	$dir=$conf->fournisseur->facture->dir_temp;
+}
 
-$mesg = '<a href="month.php?year='.($year - 1).'">'.img_previous().'</a> ';
+$mesg = '<a href="month.php?year='.($year - 1).'&amp;mode='.$mode.'">'.img_previous().'</a> ';
 $mesg.= $langs->trans("Year")." $year";
-$mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
+$mesg.= ' <a href="month.php?year='.($year + 1).'&amp;mode='.$mode.'">'.img_next().'</a>';
+print_fiche_titre($title, $mesg);
 
-print_fiche_titre($langs->trans("BillsStatistics"), $mesg);
+create_exdir($dir);
 
-$stats = new FactureStats($db, $socid);
-create_exdir($conf->facture->dir_temp);
+$stats = new FactureStats($db, $socid, $mode);
 
 
 $data = $stats->getNbByMonth($year);
 
-$filename = $conf->facture->dir_temp."/facture".$year.".png";
-$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=facture'.$year.'.png';
+$filename = $dir."/invoices-".$year.".png";
+if ($mode == 'customer') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoices-'.$year.'.png';
+if ($mode == 'supplier') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoices-'.$year.'.png';
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
@@ -81,8 +97,9 @@ if (! $mesg)
 
 $data = $stats->getAmountByMonth($year);
 
-$filename_amount = $conf->facture->dir_temp."/factureamount".$year.".png";
-$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureamount'.$year.'.png';
+$filename_amount = $dir."/invoicesamount-".$year.".png";
+if ($mode == 'customer') $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesamount-'.$year.'.png';
+if ($mode == 'supplier') $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicesamount-'.$year.'.png';
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
@@ -112,8 +129,9 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(ucfirst(substr(strftime("%b",dolibarr_mktime(12,12,12,$i,1,$year)),0,3)), $res[$i]);
 }
 
-$filename_avg = $conf->facture->dir_temp."/factureaverage".$year.".png";
-$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureaverage'.$year.'.png';
+$filename_avg = $dir."/invoicesaverage-".$year.".png";
+if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=invoicesaverage-'.$year.'.png';
+if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&file=invoicesaverage-'.$year.'.png';
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();

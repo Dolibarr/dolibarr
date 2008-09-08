@@ -37,6 +37,13 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
+$year = strftime("%Y", time());
+$startyear=$year-2;
+$endyear=$year;
+
+$mode='customer';
+if (isset($_GET["mode"])) $mode=$_GET["mode"];
+
 
 /*
  * View
@@ -44,15 +51,22 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-print_fiche_titre($langs->trans("BillsStatistics"), $mesg);
+if ($mode == 'customer') 
+{
+	$title=$langs->trans("BillsStatistics");
+	$dir=$conf->facture->dir_temp;
+}
+if ($mode == 'supplier') 
+{
+	$title=$langs->trans("BillsStatisticsSuppliers");
+	$dir=$conf->fournisseur->facture->dir_temp;
+}
 
-create_exdir($conf->facture->dir_temp);
+print_fiche_titre($title, $mesg);
 
-$year = strftime("%Y", time());
-$startyear=$year-2;
-$endyear=$year;
+create_exdir($dir);
 
-$stats = new FactureStats($db, $socid);
+$stats = new FactureStats($db, $socid, $mode);
 
 
 // Build graphic number of invoices
@@ -60,8 +74,9 @@ $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-$filenamenbinvoices = $conf->facture->dir_temp."/invoicesnbinyear-".$year.".png";
-$fileurlnbinvoices = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
+$filenamenbinvoices = $dir."/invoicesnbinyear-".$year.".png";
+if ($mode == 'customer') $fileurlnbinvoices = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';
+if ($mode == 'supplier') $fileurlnbinvoices = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesnbinyear-'.$year.'.png';
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
@@ -94,8 +109,9 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-$filenameamountinvoices = $conf->facture->dir_temp."/invoicesamountinyear-".$year.".png";
-$fileurlamountinvoices = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
+$filenameamountinvoices = $dir."/invoicesamountinyear-".$year.".png";
+if ($mode == 'customer') $fileurlamountinvoices = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$year.'.png';
+if ($mode == 'supplier') $fileurlamountinvoices = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicesamountinyear-'.$year.'.png';
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
@@ -125,52 +141,66 @@ if (! $mesg)
 }
 
 
+
+print '<table class="notopnoleftnopadd" width="100%"><tr>';
+print '<td align="center" valign="top">';
+
 // Show array
-$sql = "SELECT date_format(datef,'%Y') as dm, count(*) as nb, sum(total) as total FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0 ";
-if ($socid)
-{
-	$sql .= " AND fk_soc=$socid";
-}
-$sql.= " GROUP BY dm DESC;";
-$resql=$db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
+$data = $stats->getAllByYear();
 
-	print '<table class="border" width="100%">';
-	print '<tr height="24"><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NumberOfBills").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
-	print '<td align="center" valign="top" rowspan="'.($num + 2).'">';
-	if ($mesg) { print $mesg; }
-	else {
-		print '<img src="'.$fileurlnbinvoices.'" title="'.$langs->trans("NumberOfBills").'" alt="'.$langs->trans("NumberOfBills").'">';
-		print "<br>\n";
-		print '<img src="'.$fileurlamountinvoices.'" title="'.$langs->trans("AmountOfBills").'" alt="'.$langs->trans("AmountOfBills").'">';
-	}
-	print '</td></tr>';
+print '<table class="border" width="100%">';
+print '<tr height="24">';
+print '<td align="center">'.$langs->trans("Year").'</td>';
+print '<td align="center">'.$langs->trans("NumberOfBills").'</td>';
+print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '</tr>';
 
-	while ($obj = $db->fetch_object($resql))
-	{
-		$nbproduct = $obj->nb;
-		$year = $obj->dm;
-		$total = price($obj->total);
+$oldyear=0;
+foreach ($data as $val)
+{
+	$year = $val['year'];
+	$nbproduct = $val['nb'];
+	$total = price($val['total']);
+	$avg = price($val['avg']);
+	while ($oldyear > $year+1)
+	{	// If we have empty year
+		$oldyear--;
 		print '<tr height="24">';
-		print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td>';
-		print '<td align="right">'.$nbproduct.'</td>';
-		print '<td align="right">'.$total.'</td></tr>';
-
+		print '<td align="center"><a href="month.php?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
+		print '<td align="right">0</td>';
+		print '<td align="right">0</td>';
+		print '<td align="right">0</td>';
+		print '</tr>';
 	}
-	
-	print '<tr><td colspan="3"></td></tr>';
-	
-	print '</table>';
-	$db->free($resql);
+	print '<tr height="24">';
+	print '<td align="center"><a href="month.php?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
+	print '<td align="right">'.$nbproduct.'</td>';
+	print '<td align="right">'.$total.'</td>';
+	print '<td align="right">'.$avg.'</td>';
+	print '</tr>';
+	$oldyear=$year;
 }
-else
-{
-	dolibarr_print_error($db);
-}
+	
+print '</table>';
+
 
 $db->close();
+
+print '</td>';
+print '<td align="center" valign="top">';
+
+// Show graphs
+print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+if ($mesg) { print $mesg; }
+else {
+	print '<img src="'.$fileurlnbinvoices.'" title="'.$langs->trans("NumberOfBills").'" alt="'.$langs->trans("NumberOfBills").'">';
+	print "<br>\n";
+	print '<img src="'.$fileurlamountinvoices.'" title="'.$langs->trans("AmountOfBills").'" alt="'.$langs->trans("AmountOfBills").'">';
+}
+print '</td></tr></table>';
+
+print '</td></tr></table>';
 
 llxFooter('$Date$ - $Revision$');
 ?>
