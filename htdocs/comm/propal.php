@@ -293,12 +293,21 @@ if ($_REQUEST['action'] == 'setstatut' && $user->rights->propale->cloturer)
 {
 	if (! $_POST['cancel'])
 	{
-		$propal = new Propal($db);
-		$propal->fetch($_GET['propalid']);
-		// prevent browser refresh from closing proposal several times
-		if ($propal->statut==1)
+		if (empty($_REQUEST['statut']))
 		{
-			$propal->cloture($user, $_REQUEST['statut'], $_REQUEST['note']);
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("CloseAs")).'</div>';
+			$_REQUEST['action']='statut';
+			$_GET['action']='statut';
+		}
+		else
+		{
+			$propal = new Propal($db);
+			$propal->fetch($_GET['propalid']);
+			// prevent browser refresh from closing proposal several times
+			if ($propal->statut==1)
+			{
+				$propal->cloture($user, $_REQUEST['statut'], $_REQUEST['note']);
+			}
 		}
 	}
 }
