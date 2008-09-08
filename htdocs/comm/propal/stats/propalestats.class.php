@@ -114,7 +114,7 @@ class PropaleStats extends Stats
 	{
 		global $user;
 		 
-		$sql = "SELECT date_format(p.datep,'%m') as dm, sum(p.total_ht)";
+		$sql = "SELECT date_format(p.datep,'%m') as dm, sum(p.".$this->field.")";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -132,7 +132,7 @@ class PropaleStats extends Stats
 	{
 		global $user;
 		 
-		$sql = "SELECT date_format(p.datep,'%m') as dm, avg(p.total_ht)";
+		$sql = "SELECT date_format(p.datep,'%m') as dm, avg(p.".$this->field.")";
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

@@ -64,12 +64,12 @@ $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-	$filenamenb = $conf->propal->dir_temp.'/proposalsnbinyear-'.$user->id.'-'.$year.'.png';
+	$filenamenb = $dir.'/proposalsnbinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filenamenb = $conf->propal->dir_temp.'/proposalsnbinyear-'.$year.'.png';
+	$filenamenb = $dir.'/proposalsnbinyear-'.$year.'.png';
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$year.'.png';
 }
 
@@ -107,12 +107,12 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
-	$filenameamount = $conf->propal->dir_temp.'/proposalsamountinyear-'.$user->id.'-'.$year.'.png';
+	$filenameamount = $dir.'/proposalsamountinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
-	$filenameamount = $conf->propal->dir_temp.'/proposalsamountinyear-'.$year.'.png';
+	$filenameamount = $dir.'/proposalsamountinyear-'.$year.'.png';
 	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$year.'.png';
 }
 
