@@ -77,12 +77,14 @@ $data = $stats->getNbByMonth($year);
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
 	$filename = $dir.'/ordersnb-'.$user->id.'-'.$year.'.png';
-  	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnb-'.$user->id.'-'.$year.'.png';
+  	if ($mode == 'customer') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnb-'.$user->id.'-'.$year.'.png';
+  	if ($mode == 'supplier') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnb-'.$user->id.'-'.$year.'.png';
 }
 else
 {
 	$filename = $dir.'/ordersnb-'.$year.'.png';
-  	$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnb-'.$year.'.png';
+  	if ($mode == 'customer') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnb-'.$year.'.png';
+  	if ($mode == 'supplier') $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnb-'.$year.'.png';
 }
 
 $px = new DolGraph();
@@ -107,12 +109,14 @@ $data = $stats->getAmountByMonth($year);
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
 	$filename_amount = $dir.'/ordersamount-'.$user->id.'-'.$year.'.png';
-	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamount-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'customer') $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamount-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'supplier') $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamount-'.$user->id.'-'.$year.'.png';
 }
 else
 {
 	$filename_amount = $dir.'/ordersamount-'.$year.'.png';
-	$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamount-'.$year.'.png';
+	if ($mode == 'customer') $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamount-'.$year.'.png';
+	if ($mode == 'supplier') $fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamount-'.$year.'.png';
 }
 
 $px = new DolGraph();
@@ -142,12 +146,14 @@ for ($i = 1 ; $i < 13 ; $i++)
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
-	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
 }
 else
 {
 	$filename_avg = $dir.'/ordersaverage-'.$year.'.png';
-	$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
+	if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
+	if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
 }
 
 $px = new DolGraph();

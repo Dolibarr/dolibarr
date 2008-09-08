@@ -68,6 +68,7 @@ LastClosedOrders=Last %s closed orders
 AllOrders=All orders
 NbOfOrders=Number of orders
 OrdersStatistics=Orders' statistics
+OrdersStatisticsSuppliers=Supplier orders' statistics
 NumberOfOrdersByMonth=Number of orders by month
 AmountOfOrdersByMonthHT=amount of orders by month (net of tax)
 ListOfOrders=List of orders

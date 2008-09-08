@@ -25,6 +25,7 @@
  */
 include_once DOL_DOCUMENT_ROOT . "/stats.class.php";
 include_once DOL_DOCUMENT_ROOT . "/commande/commande.class.php";
+include_once DOL_DOCUMENT_ROOT . "/fourn/fournisseur.commande.class.php";
 
 
 /**
@@ -47,20 +48,32 @@ class CommandeStats extends Stats
 	 *
 	 * @param 	$DB		Database handler
 	 * @param 	$socid	Id third party
+	 * @param 	$mode	Option
 	 * @return 	PropaleStats
 	 */
-	function CommandeStats($DB, $socid=0)
+	function CommandeStats($DB, $socid=0, $mode)
 	{
 		global $user;
 		
 		$this->db = $DB;
 		
-		$object=new Commande($this->db);
-		$this->table_element=$object->table_element;
-		$this->field='total_ht';
-		
 		$this->socid = $socid;
-		$this->where.= " c.fk_statut > 0";
+		
+		if ($mode == 'customer')
+		{
+			$object=new Commande($this->db);
+			$this->table_element=$object->table_element;
+			$this->field='total_ht';
+			$this->where.= " c.fk_statut > 0";
+		}
+		if ($mode == 'supplier')
+		{
+			$object=new CommandeFournisseur($this->db);
+			$this->table_element=$object->table_element;
+			$this->field='total_ht';
+			$this->where.= " c.fk_statut >= 3 AND c.date_commande IS NOT NULL";
+		}
+				
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if($this->socid)
 		{
@@ -153,7 +166,7 @@ class CommandeStats extends Stats
 	{
 		global $user;
 		
-		$sql = "SELECT date_format(c.date_commande,'%Y') as year, count(*) as nb, sum(".$this->field.") as total, avg(".$this->field.") as avg";
+		$sql = "SELECT date_format(c.date_commande,'%Y') as year, count(*) as nb, sum(c.".$this->field.") as total, avg(".$this->field.") as avg";
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";

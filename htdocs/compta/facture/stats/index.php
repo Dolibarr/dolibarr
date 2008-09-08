@@ -118,7 +118,6 @@ $mesg = $px->isGraphKo();
 if (! $mesg)
 {
 	$px->SetData($data);
-	$px->SetPrecisionY(0);
 	$i=$startyear;
 	while ($i <= $endyear)
 	{
@@ -160,8 +159,7 @@ $oldyear=0;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	print $avg;
-	while ($oldyear > $year+1)
+	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
 		print '<tr height="24">';

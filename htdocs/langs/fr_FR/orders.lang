@@ -68,6 +68,7 @@ LastClosedOrders=Les %s dernières commandes cloturées
 AllOrders=Toutes les commandes
 NbOfOrders=Nombre de commandes
 OrdersStatistics=Statistiques des commandes
+OrdersStatisticsSuppliers=Statistiques des commandes fournisseurs
 NumberOfOrdersByMonth=Nombre de commandes par mois
 AmountOfOrdersByMonthHT=Montant total de commandes par mois (HT)
 ListOfOrders=Liste des commandes

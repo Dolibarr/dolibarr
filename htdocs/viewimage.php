@@ -156,7 +156,16 @@ if ($modulepart)
         }
         $original_file=$conf->commande->dir_temp.'/'.$original_file;
     }
-
+    elseif ($modulepart == 'orderstatssupplier')
+    {
+        $user->getrights('fournisseur');
+        if ($user->rights->fournisseur->commande->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->fournisseur->commande->dir_temp.'/'.$original_file;
+    }
+    
     // Wrapping pour les images des stats factures
     elseif ($modulepart == 'billstats')
     {

@@ -316,6 +316,7 @@ class MenuLeft {
 					$newmenu->add(DOL_URL_ROOT."/fourn/commande/index.php?leftmenu=orders_suppliers",$langs->trans("SuppliersOrders"), 0, $user->rights->fournisseur->commande->lire);
 					if ($leftmenu=="orders_suppliers") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=orders_suppliers", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
 					if ($leftmenu=="orders_suppliers") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php?leftmenu=orders_suppliers", $langs->trans("List"), 1, $user->rights->fournisseur->commande->lire);
+					if ($leftmenu=="orders_suppliers") $newmenu->add_submenu(DOL_URL_ROOT."/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1 ,$user->rights->fournisseur->commande->lire);
 				}
 
 				// Contrat

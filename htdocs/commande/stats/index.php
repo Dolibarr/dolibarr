@@ -45,19 +45,31 @@ $year = strftime("%Y", time());
 $startyear=$year-2;
 $endyear=$year;
 
+$mode='customer';
+if (isset($_GET["mode"])) $mode=$_GET["mode"];
+
 /*
  * View
  */
  
 llxHeader();
 
-print_fiche_titre($langs->trans("OrdersStatistics"), $mesg);
+if ($mode == 'customer') 
+{
+	$title=$langs->trans("OrdersStatistics");
+	$dir=$conf->commande->dir_temp;
+}
+if ($mode == 'supplier') 
+{
+	$title=$langs->trans("OrdersStatisticsSuppliers");
+	$dir=$conf->fournisseur->commande->dir_temp;
+}
 
-$dir=$conf->commande->dir_temp;
+print_fiche_titre($title, $mesg);
 
 create_exdir($dir);
 
-$stats = new CommandeStats($db, $socid);
+$stats = new CommandeStats($db, $socid, $mode);
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
@@ -68,12 +80,14 @@ $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
 	$filenamenb = $dir.'/ordersnbinyear-'.$user->id.'-'.$year.'.png';
-	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
 	$filenamenb = $dir.'/ordersnbinyear-'.$year.'.png';
-	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$year.'.png';
+	if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$year.'.png';
+	if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$year.'.png';
 }
 
 $px = new DolGraph();
@@ -110,12 +124,14 @@ $data = $stats->getAmountByMonthWithPrevYear($endyear,$startyear);
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
 	$filenameamount = $dir.'/ordersamountinyear-'.$user->id.'-'.$year.'.png';
-	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
+	if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
 }
 else
 {
 	$filenameamount = $dir.'/ordersamountinyear-'.$year.'.png';
-	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$year.'.png';
+	if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$year.'.png';
+	if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$year.'.png';
 }
 
 $px = new DolGraph();
@@ -123,7 +139,6 @@ $mesg = $px->isGraphKo();
 if (! $mesg)
 {
 	$px->SetData($data);
-	$px->SetPrecisionY(0);
 	$i=$startyear;
 	while ($i <= $endyear)
 	{
@@ -163,8 +178,7 @@ $oldyear=0;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	print $avg;
-	while ($oldyear > $year+1)
+	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
 		print '<tr height="24">';
@@ -175,7 +189,7 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 	print '<tr height="24">';
-    print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td>';
+    print '<td align="center"><a href="month.php?year='.$year.'&amp;mode='.$mode.'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
 	print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
