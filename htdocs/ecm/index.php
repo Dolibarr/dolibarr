@@ -457,11 +457,11 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			// Show picto
 			print '<td valign="top">';
 			//print $fullpathparent.'-'.$val['fullpath']."(".$showline.")";
-			if ($showline == 5) print img_picto('','/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
-			elseif ($showline == 4) print img_picto('','/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
-			elseif ($showline == 3) print img_picto('','/theme/common/treemenu/minustop2.gif','',1).img_picto('','/theme/common/treemenu/folder-expanded.gif','',1);
-			elseif ($showline == 2) print img_picto('','/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
-			elseif ($showline == 1) print img_picto('','/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
+			if ($showline == 5) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
+			elseif ($showline == 4) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
+			elseif ($showline == 3) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop2.gif','',1).img_picto('','/theme/common/treemenu/folder-expanded.gif','',1);
+			elseif ($showline == 2) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
+			elseif ($showline == 1) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
 			print '</td>';
 			// Show link
 			print '<td valign="middle">';
