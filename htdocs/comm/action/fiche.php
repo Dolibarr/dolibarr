@@ -97,13 +97,13 @@ if ($_POST["action"] == 'add_action')
                    $_POST["p2month"],
                    $_POST["p2day"],
                    $_POST["p2year"]);
-	$datea=dolibarr_mktime($_POST["adhour"],
+	$datea=dolibarr_mktime($_POST["adhour"],	// deprecated
                    $_POST["admin"],
                    0,
                    $_POST["admonth"],
                    $_POST["adday"],
                    $_POST["adyear"]);
-	$datea2=dolibarr_mktime($_POST["a2hour"],
+	$datea2=dolibarr_mktime($_POST["a2hour"],	// deprecated
                    $_POST["a2min"],
                    0,
                    $_POST["a2month"],
@@ -126,6 +126,7 @@ if ($_POST["action"] == 'add_action')
 	$actioncomm->type_id = $cactioncomm->id;
 	$actioncomm->type_code = $cactioncomm->code;
 	$actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
+	$actioncomm->location = isset($_POST["location"])?$_POST["location"]:'';
 	$actioncomm->label = trim($_POST["label"]);
 	if (! $_POST["label"])
 	{
@@ -191,7 +192,13 @@ if ($_POST["action"] == 'add_action')
 	if ($_POST["add_webcal"] == 'on' && $conf->webcal->enabled) $actioncomm->use_webcal=1;
 	if ($_POST["add_phenix"] == 'on' && $conf->phenix->enabled) $actioncomm->use_phenix=1;
 
-	
+	// Check parameters
+	if ($actioncomm->type_code == 'AC_RDV' && ($datep == '' || $datep2 == ''))
+	{
+		$error=1;	
+		$_GET["action"] = 'create';
+        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateEnd")).'</div>';
+	}
 	if ($datea && $_POST["percentage"] == 0)
 	{
 		$error=1;	
@@ -325,7 +332,8 @@ if ($_POST["action"] == 'update')
 		$actioncomm->dateend     = $datea2;
         $actioncomm->percentage  = $_POST["percentage"];
         $actioncomm->priority    = $_POST["priority"];
-		$actioncomm->societe->id = $_POST["socid"];
+		$actioncomm->location    = isset($_POST["location"])?$_POST["location"]:'';
+        $actioncomm->societe->id = $_POST["socid"];
         $actioncomm->contact->id = $_POST["contactid"];
         $actioncomm->note        = $_POST["note"];
 
@@ -416,9 +424,9 @@ if ($_GET["action"] == 'create')
 	else print "<br>";
 	
 	print '<table class="border" width="100%">';
-
+	
 	// Type d'action actifs
-	print '<tr><td><b>'.$langs->trans("Type").'*</b></td><td>';
+	print '<tr><td width="30%"><b>'.$langs->trans("Type").'*</b></td><td>';
 	if ($_GET["actioncode"])
 	{
 		print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
@@ -431,10 +439,18 @@ if ($_GET["action"] == 'create')
 	}
 	print '</td></tr>';
 
+	// Title
 	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="30" value="'.$actioncomm->label.'"></td></tr>';
-
+	
+	// Location
+	print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" size="30" value="'.$actioncomm->location.'"></td></tr>';
+	
+	print '</table>';
+	print '<br>';
+	print '<table class="border" width="100%">';
+	
 	// Societe, contact
-	print '<tr><td nowrap>'.$langs->trans("ActionOnCompany").'</td><td>';
+	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 	if ($_REQUEST["socid"] > 0)
 	{
 		$societe = new Societe($db);
@@ -466,13 +482,17 @@ if ($_GET["action"] == 'create')
 	$html->select_users($_REQUEST["doneby"]?$_REQUEST["doneby"]:$actioncomm->userdone,'doneby',1);
 	print '</td></tr>';
 
+	print '</table>';
+	print '<br>';
+	print '<table class="border" width="100%">';
+	
 	if (! empty($_GET["datep"]) && eregi('^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$',$_GET["datep"],$reg)) 
 	{
 		$actioncomm->datep=dolibarr_mktime(0,0,0,$reg[2],$reg[3],$reg[1]);
 	}
 
 	// Date start
-	print '<tr><td nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td>';
+	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td>';
 	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action");
 	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
 	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
@@ -618,9 +638,20 @@ if ($_GET["id"])
         if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
 
         print '<table class="border" width="100%">';
+
+        // Ref
         print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
+        
+        // Type
         print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+        
+        // Title
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$act->label.'"></td></tr>';
+        
+        // Location
+        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$act->location.'"></td></tr>';
+        
+        // Company
         print '<tr><td>'.$langs->trans("Company").'</td>';
         print '<td>';
 		print $html->select_societes($act->societe->id,'socid',1,1);
@@ -712,10 +743,13 @@ if ($_GET["id"])
 		// Type
         print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
 
-		// Libelle
+		// Title
         print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
-
-		// Societe - contact
+        
+		// Location
+        print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
+        
+        // Societe - contact
         print '<tr><td>'.$langs->trans("Company").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None")).'</td>';
         print '<td>'.$langs->trans("Contact").'</td>';
         print '<td>';

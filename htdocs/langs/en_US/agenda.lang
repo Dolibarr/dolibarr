@@ -8,6 +8,7 @@ Calendars = Calendars
 AffectedTo = Affected to
 DoneBy = Done by
 Events = Events
+Location=Location
 SearchAnAction = Search an action/task
 MenuToDoActions = All uncomplete actions
 MenuDoneActions = All terminated actions

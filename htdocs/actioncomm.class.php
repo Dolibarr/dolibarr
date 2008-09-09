@@ -96,8 +96,9 @@ class ActionComm
 
         // Clean parameters
 		$this->label=trim($this->label);
-        $this->note=trim($this->note);
-		if (! $this->percentage) $this->percentage = 0;
+		$this->location=trim($this->location);
+		$this->note=trim($this->note);
+        if (! $this->percentage) $this->percentage = 0;
         if (! $this->priority)   $this->priority = 0;
         if (! $this->punctual)   $this->punctual = 0;
         if ($this->percentage > 100) $this->percentage = 100;
@@ -147,7 +148,7 @@ class ActionComm
 		$sql.= "fk_user_author,";
 		$sql.= "fk_user_action,";
 		$sql.= "fk_user_done,";
-		$sql.= "label,percent,priority,punctual,";
+		$sql.= "label,percent,priority,location,punctual,";
         $sql.= "fk_facture,propalrowid,fk_commande)";
         $sql.= " VALUES (";
         $sql.= "'".$this->db->idate($now)."',";
@@ -162,7 +163,7 @@ class ActionComm
         $sql.= ($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= ($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
 		$sql.= ($this->userdone->id > 0?"'".$this->userdone->id."'":"null").",";
-		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."','".$this->punctual."',";
+		$sql.= "'".addslashes($this->label)."','".$this->percentage."','".$this->priority."','".addslashes($this->location)."','".$this->punctual."',";
         $sql.= ($this->facid?$this->facid:"null").",";
         $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
         $sql.= ($this->orderrowid?$this->orderrowid:"null");
@@ -215,7 +216,7 @@ class ActionComm
 		$sql.= " a.fk_user_author, a.fk_user_mod,";
 		$sql.= " a.fk_user_action, a.fk_user_done,";
 		$sql.= " a.fk_contact, a.percent as percentage, a.fk_facture, a.fk_commande, a.propalrowid,";
-		$sql.= " a.priority,";
+		$sql.= " a.priority, a.location,";
 		$sql.= " c.id as type_id, c.code as type_code, c.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
@@ -252,7 +253,8 @@ class ActionComm
 				$this->usertodo->id  = $obj->fk_user_action;
 				$this->userdone->id  = $obj->fk_user_done;
 				$this->priority = $obj->priority;
-
+				$this->location = $obj->location;
+				
 				$this->societe->id = $obj->fk_soc;
 				$this->contact->id = $obj->fk_contact;
 
@@ -297,6 +299,7 @@ class ActionComm
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
         $sql.= " WHERE id=".$this->id;
 
+        dolibarr_syslog("ActionComm::delete sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql))
         {
             return 1;
@@ -346,6 +349,7 @@ class ActionComm
         $sql.= ", fk_soc =". ($this->societe->id > 0 ? "'".$this->societe->id."'":"null");
         $sql.= ", fk_contact =". ($this->contact->id > 0 ? "'".$this->contact->id."'":"null");
         $sql.= ", priority = '".$this->priority."'";
+        $sql.= ", location = ".($this->location ? "'".addslashes($this->location)."'":"null");
         $sql.= ", fk_user_mod = '".$user->id."'";
 		$sql.= ", fk_user_action=".($this->usertodo->id > 0 ? "'".$this->usertodo->id."'":"null");
 		$sql.= ", fk_user_done=".($this->userdone->id > 0 ? "'".$this->userdone->id."'":"null");
@@ -595,7 +599,7 @@ class ActionComm
 			$sql.= " a.fk_user_author, a.fk_user_mod,";
 			$sql.= " a.fk_user_action, a.fk_user_done,";
 			$sql.= " a.fk_contact, a.fk_facture, a.percent as percentage, a.fk_commande,";
-			$sql.= " a.priority,";
+			$sql.= " a.priority,a.location,";
 			$sql.= " c.id as type_id, c.code as type_code, c.libelle";
 			$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
 			$sql.= " WHERE a.fk_action=c.id";
@@ -657,20 +661,22 @@ class ActionComm
 					$datestart=$obj->datep;
 					$dateend=$obj->datep2;
 					$duration=$obj->durationp;
+					$event['summary']=$obj->label;
+					$event['desc']=$obj->note;
 					$event['startdate']=$datestart;
 					$event['duration']=$duration;	// Not required with type 'journal'
 					$event['enddate']=$dateend;		// Not required with type 'journal'
-					$event['summary']=$obj->label;
-					$event['desc']=$obj->note;
-					$event['category']=$obj->libelle;
 					$event['author']=$obj->fk_user_author;
+					$event['priority']=$obj->priority;
+					$event['location']=$obj->location;
 					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
+					$event['category']=$obj->libelle;	// libelle type action
 					$url=$dolibarr_main_url_root;
 					if (! eregi('\/$',$url)) $url.='/';
 					$url.='comm/action/fiche.php?id='.$obj->id;
 					$event['url']=$url;
 					
-					if ($qualified)
+					if ($qualified && $datestart)
 					{
 						$eventarray[$datestart]=$event;
 					}

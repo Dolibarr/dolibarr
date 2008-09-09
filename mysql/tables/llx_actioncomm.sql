@@ -25,9 +25,9 @@ create table llx_actioncomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
   datep          datetime,             -- date debut planifiee
-  datep2         datetime,             -- date fin planifiee si action non ponctuelle
+  datep2         datetime,             -- deprecated
   datea          datetime,             -- date debut realisation
-  datea2         datetime,             -- date fin realisation si action non ponctuelle
+  datea2         datetime,             -- deprecated
 
   fk_action      integer,              -- type de l'action
   label          varchar(50) NOT NULL, -- libelle de l'action
@@ -47,8 +47,9 @@ create table llx_actioncomm
   priority       smallint,
   punctual       smallint NOT NULL default 1,
   percent        smallint NOT NULL default 0,
+  location       varchar(128),
   durationp      real,                 -- duree planifiee
-  durationa      real,                 -- duree reellement passee
+  durationa      real,                 -- deprecated
   note           text,
 
   propalrowid    integer,

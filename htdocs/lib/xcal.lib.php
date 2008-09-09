@@ -67,7 +67,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 			if ($eventqualified)
 			{
 				// See http://fr.wikipedia.org/wiki/ICalendar for format
-				//$uid 		= dolibarr_print_date($now,'dayhourxcard',true).'-'.$event['uid']."-export@".$_SERVER["SERVER_NAME"];
+				// See http://www.ietf.org/rfc/rfc2445.txt for RFC
 				$uid 		  = $event['uid'];
 				$type         = $event['type'];
 				$startdate	  = $event['startdate'];
@@ -78,7 +78,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				$location	  = $event['location'];
 				$email 		  = $event['email'];
 				$url		  = $event['url'];
-				$transparency = $event['transparency'];
+				$transparency = $event['transparency'];		// OPAQUE or TRANSPARENT
 				$description=eregi_replace('<br[ \/]?>',"\n",$event['desc']);
  				$description=clean_html($description,0);	// Remove html tags
 
@@ -134,9 +134,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				                / "CANCELLED"           ;Indicates journal is removed.
 							;Status values for "VJOURNAL".
 					*/
-					if (! empty($category)) fwrite($calfileh,"CATEGORIES:".$encoding.$category."\n");
 					if (! empty($location)) fwrite($calfileh,"LOCATION:".$encoding.$location."\n");
-					//fwrite($calfileh,"TRANSP:".$transparency."\n");
 					//fwrite($calfileh,"CLASS:PUBLIC\n");				// PUBLIC, PRIVATE, CONFIDENTIAL
 
 					// Date must be GMT dates 
@@ -146,6 +144,9 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 					if (empty($enddate)) $enddate=$startdate+$duration;
 					$enddatef = dolibarr_print_date($enddate,'dayhourxcard',true);
 					fwrite($calfileh,"DTEND:".$enddatef."\n");
+
+					if (! empty($transparency)) fwrite($calfileh,"TRANSP:".$transparency."\n");
+					if (! empty($category)) fwrite($calfileh,"CATEGORIES:".$encoding.$category."\n");
 					fwrite($calfileh,"END:VEVENT\n");
 				}
 				
