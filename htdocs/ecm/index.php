@@ -232,7 +232,7 @@ dolibarr_fiche_head($head, $selected, '', 1);
 print '<table class="border" width="100%"><tr><td width="40%">';
 
 // Left area
-print '<table class="nobordernopadding" width="100%"><tr><td>';
+print '<table class="nobordernopadding" width="100%"><tr><td valign="top">';
 
 if (eregi('search',$action))
 {
@@ -241,11 +241,11 @@ if (eregi('search',$action))
 	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 	print '<table class="nobordernopadding" width="100%">';
 	print "<tr class=\"liste_titre\">";
-	print '<td colspan="3">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
-	print "<tr ".$bc[false]."><td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
-	print '<td rowspan="3"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "<tr ".$bc[false]."><td>".$langs->trans("Title").':</td><td><input type="text" name="search_title" class="flat" size="18"></td></tr>';
-	print "<tr ".$bc[false]."><td>".$langs->trans("Keyword").':</td><td><input type="text" name="search_keyword" class="flat" size="18"></td></tr>';
+	print '<td colspan="2">'.$langs->trans("ECMSearchByKeywords").'</td></tr>';
+	print "<tr ".$bc[false]."><td>".$langs->trans("Ref").':</td><td align="right"><input type="text" name="search_ref" class="flat" size="14"></td></tr>';
+	print "<tr ".$bc[false]."><td>".$langs->trans("Title").':</td><td align="right"><input type="text" name="search_title" class="flat" size="14"></td></tr>';
+	print "<tr ".$bc[false]."><td>".$langs->trans("Keyword").':</td><td align="right"><input type="text" name="search_keyword" class="flat" size="14"></td></tr>';
+	print "<tr ".$bc[false].'><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 	print "</table></form>";
 	//print $langs->trans("ECMManualOrgDesc");
 
@@ -258,20 +258,24 @@ if (eregi('search',$action))
 
 	$buthtml='<td rowspan="'.$rowspan.'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 	$butshown=0;
-	foreach($sectionauto as $section)
+	foreach($sectionauto as $sectioncur)
 	{
-		if (! $section['test']) continue;
-		if ($butshown % 2 == 0) print '<tr '. $bc[false].'>';
-		print "<td>".$section['label'].':</td>';
+		if (! $sectioncur['test']) continue;
+		//if ($butshown % 2 == 0) 
+			print '<tr '. $bc[false].'>';
+		print "<td>".$sectioncur['label'].':</td>';
 		print '<td';
-		if ($butshown % 2 == 1) print ' align="right"';
+		//if ($butshown % 2 == 1) 
+			print ' align="right"';
 		print '>';
-		print '<input type="text" name="search_'.$section['module'].'" class="flat" size="6">';
+		print '<input type="text" name="search_'.$sectioncur['module'].'" class="flat" size="14">';
 		print '</td>';
-		if ($butshown % 2 == 1) print '</tr>';
+		//if ($butshown % 2 == 1) 
+			print '</tr>';
 		$butshown++;
 	}
-	if ($butshown % 2 == 1) print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
+	//if ($butshown % 2 == 1) 
+	//	print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 
 	print '<tr '. $bc[false].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 	print "</table></form>";
@@ -533,13 +537,16 @@ print '</td></tr>';
 
 // Actions buttons
 print '<tr height="22"><td align="center">';
-if ($user->rights->ecm->setup)
+if (empty($action) || $action == 'file_manager')
 {
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.$langs->trans('ECMAddSection').'</a>';
-}
-else
-{
-	print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
+	if ($user->rights->ecm->setup)
+	{
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.$langs->trans('ECMAddSection').'</a>';
+	}
+	else
+	{
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
+	}
 }
 print '</td><td>';
 if ($user->rights->ecm->create && ! empty($section))
