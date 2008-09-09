@@ -229,7 +229,7 @@ $head = ecm_prepare_head_fm($fac);
 dolibarr_fiche_head($head, $selected, '', 1);
 
 
-print '<table class="border" width="100%"><tr><td width="40%">';
+print '<table class="border" width="100%"><tr><td width="40%" valign="top">';
 
 // Left area
 print '<table class="nobordernopadding" width="100%"><tr><td valign="top">';
@@ -301,7 +301,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">'.$langs->trans("ECMSections").'</td>';
 	print '<td class="liste_titre" colspan="4" align="right">';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual">'.$langs->trans("Refresh").' '.img_picto($langs->trans("Refresh"),'refresh').'</a>';
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.$langs->trans("Refresh").' '.img_picto($langs->trans("Refresh"),'refresh').'</a>';
 	print '</td>';
 	print '</tr>';
 
@@ -537,7 +537,7 @@ print '</td></tr>';
 
 // Actions buttons
 print '<tr height="22"><td align="center">';
-if (empty($action) || $action == 'file_manager')
+if (empty($action) || $action == 'file_manager' || eregi('refresh',$action))
 {
 	if ($user->rights->ecm->setup)
 	{
