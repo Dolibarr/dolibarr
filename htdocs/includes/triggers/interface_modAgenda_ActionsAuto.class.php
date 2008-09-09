@@ -116,7 +116,7 @@ class InterfaceActionsAuto
 		$ok=0;
 		
 		// Actions
-        if ($action == 'COMPANY_CREATE')
+		if ($action == 'COMPANY_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");

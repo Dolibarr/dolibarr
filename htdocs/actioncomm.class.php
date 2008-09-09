@@ -231,11 +231,13 @@ class ActionComm
 	
 				$this->id        = $obj->id;
 				$this->ref       = $obj->id;
+				
 				$this->type_id   = $obj->type_id;
 				$this->type_code = $obj->type_code;
 				$transcode=$langs->trans("Action".$obj->code);
 				$type_libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
 				$this->type    = $type_libelle;
+				
 				$this->label   = $obj->label;
 				$this->datep   = $obj->datep;
 				$this->datef   = $obj->datep2;
