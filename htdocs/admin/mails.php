@@ -279,9 +279,16 @@ else
 
 	// Boutons actions
     print '<div class="tabsAction">';
-	if (function_exists('fsockopen') && $port && $server)
+	if (! $linuxlike)
 	{
-	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+	    if (function_exists('fsockopen') && $port && $server)
+		{
+		    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+		}
+	}
+	else
+	{
+	    print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestSend").'</a>';
 	}
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 	if ($conf->fckeditor->enabled)
