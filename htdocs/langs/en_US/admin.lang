@@ -169,8 +169,11 @@ EMailsSetup=E-mails setup
 EMailsDesc=This page allows you to overwrite your PHP parameters for e-mails sending. In most cases on Unix/Linux OS, your PHP setup is correct and these parameters are useless.
 MAIN_MAIL_SMTP_PORT=SMTP Port (By default in php.ini: <b>%s</b>)
 MAIN_MAIL_SMTP_SERVER=SMTP Host (By default in php.ini: <b>%s</b>)
+MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike=SMTP Port (Not defined into PHP on Unix like systems)
+MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=SMTP Host (Not defined into PHP on Unix like systems)
 MAIN_MAIL_EMAIL_FROM=Sender e-mail for automatic emails (By default in php.ini: <b>%s</b>)
 MAIN_DISABLE_ALL_MAILS=Disable all e-mails sendings (for test purposes or demos)
+FeatureNotAvailableOnLinux=Feature not available on Unix like systems. Test your sendmail program locally.
 ModuleSetup=Module setup
 ModulesSetup=Modules setup
 ModuleFamilyBase=System
@@ -591,6 +594,7 @@ MAIN_MAX_DECIMALS_SHOWN=Max decimals for prices shown on screen (Add <b>...</b> 
 ParameterActiveForNextInputOnly=Parameter effective for next input only
 NoEventOrNoAuditSetup=No security event has been recorded yet. This can be normal if audit has not been enabled on "setup - security - audit" page.
 NoEventFoundWithCriteria=No security event has been found for such search criterias.
+SeeLocalSendMailSetup=See your local sendmail setup
 
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
