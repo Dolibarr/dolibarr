@@ -394,7 +394,7 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
-        $dir = "../../mysql/tables/";	
+        $dir = "../../mysql/data/";	
 
         // Creation donnees
         $file = "data.sql";
