@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,10 +117,9 @@ if ($_POST["action"] == "set")
     ***************************************************************************************/
     if ($ok)
     {
-        if ($choix==1)     $dir = "../../mysql/tables/";
-        elseif ($choix==2) $dir = "../../pgsql/tables/";
-        elseif ($choix==3) $dir = "../../mssql/tables/";
-
+        // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
+        $dir = "../../mysql/tables/";	
+    	
         $ok = 0;
         $handle=opendir($dir);
         dolibarr_install_syslog("Ouverture repertoire ".$dir." handle=".$handle,LOG_DEBUG);
@@ -217,9 +216,8 @@ if ($_POST["action"] == "set")
     ***************************************************************************************/
     if ($ok)
     {
-        if ($choix==1)     $dir = "../../mysql/tables/";
-        elseif ($choix==2) $dir = "../../pgsql/tables/";
-        elseif ($choix==3) $dir = "../../mssql/tables/";
+        // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
+        $dir = "../../mysql/tables/";	
 
         $okkeys = 0;
         $handle=opendir($dir);
@@ -327,6 +325,7 @@ if ($_POST["action"] == "set")
     ***************************************************************************************/
     if ($ok)
     {
+    	// For this file, we use directory according to database type
         if ($choix==1) $dir = "../../mysql/functions/";
         elseif ($choix==2) $dir = "../../pgsql/functions/";
         elseif ($choix==3) $dir = "../../mssql/functions/";
@@ -394,9 +393,8 @@ if ($_POST["action"] == "set")
     ***************************************************************************************/
     if ($ok)
     {
-        if ($choix==1) $dir = "../../mysql/data/";
-        elseif ($choix==2) $dir = "../../pgsql/data/";
-        elseif ($choix==3) $dir = "../../mssql/data/";
+        // We always choose in mysql directory (Conversion is done by driver to translate SQL syntax)
+        $dir = "../../mysql/tables/";	
 
         // Creation donnees
         $file = "data.sql";
@@ -472,7 +470,6 @@ if ($_POST["action"] == "set")
 
         $sql[4] = "DELETE from llx_const where name like '%_OUTPUT_URL';";
 
-
         $sql[5] = "UPDATE llx_const SET value='".$langs->defaultlang."',
         type = 'chaine',
         visible = 0
@@ -496,5 +493,4 @@ if ($_POST["action"] == "set")
 }
 
 pFooter(!$ok,$setuplang);
-
 ?>
