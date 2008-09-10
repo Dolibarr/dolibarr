@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,10 +18,10 @@
  */
 
 /**
- \file       htdocs/projet/tasks/task.php
- \ingroup    projet
- \brief      Fiche tâches d'un projet
- \version    $Id$
+ *	\file       htdocs/projet/tasks/task.php
+ *	\ingroup    projet
+ *	\brief      Fiche tâches d'un projet
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -29,11 +29,15 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
+
 /*
  * View
  */
 
 llxHeader("",$langs->trans("Task"));
+
+$projectstatic = new Project($db);
+
 
 if ($_GET["id"] > 0)
 {
@@ -63,11 +67,14 @@ if ($_GET["id"] > 0)
 		print '<input type="hidden" name="action" value="createtask">';
 		print '<table class="border" width="100%">';
 
-		print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$task->id.'</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$task->title.'</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Project").'</td><td>';
+		print $projet->getNomUrl(1);
+		print '</td></tr>';
 
 		print '<td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
-		print '<tr><td>'.$langs->trans("Task").'</td><td colspan="3">'.$task->title.'</td></tr>';
 
 		/* Liste des tâches */
 
@@ -87,15 +94,15 @@ if ($_GET["id"] > 0)
 			$tasks = array();
 			while ($i < $num)
 			{
-			  	$row = $db->fetch_row($resql);
-			  	$tasks[$i] = $row;
-			  	$i++;
-		  	}
-	  		$db->free();
+				$row = $db->fetch_row($resql);
+				$tasks[$i] = $row;
+				$i++;
+			}
+			$db->free();
 		}
 		else
 		{
-	  		dolibarr_print_error($db);
+			dolibarr_print_error($db);
 		}
 
 
@@ -106,18 +113,18 @@ if ($_GET["id"] > 0)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
-		print '<td>'.$langs->trans("DurationEffective").'</td>';
+		print '<td>'.$langs->trans("TimeSpent").'</td>';
 		print '<td colspan="2">'.$langs->trans("User").'</td>';
 		print "</tr>\n";
 
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
-	  print "<tr ".$bc[$var].">";
-	  print '<td>'.dolibarr_print_date($task_time[0]).'</td>';
-	  print '<td>'.$task_time[1].'</td>';
-	  print '<td>'.$task_time[3].'</td>';
-	  print "</tr>\n";
+  		    print "<tr ".$bc[$var].">";
+		    print '<td>'.dolibarr_print_date($task_time[0],'day').'</td>';
+		    print '<td>'.$task_time[1].'</td>';
+		    print '<td>'.$task_time[3].'</td>';
+		    print "</tr>\n";
 		}
 
 		print "</table>";

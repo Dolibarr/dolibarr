@@ -16,28 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/projet/index.php
-        \ingroup    projet
-        \brief      Page d'accueil du module projet
-        \version    $Revision$
-*/
+ *       \file       htdocs/projet/index.php
+ *       \ingroup    projet
+ *       \brief      Page d'accueil du module projet
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 $langs->load("projects");
 
 if (!$user->rights->projet->lire) accessforbidden();
 
-// Sécurité accés client
+// Security check
 if ($user->societe_id > 0) 
 {
-  $socid = $user->societe_id;
+	$socid = $user->societe_id;
 }
+
+
+/*
+ * View
+ */
 
 llxHeader("",$langs->trans("Projects"),"Projet");
 
@@ -109,7 +111,7 @@ print '</td><td width="70%" valign="top" class="notopnoleft">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield,$sortorder);
-print '<td align="right">'.$langs->trans("Nb").'</td>';
+print '<td align="right">'.$langs->trans("NbOfProjects").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT s.nom, s.rowid as socid, count(p.rowid)";

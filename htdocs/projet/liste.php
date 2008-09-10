@@ -34,7 +34,7 @@ $socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
 
 $title = $langs->trans("Projects");
 
-// Sécurité accés client
+// Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
 if ($socid > 0)
@@ -101,7 +101,7 @@ if ($resql)
   $num = $db->num_rows($resql);
   $i = 0;
   
-  print_barre_liste($langs->trans("Projects"), $page, "liste.php", "", $sortfield, $sortorder, "", $num);
+  print_barre_liste($langs->trans("ProjectsList"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';

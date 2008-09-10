@@ -758,11 +758,13 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/projet/fiche.php?leftmenu=projects&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
 					$newmenu->add_submenu(DOL_URL_ROOT."/projet/liste.php?leftmenu=projects", $langs->trans("List"), 1, $user->rights->projet->lire);
 
-					$newmenu->add(DOL_URL_ROOT."/projet/tasks/", $langs->trans("Tasks"), 0, $user->rights->projet->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/projet/tasks/mytasks.php", $langs->trans("Mytasks"), 1, $user->rights->projet->lire);
-
-					$newmenu->add(DOL_URL_ROOT."/projet/activity/", $langs->trans("Activity"), 0, $user->rights->projet->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/projet/activity/myactivity.php", $langs->trans("MyActivity"), 1, $user->rights->projet->lire);
+					$newmenu->add(DOL_URL_ROOT."/projet/tasks/index.php", $langs->trans("Tasks"), 0, $user->rights->projet->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/projet/tasks/fiche.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
+					$newmenu->add_submenu(DOL_URL_ROOT."/projet/tasks/index.php?mode=mine", $langs->trans("Mytasks"), 1, $user->rights->projet->lire);
+					
+					$newmenu->add(DOL_URL_ROOT."/projet/activity/index.php", $langs->trans("TimeSpent"), 0, $user->rights->projet->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/projet/activity/list.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
+					$newmenu->add_submenu(DOL_URL_ROOT."/projet/activity/index.php?mode=mine", $langs->trans("MyTimeSpent"), 1, $user->rights->projet->lire);
 				}
 			}
 

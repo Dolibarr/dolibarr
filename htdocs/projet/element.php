@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/projet/element.php
-        \ingroup    projet facture
-		\brief      Page des elements par projet
-		\version    $Id$
-*/
+ *      \file       htdocs/projet/element.php
+ *      \ingroup    projet facture
+ *		\brief      Page des elements par projet
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
@@ -67,10 +67,14 @@ dolibarr_fiche_head($head, 'element', $langs->trans("Project"));
 
 print '<table class="border" width="100%">';
 
-print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
 
-print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1,'compta').'</td></tr>';
+print '<tr><td>'.$langs->trans("Company").'</td><td>';
+if (! empty($projet->societe->id)) print $projet->societe->getNomUrl(1);
+else print '&nbsp;';
+print '</td></tr>';
 
 print '</table>';
 

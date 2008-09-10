@@ -30,20 +30,189 @@ require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
 $projetid='';
 $projetid=isset($_GET["id"])?$_GET["id"]:$_POST["projetid"];
-if ($projetid == '') accessforbidden();
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projetid);
 
+/*
+ * Actions
+ */
 
-Function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
+if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 {
-	$form = new Form($db); // $db est null ici mais inutile pour la fonction select_date()
+	$error=0;
+
+	if (empty($_POST["cancel"]))
+	{
+		$tmparray=split('_',$_POST['task_parent']);
+		$projectid=$tmparray[0];
+		$task_parent=$tmparray[1];
+		if (empty($task_parent)) $task_parent=0;	// If task_parent is ''
+		
+		//print $_POST['task_parent'].'-'.$projectid.'-'.$task_parent;exit;
+		$project = new Project($db);
+		$result = $project->fetch($projectid);
+		
+		$result=$project->CreateTask($user, $_POST["task_name"], $task_parent);
+	}
+
+	if (! $error)
+	{
+		Header("Location: ".DOL_URL_ROOT.'/projet/tasks/index.php');
+		exit;
+	}
+}
+
+if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
+{
+	$project = new Project($db);
+	$result = $project->fetch($_GET["id"]);
+
+	if ($result == 0)
+	{
+		foreach ($_POST as $key => $post)
+		{
+			//$pro->CreateTask($user, $_POST["task_name"]);
+			if (substr($key,0,4) == 'task')
+			{
+				if ($post > 0)
+				{
+					$post=intval($post)+(($post-intval($post))*(1+2/3));
+					$post=price2num($post);
+					 
+					$id = ereg_replace("task","",$key);
+
+					$date = dolibarr_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
+					$project->TaskAddTime($user, $id , $post, $date);
+				}
+			}
+		}
+
+		Header("Location:fiche.php?id=".$project->id);
+		exit;
+	}
+}
+
+
+/*
+ * View
+ */
+$form=new Form($db);
+
+llxHeader("",$langs->trans("Tasks"),"Tasks");
+
+$projet = new Project($db);
+if ($_GET["id"])
+{
+	$projet->fetch($_GET["id"]);
+	$projet->societe->fetch($projet->societe->id);
+}
+
+if ($_GET["action"] == 'create' && $user->rights->projet->creer)
+{
+	print_titre($langs->trans("NewTask"));
+	print '<br>';
+
+	$tasksarray=$projet->getTasksArray();
+
+	if ($mesg) print $mesg;
+
+	print '<form action="fiche.php" method="post">';
+	print '<input type="hidden" name="action" value="createtask">';
+
+	print '<table class="border" width="100%">';
+
+	print '<tr><td>'.$langs->trans("NewTask").'</td><td colspan="3">';
+	print '<input type="text" size="25" name="task_name" class="flat">&nbsp;';
+	if ($tasksarray)
+	{
+		print ' &nbsp; '.$langs->trans("ChildOfTaks").' &nbsp; ';
+
+		print '<select class="flat" name="task_parent">';
+		print '<option value="0" selected="true">&nbsp;</option>';
+		PLineSelect($j, 0, $tasksarray, $level);
+		print '</select>';
+	}
+	print '</td></tr>';
+
+	print '<tr><td colspan="4" align="center">';
+	print '<input type="submit" class="button" name="add" value="'.$langs->trans("Add").'">';
+	print ' &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</td></tr>';
+
+	print '</table>';
+	print '</form>';
+
+} 
+else
+{
+	/*
+	 * Fiche projet en mode visu
+	 *
+	 */
+
+	$head=project_prepare_head($projet);
+	dolibarr_fiche_head($head, 'tasks', $langs->trans("Project"));
+
+
+	print '<table class="border" width="100%">';
+
+	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
+
+	print '<td>'.$langs->trans("Company").'</td><td>';
+	if (! empty($projet->societe->id)) print $projet->societe->getNomUrl(1);
+	else print '&nbsp;';
+	print '</td></tr>';
+
+	$tasksrole=$projet->getTasksRoleForUser($user);
+
+	$tasksarray=$projet->getTasksArray();
+
+	print '</table>';
+	print '<br>';
+
+	print '<form name="addtime" method="POST" action="fiche.php?id='.$projet->id.'">';
+	print '<input type="hidden" name="action" value="addtime">';
+
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Project").'</td>';
+	print '<td>'.$langs->trans("RefTask").'</td>';
+	print '<td>'.$langs->trans("LabelTask").'</td>';
+	print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
+	print "</tr>\n";
+	PLines($j, 0, $tasksarray, $level, $tasksrole);
+	print '</form>';
+
+
+	print "</table>";
+	print '</div>';
+
+
+	/*
+	 * Actions
+	 */
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$projet->id.'&amp;action=create">'.$langs->trans('AddTask').'</a>';
+	print '</div>';
+}
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+
+
+function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
+{
 	global $user, $bc, $langs;
 
-	$var=true;
+	$projectstatic = new Project($db);
 	
+	$var=true;
+
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
 		if ($parent == 0)
@@ -54,10 +223,15 @@ Function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
 			$var = !$var;
 			print "<tr $bc[$var]>\n";
 
-			print "<td>".$lines[$i]->id."</td>";
-
 			print "<td>";
-
+			$projectstatic->id=$lines[$i]->projectid;
+			$projectstatic->ref=$lines[$i]->projectref;
+			print $projectstatic->getNomUrl(1);
+			print "</td>";
+				
+			print "<td>".$lines[$i]->id."</td>";
+				
+			print "<td>";
 			for ($k = 0 ; $k < $level ; $k++)
 			{
 				print "&nbsp;&nbsp;&nbsp;";
@@ -71,24 +245,10 @@ Function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
 
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
 
-			if ($tasksrole[$lines[$i]->id] == 'admin')
-			{
-				print '<td>';
-				print '<input size="4" type="text" class="flat" name="task'.$lines[$i]->id.'" value="">';
-				print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-				print '</td>';
-				print "<td>";
-				print $form->select_date('',$lines[$i]->id,'','','',"addtime");
-				print '</td>';
-			}
-			else
-			{
-				print '<td colspan="2">&nbsp;</td>';
-			}
 			print "</tr>\n";
 			$inc++;
 			$level++;
-			PLines($inc, $lines[$i]->id, $lines, $level, $tasksrole);
+			if ($lines[$i]->id) PLines($inc, $lines[$i]->id, $lines, $level, $tasksrole);
 			$level--;
 		}
 		else
@@ -98,18 +258,21 @@ Function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
 	}
 }
 
-Function PLineSelect(&$inc, $parent, $lines, &$level)
+
+function PLineSelect(&$inc, $parent, $lines, &$level)
 {
+	global $langs;
+	
 	for ($i = 0 ; $i < sizeof($lines) ; $i++)
 	{
-		if ($parent == 0)
-		$level = 0;
+		if ($parent == 0) $level = 0;
 
 		if ($lines[$i]->fk_parent == $parent)
 		{
 			$var = !$var;
-			print '<option value="'.$lines[$i]->id.'">';
-
+			print '<option value="'.$lines[$i]->projectid.'_'.$lines[$i]->id.'">';
+			print $langs->trans("Project").' '.$lines[$i]->projectref;
+			if ($lines[$i]->id) print ' > ';
 			for ($k = 0 ; $k < $level ; $k++)
 			{
 				print "&nbsp;&nbsp;&nbsp;";
@@ -119,150 +282,9 @@ Function PLineSelect(&$inc, $parent, $lines, &$level)
 
 			$inc++;
 			$level++;
-			PLineSelect($inc, $lines[$i]->id, $lines, $level);
+			if ($lines[$i]->id) PLineSelect($inc, $lines[$i]->id, $lines, $level);
 			$level--;
 		}
 	}
 }
-
-
-if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
-{
-	$project = new Project($db);
-
-	$result = $project->fetch($_GET["id"]);
-
-	if ($result == 0)
-	{
-		$task_parent = $_POST["task_parent"]?$_POST["task_parent"]:0;
-		$project->CreateTask($user, $_POST["task_name"], $task_parent);
-
-		Header("Location:fiche.php?id=".$project->id);
-	}
-}
-
-if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
-{
-	$project = new Project($db);
-	$result = $project->fetch($_GET["id"]);
-
-	if ($result == 0)
-	{
-		foreach ($_POST as $key => $post)
-		{
-	  		//$pro->CreateTask($user, $_POST["task_name"]);
-	  		if (substr($key,0,4) == 'task')
-	  		{
-			  	if ($post > 0)
-			  	{
-					$post=intval($post)+(($post-intval($post))*(1+2/3));
-					$post=price2num($post);
-			  		
-					$id = ereg_replace("task","",$key);
-		
-			  		$date = dolibarr_mktime(12,0,0,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
-			  		$project->TaskAddTime($user, $id , $post, $date);
-			  	}
-			}
-		}
-
-		Header("Location:fiche.php?id=".$project->id);
-		exit;
-	}
-}
-
-
-
-llxHeader("",$langs->trans("Tasks"),"Tasks");
-
-$projet = new Project($db);
-$projet->fetch($_GET["id"]);
-$projet->societe->fetch($projet->societe->id);
-
-
-if ($_GET["action"] == 'create' && $user->rights->projet->creer)
-{
-	print_titre($langs->trans("NewTask"));
-	print '<br>';
-	
-	$tasksarray=$projet->getTasksArray();
-	
-	if ($mesg) print $mesg;
-
-	print '<form action="fiche.php?id='.$_GET["id"].'" method="post">';
-	print '<input type="hidden" name="action" value="createtask">';
-	
-	print '<table class="border" width="100%">';
-	
-	print '<tr><td>'.$langs->trans("NewTask").'</td><td colspan="3">';
-	print '<input type="text" size="25" name="task_name" class="flat">&nbsp;';
-	if ($tasksarray)
-	{
-		print ' &nbsp; '.$langs->trans("ChildOfTaks").' &nbsp; ';
-				
-		print '<select class="flat" name="task_parent">';
-		print '<option value="0" selected="true">&nbsp;</option>';
-		PLineSelect($j, 0, $tasksarray, $level);
-		print '</select>';
-	}
-	print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	print '</td></tr>';
-	
-	print '</table>';
-	print '</form>';
-
-} else {
-
-	/*
-	 * Fiche projet en mode visu
-	 *
-	 */
-
-	$head=project_prepare_head($projet);
-	dolibarr_fiche_head($head, 'tasks', $langs->trans("Project"));
-
-
-	print '<table class="border" width="100%">';
-	
-	print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
-
-	print '<td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
-
-	$tasksrole=$projet->getTasksRoleForUser($user);
-
-	$tasksarray=$projet->getTasksArray();
-	
-	print '</table>';
-	print '<br>';
-	
-	print '<form name="addtime" method="POST" action="fiche.php?id='.$projet->id.'">';
-	print '<input type="hidden" name="action" value="addtime">';
-
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("ID").'</td>';
-	print '<td>'.$langs->trans("Task").'</td>';
-	print '<td align="right">'.$langs->trans("DurationEffective").'</td>';
-	print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
-	print "</tr>\n";
-	PLines($j, 0, $tasksarray, $level, $tasksrole);
-	print '</form>';
-
-
-	print "</table>";
-	print '</div>';
-
-	
-	/*
-	 * Actions
-	 */
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$projet->id.'&amp;action=create">'.$langs->trans('AddTask').'</a>';
-	print '</div>';
-}
-
-$db->close();
-
-llxFooter('$Date$ - $Revision$');
 ?>

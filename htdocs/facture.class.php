@@ -24,10 +24,10 @@
  */
 
 /**
- \file       htdocs/facture.class.php
- \ingroup    facture
- \brief      Fichier de la classe des factures clients
- \version    $Id$
+ *	\file       htdocs/facture.class.php
+ *	\ingroup    facture
+ *	\brief      Fichier de la classe des factures clients
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
@@ -386,10 +386,10 @@ class Facture extends CommonObject
 
 
 	/**
-	 \brief      Renvoie nom clicable (avec eventuellement le picto)
-	 \param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 \param		option			Sur quoi pointe le lien
-	 \return		string			Chaine avec URL
+	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\param		option			Sur quoi pointe le lien
+	 *	\return		string			Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{

@@ -142,7 +142,8 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print_titre($langs->trans("NewProject"));
 
 	if ($mesg) print $mesg;
-
+	print '<br>';
+	
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	//if ($_REQUEST["socid"]) print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
 	print '<table class="border" width="100%">';
@@ -159,9 +160,6 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	//print $_REQUEST["socid"];
 	print $html->select_societes($_REQUEST["socid"],'socid','',1);
 	print '</td></tr>';
-
-	// Auteur du projet
-	print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
 
 	// Responsable du projet
 	print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
@@ -203,7 +201,7 @@ else
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td><input size="8" name="ref" value="'.$projet->ref.'"></td></tr>';
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td><input size="8" name="ref" value="'.$projet->ref.'"></td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="title" value="'.$projet->title.'"></td></tr>';
@@ -229,7 +227,7 @@ else
 		print '<table class="border" width="100%">';
 		
 		// Ref
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 		
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';

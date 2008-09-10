@@ -166,32 +166,32 @@ class Project extends CommonObject
 		}
 	}
 
-	/*
-	*
-	*
-	*
+	/**
+	*	\brief		Return list of projects
+	* 	\param		id_societe	To filter on a particular third party
+	* 	\return		array		Liste of projects
 	*/
 	function liste_array($id_societe='')
 	{
 		$projets = array();
 
 		$sql = "SELECT rowid, title FROM ".MAIN_DB_PREFIX."projet";
-
-		if (isset($id_societe))
+		if (! empty($id_societe))
 		{
-			$sql .= " WHERE fk_soc = $id_societe";
+			$sql .= " WHERE fk_soc = ".$id_societe;
 		}
 
-		if ($this->db->query($sql) )
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			$nump = $this->db->num_rows();
+			$nump = $this->db->num_rows($resql);
 
 			if ($nump)
 			{
 				$i = 0;
 				while ($i < $nump)
 				{
-					$obj = $this->db->fetch_object();
+					$obj = $this->db->fetch_object($resql);
 
 					$projets[$obj->rowid] = $obj->title;
 					$i++;
@@ -273,10 +273,10 @@ class Project extends CommonObject
 	}
 
 	/**
-	*    \brief      Cr�e une tache dans le projet
-	*    \param      user        Id utilisateur qui cr�e
-	*    \param     title      titre de la t�che
-	*    \param      parent   tache parente
+	*    \brief     Create a task into project
+	*    \param     user     Id user that create
+	*    \param		title    Title of task
+	*    \param     parent   Id task parent
 	*/
 	function CreateTask($user, $title, $parent = 0)
 	{
@@ -330,18 +330,19 @@ class Project extends CommonObject
 
 
 	/**
-	*    \brief      Cree une tache dans le projet
-	*    \param      user        Id utilisateur qui cr�e
-	*    \param     title      titre de la t�che
-	*    \param      parent   tache parente
+	*    \brief     Cree une tache dans le projet
+	*    \param     user     Id utilisateur qui cree
+	*    \param     title    titre de la tache
+	*    \param     parent   tache parente
 	*/
 	function TaskAddTime($user, $task, $time, $date)
 	{
 		$result = 0;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (fk_task, task_date, task_duration, fk_user)";
-		$sql .= " VALUES (".$task.",'".$this->db->idate($date)."',".$time.", ".$user->id.") ;";
+		$sql .= " VALUES (".$task.",'".$this->db->idate($date)."',".$time.", ".$user->id.")";
 
+		dolibarr_syslog("Project::TaskAddTime sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{
 			$task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task");
@@ -354,12 +355,13 @@ class Project extends CommonObject
 			$result = -2;
 		}
 
-		if ($result ==0)
+		if ($result == 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-			$sql .= " SET duration_effective = duration_effective + '".ereg_replace(",",".",$time)."'";
+			$sql .= " SET duration_effective = duration_effective + '".price2num($time)."'";
 			$sql .= " WHERE rowid = '".$task."';";
 
+			dolibarr_syslog("Project::TaskAddTime sql=".$sql, LOG_DEBUG);
 			if ($this->db->query($sql) )
 			{
 				$result = 0;
@@ -375,7 +377,12 @@ class Project extends CommonObject
 		return $result;
 	}
 
-
+	/**
+	 * Enter description here...
+	 *
+	 * @param unknown_type $user
+	 * @return unknown
+	 */
 	function getTasksRoleForUser($user)
 	{
 		$tasksrole = array();
@@ -406,19 +413,25 @@ class Project extends CommonObject
 		return $tasksrole;
 	}
 
-
+	/**
+	 * Return list of project - tasks
+	 *
+	 * @return unknown
+	 */
 	function getTasksArray()
 	{
 		$tasks = array();
 
-		/* Liste des taches dans $tasks */
+		/* List of tasks */
 	
-		$sql = "SELECT t.rowid, t.title, t.fk_task_parent, t.duration_effective";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";
-		$sql .= " WHERE t.fk_projet =".$this->id;
-		$sql .= " ORDER BY t.fk_task_parent";
+		$sql = "SELECT p.rowid as projectid, p.ref, p.title,";
+		$sql.= " t.rowid, t.title, t.fk_task_parent, t.duration_effective";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
+		if ($this->id) $sql .= " WHERE t.fk_projet =".$this->id;
+		$sql.= " ORDER BY p.ref, t.fk_task_parent";
 
-		$var=true;
+		dolibarr_syslog("Project::getTasksArray sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -427,10 +440,13 @@ class Project extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$tasks[$i]->id    = $obj->rowid;
-				$tasks[$i]->title = $obj->title;
-				$tasks[$i]->fk_parent = $obj->fk_task_parent;
-				$tasks[$i]->duration  = $obj->duration_effective;
+				$tasks[$i]->projectid    = $obj->projectid;
+				$tasks[$i]->projectref   = $obj->ref;
+				$tasks[$i]->projectlabel = $obj->title;
+				$tasks[$i]->id         = $obj->rowid;
+				$tasks[$i]->title      = $obj->title;
+				$tasks[$i]->fk_parent  = $obj->fk_task_parent;
+				$tasks[$i]->duration   = $obj->duration_effective;
 				$i++;
 			}
 			$this->db->free();
@@ -443,5 +459,29 @@ class Project extends CommonObject
 		return $tasks;
 	}
 
+	/**
+	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\param		option			Sur quoi pointe le lien
+	 *	\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+
+		$result='';
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		$picto='project';
+
+		$label=$langs->trans("ShowProject").': '.$this->ref;
+
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}	
 }
 ?>
