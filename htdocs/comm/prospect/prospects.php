@@ -18,11 +18,11 @@
  */
 
 /**
-	    \file       htdocs/comm/prospect/prospects.php
-        \ingroup    prospect
-		\brief      Page de la liste des prospects
-		\version    $Id$
-*/
+ \file       htdocs/comm/prospect/prospects.php
+ \ingroup    prospect
+ \brief      Page de la liste des prospects
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
@@ -49,14 +49,14 @@ if (! $sortfield) $sortfield="s.nom";
 
 
 
-/* 
+/*
  * Actions
  */
 if ($_GET["action"] == 'cstc')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
-  $sql .= " WHERE rowid = ".$_GET["socid"];
-  $result=$db->query($sql);
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
+	$sql .= " WHERE rowid = ".$_GET["socid"];
+	$result=$db->query($sql);
 }
 
 
@@ -77,11 +77,11 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc
 
 if (isset($stcomm) && $stcomm != '')
 {
-    $sql .= " AND s.fk_stcomm=".$stcomm;
+	$sql .= " AND s.fk_stcomm=".$stcomm;
 }
 if ($user->societe_id)
 {
-    $sql .= " AND s.rowid = " .$user->societe_id;
+	$sql .= " AND s.rowid = " .$user->societe_id;
 }
 
 if ($_GET["search_nom"])   $sql .= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
@@ -89,9 +89,9 @@ if ($_GET["search_ville"]) $sql .= " AND s.ville like '%".addslashes(strtolower(
 
 if ($socname)
 {
-    $sql .= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
-    $sortfield = "s.nom";
-    $sortorder = "ASC";
+	$sql .= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
+	$sortfield = "s.nom";
+	$sortorder = "ASC";
 }
 
 // Count total nb of records
@@ -108,103 +108,103 @@ $sql .= $db->plimit($conf->liste_limit+1, $offset);
 $resql = $db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
+	$num = $db->num_rows($resql);
 
-    if ($num == 1 && $socname)
-    {
-        $obj = $db->fetch_object($resql);
-        Header("Location: fiche.php?socid=".$obj->rowid);
-        exit;
-    }
-    else
-    {
-        llxHeader();
-    }
+	if ($num == 1 && $socname)
+	{
+		$obj = $db->fetch_object($resql);
+		Header("Location: fiche.php?socid=".$obj->rowid);
+		exit;
+	}
+	else
+	{
+		llxHeader();
+	}
 
 	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($_GET["search_nom"]).'&amp;search_ville='.urlencode($_GET["search_ville"]);
 
-    print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"], $param, $sortfield,$sortorder,'',$num,$nbtotalofrecords);
+	print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"], $param, $sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
-    print '<table class="liste" width="100%">';
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,"valign=\"center\"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","",$param,"align=\"center\"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","",$param,"align=\"center\"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","",$param,"align=\"center\"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","",$param,"align=\"center\"",$sortfield,$sortorder);
-    print '<td class="liste_titre" colspan="4">&nbsp;</td>';
-    print "</tr>\n";
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,"valign=\"center\"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","",$param,"align=\"center\"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","",$param,"align=\"center\"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ProspectLevelShort"),"prospects.php","s.fk_prospectlevel","",$param,"align=\"center\"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","",$param,"align=\"center\"",$sortfield,$sortorder);
+	print '<td class="liste_titre" colspan="4">&nbsp;</td>';
+	print "</tr>\n";
 
-    print '<form method="get" action="prospects.php">';
-    print '<tr class="liste_titre">';
-    print '<td class="liste_titre">';
-    print '<input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'">';
-    print '</td><td class="liste_titre">';
-    print '<input type="text" class="flat" name="search_ville" size="12" value="'.$_GET["search_ville"].'">';
-    print '</td>';
-    print '<td class="liste_titre" colspan="7" align="right">';
-    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-    print '</td>';
+	print '<form method="get" action="prospects.php">';
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'">';
+	print '</td><td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_ville" size="12" value="'.$_GET["search_ville"].'">';
+	print '</td>';
+	print '<td class="liste_titre" colspan="7" align="right">';
+	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+	print '</td>';
 
-    print "</tr>\n";
+	print "</tr>\n";
 
-    $i = 0;
-    $var=true;
+	$i = 0;
+	$var=true;
 
-    $prospectstatic=new Prospect($db);
-    $prospectstatic->client=2;
-    
-    while ($i < min($num,$conf->liste_limit))
-    {
-        $obj = $db->fetch_object($resql);
+	$prospectstatic=new Prospect($db);
+	$prospectstatic->client=2;
 
-        $var=!$var;
+	while ($i < min($num,$conf->liste_limit))
+	{
+		$obj = $db->fetch_object($resql);
 
-        print "<tr $bc[$var]>";
-        print '<td>';
-        $prospectstatic->id=$obj->rowid;
-        $prospectstatic->nom=$obj->nom;
-        print $prospectstatic->getNomUrl(1);
-        print '</td>';
-        print "<td>".$obj->ville."&nbsp;</td>";
-        print "<td align=\"center\">$obj->departement</td>";
-        // Creation date
-        print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
-        // Level
-        print "<td align=\"center\">";
-        print $prospectstatic->LibLevel($obj->fk_prospectlevel);
-        print "</td>";
-        // Statut
-        print "<td align=\"center\">";
-        print $prospectstatic->LibStatut($obj->fk_stcomm,2);
-        print "</td>";
-        
-        $sts = array(-1,0,1,2,3);
-        print '<td align="right" nowrap>';
-        foreach ($sts as $key => $value)
-        {
-            if ($value <> $obj->fk_stcomm)
-            {
-                print '<a href="prospects.php?socid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.'">';
-                print img_action(0,$value);
-                print '</a>&nbsp;';
-            }
-        }
-        print '</td>';
+		$var=!$var;
 
-        print "</tr>\n";
-        $i++;
-    }
-    
-    if ($num > $conf->liste_limit || $page > 0) print_barre_liste('', $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
-    
-    print "</table>";
-    $db->free($resql);
+		print "<tr $bc[$var]>";
+		print '<td>';
+		$prospectstatic->id=$obj->rowid;
+		$prospectstatic->nom=$obj->nom;
+		print $prospectstatic->getNomUrl(1);
+		print '</td>';
+		print "<td>".$obj->ville."&nbsp;</td>";
+		print "<td align=\"center\">$obj->departement</td>";
+		// Creation date
+		print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
+		// Level
+		print "<td align=\"center\">";
+		print $prospectstatic->LibLevel($obj->fk_prospectlevel);
+		print "</td>";
+		// Statut
+		print "<td align=\"center\">";
+		print $prospectstatic->LibStatut($obj->fk_stcomm,2);
+		print "</td>";
+
+		$sts = array(-1,0,1,2,3);
+		print '<td align="right" nowrap>';
+		foreach ($sts as $key => $value)
+		{
+			if ($value <> $obj->fk_stcomm)
+			{
+				print '<a href="prospects.php?socid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$param.($page?'&amp;page='.$page:'').'">';
+				print img_action(0,$value);
+				print '</a>&nbsp;';
+			}
+		}
+		print '</td>';
+
+		print "</tr>\n";
+		$i++;
+	}
+
+	if ($num > $conf->liste_limit || $page > 0) print_barre_liste('', $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
+
+	print "</table>";
+	$db->free($resql);
 }
 else
 {
-    dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 $db->close();
