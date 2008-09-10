@@ -1037,7 +1037,7 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 		$langs->load("help");
 		
         $helpbaseurl='';
-        if ($langs->defaultlang == "fr_FR") $helpbaseurl='http://www.dolibarr.com/wikidev/index.php/%s';
+        if ($langs->defaultlang == "fr_FR") $helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
 		
 		$helppage=$langs->trans($helppagename);
 	
