@@ -48,7 +48,7 @@ class modDocument extends DolibarrModules
     $this->db = $DB ;
     $this->numero = 51 ;
     
-    $this->family = "ecm";
+    $this->family = "other";
     $this->name = "Document";
     $this->description = "Gestion des documents";
     $this->revision = explode(' ','$Revision$');

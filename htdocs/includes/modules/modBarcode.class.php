@@ -49,7 +49,7 @@ class modBarcode extends DolibarrModules
     $this->db = $DB ;
     $this->numero = 55 ;
     
-    $this->family = "other";
+    $this->family = "technic";
     $this->name = "Codes barres";
     $this->description = "Gestion des codes barres";
     $this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version

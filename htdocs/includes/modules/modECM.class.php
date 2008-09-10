@@ -62,7 +62,7 @@ class modECM extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_ECM';
 		// Where to store the module in setup page (0=common,1=interface,2=other)
-		$this->special = 2;
+		$this->special = 0;
 		// Name of png file (without png) used for this module
 		$this->picto='dir';
 		

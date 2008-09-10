@@ -1,5 +1,8 @@
 # Dolibarr language file - en_US - admin
 Version=Version
+VersionProgram=Version program
+VersionLastInstall=Version initial install
+VersionLastUpgrade=Version last upgrade
 VersionExperimental=Experimental
 VersionDevelopment=Development
 VersionUnknown=Unknown

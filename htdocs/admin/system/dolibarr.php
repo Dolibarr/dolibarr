@@ -47,7 +47,11 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("Version")."</td><td>".DOL_VERSION."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("VersionProgram")."</td><td>".DOL_VERSION."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("VersionLastInstall")."</td><td>".$conf->global->MAIN_VERSION_LAST_INSTALL."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("VersionLastUpgrade")."</td><td>".$conf->global->MAIN_VERSION_LAST_UPGRADE."</td></tr>\n";
 print '</table>';
 print '<br>';
 

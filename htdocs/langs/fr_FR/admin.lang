@@ -1,5 +1,8 @@
 # Dolibarr language file - fr_FR - admin
 Version=Version
+VersionProgram=Version programmes
+VersionLastInstall=Version installation initiale
+VersionLastUpgrade=Version dernière mise à jour
 VersionExperimental=Expérimental
 VersionDevelopment=Développement
 VersionUnknown=Inconnue
@@ -176,7 +179,7 @@ FeatureNotAvailableOnLinux=Fonctionnalité non disponible sous systemes Unix. Tes
 ModuleSetup=Configuration du module
 ModulesSetup=Configuration des modules
 ModuleFamilyBase=Système
-ModuleFamilyCrm=Gestion client (CRM)
+ModuleFamilyCrm=Gestion client
 ModuleFamilyProducts=Gestion produits
 ModuleFamilyHr=Ressources humaines
 ModuleFamilyProjects=Projets/Travail collaboratif

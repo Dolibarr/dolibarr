@@ -49,8 +49,8 @@ class modDroitPret  extends DolibarrModules
     $this->numero = 2200 ;
 
     $this->family = "other";
-    $this->name = "Droit Pr�t";
-    $this->description = "Gestion du droit de pr�ts";
+    $this->name = "Droit Pret";
+    $this->description = "Gestion du droit de prets";
     $this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_DROITPRET';
     $this->special = 2;

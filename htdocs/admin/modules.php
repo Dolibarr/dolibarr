@@ -20,10 +20,10 @@
  */
  
 /**
-   \file       htdocs/admin/modules.php
-   \brief      Page de configuration et activation des modules
-   \version    $Id$
-*/
+ *  \file       htdocs/admin/modules.php
+ *  \brief      Page de configuration et activation des modules
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -217,7 +217,7 @@ foreach ($dirlist as $dirroot)
 
 				if ($modulequalified)
 				{
-		            $modules[$i] = $objMod;
+					$modules[$i] = $objMod;
 		            $filename[$i]= $modName;
 		            $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
 					//print "x".$modName." ".$orders[$i]."\n<br>";
