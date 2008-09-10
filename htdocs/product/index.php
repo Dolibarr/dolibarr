@@ -19,11 +19,11 @@
  */
 
 /**
-   \file       htdocs/product/index.php
-   \ingroup    product
-   \brief      Page accueil des produits et services
-   \version    $Id$
-*/
+ *	\file       htdocs/product/index.php
+ *  \ingroup    product
+ *  \brief      Page accueil des produits et services
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
@@ -114,7 +114,9 @@ else
 {
 	print $statProducts.$statServices;
 }
-
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+print round($prodser[1][0])+round($prodser[1][1])+round($prodser[0][0])+round($prodser[0][1]);
+print '</td></tr>';
 print '</table>';
 
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
