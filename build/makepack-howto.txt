@@ -6,7 +6,6 @@
 - Update version number in htdocs/build/exe/doliwamp/doliwamp.iss
 - Update version number in htdocs/master.inc.php
 - Update version number in htdocs/install/inc.php
-- Run dolibarr_mysql2pgsql.pl
 - Update PAD files
 - Commit all changes
 - Add a CVS Tag and create a branch
