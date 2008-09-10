@@ -54,8 +54,8 @@ print '<tr><td width="30%" valign="top" class="notopnoleft">';
  */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Project"),"index.php","s.nom","","","",$sortfield,$sortorder);
-print '<td align="center">'.$langs->trans("NbOpenTasks").'</td>';
+print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
+print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, count(t.rowid)";
@@ -85,7 +85,7 @@ if ( $resql )
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";
     
       $i++;
@@ -103,7 +103,7 @@ print "</table>";
 print '<br /><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans('Today').'</td>';
-print '<td width="50%" align="center">Temps</td>';
+print '<td width="50%" align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
@@ -126,7 +126,7 @@ if ( $resql )
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";
       $total += $row[2];
     }
@@ -139,7 +139,7 @@ else
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
-print '<td align="center">'.$total.'</td>';
+print '<td align="right">'.$total.'</td>';
 print "</tr>\n";    
 print "</table>";
 
@@ -147,7 +147,7 @@ print "</table>";
 print '<br /><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans('Yesterday').'</td>';
-print '<td width="50%" align="center">Temps</td>';
+print '<td width="50%" align="center">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
@@ -170,7 +170,7 @@ if ( $resql )
       $var=!$var;
     	print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";
       $total += $row[2];
     }
@@ -183,7 +183,7 @@ else
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
-print '<td align="center">'.$total.'</td>';
+print '<td align="right">'.$total.'</td>';
 print "</tr>\n";
 print "</table>";
 
@@ -192,8 +192,8 @@ print '</td><td width="70%" valign="top" class="notopnoleft">';
 /* Affichage de la liste des projets de la semaine */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="50%">Activité sur les projets cette semaine</td>';
-print '<td width="50%" align="center">Temps</td>';
+print '<td>'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
+print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
@@ -215,7 +215,7 @@ if ( $resql )
       $var=!$var;
     	print "<tr ".$bc[$var].">";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";    
       $total += $row[2];
     }
@@ -228,15 +228,15 @@ else
 }
 print '<tr class="liste_total">';
 print '<td>'.$langs->trans('Total').'</td>';
-print '<td align="center">'.$total.'</td>';
+print '<td align="right">'.$total.'</td>';
 print "</tr>\n";
 print "</table><br />";
 
 /* Affichage de la liste des projets du mois */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="50%">'.$langs->trans("Project").' ce mois : '.strftime("%B %Y", $now).'</td>';
-print '<td width="50%" align="center">Nb heures</td>';
+print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.strftime("%B %Y", $now).'</td>';
+print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
@@ -249,7 +249,7 @@ $sql .= " AND tt.fk_user = ".$user->id;
 $sql .= " AND month(task_date) = ".strftime("%m",$now);
 $sql .= " GROUP BY p.rowid";
 
-$var=true;
+$var=false;
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -257,7 +257,7 @@ if ( $resql )
     {
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";    
       $var=!$var;
     }  
@@ -272,8 +272,8 @@ print "</table>";
 /* Affichage de la liste des projets de l'année */
 print '<br /><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="50%">'.$langs->trans("Project").' cette année : '.strftime("%Y", $now).'</td>';
-print '<td width="50%" align="center">Nb heures</td>';
+print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
+print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
@@ -286,7 +286,7 @@ $sql .= " AND tt.fk_user = ".$user->id;
 $sql .= " AND YEAR(task_date) = ".strftime("%Y",$now);
 $sql .= " GROUP BY p.rowid";
 
-$var=true;
+$var=false;
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -294,7 +294,7 @@ if ( $resql )
     {
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";    
       $var=!$var;
     }  
@@ -310,5 +310,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

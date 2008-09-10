@@ -55,8 +55,8 @@ print '<tr><td width="30%" valign="top" class="notopnoleft">';
  */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Project"),"index.php","s.nom","","","",$sortfield,$sortorder);
-print '<td align="center">'.$langs->trans("NbOpenTasks").'</td>';
+print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
+print '<td align="right">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, count(t.rowid)";
@@ -82,7 +82,7 @@ if ( $resql )
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td align="right">'.$row[2].'</td>';
       print "</tr>\n";
     
       $i++;
@@ -124,8 +124,8 @@ $dateendy=dolibarr_mktime(23,59,59,12,31,$info["year"]);
 /* Affichage de la liste des projets du mois */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="50%">Activité sur les projets cette semaine</td>';
-print '<td width="50%" align="right">'.$langs->trans("Hours").'</td>';
+print '<td >'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
+print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, sum(tt.task_duration) as total";
@@ -169,8 +169,8 @@ print "</table><br />";
 /* Affichage de la liste des projets du mois */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="50%">'.$langs->trans("Project").' ce mois : '.strftime("%B %Y", $now).'</td>';
-print '<td width="50%" align="right">'.$langs->trans("Hours").'</td>';
+print '<td>'.$langs->trans("ActivityOnProjectThisMonth").': '.strftime("%B %Y", $now).'</td>';
+print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, sum(tt.task_duration) as total";
@@ -214,8 +214,8 @@ print "</table>";
 /* Affichage de la liste des projets du mois */
 print '<br /><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="50%">'.$langs->trans("Project").' cette année : '.strftime("%Y", $now).'</td>';
-print '<td width="50%" align="right">'.$langs->trans("Hours").'</td>';
+print '<td>'.$langs->trans("ActivityOnProjectThisYear").': '.strftime("%Y", $now).'</td>';
+print '<td align="right">'.$langs->trans("Time").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT p.title, p.rowid, sum(tt.task_duration) as total";
@@ -259,5 +259,6 @@ print "</table>";
 print '</td></tr></table>';
 
 $db->close();
+
 llxFooter('$Date$ - $Revision$');
 ?>
