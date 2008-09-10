@@ -71,7 +71,7 @@ class Project extends CommonObject
 		$sql.= " ".$user->id.",";
 		$sql.= " ".$this->user_resp_id.", ".$this->db->idate(mktime()).", 0)";
 		
-		dolibarr_syslog("Project::create sql=".$sql);
+		dolibarr_syslog("Project::create sql=".$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -96,9 +96,11 @@ class Project extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
 			$sql.= " SET ref='".$this->ref."'";
 			$sql.= ", title = '".$this->title."'";
+			$sql.= ", fk_soc = ".($this->socid > 0?$this->socid:"null");
 			$sql.= ", fk_user_resp = ".$this->user_resp_id;
 			$sql.= " WHERE rowid = ".$this->id;
 
+			dolibarr_syslog("Project::update sql=".$sql,LOG_DEBUG);
 			if ($this->db->query($sql) )
 			{
 				$result = 0;
@@ -142,7 +144,8 @@ class Project extends CommonObject
 				$this->title          = $obj->title;
 				$this->titre          = $obj->title;
 				$this->note           = $obj->note;
-				$this->societe->id    = $obj->fk_soc;
+				$this->socid          = $obj->fk_soc;
+				$this->societe->id    = $obj->fk_soc;	// For backward compatibility
 				$this->user_author_id = $obj->fk_user_creat;
 				$this->user_resp_id   = $obj->fk_user_resp;
 				$this->statut         = $obj->fk_statut;

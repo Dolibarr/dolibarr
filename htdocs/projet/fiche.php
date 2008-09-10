@@ -19,12 +19,11 @@
  */
 
 /**
-        \file       htdocs/projet/fiche.php
-        \ingroup    projet
-        \brief      Fiche projet
-        \version    $Id$
-*/
-
+ *	\file       htdocs/projet/fiche.php
+ *	\ingroup    projet
+ *	\brief      Fiche projet
+ *	\version    $Id$
+ */
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -49,16 +48,16 @@ $result = restrictedArea($user, 'projet', $projetid);
 
 
 /*
-* Actions
-*/
+ * Actions
+ */
 
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
 	//print $_POST["socid"];
 	$pro = new Project($db);
-	$pro->socid           = $_POST["socid"];
 	$pro->ref             = $_POST["ref"];
 	$pro->title           = $_POST["title"];
+	$pro->socid           = $_POST["socid"];
 	$pro->user_resp_id    = $_POST["officer_project"];
 	$result = $pro->create($user);
 	if ($result > 0)
@@ -78,20 +77,30 @@ if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 {
 	if (! $_POST["cancel"])
 	{
-		if (!(empty($_POST["id"]) || empty($_POST["ref"]) || empty($_POST["title"])))
+		$error=0;
+		if (empty($_POST["ref"]))
+		{
+			$error++;
+			$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
+		}
+		if (empty($_POST["title"]))
+		{
+			$error++;
+			$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+		}
+		if (! $error)
 		{
 			$projet = new Project($db);
 			$projet->id           = $_POST["id"];
 			$projet->ref          = $_POST["ref"];
 			$projet->title        = $_POST["title"];
+			$projet->socid        = $_POST["socid"];
 			$projet->user_resp_id = $_POST["officer_project"];
 			$projet->update($user);
 
 			$_GET["id"]=$projet->id;  // On retourne sur la fiche projet
-		}
-		else
-		{
-			$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
 		}
 	}
 	else
@@ -118,8 +127,8 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 llxHeader("",$langs->trans("Project"),"Projet");
 
@@ -127,46 +136,51 @@ $html = new Form($db);
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
-  print_titre($langs->trans("NewProject"));
+	/*
+	 * Create
+	 */
+	print_titre($langs->trans("NewProject"));
 
-  if ($mesg) print $mesg;
-  
-  print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-  //if ($_REQUEST["socid"]) print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
-  print '<table class="border" width="100%">';
-  print '<input type="hidden" name="action" value="add">';
+	if ($mesg) print $mesg;
 
-  // Ref
-  print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="8" type="text" name="ref" value="'.$_POST["ref"].'"></td></tr>';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	//if ($_REQUEST["socid"]) print '<input type="hidden" name="socid" value="'.$_REQUEST["socid"].'">';
+	print '<table class="border" width="100%">';
+	print '<input type="hidden" name="action" value="add">';
+
+	// Ref
+	print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="8" type="text" name="ref" value="'.$_POST["ref"].'"></td></tr>';
 
 	// Label
-  print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title" value="'.$_POST["title"].'"></td></tr>';
 
-  // Client
-  print '<tr><td>'.$langs->trans("Company").'</td><td>';
-  //print $_REQUEST["socid"];
-  print $html->select_societes($_REQUEST["socid"],'socid','',1);
-  print '</td></tr>';
+	// Client
+	print '<tr><td>'.$langs->trans("Company").'</td><td>';
+	//print $_REQUEST["socid"];
+	print $html->select_societes($_REQUEST["socid"],'socid','',1);
+	print '</td></tr>';
 
-  // Auteur du projet
-  print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
-  
-  // Responsable du projet
-  print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
+	// Auteur du projet
+	print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
+
+	// Responsable du projet
+	print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
 	$html->select_users($projet->user_resp_id,'officer_project',1);
 	print '</td></tr>';
 
-  print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-  print '</table>';
-  print '</form>';
+	print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+	print '</table>';
+	print '</form>';
 
-} else {
-
+}
+else
+{
 	/*
-	* Fiche projet en mode visu
-	*
-	*/
+	 * Show or edit
+	 */
 
+	if ($mesg) print $mesg;
+	
 	$projet = new Project($db);
 	$projet->fetch($_GET["id"]);
 	$projet->societe->fetch($projet->societe->id);
@@ -196,14 +210,14 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 		// Client
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		print $projet->societe->getNomUrl(1);
+		print $html->select_societes($projet->societe->id,'socid','',1);
 		print '</td></tr>';
-		
+
 		// Responsable du projet
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
 		$html->select_users($projet->user_resp_id,'officer_project',1);
 		print '</td></tr>';
-		
+
 		print '<tr><td align="center" colspan="2"><input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
 		print '</table>';
 		print '</form>';
@@ -211,23 +225,32 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	else
 	{
 		$projet->fetch_user($projet->user_resp_id);
-		
+
 		print '<table class="border" width="100%">';
+		
+		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
+		
+		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
+		
+		// Third party
 		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-		if ($projet->societe->id) print $projet->societe->getNomUrl(1);
+		if ($projet->societe->id > 0) print $projet->societe->getNomUrl(1);
 		else print'&nbsp;';
 		print '</td></tr>';
+		
+		// Project leader
 		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>'.$projet->user->fullname.'</td></tr>';
+
 		print '</table>';
 	}
 
 	print '</div>';
 
 	/*
-	* Boutons actions
-	*/
+	 * Boutons actions
+	 */
 	print '<div class="tabsAction">';
 
 	if ($_GET["action"] != "edit")
