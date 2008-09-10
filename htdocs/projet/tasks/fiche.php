@@ -19,21 +19,17 @@
  */
 
 /**
- \file       htdocs/projet/tasks/fiche.php
- \ingroup    projet
- \brief      Fiche taches d'un projet
- \version    $Id$
+ *	\file       htdocs/projet/tasks/fiche.php
+ *	\ingroup    projet
+ *	\brief      Fiche taches d'un projet
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
-/*
- * Securite acces client
- */
 $projetid='';
-if ($_GET["id"]) { $projetid=$_GET["id"]; }
-
+$projetid=isset($_GET["id"])?$_GET["id"]:$_POST["projetid"];
 if ($projetid == '') accessforbidden();
 
 // Security check
@@ -179,30 +175,39 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 
 llxHeader("",$langs->trans("Tasks"),"Tasks");
 
+$projet = new Project($db);
+$projet->fetch($_GET["id"]);
+$projet->societe->fetch($projet->societe->id);
+
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
 	print_titre($langs->trans("NewTask"));
-
+	print '<br>';
+	
+	$tasksarray=$projet->getTasksArray();
+	
 	if ($mesg) print $mesg;
 
-	print '<form action="fiche.php?socid='.$_GET["socid"].'" method="post">';
-
+	print '<form action="fiche.php?id='.$_GET["id"].'" method="post">';
+	print '<input type="hidden" name="action" value="createtask">';
+	
 	print '<table class="border" width="100%">';
-	print '<input type="hidden" name="action" value="add">';
-
-	print '<tr><td>'.$langs->trans("Ref").'</td><td><input size="10" type="text" name="ref"></td></tr>';
-	print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title"></td></tr>';
-
-	print '<tr><td>'.$langs->trans("Company").'</td><td>';
-	$societe = new Societe($db);
-	$societe->fetch($_GET["socid"]);
-	print $societe->getNomUrl(1);
+	
+	print '<tr><td>'.$langs->trans("NewTask").'</td><td colspan="3">';
+	print '<input type="text" size="25" name="task_name" class="flat">&nbsp;';
+	if ($tasksarray)
+	{
+		print ' &nbsp; '.$langs->trans("ChildOfTaks").' &nbsp; ';
+				
+		print '<select class="flat" name="task_parent">';
+		print '<option value="0" selected="true">&nbsp;</option>';
+		PLineSelect($j, 0, $tasksarray, $level);
+		print '</select>';
+	}
+	print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Add").'">';
 	print '</td></tr>';
-
-	print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
-
-	print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
+	
 	print '</table>';
 	print '</form>';
 
@@ -213,18 +218,12 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	 *
 	 */
 
-	$projet = new Project($db);
-	$projet->fetch($_GET["id"]);
-	$projet->societe->fetch($projet->societe->id);
-
 	$head=project_prepare_head($projet);
 	dolibarr_fiche_head($head, 'tasks', $langs->trans("Project"));
 
 
-	print '<form method="POST" action="fiche.php?id='.$projet->id.'">';
-	print '<input type="hidden" name="action" value="createtask">';
 	print '<table class="border" width="100%">';
-
+	
 	print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
 
@@ -233,22 +232,10 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	$tasksrole=$projet->getTasksRoleForUser($user);
 
 	$tasksarray=$projet->getTasksArray();
-
-	/* Nouvelle tache */
-	print '<tr><td>'.$langs->trans("NewTask").'</td><td colspan="3">';
-	print '<input type="text" size="25" name="task_name" class="flat">&nbsp;';
-	if ($tasksarray)
-	{
-		print '<select class="flat" name="task_parent">';
-		print '<option value="0" selected="true">&nbsp;</option>';
-		PLineSelect($j, 0, $tasksarray, $level);
-		print '</select>';
-	}
-	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	print '</td></tr>';
-
-	print '</table></form><br>';
-
+	
+	print '</table>';
+	print '<br>';
+	
 	print '<form name="addtime" method="POST" action="fiche.php?id='.$projet->id.'">';
 	print '<input type="hidden" name="action" value="addtime">';
 
@@ -266,7 +253,13 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	print "</table>";
 	print '</div>';
 
-
+	
+	/*
+	 * Actions
+	 */
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$projet->id.'&amp;action=create">'.$langs->trans('AddTask').'</a>';
+	print '</div>';
 }
 
 $db->close();
