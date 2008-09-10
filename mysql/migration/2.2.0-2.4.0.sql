@@ -77,6 +77,10 @@ create table llx_co_exp
 -- V4 ALTER TABLE llx_expeditiondet DROP INDEX fk_expedition;
 -- V4 ALTER TABLE llx_expeditiondet DROP INDEX fk_commande_ligne;
 
+-- V4.1 update llx_commande set fk_adresse_livraison = null where fk_adresse_livraison is not null and fk_adresse_livraison not in (select rowid from llx_societe_adresse_livraison)
+-- V4.1 delete from llx_expeditiondet where fk_expedition not in (select rowid from llx_expedition);
+-- V4.1 delete from llx_livraisondet where fk_livraison not in (select rowid from llx_livraison);
+
 alter table llx_expedition add column fk_soc integer NOT NULL after ref;
 alter table llx_expedition add column fk_adresse_livraison integer DEFAULT NULL after date_expedition;
 -- V4.1 UPDATE llx_expedition as e SET e.fk_soc = (SELECT c.fk_soc FROM llx_commande AS c WHERE e.fk_commande = c.rowid);
