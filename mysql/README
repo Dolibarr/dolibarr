@@ -1,8 +1,9 @@
-# Makefile Options
-#####################
+# README
+########
 
-- mysql.sql  Génère un fichier sql unique pour l'installation (Contient les 
-             ordres de création des tables + clés et index + données)
+This directory contains:
 
-- load       Charge les données minimales définies dans data/data.sql
-
+data:      A directory with SQL script to add Dolibarr initial data.
+migration: A directory with SQL script to migrate Dolibarr database from 
+           one version to another version.
+tables:    A directory with all files with create tables and index orders.
