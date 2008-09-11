@@ -273,7 +273,9 @@ else
 		{
 			$versionfrom=$migarray['from'];
 			$versionto=$migarray['to'];
-			print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$versionfrom.' -> '.$versionto.'</b></td><td>';
+		    $newversionfrom=eregi_replace('\.[0-9]+$','.*',$versionfrom);
+		    $newversionto=eregi_replace('\.[0-9]+$','.*',$versionto);
+			print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$newversionfrom.' -> '.$newversionto.'</b></td><td>';
 			print $langs->trans("UpgradeDesc").'</td>';
 			print '<td align="center">';
 			if ($allowupgrade)
