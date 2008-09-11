@@ -346,12 +346,12 @@ if ($_GET["action"] == 'create')
 
 	  		print '<td>';
 	  		print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-	  		if ($ligne->description) print nl2br($ligne->description);
+	  		if ($ligne->desc) print nl2br($ligne->desc);
 	  		print '</td>';
 	  	}
 	  	else
-	  	{
-	  		print "<td>".nl2br($ligne->description)."</td>\n";
+	  	{var_dump($ligne);
+	  		print "<td>".nl2br($ligne->desc)."</td>\n";
 	  	}
 	  	 
 	  	print '<td align="center">'.$ligne->qty.'</td>';
@@ -474,7 +474,7 @@ else
 
 		if ($expedition->id > 0)
 		{
-			$object = $expedition->origin;
+			$typeobject = $expedition->origin;
 			$expedition->fetch_object();
 
 			if (strlen($expedition->tracking_number) && strlen($expedition->expedition_method_id)) {
@@ -558,7 +558,7 @@ else
 			if ($conf->commande->enabled)
 			{
 				$order=new Commande($db);
-				$order->fetch($expedition->$object->id);
+				$order->fetch($expedition->$typeobject->id);
 				print $langs->trans("RefOrder").'</td>';
 				print '<td colspan="3">';
 				print $order->getNomUrl(1,4);
