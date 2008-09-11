@@ -55,7 +55,7 @@ $VERSION="1.0 (build $REVISION)";
 ($DIR=$0) =~ s/([^\/\\]+)$//; ($PROG=$1) =~ s/\.([^\.]*)$//; $Extension=$1;
 $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
-$SOURCE="$DIR/..";
+$SOURCE="$DIR/../../dolibarr";
 $DESTI="$SOURCE/build";
 
 # Detect OS type
