@@ -30,64 +30,28 @@ Pour installer Dolibarr:
 - Suivez les instructions fournis par l'installeur...
 
 
-II - DOLIBARR UPGRADE
----------------------
+II - METTRE A JOUR DOLIBARR
+---------------------------
 
 Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
 - Ecraser les vieux fichiers dans le vieux répertoire 'dolibarr' par les fichiers
   fournis dans ce nouveau package.
-- Depuis votre navigateur, appeler la page install Dolibarr:
+- Si vous venez d'une version x.y.z vers x.y.w (seul le 3eme chiffre varie),
+  il n'y a pas besoin de migration de données.
+- Si vous venez d'une beta ou d'un version x.y.z vers une autre où les numéros x
+  ou y varient, vous devez appelez la page de migration dans votre navigateur:
    http://localhost/dolibarr/htdocs/install/index.php
   ou
    http://yourdolibarrhost/install/index.php
-  et choisir l'option "mettre à jour".
+  Choisir l'option de "mise à jour" en rapport avec votre cas.
   Note: Le processus de migration peut etre lancé plusieurs fois sans risque.
   
 
 III - CE QUI EST NOUVEAU
 ------------------------
 
-- Meilleur outil installeur.
-- Supporte la notion de permissions utilisateurs et groupes.
-- Traduction en anglais et support pour d'autres langues.
-- Support experimental de Postgresql.
-- Nouveaux look amélioré et plusieurs nouveaux themes.
-- Petites boites de recherche pour chaque entités Dolibarr (factures, contrats,
-  commandes, propals...)
-- Les boites de modules sur page accueil peuvent se déplacer par drag an drop
-  et l'ordre est propre à l'utilisateur (firefow seulement).
-- Peut attacher des documents sur les Actions, Commandes, Factures, Propals.
-- Peut attaches des contacts sur les Contrats, Commandes, Factures, Propals.
-- Amélioration de certains modules et paramètres:
-  * Module société: Ajout de plusieurs nouvelles propriétés (maison mère,
-    rib, remise, type, capital, tva intra ...).
-  * Module banque: Support des comptes caisses
-  * Module LDAP: Peut désactiver la synchronisation des contacts
-  * Module produit: Supporte les attachements d'images, gestion de prix et logs
-  * Module external_rss: Supporte les liens https
-  * Module webcalendar: Meilleur intégration avec Webcalendar
-  * Module facturation: Ajout de la gestion des remises et avoirs
-- Ajout de nouveau modules:
-  * Module emailing:  Pour evnoyer des emailings
-  * Module members:   Pour gérer les membres d'une association
-  * Module suppliers: Provide orders to suppliers
-  * Module contracts: Manage contracts and their contacts
-  * Module stock:     Pour gérer les entrepots et stocks
-  * Module standing orders: Pour gérer les virements français
-  * Module bookmark:  Pour gérer des marques pages
-  * Module syslog:    Pour ajouter des logs dans un fichier ou dans syslog
-  * Module oscommerce2: Nouveau module OSCommerce fonctionnant via web services
-- Les triggers Dolibarr triggers permettent d'ajouter du code personalisé PHP
-  dans le workflow, sans risque de casser Dolibarr.
-- Correction de bugs et suppression de redeondance de code.
-- Ajout d'un editeur WISIWYG (FCKEditor) pour éditer les zones de notes.
-- De nombreuses autres changement mineurs dans l'interface.
-- Support de PHP5.
-- Suppression de fichiers obsoletes et documentation.
-- Ajout d'outils d'administration (sauvegarde et purge fichiers).
-- Ajout d'un outil pour fabriquer un package de lang.
-- Ajout d'un outil pour fabriquer un package de module.
-- Ajout d'un outil pour fabriquer un package de theme.
+Voir fichier ChangeLog.
+
 
 
 IV - CE QUE DOLIBARR PEUT FAIRE

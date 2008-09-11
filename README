@@ -34,11 +34,15 @@ II - DOLIBARR UPGRADE
 To upgrade Dolibarr from an old version to this one:
 - Overwrite all old files inside old 'dolibarr' directory by files
   provided into new version package.
-- From your browser, call the Dolibarr install page:
+- If you came from version x.y.z to x.y.w (only third number differ),
+  there is no need to run any migrate process.
+- If you came from a beta version or from any version x.y.z to any
+  other where x or y number differs, you must call the Dolibarr install
+  page in your browser:
    http://localhost/dolibarr/htdocs/install/index.php
   or
    http://yourdolibarrhost/install/index.php
-  and choose the "update" option.
+  Then choose the "update" option according to your case.
   Note: Migrate process can ben runned safely several times.
   
 
