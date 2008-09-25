@@ -21,9 +21,9 @@
  */
 
 /**
- \file       	htdocs/lib/databases/mysql.lib.php
- \brief      	Fichier de la classe permettant de g�rer une base mysql
- \version		$Id$
+ *	\file       	htdocs/lib/databases/mysql.lib.php
+ *	\brief      	Fichier de la classe permettant de g�rer une base mysql
+ *	\version		$Id$
  */
 // For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
@@ -31,8 +31,8 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 
 /**
- \class      DoliDb
- \brief      Classe de gestion de la database de dolibarr
+ *	\class      DoliDb
+ *	\brief      Classe de gestion de la database de dolibarr
  */
 class DoliDb
 {
@@ -48,19 +48,19 @@ class DoliDb
 	var $versionmin=array(3,1,0);
 	//! Resultset of last request
 	var $results;
-	//! 1 si connect�, 0 sinon  
+	//! 1 if connected, 0 else  
 	var $connected;
-	//! 1 si base s�lectionn�, 0 sinon
+	//! 1 if database selected, 0 else
 	var $database_selected;
-	//! Nom base s�lectionn�e
+	//! Database name selected
 	var $database_name;
 	//! Nom user base
 	var $database_user;
 	//! 1 si une transaction est en cours, 0 sinon
 	var $transaction_opened;
-	//! Derniere requete ex�cut�e
+	//! Last executed request
 	var $lastquery;
-	//! Derniere requete ex�cut�e avec echec
+	//! Last failed executed request
 	var $lastqueryerror;
 	//! Message erreur mysql
 	var $lasterror;
@@ -72,14 +72,14 @@ class DoliDb
 
 
 	/**
-	 \brief      Ouverture d'une connexion vers le serveur et �ventuellement une database.
-	 \param      type		Type de base de donn�es (mysql ou pgsql)
+	 \brief     Ouverture d'une connexion vers le serveur et �ventuellement une database.
+	 \param     type		Type de base de donn�es (mysql ou pgsql)
 	 \param	    host		Addresse de la base de donn�es
 	 \param	    user		Nom de l'utilisateur autoris�
 	 \param	    pass		Mot de passe
 	 \param	    name		Nom de la database
 	 \param	    port		Port of database server
-	 \return     int			1 en cas de succ�s, 0 sinon
+	 \return	int			1 en cas de succ�s, 0 sinon
   	*/
 	function DoliDb($type='mysql', $host, $user, $pass, $name='', $port=0)
 	{
@@ -138,8 +138,8 @@ class DoliDb
 				$this->database_name = $name;
 				$this->ok = 1;
 
-				// Si client connect� avec charset different de celui de la base Dolibarr
-				// (La base Dolibarr a �t� forc�e en this->forcecharset � l'install)
+				// If client connected with different charset than Dolibarr database
+				// (La base Dolibarr was forced to this->forcecharset during install)
 				/*if (mysql_client_encoding ( $this->db ) != $this->getDefaultCharacterSetDatabase())
 				{
 				$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
@@ -186,15 +186,15 @@ class DoliDb
 	}
 
 	/**
-		\brief		Connection vers le serveur
-		\param	    host		addresse de la base de donn�es
-		\param	    login		nom de l'utilisateur autoris�
-		\param	    passwd		mot de passe
-		\param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
-		\param		port		Port of database server
-		\return		resource	Handler d'acc�s � la bas
-		\seealso	close
-		*/
+	 *	\brief		Connection vers le serveur
+	 *	\param	    host		database server host
+	 *	\param	    login		login
+	 *	\param	    passwd		password
+	 *	\param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
+	 *	\param		port		Port of database server
+	 *	\return		resource	Database access handler
+	 *	\seealso	close
+	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
 		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name",LOG_DEBUG);
@@ -205,9 +205,12 @@ class DoliDb
 		if ($port) $newhost.=':'.$port;
 
 		$this->db  = @mysql_connect($newhost, $login, $passwd);
-		//force les enregistrement en latin1 si la base est en utf8 par d�faut
-		// Supprim� car plante sur mon PHP-Mysql. De plus, la base est forcement en latin1 avec
-		// les nouvelles version de Dolibarr car forc� par l'install Dolibarr.
+		// Force recors to latin1 if database is in utf8 by default
+		// Removed becasue faile on my PHP-Mysql.
+		// De plus, la base est forcement en latin1 avec
+		// les nouvelles version de Dolibarr car force par l'install Dolibarr.
+		//$this->query('SET NAMES '.$this->forcecharset);
+		//print "Resultat fonction connect: ".$this->db;
 		if ($this->db)
 		{
 			$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
