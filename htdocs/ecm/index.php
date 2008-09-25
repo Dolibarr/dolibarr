@@ -497,8 +497,8 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			$ecmdirstatic->ref=$ref;
 			print $ecmdirstatic->getNomUrl(0,$option);
 			$ecmdirstatic->ref=$oldref;
-			if (! in_array($val['id'],$expandedsectionarray)) print img_picto('','/theme/common/treemenu/folder.gif','',1);
-			else print img_picto('','/theme/common/treemenu/folder-expanded.gif','',1);
+			if (! in_array($val['id'],$expandedsectionarray)) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder.gif','',1);
+			else print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder-expanded.gif','',1);
 			print '</td>';
 			// Show link
 			print '<td valign="middle">';
