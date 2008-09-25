@@ -8,6 +8,7 @@ For users:
 - Look enhancements for graphics (add transparency).
 - Added statistics report for supplier invoices
 - Added average amount in invoices statistics reports.
+- Can move a contract line to another contract of same third party.
 
 For translators:
 - The errors language file contains only error or warning messages with 

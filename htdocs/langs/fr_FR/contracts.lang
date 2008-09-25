@@ -69,6 +69,9 @@ ServiceStatus=Statut du service
 DraftContracts=Contrats brouillons
 CloseRefusedBecauseOneServiceActive=Fermeture du contrat impossible car il y a au moins un service actif
 CloseAllContracts=Tout clôturer
+MoveToAnotherContract=Déplacer le service vers un autre contrat de ce tiers.
+ConfirmMoveToAnotherContract=J'ai choisi le contrat cible et confirme le déplacement du service dans ce contrat.
+ConfirmMoveToAnotherContractQuestion=Choisissez vers quel autre contrat de ce même tiers, vous voulez déplacer ce service ?
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
 TypeContact_contrat_internal_SALESREPFOLL=Commercial suivi du contrat

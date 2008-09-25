@@ -1960,7 +1960,6 @@ class Form
    *    \param  action      	action
    *	\param	formquestion	an array with forms complementary inputs
    */
-	 
   function form_confirm($page, $title, $question, $action, $formquestion='')
   {
     global $langs;
@@ -1987,7 +1986,9 @@ class Form
 	    	}
 	    	if ($input['type'] == 'select') 
 	    	{
-
+				print '<tr><td valign="top">';
+				print $this->select_array($input['name'],$input['values'],'',1);
+				print '</td></tr>';
 	    	}
 	    	if ($input['type'] == 'checkbox') 
 	    	{
@@ -2910,6 +2911,7 @@ class Form
     function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0)
     {
         global $langs;
+        // \TODO Simplify optionType and option (only one should be necessary)
         if ($optionType == 1 && $option != '')
         {
         	print '<select class="flat" name="'.$htmlname.'" '.$option.'>';
@@ -2938,7 +2940,7 @@ class Form
             if ($key_in_label)
             {
             	$selectOptionValue = $key.' - '.($translate?$langs->trans($value):$value);
-              print $selectOptionValue;
+            	print $selectOptionValue;
             }
             else
             {

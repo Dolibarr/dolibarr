@@ -131,10 +131,6 @@ if ($_POST["date_end_real_updatemonth"] && $_POST["date_end_real_updateday"] && 
     $date_end_real_update=dolibarr_mktime(12, 0 , 0, $_POST["date_end_real_updatemonth"], $_POST["date_end_real_updateday"], $_POST["date_end_real_updateyear"]);
 }
 
-
-/*
- * Actions
- */
 if ($_POST["action"] == 'add')
 {
     $datecontrat = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
@@ -391,6 +387,32 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
     }
 }
 
+if ($_POST["action"] == 'confirm_move' && $_POST["confirm"] == 'yes')
+{
+    if ($user->rights->contrat->creer)
+    {
+    	if ($_POST['newcid'] > 0)
+    	{
+    		$contractline = new ContratLigne($db);
+    		$result=$contractline->fetch($_GET["lineid"]);
+	        $contractline->fk_contrat = $_POST["newcid"];
+	        $result=$contractline->update($user,1);
+	        if ($result >= 0)
+			{
+				Header("Location: ".$_SERVER['PHP_SELF'].'?id='.$_GET['id']);
+				return;
+			}
+			else
+			{
+				$mesg='<div class="error">'.$contrat->error.'</div>';
+			}
+    	}
+		else
+		{
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("RefNewContract")).'</div>';
+		}
+    }
+}
 
 
 /*
@@ -716,7 +738,9 @@ else
 		$servicepos=(isset($_REQUEST["servicepos"])?$_REQUEST["servicepos"]:1);
 		$colorb='333333';
 
-        /*
+		$arrayothercontracts=$contrat->getListOfContracts('others');
+		
+		/*
          * Lignes de contrats
          */
 
@@ -734,7 +758,7 @@ else
 			// Area with common detail of line
 			print '<table class="noborder" width="100%">';
 
-			$sql = "SELECT cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty, cd.rowid,";
+			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty,";
 			$sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice,";
 			$sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_debut, ".$db->pdate("cd.date_ouverture")." as date_debut_reelle,";
 			$sql.= " ".$db->pdate("cd.date_fin_validite")." as date_fin, ".$db->pdate("cd.date_cloture")." as date_fin_reelle,";
@@ -795,8 +819,17 @@ else
 					{
 						print '<td>&nbsp;</td>';
 					}
-					// Icon update et delete (statut contrat 0=brouillon,1=validï¿½,2=fermï¿½)
+					// Icon move, update et delete (statut contrat 0=brouillon,1=validï¿½,2=fermï¿½)
 					print '<td align="right" nowrap="nowrap">';
+					if (sizeof($arrayothercontracts) && $contrat->statut != 2  && $user->rights->contrat->creer)
+					{
+						print '<a href="fiche.php?id='.$id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
+						print img_picto($langs->trans("MoveToAnotherContract"),'uparrow');
+						print '</a>';
+					}
+					else {
+						print '&nbsp;';
+					}
 					if ($contrat->statut != 2  && $user->rights->contrat->creer)
 					{
 						print '<a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
@@ -824,11 +857,11 @@ else
 						print '<tr '.$bc[$var].'>';
 						print '<td colspan="6">';
 	
-						// Date prï¿½vues
+						// Date planned
 						print $langs->trans("DateStartPlanned").': ';
 						if ($objp->date_debut) {
 							print dolibarr_print_date($objp->date_debut);
-							// Warning si date prevu passï¿½e et pas en service
+							// Warning si date prevu passee et pas en service
 							if ($objp->statut == 0 && $objp->date_debut < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
 						}
 						else print $langs->trans("Unknown");
@@ -904,6 +937,27 @@ else
 			print "</table>";
 
 
+			/*
+			 * Confirmation to move service toward another contract
+			 */
+			if ($_REQUEST["action"] == 'move' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $contrat->lignes[$cursorline-1]->id == $_GET["rowid"])
+			{
+				//print '<br />';
+				$arraycontractid=array();
+				foreach($arrayothercontracts as $contractcursor)
+				{
+					$arraycontractid[$contractcursor->id]=$contractcursor->ref;
+				}
+				//var_dump($arraycontractid);
+				// Crée un tableau formulaire
+				$formquestion=array(
+				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
+				array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
+				
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;lineid=".$_GET["rowid"],$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
+				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
+			}
+			
 			/*
 			 * Confirmation de la validation activation
 			 */

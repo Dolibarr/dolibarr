@@ -1117,11 +1117,10 @@ class Contrat extends CommonObject
         }
     }
  
- 
-    /** 
-     *    \brief      R�cup�re les lignes de detail du contrat
-     *    \param      statut      Statut des lignes detail � r�cup�rer
-     *    \return     array       Tableau des lignes de details
+     /** 
+     *    \brief      Return list of line rowid
+     *    \param      statut      Status of lines to get
+     *    \return     array       Array of line's rowid
      */
     function array_detail($statut=-1)
     {
@@ -1132,6 +1131,7 @@ class Contrat extends CommonObject
         $sql.= " WHERE fk_contrat =".$this->id;
         if ($statut >= 0) $sql.= " AND statut = '$statut'";
    
+        dolibarr_syslog("Contrat::array_detail() sql=".$sql,LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1151,12 +1151,49 @@ class Contrat extends CommonObject
             return -1;
         }
     }
+    
+    /** 
+     *  	\brief      Return list of other contracts for same company than current contract
+     *		\param		option		'all' or 'others'
+     *  	\return     array   	Array of contracts id
+     */
+    function getListOfContracts($option='all')
+    {
+        $tab=array();
+        
+        $sql = "SELECT c.rowid, c.ref";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contrat as c";
+        $sql.= " WHERE fk_soc =".$this->socid;
+        if ($option == 'others') $sql.= " AND c.rowid != ".$this->id;
+
+        dolibarr_syslog("Contrat::getOtherContracts() sql=".$sql,LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $num=$this->db->num_rows($resql);
+            $i=0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($resql);
+                $contrat=new Contrat($this->db);
+                $contrat->fetch($obj->rowid);
+                $tab[]=$contrat;
+                $i++;
+            }
+            return $tab;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
 
 
     /**
      *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
      *      \param      user        Objet user
-     *      \param      mode        "inactive" pour services � activer, "expired" pour services expir�s
+     *      \param      mode        "inactive" pour services a activer, "expired" pour services expires
      *      \return     int         <0 si ko, >0 si ok
      */
     function load_board($user,$mode)
@@ -1275,7 +1312,7 @@ class ContratLigne
 
 	/**
 	 *      \brief     Constructeur d'objets ligne de contrat
-	 *      \param     DB      handler d'acc�s base de donn�e
+	 *      \param     DB      Database access handler
 	 */
     function ContratLigne($DB)
     {
