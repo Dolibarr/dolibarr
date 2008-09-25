@@ -26,6 +26,54 @@
 
 
 /**
+ * Return if a child id is in descendance of parentid
+ *
+ * @param $fulltree		Full tree. Tree must be an array of records that looks like:
+ *							id = id record
+ *							id_mere = id record mother
+ *							id_children = array of direct child id
+ *							label = record label
+ * 							fullpath = Full path of id
+ * 							level =	Level of record
+ * @param $parentid		Parent id
+ * @param $childid		Child id
+ * @return	int			1=Yes, 0=No
+ */
+function is_in_subtree($fulltree,$parentid,$childid)
+{
+	if ($parentid == $childid) return 1;	
+
+	// Get fullpath of parent
+	$fullpathparent='';
+	foreach($fulltree as $key => $val)
+	{
+		//print $val['id']."-".$section."<br>";
+		if ($val['id'] == $parentid)
+		{
+			$fullpathparent=$val['fullpath'];
+			break;
+		}
+	}
+	//print '> parent='.$parentid.' - child='.$childid.' - '.$fullpathparent.'<br>';	
+	
+	foreach($fulltree as $record)
+	{
+		if ($record['id'] == $childid)
+		{
+			//print $record['fullpath'].'_'.' - '.$fullpathparent.'_';
+			if (eregi($fullpathparent.'_',$record['fullpath'].'_')) 
+			{
+				//print 'DEL='.$childid;
+				return 1;
+			}
+		}
+	}
+	
+	return 0;
+}
+
+
+/**
  * Show picto of a tree view
  *
  * @param unknown_type $tab		Array of entries in correct order

@@ -17,11 +17,11 @@
  */
 
 /**
- \file       htdoc/ecm/index.php
- \ingroup    ecm
- \brief      Main page for ECM section area
- \version    $Id$
- \author		Laurent Destailleur
+ *	\file       htdoc/ecm/index.php
+ *	\ingroup    ecm
+ *	\brief      Main page for ECM section area
+ *	\version    $Id$
+ *	\author		Laurent Destailleur
  */
 
 require("./pre.inc.php");
@@ -396,6 +396,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	print '</td>';
 	print '</tr>';
 
+	// Load full tree
 	$fulltree=$ecmdirstatic->get_full_arbo();
 
 	// Define fullpathselected ( _x_y_z )
@@ -411,6 +412,35 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	}
 	//print "fullpathselected=".$fullpathselected."<br>";
 
+	// Update expandedsectionarray in session
+	$expandedsectionarray=split(',',$_SESSION['expandedsectionarray']);
+	if ($section && $_GET['sectionexpand'] == 'true')
+	{
+		// We add all sections that are parent of opened section
+		$pathtosection=split('_',$fullpathselected);
+		foreach($pathtosection as $idcursor)
+		{
+			if ($idcursor && ! in_array($idcursor,$expandedsectionarray))	// Not already in array
+			{
+				$expandedsectionarray[]=$idcursor;
+			}
+		}
+		$_SESSION['expandedsectionarray']=join(',',$expandedsectionarray);
+	}
+	if ($section && $_GET['sectionexpand'] == 'false')
+	{
+		// We removed all expanded sections that are child of the closed section
+		$oldexpandedsectionarray=$expandedsectionarray;
+		$expandedsectionarray=array();
+		foreach($oldexpandedsectionarray as $sectioncursor)
+		{
+			// is_in_subtree(fulltree,sectionparent,sectionchild)
+			if ($sectioncursor && ! is_in_subtree($fulltree,$section,$sectioncursor)) $expandedsectionarray[]=$sectioncursor;
+		}
+		$_SESSION['expandedsectionarray']=join(',',$expandedsectionarray);
+	}
+	//print $_SESSION['expandedsectionarray'].'<br>';
+			
 	$nbofentries=0;
 	$oldvallevel=0;
 	$var=true;
@@ -431,22 +461,26 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			$val['cachenbofdoc']=$result;
 		}
 
-		// Show line if level 1 or level selected
+		//$fullpathparent=eregi_replace('_[^_]+$','',$val['fullpath']);
+		
+		// Define showline
 		$showline=0;
-		$fullpathparent=eregi_replace('_[^_]+$','',$val['fullpath']);
-		// If directory is son of selected directory, we show line
-		if ($val['id_mere'] == $section) $showline=5;
+		
+		// If directory is son of expanded directory, we show line
+		if (in_array($val['id_mere'],$expandedsectionarray)) $showline=4;
 		// If directory is brother of selected directory, we show line
-		elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=4;
+		elseif ($val['id'] != $section && $val['id_mere'] == $ecmdirstatic->motherof[$section]) $showline=3;
 		// If directory is parent of selected directory or is selected directory, we show line
-		elseif (eregi($val['fullpath'].'_',$fullpathselected.'_')) $showline=3;
-		// If parent directory is in a same path than selected directory
-		elseif (eregi($fullpathparent.'_',$fullpathselected.'_')) $showline=2;
+		elseif (eregi($val['fullpath'].'_',$fullpathselected.'_')) $showline=2;
 		// If we are level one we show line
 		elseif ($val['level'] < 2) $showline=1;
 
 		if ($showline)
 		{
+			if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
+			else $option='indexnotexpanded'; 
+			//print $option;
+			
 			print '<tr>';
 
 			// Show tree graph pictos
@@ -456,12 +490,15 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			print '</td>';
 			// Show picto
 			print '<td valign="top">';
-			//print $fullpathparent.'-'.$val['fullpath']."(".$showline.")";
-			if ($showline == 5) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
-			elseif ($showline == 4) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
-			elseif ($showline == 3) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop2.gif','',1).img_picto('','/theme/common/treemenu/folder-expanded.gif','',1);
-			elseif ($showline == 2) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
-			elseif ($showline == 1) print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop2.gif','',1).img_picto('','/theme/common/treemenu/folder.gif','',1);
+			//print $val['fullpath']."(".$showline.")";
+			if (! in_array($val['id'],$expandedsectionarray)) $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop2.gif','',1);
+			else $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop2.gif','',1);
+			$oldref=$ecmdirstatic->ref;
+			$ecmdirstatic->ref=$ref;
+			print $ecmdirstatic->getNomUrl(0,$option);
+			$ecmdirstatic->ref=$oldref;
+			if (! in_array($val['id'],$expandedsectionarray)) print img_picto('','/theme/common/treemenu/folder.gif','',1);
+			else print img_picto('','/theme/common/treemenu/folder-expanded.gif','',1);
 			print '</td>';
 			// Show link
 			print '<td valign="middle">';

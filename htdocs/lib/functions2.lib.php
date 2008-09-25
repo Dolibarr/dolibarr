@@ -19,11 +19,12 @@
  */
 
 /**
- \file			htdocs/lib/functions2.lib.php
- \brief			Ensemble de fonctions de base de dolibarr sous forme d'include.
-				Used for counters.
- \version		$Id$
+ *	\file			htdocs/lib/functions2.lib.php
+ *	\brief			Ensemble de fonctions de base de dolibarr sous forme d'include.
+ *					This file contains rare functions.
+ *	\version		$Id$
  */
+
 
 
 /**
