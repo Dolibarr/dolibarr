@@ -25,7 +25,7 @@ create table llx_rights_def
   module        varchar(12),
   perms         varchar(50),
   subperms      varchar(50),
-  type          enum('r','w','m','d','a'),
+  type          varchar(1),
   bydefault     tinyint DEFAULT 0
 )type=innodb;
 

@@ -33,7 +33,7 @@ create table llx_adherent
   login            varchar(50) NOT NULL, -- login
   pass             varchar(50),          -- password
   fk_adherent_type smallint,
-  morphy           enum('mor','phy') NOT NULL, -- personne morale / personne physique
+  morphy           varchar(3) NOT NULL, -- personne morale / personne physique
   societe          varchar(50),
   adresse          text,
   cp               varchar(30),

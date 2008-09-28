@@ -25,6 +25,6 @@ create table llx_notify
   daten           datetime,           -- date de la notification
   fk_action       integer NOT NULL,
   fk_contact      integer NOT NULL,
-  objet_type      enum('ficheinter','facture','propale'),
+  objet_type      varchar(24) NOT NULL,
   objet_id        integer NOT NULL
 )type=innodb;

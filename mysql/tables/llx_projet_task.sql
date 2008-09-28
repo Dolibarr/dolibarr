@@ -26,6 +26,6 @@ create table llx_projet_task
   title              varchar(255),
   duration_effective real NOT NULL,
   fk_user_creat      integer,      -- createur
-  statut             enum('open','closed') DEFAULT 'open',
+  statut             varchar(6) DEFAULT 'open',
   note               text
 )type=innodb;

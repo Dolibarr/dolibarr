@@ -22,7 +22,7 @@ create table llx_projet_task_actors
 (
   fk_projet_task integer NOT NULL,
   fk_user        integer NOT NULL,
-  role           enum ('admin','read','acto','info') DEFAULT 'admin',
+  role           varchar(5) DEFAULT 'admin',
 
   UNIQUE (fk_projet_task, fk_user)
 )type=innodb;

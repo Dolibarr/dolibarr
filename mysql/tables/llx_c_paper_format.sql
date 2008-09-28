@@ -25,7 +25,7 @@ create table llx_c_paper_format
   label    varchar(50)                      NOT NULL,
   width    float(6,2)                       DEFAULT 0,  -- Largeur du papier
   height   float(6,2)                       DEFAULT 0,  -- Hauteur du papier
-  unit     enum('mm','cm','point','inch')   NOT NULL,   -- Unité de mesure
+  unit     varchar(5)                       NOT NULL,   -- Unité de mesure
   active   tinyint DEFAULT 1                NOT NULL
 )type=innodb;
 

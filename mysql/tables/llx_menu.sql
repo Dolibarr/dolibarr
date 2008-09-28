@@ -25,11 +25,11 @@ CREATE TABLE `llx_menu` (
 
 	menu_handler	varchar(16) NOT NULL,				-- Menu handler name
 	module			varchar(64),						-- Module name if record is added by a module
-	type			enum('top','left') NOT NULL,		-- Menu top or left
+	type			varchar(4) NOT NULL,				-- Menu top or left
 
 	mainmenu		varchar(100) NOT NULL,				-- Name family/module (home, companies, ...)
 	fk_menu			int(11) NOT NULL,					-- 0 or Id of mother menu line
-	position		integer NOT NULL,				-- Sort order of entry
+	position		integer NOT NULL,					-- Sort order of entry
 
 	url				varchar(255) NOT NULL,				-- Relative (or absolute) url to go
 	target			varchar(100) NULL,					-- Target of Url link

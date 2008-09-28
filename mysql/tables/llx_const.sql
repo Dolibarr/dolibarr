@@ -29,7 +29,7 @@ create table llx_const
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   name        varchar(255),
   value       text, -- max 65535 caracteres
-  type        enum('yesno','texte','chaine'),
+  type        varchar(6),
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
   tms         timestamp,
