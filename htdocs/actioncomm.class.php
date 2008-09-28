@@ -513,23 +513,25 @@ class ActionComm
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 * 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *		\param		maxlength		Nombre de caract�res max dans libell�
+	 *		\param		maxlength		Nombre de caracteres max dans libelle
 	 *		\param		class			Force style class on a link
+	 * 		\param		option			''=Link to action,'birthday'=Link to contact
 	 *		\return		string			Chaine avec URL
 	 *		\remarks	Utilise $this->id, $this->code et $this->libelle
 	 */
-	function getNomUrl($withpicto=0,$maxlength,$class='')
+	function getNomUrl($withpicto=0,$maxlength,$class='',$option='')
 	{
 		global $langs;
 		
 		$result='';
-		$lien = '<a '.($class?'class="'.$class.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
+		if ($option=='birthday') $lien = '<a '.($class?'class="'.$class.'" ':'').'href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'">';
+		else $lien = '<a '.($class?'class="'.$class.'" ':'').'href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
-        if ($langs->trans("Action".$this->code) != "Action".$this->code || ! $this->libelle)
+        if ($langs->trans("Action".$this->type_code) != "Action".$this->type_code || ! $this->libelle)
         {
-        	$libelle=$langs->trans("Action".$this->code);
-        	$libelleshort=$langs->trans("Action".$this->code,'','','','',$maxlength);
+        	$libelle=$langs->trans("Action".$this->type_code);
+        	$libelleshort=$langs->trans("Action".$this->type_code,'','','','',$maxlength);
         }
         else
         {

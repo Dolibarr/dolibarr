@@ -23,6 +23,7 @@ AddTrip=Crear desplazamiento
 Tools=Utilidades
 Birthday=Aniversario
 BirthdayDate=Fecha aniversario
+DateToBirth=Fecha de nacimiento
 Notify_NOTIFY_VAL_FICHINTER=Validación ficha intervención
 Notify_NOTIFY_VAL_FAC=Validación factura
 NbOfAttachedFiles=Número archivos/documentos adjuntos

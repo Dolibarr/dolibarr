@@ -126,8 +126,8 @@ if ($_GET["action"] == 'edit')
     print $contact->getCivilityLabel();
     print '</td></tr>';
     
-	// Birthday
-    print '<tr><td>'.$langs->trans("BirthdayDate").'</td><td>';
+	// Date To Birth
+    print '<tr><td>'.$langs->trans("DateToBirth").'</td><td>';
     $html=new Form($db);
     if ($contact->birthday)
     {
@@ -135,7 +135,7 @@ if ($_GET["action"] == 'edit')
     }
     else
     {
-        print $html->select_date(0,'birthday',0,0,1,"perso");
+        print $html->select_date('','birthday',0,0,1,"perso");
     }
     print '</td>';
 
@@ -192,19 +192,18 @@ else
     print $contact->getCivilityLabel();
     print '</td></tr>';
     
-	// Birthday
+	// Date To Birth
     if ($contact->birthday)
     {
-        print '<tr><td>'.$langs->trans("BirthdayDate").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday,"day");
-
-        if ($contact->birthday_alert)
-        print ' (alerte anniversaire active)</td>';
-        else
-        print ' (alerte anniversaire inactive)</td>';
+        print '<tr><td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday,"day");
+		print ' (';
+        if ($contact->birthday_alert) print 'alerte anniversaire active';
+        else print 'alerte anniversaire inactive';
+        print ')</td>';
     }
     else
     {
-        print '<tr><td>'.$langs->trans("Birthday").'</td><td colspan="3">'.$langs->trans("Unknown")."</td>";
+        print '<tr><td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.$langs->trans("Unknown")."</td>";
     }
     print "</tr>";
 

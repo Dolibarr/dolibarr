@@ -22,6 +22,7 @@ AddTrip=Add trip
 Tools=Tools
 Birthday=Birthday
 BirthdayDate=Birthday
+DateToBirth=Date to birth
 Notify_NOTIFY_VAL_FICHINTER=Validate intervention
 Notify_NOTIFY_VAL_FAC=Validate bill
 NbOfAttachedFiles=Number of attached files/documents

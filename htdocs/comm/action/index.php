@@ -34,6 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/date.lib.php");
 $filtera = isset($_REQUEST["userasked"])?$_REQUEST["userasked"]:(isset($_REQUEST["filtera"])?$_REQUEST["filtera"]:'');
 $filtert = isset($_REQUEST["usertodo"])?$_REQUEST["usertodo"]:(isset($_REQUEST["filtert"])?$_REQUEST["filtert"]:'');
 $filterd = isset($_REQUEST["userdone"])?$_REQUEST["userdone"]:(isset($_REQUEST["filterd"])?$_REQUEST["filterd"]:'');
+$showbirthday = isset($_REQUEST["showbirthday"])?$_REQUEST["showbirthday"]:0;
 
 $page = $_GET["page"];
 $sortfield=$_GET["sortfield"];
@@ -63,6 +64,8 @@ if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')
 
 $year=isset($_REQUEST["year"])?$_REQUEST["year"]:date("Y");
 $month=isset($_REQUEST["month"])?$_REQUEST["month"]:date("m");
+
+$langs->load("other");
 
 
 /*
@@ -136,6 +139,7 @@ if ($filtert) $param.="&filtert=".$filtert;
 if ($filterd) $param.="&filterd=".$filterd;
 if ($time) $param.="&time=".$_REQUEST["time"];
 if ($socid) $param.="&socid=".$_REQUEST["socid"];
+if ($showbirthday) $param.="&showbirthday=1";
 if ($_GET["type"]) $param.="&type=".$_REQUEST["type"];
 
 // Show navigation bar
@@ -144,6 +148,9 @@ $nav.=" <span id=\"month_name\">".dolibarr_print_date(dolibarr_mktime(0,0,0,$mon
 $nav.=" ".$year;
 $nav.=" </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+
+// Must be after the nav definition
+$param.='&year='.$year.'&month='.$month;
 
 print_fiche_titre($title,$nav,"");
 
@@ -155,6 +162,7 @@ if ($canedit)
 	print '<input type="hidden" name="time" value="'.$_REQUEST["time"].'">';
 	print '<input type="hidden" name="year" value="'.$year.'">';
 	print '<input type="hidden" name="month" value="'.$month.'">';
+	print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
 	print '<table class="border" width="100%">';
 	print '<tr>';
 	print '<td nowrap="nowrap">';
@@ -167,7 +175,7 @@ if ($canedit)
 	print img_picto($langs->trans("ViewList"),'object_list').' <input type="submit" class="button" name="viewlist" value="'.$langs->trans("ViewList").'">';
 	print '<br>';
 	print '<br>';
-	print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'" disabled="true">';
+	print img_picto($langs->trans("ViewCal"),'object_calendar').' <input type="submit" class="button" name="viewcal" value="'.$langs->trans("ViewCal").'">';
 	print '</td>';
 	print '</tr>';
 
@@ -193,15 +201,18 @@ if ($canedit)
 
 
 // Get event in an array
+$actionarray=array();
+
 $sql = 'SELECT a.id,a.label,';
 $sql.= ' '.$db->pdate('a.datep').' as datep,';
 $sql.= ' '.$db->pdate('a.datep2').' as datep2,';
 $sql.= ' '.$db->pdate('a.datea').' as datea,';
 $sql.= ' '.$db->pdate('a.datea2').' as datea2,';
 $sql.= ' a.percent,';
-$sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
-$sql.= ' WHERE 1=1';
+$sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
+$sql.= ' ca.code';
+$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'c_actioncomm as ca';
+$sql.= ' WHERE a.fk_action = ca.id';
 if ($_GET["action"] == 'show_day')
 {
 	$sql.= ' AND datep BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$month,$_GET["day"],$year));
@@ -217,15 +228,15 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
+// \TODO Limit select on dates
 $sql .= ' ORDER BY datep';
-// \TODO Add filters on dates
 //print $sql;
 
-$actionarray=array();
 $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
+	$i=0;
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
@@ -233,8 +244,7 @@ if ($resql)
 		$action->id=$obj->id;
 		$action->datep=$obj->datep;
 		$action->datef=$obj->datep2;
-		//$action->date=$obj->datea;
-		//$action->dateend=$obj->datea2;
+		$action->type_code=$obj->code;
 		$action->libelle=$obj->label;
 		$action->percentage=$obj->percent;
 		$action->author->id=$obj->fk_user_author;
@@ -285,6 +295,66 @@ else
 	dolibarr_print_error($db);
 }
 
+if ($showbirthday)
+{
+	// Add events in array
+	$sql = 'SELECT sp.rowid, sp.name, sp.firstname,';
+	$sql.= ' '.$db->pdate('sp.birthday').' as birthday';
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
+	$sql.= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.$user->id.'))';
+	if ($_GET["action"] == 'show_day')
+	{
+		$sql.= ' AND birthday BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$month,$_GET["day"],$year));
+		$sql.= ' AND '.$db->idate(dolibarr_mktime(23,59,59,$month,$_GET["day"],$year));
+	}
+	// \TODO Limit select on dates
+	$sql .= ' ORDER BY birthday';
+	//print $sql;
+	
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i=0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			$action=new ActionComm($db);
+			$action->id=$obj->rowid;	// We put contact id in action id for birthdays events
+			$action->datep=$obj->birthday;
+			$action->datef=$obj->birthday;
+			$action->type_code='BIRTHDAY';
+			$action->libelle=$langs->trans("Birthday").' '.$obj->firstname.' '.$obj->name;
+			$action->percentage=100;
+	
+			$action->date_start_in_calendar=$action->datep;
+			$action->date_end_in_calendar=$action->datef;
+			$action->ponctuel=0;
+	
+			// Add an entry in actionarray for each day
+			$daycursor=$action->date_start_in_calendar;
+			$annee = date('Y',$daycursor);
+			$mois = date('m',$daycursor);
+			$jour = date('d',$daycursor);
+	
+			$loop=true;
+			$daykey=dolibarr_mktime(0,0,0,$mois,$jour,$annee);
+			do
+			{
+				$actionarray[$daykey][]=$action;
+				$daykey+=60*60*24;
+				if ($daykey > $action->date_end_in_calendar) $loop=false;
+			}
+			while ($loop);
+			$i++;
+		}
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
+}
+
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
 if (is_readable($color_file))
@@ -292,6 +362,16 @@ if (is_readable($color_file))
 	include_once($color_file);
 }
 if (! is_array($theme_datacolor)) $theme_datacolor=array(array(120,130,150), array(200,160,180), array(190,190,220));
+
+$link='<a href="'.$_SERVER['PHP_SELF'];
+$newparam=eregi_replace('showbirthday=[0-1]','showbirthday='.(empty($showbirthday)?1:0),$param);
+if (! eregi('showbirthday=',$newparam)) $newparam.='&showbirthday=1';
+$link.='?'.$newparam;
+$link.='">';
+if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
+else $link.=$langs->trans("AgendaHideBirthdayEvents");
+$link.='</a>';
+print_fiche_titre('',$link);
 
 if ($_GET["action"] != 'show_day')
 {
@@ -426,43 +506,51 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 					// Show rect of event
 					$colorindex=0;
 					if ($action->author->id == $user->id || $action->usertodo->id == $user->id || $action->userdone->id == $user->id) $colorindex=1;
+					if ($action->type_code == 'BIRTHDAY') $colorindex=2;
 					$color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
 					//print "x".$color;
 					print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; " width="100%"><tr>';
 					print '<td nowrap="nowrap">';
-					$tmpyearstart  = date('Y',$action->date_start_in_calendar);
-					$tmpmonthstart = date('m',$action->date_start_in_calendar);
-					$tmpdaystart   = date('d',$action->date_start_in_calendar);
-					$tmpyearend    = date('Y',$action->date_end_in_calendar);
-					$tmpmonthend   = date('m',$action->date_end_in_calendar);
-					$tmpdayend     = date('d',$action->date_end_in_calendar);
-					// Hour start
-					if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
+					if ($action->type_code != 'BIRTHDAY') 
 					{
-						print dolibarr_print_date($action->date_start_in_calendar,'%H:%M');
+						$tmpyearstart  = date('Y',$action->date_start_in_calendar);
+						$tmpmonthstart = date('m',$action->date_start_in_calendar);
+						$tmpdaystart   = date('d',$action->date_start_in_calendar);
+						$tmpyearend    = date('Y',$action->date_end_in_calendar);
+						$tmpmonthend   = date('m',$action->date_end_in_calendar);
+						$tmpdayend     = date('d',$action->date_end_in_calendar);
+						// Hour start
+						if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
+						{
+							print dolibarr_print_date($action->date_start_in_calendar,'%H:%M');
+							if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
+							{
+								if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend)
+								print '-';
+								//else
+								//print '...';
+							}
+						}
 						if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
 						{
-							if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend)
-							print '-';
-							//else
-							//print '...';
+							if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend)
+							{
+								print '...';
+							}
 						}
-					}
-					if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
-					{
-						if ($tmpyearstart != $tmpyearend || $tmpmonthstart != $tmpmonthend || $tmpdaystart != $tmpdayend)
+						// Hour end
+						if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
 						{
-							print '...';
+							if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
+							print dolibarr_print_date($action->date_end_in_calendar,'%H:%M');
 						}
+						print '<br>';
+						print $action->getNomUrl(0,14,'cal_event');
 					}
-					// Hour end
-					if ($action->date_end_in_calendar && $action->date_start_in_calendar != $action->date_end_in_calendar)
+					else	// It's a birthday
 					{
-						if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
-						print dolibarr_print_date($action->date_end_in_calendar,'%H:%M');
+						print $action->getNomUrl(0,14,'cal_event','birthday');
 					}
-					print '<br>';
-					print $action->getNomUrl(0,14,'cal_event');
 					print '</td>';
 					print '<td align="right" nowrap="nowrap">'.$action->getLibStatut(3);
 					print '</td></tr></table>';

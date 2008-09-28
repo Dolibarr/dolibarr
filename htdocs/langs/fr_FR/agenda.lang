@@ -42,3 +42,5 @@ AgendaUrlOptions2=<b>login=%s</b> pour limiter l'export aux actions crées, affec
 AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions crées par l'utilisateur <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> pour limiter l'export aux actions affectées à l'utilisateur <b>%s</b>.
 AgendaUrlOptions5=<b>logind=%s</b> pour limiter l'export aux actions réalisées par l'utilisateur <b>%s</b>.
+AgendaShowBirthdayEvents=Afficher anniversaires contacts
+AgendaHideBirthdayEvents=Cacher anniversaires contacts

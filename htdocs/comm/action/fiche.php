@@ -580,7 +580,8 @@ if ($_GET["id"])
 
     $act = new ActionComm($db);
     $result=$act->fetch($_GET["id"]);
-
+	if ($result < 0) dolibarr_print_error($db,$act->error);
+	
 	$societe = new Societe($db);
 	if ($act->societe->id)
 	{
