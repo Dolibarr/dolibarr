@@ -10,7 +10,7 @@ use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="2";
-$MINOR="4";
+$MINOR="5";
 $BUILD="0";				# Mettre x pour release, ou x-beta pour beta
 $RPMSUBVERSION="1";		# A incrementer au moment de la release
 
@@ -55,7 +55,7 @@ $VERSION="1.0 (build $REVISION)";
 ($DIR=$0) =~ s/([^\/\\]+)$//; ($PROG=$1) =~ s/\.([^\.]*)$//; $Extension=$1;
 $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
-$SOURCE="$DIR/../../dolibarr";
+$SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
 
 # Detect OS type
@@ -197,9 +197,9 @@ if ($nboftargetok) {
     	$ret=`rm -fr "$BUILDROOT"`;
     
     	mkdir "$BUILDROOT";
-    	print "Copy $SOURCE into $BUILDROOT\n";
-    	mkdir "$BUILDROOT";
-    	$ret=`cp -pr "$SOURCE" "$BUILDROOT"`;
+    	mkdir "$BUILDROOT/dolibarr";
+    	print "Copy $SOURCE into $BUILDROOT/dolibarr\n";
+    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/dolibarr"`;
     }
     print "Clean $BUILDROOT\n";
     $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
