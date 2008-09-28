@@ -223,10 +223,8 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 			if (eregi($from,$file))
 			{
 				$filelist[]=$file;
-
-				// Mettre from avec valeur fin de $file
 			}
-			else if (eregi($to,$file))
+			else if (eregi($to,$file))	// First test may be false if we migrate from x.y.* to x.y.*
 			{
 				$filelist[]=$file;
 			}
