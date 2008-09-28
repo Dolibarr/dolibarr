@@ -196,7 +196,7 @@ begin
   // Create a page wpInstalling
   Page := CreateInputQueryPage(wpInstalling,
   'Technical parameters', '',
-  'Please specify some technical parameters. If you don t understand or ' #13 'are not sure, just leave the default values.');
+  'Please specify some technical parameters.' #13 'If you don''t understand, are not sure, or are doing an upgrade, just leave the ' #13 'default values.');
 
   // TODO Add control differently if first install or update
   Page.Add('SMTP server (your own or ISP SMTP server) :', False);
