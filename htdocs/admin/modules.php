@@ -219,7 +219,7 @@ foreach ($dirlist as $dirroot)
 				{
 					$modules[$i] = $objMod;
 		            $filename[$i]= $modName;
-		            $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
+		            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
 					//print "x".$modName." ".$orders[$i]."\n<br>";
 					$categ[$objMod->special]++;					// Array of all different modules categories
 		            $dirmod[$i] = $dirroot;
@@ -233,6 +233,7 @@ foreach ($dirlist as $dirroot)
 }
 
 asort($orders);
+//var_dump($orders);
 
 
 // Affichage debut page
@@ -340,7 +341,10 @@ foreach ($orders as $key => $value)
         print "  <td class=\"body\" valign=\"top\">";
         if ($family!=$oldfamily)
         {
-            print "<div class=\"titre\">".$familylib[$family]."</div>";
+            $familytext=empty($familylib[$family])?$family:$familylib[$family];
+        	print "<div class=\"titre\">";
+            print $familytext;
+            print "</div>";
             $oldfamily=$family;
         }
         else
