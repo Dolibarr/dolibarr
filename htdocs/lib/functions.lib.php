@@ -404,13 +404,14 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 
 /**
  *	\brief      Formattage de la date en fonction de la langue $conf->langage
- *	\param	    time        Date 'timestamp' ou format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
- *	\param	    format      Format d'affichage de la date
+ *	\param	    time        GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' in server TZ)
+ *	\param	    format      Output date format
  *							"%d %b %Y",
  *							"%d/%m/%Y %H:%M",
  *							"%d/%m/%Y %H:%M:%S",
  *							"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
- *	\return     string      Date formatee ou '' si time null
+ * 	\param		to_gmt		false=output string if for local server TZ users, true=output string is for GMT users 
+ *	\return     string      Formated date or '' if time is null
  */
 function dolibarr_print_date($time,$format='',$to_gmt=false)
 {
@@ -434,6 +435,8 @@ function dolibarr_print_date($time,$format='',$to_gmt=false)
 	// Analyse de la date
 	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg))
 	{
+		// This part of code should not be used.
+		dolibarr_syslog("Functions.lib::dolibarr_print_date call to function with deprecated parameter", LOG_WARN);
 		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
 		$syear = $reg[1];
 		$smonth = $reg[2];
@@ -446,25 +449,28 @@ function dolibarr_print_date($time,$format='',$to_gmt=false)
 	}
 	else
 	{
-		// Date est un timestamps
+		// Date is a timestamps
 		return adodb_strftime($format,$time,$to_gmt);
 	}
 }
 
 
 /**
- *	\brief  	Convert a string date into a TMS date
+ *	\brief  	Convert a GM string date into a GM Timestamps date
  *	\param		string			Date in a string
  *				YYYYMMDD
  *				YYYYMMDDHHMMSS
  *				DD/MM/YY ou DD/MM/YYYY
  *				DD/MM/YY HH:MM:SS ou DD/MM/YYYY HH:MM:SS
  *	\return		date			Date
+ * 	\example	19700101020000 -> 7200
  */
 function dolibarr_stringtotime($string)
 {
 	if (eregi('^([0-9]+)\/([0-9]+)\/([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$string,$reg))
 	{
+		// This part of code should not be used.
+		dolibarr_syslog("Functions.lib::dolibarr_stringtotime call to function with deprecated parameter", LOG_WARN);
 		// Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
 		// Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
 		$sday = $reg[1];
@@ -480,39 +486,39 @@ function dolibarr_stringtotime($string)
 
 	$string=eregi_replace('[^0-9]','',$string);
 	$tmp=$string.'000000';
-	$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
+	$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),1);
 	return $date;
 }
 
 
 /**
- \brief  	Return an array with date info
- \param		timestamp		Timestamp
- \param		fast			Fast mode
- \return		array			Array of informations
- If no fast mode:
- 'seconds' => $secs,
- 'minutes' => $min,
- 'hours' => $hour,
- 'mday' => $day,
- 'wday' => $dow,
- 'mon' => $month,
- 'year' => $year,
- 'yday' => floor($secsInYear/$_day_power),
- 'weekday' => gmdate('l',$_day_power*(3+$dow)),
- 'month' => gmdate('F',mktime(0,0,0,$month,2,1971)),
- 0 => $origd
- If fast mode:
- 'seconds' => $secs,
- 'minutes' => $min,
- 'hours' => $hour,
- 'mday' => $day,
- 'mon' => $month,
- 'year' => $year,
- 'yday' => floor($secsInYear/$_day_power),
- 'leap' => $leaf,
- 'ndays' => $ndays
- \remarks	PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
+ *	\brief  	Return an array with date info
+ *	\param		timestamp		Timestamp
+ *	\param		fast			Fast mode
+ *	\return		array			Array of informations
+ *				If no fast mode:
+ *				'seconds' => $secs,
+ *				'minutes' => $min,
+ *				'hours' => $hour,
+ *				'mday' => $day,
+ *				'wday' => $dow,
+ *				'mon' => $month,
+ *				'year' => $year,
+ *				'yday' => floor($secsInYear/$_day_power),
+ *				'weekday' => gmdate('l',$_day_power*(3+$dow)),
+ *				'month' => gmdate('F',mktime(0,0,0,$month,2,1971)),
+ *				0 => $origd
+ *				If fast mode:
+ *				'seconds' => $secs,
+ *				'minutes' => $min,
+ *				'hours' => $hour,
+ *				'mday' => $day,
+ *				'mon' => $month,
+ *				'year' => $year,
+ *				'yday' => floor($secsInYear/$_day_power),
+ *				'leap' => $leaf,
+ *				'ndays' => $ndays
+ *	\remarks	PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  */
 function dolibarr_getdate($timestamp,$fast=false)
 {

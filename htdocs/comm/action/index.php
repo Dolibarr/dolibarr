@@ -64,6 +64,7 @@ if (! $user->rights->agenda->allactions->read || $_GET["filter"]=='mine')
 
 $year=isset($_REQUEST["year"])?$_REQUEST["year"]:date("Y");
 $month=isset($_REQUEST["month"])?$_REQUEST["month"]:date("m");
+$day=isset($_REQUEST["day"])?$_REQUEST["day"]:0;
 
 $langs->load("other");
 
@@ -118,10 +119,10 @@ $next_month = $next['month'];
 
 $max_day_in_prev_month = date("t",dolibarr_mktime(0,0,0,$prev_month,1,$prev_year));
 $max_day_in_month = date("t",dolibarr_mktime(0,0,0,$month,1,$year));
-$day = -date("w",dolibarr_mktime(0,0,0,$month,1,$year))+2;
-if ($day > 1) $day -= 7;
-$firstdaytoshow=dolibarr_mktime(0,0,0,$prev_month,$max_day_in_prev_month+$day,$prev_year);
-$next_day=7-($max_day_in_month+1-$day)%7;
+$tmpday = -date("w",dolibarr_mktime(0,0,0,$month,1,$year))+2;
+if ($tmpday > 1) $tmpday -= 7;
+$firstdaytoshow=dolibarr_mktime(0,0,0,$prev_month,$max_day_in_prev_month+$tmpday,$prev_year);
+$next_day=7-($max_day_in_month+1-$tmpday)%7;
 if ($next_day < 6) $next_day+=7;
 $lastdaytoshow=dolibarr_mktime(0,0,0,$next_month,$next_day,$next_year);
 //print dolibarr_print_date($firstdaytoshow,'day');
@@ -132,15 +133,15 @@ if ($status == 'done') $title=$langs->trans("DoneActions");
 if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
 $param='';
-if ($status) $param="&status=".$status;
-if ($filter) $param.="&filter=".$filter;
+if ($status)  $param="&status=".$status;
+if ($filter)  $param.="&filter=".$filter;
 if ($filtera) $param.="&filtera=".$filtera;
 if ($filtert) $param.="&filtert=".$filtert;
 if ($filterd) $param.="&filterd=".$filterd;
-if ($time) $param.="&time=".$_REQUEST["time"];
-if ($socid) $param.="&socid=".$_REQUEST["socid"];
+if ($time)    $param.="&time=".$_REQUEST["time"];
+if ($socid)   $param.="&socid=".$_REQUEST["socid"];
 if ($showbirthday) $param.="&showbirthday=1";
-if ($_GET["type"]) $param.="&type=".$_REQUEST["type"];
+if (! empty($_REQUEST["type"]))   $param.="&type=".$_REQUEST["type"];
 
 // Show navigation bar
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
@@ -150,7 +151,7 @@ $nav.=" </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 
 // Must be after the nav definition
-$param.='&year='.$year.'&month='.$month;
+$param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 
 print_fiche_titre($title,$nav,"");
 
@@ -162,7 +163,9 @@ if ($canedit)
 	print '<input type="hidden" name="time" value="'.$_REQUEST["time"].'">';
 	print '<input type="hidden" name="year" value="'.$year.'">';
 	print '<input type="hidden" name="month" value="'.$month.'">';
+	print '<input type="hidden" name="day" value="'.$day.'">';
 	print '<input type="hidden" name="showbirthday" value="'.$showbirthday.'">';
+	print '<input type="hidden" name="action" value="'.$_REQUEST['action'].'">';
 	print '<table class="border" width="100%">';
 	print '<tr>';
 	print '<td nowrap="nowrap">';
@@ -218,6 +221,14 @@ if ($_GET["action"] == 'show_day')
 	$sql.= ' AND datep BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$month,$_GET["day"],$year));
 	$sql.= ' AND '.$db->idate(dolibarr_mktime(23,59,59,$month,$_GET["day"],$year));
 }
+else
+{
+	// To limit array
+	$startmonth=$month-2; $startyear=$year; if ($startmonth < 1) { $startmonth+=12; $startyear--; } 
+	$endmonth=$month+2; $endyear=$year; if ($endmonth > 12) { $endmonth-=12; $endyear++; }
+	$sql.= ' AND datep BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$startmonth,1,$startyear));
+	$sql.= ' AND '.$db->idate(dolibarr_mktime(0,0,0,$endmonth,1,$endyear));
+}
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
 	$sql.= " AND (";
@@ -228,8 +239,8 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
-// \TODO Limit select on dates
-$sql .= ' ORDER BY datep';
+// Sort on date
+$sql.= ' ORDER BY datep';
 //print $sql;
 
 $resql=$db->query($sql);
@@ -298,16 +309,19 @@ else
 if ($showbirthday)
 {
 	// Add events in array
-	$sql = 'SELECT sp.rowid, sp.name, sp.firstname,';
-	$sql.= ' '.$db->pdate('sp.birthday').' as birthday';
+	$sql = 'SELECT sp.rowid, sp.name, sp.firstname, sp.birthday';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'socpeople as sp';
 	$sql.= ' WHERE (priv=0 OR (priv=1 AND fk_user_creat='.$user->id.'))';
 	if ($_GET["action"] == 'show_day')
 	{
-		$sql.= ' AND birthday BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$month,$_GET["day"],$year));
-		$sql.= ' AND '.$db->idate(dolibarr_mktime(23,59,59,$month,$_GET["day"],$year));
+		$sql.= ' AND MONTH(birthday) = '.$month;
+		$sql.= ' AND DAY(birthday) = '.$_GET["day"];
 	}
-	// \TODO Limit select on dates
+	else
+	{
+		$sql.= ' AND MONTH(birthday) = '.$month;
+	}
+	// Sort on date
 	$sql .= ' ORDER BY birthday';
 	//print $sql;
 	
@@ -321,8 +335,11 @@ if ($showbirthday)
 			$obj = $db->fetch_object($resql);
 			$action=new ActionComm($db);
 			$action->id=$obj->rowid;	// We put contact id in action id for birthdays events
-			$action->datep=$obj->birthday;
-			$action->datef=$obj->birthday;
+			$datebirth=dolibarr_stringtotime($obj->birthday);
+			//print 'ee'.$obj->birthday.'-'.$datebirth;
+			$datearray=dolibarr_getdate($datebirth,true);
+			$action->datep=dolibarr_mktime(0,0,0,$datearray['mon'],$datearray['mday'],$year);
+			$action->datef=$action->datep;
 			$action->type_code='BIRTHDAY';
 			$action->libelle=$langs->trans("Birthday").' '.$obj->firstname.' '.$obj->name;
 			$action->percentage=100;
@@ -363,9 +380,11 @@ if (is_readable($color_file))
 }
 if (! is_array($theme_datacolor)) $theme_datacolor=array(array(120,130,150), array(200,160,180), array(190,190,220));
 
+// Add link to show birthdays
 $link='<a href="'.$_SERVER['PHP_SELF'];
 $newparam=eregi_replace('showbirthday=[0-1]','showbirthday='.(empty($showbirthday)?1:0),$param);
 if (! eregi('showbirthday=',$newparam)) $newparam.='&showbirthday=1';
+if ($_REQUEST['action']) $newparam.='&action='.$_REQUEST['action'];
 $link.='?'.$newparam;
 $link.='">';
 if (empty($showbirthday)) $link.=$langs->trans("AgendaShowBirthdayEvents");
@@ -392,17 +411,17 @@ if ($_GET["action"] != 'show_day')
 		{
 			/* Show days before the beginning of the current month
 			 (previous month)  */
-			if($day <= 0)
+			if($tmpday <= 0)
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events ($db, $max_day_in_prev_month + $day, $prev_month, $prev_year, $style, $actionarray,3);
+				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $style, $actionarray,3);
 				echo "  </td>\n";
 			}
 			/* Show days of the current month */
-			elseif(($day <= $max_day_in_month))
+			elseif(($tmpday <= $max_day_in_month))
 			{
-				$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
+				$curtime = dolibarr_mktime (0, 0, 0, $month, $tmpday, $year);
 
 				if ($curtime < $now)
 				$style='cal_current_month';
@@ -412,7 +431,7 @@ if ($_GET["action"] != 'show_day')
 				$style='cal_current_month';
 
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $day, $month, $year, $style, $actionarray, 3);
+				show_day_events($db, $tmpday, $month, $year, $style, $actionarray, 3);
 				echo "  </td>\n";
 			}
 			/* Show days after the current month (next month) */
@@ -420,10 +439,10 @@ if ($_GET["action"] != 'show_day')
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $day - $max_day_in_month, $next_month, $next_year, $style, $actionarray, 3);
+				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $style, $actionarray, 3);
 				echo "</td>\n";
 			}
-			$day++;
+			$tmpday++;
 		}
 		echo " </tr>\n";
 	}
@@ -431,7 +450,6 @@ if ($_GET["action"] != 'show_day')
 }
 else
 {
-	
 	$style='cal_current_month';
 	$timestamp=dolibarr_mktime(12,0,0,$month,$_GET["day"],$year);
 	$arraytimestamp=adodb_getdate(dolibarr_mktime(12,0,0,$month,$_GET["day"],$year));
@@ -450,6 +468,7 @@ else
 
 
 $db->close();
+
 
 llxFooter('$Date$ - $Revision$');
 
@@ -552,7 +571,9 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 						print $action->getNomUrl(0,14,'cal_event','birthday');
 					}
 					print '</td>';
-					print '<td align="right" nowrap="nowrap">'.$action->getLibStatut(3);
+					print '<td align="right" nowrap="nowrap">';
+					if ($action->type_code != 'BIRTHDAY') print $action->getLibStatut(3);
+					else print '&nbsp;';
 					print '</td></tr></table>';
 					$i++;
 				}

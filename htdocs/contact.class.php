@@ -315,7 +315,7 @@ class Contact extends CommonObject
 		}
         if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql .= " WHERE rowid=".$id;
-
+		//print "update_perso: ".$this->birthday.'-'.$this->db->idate($this->birthday);
 		dolibarr_syslog("Contact::update_perso this->birthday=".$this->birthday." - sql=".$sql);	
 		$resql = $this->db->query($sql);
 		if (! $resql)
@@ -423,9 +423,9 @@ class Contact extends CommonObject
                 $this->mail           = $obj->email;
     
                 $this->birthday       = dolibarr_stringtotime($obj->birthday);
+				//print "fetch: ".$obj->birthday.'-'.$this->birthday;
                 $this->birthday_alert = $obj->birthday_alert;
                 $this->note           = $obj->note;
-
                 $this->user_id        = $obj->user_id;
                 $this->user_login     = $obj->user_login;
 

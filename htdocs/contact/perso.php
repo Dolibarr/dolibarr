@@ -47,7 +47,8 @@ if ($user->rights->societe->contact->creer)
 		$contact = new Contact($db);
 		$contact->fetch($_POST["contactid"]);
 		
-		$contact->birthday = dolibarr_mktime(12,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
+		// Note: Correct date should be completed with location to have exact GM time of birth.
+		$contact->birthday = dolibarr_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
 		$contact->birthday_alert = $_POST["birthday_alert"];
 		 
 		$result = $contact->update_perso($_POST["contactid"], $user);
@@ -193,7 +194,7 @@ else
     print '</td></tr>';
     
 	// Date To Birth
-    if ($contact->birthday)
+    if ($contact->birthday != '')
     {
         print '<tr><td>'.$langs->trans("DateToBirth").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday,"day");
 		print ' (';
