@@ -326,6 +326,16 @@ foreach ($orders as $key => $value)
 
     $const_name = $objMod->const_name;
 
+    // Load all lang files of module
+    if (is_array($objMod->langfiles))
+    {
+    	foreach($objMod->langfiles as $domain)
+    	{
+    		$langs->load($domain);
+    	}
+    }
+    
+    // Print a separator if we change family
     if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
         print "<tr class=\"liste_titre\">\n  <td colspan=\"9\"></td>\n</tr>\n";
         $atleastoneforfamily=0;
