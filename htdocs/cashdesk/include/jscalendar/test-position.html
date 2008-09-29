@@ -1,0 +1,40 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>JS Calendar (positioning test)</title>
+    <script type="text/javascript" src="calendar.js"></script>
+    <script type="text/javascript" src="calendar-setup.js"></script>
+    <script type="text/javascript" src="lang/calendar-en.js"></script>
+    <style type="text/css"> @import url("calendar-win2k-cold-1.css"); </style>
+  </head>
+
+  <body style="height: 100%; margin: 0px; padding: 0px;">
+    <table style="height: 100%; width: 100%;" cellspacing="0" cellpadding="0">
+      <tr style="height: 100%;">
+        <td style="vertical-align: top; text-align: left;">
+          <input type="text" id="cal-field-1" />
+          <button type="submit" id="cal-button-1">...</button>
+          <script type="text/javascript">
+            Calendar.setup({
+              inputField    : "cal-field-1",
+              button        : "cal-button-1",
+              align         : "Tr"
+            });
+          </script>
+        </td>
+        <td style="vertical-align: bottom; text-align: right;">
+          <input type="text" id="cal-field-2" />
+          <button type="submit" id="cal-button-2">...</button>
+          <script type="text/javascript">
+            Calendar.setup({
+              inputField    : "cal-field-2",
+              button        : "cal-button-2"
+            });
+          </script>
+        </td>
+      </tr>
+    </table>
+  </body>
+
+</html>

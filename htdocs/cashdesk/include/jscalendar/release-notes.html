@@ -1,0 +1,435 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 3.2//EN">
+<html>
+  <head>
+    <title>jscalendar release notes</title>
+
+    <style type="text/css">
+      h1 { border-bottom: 1px solid #000; }
+      h2 { border-bottom: 1px solid #444; }
+      ul li { margin-top: 0.5em; margin-bottom: 0.5em; }
+    </style>
+  </head>
+
+  <body>
+    <div style="float: right; border: 1px solid #000; background: #fff; padding: 10px; ">
+      <a href="http://www.dynarch.com/projects/calendar/">The Coolest DHTML Calendar</a><br />
+      © <a href="http://www.dynarch.com/">Dynarch.com</a> 2002 and later.
+    </div>
+    <h1>jscalendar release notes</h1>
+
+    <p>This release compiled at Monday,  7 Mar 2005 (19:06).</p>
+
+    <h2>1.0</h2>
+
+    <ul>
+
+      <li>
+        Added support for multiple dates selection.  In this mode the
+        calendar will allow the user to select more than one date, and
+        will maintain an array of selected dates that can be
+        investigated from your custom handlers.  Sample in <a
+        href="multiple-dates.html">multiple-dates.html</a>.
+      </li>
+
+      <li>
+        Support for “day info”.  Using this feature you can display
+        custom information for certain dates.  Sample in <a
+        href="dayinfo.html">dayinfo.html</a>.  Note that if the text
+        is really big the calendar layout might appear somehow broken;
+        this is something that should be easy to fix in the CSS file.
+      </li>
+
+      <li>
+        Clicking on “Today” will now close the calendar if the current
+        date is already selected.
+      </li>
+
+      <li>
+        The “first day of week” setting can now be defined in the
+        language file--after all, it is locale-specific.  The new
+        parameter is “Calendar._FD”.  Language files should be
+        updated, but the calendar will not complain nor fail to
+        function if the parameter is not present.
+      </li>
+
+      <li>
+        Some fixes to make the thing work in Safari.  It now seems to
+        be properly supported, please let me know if you encounter any
+        problems.
+      </li>
+
+      <li>
+        New skin: Aqua theme, appropriate for MacOSX fan sites :-)
+        This theme is located in “skins/aqua/theme.css” (in the
+        future, all themes will go to this directory).
+      </li>
+
+      <li>
+        <b>Bug fixes.</b>
+        <ul>
+          <li>
+            Keyboard operation now functions normally when the
+            calendar is displaying days from adjacent months; it might
+            even work correctly for months containing disabled dates
+            :).  This fix was originally developed under contract for
+            <a
+            href="http://www.zapatec.com/website/main/products/prod1/">The
+            Zapatec Calendar</a>.  Zapatec kindly allowed us to
+            include the bugfixes back in the open source calendar.
+          </li>
+          <li>
+            Fixed the time selection bug: the previous version would
+            reset the time to current time when a new date was
+            clicked.
+          </li>
+          <li>
+            Parsing hours like "12:XX pm" would wrongfully replace
+            "pm" with "am"--fixed.
+          </li>
+          <li>
+            Fixed critical bugs in parseDate function that would
+            initialize the calendar with 'NaN' values in all cells if
+            the string to be parsed is not a valid date.
+          </li>
+          <li>
+            The golbal variable that we are using was renamed to
+            “_dynarch_popupCalendar” to minimize the risk of name
+            clashes.  It's still difficult to get rid of it.
+          </li>
+          <li>
+            Added z-index property to drop-down menus style.
+          </li>
+          <li>
+            The calendar will update an input field even in flat mode,
+            if an input field was passed.  Also, the “showOthers”
+            parameter will be effective in both popup and flat mode.
+          </li>
+          <li>
+            Others, probably.
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        Documentation &amp; sample files updated.
+      </li>
+
+    </ul>
+
+    <h2>0.9.6</h2>
+
+    <ul>
+
+      <li>
+        "Smart" (TM :-) positioning algorithm.  The new algorithm will
+        try to keep the calendar in the browser view, which is helpful
+        in situations when the input field is near the bottom or the
+        right edge.  This code is only tested with IE and Mozilla, but
+        it should work with other browsers too.  Many thanks to <a
+        href="http://www.ex3.com">Sunny Chowdhury</a> for sponsoring
+        this feature!
+      </li>
+
+      <li>
+        Support for IE5/Win is back.  I also want to thank Janusz
+        Piwowarski for keeping his eye on the CVS ;-) He reviewed my
+        IE5-related changes and sent me a much cleaner patch.
+      </li>
+
+      <li>
+        The calendar will now allow any day of week to be "the first
+        day of week".  This was requested long time ago, by someone
+        whose name I forgot (sorry).  The reason was that in certain
+        countries weeks start on Saturday.  So I thought that instead
+        of having a "mondayFirst" and a "saturdayFirst" parameter,
+        :-), it's better to have a "firstDayOfWeek" parameter; now
+        it's present and its meaning is: "0 for Sunday", "1 for
+        Monday", "2 for Tuesday", etc.  The equivalent parameter for
+        Calendar.setup is "firstDay".  The end user can also change
+        it very easy: click on the day name in the calendar display.
+      </li>
+
+      <li>
+        The above feature triggered one <b>important change</b>: the
+        notion of "weekend" is now defined in the language file.
+        Added parameters:
+
+        <pre>
+          Calendar._TT["WEEKEND"] = "0,6";
+          Calendar._TT["DAY_FIRST"] = "Display %s first";</pre>
+
+        "WEEKEND" specifies a string with comma-separated numbers from
+        0 to 7; they define what days are marked as "weekend".  5 and
+        6 mean, of course, "Sunday" and "Saturday".  Day first is the
+        tooltip displayed when a day name is hovered; "%s" will get
+        replaced with the day name.  Updated languages are "en" and
+        "ro", which I maintain.  Please note that languages wich are
+        not updated <b>will not work</b>.  If yours is one of them,
+        please consider fixing it and sending me the fix so that I can
+        include it in the distro.
+      </li>
+
+      <li>
+        The calendar can now display days from the months adjacent to
+        the currently displayed one.  This is optional, of course, and
+        the parameter name is "showsOtherMonths" (or "showOthers" in
+        Calendar.setup).  All theme files were updated.
+      </li>
+
+      <li>
+        Displays "Time:" near the time selector, only if defined in
+        the language file.
+      </li>
+
+      <li>
+        Some bugs fixed in the date parsing code (which has also been
+        rewritten a little bit cleaner).
+      </li>
+
+      <li>
+        Calendar.setup will now configure the calendar to trigger the
+        input fields' "onchange" event, if specified, when a date is
+        selected.
+      </li>
+
+      <li>
+        New parameter in Calendar.setup: "cache" (<b>defaults to
+        false</b>).  If set to true then the popup calendar object
+        will be "cached", meaning, it will be created only once, no
+        matter how many input fields are there in the page.  Sometimes
+        this is not desirable, which is why I've added this
+        parameter.  Please note that it defaults to "false" (thus the
+        default behavior has changed).
+      </li>
+
+      <li>
+        Added a simple PHP wrapper.  It provides code which loads all
+        the required scripts and theme file, and one function which
+        creates and configures an input field for date input.  It
+        takes care of creating and assigning unique ID-s for the
+        calendar fields and it also creates the "Calendar.setup" code.
+        Functions to create more specialized fields can be added very
+        easily.  This feature was requested by the FreeMED.org project
+        (thanks for donating!).
+      </li>
+
+    </ul>
+
+    <p>Wow, there were quite some changes :-D  Enjoy it!</p>
+
+    <h2>0.9.5</h2>
+
+    <p>
+      This release's primary goal is to fix a wrong license statement which
+      can be found in some files from 0.9.4.  For instance in README or
+      calendar.js, the statement was that the code is distributed under the
+      GNU GPL; that's because I had plans to change the license, then
+      changed my mind but unfortunately I committed files so.  I am sorry
+      for this inconvenience, please use the latest (0.9.5) release which is
+      fully covered by LGPL.
+    </p>
+
+    <p>Other changes:</p>
+
+    <ul>
+
+      <li>
+        <b>Fixed</b> an annoying bug that prevented the calendar to display
+	correctly when it was configured for an input field inside a
+	<b>scrolling area</b>.  <b>Many thanks</b> to Ian Barrack (<a
+	href="http://www.simban.com">Simban.com</a>) who pointed it up and
+	donated quite some money for the Calendar project!
+      </li>
+
+      <li>
+        All examples use UTF-8 now; the translations may not be all
+        up-to-date, but I <strong>strongly</strong> suggest everyone to use
+        UTF-8; other encodings are a plain mess.  So far I know for sure
+        that Romanian translation will work with UTF-8 and <em>not
+        anymore</em> with ISO-8859-2.  Other translations are probably
+        usable under UTF-8, but if your preferred language isn't... ;-)
+        please make it and send it to me for inclusion.
+      </li>
+
+      <li>
+        Fixed small bug in the documentation (one footnote didn't appear
+        where it should have).
+      </li>
+
+      <li>
+        Updated translations: DE, ES, HU, IT, RO.  Thanks to everyone who
+        sent translations!
+      </li>
+
+    </ul>
+
+    <h2>0.9.4</h2>
+
+    <h3>New stuff</h3>
+
+    <ul>
+
+      <li>Supports time selection.  Yes. ;-) This work has been largely
+        sponsored by <strong>Himanshukumar Shah</strong> (thank you!).  See
+        the docs and example files for details on how to setup.</li>
+
+      <li>Easy to link 2 or more fields by using the new
+        <code>onUpdate</code> parameter of <code>Calendar.setup</code>.  This
+        is useful, say, to automatically set a value in a second field based
+        on the value selected in the first field.  See the documentation and
+        first sample in <a href="simple-1.html">simple-1.html</a>.</li>
+
+      <li>Other <code>Calendar.setup</code> low-level parameters, for those
+        wanting to have the complete control: <code>onSelect</code> and
+        <code>onClose</code>.  The handlers are called when something is
+        selected in the calendar or when the calendar is closed.</li>
+
+      <li>The translation files can optionally include the short day names
+        and the short month names.  That's because in some languages, like
+        German, the short form is not the first 3 letters of the entire name
+        but only the first 2.  Also in other languages short names can't be
+        as easily derived from the full name by just calling substr, so this
+        patch solves the problem.</li>
+
+      <li>Implemented a nice way to make some dates "special" (look
+        different).  Specifically, the <code>setDisabledHandler</code> method
+        was replaced with the more general <code>setDateStatusHandler</code>
+        method (the old one is still available for backwards compatibility but
+        <em>will</em> be removed).  More details about this in the
+        documentation.  Also see <a href="simple-3.html">simple-3.html</a>
+        for a live sample.</li>
+
+      <li>Date parsing and formatting engine is now rewritten and supports a
+        subset of <code>strftime</code> format specifiers from ANSI C.  This
+        makes it possible to use dates like "YYYYMMDD" (the corresponding
+        format for this would be "%Y%m%d").  Details in the documentation.
+        <b>Please note that the new engine is not compatibile with older
+          calendar releases!</b></li>
+
+      <li>Along with the new date parser I workarounded an unpleasant crash
+        that occurred in IE when certain accented characters appeared in the
+        texts.  I think German was one of the language with such problems, and
+        the workaround was to use the letter without an accent.  Well, now you
+        can translate to whatever you want.</li>
+
+      <li>"Fixes" (I mean, "horrible workarounds") for Konqueror (and
+        hopefully Safari).  Unfortunately, this otherwise excellent browser
+        still has some bugs that keep the calendar from working
+        <em>exactly</em> as it should..  But they're going to be fixed,
+        right? ;-)</li>
+
+      <li>CSS themes got pretty much modified too so if you wrote your theme
+        you need to update it.  Aside for the time selector support, the CSS
+        themes contain a simple hack that makes the navigation buttons show
+        a little arrow in the lower-right corner which indicates that if one
+        holds the mouse a menu will appear.</li>
+
+    </ul>
+
+    <h3>Translation files</h3>
+
+    <p>The translation files need to be updated in order for the calendar to
+      work properly.  Currently the only updated files are calendar-en.js
+      (main file) and calendar-ro.js (well, yes, I am a Romanian ;-).</p>
+
+    <p>Specifically, they need the following:</p>
+
+    <ul>
+
+      <li>Correct date format, according with the new format specifiers
+        introduced in 0.9.4.  Details about the available format specifiers
+        in the documentation</li>
+
+      <li>Short day or month names, <em>if required</em>.  If they can be
+        derived by taking the first N letters of the full name then a simple
+        Calendar._SDN_len = N or Calendar._SMN_len = N will suffice.  If N
+        is 3 then nothing needs to be done as we take it for granted if no
+        other option is offered ;-)</li>
+
+      <li>We have some new texts that shows short usage information as well
+        as copyright information.</li>
+
+    </ul>
+
+    <p>If your favorite language is not there yet, or it is but not updated
+      according to the main calendar-en.js file, then please consider
+      translating calendar-en.js and send the translation back to me so that
+      I include it in the official distribution.</p>
+
+    <h3>Bug status</h3>
+
+    <p>Check <a
+        href="http://sourceforge.net/tracker/?atid=544285&group_id=75569&func=browse">SourceForge</a>,
+      I didn't keep track.  However, there were a lot of bugfixes.</p>
+
+    <h2>0.9.3</h2>    
+
+    <h3>New stuff</h3>
+
+    <ul>
+
+      <li>Opera&nbsp;7 compatibility &mdash; keyboard navigation is
+        still not available; text selection can't be disabled, leading to an
+        ugly effect when walking through the month/year menus.</li>
+
+      <li>Ability to align the calendar relative to the input field (or any
+        other element).  Vertical: top, center, bottom.  Horizontal: left,
+        center, right.  This is established as a new parameter for
+        <tt>showAtElement</tt>.</li>
+
+      <li>Added <tt>dateClicked</tt> property (boolean).  This can be
+        inspected in the "onSelect" handler to determine if a date was
+        really clicked or the user only changed month/year using the menus.
+        You <em>need</em> to check this for "single-click" calendars and
+        only close/hide the calendar if it's <tt>true</tt>.</li>
+
+      <li>Full documentation in <a href="doc/html/reference.html">HTML</a>
+        and <a href="doc/reference.pdf">PDF</a> format is now available in the
+        distribution archive.</li>
+
+      <li>New language definition files: HU, HR, PT, ZH.  Thanks those who
+        submitted!</li>
+
+    </ul>
+
+    <h3>Bug status</h3>
+
+    <p>This covers only those bugs that have been reported <a
+        href="http://sourceforge.net/projects/jscalendar" target="_blank"
+        title="Project page at SourceForge">at SourceForge</a>.</p>
+
+    <ol>
+
+      <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=703238&group_id=75569&atid=544285" target="_blank"
+            title="Go to bug description at sourceforge"><tt>#703,238</tt></a> &mdash; fixed</li>
+      <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=703814&group_id=75569&atid=544285" target="_blank"
+            title="Go to bug description at sourceforge"><tt>#703,814</tt></a> &mdash; fixed</li>
+      <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=716777&group_id=75569&atid=544285" target="_blank"
+            title="Go to bug description at sourceforge"><tt>#716,777</tt></a> &mdash; closed (was fixed already in 0.9.2-1)</li>
+      <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=723335&group_id=75569&atid=544285" target="_blank"
+            title="Go to bug description at sourceforge"><tt>#723,335</tt></a> &mdash; fixed</li>
+      <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=715122&group_id=75569&atid=544285" target="_blank"
+            title="Go to bug description at sourceforge"><tt>#715,122</tt></a> &mdash; feature request; implemented.</li>
+      <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=721206&group_id=75569&atid=544285" target="_blank"
+            title="Go to bug description at sourceforge"><tt>#721,206</tt></a> &mdash; fixed (added "refresh()" function)</li>
+      <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=721833&group_id=75569&atid=544285" target="_blank"
+            title="Go to bug description at sourceforge"><tt>#721,833</tt></a> &mdash; fixed (bug concerning the "yy" format
+        parsing)</li>
+      <li><a href="http://sourceforge.net/tracker/index.php?func=detail&aid=721833&group_id=75569&atid=544285" target="_blank"
+            title="Go to bug description at sourceforge"><tt>#721,833</tt></a> &mdash; won't fix (we won't set the time to
+        midnight; time might actually be useful when we implement support
+        for time selection).
+
+    </ol>
+
+    <hr />
+    <address><a href="http://dynarch.com/mishoo/">Mihai Bazon</a></address>
+<!-- Created: Tue Jul  8 17:29:37 EEST 2003 -->
+<!-- hhmts start -->
+Last modified on Wed Oct 29 02:37:07 2003
+<!-- hhmts end -->
+<!-- doc-lang: English -->
+  </body>
+</html>
+
+

@@ -60,6 +60,8 @@ class Translate {
 			$this->charset_output=$conf->character_set_client;
 		}
 		$this->dir=(! $dir ? DOL_DOCUMENT_ROOT ."/langs" : $dir);
+		
+		// For developpement purpose
 		$this->dir_bis=(defined('DOL_DOCUMENT_ROOT_BIS') ? DOL_DOCUMENT_ROOT_BIS ."/langs" : "");
     }
 
@@ -175,13 +177,23 @@ class Translate {
 		
 		// Check cache
 		if (! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja charge
-        
-        // Repertoire de traduction
-        $scandir = $this->dir."/".$this->defaultlang;
+
+		$searchdir=$this->dir;
+		
+		// If $domain is @xxx instead of xxx then we look for module lang file htdocs/xxx/langs/code_CODE/xxx.lang 
+		// instead of global lang file htdocs/langs/code_CODE/xxx.lang
+		if (eregi('@',$domain))	// It's a language file of a module, we look in dir of this module.
+		{   
+			$domain=eregi_replace('@','',$domain);
+			$searchdir=DOL_DOCUMENT_ROOT ."/".$domain."/langs";
+		}
+		
+        // Directory of translation files
+        $scandir = $searchdir."/".$this->defaultlang;
         $file_lang =  $scandir . "/".$domain.".lang";
         $filelangexists=is_file($file_lang);
-
-		// If development with 2 workspaces
+        
+		// If development with 2 workspaces (for development purpose only)
         if (! $filelangexists && $this->dir_bis)
         {
 	        $scandir = $this->dir_bis."/".$this->defaultlang;
@@ -189,19 +201,20 @@ class Translate {
 	        $filelangexists=is_file($file_lang);
 		}
 
+        // Check in "always available" alternate file if not found or if asked
         if ($alt || ! $filelangexists)
         {
-            // Repertoire de la langue alternative
-			if ($this->defaultlang == "en_US") $scandiralt = $this->dir."/fr_FR";
-            elseif (eregi('^fr',$this->defaultlang) && $this->defaultlang != 'fr_FR') $scandiralt = $this->dir."/fr_FR";
-            elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $this->dir."/en_US";
-           	else $scandiralt = $this->dir."/en_US";
+            // Dir of always available alternate file (en_US or fr_FR)
+			if ($this->defaultlang == "en_US") $scandiralt = $searchdir."/fr_FR";
+            elseif (eregi('^fr',$this->defaultlang) && $this->defaultlang != 'fr_FR') $scandiralt = $searchdir."/fr_FR";
+            elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $searchdir."/en_US";
+           	else $scandiralt = $searchdir."/en_US";
 
             $file_lang = $scandiralt . "/".$domain.".lang";
             $filelangexists=is_file($file_lang);
             $alt=1;
         }
-        
+
         if ($filelangexists)
         {
 			// Enable cache of lang file in session (faster but need more memory)
@@ -271,7 +284,7 @@ class Translate {
         }
         else
         {
-	        $this->tab_loaded[$domain]=2;           // Marque ce fichier comme charge non trouve
+	        $this->tab_loaded[$domain]=2;           // Marque ce fichier comme non trouve
         }
 		
 		return 1;
@@ -453,12 +466,12 @@ class Translate {
      */
     function file_exists($filename,$searchalt=0)
     {
-        // Test si fichier dans r�pertoire de la langue
+        // Test si fichier dans repertoire de la langue
         $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
         if (is_readable($htmlfile)) return true;
 
         if ($searchalt) {
-            // Test si fichier dans r�pertoire de la langue alternative
+            // Test si fichier dans repertoire de la langue alternative
             if ($this->defaultlang != "en_US") $htmlfilealt = $this->dir."/en_US/".$filename;   
             else $htmlfilealt = $this->dir."/fr_FR/".$filename;
             if (is_readable($htmlfilealt)) return true;
