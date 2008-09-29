@@ -2764,22 +2764,25 @@ function make_substitutions($chaine,$substitutionarray)
  *    \brief      Formate l'affichage de date de d�but et de fin
  *    \param      date_start    date de d�but
  *    \param      date_end      date de fin
+ *    \param      format        format de l'affichage
+ *    \remarks   Updated by Matelli : added format paramter
+ *    \remarks   See http://matelli.fr/showcases/patchs-dolibarr/update-date-range-format.html for details
  */
-function print_date_range($date_start,$date_end)
+function print_date_range($date_start,$date_end,$format = '')
 {
 	global $langs;
 
 	if ($date_start && $date_end)
 	{
-		print ' ('.$langs->trans('DateFromTo',dolibarr_print_date($date_start),dolibarr_print_date($date_end)).')';
+		print ' ('.$langs->trans('DateFromTo',dolibarr_print_date($date_start, $format),dolibarr_print_date($date_end, $format)).')';
 	}
 	if ($date_start && ! $date_end)
 	{
-		print ' ('.$langs->trans('DateFrom',dolibarr_print_date($date_start)).')';
+		print ' ('.$langs->trans('DateFrom',dolibarr_print_date($date_start), $format).')';
 	}
 	if (! $date_start && $date_end)
 	{
-		print ' ('.$langs->trans('DateUntil',dolibarr_print_date($date_end)).')';
+		print ' ('.$langs->trans('DateUntil',dolibarr_print_date($date_end), $format).')';
 	}
 }
 
