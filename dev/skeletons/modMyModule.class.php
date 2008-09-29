@@ -50,7 +50,7 @@ class modMyModule extends DolibarrModules
 		// Key text used to identify module (for permission, menus, etc...)
 		$this->rights_class = 'mymodule';
 		
-		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
+		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page 
 		$this->family = "projects";		
 		// Module label (no space allowed) used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -207,7 +207,7 @@ class modMyModule extends DolibarrModules
 		$ok = 1;
 		if ($ok)
 		{
-			$dir = DOL_DOCUMENT_ROOT.'/mysql/tables/mymodule/';
+			$dir = DOL_DOCUMENT_ROOT.'/mymodule/sql/';
 			$ok = 0;
 
 			// Run llx_mytable.sql files
