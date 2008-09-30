@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -22,19 +22,19 @@
  */
 
 /**
-	\file       htdocs/main.inc.php
-	\ingroup	core
-	\brief      Fichier de formatage generique des ecrans Dolibarr
-	\version    $Id$   
-*/
+ \file       htdocs/main.inc.php
+ \ingroup	core
+ \brief      Fichier de formatage generique des ecrans Dolibarr
+ \version    $Id$
+ */
 
 // Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING est positionnee.
 // A appeler avant tout. Fait l'equivalent de la fonction dol_microtime_float pas encore chargee.
 $micro_start_time=0;
 if (! empty($_SERVER['DOL_TUNING']))
 {
-    list($usec, $sec) = explode(" ", microtime());
-    $micro_start_time=((float)$usec + (float)$sec);
+	list($usec, $sec) = explode(" ", microtime());
+	$micro_start_time=((float)$usec + (float)$sec);
 }
 
 
@@ -44,17 +44,17 @@ if (! empty($_SERVER['DOL_TUNING']))
 // En mode off (recommande il faut juste faire addslashes au moment d'un insert/update.
 function stripslashes_deep($value)
 {
-   return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
+	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
 }
 //if (! eregi('PHP/6', $_SERVER['SERVER_SOFTWARE']))
 if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en compte dans PHP6
 {
 	if (get_magic_quotes_gpc())
 	{
-	   $_GET     = array_map('stripslashes_deep', $_GET);
-	   $_POST    = array_map('stripslashes_deep', $_POST);
-	   $_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
-	   $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
+		$_GET     = array_map('stripslashes_deep', $_GET);
+		$_POST    = array_map('stripslashes_deep', $_POST);
+		$_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
+		$_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 	}
 	@set_magic_quotes_runtime(0);
 }
@@ -62,25 +62,47 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en comp
 // Filtre les GET et POST pour supprimer les SQL INJECTION
 function test_sql_inject($val)
 {
-  $sql_inj = 0;
-  $sql_inj += eregi('delete[[:space:]]+from', $val);
-  $sql_inj += eregi('create[[:space:]]+table', $val);
-  $sql_inj += eregi('update.+set.+=', $val);
-  $sql_inj += eregi('insert[[:space:]]+into', $val);
-  $sql_inj += eregi('select.+from', $val);
-
-  return $sql_inj;
+	$sql_inj = 0;
+	$sql_inj += eregi('delete[[:space:]]+from', $val);
+	$sql_inj += eregi('create[[:space:]]+table', $val);
+	$sql_inj += eregi('update.+set.+=', $val);
+	$sql_inj += eregi('insert[[:space:]]+into', $val);
+	$sql_inj += eregi('select.+from', $val);
+	return $sql_inj;
 }
-foreach ($_GET as $key => $val)
+// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/patch-dolibarr-fix-sql-injection-check-in-array.html)
+function analyse_sql_injection(&$var)
 {
-  if (test_sql_inject($val) > 0)
-    unset($_GET[$key]);
+	if (is_array($var))
+	{
+		$result = array();
+		foreach ($var as $key => $value)
+		{
+		  if (test_sql_inject($key) > 0)
+		  {
+		  	unset($var[$key]);
+		  }
+		  else
+		  {
+		  	if (analyse_sql_injection($value))
+		  	{
+		  		$var[$key] = $value;
+		  	}
+		  	else
+		  	{
+		  		unset($var[$key]);
+		  	}
+		  }
+		}
+		return true;
+	}
+	else
+	{
+		return (test_sql_inject($var) <= 0);
+	}
 }
-foreach ($_POST as $key => $val)
-{
-  if (test_sql_inject($val) > 0)
-    unset($_POST[$key]);
-}
+analyse_sql_injection($_GET);
+analyse_sql_injection($_POST);
 // Fin filtre des GET et POST
 
 
@@ -103,7 +125,7 @@ if ($conf->main_force_https)
 		{
 			dolibarr_syslog("dolibarr_main_force_https is on, we make a redirect",LOG_DEBUG);
 			$newurl=eregi_replace('^http:','https:',$_SERVER["SCRIPT_URI"]);
-			
+				
 			header("Location: ".$newurl);
 			exit;
 		}
@@ -141,7 +163,7 @@ if ($dolibarr_main_authentication == 'forceuser' && empty($dolibarr_auto_user)) 
 $authmode=split(',',$dolibarr_main_authentication);
 
 // No authentication mode
-if (! sizeof($authmode)) 
+if (! sizeof($authmode))
 {
 	$langs->load('main');
 	dolibarr_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
@@ -163,21 +185,21 @@ if (! isset($_SESSION["dol_login"]))
 	{
 		require_once DOL_DOCUMENT_ROOT.'/../external-libs/Artichow/Artichow.cfg.php';
 		require_once ARTICHOW."/AntiSpam.class.php";
-		
+
 		// On cree l'objet anti-spam
 		$object = new AntiSpam();
-		
+
 		// Verifie code
 		if (! $object->check('dol_antispam_value',$_POST['code'],true))
 		{
 			dolibarr_syslog('Bad value for code, connexion refused');
 			$langs->load('main');
 			$langs->load('other');
-			
+				
 			$user->trigger_mesg='ErrorBadValueForCode - login='.$_POST["username"];
 			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 			$test=false;
-			
+				
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
@@ -186,14 +208,14 @@ if (! isset($_SESSION["dol_login"]))
 			// Fin appel triggers
 		}
 	}
-    
+
 	// Tests de validation user/mot de passe
 	// Si ok, la variable login sera initialisee
 	// Si erreur, on a placera message erreur dans session sous le nom dol_loginmesg
 	$goontestloop=false;
 	if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
 	if (isset($_POST["username"])) $goontestloop=true;
-	
+
 	if ($test && $goontestloop)
 	{
 		foreach($authmode as $mode)
@@ -205,11 +227,11 @@ if (! isset($_SESSION["dol_login"]))
 				if ($result)
 				{
 					// Call function to check user/password
-				    $usertotest=$_POST["username"];
-				    $passwordtotest=$_POST["password"];
+					$usertotest=$_POST["username"];
+					$passwordtotest=$_POST["password"];
 					$function='check_user_password_'.$mode;
 					$login=$function($usertotest,$passwordtotest);
-					if ($login) 
+					if ($login)
 					{
 						$test=false;
 						$conf->authmode=$mode;	// This properties is defined only when login
@@ -235,7 +257,7 @@ if (! isset($_SESSION["dol_login"]))
 			// Bad password. No authmode has found a good password.
 			$user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.$_POST["username"];
 			$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
-			
+				
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($db);
@@ -244,14 +266,14 @@ if (! isset($_SESSION["dol_login"]))
 			// Fin appel triggers
 		}
 	}
-	
+
 	// Fin des tests de login/passwords
-    if (! $login)
-    {
-    	// We show login page
+	if (! $login)
+	{
+		// We show login page
 		dol_loginfunction($langs,$conf,$mysoc);
 		exit;
-    }
+	}
 
 	$resultFetchUser=$user->fetch($login);
 	if ($resultFetchUser <= 0)
@@ -262,7 +284,7 @@ if (! isset($_SESSION["dol_login"]))
 		session_start();
 
 		$langs->load('main');
-		if ($resultFetchUser == 0) 
+		if ($resultFetchUser == 0)
 		{
 			$langs->load('main');
 			$langs->load('other');
@@ -303,7 +325,7 @@ else
 		session_start();
 
 		$langs->load('main');
-		if ($resultFetchUser == 0) 
+		if ($resultFetchUser == 0)
 		{
 			$langs->load('main');
 			$langs->load('other');
@@ -332,15 +354,15 @@ else
 // Est-ce une nouvelle session
 if (! isset($_SESSION["dol_login"]))
 {
-    // Nouvelle session pour ce login
-    $_SESSION["dol_login"]=$user->login;
-    $_SESSION["dol_password"]=$user->pass_crypted;
-    $_SESSION["dol_authmode"]=$conf->authmode;
-    dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
+	// Nouvelle session pour ce login
+	$_SESSION["dol_login"]=$user->login;
+	$_SESSION["dol_password"]=$user->pass_crypted;
+	$_SESSION["dol_authmode"]=$conf->authmode;
+	dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
 
 	$db->begin();
-	
-    $user->update_last_login_date();
+
+	$user->update_last_login_date();
 
 	// Appel des triggers
 	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -348,7 +370,7 @@ if (! isset($_SESSION["dol_login"]))
 	$result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
 	if ($result < 0) { $error++; }
 	// Fin appel triggers
-	
+
 	if ($error)
 	{
 		$db->rollback();
@@ -360,7 +382,7 @@ if (! isset($_SESSION["dol_login"]))
 	{
 		$db->commit();
 	}
-	
+
 	// Module webcalendar
 	if ($conf->webcal->enabled && $user->webcal_login != "")
 	{
@@ -396,12 +418,12 @@ if (! isset($_SESSION["dol_login"]))
 // Si user admin, on force droits sur les modules base
 if ($user->admin)
 {
-    $user->rights->user->user->lire=1;
-    $user->rights->user->user->creer=1;
-    $user->rights->user->user->password=1;
-    $user->rights->user->user->supprimer=1;
-    $user->rights->user->self->creer=1;
-    $user->rights->user->self->password=1;
+	$user->rights->user->user->lire=1;
+	$user->rights->user->user->creer=1;
+	$user->rights->user->user->password=1;
+	$user->rights->user->user->supprimer=1;
+	$user->rights->user->self->creer=1;
+	$user->rights->user->self->password=1;
 }
 
 /*
@@ -411,63 +433,63 @@ if ($user->admin)
 // Set liste_limit
 if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT))	// Can be 0
 {
-    $conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;
+	$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT;
 }
 if (isset($user->conf->PRODUIT_LIMIT_SIZE))		// Can be 0
 {
-    $conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
+	$conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
 }
 
 // If user has choosed its own language
 if (! empty($user->conf->MAIN_LANG_DEFAULT))
 {
 	// If different than current language
-    if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
-    {
-        $langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
-        $langs->setPhpLang();
-    }
+	if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
+	{
+		$langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+		$langs->setPhpLang();
+	}
 }
 // If language was forced on URL
 if (! empty($_GET["lang"]))
 {
-    $langs->setDefaultLang($_GET["lang"]);
-    $langs->setPhpLang();
+	$langs->setDefaultLang($_GET["lang"]);
+	$langs->setPhpLang();
 }
 
 
 // Remplace conf->css par valeur personnalise
 if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
 {
-    $conf->theme=$user->conf->MAIN_THEME;
-    $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+	$conf->theme=$user->conf->MAIN_THEME;
+	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 }
 // Cas de forcage du style depuis url
 if (! empty($_GET["theme"]))
 {
-    $conf->theme=$_GET["theme"];
-    $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+	$conf->theme=$_GET["theme"];
+	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 }
 // Si feuille de style en php existe
 if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 
 if (! empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
 {
-    $conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
+	$conf->use_javascript_ajax=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
 }
 
 // Defini gestionnaire de menu a utiliser
 if (! $user->societe_id)    // Si utilisateur interne
 {
-    $conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
-    $conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
-    // Pour compatibilite
-    if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_backoffice.php';
+	$conf->top_menu=$conf->global->MAIN_MENU_BARRETOP;
+	$conf->left_menu=$conf->global->MAIN_MENU_BARRELEFT;
+	// Pour compatibilite
+	if ($conf->left_menu == 'eldy.php') $conf->left_menu='eldy_backoffice.php';
 }
 else                        // Si utilisateur externe
 {
-    $conf->top_menu=$conf->global->MAIN_MENUFRONT_BARRETOP;
-    $conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
+	$conf->top_menu=$conf->global->MAIN_MENUFRONT_BARRETOP;
+	$conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
 }
 
 // Only rodolphe and auguria menu manage canvas menu (auguria not correctly yet)
@@ -481,11 +503,11 @@ if ($conf->global->PRODUCT_CANVAS_ABILITY)
 	// $dolibarr_smarty_libs_dir="/home/www/dolibarr/external-libs/smarty/libs/";
 	// $dolibarr_smarty_compile="/home/www/dolibarr/documents/smarty/templates/temp";
 	// $dolibarr_smarty_cache="/home/www/dolibarr/documents/smarty/cache/temp";
-	
+
 	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=$dolibarr_main_document_root.'/../external-libs/smarty/libs/';
 	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=$dolibarr_main_data_root.'/smarty/templates/temp';
 	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=$dolibarr_main_data_root.'/smarty/cache/temp';
-		
+
 	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
 	if (file_exists ($smarty_libs))
 	{
@@ -509,13 +531,13 @@ if (! $user->login) accessforbidden();
 // Verifie si user actif
 if ($user->statut < 1)
 {
-  // Si non actif, on delogue le user
-  $langs->load("other");
-  dolibarr_syslog ("Authentification ko car login desactive");
-  accessforbidden($langs->trans("ErrorLoginDisabled"));
-  exit;
+	// Si non actif, on delogue le user
+	$langs->load("other");
+	dolibarr_syslog ("Authentification ko car login desactive");
+	accessforbidden($langs->trans("ErrorLoginDisabled"));
+	exit;
 }
-			
+	
 
 dolibarr_syslog("Access to ".$_SERVER["PHP_SELF"],LOG_INFO);
 
@@ -545,37 +567,37 @@ $bc[1]="class=\"pair\"";
 // Constantes utilisees pour definir le nombre de lignes des textarea
 if (! eregi("firefox",$_SERVER["HTTP_USER_AGENT"]))
 {
-  define('ROWS_1',1);
-  define('ROWS_2',2);
-  define('ROWS_3',3);
-  define('ROWS_4',4);
-  define('ROWS_5',5);
-  define('ROWS_6',6);
-  define('ROWS_7',7);
-  define('ROWS_8',8);
-  define('ROWS_9',9);
+	define('ROWS_1',1);
+	define('ROWS_2',2);
+	define('ROWS_3',3);
+	define('ROWS_4',4);
+	define('ROWS_5',5);
+	define('ROWS_6',6);
+	define('ROWS_7',7);
+	define('ROWS_8',8);
+	define('ROWS_9',9);
 }
 else
 {
-  define('ROWS_1',0);
-  define('ROWS_2',1);
-  define('ROWS_3',2);
-  define('ROWS_4',3);
-  define('ROWS_5',4);
-  define('ROWS_6',5);
-  define('ROWS_7',6);
-  define('ROWS_8',7);
-  define('ROWS_9',8);
+	define('ROWS_1',0);
+	define('ROWS_2',1);
+	define('ROWS_3',2);
+	define('ROWS_4',3);
+	define('ROWS_5',4);
+	define('ROWS_6',5);
+	define('ROWS_7',6);
+	define('ROWS_8',7);
+	define('ROWS_9',8);
 }
 
 
 /**
-		\brief      Affiche formulaire de login
-		\param		langs		Lang object
-		\param		conf		Conf object
-		\param		mysoc		Company object
-		\remarks    Il faut changer le code html dans cette fonction pour changer le design de la logon
-*/
+ \brief      Affiche formulaire de login
+ \param		langs		Lang object
+ \param		conf		Conf object
+ \param		mysoc		Company object
+ \remarks    Il faut changer le code html dans cette fonction pour changer le design de la logon
+ */
 function dol_loginfunction($langs,$conf,$mysoc)
 {
 	$langs->load("main");
@@ -667,7 +689,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	$title.=$langs->trans("SessionName").': '.session_name();
 	if ($conf->main_authentication) $title.=", ".$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
-	
+
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$width=0;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
@@ -693,9 +715,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<tr><td align="left" valign="top" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
 	print '<td valign="top" nowrap="nowrap"><input id="password" name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
 	print '</td></tr>';
-	
+
 	print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
-	
+
 	// Code de sécurité
 	$disabled=! $conf->global->MAIN_SECURITY_ENABLECAPTCHA;
 	if (function_exists("imagecreatefrompng") && ! $disabled)
@@ -703,13 +725,13 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		//print "Info session: ".session_name().session_id();print_r($_SESSION);
 		print '<tr><td align="left" valign="middle" nowrap="nowrap"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
 		print '<td valign="top" nowrap="nowrap" align="left" class="e">';
-		
+
 		print '<table><tr>';
 		print '<td><input id="securitycode" class="flat" type="text" size="6" maxlength="5" name="code" tabindex="3"></td>';
 		print '<td><img src="'.DOL_URL_ROOT.'/lib/antispamimage.php" border="0" width="128" height="36"></td>';
 		print '<td><a href="'.$_SERVER["PHP_SELF"].'">'.img_refresh().'</a></td>';
 		print '</tr></table>';
-		
+
 		print '</td>';
 		print '</tr>';
 	}
@@ -742,7 +764,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 		print nl2br($conf->global->MAIN_HOME);
 		print '</td></tr></table></center><br>';
 	}
-	
+
 	// Fin entete html
 	print "\n</body>\n</html>";
 }
@@ -752,15 +774,15 @@ function dol_loginfunction($langs,$conf,$mysoc)
  *  \brief      Show HTML header
  *  \param      head    	Optionnal head lines
  *  \param      title   	Web page title
- *	\param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)	
+ *	\param		disablejs	Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
  *	\param		disablehead	Do not output head section
  *	\param		arrayofjs	Array of js files to add in header
  *	\param		arrayofcss	Array of css files to add in header
  */
-function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='') 
+function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
 {
 	global $user, $conf, $langs, $db;
-	
+
 	if (empty($conf->css))  $conf->css ='/theme/eldy/eldy.css.php';
 
 	//header("Content-type: text/html; charset=UTF-8");
@@ -773,7 +795,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	if ($disablehead == 0)
 	{
 		print "<head>\n";
-		
+
 		print $langs->lang_header();
 		print $head;
 
@@ -784,7 +806,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		// Affiche title
 		$appli='Dolibarr';
 		if (! empty($conf->global->MAIN_TITLE)) $appli=$conf->global->MAIN_TITLE;
-		
+
 		if ($title) print '<title>'.$appli.' - '.$title.'</title>';
 		else print "<title>".$appli."</title>";
 		print "\n";
@@ -807,7 +829,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$cssfile.'">'."\n";
 			}
 		}
-		
+
 		// Definition en alternate style sheet des feuilles de styles les plus maintenues
 		// Les navigateurs qui supportent sont rares. Plus aucun connu.
 		/*
@@ -815,7 +837,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '<link rel="alternate stylesheet" type="text/css" title="Freelug" href="'.DOL_URL_ROOT.'/theme/freelug/freelug.css.php">'."\n";
 		print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
 		*/
-		
+
 		print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">'."\n";
 		print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
 		print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
@@ -845,7 +867,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				// PWC js
 				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window.js"></script>'."\n";
 			}
-		}	
+		}
 		if (is_array($arrayofjs))
 		{
 			foreach($arrayofjs as $jsfile)
@@ -853,7 +875,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/'.$jsfile.'"></script>'."\n";
 			}
 		}
-				
+
 		print "</head>\n";
 	}
 }
@@ -864,101 +886,101 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  *  \param      title   titre page web
  *  \param      target  target du menu Accueil
  */
-function top_menu($head, $title="", $target="") 
+function top_menu($head, $title="", $target="")
 {
-    global $user, $conf, $langs, $db, $dolibarr_main_authentication;
+	global $user, $conf, $langs, $db, $dolibarr_main_authentication;
 
-    if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
+	if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
 
-    top_htmlhead($head, $title);
+	top_htmlhead($head, $title);
 
-    print '<body id="mainbody"><div id="dhtmltooltip"></div>';
+	print '<body id="mainbody"><div id="dhtmltooltip"></div>';
 
-    /*
-     * Si la constante MAIN_NEED_UPDATE est definie (par le script de migration sql en general), c'est que
-     * les donnees ont besoin d'un remaniement. Il faut passer le update.php
-     */
-    if (! empty($conf->global->MAIN_NEED_UPDATE))
-    {
-        $langs->load("admin");
-        print '<div class="fiche">'."\n";
-        print '<table class="noborder" width="100%">';
-        print '<tr><td>';
-        print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/install/index.php');
-        print '</td></tr>';
-        print "</table>";
-        llxFooter();
-        exit;
-    }
+	/*
+	 * Si la constante MAIN_NEED_UPDATE est definie (par le script de migration sql en general), c'est que
+	 * les donnees ont besoin d'un remaniement. Il faut passer le update.php
+	 */
+	if (! empty($conf->global->MAIN_NEED_UPDATE))
+	{
+		$langs->load("admin");
+		print '<div class="fiche">'."\n";
+		print '<table class="noborder" width="100%">';
+		print '<tr><td>';
+		print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/install/index.php');
+		print '</td></tr>';
+		print "</table>";
+		llxFooter();
+		exit;
+	}
 
 
-    /*
-     * Barre de menu superieure
-     */
-    print "\n".'<!-- Start top horizontal menu -->'."\n";
-    print '<div class="tmenu">'."\n";
+	/*
+	 * Barre de menu superieure
+	 */
+	print "\n".'<!-- Start top horizontal menu -->'."\n";
+	print '<div class="tmenu">'."\n";
 
-    // Charge le gestionnaire des entrees de menu du haut
+	// Charge le gestionnaire des entrees de menu du haut
 	if (! file_exists(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu))
 	{
 		$conf->top_menu='eldy_backoffice.php';
 	}
 	require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
-    $menutop = new MenuTop($db);
-    $menutop->atarget=$target;
+	$menutop = new MenuTop($db);
+	$menutop->atarget=$target;
 
-    // Affiche le menu
-    $menutop->showmenu();
+	// Affiche le menu
+	$menutop->showmenu();
 
-    // Lien sur fiche du login
-    print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
-    print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-    print '>'.$user->login.'</a>';
+	// Lien sur fiche du login
+	print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'"';
+	print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+	print '>'.$user->login.'</a>';
 
-    // Lien info
-    $htmltext=''; $text='';
-    if ($_SESSION["dol_authmode"] != 'forceuser'
-    	 && $_SESSION["dol_authmode"] != 'http')
-    {
-        $htmltext=$langs->trans("Logout").'<br>';
-        $htmltext.="<br>";
-        
-       	$text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-	    $text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-	    $text.='>';
-	    $text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-	    $text.=' alt="" title=""';
-	    $text.='>';
-	    $text.='</a>';
-    }
-    else
-    {
-	    $text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-	    $text.=' alt="" title=""';
-	    $text.='>';
-    }
-    $htmltext.='<u>'.$langs->trans("User").'</u>';
+	// Lien info
+	$htmltext=''; $text='';
+	if ($_SESSION["dol_authmode"] != 'forceuser'
+	&& $_SESSION["dol_authmode"] != 'http')
+	{
+		$htmltext=$langs->trans("Logout").'<br>';
+		$htmltext.="<br>";
+
+		$text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+		$text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+		$text.='>';
+		$text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+		$text.=' alt="" title=""';
+		$text.='>';
+		$text.='</a>';
+	}
+	else
+	{
+		$text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+		$text.=' alt="" title=""';
+		$text.='>';
+	}
+	$htmltext.='<u>'.$langs->trans("User").'</u>';
 	$htmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->fullname;
-    $htmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
-    $htmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
-    $htmltext.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
-    $htmltext.='<br>';
-    $htmltext.='<br><u>'.$langs->trans("Connection").'</u>';
+	$htmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
+	$htmltext.='<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
+	$htmltext.='<br><b>'.$langs->trans("Type").'</b>: '.($user->societe_id?$langs->trans("External"):$langs->trans("Internal"));
+	$htmltext.='<br>';
+	$htmltext.='<br><u>'.$langs->trans("Connection").'</u>';
 	$htmltext.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"dayhour");
 	$htmltext.='<br><b>'.$langs->trans("PreviousConnexion").'</b>: '.dolibarr_print_date($user->datepreviouslogin,"dayhour");
-    $htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
+	$htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
 	$htmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
 	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
-    
+
 	$html=new Form($db);
 	print $html->textwithtooltip('',$htmltext,2,1,$text);
 
-//        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-//        print ' alt="'.$title.'" title="'.$title.'"';
-//        print '>';
+	//        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+	//        print ' alt="'.$title.'" title="'.$title.'"';
+	//        print '>';
 
-    print "\n</div>\n<!-- End top horizontal menu -->\n";
+	print "\n</div>\n<!-- End top horizontal menu -->\n";
 }
 
 
@@ -970,78 +992,78 @@ function top_menu($head, $title="", $target="")
  */
 function left_menu($menu_array, $helppagename='', $form_search='')
 {
-    global $user, $conf, $langs, $db;
+	global $user, $conf, $langs, $db;
 
-//    print '<div class="vmenuplusfiche">'."\n";
-    print '<table width="100%" class="notopnoleftnoright"><tr><td class="vmenu" valign="top">'; 
-    
-    print "\n";
+	//    print '<div class="vmenuplusfiche">'."\n";
+	print '<table width="100%" class="notopnoleftnoright"><tr><td class="vmenu" valign="top">';
 
-    // Colonne de gauche
-    print '<!-- Debut left vertical menu -->'."\n";
-    print '<div class="vmenu">'."\n";
+	print "\n";
+
+	// Colonne de gauche
+	print '<!-- Debut left vertical menu -->'."\n";
+	print '<div class="vmenu">'."\n";
 
 
-    // Autres entrees du menu par le gestionnaire
-    if (! file_exists(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu))
+	// Autres entrees du menu par le gestionnaire
+	if (! file_exists(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu))
 	{
 		$conf->left_menu='eldy_backoffice.php';
 	}
 	require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
-    $menuleft=new MenuLeft($db,$menu_array);
-    $menuleft->showmenu();
+	$menuleft=new MenuLeft($db,$menu_array);
+	$menuleft->showmenu();
 
-    // Affichage des zones de recherche permanantes
-    $addzonerecherche=0;
-    if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE) $addzonerecherche=1;
-    if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT) $addzonerecherche=1;
-    if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE) $addzonerecherche=1;
+	// Affichage des zones de recherche permanantes
+	$addzonerecherche=0;
+	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE) $addzonerecherche=1;
+	if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT) $addzonerecherche=1;
+	if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE) $addzonerecherche=1;
 
-    if ($addzonerecherche  && ($user->rights->societe->lire || $user->rights->produit->lire))
-    {
-        print '<div class="blockvmenupair">';
+	if ($addzonerecherche  && ($user->rights->societe->lire || $user->rights->produit->lire))
+	{
+		print '<div class="blockvmenupair">';
 
-        if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
-        {
-            $langs->load("companies");
-            printSearchForm(DOL_URL_ROOT.'/societe.php',DOL_URL_ROOT.'/societe.php',
-                img_object($langs->trans("List"),'company').' '.$langs->trans("Companies"),'soc','socname');
-        }
+		if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE && $user->rights->societe->lire)
+		{
+			$langs->load("companies");
+			printSearchForm(DOL_URL_ROOT.'/societe.php',DOL_URL_ROOT.'/societe.php',
+			img_object($langs->trans("List"),'company').' '.$langs->trans("Companies"),'soc','socname');
+		}
 
-        if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
-        {
-            $langs->load("companies");
-            printSearchForm(DOL_URL_ROOT.'/contact/index.php',DOL_URL_ROOT.'/contact/index.php',
-                img_object($langs->trans("List"),'contact').' '.$langs->trans("Contacts"),'contact','contactname','contact');
-        }
+		if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_CONTACT && $user->rights->societe->lire)
+		{
+			$langs->load("companies");
+			printSearchForm(DOL_URL_ROOT.'/contact/index.php',DOL_URL_ROOT.'/contact/index.php',
+			img_object($langs->trans("List"),'contact').' '.$langs->trans("Contacts"),'contact','contactname','contact');
+		}
 
-        if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE && $user->rights->produit->lire)
-        {
-            $langs->load("products");
-            printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/index.php',
-                img_object($langs->trans("List"),'product').' '.$langs->trans("Products")."/".$langs->trans("Services"),'products','sall','product');
-        }
+		if (($conf->produit->enabled || $conf->service->enabled) && $conf->global->MAIN_SEARCHFORM_PRODUITSERVICE && $user->rights->produit->lire)
+		{
+			$langs->load("products");
+			printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/index.php',
+			img_object($langs->trans("List"),'product').' '.$langs->trans("Products")."/".$langs->trans("Services"),'products','sall','product');
+		}
 
-        print '</div>';
-    }
+		print '</div>';
+	}
 
-    // Zone de recherche supplementaire
-    if ($form_search)
-    {
-        print $form_search;
-    }
+	// Zone de recherche supplementaire
+	if ($form_search)
+	{
+		print $form_search;
+	}
 
-    // Lien vers l'aide en ligne (uniquement si langue fr_FR)
-    if ($helppagename)
-    {
+	// Lien vers l'aide en ligne (uniquement si langue fr_FR)
+	if ($helppagename)
+	{
 		$langs->load("help");
-		
-        $helpbaseurl='';
-        if ($langs->defaultlang == "fr_FR") $helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
-		
+
+		$helpbaseurl='';
+		if ($langs->defaultlang == "fr_FR") $helpbaseurl='http://wiki.dolibarr.org/index.php/%s';
+
 		$helppage=$langs->trans($helppagename);
-	
-        if ($helpbaseurl)
+
+		if ($helpbaseurl)
 		{
 			print '<div class="help">';
 			print '<a class="help" target="_blank" href="';
@@ -1049,34 +1071,34 @@ function left_menu($menu_array, $helppagename='', $form_search='')
 			print '">'.$langs->trans("Help").'</a>';
 			print '</div>';
 		}
-    }
+	}
 
-    if ($conf->global->MAIN_SHOW_BUGTRACK_LINK == 1)
-    {
-        // Lien vers le bugtrack
-        $bugbaseurl='http://savannah.nongnu.org/bugs/?';
-        $bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
-        $bugbaseurl.="&details=";
-        $bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
-        $bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
-        $bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
-        $bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
-        print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
-    }
-    print "\n";
-    print "</div>\n";
-    print "<!-- Fin left vertical menu -->\n";
+	if ($conf->global->MAIN_SHOW_BUGTRACK_LINK == 1)
+	{
+		// Lien vers le bugtrack
+		$bugbaseurl='http://savannah.nongnu.org/bugs/?';
+		$bugbaseurl.='func=additem&group=dolibarr&privacy=1&';
+		$bugbaseurl.="&details=";
+		$bugbaseurl.=urlencode("\n\n\n\n\n-------------\n");
+		$bugbaseurl.=urlencode($langs->trans("Version").": ".DOL_VERSION."\n");
+		$bugbaseurl.=urlencode($langs->trans("Server").": ".$_SERVER["SERVER_SOFTWARE"]."\n");
+		$bugbaseurl.=urlencode($langs->trans("Url").": ".$_SERVER["REQUEST_URI"]."\n");
+		print '<div class="help"><a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a></div>';
+	}
+	print "\n";
+	print "</div>\n";
+	print "<!-- Fin left vertical menu -->\n";
 
-    print "\n";
+	print "\n";
 
-    print '<!-- fin de zone gauche, debut zone droite -->'."\n";
-//	    print '</div>'."\n";
-//		print '<div class="vmenuplusfiche">'."\n";
+	print '<!-- fin de zone gauche, debut zone droite -->'."\n";
+	//	    print '</div>'."\n";
+	//		print '<div class="vmenuplusfiche">'."\n";
 	print '</td><td valign="top">'."\n";
 
-    
+
 	print "\n";
-    print '<div class="fiche"> <!-- begin fiche area -->'."\n";
+	print '<div class="fiche"> <!-- begin fiche area -->'."\n";
 
 }
 
@@ -1090,20 +1112,20 @@ function left_menu($menu_array, $helppagename='', $form_search='')
  *  \param   htmlmodesearch     'search'
  *  \param   htmlinputname      Nom du champ input du formulaire
  */
- 
+
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
-    global $langs;
-    print '<form action="'.$urlaction.'" method="post">';
-    print '<div class="menu_titre">';
-    print '<a class="vsmenu" href="'.$urlobject.'">';
-    print $title.'</a><br>';
-    print '</div>';
-    print '<input type="hidden" name="mode" value="search">';
-    print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
-    print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
-    print '<input type="submit" class="button" value="'.$langs->trans("Go").'">';
-    print "</form>";
+	global $langs;
+	print '<form action="'.$urlaction.'" method="post">';
+	print '<div class="menu_titre">';
+	print '<a class="vsmenu" href="'.$urlobject.'">';
+	print $title.'</a><br>';
+	print '</div>';
+	print '<input type="hidden" name="mode" value="search">';
+	print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
+	print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
+	print '<input type="submit" class="button" value="'.$langs->trans("Go").'">';
+	print "</form>";
 }
 
 
@@ -1112,18 +1134,18 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
  *		\remarks	Ferme 2 div
  * 		\param   	foot    Non utilise
  */
- 
-function llxFooter($foot='',$limitIEbug=1) 
-{
-    global $conf, $dolibarr_auto_user, $micro_start_time;
-    
-    print "\n".'</div> <!-- end div class="fiche" -->'."\n";
 
-//    print "\n".'</div> <!-- end div class="vmenuplusfiche" -->'."\n";
+function llxFooter($foot='',$limitIEbug=1)
+{
+	global $conf, $dolibarr_auto_user, $micro_start_time;
+
+	print "\n".'</div> <!-- end div class="fiche" -->'."\n";
+
+	//    print "\n".'</div> <!-- end div class="vmenuplusfiche" -->'."\n";
 	print "\n".'</td></tr></table> <!-- end right area -->'."\n";
-    
-    if (! empty($_SERVER['DOL_TUNING']))
-    {
+
+	if (! empty($_SERVER['DOL_TUNING']))
+	{
 		$micro_end_time=dol_microtime_float(true);
 		print '<script language="javascript" type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		if (function_exists("memory_get_usage"))
@@ -1135,19 +1157,19 @@ function llxFooter($foot='',$limitIEbug=1)
 			print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
 		}
 		print '"</script>';
-        print "\n";
-    } 
+		print "\n";
+	}
 
-    if ($conf->use_javascript_ajax)
-    {
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>';
-    }
+	if ($conf->use_javascript_ajax)
+	{
+		print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>';
+	}
 
-    // Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent
-    if ($limitIEbug && ! $conf->browser->firefox) print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
-    
-    print "</body>\n";
-    print "</html>\n";
+	// Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent
+	if ($limitIEbug && ! $conf->browser->firefox) print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
+
+	print "</body>\n";
+	print "</html>\n";
 }
 
 ?>
