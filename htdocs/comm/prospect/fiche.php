@@ -230,7 +230,9 @@ if ($socid > 0)
 
     if ($conf->agenda->enabled)
     {
-    	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'&afaire=1">'.$langs->trans("AddAction").'</a>';
+		// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-action-button-behaviour.html)
+		// Don't force the user to add a "todo action"; he could report an action that he did
+    	print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'">'.$langs->trans("AddAction").'</a>';
     }
 
     if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
