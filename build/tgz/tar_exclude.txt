@@ -43,6 +43,7 @@ htdocs/includes/modules/modPostnuke.class.php
 htdocs/includes/modules/modTelephonie.class.php
 htdocs/includes/triggers/interface_user.class.php
 htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
+htdocs/includes/triggers/interface_modEditeur_Editeur.class.php-NORUN
 htdocs/oscommerce_ws/ws_client_demo
 htdocs/public/bplc
 htdocs/theme/rodolphe
