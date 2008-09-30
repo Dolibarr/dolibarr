@@ -40,6 +40,7 @@ htdocs/includes/modules/modDocument.class.php
 htdocs/includes/modules/modDroitPret.class.php
 htdocs/includes/modules/modEditeur.class.php
 htdocs/includes/modules/modPostnuke.class.php
+htdocs/includes/modules/modTelephonie.class.php
 htdocs/includes/triggers/interface_user.class.php
 htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
 htdocs/oscommerce_ws/ws_client_demo
