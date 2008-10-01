@@ -200,6 +200,9 @@ if ($resql)
 	if ($num > $conf->liste_limit || $page > 0) print_barre_liste('', $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	print "</table>";
+	
+	print "</form>";
+	
 	$db->free($resql);
 }
 else
