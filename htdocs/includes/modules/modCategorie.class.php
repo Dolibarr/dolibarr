@@ -48,7 +48,8 @@ class modCategorie extends DolibarrModules
 		$this->numero = 1780;
 	
 		$this->family = "technic";
-		$this->name = "Catégories";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion des catégories (produits, clients, fournisseurs...)";
 	
 		$this->revision = explode(' ','$Revision$');

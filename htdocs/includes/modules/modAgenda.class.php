@@ -52,10 +52,12 @@ class modAgenda extends DolibarrModules
         $this->numero = 2400;
 
         $this->family = "projects";
-        $this->name = "Agenda";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
         $this->description = "Gestion de l'agenda et des actions";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
-        $this->const_name = 'MAIN_MODULE_AGENDA';
+		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='calendar';
     

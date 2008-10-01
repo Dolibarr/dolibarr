@@ -50,7 +50,8 @@ class modCommercial extends DolibarrModules
         $this->numero = 2 ;
         
         $this->family = "crm";
-        $this->name = "Commercial";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
         $this->description = "Gestion commercial";
         
         $this->revision = explode(' ','$Revision$');

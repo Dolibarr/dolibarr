@@ -18,86 +18,87 @@
  */
 
 /**
-        \defgroup   syslog  Module syslog
-        \brief      Module pour gerer les messages d'erreur dans syslog
-*/
+ \defgroup   syslog  Module syslog
+ \brief      Module pour gerer les messages d'erreur dans syslog
+ */
 
 /**
-        \file       htdocs/includes/modules/modSyslog.class.php
-        \ingroup    syslog
-        \brief      Fichier de description et activation du module de syslog
-*/
+ \file       htdocs/includes/modules/modSyslog.class.php
+ \ingroup    syslog
+ \brief      Fichier de description et activation du module de syslog
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
-   \class      modSyslog
-   \brief      Classe de description et activation du module Syslog
-*/
+ \class      modSyslog
+ \brief      Classe de description et activation du module Syslog
+ */
 
 class modSyslog extends DolibarrModules
 {
-  
-  /**
-   *   \brief      Constructeur. Definit les noms, constantes et boites
-   *   \param      DB      handler d'acc�s base
-   */
-  function modSyslog($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 42 ;
-    
-    $this->family = "technic";
-    $this->name = "Syslog";
-    $this->description = "Activation des traces debug (syslog)";
-    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
-    $this->const_name = 'MAIN_MODULE_SYSLOG';
-    $this->special = 2;
-    //$this->picto='phoning';
 
-    // Dir
-    $this->dirs = array();
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acc�s base
+	 */
+	function modSyslog($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 42 ;
 
-    // Config pages
-    $this->config_page_url = array("syslog.php");
+		$this->family = "technic";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Activation des traces debug (syslog)";
+		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+		$this->const_name = 'MAIN_MODULE_SYSLOG';
+		$this->special = 2;
+		//$this->picto='phoning';
 
-    // D�pendances
-    $this->depends = array();
-    $this->requiredby = array();
+		// Dir
+		$this->dirs = array();
 
-    // Constantes
-    $this->const = array();
+		// Config pages
+		$this->config_page_url = array("syslog.php");
 
-    // Boites
-    $this->boxes = array();
+		// D�pendances
+		$this->depends = array();
+		$this->requiredby = array();
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'syslog';
-  }
+		// Constantes
+		$this->const = array();
+
+		// Boites
+		$this->boxes = array();
+
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'syslog';
+	}
 
 
-   /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-    */
-  function init()
-  {
-    $sql = array();
-    
-    return $this->_init($sql);
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
+	function init()
+	{
+		$sql = array();
 
-  }
+		return $this->_init($sql);
 
-  /**
-    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-    Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+	}
 
-    return $this->_remove($sql);
-  }
+	/**
+	 \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
+
+		return $this->_remove($sql);
+	}
 }
 ?>

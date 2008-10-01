@@ -54,8 +54,8 @@ class modWebcalendar extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','technic','other'
 		// It is used to sort modules in module setup page 
 		$this->family = "projects";		
-		// Module title used if translation string 'ModuleXXXName' not found (XXX is id value)
-		$this->name = "Webcalendar";	
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "Interfacage avec le calendrier Webcalendar";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version

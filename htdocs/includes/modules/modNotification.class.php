@@ -20,88 +20,89 @@
  */
 
 /**
-		\defgroup   notification	Module notification
-		\brief      Module pour g�rer les notifications (par mail ou autre)
-*/
+ \defgroup   notification	Module notification
+ \brief      Module pour g�rer les notifications (par mail ou autre)
+ */
 
 /**
-		\file       htdocs/includes/modules/modNotification.class.php
-		\ingroup    notification
-		\brief      Fichier de description et activation du module Notification
-*/
+ \file       htdocs/includes/modules/modNotification.class.php
+ \ingroup    notification
+ \brief      Fichier de description et activation du module Notification
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-		\class      modMailing
-		\brief      Classe de description et activation du module Mailing
-*/
+ \class      modMailing
+ \brief      Classe de description et activation du module Mailing
+ */
 
 class modNotification extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
-    */
-  function modNotification($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 600;
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acc�s base
+	 */
+	function modNotification($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 600;
 
-    $this->family = "technic";
-    $this->name = "Notifications";
-    $this->description = "Gestion des notifications (par mail) sur �v�nement Dolibarr";
-    $this->version = 'dolibarr';	// 'experimental' or 'dolibarr' or version
-    $this->const_name = 'MAIN_MODULE_NOTIFICATION';
-    $this->special = 1;
-    $this->picto='email';
+		$this->family = "technic";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion des notifications (par mail) sur �v�nement Dolibarr";
+		$this->version = 'dolibarr';	// 'experimental' or 'dolibarr' or version
+		$this->const_name = 'MAIN_MODULE_NOTIFICATION';
+		$this->special = 1;
+		$this->picto='email';
 
-    // Dir
-    $this->dirs = array();
+		// Dir
+		$this->dirs = array();
 
-    // D�pendances
-    $this->depends = array();
-    $this->requiredby = array();
-    $this->langfiles = array("mails");
+		// D�pendances
+		$this->depends = array();
+		$this->requiredby = array();
+		$this->langfiles = array("mails");
 
-    // Config pages
-    $this->config_page_url = array("notification.php");
+		// Config pages
+		$this->config_page_url = array("notification.php");
 
-    // Constantes
-    $this->const = array();
+		// Constantes
+		$this->const = array();
 
-    // Boites
-    $this->boxes = array();
+		// Boites
+		$this->boxes = array();
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'notification';
-  }
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'notification';
+	}
 
 
-   /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-    */
-  function init()
-  {
-    // Permissions
-    $this->remove();
-   
-    return $this->_init($sql);
-  }
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
+	function init()
+	{
+		// Permissions
+		$this->remove();
+		 
+		return $this->_init($sql);
+	}
 
-  /**
-    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-    Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+	/**
+	 \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
 
-    return $this->_remove($sql);
-  }
+		return $this->_remove($sql);
+	}
 }
 ?>

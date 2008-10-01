@@ -18,140 +18,141 @@
  */
 
 /**
-   \defgroup   	stock     Module stock
-   \brief      	Module pour gerer la tenue de stocks produits
-   \version		$Id$
-*/
+ \defgroup   	stock     Module stock
+ \brief      	Module pour gerer la tenue de stocks produits
+ \version		$Id$
+ */
 
 /**
-   \file       htdocs/includes/modules/modStock.class.php
-   \ingroup    stock
-   \brief      Fichier de description et activation du module Stock
-*/
+ \file       htdocs/includes/modules/modStock.class.php
+ \ingroup    stock
+ \brief      Fichier de description et activation du module Stock
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-   \class      modStock
-   \brief      Classe de description et activation du module Stock
-*/
+ \class      modStock
+ \brief      Classe de description et activation du module Stock
+ */
 
 class modStock extends DolibarrModules
 {
 
-  /**
-   *   \brief      Constructeur. Definit les noms, constantes et boites
-   *   \param      DB      handler d'acc�s base
-   */
-  function modStock($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 52 ;
-    
-    $this->family = "products";
-    $this->name = "Stock produits";
-    $this->description = "Gestion des stocks";
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acc�s base
+	 */
+	function modStock($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 52 ;
 
-    $this->revision = explode(' ','$Revision$');
-    $this->version = $this->revision[1];
+		$this->family = "products";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion des stocks";
 
-    $this->const_name = 'MAIN_MODULE_STOCK';
-    $this->special = 0;
-    $this->picto='stock';
+		$this->revision = explode(' ','$Revision$');
+		$this->version = $this->revision[1];
 
-    // Dir
-    $this->dirs = array();
+		$this->const_name = 'MAIN_MODULE_STOCK';
+		$this->special = 0;
+		$this->picto='stock';
 
-    $this->config_page_url = array("stock.php");
+		// Dir
+		$this->dirs = array();
 
-    // Dependencies
-    $this->depends = array("modProduit");
-    $this->requiredby = array();
-	$this->langfiles = array("stocks");
+		$this->config_page_url = array("stock.php");
 
-    // Constantes
-    $this->const = array();
-    
-    // Boxes
-    $this->boxes = array();
+		// Dependencies
+		$this->depends = array("modProduit");
+		$this->requiredby = array();
+		$this->langfiles = array("stocks");
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'stock';
+		// Constantes
+		$this->const = array();
 
-    $this->rights[0][0] = 1001;
-    $this->rights[0][1] = 'Lire les stocks';
-    $this->rights[0][2] = 'r';
-    $this->rights[0][3] = 1;
-    $this->rights[0][4] = 'lire';
-    $this->rights[0][5] = '';
+		// Boxes
+		$this->boxes = array();
 
-    $this->rights[1][0] = 1002;
-    $this->rights[1][1] = 'Creer/Modifier les stocks';
-    $this->rights[1][2] = 'w';
-    $this->rights[1][3] = 0;
-    $this->rights[1][4] = 'creer';
-    $this->rights[1][5] = '';
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'stock';
 
-    $this->rights[2][0] = 1003;
-    $this->rights[2][1] = 'Supprimer les stocks';
-    $this->rights[2][2] = 'd';
-    $this->rights[2][3] = 0;
-    $this->rights[2][4] = 'supprimer';
-    $this->rights[2][5] = '';
+		$this->rights[0][0] = 1001;
+		$this->rights[0][1] = 'Lire les stocks';
+		$this->rights[0][2] = 'r';
+		$this->rights[0][3] = 1;
+		$this->rights[0][4] = 'lire';
+		$this->rights[0][5] = '';
 
-    $this->rights[3][0] = 1004;
-    $this->rights[3][1] = 'Lire mouvements de stocks';
-    $this->rights[3][2] = 'r';
-    $this->rights[3][3] = 1;
-    $this->rights[3][4] = 'mouvement';
-    $this->rights[3][5] = 'lire';
+		$this->rights[1][0] = 1002;
+		$this->rights[1][1] = 'Creer/Modifier les stocks';
+		$this->rights[1][2] = 'w';
+		$this->rights[1][3] = 0;
+		$this->rights[1][4] = 'creer';
+		$this->rights[1][5] = '';
 
-    $this->rights[4][0] = 1005;
-    $this->rights[4][1] = 'Creer/modifier mouvements de stocks';
-    $this->rights[4][2] = 'w';
-    $this->rights[4][3] = 0;
-    $this->rights[4][4] = 'mouvement';
-    $this->rights[4][5] = 'creer';
+		$this->rights[2][0] = 1003;
+		$this->rights[2][1] = 'Supprimer les stocks';
+		$this->rights[2][2] = 'd';
+		$this->rights[2][3] = 0;
+		$this->rights[2][4] = 'supprimer';
+		$this->rights[2][5] = '';
 
-    // Exports
-    //--------
-    $r=0;
+		$this->rights[3][0] = 1004;
+		$this->rights[3][1] = 'Lire mouvements de stocks';
+		$this->rights[3][2] = 'r';
+		$this->rights[3][3] = 1;
+		$this->rights[3][4] = 'mouvement';
+		$this->rights[3][5] = 'lire';
 
-    $r++;
-    $this->export_code[$r]=$this->rights_class.'_'.$r;
-    $this->export_label[$r]="Stocks";	// Translation key (used only if key ExportDataset_xxx_z not found)
-    $this->export_permission[$r]=array(array("stock","lire"));
-    $this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification','ps.reel'=>'RealStock','e.rowid'=>'IdWarehouse','e.label'=>'LabelWareHouse','e.label'=>'DescWareHouse','e.lieu'=>'LieuWareHouse','e.address'=>'Address','e.cp'=>'Zip','e.ville'=>'Town');
-    $this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product','ps.reel'=>'stock','e.rowid'=>'warehouse','e.label'=>'warehouse','e.label'=>'warehouse','e.lieu'=>'warehouse','e.address'=>'warehouse','e.cp'=>'warehouse','e.ville'=>'warehouse');
-    $this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification','ps.reel'=>'quantity','e.rowid'=>'idwarehouse','e.label'=>'labelwarehouse','e.label'=>'descwarehouse','e.lieu'=>'lieuwarehouse','e.address'=>'addresswarehouse','e.cp'=>'zipwarehouse','e.ville'=>'townwarehouse');
-    $this->export_sql_start[$r]='SELECT DISTINCT ';
-    $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
-    $this->export_sql_end[$r] .=' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid';
-  }
+		$this->rights[4][0] = 1005;
+		$this->rights[4][1] = 'Creer/modifier mouvements de stocks';
+		$this->rights[4][2] = 'w';
+		$this->rights[4][3] = 0;
+		$this->rights[4][4] = 'mouvement';
+		$this->rights[4][5] = 'creer';
 
-   /**
-    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-    *               Definit egalement les repertoires de donnees a creer pour ce module.
-    */
-  function init()
-  {
-	$sql = array();
-    
-    return $this->_init($sql);
-  }
+		// Exports
+		//--------
+		$r=0;
 
-  /**
-   *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]="Stocks";	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r]=array(array("stock","lire"));
+		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification','ps.reel'=>'RealStock','e.rowid'=>'IdWarehouse','e.label'=>'LabelWareHouse','e.label'=>'DescWareHouse','e.lieu'=>'LieuWareHouse','e.address'=>'Address','e.cp'=>'Zip','e.ville'=>'Town');
+		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product','ps.reel'=>'stock','e.rowid'=>'warehouse','e.label'=>'warehouse','e.label'=>'warehouse','e.lieu'=>'warehouse','e.address'=>'warehouse','e.cp'=>'warehouse','e.ville'=>'warehouse');
+		$this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification','ps.reel'=>'quantity','e.rowid'=>'idwarehouse','e.label'=>'labelwarehouse','e.label'=>'descwarehouse','e.lieu'=>'lieuwarehouse','e.address'=>'addresswarehouse','e.cp'=>'zipwarehouse','e.ville'=>'townwarehouse');
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
+		$this->export_sql_end[$r] .=' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid';
+	}
 
-    return $this->_remove($sql);
+	/**
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 */
+	function init()
+	{
+		$sql = array();
 
-  }
+		return $this->_init($sql);
+	}
+
+	/**
+	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
+
+		return $this->_remove($sql);
+
+	}
 }
 ?>

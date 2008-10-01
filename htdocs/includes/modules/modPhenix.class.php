@@ -53,8 +53,8 @@ class modPhenix extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','technic','other'
 		// It is used to sort modules in module setup page 
 		$this->family = "projects";		
-		// Module title used if translation string 'ModuleXXXName' not found (XXX is id value)
-		$this->name = "Phenix";	
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
 		// Module descriptoin used translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "Interface avec le calendrier Phenix";
 		// Possible values for version are: 'experimental' or 'dolibarr' or version

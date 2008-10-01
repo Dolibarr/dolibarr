@@ -17,103 +17,104 @@
  */
 
 /**
-   \defgroup   	editeur     Module editeur
-   \brief      	Module pour gerer le suivi des editeurs
-   \version		$Id$
-*/
+ \defgroup   	editeur     Module editeur
+ \brief      	Module pour gerer le suivi des editeurs
+ \version		$Id$
+ */
 
 /**
-   \file       htdocs/includes/modules/modEditeur.class.php
-   \ingroup    editeur
-   \brief      Fichier de description et activation du module Editeur
-*/
+ \file       htdocs/includes/modules/modEditeur.class.php
+ \ingroup    editeur
+ \brief      Fichier de description et activation du module Editeur
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-   \class      modEditeur
-   \brief      Classe de description et activation du module Editeur
-*/
+ \class      modEditeur
+ \brief      Classe de description et activation du module Editeur
+ */
 
 class modEditeur extends DolibarrModules
 {
-  
-  /**
-   *   \brief      Constructeur. Definit les noms, constantes et boites
-   *   \param      DB      handler d'acc�s base
-   */
-  function modEditeur($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 49 ;
-    
-    $this->family = "other";
-    $this->name = "Editeur";
-    $this->description = "Gestion des �diteurs";
-    $this->revision = explode(' ','$Revision$');
-    $this->version = $this->revision[1];
-    $this->const_name = 'MAIN_MODULE_EDITEUR';
-    $this->special = 3;
-    $this->picto='book';
 
-    // Dir
-    $this->dirs = array();
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acc�s base
+	 */
+	function modEditeur($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 49 ;
 
-    // Config pages
-    $this->config_page_url = array("editeur.php");
+		$this->family = "other";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion des editeurs";
+		$this->revision = explode(' ','$Revision$');
+		$this->version = $this->revision[1];
+		$this->const_name = 'MAIN_MODULE_EDITEUR';
+		$this->special = 3;
+		$this->picto='book';
 
-    // D�pendances
-    $this->depends = array();
-    $this->requiredby = array();
-    $this->conflictwith = array();
-    $this->needleftmenu = array('default.php');
-    $this->needtotopmenu = array();
-    $this->langfiles = array("orders","bills","companies");
+		// Dir
+		$this->dirs = array();
 
-    // Constantes
+		// Config pages
+		$this->config_page_url = array("editeur.php");
 
-    $this->const = array();
+		// D�pendances
+		$this->depends = array();
+		$this->requiredby = array();
+		$this->conflictwith = array();
+		$this->needleftmenu = array('default.php');
+		$this->needtotopmenu = array();
+		$this->langfiles = array("orders","bills","companies");
 
-    // Boites
-    $this->boxes = array();
+		// Constantes
 
-    // Documents
-    $this->docs = array();
-    $this->docs[0][0] = 1;
-    $this->docs[0][1] = 'Courrier des droits';
-    $this->docs[0][2] = 'docs/class/courrier-droit-editeur.class.php';
-    $this->docs[0][3] = 'pdf_courrier_droit_editeur';
+		$this->const = array();
 
-    // Permissions
-    $this->rights = array();
+		// Boites
+		$this->boxes = array();
 
-  }
+		// Documents
+		$this->docs = array();
+		$this->docs[0][0] = 1;
+		$this->docs[0][1] = 'Courrier des droits';
+		$this->docs[0][2] = 'docs/class/courrier-droit-editeur.class.php';
+		$this->docs[0][3] = 'pdf_courrier_droit_editeur';
+
+		// Permissions
+		$this->rights = array();
+
+	}
 
 
-  /**
-   *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-   *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-   */
-  function init()
-  {
-    global $conf;
-    
-    $sql = array();
-    
-    return $this->_init($sql);
-  }
-  
-  
-  /**
-   *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
-	
-    return $this->_remove($sql);
-  }
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
+	function init()
+	{
+		global $conf;
+
+		$sql = array();
+
+		return $this->_init($sql);
+	}
+
+
+	/**
+	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
+
+		return $this->_remove($sql);
+	}
 }
 ?>

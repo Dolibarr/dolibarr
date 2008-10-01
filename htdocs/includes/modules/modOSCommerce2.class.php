@@ -22,22 +22,22 @@
  */
 
 /**     \defgroup   oscommerce2     Module OSCommerce 2
-        \brief      Module pour g�rer une boutique et interface avec OSCommerce via Web Services
-*/
+ \brief      Module pour g�rer une boutique et interface avec OSCommerce via Web Services
+ */
 
 /**
-        \file       htdocs/includes/modules/modOSCommerce2.class.php
-        \ingroup    oscommerce2
-        \brief      Fichier de description et activation du module OSCommerce2
-*/
+ \file       htdocs/includes/modules/modOSCommerce2.class.php
+ \ingroup    oscommerce2
+ \brief      Fichier de description et activation du module OSCommerce2
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
-/** 
-		\class 		modOSCommerce2
-		\brief      Classe de description et activation du module OSCommerce2
-*/
+/**
+ \class 		modOSCommerce2
+ \brief      Classe de description et activation du module OSCommerce2
+ */
 
 class modOSCommerce2 extends DolibarrModules
 {
@@ -50,45 +50,46 @@ class modOSCommerce2 extends DolibarrModules
 	{
 		$this->db = $DB ;
 		$this->numero = 900;
-	
+
 		$this->family = "products";
-		$this->name = "OSCommerce by WS";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Interface de visualisation d'une boutique OSCommerce via des Web services.\nCe module requiert d'installer les composants dans /oscommerce_ws/ws_server sur OSCommerce. Voir fichier README dans /oscommerce_ws/ws_server";
 		$this->version = 'experimental';	// 'development' or 'experimental' or 'dolibarr' or version
 		$this->const_name = 'MAIN_MODULE_OSCOMMERCEWS';
 		$this->special = 1;
-	
+
 		// Dir
 		$this->dirs = array();
-	
+
 		// Config pages
 		$this->config_page_url = array();
-	
+
 		// D�pendances
 		$this->depends = array();
 		$this->requiredby = array();
-	    $this->conflictwith = array("modBoutique");
-	   	$this->langfiles = array("shop");
-	
+		$this->conflictwith = array("modBoutique");
+		$this->langfiles = array("shop");
+
 		// Constantes
 		$this->const = array();
-	
-	    // Boites
-	    $this->boxes = array();
+
+		// Boites
+		$this->boxes = array();
 
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'boutique';
 	}
-  
-   /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-    */
+
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
 	function init()
 	{
 		$sql = array();
-		
+
 		return $this->_init($sql);
 	}
 
@@ -99,9 +100,9 @@ class modOSCommerce2 extends DolibarrModules
 	function remove()
 	{
 		$sql = array();
-		
+
 		return $this->_remove($sql);
 	}
-  
+
 }
 ?>

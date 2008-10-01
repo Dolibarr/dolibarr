@@ -19,108 +19,109 @@
  */
 
 /**
-        \defgroup   barcode         Module code barre
-        \brief      Module pour gerer les codes barres
-		\version	$Id$
-*/
+ \defgroup   barcode         Module code barre
+ \brief      Module pour gerer les codes barres
+ \version	$Id$
+ */
 
 /**
-        \file       htdocs/includes/modules/modBarcode.class.php
-        \ingroup    barcode,produit
-        \brief      Fichier de description et activation du module Barcode
-*/
+ \file       htdocs/includes/modules/modBarcode.class.php
+ \ingroup    barcode,produit
+ \brief      Fichier de description et activation du module Barcode
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
-        \class      modBarcode
-		\brief      Classe de description et activation du module Barcode
-*/
+ \class      modBarcode
+ \brief      Classe de description et activation du module Barcode
+ */
 
 class modBarcode extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
-    */
-  function modBarcode($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 55 ;
-    
-    $this->family = "technic";
-    $this->name = "Codes barres";
-    $this->description = "Gestion des codes barres";
-    $this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
-    $this->const_name = 'MAIN_MODULE_BARCODE';
-    $this->special = 2;
-    $this->picto='barcode';
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acc�s base
+	 */
+	function modBarcode($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 55 ;
 
-    // Dir
-    $this->dirs = array();
+		$this->family = "technic";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion des codes barres";
+		$this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
+		$this->const_name = 'MAIN_MODULE_BARCODE';
+		$this->special = 2;
+		$this->picto='barcode';
 
-    // D�pendances
-    $this->depends = array("modProduit");
-	  $this->requiredby = array();
-	
-	  // Config pages
-    $this->config_page_url = array("barcode.php");
-	
-    // Constantes
-    $this->const = array();
+		// Dir
+		$this->dirs = array();
 
-    // Boxes
-    $this->boxes = array();
+		// D�pendances
+		$this->depends = array("modProduit");
+		$this->requiredby = array();
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'barcode';
-    
-    $this->rights[1][0] = 300; // id de la permission
-    $this->rights[1][1] = 'Lire les codes barres'; // libelle de la permission
-    $this->rights[1][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[1][3] = 1; // La permission est-elle une permission par d�faut
-    $this->rights[1][4] = 'lire';
+		// Config pages
+		$this->config_page_url = array("barcode.php");
 
-    $this->rights[2][0] = 301; // id de la permission
-    $this->rights[2][1] = 'Cr�er/modifier les codes barres'; // libelle de la permission
-    $this->rights[2][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[2][3] = 0; // La permission est-elle une permission par d�faut
-    $this->rights[2][4] = 'creer';
+		// Constantes
+		$this->const = array();
 
-    $this->rights[4][0] = 302; // id de la permission
-    $this->rights[4][1] = 'Supprimer les codes barres'; // libelle de la permission
-    $this->rights[4][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[4][3] = 0; // La permission est-elle une permission par d�faut
-    $this->rights[4][4] = 'supprimer';
+		// Boxes
+		$this->boxes = array();
 
-  }
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'barcode';
+
+		$this->rights[1][0] = 300; // id de la permission
+		$this->rights[1][1] = 'Lire les codes barres'; // libelle de la permission
+		$this->rights[1][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
+		$this->rights[1][3] = 1; // La permission est-elle une permission par d�faut
+		$this->rights[1][4] = 'lire';
+
+		$this->rights[2][0] = 301; // id de la permission
+		$this->rights[2][1] = 'Cr�er/modifier les codes barres'; // libelle de la permission
+		$this->rights[2][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
+		$this->rights[2][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[2][4] = 'creer';
+
+		$this->rights[4][0] = 302; // id de la permission
+		$this->rights[4][1] = 'Supprimer les codes barres'; // libelle de la permission
+		$this->rights[4][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
+		$this->rights[4][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[4][4] = 'supprimer';
+
+	}
 
 
-   /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-    */
-  function init()
-  {
-    // Permissions
-    $this->remove();
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
+	function init()
+	{
+		// Permissions
+		$this->remove();
 
-    $sql = array();
+		$sql = array();
 
-    return $this->_init($sql);
-  }
+		return $this->_init($sql);
+	}
 
-  /**
-   *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+	/**
+	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
 
-    return $this->_remove($sql);
-  }
+		return $this->_remove($sql);
+	}
 }
 ?>

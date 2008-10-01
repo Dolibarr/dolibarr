@@ -43,7 +43,7 @@ class InterfaceEditeur
   {
     $this->db = $DB ;
     
-    $this->name = "Editeur";
+    $this->name = eregi_replace('Interface','',get_class($this));
     $this->family = "editeur";
     $this->description = "Les triggers de ce composant tri les lignes commandes par stock_loc.";
     $this->revision = explode(' ','$Revision$');

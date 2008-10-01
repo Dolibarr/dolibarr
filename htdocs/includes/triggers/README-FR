@@ -8,7 +8,7 @@ La syntaxe d'un fichier Trigger est:
 where:
 > modModule est la partie du nom du descripteur de module trouve dans le
             repertoire includes/modules pour lequel le trigger doit etre.
-            actiff ou la valeure 'all' si ne doit pas etre actif pour un
+            actif ou la valeur 'all' si ne doit pas etre actif pour un
 			module particulier.
 > Mytrigger est le nom du trigger. La classe PHP dans le fichier trigger
             aura pour nom InterfaceMytrigger.

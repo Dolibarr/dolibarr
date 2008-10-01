@@ -90,19 +90,11 @@ foreach($modules as $const => $desc)
  * Affiche page
  */
 
-llxHeader("","");
+llxHeader();
 
-$html=new Form($db);
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/fckeditor.php";
-$head[$h][1] = $langs->trans("Activation");
-$hselected=$h;
-$h++;
-
-dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
-
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans("FCKEditor"),$linkback,'setup');
+print '<br>';
 /*
  * Activation/désactivation de FCKeditor
  */

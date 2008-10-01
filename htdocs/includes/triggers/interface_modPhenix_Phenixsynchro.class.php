@@ -51,7 +51,7 @@ class InterfacePhenixsynchro
     {
         $this->db = $DB ;
     
-        $this->name = "Phenixsynchro";
+        $this->name = eregi_replace('Interface','',get_class($this));
         $this->family = "phenix";
         $this->description = "Les triggers de ce composant permettent d'insérer un évênement dans le calendrier phenix pour chaque grand évênement Dolibarr.";
         $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version

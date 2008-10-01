@@ -54,10 +54,10 @@ class modMantis extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','technic','other'
 		// It is used to sort modules in module setup page 
 		$this->family = "projects";		
-		// Module title used if translation string 'ModuleXXXName' not found (XXX is id value)
-		$this->name = "Mantis";	
-		// Module descriptoin used translation string 'ModuleXXXDesc' not found (XXX is id value)
-		$this->description = "Interfa�age avec le bug tracking Mantis";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		// Module description used translation string 'ModuleXXXDesc' not found (XXX is id value)
+		$this->description = "Interfacage avec le bug tracking Mantis";
 		// Possible values for version are: 'experimental' or 'dolibarr' or version
 		$this->version = 'dolibarr';    
 		// Id used in llx_const table to manage module status (enabled/disabled)	

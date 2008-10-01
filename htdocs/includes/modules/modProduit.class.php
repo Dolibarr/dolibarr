@@ -20,181 +20,182 @@
  */
 
 /**
-        \defgroup   produit     Module produit
-        \brief      Module pour gerer le suivi de produits predefinis
-		\version	$Id$
-*/
+ \defgroup   produit     Module produit
+ \brief      Module pour gerer le suivi de produits predefinis
+ \version	$Id$
+ */
 
 /**
-        \file       htdocs/includes/modules/modProduit.class.php
-        \ingroup    produit
-        \brief      Fichier de description et activation du module Produit
-*/
+ \file       htdocs/includes/modules/modProduit.class.php
+ \ingroup    produit
+ \brief      Fichier de description et activation du module Produit
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-        \class      modProduit
-		\brief      Classe de description et activation du module Produit
-*/
+ \class      modProduit
+ \brief      Classe de description et activation du module Produit
+ */
 
 class modProduit extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
-    */
-  function modProduit($DB)
-  {
-    global $conf;
-    
-    $this->db = $DB ;
-    $this->numero = 50 ;
-    
-    $this->family = "products";
-    $this->name = "Produit";
-    $this->description = "Gestion des produits";
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acc�s base
+	 */
+	function modProduit($DB)
+	{
+		global $conf;
 
-    $this->revision = explode(' ','$Revision$');
-    $this->version = $this->revision[1];
+		$this->db = $DB ;
+		$this->numero = 50 ;
 
-    $this->const_name = 'MAIN_MODULE_PRODUIT';
-    $this->special = 0;
-    $this->picto='product';
+		$this->family = "products";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion des produits";
 
-    // Dir
-    $this->dirs = array();
+		$this->revision = explode(' ','$Revision$');
+		$this->version = $this->revision[1];
 
-    // D�pendances
-    $this->depends = array();
-	$this->requiredby = array("modStock","modService","modBarcode");
+		$this->const_name = 'MAIN_MODULE_PRODUIT';
+		$this->special = 0;
+		$this->picto='product';
 
-	// Config pages
-    $this->config_page_url = array("produit.php");
-	$this->langfiles = array("products","companies");
-	
-    // Constantes
-    $this->const = array();
-    $r=0;
-	
-    $this->const[$r][0] = "MAIN_SEARCHFORM_PRODUITSERVICE";
-    $this->const[$r][1] = "yesno";
-    $this->const[$r][2] = "1";
-    $this->const[$r][3] = "Affichage formulaire de recherche des Produits et Services dans la barre de gauche";
-    $this->const[$r][4] = 0;
-    $r++;
+		// Dir
+		$this->dirs = array();
 
-    // Boxes
-    $this->boxes = array();
-    $this->boxes[0][1] = "box_produits.php";
+		// D�pendances
+		$this->depends = array();
+		$this->requiredby = array("modStock","modService","modBarcode");
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'produit';
-    $r=0;
-    
-    $r++;
-    $this->rights[$r][0] = 31; // id de la permission
-    $this->rights[$r][1] = 'Lire les produits/services'; // libelle de la permission
-    $this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[$r][3] = 1; // La permission est-elle une permission par d�faut
-    $this->rights[$r][4] = 'lire';
+		// Config pages
+		$this->config_page_url = array("produit.php");
+		$this->langfiles = array("products","companies");
 
-    $r++;
-    $this->rights[$r][0] = 32; // id de la permission
-    $this->rights[$r][1] = 'Cr�er modifier les produits/services'; // libelle de la permission
-    $this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
-    $this->rights[$r][4] = 'creer';
+		// Constantes
+		$this->const = array();
+		$r=0;
 
-    $r++;
-    $this->rights[$r][0] = 33; // id de la permission
-    $this->rights[$r][1] = 'Commander les produits/services'; // libelle de la permission
-    $this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
-    $this->rights[$r][4] = 'commander';
+		$this->const[$r][0] = "MAIN_SEARCHFORM_PRODUITSERVICE";
+		$this->const[$r][1] = "yesno";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = "Affichage formulaire de recherche des Produits et Services dans la barre de gauche";
+		$this->const[$r][4] = 0;
+		$r++;
 
-    $r++;
-    $this->rights[$r][0] = 34; // id de la permission
-    $this->rights[$r][1] = 'Supprimer les produits/services'; // libelle de la permission
-    $this->rights[$r][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
-    $this->rights[$r][4] = 'supprimer';
+		// Boxes
+		$this->boxes = array();
+		$this->boxes[0][1] = "box_produits.php";
 
-    $r++;
-    $this->rights[$r][0] = 38;
-    $this->rights[$r][1] = 'Exporter les produits';
-    $this->rights[$r][2] = 'r';
-    $this->rights[$r][3] = 0;
-    $this->rights[$r][4] = 'export';
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'produit';
+		$r=0;
+
+		$r++;
+		$this->rights[$r][0] = 31; // id de la permission
+		$this->rights[$r][1] = 'Lire les produits/services'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par d�faut
+		$this->rights[$r][4] = 'lire';
+
+		$r++;
+		$this->rights[$r][0] = 32; // id de la permission
+		$this->rights[$r][1] = 'Cr�er modifier les produits/services'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][4] = 'creer';
+
+		$r++;
+		$this->rights[$r][0] = 33; // id de la permission
+		$this->rights[$r][1] = 'Commander les produits/services'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][4] = 'commander';
+
+		$r++;
+		$this->rights[$r][0] = 34; // id de la permission
+		$this->rights[$r][1] = 'Supprimer les produits/services'; // libelle de la permission
+		$this->rights[$r][2] = 'd'; // type de la permission (d�pr�ci� � ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
+		$this->rights[$r][4] = 'supprimer';
+
+		$r++;
+		$this->rights[$r][0] = 38;
+		$this->rights[$r][1] = 'Exporter les produits';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'export';
 
 
-    // Exports
-    //--------
-    $r=0;
+		// Exports
+		//--------
+		$r=0;
 
-    $r++;
-    $this->export_code[$r]=$this->rights_class.'_'.$r;
-    $this->export_label[$r]="ProductsOrServices";	// Translation key (used only if key ExportDataset_xxx_z not found)
-    $this->export_permission[$r]=array(array("produit","export"));
-    $this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
-    $this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product');
-    $this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification');
-    $this->export_sql_start[$r]='SELECT DISTINCT ';
-    $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
-    
-    
-    // Imports
-    //--------
-    $r=0;
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]="ProductsOrServices";	// Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_permission[$r]=array(array("produit","export"));
+		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"Price",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration",'p.datec'=>'DateCreation','p.tms'=>'DateModification');
+		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product",'p.datec'=>'product','p.tms'=>'product');
+		$this->export_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration",'p.datec'=>'datecreation','p.tms'=>'datemodification');
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
 
-    $r++;
-    $this->import_code[$r]=$this->id.'_'.$r;
-    $this->import_label[$r]="ProductsOrServices";	// Translation key
-    $this->import_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration");
-    $this->import_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product");
-    //$this->import_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration");
-        
-    if($conf->global->PRODUIT_MULTIPRICES)
-    {
-    	$this->import_multiprices[$r]=array();
-    	
-    	for($i=1;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-    	{
-    		$this->import_multiprices[$r][$i]["price_ht"] = "SellingPriceHT ".$i;
-    		$this->import_multiprices[$r][$i]["price_ttc"] = "SellingPriceTTC ".$i;
-    	}
-    }
-    
+
+		// Imports
+		//--------
+		$r=0;
+
+		$r++;
+		$this->import_code[$r]=$this->id.'_'.$r;
+		$this->import_label[$r]="ProductsOrServices";	// Translation key
+		$this->import_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration");
+		$this->import_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product");
+		//$this->import_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration");
+
+		if($conf->global->PRODUIT_MULTIPRICES)
+		{
+			$this->import_multiprices[$r]=array();
+			 
+			for($i=1;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+			{
+				$this->import_multiprices[$r][$i]["price_ht"] = "SellingPriceHT ".$i;
+				$this->import_multiprices[$r][$i]["price_ttc"] = "SellingPriceTTC ".$i;
+			}
+		}
+
 
 	}
 
 
-   /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-    */
-  function init()
-  {
-    // Permissions
-    $this->remove();
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
+	function init()
+	{
+		// Permissions
+		$this->remove();
 
-    $sql = array();
+		$sql = array();
 
-    return $this->_init($sql);
-  }
+		return $this->_init($sql);
+	}
 
-  /**
-   *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+	/**
+	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
 
-    return $this->_remove($sql);
-  }
+		return $this->_remove($sql);
+	}
 }
 ?>

@@ -20,143 +20,144 @@
  */
 
 /**     \defgroup   comptabilite_expert     Module comptabilite expert
-        \brief      Module pour inclure des fonctions de comptabilit� (gestion de comptes comptables et rapports)
-		\version	$Id$
-*/
+ \brief      Module pour inclure des fonctions de comptabilit� (gestion de comptes comptables et rapports)
+ \version	$Id$
+ */
 
 /**
-        \file       htdocs/includes/modules/modComptabiliteExpert.class.php
-        \ingroup    comptabilite_expert
-        \brief      Fichier de description et activation du module Comptabilite Expert
-*/
+ \file       htdocs/includes/modules/modComptabiliteExpert.class.php
+ \ingroup    comptabilite_expert
+ \brief      Fichier de description et activation du module Comptabilite Expert
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-        \class      modComptabiliteExpert
-        \brief      Classe de description et activation du module Comptabilite Expert
-*/
+ \class      modComptabiliteExpert
+ \brief      Classe de description et activation du module Comptabilite Expert
+ */
 
 class modComptabiliteExpert extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acces base
-    */
-  function modComptabiliteExpert($DB)
-  {
-    global $conf;
-    
-    $this->db = $DB ;
-    $this->numero = 130 ;
-    
-    $this->family = "financial";
-    $this->name = "ComptabiliteExpert";
-    $this->description = "Gestion expert de comptabilite (doubles parties)";
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acces base
+	 */
+	function modComptabiliteExpert($DB)
+	{
+		global $conf;
 
-//    $this->revision = explode(' ','$Revision$');
-//    $this->version = $this->revision[1];
-    $this->version = "development";
+		$this->db = $DB ;
+		$this->numero = 130 ;
 
-    $this->const_name = 'MAIN_MODULE_COMPTABILITEEXPERT';
-    $this->special = 0;
-        
-    // Config pages
-    $this->config_page_url = array("comptaexpert.php");
+		$this->family = "financial";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion expert de comptabilite (doubles parties)";
 
-    // Dependances
-    $this->depends = array("modFacture","modBanque");
-    $this->requiredby = array();
-    $this->conflictwith = array("modComptabilite");
-   	$this->langfiles = array("compta");
+		//    $this->revision = explode(' ','$Revision$');
+		//    $this->version = $this->revision[1];
+		$this->version = "development";
 
-    // Constantes
-    $this->const = array();
+		$this->const_name = 'MAIN_MODULE_COMPTABILITEEXPERT';
+		$this->special = 0;
 
-    // Repertoires
-    $this->dirs = array();
-    $this->dirs[0] = $conf->comptaexpert->dir_output;
-    $this->dirs[1] = $conf->comptaexpert->dir_output."/rapport";
-    $this->dirs[2] = $conf->comptaexpert->dir_output."/export";
-    $this->dirs[3] = $conf->comptaexpert->dir_images;
+		// Config pages
+		$this->config_page_url = array("comptaexpert.php");
 
-    // Boites
-    $this->boxes = array();
+		// Dependances
+		$this->depends = array("modFacture","modBanque");
+		$this->requiredby = array();
+		$this->conflictwith = array("modComptabilite");
+		$this->langfiles = array("compta");
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'comptaexpert';
+		// Constantes
+		$this->const = array();
 
-    $this->rights[1][0] = 131;
-    $this->rights[1][1] = 'Lire le plan de compte';
-    $this->rights[1][2] = 'r';
-    $this->rights[1][3] = 1;
-    $this->rights[1][4] = 'plancompte';
-    $this->rights[1][5] = 'lire';
+		// Repertoires
+		$this->dirs = array();
+		$this->dirs[0] = $conf->comptaexpert->dir_output;
+		$this->dirs[1] = $conf->comptaexpert->dir_output."/rapport";
+		$this->dirs[2] = $conf->comptaexpert->dir_output."/export";
+		$this->dirs[3] = $conf->comptaexpert->dir_images;
 
-    $this->rights[2][0] = 132;
-    $this->rights[2][1] = 'Creer/modifier un plan de compte';
-    $this->rights[2][2] = 'w';
-    $this->rights[2][3] = 0;
-    $this->rights[2][4] = 'plancompte';
-    $this->rights[2][5] = 'creer';
+		// Boites
+		$this->boxes = array();
 
-    $this->rights[3][0] = 133;
-    $this->rights[3][1] = 'Cloturer plan de compte';
-    $this->rights[3][2] = 'w';
-    $this->rights[3][3] = 0;
-    $this->rights[3][4] = 'plancompte';
-    $this->rights[3][5] = 'cloturer';
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'comptaexpert';
 
-    $this->rights[4][0] = 141;
-    $this->rights[4][1] = 'Lire les mouvements comptables';
-    $this->rights[4][2] = 'r';
-    $this->rights[4][3] = 1;
-    $this->rights[4][4] = 'mouvements';
-    $this->rights[4][5] = 'lire';
+		$this->rights[1][0] = 131;
+		$this->rights[1][1] = 'Lire le plan de compte';
+		$this->rights[1][2] = 'r';
+		$this->rights[1][3] = 1;
+		$this->rights[1][4] = 'plancompte';
+		$this->rights[1][5] = 'lire';
 
-    $this->rights[5][0] = 142;
-    $this->rights[5][1] = 'Creer/modifier/annuler les mouvements comptables';
-    $this->rights[5][2] = 'w';
-    $this->rights[5][3] = 0;
-    $this->rights[5][4] = 'mouvements';
-    $this->rights[5][5] = 'creer';
+		$this->rights[2][0] = 132;
+		$this->rights[2][1] = 'Creer/modifier un plan de compte';
+		$this->rights[2][2] = 'w';
+		$this->rights[2][3] = 0;
+		$this->rights[2][4] = 'plancompte';
+		$this->rights[2][5] = 'creer';
 
-    $this->rights[6][0] = 145;
-    $this->rights[6][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
-    $this->rights[6][2] = 'r';
-    $this->rights[6][3] = 0;
-    $this->rights[6][4] = 'comptarapport';
-    $this->rights[6][5] = 'lire';
+		$this->rights[3][0] = 133;
+		$this->rights[3][1] = 'Cloturer plan de compte';
+		$this->rights[3][2] = 'w';
+		$this->rights[3][3] = 0;
+		$this->rights[3][4] = 'plancompte';
+		$this->rights[3][5] = 'cloturer';
 
-  }
+		$this->rights[4][0] = 141;
+		$this->rights[4][1] = 'Lire les mouvements comptables';
+		$this->rights[4][2] = 'r';
+		$this->rights[4][3] = 1;
+		$this->rights[4][4] = 'mouvements';
+		$this->rights[4][5] = 'lire';
+
+		$this->rights[5][0] = 142;
+		$this->rights[5][1] = 'Creer/modifier/annuler les mouvements comptables';
+		$this->rights[5][2] = 'w';
+		$this->rights[5][3] = 0;
+		$this->rights[5][4] = 'mouvements';
+		$this->rights[5][5] = 'creer';
+
+		$this->rights[6][0] = 145;
+		$this->rights[6][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
+		$this->rights[6][2] = 'r';
+		$this->rights[6][3] = 0;
+		$this->rights[6][4] = 'comptarapport';
+		$this->rights[6][5] = 'lire';
+
+	}
 
 
-   /**
-    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-    *               Definit egalement les repertoires de donnees e creer pour ce module.
-    */
-  function init()
-  {
-    global $conf;
-    
-    // Nettoyage avant activation
-    $this->remove();
+	/**
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees e creer pour ce module.
+	 */
+	function init()
+	{
+		global $conf;
 
-    return $this->_init($sql);
-  }
+		// Nettoyage avant activation
+		$this->remove();
 
-  /**
-   *    \brief      Fonction appelee lors de la desactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+		return $this->_init($sql);
+	}
 
-    return $this->_remove($sql);
-  }
+	/**
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
+
+		return $this->_remove($sql);
+	}
 }
 ?>

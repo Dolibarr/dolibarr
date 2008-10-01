@@ -226,7 +226,7 @@ class DolibarrModules
 		}
 		else
 		{
-			// Si traduction du nom du module n'existe pas, on prend definition en dur dans module
+			// If translation of module with its numero does not exists, we take its name
 			return $this->name;
 		}
 	}

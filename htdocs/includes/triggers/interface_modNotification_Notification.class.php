@@ -42,7 +42,7 @@ class InterfaceNotification
     {
         $this->db = $DB ;
     
-        $this->name = "Notification";
+        $this->name = eregi_replace('Interface','',get_class($this));
         $this->family = "notification";
         $this->description = "Les triggers de ce composant envoie les notifications par mail selon configuration du module Notification.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version

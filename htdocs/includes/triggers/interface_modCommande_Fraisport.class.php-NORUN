@@ -43,7 +43,7 @@ class InterfaceFraisport
   {
     $this->db = $DB ;
     
-    $this->name = "Fraisport";
+    $this->name = eregi_replace('Interface','',get_class($this));
     $this->family = "facture";
     $this->description = "Les triggers de ce composant calculent les frais de port.";
     $this->revision = explode(' ','$Revision$');

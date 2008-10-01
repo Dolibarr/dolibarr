@@ -20,109 +20,110 @@
  */
 
 /**
-        \defgroup   don     Module don
-        \brief      Module pour g�rer le suivi des dons
-*/
+ \defgroup   don     Module don
+ \brief      Module pour g�rer le suivi des dons
+ */
 
 /**
-        \file       htdocs/includes/modules/modDon.class.php
-        \ingroup    don
-        \brief      Fichier de description et activation du module Don
-*/
+ \file       htdocs/includes/modules/modDon.class.php
+ \ingroup    don
+ \brief      Fichier de description et activation du module Don
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-        \class      modDon
-        \brief      Classe de description et activation du module Don
-*/
+ \class      modDon
+ \brief      Classe de description et activation du module Don
+ */
 
 class modDon  extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
-    */
-  function modDon($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 700 ;
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acc�s base
+	 */
+	function modDon($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 700 ;
 
-    $this->family = "financial";
-    $this->name = "Don";
-    $this->description = "Gestion des dons";
-    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
-    $this->const_name = 'MAIN_MODULE_DON';
-    $this->special = 0;
+		$this->family = "financial";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion des dons";
+		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+		$this->const_name = 'MAIN_MODULE_DON';
+		$this->special = 0;
 
-    // Dir
-    $this->dirs = array();
+		// Dir
+		$this->dirs = array();
 
-    // D�pendances
-    $this->depends = array();
-    $this->requiredby = array();
+		// D�pendances
+		$this->depends = array();
+		$this->requiredby = array();
 
-    // Config pages
-    $this->config_page_url = array("dons.php");
+		// Config pages
+		$this->config_page_url = array("dons.php");
 
-    // Constantes
-    $this->const = array();
-    $this->const[0][0] = "DON_FORM";
-    $this->const[0][1] = "chaine";
-    $this->const[0][2] = "fsfe.fr.php";
-    $this->const[0][3] = 'Nom du gestionnaire de formulaire de dons';
-    $this->const[0][4] = 0;
+		// Constantes
+		$this->const = array();
+		$this->const[0][0] = "DON_FORM";
+		$this->const[0][1] = "chaine";
+		$this->const[0][2] = "fsfe.fr.php";
+		$this->const[0][3] = 'Nom du gestionnaire de formulaire de dons';
+		$this->const[0][4] = 0;
 
-    // Boxes
-    $this->boxes = array();
-    
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'don';
+		// Boxes
+		$this->boxes = array();
 
-    $this->rights[1][0] = 700;
-    $this->rights[1][1] = 'Lire les dons';
-    $this->rights[1][2] = 'r';
-    $this->rights[1][3] = 1;
-    $this->rights[1][4] = 'lire';
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'don';
 
-    $this->rights[2][0] = 701;
-    $this->rights[2][1] = 'Cr�er/modifier les dons';
-    $this->rights[2][2] = 'w';
-    $this->rights[2][3] = 0;
-    $this->rights[2][4] = 'creer';
+		$this->rights[1][0] = 700;
+		$this->rights[1][1] = 'Lire les dons';
+		$this->rights[1][2] = 'r';
+		$this->rights[1][3] = 1;
+		$this->rights[1][4] = 'lire';
 
-    $this->rights[3][0] = 702;
-    $this->rights[3][1] = 'Supprimer les dons';
-    $this->rights[3][2] = 'd';
-    $this->rights[3][3] = 0;
-    $this->rights[3][4] = 'supprimer';
+		$this->rights[2][0] = 701;
+		$this->rights[2][1] = 'Cr�er/modifier les dons';
+		$this->rights[2][2] = 'w';
+		$this->rights[2][3] = 0;
+		$this->rights[2][4] = 'creer';
 
-  }
+		$this->rights[3][0] = 702;
+		$this->rights[3][1] = 'Supprimer les dons';
+		$this->rights[3][2] = 'd';
+		$this->rights[3][3] = 0;
+		$this->rights[3][4] = 'supprimer';
+
+	}
 
 
-   /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-    */
-  function init()
-  {
-    $sql = array();
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
+	function init()
+	{
+		$sql = array();
 
-    return $this->_init($sql);
-  }
+		return $this->_init($sql);
+	}
 
-  /**
-   *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+	/**
+	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
 
-    return $this->_remove($sql);   
-  }
+		return $this->_remove($sql);
+	}
 }
 ?>

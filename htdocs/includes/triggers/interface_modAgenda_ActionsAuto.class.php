@@ -47,7 +47,7 @@ class InterfaceActionsAuto
     {
         $this->db = $DB ;
     
-        $this->name = "ActionsAuto";
+        $this->name = eregi_replace('^Interface','',get_class($this));
         $this->family = "agenda";
         $this->description = "Triggers of this module add actions in agenda according to setup made in agenda setup.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version

@@ -19,101 +19,102 @@
  * $Id$
  */
 
-/** 
-    \defgroup   energie     Module energie
-    \brief      Module pour le suivi de la consommation d'energie
-*/
+/**
+ \defgroup   energie     Module energie
+ \brief      Module pour le suivi de la consommation d'energie
+ */
 
 /**
-   \file       htdocs/includes/modules/modEnergie.class.php
-   \ingroup    energie
-   \brief      Fichier de description et activation du module Energie
-*/
+ \file       htdocs/includes/modules/modEnergie.class.php
+ \ingroup    energie
+ \brief      Fichier de description et activation du module Energie
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-   \class modEnergie
-   \brief      Classe de description et activation du module Energie
-*/
+ \class modEnergie
+ \brief      Classe de description et activation du module Energie
+ */
 
 class modEnergie extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
-    */
-  function modEnergie($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 23 ;
-    
-    $this->family = "other";
-    $this->name = "Energie";
-    $this->description = "Suivi de la consommation des energies";
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acc�s base
+	 */
+	function modEnergie($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 23 ;
 
-    $this->revision = explode(' ','$Revision$');
-    $this->version = $this->revision[1];
+		$this->family = "other";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Suivi de la consommation des energies";
 
-    $this->const_name = 'MAIN_MODULE_ENERGIE';
-    $this->special = 2;
-    $this->picto='energie';
+		$this->revision = explode(' ','$Revision$');
+		$this->version = $this->revision[1];
 
-    // Dir
-    $this->dirs = array();
+		$this->const_name = 'MAIN_MODULE_ENERGIE';
+		$this->special = 2;
+		$this->picto='energie';
 
-    // D�pendances
-    $this->depends = array();
+		// Dir
+		$this->dirs = array();
 
-    // Config pages
-    $this->config_page_url = array("energie.php");
+		// D�pendances
+		$this->depends = array();
 
-    // Constantes
-    $this->const = array();
+		// Config pages
+		$this->config_page_url = array("energie.php");
 
-    // Boxes
-    $this->boxes = array();
-	$r=0;
-    $this->boxes[$r][1] = "box_energie_releve.php";
-	$r++;
-	$this->boxes[$r][1] = "box_energie_graph.php";
-    $r++;
+		// Constantes
+		$this->const = array();
 
-    // Permissions
-    $this->rights = array();
+		// Boxes
+		$this->boxes = array();
+		$r=0;
+		$this->boxes[$r][1] = "box_energie_releve.php";
+		$r++;
+		$this->boxes[$r][1] = "box_energie_graph.php";
+		$r++;
 
-  }
+		// Permissions
+		$this->rights = array();
+
+	}
 
 
-   /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-    */
-  function init()
-  {       
-    global $conf;
-    // Permissions et valeurs par d�faut
-    $this->remove();
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
+	function init()
+	{
+		global $conf;
+		// Permissions et valeurs par d�faut
+		$this->remove();
 
-    $sql = array();
+		$sql = array();
 
-    $this->dirs[0] = DOL_DATA_ROOT."/energie";
-    $this->dirs[1] = DOL_DATA_ROOT."/energie/graph";
-    
-    return $this->_init($sql);
-  }
+		$this->dirs[0] = DOL_DATA_ROOT."/energie";
+		$this->dirs[1] = DOL_DATA_ROOT."/energie/graph";
 
-  /**
-   *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+		return $this->_init($sql);
+	}
 
-    return $this->_remove($sql);
-  }
+	/**
+	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
+
+		return $this->_remove($sql);
+	}
 }
 ?>

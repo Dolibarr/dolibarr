@@ -20,80 +20,81 @@
  */
 
 /**     \defgroup   postnuke     Module postnuke
-        \brief      Module d'interfacage avec Postnuke
-*/
+ \brief      Module d'interfacage avec Postnuke
+ */
 
 /**
-        \file       htdocs/includes/modules/modPostnuke.class.php
-        \ingroup    postnuke
-        \brief      Fichier de description et activation du module Postnuke
-*/
+ \file       htdocs/includes/modules/modPostnuke.class.php
+ \ingroup    postnuke
+ \brief      Fichier de description et activation du module Postnuke
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-        \class      modPostnuke
-		\brief      Classe de description et activation du module Postnuke
-*/
+ \class      modPostnuke
+ \brief      Classe de description et activation du module Postnuke
+ */
 
 class modPostnuke extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
-    */
-  function modPostnuke($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 210;
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acc�s base
+	 */
+	function modPostnuke($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 210;
 
-    $this->family = "technic";
-    $this->name = "Postnuke";
-    $this->description = "Gestion de l'outil PostNuke";
-    $this->version = 'development';    // 'development' or 'experimental' or 'dolibarr' or version
-    $this->const_name = 'MAIN_MODULE_POSTNUKE';
-    $this->special = 1;
+		$this->family = "technic";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion de l'outil PostNuke";
+		$this->version = 'development';    // 'development' or 'experimental' or 'dolibarr' or version
+		$this->const_name = 'MAIN_MODULE_POSTNUKE';
+		$this->special = 1;
 
-    // Dir
-    $this->dirs = array();
+		// Dir
+		$this->dirs = array();
 
-    // D�pendances
-    $this->depends = array();
-    $this->requiredby = array();
+		// D�pendances
+		$this->depends = array();
+		$this->requiredby = array();
 
-    // Constantes
-    $this->const = array();
-    
-    // Boxes
-    $this->boxes = array();
+		// Constantes
+		$this->const = array();
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'postnuke';
-  }
+		// Boxes
+		$this->boxes = array();
 
-   /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-    */
-  function init()
-  {
-    $sql = array();
-    
-    return $this->_init($sql);
-  }
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'postnuke';
+	}
 
-  /**
-   *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
+	function init()
+	{
+		$sql = array();
 
-    return $this->_remove($sql);   
-  }
+		return $this->_init($sql);
+	}
+
+	/**
+	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
+
+		return $this->_remove($sql);
+	}
 }
 ?>

@@ -28,7 +28,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
-$mode=isset($_GET["mode"])?$_GET["mode"]:0;
+$mode=isset($_GET["mode"])?$_GET["mode"]:(isset($_SESSION['mode'])?$_SESSION['mode']:0);
 $mesg=isset($_GET["mesg"])?urldecode($_GET["mesg"]):"";
 
 if (!$user->admin)
@@ -159,6 +159,7 @@ function UnActivate($value,$requiredby=1)
 /*
  * Affichage page
  */
+$_SESSION["mode"]=$mode;
 
 llxHeader("","");
 
@@ -210,8 +211,8 @@ foreach ($dirlist as $dirroot)
 				if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
 				if ($objMod->needtopmenu  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
 
-				// We dsicard modules according to features level (if active we always show them)
-				$const_name = $objMod->const_name;
+				// We discard modules according to features level (PS: if module is activated we always show it)
+				$const_name = 'MAIN_MODULE_'.strtoupper(eregi_replace('^mod','',get_class($objMod)));
 				if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
 				if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
 
@@ -324,7 +325,7 @@ foreach ($orders as $key => $value)
     $modName = $filename[$key];
 	$objMod  = $modules[$key];
 
-    $const_name = $objMod->const_name;
+    $const_name = 'MAIN_MODULE_'.strtoupper(eregi_replace('^mod','',get_class($objMod)));
 
     // Load all lang files of module
     if (is_array($objMod->langfiles))

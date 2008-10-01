@@ -53,8 +53,8 @@ class modECM extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
 		// It is used to sort modules in module setup page 
 		$this->family = "ecm";		
-		// Module title used if translation string 'ModuleXXXName' not found (XXX is id value)
-		$this->name = "ECM";	
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "Electronic Content Management";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version

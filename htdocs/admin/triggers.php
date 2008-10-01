@@ -179,8 +179,6 @@ foreach ($orders as $key => $value)
         $objMod = new $modName($db);
     }
 
-    $const_name = $objMod->const_name;
-
     $var=!$var;
 
 	// Define disabledbyname and disabledbymodule

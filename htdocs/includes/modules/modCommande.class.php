@@ -51,7 +51,8 @@ class modCommande extends DolibarrModules
 		$this->numero = 25 ;
 
 		$this->family = "crm";
-		$this->name = "Commande";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion des commandes clients";
 		$this->revision = explode(' ','$Revision$');
 		$this->version = $this->revision[1];

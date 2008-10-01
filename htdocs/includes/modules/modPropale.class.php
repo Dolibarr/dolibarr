@@ -22,147 +22,148 @@
  */
 
 /**     \defgroup   propale     Module propale
-        \brief      Module pour gerer la tenue de propositions commerciales
-*/
+ \brief      Module pour gerer la tenue de propositions commerciales
+ */
 
 /**
-        \file       htdocs/includes/modules/modPropale.class.php
-        \ingroup    propale
-        \brief      Fichier de description et activation du module Propale
-*/
+ \file       htdocs/includes/modules/modPropale.class.php
+ \ingroup    propale
+ \brief      Fichier de description et activation du module Propale
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /** \class modPropale
-		\brief      Classe de description et activation du module Propale
-*/
+ \brief      Classe de description et activation du module Propale
+ */
 
 class modPropale extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acces base
-    */
-  function modPropale($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 20 ;
-    
-    $this->family = "crm";
-    $this->name = "Propositions commerciales";
-    $this->description = "Gestion des propositions commerciales";
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acces base
+	 */
+	function modPropale($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 20 ;
 
-    $this->revision = explode(' ','$Revision$');
-    $this->version = $this->revision[1];
+		$this->family = "crm";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion des propositions commerciales";
 
-    $this->const_name = 'MAIN_MODULE_PROPALE';
-    $this->special = 0;
-    $this->picto='propal';
+		$this->revision = explode(' ','$Revision$');
+		$this->version = $this->revision[1];
 
-    // Dir
-    $this->dirs = array();
+		$this->const_name = 'MAIN_MODULE_PROPALE';
+		$this->special = 0;
+		$this->picto='propal';
 
-    // Dependances
-    $this->depends = array("modSociete","modCommercial");
-    $this->config_page_url = array("propale.php");
+		// Dir
+		$this->dirs = array();
 
-    // Constantes
-    $this->const = array();
+		// Dependances
+		$this->depends = array("modSociete","modCommercial");
+		$this->config_page_url = array("propale.php");
 
-    $this->const[0][0] = "PROPALE_ADDON_PDF";
-    $this->const[0][1] = "chaine";
-    $this->const[0][2] = "azur";
-    $this->const[0][3] = 'Nom du gestionnaire de generation des propales en PDF';
-    $this->const[0][4] = 0;
+		// Constantes
+		$this->const = array();
 
-    $this->const[1][0] = "PROPALE_ADDON";
-    $this->const[1][1] = "chaine";
-    $this->const[1][2] = "mod_propale_marbre";
-    $this->const[1][3] = 'Nom du gestionnaire de numerotation des propales';
-    $this->const[1][4] = 0;
+		$this->const[0][0] = "PROPALE_ADDON_PDF";
+		$this->const[0][1] = "chaine";
+		$this->const[0][2] = "azur";
+		$this->const[0][3] = 'Nom du gestionnaire de generation des propales en PDF';
+		$this->const[0][4] = 0;
 
-    // Boxes
-    $this->boxes = array();
-    $this->boxes[0][1] = "box_propales.php";
+		$this->const[1][0] = "PROPALE_ADDON";
+		$this->const[1][1] = "chaine";
+		$this->const[1][2] = "mod_propale_marbre";
+		$this->const[1][3] = 'Nom du gestionnaire de numerotation des propales';
+		$this->const[1][4] = 0;
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'propale';
+		// Boxes
+		$this->boxes = array();
+		$this->boxes[0][1] = "box_propales.php";
 
-    $this->rights[1][0] = 21; // id de la permission
-    $this->rights[1][1] = 'Lire les propositions commerciales'; // libelle de la permission
-    $this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
-    $this->rights[1][3] = 1; // La permission est-elle une permission par defaut
-    $this->rights[1][4] = 'lire';
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'propale';
 
-    $this->rights[2][0] = 22; // id de la permission
-    $this->rights[2][1] = 'Creer/modifier les propositions commerciales'; // libelle de la permission
-    $this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
-    $this->rights[2][3] = 0; // La permission est-elle une permission par defaut
-    $this->rights[2][4] = 'creer';
+		$this->rights[1][0] = 21; // id de la permission
+		$this->rights[1][1] = 'Lire les propositions commerciales'; // libelle de la permission
+		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[1][4] = 'lire';
 
-    $this->rights[3][0] = 24; // id de la permission
-    $this->rights[3][1] = 'Valider les propositions commerciales'; // libelle de la permission
-    $this->rights[3][2] = 'd'; // type de la permission (deprecie a ce jour)
-    $this->rights[3][3] = 0; // La permission est-elle une permission par defaut
-    $this->rights[3][4] = 'valider';
+		$this->rights[2][0] = 22; // id de la permission
+		$this->rights[2][1] = 'Creer/modifier les propositions commerciales'; // libelle de la permission
+		$this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[2][4] = 'creer';
 
-    $this->rights[4][0] = 25; // id de la permission
-    $this->rights[4][1] = 'Envoyer les propositions commerciales aux clients'; // libelle de la permission
-    $this->rights[4][2] = 'd'; // type de la permission (deprecie a ce jour)
-    $this->rights[4][3] = 0; // La permission est-elle une permission par defaut
-    $this->rights[4][4] = 'envoyer';
+		$this->rights[3][0] = 24; // id de la permission
+		$this->rights[3][1] = 'Valider les propositions commerciales'; // libelle de la permission
+		$this->rights[3][2] = 'd'; // type de la permission (deprecie a ce jour)
+		$this->rights[3][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[3][4] = 'valider';
 
-    $this->rights[5][0] = 26; // id de la permission
-    $this->rights[5][1] = 'Cloturer les propositions commerciales'; // libelle de la permission
-    $this->rights[5][2] = 'd'; // type de la permission (deprecie a ce jour)
-    $this->rights[5][3] = 0; // La permission est-elle une permission par defaut
-    $this->rights[5][4] = 'cloturer';
+		$this->rights[4][0] = 25; // id de la permission
+		$this->rights[4][1] = 'Envoyer les propositions commerciales aux clients'; // libelle de la permission
+		$this->rights[4][2] = 'd'; // type de la permission (deprecie a ce jour)
+		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[4][4] = 'envoyer';
 
-    $this->rights[6][0] = 27; // id de la permission
-    $this->rights[6][1] = 'Supprimer les propositions commerciales'; // libelle de la permission
-    $this->rights[6][2] = 'd'; // type de la permission (deprecie a ce jour)
-    $this->rights[6][3] = 0; // La permission est-elle une permission par defaut
-    $this->rights[6][4] = 'supprimer';
+		$this->rights[5][0] = 26; // id de la permission
+		$this->rights[5][1] = 'Cloturer les propositions commerciales'; // libelle de la permission
+		$this->rights[5][2] = 'd'; // type de la permission (deprecie a ce jour)
+		$this->rights[5][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[5][4] = 'cloturer';
 
-  }
+		$this->rights[6][0] = 27; // id de la permission
+		$this->rights[6][1] = 'Supprimer les propositions commerciales'; // libelle de la permission
+		$this->rights[6][2] = 'd'; // type de la permission (deprecie a ce jour)
+		$this->rights[6][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[6][4] = 'supprimer';
+
+	}
 
 
-   /**
-    *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
-    *               Definit egalement les repertoires de donnees a creer pour ce module.
-    */
-  function init()
-  {       
-    global $conf;
-    // Permissions et valeurs par defaut
-    $this->remove();
+	/**
+	 *   \brief      Fonction appelee lors de l'activation du module. Insere en base les constantes, boites, permissions du module.
+	 *               Definit egalement les repertoires de donnees a creer pour ce module.
+	 */
+	function init()
+	{
+		global $conf;
+		// Permissions et valeurs par defaut
+		$this->remove();
 
-    // Repertoires
-    $this->dirs[0] = $conf->propal->dir_output;
-    $this->dirs[1] = $conf->propal->dir_temp;
+		// Repertoires
+		$this->dirs[0] = $conf->propal->dir_output;
+		$this->dirs[1] = $conf->propal->dir_temp;
 
-    $sql = array(
+		$sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."'",
 		 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES('".$this->const[0][2]."','propal')",
-		 );
-    
-    return $this->_init($sql);
+		);
 
-  }
+		return $this->_init($sql);
 
-  /**
-   *    \brief      Fonction appelee lors de la desactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+	}
 
-    return $this->_remove($sql);
+	/**
+	 *    \brief      Fonction appelee lors de la desactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
 
-  }
+		return $this->_remove($sql);
+
+	}
 }
 ?>

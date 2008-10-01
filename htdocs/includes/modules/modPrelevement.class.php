@@ -18,45 +18,46 @@
  */
 
 /**
-   \defgroup   	prelevement     Module prelevement
-   \brief      	Module de gestion des prelevements bancaires
-   \version		$Id$
-*/
+ \defgroup   	prelevement     Module prelevement
+ \brief      	Module de gestion des prelevements bancaires
+ \version		$Id$
+ */
 
 /**
-		\file       htdocs/includes/modules/modPrelevement.class.php
-		\ingroup    prelevement
-		\brief      Fichier de description et activation du module Prelevement
-*/
+ \file       htdocs/includes/modules/modPrelevement.class.php
+ \ingroup    prelevement
+ \brief      Fichier de description et activation du module Prelevement
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-		\class 		modPrelevement
-		\brief      Classe de description et activation du module Prelevement
-*/
+ \class 		modPrelevement
+ \brief      Classe de description et activation du module Prelevement
+ */
 class modPrelevement extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acc�s base
-    */
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acc�s base
+	 */
 	function modPrelevement($DB)
 	{
 		global $conf;
-	
+
 		$this->db = $DB ;
 		$this->numero = 57 ;
-	
+
 		$this->family = "financial";
-		$this->name = "Prelevement";
-		$this->description = "Gestion des Pr�l�vements";
-	
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion des Prelevements";
+
 		$this->revision = explode(' ','$Revision$');
 		$this->version = $this->revision[1];
-	
+
 		$this->const_name = 'MAIN_MODULE_PRELEVEMENT';
 		$this->special = 0;
 		// Name of png file (without png) used for this module
@@ -64,42 +65,42 @@ class modPrelevement extends DolibarrModules
 		// Dir
 		$this->dirs = array();
 		$this->data_directory = $conf->prelevement->dir_output . "/bon";
-	
+
 		// D�pendances
 		$this->depends = array("modFacture");
 		$this->requiredby = array();
-	
+
 		// Constantes
 		$this->const = array();
-	
+
 		// Boites
 		$this->boxes = array();
-	
+
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'prelevement';
-	
+
 		$this->rights[1][0] = 151;
 		$this->rights[1][1] = 'Consulter les prelevements';
 		$this->rights[1][2] = 'r';
 		$this->rights[1][3] = 1;
 		$this->rights[1][4] = 'bons';
 		$this->rights[1][5] = 'lire';
-	
+
 		$this->rights[2][0] = 152;
 		$this->rights[2][1] = 'Configurer les prelevements';
 		$this->rights[2][2] = 'w';
 		$this->rights[2][3] = 0;
 		$this->rights[2][4] = 'bons';
 		$this->rights[2][5] = 'configurer';
-	
+
 		$this->rights[3][0] = 153;
 		$this->rights[3][1] = 'Consulter les bons de prelevements';
 		$this->rights[3][2] = 'r';
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'bons';
 		$this->rights[3][5] = 'lire';
-	
+
 		$this->rights[4][0] = 154;
 		$this->rights[4][1] = 'Creer un bon de prelevement';
 		$this->rights[4][2] = 'w';
@@ -109,23 +110,23 @@ class modPrelevement extends DolibarrModules
 	}
 
 
-   /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-    */
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
 	function init()
 	{
 		global $conf;
-	
+
 		// Permissions
 		$this->remove();
-	
+
 		// Dir
 		$this->dirs[0] = $conf->prelevement->dir_output;
 		$this->dirs[1] = $conf->prelevement->dir_output."/bon" ;
-	
+
 		$sql = array();
-	
+
 		return $this->_init($sql);
 	}
 
@@ -136,7 +137,7 @@ class modPrelevement extends DolibarrModules
 	function remove()
 	{
 		$sql = array();
-	
+
 		return $this->_remove($sql);
 	}
 

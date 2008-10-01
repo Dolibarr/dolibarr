@@ -50,7 +50,8 @@ class modDomain extends DolibarrModules
         $this->numero = 1300 ;
     
         $this->family = "other";
-        $this->name = "Domains";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
         $this->description = "Gestion d'une base de noms de domaines";
         $this->version = 'development';			// 'development' or 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_DOMAIN';

@@ -43,7 +43,7 @@ class InterfaceEcotax
   {
     $this->db = $DB ;
     
-    $this->name = "Ecotax";
+    $this->name = eregi_replace('Interface','',get_class($this));
     $this->family = "facture";
     $this->description = "Les triggers de ce composant calculent le ecotax du produit si le produit est membre d'une categorie speciale (par default: 'Ecotax', change le valeur du variable \$ecotax dans le trigger pour accomoder votre choix).";
     $this->revision = explode(' ','$Revision$');

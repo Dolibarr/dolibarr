@@ -17,100 +17,101 @@
  */
 
 /**
-        \defgroup   DroitPret     Module pret
-		\version	$Id$
-        \brief      Module pour gerer le suivi des droits de prets
-*/
+ \defgroup   DroitPret     Module pret
+ \version	$Id$
+ \brief      Module pour gerer le suivi des droits de prets
+ */
 
 /**
-        \file       htdocs/includes/modules/modDroitPret.class.php
-        \ingroup    don
-        \brief      Fichier de description et activation du module DroitPret
-*/
+ \file       htdocs/includes/modules/modDroitPret.class.php
+ \ingroup    don
+ \brief      Fichier de description et activation du module DroitPret
+ */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**
-        \class      modDroitPret
-        \brief      Classe de description et activation du module DroitPr�t
-*/
+ \class      modDroitPret
+ \brief      Classe de description et activation du module DroitPr�t
+ */
 
 class modDroitPret  extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'acces base
-    */
-  function modDroitPret($DB)
-  {
-    $this->db = $DB ;
-    $this->numero = 2200 ;
+	/**
+	 *   \brief      Constructeur. Definit les noms, constantes et boites
+	 *   \param      DB      handler d'acces base
+	 */
+	function modDroitPret($DB)
+	{
+		$this->db = $DB ;
+		$this->numero = 2200 ;
 
-    $this->family = "other";
-    $this->name = "Droit Pret";
-    $this->description = "Gestion du droit de prets";
-    $this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
-    $this->const_name = 'MAIN_MODULE_DROITPRET';
-    $this->special = 2;
+		$this->family = "other";
+		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
+		$this->name = eregi_replace('^mod','',get_class($this));
+		$this->description = "Gestion du droit de prets";
+		$this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
+		$this->const_name = 'MAIN_MODULE_DROITPRET';
+		$this->special = 2;
 
-    // Dir
-    $this->dirs = array();
+		// Dir
+		$this->dirs = array();
 
-    // D�pendances
-    $this->depends = array();
-    $this->requiredby = array();
+		// D�pendances
+		$this->depends = array();
+		$this->requiredby = array();
 
-    // Config pages
-    $this->config_page_url = array("droitpret.php");
+		// Config pages
+		$this->config_page_url = array("droitpret.php");
 
-    // Constantes
-    $this->const = array();
+		// Constantes
+		$this->const = array();
 
-    // Boxes
-    $this->boxes = array();
-    
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'droitpret';
+		// Boxes
+		$this->boxes = array();
 
-    $this->rights[1][0] = 2200;
-    $this->rights[1][1] = 'Lire les droits de pr�ts';
-    $this->rights[1][2] = 'r';
-    $this->rights[1][3] = 1;
-    $this->rights[1][4] = 'lire';
+		// Permissions
+		$this->rights = array();
+		$this->rights_class = 'droitpret';
 
-    $this->rights[2][0] = 2201;
-    $this->rights[2][1] = 'Cr�er/modifier les droits de pr�ts';
-    $this->rights[2][2] = 'w';
-    $this->rights[2][3] = 0;
-    $this->rights[2][4] = 'creer';
+		$this->rights[1][0] = 2200;
+		$this->rights[1][1] = 'Lire les droits de pr�ts';
+		$this->rights[1][2] = 'r';
+		$this->rights[1][3] = 1;
+		$this->rights[1][4] = 'lire';
 
-
-  }
+		$this->rights[2][0] = 2201;
+		$this->rights[2][1] = 'Cr�er/modifier les droits de pr�ts';
+		$this->rights[2][2] = 'w';
+		$this->rights[2][3] = 0;
+		$this->rights[2][4] = 'creer';
 
 
-   /**
-    *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
-    *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
-    */
-  function init()
-  {
-    $sql = array();
+	}
 
-    return $this->_init($sql);
-  }
 
-  /**
-   *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
-   */
-  function remove()
-  {
-    $sql = array();
+	/**
+	 *   \brief      Fonction appel�e lors de l'activation du module. Ins�re en base les constantes, boites, permissions du module.
+	 *               D�finit �galement les r�pertoires de donn�es � cr�er pour ce module.
+	 */
+	function init()
+	{
+		$sql = array();
 
-    return $this->_remove($sql);   
-  }
+		return $this->_init($sql);
+	}
+
+	/**
+	 *    \brief      Fonction appel�e lors de la d�sactivation d'un module.
+	 *                Supprime de la base les constantes, boites et permissions du module.
+	 */
+	function remove()
+	{
+		$sql = array();
+
+		return $this->_remove($sql);
+	}
 }
 ?>
