@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/commande/index.php
-        \ingroup    commande
-		\brief      Page acceuil espace commandes
-		\version    $Id$
-*/
+ \file       htdocs/commande/index.php
+ \ingroup    commande
+ \brief      Page acceuil espace commandes
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
@@ -35,10 +35,10 @@ $langs->load("orders");
 // Sécurité accés client
 $socid='';
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
 }
 
 
@@ -81,27 +81,27 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc
 
 if ( $db->query($sql) )
 {
-    $langs->load("orders");
-    $num = $db->num_rows();
-    if ($num)
-    {
-        $i = 0;
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre">';
-        print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
-        $var = True;
-        while ($i < $num)
-        {
-            $var=!$var;
-            $obj = $db->fetch_object();
-            print "<tr $bc[$var]>";
-            print '<td nowrap="nowrap">';
-            print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a></td></tr>';
-            $i++;
-        }
-        print "</table><br>";
-    }
+	$langs->load("orders");
+	$num = $db->num_rows();
+	if ($num)
+	{
+		$i = 0;
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
+		$var = True;
+		while ($i < $num)
+		{
+			$var=!$var;
+			$obj = $db->fetch_object();
+			print "<tr $bc[$var]>";
+			print '<td nowrap="nowrap">';
+			print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a></td></tr>';
+			$i++;
+		}
+		print "</table><br>";
+	}
 }
 
 /*
@@ -118,48 +118,48 @@ $sql .= " ORDER BY c.rowid DESC";
 
 if ( $db->query($sql) )
 {
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
 
-    $num = $db->num_rows();
-    if ($num)
-    {
-        $i = 0;
-        $var = True;
-        while ($i < $num)
-        {
-            $var=!$var;
-            $obj = $db->fetch_object();
-            print "<tr $bc[$var]>";
-            print '<td nowrap="nowrap">';
-            
-            $commandestatic->id=$obj->rowid;
-				    $commandestatic->ref=$obj->ref;
-				
-				    print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				    print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
-				    print $commandestatic->getNomUrl(1);
-				    print '</td>';
-				    
-				    print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
-				    print '&nbsp;';
-				    print '</td>';
-				
-				    print '<td width="16" align="right" class="nobordernopadding">';
-				    $filename=sanitize_string($obj->ref);
-				    $filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
-				    $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				    $formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
-				    print '</td></tr></table>';
+	$num = $db->num_rows();
+	if ($num)
+	{
+		$i = 0;
+		$var = True;
+		while ($i < $num)
+		{
+			$var=!$var;
+			$obj = $db->fetch_object();
+			print "<tr $bc[$var]>";
+			print '<td nowrap="nowrap">';
 
-            print '</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a></td></tr>';
-            $i++;
-        }
-    }
+			$commandestatic->id=$obj->rowid;
+			$commandestatic->ref=$obj->ref;
 
-    print "</table><br>";
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+			print $commandestatic->getNomUrl(1);
+			print '</td>';
+
+			print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
+			print '&nbsp;';
+			print '</td>';
+
+			print '<td width="16" align="right" class="nobordernopadding">';
+			$filename=sanitize_string($obj->ref);
+			$filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
+			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+			print '</td></tr></table>';
+
+			print '</td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a></td></tr>';
+			$i++;
+		}
+	}
+
+	print "</table><br>";
 }
 
 
@@ -180,50 +180,51 @@ $sql .= " ORDER BY c.rowid DESC";
 
 if ( $db->query($sql) )
 {
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="3">'.$langs->trans("OnProcessOrders").' ('.$num.')</td></tr>';
+	$num = $db->num_rows();
+	
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="3">'.$langs->trans("OnProcessOrders").' ('.$num.')</td></tr>';
 
-    $num = $db->num_rows();
-    if ($num)
-    {
-        $i = 0;
-        $var = True;
-        while ($i < $num)
-        {
-            $var=!$var;
-            $obj = $db->fetch_object();
-            print "<tr $bc[$var]>";
-            print '<td width="20%" nowrap="nowrap">';
-            
-            $commandestatic->id=$obj->rowid;
-				    $commandestatic->ref=$obj->ref;
-				
-				    print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				    print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
-				    print $commandestatic->getNomUrl(1);
-				    print '</td>';
-				    
-				    print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
-				    print '&nbsp;';
-				    print '</td>';
-				
-				    print '<td width="16" align="right" class="nobordernopadding">';
-				    $filename=sanitize_string($obj->ref);
-				    $filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
-				    $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				    $formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
-				    print '</td></tr></table>';
-				    
-				    print '</td>';
-            
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-            print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
-            print '</tr>';
-            $i++;
-        }
-    }
-    print "</table><br>";
+	if ($num)
+	{
+		$i = 0;
+		$var = True;
+		while ($i < $num)
+		{
+			$var=!$var;
+			$obj = $db->fetch_object();
+			print "<tr $bc[$var]>";
+			print '<td width="20%" nowrap="nowrap">';
+
+			$commandestatic->id=$obj->rowid;
+			$commandestatic->ref=$obj->ref;
+
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+			print $commandestatic->getNomUrl(1);
+			print '</td>';
+
+			print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
+			print '&nbsp;';
+			print '</td>';
+
+			print '<td width="16" align="right" class="nobordernopadding">';
+			$filename=sanitize_string($obj->ref);
+			$filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
+			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+			print '</td></tr></table>';
+
+			print '</td>';
+
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	print "</table><br>";
 }
 
 /*
@@ -245,52 +246,52 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="4">'.$langs->trans("LastClosedOrders",$max).'</td></tr>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="4">'.$langs->trans("LastClosedOrders",$max).'</td></tr>';
 
-    $num = $db->num_rows($resql);
-    if ($num)
-    {
-        $i = 0;
-        $var = True;
-        while ($i < $num)
-        {
-            $var=!$var;
-            $obj = $db->fetch_object($resql);
-            
-            print "<tr $bc[$var]>";
-            print '<td width="20%" nowrap="nowrap">';
-            
-            $commandestatic->id=$obj->rowid;
-				    $commandestatic->ref=$obj->ref;
-				
-				    print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				    print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
-				    print $commandestatic->getNomUrl(1);
-				    print '</td>';
-				    
-				    print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
-				    print '&nbsp;';
-				    print '</td>';
-				
-				    print '<td width="16" align="right" class="nobordernopadding">';
-				    $filename=sanitize_string($obj->ref);
-				    $filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
-				    $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				    $formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
-				    print '</td></tr></table>';
-				    
-				    print '</td>';
-            
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
-            print '<td>'.dolibarr_print_date($obj->datec).'</td>';
-            print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
-            print '</tr>';
-            $i++;
-        }
-    }
-    print "</table><br>";
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$i = 0;
+		$var = True;
+		while ($i < $num)
+		{
+			$var=!$var;
+			$obj = $db->fetch_object($resql);
+
+			print "<tr $bc[$var]>";
+			print '<td width="20%" nowrap="nowrap">';
+
+			$commandestatic->id=$obj->rowid;
+			$commandestatic->ref=$obj->ref;
+
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+			print $commandestatic->getNomUrl(1);
+			print '</td>';
+
+			print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
+			print '&nbsp;';
+			print '</td>';
+
+			print '<td width="16" align="right" class="nobordernopadding">';
+			$filename=sanitize_string($obj->ref);
+			$filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
+			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+			print '</td></tr></table>';
+
+			print '</td>';
+
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+			print '<td>'.dolibarr_print_date($obj->datec).'</td>';
+			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	print "</table><br>";
 }
 
 
