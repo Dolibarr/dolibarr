@@ -457,9 +457,11 @@ class Conf
 		$this->format_date_short="%d/%m/%Y";
 		$this->format_hour_short="%H:%M";
 		$this->format_date_text_short="%d %b %Y";
+		$this->format_date_text="%d %B %Y";
 		$this->format_date_hour_short="%d/%m/%Y %H:%M";
-		$this->format_date_hour_text_short="%d %B %Y %H:%M";
-
+		$this->format_date_hour_text_short="%d %b %Y %H:%M";
+		$this->format_date_hour_text="%d %B %Y %H:%M";
+		
 		$this->format_date_short_java="dd/MM/yyyy";
 
 		// Limites decimales si non definie (peuvent etre egale a 0)

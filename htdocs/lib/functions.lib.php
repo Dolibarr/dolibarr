@@ -422,9 +422,12 @@ function dolibarr_print_date($time,$format='',$to_gmt=false)
 
 	if ($format == 'day')          $format=$conf->format_date_short;
 	if ($format == 'hour')         $format=$conf->format_hour_short;
-	if ($format == 'daytext')      $format=$conf->format_date_text_short;
+	if ($format == 'daytext')      $format=$conf->format_date_text;
+	if ($format == 'daytextshort') $format=$conf->format_date_text_short;
 	if ($format == 'dayhour')      $format=$conf->format_date_hour_short;
-	if ($format == 'dayhourtext')  $format=$conf->format_date_hour_text_short;
+	if ($format == 'dayhourtext')  $format=$conf->format_date_hour_text;
+	if ($format == 'dayhourtextshort')  $format=$conf->format_date_hour_text_short;
+
 	if ($format == 'dayhourlog')   $format='%Y%m%d%H%M%S';
 	if ($format == 'dayhourldap')  $format='%Y%m%d%H%M%SZ';
 	if ($format == 'dayhourxcard') $format='%Y%m%dT%H%M%SZ';
