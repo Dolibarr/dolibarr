@@ -700,8 +700,35 @@ class Societe extends CommonObject
 
 
 
-		if ( $this->db->begin())
+		if ($this->db->begin())
 		{
+			// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-third-party-deleting.html)
+			// Removing every "categorie" link with this company
+			require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
+			
+			$static_cat = new Categorie($this->db);
+			$toute_categs = array();
+			
+			// Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
+			if ($this->client || $this->prospect)
+			{
+				$toute_categs ['societe'] = $static_cat->containing($this->id,'societe',2);
+			}
+			if ($this->fournisseur)
+			{				
+				$toute_categs ['fournisseur'] = $static_cat->containing($this->id,'fournisseur',1);
+			}
+			
+			// Remove each "Categorie"
+			foreach ($toute_categs as $type => $categs_type)
+			{
+				foreach ($categs_type as $cat)
+				{
+					$cat->del_type($this, $type);
+				}
+			}
+			
+			// Remove contacts
 			$sql = "DELETE from ".MAIN_DB_PREFIX."socpeople";
 			$sql.= " WHERE fk_soc = " . $id;
 			if ($this->db->query($sql))

@@ -854,7 +854,11 @@ class Categorie
 	}
 
 	/**
-	* Retourne les catégories contenant le produit $id
+	* 		Return list of categories linked to element of type $type with id $typeid
+	* 		@param		id			Id of element
+	* 		@param		type		Type of link ('customer','fournisseur','societe'...)
+	* 		@param		typeid		Type id of link (0,1,2...)
+	* 		@return		array		List of category objects
 	*/
 	function containing ($id,$type,$typeid)
 	{
