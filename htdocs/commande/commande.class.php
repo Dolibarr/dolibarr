@@ -546,7 +546,14 @@ class Commande extends CommonObject
 					$this->lines[$i]->fk_product,
 					$this->lines[$i]->remise_percent,
 					$this->lines[$i]->fk_remise_except,
-					$this->lines[$i]->info_bits
+					$this->lines[$i]->info_bits,
+					0,
+					'HT',
+					0,
+					// Added by Matelli (http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+					// Add start and end dates to the new line
+					$this->lines[$i]->date_start,
+					$this->lines[$i]->date_end
 					);
 
 					if ($resql < 0)
@@ -627,6 +634,8 @@ class Commande extends CommonObject
 	 *		\param    	fk_remise_exscept	Id remise
 	 *		\param		price_base_type		HT or TTC
 	 * 		\param    	pu_ttc             	Prix unitaire TTC
+	 * 		\param    	date_start             	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 * 		\param    	date_end             	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 	 *    	\return    	int             	>0 si ok, <0 si ko
 	 *    	\see       	add_product
 	 * 		\remarks	Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
@@ -634,9 +643,9 @@ class Commande extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 */
-	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0)
+	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='')
 	{
-		dolibarr_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc");
+		dolibarr_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		// Clean parameters
@@ -700,6 +709,11 @@ class Commande extends CommonObject
 			// \TODO Ne plus utiliser
 			$ligne->price=$price;
 			$ligne->remise=$remise;
+			
+			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+			// Save the start and end date of the new line in the object
+			$ligne->date_start=$date_start;
+			$ligne->date_end=$date_end;
 				
 			$result=$ligne->insert();
 			if ($result > 0)
@@ -734,13 +748,15 @@ class Commande extends CommonObject
 	 * 		\brief				Ajoute une ligne dans tableau lines
 	 *		\param				idproduct			Id du produit a ajouter
 	 *		\param				qty					Quantite
+	 * 		\param    	date_start             	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 * 		\param    	date_end             	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 	 *		\remise_percent		remise_percent		Remise relative effectuee sur le produit
 	 * 		\return    			void
 	 *		\remarks			$this->client doit etre charge
 	 *		\TODO	Remplacer les appels a cette fonction par generation objet Ligne
 	 *				insere dans tableau $this->products
 	 */
-	function add_product($idproduct, $qty, $remise_percent=0)
+	function add_product($idproduct, $qty, $remise_percent=0, $date_start='', $date_end='')
 	{
 		global $conf, $mysoc;
 
@@ -768,6 +784,11 @@ class Commande extends CommonObject
 	  $line->ref=$prod->ref;
 	  $line->libelle=$prod->libelle;
 	  $line->product_desc=$prod->description;
+	  
+	  // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	  // Save the start and end date of the line in the object
+	  if ($date_start) { $line->date_start = $date_start; }
+	  if ($date_end)   { $line->date_end = $date_end; }
 
 	  $this->lines[] = $line;
 
@@ -987,6 +1008,9 @@ class Commande extends CommonObject
 		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
 		$sql.= ' l.total_ht, l.total_ttc, l.total_tva,';
 		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
+		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+		// Load from the database the start and end date
+		$sql.= ','.$this->db->pdate('l.date_start').' as date_start,'.$this->db->pdate('l.date_end').' as date_end';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
 		$sql.= ' WHERE l.fk_commande = '.$this->id;
@@ -1029,6 +1053,11 @@ class Commande extends CommonObject
 				$ligne->libelle          = $objp->label;
 				$ligne->product_desc     = $objp->product_desc; 		// Description produit
 				$ligne->fk_product_type  = $objp->fk_product_type;	// Produit ou service
+				
+				// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+				// Save the start and end date of the line in the object
+				$ligne->date_start       = $objp->date_start;
+				$ligne->date_end         = $objp->date_end;
 
 				$this->lignes[$i] = $ligne;
 				$i++;
@@ -1581,11 +1610,13 @@ class Commande extends CommonObject
 	 *  \param    tva_tx           	Taux TVA
 	 *  \param    price_base_type		HT or TTC
 	 *  \param    info_bits        	Miscellanous informations on line
+	 *  \param    date_start             	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 *  \param    date_end             	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 	 *  \return   int              	< 0 si erreur, > 0 si ok
 	 */
-	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0)
+	function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='')
 	{
-		dolibarr_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits");
+		dolibarr_syslog("Commande::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva, $price_base_type, $info_bits, $date_start, $date_end");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
@@ -1641,6 +1672,14 @@ class Commande extends CommonObject
 	  $sql.= ",total_ht='".price2num($total_ht)."'";
 	  $sql.= ",total_tva='".price2num($total_tva)."'";
 	  $sql.= ",total_ttc='".price2num($total_ttc)."'";
+	  
+	  // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	  // Save the start and end date in the database
+      if ($date_start) { $sql.= ",date_start='".$date_start."'"; }
+      else { $sql.=',date_start=null'; }
+      if ($date_end) { $sql.= ",date_end='".$date_end."'"; }
+      else { $sql.=',date_end=null'; }
+	
 	  $sql.= " WHERE rowid = ".$rowid;
 
 	  $result = $this->db->query($sql);
@@ -2127,6 +2166,11 @@ class CommandeLigne
 	var $ref;				// Reference produit
 	var $product_libelle; 	// Label produit
 	var $product_desc;  	// Description produit
+	
+	// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	// Start and end date of the line
+	var $date_start;
+	var $date_end;
 
 
 	/**
@@ -2148,6 +2192,9 @@ class CommandeLigne
 		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
 		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc, cd.marge_tx, cd.marque_tx, cd.rang,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+		// Load start and end dates from the database
+		$sql.= ','.$this->db->pdate('cd.date_start').' as date_start,'.$this->db->pdate('cd.date_end').' as date_end';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		$sql.= ' WHERE cd.rowid = '.$rowid;
@@ -2177,6 +2224,11 @@ class CommandeLigne
 			$this->ref	            = $objp->product_ref;
 			$this->product_libelle  = $objp->product_libelle;
 			$this->product_desc     = $objp->product_desc;
+			
+			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+			// Save the start and end dates of the line in the object
+			$this->date_start     = $objp->date_start;
+			$this->date_end       = $objp->date_end;
 				
 			$this->db->free($result);
 		}
@@ -2255,7 +2307,9 @@ class CommandeLigne
 		$sql.= ' (fk_commande, description, qty, tva_tx,';
 		$sql.= ' fk_product, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql.= ' rang, marge_tx, marque_tx,';
-		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
+		// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+		// Insert in the database the start and end dates
+		$sql.= ' info_bits, total_ht, total_tva, total_ttc, date_start, date_end)';
 		$sql.= " VALUES (".$this->fk_commande.",";
 		$sql.= " '".addslashes($this->desc)."',";
 		$sql.= " '".price2num($this->qty)."',";
@@ -2276,7 +2330,13 @@ class CommandeLigne
 		$sql.= " '".$this->info_bits."',";
 		$sql.= " '".price2num($this->total_ht)."',";
 		$sql.= " '".price2num($this->total_tva)."',";
-		$sql.= " '".price2num($this->total_ttc)."'";
+		// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+		// Insert in the database the start and end dates
+		$sql.= " '".price2num($this->total_ttc)."',";
+		if ($this->date_start) { $sql.= "'".$this->date_start."',"; }
+		else { $sql.='null,'; }
+		if ($this->date_end)   { $sql.= "'".$this->date_end."'"; }
+		else { $sql.='null'; }
 		$sql.= ')';
 
 		if ($this->fk_product)

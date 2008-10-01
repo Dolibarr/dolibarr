@@ -55,12 +55,15 @@ $socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
 $projetid=isset($_GET['projetid'])?$_GET['projetid']:0;
 
 // Security check
+$socid=0;
 $facid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $facid,'');
 
 // Nombre de ligne pour choix de produit/service prédéfinis
 $NBLINES=4;
+
+$usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 
 /******************************************************************************/
@@ -793,31 +796,22 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		}
 		$ret=$fac->fetch_client();
 
+		$suffixe = $_POST['idprod'] ? '_predef' : '';
 		$date_start='';
 		$date_end='';
-		// Si ajout champ produit libre
-		if ($_POST['action'] == 'addligne')
+		if ($_POST['date_start'.$suffixe.'year'] && $_POST['date_start'.$suffixe.'month'] && $_POST['date_start'.$suffixe.'day'])
 		{
-			if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
-			{
-				$date_start=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
-			}
-			if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
-			{
-				$date_end=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
-			}
+			$date_start=$_POST['date_start'.$suffixe.'year'].'-'.$_POST['date_start'.$suffixe.'month'].'-'.$_POST['date_start'.$suffixe.'day'];
+			// If hour/minute are specified, append them
+			if (($_POST['date_start'.$suffixe.'hour']) && ($_POST['date_start'.$suffixe.'min']))
+				$date_start.=' '.$_POST['date_start'.$suffixe.'hour'].':'.$_POST['date_start'.$suffixe.'min'];
 		}
-		// Si ajout champ produit prédéfini
-		if ($_POST['action'] == 'addligne_predef')
+		if ($_POST['date_end'.$suffixe.'year'] && $_POST['date_end'.$suffixe.'month'] && $_POST['date_end'.$suffixe.'day'])
 		{
-			if ($_POST['date_start_predefyear'] && $_POST['date_start_predefmonth'] && $_POST['date_start_predefday'])
-			{
-				$date_start=$_POST['date_start_predefyear'].'-'.$_POST['date_start_predefmonth'].'-'.$_POST['date_start_predefday'];
-			}
-			if ($_POST['date_end_predefyear'] && $_POST['date_end_predefmonth'] && $_POST['date_end_predefday'])
-			{
-				$date_end=$_POST['date_end_predefyear'].'-'.$_POST['date_end_predefmonth'].'-'.$_POST['date_end_predefday'];
-			}
+			$date_end=$_POST['date_end'.$suffixe.'year'].'-'.$_POST['date_end'.$suffixe.'month'].'-'.$_POST['date_end'.$suffixe.'day'];
+			// If hour/minute are specified, append them
+			if (($_POST['date_end'.$suffixe.'hour']) && ($_POST['date_end'.$suffixe.'min']))
+				$date_end.=' '.$_POST['date_end'.$suffixe.'hour'].':'.$_POST['date_end'.$suffixe.'min'];
 		}
 
 		$price_base_type = 'HT';
@@ -929,11 +923,21 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 
 	$date_start='';
 	$date_end='';
-	if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday']) {
+	// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	// Retrieve start and end date (for product/service lines or customizable lines)
+	if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
+	{
 		$date_start=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
+		// If hour/minute are specified, append them
+		if (($_POST['date_starthour']) && ($_POST['date_startmin']))
+			$date_start.=' '.$_POST['date_starthour'].':'.$_POST['date_startmin'];
 	}
-	if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday']) {
+	if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
+	{
 		$date_end=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
+		// If hour/minute are specified, append them
+		if (($_POST['date_endhour']) && ($_POST['date_endmin']))
+			$date_end.=' '.$_POST['date_endhour'].':'.$_POST['date_endmin'];
 	}
 
 	// Define info_bits
@@ -1623,12 +1627,12 @@ if ($_GET['action'] == 'create')
 					print '<td class="nobordernopadding" nowrap="nowrap">';
 					print $langs->trans('From').' ';
 					print '</td><td class="nobordernopadding" nowrap="nowrap">';
-					print $html->select_date('','date_start'.$i,0,0,1,"add");
+					print $html->select_date('','date_start'.$i,$usehm,$usehm,1,"add");
 					print '</td></tr>';
 					print '<td class="nobordernopadding" nowrap="nowrap">';
 					print $langs->trans('to').' ';
 					print '</td><td class="nobordernopadding" nowrap="nowrap">';
-					print $html->select_date('','date_end'.$i,0,0,1,"add");
+					print $html->select_date('','date_end'.$i,$usehm,$usehm,1,"add");
 					print '</td></tr></table>';
 					print '</td>';
 				}
@@ -2652,9 +2656,9 @@ else
 						{
 							print '<tr '.$bc[$var].'>';
 							print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-							print $html->select_date($objp->date_start,'date_start',0,0,$objp->date_start?0:1,"updateligne");
+							print $html->select_date($objp->date_start,'date_start',$usehm,$usehm,$objp->date_start?0:1,"updateligne");
 							print ' '.$langs->trans('to').' ';
-							print $html->select_date($objp->date_end,'date_end',0,0,$objp->date_end?0:1,"updateligne");
+							print $html->select_date($objp->date_end,'date_end',$usehm,$usehm,$objp->date_end?0:1,"updateligne");
 							print '</td>';
 							print '</tr>';
 						}
@@ -2721,9 +2725,9 @@ else
 				{
 					print '<tr '.$bc[$var].'>';
 					print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-					print $html->select_date('','date_start',0,0,1,"addligne");
+					print $html->select_date('','date_start',$usehm,$usehm,1,"addligne");
 					print ' '.$langs->trans('to').' ';
-					print $html->select_date('','date_end',0,0,1,"addligne");
+					print $html->select_date('','date_end',$usehm,$usehm,1,"addligne");
 					print '</td>';
 					print '</tr>';
 				}
@@ -2788,9 +2792,9 @@ else
 					{
 						print '<tr '.$bc[$var].'>';
 						print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-						print $html->select_date('','date_start_predef',0,0,1,"addligne_predef");
+						print $html->select_date('','date_start_predef',$usehm,$usehm,1,"addligne_predef");
 						print ' '.$langs->trans('to').' ';
-						print $html->select_date('','date_end_predef',0,0,1,"addligne_predef");
+						print $html->select_date('','date_end_predef',$usehm,$usehm,1,"addligne_predef");
 						print '</td>';
 						print '</tr>';
 					}

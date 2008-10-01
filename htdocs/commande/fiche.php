@@ -48,20 +48,13 @@ $langs->load('products');
 if (!$user->rights->commande->lire) accessforbidden();
 
 
-// Securite acces client
+// Security check
 $socid=0;
-if ($user->societe_id > 0)
-{
-	$socid = $user->societe_id;
-}
-if ($user->societe_id >0 && isset($_GET["id"]) && $_GET["id"]>0)
-{
-	$commande = new Commande($db);
-	$commande->fetch((int)$_GET['id']);
-	if ($user->societe_id !=  $commande->socid) {
-		accessforbidden();
-	}
-}
+$contratid = isset($_GET["id"])?$_GET["id"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'commande',$contratid,'commande');
+
+$usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 // Recuperation de l'id de projet
 $projetid = 0;
@@ -303,6 +296,26 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			exit;
 		}
 		$ret=$commande->fetch_client();
+		
+		$suffixe = $_POST['idprod'] ? '_prod' : '';
+		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+		// Retrieve start and end date (for product/service lines or customizable lines)
+		$date_start='';
+		$date_end='';
+		if ($_POST['date_start'.$suffixe.'year'] && $_POST['date_start'.$suffixe.'month'] && $_POST['date_start'.$suffixe.'day'])
+		{
+			$date_start=$_POST['date_start'.$suffixe.'year'].'-'.$_POST['date_start'.$suffixe.'month'].'-'.$_POST['date_start'.$suffixe.'day'];
+			// If hour/minute are specified, append them
+			if (($_POST['date_start'.$suffixe.'hour']) && ($_POST['date_start'.$suffixe.'min']))
+				$date_start.=' '.$_POST['date_start'.$suffixe.'hour'].':'.$_POST['date_start'.$suffixe.'min'];
+		}
+		if ($_POST['date_end'.$suffixe.'year'] && $_POST['date_end'.$suffixe.'month'] && $_POST['date_end'.$suffixe.'day'])
+		{
+			$date_end=$_POST['date_end'.$suffixe.'year'].'-'.$_POST['date_end'.$suffixe.'month'].'-'.$_POST['date_end'.$suffixe.'day'];
+			// If hour/minute are specified, append them
+			if (($_POST['date_end'.$suffixe.'hour']) && ($_POST['date_end'.$suffixe.'min']))
+				$date_end.=' '.$_POST['date_end'.$suffixe.'hour'].':'.$_POST['date_end'.$suffixe.'min'];
+		}
 
 		$price_base_type = 'HT';
 
@@ -376,9 +389,13 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$_POST['idprod'],
 			$_POST['remise_percent'],
 			$info_bits,
-				'',
+			0,
 			$price_base_type,
-			$pu_ttc
+	 		$pu_ttc,
+	 		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 		// Add the start and end dates
+	 		$date_start,
+	 		$date_end
 			);
 	
 			if ($result > 0)
@@ -405,6 +422,26 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 {
 	$commande = new Commande($db,'',$_POST['id']);
 	if (! $commande->fetch($_POST['id']) > 0) dolibarr_print_error($db);
+	
+	
+	$date_start='';
+	$date_end='';
+	// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	// Retrieve start and end date (for product/service lines or customizable lines)
+	if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
+	{
+		$date_start=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
+		// If hour/minute are specified, append them
+		if (($_POST['date_starthour']) && ($_POST['date_startmin']))
+			$date_start.=' '.$_POST['date_starthour'].':'.$_POST['date_startmin'];
+	}
+	if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
+	{
+		$date_end=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
+		// If hour/minute are specified, append them
+		if (($_POST['date_endhour']) && ($_POST['date_endmin']))
+			$date_end.=' '.$_POST['date_endhour'].':'.$_POST['date_endmin'];
+	}
 
 	// Define info_bits
 	$info_bits=0;
@@ -426,8 +463,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 		$_POST['qty'],
 		$_POST['elremise_percent'],
 		$vat_rate,
-					  'HT',
-		$info_bits
+    	'HT',
+	 	$info_bits,
+	 	// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 	// Add the start and end dates
+	 	$date_start,
+	 	$date_end
 		);
 	
 		if ($result >= 0)
@@ -1393,6 +1434,10 @@ else
 			$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid, ';
 			$sql.= ' p.description as product_desc';
+			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+			// Load start and end dates
+			$sql.= ','.$db->pdate('l.date_start').' as date_start,';
+			$sql.= ' '.$db->pdate('l.date_end').' as date_end';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
 			$sql.= ' WHERE l.fk_commande = '.$commande->id;
@@ -1440,8 +1485,9 @@ else
 							$text.= ' - '.$objp->product;
 							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
 							print $html->textwithtooltip($text,$description,3,'','',$i);
-							// Todo: voir si on insert ou pas en option les dates de debut et de fin de service
-							//print_date_range($objp->date_start,$objp->date_end);
+							// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+							// Print the start and end dates
+							print_date_range($objp->date_start,$objp->date_end);
 							if ($conf->global->PRODUIT_DESC_IN_FORM)
 							{
 								print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
@@ -1476,6 +1522,9 @@ else
 							else
 							{
 								print nl2br($objp->description);
+								// Updated by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+								// Print the start and end dates
+								print_date_range($objp->date_start,$objp->date_end,'dayhour');
 							}
 							print '</td>';
 						}
@@ -1614,6 +1663,17 @@ else
 						print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>';
+						
+						// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+						// Start and end dates selector
+						print '<tr '.$bc[$var].'>';
+						print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+						print $html->select_date($objp->date_start,'date_start',$usehm,$usehm,$objp->date_start?0:1,"updateligne");
+						print ' '.$langs->trans('to').' ';
+						print $html->select_date($objp->date_end,'date_end',$usehm,$usehm,$objp->date_end?0:1,"updateligne");
+						print '</td>';
+						print '</tr>';
+						
 						print '</form>';
 					}
 
@@ -1676,7 +1736,19 @@ else
 				print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
 				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 				print '</tr>';
-
+				
+				if ($conf->service->enabled)
+				{
+					// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+					// Start and end dates selector
+					print '<tr '.$bc[$var].'>';
+					print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+					print $html->select_date('','date_start',$usehm,$usehm,1,"addligne");
+					print ' '.$langs->trans('to').' ';
+					print $html->select_date('','date_end',$usehm,$usehm,1,"addligne");
+					print '</td>';
+					print '</tr>';
+				}
 				print '</form>';
 
 				// Ajout de produits/services predefinis
@@ -1734,7 +1806,19 @@ else
 					print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="remise_percent" value="'.$soc->remise_client.'">%</td>';
 					print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 					print '</tr>';
-
+				
+					if ($conf->service->enabled)
+					{
+						// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+						// Start and end dates selector
+						print '<tr '.$bc[$var].'>';
+						print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+						print $html->select_date('','date_start_prod',$usehm,$usehm,1,"addligne");
+						print ' '.$langs->trans('to').' ';
+						print $html->select_date('','date_end_prod',$usehm,$usehm,1,"addligne");
+						print '</td>';
+						print '</tr>';
+					}
 					print '</form>';
 				}
 			}

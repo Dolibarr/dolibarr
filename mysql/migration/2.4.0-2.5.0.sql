@@ -16,7 +16,7 @@ alter table llx_societe add column gencod			 varchar(255);
 
 delete from llx_user_param where page <> '';
 
-alter table llx_expedition add tracking_number varchar(50) after fk_expedition_methode;
+alter table llx_expedition add column tracking_number varchar(50) after fk_expedition_methode;
 
 alter table llx_actioncomm add column location varchar(128) after percent;
 
@@ -32,5 +32,6 @@ alter table llx_projet_task_actors modify column role           varchar(5) DEFAU
 alter table llx_projet_task modify column statut             varchar(6) DEFAULT 'open';
 alter table llx_rights_def modify column   type          varchar(1);
 
+ALTER TABLE `llx_commandedet` ADD column `date_start` DATETIME DEFAULT NULL, ADD `date_end` DATETIME DEFAULT NULL ;
 
 

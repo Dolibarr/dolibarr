@@ -37,10 +37,12 @@ $langs->load("bills");
 $langs->load("products");
 
 // Security check
+$socid=0;
+$contratid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'contrat',$contratid,'contrat');
 
-
+$usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 /*
  * Actions
@@ -86,11 +88,11 @@ if ($_POST["mode"]=='predefined')
 	$date_end='';
 	if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
 	{
-		$date_start=dolibarr_mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
+		$date_start=dolibarr_mktime($_POST["date_starthour"], $_POST["date_startmin"], 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
 	}
 	if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
 	{
-		$date_end=dolibarr_mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
+		$date_end=dolibarr_mktime($_POST["date_endhour"], $_POST["date_endmin"], 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
 	}
 }
 
@@ -101,11 +103,11 @@ if ($_POST["mode"]=='libre')
 	$date_end_sl='';
 	if ($_POST["date_start_slmonth"] && $_POST["date_start_slday"] && $_POST["date_start_slyear"])
 	{
-		$date_start_sl=dolibarr_mktime(12, 0 , 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
+		$date_start_sl=dolibarr_mktime($_POST["date_start_slhour"], $_POST["date_start_slmin"], 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
 	}
 	if ($_POST["date_end_slmonth"] && $_POST["date_end_slday"] && $_POST["date_end_slyear"])
 	{
-		$date_end_sl=dolibarr_mktime(12, 0 , 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
+		$date_end_sl=dolibarr_mktime($_POST["date_end_slhour"], $_POST["date_end_slmin"], 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
 	}
 }
 
@@ -116,24 +118,24 @@ $date_start_real_update='';
 $date_end_real_update='';
 if ($_POST["date_start_updatemonth"] && $_POST["date_start_updateday"] && $_POST["date_start_updateyear"])
 {
-    $date_start_update=dolibarr_mktime(12, 0 , 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $_POST["date_start_updateyear"]);
+    $date_start_update=dolibarr_mktime($_POST["date_start_updatehour"], $_POST["date_start_updatemin"], 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $_POST["date_start_updateyear"]);
 }
 if ($_POST["date_end_updatemonth"] && $_POST["date_end_updateday"] && $_POST["date_end_updateyear"])
 {
-    $date_end_update=dolibarr_mktime(12, 0 , 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $_POST["date_end_updateyear"]);
+    $date_end_update=dolibarr_mktime($_POST["date_end_updatehour"], $_POST["date_end_updatemin"], 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $_POST["date_end_updateyear"]);
 }
 if ($_POST["date_start_real_updatemonth"] && $_POST["date_start_real_updateday"] && $_POST["date_start_real_updateyear"])
 {
-    $date_start_real_update=dolibarr_mktime(12, 0 , 0, $_POST["date_start_real_updatemonth"], $_POST["date_start_real_updateday"], $_POST["date_start_real_updateyear"]);
+    $date_start_real_update=dolibarr_mktime($_POST["date_start_real_updatehour"], $_POST["date_start_real_updatemin"], 0, $_POST["date_start_real_updatemonth"], $_POST["date_start_real_updateday"], $_POST["date_start_real_updateyear"]);
 }
 if ($_POST["date_end_real_updatemonth"] && $_POST["date_end_real_updateday"] && $_POST["date_end_real_updateyear"])
 {
-    $date_end_real_update=dolibarr_mktime(12, 0 , 0, $_POST["date_end_real_updatemonth"], $_POST["date_end_real_updateday"], $_POST["date_end_real_updateyear"]);
+    $date_end_real_update=dolibarr_mktime($_POST["date_end_real_updatehour"], $_POST["date_end_real_updatemin"], 0, $_POST["date_end_real_updatemonth"], $_POST["date_end_real_updateday"], $_POST["date_end_real_updateyear"]);
 }
 
 if ($_POST["action"] == 'add')
 {
-    $datecontrat = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+    $datecontrat = dolibarr_mktime($_POST["rehour"], $_POST["remin"], 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
     $contrat = new Contrat($db);
 
@@ -187,25 +189,25 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 		// Si ajout champ produit libre
 		if ($_POST['mode'] == 'libre')
 		{
-			if ($_POST['date_start_slyear'] && $_POST['date_start_slmonth'] && $_POST['date_start_slday'])
+			if ($_POST["date_start_slmonth"] && $_POST["date_start_slday"] && $_POST["date_start_slyear"])
 			{
-				$date_start=dolibarr_mktime(12,0,0,$_POST['date_start_slmonth'],$_POST['date_start_slday'],$_POST['date_start_slyear']);
+				$date_start=dolibarr_mktime($_POST["date_start_slhour"], $_POST["date_start_slmin"], 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
 			}
-			if ($_POST['date_end_slyear'] && $_POST['date_end_slmonth'] && $_POST['date_end_slday'])
+			if ($_POST["date_end_slmonth"] && $_POST["date_end_slday"] && $_POST["date_end_slyear"])
 			{
-				$date_end=dolibarr_mktime(12,0,0,$_POST['date_end_slmonth'],$_POST['date_end_slday'],$_POST['date_end_slyear']);
+				$date_end=dolibarr_mktime($_POST["date_end_slhour"], $_POST["date_end_slmin"], 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
 			}
 		}
-		// Si ajout champ produit pr�d�fini
+		// Si ajout champ produit predefini
 		if ($_POST['mode'] == 'predefined')
 		{
-			if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
+			if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
 			{
-				$date_start=dolibarr_mktime(12,0,0,$_POST['date_startmonth'],$_POST['date_startday'],$_POST['date_startyear']);
+				$date_start=dolibarr_mktime($_POST["date_starthour"], $_POST["date_startmin"], 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
 			}
-			if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
+			if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
 			{
-				$date_end=dolibarr_mktime(12,0,0,$_POST['date_endmonth'],$_POST['date_endday'],$_POST['date_endyear']);
+				$date_end=dolibarr_mktime($_POST["date_endhour"], $_POST["date_endmin"], 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
 			}
 		}
 
@@ -492,7 +494,7 @@ if ($_GET["action"] == 'create')
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans("Date").'</td><td>';
-            $form->select_date('','','','','',"contrat");
+            $form->select_date('','',0,0,'',"contrat");
             print "</td></tr>";
 
             if ($conf->projet->enabled)
@@ -911,9 +913,9 @@ else
 					print "<tr $bc[$var]>";
 					print '<td colspan="5">';
 					print $langs->trans("DateStartPlanned").' ';
-					$form->select_date($objp->date_debut,"date_start_update",0,0,($objp->date_debut>0?0:1),"update");
-					print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-					$form->select_date($objp->date_fin,"date_end_update",0,0,($objp->date_fin>0?0:1),"update");
+					$form->select_date($objp->date_debut,"date_start_update",$usehm,$usehm,($objp->date_debut>0?0:1),"update");
+					print '<br>'.$langs->trans("DateEndPlanned").' ';
+					$form->select_date($objp->date_fin,"date_end_update",$usehm,$usehm,($objp->date_fin>0?0:1),"update");
 					print '</td>';
 					print '</tr>';
 
@@ -1064,11 +1066,11 @@ else
 				}
 
 				print '<tr '.$bc[$var].'><td>'.$langs->trans("DateServiceActivate").'</td><td>';
-				print $html->select_date($dateactstart,'','','','',"active");
+				print $html->select_date($dateactstart,'',$usehm,$usehm,'',"active");
 				print '</td>';
 
 				print '<td>'.$langs->trans("DateEndPlanned").'</td><td>';
-				print $html->select_date($dateactend,"end",'','','',"active");
+				print $html->select_date($dateactend,"end",$usehm,$usehm,'',"active");
 				print '</td>';
 				
 				print '<td align="center" rowspan="2" valign="middle">';
@@ -1119,7 +1121,7 @@ else
 					if ($objp->statut == 4)
 					{
 						print $langs->trans("DateEndReal").' ';
-						$form->select_date($dateactend,"end",0,0,($objp->date_fin_reelle>0?0:1),"closeline");
+						$form->select_date($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline");
 					}
 				}
 				print '</td>';
@@ -1188,9 +1190,9 @@ else
 			print "<tr $bc[$var]>";
 			print '<td colspan="8">';
 			print $langs->trans("DateStartPlanned").' ';
-			$form->select_date('',"date_start",0,0,1,"addligne");
+			$form->select_date('',"date_start",$usehm,$usehm,1,"addligne");
 			print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-			$form->select_date('',"date_end",0,0,1,"addligne");
+			$form->select_date('',"date_end",$usehm,$usehm,1,"addligne");
 			print '</td>';
 			print '</tr>';
 			
@@ -1220,9 +1222,9 @@ else
 			print "<tr $bc[$var]>";
 			print '<td colspan="8">';
 			print $langs->trans("DateStartPlanned").' ';
-			$form->select_date('',"date_start_sl",0,0,1,"addligne_sl");
+			$form->select_date('',"date_start_sl",$usehm,$usehm,1,"addligne_sl");
 			print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
-			$form->select_date('',"date_end_sl",0,0,1,"addligne_sl");
+			$form->select_date('',"date_end_sl",$usehm,$usehm,1,"addligne_sl");
 			print '</td>';
 			print '</tr>';
 			

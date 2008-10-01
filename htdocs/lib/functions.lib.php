@@ -542,32 +542,37 @@ function dolibarr_getdate($timestamp,$fast=false)
 }
 
 /**
- \brief  	Retourne une date fabriquee depuis infos.
- Remplace la fonction mktime non implementee sous Windows si annee < 1970
- \param		hour			Hour
- \param		minute			Minute
- \param		second			Second
- \param		month			Month
- \param		day				Day
- \param		year			Year
- \param		gm				Time gm
- \param		check			No check on parameters (Can use day 32, etc...)
- \return	timestamp		Date en timestamp, '' if error
- \remarks	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
+ *	Retourne une date fabriquee depuis infos.
+ * 	Remplace la fonction mktime non implementee sous Windows si annee < 1970
+ *	@param		hour			Hour	(can be -1 for undefined)
+ *	@param		minute			Minute	(can be -1 for undefined)
+ *	@param		second			Second	(can be -1 for undefined)
+ *	@param		month			Month
+ *	@param		day				Day
+ *	@param		year			Year
+ *	@param		gm				Time gm
+ *	@param		check			No check on parameters (Can use day 32, etc...)
+ *	@return		timestamp		Date en timestamp, '' if error
+ *	@remarks	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  */
 function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 {
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
 
+	// Clean parameters
+	if ($hour   == -1) $hour=0;
+	if ($minute == -1) $minute=0;
+	if ($second == -1) $second=0;
+		
 	// Check parameters
 	if ($check)
 	{
 		if (! $month || ! $day)  return '';
 		if ($day   > 31) return '';
 		if ($month > 12) return '';
-		if ($min  < 0 || $min  > 60) return '';
-		if ($hour < 0 || $hour > 24) return '';
-		if ($min  < 0 || $min  > 60) return '';
+		if ($hour  < 0 || $hour   > 24) return '';
+		if ($minute< 0 || $minute > 60) return '';
+		if ($second< 0 || $second > 60) return '';
 	}
 
 	$usealternatemethod=false;
@@ -1431,7 +1436,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 			else
 			{
-				if (!$dbtablename) $dbtablename = $feature;	// Si dbtable non d�fini, meme nom que le module
+				if (!$dbtablename) $dbtablename = $feature;	// Si dbtable non defini, meme nom que le module
 
 				$sql = "SELECT sc.fk_soc";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";

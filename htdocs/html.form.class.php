@@ -2627,19 +2627,19 @@ class Form
 
 
 	/**
-	 *		\brief  Affiche zone de selection de date
-	 *      		Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
-	 *            	Les champs sont pré-sélectionnés avec:
+	 *		Affiche zone de selection de date
+	 *      Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
+	 *      Les champs sont pré-sélectionnés avec:
 	 *            	- La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
 	 *            	- La date du jour si set_time vaut ''
 	 *            	- Aucune date (champs vides) si set_time vaut -1 (dans ce cas empty doit valoir 1)
-	 *		\param	set_time 		Date de pré-sélection
-	 *		\param	prefix			Prefix pour nom champ
-	 *		\param	h				1=Affiche aussi les heures
-	 *		\param	m				1=Affiche aussi les minutes
-	 *		\param	empty			0=Champ obligatoire, 1=Permet une saisie vide
-	 *		\param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup style andre.
-	 *		\param	d				1=Affiche aussi les jours, mois, annees
+	 *		@param	set_time 		Date de pré-sélection
+	 *		@param	prefix			Prefix pour nom champ
+	 *		@param	h				1=Affiche aussi les heures
+	 *		@param	m				1=Affiche aussi les minutes
+	 *		@param	empty			0=Champ obligatoire, 1=Permet une saisie vide
+	 *		@param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup style andre.
+	 *		@param	d				1=Affiche aussi les jours, mois, annees
 	 */
 	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1)
 	{
