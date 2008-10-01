@@ -238,7 +238,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Generate"),$_SERVER["PHP_SELF"],"");
+	print_liste_field_titre($langs->trans("Generate"),$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
