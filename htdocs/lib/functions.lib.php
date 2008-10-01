@@ -2481,7 +2481,10 @@ function measuring_units_string($unit,$measuring_style='')
  */
 function clean_url($url,$http=1)
 {
-	if (eregi('^(https?:[\\\/]+)?([0-9A-Z\-\.]+\.[A-Z]{2,4})(:[0-9]+)?',$url,$regs))
+	// Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/fix-cleaning-url.html)
+	// To include the minus sign in a char class, we must not escape it but put it at the end of the class
+	// Also, there's no need of escape a dot sign in a class
+	if (eregi('^(https?:[\\\/]+)?([0-9A-Z.-]+\.[A-Z]{2,4})(:[0-9]+)?',$url,$regs))
 	{
 		$proto=$regs[1];
 		$domain=$regs[2];
