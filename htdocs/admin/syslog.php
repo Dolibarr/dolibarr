@@ -101,7 +101,7 @@ if (! $defaultsyslogfile) $defaultsyslogfile='dolibarr.log';
 print_titre($langs->trans("SyslogOutput"));
 
 // Mode
-print '<form action="syslog.php" method="post">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="set">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

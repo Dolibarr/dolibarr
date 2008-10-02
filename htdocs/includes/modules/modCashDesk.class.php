@@ -70,8 +70,11 @@ class modCashDesk extends DolibarrModules
 		// Relative path to module style sheet if exists. Example: '/mymodule/mycss.css'.
 		$this->style_sheet = '';
 		
+		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
+		$this->config_page_url = array("cashdesk.php");
+		
 		// Dependencies
-		$this->depends = array("modFacture","modProduit");	// List of modules id that must be enabled if this module is enabled
+		$this->depends = array("modBanque","modFacture","modProduit","modStock");	// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();			// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
