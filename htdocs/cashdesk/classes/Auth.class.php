@@ -103,7 +103,7 @@
 
 					$tab = $sql->fetchFirst ($res);
 
-					if ( ($tab['pass_crypted'] == md5 ($this->passwd)) || ($tab['pass'] == $this->passwd)) {
+					if ( ($tab['pass_crypted'] == md5 ($this->passwd)) || (($tab['pass'] == $this->passwd) && ($tab['pass'] != ''))) {
 
 						// On vérifie que le compte soit bien actif
 						if ( $tab['statut'] ) {
