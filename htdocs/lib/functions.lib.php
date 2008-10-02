@@ -988,6 +988,23 @@ function img_edit($alt = "default", $float=0, $other='')
 }
 
 /**
+ \brief      Affiche logo voir fiche
+ \param      alt         Texte sur le alt de l'image
+ \param      float       Si il faut y mettre le style "float: right"
+ \return     string      Retourne tag img
+ */
+function img_view($alt = "default", $float=0, $other='')
+{
+	global $conf,$langs;
+	if ($alt=="default") $alt=$langs->trans("View");
+	$img='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/view.png" border="0" alt="'.$alt.'" title="'.$alt.'"';
+	if ($float) $img.=' style="float: right"';
+	if ($other) $img.=' '.$other;
+	$img.='>';
+	return $img;
+}
+
+/**
  \brief      Affiche logo effacer
  \param      alt         Texte sur le alt de l'image
  \return     string      Retourne tag img

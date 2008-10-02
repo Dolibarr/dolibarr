@@ -380,7 +380,7 @@ if ($account || $_GET["ref"])
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">&nbsp;</td>';
 	print '<td><input type="text" class="flat" name="req_desc" value="'.$_REQUEST["req_desc"].'" size="24"></td>';
-	print '<td><input type="text" class="flat" name="thirdparty" value="'.$_REQUEST["thirdparty"].'" size="16"></td>';
+	print '<td><input type="text" class="flat" name="thirdparty" value="'.$_REQUEST["thirdparty"].'" size="14"></td>';
 	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_REQUEST["req_debit"].'" size="4"></td>';
 	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_REQUEST["req_credit"].'" size="4"></td>';
 	print '<td align="center">&nbsp;</td>';
@@ -459,34 +459,46 @@ if ($account || $_GET["ref"])
 	            }
 	    
 	            print "<tr $bc[$var]>";
+
 	            print "<td nowrap>".dolibarr_print_date($objp->do,"day")."</td>\n";
+	            
 	            print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"day")."</td>\n";
+	            
 	            print "<td nowrap>&nbsp;".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
-	            print '<td><a href="ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
-				if (eregi('^\((.*)\)$',$objp->label,$reg))
-				{
-					// Label générique car entre parenthèses. On l'affiche en le traduisant	
-					print $langs->trans($reg[1]);
-				}
-				else
-				{    
-	            	print $objp->label;
+	            
+	            // Description
+	            print '<td>';
+	            
+	            $links = $acct->get_url($objp->rowid);
+	            
+	            $isbanktransfert=false;
+	            foreach($links as $key=>$val) { if ($val['type']=='banktransfert') $isbanktransfert=true; }
+	            
+	            if (sizeof($links) == 0 || $isbanktransfert)
+	            {
+					if (eregi('^\((.*)\)$',$objp->label,$reg))
+					{
+						// Label générique car entre parenthèses. On l'affiche en le traduisant	
+						print $langs->trans($reg[1]);
+					}
+					else
+					{    
+		            	print $objp->label;
+		            }
 	            }
-	            print '</a>';
 
 	            /*
 	             * Ajout les liens autres que tiers
 	             */
-	            $links = $acct->get_url($objp->rowid);
 	            foreach($links as $key=>$val)
 	            {
 	                if ($links[$key]['type']=='payment') {
-						print ' - ';
+						//print ' - ';
 	                    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
 						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
 						{
 							// Label générique car entre parenthèses. On l'affiche en le traduisant	
-							if ($reg[1]=='paiement') $reg[1]='Payment';
+							if ($reg[1]=='paiement') $reg[1]='CustomerInvoicePayment';
 							print $langs->trans($reg[1]);
 						}
 						else
@@ -496,12 +508,12 @@ if ($account || $_GET["ref"])
 		                print '</a>';
 	                }
 	                else if ($links[$key]['type']=='payment_supplier') {
-						print ' - ';
+						//print ' - ';
 	                    print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
 						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
 						{
 							// Label générique car entre parenthèses. On l'affiche en le traduisant	
-							if ($reg[1]=='paiement') $reg[1]='Payment';
+							if ($reg[1]=='paiement') $reg[1]='SupplierInvoicePayment';
 							print $langs->trans($reg[1]);
 						}
 						else
@@ -515,25 +527,19 @@ if ($account || $_GET["ref"])
 					else if ($links[$key]['type']=='sc') {
 					}
 					else if ($links[$key]['type']=='payment_sc') {
-						print ' - ';
+						//print ' - ';
 						print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
 						//print img_object($langs->trans('ShowPayment'),'payment').' ';
 						print $langs->trans("SocialContributionPayment");
 						print '</a>';
 					}
 					else if ($links[$key]['type']=='banktransfert') {
-						/* Do not show this link (avoid confusion). Can be accessed from transaction detail.
-						print ' - ';
-						print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
-						//print img_object($langs->trans('ShowPayment'),'payment').' ';
-						print $langs->trans("TransactionWithOtherAccount");
-						print '</a>';
-						*/
+						/* Do not show this link (avoid confusion). Can already be accessed from transaction detail */
 					}
 					else if ($links[$key]['type']=='member') {
 					}
 					else {
-						print ' - ';
+						//print ' - ';
 	    			    print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
 						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
 						{
@@ -611,7 +617,11 @@ if ($account || $_GET["ref"])
 	            // Relevé rappro ou lien edition
 	            if ($objp->rappro && $acct->type != 2)  // Si non compte cash
 	            {
-	                print "<td align=\"center\" nowrap>&nbsp; ";
+	                print "<td align=\"center\" nowrap>";
+	                print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
+	                print img_view();
+	                print '</a>';
+	                print "&nbsp; ";
 	                print "<a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a>";
 	                print "</td>";
 	            }
@@ -622,6 +632,12 @@ if ($account || $_GET["ref"])
 	                {
 	                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
 	                    print img_edit();
+	                    print '</a>';
+					}
+					else
+					{
+	                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
+	                    print img_view();
 	                    print '</a>';
 					}
 					print '&nbsp;';
