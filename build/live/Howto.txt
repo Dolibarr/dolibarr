@@ -56,20 +56,19 @@ exists. You can comment lines:
 ;extension=mhash.so
 ;extension=snmp.so
 
-10) Copy files demo_drop_dolibarr_database.php and demo_load_dolibarr_data.php
-found in this directory into 
-\slax\changes\var\www\htdocs\
-Thoose files could be used to clean a Dolibarr install or load demo datas.
-
-11) Personalized your desktop.
+10) Personalized your desktop.
 Add a link to application
 "firefox http://localhost/dolibarr/htdocs/index.php"
+Add a link to application
+"/var/www/htdocs/dolibarr/dev/initdemo/initdemo.sh"
+Add a link to application
+"/var/www/htdocs/dolibarr/dev/initdemo/removedemo.sh"
 
-12) Reboot again on your USB key.
+11) Reboot again on your USB key.
 
-13) Now you can run Dolibarr install process
+12) Now you can run Dolibarr install process
 http://localhost/dolibarr/htdocs/install/index.php
-or build a CD with command
+or copy USB key content to build another one quickly.
+or build a CD with command (TODO).
 
-or copy USB key content to build antoher one quickly.
 

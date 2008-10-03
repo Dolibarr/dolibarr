@@ -13,7 +13,7 @@ DIALOG=${DIALOG=dialog}
 DIALOG="$DIALOG --ascii-lines"
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
-$DIALOG --title "Purge de Dolibarr" --clear \
+$DIALOG --title "Reload Dolibarr database" --clear \
         --inputbox "Mysql database name :" 16 51 dolibarrdemo 2> $fichtemp
 valret=$?
 case $valret in
