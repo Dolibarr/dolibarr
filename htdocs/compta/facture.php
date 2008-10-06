@@ -51,11 +51,10 @@ $langs->load('main');
 
 $sall=isset($_GET['sall'])?trim($_GET['sall']):trim($_POST['sall']);
 $mesg=isset($_GET['mesg'])?urldecode($_GET['mesg']):'';
-$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
 $projetid=isset($_GET['projetid'])?$_GET['projetid']:0;
 
 // Security check
-$socid=0;
+$socid=isset($_GET['socid'])?$_GET['socid']:$_POST['socid'];
 $facid = isset($_GET["id"])?$_GET["id"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $facid,'');
@@ -1331,7 +1330,7 @@ if ($_GET['action'] == 'create')
 	}
 	else
 	{
-		$soc->fetch($socid);
+		$res=$soc->fetch($socid);
 		$cond_reglement_id = $soc->cond_reglement;
 		$mode_reglement_id = $soc->mode_reglement;
 		$remise_percent = $soc->remise_client;
