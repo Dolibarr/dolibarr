@@ -1,0 +1,11 @@
+# Dolibarr language file - it_IT - deliveries
+Delivery=Consegna
+Deliveries=Consegne
+DeliveryCard=Scheda consegna
+DeliveryOrder=Ordine di consegna
+DeliveryOrders=Ordini di consegna
+DeliveryDate=Data di consegna
+CreateDeliveryOrder=Genera ordine di consegna
+SetDeliveryDate=Imposta la data di spedizione
+ValidateDeliveryReceipt=Valida la ricevuta di consegna
+ValidateDeliveryReceiptConfirm=Sei sicuro di voler validare questa ricevuta di consegna?

@@ -1,0 +1,26 @@
+# Dolibarr language file - it_IT - ldap   
+DomainPassword                            =Password per dominio 
+YouMustChangePassNextLogon		  =Password per l'utente <b>%s </ b> sul dominio <b>%s </ b> deve essere cambiata. 
+UserMustChangePassNextLogon		  =L'utente deve cambiare la password del dominio %s 
+LdapUacf_NORMAL_ACCOUNT			  =Account utente 
+LdapUacf_DONT_EXPIRE_PASSWORD		  =Nessuna scadenza password 
+LdapUacf_ACCOUNTDISABLE			  =Account disabilitato nel dominio %s 
+LDAPInformationsForThisContact		  =Informazioni nel database LDAP per questo contatto 
+LDAPInformationsForThisUser		  =Informazioni nel database LDAP per questo utente 
+LDAPInformationsForThisGroup		  =Informazioni nel database LDAP per questo gruppo 
+LDAPInformationsForThisMember		  =Informazioni nel database LDAP per questo membro 
+LDAPAttribute				  =Attributo LDAP 
+LDAPAttributes				  =LDAP attributi 
+LDAPCard				  =LDAP carta 
+LDAPRecordNotFound			  =Il record non è stato trovato nella banca dati LDAP 
+LDAPUsers				  =Gli utenti nel database LDAP 
+LDAPGroups				  =Gruppi in database LDAP 
+LDAPFieldStatus				  =Stato 
+LDAPFieldFirstSubscriptionDate		  =Prima data di sottoscrizione 
+LDAPFieldFirstSubscriptionAmount	  =Importo della prima sottoscrizione  
+LDAPFieldLastSubscriptionDate		  =Data ultima sottoscrizione  
+LDAPFieldLastSubscriptionAmount		  =Importo ultima sottoscrizione  
+SynchronizeDolibarr2Ldap		  =Sincronizzare utente (Dolibarr -> LDAP) 
+UserSynchronized			  =Utente sincronizzato 
+ForceSynchronize			  =Forza la sincronizzazione Dolibarr -> LDAP 
+ErrorFailedToReadLDAP			  =Impossibile leggere database LDAP. Controlla LDAP modulo di database di configurazione e di accessibilità.

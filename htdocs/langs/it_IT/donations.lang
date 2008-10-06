@@ -1,0 +1,24 @@
+# Dolibarr language file - it_IT - donations     	
+Donation					 =Donazione
+Donationss					 =Donazioni
+Donor						 =Donatore
+Donors						 =I donatori
+AddDonation					 =Aggiungi una donazione
+NewDonation					 =Nuova donazione
+DonationPromise					 =Dono promessa
+PromisesNotValid				 =Promesse non convalidato
+PromisesValid					 =Convalidato promesse
+DonationsPayed					 =Donazioni pagato
+DonationsReceived				 =Donazioni ricevute
+PublicDonation					 =Pubblico donazione
+DonationsNumber					 =Donazione numero
+DonationsArea					 =Donazioni zona
+DonationStatusPromiseNotValidated		 =Progetto promessa
+DonationStatusPromiseValidated			 =Promessa di validato
+DonationStatusPayed				 =Donazione ricevuta
+DonationStatusPromiseNotValidatedShort		 =Bozza
+DonationStatusPromiseValidatedShort		 =Convalidato
+DonationStatusPayedShort			 =Ricevuto
+ValidPromise					 =Valida promessa
+BuildDonationReceipt				 =Costruire ricevimento
+DonationsModels					 =Documenti modelli di donazione ricevute

@@ -1,0 +1,4 @@
+# Dolibarr language file - it_IT- google
+GoogleSetup=Google tools integration setup 
+GoogleSetupHelp=Aiuta a definire i parameteri che si possono trovare nel Google embedded helper url %s
+GoogleAgendaNb=Agenda nb %s 

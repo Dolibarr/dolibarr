@@ -1,0 +1,7 @@
+# Dolibarr language file - it_IT - oscommerce
+OSCommerce=OS Commerce
+OSCommerceSetup=OS Commerce module setup
+OSCommerceSetupSaved=OS Commerce setup saved
+OSCOmmerceServer=OS Commerce server host/ip
+OSCOmmerceDatabaseName=OS Commerce database name
+OSCOmmerceUser=OS Commerce database login
