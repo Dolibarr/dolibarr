@@ -37,8 +37,7 @@ $langs->load("banks");
 if (!$user->admin)
   accessforbidden();
   
-if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
-  || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
+if ( (isset($_POST["action"]) && $_POST["action"] == 'update'))
 {
 	//Conversion des jours en secondes
     dolibarr_set_const($db, "MAIN_DELAY_ACTIONS_TODO",$_POST["ActionsToDo"]);
@@ -52,13 +51,12 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     dolibarr_set_const($db, "MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE",$_POST["TransactionsToConciliate"]);
     dolibarr_set_const($db, "MAIN_DELAY_CHEQUES_TO_DEPOSIT",$_POST["ChequesToDeposit"]);
 	dolibarr_set_const($db, "MAIN_DELAY_MEMBERS",$_POST["Members"]);
-    if ($_POST['action'] != 'updateedit')
-    {
-        Header("Location: delais.php");
-    }
 }
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -72,25 +70,8 @@ $form = new Form($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
 
-if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
- || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
+if ((isset($_GET["action"]) && $_GET["action"] == 'edit'))
 {
-    /*
-     * Edition des param?tres
-     */
-    print '
-    <script language="javascript" type="text/javascript">
-    <!--
-    function save_refresh()
-    {
-    	document.form_index.action.value="updateedit";
-    	document.form_index.submit();
-    //	location.href = "delais.php?action=updateedit";
-    }
-    -->
-    </script>
-    ';
-
     print '<form method="post" action="delais.php" name="form_index">';
     print '<input type="hidden" name="action" value="update">';
     $var=true;
