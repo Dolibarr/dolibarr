@@ -16,6 +16,7 @@ SuppliersOrdersRunning=Current suppliers' orders
 CustomerOrder=Customer order
 CustomersOrders=Customers' orders
 CustomersOrdersRunning=Current customers' orders
+CustomersOrdersAndOrdersLines=Customer orders and orders' lines
 OrdersToValid=Orders to valid
 OrdersToBill=Orders to bill
 OrdersInProcess=Orders in process

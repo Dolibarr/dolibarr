@@ -77,13 +77,13 @@ class modCommande extends DolibarrModules
 		$this->const[0][0] = "COMMANDE_ADDON_PDF";
 		$this->const[0][1] = "chaine";
 		$this->const[0][2] = "einstein";
-		$this->const[0][3] = 'Nom du gestionnaire de g�n�ration des commandes en PDF';
+		$this->const[0][3] = 'Nom du gestionnaire de generation des commandes en PDF';
 		$this->const[0][4] = 0;
 
 		$this->const[1][0] = "COMMANDE_ADDON";
 		$this->const[1][1] = "chaine";
 		$this->const[1][2] = "mod_commande_marbre";
-		$this->const[1][3] = 'Nom du gestionnaire de num�rotation des commandes';
+		$this->const[1][3] = 'Nom du gestionnaire de numerotation des commandes';
 		$this->const[1][4] = 0;
 
 		// Boites
@@ -159,15 +159,16 @@ class modCommande extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='Commandes clients et lignes de commande';
+		$this->export_label[$r]='CustomersOrdersAndOrdersLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_permission[$r]=array(array("commande","commande","export"));
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','c.rowid'=>"Id",'c.ref'=>"Ref",'c.ref_client'=>"RefClient",'c.fk_soc'=>"IdCompany",'c.date_creation'=>"DateCreation",'c.date_commande'=>"DateOrder",'c.amount_ht'=>"Amount",'c.remise_percent'=>"GlobalDiscount",'c.total_ht'=>"TotalHT",'c.total_ttc'=>"TotalTTC",'c.facture'=>"OrderShortStatusInvoicee",'c.fk_statut'=>'Status','c.note'=>"Note",'c.date_livraison'=>'DeliveryDate','p.ref'=>'RefProduct','p.label'=>'Label','cd.rowid'=>'LineId','cd.description'=>"LineDescription",'cd.total_ht'=>"LineTotalHT",'cd.tva_tx'=>"LineVATRate",'cd.qty'=>"LineQty");
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.cp'=>'company','s.ville'=>'company','s.fk_pays'=>'company','s.tel'=>'company','s.siren'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.siret'=>'company','c.rowid'=>"order",'c.ref'=>"order",'c.ref_client'=>"order",'c.fk_soc'=>"order",'c.date_creation'=>"order",'c.date_commande'=>"order",'c.amount_ht'=>"order",'c.remise_percent'=>"order",'c.total_ht'=>"order",'c.total_ttc'=>"order",'c.facture'=>"order",'c.fk_statut'=>'order','c.note'=>"order",'c.date_livraison'=>"order",'p.ref'=>'product','p.label'=>'product','cd.rowid'=>'order_line','cd.description'=>"order_line",'cd.total_ht'=>"order_line",'cd.tva_tx'=>"order_line",'cd.qty'=>"order_line");
 		$this->export_alias_array[$r]=array('s.rowid'=>"socid",'s.nom'=>'soc_name','s.address'=>'soc_adres','s.cp'=>'soc_zip','s.ville'=>'soc_ville','s.fk_pays'=>'soc_pays','s.tel'=>'soc_tel','s.siren'=>'soc_siren','s.siret'=>'soc_siret','s.ape'=>'soc_ape','s.idprof4'=>'soc_idprof4','c.rowid'=>"orderid",'c.ref'=>"ref",'c.ref_client'=>"refclient",'c.fk_soc'=>"fk_soc",'c.date_creation'=>"datecreation",'c.date_commande'=>"dateorder",'c.amount_ht'=>"amount",'c.remise_percent'=>"globaldiscount",'c.total_ht'=>"totalht",'c.total_ttc'=>"totalttc",'c.facture'=>"invoicee",'c.fk_statut'=>'status','c.note'=>"note",'c.date_livraison'=>'datedelivery','p.ref'=>'refproduct','p.label'=>'label','cd.rowid'=>'lineid','cd.description'=>"linedescription",'cd.total_ht'=>"linetotalht",'cd.tva_tx'=>"linevatrate",'cd.qty'=>"lineqty");
 
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd, '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'product as p';
-		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_commande AND cd.fk_product = p.rowid';
+		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd, '.MAIN_DB_PREFIX.'societe as s)';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (cd.fk_product = p.rowid)';
+		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_commande';
 	}
 
 
