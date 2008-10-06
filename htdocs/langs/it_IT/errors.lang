@@ -1,9 +1,9 @@
 # Dolibarr language file - it_IT - errors          
-ErrorDuplicateTrigger				   =Un trigger file con class name '<b> %s </ b>' è presente più volte. Rimuovi file trigger duplicati dalla directory '<b> %s </ b>'.
-ErrorFailToDeleteFile				   =Impossibile rimuovere il file '<b> %s </ b>'.
-ErrorFailToCreateFile				   =Impossibile creare il file '<b> %s </ b>'.
-ErrorFailToRenameDir				   =Impossibile rinominare la directory '<b> %s </ b>' in '<b> %s </ b>'.
-ErrorFailToCreateDir				   =Impossibile creare la directory '<b> %s </ b>'.
+ErrorDuplicateTrigger				   =Un trigger file con class name '<b> %s </b>' è presente più volte. Rimuovi file trigger duplicati dalla directory '<b> %s </b>'.
+ErrorFailToDeleteFile				   =Impossibile rimuovere il file '<b> %s </b>'.
+ErrorFailToCreateFile				   =Impossibile creare il file '<b> %s </b>'.
+ErrorFailToRenameDir				   =Impossibile rinominare la directory '<b> %s </b>' in '<b> %s </b>'.
+ErrorFailToCreateDir				   =Impossibile creare la directory '<b> %s </b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType	   =Questo contatto è già stato definito come contatto per questo tipo.
 ErrorCashAccountAcceptsOnlyCashMoney		   =Questo conto corrente è un conto di cassa, in modo che accetta solo pagamenti in contanti.
 ErrorFromToAccountsMustDiffers			   =Conti bancari di origine e di destinazione devono essere differenti.
@@ -20,13 +20,13 @@ ErrorFailedToWriteInDir				   =Impossibile scrivere nella directory %s
 ErrorFoundBadEmailInFile			   =Trovata sintassi errata e-mail per %s righe nel file (ad esempio, alla linea %s con e-mail = %s)
 UserCannotBeDelete				   =L'utente non può essere eliminato. Forse è associato ad alcuni elementi di Dolibarr.
 ErrorFieldsRequired				   =Alcuni campi obbligatori non sono stati riempiti.
-ErrorFailedToCreateDir				   =Impossibile creare una directory. Verifica che il server Web utente ha i permessi per scrivere documenti nella directory  Dolibarr. Se il parametro <b> safe_mode </ b> è abilitato su questo PHP, verificare che i file php Dolibarr possiede al server web utente (o gruppo).
+ErrorFailedToCreateDir				   =Impossibile creare una directory. Verifica che il server Web utente ha i permessi per scrivere documenti nella directory  Dolibarr. Se il parametro <b> safe_mode </b> è abilitato su questo PHP, verificare che i file php Dolibarr possiede al server web utente (o gruppo).
 ErrorNoMailDefinedForThisUser			   =Nessun messaggio definito per questo utente
 ErrorFeatureNeedJavascript			   =Questa funzione javascript necessita di essere attivata al lavoro. Modificare questa impostazione in - visualizzazione.
 ErrorTopMenuMustHaveAParentWithId0		   =Un menu di tipo 'Top' non può avere un menu principale. Metti 0 menu genitori o scegliere un menu di tipo 'sinistra'.
 ErrorLeftMenuMustHaveAParentId			   =Un menu di tipo 'rimasto' necessario disporre di un id genitore .
 ErrorGenbarCodeNotfound				   =File non trovato (Bad percorso sbagliato autorizzazioni o accesso negato da openbasedir parametro)
-ErrorFunctionNotAvailableInPHP			   =Funzione <b> %s </ b> è necessario per questa funzione, ma non è disponibile in questa versione / configurazione di PHP.
+ErrorFunctionNotAvailableInPHP			   =Funzione <b> %s </b> è necessario per questa funzione, ma non è disponibile in questa versione / configurazione di PHP.
 ErrorDirAlreadyExists				   =Una directory con questo nome esiste già.
-WarningAllowUrlFopenMustBeOn			   =Parametro <b> allow_url_fopen </ b> deve essere impostato su <b> su </ b> nel filer <b> php.ini </ b> per avere questo modulo di lavoro completamente. È necessario modificare questo file manualmente.
-ErrorFieldCanNotContainSpecialCharacters	   =Campo <b> %s </ b> non contiene caratteri speciali.
+WarningAllowUrlFopenMustBeOn			   =Parametro <b> allow_url_fopen </b> deve essere impostato su <b> su </b> nel filer <b> php.ini </b> per avere questo modulo di lavoro completamente. È necessario modificare questo file manualmente.
+ErrorFieldCanNotContainSpecialCharacters	   =Campo <b> %s </b> non contiene caratteri speciali.
