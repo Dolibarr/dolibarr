@@ -55,7 +55,7 @@ class modExternalRss extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Ajout de files d'informations RSS dans les �crans Dolibarr";
 		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_EXTERNALRSS';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 1;
 		$this->picto='rss';
 

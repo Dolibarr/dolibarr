@@ -55,7 +55,7 @@ class modBoutique extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Interface de visualisation d'une boutique OSCommerce ou OSCSS";
 		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_BOUTIQUE';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 1;
 	
 		// Dir
@@ -68,7 +68,7 @@ class modBoutique extends DolibarrModules
 		// D�pendances
 		$this->depends = array();
 		$this->requiredby = array();
-	    $this->conflictwith = array("modOSCommerce2");
+	    $this->conflictwith = array("modOSCommerceWS");
 	   	$this->langfiles = array("shop");
 	
 		// Constantes

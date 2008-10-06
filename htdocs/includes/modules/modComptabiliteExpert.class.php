@@ -61,7 +61,7 @@ class modComptabiliteExpert extends DolibarrModules
 		//    $this->version = $this->revision[1];
 		$this->version = "development";
 
-		$this->const_name = 'MAIN_MODULE_COMPTABILITEEXPERT';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 
 		// Config pages

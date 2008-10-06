@@ -56,7 +56,7 @@ class modAdherent extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
         $this->description = "Gestion des adherents d'une association";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
-        $this->const_name = 'MAIN_MODULE_ADHERENT';
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 0;
         $this->picto='user';
     

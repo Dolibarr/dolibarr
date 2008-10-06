@@ -55,7 +55,7 @@ class modNotification extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion des notifications (par mail) sur �v�nement Dolibarr";
 		$this->version = 'dolibarr';	// 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_NOTIFICATION';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 1;
 		$this->picto='email';
 

@@ -56,7 +56,7 @@ class modDeplacement extends DolibarrModules
 		$this->revision = explode(' ','$Revision$');
 		$this->version = $this->revision[1];
 
-		$this->const_name = 'MAIN_MODULE_DEPLACEMENT';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto = "generic";
 

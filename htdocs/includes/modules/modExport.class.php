@@ -52,7 +52,7 @@ class modExport extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Outils d'exports de donnees Dolibarr (via un assistant)";
 		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_EXPORT';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto='';
 

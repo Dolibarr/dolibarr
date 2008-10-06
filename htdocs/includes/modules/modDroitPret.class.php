@@ -53,7 +53,7 @@ class modDroitPret  extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion du droit de prets";
 		$this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_DROITPRET';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 2;
 
 		// Dir

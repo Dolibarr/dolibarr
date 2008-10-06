@@ -39,14 +39,14 @@ include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
  \brief      Classe de description et activation du module OSCommerce2
  */
 
-class modOSCommerce2 extends DolibarrModules
+class modOSCommerceWS extends DolibarrModules
 {
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
 	 *   \param      DB      handler d'acc�s base
 	 */
-	function modOSCommerce2($DB)
+	function modOSCommerceWS($DB)
 	{
 		$this->db = $DB ;
 		$this->numero = 900;
@@ -56,7 +56,7 @@ class modOSCommerce2 extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Interface de visualisation d'une boutique OSCommerce via des Web services.\nCe module requiert d'installer les composants dans /oscommerce_ws/ws_server sur OSCommerce. Voir fichier README dans /oscommerce_ws/ws_server";
 		$this->version = 'experimental';	// 'development' or 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_OSCOMMERCEWS';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 1;
 
 		// Dir
@@ -65,7 +65,7 @@ class modOSCommerce2 extends DolibarrModules
 		// Config pages
 		$this->config_page_url = array();
 
-		// D�pendances
+		// Dependances
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array("modBoutique");

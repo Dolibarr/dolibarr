@@ -54,7 +54,7 @@ class modEditeur extends DolibarrModules
 		$this->description = "Gestion des editeurs";
 		$this->revision = explode(' ','$Revision$');
 		$this->version = $this->revision[1];
-		$this->const_name = 'MAIN_MODULE_EDITEUR';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 3;
 		$this->picto='book';
 

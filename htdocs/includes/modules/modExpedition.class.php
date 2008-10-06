@@ -55,7 +55,7 @@ class modExpedition extends DolibarrModules
 		$this->description = "Gestion des expeditions";
 		$this->revision = explode(' ','$Revision$');
 		$this->version = $this->revision[1];
-		$this->const_name = 'MAIN_MODULE_EXPEDITION';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto = "sending";
 

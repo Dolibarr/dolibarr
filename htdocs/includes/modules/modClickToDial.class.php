@@ -56,7 +56,7 @@ class modClickToDial extends DolibarrModules
 
 		$this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
 
-		$this->const_name = 'MAIN_MODULE_CLICKTODIAL';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 1;
 		$this->picto='phoning';
 

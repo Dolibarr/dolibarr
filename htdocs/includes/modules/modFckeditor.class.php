@@ -53,7 +53,7 @@ class modFckeditor extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Editeur WYSIWYG";
 		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_FCKEDITOR';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 2;
 
 		// Dir

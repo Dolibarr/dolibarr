@@ -56,7 +56,7 @@ class modProjet extends DolibarrModules
 		$this->description = "Gestion des projets";
 		$this->revision = explode(" ","$Revision$");
 		$this->version = $this->revision[1];
-		$this->const_name = 'MAIN_MODULE_PROJET';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto='email';
 

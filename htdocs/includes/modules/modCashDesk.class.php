@@ -60,7 +60,7 @@ class modCashDesk extends DolibarrModules
 		$this->version = 'development';
 		//$this->version = 'experimental';    // 'development' or 'experimental' or 'dolibarr' or version
 	
-		$this->const_name = 'MAIN_MODULE_CASHDESK';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
 		$this->picto = 'generic';
 	

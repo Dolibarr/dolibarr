@@ -136,11 +136,24 @@ function UnActivate($value,$requiredby=1)
 	if ($modName)
 	{
 		$file = $modName . ".class.php";
-		$res=include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
+		$res=@include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
 		if (defined('DOL_DOCUMENT_ROOT_BIS') && ! $res) include_once(DOL_DOCUMENT_ROOT_BIS."/includes/modules/".$file);
 
-		$objMod = new $modName($db);
-		$result=$objMod->remove();
+		if ($res)
+		{
+			$objMod = new $modName($db);
+			$result=$objMod->remove();
+		}
+		else
+		{
+			$genericMod = new DolibarrModules($db);
+			$genericMod->name=eregi_replace('^mod','',$modName);
+			$genericMod->style_sheet=1;
+			$genericMod->rights_class=strtolower(eregi_replace('^mod','',$modName));
+			$genericMod->const_name='MAIN_MODULE_'.strtoupper(eregi_replace('^mod','',$modName));
+			dolibarr_syslog("modules::UnActivate Failed to find module file, we use generic function with name ".$genericMod->name);
+			$genericMod->_remove();
+		}
 	}
 
 	// Desactivation des modules qui dependent de lui

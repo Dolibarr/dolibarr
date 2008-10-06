@@ -54,7 +54,7 @@ class modDocument extends DolibarrModules
 		$this->description = "Gestion des documents";
 		$this->revision = explode(' ','$Revision$');
 		$this->version = $this->revision[1];
-		$this->const_name = 'MAIN_MODULE_DOCUMENT';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 2;
 		$this->picto='dir';
 

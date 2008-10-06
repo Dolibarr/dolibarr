@@ -54,7 +54,7 @@ class modBarcode extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
 		$this->description = "Gestion des codes barres";
 		$this->version = 'dolibarr';		// 'development' or 'experimental' or 'dolibarr' or version
-		$this->const_name = 'MAIN_MODULE_BARCODE';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 2;
 		$this->picto='barcode';
 

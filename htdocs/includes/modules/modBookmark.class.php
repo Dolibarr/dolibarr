@@ -56,7 +56,7 @@ class modBookmark extends DolibarrModules
 		$this->revision = explode(' ','$Revision$');
 		$this->version = $this->revision[1];
 
-		$this->const_name = 'MAIN_MODULE_BOOKMARK';
+		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 2;
 		$this->picto='bookmark';
 

@@ -54,7 +54,7 @@ class modDomain extends DolibarrModules
 		$this->name = eregi_replace('^mod','',get_class($this));
         $this->description = "Gestion d'une base de noms de domaines";
         $this->version = 'development';			// 'development' or 'experimental' or 'dolibarr' or version
-        $this->const_name = 'MAIN_MODULE_DOMAIN';
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         $this->special = 2;
         $this->picto='user';
     

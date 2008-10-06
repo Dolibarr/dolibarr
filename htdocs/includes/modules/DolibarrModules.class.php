@@ -21,47 +21,47 @@
  */
 
 /**
-   \file       	htdocs/includes/modules/DolibarrModules.class.php
-   \brief 		Fichier de description et activation des modules Dolibarr
-   \version		$Id$
-*/
+ \file       	htdocs/includes/modules/DolibarrModules.class.php
+ \brief 		Fichier de description et activation des modules Dolibarr
+ \version		$Id$
+ */
 
 
 /**
-   \class      DolibarrModules
-   \brief      Classe mere des classes de description et activation des modules Dolibarr
-*/
+ \class      DolibarrModules
+ \brief      Classe mere des classes de description et activation des modules Dolibarr
+ */
 class DolibarrModules
 {
-  //! Database handler
-  var $db;
-  //! Relative path to module style sheet
-  var $style_sheet = '';
-  //! Path to create when module activated
-  var $dirs = array();
-  //! Tableau des boites
-  var $boxes;
-  //! Tableau des constantes
-  var $const;
-  //! Tableau des droits
-  var $rights;
-  //! Tableau des menus
-  var $menu=array();
-  //! Tableau des documents ???
-  var $docs;
-  
-  var $dbversion;
+	//! Database handler
+	var $db;
+	//! Relative path to module style sheet
+	var $style_sheet = '';
+	//! Path to create when module activated
+	var $dirs = array();
+	//! Tableau des boites
+	var $boxes;
+	//! Tableau des constantes
+	var $const;
+	//! Tableau des droits
+	var $rights;
+	//! Tableau des menus
+	var $menu=array();
+	//! Tableau des documents ???
+	var $docs;
+
+	var $dbversion;
 
 
-  /**
-   *      \brief      Constructeur
-   *      \param      DB      handler d'acces base
-   */
-  function DolibarrModules($DB)
-  {
-    $this->db = $DB ;
-    $this->dbversion = "-";
-  }
+	/**
+	 *      \brief      Constructeur
+	 *      \param      DB      handler d'acces base
+	 */
+	function DolibarrModules($DB)
+	{
+		$this->db = $DB ;
+		$this->dbversion = "-";
+	}
 
 
 	/**
@@ -73,57 +73,57 @@ class DolibarrModules
 	{
 		global $langs;
 		$err=0;
-	
+
 		$this->db->begin();
-		
-		// Insere une entree dans llx_dolibarr_modules
+
+		// Insert line in module table
 		if (! $err) $err+=$this->_dbactive();
-	
-		// Insere la constante d'activation module
+
+		// Insert activation module constant
 		if (! $err) $err+=$this->_active();
-	
+
 		// Insere le nom de la feuille de style
 		if (! $err) $err+=$this->insert_style_sheet();
 
 		// Insere les constantes associees au module dans llx_const
 		if (! $err) $err+=$this->insert_const();
-	
+
 		// Insere les boites dans llx_boxes_def
 		if (! $err) $err+=$this->insert_boxes();
-	
+
 		// Insere les permissions associees au module actif dans llx_rights_def
 		if (! $err) $err+=$this->insert_permissions();
-	
+
 		// Insere les constantes associees au module dans llx_const
 		if (! $err) $err+=$this->insert_menus();
-	
+
 		// Execute les requetes sql complementaires
 		for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
 		{
-			if (! $err) 
+			if (! $err)
 			{
 				$sql=$array_sql[$i];
-				
+
 				$result=$this->db->query($sql);
 				if (! $result)
 				{
 					$this->error=$this->db->error();
-			   		dolibarr_syslog("DolibarrModules::_init Error sql=".$sql." - ".$this->error, LOG_ERR);
-			   		$err++;
+					dolibarr_syslog("DolibarrModules::_init Error sql=".$sql." - ".$this->error, LOG_ERR);
+					$err++;
 				}
 			}
 		}
-	
+
 		// Cree les documents generables
 		if (is_array($this->docs))
 		{
 			foreach ($this->docs as $key => $doc)
 			{
-				if (! $err) 
+				if (! $err)
 				{
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_generator (rowid,name,classfile,class) VALUES ";
 					$sql .= "(".$doc[0].",'".addslashes($doc[1])."','".$doc[2]."','".$doc[3]."');";
-					
+						
 					$result=$this->db->query($sql);
 					if (! $result)
 					{
@@ -134,7 +134,7 @@ class DolibarrModules
 				}
 			}
 		}
-	
+
 		// Cree les repertoires
 		if (is_array($this->dirs))
 		{
@@ -150,7 +150,7 @@ class DolibarrModules
 				}
 			}
 		}
-		
+
 		// Renvoi valeur de retour
 		if (! $err)
 		{
@@ -164,61 +164,61 @@ class DolibarrModules
 		}
 	}
 
-  /**
-   *  \brief      Fonction de desactivation. Supprime de la base les constantes et boites du module
-   *  \param      array_sql       tableau de requete sql a executer a la desactivation
-   *  \return     int             1 if OK, 0 if KO
-   */
-  function _remove($array_sql)
-  {
-    $err = 0;
-    
-    // Supprime entree des modules
-    $err+=$this->_dbunactive();
-    
-    // Supprime la constante d'activation du module
-    $err+=$this->_unactive();
-    
-    // Supprime les boites de la liste des boites disponibles
-    $err+=$this->delete_style_sheet();
+	/**
+	 *  \brief      Fonction de desactivation. Supprime de la base les constantes et boites du module
+	 *  \param      array_sql       tableau de requete sql a executer a la desactivation
+	 *  \return     int             1 if OK, 0 if KO
+	 */
+	function _remove($array_sql)
+	{
+		$err = 0;
 
-    // Supprime les boites de la liste des boites disponibles
-    $err+=$this->delete_boxes();
-    
-    // Supprime les droits de la liste des droits disponibles
-    $err+=$this->delete_permissions();
-    
-    // Supprime les menus apportes par le module
-    $err+=$this->delete_menus();
-    
-    // Supprime les documents generables
-    $err+=$this->delete_docs();
+		// Remove line in activation module
+		$err+=$this->_dbunactive();
 
-    // Execute les requetes sql complementaires
-    for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
-      {
-	if (!$this->db->query($array_sql[$i]))
-	  {
-	    $err++;
-	  }
-      }
-    
-    // Renvoi valeur de retour
-        if ($err > 0) return 0;
-        return 1;
-  }
-  
+		// Remove activation module line
+		$err+=$this->_unactive();
+
+		// Supprime les boites de la liste des boites disponibles
+		$err+=$this->delete_style_sheet();
+
+		// Supprime les boites de la liste des boites disponibles
+		$err+=$this->delete_boxes();
+
+		// Supprime les droits de la liste des droits disponibles
+		$err+=$this->delete_permissions();
+
+		// Supprime les menus apportes par le module
+		$err+=$this->delete_menus();
+
+		// Supprime les documents generables
+		$err+=$this->delete_docs();
+
+		// Execute les requetes sql complementaires
+		for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+		{
+			if (!$this->db->query($array_sql[$i]))
+	  		{
+	  			$err++;
+	  		}
+		}
+
+		// Renvoi valeur de retour
+		if ($err > 0) return 0;
+		return 1;
+	}
+
 
 	/**
 		\brief      Retourne le nom traduit du module si la traduction existe dans admin.lang,
-					sinon le nom defini par defaut dans le module.
+		sinon le nom defini par defaut dans le module.
 		\return     string      Nom du module traduit
-	*/
+		*/
 	function getName()
 	{
 		global $langs;
 		$langs->load("admin");
-		
+
 		if ($langs->trans("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
 		{
 			// Si traduction du nom du module existe
@@ -230,18 +230,18 @@ class DolibarrModules
 			return $this->name;
 		}
 	}
-  
-  
+
+
 	/**
 		\brief      Retourne la description traduite du module si la traduction existe dans admin.lang,
 		sinon la description definie par defaut dans le module.
 		\return     string      Nom du module traduit
-	*/
+		*/
 	function getDesc()
 	{
 		global $langs;
 		$langs->load("admin");
-		
+
 		if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
 		{
 			// Si traduction de la description du module existe
@@ -253,223 +253,225 @@ class DolibarrModules
 			return $this->description;
 		}
 	}
-  
-  
+
+
 	/**
 		\brief      Retourne la version du module.
 		Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
 		Pour les modules 'dolibarr', retourne la version de Dolibarr
 		Pour les autres modules, retourne la version du module
 		\return     string      Version du module
-	*/
+		*/
 	function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
-		
+
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
 		elseif ($this->version == 'dolibarr') return DOL_VERSION;
 		elseif ($this->version) return $this->version;
 		else return $langs->trans("VersionUnknown");
 	}
-  
-
-    /**
-            \brief      Retourne la version en base du module.
-            \return     string      Version du module
-     */
-    function getDbVersion()
-    {
-        global $langs;
-        $langs->load("admin");
-
-        $sql ="SELECT active_version FROM ".MAIN_DB_PREFIX."dolibarr_modules";
-        $sql .= " WHERE numero=".$this->numero." AND active = 1";
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-
-            if ($num > 0)
-            {
-                $row = $this->db->fetch_row($resql);
-
-                $this->dbversion = $row[0];
-            }
-
-            $this->db->free($resql);
-        }
-        
-        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-        elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
-        elseif ($this->version == 'dolibarr') return DOL_VERSION;
-        elseif ($this->version) return $this->version;
-        else return "";
-
-    }
 
 
-    /**
-            \brief      Retourne la liste des fichiers lang en rapport avec le module
-            \return     array       Tableau des fichier lang
-     */
-    function getLangFilesArray()
-    {
-        return $this->langfiles;
-    }
-    
-    /**
-            \brief      Retourne le libelle d'un lot de donnees exportable
-            \return     string      Libelle du lot de donnees
-     */
-    function getDatasetLabel($r)
-    {
-        global $langs;
-        
-        $langstring="ExportDataset_".$this->export_code[$r];
-        if ($langs->trans($langstring) == $langstring)
-        {
-            // Traduction non trouvee
-            return $langs->trans($this->export_label[$r]);
-        }
-        else
-        {
-            // Traduction trouvee
-            return $langs->trans($langstring);
-        }
-    }
-    
-    
-  /**
-     \brief      Insere ligne module
-     \return     int         Nombre d'erreurs (0 si ok)
-  */
-  function _dbactive()
-  {
-    $err = 0;
-    
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero.";";
-    $this->db->query($sql_del);
-    
-    $sql ="INSERT INTO ".MAIN_DB_PREFIX."dolibarr_modules (numero,active,active_date,active_version)";
-    $sql .= " VALUES (";
-    $sql .= $this->numero.",1,".$this->db->idate(mktime()).",'".$this->version."')";
-    
-    $this->db->query($sql);
-    
-    return $err;
-  }
-  
-  
-  /**
-     \brief      Supprime ligne module
-     \return     int     Nombre d'erreurs (0 si ok)
-  */
-  function _dbunactive()
-  {
-    $err = 0;
-    
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero.";";
-    $this->db->query($sql_del);
-    
-    return $err;
-  }
-    
-
-    /**
-            \brief      Insere constante d'activation module
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function _active()
-    {
-        $err = 0;
-
-        $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."';";
-        $this->db->query($sql_del);
-
-        $sql ="INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-        ('".$this->const_name."','1',0);";
-        if (!$this->db->query($sql))
-        {
-            $err++;
-        }
-        
-        return $err;
-    }
-    
-    
-    /**
-            \brief      Supprime constante d'activation module
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function _unactive()
-    {
-        $err = 0;
-
-        $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."';";
-        $this->db->query($sql_del);
-
-        return $err;
-    }
-
-
-    /**
-            \brief      Insere les boites associees au module dans llx_boxes_def
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function insert_boxes()
-    {
-        $err=0;
-
-        if (is_array($this->boxes))
-        {
-	        foreach ($this->boxes as $key => $value)
-	        {
-	            //$titre = $this->boxes[$key][0];
-	            $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';
-	            $note  = isset($this->boxes[$key][2])?$this->boxes[$key][2]:'';
-	
-	            $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def";
-	            $sql.= " WHERE file ='".$file."'";
-	            if ($note) $sql.=" AND note ='".addslashes($note)."'";
-	
-	            $result=$this->db->query($sql);
-	            if ($result)
-	            {
-	                $row = $this->db->fetch_row($result);
-	                if ($row[0] == 0)
-	                {
-	                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file,note)";
-	                    $sql.= " VALUES ('".addslashes($file)."',";
-	                    $sql.= $note?"'".addslashes($note)."'":"null";
-	                    $sql.= ")";
-						//print $sql;
-	                    if (! $this->db->query($sql))
-	                    {
-	                        $err++;
-	                    }
-	                }
-	            }
-	            else
-	            {
-	                $err++;
-	            }
-	        }
-        }
-        
-        return $err;
-    }
-
-
-  
 	/**
-     \brief      Supprime les documents
-     \return     int     Nombre d'erreurs (0 si ok)
-	*/
+	 \brief      Retourne la version en base du module.
+	 \return     string      Version du module
+	 */
+	function getDbVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		$sql ="SELECT active_version FROM ".MAIN_DB_PREFIX."dolibarr_modules";
+		$sql .= " WHERE numero=".$this->numero." AND active = 1";
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+
+			if ($num > 0)
+			{
+				$row = $this->db->fetch_row($resql);
+
+				$this->dbversion = $row[0];
+			}
+
+			$this->db->free($resql);
+		}
+
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return "";
+
+	}
+
+
+	/**
+	 \brief      Retourne la liste des fichiers lang en rapport avec le module
+	 \return     array       Tableau des fichier lang
+	 */
+	function getLangFilesArray()
+	{
+		return $this->langfiles;
+	}
+
+	/**
+	 \brief      Retourne le libelle d'un lot de donnees exportable
+	 \return     string      Libelle du lot de donnees
+	 */
+	function getDatasetLabel($r)
+	{
+		global $langs;
+
+		$langstring="ExportDataset_".$this->export_code[$r];
+		if ($langs->trans($langstring) == $langstring)
+		{
+			// Traduction non trouvee
+			return $langs->trans($this->export_label[$r]);
+		}
+		else
+		{
+			// Traduction trouvee
+			return $langs->trans($langstring);
+		}
+	}
+
+
+	/**
+	 *	\brief      Insert line in module table
+	 *	\return     int         Nombre d'erreurs (0 si ok)
+	 */
+	function _dbactive()
+	{
+		$err = 0;
+
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero.";";
+		$this->db->query($sql_del);
+
+		$sql ="INSERT INTO ".MAIN_DB_PREFIX."dolibarr_modules (numero,active,active_date,active_version)";
+		$sql .= " VALUES (";
+		$sql .= $this->numero.",1,".$this->db->idate(mktime()).",'".$this->version."')";
+
+		$this->db->query($sql);
+
+		return $err;
+	}
+
+
+	/**
+	 *	\brief      Remove line in module table
+	 *	\return     int     Nb of errors (0 if OK)
+	 */
+	function _dbunactive()
+	{
+		$err = 0;
+
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero;
+		$this->db->query($sql_del);
+
+		return $err;
+	}
+
+
+	/**
+	 *	\brief      Insert constant to activate module
+	 *	\return     int     Nb of errors (0 if OK)
+	 */
+	function _active()
+	{
+		$err = 0;
+
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
+		$this->db->query($sql_del);
+
+		$sql ="INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+        ('".$this->const_name."','1',0)";
+		dolibarr_syslog("DolibarrModules::_active sql=".$sql);
+		if (!$this->db->query($sql))
+		{
+			$err++;
+		}
+
+		return $err;
+	}
+
+
+	/**
+	 *	\brief      Remove activation line
+	 *	\return     int     Nb of errors (0 if OK)
+	 **/
+	function _unactive()
+	{
+		$err = 0;
+
+		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
+		dolibarr_syslog("DolibarrModules::_unactive sql=".$sql_del);
+		$this->db->query($sql_del);
+
+		return $err;
+	}
+
+
+	/**
+	 \brief      Insere les boites associees au module dans llx_boxes_def
+	 \return     int     Nombre d'erreurs (0 si ok)
+	 */
+	function insert_boxes()
+	{
+		$err=0;
+
+		if (is_array($this->boxes))
+		{
+			foreach ($this->boxes as $key => $value)
+			{
+				//$titre = $this->boxes[$key][0];
+				$file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';
+				$note  = isset($this->boxes[$key][2])?$this->boxes[$key][2]:'';
+
+				$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def";
+				$sql.= " WHERE file ='".$file."'";
+				if ($note) $sql.=" AND note ='".addslashes($note)."'";
+
+				$result=$this->db->query($sql);
+				if ($result)
+				{
+					$row = $this->db->fetch_row($result);
+					if ($row[0] == 0)
+					{
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file,note)";
+						$sql.= " VALUES ('".addslashes($file)."',";
+						$sql.= $note?"'".addslashes($note)."'":"null";
+						$sql.= ")";
+						//print $sql;
+						if (! $this->db->query($sql))
+						{
+							$err++;
+						}
+					}
+				}
+				else
+				{
+					$err++;
+				}
+			}
+		}
+
+		return $err;
+	}
+
+
+
+	/**
+	 \brief      Supprime les documents
+	 \return     int     Nombre d'erreurs (0 si ok)
+	 */
 	function delete_docs()
-	{   
+	{
 		$err=0;
 
 		// Supprime les documents generables
@@ -479,28 +481,29 @@ class DolibarrModules
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_generator ";
 				$sql .= "WHERE name= '".addslashes($doc[0])."' AND classfile='".$doc[1]."'AND class='".$doc[2]."';";
-				
+
+				dolibarr_syslog("DolibarrModules::delete_docs sql=".$sql);
 				$result=$this->db->query($sql);
 				if (! $result)
 				{
-					dolibarr_syslog("DolibarrModules.class::delete_docs Error sql=".$sql." - ".$this->db->error());
+					dolibarr_syslog("DolibarrModules::delete_docs Error sql=".$sql." - ".$this->db->error());
 					$err++;
 				}
-				
+
 			}
 		}
 		return $err;
 	}
-  
-  
+
+
 	/**
 		\brief      Supprime les boites
 		\return     int     Nombre d'erreurs (0 si ok)
-	*/
+		*/
 	function delete_boxes()
 	{
 		$err=0;
-		
+
 		if (is_array($this->boxes))
 		{
 			foreach ($this->boxes as $key => $value)
@@ -508,14 +511,14 @@ class DolibarrModules
 				//$titre = $this->boxes[$key][0];
 				$file  = $this->boxes[$key][1];
 				//$note  = $this->boxes[$key][2];
-				
+
 				$sql = "DELETE ".MAIN_DB_PREFIX."boxes";
 				$sql.= " FROM ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
 				$sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
 				$sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".addslashes($file)."'";
 				dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
 				$this->db->query($sql);
-				
+
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
 				$sql.= " WHERE file = '".addslashes($file)."'";
 				dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
@@ -525,18 +528,18 @@ class DolibarrModules
 				}
 			}
 		}
-		
+
 		return $err;
 	}
-  
+
 	/**
 		\brief      Desactive feuille de style du module par suppression ligne dans llx_const
 		\return     int     Nombre d'erreurs (0 si ok)
-	*/
+		*/
 	function delete_style_sheet()
 	{
 		$err=0;
-		
+
 		if ($this->style_sheet)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
@@ -547,200 +550,200 @@ class DolibarrModules
 				$err++;
 			}
 		}
-		
+
 		return $err;
 	}
 
-    /**
-            \brief      Active la feuille de style associee au module par insertion ligne dans llx_const
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function insert_style_sheet()
-    {
-        $err=0;
+	/**
+	 \brief      Active la feuille de style associee au module par insertion ligne dans llx_const
+	 \return     int     Nombre d'erreurs (0 si ok)
+	 */
+	function insert_style_sheet()
+	{
+		$err=0;
 
-        if ($this->style_sheet)
+		if ($this->style_sheet)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible)";
 			$sql.= " VALUES ('".$this->const_name."_CSS','chaine','".$this->style_sheet."','Style sheet for module ".$this->name."','0')";
 			dolibarr_syslog("DolibarrModules::insert_style_sheet sql=".$sql);
 			$resql=$this->db->query($sql);
 			/* Allow duplicate key
-			if (! $resql)
+			 if (! $resql)
+			 {
+				$err++;
+				}
+				*/
+		}
+
+		return $err;
+	}
+
+	/**
+	 \brief      Insere les constantes associees au module dans llx_const
+	 \return     int     Nombre d'erreurs (0 si ok)
+	 */
+	function insert_const()
+	{
+		$err=0;
+
+		foreach ($this->const as $key => $value)
+		{
+			$name   = $this->const[$key][0];
+			$type   = $this->const[$key][1];
+			$val    = $this->const[$key][2];
+			$note   = $this->const[$key][3];
+			$visible= $this->const[$key][4];
+
+			$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."const WHERE name ='".$name."'";
+
+			$result=$this->db->query($sql);
+			if ($result)
+			{
+				$row = $this->db->fetch_row($result);
+
+				if ($row[0] == 0)
+				{
+					if (! $visible) $visible='0';
+					if (strlen($note))
+					{
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note','$visible')";
+					}
+					elseif (strlen($val))
+					{
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val','$visible')";
+					}
+					else
+					{
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type','$visible')";
+					}
+
+					dolibarr_syslog("DolibarrModules::insert_const sql=".$sql);
+					if (! $this->db->query($sql) )
+					{
+						dolibarr_syslog("DolibarrModules::insert_const ".$this->db->lasterror(), LOG_ERR);
+						$err++;
+					}
+				}
+			}
+			else
 			{
 				$err++;
 			}
-			*/
 		}
-		
+
 		return $err;
 	}
-	
-    /**
-            \brief      Insere les constantes associees au module dans llx_const
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function insert_const()
-    {
-        $err=0;
-        
-        foreach ($this->const as $key => $value)
-        {
-            $name   = $this->const[$key][0];
-            $type   = $this->const[$key][1];
-            $val    = $this->const[$key][2];
-            $note   = $this->const[$key][3];
-            $visible= $this->const[$key][4];
 
-            $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."const WHERE name ='".$name."'";
+	/**
+	 \brief      Insere les permissions associees au module dans llx_rights_def
+	 \return     int     Nombre d'erreurs (0 si ok)
+	 */
+	function insert_permissions()
+	{
+		$err=0;
 
-            $result=$this->db->query($sql);
-            if ($result)
-            {
-                $row = $this->db->fetch_row($result);
+		//print $this->rights_class." ".sizeof($this->rights)."<br>";
 
-                if ($row[0] == 0)
-                {
-                    if (! $visible) $visible='0';
-                    if (strlen($note))
-                    {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note','$visible')";
-                    }
-                    elseif (strlen($val))
-                    {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val','$visible')";
-                    }
-                    else
-                    {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type','$visible')";
-                    }
+		// Test si module actif
+		$sql_del = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
+		$resql=$this->db->query($sql_del);
+		if ($resql) {
 
-					dolibarr_syslog("DolibarrModules::insert_const sql=".$sql);
-                    if (! $this->db->query($sql) )
-                    {
-                    	dolibarr_syslog("DolibarrModules::insert_const ".$this->db->lasterror(), LOG_ERR);
-                        $err++;
-                    }
-                }
-            }
-            else
-            {
-                $err++;
-            }
-        }
-        
-        return $err;
-    }
-    
-    /**
-            \brief      Insere les permissions associees au module dans llx_rights_def
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function insert_permissions()
-    {
-        $err=0;
+			$obj=$this->db->fetch_object($resql);
+			if ($obj->value) {
 
-        //print $this->rights_class." ".sizeof($this->rights)."<br>";
+				// Si module actif
+				foreach ($this->rights as $key => $value)
+				{
+					$r_id       = $this->rights[$key][0];
+					$r_desc     = $this->rights[$key][1];
+					$r_type     = $this->rights[$key][2];
+					$r_def      = $this->rights[$key][3];
+					$r_perms    = $this->rights[$key][4];
+					$r_subperms = $this->rights[$key][5];
+					$r_modul    = $this->rights_class;
 
-        // Test si module actif
-        $sql_del = "SELECT value FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
-        $resql=$this->db->query($sql_del);
-        if ($resql) {
-            
-            $obj=$this->db->fetch_object($resql);
-            if ($obj->value) {
-                
-                // Si module actif
-                foreach ($this->rights as $key => $value)
-                {
-                    $r_id       = $this->rights[$key][0];
-                    $r_desc     = $this->rights[$key][1];
-                    $r_type     = $this->rights[$key][2];
-                    $r_def      = $this->rights[$key][3];
-                    $r_perms    = $this->rights[$key][4];
-                    $r_subperms = $this->rights[$key][5];
-                    $r_modul    = $this->rights_class;
-        
-                    if (empty($r_type)) $r_type='w';
-                    
-                    if (strlen($r_perms) )
-                    {
-                        if (strlen($r_subperms) )
-                        {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-                            $sql .= " (id, libelle, module, type, bydefault, perms, subperms)";
-                            $sql .= " VALUES ";
-                            $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
-                        }
-                        else
-                        {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-                            $sql .= " (id, libelle, module, type, bydefault, perms)";
-                            $sql .= " VALUES ";
-                            $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
-                        }
-                    }
-                    else
-                    {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-                        $sql .= " (id, libelle, module, type, bydefault)";
-                        $sql .= " VALUES ";
-                        $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
-                    }
-        
+					if (empty($r_type)) $r_type='w';
+
+					if (strlen($r_perms) )
+					{
+						if (strlen($r_subperms) )
+						{
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+							$sql .= " (id, libelle, module, type, bydefault, perms, subperms)";
+							$sql .= " VALUES ";
+							$sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+						}
+						else
+						{
+							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+							$sql .= " (id, libelle, module, type, bydefault, perms)";
+							$sql .= " VALUES ";
+							$sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+						}
+					}
+					else
+					{
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+						$sql .= " (id, libelle, module, type, bydefault)";
+						$sql .= " VALUES ";
+						$sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
+					}
+
 					dolibarr_syslog("DolibarrModules::insert_permissions sql=".$sql);
-                    $resql=$this->db->query($sql);
-                    if (! $resql)
-                    {
-                        if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
-                            $err++;
-                        }
-                    }
-                }
-            }
-        }
-        
-        return $err;
-    }
+					$resql=$this->db->query($sql);
+					if (! $resql)
+					{
+						if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
+							$err++;
+						}
+					}
+				}
+			}
+		}
+
+		return $err;
+	}
 
 
-    /**
-            \brief      Supprime les permissions
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function delete_permissions()
-    {
-        $err=0;
-        
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = '".$this->rights_class."'";
+	/**
+	 \brief      Supprime les permissions
+	 \return     int     Nombre d'erreurs (0 si ok)
+	 */
+	function delete_permissions()
+	{
+		$err=0;
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = '".$this->rights_class."'";
 		dolibarr_syslog("DolibarrModules::delete_permissions sql=".$sql);
-        if (!$this->db->query($sql))
-        {
-            $err++;
-        }
+		if (!$this->db->query($sql))
+		{
+			$err++;
+		}
 
-        return $err;
-    }
+		return $err;
+	}
 
-    
-    /**
-            \brief      Insere les menus dans llx_menu*
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function insert_menus()
-    {
+
+	/**
+	 \brief      Insere les menus dans llx_menu*
+	 \return     int     Nombre d'erreurs (0 si ok)
+	 */
+	function insert_menus()
+	{
 		global $user;
-    	
+		 
 		require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
 		$err=0;
-		        
+
 		$this->db->begin();
-		
-        foreach ($this->menu as $key => $value)
-        {
-       		$menu = new Menubase($this->db);
-			$menu->menu_handler='all';	
+
+		foreach ($this->menu as $key => $value)
+		{
+			$menu = new Menubase($this->db);
+			$menu->menu_handler='all';
 			$menu->module=$this->rights_class;
 			if (! $this->menu[$key]['fk_menu'])
 			{
@@ -774,51 +777,51 @@ class DolibarrModules
 			{
 				$result=$menu->create($user);
 				if ($result > 0)
-            	{
-            		$this->menu[$key]['rowid']=$result;	
-            	}
-            	else
-            	{
+				{
+					$this->menu[$key]['rowid']=$result;
+				}
+				else
+				{
 					$this->error=$menu->error;
-            		$err++;
-            	}
+					$err++;
+				}
 			}
-        }
-        
-        if (! $err)
-        {
-        	$this->db->commit();
-        }
-        else
-        {
-        	dolibarr_syslog("DolibarrModules::insert_menus ".$this->error, LOG_ERR);
-        	$this->db->rollback();
-        }
+		}
 
-        return $err;
-    }
+		if (! $err)
+		{
+			$this->db->commit();
+		}
+		else
+		{
+			dolibarr_syslog("DolibarrModules::insert_menus ".$this->error, LOG_ERR);
+			$this->db->rollback();
+		}
+
+		return $err;
+	}
 
 
-    /**
-            \brief      Supprime les permissions
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function delete_menus()
-    {
-        $err=0;
-        
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-        $sql.= " WHERE module = '".addslashes($this->rights_class)."'";
-        
+	/**
+	 \brief      Supprime les permissions
+	 \return     int     Nombre d'erreurs (0 si ok)
+	 */
+	function delete_menus()
+	{
+		$err=0;
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
+		$sql.= " WHERE module = '".addslashes($this->rights_class)."'";
+
 		dolibarr_syslog("DolibarrModules::delete_menus sql=".$sql);
 		$resql=$this->db->query($sql);
 		if (! $resql)
-        {
-            $err++;
-        }
+		{
+			$err++;
+		}
 
-        return $err;
-    }
-        
+		return $err;
+	}
+
 }
 ?>
