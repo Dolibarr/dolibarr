@@ -129,7 +129,8 @@ if ($user->societe_id == 0)
                       $conf->propal->enabled && $user->rights->propale->lire,
                       $conf->commande->enabled && $user->rights->commande->lire,
                       $conf->facture->enabled && $user->rights->facture->lire,
-                      $conf->telephonie->enabled && $user->rights->telephonie->lire);
+                      $conf->telephonie->enabled && $user->rights->telephonie->lire,
+					  $conf->societe->enabled && $user->rights->contrat->activer);
     // Fichier des classes qui contiennent la methode load_state_board pour chaque ligne
     $includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
                     DOL_DOCUMENT_ROOT."/prospect.class.php",
@@ -140,7 +141,8 @@ if ($user->societe_id == 0)
                     DOL_DOCUMENT_ROOT."/propal.class.php",
                     DOL_DOCUMENT_ROOT."/commande/commande.class.php",
                     DOL_DOCUMENT_ROOT."/facture.class.php",
-                    DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
+                    DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php",
+					DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
     // Nom des classes qui contiennent la methode load_state_board pour chaque ligne
     $classes=array('Client',
                    'Prospect',
@@ -151,7 +153,8 @@ if ($user->societe_id == 0)
 				   'Propal',
 				   'Commande',
 				   'Facture',
-                   'LigneTel');
+                   'LigneTel',
+                   'Contrat');
     // Clé de tableau retourné par la methode load_state_board pour chaque ligne
     $keys=array('customers',
                 'prospects',
@@ -162,7 +165,8 @@ if ($user->societe_id == 0)
 				'proposals',
 				'orders',
 				'invoices',
-                'sign');
+                'sign',
+				'Contracts');
     // Icon des lignes du tableau de bord
     $icons=array('company',
                  'company',
@@ -173,7 +177,8 @@ if ($user->societe_id == 0)
 				 'propal',
 				 'order',
 				 'bill',
-                 'phoning');
+                 'phoning',
+				 'order');
     // Translation keyword
     $titres=array("Customers",
                   "Prospects",
@@ -184,7 +189,8 @@ if ($user->societe_id == 0)
                   "CommercialProposals",
                   "CustomersOrders",
                   "BillsCustomers",
-                  "Lignes de téléphonie suivis");
+                  "Lignes de telephonie suivis",
+                  "Contracts");
     // Lien des lignes du tableau de bord
     $links=array(DOL_URL_ROOT.'/comm/clients.php',
                  DOL_URL_ROOT.'/comm/prospect/prospects.php',
@@ -195,7 +201,8 @@ if ($user->societe_id == 0)
                  DOL_URL_ROOT.'/comm/propal.php?mainmenu=commercial',
                  DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
                  DOL_URL_ROOT.'/compta/facture.php?mainmenu=accountancy',
-                 DOL_URL_ROOT.'/telephonie/ligne/index.php');
+                 DOL_URL_ROOT.'/telephonie/ligne/index.php',
+				 DOL_URL_ROOT.'/contrat/liste.php');
     // Translation lang files
     $langfile=array("bills",
                     "prospects",
@@ -206,7 +213,8 @@ if ($user->societe_id == 0)
                     "propal",
                     "orders",
                     "bills",
-                    "");
+                    "",
+					"Contracts");
                  
 	//print memory_get_usage()."<br>";
 
