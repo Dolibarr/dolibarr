@@ -99,7 +99,7 @@ if ($action=='delete_action')
 
 
 /*
- * Affichage liste
+ * View
  */
 
 llxHeader();
