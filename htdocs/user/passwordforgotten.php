@@ -181,7 +181,7 @@ print '  font-size: 12px;';
 print '}'."\n";
 print '-->'."\n";
 print '</style>'."\n";
-print '<script language="javascript" type="text/javascript">'."\n";
+print '<script type="text/javascript">'."\n";
 print "function donnefocus() {\n";
 if (! $_REQUEST["username"]) print "document.getElementById('username').focus();\n";
 else print "document.getElementById('password').focus();\n";

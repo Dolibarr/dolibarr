@@ -65,7 +65,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 				{
 					create_exdir($conf->societe->dir_logos);
 				}        
-				if (dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file,1))
+				if (dol_move_uploaded_file($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file,1) > 0)
 				{
 					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
 					
@@ -660,7 +660,7 @@ else
 		$s.=' &nbsp; ';
 		if ($conf->use_javascript_ajax)
 		{
-			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
+			$s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
 			print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 		}
 		else

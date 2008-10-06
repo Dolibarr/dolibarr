@@ -45,7 +45,7 @@ print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://ww
 print '<html><head>';
 if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
 {
-	print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
+	print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
 }
 else
 {
@@ -65,7 +65,7 @@ $tradTemp=array($langs->trans("January"),
 				$langs->trans("November"),
 				$langs->trans("December")
 				);
-print '<script language="javascript" type="text/javascript">';
+print '<script type="text/javascript">';
 print 'var tradMonths = '.php2js($tradTemp).';';
 print '</script>'."\n";
 print '</head><body>'."\n";

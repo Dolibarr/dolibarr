@@ -644,7 +644,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '}'."\n";
 	print '-->'."\n";
 	print '</style>'."\n";
-	print '<script language="javascript" type="text/javascript">'."\n";
+	print '<script type="text/javascript">'."\n";
 	print "function donnefocus() {\n";
 	if (! $_REQUEST["username"]) print "document.getElementById('username').focus();\n";
 	else print "document.getElementById('password').focus();\n";
@@ -845,16 +845,16 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		// Output javascript links
 		if (! $disablejs && $conf->use_javascript_ajax)
 		{
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
 		}
 		if (! $disablejs && $conf->use_javascript_ajax)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php';
 
 			// This one is required for all Ajax features
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
 			// This one is required fox boxes
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
+			print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
 
 			// Those ones are required only with option "confirm by ajax popup"
 			if ($conf->global->MAIN_CONFIRM_AJAX)
@@ -862,17 +862,17 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 				// PWC css
 				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/alert.css">'."\n";
 				// Scriptaculous used by PWC
-				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
-				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/controls.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/controls.js"></script>'."\n";
 				// PWC js
-				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window.js"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/pwc/window.js"></script>'."\n";
 			}
 		}
 		if (is_array($arrayofjs))
 		{
 			foreach($arrayofjs as $jsfile)
 			{
-				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/'.$jsfile.'"></script>'."\n";
+				print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/'.$jsfile.'"></script>'."\n";
 			}
 		}
 
@@ -1147,7 +1147,7 @@ function llxFooter($foot='',$limitIEbug=1)
 	if (! empty($_SERVER['DOL_TUNING']))
 	{
 		$micro_end_time=dol_microtime_float(true);
-		print '<script language="javascript" type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		print '<script type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
 		if (function_exists("memory_get_usage"))
 		{
 			print ' - Memory usage: '.memory_get_usage();
@@ -1162,7 +1162,7 @@ function llxFooter($foot='',$limitIEbug=1)
 
 	if ($conf->use_javascript_ajax)
 	{
-		print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>';
+		print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_foot.js"></script>';
 	}
 
 	// Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent

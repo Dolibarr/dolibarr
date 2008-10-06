@@ -26,18 +26,17 @@
  */
 
 /**
- \file       htdocs/html.form.class.php
- \brief      Fichier de la classe des fonctions prédéfinie de composants html
- \version	$Id$
+ *	\file       htdocs/html.form.class.php
+ *	\brief      Fichier de la classe des fonctions prédéfinie de composants html
+ *	\version	$Id$
  */
 
 
 /**
- \class      Form
- \brief      Classe permettant la génération de composants html
- \remarks	Only common components must be here.
+ *	\class      Form
+ *	\brief      Classe permettant la génération de composants html
+ *	\remarks	Only common components must be here.
  */
-
 class Form
 {
 	var $db;
@@ -1586,6 +1585,44 @@ class Form
 
 
 	/**
+	 *      \brief      Show list of action status
+	 */
+	function form_select_status_action($formname,$selected,$canedit=1)
+	{
+		global $langs,$conf;
+
+		$listofstatus=array('0'=>$langs->trans("ActionRunningNotStarted"),'50'=>$langs->trans("ActionRunningShort"),'100'=>$langs->trans("ActionDoneShort"));
+
+		if ($conf->use_javascript_ajax)
+		{
+			print "\n";
+			print '<script type="text/javascript">'."\n";
+			print 'function select_status(mypercentage) {'."\n";
+			print 'document.'.$formname.'.percentageshown.value=mypercentage;'."\n";
+			print 'document.'.$formname.'.percentage.value=mypercentage;'."\n";
+			print 'if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
+			print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
+			print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
+			print '}'."\n";
+			print '</script>'."\n";
+			print '<select '.($canedit?'':'disabled="true" ').'name="status" class="flat" onChange="select_status(document.'.$formname.'.status.value)">';
+			foreach($listofstatus as $key => $val)
+			{
+				print '<option value="'.$key.'"'.($selected == $key?' selected="true"':'').'>'.$val.'</option>';
+			}
+			print '</select>';
+			if ($selected == 0 || $selected == 100) $canedit=0;
+			print ' <input type="text" name="percentageshown" class="flat" value="'.$selected.'" size="2"'.($canedit?'':' disabled="true"').' onChange="select_status(document.'.$formname.'.percentageshown.value)">%';
+			print ' <input type="hidden" name="percentage" value="'.$selected.'">';
+		}
+		else
+		{
+			print ' <input type="text" name="percentage" class="flat" value="'.$selected.'" size="2"'.($canedit?'':' disabled="true"').'>%';
+		}
+	}
+
+	
+	/**
 	 *      \brief      Retourne la liste des types de paiements possibles
 	 *      \param      selected        Id du type de paiement pré-sélectionné
 	 *      \param      htmlname        Nom de la zone select
@@ -2699,7 +2736,7 @@ class Form
 				{
 					// Zone de saisie manuelle de la date
 					print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="10" maxlength="11" value="'.$formated_date.'"';
-					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
+					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\'); "';
 					print '>';
 						
 					// Icone calendrier
@@ -2716,11 +2753,11 @@ class Form
 					// Calendrier popup version defaut
 					if ($langs->defaultlang != "")
 					{
-						print '<script language="javascript" type="text/javascript">';
+						print '<script type="text/javascript">';
 						print 'selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
 						print '</script>';
 					}
-					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
+					print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
 					print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"';
 					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
 					print '> ';

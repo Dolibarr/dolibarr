@@ -20,11 +20,11 @@
  */
 
 /**
-        \file       htdocs/comm/action/fiche.php
-        \ingroup    agenda
-        \brief      Page for action card
-        \version    $Id$
-*/
+ *       \file       htdocs/comm/action/fiche.php
+ *       \ingroup    agenda
+ *       \brief      Page for action card
+ *       \version    $Id$
+ */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -110,6 +110,13 @@ if ($_POST["action"] == 'add_action')
                    $_POST["a2day"],
                    $_POST["a2year"]);
 	
+	if (! $datep2 && $_POST["percentage"] == 100)
+	{
+		$error=1;
+	   	$_GET["action"] = 'create';
+	   	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd")).'</div>';
+	}
+                   
 	// Initialisation objet cactioncomm
     if (! $_POST["actioncode"])
     {
@@ -395,6 +402,10 @@ if ($_POST["action"] == 'update')
 
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 $html = new Form($db);
@@ -413,7 +424,7 @@ if ($_GET["action"] == 'create')
 		$result=$contact->fetch($_GET["contactid"]);
 	}
 
-	print '<form name="action" action="fiche.php" method="post">';
+	print '<form name="formaction" action="fiche.php" method="post">';
 	print '<input type="hidden" name="action" value="add_action">';
     if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="backtopage" value="'.($_REQUEST["backtopage"] != 1 ? $_REQUEST["backtopage"] : $_SERVER["HTTP_REFERER"]).'">';
 
@@ -440,14 +451,10 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	// Title
-	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="30" value="'.$actioncomm->label.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Title").'</td><td><input type="text" name="label" size="60" value="'.$actioncomm->label.'"></td></tr>';
 	
 	// Location
-	print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" size="30" value="'.$actioncomm->location.'"></td></tr>';
-	
-	print '</table>';
-	print '<br>';
-	print '<table class="border" width="100%">';
+	print '<tr><td>'.$langs->trans("Location").'</td><td><input type="text" name="location" size="60" value="'.$actioncomm->location.'"></td></tr>';
 	
 	// Societe, contact
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
@@ -472,8 +479,18 @@ if ($_GET["action"] == 'create')
 		print '</td></tr>';
 	}
 
+	print '</table>';
+	print '<br>';
+	print '<table class="border" width="100%">';
+	
+	// Created by
+	/*print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionUserAsk").'</td><td>';
+	print $user->getNomUrl();
+	print '</td></tr>';
+	*/
+	
 	// Affecte a
-	print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td>';
+	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 	$html->select_users($_REQUEST["affectedto"]?$_REQUEST["affectedto"]:$actioncomm->usertodo,'affectedto',1);
 	print '</td></tr>';
 
@@ -520,20 +537,25 @@ if ($_GET["action"] == 'create')
 	*/
 	
 	// Avancement
-	if ($_REQUEST["afaire"] == 1)
+	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
+	print '<td>';
+	$percent=0;
+	if (isset($_POST['percentage']))
 	{
-		print '<input type="hidden" name="percentage" value="0">';
-		print '<input type="hidden" name="todo" value="on">';
-		print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionToDo").' / 0%</td></tr>';
+		$percent=$_POST['percentage'];
 	}
-	elseif ($_REQUEST["afaire"] == 2)
+	else
 	{
-		print '<input type="hidden" name="percentage" value="100">';
-		print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("StatusActionDone").' / 100%</td></tr>';
-	} else
-	{
-		print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0" size="4">%</td></tr>';
+		if ($_REQUEST["afaire"] == 1) $percent=0;
+		if ($_REQUEST["afaire"] == 2) $percent=100;
 	}
+	print $html->form_select_status_action('formaction',$percent,1);
+	print '</td></tr>';
+
+	// Priority
+	print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+	print '<input type="text" name="priority" value="'.$act->priority.'" size="5">';
+	print '</td></tr>';
 
 	add_row_for_calendar_link();
 
@@ -548,7 +570,7 @@ if ($_GET["action"] == 'create')
 	}
 	else
 	{
-		print '<textarea name="note" cols="90" rows="'.ROWS_8.'"></textarea>';
+		print '<textarea name="note" cols="90" rows="'.ROWS_7.'"></textarea>';
 	}
 	print '</td></tr>';
 
@@ -633,7 +655,7 @@ if ($_GET["id"])
     if ($_REQUEST["action"] == 'edit')
     {
         // Fiche action en mode edition
-        print '<form action="fiche.php" method="post">';
+        print '<form name="formaction" action="fiche.php" method="post">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
         if (! empty($_REQUEST["backtopage"])) print '<input type="hidden" name="from" value="'.($_REQUEST["from"] ? $_REQUEST["from"] : $_SERVER["HTTP_REFERER"]).'">';
@@ -696,15 +718,18 @@ if ($_GET["id"])
 		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
-		// Priorite
+		// Status
+        print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		$percent=isset($_REQUEST["percentage"])?$_REQUEST["percentage"]:$act->percentage;
+		print $html->form_select_status_action('formaction',$percent,1);
+        print '</td></tr>';
+
+		// Priority
 		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
 		print '<input type="text" name="priority" value="'.$act->priority.'" size="5">';
 		print '</td></tr>';
 
-		// Status
-        print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percentage" value="'.(isset($_REQUEST["percentage"])?$_REQUEST["percentage"]:$act->percentage).'" size="4">%</td></tr>';
-
-		// Object linked
+        // Object linked
         if ($act->objet_url)
         {
             print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
@@ -722,7 +747,7 @@ if ($_GET["id"])
 	    }
 	    else
 	    {
-			print '<textarea name="note" cols="90" rows="'.ROWS_8.'">'.dol_htmlentitiesbr_decode($act->note).'</textarea>';
+			print '<textarea name="note" cols="90" rows="'.ROWS_7.'">'.dol_htmlentitiesbr_decode($act->note).'</textarea>';
 	    }
 
         print '</td></tr>';
@@ -797,17 +822,17 @@ if ($_GET["id"])
 		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
-		// Priorite
-		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
-		print $act->priority;
-		print '</td></tr>';
-
         // Statut
         print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
         print $act->getLibStatut(4);
         print '</td></tr>';
 
-		// Objet lie
+		// Priority
+		print '<tr><td nowrap>'.$langs->trans("Priority").'</td><td colspan="3">';
+		print $act->priority;
+		print '</td></tr>';
+
+        // Objet lie
         if ($act->objet_url)
         {
             print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
