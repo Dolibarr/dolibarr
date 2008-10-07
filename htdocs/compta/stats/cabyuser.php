@@ -40,16 +40,20 @@ $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 if (! $sortorder) $sortorder="asc";
 if (! $sortfield) $sortfield="name";
 
-// Sécurité accés client
+// Security check
 if ($user->societe_id > 0) $socid = $user->societe_id;
 
+
+/*
+ * View
+ */
 
 llxHeader();
 
 
 $html=new Form($db);
 
-// Affiche en-tête du rapport
+// Affiche en-tï¿½te du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
@@ -85,7 +89,7 @@ else
 {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-     * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
+     * vieilles versions, ils n'ï¿½taient pas liï¿½s via paiement_facture. On les ajoute plus loin)
      */
 	$sql = "SELECT u.rowid as rowid, u.name as name, u.firstname as firstname, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u" ;
@@ -117,7 +121,7 @@ else {
     dolibarr_print_error($db);   
 }
 
-// On ajoute les paiements anciennes version, non liés par paiement_facture
+// On ajoute les paiements anciennes version, non lies par paiement_facture
 if ($modecompta != 'CREANCES-DETTES')
 {
     $sql = "SELECT -1 as rowid, '' as name, '' as firstname, sum(p.amount) as amount_ttc";
@@ -154,7 +158,7 @@ print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"name","",'&amp;year='.($year).'&modecompta='.$modecompta,"",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Percentage"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("OrderStats"),$_SERVER["PHP_SELF"],"","","",'align="center" width="20%"');
+if ($conf->global->MAIN_FEATURES_LEVEL == 2) print_liste_field_titre($langs->trans("OrderStats"),$_SERVER["PHP_SELF"],"","","",'align="center" width="20%"');
 print "</tr>\n";
 $var=true;
 
@@ -162,7 +166,7 @@ if (sizeof($amount))
 {
     $arrayforsort=$name;
     
-    // On définit tableau arrayforsort
+    // We define arrayforsort
     if ($sortfield == 'name' && $sortorder == 'asc') {
         asort($name);
         $arrayforsort=$name;
@@ -180,7 +184,7 @@ if (sizeof($amount))
         $arrayforsort=$amount;
     }
 
-    foreach($arrayforsort as $key=>$value)
+    foreach($arrayforsort as $key => $value)
     {
         $var=!$var;
         print "<tr $bc[$var]>";
@@ -190,23 +194,27 @@ if (sizeof($amount))
             $linkname='<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowUser"),'user').' '.$fullname.'</a>';
         }
         else {
-            $linkname=$langs->trans("Paiements liés à aucune facture");
+            $linkname=$langs->trans("PaymentsLinkedToNoUsers");
         }
         print "<td>".$linkname."</td>\n";
         print '<td align="right">'.price($amount[$key]).'</td>';
         print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal,2).'%' : '&nbsp;').'</td>';
-        if($key>0){
-        	print '<td align="center"><a href="comm.php?id='.$key.'">'.img_picto($langs->trans("Show"),"vcard").'</a></td>';
-        } else {
-        	print '<td> &nbsp; </td>' ;
+        if ($conf->global->MAIN_FEATURES_LEVEL == 2) 
+        {
+        	if($key>0){
+           		print '<td align="center"><a href="comm.php?id='.$key.'">'.img_picto($langs->trans("Show"),"vcard").'</a></td>';
+        	} else {
+        		print '<td> &nbsp; </td>' ;
+        	}
         }
-        	
         print "</tr>\n";
         $i++;
     }
 
     // Total
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($catotal).'</td><td>&nbsp;</td></tr>';
+    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($catotal).'</td><td>&nbsp;</td>';
+    if ($conf->global->MAIN_FEATURES_LEVEL == 2) print '<td>&nbsp;</td>';
+    print '</tr>';
 
     $db->free($result);
 }
