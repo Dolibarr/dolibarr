@@ -58,7 +58,6 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	// Action ajout d'une categorie
 	if ($_POST["cancel"])
 	{
-		print 'origin : '.$idProdOrigin;
 		if ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&type='.$_GET["type"]);
