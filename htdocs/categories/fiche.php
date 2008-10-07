@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ if (isset ($_REQUEST['choix']))
 	$nbcats = $_REQUEST['choix'];
 }
 else
-{ // par d�fault, une nouvelle cat�gorie sera dans une seule cat�gorie m�re
+{ // par default, une nouvelle categorie sera dans une seule categorie mere
 	$nbcats = 1;
 }
 
@@ -55,22 +55,28 @@ if ($_REQUEST['origin'])
 
 if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 {
-	// Action ajout d'une cat�gorie
+	// Action ajout d'une categorie
 	if ($_POST["cancel"])
 	{
+		print 'origin : '.$idProdOrigin;
 		if ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&type='.$_GET["type"]);
 			exit;
 		}
-		if ($idCompanyOrigin)
+		else if ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'&type='.$_GET["type"]);
 			exit;
 		}
-		if ($idSupplierOrigin)
+		else if ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&type='.$_GET["type"]);
+			exit;
+		}
+		else
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$_GET["type"]);
 			exit;
 		}
 	}
@@ -79,8 +85,9 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 
 	$categorie->label          = $_POST["nom"];
 	$categorie->description    = $_POST["description"];
+	$categorie->socid          = $_POST["socid"];
 	$categorie->visible        = $_POST["visible"];
-	$categorie->type		   = $_POST["type"];
+	$categorie->type		       = $_POST["type"];
 	if($_POST['catMere'] != "-1")
 	$categorie->id_mere = $_POST['catMere'];
 
@@ -184,12 +191,23 @@ if ($user->rights->categorie->creer)
 		}
 		
 		print '</td></tr>';
-		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
-		print $html->select_all_categories($_GET['type']);
-		print '</td></tr>';
-		print '<tr><td>'.$langs->trans ("ContentsVisibleByAll").'</td><td>';
-		print $html->selectyesno("visible", 1,1);
-		print '</td></tr>';
+		if ($_GET['type'] == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+		{
+			print '<tr><td>'.$langs->trans ("AssignedToCustomer").'</td><td>';
+			print $html->select_societes('','socid','s.client = 1 AND s.fournisseur = 0',1);
+			print '</td></tr>';
+			print '<input type="hidden" name="catMere" value="-1">';
+			print '<input type="hidden" name="type" value="0">';
+		}
+		else
+		{
+			print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
+			print $html->select_all_categories($_GET['type']);
+			print '</td></tr>';
+			print '<tr><td>'.$langs->trans ("ContentsVisibleByAll").'</td><td>';
+			print $html->selectyesno("visible", 1,1);
+			print '</td></tr>';
+		}
 		print '<tr><td colspan="2" align="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" />';
 		print ' &nbsp; &nbsp; ';
