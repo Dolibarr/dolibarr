@@ -47,3 +47,5 @@ alter table llx_commandedet add column import_key         varchar(14);
 alter table llx_facture_fourn     add column import_key         varchar(14);
 alter table llx_facture_fourn_det add column import_key         varchar(14);
 
+alter table llx_commande    modify column source smallint NULL;
+

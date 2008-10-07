@@ -34,7 +34,7 @@ create table llx_commande
   fk_user_author        integer,                       -- createur de la commande
   fk_user_valid         integer,                       -- valideur de la commande
   fk_user_cloture       integer,                       -- auteur cloture
-  source                smallint NOT NULL,
+  source                smallint,
   fk_statut             smallint  default 0,
   amount_ht             real      default 0,
   remise_percent        real      default 0,
