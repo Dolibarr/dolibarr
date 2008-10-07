@@ -163,17 +163,17 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 		// Insertion contact par defaut si defini
 		if ($_POST["contactidp"])
 		{
-	  $result=$commande->add_contact($_POST["contactidp"],'CUSTOMER','external');
+	  		$result=$commande->add_contact($_POST["contactidp"],'CUSTOMER','external');
 
-	  if ($result > 0)
-	  {
-	  	$error=0;
-	  }
-	  else
-	  {
-	  	$mesg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
-	  	$error=1;
-	  }
+	  		if ($result > 0)
+	  		{
+	  			$error=0;
+	  		}
+	  		else
+	  		{
+	  			$mesg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
+	  			$error=1;
+	  		}
 		}
 
 		$_GET['id'] = $commande->id;
@@ -296,7 +296,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			exit;
 		}
 		$ret=$commande->fetch_client();
-		
+
 		$suffixe = $_POST['idprod'] ? '_prod' : '';
 		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 		// Retrieve start and end date (for product/service lines or customizable lines)
@@ -307,14 +307,14 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$date_start=$_POST['date_start'.$suffixe.'year'].'-'.$_POST['date_start'.$suffixe.'month'].'-'.$_POST['date_start'.$suffixe.'day'];
 			// If hour/minute are specified, append them
 			if (($_POST['date_start'.$suffixe.'hour']) && ($_POST['date_start'.$suffixe.'min']))
-				$date_start.=' '.$_POST['date_start'.$suffixe.'hour'].':'.$_POST['date_start'.$suffixe.'min'];
+			$date_start.=' '.$_POST['date_start'.$suffixe.'hour'].':'.$_POST['date_start'.$suffixe.'min'];
 		}
 		if ($_POST['date_end'.$suffixe.'year'] && $_POST['date_end'.$suffixe.'month'] && $_POST['date_end'.$suffixe.'day'])
 		{
 			$date_end=$_POST['date_end'.$suffixe.'year'].'-'.$_POST['date_end'.$suffixe.'month'].'-'.$_POST['date_end'.$suffixe.'day'];
 			// If hour/minute are specified, append them
 			if (($_POST['date_end'.$suffixe.'hour']) && ($_POST['date_end'.$suffixe.'min']))
-				$date_end.=' '.$_POST['date_end'.$suffixe.'hour'].':'.$_POST['date_end'.$suffixe.'min'];
+			$date_end.=' '.$_POST['date_end'.$suffixe.'hour'].':'.$_POST['date_end'.$suffixe.'min'];
 		}
 
 		$price_base_type = 'HT';
@@ -391,13 +391,13 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$info_bits,
 			0,
 			$price_base_type,
-	 		$pu_ttc,
-	 		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	 		// Add the start and end dates
-	 		$date_start,
-	 		$date_end
+			$pu_ttc,
+			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+			// Add the start and end dates
+			$date_start,
+			$date_end
 			);
-	
+
 			if ($result > 0)
 			{
 				if ($_REQUEST['lang_id'])
@@ -422,8 +422,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 {
 	$commande = new Commande($db,'',$_POST['id']);
 	if (! $commande->fetch($_POST['id']) > 0) dolibarr_print_error($db);
-	
-	
+
+
 	$date_start='';
 	$date_end='';
 	// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
@@ -433,14 +433,14 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 		$date_start=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
 		// If hour/minute are specified, append them
 		if (($_POST['date_starthour']) && ($_POST['date_startmin']))
-			$date_start.=' '.$_POST['date_starthour'].':'.$_POST['date_startmin'];
+		$date_start.=' '.$_POST['date_starthour'].':'.$_POST['date_startmin'];
 	}
 	if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
 	{
 		$date_end=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
 		// If hour/minute are specified, append them
 		if (($_POST['date_endhour']) && ($_POST['date_endmin']))
-			$date_end.=' '.$_POST['date_endhour'].':'.$_POST['date_endmin'];
+		$date_end.=' '.$_POST['date_endhour'].':'.$_POST['date_endmin'];
 	}
 
 	// Define info_bits
@@ -463,14 +463,14 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 		$_POST['qty'],
 		$_POST['elremise_percent'],
 		$vat_rate,
-    	'HT',
-	 	$info_bits,
-	 	// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	 	// Add the start and end dates
-	 	$date_start,
-	 	$date_end
+		'HT',
+		$info_bits,
+		// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+		// Add the start and end dates
+		$date_start,
+		$date_end
 		);
-	
+
 		if ($result >= 0)
 		{
 			if ($_REQUEST['lang_id'])
@@ -655,7 +655,7 @@ if ($_POST['addfile'])
 			}
 			else
 			{
-				// Echec transfert (fichier d�passant la limite ?)
+				// Echec transfert (fichier d�passant la limite ?
 				$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 				// print_r($_FILES);
 			}
@@ -733,10 +733,10 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 				$formmail = new FormMail($db);
 
 				$attachedfiles=$formmail->get_attached_files();
-                $filepath = $attachedfiles['paths'];
-                $filename = $attachedfiles['names'];
-                $mimetype = $attachedfiles['mimes'];
-				
+				$filepath = $attachedfiles['paths'];
+				$filename = $attachedfiles['names'];
+				$mimetype = $attachedfiles['mimes'];
+
 				// Send mail
 				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
@@ -1663,7 +1663,7 @@ else
 						print '<td align="center" colspan="4"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>';
-						
+
 						// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 						// Start and end dates selector
 						print '<tr '.$bc[$var].'>';
@@ -1673,7 +1673,7 @@ else
 						print $html->select_date($objp->date_end,'date_end',$usehm,$usehm,$objp->date_end?0:1,"updateligne");
 						print '</td>';
 						print '</tr>';
-						
+
 						print '</form>';
 					}
 
@@ -1736,7 +1736,7 @@ else
 				print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
 				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 				print '</tr>';
-				
+
 				if ($conf->service->enabled)
 				{
 					// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
@@ -1806,7 +1806,7 @@ else
 					print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="remise_percent" value="'.$soc->remise_client.'">%</td>';
 					print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
 					print '</tr>';
-				
+
 					if ($conf->service->enabled)
 					{
 						// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
@@ -1852,7 +1852,7 @@ else
 								$num = $commande->ref;
 							}
 							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_validate&confirm=yes';
-						 	print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateOrder',$num)).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateOrder',$num)).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
 						}
 						else
 						{

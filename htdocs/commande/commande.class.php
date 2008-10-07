@@ -486,13 +486,13 @@ class Commande extends CommonObject
 		// Nettoyage parametres
 		$this->brouillon = 1;		// On positionne en mode brouillon la commande
 
-		dolibarr_syslog("Commande.class::create");
+		dolibarr_syslog("Commande::create");
 
 		// Verification parametres
-		if ($this->source < 0)
+		if (! empty($conf->global->COMMANDE_REQUIRE_SOURCE) && $this->source < 0)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
-			dolibarr_syslog("Commande.class::create ".$this->error, LOG_ERR);
+			dolibarr_syslog("Commande::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if (! $remise) $remise=0;
@@ -503,7 +503,7 @@ class Commande extends CommonObject
 		if ($result < 0)
 		{
 			$this->error="Failed to fetch company";
-			dolibarr_syslog("Commande.class::create ".$this->error, LOG_ERR);
+			dolibarr_syslog("Commande::create ".$this->error, LOG_ERR);
 			return -2;
 		}
 
@@ -515,7 +515,7 @@ class Commande extends CommonObject
 		$sql.= ' remise_absolue, remise_percent)';
 		$sql.= " VALUES ('".$this->ref."',".$this->socid.", ".$this->db->idate(mktime()).", ".$user->id.', '.$this->projetid.',';
 		$sql.= ' '.$this->db->idate($this->date_commande).',';
-		$sql.= ' '.$this->source.', ';
+		$sql.= ' '.($this->source>=0?$this->source:'null').', ';
 		$sql.= " '".addslashes($this->note)."', ";
 		$sql.= " '".addslashes($this->note_public)."', ";
 		$sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."',";
@@ -1845,7 +1845,7 @@ class Commande extends CommonObject
 		$label=$langs->trans('OrderSource'.$this->source);
 		// \TODO Si libelle non trouve, on va chercher en base dans dictionnaire
 
-
+		if ($label == 'OrderSource') return '';
 		return $label;
 	}
 
@@ -2368,7 +2368,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("CommandeLigne.class.php::insert Error ".$this->error);
+			dolibarr_syslog("CommandeLigne::insert Error ".$this->error);
 			$this->db->rollback();
 			return -2;
 		}
@@ -2390,7 +2390,7 @@ class CommandeLigne
 		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dolibarr_syslog("CommandeLigne.class.php::update_total sql=$sql");
+		dolibarr_syslog("CommandeLigne::update_total sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2401,7 +2401,7 @@ class CommandeLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("CommandeLigne.class.php::update_total Error ".$this->error);
+			dolibarr_syslog("CommandeLigne::update_total Error ".$this->error);
 			$this->db->rollback();
 			return -2;
 		}
