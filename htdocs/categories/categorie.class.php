@@ -182,7 +182,7 @@ class Categorie
 		// Clean parameters
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
-		
+		if ($this->socid == -1) $this->socid = 0;
 		
 		$this->db->begin();
 

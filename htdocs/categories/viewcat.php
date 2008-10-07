@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2007 Regis Houssin	  	  <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Regis Houssin	  	  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,10 +121,23 @@ print $langs->trans("Description").'</td><td>';
 print nl2br($c->description);
 print '</td></tr>';
 
-print '<tr><td width="20%" class="notopnoleft">';
-print $langs->trans("Status").'</td><td>';
-print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-print '</td></tr>';
+if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+{
+	$soc = new Societe($db);
+	$soc->fetch($c->socid);
+	
+	print '<tr><td width="20%" class="notopnoleft">';
+	print $langs->trans("AssignedToTheCustomer").'</td><td>';
+	print $soc->getNomUrl(1);
+	print '</td></tr>';
+}
+else
+{
+	print '<tr><td width="20%" class="notopnoleft">';
+	print $langs->trans("Status").'</td><td>';
+	print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
+	print '</td></tr>';
+}
 
 print '</table>';
 
