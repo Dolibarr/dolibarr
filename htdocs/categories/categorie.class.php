@@ -179,6 +179,8 @@ class Categorie
 	*/
 	function update()
 	{
+		global $conf;
+		
 		// Clean parameters
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
@@ -217,7 +219,7 @@ class Categorie
 		{
 			$sql .= ", description = '".addslashes($this->description)."'";
 		}
-		if ($this->socid)
+		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
 			$sql .= ", fk_soc = ".$this->socid;
 		}
