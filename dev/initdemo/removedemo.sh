@@ -9,6 +9,8 @@
 # WARNING: This script erase all data of database
 #------------------------------------------------------
 
+export mydir=`echo "$_" | sed -e 's/removedemo.sh//'`;
+
 DIALOG=${DIALOG=dialog}
 DIALOG="$DIALOG --ascii-lines"
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
@@ -26,4 +28,10 @@ exit;;
 esac
 
 # ---------------------------- remove conf file
-rm ../../htdocs/conf/conf.php
+echo "Remove file $mydir../../htdocs/conf/conf.php"
+rm $mydir../../htdocs/conf/conf.php 2>/dev/null
+echo "Remove file $mydir../../install.lock"
+rm $mydir../../install.lock 2>/dev/null
+
+echo "Dolibarr demo has been removed (need to be installed again)."
+echo

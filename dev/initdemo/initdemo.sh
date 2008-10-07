@@ -9,11 +9,13 @@
 # WARNING: This script erase all data of database
 #------------------------------------------------------
 
+export mydir=`echo "$_" | sed -e 's/initdemo.sh//'`;
+
 DIALOG=${DIALOG=dialog}
 DIALOG="$DIALOG --ascii-lines"
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
-$DIALOG --title "Reload Dolibarr database" --clear \
+$DIALOG --title "Init Dolibarr with demo values" --clear \
         --inputbox "Mysql database name :" 16 51 dolibarrdemo 2> $fichtemp
 valret=$?
 case $valret in
@@ -28,8 +30,8 @@ esac
 DIALOG=${DIALOG=dialog}
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
-$DIALOG --title "Purge de Dolibarr" --clear \
-        --inputbox "Mysql usr login (ex: root):" 16 51 2> $fichtemp
+$DIALOG --title "Init Dolibarr with demo values" --clear \
+        --inputbox "Mysql user login (ex: root):" 16 51 2> $fichtemp
 
 valret=$?
 
@@ -45,8 +47,8 @@ esac
 DIALOG=${DIALOG=dialog}
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
-$DIALOG --title "Purge de Dolibarr" --clear \
-        --inputbox "Password for Mysql user admin :" 16 51 2> $fichtemp
+$DIALOG --title "Init Dolibarr with demo values" --clear \
+        --inputbox "Password for Mysql user login :" 16 51 2> $fichtemp
 
 valret=$?
 
@@ -62,7 +64,7 @@ esac
 DIALOG=${DIALOG=dialog}
 fichtemp=`tempfile 2>/dev/null` || fichtemp=/tmp/test$$
 trap "rm -f $fichtemp" 0 1 2 5 15
-$DIALOG --title "Purge de Dolibarr" --clear \
+$DIALOG --title "Init Dolibarr with demo values" --clear \
         --inputbox "Full path to documents directory (ex: /var/www/dolibarr/documents)- no / at end :" 16 51 2> $fichtemp
 
 valret=$?
@@ -87,4 +89,7 @@ case $? in
 esac
 
 # ---------------------------- run sql file
-mysql -u$admin -p$passwd $base < initdemo.sql
+mysql -u$admin -p$passwd $base < $mydir/initdemo.sql
+
+echo "Dolibarr data demo has been loaded."
+echo
