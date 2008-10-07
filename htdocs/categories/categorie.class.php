@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2006-2008 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -72,7 +72,7 @@ class Categorie
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, label, description, visible, type";
+		$sql = "SELECT rowid, label, description, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE rowid = ".$id;
 
@@ -82,9 +82,10 @@ class Categorie
 		{
 			$res = $this->db->fetch_array($resql);
 
-			$this->id		   = $res['rowid'];
-			$this->label	   = $res['label'];
+			$this->id		       = $res['rowid'];
+			$this->label	     = $res['label'];
 			$this->description = $res['description'];
+			$this->socid       = $res['fk_soc'];
 			$this->visible     = $res['visible'];
 			$this->type        = $res['type'];
 
@@ -136,7 +137,7 @@ class Categorie
 		}
 
 		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, fk_soc, visible, type) ";
-		$sql .= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."','".$this->socid."','".$this->visible."',".$this->type.")";
+		$sql .= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."',".$this->socid.",'".$this->visible."',".$this->type.")";
 
 
 		$res  = $this->db->query ($sql);
@@ -216,6 +217,7 @@ class Categorie
 		{
 			$sql .= ", description = '".addslashes($this->description)."'";
 		}
+		$sql .= ", fk_soc = ".$this->socid;
 		$sql .= ", visible = '".$this->visible."'";
 		$sql .= " WHERE rowid = ".$this->id;
 

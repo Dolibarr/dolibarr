@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,13 @@ require "./pre.inc.php";
 
 if (!$user->rights->categorie->lire)
   accessforbidden();
+  
+// If socid provided by ajax company selector
+if (! empty($_POST['socid_id']))
+{
+	$_POST['socid'] = $_POST['socid_id'];
+	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+}
 
 // Action mise à jour d'une catégorie
 if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
@@ -41,6 +48,7 @@ if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 	
 	$categorie->label          = $_POST["nom"];
 	$categorie->description    = $_POST["description"];
+	$categorie->socid          = $_POST["socid"];
 	$categorie->visible        = $_POST["visible"];
 	
 	if($_POST['catMere'] != "-1")
@@ -132,13 +140,24 @@ else
 
 print '</td></tr>';
 
-print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-print $html->select_all_categories($categorie->type,$categorie->id_mere);
-print '</td></tr>';
-
-print '<tr><td>'.$langs->trans("ContentsVisibleByAll").'</td><td>';
-print $html->selectyesno("visible",$categorie->visible,1);
-print '</td></tr>';
+if ($_GET['type'] == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+{
+	print '<tr><td>'.$langs->trans ("AssignedToCustomer").'</td><td>';
+	print $html->select_societes($categorie->socid,'socid','s.client = 1 AND s.fournisseur = 0',1);
+	print '</td></tr>';
+	print '<input type="hidden" name="catMere" value="-1">';
+	print '<input type="hidden" name="visible" value="1">';
+}
+else
+{
+	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+	print $html->select_all_categories($categorie->type,$categorie->id_mere);
+	print '</td></tr>';
+	
+	print '<tr><td>'.$langs->trans("ContentsVisibleByAll").'</td><td>';
+	print $html->selectyesno("visible",$categorie->visible,1);
+	print '</td></tr>';
+}
 		
 print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td></tr>';
