@@ -1134,19 +1134,6 @@ class Facture extends CommonObject
 			if (! $error && $facref == 'PROV')
 			{
 				// La vérif qu'une remise n'est pas utilisée 2 fois est faite au moment de l'insertion de ligne
-
-				// On met a jour table des ventes
-				// On crée ici une denormalisation pas forcement utilisé !!!
-				// TODO Virer utilisation du champ nbvente si utilisation non justifié
-				foreach($this->lignes as $i => $line)
-				{
-					if ($line->fk_product)
-					{
-						$sql = 'UPDATE '.MAIN_DB_PREFIX.'product SET nbvente=nbvente+1 WHERE rowid = '.$line->rowid;
-						$resql2 = $this->db->query($sql);
-						$i++;
-					}
-				}
 			}
 
 			if (! $error)

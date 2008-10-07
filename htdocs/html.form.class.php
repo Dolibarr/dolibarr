@@ -1011,7 +1011,7 @@ class Form
 		}
 		if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
 		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
-		$sql.= " ORDER BY p.nbvente DESC";
+		$sql.= " ORDER BY p.ref";
 		if ($limit) $sql.= " LIMIT $limit";
 
 		dolibarr_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
@@ -1024,7 +1024,7 @@ class Form
 			$sqld = "SELECT d.fk_product, d.label";
 			$sqld.= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_det as d ";
 			$sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
-			$sqld.= " ORDER BY p.nbvente DESC";
+			$sqld.= " ORDER BY p.ref";
 
 			dolibarr_syslog("Form::select_produits_do sql=".$sql, LOG_DEBUG);
 			$resultd = $this->db->query($sqld);

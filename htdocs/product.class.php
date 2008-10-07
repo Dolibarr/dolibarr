@@ -911,7 +911,7 @@ class Product extends CommonObject
 		}
 
 		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc, price_min, price_min_ttc, price_base_type, tva_tx, envente,";
-		$sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte,canvas,";
+		$sql.= " fk_product_type, duration, seuil_stock_alerte,canvas,";
 		$sql.= " stock_commande, stock_loc, weight, weight_units, volume, volume_units, barcode, fk_barcode_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
@@ -935,7 +935,6 @@ class Product extends CommonObject
 			$this->price_base_type    = $result["price_base_type"];
 			$this->tva_tx             = $result["tva_tx"];
 			$this->type               = $result["fk_product_type"];
-			$this->nbvente            = $result["nbvente"];
 			$this->status             = $result["envente"];
 			$this->duration           = $result["duration"];
 			$this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
