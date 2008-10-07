@@ -48,6 +48,13 @@ if ($_REQUEST['origin'])
 	
 }
 
+// If socid provided by ajax company selector
+if (! empty($_POST['socid_id']))
+{
+	$_POST['socid'] = $_POST['socid_id'];
+	$_REQUEST['socid'] = $_REQUEST['socid_id'];
+}
+
 
 /*
 *	Actions
@@ -87,6 +94,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	$categorie->socid          = $_POST["socid"];
 	$categorie->visible        = $_POST["visible"];
 	$categorie->type		       = $_POST["type"];
+
 	if($_POST['catMere'] != "-1")
 	$categorie->id_mere = $_POST['catMere'];
 
@@ -193,10 +201,10 @@ if ($user->rights->categorie->creer)
 		if ($_GET['type'] == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
 			print '<tr><td>'.$langs->trans ("AssignedToCustomer").'</td><td>';
-			print $html->select_societes('','socid','s.client = 1 AND s.fournisseur = 0',1);
+			print $html->select_societes($_REQUEST['socid_id'],'socid','s.client = 1 AND s.fournisseur = 0',1);
 			print '</td></tr>';
 			print '<input type="hidden" name="catMere" value="-1">';
-			print '<input type="hidden" name="type" value="0">';
+			print '<input type="hidden" name="visible" value="1">';
 		}
 		else
 		{

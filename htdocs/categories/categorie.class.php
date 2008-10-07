@@ -45,6 +45,7 @@ class Categorie
 	var $id_mere;
 	var $label;
 	var $description;
+	var $socid;
 	var $statut;
 	var $type;					// 0=Produit, 1=Fournisseur, 2=Tiers
 
@@ -124,6 +125,7 @@ class Categorie
 	{
 		global $langs;
 		$langs->load('categories');
+		
 		if ($this->already_exists ())
 		{
 			$this->error=$langs->trans("ImpossibleAddCat");
@@ -131,8 +133,8 @@ class Categorie
 			return -1;
 		}
 
-		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, visible,type) ";
-		$sql .= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."', '".$this->visible."',".$this->type.")";
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, fk_soc, visible, type) ";
+		$sql .= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."','".$this->socid."','".$this->visible."',".$this->type.")";
 
 
 		$res  = $this->db->query ($sql);
