@@ -126,6 +126,8 @@ class Categorie
 		global $langs;
 		$langs->load('categories');
 		
+		if ($this->socid == -1) $this->socid = 0;
+		
 		if ($this->already_exists ())
 		{
 			$this->error=$langs->trans("ImpossibleAddCat");
