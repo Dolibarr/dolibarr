@@ -25,11 +25,11 @@ create table llx_commandedet
   fk_commande        integer,
   fk_product         integer,
   description        text,
-  tva_tx             double(6,3),		              -- taux tva
+  tva_tx             double(6,3),	              -- taux tva
   qty                real,                            -- quantité
   remise_percent     real         DEFAULT 0,          -- pourcentage de remise
   remise             real         DEFAULT 0,          -- montant de la remise
-  fk_remise_except	 integer      NULL,               -- Lien vers table des remises fixes
+  fk_remise_except   integer      NULL,               -- Lien vers table des remises fixes
   price              real,                            -- prix final
   subprice           double(24,8) DEFAULT 0,          -- prix unitaire
   total_ht           double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantité et incluant remise ligne et globale
@@ -37,15 +37,16 @@ create table llx_commandedet
   total_ttc          double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
   date_start         datetime     DEFAULT NULL,       -- date debut si service
   date_end           datetime     DEFAULT NULL,       -- date fin si service
-  info_bits		     integer      DEFAULT 0,          -- TVA NPR ou non
+  info_bits          integer      DEFAULT 0,          -- TVA NPR ou non
   marge_tx           double(6,3)  DEFAULT 0,          -- taux de marge (marge sur prix d'achat)
   marque_tx          double(6,3)  DEFAULT 0,          -- taux de marque (marge sur prix de vente)
   special_code       tinyint(4)   UNSIGNED DEFAULT 0, -- code pour les lignes speciales
-  rang               integer      DEFAULT 0
+  rang               integer      DEFAULT 0,
+  import_key         varchar(14)
 )type=innodb;
 
 -- 
--- Liste des codes pour special_code
+-- List of codes for special_code
 --
 -- 1 : frais de port
 -- 2 : ecotaxe

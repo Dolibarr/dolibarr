@@ -35,7 +35,6 @@ create table llx_product
   tva_tx             double(6,3),
   fk_user_author     integer,
   envente            tinyint      DEFAULT 1,
-  nbvente            integer      DEFAULT 0,
   fk_product_type    integer      DEFAULT 0,
   duration           varchar(6),
   stock_propale      integer      DEFAULT 0,
@@ -49,6 +48,7 @@ create table llx_product
   weight_units       tinyint      DEFAULT NULL,
   volume             float        DEFAULT NULL,
   volume_units       tinyint      DEFAULT NULL,
-  canvas             varchar(15)  DEFAULT ''
+  canvas             varchar(15)  DEFAULT '',
+  import_key         varchar(14)
 )type=innodb;
 

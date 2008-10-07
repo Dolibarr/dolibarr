@@ -43,5 +43,6 @@ create table llx_socpeople
   priv           smallint NOT NULL DEFAULT 0,
   fk_user_creat  integer DEFAULT 0, -- user qui a créé l'enregistrement
   fk_user_modif  integer,
-  note           text
+  note           text,
+  import_key     varchar(14)
 )type=innodb;

@@ -52,6 +52,5 @@ create table llx_commande
   fk_mode_reglement     integer,                       -- mode de réglement
   date_livraison 	      date 	  default NULL,
   fk_adresse_livraison  integer,                       -- adresse de livraison
-
-  UNIQUE INDEX (ref)
+  import_key            varchar(14)
 )type=innodb;

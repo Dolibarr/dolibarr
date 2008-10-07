@@ -48,5 +48,6 @@ create table llx_facture_fourn
   date_lim_reglement  date,      -- date limite de reglement
 
   note       	text,
-  note_public	text
+  note_public	text,
+  import_key    varchar(14)
 )type=innodb;

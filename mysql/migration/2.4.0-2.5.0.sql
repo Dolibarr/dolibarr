@@ -35,3 +35,15 @@ alter table llx_rights_def modify column   type          varchar(1);
 ALTER TABLE `llx_commandedet` ADD column `date_start` DATETIME DEFAULT NULL, ADD `date_end` DATETIME DEFAULT NULL ;
 
 alter table llx_categorie add column fk_soc integer DEFAULT 0 after description;
+
+alter table llx_product drop column nbvente;
+
+alter table llx_product     add column import_key         varchar(14);
+alter table llx_socpeople   add column import_key         varchar(14);
+alter table llx_facture     add column import_key         varchar(14);
+alter table llx_facturedet  add column import_key         varchar(14);
+alter table llx_commande    add column import_key         varchar(14);
+alter table llx_commandedet add column import_key         varchar(14);
+alter table llx_facture_fourn     add column import_key         varchar(14);
+alter table llx_facture_fourn_det add column import_key         varchar(14);
+
