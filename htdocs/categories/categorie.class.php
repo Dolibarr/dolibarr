@@ -136,8 +136,10 @@ class Categorie
 			return -1;
 		}
 
-		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, fk_soc, visible, type) ";
-		$sql .= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."',".$this->socid.",'".$this->visible."',".$this->type.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, fk_soc, visible, type) ";
+		$sql.= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."',";
+		$sql.= ($this->socid?$this->socid:"null").",";
+		$sql.= "'".$this->visible."',".$this->type.")";
 
 
 		$res  = $this->db->query ($sql);
