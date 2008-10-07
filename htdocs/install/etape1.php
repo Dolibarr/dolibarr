@@ -220,7 +220,7 @@ if ($_POST["action"] == "set")
 		if (! is_dir($main_data_dir))
 		{
 			print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
-			print $langs->trans("YouMustCreateItAndAllowServerToWrite");
+			print ' '.$langs->trans("YouMustCreateItAndAllowServerToWrite");
 			print '</td><td>';
 			print '<font class="error">'.$langs->trans("Error").'</font>';
 			print "</td></tr>";
@@ -263,6 +263,15 @@ if ($_POST["action"] == "set")
 						dolibarr_install_syslog("etape1: Directory '".$dir[$i]."' created");
 					}
 				}
+			}
+			if ($error)
+			{
+				print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
+				print ' '.$langs->trans("YouMustCreateItAndAllowServerToWrite");
+				print '</td><td>';
+				print '<font class="error">'.$langs->trans("Error").'</font>';
+				print "</td></tr>";
+	    		print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
 			}
 		}
 	}
