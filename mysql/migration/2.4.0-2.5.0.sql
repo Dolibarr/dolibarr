@@ -34,4 +34,4 @@ alter table llx_rights_def modify column   type          varchar(1);
 
 ALTER TABLE `llx_commandedet` ADD column `date_start` DATETIME DEFAULT NULL, ADD `date_end` DATETIME DEFAULT NULL ;
 
-
+alter table llx_categorie add column fk_soc integer DEFAULT NULL after description;
