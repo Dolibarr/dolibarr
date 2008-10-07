@@ -140,7 +140,7 @@ else
 
 print '</td></tr>';
 
-if ($_GET['type'] == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+if ($_GET['type'] == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER && !$categorie->id_mere)
 {
 	print '<tr><td>'.$langs->trans ("AssignedToCustomer").'</td><td>';
 	print $html->select_societes($categorie->socid,'socid','s.client = 1 AND s.fournisseur = 0',1);

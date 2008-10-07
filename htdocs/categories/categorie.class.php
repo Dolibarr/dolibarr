@@ -217,7 +217,10 @@ class Categorie
 		{
 			$sql .= ", description = '".addslashes($this->description)."'";
 		}
-		$sql .= ", fk_soc = ".$this->socid;
+		if ($this->socid)
+		{
+			$sql .= ", fk_soc = ".$this->socid;
+		}
 		$sql .= ", visible = '".$this->visible."'";
 		$sql .= " WHERE rowid = ".$this->id;
 

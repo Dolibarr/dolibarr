@@ -123,13 +123,23 @@ print '</td></tr>';
 
 if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 {
-	$soc = new Societe($db);
-	$soc->fetch($c->socid);
-	
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("AssignedToTheCustomer").'</td><td>';
-	print $soc->getNomUrl(1);
-	print '</td></tr>';
+	if ($c->socid)
+	{
+		$soc = new Societe($db);
+		$soc->fetch($c->socid);
+		
+		print '<tr><td width="20%" class="notopnoleft">';
+		print $langs->trans("AssignedToTheCustomer").'</td><td>';
+		print $soc->getNomUrl(1);
+		print '</td></tr>';
+	}
+	else
+	{
+		print '<tr><td width="20%" class="notopnoleft">';
+		print $langs->trans("InternalCategory").'</td><td>';
+		print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
+		print '</td></tr>';
+	}
 }
 else
 {
@@ -203,6 +213,21 @@ else
 		print "<tr><td>".$langs->trans("NoSubCat")."</td></tr>";
 	}
 	print "</table>\n";
+	
+  /*
+   * Boutons actions
+   */
+  if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+  {
+	  print "<div class='tabsAction'>\n";
+	
+	  if ($user->rights->categorie->creer)
+	  {
+		  print "<a class='butAction' href='fiche.php?action=create&amp;catorigin=".$c->id."&amp;socid=".$c->socid."&amp;type=".$type."'>".$langs->trans("Create")."</a>";
+	  }
+	
+	  print "</div>";
+  }
 }
 
 

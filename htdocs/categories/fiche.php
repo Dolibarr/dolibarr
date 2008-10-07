@@ -45,7 +45,11 @@ if ($_REQUEST['origin'])
 	if ($_GET['type'] == 0) $idProdOrigin = $_REQUEST['origin'];
 	if ($_GET['type'] == 1) $idSupplierOrigin = $_REQUEST['origin'];
 	if ($_GET['type'] == 2) $idCompanyOrigin = $_REQUEST['origin'];
-	
+}
+
+if ($_REQUEST['catorigin'])
+{
+	if ($_GET['type'] == 0) $idCatOrigin = $_REQUEST['catorigin'];
 }
 
 // If socid provided by ajax company selector
@@ -78,6 +82,11 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		else if ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&type='.$_GET["type"]);
+			exit;
+		}
+		else if ($idCatOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCatOrigin.'&type='.$_GET["type"]);
 			exit;
 		}
 		else
@@ -140,6 +149,11 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idSupplierOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+		if ($idCatOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCatOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		}
 
 		header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$_POST["type"]);
 		exit;
@@ -174,6 +188,10 @@ if ($user->rights->categorie->creer)
 		{
 			print '<input type="hidden" name="origin" value="'.$_REQUEST['origin'].'">';
 		}
+		if ($_REQUEST['catorigin'])
+		{
+			print '<input type="hidden" name="catorigin" value="'.$_REQUEST['catorigin'].'">';
+		}
 		print '<input type="hidden" name="nom" value="'.$nom.'">';
 
 		print_fiche_titre($langs->trans("CreateCat"));
@@ -200,11 +218,24 @@ if ($user->rights->categorie->creer)
 		print '</td></tr>';
 		if ($_GET['type'] == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
-			print '<tr><td>'.$langs->trans ("AssignedToCustomer").'</td><td>';
-			print $html->select_societes($_REQUEST['socid_id'],'socid','s.client = 1 AND s.fournisseur = 0',1);
-			print '</td></tr>';
-			print '<input type="hidden" name="catMere" value="-1">';
-			print '<input type="hidden" name="visible" value="1">';
+			if ($_REQUEST['catorigin'])
+			{
+				print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
+				print $html->select_all_categories($_GET['type'],$_REQUEST['catorigin']);
+				print '</td></tr>';
+				print '<tr><td>'.$langs->trans ("ContentsVisibleByAll").'</td><td>';
+				print $html->selectyesno("visible", 1,1);
+				print '</td></tr>';
+				print '<input type="hidden" name="socid" value="'.$_GET['socid'].'">';
+			}
+			else
+			{
+				print '<tr><td>'.$langs->trans ("AssignedToCustomer").'</td><td>';
+				print $html->select_societes($_REQUEST['socid_id'],'socid','s.client = 1 AND s.fournisseur = 0',1);
+				print '</td></tr>';
+				print '<input type="hidden" name="catMere" value="-1">';
+				print '<input type="hidden" name="visible" value="1">';
+			}
 		}
 		else
 		{
