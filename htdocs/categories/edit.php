@@ -33,6 +33,8 @@ require "./pre.inc.php";
 if (!$user->rights->categorie->lire)
   accessforbidden();
   
+$type=$_REQUEST['type'];
+  
 // If socid provided by ajax company selector
 if (! empty($_POST['socid_id']))
 {
@@ -71,7 +73,7 @@ if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 	{
 		if ($categorie->update($user) > 0)
 		{
-			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$categorie->id);
+			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$categorie->id.'&type='.$type);
 			exit;
 		}
 		else
@@ -114,6 +116,7 @@ print "\n";
 print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$categorie->id.'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
 
 print '<table class="border" width="100%">';
 print '<tr><td>';

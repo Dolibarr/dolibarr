@@ -124,10 +124,8 @@ class Categorie
 	*/
 	function create()
 	{
-		global $langs;
+		global $conf,$langs;
 		$langs->load('categories');
-		
-		if ($this->socid == -1) $this->socid = 0;
 		
 		if ($this->already_exists ())
 		{
@@ -136,9 +134,17 @@ class Categorie
 			return -1;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, fk_soc, visible, type) ";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description,";
+		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+		{
+			$sql.= "fk_soc,";
+		}
+		$sql.=  "visible, type) ";
 		$sql.= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."',";
-		$sql.= ($this->socid?$this->socid:"null").",";
+		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
+		{
+			$sql.= ($this->socid != -1 ? $this->socid : 'null').",";
+		}
 		$sql.= "'".$this->visible."',".$this->type.")";
 
 
@@ -186,7 +192,6 @@ class Categorie
 		// Clean parameters
 		$this->label=trim($this->label);
 		$this->description=trim($this->description);
-		if ($this->socid == -1) $this->socid = 0;
 		
 		$this->db->begin();
 
@@ -223,7 +228,7 @@ class Categorie
 		}
 		if ($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		{
-			$sql .= ", fk_soc = ".$this->socid;
+			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
 		}
 		$sql .= ", visible = '".$this->visible."'";
 		$sql .= " WHERE rowid = ".$this->id;
