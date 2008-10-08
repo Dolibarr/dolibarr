@@ -161,7 +161,8 @@ print "<div class='tabsAction'>\n";
 
 if ($user->rights->categorie->creer)
 {
-	print "<a class='butAction' href='edit.php?id=".$c->id."&amp;type=".$type."'>".$langs->trans("Modify")."</a>";
+	$socid = ($c->socid ? "&amp;socid=".$c->socid : "");
+	print "<a class='butAction' href='edit.php?id=".$c->id.$socid."&amp;type=".$type."'>".$langs->trans("Modify")."</a>";
 }
 
 if ($user->rights->categorie->supprimer)

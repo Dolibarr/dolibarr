@@ -160,6 +160,7 @@ else
 	print '<tr><td>'.$langs->trans("ContentsVisibleByAll").'</td><td>';
 	print $html->selectyesno("visible",$categorie->visible,1);
 	print '</td></tr>';
+	print '<input type="hidden" name="socid" value="'.$categorie->socid.'">';
 }
 		
 print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
