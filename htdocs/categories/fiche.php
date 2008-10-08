@@ -100,7 +100,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 
 	$categorie->label          = $_POST["nom"];
 	$categorie->description    = $_POST["description"];
-	$categorie->socid          = $_POST["socid"];
+	$categorie->socid          = ($_POST["socid"] ? $_POST["socid"] : 'null');
 	$categorie->visible        = $_POST["visible"];
 	$categorie->type		       = $_POST["type"];
 
