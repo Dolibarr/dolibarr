@@ -22,7 +22,7 @@
 /**
  * 	\file       htdocs/includes/modules/propale/pdf_propale_jaune.modules.php
  *	\ingroup    propale
- *	\brief      Fichier de la classe permettant de générer les propales au modèle Jaune
+ *	\brief      Fichier de la classe permettant de gï¿½nï¿½rer les propales au modï¿½le Jaune
  *	\version    $Id$
  */
 
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  * 	    \class      pdf_propale_jaune
- *		\brief      Classe permettant de générer les propales au modèle Jaune
+ *		\brief      Classe permettant de gï¿½nï¿½rer les propales au modï¿½le Jaune
  */
 class pdf_propale_jaune extends ModelePDFPropales
 {
@@ -41,7 +41,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 	/**
 	 * 		\brief  Constructeur
-	 *		\param	db		handler accès base de donnée
+	 *		\param	db		handler accï¿½s base de donnï¿½e
 	 */
 	function pdf_propale_jaune($db=0)
 	{
@@ -52,7 +52,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		
 		$this->db = $db;
 		$this->name = "jaune";
-		$this->description = "Modèle de proposition Jaune";
+		$this->description = "Modele de proposition Jaune";
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -74,8 +74,8 @@ class pdf_propale_jaune extends ModelePDFPropales
 	}
 
 
-	/**	\brief      Renvoi dernière erreur
-	 \return     string      Dernière erreur
+	/**	\brief      Renvoi derniï¿½re erreur
+	 \return     string      Derniï¿½re erreur
 	 */
 	function pdferror()
 	{
@@ -84,7 +84,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 
 	/**
-	 \brief      Fonction générant la propale sur le disque
+	 \brief      Fonction gï¿½nï¿½rant la propale sur le disque
 	 \param	    propale			Objet propal
 		\param		outputlangs		Lang object for output language
 		\return	    int     		1=ok, 0=ko
@@ -105,7 +105,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		if ($conf->propal->dir_output)
 		{
-			// Définition de l'objet $propal (pour compatibilite ascendante)
+			// Dï¿½finition de l'objet $propal (pour compatibilite ascendante)
 			if (! is_object($propale))
 			{
 				$id = $propale;
@@ -113,7 +113,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$ret=$propale->fetch($id);
 			}
 
-			// Définition de $dir et $file
+			// Dï¿½finition de $dir et $file
 			if ($propale->specimen)
 			{
 				$dir = $conf->propal->dir_output;
@@ -143,7 +143,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -351,7 +351,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		{
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, "Tél : ".FAC_PDF_TEL);
+	  $pdf->MultiCell(76, 5, "Tï¿½l : ".FAC_PDF_TEL);
 		}
 		if (defined("MAIN_INFO_SIREN"))
 		{

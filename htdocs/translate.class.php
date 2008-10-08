@@ -44,7 +44,7 @@ class Translate {
     var $cache_labels=array();		// Cache for labels
 	
     var $charset_inputfile='ISO-8859-1';	// Codage du contenu du fichier langue
-	var $charset_output='ISO-8859-1';		// Codage par defaut de la sortie de la methode trans
+	var $charset_output='UTF-8';		// Codage par defaut de la sortie de la methode trans
 	
 
     /**
@@ -379,12 +379,13 @@ class Translate {
      */
     function transnoentities($key, $param1='', $param2='', $param3='', $param4='')
     {
-        if ($this->getTransFromTab($key))
+    	$newstr=$key;
+        if ($this->getTransFromTab($newstr))
         {
             // Si la traduction est disponible
-            return sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
+            $newstr=sprintf($this->tab_translate[$newstr],$param1,$param2,$param3,$param4);
         }
-        return $key;
+        return $this->convToOuptutCharset($newstr);
     }
 
 

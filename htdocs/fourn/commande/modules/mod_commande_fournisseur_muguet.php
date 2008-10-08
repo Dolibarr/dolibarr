@@ -21,7 +21,7 @@
 /**
      	\file       htdocs/fourn/commande/modules/mod_commande_fournisseur_muguet.php
 		\ingroup    commande
-		\brief      Fichier contenant la classe du modèle de numérotation de référence de commande fournisseur Muguet
+		\brief      Fichier contenant la classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de commande fournisseur Muguet
 		\version    $Id$
 */
 
@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/modules_commandefournis
 
 
 /**	    \class      mod_commande_fournisseur_muguet
-		\brief      Classe du modèle de numérotation de référence de commande fournisseur Muguet
+		\brief      Classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de commande fournisseur Muguet
 */
 class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
@@ -39,16 +39,16 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	var $prefix='CF';
     
     
-    /**     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
     function info()
     {
-		return "Renvoie le numéro sous la forme ".$this->prefix."yymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0";
+		return "Renvoie le numero sous la forme ".$this->prefix."yymm-nnnn ou yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise a 0";
     }
 
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -57,8 +57,8 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     }
 
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
+    /**     \brief      Test si les numeros deja en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numerotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -79,7 +79,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         }
         else
         {
-            $this->error='Une commande commençant par $coyymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.';
+            $this->error='Une commande commencant par $coyymm existe en base et est incompatible avec cette numerotation. Supprimer la ou renommer la pour activer ce module.';
             return false;    
         }
     }
@@ -93,7 +93,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     {
         global $db;
 
-        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
         $posindice=8;
         $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
@@ -116,7 +116,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     }
 
 
-    /**     \brief      Renvoie la référence de commande suivante non utilisée
+    /**     \brief      Renvoie la rï¿½fï¿½rence de commande suivante non utilisï¿½e
 	*      	\param      objsoc      Object third party
 	*      	\param      object		Object
     *      	\return     string      Texte descripif

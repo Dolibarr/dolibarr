@@ -21,7 +21,7 @@
 /**
      	\file       htdocs/includes/modules/propale/mod_propale_marbre.php
 		\ingroup    propale
-		\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Marbre
+		\brief      Fichier contenant la classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de propale Marbre
 		\version    $Id$
 */
 
@@ -29,7 +29,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php")
 
 
 /**	    \class      mod_propale_marbre
-		\brief      Classe du modèle de numérotation de référence de propale Marbre
+		\brief      Classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de propale Marbre
 */
 
 class mod_propale_marbre extends ModeleNumRefPropales
@@ -40,16 +40,16 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	var $nom = "Marbre";
 	
 
-    /**     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
     function info()
     {
-      return "Renvoie le numéro sous la forme PRyymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0";
+      return "Renvoie le numero sous la forme PRyymm-nnnn oe yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise e 0";
     }
 
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -58,8 +58,8 @@ class mod_propale_marbre extends ModeleNumRefPropales
     }
 
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
+    /**     \brief      Test si les numeros deje en vigueur dans la base ne provoquent pas de
+     *                  de conflits qui empechera cette numerotation de fonctionner.
      *      \return     boolean     false si conflit, true si ok
      */
     function canBeActivated()
@@ -80,7 +80,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
         }
         else
         {
-            $this->error='Une propal commençant par $pryymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.';
+            $this->error='Une propal commeneant par $pryymm existe en base et est incompatible avec cette numerotation. Supprimer la ou renommer la pour activer ce module.';
             return false;    
         }
     }
@@ -94,7 +94,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
     {
         global $db;
 
-        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
         $posindice=8;
         $sql = "SELECT MAX(0+SUBSTRING(ref,".$posindice.")) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
