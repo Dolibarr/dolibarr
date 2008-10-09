@@ -219,27 +219,6 @@ if (! $error && $db->connected)
 	
 	<tr><td align="center" class="label" colspan="3"><h3><?php echo $langs->trans("CharsetChoice");?></h3></td></tr>
 	
-	<tr>
-		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetClient"); ?></td>
-		<td valign="top" class="label"><select name="character_set_client">
-		<option value="ISO-8859-1">ISO-8859-1</option>
-		<option value="UTF-8">UTF-8 <?php echo $langs->trans("Experimental") ?></option>
-<!--
-		<option>ISO-8859-15</option>
-		<option>cp866</option>
-		<option>cp1251</option>
-		<option>cp1252</option>
-		<option>KOI8-R</option>
-		<option>BIG5</option>
-		<option>GB2312</option>
-		<option>BIG5-HKSCS</option>
-		<option>Shift_JIS</option>
-		<option>EUC-JP</option>
--->
-		</select></td>
-		<td class="label"><div class="comment"><?php echo $langs->trans("CharacterSetClientComment"); ?></div></td>
-	</tr>
-
 	<?php
 	$defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
 	$defaultCollationConnection=$db->getDefaultCollationDatabase();

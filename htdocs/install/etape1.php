@@ -147,10 +147,6 @@ if ($_POST["action"] == "set")
 			fputs($fp, '$dolibarr_main_db_character_set="'.$_POST["character_set_database"].'";');
 			fputs($fp,"\n");
 			
-			/* Choix des charsets*/
-			fputs($fp, '$character_set_client="'.$_POST["character_set_client"].'";');
-			fputs($fp,"\n");
-			
 			fputs($fp, '$dolibarr_main_db_collation="'.$_POST["dolibarr_main_db_collation"].'";');
 			fputs($fp,"\n");
 
@@ -281,7 +277,7 @@ if ($_POST["action"] == "set")
 	*/
 	if (! $error)
 	{
-		conf($dolibarr_main_document_root );
+		conf($dolibarr_main_document_root);
 		
 		$userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
 		$passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";

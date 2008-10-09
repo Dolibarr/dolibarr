@@ -51,7 +51,7 @@ if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
 
-// Init "forced values" to nothing. "forced values" are used after an doliwamp install wizard.
+// Init "forced values" to nothing. "forced values" are used after a Doliwamp install wizard.
 if (file_exists("./install.forced.php")) include_once("./install.forced.php");
 
 dolibarr_install_syslog("etape2: Entering etape2.php page");
@@ -154,7 +154,8 @@ if ($_POST["action"] == "set")
                     
 	                //print "<tr><td>Creation de la table $name/td>";
 					$requestnb++;
-					if ($character_set_client=="UTF-8"){
+					if ($conf->character_set_client == "UTF-8")
+					{
 						$buffer=utf8_encode ($buffer);
 					}
 					
@@ -265,7 +266,8 @@ if ($_POST["action"] == "set")
 	                    {
 			                //print "<tr><td>Creation des cles et index de la table $name: '$buffer'</td>";
 							$requestnb++;
-							if ($character_set_client=="UTF-8"){
+							if ($conf->character_set_client == "UTF-8")
+							{
 								$buffer=utf8_encode ($buffer);
 							}
 							

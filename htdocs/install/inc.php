@@ -109,9 +109,9 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
-if (! isset($conf->character_set_client))     $conf->character_set_client='iso-8859-1';
-if (! isset($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
-if (! isset($conf->db->user)) $conf->db->user='';
+if (empty($conf->character_set_client))     	  $conf->character_set_client=$charset;
+if (empty($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
+if (empty($conf->db->user)) $conf->db->user='';
 
 	
 // Security check
@@ -190,6 +190,7 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_name;
 	global $dolibarr_main_db_user;
 	global $dolibarr_main_db_pass;
+	global $character_set_client;
 
     $return=include_once($dolibarr_main_document_root."/conf/conf.class.php");
     if (! $return) return -1;
@@ -201,11 +202,12 @@ function conf($dolibarr_main_document_root)
 	$conf->db->name = trim($dolibarr_main_db_name);
 	$conf->db->user = trim($dolibarr_main_db_user);
 	$conf->db->pass = trim($dolibarr_main_db_pass);
-	if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
+
+	if (empty($character_set_client)) $character_set_client=$charset;
 	$conf->character_set_client=$character_set_client;
-	if (! isset($dolibarr_main_db_charset) || ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='latin1'; 
+	if (empty($dolibarr_main_db_charset)) $dolibarr_main_db_charset='latin1'; 
 	$conf->db->character_set=$dolibarr_main_db_charset;
-	if (! isset($dolibarr_main_db_collation) || ! $dolibarr_main_db_collation) $dolibarr_main_db_collation='latin1_swedish_ci';
+	if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
 	$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
 
 	return 1;
