@@ -60,6 +60,8 @@ require_once(DOL_DOCUMENT_ROOT.'/lib/files.lib.php');
 // C'est un wrapper, donc header vierge
 function llxHeader() { }
 
+// Default encoding for HTTP output if no encoding can be found for file to download 
+//$encoding='ISO-8859-1';
 
 $action = $_GET["action"];
 $original_file = urldecode($_GET["file"]);
@@ -91,7 +93,6 @@ $original_file = str_replace("../","/", "$original_file");
 $refname=basename(dirname($original_file)."/");
 
 $accessallowed=0;
-$encoding='ISO-8859-1';				// By default
 $sqlprotectagainstexternals='';
 if ($modulepart)
 {
