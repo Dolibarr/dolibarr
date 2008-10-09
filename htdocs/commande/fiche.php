@@ -33,6 +33,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/lib/project.lib.php');
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
@@ -1569,7 +1570,7 @@ else
 								if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 								{
 									$url = $_SERVER["PHP_SELF"].'?id='.$id.'&lineid='.$objp->rowid.'&action=confirm_deleteline&confirm=yes';
-									print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProductLine').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'deleteline'.$i.'\')">';
+									print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmDeleteProductLine')).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'deleteline'.$i.'\')">';
 								}
 								else
 								{
@@ -1852,7 +1853,7 @@ else
 								$num = $commande->ref;
 							}
 							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_validate&confirm=yes';
-							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateOrder',$num)).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateOrder',$num)).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'validate\')"';
 						}
 						else
 						{
@@ -1912,7 +1913,7 @@ else
 							if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 							{
 								$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_close&confirm=yes';
-								print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmCloseOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'close\')"';
+								print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmCloseOrder')).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'close\')"';
 							}
 							else
 							{
@@ -1932,7 +1933,7 @@ else
 							if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 							{
 								$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_cancel&confirm=yes';
-								print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmCancelOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'cancel\')"';
+								print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmCancelOrder')).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'cancel\')"';
 							}
 							else
 							{
@@ -1949,7 +1950,7 @@ else
 						if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 						{
 							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_delete&confirm=yes';
-							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
+							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmDeleteOrder')).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'delete\')"';
 						}
 						else
 						{
