@@ -22,27 +22,27 @@
 
 /**
  *	\file       htdocs/lib/databases/mysqli.lib.php
- *	\brief      Fichier de la classe permettant de g�rer une base mysql
+ *	\brief      Class file to manage Dolibarr database access for a Mysql database
  *	\version	$Id$
  */
-// Pour compatibilit� lors de l'upgrade
+// For compatibility during upgrade
 if (! defined('DOL_DOCUMENT_ROOT'))	 define('DOL_DOCUMENT_ROOT', '../..');
 if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 
 /**
  *	\class      DoliDb
- *	\brief      Classe permettant de g�r�r la database de dolibarr
+ *	\brief      Class to manage Dolibarr database access for a Mysql database
  */
 class DoliDb
 {
-	//! Handler de base
+	//! Database handler
 	var $db;
-	//! Nom du gestionnaire
+	//! Database type
 	var $type='mysqli';
-	//! Charset
+	//! Charset used to force charset when creating database
 	var $forcecharset='latin1';
-	//! Collate
+	//! Collate used to force collate when creating database
 	var $forcecollate='latin1_swedish_ci';
 	//! Version min database
 	var $versionmin=array(4,1,0);
@@ -79,7 +79,7 @@ class DoliDb
 	 \param	    pass		Mot de passe
 	 \param	    name		Nom de la database
 	 \param	    port		Port of database server
-	 \return    int			1 en cas de succ�s, 0 sinon
+	 \return    int			1 en cas de succes, 0 sinon
 	 */
 	function DoliDb($type='mysqli', $host, $user, $pass, $name='', $port=0)
 	{
@@ -101,8 +101,8 @@ class DoliDb
 		{
 			$this->connected = 0;
 			$this->ok = 0;
-			$this->error="Mysqli PHP functions are not available in this version of PHP. Try to use another driver.";
-			dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions are not available in this version of PHP. Try to use another driver.",LOG_ERR);
+			$this->error="Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.";
+			dolibarr_syslog("DoliDB::DoliDB : Mysqli PHP functions for using Mysqli driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -116,6 +116,7 @@ class DoliDb
 		}
 
 		// Essai connexion serveur
+		// We do not try to connect to database, only to server. Connect to database is done later in constrcutor
 		$this->db = $this->connect($host, $user, $pass, '', $port);
 
 		if ($this->db)
@@ -132,7 +133,7 @@ class DoliDb
 			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysqli_connect_error=".$this->error,LOG_ERR);
 		}
 
-		// Si connexion serveur ok et si connexion base demand�e, on essaie connexion base
+		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
 		if ($this->connected && $name)
 		{
 			if ($this->select_db($name))
@@ -141,13 +142,15 @@ class DoliDb
 				$this->database_name = $name;
 				$this->ok = 1;
 
-				// If client connected with different charset than Dolibarr database
-				// (La base Dolibarr was forced to this->forcecharset during install)
-				/*if (mysqli_client_encoding ( $this->db ) != $this->getDefaultCharacterSetDatabase())
+				// If client connected with different charset than Dolibarr HTML output
+				$clientmustbe='';
+				if (eregi('UTF-8',$conf->character_set_client))      $clientmustbe='utf8';
+				if (eregi('ISO-8859-1',$conf->character_set_client)) $clientmustbe='latin1';
+				if (mysqli_client_encoding($this->db) != $clientmustbe)
 				{
-				$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
-				$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
-				}*/
+					$this->query("SET NAMES '".$clientmustbe."'", $this->db);
+					//$this->query("SET CHARACTER SET ". $this->forcecharset);
+				}
 			}
 			else
 			{
@@ -155,13 +158,26 @@ class DoliDb
 				$this->database_name = '';
 				$this->ok = 0;
 				$this->error=$this->error();
-				dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
+				dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db ".$this->error,LOG_ERR);
 			}
 		}
 		else
 		{
 			// Pas de selection de base demandee, ok ou ko
 			$this->database_selected = 0;
+			
+			if ($this->connected)
+			{
+				// If client connected with different charset than Dolibarr HTML output
+				$clientmustbe='';
+				if (eregi('UTF-8',$conf->character_set_client))      $clientmustbe='utf8';
+				if (eregi('ISO-8859-1',$conf->character_set_client)) $clientmustbe='latin1';
+				if (mysqli_client_encoding($this->db) != $clientmustbe)
+				{
+					$this->query("SET NAMES '".$clientmustbe."'", $this->db);
+					//$this->query("SET CHARACTER SET ". $this->forcecharset);
+				}
+			}
 		}
 
 		return $this->ok;
@@ -190,7 +206,7 @@ class DoliDb
 
 
 	/**
-	 *	\brief      Connection vers le serveur
+	 *	\brief      Connexion to server
 	 *	\param	    host		database server host
 	 *	\param	    login		login
 	 *	\param	    passwd		password
@@ -201,7 +217,7 @@ class DoliDb
 	 */
 	function connect($host, $login, $passwd, $name, $port=0)
 	{
-		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name");
+		dolibarr_syslog("DoliDB::connect host=$host, port=$port, login=$login, passwd=--hidden--, name=$name",LOG_DEBUG);
 
 		$newhost=$host;
 		$newport=$port;
@@ -210,17 +226,8 @@ class DoliDb
 		if (! $newport) $newport=3306;
 
 		$this->db  = @mysqli_connect($newhost, $login, $passwd, $name, $newport);
-		// Force recors to latin1 if database is in utf8 by default
-		// Removed becasue faile on my PHP-Mysql.
-		// De plus, la base est forcement en latin1 avec
-		// les nouvelles version de Dolibarr car force par l'install Dolibarr.
-		//$this->query('SET NAMES '.$this->forcecharset);
+
 		//print "Resultat fonction connect: ".$this->db;
-		if ($this->db)
-		{
-			$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
-			$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
-		}
 		return $this->db;
 	}
 
@@ -350,7 +357,7 @@ class DoliDb
 		$query = trim($query);
 		if (! $this->database_name)
 		{
-			// Ordre SQL ne n�cessitant pas de connexion � une base (exemple: CREATE DATABASE
+			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
 			$ret = mysqli_query($this->db,$query);
 		}
 		else
@@ -381,7 +388,7 @@ class DoliDb
 	 */
 	function fetch_object($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_object($resultset)) { $resultset=$this->results; }
 		return mysqli_fetch_object($resultset);
 	}
@@ -395,7 +402,7 @@ class DoliDb
 
 	function fetch_array($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_object($resultset)) { $resultset=$this->results; }
 		return mysqli_fetch_array($resultset);
 	}
@@ -408,7 +415,7 @@ class DoliDb
 
 	function fetch_row($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_bool($resultset))
 		{
 			if (! is_object($resultset)) { $resultset=$this->results; }
@@ -416,7 +423,7 @@ class DoliDb
 		}
 		else
 		{
-			// si le curseur est un bool�en on retourne la valeur 0
+			// si le curseur est un booleen on retourne la valeur 0
 			return 0;
 		}
 	}
@@ -521,11 +528,11 @@ class DoliDb
 
 
 	/**
-	 *   \brief      Formatage (par la base de donn�es) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
-	 *               afin de retourner une donn�e toujours au format universel date tms unix.
+	 *   \brief      Formatage (par la base de donn�es) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
+	 *               afin de retourner une donn�e toujours au format universel date TMS unix.
 	 *               Fonction � utiliser pour g�n�rer les SELECT.
-	 *   \param	    param       Date au format text � convertir
-	 *   \return	    date        Date au format tms.
+	 *   \param	    param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
+	 *   \return	    date        Date au format TMS.
 	 *	\TODO		Remove unix_timestamp functions
 	 */
 	function pdate($param)
@@ -536,8 +543,8 @@ class DoliDb
 	/**
 	 *   \brief     Formatage (par PHP) d'une date vers format texte pour insertion dans champ date.
 	 *              Fonction � utiliser pour g�n�rer les INSERT, UPDATE ou les clauses WHERE
-	 *   \param	    param       Date tms � convertir
-	 *   \return	date        Date au format text YYYYMMDDHHMMSS.
+	 *   \param	    param       Date TMS � convertir
+	 *   \return	date        Date au format texte YYYYMMDDHHMMSS.
 	 */
 	function idate($param)
 	{
@@ -688,20 +695,23 @@ class DoliDb
 
 
 	/**
-	 \brief          Cr�ation d'une nouvelle base de donn�e
-	 \param	        database		nom de la database � cr�er
-	 \return	        resource		resource d�finie si ok, null si k
-	 \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
+	 *	\brief          Create a new database
+	 *	\param	        database		Database name to create
+	 *	\return	        resource		resource defined if OK, null if KO
+	 *	\remarks        Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
+	 *					We force to create database with charset this->forcecharset and collate this->forcecollate
 	 */
 	function DDLCreateDb($database)
 	{
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;
 		$sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+
+		dolibarr_syslog($sql,LOG_DEBUG);
 		$ret=$this->query($sql);
 		if (! $ret)
 		{
-			// On r�essaie pour compatibilit� avec Mysql < 4.1.1
+			// We try again for compatibility with Mysql < 4.1.1
 			$sql = 'CREATE DATABASE '.$database;
 			$ret=$this->query($sql);
 		}
@@ -721,7 +731,7 @@ class DoliDb
 		$like = '';
 		if ($table) $like = "LIKE '".$table."'";
 		$sql="SHOW TABLES FROM ".$database." ".$like.";";
-		// $sql;
+		//print $sql;
 		$result = $this->query($sql);
 		while($row = $this->fetch_row($result))
 		{
@@ -799,7 +809,7 @@ class DoliDb
 		$sql .= ",".implode(',',$sqlk);
 		$sql .=") type=".$type;
 
-		dolibarr_syslog($sql);
+		dolibarr_syslog($sql,LOG_DEBUG);
 		if(! $this -> query($sql))
 		return -1;
 		else
@@ -816,7 +826,7 @@ class DoliDb
 	{
 		$sql="DESC ".$table." ".$field;
 
-		dolibarr_syslog($sql);
+		dolibarr_syslog($sql,LOG_DEBUG);
 		$this->results = $this->query($sql);
 		return $this->results;
 	}
@@ -850,6 +860,7 @@ class DoliDb
 		$sql  .= " ".$field_desc['extra'];
 		$sql .= " ".$field_position;
 
+		dolibarr_syslog($sql,LOG_DEBUG);
 		if(! $this -> query($sql))
 		return -1;
 		else
@@ -902,7 +913,8 @@ class DoliDb
 	 *	\brief		Return charset used to store data in database
 	 *	\return		string		Charset
 	 */
-	function getDefaultCharacterSetDatabase(){
+	function getDefaultCharacterSetDatabase()
+	{
 		$resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
 		if (!$resql)
 		{
@@ -913,7 +925,12 @@ class DoliDb
 		return $liste['Value'];
 	}
 
-	function getListOfCharacterSet(){
+	/**
+	 *	\brief		Return list of available charset that can be used to store data in database
+	 *	\return		array		List of Charset
+	 */
+	function getListOfCharacterSet()
+	{
 		$resql=$this->query('SHOW CHARSET');
 		$liste = array();
 		if ($resql)
@@ -937,7 +954,8 @@ class DoliDb
 	 *	\brief		Return collation used in database
 	 *	\return		string		Collation value
 	 */
-	function getDefaultCollationDatabase(){
+	function getDefaultCollationDatabase()
+	{
 		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
 		if (!$resql)
 		{
@@ -948,7 +966,12 @@ class DoliDb
 		return $liste['Value'];
 	}
 
-	function getListOfCollation(){
+	/**
+	 *	\brief		Return list of available collation that can be used for database
+	 *	\return		array		Liste of Collation
+	 */
+	function getListOfCollation()
+	{
 		$resql=$this->query('SHOW COLLATION');
 		$liste = array();
 		if ($resql)

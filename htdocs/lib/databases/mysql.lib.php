@@ -79,7 +79,7 @@ class DoliDb
 	 \param	    pass		Mot de passe
 	 \param	    name		Nom de la database
 	 \param	    port		Port of database server
-	 \return	int			1 en cas de succ�s, 0 sinon
+	 \return	int			1 en cas de succes, 0 sinon
 	 */
 	function DoliDb($type='mysql', $host, $user, $pass, $name='', $port=0)
 	{
@@ -95,12 +95,14 @@ class DoliDb
 
 		$this->transaction_opened=0;
 
+		//print "Name DB: $host,$user,$pass,$name<br>";
+
 		if (! function_exists("mysql_connect"))
 		{
 			$this->connected = 0;
 			$this->ok = 0;
-			$this->error="Mysql PHP functions for using MySql driver are not available in this version of PHP";
-			dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions for using Mysql driver are not available in this version of PHP",LOG_ERR);
+			$this->error="Mysql PHP functions for using MySql driver are not available in this version of PHP. Try to use another driver.";
+			dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions for using Mysql driver are not available in this version of PHP. Try to use another driver.",LOG_ERR);
 			return $this->ok;
 		}
 
@@ -350,7 +352,7 @@ class DoliDb
 
 		if (! $this->database_name)
 		{
-			// Ordre SQL ne n�cessitant pas de connexion � une base (exemple: CREATE DATABASE)
+			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
 			$ret = mysql_query($query, $this->db);
 		}
 		else
@@ -381,7 +383,7 @@ class DoliDb
 	 */
 	function fetch_object($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return mysql_fetch_object($resultset);
 	}
@@ -393,7 +395,7 @@ class DoliDb
 	 */
 	function fetch_array($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return mysql_fetch_array($resultset);
 	}
@@ -406,7 +408,7 @@ class DoliDb
 	 */
 	function fetch_row($resultset=0)
 	{
-		// Si le resultset n'est pas fourni, on prend le dernier utilis� sur cette connexion
+		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
 		if (! is_resource($resultset)) { $resultset=$this->results; }
 		return @mysql_fetch_row($resultset);
 	}
