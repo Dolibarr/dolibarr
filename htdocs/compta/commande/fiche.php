@@ -36,6 +36,7 @@ $langs->load("orders");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load('deliveries');
+$langs->load('sendings');
 
 if (! $user->rights->commande->lire) accessforbidden();
 
