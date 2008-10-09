@@ -705,8 +705,10 @@ class Account extends CommonObject
 		$sql = "SELECT b.rowid,".$this->db->pdate("b.datev")." as datefin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
 		$sql.= " WHERE b.rappro=0 AND b.fk_account = ba.rowid";
-		$sql.= " AND ba.rappro = 1";	// Compte rapprochable
+		$sql.= " AND (ba.rappro = 1 AND ba.courant != 2)";	// Compte rapprochable
 		if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
+
+		//print $sql;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
