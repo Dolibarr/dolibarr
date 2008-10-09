@@ -61,7 +61,7 @@ else
 
 $includeconferror='';
 $conffile = "../conf/conf.php";
-$charset="ISO-8859-1";
+$charset="UTF-8";	// If not output format found in any conf file
 if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {
 	$result=include_once($conffile);	// Load conf file
@@ -204,7 +204,7 @@ function conf($dolibarr_main_document_root)
 	$conf->db->pass = trim($dolibarr_main_db_pass);
 
 	if (empty($character_set_client)) $character_set_client=$charset;
-	$conf->character_set_client=$character_set_client;
+	$conf->character_set_client=strtoupper($character_set_client);
 	if (empty($dolibarr_main_db_charset)) $dolibarr_main_db_charset='latin1'; 
 	$conf->db->character_set=$dolibarr_main_db_charset;
 	if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';

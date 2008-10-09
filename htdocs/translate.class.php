@@ -20,7 +20,7 @@
 
 /**
  *   	\file       htdocs/translate.class.php
- *		\brief      File for tanslation class
+ *		\brief      File for Tanslate class
  *		\author	    Eric Seigne
  *		\author	    Laurent Destailleur
  *		\version    $Id$
@@ -43,8 +43,8 @@ class Translate {
 	
     var $cache_labels=array();		// Cache for labels
 	
-    var $charset_inputfile='ISO-8859-1';	// Codage du contenu du fichier langue
-	var $charset_output='UTF-8';		// Codage par defaut de la sortie de la methode trans
+    var $charset_inputfile='ISO-8859-1';	// Codage used to encode lang files (used if CHARSET not found in file)
+	var $charset_output='UTF-8';			// Codage used by defaut for "trans" method output if $conf->character_set_client not defined (character_set_client in conf.php)
 	
 
     /**
@@ -54,13 +54,12 @@ class Translate {
      */
     function Translate($dir = "",$conf)
     {
-		// Si charset output defini
-		if (isset($conf->character_set_client) && $conf->character_set_client) 
+		// If charset output is forced
+		if (! empty($conf->character_set_client)) 
 		{
 			$this->charset_output=$conf->character_set_client;
 		}
 		$this->dir=(! $dir ? DOL_DOCUMENT_ROOT ."/langs" : $dir);
-		
 		// For developpement purpose
 		$this->dir_bis=(defined('DOL_DOCUMENT_ROOT_BIS') ? DOL_DOCUMENT_ROOT_BIS ."/langs" : "");
     }
@@ -484,17 +483,23 @@ class Translate {
 
    /**
      *  \brief      Renvoi le fichier $filename dans la version de la langue courante, sinon alternative
-     *  \param      filename        nom du fichier � rechercher
+     *  \param      filename        nom du fichier a rechercher
      *  \param      searchalt       cherche aussi dans langue alternative
 	 *	\return		boolean
      */
     function print_file($filename,$searchalt=0)
     {
+    	global $conf;
+    	
         // Test si fichier dans repertoire de la langue
         $htmlfile=$this->dir."/".$this->defaultlang."/".$filename;
         if (is_readable($htmlfile))
         {
-            include $htmlfile;
+            $content=file_get_contents($htmlfile);
+            $isutf8=utf8_check($content);
+	        if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content); 
+	        elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content); 
+	        else print $content;
             return true;
         }
 
@@ -504,8 +509,12 @@ class Translate {
             else $htmlfilealt = $this->dir."/fr_FR/".$filename;
             if (is_readable($htmlfilealt))
             {
-                include $htmlfilealt;
-                return true;
+	            $content=file_get_contents($htmlfile);
+            	$isutf8=utf8_check($content);
+	            if (! $isutf8 && $conf->character_set_client == 'UTF-8') print utf8_encode($content); 
+	            elseif ($isutf8 && $conf->character_set_client == 'ISO-8859-1') print utf8_decode($content); 
+	            else print $content;
+	            return true;
             }
         }
         

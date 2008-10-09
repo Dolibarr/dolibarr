@@ -22,7 +22,7 @@
 
 /**
  *	\file       	htdocs/lib/databases/mysql.lib.php
- *	\brief      	Fichier de la classe permettant de g�rer une base mysql
+ *	\brief      	Class file to manage Dolibarr database access for a Mysql database
  *	\version		$Id$
  */
 // For compatibility during upgrade
@@ -32,23 +32,23 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 /**
  *	\class      DoliDb
- *	\brief      Classe de gestion de la database de dolibarr
+ *	\brief      Class to manage Dolibarr database access for a Mysql database
  */
 class DoliDb
 {
-	//! Handler de base
+	//! Database handler
 	var $db;
-	//! Nom du gestionnaire
+	//! Database type
 	var $type='mysql';
-	//! Charset
+	//! Charset used to force charset when creating database
 	var $forcecharset='latin1';
-	//! Collate
+	//! Collate used to force collate when creating database
 	var $forcecollate='latin1_swedish_ci';
 	//! Version min database
 	var $versionmin=array(3,1,0);
 	//! Resultset of last request
 	var $results;
-	//! 1 if connected, 0 else  
+	//! 1 if connected, 0 else
 	var $connected;
 	//! 1 if database selected, 0 else
 	var $database_selected;
@@ -80,7 +80,7 @@ class DoliDb
 	 \param	    name		Nom de la database
 	 \param	    port		Port of database server
 	 \return	int			1 en cas de succ�s, 0 sinon
-  	*/
+	 */
 	function DoliDb($type='mysql', $host, $user, $pass, $name='', $port=0)
 	{
 		global $conf,$langs;
@@ -129,7 +129,7 @@ class DoliDb
 			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".$this->error,LOG_ERR);
 		}
 
-		// Si connexion serveur ok et si connexion base demand�e, on essaie connexion base
+		// Si connexion serveur ok et si connexion base demandee, on essaie connexion base
 		if ($this->connected && $name)
 		{
 			if ($this->select_db($name))
@@ -138,13 +138,15 @@ class DoliDb
 				$this->database_name = $name;
 				$this->ok = 1;
 
-				// If client connected with different charset than Dolibarr database
-				// (La base Dolibarr was forced to this->forcecharset during install)
-				/*if (mysql_client_encoding ( $this->db ) != $this->getDefaultCharacterSetDatabase())
+				// If client connected with different charset than Dolibarr HTML output
+				$clientmustbe='';
+				if (eregi('UTF-8',$conf->character_set_client))      $clientmustbe='utf8';
+				if (eregi('ISO-8859-1',$conf->character_set_client)) $clientmustbe='latin1';
+				if (mysql_client_encoding($this->db) != $clientmustbe)
 				{
-				$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
-				$this->query("SET CHARACTER SET ". $this->forcecharset);
-				}*/
+					$this->query("SET NAMES '".$clientmustbe."'", $this->db);
+					//$this->query("SET CHARACTER SET ". $this->forcecharset);
+				}
 			}
 			else
 			{
@@ -159,6 +161,19 @@ class DoliDb
 		{
 			// Pas de selection de base demandee, ok ou ko
 			$this->database_selected = 0;
+			
+			if ($this->connected)
+			{
+				// If client connected with different charset than Dolibarr HTML output
+				$clientmustbe='';
+				if (eregi('UTF-8',$conf->character_set_client))      $clientmustbe='utf8';
+				if (eregi('ISO-8859-1',$conf->character_set_client)) $clientmustbe='latin1';
+				if (mysql_client_encoding($this->db) != $clientmustbe)
+				{
+					$this->query("SET NAMES '".$clientmustbe."'", $this->db);
+					//$this->query("SET CHARACTER SET ". $this->forcecharset);
+				}
+			}
 		}
 
 		return $this->ok;
@@ -186,7 +201,7 @@ class DoliDb
 	}
 
 	/**
-	 *	\brief		Connection vers le serveur
+	 *	\brief		Connexion to server
 	 *	\param	    host		database server host
 	 *	\param	    login		login
 	 *	\param	    passwd		password
@@ -205,17 +220,7 @@ class DoliDb
 		if ($port) $newhost.=':'.$port;
 
 		$this->db  = @mysql_connect($newhost, $login, $passwd);
-		// Force recors to latin1 if database is in utf8 by default
-		// Removed becasue faile on my PHP-Mysql.
-		// De plus, la base est forcement en latin1 avec
-		// les nouvelles version de Dolibarr car force par l'install Dolibarr.
-		//$this->query('SET NAMES '.$this->forcecharset);
-		//print "Resultat fonction connect: ".$this->db;
-		if ($this->db)
-		{
-			$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
-			$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
-		}
+
 		//print "Resultat fonction connect: ".$this->db;
 		return $this->db;
 	}
@@ -250,7 +255,7 @@ class DoliDb
 	/**
 	 \brief          Renvoie la version du serveur dans un tableau
 	 \return	        array  		Tableau de chaque niveau de version
-  */
+	 */
 	function getVersionArray()
 	{
 		return split('\.',$this->getVersion());
@@ -261,7 +266,7 @@ class DoliDb
 	 \brief      Fermeture d'une connexion vers une database.
 	 \return	    resource
 	 \seealso	connect
-  */
+	 */
 	function close()
 	{
 		return mysql_close($this->db);
@@ -271,7 +276,7 @@ class DoliDb
 	/**
 	 \brief      Debut d'une transaction.
 	 \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
-  */
+	 */
 	function begin()
 	{
 		if (! $this->transaction_opened)
@@ -616,8 +621,8 @@ class DoliDb
 			1216 => 'DB_ERROR_NO_PARENT',
 			1217 => 'DB_ERROR_CHILD_EXISTS',
 			1451 => 'DB_ERROR_CHILD_EXISTS'
-		     );
-			
+			);
+				
 			if (isset($errorcode_map[mysql_errno($this->db)]))
 			{
 				return $errorcode_map[mysql_errno($this->db)];
@@ -672,21 +677,23 @@ class DoliDb
 
 
 	/**
-		\brief          Cr�ation d'une nouvelle base de donn�e
-		\param	        database		nom de la database � cr�er
-		\return	        resource		resource d�finie si ok, null si k
-		\remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
-		On force creation de la base avec le charset forcecharset
-		*/
+	 *	\brief          Create a new database
+	 *	\param	        database		Database name to create
+	 *	\return	        resource		resource defined if OK, null if KO
+	 *	\remarks        Do not use function xxx_create_db (xxx=mysql, ...) as they are deprecated
+	 *					We force to create database with charset this->forcecharset and collate this->forcecollate
+	 */
 	function DDLCreateDb($database)
 	{
 		// ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
 		$sql = 'CREATE DATABASE '.$database;
 		$sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+
+		dolibarr_syslog($sql,LOG_DEBUG);
 		$ret=$this->query($sql);
 		if (! $ret)
 		{
-			// On r�essaie pour compatibilit� avec Mysql < 4.1.1
+			// We try again for compatibility with Mysql < 4.1.1
 			$sql = 'CREATE DATABASE '.$database;
 			$ret=$this->query($sql);
 		}
@@ -900,6 +907,10 @@ class DoliDb
 		return $liste['Value'];
 	}
 
+	/**
+	 *	\brief		Return list of available charset that can be used to store data in database
+	 *	\return		array		List of Charset
+	 */
 	function getListOfCharacterSet()
 	{
 		$resql=$this->query('SHOW CHARSET');
@@ -937,7 +948,12 @@ class DoliDb
 		return $liste['Value'];
 	}
 
-	function getListOfCollation(){
+	/**
+	 *	\brief		Return list of available collation that can be used for database
+	 *	\return		array		Liste of Collation
+	 */
+	function getListOfCollation()
+	{
 		$resql=$this->query('SHOW COLLATION');
 		$liste = array();
 		if ($resql)

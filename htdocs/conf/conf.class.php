@@ -40,7 +40,7 @@ class Conf
 	//! Objet des caracteristiques de connexions
 	var $db;            
 	//! Charset for HTML output
-	var $character_set_client;	
+	var $character_set_client;	// ISO-8859-1, UTF8
 
 	var $externalrss;
 	var $commande;

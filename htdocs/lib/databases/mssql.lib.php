@@ -40,9 +40,9 @@ class DoliDb
 	var $db;
 	//! Nom du gestionnaire
 	var $type='mssql';
-	//! Charset
+	//! Charset used to force charset when creating database
 	var $forcecharset='latin1';
-	//! Collate
+	//! Collate used to force collate when creating database
 	var $forcecollate='latin1_swedish_ci';
 	//! Version min database
 	var $versionmin=array(2000);

@@ -104,7 +104,7 @@ $dolibarr_main_db_type="";
 
 
 # dolibarr_main_db_character_set
-# Database character set used to store data.
+# Database character set used to store data (forced during database creation).
 # Default value: depends on database driver
 # Examples:
 # dolibarr_main_db_character_set="latin1";
@@ -113,7 +113,7 @@ $dolibarr_main_db_character_set="latin1";
 
 
 # dolibarr_main_db_collation
-# Database character set used to sort data.
+# Database character set used to sort data (forced during database creation).
 # Default value: depends on database driver
 # Examples:
 # dolibarr_main_db_collation="latin1_swedish_ci";
@@ -124,7 +124,7 @@ $dolibarr_main_db_collation="latin1_swedish_ci";
 # character_set_client
 # Page code for HTML outputs.
 # Default value: ISO-8859-1
-# Possible values: ISO-8859-1
+# Possible values: ISO-8859-1, UTF-8
 #
 $character_set_client="ISO-8859-1";
 

@@ -112,7 +112,7 @@ function sanitize_string($str,$newstr='_')
 	$forbidden_chars_to_underscore=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 	//$forbidden_chars_to_remove=array("(",")");
 	$forbidden_chars_to_remove=array();
-	
+
 	return str_replace($forbidden_chars_to_underscore,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
 }
 
@@ -124,11 +124,11 @@ function sanitize_string($str,$newstr='_')
  */
 function dol_escape_js($stringtoescape)
 {
-    // escape quotes and backslashes, newlines, etc.
-    return strtr($stringtoescape, array('\\'=>'\\\\',"'"=>"\\'",'"'=>'\\"',"\r"=>'\\r',"\n"=>'\\n','</'=>'<\/'));			
+	// escape quotes and backslashes, newlines, etc.
+	return strtr($stringtoescape, array('\\'=>'\\\\',"'"=>"\\'",'"'=>'\\"',"\r"=>'\\r',"\n"=>'\\n','</'=>'<\/'));
 }
 
-    
+
 
 
 /**
@@ -410,7 +410,7 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
  *							"%d/%m/%Y %H:%M",
  *							"%d/%m/%Y %H:%M:%S",
  *							"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
- * 	\param		to_gmt		false=output string if for local server TZ users, true=output string is for GMT users 
+ * 	\param		to_gmt		false=output string if for local server TZ users, true=output string is for GMT users
  *	\return     string      Formated date or '' if time is null
  */
 function dolibarr_print_date($time,$format='',$to_gmt=false)
@@ -563,7 +563,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 	if ($hour   == -1) $hour=0;
 	if ($minute == -1) $minute=0;
 	if ($second == -1) $second=0;
-		
+
 	// Check parameters
 	if ($check)
 	{
@@ -1271,7 +1271,7 @@ function img_mime($file,$alt='')
 	if (eregi('\.(avi|mvw|divx|xvid)',$file))    $mime='video';
 	if (eregi('\.(zip|rar|gz|tgz|z|cab|bz2)',$file))       $mime='archive';
 	if (empty($alt)) $alt='Mime type: '.$mime;
-	
+
 	$mime.='.png';
 	return '<img src="'.DOL_URL_ROOT.'/theme/common/mime/'.$mime.'" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
@@ -1660,20 +1660,20 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 		if (file_exists($file_name))
 		{
 			dolibarr_syslog("Functions.lib::dol_move_uploaded_file File ".$file_name." already exists", LOG_WARNING);
-			return -2;			
+			return -2;
 		}
 	}
-	
+
 	// Move file
 	$return=move_uploaded_file($src_file, $file_name);
 	if ($return)
 	{
 		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name, LOG_DEBUG);
-		return 1;			
+		return 1;
 	}
-	else 
+	else
 	{
-		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);			
+		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Failed to move ".$src_file." to ".$file_name, LOG_ERR);
 		return -3;
 	}
 }
@@ -2021,7 +2021,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 	global $langs,$conf;
 
 	$nbdecimal=$rounding;
-	
+
 	// Output separators by default (french)
 	$dec=','; $thousand=' ';
 
@@ -2620,7 +2620,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0)
  */
 function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0)
 {
-	if (dol_textishtml($stringtoencode)) 
+	if (dol_textishtml($stringtoencode))
 	{
 		// Replace "<br type="_moz" />" by "<br>". It's same and avoid pb with FPDF.
 		$stringtoencode=eregi_replace('<br( [ a-zA-Z_="]*)?/?>','<br>',$stringtoencode);
@@ -2661,7 +2661,7 @@ function dol_entity_decode($stringhtml)
 
 /**
  \brief		Check if a string is a correct iso string
- 			If not, it will we considered not HTML encoded even if it is by FPDF.
+ If not, it will we considered not HTML encoded even if it is by FPDF.
  \remarks	Example, if string contains euro symbol that has ascii code 128.
  \param		s		String to check
  \return	int		0 if bad iso, 1 if good iso
@@ -2691,7 +2691,7 @@ function dol_nboflines($s,$maxchar=0)
 {
 	$arraystring=split("\n",$s);
 	$nb=sizeof($arraystring);
-	
+
 	return $nb;
 }
 
@@ -2709,23 +2709,23 @@ function num_lines($texte,$maxlinesize=0)
 	$pattern = '/(<[^>]+>)/Uu';
 	$a = preg_split($pattern, $texte, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	$nblines = ((count($a)+1)/2);
-    // count possible auto line breaks 	 
-         if($maxlinesize) 	 
-         { 	 
-                  foreach ($a as $line) 	 
-                  { 	 
-                         if (strlen($line)>$maxlinesize) 	 
-                         { 	 
-                                 //$line_dec = html_entity_decode(strip_tags($line)); 	 
-                                 $line_dec = html_entity_decode($line); 	 
-                                 if(strlen($line_dec)>$maxlinesize) 	 
-                                 { 	 
-                                 $line_dec=wordwrap($line_dec,$maxlinesize,'\n',true); 	 
-                                 $nblines+=substr_count($line_dec,'\n'); 	 
-                                 } 	 
-                         } 	 
-                  } 	 
-         }
+	// count possible auto line breaks
+	if($maxlinesize)
+	{
+		foreach ($a as $line)
+		{
+			if (strlen($line)>$maxlinesize)
+			{
+				//$line_dec = html_entity_decode(strip_tags($line));
+				$line_dec = html_entity_decode($line);
+				if(strlen($line_dec)>$maxlinesize)
+				{
+					$line_dec=wordwrap($line_dec,$maxlinesize,'\n',true);
+					$nblines+=substr_count($line_dec,'\n');
+				}
+			}
+		}
+	}
 	return $nblines;
 }
 
@@ -2976,24 +2976,24 @@ function dol_sort_array($array, $index, $order='asc', $natsort, $case_sensitive)
  * 	\return true is empty or non-existing, false if it contains files
  */
 function is_emtpy_folder($folder){
-   if(is_dir($folder) ){
-       $handle = opendir($folder);
-       while( (gettype( $name = readdir($handle)) != "boolean")){
-               $name_array[] = $name;
-       }
-       foreach($name_array as $temp)
-           $folder_content .= $temp;
+	if(is_dir($folder) ){
+		$handle = opendir($folder);
+		while( (gettype( $name = readdir($handle)) != "boolean")){
+			$name_array[] = $name;
+		}
+		foreach($name_array as $temp)
+		$folder_content .= $temp;
 
-       if($folder_content == "...")
-           return true;
-       else
-           return false;
-       
-       closedir($handle);
-   }
-   else
-       return true; // Le répertoire n'existe pas
-} 
+		if($folder_content == "...")
+		return true;
+		else
+		return false;
+		 
+		closedir($handle);
+	}
+	else
+	return true; // Le répertoire n'existe pas
+}
 
 /**
  * 	\brief	Return an html table from an array
@@ -3026,4 +3026,30 @@ function array2tr($data,$troptions='',$tdoptions=''){
 	$text.= '</tr>' ;
 	return $text ;
 }
+
+
+/**
+ *      \brief      Check if a string is in UTF8
+ *      \param      $Str        String to check
+ * 		\return		boolean		True if string is UTF8, false if not
+ */
+function utf8_check($Str)
+{
+	for ($i=0; $i<strlen($Str); $i++)
+	{
+		if (ord($Str[$i]) < 0x80) continue; # 0bbbbbbb
+		elseif ((ord($Str[$i]) & 0xE0) == 0xC0) $n=1; # 110bbbbb
+		elseif ((ord($Str[$i]) & 0xF0) == 0xE0) $n=2; # 1110bbbb
+		elseif ((ord($Str[$i]) & 0xF8) == 0xF0) $n=3; # 11110bbb
+		elseif ((ord($Str[$i]) & 0xFC) == 0xF8) $n=4; # 111110bb
+		elseif ((ord($Str[$i]) & 0xFE) == 0xFC) $n=5; # 1111110b
+		else return false; # Does not match any model
+		for ($j=0; $j<$n; $j++) { # n bytes matching 10bbbbbb follow ?
+			if ((++$i == strlen($Str)) || ((ord($Str[$i]) & 0xC0) != 0x80))
+			return false;
+		}
+	}
+	return true;
+}
+
 ?>

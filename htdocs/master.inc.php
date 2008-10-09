@@ -139,9 +139,10 @@ $conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
 $conf->main_authentication = $dolibarr_main_authentication;
 // Force https
 $conf->main_force_https = $dolibarr_main_force_https;
-// Identifiant propre au client
-if (empty($character_set_client)) $character_set_client='ISO-8859-1';
-$conf->character_set_client=$character_set_client;
+// Define charset for HTML Output
+$charset='ISO-8859-1';	// If not output format found in any conf file
+if (empty($character_set_client)) $character_set_client=$charset;
+$conf->character_set_client=strtoupper($character_set_client);
 
 // Defini prefix
 if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];
