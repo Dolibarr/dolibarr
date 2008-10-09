@@ -74,5 +74,6 @@ CreateEmptyPropal				       =Crea vuoto VIERGE proposte commerciali o dalla list
 DefaultProposalDurationValidity			       =Default proposta commerciale durata di validità (in giorni) 
 UseCustomerContactAsPropalRecipientIfExist	       =Utilizzare l'indirizzo di contatto con i clienti se invece definito di indirizzo di terzi come proposta indirizzo del destinatario 
 
-# azur PDF Model
-PDFAzurDescription				       =Una proposta completa modello (logo. ..)
+# Documents models
+DocModelAzurDescription				       =Una proposta completa modello (logo. ..)
+DocModelJauneDescription                   =Jaune proposal model

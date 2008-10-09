@@ -334,11 +334,6 @@ PDFTourteauDescription						   =Modello di fattura Tourteau
 								   
 								   
 								   
-								   
-# NumRef Modules						   
-DefinedAndHasThisValue						   =Definiti e il valore di
-IsNotDefined							   =non definito
-								   
 TerreNumRefModelDesc1						   =NUMERO ritorno con formato %syymm-nnnn standard per le fatture e %syymm-nnnn per note di credito dove aa è anno, MM è il mese e NNNN è una sequenza senza pausa e non tornare a 0
 TerreNumRefModelError						   =Un disegno di legge che iniziano con $ syymm già esiste e non è compatibile con questo modello di sequenza. Rimuovere o rinominare per attivare questo modulo.
 								   

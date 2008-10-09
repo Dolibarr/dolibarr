@@ -55,7 +55,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		$this->db = $db;
 		$this->name = "azur";
-		$this->description = $langs->trans('PDFAzurDescription');
+		$this->description = $langs->trans('DocModelAzurDescription');
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';

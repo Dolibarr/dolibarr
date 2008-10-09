@@ -274,21 +274,10 @@ PDFTourteauDescription=Factuurmodel Tourteau
 
 
 # NumRef Modules
-DefinedAndHasThisValue=Définie et vaut
-IsNotDefined=N'est pas définie
 
 # deneb
 DenebNumRefModelDesc1=Renvoie le numéro de facture sous la forme, PREF-31-12-2004-01, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 31 décembre 2004) et d'un compteur.
 DenebNumRefModelDesc2=Si la constante FACTURE_DENEB_DELTA est définie, un offset est appliqué sur le compteur
-
-# janus
-JanusNumRefModelDesc1=Renvoie le numéro de facture sous une forme spéciale F50201 pour la 1ere facture de février 2005
-
-# jupiter
-JupiterNumRefModelDesc1=Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003
-
-# lune
-LuneNumRefModelDesc1=Système de numérotation mensuel sous la forme F0501015, qui correspond à la 15ème facture du mois de Janvier 2005
 
 # mars
 MarsNumRefModelDesc1=Numéro de facture sous la forme, PREF-10-2004-005, qui correspond à la 5ème facture d'octobre 2004 et où PREF est le préfix de la société.

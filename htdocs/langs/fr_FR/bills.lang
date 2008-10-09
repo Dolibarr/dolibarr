@@ -342,8 +342,6 @@ PDFTourteauDescription=Modèle de facture sans remise
 
 
 # NumRef Modules
-DefinedAndHasThisValue=Définie et vaut
-IsNotDefined=N'est pas définie
 
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et %syymm-nnnn pour les avoirs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
 TerreNumRefModelError=Une facture commençant par $syymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.

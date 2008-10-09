@@ -479,10 +479,6 @@ PDFTourteauDescription=Modelo de factura sin descuento
 
 
 
-
-DefinedAndHasThisValue=Definida y válida
-IsNotDefined=No está definida
-
 # deneb
 
 
@@ -500,57 +496,8 @@ IsNotDefined=No está definida
 DenebNumRefModelDesc1=Devuelve el número de factura en formato, PREF-31-12-2004-01, donde PREF es el prefijo comercial de la empresa,  seguido de la fecha (aquí el 31 de diciembre de 2004) y de un contador.
 DenebNumRefModelDesc2=Si se define la constante FACTURE_DENEB_DELTA, se aplica un offset sobre el contador
 
-# janus
-
-
-
-
-
-
-
-
-
-
-
-
-
-JanusNumRefModelDesc1=Devuelve el número de factura bajo el formato F50201 para la 1º factura de febrero de 2005
-
-# jupiter
-
-
-
-
-
-
-
-
-
-
-
-
-
-JupiterNumRefModelDesc1=Sistema de numeración mensual bajo el formato F20030715, que corresponde a la 15ª factura del mes de julio de 2003
-
-# lune
-
-
-
-
-
-
-
-
-
-
-
-
-
-LuneNumRefModelDesc1=Sistema de numeración mensual bajo el formato F0501015, que corresponde a la 15ª factura del mes de enero de 2005
 
 # mars
-
-
 
 
 

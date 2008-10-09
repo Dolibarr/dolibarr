@@ -45,7 +45,8 @@ class mod_propale_marbre extends ModeleNumRefPropales
      */
     function info()
     {
-      return "Renvoie le numero sous la forme PRyymm-nnnn oe yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise e 0";
+    	global $langs;
+      	return $langs->trans("MarbreNumRefModelDesc");
     }
 
 

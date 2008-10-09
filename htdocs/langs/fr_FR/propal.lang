@@ -75,21 +75,9 @@ CreateEmptyPropal=Créer proposition/devis vierge ou depuis liste de produits pré
 DefaultProposalDurationValidity=Délai de validité par défaut (en jours)
 UseCustomerContactAsPropalRecipientIfExist=Utiliser adresse contact suivi client si défini plutot que adresse tiers comme destinataire des propositions
 
-# azur PDF Model
-PDFAzurDescription=Modèle de propositions commerciales complet (logo...)
+# Documents models
+DocModelAzurDescription=Modèle de propositions commerciales complet (logo...)
+DocModelJauneDescription=Modele de proposition Jaune
 
 # NumRef Modules
-DefinedAndHasThisValue=Définie et vaut
-IsNotDefined=N'est pas définie
-
-# Emeraude
-EmeraudeNumRefModelDesc1=Renvoie le numéro sous la forme PRYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1
-EmeraudeNumRefModelDesc2=L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.
-EmeraudeNumRefModelDesc3=Définir le mois de début d'exercice dans configuration->société, ex: septembre.
-EmeraudeNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2007 une propale nommée PR0800001
-
-# Rubis
-RubisNumRefModelDesc1=Renvoie le numéro sous la forme PRYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1
-RubisNumRefModelDesc2=L'année s'incrémente de 1 SANS remise à zero en début d'année d'exercice.
-RubisNumRefModelDesc3=Définir le mois de début d'exercice dans configuration->société, ex: septembre.
-RubisNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2007 une propale nommée PR0800345
+MarbreNumRefModelDesc=Renvoie le numero sous la forme PRyymm-nnnn où yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise à 0

@@ -41,7 +41,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 	/**
 	 * 		\brief  Constructeur
-	 *		\param	db		handler acc�s base de donn�e
+	 *		\param	db		Database access handler
 	 */
 	function pdf_propale_jaune($db=0)
 	{
@@ -52,7 +52,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		
 		$this->db = $db;
 		$this->name = "jaune";
-		$this->description = "Modele de proposition Jaune";
+		$this->description = $langs->trans('DocModelJauneDescription');
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
