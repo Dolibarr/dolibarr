@@ -43,7 +43,8 @@ if ($conf->phenix->enabled && $conf->phenix->cookie)
 dolibarr_syslog("End session in DOLSESSID_".$dolibarr_main_db_name);
 
 session_destroy();
-session_name("DOLSESSID_".$dolibarr_main_db_name);
+$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+session_name($sessionname);
 session_start();
 session_unregister("dol_login");
 
