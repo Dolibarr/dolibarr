@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/compta/bank/rappro.php
         \ingroup    banque
         \brief      Page de rapprochement bancaire
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -36,8 +34,22 @@ if (! $user->rights->banque->consolidate) accessforbidden();
 
 
 /*
- * Action rapprochement
+ * Actions
  */
+
+if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $_GET["action"] == 'dvnext')
+{
+	$ac = new Account($db);
+	$ac->datev_next($_GET["rowid"]);
+}
+
+if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $_GET["action"] == 'dvprev')
+{
+	$ac = new Account($db);
+	$ac->datev_previous($_GET["rowid"]);
+}
+
+// Conciliation
 if ($user->rights->banque->consolidate && $_POST["action"] == 'rappro')
 {
 	// Definition, nettoyage parametres
@@ -120,12 +132,13 @@ if ($resql) {
 }
 
 
+/*
+ * View
+ */
+$form=new Form($db);
 
 llxHeader();
 
-/*
- * Affichage liste des transactions à rapprocher
- */
 $acct = new Account($db);
 $acct->fetch($_GET["account"]);
 
@@ -133,7 +146,7 @@ $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, ".$db->pdate("b.datev").
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= " WHERE rappro=0 AND fk_account=".$_GET["account"];
 $sql.= " ORDER BY dateo ASC";
-$sql.= " LIMIT 1000";	// Limite juste pour eviter saturation page.
+$sql.= " LIMIT 1000";	// Limit to avoid page overload
 
 $resql = $db->query($sql);
 if ($resql)
@@ -204,9 +217,30 @@ if ($resql)
         print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
         print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
 
+        // Date op
         print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->do,"day").'</td>';
-        print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->dv,"day").'</td>';
-        print '<td nowrap="nowrap">'.$objp->type.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
+        
+        // Date value
+		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
+		{
+			print '<td align="center">';
+			print dolibarr_print_date($objp->dv,"day");
+			print ' &nbsp; ';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+			print img_edit_remove() . "</a> ";
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvnext&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
+			print img_edit_add() ."</a>";
+			print '</td>';
+		}
+		else
+		{
+			print '<td align="center">';
+			print dolibarr_print_date($objp->dv,"day");
+			print '</td>';
+		}
+        
+		// Number
+		print '<td nowrap="nowrap">'.$objp->type.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
 
 		// Description
         print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
