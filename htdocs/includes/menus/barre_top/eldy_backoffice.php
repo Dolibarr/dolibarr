@@ -62,11 +62,6 @@ class MenuTop {
     {
         global $user,$conf,$langs,$dolibarr_main_db_name;;
         
-        if (! session_id()) {
-            session_name("DOLSESSID_".$dolibarr_main_db_name);
-            session_start();
-        }
-        
         // On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];

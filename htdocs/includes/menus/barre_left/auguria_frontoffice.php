@@ -23,11 +23,11 @@
 		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
-        \remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,
-        \remarks    définir la liste des entrées menu à faire apparaitre.
+        \remarks    A l'aide d'un objet $newmenu=new Menu() et des mï¿½thode add et add_submenu,
+        \remarks    dï¿½finir la liste des entrï¿½es menu ï¿½ faire apparaitre.
         \remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
-        \remarks    Ce qui est défini dans un tel gestionnaire sera alors prioritaire sur
-        \remarks    les définitions de menu des fichiers pre.inc.php
+        \remarks    Ce qui est dï¿½fini dans un tel gestionnaire sera alors prioritaire sur
+        \remarks    les dï¿½finitions de menu des fichiers pre.inc.php
 */
 
 
@@ -66,19 +66,14 @@ class MenuLeft {
     {
         global $user,$conf,$langs,$dolibarr_main_db_name;
         
-        if (! session_id()) {
-            session_name("DOLSESSID_".$dolibarr_main_db_name);
-            session_start();    // En mode authentification PEAR, la session a dï¿½jï¿½ ï¿½tï¿½ ouverte
-        }
-
-        // On rï¿½cupï¿½re mainmenu et leftmenu qui dï¿½finissent le menu ï¿½ afficher
+        // On recupere mainmenu et leftmenu qui definissent le menu a afficher
         if (isset($_GET["mainmenu"])) {
             // On sauve en session le menu principal choisi
             $mainmenu=$_GET["mainmenu"];
             $_SESSION["mainmenu"]=$mainmenu;
             $_SESSION["leftmenuopened"]="";
         } else {
-            // On va le chercher en session si non dï¿½fini par le lien    
+            // On va le chercher en session si non defini par le lien    
             $mainmenu=$_SESSION["mainmenu"];
         }
 

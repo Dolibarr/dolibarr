@@ -46,7 +46,6 @@ function stripslashes_deep($value)
 {
 	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
 }
-//if (! eregi('PHP/6', $_SERVER['SERVER_SOFTWARE']))
 if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en compte dans PHP6
 {
 	if (get_magic_quotes_gpc())

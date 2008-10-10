@@ -59,11 +59,6 @@ class MenuLeft {
 	{
 		global $user,$conf,$langs,$dolibarr_main_db_name;
 
-		if (! session_id()) {
-			session_name("DOLSESSID_".$dolibarr_main_db_name);
-			session_start();
-		}
-
 		// On récupère mainmenu et leftmenu qui définissent le menu à afficher
 		if (isset($_GET["mainmenu"]))
 		{

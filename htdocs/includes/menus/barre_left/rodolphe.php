@@ -17,22 +17,22 @@
  */
 
 /**	    \file       htdocs/includes/menus/barre_left/rodolphe.php
-		\brief      Gestionnaire par défaut du menu de gauche
+		\brief      Gestionnaire par dï¿½faut du menu de gauche
 		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
-        \remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,
-        \remarks    définir la liste des entrées menu à faire apparaitre.
+        \remarks    A l'aide d'un objet $newmenu=new Menu() et des mï¿½thode add et add_submenu,
+        \remarks    dï¿½finir la liste des entrï¿½es menu ï¿½ faire apparaitre.
         \remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
-        \remarks    Ce qui est définir dans un tel gestionnaire sera alors prioritaire sur
-        \remarks    les définitions de menu des fichiers pre.inc.php
+        \remarks    Ce qui est dï¿½finir dans un tel gestionnaire sera alors prioritaire sur
+        \remarks    les dï¿½finitions de menu des fichiers pre.inc.php
 */
 
 
 /**     \class      MenuLeft
-	    \brief      Classe permettant la gestion par défaut du menu du gauche
-        \remarks    Le gestionnaire par defaut ne fait rien: C'est donc le menu défini dans les
-        \remarks    fichiers pre.inc.php du répertoire de la page qui est utilisé.
+	    \brief      Classe permettant la gestion par dï¿½faut du menu du gauche
+        \remarks    Le gestionnaire par defaut ne fait rien: C'est donc le menu dï¿½fini dans les
+        \remarks    fichiers pre.inc.php du rï¿½pertoire de la page qui est utilisï¿½.
 */
 
 class MenuLeft {
@@ -42,8 +42,8 @@ class MenuLeft {
     
     /**
      *    \brief      Constructeur
-     *    \param      db      Handler d'accès base de donnée
-     *    \param      menu_array    Tableau des entrée de menu défini dans les fichier pre.inc.php
+     *    \param      db      Handler d'accï¿½s base de donnï¿½e
+     *    \param      menu_array    Tableau des entrï¿½e de menu dï¿½fini dans les fichier pre.inc.php
      */
     function MenuLeft($db,&$menu_array)
     {
@@ -59,12 +59,7 @@ class MenuLeft {
     {
         global $user, $conf, $langs, $dolibarr_main_db_name;
 
-    	if (! session_id()) {
-			session_name("DOLSESSID_".$dolibarr_main_db_name);
-			session_start();
-		}
-
-		// On récupère mainmenu et leftmenu qui définissent le menu à afficher
+		// On rï¿½cupï¿½re mainmenu et leftmenu qui dï¿½finissent le menu ï¿½ afficher
 		if (isset($_GET["mainmenu"]))
 		{
 			// On sauve en session le menu principal choisi
@@ -74,7 +69,7 @@ class MenuLeft {
 		}
 		else
 		{
-			// On va le chercher en session si non défini par le lien
+			// On va le chercher en session si non dï¿½fini par le lien
 			$mainmenu=$_SESSION["mainmenu"];
 		}
 
@@ -93,7 +88,7 @@ class MenuLeft {
 				$_SESSION["leftmenuopened"]=$leftmenu;
 			}
 		} else {
-			// On va le chercher en session si non défini par le lien
+			// On va le chercher en session si non dï¿½fini par le lien
 			$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
 		}
 		
@@ -108,14 +103,14 @@ class MenuLeft {
 			$newmenu = $this->menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,0,'eldy');
 			
 			/*
-			* Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
+			* Menu AUTRES (Pour les menus du haut qui ne serait pas gï¿½rï¿½s)
 			*/
 			if ($mainmenu && ! in_array($mainmenu,$this->overwritemenufor)) { $mainmenu=""; }
 		}
 
 
 		/**
-		*  Si on est sur un cas géré de surcharge du menu, on ecrase celui par defaut
+		*  Si on est sur un cas gï¿½rï¿½ de surcharge du menu, on ecrase celui par defaut
 		*/
 		if ($mainmenu) {
 			$this->menu_array=$newmenu->liste;

@@ -23,11 +23,11 @@
 		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
-        \remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,
-        \remarks    définir la liste des entrées menu à faire apparaitre.
+        \remarks    A l'aide d'un objet $newmenu=new Menu() et des mï¿½thode add et add_submenu,
+        \remarks    dï¿½finir la liste des entrï¿½es menu ï¿½ faire apparaitre.
         \remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
-        \remarks    Ce qui est défini dans un tel gestionnaire sera alors prioritaire sur
-        \remarks    les définitions de menu des fichiers pre.inc.php
+        \remarks    Ce qui est dï¿½fini dans un tel gestionnaire sera alors prioritaire sur
+        \remarks    les dï¿½finitions de menu des fichiers pre.inc.php
 */
 
 
@@ -47,8 +47,8 @@ class MenuLeft {
     
     /**
      *    \brief      Constructeur
-     *    \param      db            Handler d'accès base de donnée
-     *    \param      menu_array    Tableau des entrée de menu défini dans les fichier pre.inc.php
+     *    \param      db            Handler d'accï¿½s base de donnï¿½e
+     *    \param      menu_array    Tableau des entrï¿½e de menu dï¿½fini dans les fichier pre.inc.php
      */
     function MenuLeft($db,&$menu_array)
     {
@@ -65,20 +65,14 @@ class MenuLeft {
     {
         global $user,$conf,$langs,$dolibarr_main_db_name;
         
-        
-        if (! session_id()) {
-            session_name("DOLSESSID_".$dolibarr_main_db_name);
-            session_start();    // En mode authentification PEAR, la session a déjà été ouverte
-        }
-
-        // On récupère mainmenu et leftmenu qui définissent le menu à afficher
+        // On recupere mainmenu et leftmenu qui definissent le menu a afficher
         if (isset($_GET["mainmenu"])) {
             // On sauve en session le menu principal choisi
             $mainmenu=$_GET["mainmenu"];
             $_SESSION["mainmenu"]=$mainmenu;
             $_SESSION["leftmenuopened"]="";
         } else {
-            // On va le chercher en session si non défini par le lien    
+            // On va le chercher en session si non defini par le lien    
             $mainmenu=$_SESSION["mainmenu"];
         }
 
@@ -94,7 +88,7 @@ class MenuLeft {
                 $_SESSION["leftmenuopened"]=$this->leftmenu;
             }
         } else {
-            // On va le chercher en session si non défini par le lien    
+            // On va le chercher en session si non dï¿½fini par le lien    
             $this->leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
         }
         
@@ -113,7 +107,7 @@ class MenuLeft {
  			$this->newmenu = $menuArbo->menuLeftCharger($this->newmenu,$mainmenu,$this->leftmenu,0,'auguria');
 			
             /*
-             * Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
+             * Menu AUTRES (Pour les menus du haut qui ne serait pas gï¿½rï¿½s)
              */
 			if ($mainmenu && ! in_array($mainmenu,$this->overwritemenufor)) { $mainmenu=""; }
         }
@@ -123,7 +117,7 @@ class MenuLeft {
         
         
         /**
-         *  Si on est sur un cas géré de surcharge du menu, on ecrase celui par defaut
+         *  Si on est sur un cas gï¿½rï¿½ de surcharge du menu, on ecrase celui par defaut
          */
         if ($mainmenu) {
             $this->menu_array=$this->newmenu->liste;

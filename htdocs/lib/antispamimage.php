@@ -39,6 +39,7 @@ require_once ARTICHOW."/AntiSpam.class.php";
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;
 session_name($sessionname);
 session_start();
+dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
 
 
 // On créé l'objet anti-spam
