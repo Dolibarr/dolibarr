@@ -117,17 +117,30 @@ if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 	$result = $db->query( $sql);
 }
 /*
- * Action cr�ation
+ * Action creation
  */
 if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 {
-	if ($_POST['facnumber'])
+	$datefacture=dolibarr_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
+	$datedue=dolibarr_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
+	
+	if ($datefacture == '')
 	{
-		$datefacture = dolibarr_mktime(12,0,0,
-			$_POST['remonth'],
-			$_POST['reday'],
-			$_POST['reyear']);
+		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')).'</div>';
+		$_GET['action']='create';
+		$_GET['socid']=$_POST['socid'];
+		$error++;
+	}
+	if (empty($_POST['facnumber']))
+	{
+		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')).'</div>';
+		$_GET['action']='create';
+		$_GET['socid']=$_POST['socid'];
+		$error++;
+	}
 
+	if (! $error)		
+	{
 		$db->begin();
 
 		// Creation facture
@@ -137,7 +150,7 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 		$facfou->socid         = $_POST['socid'];
 		$facfou->libelle       = $_POST['libelle'];
 		$facfou->date          = $datefacture;
-		$facfou->date_echeance = dolibarr_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
+		$facfou->date_echeance = $datedue;
 		$facfou->note          = $_POST['note'];
 
 		$facid = $facfou->create($user);
@@ -189,12 +202,6 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 			$_GET['action']='create';
 			$_GET['socid']=$_POST['socid'];
 		}
-	}
-	else
-	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')).'</div>';
-		$_GET['action']='create';
-		$_GET['socid']=$_POST['socid'];
 	}
 }
 
@@ -337,11 +344,17 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 		$societe->fetch($_GET['socid']);
 	}
 
+	$datefacture=dolibarr_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
+	$datedue=dolibarr_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
+	
+	$dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
+	
 	print '<form name="add" action="fiche.php" method="post">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<table class="border" width="100%">';
+	
+	// Third party
 	print '<tr><td>'.$langs->trans('Company').'</td>';
-
 	print '<td>';
 
 	if ($_GET['socid'])
@@ -356,26 +369,17 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 	print '</td>';
 	print '<td width="50%">'.$langs->trans('NotePublic').'</td></tr>';
 
-	if($_GET['action'] == 'copy'){
-		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="facnumber" value="'.$fac_ori->ref.'" type="text"></td>';
-	}else{
-		print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="facnumber" type="text"></td>';
-	}
-
+	print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="facnumber" value="'.(isset($_POST['facnumber'])?$_POST['facnumber']:$fac_ori->ref).'" type="text"></td>';
 	print '<td width="50%" rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td></tr>';
-	if ($_GET['action'] == 'copy')
-	{
-		print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.$fac_ori->libelle.'" type="text"></td></tr>';
-	}
-	else
-	{
-		print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" type="text"></td></tr>';
-	}
 
+	print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:$fac_ori->libelle).'" type="text"></td></tr>';
+
+	// Date invoice
 	print '<tr><td>'.$langs->trans('DateInvoice').'</td><td>';
-	$html->select_date('','','','','',"add");
+	$html->select_date($dateinvoice,'','','','',"add");
 	print '</td></tr>';
 
+	// Due date
 	print '<tr><td>'.$langs->trans('DateEcheance').'</td><td>';
 	$html->select_date('','ech','','','',"add");
 	print '</td></tr>';
