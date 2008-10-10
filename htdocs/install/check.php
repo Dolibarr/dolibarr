@@ -95,18 +95,6 @@ if (! function_exists("session_id"))
 else
 {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportSessions")."<br>\n";
-	/*
-	 // On se fout des warning sur session_start, meme si pas moyen de mettre cookie dans http, car on ne test pas entre 2 pages mais au sein de la meme
-	 print '<img src="../theme/eldy/img/tick.png" alt="Ok"> Test sauvegarde donnée en session.'."<br>\n";;
-	 @session_start();
-	 $_SESSION['test']=1;
-	 session_write_close();
-
-	 @session_start();
-	 if (! $_SESSION['test']) print '<img src="../theme/eldy/img/error.png" alt="Error"> Echec récupération donnée en session. Votre PHP ne fonctionne pas correctement. Votre répertoire de sauvegarde des sessions est peut-être plein.'."<br>\n";
-	 else print '<img src="../theme/eldy/img/tick.png" alt="Ok"> Succès récupération donnée en session.'."<br>\n";
-	 session_write_close();
-	 */
 }
 
 
