@@ -132,24 +132,24 @@ function dol_escape_js($stringtoescape)
 
 
 /**
- \brief      Envoi des messages dolibarr dans un fichier ou dans syslog
- Pour fichier:   fichier defini par SYSLOG_FILE
- Pour syslog:    facility defini par SYSLOG_FACILITY
- \param      message		    Message a tracer. Ne doit pas etre traduit si level = LOG_ERR
- \param      level           Niveau de l'erreur
- \remarks	Cette fonction n'a un effet que si le module syslog est activï¿½.
- Warning, les fonctions syslog sont bugguï¿½s sous Windows et gï¿½nï¿½rent des
- fautes de protection mï¿½moire. Pour rï¿½soudre, utiliser le loggage fichier,
- au lieu du loggage syslog (configuration du module).
- Si SYSLOG_FILE_NO_ERROR dï¿½fini, on ne gï¿½re pas erreur ecriture log
- \remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
- On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
+ *	\brief      Envoi des messages dolibarr dans un fichier ou dans syslog
+ *				Pour fichier:   fichier defini par SYSLOG_FILE
+ *				Pour syslog:    facility defini par SYSLOG_FACILITY
+ *	\param      message		    Message a tracer. Ne doit pas etre traduit si level = LOG_ERR
+ *	\param      level           Niveau de l'erreur
+ *	\remarks	Cette fonction n'a un effet que si le module syslog est active.
+ *	Warning, les fonctions syslog sont buggues sous Windows et generent des
+ *	fautes de protection memoire. Pour resoudre, utiliser le loggage fichier,
+ *	au lieu du loggage syslog (configuration du module).
+ *	Si SYSLOG_FILE_NO_ERROR defini, on ne gere pas erreur ecriture log
+ *	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
+ *				On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  */
 function dolibarr_syslog($message, $level=LOG_INFO)
 {
 	global $conf,$user,$langs;
 
-	if (isset($conf->syslog->enabled) && $conf->syslog->enabled)
+	if (! empty($conf->syslog->enabled))
 	{
 		//print $level.' - '.$conf->global->SYSLOG_LEVEL.' - '.$conf->syslog->enabled." \n";
 		if ($level > $conf->global->SYSLOG_LEVEL) return;
@@ -202,7 +202,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 		}
 		else
 		{
-			//define_syslog_variables(); dï¿½ja dï¿½finit dans master.inc.php
+			//define_syslog_variables(); already defined in master.inc.php
 			if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
 			{
 				$facility = MAIN_SYSLOG_FACILITY;
@@ -544,7 +544,8 @@ function dolibarr_getdate($timestamp,$fast=false)
 /**
  *	Retourne une date fabriquee depuis infos.
  * 	Remplace la fonction mktime non implementee sous Windows si annee < 1970
- *	@param		hour			Hour	(can be -1 for undefined)
+ *	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
+ * 	@param		hour			Hour	(can be -1 for undefined)
  *	@param		minute			Minute	(can be -1 for undefined)
  *	@param		second			Second	(can be -1 for undefined)
  *	@param		month			Month
@@ -553,7 +554,6 @@ function dolibarr_getdate($timestamp,$fast=false)
  *	@param		gm				Time gm
  *	@param		check			No check on parameters (Can use day 32, etc...)
  *	@return		timestamp		Date en timestamp, '' if error
- *	@remarks	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows
  */
 function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 {
@@ -2992,7 +2992,7 @@ function is_emtpy_folder($folder){
 		closedir($handle);
 	}
 	else
-	return true; // Le répertoire n'existe pas
+	return true; // Le rï¿½pertoire n'existe pas
 }
 
 /**
