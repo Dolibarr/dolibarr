@@ -79,6 +79,7 @@ ServerTZ=Time Zone Serveur
 PHPTZ=Time Zone PHP
 PHPServerOffsetWithGreenwich=Offset serveur PHP avec Greenwich (secondes)
 CurrentHour=Heure courante
+CurrentSessionTimeOut=Time out session courante
 OSEnv=Environnement OS
 Box=Boîte
 Boxes=Boîtes
