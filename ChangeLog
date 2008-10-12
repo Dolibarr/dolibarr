@@ -3,6 +3,7 @@ English Dolibarr changelog
 ***** Changelog for 2.5 compared to 2.4 *****
 
 For users:
+- Sessions timeout can be configured to overwrite PHP setup.
 - Support bookmark add of product cards.
 - New view in ecm module.
 - Look enhancements for graphics (add transparency).
