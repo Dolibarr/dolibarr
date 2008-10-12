@@ -117,7 +117,7 @@ foreach ($eventstolog as $key => $arr)
 	    print '<td>';
 	    $key='MAIN_AGENDA_ACTIONAUTO_'.$arr['id'];
 		$value=$conf->global->$key;
-		print '<input type="checkbox" name="'.$key.'" value="1"'.($value?' checked="true"':'').'>';
+		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked="true"':'').'>';
 	    print '</td></tr>'."\n";
 	}
 }

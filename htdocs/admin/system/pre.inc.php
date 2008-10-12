@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-		\file 		htdocs/admin/system/pre.inc.php
-		\brief      Fichier gestionnaire menu page infos système
-		\version    $Revision$
-*/
+ *		\file 		htdocs/admin/system/pre.inc.php
+ *		\brief      Fichier gestionnaire menu page infos système
+ *		\version    $Id$
+ */
 
 require("../../main.inc.php");
 
@@ -45,7 +43,8 @@ function llxHeader($head = "", $urlp = "")
     // Dolibarr
     $menu->add(DOL_URL_ROOT."/admin/system/dolibarr.php", "Dolibarr");
     $menu->add_submenu(DOL_URL_ROOT."/admin/system/constall.php", $langs->trans("AllParameters"));
-	$menu->add_submenu(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
+	$menu->add_submenu(DOL_URL_ROOT."/admin/system/modules.php", $langs->trans("Modules"));
+    $menu->add_submenu(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
     $menu->add_submenu(DOL_URL_ROOT."/about.php", $langs->trans("About"));
     
     // OS
@@ -56,9 +55,6 @@ function llxHeader($head = "", $urlp = "")
     
     // PHP
     $menu->add(DOL_URL_ROOT."/admin/system/phpinfo.php", $langs->trans("Php"));
-    $menu->add_submenu(DOL_URL_ROOT."/admin/system/phpinfo.php?what=conf", $langs->trans("PhpConf"));
-    $menu->add_submenu(DOL_URL_ROOT."/admin/system/phpinfo.php?what=env", $langs->trans("PhpEnv"));
-    $menu->add_submenu(DOL_URL_ROOT."/admin/system/phpinfo.php?what=modules", $langs->trans("PhpModules"));
     
 	// Database
     $menu->add(DOL_URL_ROOT."/admin/system/database.php", $langs->trans("Database"));

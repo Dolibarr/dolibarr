@@ -36,6 +36,8 @@ if (!$user->admin)
 /*
  * View
  */
+
+$form=new Form($db);
   
 llxHeader();
 
@@ -100,94 +102,24 @@ print '<br>';
 
 $var=true;
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Session").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Session").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("SessionId")."</td><td>".session_id()."</td></tr>\n";
-//$var=!$var;
-//print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentSessionTimeOut")."</td><td>".ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds")."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("SessionId").'</td><td colspan="2">'.session_id()."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTheme")."</td><td>".$conf->theme."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentSessionTimeOut").'</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
+print '</td><td align="right">';
+print $form->textwithhelp('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print "</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTopMenuHandler")."</td><td>".$conf->top_menu."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentLeftMenuHandler")."</td><td>".$conf->left_menu."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTopMenuHandler").'</td><td colspan="2">'.$conf->top_menu."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentUserLanguage")."</td><td>".$langs->getDefaultLang()."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentLeftMenuHandler").'</td><td colspan="2">'.$conf->left_menu."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentUserLanguage").'</td><td colspan="2">'.$langs->getDefaultLang()."</td></tr>\n";
 print '</table>';
 print '<br>';
-
-
-// Charge les modules
-$db->begin();
-
-$dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
-$handle=opendir($dir);
-$modules = array();
-$modules_names = array();
-$modules_files = array();
-while (($file = readdir($handle))!==false)
-{
-    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, strlen($file) - 10) == '.class.php')
-    {
-        $modName = substr($file, 0, strlen($file) - 10);
-
-        if ($modName)
-        {
-            include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
-            $objMod = new $modName($db);
-
-            $modules[$objMod->numero]=$objMod;
-            $modules_names[$objMod->numero]=$objMod->name;
-			$modules_files[$objMod->numero]=$file;
-            $picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
-        }
-    }
-}
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Modules").'</td>';
-print '<td>'.$langs->trans("Version").'</td>';
-print '<td align="center">'.$langs->trans("Id Module").'</td>';
-print '<td>'.$langs->trans("Id Permissions").'</td>';
-print '</tr>';
-$var=false;
-$sortorder=$modules_names;
-ksort($sortorder);
-$rights_ids = array();
-foreach($sortorder as $numero=>$name) 
-{
-    $idperms="";
-    $var=!$var;
-    // Module
-    print "<tr $bc[$var]><td width=\"300\" nowrap=\"nowrap\">";
-	$alt=$name.' - '.$modules_files[$numero];
-	print img_object($alt,$picto[$numero]).' '.$modules[$numero]->getName();
-	print "</td>";
-    // Version
-    print '<td>'.$modules[$numero]->getVersion().'</td>';
-    // Id
-    print '<td align="center">'.$numero.'</td>';
-    // Permissions
-    if ($modules[$numero]->rights)
-    {
-        foreach($modules[$numero]->rights as $rights)
-        {
-            $idperms.=($idperms?", ":"").$rights[0];
-	    array_push($rights_ids, $rights[0]);
-        }
-    }
-    print '<td>'.($idperms?$idperms:"&nbsp;").'</td>';
-    print "</tr>\n";
-}
-print '</table>';
-print '<br>';
-sort($rights_ids);
-foreach($rights_ids as $right_id)
-{
-  if ($old == $right_id)
-    print "Attention doublon sur la permission : $right_id<br>";
-  $old = $right_id;
-}
 
 llxFooter('$Date$ - $Revision$');
 ?>

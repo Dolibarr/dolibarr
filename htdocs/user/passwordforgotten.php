@@ -32,9 +32,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 // Init session
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;
+if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
 session_name($sessionname);
 session_start();
-dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
+dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
 
 $user->getrights('user');
 

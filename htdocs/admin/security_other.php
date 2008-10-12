@@ -17,11 +17,11 @@
  */
 
 /**
-	    \file       htdocs/admin/security_other.php
-        \ingroup    core
-        \brief      Page de configuration du module s�curit� autre
-		\version    $Id$
-*/
+ *	    \file       htdocs/admin/security_other.php
+ *      \ingroup    core
+ *      \brief      Page de configuration du module s�curit� autre
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -58,6 +58,13 @@ if ($_GET["action"] == 'activate_captcha')
 else if ($_GET["action"] == 'disable_captcha')
 {
 	dolibarr_del_const($db, "MAIN_SECURITY_ENABLECAPTCHA");
+	Header("Location: security_other.php");
+	exit;
+}
+
+if ($_GET["action"] == 'MAIN_SESSION_TIMEOUT')
+{
+	dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"]);
 	Header("Location: security_other.php");
 	exit;
 }
@@ -99,7 +106,7 @@ $form = new Form($db);
 
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td colspan="2">'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
@@ -107,7 +114,7 @@ print "</tr>\n";
 
 print '<form action="'.$_SERVER["PHP_SELF"].'?action=set_main_upload_doc" method="POST">';
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("MaxSizeForUploadedFiles").'.';
+print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max=@ini_get('upload_max_filesize');
 if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit",$max*1024,$langs->trans("Kb")).'.';
 else print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
@@ -119,6 +126,22 @@ print '<td align="center">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr></form>';
+
+$var=!$var;
+if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=ini_get("session.gc_maxlifetime");
+print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_SESSION_TIMEOUT" method="POST">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
+print $form->textwithhelp('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print '</td>';
+print '<td nowrap="1">';
+print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.$conf->global->MAIN_SESSION_TIMEOUT.'"> '.$langs->trans("seconds");
+print '</td>';
+print '<td align="center">';
+print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr></form>';
+
 print '</table>';
 
 print '<br>';

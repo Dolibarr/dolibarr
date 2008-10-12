@@ -17,11 +17,11 @@
  */
 
 /**
-	    \file       htdocs/admin/events.php
-        \ingroup    core
-        \brief      Log event setup page
-		\version    $Id$
-*/
+ *	    \file       htdocs/admin/events.php
+ *      \ingroup    core
+ *      \brief      Log event setup page
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -133,7 +133,7 @@ foreach ($eventstolog as $key => $arr)
 	    print '<td>';
 	    $key='MAIN_LOGEVENTS_'.$arr['id'];
 		$value=$conf->global->$key;
-		print '<input type="checkbox" name="'.$key.'" value="1"'.($value?' checked="true"':'').'>';
+		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked="true"':'').'>';
 	    print '</td></tr>'."\n";
 	}
 }
