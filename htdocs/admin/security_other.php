@@ -69,6 +69,13 @@ if ($_GET["action"] == 'MAIN_SESSION_TIMEOUT')
 	exit;
 }
 
+if ($_GET["action"] == 'MAIN_UMASK')
+{
+	dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"]);
+	Header("Location: security_other.php");
+	exit;
+}
+
 if ($_GET["action"] == 'activate_avscan')
 {
 	dolibarr_set_const($db, "MAIN_USE_AVSCAN", '1');
@@ -121,6 +128,20 @@ else print ' '.$langs->trans("NoMaxSizeByPHPLimit").'.';
 print '</td>';
 print '<td nowrap="1">';
 print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.$conf->global->MAIN_UPLOAD_DOC.'"> '.$langs->trans("Kb");
+print '</td>';
+print '<td align="center">';
+print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr></form>';
+
+$var=!$var;
+print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_UMASK" method="POST">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("UMask").'</td><td align="right">';
+print $form->textwithhelp('',$langs->trans("UMaskExplanation"));
+print '</td>';
+print '<td nowrap="1">';
+print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.$conf->global->MAIN_UMASK.'">';
 print '</td>';
 print '<td align="center">';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';

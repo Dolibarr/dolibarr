@@ -469,6 +469,8 @@ class Conf
 		if (! isset($this->global->MAIN_MAX_DECIMALS_TOT))   $this->global->MAIN_MAX_DECIMALS_TOT=2;
 		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN)) $this->global->MAIN_MAX_DECIMALS_SHOWN=8;
 
+		// Define umask
+		if (empty($conf->global->MAIN_UMASK)) $conf->global->MAIN_UMASK='0664';
 		
 		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de desactiver la fonction TVA
 		 * (pour particuliers ou liberaux en franchise)

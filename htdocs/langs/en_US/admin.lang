@@ -208,6 +208,8 @@ DoTestServerAvailability=Test server connectivity
 DoTestSend=Test sending
 DoTestSendHTML=Test sending HTML
 ErrorCantUseRazInStartedYearIfNoYearMonthInMask=Error, can't user option @ if sequence {yy}{mm} or {yyyy}{mm} is not in mask.
+UMask=UMask parameter for new files on Unix/Linux/BSD file system.
+UMaskExplanation=This parameter allow you to define permissions set by default on files created by Dolibarr on server (during upload for example).<br>It must be the octal value (for example, 0666 means read and write for everyone).<br>Ce paramètre ne sert pas sous un serveur Windows.
 
 # Modules
 Module0Name=Users & groups
