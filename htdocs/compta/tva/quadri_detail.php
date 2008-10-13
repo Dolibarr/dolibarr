@@ -57,10 +57,15 @@ $q=(! empty($_GET["q"]))?$_GET["q"]:1;
 $modetax = $conf->global->TAX_MODE;
 if ($_GET["modetax"]) $modetax=$_GET["modetax"];
 
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
-/**
- * Affichage page
+
+/*
+ * View
  */
 
 llxHeader();
@@ -151,8 +156,9 @@ $x_paye = vat_by_quarter($db, $y, $q, $modetax, 'buy');
 
 if (! is_array($x_coll) || ! is_array($x_paye))
 {
+	$langs->load("errors");
 	if ($x_coll == -1)
-		print '<tr><td colspan="5">'.$langs->trans("NoAccountancyModuleLoaded").'</td></tr>';
+		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
 	else if ($x_coll == -2)
 		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 	else

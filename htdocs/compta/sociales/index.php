@@ -27,9 +27,10 @@
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 
-
-if (!$user->admin && ! $user->rights->tax->charges->lire)
-  accessforbidden();
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];

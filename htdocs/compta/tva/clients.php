@@ -57,10 +57,15 @@ if($min == 0 or $min!=floatval(strval($min))){
 $modetax = $conf->global->TAX_MODE;
 if ($_GET["modetax"]) $modetax=$_GET["modetax"];
 
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'tax', '', '', 'charges');
+
 
 
 /*
- * Code
+ * View
  */
 
 llxHeader();
@@ -184,8 +189,9 @@ if (is_array($coll_list))
 }
 else
 {
+	$langs->load("errors");
 	if ($coll_list == -1)
-		print '<tr><td colspan="5">'.$langs->trans("NoAccountancyModuleLoaded").'</td></tr>';
+		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
 	else if ($coll_list == -2)
 		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 	else
@@ -255,8 +261,9 @@ if (is_array($coll_list))
 }
 else
 {
+	$langs->load("errors");
 	if ($coll_list == -1)
-		print '<tr><td colspan="5">'.$langs->trans("NoAccountancyModuleLoaded").'</td></tr>';
+		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
 	else if ($coll_list == -2)
 		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 	else

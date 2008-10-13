@@ -30,6 +30,16 @@ require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 $langs->load("compta");
 $langs->load("compta");
 
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'tax', '', '', 'charges');
+
+
+
+/*
+ * View
+ */
 
 llxHeader();
 

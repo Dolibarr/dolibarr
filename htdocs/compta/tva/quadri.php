@@ -40,6 +40,10 @@ if ($year == 0 )
   $year_start = $year;
 }
 
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'tax', '', '', 'charges');
 
 
 /**
@@ -168,8 +172,9 @@ function tva_paye($db, $y,$q)
     }
 }
 
+
 /**
- * Main script
+ * View
  */
 
 llxHeader();

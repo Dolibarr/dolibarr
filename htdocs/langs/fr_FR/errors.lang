@@ -32,3 +32,4 @@ ErrorFieldCanNotContainSpecialCharacters=Le champ <b>%s</b> ne peut contenir de 
 WarningAllowUrlFopenMustBeOn=Attention, le paramètre <b>allow_url_fopen</b> doit etre positionné à <b>on</b> dans le fichier <b>php.ini</b> pour que ce module soit pleinement opérationnel. Vous devez modifier ce fichier manuellement.
 WarningBuildScriptNotRunned=Le script <b>%s</b> n'a pas encore été lancé pour générer les graphiques.
 WarningBookmarkAlreadyExists=Un marque-page avec ce titre ou cette destination (URL) existe déjà.
+ErrorNoAccountancyModuleLoaded=Aucun module de comptabilité activé

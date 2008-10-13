@@ -39,6 +39,11 @@ if ($year == 0 )
   $year_start = $year;
 }
 
+// Security check
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+if ($user->societe_id) $socid=$user->societe_id;
+$result = restrictedArea($user, 'tax', '', '', 'charges');
+
 
 
 /**
@@ -200,7 +205,7 @@ function pt ($db, $sql, $date)
 
 
 /*
- *
+ * View
  */
 
 llxHeader();
