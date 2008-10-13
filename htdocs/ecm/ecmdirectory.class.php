@@ -377,7 +377,7 @@ class EcmDirectory // extends CommonObject
 	    $result='';
 			
 	    $lien = '<a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$this->id.'">';
-	    if ($option == 'index') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'">';
+	    if ($option == 'index') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true">';
 	    if ($option == 'indexexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=false">';
 	    if ($option == 'indexnotexpanded') $lien = '<a href="'.DOL_URL_ROOT.'/ecm/index.php?section='.$this->id.'&amp;sectionexpand=true">';
 	    $lienfin='</a>';

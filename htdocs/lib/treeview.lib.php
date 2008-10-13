@@ -76,29 +76,52 @@ function is_in_subtree($fulltree,$parentid,$childid)
 /**
  * Show picto of a tree view
  *
- * @param unknown_type $tab		Array of entries in correct order
- * @param unknown_type $key		Key of value to show picto
+ * @param 	fulltree	Array of entries in correct order
+ * @param 	key			Key of value to show picto
+ * @return	int			1
  */
-function tree_showpad(&$tab,$key,$selected=0)
+function tree_showpad(&$fulltree,$key,$selected=0)
 {
 	$pos=1;
-	while ($pos <= $tab[$key]['level'] && $tab[$key]['level'] > 0)
+	while ($pos <= $fulltree[$key]['level'] && $fulltree[$key]['level'] > 0)
 	{
 		// Process picto for column $pos
-		// \TODO If at least one of this level
-		$atleastonofthislevelafter=1;
+
+		$atleastonofthislevelafter=0;
+		$found=0;
+		//print 'x'.$key;
+		foreach($fulltree as $key2 => $val2)
+		{
+			if ($found == 1)
+			{
+				if ($fulltree[$key2]['level'] == $pos)
+				{
+					$atleastonofthislevelafter=1;
+					break;
+				} 
+				if ($fulltree[$key2]['level'] < $pos)
+				{
+					break;
+				} 
+			}
+			if ($key2 == $key) $found=1;	
+		}
+		//print $atleastonofthislevelafter;
+		
 		if ($atleastonofthislevelafter)
 		{
-			if ($tab[$key]['level'] == $pos) print img_picto_common('','treemenu/branch.gif');
+			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branch.gif');
 			else print img_picto_common('','treemenu/line.gif');
 		}
 		else
 		{
-			if ($tab[$key]['level'] == $pos) print img_picto_common('','treemenu/branchbottom.gif');
+			if ($fulltree[$key]['level'] == $pos) print img_picto_common('','treemenu/branchbottom.gif');
 			else print img_picto_common('','treemenu/linebottom.gif');
 		}
 		$pos++;
 	}
+	
+	return 1;
 }
 
 

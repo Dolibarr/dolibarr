@@ -342,7 +342,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 				// Section
 				print '<td align="left">';
 				print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
-				print tree_showpad($sectionauto,$key);
+				tree_showpad($sectionauto,$key);
 				print '</td><td valign="top">';
 				print img_picto('','object_dir');
 				print '</td><td valign="middle">&nbsp;';
@@ -486,7 +486,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			// Show tree graph pictos
 			print '<td align="left">';
 			print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
-			print tree_showpad($fulltree,$key);
+			tree_showpad($fulltree,$key);
 			print '</td>';
 			// Show picto
 			print '<td valign="top">';
