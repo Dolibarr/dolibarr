@@ -385,9 +385,10 @@ class FormFile
 	 * 		\param		relativepath		Relative path of docs (autodefined if not provided)
 	 * 		\param		permtodelete		Permission to delete
 	 * 		\param		useinecm			Change output for use in ecm module
+	 * 		\param		textifempty			Text to show if filearray is empty
 	 * 		\return		int					<0 if KO, nb of files shown if OK
 	 */
-	function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0)
+	function list_of_documents($filearray,$object,$modulepart,$param,$forcedownload=0,$relativepath='',$permtodelete=1,$useinecm=0,$textifempty='')
 	{
 		global $user, $conf, $langs;
 		global $bc;
@@ -441,7 +442,13 @@ class FormFile
 				print "</td></tr>\n";
 			}
 		}
-		if (sizeof($filearray) == 0) print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("NoFileFound").'</td></tr>';
+		if (sizeof($filearray) == 0) 
+		{
+			print '<tr '.$bc[$var].'><td colspan="4">';
+			if (empty($textifempty)) print $langs->trans("NoFileFound");
+			else print $textifempty;
+			print '</td></tr>';
+		}
 		print "</table>";
 		// Fin de zone
 

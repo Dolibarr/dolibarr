@@ -102,11 +102,10 @@ class Fichinter extends CommonObject
 		$result=$soc->fetch($this->socid);
 		$this->verifyNumRef($soc);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, description, model_pdf";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datec, ref, fk_user_author, description, model_pdf";
 		if ($this->projet_id) $sql.=  ", fk_projet";
 		$sql.= ") ";
 		$sql.= " VALUES (".$this->socid.",";
-		$sql.= " ".$this->db->idate($this->date).",";
 		$sql.= " ".$this->db->idate(mktime()).", '".$this->ref."', ".$this->author;
 		$sql.= ", '".addslashes($this->description)."', '".$this->modelpdf."'";
 		if ($this->projet_id) $sql .= ", ".$this->projet_id;
@@ -420,25 +419,25 @@ class Fichinter extends CommonObject
 	{
 		if ($user->rights->ficheinter->creer)
 		{
-			//verif que le projet et la societe concordent
-			$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc ='.$this->socid.' AND p.rowid='.$project_id;
-			$sqlres = $this->db->query($sql);
-			if ($sqlres)
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter';
+			$sql.= ' SET fk_projet = '.($project_id <= 0?'NULL':$project_id);
+			$sql.= ' WHERE rowid = '.$this->id;
+
+			dolibarr_syslog("Fichinter::set_project sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
 			{
-				$numprojet = $this->db->num_rows($sqlres);
-				if ($numprojet > 0)
-				{
-					$this->projetidp=$project_id;
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter SET fk_projet = '.$project_id;
-					$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
-					$this->db->query($sql);
-				}
+				$this->projetidp=$project_id;
 			}
 			else
 			{
-
-				dolibarr_syslog("Fichinter::set_project Erreur SQL");
+				$this->error=$this->db->error();
+				dolibarr_syslog("Fichinter::set_project Error ".$this->error);
 			}
+		}
+		else
+		{
+			dolibarr_syslog("Fichinter::set_project Error Permission refused");
 		}
 	}
 

@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/fichinter/fiche.php
- \brief      Fichier fiche intervention
- \ingroup    ficheinter
- \version    $Id$
+ *	\file       htdocs/fichinter/fiche.php
+ *	\brief      Fichier fiche intervention
+ *	\ingroup    ficheinter
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -96,7 +96,6 @@ if ($_POST["action"] == 'add')
 {
 	$fichinter = new Fichinter($db);
 
-	$fichinter->date = dolibarr_mktime($_POST["phour"], $_POST["pmin"] , $_POST["psec"], $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]);
 	$fichinter->socid = $_POST["socid"];
 	$fichinter->duree = $_POST["duree"];
 	$fichinter->projet_id = $_POST["projetidp"];
@@ -130,7 +129,6 @@ if ($_POST["action"] == 'update')
 {
 	$fichinter = new Fichinter($db);
 
-	$fichinter->date = dolibarr_mktime($_POST["phour"], $_POST["pmin"] , $_POST["psec"], $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$fichinter->socid = $_POST["socid"];
 	$fichinter->projet_id = $_POST["projetidp"];
 	$fichinter->author = $user->id;
@@ -142,7 +140,7 @@ if ($_POST["action"] == 'update')
 }
 
 /*
- * G�n�rer ou reg�n�rer le document PDF
+ * Build doc
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
@@ -164,14 +162,13 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	}
 }
 
-/*
- * Classer dans un projet
- */
+// Set into a project
 if ($_POST['action'] == 'classin')
 {
 	$fichinter = new Fichinter($db);
 	$fichinter->fetch($_GET['id']);
-	$fichinter->set_project($user, $_POST['projetidp']);
+	$result=$fichinter->set_project($user, $_POST['projetidp']);
+	if ($result < 0) dolibarr_print_error($db,$fichinter->error);
 }
 
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
@@ -186,14 +183,6 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 	exit;
 }
 
-if ($_POST['action'] == 'setdate_delivery')
-{
-	$fichinter = new Fichinter($db);
-	$fichinter->fetch($_GET['id']);
-	$result=$fichinter->set_date_delivery($user,dolibarr_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
-	if ($result < 0) dolibarr_print_error($db,$fichinter->error);
-}
-
 if ($_POST['action'] == 'setdescription')
 {
 	$fichinter = new Fichinter($db);
@@ -201,6 +190,8 @@ if ($_POST['action'] == 'setdescription')
 	$result=$fichinter->set_description($user,$_POST['description']);
 	if ($result < 0) dolibarr_print_error($db,$fichinter->error);
 }
+
+
 
 /*
  *  Ajout d'une ligne d'intervention
@@ -254,7 +245,6 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
 	$duration = ConvertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
 
 	$fichinterline->desc=$desc;
-	$fichinterline->datei=$date_intervention;
 	$fichinterline->duration=$duration;
 	$result = $fichinterline->update();
 
@@ -409,10 +399,6 @@ if ($_GET["action"] == 'create')
 		print '<input type="hidden" name="socid" value='.$_GET["socid"].'>';
 		print "<tr><td>".$langs->trans("Company")."</td><td>".$societe->getNomUrl(1)."</td></tr>";
 
-		print "<tr><td>".$langs->trans("Date")."</td><td>";
-		$html->select_date(time(),"p",'','','','fichinter');
-		print "</td></tr>";
-
 		print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
 		print "<tr><td>".$langs->trans("Ref")."</td>";
@@ -548,29 +534,6 @@ elseif ($_GET["id"] > 0)
 
 	// Societe
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$fichinter->client->getNomUrl(1)."</td></tr>";
-
-	// Date
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('Date');
-	print '</td>';
-	if ($_GET['action'] != 'editdate_delivery' && $fichinter->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_delivery&amp;id='.$fichinter->id.'">'.img_edit($langs->trans('SetDateCreate'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editdate_delivery')
-	{
-		print '<form name="editdate_delivery" action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'" method="post">';
-		print '<input type="hidden" name="action" value="setdate_delivery">';
-		$html->select_date($fichinter->date,'liv_','','','',"editdate_delivery");
-		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-		print '</form>';
-	}
-	else
-	{
-		print dolibarr_print_date($fichinter->date,'%a %d %B %Y');
-	}
-	print '</td>';
-	print '</tr>';
 
 	// Projet
 	if ($conf->projet->enabled)
@@ -905,13 +868,13 @@ elseif ($_GET["id"] > 0)
 		}
 
 		// Delete
-		if ($fichinter->statut == 0 && $user->rights->ficheinter->supprimer)
+		if (($fichinter->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
 		{
 			print '<a class="butActionDelete" ';
 			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 			{
 				$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_delete&confirm=yes';
-				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans("ConfirmDeleteIntervention").'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
+				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans("ConfirmDeleteIntervention",$fichinter->ref)).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
 			}
 			else
 			{

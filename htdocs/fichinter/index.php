@@ -52,6 +52,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+
 /*
 *	View
 */
@@ -59,10 +60,13 @@ $pagenext = $page + 1;
 llxHeader();
 
 
-$sql = "SELECT s.nom,s.rowid as socid, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.description, f.duree";
+$sql = "SELECT s.nom,s.rowid as socid, f.ref, f.rowid as fichid, f.fk_statut,";
+$sql.= " fd.description, ".$db->pdate("fd.date")." as dp, fd.duree";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ", ".MAIN_DB_PREFIX."fichinter as f ";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 $sql.= " WHERE f.fk_soc = s.rowid ";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid > 0)

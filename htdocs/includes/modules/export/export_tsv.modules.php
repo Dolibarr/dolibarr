@@ -161,7 +161,8 @@ class ExportTsv extends ModeleExports
  		foreach($array_selected_sorted as $code => $value)
         {
             $alias=$array_alias[$code];
-			$newvalue=$objp->$alias;
+            if (empty($alias)) dolibarr_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
+            $newvalue=$objp->$alias;
 
             // Translation newvalue
 			if (eregi('^\((.*)\)$',$newvalue,$reg))

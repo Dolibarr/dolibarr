@@ -153,6 +153,7 @@ class ExportExcel extends ModeleExports
         {
             $alias=$array_export_fields_label[$code];
             //print "dd".$alias;
+            if (empty($alias)) dolibarr_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
             $this->worksheet->write($this->row, $this->col, $langs->transnoentities($alias), $formatheader);
             $this->col++;
         }
