@@ -330,6 +330,7 @@ print '</td>';
 print '<td align="center" width="100">';
 if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) 
 {
+	$langs->load("errors");
 	print img_warning($langs->trans("WarningPassIsEmpty"));
 }
 else
