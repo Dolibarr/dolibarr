@@ -314,7 +314,7 @@ function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 		$i++;
 	}
 	$sql.= ")";
-	dolibarr_syslog("functions.lib.php::dolibarr_set_user_page_param $sql");
+	dolibarr_syslog("functions.lib::dolibarr_set_user_page_param $sql");
 
 	$resql=$db->query($sql);
 	if (! $resql)
@@ -334,7 +334,7 @@ function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 			if ($url) $sql.= " '".urlencode($url)."',";
 			else $sql.= " '',";
 			$sql.= " '".$key."','".addslashes($value)."');";
-			dolibarr_syslog("functions.lib.php::dolibarr_set_user_page_param $sql");
+			dolibarr_syslog("functions.lib::dolibarr_set_user_page_param $sql");
 
 			$result=$db->query($sql);
 			if (! $result)
@@ -1334,18 +1334,18 @@ function info_admin($texte,$infoonimgalt=0)
 
 
 /**
- \brief      Check permissions of a user to show a page and an object.
- \param      user      	  	User to check
- \param      feature		Feature to check (in most cases, it's module name)
- \param      objectid      	Object ID if we want to check permission on on object (optionnal)
- \param      dbtablename    Table name where object is stored. Not used if objectid is null (optionnel)
- \param      feature2		Feature to check (second level of permission)
+ *	\brief      Check permissions of a user to show a page and an object.
+ *	\param      user      	  	User to check
+ *	\param      feature			Feature to check (in most cases, it's module name)
+ *	\param      objectid      	Object ID if we want to check permission on on object (optionnal)
+ *	\param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnel)
+ *	\param      feature2		Feature to check (second level of permission)
  */
 function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',$feature2='')
 {
 	global $db;
 
-	//print "$user->id, $feature, $objectid, $dbtablename, $list ".$user->rights->societe->contact->lire;
+	//print "$user->id, $feature, $objectid, $dbtablename, ".$user->rights->societe->contact->lire;
 
 	// Check read permission from module
 	// TODO Replace "feature" param by permission for reading
@@ -1372,11 +1372,13 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 	}
 	else if (! empty($feature2))	// This should be used for future changes
 	{
-		if (! $user->rights->$feature->$feature2->read) $readok=0;
+		if (empty($user->rights->$feature->$feature2->lire)
+			&& empty($user->rights->$feature->$feature2->read)) $readok=0;
 	}
 	else if (! empty($feature))		// This is for old permissions
 	{
-		if (! $user->rights->$feature->lire) $readok=0;
+		if (empty($user->rights->$feature->lire) 
+			&& empty($user->rights->$feature->read)) $readok=0;
 	}
 	if (! $readok) accessforbidden();
 	//print "Read access is ok";
@@ -1411,11 +1413,13 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		}
 		else if (! empty($feature2))	// This should be used for future changes
 		{
-			if (! $user->rights->$feature->$feature2->write) $createok=0;
+			if (empty($user->rights->$feature->$feature2->creer)
+				&& empty($user->rights->$feature->$feature2->write)) $createok=0;
 		}
 		else if (! empty($feature))		// This is for old permissions
 		{
-			if (! $user->rights->$feature->creer) $createok=0;
+			if (empty($user->rights->$feature->creer) 
+				&& empty($user->rights->$feature->write)) $createok=0;
 		}
 		if (! $createok) accessforbidden();
 		//print "Write access is ok";
@@ -1434,8 +1438,9 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 			else
 			{
-				if (!$dbtablename) $dbtablename = $feature;	// Si dbtable non d�fini, meme nom que le module
-					
+				// If dbtable not defined, we use same name for table than module name
+				if (!$dbtablename) $dbtablename = $feature;
+
 				$sql = "SELECT dbt.fk_soc";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= " WHERE dbt.rowid = ".$objectid;
@@ -1473,7 +1478,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 			}
 			else
 			{
-				dolibarr_syslog("functions.lib.php::restrictedArea sql=".$sql, LOG_ERR);
+				dolibarr_syslog("functions.lib::restrictedArea sql=".$sql, LOG_ERR);
 				accessforbidden();
 			}
 		}
@@ -2292,7 +2297,7 @@ function get_exdir($num,$level=3)
  */
 function create_exdir($dir)
 {
-	dolibarr_syslog("functions.lib.php::create_exdir: dir=".$dir,LOG_INFO);
+	dolibarr_syslog("functions.lib::create_exdir: dir=".$dir,LOG_INFO);
 
 	if (@is_dir($dir)) return 0;
 
@@ -2313,18 +2318,18 @@ function create_exdir($dir)
 		{
 			if (! @is_dir($ccdir))
 			{
-		  dolibarr_syslog("functions.lib.php::create_exdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.",LOG_DEBUG);
+		  dolibarr_syslog("functions.lib::create_exdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.",LOG_DEBUG);
 
 		  umask(0);
 		  if (! @mkdir($ccdir, 0755))
 		  {
 		  	// Si le is_dir a renvoye une fausse info, alors on passe ici.
-		  	dolibarr_syslog("functions.lib.php::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
+		  	dolibarr_syslog("functions.lib::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
 		  	$nberr++;
 		  }
 		  else
 		  {
-		  	dolibarr_syslog("functions.lib.php::create_exdir: Directory '".$ccdir."' created",LOG_DEBUG);
+		  	dolibarr_syslog("functions.lib::create_exdir: Directory '".$ccdir."' created",LOG_DEBUG);
 		  	$nberr=0;	// On remet a zero car si on arrive ici, cela veut dire que les �checs pr�c�dents peuvent etre ignor�s
 		  	$nbcreated++;
 		  }
