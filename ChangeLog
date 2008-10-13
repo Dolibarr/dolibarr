@@ -12,6 +12,7 @@ For users:
 - Can move a contract line to another contract of same third party.
 - Add an export definition to export interventions.
 - Can set umask file permissions on Unix/Linux/BSD systems.
+- Miscelanous bug fixes.
 
 For translators:
 - The errors language file contains only error or warning messages with 
