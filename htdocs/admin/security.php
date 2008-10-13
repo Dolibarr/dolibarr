@@ -328,6 +328,7 @@ if (! empty($dolibarr_main_db_encrypted_pass))
 print '</td>';
 
 print '<td align="center" width="100">';
+// TODO Impossibilité de crypter le mot de passe lorsqu'il y a en a un, il affiche qu'il n'y en a pas !!
 if (empty($dolibarr_main_db_pass) && empty($dolibarr_main_db_encrypted_pass)) 
 {
 	$langs->load("errors");
