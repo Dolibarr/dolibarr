@@ -561,7 +561,8 @@ $filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$',$sortfield,(strtolowe
 
 $formfile=new FormFile($db);
 $param='&amp;section='.$section;
-$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->create,1);
+$textifempty=($section?$langs->trans("NoFileFound"):$langs->trans("ECMSelectASection"));
+$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->create,1,$textifempty);
 
 //	print '<table width="100%" class="border">';
 
