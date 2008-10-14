@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,17 @@
  */
 
 /**
-        \file       htdocs/lib/datepicker.php
-        \brief      Fichier de gestion de la popup de selection de date eldy
+        \file       htdocs/public/adherents/priv_liste.php
+        \brief      File sample to list members
         \version    $Id$
 */
 
 require("../../master.inc.php");
+
+$langs->load("main");
+$langs->load("members");
+$langs->load("companies");
+
 
 function llxHeaderVierge($title, $head = "")
 {
@@ -45,8 +50,6 @@ function llxFooter()
 }
 
 
-$langs->load("members");
-
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
@@ -66,11 +69,11 @@ $pagenext = $page + 1;
  * View
  */
 
-llxHeaderVierge("List of members");
+llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"));
 
 
-$sql = "select rowid,prenom,nom, societe, cp,ville,email,naiss,photo";
-$sql.= " from ".MAIN_DB_PREFIX."adherent where statut=1";
+$sql = "select rowid, prenom, nom, societe, cp, ville, email, naiss, photo";
+$sql.= " from ".MAIN_DB_PREFIX."adherent where statut=1 and public=1";
 $sql.= " ORDER BY $sortfield $sortorder";
 $sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 //$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, cp, ville, d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
@@ -85,7 +88,7 @@ if ($result)
 	$i = 0;
 
 	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
-	print_barre_liste($langs->trans("MembersList"), $page, "priv_liste.php", $param);
+	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, "priv_liste.php", $param, $sortfield, $sortorder, '', $num);
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
@@ -103,7 +106,7 @@ if ($result)
 		$objp = $db->fetch_object($result);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print "<td><a href=\"priv_fiche.php?rowid=$objp->rowid\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
+		print "<td><a href=\"priv_fiche.php?id=$objp->rowid\">".$objp->prenom." ".$objp->nom." / ".$objp->societe."</a></TD>\n";
 		print "<td>$objp->naiss</td>\n";
 		print "<td>$objp->email</td>\n";
 		print "<td>$objp->cp</td>\n";
