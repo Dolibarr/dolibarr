@@ -59,10 +59,11 @@ MailingAddFile=Attach this file
 NoAttachedFiles=No attached files
 
 # Libelle des modules de liste de destinataires mailing
-MailingModuleDescContactCompanies=Unique contacts of all third parties
+MailingModuleDescContactCompanies=Contacts of all third parties (customer, prospect, supplier, ...)
 MailingModuleDescDolibarrUsers=All Dolibarr users with emails
 MailingModuleDescFundationMembers=Fundation members with emails
 MailingModuleDescEmailsFromFile=EMails from a file
+MailingModuleDescContactsCategories=Contacts of all third parties (by category)
 
 LineInFile=Line %s in file
 RecipientSelectionModules=Defined requests for recipients' selection
