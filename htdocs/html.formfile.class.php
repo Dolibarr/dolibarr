@@ -418,7 +418,7 @@ class FormFile
 				// Define relative path used to store the file
 				if (! $relativepath)
 				{
-					$relativepath=$object->ref.'/';
+					$relativepath=sanitize_string($object->ref).'/';
 					if ($modulepart == 'facture_fournisseur')	$relativepath=get_exdir($object->id,2).$relativepath;
 				}
 
