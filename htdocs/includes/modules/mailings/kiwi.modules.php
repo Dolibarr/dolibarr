@@ -147,9 +147,9 @@ class mailing_kiwi extends MailingTargets
         $s.='<select name="filter" class="flat">';
         
         # Show categories
-		$sql = "SELECT rowid, label, type";
+        $sql = "SELECT rowid, label, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-        $sql.= " WHERE visible > 0";
+        $sql.= " WHERE visible > 0 AND type > 0";
         $sql.= " ORDER BY label";
 
         $resql = $this->db->query($sql);
