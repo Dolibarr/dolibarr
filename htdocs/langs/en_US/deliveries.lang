@@ -5,6 +5,7 @@ DeliveryCard=Delivery card
 DeliveryOrder=Delivery order
 DeliveryOrders=Delivery orders
 DeliveryDate=Delivery date
+DeliveryDateShort=Deliv. date
 CreateDeliveryOrder=Generate delivery order
 SetDeliveryDate=Set shipping date
 ValidateDeliveryReceipt=Validate delivery receipt

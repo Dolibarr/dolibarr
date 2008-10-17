@@ -1089,23 +1089,29 @@ class Commande extends CommonObject
 	}
 
 	/**
-	 *      \brief      Charge tableau avec les expeditions par ligne
-	 *      \param      filtre_statut       Filtre sur statut
-	 *      \return     int                	<0 if KO, Nb of records if OK
+	 *      \brief      Load array this->expeditions of nb of products sent by line in order
+	 *      \param      filtre_statut       Filter on status
+	 *      \return     int                	<0 if KO, Nb of lines found if OK
 	 */
 	function loadExpeditions($filtre_statut=-1)
 	{
 		$num=0;
 		$this->expeditions = array();
 
-		$sql = 'SELECT fk_product, sum(ed.qty)';
-		$sql.=' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed, '.MAIN_DB_PREFIX.'expedition as e, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd';
-		$sql.=' WHERE ed.fk_expedition = e.rowid AND ed.fk_origin_line = cd.rowid AND cd.fk_commande = c.rowid';
-		$sql.=' AND cd.fk_commande =' .$this->id;
+		$sql = 'SELECT cd.rowid, cd.fk_product,';
+		$sql.= ' sum(ed.qty) as qty';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed,';
+		if ($filtre_statut >= 0) $sql.= ' '.MAIN_DB_PREFIX.'expedition as e,';
+		$sql.= ' '.MAIN_DB_PREFIX.'commandedet as cd';
+		$sql.= ' WHERE';
+		if ($filtre_statut >= 0) $sql.= ' ed.fk_expedition = e.rowid AND';
+		$sql.= ' ed.fk_origin_line = cd.rowid';
+		$sql.= ' AND cd.fk_commande =' .$this->id;
 		if ($filtre_statut >= 0) $sql.=' AND e.fk_statut = '.$filtre_statut;
-		$sql .= ' GROUP BY fk_product ';
-
-		dolibarr_syslog("Commande::loadExpedition sql=".$sql,LOG_DEBUG);
+		$sql.= ' GROUP BY cd.rowid, cd.fk_product';
+		//print $sql;
+		
+		dolibarr_syslog("Commande::loadExpeditions sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1113,8 +1119,8 @@ class Commande extends CommonObject
 			$i = 0;
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row($result);
-				$this->expeditions[$row[0]] = $row[1];
+				$obj = $this->db->fetch_object($result);
+				$this->expeditions[$obj->rowid] = $obj->qty;
 				$i++;
 			}
 			$this->db->free();
@@ -1123,6 +1129,7 @@ class Commande extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
+			dolibarr_syslog("Commande::loadExpeditions ".$this->error,LOG_ERR);
 			return -1;
 		}
 

@@ -167,7 +167,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->SetFont('Arial','', 7);
 
 				//Insertion de l entete
-				$this->_pagehead($pdf, $this->expe);
+				$this->_pagehead($pdf, $this->expe, $outputlangs);
 
 				//Initialisation des coordonnées
 				$tab_top = 53;
@@ -180,7 +180,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$curY = $pdf->GetY();
 				$nexY = $pdf->GetY();
 				//Generation du tableau
-				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 				//Recuperation des produits de la commande.
 				$this->expe->commande->fetch_lines(1);
 				$Produits = $this->expe->commande->lignes;
@@ -199,27 +199,32 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					//Insertion du libelle
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (50, $curY );
-					$pdf->MultiCell(130, 5, $Prod->libelle, 0, 'L', 0);
-					//Insertion de la quantite
+					$pdf->MultiCell(90, 5, $Prod->libelle, 0, 'L', 0);
+					//Insertion de la quantite commandée
 					$pdf->SetFont('Arial','', 7);
-					$pdf->SetXY (180, $curY );
-					$pdf->MultiCell(20, 5, $Produits[$i]->qty, 0, 'L', 0);
+					$pdf->SetXY (140, $curY );
+					$pdf->MultiCell(30, 5, $this->expe->lignes[$i]->qty_asked, 0, 'C', 0);
+					//Insertion de la quantite à envoyer
+					$pdf->SetFont('Arial','', 7);
+					$pdf->SetXY (170, $curY );
+					$pdf->MultiCell(30, 5, $this->expe->lignes[$i]->qty_shipped, 0, 'C', 0);
+					
 					//Generation de la page 2
 					$curY += 4;
 					$nexY = $curY;
 					if ($nexY > ($tab_top+$tab_height-10) && $i < $nblignes - 1){
-						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-						$this->_pagefoot($pdf);
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+						$this->_pagefoot($pdf, $outputlangs);
 						$pdf->AliasNbPages();
 						$pdf->AddPage();
 						$nexY = $iniY;
-						$this->_pagehead($pdf, $this->expe);
+						$this->_pagehead($pdf, $this->expe, $outputlangs);
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('Arial','', 7);
 					}
 				}
 				//Insertion du pied de page
-				$this->_pagefoot($pdf);
+				$this->_pagefoot($pdf, $outputlangs);
 
 				$pdf->AliasNbPages();
 
@@ -252,7 +257,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	//********************************
 	// Generation du tableau
 	//********************************
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
 		global $langs;
 
@@ -267,18 +272,20 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->MultiCell(10,5,"LR",0,'C',1);
 		$pdf->line(30, $tab_top, 30, $tab_top + $tab_height);
 		$pdf->SetXY(30,$tab_top);
-		$pdf->MultiCell(20,5,$langs->transnoentities("Ref"),0,'C',1);
+		$pdf->MultiCell(20,5,$outputlangs->transnoentities("Ref"),0,'C',1);
 		$pdf->SetXY(50,$tab_top);
-		$pdf->MultiCell(130,5,$langs->transnoentities("Description"),0,'L',1);
-		$pdf->SetXY(180,$tab_top);
-		$pdf->MultiCell(20,5,$langs->transnoentities("Quantity"),0,'L',1);
+		$pdf->MultiCell(90,5,$outputlangs->transnoentities("Description"),0,'L',1);
+		$pdf->SetXY(140,$tab_top);
+		$pdf->MultiCell(30,5,$outputlangs->transnoentities("QtyOrdered"),0,'C',1);
+		$pdf->SetXY(170,$tab_top);
+		$pdf->MultiCell(30,5,$outputlangs->transnoentities("QtyToShip"),0,'C',1);
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 	}
 
 	//********************************
 	// Generation du Pied de page
 	//********************************
-	function _pagefoot(&$pdf)
+	function _pagefoot(&$pdf, $outputlangs)
 	{
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetY(-23);
@@ -295,7 +302,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 	//********************************
 	// Generation de l entete
 	//********************************
-	function _pagehead(&$pdf, $exp)
+	function _pagehead(&$pdf, $exp, $outputlangs)
 	{
 		global $conf, $langs;
 
@@ -331,7 +338,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY(60,7);
 		$pdf->SetFont('Arial','B',14);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $langs->transnoentities("SendingSheet"), '' , 'L');	// Bordereau expedition
+		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("SendingSheet"), '' , 'L');	// Bordereau expedition
 		//Num Expedition
 		$Yoff = $Yoff+7;
 		$Xoff = 140;
@@ -339,7 +346,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $langs->transnoentities("RefSending").': '.$exp->ref, '' , 'L');
+		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("RefSending").': '.$exp->ref, '' , 'L');
 		//$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Num Commande
 		$Yoff = $Yoff+4;
@@ -347,7 +354,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $langs->transnoentities("RefOrder").': '.$exp->commande->ref, '' , 'L');
+		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("RefOrder").': '.$exp->commande->ref, '' , 'L');
 
 		$Xoff = 115;
 		//$this->Code39($Xoff+43, $Yoff+1, $exp->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
@@ -491,7 +498,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Tel Client
 		$pdf->SetXY($blDestX,$Yoff+$blSocY);
 		$pdf->SetFont('Arial','',7);
-		$pdf->MultiCell($blW,3, "Tel : ".$this->destinataire->phone_pro, 0, 'L');
+		$pdf->MultiCell($blW,3, $outputlangs->trans("Tel")." : ".$this->destinataire->phone_pro, 0, 'L');
 	}
 }
 ?>

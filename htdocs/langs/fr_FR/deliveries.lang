@@ -5,6 +5,7 @@ DeliveryCard=Fiche livraison
 DeliveryOrder=Bon de livraison
 DeliveryOrders=Bons de livraison
 DeliveryDate=Date de livraison
+DeliveryDateShort=Date livr.
 CreateDeliveryOrder=Générer bon de livraison
 QtyDelivered=Qté livrée 
 SetDeliveryDate=Définir la date de livraison

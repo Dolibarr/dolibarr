@@ -633,10 +633,11 @@ class Livraison extends CommonObject
 		$this->lignes = array();
 	
 		$sql = "SELECT p.label, p.ref,";
-		$sql.= " l.description, l.fk_product, l.subprice, l.total_ht, l.qty as qty_shipped";
-		$sql.= " FROM ".MAIN_DB_PREFIX."livraisondet as l";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = l.fk_product";
-		$sql.= " WHERE l.fk_livraison = ".$this->id;
+		$sql.= " cd.qty as qty_asked,";
+		$sql.= " ld.description, ld.fk_product, ld.subprice, ld.total_ht, ld.qty as qty_shipped";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on p.rowid = ld.fk_product";
+		$sql.= " WHERE ld.fk_origin_line = cd.rowid AND ld.fk_livraison = ".$this->id;
 
 		dolibarr_syslog("Livraison::fetch_lignes sql=".$sql);
 		$resql = $this->db->query($sql);

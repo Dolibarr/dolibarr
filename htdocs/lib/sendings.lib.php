@@ -17,10 +17,10 @@
  */
 
 /**
- \file       htdocs/lib/sendings.lib.php
- \ingroup    expedition
- \brief      Library for expedition module
- \version    $Id$
+ *	\file       htdocs/lib/sendings.lib.php
+ *	\ingroup    expedition
+ *	\brief      Library for expedition module
+ *	\version    $Id$
  */
 
 
@@ -37,10 +37,11 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.description, obj.qty as qty_asked";
 	$sql.= ", ed.qty as qty_shipped, ed.fk_expedition as expedition_id";
 	$sql.= ", e.ref, ".$db->pdate("e.date_expedition")." as date_expedition";
-    if ($conf->livraison_bon->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref";
-	$sql.= " FROM ".MAIN_DB_PREFIX.$origin."det as obj";
-	$sql.= " , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
-    if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid";
+    if ($conf->livraison_bon->enabled) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, ".$db->pdate("l.date_livraison")." as date_delivery, ld.qty as qty_received";
+	$sql.= " FROM (".MAIN_DB_PREFIX."expeditiondet as ed,";
+	$sql.= " ".MAIN_DB_PREFIX.$origin."det as obj,";
+	$sql.= " ".MAIN_DB_PREFIX."expedition as e)";
+    if ($conf->livraison_bon->enabled) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.fk_expedition = e.rowid LEFT JOIN ".MAIN_DB_PREFIX."livraisondet as ld ON ld.fk_livraison = l.rowid  AND obj.rowid = ld.fk_origin_line";
 	$sql.= " WHERE obj.fk_".$origin." = ".$origin_id;
 	if ($filter) $sql.=$filter;
 	$sql.= " AND obj.rowid = ed.fk_origin_line";
@@ -63,17 +64,16 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 			
 			print '<table class="liste" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td align="left">'.$langs->trans("Ref").'</td>';
-			print '<td>'.$langs->trans("Description").'</td>';
-			print '<td align="center">'.$langs->trans("Qty").'</td>';
+			print '<td align="left">'.$langs->trans("Description").'</td>';
+			//print '<td align="left">'.$langs->trans("QtyOrdered").'</td>';
+			print '<td align="left">'.$langs->trans("SendingSheet").'</td>';
+			print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
 			print '<td align="center">'.$langs->trans("DateSending").'</td>';
-            if ($conf->expedition_bon->enabled)
-            {
-                print '<td>'.$langs->trans("SendingSheet").'</td>';
-            }
-            if ($conf->livraison_bon->enabled)
+			if ($conf->livraison_bon->enabled)
             {
                 print '<td>'.$langs->trans("DeliveryOrder").'</td>';
+                print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
+				print '<td align="center">'.$langs->trans("DeliveryDate").'</td>';
             }
 			print "</tr>\n";
 
@@ -83,7 +83,8 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 				$var=!$var;
 				$objp = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
-				print '<td align="left" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
+				
+				// Description
 				if ($objp->fk_product > 0)
 				{
 					$product = new Product($db);
@@ -98,20 +99,27 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 				{
 					print "<td>".dol_htmlentitiesbr(dolibarr_trunc($objp->description,24))."</td>\n";
 				}
+
+				//print '<td align="center">'.$objp->qty_asked.'</td>';
+				
+				// Sending id
+				print '<td align="left" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
+
 				print '<td align="center">'.$objp->qty_shipped.'</td>';
+				
 				print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->date_expedition,'dayhour').'</td>';
-				if ($conf->expedition_bon->enabled)
-				{
-					print '<td align="left"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->ref.'<a></td>';
-				}
 				if ($conf->livraison_bon->enabled)
 				{
 					if ($objp->livraison_id)
 					{
 						print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
+						print '<td align="center">'.$objp->qty_received.'</td>';
+						print '<td>'.dolibarr_print_date($objp->date_delivery,'dayhour').'</td>';
 					}
 					else
 					{
+						print '<td>&nbsp;</td>';
+						print '<td>&nbsp;</td>';
 						print '<td>&nbsp;</td>';
 					}
 				}

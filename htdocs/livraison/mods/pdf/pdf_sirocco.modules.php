@@ -153,7 +153,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($user->fullname);
 
-				$this->_pagehead($pdf, $delivery);
+				$this->_pagehead($pdf, $delivery, $outputlangs);
 
 				$pagenb = 1;
 				$tab_top = 100;
