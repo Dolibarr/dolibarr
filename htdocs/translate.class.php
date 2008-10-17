@@ -43,8 +43,8 @@ class Translate {
 	
     var $cache_labels=array();		// Cache for labels
 	
-    var $charset_inputfile='ISO-8859-1';	// Codage used to encode lang files (used if CHARSET not found in file)
-	var $charset_output='UTF-8';			// Codage used by defaut for "trans" method output if $conf->character_set_client not defined (character_set_client in conf.php)
+    var $charset_inputfile='ISO-8859-1';	// Codage used by default to encode lang files (used if CHARSET not found in file)
+	var $charset_output='UTF-8';			// Codage used by default for "trans" method output if $conf->character_set_client not defined (character_set_client in conf.php)
 	
 
     /**
@@ -155,10 +155,12 @@ class Translate {
 
 
     /**
-	 *  \brief      Charge en memoire le tableau de traduction pour un domaine particulier
-     *              Si le domaine est deja charge, la fonction ne fait rien
-     *  \param      domain      Nom du domain (fichier lang) a charger
-     *  \param      alt         Utilise le fichier alternatif meme si fichier dans la langue est trouvee
+	 *  \brief      Load in a memory array, translation key-value for a particular file.
+     *              If data for file already loaded, do nothing.
+     * 				All data in translation array are stored in ISO-8859-1 format.
+     * 				\\TODO Store data arrays in UTF-8 format.
+     *  \param      domain      File name to load (.lang file)
+     *  \param      alt         Use alternate file even if file in target language is found
 	 *	\return		int			<0 if KO, >0 if OK
      *	\remarks	tab_loaded is completed with $domain key. 
 	 *				Value for key is: 1:Loaded from disk, 2:Not found, 3:Loaded from cache

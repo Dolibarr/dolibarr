@@ -109,6 +109,9 @@ class pdf_einstein extends ModelePDFCommandes
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
+		// Force output charset to ISO, because, FPDF expect text encoded in ISO
+		$outputlangs->charset_output=$outputlangs->character_set_client='ISO-8859-1';
+		
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");

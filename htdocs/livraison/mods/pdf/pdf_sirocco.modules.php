@@ -41,9 +41,14 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	/**		\brief      Constructor
 	 *		\param	    db	    Database handler
 	 */
-	function pdf_sirocco($db=0)
+	function pdf_sirocco($db)
 	{
-		$this->db = $db;
+		global $conf,$langs,$mysoc;
+		
+        $langs->load("main");
+        $langs->load("bills");
+		
+        $this->db = $db;
 		$this->name = "sirocco";
 		$this->description = "Modele de bon de réception livraison simple";
 
@@ -57,6 +62,10 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$this->marge_haute=10;
 		$this->marge_basse=10;
 
+		// Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		
 		$this->error = "";
 	}
 
@@ -80,10 +89,16 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	{
 		global $user,$conf,$langs;
 
-		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("products");
-		$langs->load("deliveries");
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		// Force output charset to ISO, because, FPDF expect text encoded in ISO
+		$outputlangs->charset_output=$outputlangs->character_set_client='ISO-8859-1';
+
+		$outputlangs->load("main");
+		$outputlangs->load("bills");
+		$outputlangs->load("products");
+		$outputlangs->load("deliveries");
+
+		$outputlangs->setPhpLang();
 
 		if ($conf->livraison_bon->dir_output)
 		{
@@ -134,7 +149,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$pdf->AddPage();
 
 				$pdf->SetTitle($delivery->ref);
-				$pdf->SetSubject($langs->transnoentities("DeliveryOrder"));
+				$pdf->SetSubject($outputlangs->transnoentities("DeliveryOrder"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($user->fullname);
 
@@ -158,7 +173,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
-			  		$curY = $nexY;
+					$curY = $nexY;
 
 					// Description de la ligne produit
 					$libelleproduitservice=dol_htmlentitiesbr($delivery->lignes[$i]->label,1);
@@ -178,11 +193,11 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 							if($prodser->isservice())
 							{
 								// Un service peur aussi etre livre
-								$prefix_prodserv = $langs->transnoentities("Service")." ";
+								$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
 							}
 							else
 							{
-								$prefix_prodserv = $langs->transnoentities("Product")." ";
+								$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
 							}
 							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
 						}
@@ -190,50 +205,50 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
 					{
 						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$langs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")",1);
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")",1);
 					}
-			  
-			  	$pdf->SetXY (30, $curY );
-					
-				$pdf->MultiCell(100, 5, $libelleproduitservice, 0, 'J', 0);
 
-			  	$nexY = $pdf->GetY();
+					$pdf->SetXY (30, $curY );
 
-			  $pdf->SetXY (10, $curY );
+					$pdf->MultiCell(100, 5, $libelleproduitservice, 0, 'J', 0);
 
-			  $pdf->MultiCell(20, 5, $delivery->lignes[$i]->ref, 0, 'C');
+					$nexY = $pdf->GetY();
 
-			  // \TODO Field not yet saved in database
-			  //$pdf->SetXY (133, $curY );
-			  //$pdf->MultiCell(10, 5, $delivery->lignes[$i]->tva_tx, 0, 'C');
+					$pdf->SetXY (10, $curY );
 
-			  $pdf->SetXY (145, $curY );
-			  $pdf->MultiCell(10, 5, $delivery->lignes[$i]->qty_shipped, 0, 'C');
+					$pdf->MultiCell(20, 5, $delivery->lignes[$i]->ref, 0, 'C');
 
-			  // \TODO Field not yet saved in database
-			  //$pdf->SetXY (156, $curY );
-			  //$pdf->MultiCell(18, 5, price($delivery->lignes[$i]->price), 0, 'R', 0);
+					// \TODO Field not yet saved in database
+					//$pdf->SetXY (133, $curY );
+					//$pdf->MultiCell(10, 5, $delivery->lignes[$i]->tva_tx, 0, 'C');
 
-			  // \TODO Field not yet saved in database
-			  //$pdf->SetXY (174, $curY );
-			  //$total = price($delivery->lignes[$i]->price * $delivery->lignes[$i]->qty_shipped);
-			  //$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+					$pdf->SetXY (145, $curY );
+					$pdf->MultiCell(10, 5, $delivery->lignes[$i]->qty_shipped, 0, 'C');
 
-			  $pdf->line(10, $curY, 200, $curY );
+					// \TODO Field not yet saved in database
+					//$pdf->SetXY (156, $curY );
+					//$pdf->MultiCell(18, 5, price($delivery->lignes[$i]->price), 0, 'R', 0);
 
-			  if ($nexY > 240 && $i < $nblignes - 1)
-			  {
-			  	$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-			  	$pdf->AddPage();
-			  	$nexY = $iniY;
-			  	$this->_pagehead($pdf, $delivery);
-			  	$pdf->SetTextColor(0,0,0);
-			  	$pdf->SetFont('Arial','', 10);
-			  }
+					// \TODO Field not yet saved in database
+					//$pdf->SetXY (174, $curY );
+					//$total = price($delivery->lignes[$i]->price * $delivery->lignes[$i]->qty_shipped);
+					//$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+
+					$pdf->line(10, $curY, 200, $curY );
+
+					if ($nexY > 240 && $i < $nblignes - 1)
+					{
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+						$pdf->AddPage();
+						$nexY = $iniY;
+						$this->_pagehead($pdf, $delivery, $outputlangs);
+						$pdf->SetTextColor(0,0,0);
+						$pdf->SetFont('Arial','', 10);
+					}
 				}
 
-				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-	
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+
 				$pdf->Output($file);
 				return 1;
 			}
@@ -249,7 +264,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	 *   \brief      Affiche la grille des lignes de propales
 	 *   \param      pdf     objet PDF
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
 		global $langs,$conf;
 		$langs->load("main");
@@ -259,17 +274,17 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$pdf->Text(30,$tab_top + 5,$langs->transnoentities("Designation"));
 
-//		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-//		$pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
+		//		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
+		//		$pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
 
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
 		$pdf->Text(147,$tab_top + 5,$langs->transnoentities("QtyShipped"));
 
-//		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-//		$pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
+		//		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
+		//		$pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
 
-//		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-//		$pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
+		//		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
+		//		$pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
 
 		//      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
@@ -277,91 +292,102 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',10);
-//		$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
-//		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
+		//		$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
+		//		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 
 	}
 
-	/*
+	/**
 	 *   	\brief      Affiche en-tete propale
 	 *   	\param      pdf     objet PDF
 	 *   	\param      fac     objet propale
 	 *      \param      showadress      0=non, 1=oui
 	 */
-	function _pagehead(&$pdf, $delivery)
+	function _pagehead(&$pdf, $delivery, $outputlangs)
 	{
 		global $langs;
-	 $langs->load("deliveries");
-	 $pdf->SetXY(10,5);
-	 if (defined("MAIN_INFO_SOCIETE_NOM"))
-	 {
-	  $pdf->SetTextColor(0,0,200);
-	  $pdf->SetFont('Arial','B',14);
-	  $pdf->MultiCell(76, 8, MAIN_INFO_SOCIETE_NOM, 0, 'L');
-	 }
 
-	 $pdf->SetTextColor(70,70,170);
-	 if (defined("FAC_PDF_ADRESSE"))
-	 {
-	  $pdf->SetFont('Arial','',12);
-	  $pdf->MultiCell(76, 5, FAC_PDF_ADRESSE);
-	 }
-	 if (defined("FAC_PDF_TEL"))
-	 {
-	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, "Tel : ".FAC_PDF_TEL);
-	 }
-	 if (defined("MAIN_INFO_SIREN"))
-	 {
-	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, "SIREN : ".MAIN_INFO_SIREN);
-	 }
+		$outputlangs->load("deliveries");
+		$pdf->SetXY(10,5);
+		if (defined("MAIN_INFO_SOCIETE_NOM"))
+		{
+			$pdf->SetTextColor(0,0,200);
+			$pdf->SetFont('Arial','B',14);
+			$pdf->MultiCell(76, 8, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+		}
 
-	 if (defined("FAC_PDF_INTITULE2"))
-	 {
-	  $pdf->SetXY(100,5);
-	  $pdf->SetFont('Arial','B',14);
-	  $pdf->SetTextColor(0,0,200);
-	  $pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
-	 }
-	 /*
-	  * Adresse Client
-	  */
-	 $pdf->SetTextColor(0,0,0);
-	 $pdf->SetFont('Arial','B',12);
-	 $client = new Societe($this->db);
-	 /*
-	  * if a delivery address is used, use that, else use the client address
-	  */
-	 if ($commande->adresse_livraison_id>0) {
-	 	$client->fetch_adresse_livraison($commande->adresse_livraison_id);
-	 } else {
-	 	$client->fetch($delivery->socid);
-	 }
-	 $delivery->client = $client;
+		$pdf->SetTextColor(70,70,170);
+		if (defined("FAC_PDF_ADRESSE"))
+		{
+			$pdf->SetFont('Arial','',12);
+			$pdf->MultiCell(76, 5, FAC_PDF_ADRESSE);
+		}
+		if (defined("FAC_PDF_TEL"))
+		{
+			$pdf->SetFont('Arial','',10);
+			$pdf->MultiCell(76, 5, "Tel : ".FAC_PDF_TEL);
+		}
+		if (defined("MAIN_INFO_SIREN"))
+		{
+			$pdf->SetFont('Arial','',10);
+			$pdf->MultiCell(76, 5, "SIREN : ".MAIN_INFO_SIREN);
+		}
 
-	 $pdf->SetXY(102,42);
-	 $pdf->MultiCell(96,5, $delivery->client->nom);
-	 $pdf->SetFont('Arial','B',11);
-	 $pdf->SetXY(102,47);
-	 $pdf->MultiCell(96,5, $delivery->client->adresse . "\n" . $delivery->client->cp . " " . $delivery->client->ville);
-	 $pdf->rect(100, 40, 100, 40);
+		if (defined("FAC_PDF_INTITULE2"))
+		{
+			$pdf->SetXY(100,5);
+			$pdf->SetFont('Arial','B',14);
+			$pdf->SetTextColor(0,0,200);
+			$pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
+		}
+		/*
+		 * Adresse Client
+		 */
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('Arial','B',12);
+		$client = new Societe($this->db);
+		/*
+		 * if a delivery address is used, use that, else use the client address
+		 */
+		if ($commande->adresse_livraison_id>0)
+		{
+			$client->fetch_adresse_livraison($commande->adresse_livraison_id);
+		}
+		else
+		{
+			$client->fetch($delivery->socid);
+		}
+		$delivery->client = $client;
 
-
-	 $pdf->SetTextColor(200,0,0);
-	 $pdf->SetFont('Arial','B',12);
-	 $pdf->Text(11, 88, $langs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"day"));
-	 $pdf->Text(11, 94, $langs->transnoentities("DeliveryOrder")." ".$delivery->ref);
-
-	 $pdf->SetFont('Arial','B',9);
-	 $commande = new Commande ($this->db);
-	 if ($commande->fetch($delivery->commande_id) >0) {
-	 	$pdf->Text(11, 98, $langs->transnoentities("RefOrder")." ".$commande->ref);
-	 }
+		$pdf->SetXY(102,42);
+		$pdf->MultiCell(96,5, $delivery->client->nom);
+		$pdf->SetFont('Arial','B',11);
+		$pdf->SetXY(102,47);
+		$pdf->MultiCell(96,5, $delivery->client->adresse . "\n" . $delivery->client->cp . " " . $delivery->client->ville);
+		$pdf->rect(100, 40, 100, 40);
 
 
+		$pdf->SetTextColor(200,0,0);
+		$pdf->SetFont('Arial','B',12);
+		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"day"));
+		$pdf->Text(11, 94, $outputlangs->transnoentities("DeliveryOrder")." ".$delivery->ref);
+
+		$pdf->SetFont('Arial','B',9);
+		$commande = new Commande ($this->db);
+		if ($commande->fetch($delivery->commande_id) >0)
+		{
+			$pdf->Text(11, 98, $outputlangs->transnoentities("RefOrder")." ".$commande->ref);
+		}
 	}
 
+	/**
+	 *   \brief      Affiche le pied de page
+	 *   \param      pdf     objet PDF
+	 */
+	function _pagefoot(&$pdf,$outputlangs)
+	{
+		return pdf_pagefoot($pdf,$outputlangs,'DELIVERY_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur);
+	}
 }
 
 ?>

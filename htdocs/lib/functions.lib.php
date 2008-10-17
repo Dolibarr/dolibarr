@@ -101,7 +101,7 @@ function unaccent_isostring($str)
 }
 
 /**
- *	\brief          Nettoie chaine de caractere de caracteres speciaux
+ *	\brief          Nettoie chaine de caractere de ces caracteres speciaux
  *	\remarks		Fonction appelee par exemple pour definir un nom de fichier depuis un identifiant chaine libre
  *	\param          str             String to clean
  * 	\param			newstr			String to replace bad chars by
@@ -403,19 +403,20 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 
 
 /**
- *	\brief      Formattage de la date en fonction de la langue $conf->langage
- *	\param	    time        GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' in server TZ)
- *	\param	    format      Output date format
- *							"%d %b %Y",
- *							"%d/%m/%Y %H:%M",
- *							"%d/%m/%Y %H:%M:%S",
- *							"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
- * 	\param		to_gmt		false=output string if for local server TZ users, true=output string is for GMT users
- *	\return     string      Formated date or '' if time is null
+ *	\brief      Output date in a string format according to language $conf->language
+ *	\param	    time        	GM Timestamps date (or 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' in server TZ)
+ *	\param	    format      	Output date format
+ *								"%d %b %Y",
+ *								"%d/%m/%Y %H:%M",
+ *								"%d/%m/%Y %H:%M:%S",
+ *								"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
+ * 	\param		to_gmt			false=output string if for local server TZ users, true=output string is for GMT users
+ *	\param		convtooutput	true=Output string is encoded into encoding defined into $langs->charset_output.
+ * 	\return     string      	Formated date or '' if time is null
  */
-function dolibarr_print_date($time,$format='',$to_gmt=false)
+function dolibarr_print_date($time,$format='',$to_gmt=false,$convtooutput=true)
 {
-	global $conf;
+	global $conf,$langs;
 
 	// Si format non defini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
 	if (! $format) $format=(isset($conf->format_date_text_short) ? $conf->format_date_text_short : '%Y-%m-%d %H:%M:%S');
@@ -448,13 +449,14 @@ function dolibarr_print_date($time,$format='',$to_gmt=false)
 		$smin = $reg[5];
 		$ssec = $reg[6];
 
-		return adodb_strftime($format,dolibarr_mktime($shour,$smin,$ssec,$smonth,$sday,$syear),$to_gmt);
+		$ret=adodb_strftime($format,dolibarr_mktime($shour,$smin,$ssec,$smonth,$sday,$syear),$to_gmt);
 	}
 	else
 	{
 		// Date is a timestamps
-		return adodb_strftime($format,$time,$to_gmt);
+		$ret=adodb_strftime($format,$time,$to_gmt);
 	}
+	return ($convtooutput?$langs->convToOuptutCharset($ret):$ret);
 }
 
 
@@ -2794,13 +2796,13 @@ function make_substitutions($chaine,$substitutionarray)
 }
 
 
-/*
- *    \brief      Formate l'affichage de date de d�but et de fin
- *    \param      date_start    date de d�but
- *    \param      date_end      date de fin
- *    \param      format        format de l'affichage
- *    \remarks   Updated by Matelli : added format paramter
- *    \remarks   See http://matelli.fr/showcases/patchs-dolibarr/update-date-range-format.html for details
+/**
+ *    \brief      	Format output for start and end date
+ *    \param      	date_start    Start date
+ *    \param      	date_end      End date
+ *    \param      	format        Output format
+ *    \remarks   	Updated by Matelli : added format paramter
+ *    \remarks   	See http://matelli.fr/showcases/patchs-dolibarr/update-date-range-format.html for details
  */
 function print_date_range($date_start,$date_end,$format = '')
 {
@@ -2808,15 +2810,15 @@ function print_date_range($date_start,$date_end,$format = '')
 
 	if ($date_start && $date_end)
 	{
-		print ' ('.$langs->trans('DateFromTo',dolibarr_print_date($date_start, $format),dolibarr_print_date($date_end, $format)).')';
+		print ' ('.$langs->trans('DateFromTo',dolibarr_print_date($date_start, $format, false, false),dolibarr_print_date($date_end, $format, false, false)).')';
 	}
 	if ($date_start && ! $date_end)
 	{
-		print ' ('.$langs->trans('DateFrom',dolibarr_print_date($date_start), $format).')';
+		print ' ('.$langs->trans('DateFrom',dolibarr_print_date($date_start, $format, false, false)).')';
 	}
 	if (! $date_start && $date_end)
 	{
-		print ' ('.$langs->trans('DateUntil',dolibarr_print_date($date_end), $format).')';
+		print ' ('.$langs->trans('DateUntil',dolibarr_print_date($date_end, $format, false, false)).')';
 	}
 }
 
