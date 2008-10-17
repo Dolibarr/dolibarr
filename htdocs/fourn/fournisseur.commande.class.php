@@ -47,6 +47,7 @@ class CommandeFournisseur extends Commande
 	var $id ;
 	var $brouillon;
 
+	
 	/**   \brief      Constructeur
 	 *    \param      DB      Handler d'accès aux bases de données
 	 */
@@ -123,11 +124,12 @@ class CommandeFournisseur extends Commande
 			$sql = "SELECT l.rowid, l.ref as ref_fourn, l.fk_product, l.label, l.description, l.qty,";
 			$sql.= " l.tva_tx, l.remise_percent, l.subprice,";
 			$sql.= " l.total_ht, l.total_tva, l.total_ttc,";
-			$sql.= " p.rowid as product_id, p.ref, p.label as product, p.description as product_desc";
+			$sql.= " p.rowid as product_id, p.ref, p.label as product";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 			$sql.= " WHERE l.fk_commande = ".$this->id;
 			$sql.= " ORDER BY l.rowid";
+			//print $sql;
 			
 			dolibarr_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
 			$result = $this->db->query($sql);
@@ -154,7 +156,7 @@ class CommandeFournisseur extends Commande
 						
 					$ligne->fk_product          = $objp->product_id;   // Id du produit
 					$ligne->libelle             = $objp->label;        // Label produit
-					$ligne->product_desc        = $objp->product_desc; // Description produit
+					$ligne->product_desc        = $objp->description;  // Description produit
 
 					$ligne->ref                 = $objp->ref;          // Reference
 					$ligne->ref_fourn           = $objp->ref_fourn;    // Reference supplier

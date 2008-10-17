@@ -224,7 +224,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 	exit;
 }
 
-if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+if ($_REQUEST['action'] == 'confirm_deleteproductline' && ($_POST['confirm'] == 'yes' || empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE)))
 {
 	if ($user->rights->fournisseur->commande->creer)
 	{
@@ -577,7 +577,7 @@ if ($id > 0)
 		/*
 		 * Confirmation de la suppression d'une ligne produit
 		 */
-		if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+		if ($_GET['action'] == 'delete_product_line' && ! empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE))
 		{
 			$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
 			print '<br>';
@@ -609,19 +609,20 @@ if ($id > 0)
 		print $commande->getLibStatut(4);
 		print "</td></tr>";
 
+		// Date
 		if ($commande->methode_commande_id > 0)
 		{
 			print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
 
 			if ($commande->date_commande)
 			{
-		  print dolibarr_print_date($commande->date_commande,"dayhour")."\n";
+				print dolibarr_print_date($commande->date_commande,"dayhourtext")."\n";
 			}
 
 			print '</td><td	width="50%"	colspan="3">';
 			if ($commande->methode_commande)
 			{
-		  print $langs->trans("Method")." : " .$commande->methode_commande;
+		  		print $langs->trans("Method")." : " .$commande->methode_commande;
 			}
 			print "</td></tr>";
 		}
@@ -746,7 +747,9 @@ if ($id > 0)
 					print img_edit();
 					print '</a></td>';
 
-					print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete_product_line&amp;lineid='.$objp->id.'">';
+					$actiondelete='delete_product_line';
+					if (empty($conf->global->PRODUIT_CONFIRM_DELETE_LINE)) $actiondelete='confirm_deleteproductline';
+					print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action='.$actiondelete.'&amp;lineid='.$objp->id.'">';
 					print img_delete();
 					print '</a></td>';
 				}
@@ -799,7 +802,7 @@ if ($id > 0)
 				print '</tr>' .	"\n";
 				print "</form>\n";
 			}
-	  		$i++;
+			$i++;
 		}
 
 		/*

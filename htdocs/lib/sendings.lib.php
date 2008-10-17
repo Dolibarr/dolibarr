@@ -112,7 +112,7 @@ function show_list_sending_receive($origin='commande',$origin_id,$filter='')
 				{
 					if ($objp->livraison_id)
 					{
-						print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'generic').' '.$objp->livraison_ref.'<a></td>';
+						print '<td><a href="'.DOL_URL_ROOT.'/livraison/fiche.php?id='.$objp->livraison_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->livraison_ref.'<a></td>';
 						print '<td align="center">'.$objp->qty_received.'</td>';
 						print '<td>'.dolibarr_print_date($objp->date_delivery,'dayhour').'</td>';
 					}
