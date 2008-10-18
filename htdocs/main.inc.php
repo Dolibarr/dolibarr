@@ -886,7 +886,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  *  \param      title   titre page web
  *  \param      target  target du menu Accueil
  */
-function top_menu($head, $title="", $target="")
+function top_menu($head, $title='', $target='')
 {
 	global $user, $conf, $langs, $db, $dolibarr_main_authentication;
 

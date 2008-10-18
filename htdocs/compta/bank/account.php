@@ -107,7 +107,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"]=='yes' && $user->r
 
 
 /*
-* Affichage page
+* View
 */
 
 llxHeader();
@@ -261,7 +261,7 @@ if ($account || $_GET["ref"])
 
 	
 	/**
-	* Bandeau recherche
+	* Search form
 	*/
 
 	// Define transaction list navigation string
@@ -473,8 +473,10 @@ if ($account || $_GET["ref"])
 	            
 	            $isbanktransfert=false;
 	            foreach($links as $key=>$val) { if ($val['type']=='banktransfert') $isbanktransfert=true; }
+	            $issocialcontrib=false;
+	            //foreach($links as $key=>$val) { if ($val['type']=='sc') $issocialcontrib=true; }
 	            
-	            if (sizeof($links) == 0 || $isbanktransfert)
+	            if (sizeof($links) == 0 || $isbanktransfert || $issocialcontrib)
 	            {
 					if (eregi('^\((.*)\)$',$objp->label,$reg))
 					{
@@ -524,9 +526,14 @@ if ($account || $_GET["ref"])
 	                }
 	                else if ($links[$key]['type']=='company') {
 	                }
-					else if ($links[$key]['type']=='sc') {
+					else if ($links[$key]['type']=='sc') {	// This is waitin for card to link to payment_sc
+						print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
+						//print img_object($langs->trans('ShowPayment'),'payment').' ';
+						print $langs->trans("SocialContribution");
+						print '</a>';
 					}
-					else if ($links[$key]['type']=='payment_sc') {
+					else if ($links[$key]['type']=='payment_sc') 
+					{
 						//print ' - ';
 						print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
 						//print img_object($langs->trans('ShowPayment'),'payment').' ';

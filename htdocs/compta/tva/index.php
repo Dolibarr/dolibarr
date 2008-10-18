@@ -219,10 +219,10 @@ $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next(
 print_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
 
-echo '<table width="100%">';
+echo '<table width="100%" class="nobordernopadding">';
 echo '<tr><td>';
 print_fiche_titre($langs->trans("VATSummary"));
-echo '</td><td>';
+echo '</td><td width="5">&nbsp;</td><td>';
 print_fiche_titre($langs->trans("VATPayed"));
 echo '</td></tr>';
 
@@ -284,7 +284,7 @@ else
 print '</table>';
 	
 	
-echo '</td><td valign="top" width="50%">';
+echo '</td><td>&nbsp;</td><td valign="top" width="50%">';
 	
 	
 /*

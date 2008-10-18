@@ -31,11 +31,11 @@ if (! $res) include("../../../dolibarr/htdocs/main.inc.php");	// Used on dev env
 $langs->load("admin");
 
 
-function llxHeader($head = "", $title="", $help_url='')
+function llxHeader($head = '', $title='', $help_url='')
 {
 	global $conf, $user, $langs;
 
-	top_menu($head);
+	top_menu($head, $title, $target);
 
 	$menuarray=array();
 	

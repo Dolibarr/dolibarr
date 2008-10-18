@@ -397,7 +397,7 @@ class MenuLeft {
 					}
 				}
 
-				// Clients
+				// Customers
 				if ($conf->societe->enabled)
 				{
 					$newmenu->add(DOL_URL_ROOT."/compta/index.php?leftmenu=customers", $langs->trans("Customers"),0,$user->rights->societe->lire);
@@ -409,7 +409,7 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"),1,$user->rights->societe->contact->lire);
 				}
 
-				// Factures
+				// Invoices
 				if ($conf->facture->enabled)
 				{
 					$langs->load("bills");
@@ -434,14 +434,14 @@ class MenuLeft {
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),2,$user->rights->facture->lire);
 				}
 				
-				// Propal
+				// Proposals
 				if ($conf->propal->enabled)
 				{
 					$langs->load("propal");
 					$newmenu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"),0,$user->rights->propale->lire);
 				}
 
-				// Commandes
+				// Orders
 				if ($conf->commande->enabled )
 				{
 					$langs->load("orders");
@@ -449,7 +449,7 @@ class MenuLeft {
 					//                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/", $langs->trans("StatusOrderToBill"), 1 ,$user->rights->commande->lire);
 				}
 
-				// Dons
+				// Donations
 				if ($conf->don->enabled)
 				{
 					$langs->load("donations");
@@ -468,11 +468,11 @@ class MenuLeft {
 					if ($leftmenu=="tripsandexpenses") $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("List"), 1, $user->rights->deplacement->lire);
 				}
 				
-				// Taxes et charges sociales
+				// Taxes and social contributions
 				if ($conf->tax->enabled)
 				{
 					$newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax&amp;mainmenu=accountancy",$langs->trans("MenuTaxAndDividends"), 0, $user->rights->tax->charges->lire);
-					if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax_social&amp;mainmenu=accountancy",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
+					if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax_social&amp;mainmenu=accountancy&amp;mode=sconly",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
 					if (eregi('^tax',$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/charges.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
 					if (eregi('^tax',$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("List"), 2, $user->rights->tax->charges->lire);
 					// VAT

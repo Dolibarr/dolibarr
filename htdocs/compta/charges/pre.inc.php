@@ -29,13 +29,13 @@
 require("../../main.inc.php");
 
 
-function llxHeader($head = "")
+function llxHeader($head = '', $title='', $help_url='')
 {
     global $user, $conf, $langs;
     $langs->load("compta");
     $langs->load("propal");
     
-    top_menu($head);
+    top_menu($head, $title, $target);
     
     $menu = new Menu();
     
