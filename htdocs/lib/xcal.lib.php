@@ -316,7 +316,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 		// We change mod to allow file to be overwritten if dump is launched
 		// from command line or a web session.
 		// 0666 = rw-rw-rw-
-		@chmod($fichier, $conf->global->MAIN_UMASK);
+		if (! empty($conf->global->MAIN_UMASK)) @chmod($fichier, $conf->global->MAIN_UMASK);
 	}
 }
 

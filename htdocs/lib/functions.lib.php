@@ -1676,7 +1676,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	$return=move_uploaded_file($src_file, $file_name);
 	if ($return)
 	{	
-		@chmod($file_name, $conf->global->MAIN_UMASK);
+		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name, $conf->global->MAIN_UMASK);
 		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
 		return 1;
 	}

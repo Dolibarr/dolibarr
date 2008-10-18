@@ -600,7 +600,7 @@ class Ldap
 			// We change mod to allow file to be overwritten if dump is launched
 			// from command line or a web session.
 			// 0666 = rw-rw-rw-
-			@chmod($file, $conf->global->MAIN_UMASK);
+			if (! empty($conf->global->MAIN_UMASK)) @chmod($file, $conf->global->MAIN_UMASK);
 			return 1;
 		}
 		else
