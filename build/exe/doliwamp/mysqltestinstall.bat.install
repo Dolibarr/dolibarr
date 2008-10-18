@@ -1,6 +1,7 @@
 @echo off
 REM -----------------------------------
 REM Launch a test to connect to mysql
+REM $Id$
 REM -----------------------------------
 
 echo ----------------------------------------------
@@ -19,3 +20,4 @@ echo Try to connect to mysql with this password
 .\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysql -P WAMPMYSQLPORT -u root -p%SAVES%
 
 sleep 2
+pause
