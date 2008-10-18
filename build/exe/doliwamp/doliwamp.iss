@@ -68,6 +68,7 @@ Source: "build\exe\doliwamp\install_services.bat.install"; DestDir: "{app}\"; Fl
 Source: "build\exe\doliwamp\uninstall_services.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\mysqlinitpassword.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\mysqltestinstall.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\startdoliwamp_manual_donotuse.bat.install"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications
 Source: "C:\Program Files\Wamp\apps\phpmyadmin2.10.1\*.*"; DestDir: "{app}\apps\phpmyadmin2.10.1"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log"
@@ -580,6 +581,8 @@ begin
       LoadStringFromFile (srcFile, srcContents);
 
       //version de apache et mysql
+      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
+      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
       StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
       StringChange (srcContents, 'WAMPMYSQLPORT', myport);
 
@@ -587,6 +590,26 @@ begin
     end
 
 
+    //----------------------------------------------
+    // Fichier startdoliwamp_manual_donotuse.bat
+    //----------------------------------------------
+
+    destFile := pathWithSlashes+'/startdoliwamp_manual_donotuse.bat';
+    srcFile := pathWithSlashes+'/startdoliwamp_manual_donotuse.bat.install';
+
+    if not FileExists (destFile) and FileExists (srcFile) then
+    begin
+      LoadStringFromFile (srcFile, srcContents);
+
+      //version de apache et mysql
+      StringChange (srcContents, 'WAMPROOT', pathWithSlashes);
+      StringChange (srcContents, 'WAMPAPACHEVERSION', apacheVersion);
+      StringChange (srcContents, 'WAMPMYSQLVERSION', mysqlVersion);
+      StringChange (srcContents, 'WAMPMYSQLPORT', myport);
+
+      SaveStringToFile(destFile,srcContents, False);
+    end
+    
 
 
     //----------------------------------------------
