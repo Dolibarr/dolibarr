@@ -242,7 +242,7 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && ($_POST['confirm'] == 
 	exit;
 }
 
-if ($_POST['action'] ==	'confirm_valid'	&& $_POST['confirm'] ==	'yes' && $user->rights->fournisseur->commande->valider)
+if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->commande->valider)
 {
 	$commande =	new	CommandeFournisseur($db);
 
@@ -622,7 +622,7 @@ if ($id > 0)
 			print '</td><td	width="50%"	colspan="3">';
 			if ($commande->methode_commande)
 			{
-		  		print $langs->trans("Method")." : " .$commande->methode_commande;
+				print $langs->trans("Method")." : " .$commande->methode_commande;
 			}
 			print "</td></tr>";
 		}
@@ -919,42 +919,55 @@ if ($id > 0)
 
 			if ($commande->statut == 0 && $num > 0)
 			{
-		  if ($user->rights->fournisseur->commande->valider)
-		  {
-		  	print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
-		  }
+				if ($user->rights->fournisseur->commande->valider)
+				{
+					print '<a class="butAction" ';
+					if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+					{
+						// We check if number is temporary number
+						if (eregi('^\(PROV',$commande->ref)) $num = $commande->getNextNumRef($soc);
+						else $num = $commande->ref;
+						$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=confirm_valid&confirm=yes';
+						print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateBill',$num)).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'validate\')"';
+					}
+					else
+					{
+						print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=valid"';
+					}
+					print '>'.$langs->trans('Validate').'</a>';
+				}
 			}
 
 			if ($commande->statut == 1)
 			{
-		  if ($user->rights->fournisseur->commande->approuver)
-		  {
-		  	print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+				if ($user->rights->fournisseur->commande->approuver)
+				{
+					print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
 
-		  	print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
-		  }
+					print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+				}
 
-		  if ($user->rights->fournisseur->commande->annuler)
-		  {
-		  	print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
-		  }
+				if ($user->rights->fournisseur->commande->annuler)
+				{
+					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+				}
 
 			}
 
 			if ($commande->statut == 2)
 			{
-		  if ($user->rights->fournisseur->commande->annuler)
-		  {
-		  	print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
-		  }
+				if ($user->rights->fournisseur->commande->annuler)
+				{
+					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=cancel">'.$langs->trans("CancelOrder").'</a>';
+				}
 			}
 
 			if ($commande->statut == 0)
 			{
-		  if ($user->rights->fournisseur->commande->creer)
-		  {
-		  	print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-		  }
+				if ($user->rights->fournisseur->commande->creer)
+				{
+					print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+				}
 			}
 
 			print "</div>";
