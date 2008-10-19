@@ -513,16 +513,9 @@ if ($id > 0)
 		{
 			$commande->date_commande=time();
 
-			// on verifie si la	commande est en numerotation provisoire
-			$ref = substr($commande->ref, 1, 4);
-			if ($ref ==	'PROV')
-			{
-				$newref	= $commande->getNextNumRef($soc);
-			}
-			else
-			{
-				$newref	= $commande->ref;
-			}
+			// We check if number is temporary number
+			if (eregi('^\(PROV',$commande->ref)) $newref = $commande->getNextNumRef($soc);
+			else $newref = $commande->ref;
 
 			$text=$langs->trans('ConfirmValidateOrder',$newref);
 			if ($conf->notification->enabled)
@@ -928,7 +921,7 @@ if ($id > 0)
 						if (eregi('^\(PROV',$commande->ref)) $num = $commande->getNextNumRef($soc);
 						else $num = $commande->ref;
 						$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=confirm_valid&confirm=yes';
-						print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateBill',$num)).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'validate\')"';
+						print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateOrder',$num)).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'validate\')"';
 					}
 					else
 					{
