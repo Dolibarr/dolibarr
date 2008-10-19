@@ -21,11 +21,11 @@
  */
 
 /**
-	\file       htdocs/fourn/facture/fiche.php
-	\ingroup    facture, fournisseur
-	\brief      Page for supplier invoice card
-	\version    $Id$
-*/
+ *	\file       htdocs/fourn/facture/fiche.php
+ *	\ingroup    facture, fournisseur
+ *	\brief      Page for supplier invoice card
+ *	\version    $Id$
+ */
 
 require_once('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
@@ -53,7 +53,7 @@ $html = new Form($db);
 $mesg='';
 $action=isset($_GET['action'])?$_GET['action']:$_POST['action'];
 
-if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->facture->valider)
+if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $user->rights->fournisseur->facture->valider)
 {
 	$facturefourn=new FactureFournisseur($db);
 	$facturefourn->fetch($_GET['facid']);
@@ -894,6 +894,7 @@ else
 		/*
 		 * Boutons actions
 		 */
+		
 		print '<div class="tabsAction">';
 
 		if ($fac->statut <= 1 && $fac->getSommePaiement() <= 0 && $user->rights->fournisseur->facture->creer)
@@ -918,7 +919,20 @@ else
 		{
 			if (sizeof($fac->lignes) && $_GET['action'] <> 'edit')
 			{
-				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Valid').'</a>';
+				print '<a class="butAction" ';
+				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+				{
+					// We check if number is temporary number
+					if (eregi('^\(PROV',$fac->ref)) $num = $fac->getNextNumRef($soc);
+					else $num = $fac->ref;
+					$url = $_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=confirm_valid&confirm=yes';
+					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateBill',$num)).'\',\''.dol_escape_js($langs->trans("Yes")).'\',\''.dol_escape_js($langs->trans("No")).'\',\'validate\')"';
+				}
+				else
+				{
+					print 'href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid"';
+				}
+				print '>'.$langs->trans('Validate').'</a>';
 			}
 		}
 		else
