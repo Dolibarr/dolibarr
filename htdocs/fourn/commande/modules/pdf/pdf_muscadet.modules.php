@@ -412,9 +412,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				 $pdf->SetXY ($this->marges['g'], $cury+12);
 				 $pdf->MultiCell(90, 3, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
 				 $pdf->SetXY ($this->marges['g'], $cury+22);
-				 $pdf->MultiCell(90, 3, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
+				 $pdf->MultiCell(90, 3, $outputlangs->trans("IBAN")." : " . $account->iban_prefix, 0, 'L', 0);
 				 $pdf->SetXY ($this->marges['g'], $cury+25);
-				 $pdf->MultiCell(90, 3, "BIC : " . $account->bic, 0, 'L', 0);
+				 $pdf->MultiCell(90, 3, $outputlangs->trans("BIC")." : " . $account->bic, 0, 'L', 0);
 
 				 }
 				 }

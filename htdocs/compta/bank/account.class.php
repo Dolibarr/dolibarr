@@ -56,7 +56,7 @@ class Account extends CommonObject
 	var $number;
 	//! Cle de controle du RIB
 	var $cle_rib;
-	//! Numero BIC du compte
+	//! Numero BIC/SWIFT du compte
 	var $bic;
 	//! Prefix IBAN a utiliser pour creer la cle IBAN International Bank Account Number
 	var $iban_prefix;

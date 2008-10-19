@@ -62,11 +62,11 @@ class pdf_huitre extends ModelePDFFactures
 		$this->page_largeur = 210;
 		$this->page_hauteur = 297;
 		$this->format = array($this->page_largeur,$this->page_hauteur);
-        $this->marge_gauche=10;
-        $this->marge_droite=10;
-        $this->marge_haute=10;
-        $this->marge_basse=10;
-		
+		$this->marge_gauche=10;
+		$this->marge_droite=10;
+		$this->marge_haute=10;
+		$this->marge_basse=10;
+
 		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
 		$this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
 		$this->option_modereg = 0;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
@@ -96,7 +96,7 @@ class pdf_huitre extends ModelePDFFactures
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output=$outputlangs->character_set_client='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
@@ -108,49 +108,49 @@ class pdf_huitre extends ModelePDFFactures
 		{
 			// Définition de l'objet $fac (pour compatibilite ascendante)
 			if (! is_object($fac))
-	  {
-	  	$id = $fac;
-	  	$fac = new Facture($this->db,"",$id);
-	  	$ret=$fac->fetch($id);
-	  }
+			{
+				$id = $fac;
+				$fac = new Facture($this->db,"",$id);
+				$ret=$fac->fetch($id);
+			}
 
-	  // Définition de $dir et $file
-	  if ($fac->specimen)
-	  {
-	  	$dir = $conf->facture->dir_output;
-	  	$file = $dir . "/SPECIMEN.pdf";
-	  }
-	  else
-	  {
-	  	$facref = sanitize_string($fac->ref);
-	  	$dir = $conf->facture->dir_output . "/" . $facref;
-	  	$file = $dir . "/" . $facref . ".pdf";
-	  }
+			// Définition de $dir et $file
+			if ($fac->specimen)
+			{
+				$dir = $conf->facture->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
+			}
+			else
+			{
+				$facref = sanitize_string($fac->ref);
+				$dir = $conf->facture->dir_output . "/" . $facref;
+				$file = $dir . "/" . $facref . ".pdf";
+			}
 
-	  if (! file_exists($dir))
-	  {
-	  	if (create_exdir($dir) < 0)
-	  	{
-	  		$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
-	  		$langs->setPhpLang();	// On restaure langue session
-	  		return 0;
-	  	}
-	  }
+			if (! file_exists($dir))
+			{
+				if (create_exdir($dir) < 0)
+				{
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+					$langs->setPhpLang();	// On restaure langue session
+					return 0;
+				}
+			}
 
-	  if (file_exists($dir))
-	  {
-	  	// Protection et encryption du pdf
-	  	if ($conf->global->PDF_SECURITY_ENCRYPTION)
-	  	{
+			if (file_exists($dir))
+			{
+				// Protection et encryption du pdf
+				if ($conf->global->PDF_SECURITY_ENCRYPTION)
+				{
 					$pdf=new FPDI_Protection('P','mm','A4');
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
 					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-	  	}
-	  	else
-	  	{
-	  		$pdf=new FPDI('P','mm',$this->format);
+				}
+				else
+				{
+					$pdf=new FPDI('P','mm',$this->format);
 				}
 
 				$pdf->Open();
@@ -203,20 +203,20 @@ class pdf_huitre extends ModelePDFFactures
 
 					if ($nexY > 200 && $i < $nblignes - 1)
 					{
-		    $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-		    $pdf->AddPage();
-		    $nexY = $iniY;
-		    $this->_pagehead($pdf, $fac, $outputlangs);
-		    $pdf->SetTextColor(0,0,0);
-		    $pdf->SetFont('Arial','', 10);
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
+						$pdf->AddPage();
+						$nexY = $iniY;
+						$this->_pagehead($pdf, $fac, $outputlangs);
+						$pdf->SetTextColor(0,0,0);
+						$pdf->SetFont('Arial','', 10);
 					}
 
 				}
-				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
-				$this->_tableau_tot($pdf, $fac);
+				$this->_tableau_tot($pdf, $fac, $outputlangs);
 
-				$this->_tableau_compl($pdf, $fac);
+				$this->_tableau_compl($pdf, $fac, $outputlangs);
 
 				/*
 				 *
@@ -225,20 +225,20 @@ class pdf_huitre extends ModelePDFFactures
 				{
 					if (FACTURE_RIB_NUMBER > 0)
 					{
-		    $account = new Account($this->db);
-		    $account->fetch(FACTURE_RIB_NUMBER);
+						$account = new Account($this->db);
+						$account->fetch(FACTURE_RIB_NUMBER);
 
-		    $pdf->SetXY (10, 40);
-		    $pdf->SetFont('Arial','U',8);
-		    $pdf->MultiCell(40, 4, $langs->transnoentities("BankDetails"), 0, 'L', 0);
-		    $pdf->SetFont('Arial','',8);
-		    $pdf->MultiCell(40, 4, $langs->transnoentities("BankCode").' : ' . $account->code_banque, 0, 'L', 0);
-		    $pdf->MultiCell(40, 4, $langs->transnoentities("DeskCode").' : ' . $account->code_guichet, 0, 'L', 0);
-		    $pdf->MultiCell(50, 4, $langs->transnoentities("BankAccountNumber").' : ' . $account->number, 0, 'L', 0);
-		    $pdf->MultiCell(40, 4, $langs->transnoentities("BankAccountNumberKey").' : ' . $account->cle_rib, 0, 'L', 0);
-		    $pdf->MultiCell(40, 4, $langs->transnoentities("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
-		    $pdf->MultiCell(40, 4, $langs->transnoentities("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
-		    $pdf->MultiCell(40, 4, $langs->transnoentities("BIC").' : ' . $account->bic, 0, 'L', 0);
+						$pdf->SetXY (10, 40);
+						$pdf->SetFont('Arial','U',8);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BankDetails"), 0, 'L', 0);
+						$pdf->SetFont('Arial','',8);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BankCode").' : ' . $account->code_banque, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("DeskCode").' : ' . $account->code_guichet, 0, 'L', 0);
+						$pdf->MultiCell(50, 4, $outputlangs->transnoentities("BankAccountNumber").' : ' . $account->number, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BankAccountNumberKey").' : ' . $account->cle_rib, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BIC").' : ' . $account->bic, 0, 'L', 0);
 					}
 				}
 
@@ -251,7 +251,7 @@ class pdf_huitre extends ModelePDFFactures
 				{
 					$pdf->SetFont('Arial','',7);
 					$pdf->SetXY(10, 211);
-					$note = $langs->transnoentities("Note").' : '.$fac->note_public;
+					$note = $outputlangs->transnoentities("Note").' : '.$fac->note_public;
 					$pdf->MultiCell(110, 3, $note, 0, 'J');
 				}
 
@@ -280,13 +280,13 @@ class pdf_huitre extends ModelePDFFactures
 
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
-	  }
-	  else
-	  {
-	  	$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
-	  	$langs->setPhpLang();	// On restaure langue session
-	  	return 0;
-	  }
+			}
+			else
+			{
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+				$langs->setPhpLang();	// On restaure langue session
+				return 0;
+			}
 		}
 		else
 		{
@@ -343,7 +343,7 @@ class pdf_huitre extends ModelePDFFactures
 		$this->_out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c ', $x1*$this->k, ($h-$y1)*$this->k,
 		$x2*$this->k, ($h-$y2)*$this->k, $x3*$this->k, ($h-$y3)*$this->k));
 	}
-	///////////////////////////////
+
 	function _tableau_compl(&$pdf, $fac)
 	{
 		global $langs;
@@ -377,7 +377,7 @@ class pdf_huitre extends ModelePDFFactures
 	 *   \param      pdf         objet PDF
 	 *   \param      fac         objet facture
 	 */
-	function _tableau_tot(&$pdf, $fac)
+	function _tableau_tot(&$pdf, $fac, $outputlangs)
 	{
 		global $langs;
 		$langs->load("main");
@@ -396,7 +396,7 @@ class pdf_huitre extends ModelePDFFactures
 		//	      $pdf->line(132, $tab2_top + $tab2_height - 7, 200, $tab2_top + $tab2_height - 7 );
 
 		$pdf->SetXY (132, $tab2_top + 0);
-		$pdf->MultiCell(42, $tab2_hl, $langs->transnoentities("TotalHT"), 0, 'R', 0);
+		$pdf->MultiCell(42, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'R', 0);
 
 		$pdf->SetXY (174, $tab2_top + 0);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
@@ -404,13 +404,13 @@ class pdf_huitre extends ModelePDFFactures
 		$index = 1;
 
 		$pdf->SetXY (132, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell(42, $tab2_hl, $langs->transnoentities("TotalVAT"), 0, 'R', 0);
+		$pdf->MultiCell(42, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'R', 0);
 
 		$pdf->SetXY (174, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
 
 		$pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+1));
-		$pdf->MultiCell(42, $tab2_hl, $langs->transnoentities("TotalTTC"), 0, 'R', 1);
+		$pdf->MultiCell(42, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), 0, 'R', 1);
 
 		$pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+1));
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 1);
@@ -420,13 +420,13 @@ class pdf_huitre extends ModelePDFFactures
 		if ($deja_regle > 0)
 		{
 			$pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+2));
-			$pdf->MultiCell(42, $tab2_hl, $langs->transnoentities("AlreadyPayed"), 0, 'R', 0);
+			$pdf->MultiCell(42, $tab2_hl, $outputlangs->transnoentities("AlreadyPayed"), 0, 'R', 0);
 
 			$pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+2));
 			$pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
 			$pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+3));
-			$pdf->MultiCell(42, $tab2_hl, $langs->transnoentities("RemainderToPay"), 0, 'R', 1);
+			$pdf->MultiCell(42, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), 0, 'R', 1);
 
 			$pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+3));
 			$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 1);
@@ -436,7 +436,7 @@ class pdf_huitre extends ModelePDFFactures
 	 *   \brief      Affiche la grille des lignes de factures
 	 *   \param      pdf     objet PDF
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
 		global $langs;
 		$langs->load("main");
@@ -444,19 +444,19 @@ class pdf_huitre extends ModelePDFFactures
 
 		$pdf->SetFont('Arial','',10);
 
-		$pdf->Text(11,$tab_top + 5,$langs->transnoentities("Designation"));
+		$pdf->Text(11,$tab_top + 5,$outputlangs->transnoentities("Designation"));
 
 		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-		$pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
+		$pdf->Text(134,$tab_top + 5,$outputlangs->transnoentities("VAT"));
 
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-		$pdf->Text(147,$tab_top + 5,$langs->transnoentities("Qty"));
+		$pdf->Text(147,$tab_top + 5,$outputlangs->transnoentities("Qty"));
 
 		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-		$pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
+		$pdf->Text(160,$tab_top + 5,$outputlangs->transnoentities("PriceU"));
 
 		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-		$pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
+		$pdf->Text(187,$tab_top + 5,$outputlangs->transnoentities("Total"));
 
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 		$pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
@@ -601,10 +601,11 @@ class pdf_huitre extends ModelePDFFactures
 
 	}
 
-	/*
-	 *   \brief      Affiche le pied de page de la facture
-	 *   \param      pdf     objet PDF
-	 *   \param      fac     objet facture
+	/**
+	 *   	\brief      Affiche le pied de page de la facture
+	 *   	\param      pdf     		object PDF
+	 *  	\param      fac     		object invoice
+	 * 		\param		outputlangs		object langs
 	 */
 	function _pagefoot(&$pdf, $fac, $outputlangs)
 	{
