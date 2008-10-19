@@ -1165,34 +1165,41 @@ class Societe extends CommonObject
 	 *		\param		maxlen			Longueur max libelle
 	 *		\return		string			Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlen=0)
+	function getNomUrl($withpicto=0,$option='customer',$maxlen=0)
 	{
 		global $langs;
 
 		$result='';
 
-		if ($this->client == 1)
+		if ($option == 'customer')
 		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">';
+			if ($this->client == 1)
+			{
+				$lien = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">';
+				$lienfin='</a>';
+			}
+			elseif($this->client == 2)
+			{
+				$lien= '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$this->id.'">';
+				$lienfin='</a>';
+			}
+			else
+			{
+				$lien = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">';
+				$lienfin='</a>';
+			}
+		}
+		if ($option == 'supplier')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$this->id.'">';
 			$lienfin='</a>';
 		}
-		elseif($this->client == 2)
-		{
-			$lien= '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$this->id.'">';
-			$lienfin='</a>';
-		}
-		else
-		{
-			$lien = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">';
-			$lienfin='</a>';
-		}
-
 		if ($option == 'compta')
 		{
 			$lien = '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$this->id.'">';
 			$lienfin='</a>';
 		}
-
+		
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin.' ');
 		$result.=$lien.($maxlen?dolibarr_trunc($this->nom,$maxlen):$this->nom).$lienfin;
 		return $result;
