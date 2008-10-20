@@ -83,7 +83,7 @@ if ($_POST['addfile'] || $_POST['addfilehtml'])
 	        }
 	        else
 	        {
-	            // Echec transfert (fichier dépassant la limite ?)
+	            // Echec transfert (fichier dï¿½passant la limite ?)
 	            $message = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
 	            // print_r($_FILES);
 	        }
@@ -177,6 +177,9 @@ $server=! empty($conf->global->MAIN_MAIL_SMTP_SERVER)?$conf->global->MAIN_MAIL_S
 if (! $server) $server='127.0.0.1';
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -288,7 +291,7 @@ else
 	}
 	else
 	{
-	    print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestSend").'</a>';
+	    print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 	if ($conf->fckeditor->enabled)
