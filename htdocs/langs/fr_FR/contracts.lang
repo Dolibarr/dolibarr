@@ -18,6 +18,7 @@ ServicesLegend=Légende pour les services
 Contracts=Contrats
 Contract=Contrat
 ContractContacts=Contacts contrat
+NoContracts=Pas de contrats
 MenuServices=Services
 MenuInactiveServices=Services inactifs
 MenuRunningServices=Services actifs
