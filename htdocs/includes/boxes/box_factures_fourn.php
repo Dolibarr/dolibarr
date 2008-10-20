@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
 	    \file       htdocs/includes/boxes/box_factures_fourn.php
         \ingroup    fournisseur
 		\brief      Fichier de gestion d'une box des factures fournisseurs
-		\version    $Revision$
+		\version    $Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -38,7 +36,6 @@ class box_factures_fourn extends ModeleBoxes {
 
 	var $db;
 	var $param;
-	var $textnohtmlencoded=true;
 	
     var $info_box_head = array();
     var $info_box_contents = array();
@@ -51,12 +48,12 @@ class box_factures_fourn extends ModeleBoxes {
         global $langs;
         $langs->load("boxes");
 
-        $this->boxlabel=$langs->transnoentities("BoxLastSupplierBills");
+        $this->boxlabel=$langs->trans("BoxLastSupplierBills");
     }
 
     /**
-     *      \brief      Charge les données en mémoire pour affichage ultérieur
-     *      \param      $max        Nombre maximum d'enregistrements à charger
+     *      \brief      Charge les donnï¿½es en mï¿½moire pour affichage ultï¿½rieur
+     *      \param      $max        Nombre maximum d'enregistrements ï¿½ charger
      */
     function loadBox($max=5)
     {
@@ -66,7 +63,7 @@ class box_factures_fourn extends ModeleBoxes {
         $facturestatic=new FactureFournisseur($db);
 
         $this->info_box_head = array(
-				'text' => $langs->transnoentities("BoxTitleLastSupplierBills",$max),
+				'text' => $langs->trans("BoxTitleLastSupplierBills",$max)
 			);
 
         if ($user->rights->fournisseur->facture->lire)

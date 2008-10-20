@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 		\file       htdocs/includes/boxes/box_commandes.php
 		\ingroup    commande
-		\brief      Module de génération de l'affichage de la box commandes
+		\brief      Module de generation de l'affichage de la box commandes
+		\version	$Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -55,8 +53,8 @@ class box_commandes extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les données en mémoire pour affichage ultérieur
-     *      \param      $max        Nombre maximum d'enregistrements à charger
+     *      \brief      Charge les donnï¿½es en mï¿½moire pour affichage ultï¿½rieur
+     *      \param      $max        Nombre maximum d'enregistrements ï¿½ charger
      */
     function loadBox($max=5)
     {

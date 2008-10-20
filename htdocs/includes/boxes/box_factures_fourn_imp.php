@@ -52,8 +52,8 @@ class box_factures_fourn_imp extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les données en mémoire pour affichage ultérieur
-     *      \param      $max        Nombre maximum d'enregistrements à charger
+     *      \brief      Charge les donnï¿½es en mï¿½moire pour affichage ultï¿½rieur
+     *      \param      $max        Nombre maximum d'enregistrements ï¿½ charger
      */
     function loadBox($max=5)
     {

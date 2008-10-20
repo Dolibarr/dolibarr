@@ -20,14 +20,14 @@
 /**
 	    \file       htdocs/includes/boxes/modules_boxes.php
 		\ingroup    facture
-		\brief      Fichier contenant la classe mère des boites
+		\brief      Fichier contenant la classe mï¿½re des boites
 		\version    $Id$
 */
 
 
 /**
 	    \class      ModeleBoxes
-		\brief      Classe mère des boites
+		\brief      Classe mï¿½re des boites
 */
 
 class ModeleBoxes
@@ -36,7 +36,6 @@ class ModeleBoxes
 
     var $db;
     var $error='';
-	var $textnohtmlencoded=false;
 
 	/*
 	*	\brief		Constructeur
@@ -48,7 +47,7 @@ class ModeleBoxes
 	
 	
    /**
-        \brief      Renvoi le dernier message d'erreur de création de facture
+        \brief      Renvoi le dernier message d'erreur de crï¿½ation de facture
     */
     function error()
     {
@@ -94,7 +93,7 @@ class ModeleBoxes
 
    /**
         \brief      Methode standard d'affichage des boites
-        \param      $head       tableau des caractéristiques du titre
+        \param      $head       tableau des caractï¿½ristiques du titre
         \param      $contents   tableau des lignes de contenu
     */
     function showBox($head, $contents)
@@ -129,8 +128,7 @@ class ModeleBoxes
 	        if (! empty($head['text']))
 			{
 				$s=dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$this->MAXLENGTHBOX);
-				if ($this->textnohtmlencoded) print htmlentities($s);
-				else print $s;
+				print $s;
 			}
 	        if (! empty($head['sublink']))
 	        {
