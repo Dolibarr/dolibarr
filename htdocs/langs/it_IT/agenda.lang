@@ -1,6 +1,6 @@
 # Dolibarr language file - it_IT - agenda 
 Actions                               =Azioni
-ActionsArea 			      =Azioni zona (Eventi e compiti)
+ActionsArea 			      =Sezione azioni (eventi e compiti)
 Agenda 				      =Ordine del giorno
 Agendas 			      =Ordini del giorno
 Calendar 			      =Calendario
@@ -8,11 +8,11 @@ Calendars 			      =Calendari
 AffectedTo 			      =Atto interessato a
 DoneBy 				      =Realizzato da
 Events 				      =Eventi
-SearchAnAction 			      =Cerca un ricorso / compito
-MenuToDoActions 		      =Tutte le azioni uncomplete
-MenuDoneActions 		      =Tutte le azioni di archiviazione
-MenuToDoMyActions 		      =Il mio incompleto azioni
-MenuDoneMyActions 		      =Il mio archiviazione azioni
+SearchAnAction 			      =Cerca un'azione / compito
+MenuToDoActions 		      =Tutte le azioni incomplete
+MenuDoneActions 		      =Tutte le azioni archiviate
+MenuToDoMyActions 		      =Le mie azioni incomplete 
+MenuDoneMyActions 		      =Le mie azioni completate
 ListOfEvents 			      =Elenco degli eventi Dolibarr
 ActionsAskedBy 			      =Azioni registrati da
 ActionsToDoBy 			      =Azioni interessati a

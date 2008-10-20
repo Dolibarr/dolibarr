@@ -1,6 +1,6 @@
 # Dolibarr language file - it_IT - other
 ErrorPasswordDiffers                                 =Password è diverso, si prega di digitare nuovamente. 
-ErrorForbidden					     =Accesso vietato. <br> Si tenta di accedere a una pagina, o caratteristica zona senza essere in una sessione autenticata o che non è consentito per l'utente. 
+ErrorForbidden					     =Accesso vietato. <br> Si tenta di accedere a una pagina, o particolare sezione  senza essere in una sessione autenticata o non consentita per l'utente. 
 ErrorForbidden2					     =L'autorizzazione per questi dati di accesso possono essere definiti con il tuo amministratore di Dolibarr dal menu %s -> %s. 
 ErrorForbidden3					     =Sembra che Dolibarr non viene utilizzato attraverso una sessione autenticata. Dai un'occhiata alla documentazione di installazione Dolibarr sapere come gestire le autenticazioni (htaccess, mod_auth o altri ...). 
 ErrorNoImagickReadimage				     =Imagick_readimage funzione non è stato trovato in questo PHP. Anteprima non può essere disponibile. Gli amministratori possono disattivare questa scheda dal menu Impostazioni - Schermo. 
@@ -10,9 +10,9 @@ ErrorCantReadDir				     =Impossibile leggere la directory '%s'
 ErrorFailedToFindEntity				     =Impossibile leggere entità '%s' 
 ErrorBadLoginPassword				     =Valore non valido per il login o password 
 ErrorLoginDisabled				     =Il tuo account è stato disabilitato 
-ErrorFailedToRunExternalCommand			     =Impossibile eseguire comando esterno. Controlla che sia disponibile e runnable dal vostro server PHP. Se il PHP <b> Modalità </b> è abilitata, verificare che il comando è all'interno di una directory definita dal parametro <b> safe_mode_exec_dir </b>. 
+ErrorFailedToRunExternalCommand			     =Impossibile eseguire comando esterno. Controlla che sia disponibile e runnable dal vostro server PHP. Se il PHP <b> Modalità </ b> è abilitata, verificare che il comando è all'interno di una directory definita dal parametro <b> safe_mode_exec_dir </ b>. 
 ErrorFailedToChangePassword			     =Impossibile cambiare la password 
-ErrorLoginDoesNotExists				     =Utente con accesso <b> %s </b> non è stata trovata. 
+ErrorLoginDoesNotExists				     =Utente con accesso <b> %s </ b> non è stata trovata. 
 ErrorLoginHasNoEmail				     =Questo utente non ha alcun indirizzo email. Processo interrotto. 
 ErrorBadValueForCode				     =Bad i tipi di valore per il codice. Riprova con un nuovo valore ... 
 ErrorFileIsInfectedWith				     =Questo file è stato infettato da %s 
@@ -51,7 +51,7 @@ UseAnExternalHttpLinkOrRelativeDolibarrLink	     =Utilizzare un URL esterno o un
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark	     =Scegli se pagina aperta dal collegamento deve figurare sull'etichetta o in una nuova finestra 
 BookmarksManagement				     =Bookmark gestione 
 ListOfBookmarks					     =Elenco dei siti preferiti 
-NoExportableData				     =N. esportabili dati (non esportabili moduli con i dati caricati, o autorizzazioni mancanti) 
+NoExportableData				     =Nessun dato esportabile ( moduli con i dati caricati non esportabili, o autorizzazioni mancanti) 
 ToExport					     =Esporta 
 NewExport					     =Nuova esportazione 
 CreatedBy					     =Creato da %s 
@@ -82,14 +82,14 @@ VolumeUnitmm3					     =mm <sup>3</ SUP>
 BugTracker					     =Bug tracker 
 SendNewPasswordDesc				     =Questo modulo consente di richiedere una nuova passord. Sarà inviare al tuo indirizzo email. <br> Cambiamento sarà effettivo solo dopo aver fatto clic sul link di conferma all'interno di questa e-mail. <br> Controlla la tua email lettore software. 
 BackToLoginPage					     =Torna alla pagina di accesso 
-AuthenticationDoesNotAllowSendNewPassword	     =Modalità di autenticazione è <b> %s </b>. <br> In questa modalità, Dolibarr non può sapere né cambiare la tua password. <br> Contattare l'amministratore di sistema se si desidera cambiare la tua password. 
+AuthenticationDoesNotAllowSendNewPassword	     =Modalità di autenticazione è <b> %s </ b>. <br> In questa modalità, Dolibarr non può sapere né cambiare la tua password. <br> Contattare l'amministratore di sistema se si desidera cambiare la tua password. 
 EnableGDLibraryDesc				     =Installare o abilitare libreria GD con il PHP per utilizzare questa opzione. 
 EnablePhpAVModuleDesc				     =È necessario installare un modulo compatibile con il vostro antivirus. (ClamAV: php4-clamavlib o php5-clamavlib) 
 ##### Webcal #####
 LoginWebcal					     =Login per Webcalendar 
-ErrorWebcalLoginNotDefined			     =Il Webcalendar di accesso associati al tuo Dolibarr login <b>%s </b> non è definito. 
+ErrorWebcalLoginNotDefined			     =Il Webcalendar di accesso associati al tuo Dolibarr login <b>%s </ b> non è definito. 
 ##### Phenix #####
-ErrorPhenixLoginNotDefined			     =Le Phenix di accesso associati al tuo Dolibarr login <b>%s </b> non è definito. 
+ErrorPhenixLoginNotDefined			     =Le Phenix di accesso associati al tuo Dolibarr login <b>%s </ b> non è definito. 
 ##### Calendar common #####
 AddCalendarEntry				     =Aggiungi entrata nel calendario %s 
 NewCompanyToDolibarr				     =Azienda %s aggiunto in Dolibarr 
@@ -109,7 +109,7 @@ MemberValidatedInDolibarr			     =Stati %s convalidati in Dolibarr
 MemberResiliatedInDolibarr			     =Stati %s resiliated in Dolibarr 
 MemberDeletedInDolibarr				     =Stati %s eliminato dal Dolibarr 
 ##### Export #####
-ExportsArea					     =Esportazioni zona 
+ExportsArea					     =Sezione esportazioni 
 AvailableFormats				     =Formati disponibili 
 LibraryUsed					     =Librairy utilizzate 
 LibraryVersion					     =Versione 

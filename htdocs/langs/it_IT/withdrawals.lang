@@ -1,6 +1,6 @@
 # Dolibarr language file - it_IT - withdrawals "bonifico periodico" o "disposizione permanente di bonifico", se è una domiciliazione di bollette è meglio "RID".
 StandingOrdersArea			       =Sezione ordini permanenti 
-CustomersStandingOrdersArea		       =Sezione clienti ordini permanenti 
+CustomersStandingOrdersArea		       =Sezione ordini permanenti clienti
 StandingOrders				       =Ordini permanenti 
 StandingOrder				       =Ordini permanenti 
 NewStandingOrder			       =Nuovo ordine permanente 

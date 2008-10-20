@@ -1,13 +1,13 @@
 # Dolibarr language file - it_IT - propal              
-Proposals					       =Proposte commerciali 
-Proposal					       =Proposta commerciale 
+Proposals					       =Proposte commerciali / Preventivi
+Proposal					       =Proposta commerciale /  Preventivo
 ProposalsDraft					       =Bozza di proposte commerciali 
 ProposalDraft					       =Bozza di proposta commerciale 
 ProposalsOpened					       =Proposte commerciali aperte
-Prop						       =Proposte commerciali 
-CommercialProposal				       =Proposta commerciale 
-CommercialProposals				       =Proposte commerciali 
-ProposalContact					       =Proposta di contatto 
+Prop						       =Prop. commerciali/Preventivi
+CommercialProposal				       =Proposta commerciale/Preventivo
+CommercialProposals				       =Proposte commerciali/Preventivi
+ProposalContact					       =Contatto della proposta
 NewProp						       =Nuova proposta commerciale 
 NewProposal					       =Nuova proposta commerciale 
 NewPropal					       =Nuova proposta 
@@ -75,5 +75,5 @@ DefaultProposalDurationValidity			       =Default proposta commerciale durata di
 UseCustomerContactAsPropalRecipientIfExist	       =Utilizzare l'indirizzo di contatto con i clienti se invece definito di indirizzo di terzi come proposta indirizzo del destinatario 
 
 # Documents models
-DocModelAzurDescription				       =Una proposta completa modello (logo. ..)
-DocModelJauneDescription                   =Jaune proposal model
+DocModelAzurDescription                    =Modello di proposta completa (logo...)
+DocModelJauneDescription                   =Modello di proposta Jaune

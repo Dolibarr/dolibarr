@@ -2,8 +2,8 @@
 Delivery=Consegna
 Deliveries=Consegne
 DeliveryCard=Scheda consegna
-DeliveryOrder=Ordine di consegna
-DeliveryOrders=Ordini di consegna
+DeliveryOrder=Consegna dell'ordine
+DeliveryOrders=Consegne degli ordini
 DeliveryDate=Data di consegna
 CreateDeliveryOrder=Genera ordine di consegna
 SetDeliveryDate=Imposta la data di spedizione
