@@ -73,7 +73,7 @@ function show_array_actions_to_do($max=5)
 
 	            print "<tr $bc[$var]>";
 
-	            $staticaction->code=$obj->code;
+	            $staticaction->type_code=$obj->code;
 	            $staticaction->libelle=$obj->libelle;
 	            $staticaction->id=$obj->id;
 	            print '<td>'.$staticaction->getNomUrl(1,12).'</td>';
@@ -183,8 +183,8 @@ function show_array_last_actions_done($max=5)
 			print "</tr>\n";
 			$i++;
 		}
-		// TODO Ajouter rappel pour "il y a des contrats à mettre en service"
-		// TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
+		// TODO Ajouter rappel pour "il y a des contrats ï¿½ mettre en service"
+		// TODO Ajouter rappel pour "il y a des contrats qui arrivent ï¿½ expiration"
 		print "</table><br>";
 
 		$db->free($resql);
