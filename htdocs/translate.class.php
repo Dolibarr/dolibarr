@@ -265,8 +265,11 @@ class Translate {
 		                        	//if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
 		                        	if ($this->charset_inputfile == 'ISO-8859-1') $value=utf8_encode($value);
 
-									//$this->setTransFromTab($key,$value);
-									$this->tab_translate[$key]=$value;
+									// We do not load Separator values for alternate files
+									if (! $alt || (! eregi('^Separator',$key)))
+									{
+										$this->tab_translate[$key]=$value;
+									}
 									if ($enablelangcacheinsession) $tabtranslatedomain[$key]=$value;	// To save lang in session
 								}
 	                        }

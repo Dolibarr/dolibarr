@@ -2100,7 +2100,8 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 	$dec=','; $thousand=' ';
 	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
 	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
-
+	
+	//print 'x'.$dec.$thousand.'-';
 	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
 	{
 		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users

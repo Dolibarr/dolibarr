@@ -1312,7 +1312,7 @@ class Facture extends CommonObject
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
-
+			
 			if ($price_base_type=='HT')
 			{
 				$pu=$pu_ht;
