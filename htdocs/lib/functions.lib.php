@@ -456,7 +456,11 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$convtooutput=true)
 		// Date is a timestamps
 		$ret=adodb_strftime($format,$time,$to_gmt);
 	}
-	return ($convtooutput?$langs->convToOuptutCharset($ret):$ret);
+	
+	// Page code for text from strftime functions
+	$pagecodefrom='ISO-8859-1';
+	 
+	return ($convtooutput?$langs->convToOuptutCharset($ret,$pagecodefrom):$ret);
 }
 
 

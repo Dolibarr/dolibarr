@@ -425,14 +425,15 @@ class Translate {
 
     
 	/**
-     *  \brief       Convertit une chaine dans le charset de sortie
-     *  \param       str            chaine a convertir
-     *  \return      string         chaine traduite
+     *  \brief      Convert a string into output charset (this->charset_output)
+     *  \param      str            	chaine a convertir
+     *  \param		pagecodefrom	Page code of src string
+     *  \return     string         	chaine traduite
      */
-    function convToOuptutCharset($str)
+    function convToOuptutCharset($str,$pagecodefrom='UTF-8')
     {
-		//if ($this->charset_output=='UTF-8')      	$str=utf8_encode($str);
-		if ($this->charset_output=='ISO-8859-1')	$str=utf8_decode($str);
+    	if ($pagecodefrom == 'ISO-8859-1' && $this->charset_output == 'UTF-8')  $str=utf8_encode($str);
+		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1')	$str=utf8_decode($str);
 		return $str;
     }
 
