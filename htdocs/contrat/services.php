@@ -62,6 +62,8 @@ $staticcontratligne=new ContratLigne($db);
  * View
  */
 
+$form=new Form($db);
+
 llxHeader();
 
 $sql = "SELECT s.rowid as socid, s.nom, c.rowid as cid,";
@@ -88,6 +90,10 @@ if ($search_nom)      $sql.= " AND s.nom like '%".addslashes($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".addslashes($search_contract)."'";
 if ($search_service)  $sql.= " AND (p.ref like '%".addslashes($search_service)."%' OR p.description like '%".addslashes($search_service)."%')";
 if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
+$filter_date1=dolibarr_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['op1year']);
+$filter_date2=dolibarr_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
+if (! empty($_REQUEST['filter_op1']) && $_REQUEST['filter_op1'] != -1 && $filter_date1 != '') $sql.= " AND date_ouverture_prevue ".$_REQUEST['filter_op1']." ".$db->idate($filter_date1);
+if (! empty($_REQUEST['filter_op2']) && $_REQUEST['filter_op2'] != -1 && $filter_date2 != '') $sql.= " AND date_fin_validite ".$_REQUEST['filter_op2']." ".$db->idate($filter_date2);
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
 
@@ -105,7 +111,11 @@ if ($resql)
     if ($search_service)  $param.='&amp;search_service='.urlencode($search_service);
     if ($mode)            $param.='&amp;mode='.$mode;
     if ($filter)          $param.='&amp;filter='.$filter;
-
+    if (! empty($_REQUEST['filter_op1']) && $_REQUEST['filter_op1'] != -1) $param.='&amp;filter_op1='.urlencode($_REQUEST['filter_op1']);
+    if (! empty($_REQUEST['filter_op2']) && $_REQUEST['filter_op2'] != -1) $param.='&amp;filter_op2='.urlencode($_REQUEST['filter_op2']);
+    if ($filter_date1 != '') $param.='&amp;op1day='.$_REQUEST['op1day'].'&amp;op1month='.$_REQUEST['op1month'].'&amp;op1year='.$_REQUEST['op1year'];
+    if ($filter_date2 != '') $param.='&amp;op2day='.$_REQUEST['op2day'].'&amp;op2month='.$_REQUEST['op2month'].'&amp;op2year='.$_REQUEST['op2year'];
+    
     print_barre_liste($langs->trans("ListOfServices"), $page, "services.php", $param, $sortfield, $sortorder,'',$num);
 
     print '<table class="liste" width="100%">';
@@ -136,8 +146,20 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="24" name="search_nom" value="'.stripslashes($search_nom).'">';
     print '</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="center">';
+    $arrayofoperators=array('<'=>'<','>'=>'>');
+	print $form->select_array('filter_op1',$arrayofoperators,$_REQUEST['filter_op1'],1);
+    print ' ';
+    $filter_date1=dolibarr_mktime(0,0,0,$_REQUEST['op1month'],$_REQUEST['op1day'],$_REQUEST['"op1year']);
+    print $form->select_date($filter_date1,'op1',0,0,1);
+    print '</td>';
+    print '<td class="liste_titre" align="center">';
+    $arrayofoperators=array('<'=>'<','>'=>'>');
+    print $form->select_array('filter_op2',$arrayofoperators,$_REQUEST['filter_op2'],1);
+    print ' ';
+    $filter_date2=dolibarr_mktime(0,0,0,$_REQUEST['op2month'],$_REQUEST['op2day'],$_REQUEST['op2year']);
+    print $form->select_date($filter_date2,'op2',0,0,1);
+    print '</td>';
     print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
     print "</td>";
     print "</tr>\n";
