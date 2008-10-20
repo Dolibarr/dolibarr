@@ -784,7 +784,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	global $user, $conf, $langs, $db;
 
 	if (empty($conf->css))  $conf->css ='/theme/eldy/eldy.css.php';
-
 	//header("Content-type: text/html; charset=UTF-8");
 	header("Content-type: text/html; charset=".$conf->character_set_client);
 
