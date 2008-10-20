@@ -140,7 +140,7 @@ $conf->main_authentication = $dolibarr_main_authentication;
 // Force https
 $conf->main_force_https = $dolibarr_main_force_https;
 // Define charset for HTML Output
-$charset='ISO-8859-1';	// If not output format found in any conf file
+$charset='UTF-8';	// If not output format found in any conf file
 if (empty($character_set_client)) $character_set_client=$charset;
 $conf->character_set_client=strtoupper($character_set_client);
 

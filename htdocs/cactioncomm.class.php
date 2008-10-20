@@ -26,7 +26,7 @@
 
 
 /**     \class      CActioncomm
-	    \brief      Classe permettant la gestion des différents types d'actions commerciales
+	    \brief      Classe permettant la gestion des diffï¿½rents types d'actions commerciales
 */
 
 class CActionComm {
@@ -46,7 +46,7 @@ class CActionComm {
 
   /**
    *    \brief      Constructeur
-   *    \param      DB          Handler d'accès base de donnée
+   *    \param      DB          Handler d'accï¿½s base de donnï¿½e
    */
   function CActionComm($DB)
     {
@@ -55,7 +55,7 @@ class CActionComm {
 
   /**
    *    \brief      Charge l'objet type d'action depuis la base
-   *    \param      id          id ou code du type d'action à récupérer
+   *    \param      id          id ou code du type d'action ï¿½ rï¿½cupï¿½rer
    *    \return     int         1=ok, 0=aucune action, -1=erreur
    */
 	function fetch($id)
@@ -153,8 +153,8 @@ class CActionComm {
 	}
 
   
-	/*
-	*   \brief      Renvoie le nom sous forme d'un libellé traduit d'un type d'action
+	/**
+	*   \brief      Renvoie le nom sous forme d'un libelle traduit d'un type d'action
 	*	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 	*	\param		option			Sur quoi pointe le lien
 	*   \return     string      	Libelle du type d'action

@@ -123,10 +123,10 @@ $dolibarr_main_db_collation="latin1_swedish_ci";
 
 # character_set_client
 # Page code for HTML outputs.
-# Default value: ISO-8859-1
-# Possible values: ISO-8859-1, UTF-8
+# Default value: UTF-8
+# Possible values: UTF-8, ISO-8859-1
 #
-$character_set_client="ISO-8859-1";
+$character_set_client="UTF-8";
 
 
 # dolibarr_main_authentication

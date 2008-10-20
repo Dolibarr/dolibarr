@@ -145,11 +145,16 @@ class Translate {
         $code_lang_tiret=ereg_replace('_','-',$this->defaultlang);
         setlocale(LC_ALL, $this->defaultlang);    // Compenser pb de locale avec windows
         setlocale(LC_ALL, $code_lang_tiret);
-        if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL) setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL);
-        if (defined("MAIN_FORCE_SETLOCALE_LC_TIME") && MAIN_FORCE_SETLOCALE_LC_TIME) setlocale(LC_TIME, MAIN_FORCE_SETLOCALE_LC_TIME);
-        if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC") && MAIN_FORCE_SETLOCALE_LC_NUMERIC) setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC);
-        if (defined("MAIN_FORCE_SETLOCALE_LC_MONETARY") && MAIN_FORCE_SETLOCALE_LC_MONETARY) setlocale(LC_MONETARY, MAIN_FORCE_SETLOCALE_LC_MONETARY);
-    
+
+        if (defined("MAIN_FORCE_SETLOCALE_LC_ALL") && MAIN_FORCE_SETLOCALE_LC_ALL)         
+        	$res_lc_all=setlocale(LC_ALL, MAIN_FORCE_SETLOCALE_LC_ALL.'.UTF-8', MAIN_FORCE_SETLOCALE_LC_ALL);
+        if (defined("MAIN_FORCE_SETLOCALE_LC_TIME") && MAIN_FORCE_SETLOCALE_LC_TIME) 
+        	$res_lc_time=setlocale(LC_TIME, MAIN_FORCE_SETLOCALE_LC_TIME.'.UTF-8', MAIN_FORCE_SETLOCALE_LC_TIME);
+        if (defined("MAIN_FORCE_SETLOCALE_LC_NUMERIC") && MAIN_FORCE_SETLOCALE_LC_NUMERIC)
+        	$res_lc_numeric=setlocale(LC_NUMERIC, MAIN_FORCE_SETLOCALE_LC_NUMERIC.'.UTF-8', MAIN_FORCE_SETLOCALE_LC_NUMERIC);
+        if (defined("MAIN_FORCE_SETLOCALE_LC_MONETARY") && MAIN_FORCE_SETLOCALE_LC_MONETARY)
+        	$res_lc_monetary=setlocale(LC_MONETARY, MAIN_FORCE_SETLOCALE_LC_MONETARY.'UTF-8', MAIN_FORCE_SETLOCALE_LC_MONETARY);
+        //print 'x'.$res_lc_all;
         return 1;
     }
 
@@ -256,9 +261,9 @@ class Translate {
 								}
 								else
 								{
-									// On stocke toujours dans le tableau Tab en ISO
-		                        	if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
-		                        	//if ($this->charset_inputfile == 'ISO-8859-1') $value=$value;
+									// On stocke toujours dans le tableau Tab en UTF-8
+		                        	//if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
+		                        	if ($this->charset_inputfile == 'ISO-8859-1') $value=utf8_encode($value);
 
 									//$this->setTransFromTab($key,$value);
 									$this->tab_translate[$key]=$value;
@@ -333,7 +338,7 @@ class Translate {
             $newstr=ereg_replace('>','__gt__',$newstr);
             $newstr=ereg_replace('"','__quot__',$newstr);
 
-			$newstr=$this->convToOuptutCharset($newstr);
+			$newstr=$this->convToOuptutCharset($newstr);	// Convert string to this->charset_output
 			
             // Cryptage en html de la chaine
 			// $newstr est une chaine stockee en memoire au format $this->charset_output
@@ -416,15 +421,15 @@ class Translate {
     }
 
     
-/**
+	/**
      *  \brief       Convertit une chaine dans le charset de sortie
      *  \param       str            chaine a convertir
      *  \return      string         chaine traduite
      */
     function convToOuptutCharset($str)
     {
-		if ($this->charset_output=='UTF-8')      	$str=utf8_encode($str);
-		//if ($this->charset_output=='ISO-8859-1')	$str=$str;
+		//if ($this->charset_output=='UTF-8')      	$str=utf8_encode($str);
+		if ($this->charset_output=='ISO-8859-1')	$str=utf8_decode($str);
 		return $str;
     }
 
@@ -435,7 +440,7 @@ class Translate {
      */
     function get_available_languages($langdir=DOL_DOCUMENT_ROOT)
     {
-        // On parcour le r�pertoire langs pour d�tecter les langues disponibles
+        // We scan directory langs to detect available languages
         $handle=opendir($langdir ."/langs");
         $langs_available=array();
         while ($file = trim(readdir($handle)))
@@ -568,7 +573,7 @@ class Translate {
             return -1;
         }
     }
-    
+
 }
 
 ?>

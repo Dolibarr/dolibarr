@@ -1,0 +1,183 @@
+# Dolibarr language file - pl_PL - install
+CHARSET=UTF-8
+InstallEasy=Staraliśmy się by instalacja Dolibarra była tak prosta jak to możliwe. Postępuj wg instrukcji krok po kroku.
+MiscellanousChecks=Sprawdzenie wymagań
+DolibarrWelcome=Witaj w Dolibarrze
+ConfFileExists=Plik konfiguracyjny <b>%s</b> istnieje.
+ConfFileDoesNotExists=Plik konfiguracyjny <b>%s</b> nie istnieje!
+ConfFileDoesNotExistsAndCouldNotBeCreated=Plik konfiguracyjny <b>%s</b> nie istnieje i nie mógł zostać utworzony!
+ConfFileCouldBeCreated=Plik konfiguracyjny <b>%s</b> mógł zostać utworzony.
+ConfFileIsNotWritable=Plik konfiguracyjny <b>%s</b> nie ma uprawnień do zapisu. Sprawdź uprawnienia. Przy pierwszej instalacji Twój serwer WWW musi posiadać uprawnienia do zapisu tego pliku podczas procesu konfiguracji (Dla systemów uniksowych wystarczy wykonać polecenie "chmod 666").
+ConfFileIsWritable=Plik konfiguracyjny <b>%s</b> ma uprawnienia do zapisu.
+PHPSupportSessions=PHP obsługuje sesje.
+PHPSupportPOSTGETOk=PHP obsługuje zmienne POST i GET.
+PHPSupportPOSTGETKo=Możliwe, że PHP nie obsługuje zmiennych POST i/lub GET. Sprawdź parametr <b>variables_order</b> w php.ini.
+PHPSupportGD=PHP obsługuje graficzne funkcje GD.
+PHPMemoryOK=Maksymalna ilość pamięci sesji PHP to <b>%s</b>. Powinno wystarczyć.
+PHPMemoryTooLow=Maksymalna ilość pamięci sesji PHP <b>%s</b> bajtów. To może nie wystarczyć. Zmień w <b>php.ini</b> parametr <b>memory_limit</b> na przynajmniej <b>%s</b> bajtów.
+Recheck=Bardziej dokładny test
+ErrorPHPDoesNotSupportSessions=Instalacja PHP nie obsługuje sesji. Taka funkcjonalność jest wymagana do działania Dolibarra. Sprawdź swoje ustawienia PHP.
+ErrorDirDoesNotExists=Katalog %s nie istnieje.
+ErrorGoBackAndCorrectParameters=Cofnij się i popraw parametry.
+ErrorWrongValueForParameter=Wprowadzono nieprawidłową wartość dla parametru '%s'.
+ErrorFailedToCreateDatabase=Utworzenie bazy danych '%s' nie powiodło się.
+ErrorFailedToConnectToDatabase=Połączenie z bazą danych '%s' nie powiodło się.
+ErrorPHPVersionTooLow=Wersja PHP zbyt stara. Wymagana wersja to przynajmniej %s.
+ErrorConnectedButDatabaseNotFound=Połączenie z serwerem powiodło się, ale nie znaleziony bazy '%s'.
+ErrorDatabaseAlreadyExists=Baza danych '%s' już istnieje.
+IfDatabaseNotExistsGoBackAndUncheckCreate=Jeśli baza danych nie istnieje, w poprzednim kroku zaznacz opcję "Utwórz bazę danych".
+IfDatabaseExistsGoBackAndCheckCreate=Jeśli baza danych istnieje, w poprzednim kroku odznacz opcję "Utwórz bazę danych".
+PHPVersion=Wersja PHP
+YouCanContinue=Możesz kontynuować...
+PleaseBePatient=Proszę o cierpliwość...
+License=Użyta licencja
+ConfigurationFile=Plik konfiguracyjny
+WebPagesDirectory=Katalog na strony WWW
+DocumentsDirectory=Katalog na przesłane i wygenerowane dokumenty
+URLRoot=Główny (Root) URL
+DolibarrDatabase=Baza danych Dolibarr
+DatabaseChoice=Wybrana baza danych
+DatabaseType=Rodzaj bazy danych
+DriverType=Rodzaj sterownika
+Server=Serwer
+ServerAddressDescription=Nazwa lub adres IP serwera baz danych, zazwyczaj 'localhost' jeśli serwer baz danych znajduje się fizycznie na tej samej maszynie co serwer WWW
+ServerPortDescription=Port serwera baz danych. Zostaw puste jeśli nie znasz.
+DatabaseServer=Serwer baz danych
+DatabaseName=Nazwa bazy danych
+Login=Login
+AdminLogin=Login do bazy danych. Zostaw puste jeśli korzystasz z połączeń anonimowych
+Password=Hasło
+PasswordAgain=Powtórz hasło
+AdminPassword=Hasło do bazy danych. Zostaw puste jeśli korzystasz z połączeń anonimowych
+CreateDatabase=Utwórz bazę danych
+CreateUser=Utwórz użytkownika
+DatabaseSuperUserAccess=Baza danych z dostępem na prawach superużytkownika
+CheckToCreateDatabase=Zaznacz jeśli baza danych nie istnieje i musi zostać utworzona.<br>W takim przypadku na dole tej strony musisz podać użytkownika/hasło do konta superużytkownika.
+CheckToCreateUser=Zaznacz jeśli użytkownik nie istnieje i musi zostać utworzony.<br>W takim przypadku na dole tej strony musisz podać użytkownika/hasło do konta superużytkownika.
+Experimental=(eksperymentalne, nie działające)
+DatabaseRootLoginDescription=Login użytkownika mogącego tworzyć nowe bazy lub nowych użytkowników, niepotrzebne jeśli baza danych oraz użytkownik już istnieją (powszechna sytuacja podczas instalacji na hostingu).
+KeepEmptyIfNoPassword=Zostaw puste jeśli użytkownik nie posiada hasła (unikaj takiej sytuacji)
+SaveConfigurationFile=Zapis wartości
+ConfigurationSaving=Zapisywanie pliku konfiguracyjnego
+ServerConnection=Połączenie z serwerem
+DatabaseConnection=Połączenie z bazą danych
+DatabaseCreation=Utworzenie bazy danych
+UserCreation=Utworzenie użytkownika
+CreateDatabaseObjects=Tworzenie obiektów w bazie danych
+ReferenceDataLoading=Przesyłanie danych
+TablesAndPrimaryKeysCreation=Tworzenie tabel oraz kluczy głównych
+CreateTableAndPrimaryKey=Tworzenie tabeli %s
+CreateOtherKeysForTable=Tworzenie kluczy obcych oraz indeksów dla tabeli %s
+OtherKeysCreation=Tworzenie kluczy obcych oraz indeksów
+FunctionsCreation=Tworzenie funkcji
+AdminAccountCreation=Tworzenie użytkownika
+PleaseTypePassword=Proszę wprowadzić hasło, puste hasła są niedozwolone!
+PleaseTypeALogin=Proszę wprowadzić nazwę użytkownika!
+PasswordsMismatch=Hasła różnią się, spróbuj ponownie!
+SetupEnd=Koniec ustawień
+SystemIsInstalled=Instalacja zakończona.
+SystemIsUpgraded=Dolibarr został zaktualizowany pomyślnie.
+YouNeedToPersonalizeSetup=Teraz należy ustawić Dolibarra tak by spełniał Twoje wymagania (wygląd, możliwości, ...). Kliknij w poniższy link by przejść do ustawień:
+AdminLoginCreatedSuccessfuly=Użytkownik administracyjny Dolibarra '<b>%s</b>' utworzony pomyślnie.
+GoToSetupArea=Przejdź do ustawień Dolibarra
+Examples=Przykłady
+WithNoSlashAtTheEnd=Bez znaku ukośnika "/" na końcu
+DirectoryRecommendation=Zalecane jest by umieścić ten katalog poza katalogiem ze stronami WWW.
+LoginAlreadyExists=Już istnieje
+DolibarrAdminLogin=Użytkownik administracyjny Dolibarra
+FailedToCreateAdminLogin=Utworzenie konta administracyjnego Dolibarra nie powiodło się.
+AdminLoginAlreadyExists=Konto administracyjne Dolibarra '<b>%s</b>' już istnieje.
+WarningRemoveInstallDir=Ostrzeżenie: ze względów bezpieczeństwa po instalacji lub aktualizacji powinno się usunąć katalog <b>install<b> lub zmienić jego nazwę na <b>install.lock</b> by zapobiec jego nieuprawnionemu użyciu.
+ThisPHPDoesNotSupportTypeBase=Ta wersja PHP nie obsługuje żadnego interfejsu dostępu do baz danych typu %s
+FunctionNotAvailableInThisPHP=Niedostępne w tej wersji PHP
+MigrateScript=Skrypt migracyjny
+ChoosedMigrateScript=Wybierz skrypt migracyjny
+DataMigration=Migracja danych
+DatabaseMigration=Migracja struktur baz danych
+ProcessMigrateScript=Przetwarzanie skryptów
+ChooseYourSetupMode=Wybierz tryb instalacji i potwierdź przyciskiem "Start"...
+FreshInstall=Świeża instalacja
+FreshInstallDesc=Użyj tego trybu jeśli to pierwsza instalacja. Jeśli nie to w tym trybie można naprawić poprzednią niepełną instalację, ale w przypadku aktualizacji skorzystaj z trybu "Aktualizacja". 
+Upgrade=Aktualizacja
+UpgradeDesc=Użyj tego trybu jeśli podmieniono stare pliki Dolibarra plikami z nowszej wersji. Ten tryb uaktualni bazę danych i poprzednie dane.
+Start=Start
+InstallNotAllowed=Ustawienie niedostępne przez uprawnienia <b>conf.php</b>
+NotAvailable=Niedostępne
+YouMustCreateWithPermission=Musisz utworzyć plik %s i ustawić mu prawa zapisu dla serwera WWW podczas procesu instalacyjnego.
+CorrectProblemAndReloadPage=Proszę poprawić te ustawienia i odświeżyć stronę.
+AlreadyDone=Migracja już przeprowadzona.
+DatabaseVersion=Wersja bazy danych
+ServerVersion=Wersja serwera baz danych
+YouMustCreateItAndAllowServerToWrite=Musisz utworzyć ten katalog i zezwolić serwerowi WWW na zapis w nim.
+CharsetChoice=Wybór zestawu kodowania
+CharacterSetClient=Zestaw kodowania dla wygenerowanych stron HTML
+CharacterSetClientComment=Wybierz zestaw kodowania znaków dla stron HTML.<br/> Domyślnym wyborem zestawu znaków jest ten zastosowany w bazie danych.
+CollationConnection=Sposób sortowania znaków
+CollationConnectionComment=Wybierz stronę kodową, która definiuje sposób sortowania znaków używany przez bazę danych. Ten parametr jest często nazywany 'collation'.<br/>Jeśli baza już istnieje, nie ma możliwości zdefiniowania tego parametru.
+CharacterSetDatabase=Zestaw znaków dla bazy danych
+CharacterSetDatabaseComment=Wybierz zesta znaków, który zostanie użyty do utworzenia bazy danych.<br/>Jeśli baza już istnieje, nie ma możliwości zdefiniowania tego parametru.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=Wybrano by utworzyć bazę danych <b>%s</b>, ale by tego dokonać Dolibarr musi połączyć się z serwerem <b>%s</b> na prawach superużytkownika <b>%s</b>.
+YouAskLoginCreationSoDolibarrNeedToConnect=Wybrano by utworzyć użytkownika <b>%s</b>, ale by tego dokonać Dolibarr musi połączyć się z serwerem <b>%s</b> na prawach superużytkownika <b>%s</b>.
+BecauseConnectionFailedParametersMayBeWrong=Połączenie nie powiodło się, więc adres serwera lub parametry superużytkownika musiały być nieprawidłowe.
+OrphelinsPaymentsDetectedByMethod=Osierocona płatność wykryta przez metodę %s
+RemoveItManuallyAndPressF5ToContinue=Usuń go ręcznie i odśwież stronę by kontynuować.
+KeepDefaultValues=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
+FieldRenamed=Nazwa pola zmieniona
+
+#########
+# upgrade
+#########
+MigrationOrder=Migracja danych zamówień odbiorców
+MigrationSupplierOrder=Migracja danych zamówień dostawców
+MigrationProposal=Migracja danych propozycji handlowych
+MigrationInvoice=Migracja danych faktur odbiorców
+MigrationContract=Migracja danych kontraktów
+MigrationSuccessfullUpdate=Aktualizacja powiodła się
+MigrationUpdateFailed=Aktualizacja nie powiodła się
+
+# Payments Update
+MigrationPaymentsUpdate=Korekta danych płatności
+MigrationPaymentsNumberToUpdate=%s płatności do aktualizacji
+MigrationProcessPaymentUpdate=Aktualizacja płatności %s
+MigrationPaymentsNothingToUpdate=Nic więcej do zrobienia
+MigrationPaymentsNothingUpdatable=Brak płatności do korekty
+
+# Contracts Update
+MigrationContractsUpdate=Korekta danych kontraktowych
+MigrationContractsNumberToUpdate=%s kontraktów do zaktualizowania
+MigrationContractsLineCreation=Utwórz linię kontraktową dla kontraktu %s
+MigrationContractsNothingToUpdate=Nic więcej do zrobienia
+MigrationContractsFieldDontExist=Pole fk_facture już nie istnieje. Nic więcej do zrobienia.
+
+# Contracts Empty Dates Update
+MigrationContractsEmptyDatesUpdate=Korekta pustych dat kontraktów
+MigrationContractsEmptyDatesUpdateSuccess=Korekta pustych dat kontraktów zakończona pomyślnie
+MigrationContractsEmptyDatesNothingToUpdate=Brak pustych dat kontraktów do korekty
+MigrationContractsEmptyCreationDatesNothingToUpdate=Brak dat utworzenia kontraktów do korekty
+
+# Contracts Invalid Dates Update
+MigrationContractsInvalidDatesUpdate=Nieprawidłowa wartość przy korekcie daty kontraktu
+MigrationContractsInvalidDateFix=Korekta kontraktu %s (Data kontraktu =%s, Minimalna data rozpoczęcia usługi=%s)
+MigrationContractsInvalidDatesNumber=%s kontraktów zmodyfikowano
+MigrationContractsInvalidDatesNothingToUpdate=Brak dat z nieprawidłową wartością do korekty
+
+# Contracts Incoherent Dates Update
+MigrationContractsIncoherentCreationDateUpdate=Nieprawidłowa wartość daty początkowej kontraktu do korekty
+MigrationContractsIncoherentCreationDateUpdateSuccess=Nieprawidłowa wartość początkowej daty kontraktu skorygowana poprawnie
+MigrationContractsIncoherentCreationDateNothingToUpdate=Brak nieprawidłowych wartości początkowej daty kontraktu do korekty
+
+# Reopening Contracts
+MigrationReopeningContracts=Otwarte kontrakty zamknięte z przyczyny błędu
+MigrationReopenThisContract=Ponownie otwórz kontrakt %s
+MigrationReopenedContractsNumber=%s kontraktów zmodyfikowanych
+MigrationReopeningContractsNothingToUpdate=Brak zamkniętych kontraktów do otwarcia
+
+# Migration transfert
+MigrationBankTransfertsUpdate=Zaktualizuj połączenia między transakcjami bankowymi, a transferami bankowymi
+MigrationBankTransfertsNothingToUpdate=Wszystkie połączenia są aktualne
+
+# Migration delivery
+MigrationShipmentOrderMatching=Aktualizacja rachunków za wysyłki
+MigrationDeliveryOrderMatching=Aktualizacja rachunków za dostawy
+MigrationDeliveryDetail=Aktualizacja dostawy
+
