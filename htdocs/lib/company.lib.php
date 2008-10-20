@@ -381,7 +381,8 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 		$sql.= " ".$db->pdate("a.datep")." as dp,";
 		$sql.= " ".$db->pdate("a.datea")." as da,";
 		$sql.= " a.percent,";
-		$sql.= " c.code as acode, c.libelle, a.propalrowid, a.fk_user_author, a.fk_contact,";
+		$sql.= " a.propalrowid, a.fk_user_author, a.fk_contact,";
+		$sql.= " c.code as acode, c.libelle,";
 		$sql.= " u.login, u.rowid,";
 		$sql.= " sp.name, sp.firstname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
@@ -426,7 +427,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 					}
 					else
 					{
-						$actionstatic->code=$obj->acode;
+						$actionstatic->type_code=$obj->acode;
 						$actionstatic->libelle=$obj->libelle;
 						$actionstatic->id=$obj->id;
 						print '<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
@@ -611,7 +612,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 			print '<td width="140">';
 			if ($histo[$key]['type']=='action')
 			{
-				$actionstatic->code=$histo[$key]['acode'];
+				$actionstatic->type_code=$histo[$key]['acode'];
 				$actionstatic->libelle=$histo[$key]['libelle'];
 				$actionstatic->id=$histo[$key]['id'];
 				print $actionstatic->getNomUrl(1,16);

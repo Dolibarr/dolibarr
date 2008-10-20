@@ -39,7 +39,7 @@ if (!$user->rights->societe->lire)
 $langs->load("commercial");
 $langs->load("orders");
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 $socid='';
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0) 
@@ -232,7 +232,6 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 
 /*
  * Bookmark
- *
  */
  if ($conf->bookmark->enabled)
  {
@@ -282,7 +281,6 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 /*
  * Actions to do
- *
  */
 if ($user->rights->agenda->myactions->read)
 {
@@ -298,7 +296,7 @@ if ($user->rights->agenda->myactions->read)
 }
 
 /*
- * Derniers clients enregistrés
+ * Derniers clients enregistrï¿½s
  */
 if ($user->rights->societe->lire)
 {
@@ -488,7 +486,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 }
 
 /*
- * Dernières propales fermées
+ * Derniï¿½res propales fermï¿½es
  *
  */
 
