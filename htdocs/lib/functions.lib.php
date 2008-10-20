@@ -759,16 +759,21 @@ function dol_phone_link($phone,$option=0)
  */
 function dolibarr_trunc($string,$size=40,$trunc='right')
 {
+	global $conf;
+	
 	if ($size==0) return $string;
 	if (! defined('USE_SHORT_TITLE') || (defined('USE_SHORT_TITLE') && USE_SHORT_TITLE))
 	{
 		// We go always here
 		if ($trunc == 'right')
 		{
+			//mb_internal_encoding("UTF-8");
+			//print $conf->character_set_client.'-'.mb_strlen($string).'-'.strlen($string);
+			//print 'ee'.$string.$size.mb_strcut($string,0,$size,'UTF-8').'rr';
 			if (strlen($string) > $size)
-			return substr($string,0,$size).'...';
+				return substr($string,0,$size).'...';
 			else
-			return $string;
+				return $string;
 		}
 		if ($trunc == 'middle')
 		{
