@@ -22,7 +22,7 @@
 /**
         \file       htdocs/bon-prelevement.class.php
         \ingroup    prelevement
-        \brief      Fichier de la classe des bons de prélévements
+        \brief      Fichier de la classe des bons de prï¿½lï¿½vements
         \version    $Revision$
 */
 
@@ -129,7 +129,7 @@ class BonPrelevement
         if ($concat == 1)
         {
             /*
-             * On aggrège les lignes
+             * On aggrï¿½ge les lignes
              */
             $sql = "SELECT rowid FROM  ".MAIN_DB_PREFIX."prelevement_lignes";
             $sql .= " WHERE fk_prelevement_bons".$this->id;
@@ -150,7 +150,7 @@ class BonPrelevement
         else
         {
             /*
-             * Pas de d'agrégation
+             * Pas de d'agrï¿½gation
              */
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_lignes (fk_prelevement_bons";
             $sql .= " , fk_soc , client_nom ";
@@ -237,7 +237,7 @@ class BonPrelevement
             }
             else
             {
-                dolibarr_syslog("BonPrelevement::Fetch Erreur aucune ligne retournée");
+                dolibarr_syslog("BonPrelevement::Fetch Erreur aucune ligne retournï¿½e");
                 return -1;
             }
         }
@@ -279,7 +279,7 @@ class BonPrelevement
 
                 for ($i = 0 ; $i < sizeof($facs) ; $i++)
                 {
-                    /* Tag la facture comme impayée */
+                    /* Tag la facture comme impayï¿½e */
                     dolibarr_syslog("BonPrelevement::set_credite set_payed fac ".$facs[$i]);
                     $fac = new Facture($this->db);
                     $fac->fetch($facs[$i]);
@@ -302,7 +302,7 @@ class BonPrelevement
             }
 
             /*
-             * Fin de la procédure
+             * Fin de la procï¿½dure
              *
              */
             if ($error == 0)
@@ -352,10 +352,10 @@ class BonPrelevement
 
                     if ($this->db->query($sql))
                     {
-                        $subject = "Crédit prélèvement ".$this->ref." à la banque";
-                        $message = "Le bon de prélèvement ".$this->ref;
-                        $message .= " a été crédité par la banque.\n";
-                        $message .= "Date crédit : ".dolibarr_print_date($date,'dayhour');
+                        $subject = "Crï¿½dit prï¿½lï¿½vement ".$this->ref." ï¿½ la banque";
+                        $message = "Le bon de prï¿½lï¿½vement ".$this->ref;
+                        $message .= " a ï¿½tï¿½ crï¿½ditï¿½ par la banque.\n";
+                        $message .= "Date crï¿½dit : ".dolibarr_print_date($date,'dayhour');
 
                         $this->Notify($user, "cr", $subject, $message);
                     }
@@ -366,7 +366,7 @@ class BonPrelevement
                     }
 
                     /*
-                     * Fin de la procédure
+                     * Fin de la procï¿½dure
                      *
                      */
                     if ($error == 0)
@@ -421,12 +421,12 @@ class BonPrelevement
             {
                 $this->method_trans = $method;
 
-                $subject = "Transmission du prélèvement ".$this->ref." à la banque";
-                $message = "Le bon de prélèvement ".$this->ref;
-                $message .= " a été transmis à la banque par ".$user->prenom. " ".$user->nom;
+                $subject = "Transmission du prï¿½lï¿½vement ".$this->ref." ï¿½ la banque";
+                $message = "Le bon de prï¿½lï¿½vement ".$this->ref;
+                $message .= " a ï¿½tï¿½ transmis ï¿½ la banque par ".$user->prenom. " ".$user->nom;
                 $message .= "\n\n";
                 $message .= "\nMontant : ".price($this->amount);
-                $message .= "\nMéthode : ".$this->methodes_trans[$this->method_trans];
+                $message .= "\nMï¿½thode : ".$this->methodes_trans[$this->method_trans];
                 $message .= "\nDate  : ".dolibarr_print_date($date,'day');
 
                 $this->Notify($user,"tr", $subject, $message, 1);
@@ -439,7 +439,7 @@ class BonPrelevement
             }
 
             /*
-             * Fin de la procédure
+             * Fin de la procï¿½dure
              *
              */
             if ($error == 0)
@@ -470,7 +470,7 @@ class BonPrelevement
     function Notify($user, $action, $subject, $message, $joinfile=0)
     {
         $message .= "\n\n--\n";
-        $message .= "Ceci est un message automatique envoyé par Dolibarr";
+        $message .= "Ceci est un message automatique envoyï¿½ par Dolibarr";
 
         $sql = "SELECT u.name, u.firstname, u.email";
         $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -516,15 +516,15 @@ class BonPrelevement
     }
 
     /**
-     *    \brief      Recupére la liste des factures concernées
+     *    \brief      Recupï¿½re la liste des factures concernï¿½es
      */
     function _get_list_factures()
     {
         $arr = array();
 
         /*
-         * Renvoie toutes les factures présente
-         * dans un bon de prélèvement
+         * Renvoie toutes les factures prï¿½sente
+         * dans un bon de prï¿½lï¿½vement
          */
         $sql = "SELECT fk_facture";
         $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
@@ -595,7 +595,7 @@ class BonPrelevement
     }
 
     /**
-     *      \brief      Renvoi nombre de factures a prélever
+     *      \brief      Renvoi nombre de factures a prï¿½lever
      *      \param      banque      bank
      *      \param      agence      agence
      *      \return     int         <O si erreur, sinon nbre de factures
@@ -645,7 +645,7 @@ class BonPrelevement
 
     /**
      *      \brief      Cree prelevement
-     *      \return     int     <0 si ko, nbre de facture prélevé sinon
+     *      \return     int     <0 si ko, nbre de facture prï¿½levï¿½ sinon
      */
     function Create($banque=0, $guichet=0)
     {
@@ -693,7 +693,7 @@ class BonPrelevement
             $sql .= " AND f.paye = 0";
             $sql .= " AND pfd.traite = 0";
             $sql .= " AND f.total_ttc > 0";
-            $sql .= " AND f.fk_mode_reglement = 3"; // Mode prélèvement
+            $sql .= " AND f.fk_mode_reglement = 3"; // Mode prï¿½lï¿½vement
 
             if ($banque == 1)
             {
@@ -718,7 +718,7 @@ class BonPrelevement
                     $i++;
                 }
                 $this->db->free($resql);
-                dolibarr_syslog("$i factures à prélever");
+                dolibarr_syslog("$i factures ï¿½ prï¿½lever");
             }
             else
             {
@@ -737,11 +737,11 @@ class BonPrelevement
         if (! $error)
         {
             /*
-             * Vérification des RIB
+             * Vï¿½rification des RIB
              *
              */
             $i = 0;
-            dolibarr_syslog("Début vérification des RIB");
+            dolibarr_syslog("Dï¿½but vï¿½rification des RIB");
 
             if (sizeof($factures) > 0)
             {
@@ -769,7 +769,7 @@ class BonPrelevement
                         }
                         else
                         {
-                            dolibarr_syslog("Impossible de lire la société");
+                            dolibarr_syslog("Impossible de lire la sociï¿½tï¿½");
                         }
                     }
                     else
@@ -790,7 +790,7 @@ class BonPrelevement
          *
          */
 
-        dolibarr_syslog(sizeof($factures_prev)." factures seront prélevées");
+        dolibarr_syslog(sizeof($factures_prev)." factures seront prï¿½levï¿½es");
 
         if (sizeof($factures_prev) > 0)
         {
@@ -855,7 +855,7 @@ class BonPrelevement
                 else
                 {
                     $error++;
-                    dolibarr_syslog("Erreur création du bon de prelevement");
+                    dolibarr_syslog("Erreur crï¿½ation du bon de prelevement");
                 }
             }
 
@@ -865,7 +865,7 @@ class BonPrelevement
              */
             if (!$error)
             {
-                dolibarr_syslog("Début génération des paiements");
+                dolibarr_syslog("Dï¿½but gï¿½nï¿½ration des paiements");
                 dolibarr_syslog("Nombre de factures ".sizeof($factures_prev));
 
                 if (sizeof($factures_prev) > 0)
@@ -880,7 +880,7 @@ class BonPrelevement
                         $pai->amounts = array();
                         $pai->amounts[$fac[0]] = $fact->total_ttc;
                         $pai->datepaye = $this->db->idate($datetimeprev);
-                        $pai->paiementid = 3; // prélèvement
+                        $pai->paiementid = 3; // prï¿½lï¿½vement
                         $pai->num_paiement = $ref;
 
                         if ($pai->create($user, 1) == -1)  // on appelle en no_commit
@@ -896,7 +896,7 @@ class BonPrelevement
                             $pai->valide();
 
                             /*
-                            * Ajout d'une ligne de prélèvement
+                            * Ajout d'une ligne de prï¿½lï¿½vement
                             *
                             *
                             * $fac[3] : banque
@@ -916,7 +916,7 @@ class BonPrelevement
                             }
 
                             /*
-                             * Mise à jour des demandes
+                             * Mise ï¿½ jour des demandes
                              *
                              */
                             $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
@@ -976,7 +976,7 @@ class BonPrelevement
             }
 
             /*
-             * Mise à jour du total
+             * Mise ï¿½ jour du total
              *
              */
 
@@ -988,7 +988,7 @@ class BonPrelevement
             if (! $resql)
             {
                 $error++;
-                dolibarr_syslog("Erreur mise à jour du total - $sql");
+                dolibarr_syslog("Erreur mise ï¿½ jour du total - $sql");
             }
 
             /*
@@ -1086,11 +1086,13 @@ class BonPrelevement
     }
 
     /**
-     * Génération d'un bon de prélèvement
+     * Gï¿½nï¿½ration d'un bon de prï¿½lï¿½vement
      *
      */
     function Generate()
     {
+    	global $conf;
+    	
         $result = -1;
 
         $this->file = fopen ($this->filename,"w");
@@ -1160,7 +1162,9 @@ class BonPrelevement
         $this->EnregTotal($this->total);
 
         fclose($this->file);
-
+		if (! empty($conf->global->MAIN_UMASK)) 
+			@chmod($this->file, octdec($conf->global->MAIN_UMASK));
+        
         return $result;
     }
 
@@ -1173,13 +1177,13 @@ class BonPrelevement
     function EnregDestinataire($rowid, $client_nom, $rib_banque, $rib_guichet, $rib_number, $amount)
     {
         fputs ($this->file, "06");
-        fputs ($this->file, "08"); // Prélèvement ordinaire
+        fputs ($this->file, "08"); // Prï¿½lï¿½vement ordinaire
 
-        fputs ($this->file, "        "); // Zone Réservée B2
+        fputs ($this->file, "        "); // Zone Rï¿½servï¿½e B2
 
-        fputs ($this->file, $this->numero_national_emetteur); // Numéro National d'emmetteur B3
+        fputs ($this->file, $this->numero_national_emetteur); // Numï¿½ro National d'emmetteur B3
 
-        // Date d'échéance C1
+        // Date d'ï¿½chï¿½ance C1
 
         fputs ($this->file, "       ");
         fputs ($this->file, strftime("%d%m", $this->date_echeance));
@@ -1193,7 +1197,7 @@ class BonPrelevement
 
         fputs ($this->file, substr("                                    ",0,24));
 
-        // Zone Réservée D2
+        // Zone Rï¿½servï¿½e D2
 
         fputs ($this->file, substr("                             ",0,8));
 
@@ -1211,16 +1215,16 @@ class BonPrelevement
 
         fputs ($this->file, substr("000000000000000".$montant, -16));
 
-        // Libellé F
+        // Libellï¿½ F
 
         fputs ($this->file, substr("*".$this->ref.$rowid."                                   ",0,13));
         fputs ($this->file, substr("                                        ",0,18));
 
-        // Code établissement G1
+        // Code ï¿½tablissement G1
 
         fputs ($this->file, $rib_banque);
 
-        // Zone Réservée G2
+        // Zone Rï¿½servï¿½e G2
 
         fputs ($this->file, substr("                                        ",0,5));
 
@@ -1236,13 +1240,13 @@ class BonPrelevement
     function EnregDestinataireVersion1($fac)
     {
         fputs ($this->file, "06");
-        fputs ($this->file, "08"); // Prélèvement ordinaire
+        fputs ($this->file, "08"); // Prï¿½lï¿½vement ordinaire
 
-        fputs ($this->file, "        "); // Zone Réservée B2
+        fputs ($this->file, "        "); // Zone Rï¿½servï¿½e B2
 
-        fputs ($this->file, $this->numero_national_emetteur); // Numéro National d'emmetteur B3
+        fputs ($this->file, $this->numero_national_emetteur); // Numï¿½ro National d'emmetteur B3
 
-        // Date d'échéance C1
+        // Date d'ï¿½chï¿½ance C1
 
         fputs ($this->file, "       ");
         fputs ($this->file, strftime("%d%m", $this->date_echeance));
@@ -1252,11 +1256,11 @@ class BonPrelevement
 
         fputs ($this->file, substr($fac->client->nom. "                           ",0,24));
 
-        // Reference de la remise créancier D1
+        // Reference de la remise crï¿½ancier D1
 
         fputs ($this->file, substr("                                    ",0,24));
 
-        // Zone Réservée D2
+        // Zone Rï¿½servï¿½e D2
 
         fputs ($this->file, substr("                             ",0,8));
 
@@ -1274,16 +1278,16 @@ class BonPrelevement
 
         fputs ($this->file, substr("000000000000000".$montant, -16));
 
-        // Libellé F
+        // Libellï¿½ F
 
         fputs ($this->file, substr("*".$fac->ref."                                   ",0,13));
         fputs ($this->file, substr("                                        ",0,18));
 
-        // Code établissement G1
+        // Code ï¿½tablissement G1
 
         fputs ($this->file, $fac->client->bank_account->code_banque);
 
-        // Zone Réservée G2
+        // Zone Rï¿½servï¿½e G2
 
         fputs ($this->file, substr("                                        ",0,5));
 
@@ -1297,13 +1301,13 @@ class BonPrelevement
     function EnregEmetteur()
     {
         fputs ($this->file, "03");
-        fputs ($this->file, "08"); // Prélèvement ordinaire
+        fputs ($this->file, "08"); // Prï¿½lï¿½vement ordinaire
 
-        fputs ($this->file, "        "); // Zone Réservée B2
+        fputs ($this->file, "        "); // Zone Rï¿½servï¿½e B2
 
-        fputs ($this->file, $this->numero_national_emetteur); // Numéro National d'emmetteur B3
+        fputs ($this->file, $this->numero_national_emetteur); // Numï¿½ro National d'emmetteur B3
 
-        // Date d'échéance C1
+        // Date d'ï¿½chï¿½ance C1
 
         fputs ($this->file, "       ");
         fputs ($this->file, strftime("%d%m", $this->date_echeance));
@@ -1313,15 +1317,15 @@ class BonPrelevement
 
         fputs ($this->file, substr($this->raison_sociale. "                           ",0,24));
 
-        // Reference de la remise créancier D1 sur 7 caractéres
+        // Reference de la remise crï¿½ancier D1 sur 7 caractï¿½res
 
         fputs ($this->file, substr($this->reference_remise. "                           ",0,7));
 
-        // Zone Réservée D1-2
+        // Zone Rï¿½servï¿½e D1-2
 
         fputs ($this->file, substr("                                    ",0,17));
 
-        // Zone Réservée D2
+        // Zone Rï¿½servï¿½e D2
 
         fputs ($this->file, substr("                             ",0,2));
         fputs ($this->file, "E");
@@ -1335,19 +1339,19 @@ class BonPrelevement
 
         fputs ($this->file, substr("000000000000000".$this->emetteur_numero_compte, -11));
 
-        // Zone Réservée E
+        // Zone Rï¿½servï¿½e E
 
         fputs ($this->file, substr("                                        ",0,16));
 
-        // Zone Réservée F
+        // Zone Rï¿½servï¿½e F
 
         fputs ($this->file, substr("                                        ",0,31));
 
-        // Code établissement
+        // Code ï¿½tablissement
 
         fputs ($this->file, $this->emetteur_code_etablissement);
 
-        // Zone Réservée G
+        // Zone Rï¿½servï¿½e G
 
         fputs ($this->file, substr("                                        ",0,5));
 
@@ -1362,13 +1366,13 @@ class BonPrelevement
     function EnregTotal($total)
     {
         fputs ($this->file, "08");
-        fputs ($this->file, "08"); // Prélèvement ordinaire
+        fputs ($this->file, "08"); // Prï¿½lï¿½vement ordinaire
 
-        fputs ($this->file, "        "); // Zone Réservée B2
+        fputs ($this->file, "        "); // Zone Rï¿½servï¿½e B2
 
-        fputs ($this->file, $this->numero_national_emetteur); // Numéro National d'emmetteur B3
+        fputs ($this->file, $this->numero_national_emetteur); // Numï¿½ro National d'emmetteur B3
 
-        // Réservé C1
+        // Rï¿½servï¿½ C1
 
         fputs ($this->file, substr("                           ",0,12));
 
@@ -1381,7 +1385,7 @@ class BonPrelevement
 
         fputs ($this->file, substr("                                    ",0,24));
 
-        // Zone Réservée D2
+        // Zone Rï¿½servï¿½e D2
 
         fputs ($this->file, substr("                             ",0,8));
 
@@ -1399,15 +1403,15 @@ class BonPrelevement
 
         fputs ($this->file, substr("000000000000000".$montant, -16));
 
-        // Zone Réservée F
+        // Zone Rï¿½servï¿½e F
 
         fputs ($this->file, substr("                                        ",0,31));
 
-        // Code établissement
+        // Code ï¿½tablissement
 
         fputs ($this->file, substr("                                        ",0,5));
 
-        // Zone Réservée F
+        // Zone Rï¿½servï¿½e F
 
         fputs ($this->file, substr("                                        ",0,5));
 

@@ -38,7 +38,7 @@ function makesalt($type=CRYPT_SALT_LENGTH)
 	{
 	case 12:	// 8 + 4
 		$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
-	case 8:		// 8 + 4 (Pour compatibilite, ne devrait pas etre utilisé)
+	case 8:		// 8 + 4 (Pour compatibilite, ne devrait pas etre utilisï¿½)
 		$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
 	case 2:		// 2
 	default: 	// by default, fall back on Standard DES (should work everywhere)
@@ -89,10 +89,14 @@ function encodedecode_dbpassconf($level=0)
 		}
 		fclose($fp);
 		
-		if ($fp = @fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','w'))
+		$file=DOL_DOCUMENT_ROOT.'/conf/conf.php';
+		if ($fp = @fopen($file,'w'))
 		{
 			fputs($fp, $config, strlen($config));
 			fclose($fp);
+			// It's config file, so we set permission for creator only
+			// @chmod($file, octdec('0600'));
+			
 			return 1;
 		}
 		else
@@ -109,9 +113,9 @@ function encodedecode_dbpassconf($level=0)
 }
 
 /**
- *	\brief   Encode une chaine de caractére
- *	\param   chaine			chaine de caractères a encoder
- *	\return  string_coded  	chaine de caractères encodée
+ *	\brief   Encode une chaine de caractï¿½re
+ *	\param   chaine			chaine de caractï¿½res a encoder
+ *	\return  string_coded  	chaine de caractï¿½res encodï¿½e
  */
 function dol_encode($chain)
 {
@@ -125,9 +129,9 @@ function dol_encode($chain)
 }
 
 /**
- *	\brief   Decode une chaine de caractére
- *	\param   chain    chaine de caractéres a decoder
- *	\return  string_coded  chaine de caractéres decodée
+ *	\brief   Decode une chaine de caractï¿½re
+ *	\param   chain    chaine de caractï¿½res a decoder
+ *	\return  string_coded  chaine de caractï¿½res decodï¿½e
  */
 function dol_decode($chain)
 {

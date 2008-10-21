@@ -16,28 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
 	\file       htdocs/includes/modules/rapport/pdf_paiement.class.php
 	\ingroup    banque
-	\brief      Fichier de la classe permettant de générer les rapports de paiement
-	\version    $Revision$
+	\brief      Fichier de la classe permettant de gï¿½nï¿½rer les rapports de paiement
+	\version    $Id$
 */
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**	
 	\class      pdf_paiement
-	\brief      Classe permettant de générer les rapports de paiement
+	\brief      Classe permettant de gï¿½nï¿½rer les rapports de paiement
 */
 class pdf_paiement extends FPDF
 {
 	/**	
 		\brief  Constructeur
-		\param	db		handler accès base de donnée
+		\param	db		handler accï¿½s base de donnï¿½e
 	*/
 	function pdf_paiement($db)
 	{ 
@@ -160,14 +158,20 @@ class pdf_paiement extends FPDF
 	}
 	
 	/**
-		\brief  Fonction générant le rapport sur le disque
+		\brief  Fonction generant le rapport sur le disque
 		\param	_dir		repertoire
 		\param	month		mois du rapport
 		\param	year		annee du rapport
 	*/
-	function write_file($_dir, $month, $year)
+	function write_file($_dir, $month, $year, $outputlangs='')
 	{
-		global $langs;
+		global $user,$langs,$conf;
+
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		// Force output charset to ISO, because FPDF expect text to be encoded in ISO
+		$outputlangs->charset_output=$outputlangs->character_set_client='ISO-8859-1';
+
+		$outputlangs->setPhpLang();
 		
 		$this->month=$month;
 		$this->year=$year;
@@ -194,7 +198,7 @@ class pdf_paiement extends FPDF
 			$pdf = new FPDI_Protection('P','mm','A4');
 			$pdfrights = array('print'); // Ne permet que l'impression du document
 			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-			$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+			$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
 			$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 		}
 		else
@@ -256,7 +260,7 @@ class pdf_paiement extends FPDF
 		
 		if ($pages == 0)
 		{
-			// force à générer au moins une page si le rapport ne contient aucune ligne
+			// force to build at least one page if report has no line
 			$pages = 1;
 		}
 		/*
@@ -275,6 +279,11 @@ class pdf_paiement extends FPDF
 		$this->Body($pdf, 1, $lines);
 		
 		$pdf->Output($_file);
+		if (! empty($conf->global->MAIN_UMASK)) 
+			@chmod($file, octdec($conf->global->MAIN_UMASK));
+
+		$langs->setPhpLang();	// On restaure langue session
+		return 1;
 	}  
 }
 

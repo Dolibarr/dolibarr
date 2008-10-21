@@ -169,6 +169,9 @@ if ($what == 'mysql')
 		if ($compression == 'none') fclose($handle);
 		if ($compression == 'gz')   gzclose($handle);
 		if ($compression == 'bz')   bzclose($handle);
+
+		if (! empty($conf->global->MAIN_UMASK)) 
+			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 	}
 	else
 	{

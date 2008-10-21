@@ -22,7 +22,7 @@
 /**
  \file       htdocs/includes/modules/commande/pdf_einstein.modules.php
  \ingroup    commande
- \brief      Fichier de la classe permettant de générer les commandes au modèle Einstein
+ \brief      Fichier de la classe permettant de gï¿½nï¿½rer les commandes au modï¿½le Einstein
  \author	    Laurent Destailleur
  \version    $Id$
  */
@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  \class      pdf_einstein
- \brief      Classe permettant de générer les commandes au modèle Einstein
+ \brief      Classe permettant de gï¿½nï¿½rer les commandes au modï¿½le Einstein
  */
 
 class pdf_einstein extends ModelePDFCommandes
@@ -44,7 +44,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 	/**
 	 \brief      Constructeur
-	 \param	    db		Handler accès base de donnée
+	 \param	    db		Handler accï¿½s base de donnï¿½e
 	 */
 	function pdf_einstein($db)
 	{
@@ -69,12 +69,12 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$this->option_logo = 1;                    // Affiche logo
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Affiche mode règlement
-		$this->option_condreg = 1;                 // Affiche conditions règlement
+		$this->option_modereg = 1;                 // Affiche mode rï¿½glement
+		$this->option_condreg = 1;                 // Affiche conditions rï¿½glement
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 1;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 1;             // Gère les avoirs
+		$this->option_credit_note = 1;             // Gï¿½re les avoirs
 		$this->option_freetext = 1;					// Support add of a personalised text
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
@@ -83,7 +83,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -99,8 +99,8 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/**
-	 *		\brief      Fonction générant la commande sur le disque
-	 *		\param	    com				Objet commande à générer
+	 *		\brief      Fonction gï¿½nï¿½rant la commande sur le disque
+	 *		\param	    com				Objet commande ï¿½ gï¿½nï¿½rer
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int         	1=ok, 0=ko
 	 */
@@ -123,7 +123,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		if ($conf->commande->dir_output)
 		{
-			// Définition de l'objet $com (pour compatibilite ascendante)
+			// Dï¿½finition de l'objet $com (pour compatibilite ascendante)
 			if (! is_object($com))
 			{
 				$id = $com;
@@ -132,7 +132,7 @@ class pdf_einstein extends ModelePDFCommandes
 			}
 			$deja_regle = "";
 
-			// Définition de $dir et $file
+			// Dï¿½finition de $dir et $file
 			if ($com->specimen)
 			{
 				$dir = $conf->commande->dir_output;
@@ -164,7 +164,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -208,7 +208,7 @@ class pdf_einstein extends ModelePDFCommandes
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gï¿½rer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $com->note_public, 0, 'J');
 					$nexY = $pdf->GetY();
@@ -251,7 +251,7 @@ class pdf_einstein extends ModelePDFCommandes
 							$libelleproduitservice.=dol_htmlentitiesbr($com->lignes[$i]->desc,1);
 						}
 					}
-					// Si ligne associée à un code produit
+					// Si ligne associï¿½e ï¿½ un code produit
 					if ($com->lignes[$i]->fk_product)
 					{
 						$prodser = new Product($this->db);
@@ -282,7 +282,7 @@ class pdf_einstein extends ModelePDFCommandes
 					// Description
 					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par dï¿½faut
 
 					$nexY = $pdf->GetY();
 
@@ -322,9 +322,9 @@ class pdf_einstein extends ModelePDFCommandes
 					// cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
-						//on récupère la description du produit suivant
+						//on rï¿½cupï¿½re la description du produit suivant
 						$follow_descproduitservice = $com->lignes[$i+1]->desc;
-						//on compte le nombre de ligne afin de vérifier la place disponible (largeur de ligne 52 caracteres)
+						//on compte le nombre de ligne afin de vï¿½rifier la place disponible (largeur de ligne 52 caracteres)
 						$nblineFollowDesc = (num_lines($follow_descproduitservice,52)*4);
 					}
 					else	// If it's last line
@@ -388,7 +388,9 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->Close();
 
 				$pdf->Output($file);
-
+				if (! empty($conf->global->MAIN_UMASK)) 
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
@@ -612,7 +614,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$index = 0;
 
-		// Affichage des totaux de TVA par taux (conformément à réglementation)
+		// Affichage des totaux de TVA par taux (conformï¿½ment ï¿½ rï¿½glementation)
 		$pdf->SetFillColor(248,248,248);
 
 		foreach( $this->tva as $tvakey => $tvaval )
@@ -699,7 +701,7 @@ class pdf_einstein extends ModelePDFCommandes
 	{
 		global $conf;
 
-		// Montants exprimés en     (en tab_top - 1)
+		// Montants exprimï¿½s en     (en tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentities("Currency".$conf->monnaie));
@@ -746,7 +748,7 @@ class pdf_einstein extends ModelePDFCommandes
 	}
 
 	/*
-	 *   	\brief      Affiche en-tête commande
+	 *   	\brief      Affiche en-tï¿½te commande
 	 *   	\param      pdf     		Objet PDF
 	 *   	\param      com     		Objet commande
 	 *      \param      showadress      0=non, 1=oui
@@ -853,7 +855,7 @@ class pdf_einstein extends ModelePDFCommandes
 			if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
 			else $pdf->MultiCell(80, 4, $this->emetteur->nom, 0, 'L');
 
-			// Caractéristiques emetteur
+			// Caractï¿½ristiques emetteur
 			$carac_emetteur = '';
 			if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
 			else {
@@ -915,7 +917,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// Nom client
 				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
 					
-				// Caractéristiques client
+				// Caractï¿½ristiques client
 				$carac_client.="\n".$object->contact->adresse;
 				$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
 				//Pays si different de l'emetteur
@@ -931,19 +933,19 @@ class pdf_einstein extends ModelePDFCommandes
 				$pdf->SetFont('Arial','B',11);
 				$pdf->MultiCell(96,4, $object->client->nom, 0, 'L');
 					
-				// Nom du contact suivi commande si c'est une société
+				// Nom du contact suivi commande si c'est une sociï¿½tï¿½
 				$arrayidcontact = $object->getIdContact('external','CUSTOMER');
 				if (sizeof($arrayidcontact) > 0)
 				{
 					$object->fetch_contact($arrayidcontact[0]);
-					// On vérifie si c'est une société ou un particulier
+					// On vï¿½rifie si c'est une sociï¿½tï¿½ ou un particulier
 					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 					{
 						$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
 					}
 				}
 					
-				// Caractéristiques client
+				// Caractï¿½ristiques client
 				$carac_client.="\n".$object->client->adresse;
 				$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
 
@@ -953,7 +955,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$carac_client.=dol_entity_decode($object->client->pays)."\n";
 				}
 			}
-			// Numéro TVA intracom
+			// Numï¿½ro TVA intracom
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
 			$pdf->SetFont('Arial','',9);
 			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name

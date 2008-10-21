@@ -21,74 +21,74 @@
  */
 
 /**
-		\file       htdocs/compta/paiement/cheque/pdf/pdf_blochet.class.php
-		\ingroup    banque
-		\brief      Fichier de la classe permettant de générer les bordereau de remise de cheque
-		\version    $Revision$
-*/
+ \file       htdocs/compta/paiement/cheque/pdf/pdf_blochet.class.php
+ \ingroup    banque
+ \brief      Fichier de la classe permettant de gï¿½nï¿½rer les bordereau de remise de cheque
+ \version    $Revision$
+ */
 
 
-/**	
-   \class      BordereauChequeBlochet
-   \brief      Classe permettant de générer les bordereau de remise de cheque
-*/
+/**
+ \class      BordereauChequeBlochet
+ \brief      Classe permettant de gï¿½nï¿½rer les bordereau de remise de cheque
+ */
 
 class BordereauChequeBlochet
 {
 	var $emetteur;	// Objet societe qui emet
 
-	/**	
-     \brief  Constructeur
-	*/
+	/**
+	 \brief  Constructeur
+	 */
 	function BordereauChequeBlochet($db)
-	{ 
-        global $conf,$langs,$mysoc;
+	{
+		global $conf,$langs,$mysoc;
 
 		$langs->load("main");
 		$langs->load("bills");
-		
+
 		$this->db = $db;
-        $this->name = "blochet";
+		$this->name = "blochet";
 		$this->description = $langs->transnoentities("CheckReceipt");
-		
+
 		$this->tab_top = 60;
-		
-        // Dimension page pour format A4
-        $this->type = 'pdf';
-        $this->page_largeur = 210;
-        $this->page_hauteur = 297;
-        $this->format = array($this->page_largeur,$this->page_hauteur);
-        $this->marge_gauche=10;
-        $this->marge_droite=20;
-        $this->marge_haute=10;
-        $this->marge_basse=10;
+
+		// Dimension page pour format A4
+		$this->type = 'pdf';
+		$this->page_largeur = 210;
+		$this->page_hauteur = 297;
+		$this->format = array($this->page_largeur,$this->page_hauteur);
+		$this->marge_gauche=10;
+		$this->marge_droite=20;
+		$this->marge_haute=10;
+		$this->marge_basse=10;
 
 		$this->line_height = 5;
 		$this->line_per_page = 25;
-		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;    
+		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;
 	}
-	
-	
-	/**	
+
+
+	/**
 		\brief  Generate Header
 		\param  pdf pdf object
 		\param  page current page number
 		\param  pages number of pages
-	*/  
+		*/
 	function Header(&$pdf, $page, $pages)
 	{
 		global $langs;
-		
+
 		$title = $this->description;
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Text(10, 10, $title);
 
 		$pdf->SetFont('Arial','',10);
 		$pdf->Text(10, 19, $langs->transnoentities("Numero"));
-		
+
 		$pdf->SetFont('Arial','',10);
 		$pdf->Text(10, 27, $langs->transnoentities("Date") );
-		
+
 		$pdf->SetFont('Arial','',10);
 		$pdf->Text(10, 35, $langs->transnoentities("Owner"));
 
@@ -120,7 +120,7 @@ class BordereauChequeBlochet
 		$pdf->line(170, 47, 170, 54);
 
 		$pdf->SetFont('Arial','',10);
-		$pdf->Text(10, 52, "Nombre de chèque");
+		$pdf->Text(10, 52, "Nombre de chï¿½que");
 
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Text(57, 52, $this->nbcheque);
@@ -131,7 +131,7 @@ class BordereauChequeBlochet
 		$pdf->SetFont('Arial','B',10);
 		$pdf->SetXY (170, 47);
 		$pdf->MultiCell(31, 7, price($this->amount), 0, 'C', 0);
-	
+
 		// Tableau
 		$pdf->SetFont('Arial','',8);
 		$pdf->Text(11,$this->tab_top + 6,$langs->transnoentities("Num"));
@@ -178,31 +178,31 @@ class BordereauChequeBlochet
 
 			$pdf->SetXY (10, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'J', 0);
-			
+				
 			$pdf->SetXY (30, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(70, $this->line_height, dolibarr_trunc($this->lines[$j]->bank_chq,44), 0, 'J', 0);
-			
+				
 			$pdf->SetXY (100, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(80, $this->line_height, dolibarr_trunc($this->lines[$j]->emetteur_chq,50), 0, 'J', 0);
-			
+				
 			$pdf->SetXY (180, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);
 
-			$yp = $yp + $this->line_height;	
+			$yp = $yp + $this->line_height;
 		}
 	}
 	/**
-		\brief  Fonction générant le rapport sur le disque
+		\brief  Fonction gï¿½nï¿½rant le rapport sur le disque
 		\param	_dir		repertoire
 		\param	month		mois du rapport
 		\param	year		annee du rapport
-	*/
+		*/
 	function write_file($_dir, $number)
 	{
 		global $langs;
-		
+
 		$dir = $_dir . "/".get_exdir($number);
-		
+
 		if (! is_dir($dir))
 		{
 			$result=create_exdir($dir);
@@ -210,54 +210,56 @@ class BordereauChequeBlochet
 			if ($result < 0)
 			{
 				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
-				return -1;	
-			}	
+				return -1;
+			}
 		}
-		
+
 		$month = sprintf("%02d",$month);
 		$year = sprintf("%04d",$year);
-		$_file = $dir . "bordereau-00".$number.".pdf"; //Todo: réparation provisoire, ajout de 2 zero
-		
+		$_file = $dir . "bordereau-00".$number.".pdf"; //Todo: rï¿½paration provisoire, ajout de 2 zero
+
 		// Protection et encryption du pdf
-    if ($conf->global->PDF_SECURITY_ENCRYPTION)
-    {
-     	require_once(FPDFI_PATH.'fpdi_protection.php');
-     	$pdf = new FPDI_Protection('P','mm','A4');
-     	$pdfrights = array('print'); // Ne permet que l'impression du document
-    	$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-     	$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
-     	$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-    }
-    else
-    {
-    	require_once(FPDFI_PATH.'fpdi.php');
-    	$pdf=new FPDI('P','mm',$this->format);
-    }
+		if ($conf->global->PDF_SECURITY_ENCRYPTION)
+		{
+			require_once(FPDFI_PATH.'fpdi_protection.php');
+			$pdf = new FPDI_Protection('P','mm','A4');
+			$pdfrights = array('print'); // Ne permet que l'impression du document
+			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+			$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
+			$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+		}
+		else
+		{
+			require_once(FPDFI_PATH.'fpdi.php');
+			$pdf=new FPDI('P','mm',$this->format);
+		}
 
 		$pdf->Open();
-		
-		
+
+
 		$pages = intval($lignes / $this->line_per_page);
-		
+
 		if (($lignes % $this->line_per_page)>0)
 		{
 			$pages++;
 		}
-		
+
 		if ($pages == 0)
 		{
-			// force à générer au moins une page si le rapport ne contient aucune ligne
+			// force to build at least one page if report has no lines
 			$pages = 1;
 		}
-		
+
 		$pdf->AddPage();
-		
+
 		$this->Header($pdf, 1, $pages);
-		
+
 		$this->Body($pdf, 1);
-		
+
 		$pdf->Output($_file);
-	}  
+		if (! empty($conf->global->MAIN_UMASK))
+			@chmod($file, octdec($conf->global->MAIN_UMASK));
+	}
 }
 
 ?>

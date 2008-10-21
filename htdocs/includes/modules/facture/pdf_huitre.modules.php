@@ -22,7 +22,7 @@
 /**
  \file       htdocs/includes/modules/facture/pdf_huitre.modules.php
  \ingroup    facture
- \brief      Fichier de la classe permettant de générer les factures au modèle Huitre
+ \brief      Fichier de la classe permettant de gï¿½nï¿½rer les factures au modï¿½le Huitre
  \author	    Laurent Destailleur
  \version    $Id$
  */
@@ -33,7 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  \class      pdf_huitre
- \brief      Classe permettant de générer les factures au modèle Huitre
+ \brief      Classe permettant de gï¿½nï¿½rer les factures au modï¿½le Huitre
  */
 
 class pdf_huitre extends ModelePDFFactures
@@ -42,7 +42,7 @@ class pdf_huitre extends ModelePDFFactures
 
 
 	/**		\brief  Constructeur
-	 \param	db		handler accès base de donnée
+	 \param	db		handler accï¿½s base de donnï¿½e
 	 */
 	function pdf_huitre($db)
 	{
@@ -69,23 +69,23 @@ class pdf_huitre extends ModelePDFFactures
 
 		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
 		$this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 0;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
-		$this->option_condreg = 1;                 // Affiche conditions règlement
+		$this->option_modereg = 0;                 // Gere choix mode rï¿½glement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
+		$this->option_condreg = 1;                 // Affiche conditions rï¿½glement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 0;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 0;             // Gère les avoirs
+		$this->option_credit_note = 0;             // Gï¿½re les avoirs
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 	}
 
 
 	/**
-	 *		\brief      Fonction générant la facture sur le disque
-	 *		\param	    fac				Objet facture à générer (ou id si ancienne methode)
+	 *		\brief      Fonction gï¿½nï¿½rant la facture sur le disque
+	 *		\param	    fac				Objet facture ï¿½ gï¿½nï¿½rer (ou id si ancienne methode)
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int     		1=ok, 0=ko
 	 */
@@ -106,7 +106,7 @@ class pdf_huitre extends ModelePDFFactures
 
 		if ($conf->facture->dir_output)
 		{
-			// Définition de l'objet $fac (pour compatibilite ascendante)
+			// Dï¿½finition de l'objet $fac (pour compatibilite ascendante)
 			if (! is_object($fac))
 			{
 				$id = $fac;
@@ -114,7 +114,7 @@ class pdf_huitre extends ModelePDFFactures
 				$ret=$fac->fetch($id);
 			}
 
-			// Définition de $dir et $file
+			// Dï¿½finition de $dir et $file
 			if ($fac->specimen)
 			{
 				$dir = $conf->facture->dir_output;
@@ -145,7 +145,7 @@ class pdf_huitre extends ModelePDFFactures
 					$pdf=new FPDI_Protection('P','mm','A4');
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -271,13 +271,12 @@ class pdf_huitre extends ModelePDFFactures
 				$pdf->SetLineWidth(0.5);
 
 
-
-
-
 				$pdf->Close();
 
 				$pdf->Output($file);
-
+				if (! empty($conf->global->MAIN_UMASK)) 
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
@@ -373,7 +372,7 @@ class pdf_huitre extends ModelePDFFactures
 	}
 
 	/*
-	 *   \brief      Affiche le total à payer
+	 *   \brief      Affiche le total ï¿½ payer
 	 *   \param      pdf         objet PDF
 	 *   \param      fac         objet facture
 	 */
@@ -463,7 +462,7 @@ class pdf_huitre extends ModelePDFFactures
 	}
 
 	/*
-	 *   \brief      Affiche en-tête facture
+	 *   \brief      Affiche en-tï¿½te facture
 	 *   \param      pdf     objet PDF
 	 *   \param      fac     objet facture
 	 */

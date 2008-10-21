@@ -270,7 +270,9 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pdf->Close();
 
 				$pdf->Output($file);
-
+				if (! empty($conf->global->MAIN_UMASK)) 
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}

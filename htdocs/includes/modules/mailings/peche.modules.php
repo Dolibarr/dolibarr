@@ -20,7 +20,7 @@
 /**
  \file       htdocs/includes/modules/mailings/peche.modules.php
  \ingroup    mailing
- \brief      Fichier de la classe permettant de générer la liste de destinataires Peche
+ \brief      Fichier de la classe permettant de gï¿½nï¿½rer la liste de destinataires Peche
  \version    $Id$
  */
 
@@ -29,13 +29,13 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 /**
  \class      mailing_pomme
- \brief      Classe permettant de générer la liste des destinataires Pomme
+ \brief      Classe permettant de gï¿½nï¿½rer la liste des destinataires Pomme
  */
 
 class mailing_peche extends MailingTargets
 {
 	var $name='EmailsFromFile';              // Identifiant du module mailing
-	var $desc='EMails issus d\'un fichier';  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+	var $desc='EMails issus d\'un fichier';  // Libellï¿½ utilisï¿½ si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvï¿½e
 	var $require_module=array();             // Module mailing actif si modules require_module actifs
 	var $require_admin=1;                    // Module mailing actif pour user admin ou non
 	var $picto='generic';
@@ -99,7 +99,7 @@ class mailing_peche extends MailingTargets
 
 	/**
 	 *    \brief      Ajoute destinataires dans table des cibles
-	 *    \param      mailing_id    Id du mailing concerné
+	 *    \param      mailing_id    Id du mailing concernï¿½
 	 *    \param      filterarray   Requete sql de selection des destinataires
 	 *    \return     int           < 0 si erreur, nb ajout si ok
 	 */
@@ -123,7 +123,8 @@ class mailing_peche extends MailingTargets
 				
 				//$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
 				//print_r($_FILES);
-				$handle = @fopen($upload_dir . "/" . $_FILES['username']['name'], "r");
+				$file=$upload_dir . "/" . $_FILES['username']['name'];
+				$handle = @fopen($file, "r");
 				if ($handle) 
 				{
 					$i = 0;
@@ -165,6 +166,7 @@ class mailing_peche extends MailingTargets
 				        }
 				    }
 				    fclose($handle);
+				    
 				    if ($i > 0) 
 				    {
 				    	return -$i;

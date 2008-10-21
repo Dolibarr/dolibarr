@@ -110,7 +110,7 @@ class CommActionRapport
 				$pdf=new FPDI_Protection('P','mm',$this->format);
 				$pdfrights = array('print'); // Ne permet que l'impression du document
 				$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-				$pdfownerpass = NULL; // Mot de passe du propriétire, crée aléatoirement si pas défini
+				$pdfownerpass = NULL; // Mot de passe du propriï¿½tire, crï¿½e alï¿½atoirement si pas dï¿½fini
 				$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 			}
 			else
@@ -138,7 +138,9 @@ class CommActionRapport
             $pdf->Close();
 
             $pdf->Output($file);
-
+			if (! empty($conf->global->MAIN_UMASK)) 
+				@chmod($file, octdec($conf->global->MAIN_UMASK));
+            
             return 1;
         }
     }

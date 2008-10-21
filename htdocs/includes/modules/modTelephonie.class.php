@@ -340,6 +340,7 @@ class modTelephonie extends DolibarrModules
 							}
 						}
 						fclose($fp);
+				
 					}
 
 					//print "<tr><td>Creation de la table $name/td>";

@@ -82,22 +82,22 @@ function check_mail ($mail)
 function unaccent_isostring($str)
 {
 	$translation = array(
-	  	"\xE0" => "a",
-	  	"\xE1" => "a",
-	  	"\xE2" => "a",
-	  	"\xE8" => "e",
-	  	"\xE9" => "e",
-	  	"\xEA" => "e",
-	  	"\xEB" => "e",
-	  	"\xEE" => "i",
-	  	"\xEF" => "i",
-	  	"\xF4" => "o",
-	  	"\xF6" => "o",
-	  	"\xFB" => "u",
-	  	"\xFC" => "u"
+	"\xE0" => "a",
+	"\xE1" => "a",
+	"\xE2" => "a",
+	"\xE8" => "e",
+	"\xE9" => "e",
+	"\xEA" => "e",
+	"\xEB" => "e",
+	"\xEE" => "i",
+	"\xEF" => "i",
+	"\xF4" => "o",
+	"\xF6" => "o",
+	"\xFB" => "u",
+	"\xFC" => "u"
 	  	);
 
-	  	return str_replace(array_keys($translation), array_values($translation), $str);
+	return str_replace(array_keys($translation), array_values($translation), $str);
 }
 
 /**
@@ -185,6 +185,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 
 				fwrite($file,$message."\n");
 				fclose($file);
+				// This is for log file, we do not change permissions
 
 				// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
 				if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
@@ -300,7 +301,7 @@ function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 
 	$db->begin();
 
-	// On efface anciens param�tres pour toutes les cl� dans $tab
+	// On efface anciens param�tres pour toutes les cl� dans $ta
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
 	$sql.= " WHERE fk_user = ".$user->id;
 	if ($url) $sql.=" AND page='".$url."'";
@@ -456,10 +457,10 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$convtooutput=true)
 		// Date is a timestamps
 		$ret=adodb_strftime($format,$time,$to_gmt);
 	}
-	
+
 	// Page code for text from strftime functions
 	$pagecodefrom='ISO-8859-1';
-	 
+
 	return ($convtooutput?$langs->convToOuptutCharset($ret,$pagecodefrom):$ret);
 }
 
@@ -760,7 +761,7 @@ function dol_phone_link($phone,$option=0)
 function dolibarr_trunc($string,$size=40,$trunc='right')
 {
 	global $conf;
-	
+
 	if ($size==0) return $string;
 	if (! defined('USE_SHORT_TITLE') || (defined('USE_SHORT_TITLE') && USE_SHORT_TITLE))
 	{
@@ -771,9 +772,9 @@ function dolibarr_trunc($string,$size=40,$trunc='right')
 			//print $conf->character_set_client.'-'.mb_strlen($string).'-'.strlen($string);
 			//print 'ee'.$string.$size.mb_strcut($string,0,$size,'UTF-8').'rr';
 			if (strlen($string) > $size)
-				return substr($string,0,$size).'...';
+			return substr($string,0,$size).'...';
 			else
-				return $string;
+			return $string;
 		}
 		if ($trunc == 'middle')
 		{
@@ -1384,12 +1385,12 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 	else if (! empty($feature2))	// This should be used for future changes
 	{
 		if (empty($user->rights->$feature->$feature2->lire)
-			&& empty($user->rights->$feature->$feature2->read)) $readok=0;
+		&& empty($user->rights->$feature->$feature2->read)) $readok=0;
 	}
 	else if (! empty($feature))		// This is for old permissions
 	{
-		if (empty($user->rights->$feature->lire) 
-			&& empty($user->rights->$feature->read)) $readok=0;
+		if (empty($user->rights->$feature->lire)
+		&& empty($user->rights->$feature->read)) $readok=0;
 	}
 	if (! $readok) accessforbidden();
 	//print "Read access is ok";
@@ -1425,12 +1426,12 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 		else if (! empty($feature2))	// This should be used for future changes
 		{
 			if (empty($user->rights->$feature->$feature2->creer)
-				&& empty($user->rights->$feature->$feature2->write)) $createok=0;
+			&& empty($user->rights->$feature->$feature2->write)) $createok=0;
 		}
 		else if (! empty($feature))		// This is for old permissions
 		{
-			if (empty($user->rights->$feature->creer) 
-				&& empty($user->rights->$feature->write)) $createok=0;
+			if (empty($user->rights->$feature->creer)
+			&& empty($user->rights->$feature->write)) $createok=0;
 		}
 		if (! $createok) accessforbidden();
 		//print "Write access is ok";
@@ -1684,8 +1685,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	// Move file
 	$return=move_uploaded_file($src_file, $file_name);
 	if ($return)
-	{	
-		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name, $conf->global->MAIN_UMASK);
+	{
+		if (! empty($conf->global->MAIN_UMASK)) @chmod($file_name, octdec($conf->global->MAIN_UMASK));
 		dolibarr_syslog("Functions.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
 		return 1;
 	}
@@ -2001,7 +2002,7 @@ function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrow
  *		\param	    rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
  *		\param		foundpercent	Add a percent % sign in output
  *		\param		info_bits		Miscellanous information on vat
- *		\return		string			Chaine avec montant format� (19,6 ou 19,6% ou 8.5% *)
+ *		\return		string			Chaine avec montant format� (19,6 ou 19,6% ou 8.5% *
  */
 function vatrate($rate,$addpercent=false,$info_bits=0)
 {
@@ -2109,7 +2110,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 	$dec=','; $thousand=' ';
 	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
 	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
-	
+
 	//print 'x'.$dec.$thousand.'-';
 	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
 	{
@@ -2157,8 +2158,8 @@ function get_product_vat_for_country($idprod, $countrycode)
  \remarks    	Si vendeur non assujeti a TVA, TVA par d�faut=0. Fin de r�gle.
  Si le (pays vendeur = pays acheteur) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle.
  Si (vendeur et acheteur dans Communaut� europ�enne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par d�faut=0 (La TVA doit �tre pay� par acheteur au centre d'impots de son pays et non au vendeur). Fin de r�gle.
- Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle.
- Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = entreprise avec num TVA) intra alors TVA par d�faut=0. Fin de r�gle.
+ Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle
+ Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = entreprise avec num TVA) intra alors TVA par d�faut=0. Fin de r�gle
  Sinon TVA propos�e par d�faut=0. Fin de r�gle.
  \param      	societe_vendeuse    	Objet soci�t� vendeuse
  \param      	societe_acheteuse   	Objet soci�t� acheteuse
@@ -2190,7 +2191,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
 	// Si (vendeur et acheteur dans Communaut� europ�enne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par d�faut=0 (La TVA doit �tre pay� par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de r�gle.
 	// Non g�r�
 
-	// Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle.
+	// Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle
 	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && ! $societe_acheteuse->tva_intra)
 	{
 		if ($idprod) return get_product_vat_for_country($idprod,$societe_vendeuse->pays_code);
@@ -2198,7 +2199,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
 		return $taux_produit;
 	}
 
-	// Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = entreprise avec num TVA intra) alors TVA par d�faut=0. Fin de r�gle.
+	// Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = entreprise avec num TVA intra) alors TVA par d�faut=0. Fin de r�gle
 	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_intra)
 	{
 		return 0;
@@ -2215,8 +2216,8 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $
  \remarks    	Si vendeur non assujeti a TVA, TVA par d�faut=0. Fin de r�gle.
  Si le (pays vendeur = pays acheteur) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle.
  Si (vendeur et acheteur dans Communaut� europ�enne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par d�faut=0 (La TVA doit �tre pay� par acheteur au centre d'impots de son pays et non au vendeur). Fin de r�gle.
- Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle.
- Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = entreprise avec num TVA) intra alors TVA par d�faut=0. Fin de r�gle.
+ Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle
+ Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = entreprise avec num TVA) intra alors TVA par d�faut=0. Fin de r�gle
  Sinon TVA propos�e par d�faut=0. Fin de r�gle.
  \param      	societe_vendeuse    	Objet soci�t� vendeuse
  \param      	societe_acheteuse   	Objet soci�t� acheteuse
@@ -2289,7 +2290,7 @@ function departement_rowid($db,$code, $pays_id)
 }
 
 /**
- \brief      Renvoi un chemin de classement r�pertoire en fonction d'un id
+ \brief      Renvoi un chemin de classement r�pertoire en fonction d'un i
  \remarks    Examples: 1->"0/0/1/", 15->"0/1/5/"
  \param      $num        	Id a d�composer
  \param      $level		Niveau de decoupage (1, 2 ou 3 niveaux)
@@ -2311,6 +2312,8 @@ function get_exdir($num,$level=3)
  */
 function create_exdir($dir)
 {
+	global $conf;
+	
 	dolibarr_syslog("functions.lib::create_exdir: dir=".$dir,LOG_INFO);
 
 	if (@is_dir($dir)) return 0;
@@ -2332,21 +2335,24 @@ function create_exdir($dir)
 		{
 			if (! @is_dir($ccdir))
 			{
-		  dolibarr_syslog("functions.lib::create_exdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.",LOG_DEBUG);
+				dolibarr_syslog("functions.lib::create_exdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.",LOG_DEBUG);
 
-		  umask(0);
-		  if (! @mkdir($ccdir, 0755))
-		  {
-		  	// Si le is_dir a renvoye une fausse info, alors on passe ici.
-		  	dolibarr_syslog("functions.lib::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
-		  	$nberr++;
-		  }
-		  else
-		  {
-		  	dolibarr_syslog("functions.lib::create_exdir: Directory '".$ccdir."' created",LOG_DEBUG);
-		  	$nberr=0;	// On remet a zero car si on arrive ici, cela veut dire que les �checs pr�c�dents peuvent etre ignor�s
-		  	$nbcreated++;
-		  }
+				umask(0);
+				$dirmaskdec=octdec('0755');
+				if (! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK); 
+				$dirmaskdec |= octdec('0110');
+				if (! @mkdir($ccdir, $dirmaskdec))
+				{
+					// Si le is_dir a renvoye une fausse info, alors on passe ici.
+					dolibarr_syslog("functions.lib::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.",LOG_WARNING);
+					$nberr++;
+				}
+				else
+				{
+					dolibarr_syslog("functions.lib::create_exdir: Directory '".$ccdir."' created",LOG_DEBUG);
+					$nberr=0;	// On remet a zero car si on arrive ici, cela veut dire que les �checs pr�c�dents peuvent etre ignor�s
+					$nbcreated++;
+				}
 			}
 			else
 			{
@@ -3007,7 +3013,7 @@ function is_emtpy_folder($folder){
 		return true;
 		else
 		return false;
-		 
+			
 		closedir($handle);
 	}
 	else

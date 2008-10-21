@@ -201,6 +201,8 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 		fwrite($calfileh,"END:VCALENDAR");
 		
 		fclose($calfileh);
+		if (! empty($conf->global->MAIN_UMASK)) 
+			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 	}
 	else
 	{
@@ -312,11 +314,8 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 		fwrite($fichier, '</rss>');
 
 		fclose($fichier);
-
-		// We change mod to allow file to be overwritten if dump is launched
-		// from command line or a web session.
-		// 0666 = rw-rw-rw-
-		if (! empty($conf->global->MAIN_UMASK)) @chmod($fichier, $conf->global->MAIN_UMASK);
+		if (! empty($conf->global->MAIN_UMASK)) 
+			@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
 	}
 }
 

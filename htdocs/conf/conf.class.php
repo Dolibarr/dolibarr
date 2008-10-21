@@ -238,6 +238,7 @@ class Conf
 		// Module adherent
 		$this->adherent->enabled=defined("MAIN_MODULE_ADHERENT")?MAIN_MODULE_ADHERENT:0;
 		$this->adherent->dir_output=DOL_DATA_ROOT."/adherent";
+		$this->adherent->dir_tmp=DOL_DATA_ROOT."/adherent/temp";
 		// Module produit
 		$this->produit->enabled=defined("MAIN_MODULE_PRODUIT")?MAIN_MODULE_PRODUIT:0;
 		$this->produit->dir_output=DOL_DATA_ROOT."/produit";

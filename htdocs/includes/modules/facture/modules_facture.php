@@ -21,30 +21,30 @@
  */
 
 /**
-   \file       htdocs/includes/modules/facture/modules_facture.php
-   \ingroup    facture
-   \brief      Fichier contenant la classe mère de generation des factures en PDF
-   et la classe mère de numérotation des factures
-   \version    $Id$
-*/
+ \file       htdocs/includes/modules/facture/modules_facture.php
+ \ingroup    facture
+ \brief      Fichier contenant la classe mï¿½re de generation des factures en PDF
+ et la classe mï¿½re de numï¿½rotation des factures
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis car utilisé dans les classes qui héritent
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis car utilisï¿½ dans les classes qui hï¿½ritent
 
 
 /**
-   \class      ModelePDFFactures
-   \brief      Classe mère des modèles de facture
-*/
+ \class      ModelePDFFactures
+ \brief      Classe mï¿½re des modï¿½les de facture
+ */
 
 class ModelePDFFactures extends FPDF
 {
 	var $error='';
 
 	/**
-	 *       \brief      Renvoi le dernier message d'erreur de création de facture
+	 *       \brief      Renvoi le dernier message d'erreur de crï¿½ation de facture
 	 */
 	function pdferror()
 	{
@@ -52,16 +52,16 @@ class ModelePDFFactures extends FPDF
 	}
 
 	/**
-	 *      \brief      Renvoi la liste des modèles actifs
+	 *      \brief      Renvoi la liste des modï¿½les actifs
 	 *      \param      db      Handler de base
 	 */
 	function liste_modeles($db)
 	{
-        $type='invoice';
-        $liste=array();
-        $sql ="SELECT nom as id, nom as lib";
-        $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-        $sql.=" WHERE type = '".$type."'";
+		$type='invoice';
+		$liste=array();
+		$sql ="SELECT nom as id, nom as lib";
+		$sql.=" FROM ".MAIN_DB_PREFIX."document_model";
+		$sql.=" WHERE type = '".$type."'";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -86,64 +86,64 @@ class ModelePDFFactures extends FPDF
 }
 
 /**
-   \class      ModeleNumRefFactures
-   \brief      Classe mère des modèles de numérotation des références de facture
-*/
+ \class      ModeleNumRefFactures
+ \brief      Classe mï¿½re des modï¿½les de numï¿½rotation des rï¿½fï¿½rences de factur
+ */
 class ModeleNumRefFactures
 {
 	var $error='';
-	
+
 	/**     \brief     	Return if a module can be used or not
-	*      	\return		boolean     true if module can be used
-	*/
+	 *      	\return		boolean     true if module can be used
+	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-	/**		\brief		Renvoi la description par defaut du modele de numérotation
-	*      	\return     string      Texte descripif
-	*/
+	/**		\brief		Renvoi la description par defaut du modele de numï¿½rotation
+	 *      	\return     string      Texte descripif
+	 */
 	function info()
 	{
 		global $langs;
 		$langs->load("bills");
 		return $langs->trans("NoDescription");
 	}
-	
-	/**     \brief     	Renvoi un exemple de numérotation
-	*		\return		string      Example
-	*/
+
+	/**     \brief     	Renvoi un exemple de numï¿½rotation
+	 *		\return		string      Example
+	 */
 	function getExample()
 	{
 		global $langs;
 		$langs->load("bills");
 		return $langs->trans("NoExample");
 	}
-	
-	/**     \brief     	Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-	*                  	de conflits qui empechera cette numérotation de fonctionner.
-	*      	\return		boolean     false si conflit, true si ok
-	*/
+
+	/**     \brief     	Test si les numï¿½ros dï¿½jï¿½ en vigueur dans la base ne provoquent pas d
+	 *                  	de conflits qui empechera cette numï¿½rotation de fonctionner.
+	 *      	\return		boolean     false si conflit, true si ok
+	 */
 	function canBeActivated()
 	{
 		return true;
 	}
-	
-	/**     \brief      Renvoi prochaine valeur attribuée
-	*      	\param      objsoc		Objet societe
-	*      	\param      facture		Objet facture
-	*      	\return     string      Valeur
-	*/
+
+	/**     \brief      Renvoi prochaine valeur attribuï¿½e
+	 *      	\param      objsoc		Objet societe
+	 *      	\param      facture		Objet facture
+	 *      	\return     string      Valeur
+	 */
 	function getNextValue($objsoc,$facture)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
 	}
-	
+
 	/**     \brief      Renvoi version du module numerotation
-	*      	\return     string      Valeur
-	*/
+	 *      	\return     string      Valeur
+	 */
 	function getVersion()
 	{
 		global $langs;
@@ -153,19 +153,19 @@ class ModeleNumRefFactures
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
 		return $langs->trans("NotAvailable");
-	}	
+	}
 }
 
 
 /**
-		\brief   	Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
-		\param   	db  			objet base de donnée
-		\param   	id				id de la facture à créer
-		\param	    message			message
-		\param	    modele			force le modele à utiliser ('' par defaut)
-		\param		outputlangs		objet lang a utiliser pour traduction
-		\return  	int        		<0 si KO, >0 si OK
-*/
+ \brief   	Cree un facture sur disque en fonction du modele de FACTURE_ADDON_PDF
+ \param   	db  			objet base de donnee
+ \param   	id				id de la facture a creer
+ \param	    message			message
+ \param	    modele			force le modele a utiliser ('' par defaut)
+ \param		outputlangs		objet lang a utiliser pour traduction
+ \return  	int        		<0 si KO, >0 si OK
+ */
 function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 {
 	global $conf,$langs;
@@ -173,7 +173,7 @@ function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 
 	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
 
-	// Positionne modele sur le nom du modele à utiliser
+	// Positionne modele sur le nom du modele a utiliser
 	if (! strlen($modele))
 	{
 		if ($conf->global->FACTURE_ADDON_PDF)
@@ -199,7 +199,7 @@ function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 
 		if ($obj->write_file($id, $outputlangs) > 0)
 		{
-			// Succès de la création de la facture. On génère le fichier meta
+			// Success in building document. We build meta file.
 			facture_meta_create($db, $id);
 
 			// et on supprime l'image correspondant au preview
@@ -216,17 +216,17 @@ function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 	}
 	else
 	{
-        dolibarr_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file));
+		dolibarr_print_error('',$langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists",$dir.$file));
 		return -1;
 	}
 }
 
 /**
-   \brief       Créé un meta fichier à côté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payée ou compliquée à gérer ... avec un rgrep c'est vite fait bien fait [eric seigne]
-   \param	    db  		Objet base de donnée
-   \param	    facid		Id de la facture à créer
-   \param       message     Message
-*/
+ \brief       Crï¿½ï¿½ un meta fichier ï¿½ cï¿½tï¿½ de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payï¿½e ou compliquï¿½e ï¿½ gï¿½rer ... avec un rgrep c'est vite fait bien fait [eric seigne
+ \param	    db  		Objet base de donnï¿½e
+ \param	    facid		Id de la facture ï¿½ crï¿½er
+ \param       message     Message
+ */
 function facture_meta_create($db, $facid, $message="")
 {
 	global $langs,$conf;
@@ -234,71 +234,75 @@ function facture_meta_create($db, $facid, $message="")
 	$fac = new Facture($db,"",$facid);
 	$fac->fetch($facid);
 	$fac->fetch_client();
-	
+
 	if ($conf->facture->dir_output)
 	{
 		$facref = sanitize_string($fac->ref);
 		$dir = $conf->facture->dir_output . "/" . $facref ;
 		$file = $dir . "/" . $facref . ".meta";
-		
+
 		if (! is_dir($dir))
 		{
 			create_exdir($dir);
 		}
 
-    	if (is_dir($dir))
+		if (is_dir($dir))
 		{
-		  	$nblignes = sizeof($fac->lignes);
-		  	$client = $fac->client->nom . " " . $fac->client->adresse . " " . $fac->client->cp . " " . $fac->client->ville;
-		  	$meta = "REFERENCE=\"" . $fac->ref . "\"
+			$nblignes = sizeof($fac->lignes);
+			$client = $fac->client->nom . " " . $fac->client->adresse . " " . $fac->client->cp . " " . $fac->client->ville;
+			$meta = "REFERENCE=\"" . $fac->ref . "\"
 DATE=\"" . dolibarr_print_date($fac->date) . "\"
 NB_ITEMS=\"" . $nblignes . "\"
 CLIENT=\"" . $client . "\"
 TOTAL_HT=\"" . $fac->total_ht . "\"
 TOTAL_TTC=\"" . $fac->total_ttc . "\"\n";
 
-	  for ($i = 0 ; $i < $nblignes ; $i++) {
-	    //Pour les articles
-	    $meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lignes[$i]->qty . "\"
+	  		for ($i = 0 ; $i < $nblignes ; $i++)
+	  		{
+	  	//Pour les articles
+	  	$meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lignes[$i]->qty . "\"
 ITEM_" . $i . "_UNIT_PRICE=\"" . $fac->lignes[$i]->price . "\"
 ITEM_" . $i . "_TVA=\"" .$fac->lignes[$i]->tva_tx . "\"
 ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->desc)) . "\"
 ";
 	  }
+		}
+		$fp = fopen ($file,"w");
+		fputs($fp,$meta);
+		fclose($fp);
+		if (! empty($conf->global->MAIN_UMASK)) 
+			@chmod($file, octdec($conf->global->MAIN_UMASK));
+		
 	}
-      $fp = fopen ($file,"w");
-      fputs($fp,$meta);
-      fclose($fp);
-    }
 }
 
 
 /**
-   \brief       Supprime l'image de prévisualitation, pour le cas de régénération de facture
-   \param	    db  		objet base de donnée
-   \param	    facid		id de la facture à créer
-*/
+ \brief       Supprime l'image de prï¿½visualitation, pour le cas de rï¿½gï¿½nï¿½ration de facture
+ \param	    db  		objet base de donnï¿½e
+ \param	    facid		id de la facture ï¿½ crï¿½er
+ */
 function facture_delete_preview($db, $facid)
 {
-  global $langs,$conf;
+	global $langs,$conf;
 
-  $fac = new Facture($db,"",$facid);
-  $fac->fetch($facid);
+	$fac = new Facture($db,"",$facid);
+	$fac->fetch($facid);
 
-  if ($conf->facture->dir_output)
-    {
-      $facref = sanitize_string($fac->ref);
-      $dir = $conf->facture->dir_output . "/" . $facref ;
-      $file = $dir . "/" . $facref . ".pdf.png";
-
-      if ( file_exists( $file ) && is_writable( $file ) )
+	if ($conf->facture->dir_output)
 	{
+		$facref = sanitize_string($fac->ref);
+		$dir = $conf->facture->dir_output . "/" . $facref ;
+		$file = $dir . "/" . $facref . ".pdf.png";
+
+		if ( file_exists( $file ) && is_writable( $file ) )
+		{
 	  if ( ! unlink($file) )
-	    {
-	      return 0;
-	    }
+	  {
+	  	return 0;
+	  }
+		}
 	}
-    }
 }
 
 ?>

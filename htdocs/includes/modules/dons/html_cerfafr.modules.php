@@ -130,7 +130,9 @@ class html_cerfafr extends ModeleDon
 		        $handle=fopen($file,"w");        
 		        fwrite($handle,$html);
 		        fclose($handle);
-		
+				if (! empty($conf->global->MAIN_UMASK)) 
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+		        
 		        return 1;
             }
             else

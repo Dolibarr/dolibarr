@@ -23,8 +23,8 @@
 /**
  \file       htdocs/includes/modules/facture/pdf_oursin.modules.php
  \ingroup    facture
- \brief      Fichier de la classe permettant de générer les factures au modèle oursin
- \author	    Sylvain SCATTOLINI basé sur un modèle de Laurent Destailleur
+ \brief      Fichier de la classe permettant de gï¿½nï¿½rer les factures au modï¿½le oursin
+ \author	    Sylvain SCATTOLINI basï¿½ sur un modï¿½le de Laurent Destailleur
  \version    $Id$
  */
 
@@ -34,7 +34,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  \class      pdf_oursin
- \brief      Classe permettant de générer les factures au modèle oursin
+ \brief      Classe permettant de gï¿½nï¿½rer les factures au modï¿½le oursin
  */
 
 class pdf_oursin extends ModelePDFFactures
@@ -44,7 +44,7 @@ class pdf_oursin extends ModelePDFFactures
 
 	/**
 	 \brief  Constructeur
-	 \param	db		handler accès base de donnée
+	 \param	db		handler accï¿½s base de donnï¿½e
 	 */
 	function pdf_oursin($db)
 	{
@@ -70,12 +70,12 @@ class pdf_oursin extends ModelePDFFactures
 		
 		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
-		$this->option_condreg = 1;                 // Affiche conditions règlement
+		$this->option_modereg = 1;                 // Gere choix mode rï¿½glement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
+		$this->option_condreg = 1;                 // Affiche conditions rï¿½glement
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 0;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 1;             // Gère les avoirs
+		$this->option_credit_note = 1;             // Gï¿½re les avoirs
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
@@ -83,13 +83,13 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 	}
 
 
 	/**
-	 *		\brief      Fonction générant la facture sur le disque
-	 *		\param	    fac				Objet facture à générer (ou id si ancienne methode)
+	 *		\brief      Fonction gï¿½nï¿½rant la facture sur le disque
+	 *		\param	    fac				Objet facture ï¿½ gï¿½nï¿½rer (ou id si ancienne methode)
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int     		1=ok, 0=ko
 	 */
@@ -110,7 +110,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		if ($conf->facture->dir_output)
 		{
-			// Définition de l'objet $fac (pour compatibilite ascendante)
+			// Dï¿½finition de l'objet $fac (pour compatibilite ascendante)
 			if (! is_object($fac))
 			{
 				$id = $fac;
@@ -122,7 +122,7 @@ class pdf_oursin extends ModelePDFFactures
 			$amount_credit_not_included = $fac->getSommeCreditNote();
 
 				
-			// Définition de $dir et $file
+			// Dï¿½finition de $dir et $file
 			if ($fac->specimen)
 			{
 				$dir = $conf->facture->dir_output;
@@ -154,7 +154,7 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -196,7 +196,7 @@ class pdf_oursin extends ModelePDFFactures
 					$codeproduitservice="";
 					$pdf->SetXY ($this->marges['g']+ 1, $curY );
 					if (defined("FACTURE_CODEPRODUITSERVICE") && FACTURE_CODEPRODUITSERVICE) {
-						// Affiche code produit si ligne associée à un code produit
+						// Affiche code produit si ligne associï¿½e ï¿½ un code produit
 
 						$prodser = new Product($this->db);
 
@@ -206,7 +206,7 @@ class pdf_oursin extends ModelePDFFactures
 						}
 					}
 					if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
-						// Affichage durée si il y en a une
+						// Affichage durï¿½e si il y en a une
 						$codeproduitservice.=" (".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
 					}
 					$pdf->MultiCell(108, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
@@ -260,7 +260,7 @@ class pdf_oursin extends ModelePDFFactures
 					$posy=$this->_tableau_versements($pdf, $fac, $posy, $outputlangs);
 				}
 
-				// Mode de règlement
+				// Mode de rï¿½glement
 				if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER)) {
 					$pdf->SetXY ($this->marges['g'], 228);
 					$pdf->SetTextColor(200,0,0);
@@ -270,7 +270,7 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf->SetTextColor(0,0,0);
 				}
 
-				// Propose mode règlement par CHQ
+				// Propose mode rï¿½glement par CHQ
 				if (defined("FACTURE_CHQ_NUMBER"))
 				{
 					if (FACTURE_CHQ_NUMBER > 0)
@@ -287,7 +287,7 @@ class pdf_oursin extends ModelePDFFactures
 					}
 				}
 
-				// Propose mode règlement par RIB
+				// Propose mode rï¿½glement par RIB
 				if (defined("FACTURE_RIB_NUMBER"))
 				{
 					if (FACTURE_RIB_NUMBER > 0)
@@ -334,7 +334,7 @@ class pdf_oursin extends ModelePDFFactures
 					}
 				}
 
-				// Conditions de règlements
+				// Conditions de rï¿½glements
 				if ($fac->cond_reglement_code)
 				{
 					$pdf->SetFont('Arial','B',10);
@@ -354,7 +354,9 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->Close();
 
 				$pdf->Output($file);
-
+				if (! empty($conf->global->MAIN_UMASK)) 
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
@@ -512,7 +514,7 @@ class pdf_oursin extends ModelePDFFactures
 	}
 
 	/*
-	 *   \brief      Affiche le total à payer
+	 *   \brief      Affiche le total ï¿½ payer
 	 *   \param      pdf         objet PDF
 	 *   \param      fac         objet facture
 	 *   \param      deja_regle  montant deja regle
@@ -617,7 +619,7 @@ class pdf_oursin extends ModelePDFFactures
 	}
 
 	/*
-	 *   \brief      Affiche en-tête facture
+	 *   \brief      Affiche en-tï¿½te facture
 	 *   \param      pdf     objet PDF
 	 *   \param      fac     objet facture
 	 */
@@ -705,7 +707,7 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell(80, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
 		}
 
-		// Caractéristiques emetteur
+		// Caractï¿½ristiques emetteur
 		$pdf->SetFont('Arial','',9);
 		if (defined("FAC_PDF_ADRESSE"))
 		{

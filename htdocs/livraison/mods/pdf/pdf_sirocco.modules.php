@@ -50,7 +50,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		
         $this->db = $db;
 		$this->name = "sirocco";
-		$this->description = "Modele de bon de réception livraison simple";
+		$this->description = "Modele de bon de rï¿½ception livraison simple";
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -64,7 +64,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		// Recupere emmetteur
         $this->emetteur=$mysoc;
-        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 		
 		$this->error = "";
 	}
@@ -250,6 +250,9 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 
 				$pdf->Output($file);
+				if (! empty($conf->global->MAIN_UMASK)) 
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				
 				return 1;
 			}
 		}

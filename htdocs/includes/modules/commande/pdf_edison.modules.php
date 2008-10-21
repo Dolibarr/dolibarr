@@ -270,6 +270,9 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->Close();
 
 				$pdf->Output($file);
+				if (! empty($conf->global->MAIN_UMASK)) 
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}

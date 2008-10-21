@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/fourn/commande/modules/pdf_muscadet.modules.php
  *	\ingroup    fournisseur
- *	\brief      Fichier de la classe permettant de générer les commandes fournisseurs au modèle Muscadet
+ *	\brief      Fichier de la classe permettant de gï¿½nï¿½rer les commandes fournisseurs au modï¿½le Muscadet
  *	\author	    Regis Houssin
  *	\version    $Id$
  */
@@ -35,14 +35,14 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
  *	\class      pdf_muscadet
- *	\brief      Classe permettant de générer les commandes fournisseurs au modèle Muscadet
+ *	\brief      Classe permettant de gï¿½nï¿½rer les commandes fournisseurs au modï¿½le Muscadet
  */
 class pdf_muscadet extends ModelePDFSuppliersOrders
 {
 
 	/**
 	 *	\brief      Constructeur
-	 *	\param	    db		Handler accès base de donnée
+	 *	\param	    db		Handler accï¿½s base de donnï¿½e
 	 */
 	function pdf_muscadet($db)
 	{
@@ -53,7 +53,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$this->db = $db;
 		$this->name = "muscadet";
-		$this->description = "Modèle de commandes fournisseur complet (logo...)";
+		$this->description = "Modï¿½le de commandes fournisseur complet (logo...)";
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -67,8 +67,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$this->option_logo = 1;                    // Affiche logo
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 1;                 // Affiche mode règlement
-		$this->option_condreg = 1;                 // Affiche conditions règlement
+		$this->option_modereg = 1;                 // Affiche mode rï¿½glement
+		$this->option_condreg = 1;                 // Affiche conditions rï¿½glement
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 
@@ -77,7 +77,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
@@ -93,8 +93,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	}
 
 	/**
-	 \brief      Renvoi dernière erreur
-	 \return     string      Dernière erreur
+	 \brief      Renvoi derniï¿½re erreur
+	 \return     string      Derniï¿½re erreur
 	 */
 	function pdferror()
 	{
@@ -102,8 +102,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	}
 
 	/**
-	 \brief      	Fonction générant la commande sur le disque
-	 \param	    	id	        Id de la commande à générer
+	 \brief      	Fonction gï¿½nï¿½rant la commande sur le disque
+	 \param	    	id	        Id de la commande ï¿½ gï¿½nï¿½rer
 	 \return	    int         1=ok, 0=ko
 	 */
 	function write_file($com,$outputlangs='')
@@ -125,7 +125,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		if ($conf->fournisseur->commande->dir_output)
 		{
-			// Définition de l'objet $com (pour compatibilite ascendante)
+			// Dï¿½finition de l'objet $com (pour compatibilite ascendante)
 			if (! is_object($com))
 			{
 				$id = $com;
@@ -134,7 +134,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			}
 			$deja_regle = "";
 
-			// Définition de $dir et $file
+			// Dï¿½finition de $dir et $file
 			if ($com->specimen)
 			{
 				$dir = $conf->fournisseur->commande->dir_output;
@@ -167,7 +167,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf=new FPDI_Protection('P','mm',$this->format);
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 				else
@@ -210,7 +210,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				{
 					$tab_top = 88;
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gï¿½rer multi-page
 					$pdf->SetXY ($this->posxdesc-1, $tab_top);
 					$pdf->MultiCell(190, 3, $com->note_public, 0, 'J');
 					$nexY = $pdf->GetY();
@@ -244,22 +244,22 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						if ($libelleproduitservice) $libelleproduitservice.="<br>";
 						$libelleproduitservice.=dol_htmlentitiesbr($com->lignes[$i]->desc,1);
 					}
-					// Si ligne associée à un code produit
+					// Si ligne associï¿½e ï¿½ un code produit
 					if ($com->lignes[$i]->fk_product)
 					{
 						$libelleproduitservice=$outputlangs->transnoentities("Product")." ".$com->lignes[$i]->ref_fourn." - ".$libelleproduitservice;
 					}
 					if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
 					{
-						// Affichage durée si il y en a une
+						// Affichage durï¿½e si il y en a une
 						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end).")",1);
 					}
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gï¿½rer multi-page
 
 					$pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
 
-					$pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par dï¿½faut
 
 					$nexY = $pdf->GetY();
 
@@ -271,7 +271,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->SetXY ($this->posxup, $curY);
 					$pdf->MultiCell(18, 4, price($com->lignes[$i]->subprice), 0, 'R', 0);
 
-					// Quantité
+					// Quantitï¿½
 					$pdf->SetXY ($this->posxqty, $curY);
 					$pdf->MultiCell(10, 4, $com->lignes[$i]->qty, 0, 'R');
 
@@ -333,7 +333,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				}
 
 				/*
-				 * Mode de règlement
+				 * Mode de rï¿½glement
 				 */
 				if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER))
 				{
@@ -346,7 +346,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				}
 
 				/*
-				 * Propose mode règlement par CHQ
+				 * Propose mode rï¿½glement par CHQ
 				 */
 				/*
 				 if (defined("FACTURE_CHQ_NUMBER"))
@@ -358,7 +358,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 				 $pdf->SetXY ($this->marge_gauche, 227);
 				 $pdf->SetFont('Arial','B',8);
-				 $pdf->MultiCell(90, 3, "Règlement par chèque à l'ordre de ".$account->proprio." envoyé à:",0,'L',0);
+				 $pdf->MultiCell(90, 3, "Rï¿½glement par chï¿½que ï¿½ l'ordre de ".$account->proprio." envoyï¿½ ï¿½:",0,'L',0);
 				 $pdf->SetXY ($this->marge_gauche, 231);
 				 $pdf->SetFont('Arial','',8);
 				 $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
@@ -367,7 +367,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				 */
 
 				/*
-				 * Propose mode règlement par RIB
+				 * Propose mode rï¿½glement par RIB
 				 */
 				/*
 				 if (defined("FACTURE_RIB_NUMBER"))
@@ -382,7 +382,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				 $cury=242;
 				 $pdf->SetXY ($this->marges['g'], $cury);
 				 $pdf->SetFont('Arial','B',8);
-				 $pdf->MultiCell(90, 3, "Règlement par virement sur le compte bancaire suivant:", 0, 'L', 0);
+				 $pdf->MultiCell(90, 3, "Rï¿½glement par virement sur le compte bancaire suivant:", 0, 'L', 0);
 				 $cury+=4;
 				 $pdf->SetFont('Arial','B',6);
 				 $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
@@ -393,10 +393,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				 $pdf->MultiCell(18, 3, "Code guichet", 0, 'C', 0);
 				 $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
 				 $pdf->SetXY ($this->marges['g']+36, $cury);
-				 $pdf->MultiCell(24, 3, "Numéro compte", 0, 'C', 0);
+				 $pdf->MultiCell(24, 3, "Numï¿½ro compte", 0, 'C', 0);
 				 $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
 				 $pdf->SetXY ($this->marges['g']+60, $cury);
-				 $pdf->MultiCell(13, 3, "Clé RIB", 0, 'C', 0);
+				 $pdf->MultiCell(13, 3, "Clï¿½ RIB", 0, 'C', 0);
 				 $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
 
 				 $pdf->SetFont('Arial','',8);
@@ -421,13 +421,13 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				 */
 
 				/*
-				 * Conditions de règlements
+				 * Conditions de rï¿½glements
 				 */
-				/* Pour l'instant les conditions de règlement ne sont pas gérées sur les propales */
+				/* Pour l'instant les conditions de rï¿½glement ne sont pas gï¿½rï¿½es sur les propales */
 				/*
 				 $pdf->SetFont('Arial','B',10);
 				 $pdf->SetXY($this->marge_gauche, 217);
-				 $titre = "Conditions de réglement:";
+				 $titre = "Conditions de rï¿½glement:";
 				 $pdf->MultiCell(80, 5, $titre, 0, 'L');
 				 $pdf->SetFont('Arial','',10);
 				 $pdf->SetXY(54, 217);
@@ -443,7 +443,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->Close();
 
 				$pdf->Output($file);
-
+				if (! empty($conf->global->MAIN_UMASK)) 
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -462,7 +464,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	}
 
 	/**
-	 *   \brief      Affiche le total à payer
+	 *   \brief      Affiche le total ï¿½ payer
 	 *   \param      pdf         	Objet PDF
 	 *   \param      object        	Objet order
 	 *   \param      deja_regle  	Montant deja regle
@@ -503,7 +505,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->MultiCell($largcol2, $tab2_hl, "-".$object->remise_percent."%", 0, 'R', 1);
 
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT après remise", 0, 'L', 1);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT aprï¿½s remise", 0, 'L', 1);
 
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht), 0, 'R', 0);
@@ -515,7 +517,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$index = 0;
 		}
 
-		// Affichage des totaux de TVA par taux (conformément à réglementation)
+		// Affichage des totaux de TVA par taux (conformï¿½ment ï¿½ rï¿½glementation)
 		$pdf->SetFillColor(248,248,248);
 
 		foreach( $this->tva as $tvakey => $tvaval )
@@ -599,7 +601,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	{
 		global $conf;
 		 
-		// Montants exprimés en     (en tab_top - 1)
+		// Montants exprimï¿½s en     (en tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentities("Currency".$conf->monnaie));
@@ -724,7 +726,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
 			else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
 
-			// Caractéristiques emetteur
+			// Caractï¿½ristiques emetteur
 			$carac_emetteur = '';
 			if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
 			else {
@@ -769,7 +771,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->SetFont('Arial','B',11);
 			$pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
 
-			// Caractéristiques client
+			// Caractï¿½ristiques client
 			$carac_client=$object->client->adresse;
 			$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
 			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;

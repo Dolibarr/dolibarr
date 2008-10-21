@@ -94,8 +94,17 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		// enregistre le fichier pdf concatene
 		$filename=sanitize_string(strtolower($langs->transnoentities("Unpayed")));
 		if ($option=='late') $filename.='_'.sanitize_string(strtolower($langs->transnoentities("Late")));
-		if ($pagecount) $pdf->Output($diroutputpdf.'/'.$filename.'_'.dolibarr_print_date(mktime(),'dayhourlog').'.pdf');
-		else $mesg='<div class="error">'.$langs->trans('NoPDFAvailableForChecked').'</div>';
+		if ($pagecount) 
+		{
+			$file=$diroutputpdf.'/'.$filename.'_'.dolibarr_print_date(mktime(),'dayhourlog').'.pdf';
+			$pdf->Output($file);
+			if (! empty($conf->global->MAIN_UMASK)) 
+				@chmod($file, octdec($conf->global->MAIN_UMASK));
+		}
+		else 
+		{
+			$mesg='<div class="error">'.$langs->trans('NoPDFAvailableForChecked').'</div>';
+		}
 	} 
 	else
 	{

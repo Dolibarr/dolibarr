@@ -266,6 +266,9 @@ class CMailFile
         	fputs($fp, $this->eol);			// This eol is added by the mail function, so we add it in log
         	fputs($fp, $this->message);
         	fclose($fp);
+			if (! empty($conf->global->MAIN_UMASK)) 
+				@chmod($outputfile, octdec($conf->global->MAIN_UMASK));
+        	
     	}
     }
 
