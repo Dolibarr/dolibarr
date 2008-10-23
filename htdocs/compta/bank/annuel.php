@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-		\file        htdocs/compta/bank/annuel.php
-		\ingroup     banque
-		\brief       Page reporting mensuel Entrées/Sorties d'un compte bancaire
-		\version     $Revision$
+ *		\file        htdocs/compta/bank/annuel.php
+ *		\ingroup     banque
+ *		\brief       Page reporting mensuel Entrées/Sorties d'un compte bancaire
+ *		\version     $Id$
 */
 
 require("./pre.inc.php");
@@ -162,11 +160,12 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 {
     $var=!$var;
     print '<tr '.$bc[$var].'>';
-    print "<td>".strftime("%B",dolibarr_mktime(1,1,1,$mois,1,2000))."</td>";
+    print "<td>".dolibarr_print_date(dolibarr_mktime(1,1,1,$mois,1,2000),"%B")."</td>";
     for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
+        $case = sprintf("%04s-%02s",$annee,$mois);
+    	
         print '<td align="right" width="10%">&nbsp;';
-        $case = strftime("%Y-%m",dolibarr_mktime(1,1,1,$mois,1,$annee));
         if ($decaiss[$case]>0)
         {
             print price($decaiss[$case]);
@@ -175,7 +174,6 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
         print "</td>";
 
         print '<td align="right" width="10%">&nbsp;';
-        $case = strftime("%Y-%m",dolibarr_mktime(1,1,1,$mois,1,$annee));
         if ($encaiss[$case]>0)
         {
             print price($encaiss[$case]);

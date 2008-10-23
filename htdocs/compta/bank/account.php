@@ -495,7 +495,7 @@ if ($account || $_GET["ref"])
 					}
 					else
 					{    
-		            	print $objp->label;
+		            	print dolibarr_trunc($objp->label,60);
 		            }
 	            }
 
