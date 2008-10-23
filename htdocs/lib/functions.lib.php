@@ -154,18 +154,19 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 		//print $level.' - '.$conf->global->SYSLOG_LEVEL.' - '.$conf->syslog->enabled." \n";
 		if ($level > $conf->global->SYSLOG_LEVEL) return;
 
-		// Traduction du message
+		// Load error message files if this is an error message (rare) 
 		if ($level == LOG_ERR)
 		{
 			$langs->load("errors");
 			if ($message != $langs->trans($message)) $message = $langs->trans($message);
 		}
 
-		// Ajout user a la log
+		// Add user to log message
 		$login='???';
 		if (is_object($user) && $user->id) $login=$user->login;
 		$message=sprintf("%-8s",$login)." ".$message;
 
+		// Check if log is to a file (SYSLOG_FILE defined) or to syslog
 		if (defined("SYSLOG_FILE") && SYSLOG_FILE)
 		{
 			$filelog=SYSLOG_FILE;
@@ -203,33 +204,36 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 		}
 		else
 		{
-			//define_syslog_variables(); already defined in master.inc.php
-			if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
+			if (function_exists('openlog'))	// This function does not exists on some ISP (Ex: Free in France)
 			{
-				$facility = MAIN_SYSLOG_FACILITY;
+				//define_syslog_variables(); already defined in master.inc.php
+				if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
+				{
+					$facility = constant("MAIN_SYSLOG_FACILITY");
+				}
+				elseif (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY)
+				{
+					// Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
+					$facility = constant("SYSLOG_FACILITY");
+				}
+				else
+				{
+					$facility = LOG_USER;
+				}
+	
+				openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
+	
+				if (! $level)
+				{
+					syslog(LOG_ERR, $message);
+				}
+				else
+				{
+					syslog($level, $message);
+				}
+	
+				closelog();
 			}
-			elseif (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY && defined(SYSLOG_FACILITY))
-			{
-				// Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
-				$facility = constant(SYSLOG_FACILITY);
-			}
-			else
-			{
-				$facility = LOG_USER;
-			}
-
-			openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
-
-			if (! $level)
-			{
-				syslog(LOG_ERR, $message);
-			}
-			else
-			{
-				syslog($level, $message);
-			}
-
-			closelog();
 		}
 	}
 }
