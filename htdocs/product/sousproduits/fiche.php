@@ -109,7 +109,7 @@ if($action == 'search' )
 	}
 	if ($conf->categorie->enabled && $catMere != -1 and $catMere)
 	{
-		$sql .= "AND cp.fk_categorie ='".$catMere."'";
+		$sql .= " AND cp.fk_categorie ='".addslashes($catMere)."'";
 	}
 	$sql .= " ORDER BY p.ref ASC ";
 	// $sql .= $db->plimit($limit + 1 ,$offset);
