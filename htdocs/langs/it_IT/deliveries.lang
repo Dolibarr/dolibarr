@@ -9,3 +9,15 @@ CreateDeliveryOrder=Genera ordine di consegna
 SetDeliveryDate=Imposta la data di spedizione
 ValidateDeliveryReceipt=Valida la ricevuta di consegna
 ValidateDeliveryReceiptConfirm=Sei sicuro di voler validare questa ricevuta di consegna?
+
+# merou PDF model						   
+NameAndSignature				=Nome e firma : 
+ToAndDate 						=A___________________________________ il ____/_____/__________
+GoodStatusDeclaration 			=Dichiaro di aver ricevuto le merci di cui sopra in buone condizioni,
+Deliverer						=Chi consegna : 
+Date 							=Data : 
+Sender							=Mittente
+Recipient						=Destinatario
+ICOMM							=N° Part. IVA : 
+APE								=Iscr. trib. : 
+SIRET							=R.E.A. : 

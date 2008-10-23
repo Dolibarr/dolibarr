@@ -1,12 +1,12 @@
 # Dolibarr language file - it_IT - propal              
-Proposals					       =Proposte commerciali / Preventivi
-Proposal					       =Proposta commerciale /  Preventivo
+Proposals					       =Preventivi/Proposte commerciali
+Proposal					       =Preventivo/Proposta commerciale  
 ProposalsDraft					       =Bozza di proposte commerciali 
 ProposalDraft					       =Bozza di proposta commerciale 
 ProposalsOpened					       =Proposte commerciali aperte
-Prop						       =Prop. commerciali/Preventivi
-CommercialProposal				       =Proposta commerciale/Preventivo
-CommercialProposals				       =Proposte commerciali/Preventivi
+Prop						       =Preventivi/Prop. commerciali
+CommercialProposal				       =Preventivo/Proposta commerciale
+CommercialProposals				       =Preventivi/Proposte commerciali
 ProposalContact					       =Contatto della proposta
 NewProp						       =Nuova proposta commerciale 
 NewProposal					       =Nuova proposta commerciale 

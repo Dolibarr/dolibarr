@@ -59,7 +59,7 @@ MailingAddFile						     =Allega questo file
 NoAttachedFiles						     =Nessun file allegati 
 							     
 # Libelle des modules de liste de destinataires mailing	     
-MailingModuleDescContactCompanies			     =Contatti di terzi (clienti potenziali - prospettive, clienti, fornitori...)
+MailingModuleDescContactCompanies			     =Contatti di terzi (potenziali clienti, clienti, fornitori...)
 MailingModuleDescDolibarrUsers				     =Tutti gli utenti Dolibarr con messaggi di posta elettronica 
 MailingModuleDescFundationMembers			     =Membri fondazione con le email 
 MailingModuleDescEmailsFromFile				     =Email da un file 
