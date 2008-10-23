@@ -663,16 +663,9 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	// Table 1
 	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">';
-	if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
-	{
-		// TODO A virer Cas qui ne devrait pas arriver (pour compatibilité)
-		print '<tr><td colspan="3" style="text-align:center;">';
-		print '<img src="/logo.png"></td></tr>';
-	}
-	else
-	{
-		print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>';
-	}
+	$title='Dolibarr '.DOL_VERSION;
+	if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$conf->global->MAIN_APPLICATION_TITLE;
+	print '<tr class="vmenu"><td align="center">'.$title.'</td></tr>';
 	print '</table>';
 	print '<br>';
 
