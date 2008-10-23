@@ -35,3 +35,6 @@ Carriers=Transporteurs
 Carrier=Transporteur
 CarriersArea=Espace transporteurs
 NewCarrier=Nouveau transporteur
+ConfirmDeleteSending=Etes-vous sûr de vouloir supprimer cette expedition ?
+ConfirmValidateSending=Etes-vous sûr de vouloir valider cette expédition ?
+ConfirmCancelSending=Etes-vous sûr de vouloir annuler cette expédition ?

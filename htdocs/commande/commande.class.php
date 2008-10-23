@@ -52,7 +52,7 @@ class Commande extends CommonObject
 	var $ref_client;
 	var $contactid;
 	var $projet_id;
-	var $statut;		// -1=Annulee, 0=Brouillon, 1=Validee, 2=Acceptee, 3=Recue (facturee ou non)
+	var $statut;		// -1=Annulee, 0=Brouillon, 1=Validee, 2=Acceptee, 3=Envoyee/Recue (facturee ou non)
 	var $facturee;
 	var $brouillon;
 	var $cond_reglement_id;
@@ -205,6 +205,7 @@ class Commande extends CommonObject
 	{
 		global $conf,$langs;
 			
+		// Protection
 		if ($this->statut == 1)
 		{
 			return 0;
@@ -212,7 +213,7 @@ class Commande extends CommonObject
 
 		if (! $user->rights->commande->valider)
 		{
-			$this->error='Autorisation insuffisante';
+			$this->error='Permission denied';
 			return -1;
 		}
 			
@@ -274,31 +275,15 @@ class Commande extends CommonObject
 				}
 			}
 
-			//Si active on decremente le produit principal et ses composants a la validation de command
+			// If stock is incremented on validate order, we must increment it
 			if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 				{
-					if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
-					{
-						$prod = new Product($this->db, $this->lignes[$i]->fk_product);
-						$prod -> get_sousproduits_arbo ();
-						$prods_arbo = $prod->get_each_prod();
-						if(sizeof($prods_arbo) > 0)
-						{
-							foreach($prods_arbo as $key => $value)
-							{
-								// on decompte le stock de tous les sousproduits
-								$mouvS = new MouvementStock($this->db);
-								$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-								$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
-							}
-						}
-					}
 					$mouvP = new MouvementStock($this->db);
-					// on decompte le stock du produit principal
+					// We decrement stock of product (and sub-products)
 					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
 					$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 				}
@@ -325,152 +310,150 @@ class Commande extends CommonObject
 	/**
 	 *		\brief		Set draft status
 	 *		\param		user		Object user that modify
-	 *		\param		int			<0 if KO, >0 if OK
+	 *		\return		int			<0 if KO, >0 if OK
 	 */
 	function set_draft($user)
 	{
 		global $conf,$langs;
 
+		// Protection
+		if ($this->statut <= 0)
+		{
+			return 0;
+		}
+
+		if (! $user->rights->commande->valider)
+		{
+			$this->error='Permission denied';
+			return -1;
+		}
+				
+		$this->db->begin();
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
 		$sql .= " WHERE rowid = ".$this->id;
 
+		dolibarr_syslog("Commande::set_draft sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			//Si active on incremente le produit principal et ses composants a l'edition de la commande
-	  if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
-	  {
-	  	require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+			// If stock is decremented on validate order, we must reincrement it
+			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 
 				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 				{
-					if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
-					{
-						$prod = new Product($this->db, $this->lignes[$i]->fk_product);
-						$prod -> get_sousproduits_arbo ();
-						$prods_arbo = $prod->get_each_prod();
-						if(sizeof($prods_arbo) > 0)
-						{
-							foreach($prods_arbo as $key => $value)
-							{
-								// on decompte le stock de tous les sousproduits
-								$mouvS = new MouvementStock($this->db);
-								$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-								$result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
-							}
-						}
-					}
 					$mouvP = new MouvementStock($this->db);
-					// on decompte le stock du produit principal
+					// We increment stock of product (and sub-products)
 					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
 					$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
-		  }
-	  }
-	  return 1;
+				}
+
+				if ($result > 0)
+				{
+					$this->statut=0;
+					$this->db->commit();
+					return $result;
+				}
+				else
+				{
+					$this->error=$mouvP->error;
+					$this->db->rollback();
+					return $result;
+				}
+			}
+				
+			$this->statut=0;
+			$this->db->commit();
+			return 1;
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			dolibarr_syslog($this->error, LOG_ERR);
+			return -1;
 		}
 	}
 
 	/**
-	 *    \brief      Cloture la commande
-	 *    \param      user        Objet utilisateur qui cloture
-	 *    \return     int         <0 si ko, >0 si ok
+	 *    	\brief      Cloture la commande
+	 * 		\param      user        Objet utilisateur qui cloture
+	 *		\return		int			<0 if KO, >0 if OK
 	 */
 	function cloture($user)
 	{
 		global $conf;
+
 		if ($user->rights->commande->valider)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
 			$sql.= ' SET fk_statut = 3,';
 			$sql.= ' fk_user_cloture = '.$user->id.',';
-			$sql.= " date_cloture = ".$this->db->idate(mktime());
-			$sql.= " WHERE rowid = $this->id AND fk_statut > 0 ;";
+			$sql.= ' date_cloture = '.$this->db->idate(mktime());
+			$sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
 			if ($this->db->query($sql))
 			{
-				if($conf->stock->enabled && $conf->global->PRODUIT_SOUSPRODUITS == 1 && $conf->global->STOCK_CALCULATE_ON_SHIPMENT == 1)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
-					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-					{
-		    $prod = new Product($this->db, $this->lignes[$i]->fk_product);
-		    $prod -> get_sousproduits_arbo ();
-		    $prods_arbo = $prod->get_each_prod();
-		    if(sizeof($prods_arbo) > 0)
-		    {
-		    	foreach($prods_arbo as $key => $value)
-		    	{
-		    		// on decompte le stock de tous les sousproduits
-		    		$mouvS = new MouvementStock($this->db);
-		    		$entrepot_id = "1";
-		    		$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
-		    	}
-		    }
-		    // on decompte pas le stock du produit principal, ca serait fait manuellement avec l'expedition
-		    // $result=$mouvS->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
-					}
-				}
 				return 1;
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				$this->error=$this->db->error();
+				dolibarr_syslog($this->error, LOG_ERR);
 				return -1;
 			}
 		}
 	}
 
 	/**
-	 * Annule la commande
-	 *
+	 * 	\brief		Cancel an order
+	 *	\return		int			<0 if KO, >0 if OK
+	 * 	\remarks	If stock is decremented on order validation, we must reincrement it
 	 */
 	function cancel($user)
 	{
 		global $conf;
+
 		if ($user->rights->commande->valider)
 		{
+			$this->db->begin();
+				
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = -1';
 			$sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
 
 			if ($this->db->query($sql) )
 			{
-				//Si active on incremente le produit principal et ses composants a l'edition de la commande
+				// If stock is decremented on validate order, we must reincrement it
 				if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 				{
-					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
-
-					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+					$mouvP = new MouvementStock($this->db);
+					// We increment stock of product (and sub-products)
+					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+					$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+			
+					if ($result > 0)
 					{
-						if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
-						{
-							$prod = new Product($this->db, $this->lignes[$i]->fk_product);
-							$prod -> get_sousproduits_arbo ();
-							$prods_arbo = $prod->get_each_prod();
-							if(sizeof($prods_arbo) > 0)
-							{
-								foreach($prods_arbo as $key => $value)
-								{
-									// on decompte le stock de tous les sousproduits
-									$mouvS = new MouvementStock($this->db);
-									$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-									$result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
-								}
-							}
-						}
-						$mouvP = new MouvementStock($this->db);
-						// on decompte le stock du produit principal
-						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-		    $result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						$this->db->commit();
+						return $result;
+					}
+					else
+					{
+						$this->error=$mouvP->error;
+						$this->db->rollback();
+						return $result;
 					}
 				}
+				
+				$this->db->commit();
 				return 1;
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
+				$this->error=$this->db->error();
+				$this->db->rollback();
+				dolibarr_syslog($this->error, LOG_ERR);
+				return -1;
 			}
 		}
 	}
@@ -669,7 +652,7 @@ class Commande extends CommonObject
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
-				
+
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -678,7 +661,7 @@ class Commande extends CommonObject
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-				
+
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
@@ -688,10 +671,10 @@ class Commande extends CommonObject
 				$remise = round(($pu * $remise_percent / 100), 2);
 				$price = $pu - $remise;
 			}
-				
+
 			// Insert line
 			$ligne=new CommandeLigne($this->db);
-				
+
 			$ligne->fk_commande=$commandeid;
 			$ligne->desc=$desc;
 			$ligne->qty=$qty;
@@ -705,16 +688,16 @@ class Commande extends CommonObject
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
-				
+
 			// \TODO Ne plus utiliser
 			$ligne->price=$price;
 			$ligne->remise=$remise;
-			
+
 			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 			// Save the start and end date of the new line in the object
 			$ligne->date_start=$date_start;
 			$ligne->date_end=$date_end;
-				
+
 			$result=$ligne->insert();
 			if ($result > 0)
 			{
@@ -784,7 +767,7 @@ class Commande extends CommonObject
 	  $line->ref=$prod->ref;
 	  $line->libelle=$prod->libelle;
 	  $line->product_desc=$prod->description;
-	  
+
 	  // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 	  // Save the start and end date of the line in the object
 	  if ($date_start) { $line->date_start = $date_start; }
@@ -946,7 +929,7 @@ class Commande extends CommonObject
 				$this->db->rollback();
 				return -5;
 			}
-			 
+
 			$comligne=new CommandeLigne($this->db);
 			$comligne->fk_commande=$this->id;
 			$comligne->fk_remise_except=$remise->id;
@@ -960,11 +943,11 @@ class Commande extends CommonObject
 			$comligne->remise_percent=0;
 			$comligne->rang=-1;
 			$comligne->info_bits=2;
-			 
+
 			$comligne->total_ht  = -$remise->amount_ht;
 			$comligne->total_tva = -$remise->amount_tva;
 			$comligne->total_ttc = -$remise->amount_ttc;
-			 
+
 			$result=$comligne->insert();
 			if ($result > 0)
 			{
@@ -1053,7 +1036,7 @@ class Commande extends CommonObject
 				$ligne->libelle          = $objp->label;
 				$ligne->product_desc     = $objp->product_desc; 		// Description produit
 				$ligne->fk_product_type  = $objp->fk_product_type;	// Produit ou service
-				
+
 				// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 				// Save the start and end date of the line in the object
 				$ligne->date_start       = $objp->date_start;
@@ -1110,7 +1093,7 @@ class Commande extends CommonObject
 		if ($filtre_statut >= 0) $sql.=' AND e.fk_statut = '.$filtre_statut;
 		$sql.= ' GROUP BY cd.rowid, cd.fk_product';
 		//print $sql;
-		
+
 		dolibarr_syslog("Commande::loadExpeditions sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1232,11 +1215,11 @@ class Commande extends CommonObject
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
-				
+
 			$sql = "SELECT fk_product, qty";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
 			$sql.= " WHERE rowid = '$idligne'";
-				
+
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -1378,7 +1361,7 @@ class Commande extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
 			$sql.= " SET date_livraison = ".($date_livraison ? $this->db->idate($date_livraison) : 'null');
 			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-				
+
 			dolibarr_syslog("Commande::set_date_livraison sql=$sql",LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -1679,14 +1662,14 @@ class Commande extends CommonObject
 	  $sql.= ",total_ht='".price2num($total_ht)."'";
 	  $sql.= ",total_tva='".price2num($total_tva)."'";
 	  $sql.= ",total_ttc='".price2num($total_ttc)."'";
-	  
+
 	  // Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 	  // Save the start and end date in the database
-      if ($date_start) { $sql.= ",date_start='".$date_start."'"; }
-      else { $sql.=',date_start=null'; }
-      if ($date_end) { $sql.= ",date_end='".$date_end."'"; }
-      else { $sql.=',date_end=null'; }
-	
+	  if ($date_start) { $sql.= ",date_start='".$date_start."'"; }
+	  else { $sql.=',date_start=null'; }
+	  if ($date_end) { $sql.= ",date_end='".$date_end."'"; }
+	  else { $sql.=',date_end=null'; }
+
 	  $sql.= " WHERE rowid = ".$rowid;
 
 	  $result = $this->db->query($sql);
@@ -2173,7 +2156,7 @@ class CommandeLigne
 	var $ref;				// Reference produit
 	var $product_libelle; 	// Label produit
 	var $product_desc;  	// Description produit
-	
+
 	// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 	// Start and end date of the line
 	var $date_start;
@@ -2227,16 +2210,16 @@ class CommandeLigne
 			$this->marge_tx         = $objp->marge_tx;
 			$this->marque_tx        = $objp->marque_tx;
 			$this->rang             = $objp->rang;
-				
+
 			$this->ref	            = $objp->product_ref;
 			$this->product_libelle  = $objp->product_libelle;
 			$this->product_desc     = $objp->product_desc;
-			
+
 			// Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
 			// Save the start and end dates of the line in the object
 			$this->date_start     = $objp->date_start;
 			$this->date_end       = $objp->date_end;
-				
+
 			$this->db->free($result);
 		}
 		else
@@ -2368,7 +2351,7 @@ class CommandeLigne
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
 			}
-				
+
 			$this->db->commit();
 			return $this->rowid;
 		}

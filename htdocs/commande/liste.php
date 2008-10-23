@@ -20,11 +20,11 @@
  */
 
 /**
-        \file       htdocs/commande/liste.php
-        \ingroup    commande
-        \brief      Page liste des commandes
-        \version    $Id$
-*/
+ \file       htdocs/commande/liste.php
+ \ingroup    commande
+ \brief      Page liste des commandes
+ \version    $Id$
+ */
 
 
 require('./pre.inc.php');
@@ -50,10 +50,10 @@ $result = restrictedArea($user, 'commande', $orderid,'');
 /*
  * View
  */
- 
+
 $html = new Form($db);
 $formfile = new FormFile($db);
- 
+
 llxHeader();
 
 $begin=$_GET['begin'];
@@ -75,7 +75,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFI
 $sql.= ' WHERE c.fk_soc = s.rowid';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
-  $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 if ($sref)
 {
@@ -147,20 +147,20 @@ if ($resql)
 		$title = $langs->trans('ListOfOrders');
 	}
 	if (strval($_GET['viewstatut']) == '0')
-		$title.=' - '.$langs->trans('StatusOrderDraftShort');
+	$title.=' - '.$langs->trans('StatusOrderDraftShort');
 	if ($_GET['viewstatut'] == 1)
-		$title.=' - '.$langs->trans('StatusOrderValidatedShort');
+	$title.=' - '.$langs->trans('StatusOrderValidatedShort');
 	if ($_GET['viewstatut'] == 2)
-		$title.=' - '.$langs->trans('StatusOrderOnProcessShort');
+	$title.=' - '.$langs->trans('StatusOrderOnProcessShort');
 	if ($_GET['viewstatut'] == 3)
-		$title.=' - '.$langs->trans('StatusOrderToBillShort');
+	$title.=' - '.$langs->trans('StatusOrderToBillShort');
 	if ($_GET['viewstatut'] == 4)
-		$title.=' - '.$langs->trans('StatusOrderProcessedShort');
+	$title.=' - '.$langs->trans('StatusOrderProcessedShort');
 	if ($_GET['viewstatut'] == -1)
-		$title.=' - '.$langs->trans('StatusOrderCanceledShort');
+	$title.=' - '.$langs->trans('StatusOrderCanceledShort');
 	if ($_GET['viewstatut'] == -2)
-		$title.=' - '.$langs->trans('StatusOrderToProcessShort');
-		
+	$title.=' - '.$langs->trans('StatusOrderToProcessShort');
+
 	$num = $db->num_rows($resql);
 	print_barre_liste($title, $_GET['page'], 'liste.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
 	$i = 0;
@@ -193,39 +193,42 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-    print '<td width="20%" nowrap="nowrap">';
-    
-    $generic_commande->id=$objp->rowid;
+		print '<td width="20%" nowrap="nowrap">';
+
+		$generic_commande->id=$objp->rowid;
 		$generic_commande->ref=$objp->ref;
-				
+
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 		print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
 		print $generic_commande->getNomUrl(1,$objp->fk_statut);
 		print '</td>';
-		   
+		 
 		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
 		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $objp->date_commande < (time() - $conf->commande->traitement->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
-		
+
 		print '<td width="16" align="right" class="nobordernopadding">';
 		$filename=sanitize_string($objp->ref);
 		$filedir=$conf->commande->dir_output . '/' . sanitize_string($objp->ref);
 		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
 		$formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
 		print '</td></tr></table>';
-				    
+
 		print '</td>';
-		
+
 		print '<td><a href="../comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+		
 		print '<td>'.$objp->ref_client.'</td>';
+		
+		// Date
+		$y = dolibarr_print_date($objp->date_commande,'%Y');
+		$m = dolibarr_print_date($objp->date_commande,'%m');
+		$ml = dolibarr_print_date($objp->date_commande,'%B');
+		$d = dolibarr_print_date($objp->date_commande,'%d');
 		print '<td align="right">';
-		$y = strftime('%Y',$objp->date_commande);
-		$m = strftime('%m',$objp->date_commande);
-		print strftime('%d',$objp->date_commande);
-		print ' <a href="liste.php?year='.$y.'&amp;month='.$m.'">';
-		print strftime('%B',$objp->date_commande).'</a>';
-		print ' <a href="liste.php?year='.$y.'">';
-		print strftime('%Y',$objp->date_commande).'</a>';
+		print $d;
+		print ' <a href="liste.php?year='.$y.'&amp;month='.$m.'">'.$ml.'</a>';
+		print ' <a href="liste.php?year='.$y.'">'.$y.'</a>';
 		print '</td>';
 		print '<td align="right">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 		print '</tr>';

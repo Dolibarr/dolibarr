@@ -147,15 +147,14 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<td>'.$product->stock_reel.'</td>';
 		print '</tr>';
 
-
-		// Calculating a theorical value of stock if stock increment is done on order			
-		if ($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)
+		// Calculating a theorical value of stock if stock increment is done on real sending			
+		if ($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 		{
 			$stock_commande_client=$stock_commande_fournisseur=0;
 	
 			if ($conf->commande->enabled)
 			{
-				$result=$product->load_stats_commande(0,'2');
+				$result=$product->load_stats_commande(0,'1,2');
 				if ($result < 0) dolibarr_print_error($db,$product->error);
 				$stock_commande_client=$product->stats_commande['qty'];
 			}
@@ -166,7 +165,7 @@ if ($_GET["id"] || $_GET["ref"])
 				$stock_commande_fournisseur=$product->stats_commande_fournisseur['qty'];
 			}
 			 
-			$product->stock_theorique=$product->stock_reel-$stock_commande_client+$stock_commande_fournisseur;
+			$product->stock_theorique=$product->stock_reel-($stock_commande_client+$stock_sending_client)+$stock_commande_fournisseur;
 			 
 			// Stock theorique
 			print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
@@ -190,10 +189,12 @@ if ($_GET["id"] || $_GET["ref"])
 			if ($conf->commande->enabled)
 			{
 				if ($found) print '<br>'; else $found=1;
-				print $langs->trans("CustomersOrdersRunning").': '.$stock_commande_client;
-				$result=$product->load_stats_commande(0,'0,1');
+				print $langs->trans("CustomersOrdersRunning").': '.($stock_commande_client+$stock_sending_client);
+				$result=$product->load_stats_commande(0,'0');
 				if ($result < 0) dolibarr_print_error($db,$product->error);
-				print ' ('.$langs->trans("DraftOrWaitingShipped").': '.$product->stats_commande['qty'].')';
+				print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
+				//print '<br>';
+				//print $langs->trans("CustomersSendingRunning").': '.$stock_sending_client;
 			}
 
 			// Nbre de commande fournisseurs en cours

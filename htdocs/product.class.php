@@ -182,7 +182,7 @@ class Product extends CommonObject
 			$price_ht = price2num($this->price,'MU');
 			$price_ttc = price2num($this->price * (1 + ($this->tva_tx / 100)),'MU');
 		}
-		
+
 		if (($this->price_min_ttc > 0)&&($this->price_base_type == 'TTC'))
 		{
 			$price_min_ttc = price2num($this->price_min_ttc,'MU');
@@ -220,13 +220,13 @@ class Product extends CommonObject
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product";
 					$sql.= " (datec, ";
 					if ($this->ref) $sql.= "ref, ";
- 					$sql.= "price_min, price_min_ttc, ";
+					$sql.= "price_min, price_min_ttc, ";
 					$sql.= "label, ";
 					$sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas)";
 					$sql.= " VALUES (".$this->db->idate(mktime()).", ";
 					if ($this->ref) $sql.= "'".$this->ref."',";
- 					$sql.= price2num($price_min_ht).",";
- 					$sql.= price2num($price_min_ttc).",";
+					$sql.= price2num($price_min_ht).",";
+					$sql.= price2num($price_min_ttc).",";
 					$sql.= " ".($this->libelle?"'".addslashes($this->libelle)."'":"null").",";
 					$sql.= $user->id.",";
 					$sql.= " ".$this->type.",";
@@ -248,7 +248,7 @@ class Product extends CommonObject
 							$this->price_ttc = $price_ttc;
 							$this->price_min     = $price_min_ht;
 							$this->price_min_ttc = $price_min_ttc;
-							
+
 							$result = $this->_log_price($user);
 							if ($result > 0)
 							{
@@ -509,7 +509,7 @@ class Product extends CommonObject
 				$sqlb = "DELETE from ".MAIN_DB_PREFIX."product_price";
 				$sqlb.= " WHERE fk_product = ".$id;
 				$resultb = $this->db->query($sqlb);
-				
+
 				$sqlb = "DELETE from ".MAIN_DB_PREFIX."product_price_min";
 				$sqlb.= " WHERE fk_product = ".$id;
 				$resultb = $this->db->query($sqlb);
@@ -699,7 +699,7 @@ class Product extends CommonObject
 		else
 		{
 			$queryError = false;
-			
+
 			// On ajoute nouveau tarif
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx,price_min,price_min_ttc) ";
 			$sql.= " VALUES(".$this->db->idate(mktime()).",".$this->id.",".$user->id.",".$this->price.",".$this->price_ttc.",'".$this->price_base_type."',".$this->status.",".$this->tva_tx;
@@ -709,8 +709,8 @@ class Product extends CommonObject
 			dolibarr_syslog("Product::_log_price sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (!$resql)
-					$queryError = true;
-					
+			$queryError = true;
+
 			if($queryError)
 			{
 				dolibarr_print_error($this->db);
@@ -718,8 +718,8 @@ class Product extends CommonObject
 			}
 			else
 			return 1;
-			
-			
+
+
 		}
 	}
 
@@ -825,7 +825,7 @@ class Product extends CommonObject
 				$price_ttc = price2num($newprice,'MU');
 				$price = price2num($newprice) / (1 + ($newvat / 100));
 				$price = price2num($price,'MU');
-				
+
 				if($newminprice!=''){
 					$price_min_ttc = price2num($newminprice,'MU');
 					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
@@ -837,7 +837,7 @@ class Product extends CommonObject
 				$price = price2num($newprice,'MU');
 				$price_ttc = price2num($newprice) * (1 + ($newvat / 100));
 				$price_ttc = price2num($price_ttc,'MU');
-				
+
 				if($newminprice!=''){
 					$price_min = price2num($newminprice,'MU');
 					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
@@ -852,7 +852,7 @@ class Product extends CommonObject
 			$sql.= " price=".$price.",";
 			$sql.= " price_ttc=".$price_ttc.",";
 			$sql.= " price_min=".$price_min.",";
-			$sql.= " price_min_ttc=".$price_min_ttc.",";	
+			$sql.= " price_min_ttc=".$price_min_ttc.",";
 			$sql.= " tva_tx='".price2num($newvat)."'";
 			$sql.= " WHERE rowid = " . $id;
 
@@ -1043,9 +1043,9 @@ class Product extends CommonObject
 					}
 				}
 					
-	  		}
+			}
 
-	  		$res=$this->load_stock();
+			$res=$this->load_stock();
 
 			return $res;
 		}
@@ -1099,7 +1099,7 @@ class Product extends CommonObject
 
 	/**
 	 *    \brief    Charge tableau des stats commande client pour le produit/service
-	 *    \param    socid       	Id societe pour filtrer sur une soci�t�
+	 *    \param    socid       	Id societe pour filtrer sur une societe
 	 *    \param    filtrestatut    Id statut pour filtrer sur un statut
 	 *    \return   array       	Tableau des stats
 	 */
@@ -1180,6 +1180,50 @@ class Product extends CommonObject
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
+			return -1;
+		}
+	}
+
+	/**
+	 *    \brief    Charge tableau des stats expedition client pour le produit/service
+	 *    \param    socid       	Id societe pour filtrer sur une societe
+	 *    \param    filtrestatut    Id statut pour filtrer sur un statut
+	 *    \return   array       	Tableau des stats
+	 */
+	function load_stats_sending($socid=0,$filtrestatut='')
+	{
+		global $conf,$user;
+
+		$sql = "SELECT COUNT(DISTINCT c.fk_soc) as nb_customers, COUNT(DISTINCT c.rowid) as nb,";
+		$sql.= " COUNT(ed.rowid) as nb_rows, SUM(ed.qty) as qty";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commandedet as cd,";
+		$sql.= " ".MAIN_DB_PREFIX."expedition as c";
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE c.rowid = ed.fk_expedition AND ed.fk_origin_line = cd.rowid AND cd.fk_product = ".$this->id;
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if ($socid > 0)
+		{
+			$sql.= " AND c.fk_soc = ".$socid;
+		}
+
+		if ($filtrestatut <> '')
+		{
+			$sql.= " AND c.fk_statut in (".$filtrestatut.")";
+		}
+
+		$result = $this->db->query($sql) ;
+		if ( $result )
+		{
+			$obj=$this->db->fetch_object($result);
+			$this->stats_expedition['customers']=$obj->nb_customers;
+			$this->stats_expedition['nb']=$obj->nb;
+			$this->stats_expedition['rows']=$obj->nb_rows;
+			$this->stats_expedition['qty']=$obj->qty?$obj->qty:0;
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
 			return -1;
 		}
 	}
@@ -1810,29 +1854,55 @@ class Product extends CommonObject
 		$db->commit();
 		return 1;
 	}
+
 	/**
-	 *   \brief fonction r�cursive uniquement utilis�e par get_arbo_each_prod, recompose l'arborescence des sousproduits
+	 *   \brief fonction recursive uniquement utilisee par get_arbo_each_prod, recompose l'arborescence des sousproduits
 	 *   \return void
 	 */
-	function fetch_prod_arbo($prod,$compl_path="")
+	function fetch_prod_arbo($prod,$compl_path="",$multiply="")
 	{
+		global $langs;
+
 		$this->res;
 		$this->pere_encours;
 		foreach($prod as $nom_pere => $desc_pere)
 		{
-			// on est dans une sous-cat�gorie
+			// on est dans une sous-categorie
 			if(is_array($desc_pere))
-	  $this->res[]= array($compl_path.stripslashes($nom_pere)." (".$desc_pere[1].")",$desc_pere[0]);
-	  else if($nom_pere != "0" && $nom_pere != "1")
-	  $this->res[]= array($compl_path.stripslashes($nom_pere),$desc_pere);
-	  if(sizeof($desc_pere) >1)
-	  {
-	  	$this ->fetch_prod_arbo($desc_pere,stripslashes($nom_pere)." -> ");
-	  }
+			{
+				if($multiply)
+				{
+					$img="";
+					$trueValue=$desc_pere[1]*$multiply;
+					$product = new Product($this->db);
+					$this->fetch($desc_pere[0]);
+					$this->load_stock();
+					if ($this->stock_entrepot[1] < $this->seuil_stock_alerte)
+					{
+						$img=img_warning($langs->trans("StockTooLow"));
+					}
+					$this->res[]= array("<tr><td>&nbsp; &nbsp; &nbsp;
+                                <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$desc_pere[0]."\">".$compl_path.stripslashes($nom_pere)."
+                                </a></td><td align=\"center\"> ".$trueValue."</td><td>&nbsp</td></td><td>&nbsp</td>
+                                </td><td align=\"center\">".$this->stock_entrepot[1]." ".$img."</td></tr>",
+					$desc_pere[0]);
+				}
+				else
+				{
+					$this->res[]= array($compl_path.$nom_pere." (".$desc_pere[1].")",$desc_pere[0]);
+				}
+			}
+			else if($nom_pere != "0" && $nom_pere != "1")
+			$this->res[]= array($compl_path.$nom_pere,$desc_pere);
+			if(sizeof($desc_pere) >1)
+			{
+				$this ->fetch_prod_arbo($desc_pere,$nom_pere." -> ");
+			}
 		}
 	}
+
 	/**
-	 *   \brief fonction r�cursive uniquement utilis�e par get_each_prod, ajoute chaque sousproduits dans le tableau res
+	 *   \brief fonction recursive uniquement utilisee par get_each_prod, ajoute chaque sousproduits dans le tableau res
 	 *   \return void
 	 */
 	function fetch_prods($prod)
@@ -1840,34 +1910,35 @@ class Product extends CommonObject
 		$this->res;
 		foreach($prod as $nom_pere => $desc_pere)
 		{
-			// on est dans une sous-cat�gorie
+			// on est dans une sous-categorie
 			if(is_array($desc_pere))
-	  $this->res[]= array($desc_pere[1],$desc_pere[0]);
-	  if(sizeof($desc_pere) >1)
-	  {
-	  	$this ->fetch_prods($desc_pere);
-	  }
+			$this->res[]= array($desc_pere[1],$desc_pere[0]);
+			if(sizeof($desc_pere) >1)
+			{
+				$this ->fetch_prods($desc_pere);
+			}
 		}
 	}
+
 	/**
-	 *   \brief reconstruit l'arborescence des cat�gorie sous la forme d'un tableau
+	 *   \brief reconstruit l'arborescence des categorie sous la forme d'un tableau
 	 *   \return array $this->res
 	 */
-	function get_arbo_each_prod()
+	function get_arbo_each_prod($multiply="")
 	{
 		$this->res = array();
 		if(is_array($this -> sousprods))
 		{
 			foreach($this -> sousprods as $nom_pere => $desc_pere)
-	  {
-	  	if(sizeof($desc_pere) >1)
-	  	$this ->fetch_prod_arbo($desc_pere);
-
-	  }
-	  sort($this->res);
+			{
+				if(sizeof($desc_pere) >1)
+				$this ->fetch_prod_arbo($desc_pere,"",$multiply);
+			}
+			sort($this->res);
 		}
 		return $this->res;
 	}
+
 	/**
 	 *   \brief renvoie tous les sousproduits dans le tableau res, chaque ligne de res contient : id -> qty
 	 *   \return array $this->res
@@ -1878,12 +1949,12 @@ class Product extends CommonObject
 		if(is_array($this -> sousprods))
 		{
 			foreach($this -> sousprods as $nom_pere => $desc_pere)
-	  {
-	  	if(sizeof($desc_pere) >1)
-	  	$this ->fetch_prods($desc_pere);
+			{
+				if(sizeof($desc_pere) >1)
+				$this ->fetch_prods($desc_pere);
 
-	  }
-	  sort($this->res);
+			}
+			sort($this->res);
 		}
 		return $this->res;
 	}

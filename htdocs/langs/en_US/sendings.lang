@@ -35,3 +35,6 @@ Carriers=Carriers
 Carrier=Carrier
 CarriersArea=Carriers area
 NewCarrier=New carrier
+ConfirmDeleteSending=Are you sure you want to delete this sending ?
+ConfirmValidateSending=Are you sure you want to valdate this sending ?
+ConfirmCancelSending=Are you sure you want to cancel this sending ?

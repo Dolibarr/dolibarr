@@ -183,12 +183,12 @@ if ($_GET["id"] > 0)
 		}
 		print '</td>';
 		print '</tr>';
-		 
+			
 		// Société
 		print '<tr><td>'.$langs->trans('Company').'</td>';
 		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 		print '</tr>';
-		 
+			
 		// Date
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">'.dolibarr_print_date($commande->date,'daytext').'</td>';
@@ -202,13 +202,13 @@ if ($_GET["id"] > 0)
 		}
 		print '</td>';
 		print '</tr>';
-		 
+			
 		// Date de livraison
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('DeliveryDate');
 		print '</td>';
-		 
+			
 		if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
@@ -229,17 +229,17 @@ if ($_GET["id"] > 0)
 		print nl2br($commande->note_public);
 		print '</td>';
 		print '</tr>';
-		 
+			
 		// Adresse de livraison
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('DeliveryAddress');
 		print '</td>';
-		 
+			
 		if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
-		 
+			
 		if ($_GET['action'] == 'editdelivery_adress')
 		{
 			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
@@ -249,7 +249,7 @@ if ($_GET["id"] > 0)
 			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
 		}
 		print '</td></tr>';
-		 
+			
 		// Conditions et modes de réglement
 		print '<tr><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
@@ -336,11 +336,12 @@ if ($_GET["id"] > 0)
 		 */
 		print '<table class="liste" width="100%">';
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.price, cd.qty, cd.tva_tx, cd.subprice";
+		$sql = "SELECT cd.fk_product, cd.description, cd.price, sum(cd.qty) as qty, cd.rowid, cd.tva_tx, cd.subprice";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$commande->id;
 		// $sql.= " AND p.fk_product_type <> 1";		Why this line ?
+		$sql.= " group by (cd.fk_product)";
 		$sql.= " ORDER BY cd.rowid";
 
 		dolibarr_syslog("commande.php sql=".$sql, LOG_DEBUG);
@@ -370,7 +371,7 @@ if ($_GET["id"] > 0)
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				 
+					
 				$var=!$var;
 				print "<tr $bc[$var]>";
 				if ($objp->fk_product > 0)
@@ -390,6 +391,7 @@ if ($_GET["id"] > 0)
 
 				print '<td align="center">'.$objp->qty.'</td>';
 
+				$qtyProdCom=$objp->qty;
 				print '<td align="center">';
 				// Nb of sending products for this line of order
 				$quantite_livree = $commande->expeditions[$objp->rowid];
@@ -418,6 +420,17 @@ if ($_GET["id"] > 0)
 				}
 				print "</tr>";
 
+				// associations sous produits
+				$product->get_sousproduits_arbo ();
+				$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+				if(sizeof($prods_arbo) > 0)
+				{
+					foreach($prods_arbo as $key => $value)
+					{
+						print $value[0];
+					}
+				}
+				
 				$i++;
 				$var=!$var;
 			}
@@ -445,7 +458,7 @@ if ($_GET["id"] > 0)
 		if ($user->societe_id == 0)
 		{
 			print '<div class="tabsAction">';
-			 
+
 			// Bouton expedier sans gestion des stocks
 			if (! $conf->stock->enabled && $reste_a_livrer_total > 0 && ! $commande->brouillon && $user->rights->expedition->creer)
 			{
@@ -472,11 +485,11 @@ if ($_GET["id"] > 0)
 
 			$entrepot = new Entrepot($db);
 			$langs->load("stocks");
-			 
+
 			print '<tr>';
 			print '<td>'.$langs->trans("Warehouse").'</td>';
 			print '<td>';
-			 
+
 			if (sizeof($user->entrepots) === 1)
 			{
 				$uentrepot = array();
@@ -506,7 +519,7 @@ if ($_GET["id"] > 0)
 
 			print "</table>";
 			print "</form>\n";
-			 
+
 			$somethingshown=1;
 		}
 

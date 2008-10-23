@@ -354,6 +354,7 @@ if ($_GET["action"] == 'create')
 				}
 
 				print '<td align="center">'.$ligne->qty.'</td>';
+				$qtyProdCom=$ligne->qty;
 
 				print '<td align="center">';
 				$quantityDelivered = $object->expeditions[$ligne->id];
@@ -423,6 +424,7 @@ if ($_GET["action"] == 'create')
 						$html->select_array('entl'.$i,$array,'',1,0,0);
 						print '</td>';
 					}
+						
 				}
 				else
 				{
@@ -434,6 +436,17 @@ if ($_GET["action"] == 'create')
 				}
 
 				print "</tr>\n";
+
+				// associations sous produits
+				$product->get_sousproduits_arbo ();
+				$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+				if(sizeof($prods_arbo) > 0)
+				{
+					foreach($prods_arbo as $key => $value)
+					{
+						print $value[0];
+					}
+				}
 
 				$indiceAsked++;
 			}
@@ -448,7 +461,7 @@ if ($_GET["action"] == 'create')
 		}
 		else
 		{
-	  		dolibarr_print_error($db);
+			dolibarr_print_error($db);
 		}
 	}
 }
@@ -506,7 +519,7 @@ else
 			 */
 			if ($_GET["action"] == 'delete')
 			{
-				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('DeleteSending'),'Etes-vous sûr de vouloir supprimer cette expedition ?','confirm_delete');
+				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$expedition->ref),'confirm_delete');
 				print '<br>';
 			}
 
@@ -516,7 +529,7 @@ else
 			 */
 			if ($_GET["action"] == 'valid')
 			{
-				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('ValidateSending'),'Etes-vous sûr de vouloir valider cette expédition ?','confirm_valid');
+				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('ValidateSending'),$langs->trans("ConfirmValidateSending",$expedition->ref),'confirm_valid');
 				print '<br>';
 			}
 			/*
@@ -525,7 +538,7 @@ else
 			 */
 			if ($_GET["action"] == 'annuler')
 			{
-				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('CancelSending'),'Etes-vous sûr de vouloir annuler cette commande ?','confirm_cancel');
+				$html->form_confirm($_SERVER['PHP_SELF'].'?id='.$expedition->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$expedition->ref),'confirm_cancel');
 				print '<br>';
 			}
 
@@ -741,7 +754,7 @@ else
 		print '<br>';
 		//show_list_sending_receive($expedition->origin,$expedition->origin_id," AND e.rowid <> ".$expedition->id);
 		show_list_sending_receive($expedition->origin,$expedition->origin_id);
-		
+
 	}
 	else
 	{
