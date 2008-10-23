@@ -94,6 +94,17 @@ class MenuLeft {
 
 
 		$newmenu = new Menu();
+		
+		// Show logo company
+		if (! empty($conf->global->MAIN_SHOW_LOGO))
+		{
+			$mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL; 
+	    if (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small)) 
+	    {
+	    	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small); 
+	    	print '<img title="'.$title.'" src="'.$urllogo.'">';
+	    }
+	  }
 
 		/**
 		* On definit newmenu en fonction de mainmenu et leftmenu
@@ -108,18 +119,7 @@ class MenuLeft {
 			if ($mainmenu == 'home')
 			{
 				$langs->load("users");
-
-                // Show logo company
-				if (! empty($conf->global->MAIN_SHOW_LOGO))
-				{
-	                $mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL; 
-	                if (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small)) 
-	                { 
-	                    $urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small); 
-	                    print '<img title="'.$title.'" src="'.$urllogo.'">'; 
-	                } 
-				}
-				 				
+		
 				// My Informations
 				$newmenu->add(DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'&amp;leftmenu=home', $langs->trans("MyInformations"));
 
