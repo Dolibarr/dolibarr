@@ -44,7 +44,9 @@
 	$conf_taille_listes = 200;	// Nombre max de lignes à afficher dans les listes
 	$conf_nbr_car_listes = 60;	// Nombre max de caractères par ligne dans les listes	
 	
-
-	require ('classes/'.$conf_db_type.'.class.php');
+	$new_conf_db_type=$conf_db_type;
+	if (eregi('mysql',$new_conf_db_type)) $new_conf_db_type='Mysql';
+	
+	require ('classes/'.$new_conf_db_type.'.class.php');
 	$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 ?>
