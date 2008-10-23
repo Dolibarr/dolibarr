@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2007 Régis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,25 +94,22 @@ if ($action == 'add_prod' &&
 				}
      }
 }
-// action recherche des produits par mot-clé et/ou par catégorie
+// action recherche des produits par mot-cle et/ou par categorie
 if($action == 'search' )
 {
 	#$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type';
 	$sql = 'SELECT p.rowid, p.ref, p.label, p.price';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-	if($conf->categorie->enabled && $catMere != -1)
-	{
-		$sql .= ', '.MAIN_DB_PREFIX.'categorie_product as cp';
-	}
-	$sql .= " WHERE 1=1";
+    $sql.= ' left join '.MAIN_DB_PREFIX.'categorie_product as cp on p.rowid=cp.fk_product'; 
+	$sql.= " WHERE 1=1";
 	if($key != "")
 	{
 		$sql .= " AND (p.ref like '%".$key."%'";
 		$sql .= " OR p.label like '%".$key."%')";
 	}
-	if($conf->categorie->enabled && $catMere != -1)
+    if ($conf->categorie->enabled && $catMere != -1 and $catMere) 
 	{
-		$sql .= " AND p.rowid=cp.fk_product AND cp.fk_categorie ='".$catMere."'";
+        $sql .= "AND cp.fk_categorie ='".$catMere."'"; 
 	}
 	$sql .= " ORDER BY p.ref ASC ";
 	// $sql .= $db->plimit($limit + 1 ,$offset);
@@ -125,6 +122,11 @@ if ($cancel == $langs->trans("Cancel"))
     Header("Location: fiche.php?id=".$_POST["id"]);
     exit;
 }
+
+
+/*
+ * View
+ */
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 $html = new Form($db);
@@ -233,7 +235,7 @@ if ($id || $ref)
             // Libelle
             print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
             print '</tr>';
-			// Nombre de sousproduits associés
+			// Nombre de sousproduits associï¿½s
 			$product->get_sousproduits_arbo ();
             print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
             print '</tr>';
