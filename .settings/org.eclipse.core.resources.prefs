@@ -1,4 +1,4 @@
-#Tue Aug 19 21:49:49 CEST 2008
+#Thu Oct 16 01:39:54 CEST 2008
 eclipse.preferences.version=1
 encoding//dev/initdemo/initdemo.sql=UTF-8
 encoding//dev/skeletons/modMyModule.class.php=ISO-8859-1
@@ -64,6 +64,7 @@ encoding//htdocs/install/etape1.php=ISO-8859-1
 encoding//htdocs/install/etape2.php=ISO-8859-1
 encoding//htdocs/install/etape5.php=ISO-8859-1
 encoding//htdocs/install/upgrade2.php=ISO-8859-1
+encoding//htdocs/langs/pl_PL/install.lang=UTF-8
 encoding//htdocs/lib/CMailFile.class.php=ISO-8859-1
 encoding//htdocs/lib/datepicker.php=ISO-8859-1
 encoding//htdocs/lib/functions.inc.php=ISO-8859-1
