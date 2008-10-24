@@ -416,7 +416,8 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
  *								"%d/%m/%Y %H:%M:%S",
  *								"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
  * 	\param		to_gmt			false=output string if for local server TZ users, true=output string is for GMT users
- *	\param		convtooutput	true=Output string is encoded into encoding defined into $langs->charset_output.
+ *	\param		convtooutput	true=Output string is encoded into encoding defined into $langs->charset_output
+ * 								This means output is endoded in UTF-8 in default case.
  * 	\return     string      	Formated date or '' if time is null
  */
 function dolibarr_print_date($time,$format='',$to_gmt=false,$convtooutput=true)
@@ -2663,13 +2664,13 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0)
 	}
 }
 
-/*
- *	\brief		This function is called to decode a HTML string
+/**
+ *	\brief		This function is called to decode a HTML string (it decodes entities and br tags)
  *	\param		stringtodecode		String to decode
  */
-function dol_htmlentitiesbr_decode($stringtodecode)
+function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 {
-	$ret=html_entity_decode($stringtodecode);
+	$ret=html_entity_decode($stringtodecode,ENT_COMPAT,$pagecodeto);
 	$ret=eregi_replace("\r\n".'<br( [ a-zA-Z_="]*)?/?>',"<br>",$ret);
 	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>'."\r\n","\r\n",$ret);
 	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>'."\n","\n",$ret);
@@ -2678,14 +2679,14 @@ function dol_htmlentitiesbr_decode($stringtodecode)
 }
 
 /**
- * 	\brief   Decode le code html
- * 	\param   string      stringhtml
- * 	\return  string	  decodestring
+ *	\brief		This function is called to decode a HTML string (it decodes entities tags)
+ * 	\param   	string      stringhtml
+ * 	\return  	string	  	decodestring
  */
-function dol_entity_decode($stringhtml)
+function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 {
-	$decodedstring = html_entity_decode($stringhtml);
-	return $decodedstring;
+	$ret=html_entity_decode($stringhtml,ENT_COMPAT,$pagecodeto);
+	return $ret;
 }
 
 /**
