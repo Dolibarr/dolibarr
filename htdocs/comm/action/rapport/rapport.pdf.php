@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/comm/action/rapport/rapport.pdf.php
         \ingroup    commercial
 		\brief      Fichier de generation de PDF pour les rapports d'actions
-		\version    $Revision$
+		\version    $Id$
 */
 
 require_once(FPDFI_PATH.'fpdi_protection.php');
@@ -187,7 +184,8 @@ class CommActionRapport
         		
 		        // Calculate height of text
         		$text=dolibarr_trunc(dol_htmlentitiesbr_decode($obj->note),150);
-		        $nboflines=dol_nboflines($text);
+		        //print 'd'.$text; exit;
+        		$nboflines=dol_nboflines($text);
 		        $heightlinemax=max(2*$height,$nboflines*$height);
 				// Check if there is enough space to print record
 		        if ((1+$y+$heightlinemax) >= ($this->page_hauteur - $this->marge_haute))
@@ -205,16 +203,16 @@ class CommActionRapport
                 $y0 = $pdf->GetY();
 
                 $pdf->SetXY(26, $y);
-                $pdf->MultiCell(32, $height, dolibarr_trunc($obj->societe,32), 0, 'L', 0);
+                $pdf->MultiCell(32, $height, dolibarr_trunc($outputlangs->convToOuptutCharset($obj->societe),32), 0, 'L', 0);
                 $y1 = $pdf->GetY();
 
                 $pdf->SetXY(60,$y);
-                $pdf->MultiCell(32, $height, dolibarr_trunc($obj->libelle,32), 0, 'L', 0);
+                $pdf->MultiCell(32, $height, dolibarr_trunc($outputlangs->convToOuptutCharset($obj->libelle),32), 0, 'L', 0);
                 $y2 = $pdf->GetY();
 
                 $pdf->SetXY(106,$y);
                 //$pdf->Cell(94, 4, eregi_replace('<br>',"\n",dolibarr_trunc($obj->note,150)), 0, 'L', 0);
-                $pdf->MultiCell(94, $height, $text, 0, 'L', 0);
+                $pdf->MultiCell(94, $height, $outputlangs->convToOuptutCharset($text), 0, 'L', 0);
                 //$pdf->writeHTMLCell(dol_htmlentitiesbr($obj->note,1));
                 $y3 = $pdf->GetY();
                 
