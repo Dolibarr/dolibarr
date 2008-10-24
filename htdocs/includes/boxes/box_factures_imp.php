@@ -16,15 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
     \file       htdocs/includes/boxes/box_factures_imp.php
     \ingroup    factures
     \brief      Module de génération de l'affichage de la box factures impayees
+	\version	$Id$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -119,6 +117,7 @@ class box_factures_imp extends ModeleBoxes {
 
                     $this->info_box_contents[$i][3] = array(
                     'align' => 'right',
+                    'width' => 18,
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));                    
 
                     $i++;

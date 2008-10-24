@@ -52,8 +52,8 @@ class box_factures_fourn_imp extends ModeleBoxes {
     }
 
     /**
-     *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-     *      \param      $max        Nombre maximum d'enregistrements � charger
+     *      \brief      Charge les donnees en memoire pour affichage ulterieur
+     *      \param      $max        Nombre maximum d'enregistrements a charger
      */
     function loadBox($max=5)
     {
@@ -113,6 +113,7 @@ class box_factures_fourn_imp extends ModeleBoxes {
 
                     $this->info_box_contents[$i][3] = array(
                     'align' => 'right',
+                    'width' => 18,
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
                     
                     $i++;
