@@ -421,6 +421,7 @@ TotalWoman=Total
 TotalMan=Total
 YouCanChangeValuesForThisListFromDictionnarySetup=Puede cambiar estos valores en el menú configuración->diccionarios
 Color=Color
+Documents=Documentos
 MenuECM=Documentos
 MenuAWStats=AWStats
 MenuMembers=Members

@@ -53,7 +53,6 @@ NoOpenedPropals=No opened commercial proposals
 NoOtherOpenedPropals=No other opened commercial proposals
 RefProposal=Commercial proposal ref
 SendPropalByMail=Send commercial proposal by mail
-Documents=Documents
 FileNotUploaded=The file was not uploaded
 FileUploaded=The file was successfully uploaded
 AssociatedDocuments=Documents associated with the proposal:
