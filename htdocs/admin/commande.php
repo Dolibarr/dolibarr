@@ -23,11 +23,11 @@
  */
 
 /**
-   \file       htdocs/admin/commande.php
-   \ingroup    commande
-   \brief      Page d'administration-configuration du module Commande
-   \version    $Id$
-*/
+ \file       htdocs/admin/commande.php
+ \ingroup    commande
+ \brief      Page d'administration-configuration du module Commande
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
@@ -39,12 +39,12 @@ $langs->load("other");
 $langs->load("orders");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 /*
  * Actions
  */
- 
+
 if ($_POST["action"] == 'updateMask')
 {
 	$maskconstorder=$_POST['maskconstorder'];
@@ -54,92 +54,92 @@ if ($_POST["action"] == 'updateMask')
 
 if ($_GET["action"] == 'specimen')
 {
-  $modele=$_GET["module"];
-  
-  $commande = new Commande($db);
-  $commande->initAsSpecimen();
-  
-  // Charge le modele
-  $dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande/";
-  $file = "pdf_".$modele.".modules.php";
-  if (file_exists($dir.$file))
-    {
-      $classname = "pdf_".$modele;
-      require_once($dir.$file);
-      
-      $obj = new $classname($db);
-      
-      if ($obj->write_file($commande) > 0)
+	$modele=$_GET["module"];
+
+	$commande = new Commande($db);
+	$commande->initAsSpecimen();
+
+	// Charge le modele
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande/";
+	$file = "pdf_".$modele.".modules.php";
+	if (file_exists($dir.$file))
 	{
-	  header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
-	  return;
+		$classname = "pdf_".$modele;
+		require_once($dir.$file);
+
+		$obj = new $classname($db);
+
+		if ($obj->write_file($commande) > 0)
+		{
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
+			return;
+		}
 	}
-    }
 }
 
 if ($_GET["action"] == 'set')
 {
-  $type='order';
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
-  if ($db->query($sql))
-    {
-      
-    }
+	$type='order';
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+	if ($db->query($sql))
+	{
+
+	}
 }
 
 if ($_GET["action"] == 'del')
 {
-  $type='order';
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-  $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-  if ($db->query($sql))
-    {
-      
-    }
+	$type='order';
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	if ($db->query($sql))
+	{
+
+	}
 }
 
 if ($_GET["action"] == 'setdoc')
 {
-  $db->begin();
-  
-  if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$_GET["value"]))
-    {
-      $conf->global->COMMANDE_ADDON_PDF = $_GET["value"];
-    }
-  
-  // On active le modele
-  $type='order';
-  $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-  $sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-  $result1=$db->query($sql_del);
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
-  $result2=$db->query($sql);
-  if ($result1 && $result2) 
-    {
-      $db->commit();
-    }
-  else
-    {
-      $db->rollback();
-    }
+	$db->begin();
+
+	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$_GET["value"]))
+	{
+		$conf->global->COMMANDE_ADDON_PDF = $_GET["value"];
+	}
+
+	// On active le modele
+	$type='order';
+	$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+	$sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+	$result1=$db->query($sql_del);
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+	$result2=$db->query($sql);
+	if ($result1 && $result2)
+	{
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
 }
 
 if ($_GET["action"] == 'setmod')
 {
-  // \todo Verifier si module numerotation choisi peut etre active
-  // par appel methode canBeActivated
-  
-  dolibarr_set_const($db, "COMMANDE_ADDON",$_GET["value"]);
+	// \todo Verifier si module numerotation choisi peut etre active
+	// par appel methode canBeActivated
+
+	dolibarr_set_const($db, "COMMANDE_ADDON",$_GET["value"]);
 }
 
 if ($_POST["action"] == 'set_COMMANDE_DRAFT_WATERMARK')
 {
-    dolibarr_set_const($db, "COMMANDE_DRAFT_WATERMARK",trim($_POST["COMMANDE_DRAFT_WATERMARK"]));
+	dolibarr_set_const($db, "COMMANDE_DRAFT_WATERMARK",trim($_POST["COMMANDE_DRAFT_WATERMARK"]));
 }
 
 if ($_POST["action"] == 'set_COMMANDE_FREE_TEXT')
 {
-    dolibarr_set_const($db, "COMMANDE_FREE_TEXT",trim($_POST["COMMANDE_FREE_TEXT"]));
+	dolibarr_set_const($db, "COMMANDE_FREE_TEXT",trim($_POST["COMMANDE_FREE_TEXT"]));
 }
 
 if ($_POST["action"] == 'setvalidorder')
@@ -172,6 +172,12 @@ print_fiche_titre($langs->trans("OrdersSetup"),$linkback,'setup');
 
 print "<br>";
 
+
+
+/*
+ * Numbering module
+ */
+
 print_titre($langs->trans("OrdersNumberingModules"));
 
 print '<table class="noborder" width="100%">';
@@ -189,55 +195,55 @@ $dir = "../includes/modules/commande/";
 $handle = opendir($dir);
 if ($handle)
 {
-    $var=true;
-    
-    while (($file = readdir($handle))!==false)
-    {
-        if (substr($file, 0, 13) == 'mod_commande_' && substr($file, strlen($file)-3, 3) == 'php')
-        {
-            $file = substr($file, 0, strlen($file)-4);
+	$var=true;
 
-            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/".$file.".php");
+	while (($file = readdir($handle))!==false)
+	{
+		if (substr($file, 0, 13) == 'mod_commande_' && substr($file, strlen($file)-3, 3) == 'php')
+		{
+			$file = substr($file, 0, strlen($file)-4);
 
-            $module = new $file;
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/".$file.".php");
+
+			$module = new $file;
 
 			// Show modules according to features level
-		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+			if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-		    if ($module->isEnabled())
-		    {
-	            $var=!$var;
-	            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-	            print $module->info();
-	            print '</td>';
-	
-	            // Examples
-	            print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
-	
-	            print '<td align="center">';
-	            if ($conf->global->COMMANDE_ADDON == "$file")
-	            {
-	                print img_tick($langs->trans("Activated"));
-	            }
-	            else
-	            {
-	                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
-	            }
-	            print '</td>';
-	            
-	            $commande=new Commande($db);
+			if ($module->isEnabled())
+			{
+				$var=!$var;
+				print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+				print $module->info();
+				print '</td>';
+
+				// Examples
+				print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
+
+				print '<td align="center">';
+				if ($conf->global->COMMANDE_ADDON == "$file")
+				{
+					print img_tick($langs->trans("Activated"));
+				}
+				else
+				{
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
+				}
+				print '</td>';
+					
+				$commande=new Commande($db);
 				$commande->initAsSpecimen();
-				
+
 				// Info
 				$htmltooltip='';
 				$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
 				$facture->type=0;
-		        $nextval=$module->getNextValue($mysoc,$commande);
+				$nextval=$module->getNextValue($mysoc,$commande);
 				if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
 				{
 					$htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: ';
-			        if ($nextval)
+					if ($nextval)
 					{
 						$htmltooltip.=$nextval.'<br>';
 					}
@@ -246,19 +252,20 @@ if ($handle)
 						$htmltooltip.=$langs->trans($module->error).'<br>';
 					}
 				}
-	
-		    	print '<td align="center">';
-		    	print $html->textwithhelp('',$htmltooltip,1,0);
-		    	print '</td>';
-	
-	            print '</tr>';
-		    }
-        }
-    }
-    closedir($handle);
+
+				print '<td align="center">';
+				print $html->textwithhelp('',$htmltooltip,1,0);
+				print '</td>';
+
+				print '</tr>';
+			}
+		}
+	}
+	closedir($handle);
 }
 
 print '</table><br>';
+
 
 /*
  * Modeles de documents
@@ -319,12 +326,12 @@ while (($file = readdir($handle))!==false)
 		$module = new $classname($db);
 		print $module->description;
 		print "</td>\n";
-		
-		// Activ�
+
+		// Activated
 		if (in_array($name, $def))
 		{
 			print "<td align=\"center\">\n";
-			if ($conf->global->COMMANDE_ADDON_PDF != "$name") 
+			if ($conf->global->COMMANDE_ADDON_PDF != "$name")
 			{
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
 				print img_tick($langs->trans("Disable"));
@@ -354,27 +361,27 @@ while (($file = readdir($handle))!==false)
 			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
 		}
 		print '</td>';
-		
+
 		// Info
-    	$htmltooltip =    '<b>'.$langs->trans("Name").'</b>: '.$module->name;
-    	$htmltooltip.='<br><b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-    	$htmltooltip.='<br><b>'.$langs->trans("Height").'/'.$langs->trans("Width").'</b>: '.$module->page_hauteur.'/'.$module->page_largeur;
-    	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
-    	$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
-		// \TODO : $htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte); 
+		$htmltooltip =    '<b>'.$langs->trans("Name").'</b>: '.$module->name;
+		$htmltooltip.='<br><b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
+		$htmltooltip.='<br><b>'.$langs->trans("Height").'/'.$langs->trans("Width").'</b>: '.$module->page_hauteur.'/'.$module->page_largeur;
+		$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
+		$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
+		$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
+		$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
+		$htmltooltip.='<br><b>'.$langs->trans("MultiLanguage").'</b>: '.yn($module->option_multilang);
+		// \TODO : $htmltooltip.='<br><b>'.$langs->trans("Escompte").'</b>: '.yn($module->option_escompte);
 		$htmltooltip.='<br><b>'.$langs->trans("CreditNote").'</b>: '.yn($module->option_credit_note);
 		$htmltooltip.='<br><b>'.$langs->trans("FreeLegalTextOnOrders").'</b>: '.yn($module->option_freetext);
 		$htmltooltip.='<br><b>'.$langs->trans("WatermarkOnDraftOrders").'</b>: '.yn($module->option_draft_watermark);
 
-    	print '<td align="center">';
-    	print $html->textwithhelp('',$htmltooltip,1,0);
-    	print '</td>';
-    	print '<td align="center">';
-    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
-    	print '</td>';
+		print '<td align="center">';
+		print $html->textwithhelp('',$htmltooltip,1,0);
+		print '</td>';
+		print '<td align="center">';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+		print '</td>';
 
 		print "</tr>\n";
 	}

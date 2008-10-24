@@ -39,12 +39,13 @@ class mod_commande_marbre extends ModeleNumRefCommandes
     var $nom='Marbre';
 	
     
-    /**     \brief      Renvoi la description du modele de num�rotation
+    /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
     function info()
     {
-		return "Renvoie le num�ro sous la forme ".$this->prefix."yymm-nnnn ou yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise e 0";
+		global $langs;
+		return $langs->trans("MarbreNumRefDesc",$this->prefix);
     }
 
 

@@ -120,7 +120,7 @@ class CommandeFournisseur extends Commande
 
 			// Now load lines
 			$this->lignes = array();
-				
+
 			$sql = "SELECT l.rowid, l.ref as ref_fourn, l.fk_product, l.label, l.description, l.qty,";
 			$sql.= " l.tva_tx, l.remise_percent, l.subprice,";
 			$sql.= " l.total_ht, l.total_tva, l.total_ttc,";
@@ -130,7 +130,7 @@ class CommandeFournisseur extends Commande
 			$sql.= " WHERE l.fk_commande = ".$this->id;
 			$sql.= " ORDER BY l.rowid";
 			//print $sql;
-				
+
 			dolibarr_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
@@ -160,7 +160,7 @@ class CommandeFournisseur extends Commande
 
 					$ligne->ref                 = $objp->ref;          // Reference
 					$ligne->ref_fourn           = $objp->ref_fourn;    // Reference supplier
-						
+
 					$this->lignes[$i]      = $ligne;
 					//dolibarr_syslog("1 ".$ligne->desc);
 					//dolibarr_syslog("2 ".$ligne->product_desc);
@@ -216,7 +216,7 @@ class CommandeFournisseur extends Commande
 		global $langs,$conf;
 
 		$error=0;
-		
+
 		dolibarr_syslog("CommandeFournisseur::Valid");
 		$result = 0;
 		if ($user->rights->fournisseur->commande->valider)
@@ -248,23 +248,8 @@ class CommandeFournisseur extends Commande
 				$this->log($user, 1, time());	// Statut 1
 				$this->ref = $num;
 
-				// If stock is incremented on validate order, we must increment it
-				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER == 1)
-				{
-					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
-	
-					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-					{
-						$mouvP = new MouvementStock($this->db);
-						// We decrement stock of product (and sub-products)
-						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
-						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
-						if ($result < 0) { $error++; }
-					}
-				}
-
 				if ($error == 0)
-				{				
+				{
 					// Appel des triggers
 					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 					$interface=new Interfaces($this->db);
@@ -272,7 +257,7 @@ class CommandeFournisseur extends Commande
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 				}
-				
+
 				if ($error == 0)
 				{
 					$this->db->commit();
@@ -304,7 +289,7 @@ class CommandeFournisseur extends Commande
 	/**
 	 * 		\brief		Annule la commande
 	 * 		\param		user		Utilisateur qui demande annulation
-	 *		\remarks	L'annulation se fait apr�s la validation
+	 *		\remarks	L'annulation se fait apres la validation
 	 */
 	function Cancel($user)
 	{
@@ -316,28 +301,42 @@ class CommandeFournisseur extends Commande
 		{
 			$statut = 6;
 
+			$this->db->begin();
+			
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
-			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
+			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1";
 
-			if ($this->db->query($sql) )
-	  {
-	  	$result = 0;
-	  	$this->log($user, $statut, time());
+			if ($this->db->query($sql))
+			{
+				$result = 0;
+				$this->log($user, $statut, time());
 
-	  	// Appel des triggers
-	  	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	  	$interface=new Interfaces($this->db);
-	  	$result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
-	  	if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	  	// Fin appel triggers
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
 
-	  	return 1;
-	  }
-	  else
-	  {
-	  	dolibarr_syslog("CommandeFournisseur::Cancel Error -1");
-	  	return -1;
-	  }
+				if ($error == 0)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->lasterror();
+					return -1;
+				}
+			}
+			else
+			{
+				dolibarr_syslog("CommandeFournisseur::Cancel Error -1");
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
 		}
 		else
 		{
@@ -461,32 +460,32 @@ class CommandeFournisseur extends Commande
 			$file = COMMANDE_SUPPLIER_ADDON.'.php';
 
 			if (is_readable($dir.'/'.$file))
-	  {
-	  	// Definition du nom de module de numerotation de commande fournisseur
-	  	$modName=$conf->global->COMMANDE_SUPPLIER_ADDON;
-	  	require_once($dir.'/'.$file);
+			{
+				// Definition du nom de module de numerotation de commande fournisseur
+				$modName=$conf->global->COMMANDE_SUPPLIER_ADDON;
+				require_once($dir.'/'.$file);
 
-	  	// Recuperation de la nouvelle reference
-	  	$objMod = new $modName($this->db);
+				// Recuperation de la nouvelle reference
+				$objMod = new $modName($this->db);
 
-	  	$numref = "";
-	  	$numref = $objMod->commande_get_num($soc,$this);
+				$numref = "";
+				$numref = $objMod->commande_get_num($soc,$this);
 
-	  	if ( $numref != "")
-	  	{
-	  		return $numref;
-	  	}
-	  	else
-	  	{
-	  		dolibarr_print_error($db,"CommandeFournisseur::getNextNumRef ".$obj->error);
-	  		return -1;
-	  	}
-	  }
-	  else
-	  {
-	  	print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File",$conf->global->COMMANDE_SUPPLIER_ADDON);
-	  	return -2;
-	  }
+				if ( $numref != "")
+				{
+					return $numref;
+				}
+				else
+				{
+					dolibarr_print_error($db,"CommandeFournisseur::getNextNumRef ".$obj->error);
+					return -1;
+				}
+			}
+			else
+			{
+				print $langs->trans("Error")." ".$langs->trans("Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File",$conf->global->COMMANDE_SUPPLIER_ADDON);
+				return -2;
+			}
 		}
 		else
 		{
@@ -496,53 +495,88 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 * 		\brief	Approuve une commande
-	 *
+	 * 		\brief		Accept an order
+	 *		\param		user		Object user
 	 */
 	function approve($user)
 	{
 		global $langs,$conf;
 
+		$error=0;
+		
 		dolibarr_syslog("CommandeFournisseur::Approve");
-		$result = 0;
+		
 		if ($user->rights->fournisseur->commande->approuver)
 		{
+			$this->db->begin();
+			
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 2";
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 1 ;";
 
-			if ($this->db->query($sql) )
-	  {
-	  	$result = 0;
-	  	$this->log($user, 2, time());	// Statut 2
+			if ($this->db->query($sql))
+			{
+				$result = 0;
+				$this->log($user, 2, time());	// Statut 2
 
-	  	// Appel des triggers
-	  	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	  	$interface=new Interfaces($this->db);
-	  	$result=$interface->run_triggers('ORDER_SUPPLIER_APPROVE',$this,$user,$langs,$conf);
-	  	if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	  	// Fin appel triggers
+				// If stock is incremented on validate order, we must increment it
+				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER == 1)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 
-	  	$subject = "Votre commande ".$this->ref." a �t� approuv�e";
-	  	$message = "Bonjour,\n\n";
-	  	$message .= "Votre commande ".$this->ref." a �t� approuv�e, par $user->fullname";
-	  	$message .= "\n\nCordialement,\n\n";
-	  	$this->_NotifyCreator($user, $subject, $message);
+					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+					{
+						$mouvP = new MouvementStock($this->db);
+						// We decrement stock of product (and sub-products)
+						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						if ($result < 0) { $error++; }
+					}
+				}
 
-	  	dolibarr_syslog("CommandeFournisseur::valid Success");
-	  	$this->db->commit();
-	  	return 1;
-	  }
-	  else
-	  {
-	  	dolibarr_syslog("CommandeFournisseur::Approve Error -1");
-	  	$result = -1;
-	  }
+				if ($error == 0)
+				{				
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('ORDER_SUPPLIER_APPROVE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+				}
+				
+				if ($error == 0)
+				{
+					$subject = "Votre commande ".$this->ref." a �t� approuv�e";
+					$message = "Bonjour,\n\n";
+					$message .= "Votre commande ".$this->ref." a �t� approuv�e, par $user->fullname";
+					$message .= "\n\nCordialement,\n\n";
+					$this->_NotifyCreator($user, $subject, $message);
+				}
+				
+				if ($error == 0)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->lasterror();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				dolibarr_syslog("CommandeFournisseur::Approve Error ",$this->error, LOG_ERR);
+				return -1;
+			}
 		}
 		else
 		{
-			dolibarr_syslog("CommandeFournisseur::Approve Not Authorized");
+			dolibarr_syslog("CommandeFournisseur::Approve Not Authorized", LOG_ERR);
 		}
-		return $result ;
+		return -1;
 	}
 
 	/**
@@ -786,7 +820,7 @@ class CommandeFournisseur extends Commande
 			$total_ttc = $tabprice[2];
 
 			$subprice = price2num($pu,'MU');
-				
+
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
@@ -1304,7 +1338,7 @@ class CommandeFournisseur extends Commande
 			{
 				// Mise a jour info denormalisees au niveau facture
 				$this->update_price();
-				 
+					
 				$this->db->commit();
 				return $result;
 			}
