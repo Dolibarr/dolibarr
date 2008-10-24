@@ -44,13 +44,13 @@ class FactureFournisseur extends Facture
 	var $table_element='facture_fourn';
 	var $table_element_line='facture_fourn_det';
 	var $fk_element='fk_facture_fourn';
-	
-	//! 0=brouillon,
-	//! 1=validée,
-	//! TODO Ce statut doit etre 2 et non 1 classée payée partiellement (close_code='discount_vat','badcustomer') ou complètement (close_code=null),
-	//! TODO Ce statut doit etre 2 et non 1 classée abandonnée et aucun paiement n'a eu lieu (close_code='badcustomer','abandon' ou 'replaced')
+
+	//! 0=draft,
+	//! 1=validated,
+	//! TODO Ce statut doit etre 2 et non 1 classee payee partiellement (close_code='discount_vat','badcustomer') ou completement (close_code=null),
+	//! TODO Ce statut doit etre 2 et non 1 classee abandonnee et aucun paiement n'a eu lieu (close_code='badcustomer','abandon' ou 'replaced')
 	var $statut;
-	//! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
+	//! 1 si facture payee COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
 	var $paye;
 	
 	var $author;
@@ -71,7 +71,7 @@ class FactureFournisseur extends Facture
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB          	Handler accès base de données
+	 *    \param  DB          	Database access handler
 	 *    \param  socid			Id societe ('' par defaut)
 	 *    \param  facid       	Id facture ('' par defaut)
 	 */
@@ -97,8 +97,8 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 *    \brief      Création de la facture en base
-	 *    \param      user        object utilisateur qui crée
+	 *    \brief      Creation de la facture en base
+	 *    \param      user        object utilisateur qui cree
 	 *    \return     int         id facture si ok, < 0 si erreur
 	 */
 	function create($user)
@@ -137,7 +137,7 @@ class FactureFournisseur extends Facture
 					$this->lignes[$i]->qty);
 				}
 			}
-			// Mise à jour prix
+			// Update total price
 			if ($this->update_price() > 0)
 			{
 				$this->db->commit();
@@ -168,8 +168,8 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 *    	\brief      Recupére l'objet facture et ses lignes de factures
-	 *    	\param      rowid       id de la facture a récupérer
+	 *    	\brief      Recupï¿½re l'objet facture et ses lignes de factures
+	 *    	\param      rowid       id de la facture a rï¿½cupï¿½rer
 	 *		\return     int         >0 si ok, <0 si ko
 	 */
 	function fetch($rowid)
@@ -250,7 +250,7 @@ class FactureFournisseur extends Facture
 
 	
 	/**
-		\brief      Recupére les lignes de factures dans this->lignes
+		\brief      Recupï¿½re les lignes de factures dans this->lignes
 		\return     int         1 si ok, < 0 si erreur
 	*/
 	function fetch_lines()
@@ -307,7 +307,7 @@ class FactureFournisseur extends Facture
 	
 	
 	/**
-	 * \brief     Recupére l'objet fournisseur lié à la facture
+	 * \brief     Recupï¿½re l'objet fournisseur liï¿½ ï¿½ la facture
 	 *
 	 */
 	function fetch_fournisseur()
@@ -319,7 +319,7 @@ class FactureFournisseur extends Facture
 
 	/**
 	 * \brief     Supprime la facture
-	 * \param     rowid      id de la facture à supprimer
+	 * \param     rowid      id de la facture ï¿½ supprimer
 	 */
 	function delete($rowid)
 	{
@@ -355,8 +355,8 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 *      \brief      Tag la facture comme payée complètement
-	 *      \param      user        Objet utilisateur qui modifie l'état
+	 *      \brief      Tag la facture comme payï¿½e complï¿½tement
+	 *      \param      user        Objet utilisateur qui modifie l'ï¿½tat
      *      \return     int         <0 si ko, >0 si ok
 	 */
     function set_payed($user)
@@ -376,7 +376,7 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 *      \brief      Tag la facture comme validée
+	 *      \brief      Set invoice status as validate
 	 *      \param      user        Objet utilisateur qui valide la facture
      *      \return     int         <0 si ko, >0 si ok
 	 */
@@ -390,19 +390,46 @@ class FactureFournisseur extends Facture
         $sql.= " SET fk_statut = 1, fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("FactureFournisseur::set_valid sql=".$sql,LOG_DEBUG);
+		dolibarr_syslog("FactureFournisseur::set_valid sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('BILL_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+			$result=0;
+			
+			// Si activÃ© on dÃ©crÃ©mente le produit principal et ses composants Ã  la validation de facture
+			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 
-			$this->db->commit();
-			return 1;
+				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+				{
+					if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
+					{
+						$mouvP = new MouvementStock($this->db);
+						// We increase stock for product
+						$entrepot_id = "1"; // TODO ajouter possibilitÃ© de choisir l'entrepot
+						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+					}
+				}
+			}
+			
+			if ($result > 0)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('BILL_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+	
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
 		}
 		else
 		{
@@ -414,20 +441,20 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	* 		\brief     	Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
+	* 		\brief     	Ajoute une ligne de facture (associï¿½ ï¿½ aucun produit/service prï¿½dï¿½fini)
 	* 		\param    	desc            Description de la ligne
 	* 		\param    	pu              Prix unitaire (HT ou TTC selon price_base_type)
-	* 		\param    	txtva           Taux de tva forcé, sinon -1
-	* 		\param    	qty             Quantité
-	*		\param    	fk_product      Id du produit/service predéfini
+	* 		\param    	txtva           Taux de tva forcï¿½, sinon -1
+	* 		\param    	qty             Quantitï¿½
+	*		\param    	fk_product      Id du produit/service predï¿½fini
 	* 		\param    	remise_percent  Pourcentage de remise de la ligne
-	* 		\param    	date_start      Date de debut de validité du service
-	* 		\param    	date_end        Date de fin de validité du service
+	* 		\param    	date_start      Date de debut de validitï¿½ du service
+	* 		\param    	date_end        Date de fin de validitï¿½ du service
 	* 		\param    	ventil          Code de ventilation comptable
 	* 		\param    	info_bits		Bits de type de lignes
 	* 		\param    	price_base_type HT ou TTC
-	* 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
-	*					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
+	* 		\remarks	Les parametres sont deja censï¿½ etre juste et avec valeurs finales a l'appel
+	*					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete dï¿½fini
 	*					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	*					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	*/
@@ -438,7 +465,7 @@ class FactureFournisseur extends Facture
 
 		$this->db->begin();
 
-		// Nettoyage paramètres
+		// Nettoyage paramï¿½tres
 		if ($txtva == '') $txtva=0;
 		$txtva=price2num($txtva);
 	
@@ -475,12 +502,12 @@ class FactureFournisseur extends Facture
 	}
 
 	/**
-	 * \brief     Mets à jour une ligne de facture
+	 * \brief     Mets ï¿½ jour une ligne de facture
 	 * \param     id            	Id de la ligne de facture
 	 * \param     label         	Description de la ligne
 	 * \param     pu          		Prix unitaire (HT ou TTC selon price_base_type)
 	 * \param     tauxtva       	Taux tva
-	 * \param     qty           	Quantité
+	 * \param     qty           	Quantitï¿½
 	 * \param     idproduct			Id produit
 	 * \param	  price_base_type	HT ou TTC
 	 * \param	  info_bits			Miscellanous informations of line
@@ -596,7 +623,7 @@ class FactureFournisseur extends Facture
 					$this->user_validation = $vuser;
 				}
 				$this->date_creation     = $obj->datec;
-				//$this->date_validation   = $obj->datev; \todo La date de validation n'est pas encore gérée
+				//$this->date_validation   = $obj->datev; \todo La date de validation n'est pas encore gï¿½rï¿½e
 			}
 			$this->db->free($result);
 		}
@@ -666,14 +693,14 @@ class FactureFournisseur extends Facture
 
 	
 	/**
-	*		\brief		Initialise la facture avec valeurs fictives aléatoire
-	*					Sert à générer une facture pour l'aperu des modèles ou demo
+	*		\brief		Initialise la facture avec valeurs fictives alï¿½atoire
+	*					Sert ï¿½ gï¿½nï¿½rer une facture pour l'aperu des modï¿½les ou demo
 	*/
 	function initAsSpecimen()
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de société socids
+		// Charge tableau des id de sociï¿½tï¿½ socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE fournisseur=1 LIMIT 10";
 		$resql = $this->db->query($sql);
@@ -706,7 +733,7 @@ class FactureFournisseur extends Facture
 			}
 		}
 
-		// Initialise paramètres
+		// Initialise paramï¿½tres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;

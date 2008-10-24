@@ -48,6 +48,8 @@ class MouvementStock
 	 */
 	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
 	{
+		global $conf;
+		
 		$error = 0;
 		dolibarr_syslog("MouvementStock::_Create $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
 
@@ -132,7 +134,10 @@ class MouvementStock
 		}
 		
 		// Add movement for sub products 
-		$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, $price=0);
+		if ($conf->global->PRODUIT_SOUSPRODUITS)
+		{
+			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, $price=0);
+		}
 		
 		if ($error == 0)
 		{
@@ -150,13 +155,14 @@ class MouvementStock
 
 
 	/**
-	 *      \brief      Crée un mouvement en base pour tous les sous-produits
+	 *      \brief      Crï¿½e un mouvement en base pour tous les sous-produits
 	 *      \return     int     <0 si ko, 0 si ok
 	 */
 	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price=0)
 	{
 		$error = 0;
 		$pids = array();
+		$pqtys = array();
 
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
@@ -166,9 +172,12 @@ class MouvementStock
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$i=0;
 			while ($obj=$this->db->fetch_object($resql))
-			{		
-				$pids[]=$obj->fk_product_fils;
+			{
+				$pids[$i]=$obj->fk_product_fils;
+				$pqtys[$i]=$obj->qty;
+				$i++;
 			}
 			$this->db->free($resql);
 		}
@@ -179,9 +188,9 @@ class MouvementStock
 		}
 
 		// Create movement for each subproduct
-		foreach($pids as $pid)
+		foreach($pids as $key => $value)
 		{
-			$this->_create($user, $pid, $entrepot_id, $qty, $type, $price);
+			$this->_create($user, $pids[$key], $entrepot_id, $pqtys[$key], $type, $price);
 		}
 
 		return $error;
@@ -293,7 +302,7 @@ class MouvementStock
 	 * \brief  ???
 	 * \param  mvid         int    Id du mouvement
 	 * \param  fk_product   int    Id produit
-	 * \param  qty          float  Quantité
+	 * \param  qty          float  Quantitï¿½
 	 * \param  price        float  Prix unitaire du produit
 	 * \param  value_ope    float  Valeur du mouvement en retour
 	 * \return int          <0 si ko, 0 si ok

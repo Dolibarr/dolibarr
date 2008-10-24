@@ -97,8 +97,7 @@ $user->rights->produit->creer)
 // action recherche des produits par mot-cle et/ou par categorie
 if($action == 'search' )
 {
-	#$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type';
-	$sql = 'SELECT p.rowid, p.ref, p.label, p.price';
+	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.price';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	$sql.= ' left join '.MAIN_DB_PREFIX.'categorie_product as cp on p.rowid=cp.fk_product';
 	$sql.= " WHERE 1=1";

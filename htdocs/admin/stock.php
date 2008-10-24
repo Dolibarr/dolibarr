@@ -29,43 +29,67 @@ require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 $langs->load("admin");
 $langs->load("stocks");
 
+// Securit check
 if (!$user->admin)
 accessforbidden();
+
 
 /*
  * Actions
  */
-if ($_POST["action"] == 'stock_userstock')
+if ($_POST["action"] == 'STOCK_USERSTOCK')
 {
-	dolibarr_set_const($db, "STOCK_USERSTOCK", $_POST["stock_userstock"]);
-	//On d�sactive l'autocr�ation si l'option "stock personnel" est d�sactiv�e
-	if ($_POST["stock_userstock"] == 0)
+	dolibarr_set_const($db, "STOCK_USERSTOCK", $_POST["STOCK_USERSTOCK"]);
+	//On desactive l'autocreation si l'option "stock personnel" est desactivee
+	if ($_POST["STOCK_USERSTOCK"] == 0)
 	{
 		dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", 0);
 	}
 	Header("Location: stock.php");
 	exit;
 }
-elseif ($_POST["action"] == 'stock_userstock_autocreate')
+elseif ($_POST["action"] == 'STOCK_USERSTOCK_AUTOCREATE')
 {
-	dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", $_POST["stock_userstock_autocreate"]);
+	dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", $_POST["STOCK_USERSTOCK_AUTOCREATE"]);
 	Header("Location: stock.php");
 	exit;
 }
-// Mode of stock changement
-elseif (    $_POST["action"] == 'stock_bill'
-|| $_POST["action"] == 'stock_validateorder'
-|| $_POST["action"] == 'stock_shipment')
+// Mode of stock decrease
+if ($_POST["action"] == 'STOCK_CALCULATE_ON_BILL'
+|| $_POST["action"] == 'STOCK_CALCULATE_ON_VALIDATE_ORDER'
+|| $_POST["action"] == 'STOCK_CALCULATE_ON_SHIPMENT')
 {
 	$count=0;
 	$db->begin();
 	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", '');
 	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", '');
 	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", '');
-	if ($_POST["action"] == 'stock_bill')          $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", $_POST["stock_bill"]);
-	if ($_POST["action"] == 'stock_validateorder') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", $_POST["stock_validateorder"]);
-	if ($_POST["action"] == 'stock_shipment')      $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", $_POST["stock_shipment"]);
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_BILL')           $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", $_POST["STOCK_CALCULATE_ON_BILL"]);
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_VALIDATE_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", $_POST["STOCK_CALCULATE_ON_VALIDATE_ORDER"]);
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SHIPMENT')       $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", $_POST["STOCK_CALCULATE_ON_SHIPMENT"]);
 	if ($count == 4)
+	{
+		$db->commit();
+		Header("Location: stock.php");
+		exit;
+	}
+	else
+	{
+		$db->rollback();
+		dolibarr_print_error("Error in some requests", LOG_ERR);
+	}
+}
+// Mode of stock decrease
+if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
+|| $_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER')
+{
+	$count=0;
+	$db->begin();
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", '');
+	$count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", '');
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_BILL')           $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_BILL", $_POST["STOCK_CALCULATE_ON_SUPPLIER_BILL"]);
+	if ($_POST["action"] == 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') $count+=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER", $_POST["STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER"]);
+	if ($count == 3)
 	{
 		$db->commit();
 		Header("Location: stock.php");
@@ -109,8 +133,8 @@ print "<tr ".$bc[$var].">";
 print '<td width="60%">'.$langs->trans("UserWarehouse").'</td>';
 print '<td width="160" align="right">';
 print "<form method=\"post\" action=\"stock.php\">";
-print "<input type=\"hidden\" name=\"action\" value=\"stock_userstock\">";
-print $html->selectyesno("stock_userstock",$conf->global->STOCK_USERSTOCK,1);
+print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK\">";
+print $html->selectyesno("STOCK_USERSTOCK",$conf->global->STOCK_USERSTOCK,1);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</form>\n</td>\n</tr>\n";
 
@@ -123,8 +147,8 @@ if ($conf->global->STOCK_USERSTOCK == 1)
 
 	print '<td width="160" align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
-	print "<input type=\"hidden\" name=\"action\" value=\"stock_userstock_autocreate\">";
-	print $html->selectyesno("stock_userstock_autocreate",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
+	print $html->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
 
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
@@ -144,11 +168,11 @@ if ($conf->facture->enabled)
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
-	print '<td width="60%">'.$langs->trans("DeStockReStockOnBill").'</td>';
+	print '<td width="60%">'.$langs->trans("DeStockOnBill").'</td>';
 	print '<td width="160" align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
-	print "<input type=\"hidden\" name=\"action\" value=\"stock_bill\">";
-	print $html->selectyesno("stock_bill",$conf->global->STOCK_CALCULATE_ON_BILL,1);
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_BILL\">";
+	print $html->selectyesno("STOCK_CALCULATE_ON_BILL",$conf->global->STOCK_CALCULATE_ON_BILL,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }
@@ -157,11 +181,11 @@ if ($conf->commande->enabled)
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
-	print '<td width="60%">'.$langs->trans("DeStockReStockOnValidateOrder").'</td>';
+	print '<td width="60%">'.$langs->trans("DeStockOnValidateOrder").'</td>';
 	print '<td width="160" align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
-	print "<input type=\"hidden\" name=\"action\" value=\"stock_validateorder\">";
-	print $html->selectyesno("stock_validateorder",$conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER,1);
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_VALIDATE_ORDER\">";
+	print $html->selectyesno("STOCK_CALCULATE_ON_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }
@@ -170,11 +194,11 @@ if ($conf->expedition->enabled)
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
-	print '<td width="60%">'.$langs->trans("DeStockReStockOnShipment").'</td>';
+	print '<td width="60%">'.$langs->trans("DeStockOnShipment").'</td>';
 	print '<td width="160" align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
-	print "<input type=\"hidden\" name=\"action\" value=\"stock_shipment\">";
-	print $html->selectyesno("stock_shipment",$conf->global->STOCK_CALCULATE_ON_SHIPMENT,1);
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SHIPMENT\">";
+	print $html->selectyesno("STOCK_CALCULATE_ON_SHIPMENT",$conf->global->STOCK_CALCULATE_ON_SHIPMENT,1);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</form>\n</td>\n</tr>\n";
 }
@@ -187,11 +211,31 @@ print "  <td align=\"right\" width=\"160\">".$langs->trans("Value")."</td>\n";
 print '</tr>'."\n";
 $var=true;
 
+if ($conf->fournisseur->enabled)
+{
+	$var=!$var;
+	print "<tr ".$bc[$var].">";
+	print '<td width="60%">'.$langs->trans("ReStockOnBill").'</td>';
+	print '<td width="160" align="right">';
+	print "<form method=\"post\" action=\"stock.php\">";
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_BILL\">";
+	print $html->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_BILL",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</form>\n</td>\n</tr>\n";
+}
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td colspan="2">'.$langs->trans("FeatureNotYetAvailable").'</td>';
-print '</tr>'."\n";
+if ($conf->commande->enabled)
+{
+	$var=!$var;
+	print "<tr ".$bc[$var].">";
+	print '<td width="60%">'.$langs->trans("ReStockOnValidateOrder").'</td>';
+	print '<td width="160" align="right">';
+	print "<form method=\"post\" action=\"stock.php\">";
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER\">";
+	print $html->selectyesno("STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER",$conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</form>\n</td>\n</tr>\n";
+}
 
 
 print '</table>';

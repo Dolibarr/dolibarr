@@ -914,19 +914,22 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *    \brief     D�finit la soci�t� comme un client
-	 *
+	 *    	\brief     	Define third party as a customer
+	 *		\return		int		<0 if KO, >0 if OK
 	 */
 	function set_as_client()
 	{
 		if ($this->id)
 		{
-			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-			$sql .= " SET client = 1";
-			$sql .= " WHERE rowid = " . $this->id .";";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+			$sql.= " SET client = 1";
+			$sql.= " WHERE rowid = " . $this->id;
 
-			return $this->db->query($sql);
+			$resql=$this->db->query($sql);
+			if ($resql) return 1;
+			else return -1;
 		}
+		return 0;
 	}
 
 	/**

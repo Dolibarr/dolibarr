@@ -1083,7 +1083,7 @@ class Facture extends CommonObject
 			$this->update_price();
 
 			// Validation de la facture
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= " SET facnumber='".$numfa."', fk_statut = 1, fk_user_valid = ".$user->id;
 			if ($conf->global->FAC_FORCE_DATE_VALIDATION)
 			{
@@ -1094,15 +1094,16 @@ class Facture extends CommonObject
 				$sql.= ', date_lim_reglement='.$this->db->idate($datelim);
 			}
 			$sql.= ' WHERE rowid = '.$this->id;
+			
+			dolibarr_syslog("Facture::set_valid() sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
 				$this->facnumber=$numfa;
-				dolibarr_syslog("Facture::set_valid() sql=$sql");
 			}
 			else
 			{
-				dolibarr_syslog("Facture::set_valid() Echec update - 10 - sql=$sql");
+				dolibarr_syslog("Facture::set_valid() Echec update - 10 - sql=".$sql, LOG_DEBUG);
 				dolibarr_print_error($this->db);
 				$error++;
 			}
@@ -1138,11 +1139,11 @@ class Facture extends CommonObject
 
 			if (! $error)
 			{
-				// Classe la société rattachée comme client
+				// Define third party as a customer
 				$result=$this->client->set_as_client();
 
 				// Si activé on décrémente le produit principal et ses composants à la validation de facture
-				if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
+				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 
@@ -1150,27 +1151,8 @@ class Facture extends CommonObject
 					{
 						if ($this->lignes[$i]->fk_product && $this->lignes[$i]->product_type == 0)
 						{
-							dolibarr_syslog("Facture::set_valid() correct stock for ".$this->lignes[$i]->rowid);
-
-							// It's a product
-							if ($conf->global->PRODUIT_SOUSPRODUITS)
-							{
-								$prod = new Product($this->db, $this->lignes[$i]->fk_product);
-								$prod -> get_sousproduits_arbo();
-								$prods_arbo = $prod->get_each_prod();
-								if(sizeof($prods_arbo) > 0)
-								{
-									foreach($prods_arbo as $key => $value)
-									{
-										// on décompte le stock de tous les sousproduits
-										$mouvS = new MouvementStock($this->db);
-										$entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
-										$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
-									}
-								}
-							}
 							$mouvP = new MouvementStock($this->db);
-							// on décompte le stock du produit principal
+							// We decrease stock for product
 							$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
 							$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 						}
@@ -1181,15 +1163,24 @@ class Facture extends CommonObject
 
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
-
-				$this->db->commit();
-				return 1;
+				if ($result > 0)
+				{
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+	
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					return -1;
+				}
+				
 			}
 			else
 			{
