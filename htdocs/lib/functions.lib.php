@@ -1659,18 +1659,18 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	}
 
 	// Security:
-	// On interdit les remont�es de repertoire ainsi que les pipes dans
+	// On interdit fichiers caches, remontees de repertoire ainsi que les pipes dans
 	// les noms de fichiers.
-	if (eregi('\.\.',$src_file) || eregi('[<>|]',$src_file))
+	if (eregi('^\.',$src_file) || eregi('\.\.',$src_file) || eregi('[<>|]',$src_file))
 	{
 		dolibarr_syslog("Refused to deliver file ".$src_file);
 		return -1;
 	}
 
 	// Security:
-	// On interdit les remont�es de repertoire ainsi que les pipe dans
+	// On interdit fichiers caches, remontees de repertoire ainsi que les pipe dans
 	// les noms de fichiers.
-	if (eregi('\.\.',$dest_file) || eregi('[<>|]',$dest_file))
+	if (eregi('^\.',$dest_file) || eregi('\.\.',$dest_file) || eregi('[<>|]',$dest_file))
 	{
 		dolibarr_syslog("Refused to deliver file ".$dest_file);
 		return -1;
