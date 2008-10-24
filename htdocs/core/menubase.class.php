@@ -594,22 +594,30 @@ class Menubase
 	            // Define $chaine
 	            $chaine="";
 	            $title=$langs->trans($objm->titre);
-	            if ($title == $objm->titre && ! empty($objm->langs))
-				{
-					$langs->load($objm->langs);
-	            	$title=$langs->trans($objm->titre);
+	            if ($title == $objm->titre)	// Translation not found
+				{	
+					if (! empty($objm->langs))
+					{
+						// If it seems there no translation, we load language file defined in menu entry table
+						$langs->load($objm->langs);
+					}
+					
+	 	        	if (eregi("/",$title))
+		        	{
+		        		$tab_titre = explode("/",$title);
+		        		$chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
+		        	}
+		        	else
+		        	{
+		        		$chaine = $langs->trans($title);
+		        	} 
 				}
- 	        	if (eregi("/",$title))
-	        	{
-	        		$tab_titre = explode("/",$title);
-	        		$chaine = $langs->trans($tab_titre[0])."/".$langs->trans($tab_titre[1]);
-	        	}
-	        	else
-	        	{
-	        		$chaine = $langs->trans($title);
-	        	} 
+				else
+				{
+					$chaine=$title;
+				}
 				//print "x".$objm->titre."-".$chaine;
-
+				
 		        // Define $right
 	        	$perms = true;
 	        	if ($objm->perms)
@@ -626,7 +634,7 @@ class Menubase
 				
 		        if ($objm->rowid != $oldrowid && $oldrowid) $b++;	// Break on new entry
 		        $oldrowid=$objm->rowid;
-		        
+
 		        $tabMenu[$b]['rowid'] = $objm->rowid;
 				$tabMenu[$b]['mainmenu'] = $objm->mainmenu;
 				$tabMenu[$b]['titre'] = $chaine;	// Title
