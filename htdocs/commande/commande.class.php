@@ -197,13 +197,15 @@ class Commande extends CommonObject
 
 
 	/**
-	 *  \brief   Valide la commande
-	 *  \param   user     Utilisateur qui valide
-	 *  \return  int	<=0 si ko, >0 si ok
+	 *  \brief   Validate order
+	 *  \param   user     	Utilisateur qui valide
+	 *  \return  int		<=0 si ko, >0 si ok
 	 */
 	function valid($user)
 	{
 		global $conf,$langs;
+		
+		$error=0;
 			
 		// Protection
 		if ($this->statut == 1)
@@ -228,8 +230,7 @@ class Commande extends CommonObject
 		$result=$soc->set_as_client();
 
 		// check if temporary number
-		$comref = substr($this->ref, 1, 4);
-		if ($comref == 'PROV')
+		if (eregi('^\(PROV', $this->ref))
 		{
 			$num = $this->getNextNumRef($soc);
 		}
@@ -245,7 +246,7 @@ class Commande extends CommonObject
 		if ($resql)
 		{
 			// On efface le repertoire de pdf provisoire
-			if ($comref == 'PROV')
+			if (eregi('^\(PROV', $this->ref))
 			{
 				$comref = sanitize_string($this->ref);
 				if ($conf->commande->dir_output)
@@ -276,7 +277,7 @@ class Commande extends CommonObject
 			}
 
 			// If stock is incremented on validate order, we must increment it
-			if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 
@@ -286,23 +287,36 @@ class Commande extends CommonObject
 					// We decrement stock of product (and sub-products)
 					$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
 					$result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+					if ($result < 0) { $error++; }
 				}
 			}
 
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
-
-			$this->db->commit();
-			return $this->id;
+			if ($error == 0)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+			}
+			
+			if ($error == 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
 		}
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}

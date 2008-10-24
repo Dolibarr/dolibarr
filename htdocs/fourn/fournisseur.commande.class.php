@@ -47,9 +47,9 @@ class CommandeFournisseur extends Commande
 	var $id ;
 	var $brouillon;
 
-	
+
 	/**   \brief      Constructeur
-	 *    \param      DB      Handler d'accès aux bases de données
+	 *    \param      DB      Handler d'accï¿½s aux bases de donnï¿½es
 	 */
 	function CommandeFournisseur($DB)
 	{
@@ -90,7 +90,7 @@ class CommandeFournisseur extends Commande
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
-				
+
 			$this->id                  = $obj->rowid;
 			$this->ref                 = $obj->ref;
 			$this->socid               = $obj->fk_soc;
@@ -100,12 +100,12 @@ class CommandeFournisseur extends Commande
 			$this->total_ht            = $obj->total_ht;
 			$this->total_tva           = $obj->tva;
 			$this->total_ttc           = $obj->total_ttc;
-			$this->date_commande       = $obj->date_commande; // date à laquelle la commande a été transmise
+			$this->date_commande       = $obj->date_commande; // date ï¿½ laquelle la commande a ï¿½tï¿½ transmise
 			$this->date                = $obj->date_creation;
 			$this->remise_percent      = $obj->remise_percent;
 			$this->methode_commande_id = $obj->fk_methode_commande;
 			$this->methode_commande    = $obj->methode_commande;
-				
+
 			$this->source              = $obj->source;
 			$this->facturee            = $obj->facture;
 			$this->fk_project          = $obj->fk_project;
@@ -113,14 +113,14 @@ class CommandeFournisseur extends Commande
 			$this->note                = $obj->note;
 			$this->note_public         = $obj->note_public;
 			$this->modelpdf            = $obj->model_pdf;
-				
+
 			$this->db->free();
-				
+
 			if ($this->statut == 0) $this->brouillon = 1;
 
 			// Now load lines
 			$this->lignes = array();
-			
+				
 			$sql = "SELECT l.rowid, l.ref as ref_fourn, l.fk_product, l.label, l.description, l.qty,";
 			$sql.= " l.tva_tx, l.remise_percent, l.subprice,";
 			$sql.= " l.total_ht, l.total_tva, l.total_ttc,";
@@ -130,7 +130,7 @@ class CommandeFournisseur extends Commande
 			$sql.= " WHERE l.fk_commande = ".$this->id;
 			$sql.= " ORDER BY l.rowid";
 			//print $sql;
-			
+				
 			dolibarr_syslog("CommandeFournisseur::fetch sql=".$sql,LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
@@ -141,9 +141,9 @@ class CommandeFournisseur extends Commande
 				while ($i < $num)
 				{
 					$objp                  = $this->db->fetch_object($result);
-						
+
 					$ligne                 = new CommandeFournisseurLigne($this->db);
-						
+
 					$ligne->id                  = $objp->rowid;
 					$ligne->desc                = $objp->description;  // Description ligne
 					$ligne->qty                 = $objp->qty;
@@ -153,14 +153,14 @@ class CommandeFournisseur extends Commande
 					$ligne->total_ht            = $objp->total_ht;
 					$ligne->total_tva           = $objp->total_tva;
 					$ligne->total_ttc           = $objp->total_ttc;
-						
+
 					$ligne->fk_product          = $objp->product_id;   // Id du produit
 					$ligne->libelle             = $objp->label;        // Label produit
 					$ligne->product_desc        = $objp->description;  // Description produit
 
 					$ligne->ref                 = $objp->ref;          // Reference
 					$ligne->ref_fourn           = $objp->ref_fourn;    // Reference supplier
-					
+						
 					$this->lignes[$i]      = $ligne;
 					//dolibarr_syslog("1 ".$ligne->desc);
 					//dolibarr_syslog("2 ".$ligne->product_desc);
@@ -186,7 +186,7 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *      \brief      Insère ligne de log
+	 *      \brief      Insï¿½re ligne de log
 	 *      \param      user        Utilisateur qui modifie la commande
 	 *      \param      statut      Statut de la commande
 	 *      \param      datelog     Date de modification
@@ -206,6 +206,7 @@ class CommandeFournisseur extends Commande
 			return -1;
 		}
 	}
+
 	/**
 	 *		\brief		Valide la commande
 	 *		\param		user		Utilisateur qui valide
@@ -214,56 +215,83 @@ class CommandeFournisseur extends Commande
 	{
 		global $langs,$conf;
 
-		dolibarr_syslog("CommandeFournisseur.class::Valid");
+		$error=0;
+		
+		dolibarr_syslog("CommandeFournisseur::Valid");
 		$result = 0;
 		if ($user->rights->fournisseur->commande->valider)
 		{
 			$this->db->begin();
-				
+
 			// Definition du nom de module de numerotation de commande
 			$soc = new Societe($this->db);
 			$soc->fetch($this->fourn_id);
-			$num=$this->getNextNumRef($soc);
 
-			// on vérifie si la commande est en numérotation provisoire
-			$comref = substr($this->ref, 1, 4);
-			if ($comref == 'PROV')
-	  {
-	  	$num = $this->getNextNumRef($soc);
-	  }
-	  else
-	  {
-	  	$num = $this->ref;
-	  }
+			// Check if object has a temporary ref
+			if (eregi('^\(PROV', $this->ref))
+			{
+				$num = $this->getNextNumRef($soc);
+			}
+			else
+			{
+				$num = $this->ref;
+			}
 
-	  $sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur SET ref='$num', fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=$user->id";
-	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0";
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
+			$sql.= " SET ref='$num', fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=$user->id";
+			$sql.= " WHERE rowid = $this->id AND fk_statut = 0";
 
-	  $resql=$this->db->query($sql);
-	  if ($resql)
-	  {
-	  	$result = 1;
-	  	$this->log($user, 1, time());	// Statut 1
-	  	$this->ref = $num;
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$result = 1;
+				$this->log($user, 1, time());	// Statut 1
+				$this->ref = $num;
 
-	  	// Appel des triggers
-	  	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	  	$interface=new Interfaces($this->db);
-	  	$result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
-	  	if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	  	// Fin appel triggers
+				// If stock is incremented on validate order, we must increment it
+				if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER == 1)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+	
+					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+					{
+						$mouvP = new MouvementStock($this->db);
+						// We decrement stock of product (and sub-products)
+						$entrepot_id = "1"; //Todo: ajouter possibilite de choisir l'entrepot
+						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						if ($result < 0) { $error++; }
+					}
+				}
 
-	  	dolibarr_syslog("CommandeFournisseur::valid Success");
-	  	$this->db->commit();
-	  	return 1;
-	  }
-	  else
-	  {
-	  	$this->error=$this->db->error();
-	  	dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
-	  	$this->db->rollback();
-	  	return -1;
-	  }
+				if ($error == 0)
+				{				
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface=new Interfaces($this->db);
+					$result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
+					if ($result < 0) { $error++; $this->errors=$interface->errors; }
+					// Fin appel triggers
+				}
+				
+				if ($error == 0)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->lasterror();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				dolibarr_syslog("CommandeFournisseur::valid ".$this->error);
+				$this->db->rollback();
+				return -1;
+			}
 		}
 		else
 		{
@@ -276,7 +304,7 @@ class CommandeFournisseur extends Commande
 	/**
 	 * 		\brief		Annule la commande
 	 * 		\param		user		Utilisateur qui demande annulation
-	 *		\remarks	L'annulation se fait après la validation
+	 *		\remarks	L'annulation se fait aprï¿½s la validation
 	 */
 	function Cancel($user)
 	{
@@ -320,8 +348,8 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *    \brief      Retourne le libellé du statut d'une commande (brouillon, validée, abandonnée, payée)
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \brief      Retourne le libellï¿½ du statut d'une commande (brouillon, validï¿½e, abandonnï¿½e, payï¿½e
+	 *    \param      mode          0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -330,10 +358,10 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\brief      Renvoi le libellï¿½ d'un statut donnï¿½
 	 *		\param      statut        	Id statut
-	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string			Libellé du statut
+	 *    	\param      mode          	0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string			Libellï¿½ du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -414,8 +442,8 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *      \brief      Renvoie la référence de commande suivante non utilisée en fonction du module
-	 *                  de numérotation actif défini dans COMMANDE_SUPPLIER_ADDON
+	 *      \brief      Renvoie la rï¿½fï¿½rence de commande suivante non utilisï¿½e en fonction du modul
+	 *                  de numï¿½rotation actif dï¿½fini dans COMMANDE_SUPPLIER_ADDON
 	 *      \param	    soc  		            objet societe
 	 *      \return     string                  reference libre pour la facture
 	 */
@@ -431,7 +459,7 @@ class CommandeFournisseur extends Commande
 		if (defined('COMMANDE_SUPPLIER_ADDON') && COMMANDE_SUPPLIER_ADDON)
 		{
 			$file = COMMANDE_SUPPLIER_ADDON.'.php';
-				
+
 			if (is_readable($dir.'/'.$file))
 	  {
 	  	// Definition du nom de module de numerotation de commande fournisseur
@@ -494,9 +522,9 @@ class CommandeFournisseur extends Commande
 	  	if ($result < 0) { $error++; $this->errors=$interface->errors; }
 	  	// Fin appel triggers
 
-	  	$subject = "Votre commande ".$this->ref." a été approuvée";
+	  	$subject = "Votre commande ".$this->ref." a ï¿½tï¿½ approuvï¿½e";
 	  	$message = "Bonjour,\n\n";
-	  	$message .= "Votre commande ".$this->ref." a été approuvée, par $user->fullname";
+	  	$message .= "Votre commande ".$this->ref." a ï¿½tï¿½ approuvï¿½e, par $user->fullname";
 	  	$message .= "\n\nCordialement,\n\n";
 	  	$this->_NotifyCreator($user, $subject, $message);
 
@@ -530,14 +558,14 @@ class CommandeFournisseur extends Commande
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 9";
 			$sql .= " WHERE rowid = ".$this->id;
-			 
+
 			if ($this->db->query($sql) )
 	  {
 	  	$result = 0;
 	  	$this->log($user, 9, time());
 
-	  	$subject = "Votre commande ".$this->ref." a été refusée";
-	  	$message = "Votre commande ".$this->ref." a été refusée, par $user->fullname";
+	  	$subject = "Votre commande ".$this->ref." a ï¿½tï¿½ refusï¿½e";
+	  	$message = "Votre commande ".$this->ref." a ï¿½tï¿½ refusï¿½e, par $user->fullname";
 
 	  	$this->_NotifyCreator($user, $subject, $message);
 	  }
@@ -590,7 +618,7 @@ class CommandeFournisseur extends Commande
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 3, fk_methode_commande=".$methode.",date_commande=".$this->db->idate("$date");
 			$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 2 ;";
-			 
+
 			if ($this->db->query($sql) )
 	  {
 	  	$result = 0;
@@ -610,8 +638,8 @@ class CommandeFournisseur extends Commande
 	}
 
 	/**
-	 *      \brief      Créé la commande au statut brouillon
-	 *      \param      user        Utilisateur qui crée
+	 *      \brief      Crï¿½ï¿½ la commande au statut brouillon
+	 *      \param      user        Utilisateur qui crï¿½e
 	 *      \return     int         <0 si ko, >0 si ok
 	 */
 	function create($user)
@@ -631,7 +659,7 @@ class CommandeFournisseur extends Commande
 		if ( $this->db->query($sql) )
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
-				
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql.= " SET ref='(PROV".$this->id.")'";
 			$sql.= " WHERE rowid=".$this->id;
@@ -672,7 +700,7 @@ class CommandeFournisseur extends Commande
 	 *      \brief      Ajoute une ligne de commande
 	 *      \param      desc            	Description
 	 *      \param      pu              	Prix unitaire
-	 *      \param      qty             	Quantité
+	 *      \param      qty             	Quantitï¿½
 	 *      \param      txtva           	Taux tva
 	 *      \param      fk_product      	Id produit
 	 *      \param      remise_percent  	Remise
@@ -713,7 +741,7 @@ class CommandeFournisseur extends Commande
 		if ($this->statut == 0)
 		{
 			$this->db->begin();
-				
+
 			if ($fk_product > 0)
 			{
 				$prod = new Product($this->db, $fk_product);
@@ -728,7 +756,7 @@ class CommandeFournisseur extends Commande
 					}
 					if ($result == 0 || $result == -1)
 					{
-						$this->error="Aucun tarif trouvé pour cette quantité. Quantité saisie insuffisante ?";
+						$this->error="Aucun tarif trouvï¿½ pour cette quantitï¿½. Quantitï¿½ saisie insuffisante ?";
 						$this->db->rollback();
 						dolibarr_syslog("FournisseurCommande::addline result=".$result." - ".$this->error, LOG_DEBUG);
 						return -1;
@@ -747,7 +775,7 @@ class CommandeFournisseur extends Commande
 					return -1;
 				}
 			}
-				
+
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -758,7 +786,7 @@ class CommandeFournisseur extends Commande
 			$total_ttc = $tabprice[2];
 
 			$subprice = price2num($pu,'MU');
-			
+				
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$remise = 0;
@@ -766,7 +794,7 @@ class CommandeFournisseur extends Commande
 			{
 				$remise = round(($pu * $remise_percent / 100), 2);
 			}
-				
+
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
 			$sql.= " (fk_commande,label, description,";
 			$sql.= " fk_product,";
@@ -848,7 +876,7 @@ class CommandeFournisseur extends Commande
 	  {
 	  	$error = -1;
 	  }
-	  // Si module stock géré et que expedition faite depuis un entrepot
+	  // Si module stock gï¿½rï¿½ et que expedition faite depuis un entrepot
 	  if (!$error && $conf->stock->enabled && $entrepot)
 	  {
 	  	/*
@@ -1026,7 +1054,7 @@ class CommandeFournisseur extends Commande
 				{
 					$result = 0;
 					$result=$this->log($user, $statut, $date);
-						
+
 					$this->db->commit();
 				}
 				else
@@ -1050,9 +1078,9 @@ class CommandeFournisseur extends Commande
 		return $result ;
 	}
 
-	/**     \brief      Créé la commande depuis une propale existante
-	 \param      user            Utilisateur qui crée
-	 \param      propale_id      id de la propale qui sert de modèle
+	/**     \brief      Crï¿½ï¿½ la commande depuis une propale existante
+	 \param      user            Utilisateur qui crï¿½e
+	 \param      propale_id      id de la propale qui sert de modï¿½le
 	 */
 	function updateFromCommandeClient($user, $idc, $comclientid)
 	{
@@ -1071,7 +1099,7 @@ class CommandeFournisseur extends Commande
 	  	$libelle  = $prod->libelle;
 	  	$ref      = $prod->ref;
 	  }
-	  	
+
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
 	  $sql .= " (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
 	  $sql .= " VALUES (".$idc.", '" . addslashes($libelle) . "','" . addslashes($comclient->lignes[$i]->desc) . "'";
@@ -1208,11 +1236,11 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *      \brief     Mets à jour une ligne de commande
+	 *      \brief     Mets ï¿½ jour une ligne de commande
 	 *      \param     rowid            Id de la ligne de facture
 	 *      \param     desc             Description de la ligne
 	 *      \param     pu               Prix unitaire
-	 *      \param     qty              Quantité
+	 *      \param     qty              Quantitï¿½
 	 *      \param     remise_percent   Pourcentage de remise de la ligne
 	 *      \param     tva_tx           Taux TVA
 	 *	  \param	 info_bits		  Miscellanous informations
@@ -1226,8 +1254,8 @@ class CommandeFournisseur extends Commande
 		if ($this->brouillon)
 		{
 			$this->db->begin();
-				
-			// Nettoyage paramètres
+
+			// Nettoyage paramï¿½tres
 			$remise_percent=price2num($remise_percent);
 			$qty=price2num($qty);
 			if (! $qty) $qty=1;
@@ -1274,18 +1302,18 @@ class CommandeFournisseur extends Commande
 			$result = $this->db->query( $sql);
 			if ($result > 0)
 			{
-			  	// Mise a jour info denormalisees au niveau facture
-			  	$this->update_price();
-			  	 
-			  	$this->db->commit();
-			  	return $result;
+				// Mise a jour info denormalisees au niveau facture
+				$this->update_price();
+				 
+				$this->db->commit();
+				return $result;
 			}
 			else
 			{
-			  	$this->error=$this->db->error();
-			  	dolibarr_syslog("CommandeFournisseur::updateline ".$this->error);
-			  	$this->db->rollback();
-			  	return -1;
+				$this->error=$this->db->error();
+				dolibarr_syslog("CommandeFournisseur::updateline ".$this->error);
+				$this->db->rollback();
+				return -1;
 			}
 		}
 		else
@@ -1298,8 +1326,8 @@ class CommandeFournisseur extends Commande
 
 
 	/**
-	 *		\brief		Initialise la commande avec valeurs fictives aléatoire
-	 *					Sert à générer une commande pour l'aperu des modèles ou demo
+	 *		\brief		Initialise la commande avec valeurs fictives alï¿½atoire
+	 *					Sert ï¿½ gï¿½nï¿½rer une commande pour l'aperu des modï¿½les ou demo
 	 */
 	function initAsSpecimen()
 	{
@@ -1307,7 +1335,7 @@ class CommandeFournisseur extends Commande
 
 		dolibarr_syslog("CommandeFournisseur::initAsSpecimen");
 
-		// Charge tableau des id de société socids
+		// Charge tableau des id de sociï¿½tï¿½ socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE fournisseur=1 LIMIT 10";
 		$resql = $this->db->query($sql);
@@ -1340,7 +1368,7 @@ class CommandeFournisseur extends Commande
 			}
 		}
 
-		// Initialise paramètres
+		// Initialise paramï¿½tres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
@@ -1396,7 +1424,7 @@ class CommandeFournisseurLigne extends CommandeLigne
 	var $product_desc;  // Description produit
 
 	// From llx_product_fournisseur
-	var $ref_fourn;     // Référence fournisseur
+	var $ref_fourn;     // Rï¿½fï¿½rence fournisseur
 
 	function CommandeFournisseurLigne($DB)
 	{
@@ -1433,11 +1461,11 @@ class CommandeFournisseurLigne extends CommandeLigne
 			$this->total_ht         = $objp->total_ht;
 			$this->total_tva        = $objp->total_tva;
 			$this->total_ttc        = $objp->total_ttc;
-				
+
 			$this->ref	            = $objp->product_ref;
 			$this->product_libelle  = $objp->product_libelle;
 			$this->product_desc     = $objp->product_desc;
-				
+
 			$this->db->free($result);
 		}
 		else

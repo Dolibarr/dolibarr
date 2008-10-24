@@ -15,24 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
- \file       htdocs/product/stock/mouvementstock.class.php
- \ingroup    stock
- \brief      Fichier de la classe de gestion des mouvements de stocks
- \version    $Revision$
+ *	\file       htdocs/product/stock/mouvementstock.class.php
+ *	\ingroup    stock
+ *	\brief      Fichier de la classe de gestion des mouvements de stocks
+ *	\version    $Revision$
  */
 
 
 /**
- \class      MouvementStock
- \brief      Classe permettant la gestion des mouvements de stocks
+ *	\class      MouvementStock
+ *	\brief      Classe permettant la gestion des mouvements de stocks
  */
-
 class MouvementStock
 {
 
@@ -51,7 +47,7 @@ class MouvementStock
 		global $conf;
 		
 		$error = 0;
-		dolibarr_syslog("MouvementStock::_Create $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
+		dolibarr_syslog("MouvementStock::_Create $user->id, $fk_product, $entrepot_id, qty=$qty, type=$type, $price");
 
 		$this->db->begin();
 
@@ -71,7 +67,7 @@ class MouvementStock
 			}
 			else
 			{
-				dolibarr_syslog("MouvementStock::_Create echec insert ".$this->error);
+				dolibarr_syslog("MouvementStock::_Create ".$this->error);
 				$error = -1;
 			}
 			
@@ -116,7 +112,7 @@ class MouvementStock
 				}
 				else
 				{
-					dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+					dolibarr_syslog("MouvementStock::_Create ".$this->error, LOG_ERR);
 					$error = -3;
 				}
 			}
@@ -147,8 +143,8 @@ class MouvementStock
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->error() . " - $sql";
-			dolibarr_syslog("MouvementStock::_Create ERROR : ".$this->error);
+			$this->error=$this->db->error();
+			dolibarr_syslog("MouvementStock::_Create ".$this->error);
 			return -2;
 		}
 	}
@@ -183,14 +179,14 @@ class MouvementStock
 		}
 		else
 		{
-			dolibarr_syslog("MouvementStock::_createSubProduct echec update ".$this->error, LOG_ERROR);
+			dolibarr_syslog("MouvementStock::_createSubProduct ".$this->error, LOG_ERROR);
 			$error = -2;
 		}
 
 		// Create movement for each subproduct
 		foreach($pids as $key => $value)
 		{
-			$this->_create($user, $pids[$key], $entrepot_id, $pqtys[$key], $type, $price);
+			$this->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, $price);
 		}
 
 		return $error;

@@ -676,7 +676,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'51','Socié
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'52','Société en nom collectif');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'53','Société en commandite');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'54','Société à responsabilité limitée (SARL)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'55','Société anonyme à conseil d\'administration');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'55','Société anonyme à conseil d administration');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'56','Société anonyme à directoire');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'57','Société par actions simplifiée');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'58','Entreprise Unipersonnelle à Responsabilité Limitée (EURL)');
@@ -684,18 +684,18 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'58','Entre
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'61','Caisse d\'épargne et de prévoyance');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Groupement d\'intérêt économique (GIE)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'63','Société coopérative agricole');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'64','Société non commerciale d\'assurances');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'64','Société non commerciale d assurances');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'65','Société civile');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'69','Autres personnes de droit privé inscrites au RCS');
                                                                      
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'71','Administration de l\'état');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'71','Administration de l état');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'72','Collectivité territoriale');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'73','Établissement public administratif');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'74','Autre personne morale de droit public administratif');
                                                                      
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'81','Organisme gérant régime de protection social à adhésion obligatoire');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'82','Organisme mutualiste');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'83','Comité d\'entreprise');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'83','Comité d entreprise');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'84','Organisme professionnel');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'85','Organisme de retraite à adhésion non obligatoire');
                                                                      
@@ -714,8 +714,8 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '205', 'SC
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '206', 'SCS  - Société en commandite simple');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '207', 'SCA  - Société en commandite par action');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '208', 'SNC  - Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '209', 'GIE  - Groupement d\'intérêt économique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '210', 'GEIE - Groupement européen d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '209', 'GIE  - Groupement d intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '210', 'GEIE - Groupement européen d intérêt économique');
 
 -- Pour la Suisse
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '600', 'Raison Individuelle');

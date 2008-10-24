@@ -35,6 +35,7 @@ $langs->load("admin");
 $langs->load("propal");
 $langs->load("products");
 
+// Security check
 if (!$user->admin)
 accessforbidden();
 
