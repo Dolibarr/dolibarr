@@ -105,7 +105,7 @@ if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && $user->rights->p
 	}
 }
 
-if ($_GET["action"] == 'delete' && $user->rights->produit->creer)
+if ($_GET["action"] == 'delete' && $user->rights->produit->supprimer)
 {
 	$productstatic = new Product($db);
 	$result=$productstatic->log_price_delete($user,$_GET["lineid"]);
@@ -406,7 +406,7 @@ if ($result)
 		print '<td align="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 		print '<td align="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
 		print '<td align="right">'.$langs->trans("ChangedBy").'</td>';
-		if ($user->rights->produit->creer) print '<td align="right">&nbsp;</td>';
+		if ($user->rights->produit->supprimer) print '<td align="right">&nbsp;</td>';
 		print '</tr>';
 
 		$var=True;
@@ -436,7 +436,7 @@ if ($result)
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
 
 			// Action
-			if ($user->rights->produit->creer)
+			if ($user->rights->produit->supprimer)
 			{
 				print '<td align="right">';
 				if ($i > 0)

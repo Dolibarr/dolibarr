@@ -121,7 +121,7 @@ if ($_GET["id"] || $_GET["ref"])
 		print '</td>';
 		print '</tr>';
 
-		// Libellé
+		// Libellï¿½
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 		print '</tr>';
 
@@ -231,7 +231,9 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<td width="20%">'.$langs->trans("Warehouse").'</td>';
 
 		// Entrepot
-		print '<td width="20%"><select class="flat" name="id_entrepot">';
+		print '<td width="20%">';
+		
+		print '<select class="flat" name="id_entrepot">';
 		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql .= " WHERE statut = 1";
 		$sql .= " ORDER BY lower(e.label)";
@@ -240,15 +242,20 @@ if ($_GET["id"] || $_GET["ref"])
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
+			if ($num > 1) print '<option value="-1">&nbsp;';
 			$i = 0;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				print '<option value="'.$obj->rowid.'">'.$obj->label ;
+				print '<option value="'.$obj->rowid.'"';
+				if ($_GET["dwid"]==$obj->rowid) print ' selected="true"';
+				print '>'.$obj->label ;
 				$i++;
 			}
 		}
-		print '</select></td>';
+		print '</select>';
+		
+		print '</td>';
 		print '<td width="20%">';
 		print '<select name="mouvement" class="flat">';
 		print '<option value="0">'.$langs->trans("Add").'</option>';
@@ -265,7 +272,7 @@ if ($_GET["id"] || $_GET["ref"])
 	}
 
 	/*
-	 * Transfert de pièces
+	 * Transfert of units
 	 */
 	if ($_GET["action"] == "transfert")
 	{
@@ -273,7 +280,10 @@ if ($_GET["id"] || $_GET["ref"])
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
 		print '<input type="hidden" name="action" value="transfert_stock">';
 		print '<table class="border" width="100%"><tr>';
-		print '<td width="20%">'.$langs->trans("Source").'</td><td width="20%"><select name="id_entrepot_source">';
+		print '<td width="20%">'.$langs->trans("Source").'</td><td width="20%">';
+		
+		// Select datewarehous
+		print '<select name="id_entrepot_source">';
 
 		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql .= " WHERE statut = 1";
@@ -283,18 +293,25 @@ if ($_GET["id"] || $_GET["ref"])
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
+			if ($num > 1) print '<option value="-1">&nbsp;';
 			$i = 0;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				print '<option value="'.$obj->rowid.'">'.$obj->label ;
+				print '<option value="'.$obj->rowid.'"';
+				if ($_GET["dwid"]==$obj->rowid) print ' selected="true"';
+				print '>'.$obj->label ;
 				$i++;
 			}
 		}
-		print '</select></td>';
+		print '</select>';
+		
+		print '</td>';
 
-		print '<td width="20%">'.$langs->trans("Target").'</td><td width="20%"><select name="id_entrepot_destination">';
-
+		print '<td width="20%">'.$langs->trans("Target").'</td><td width="20%">';
+		
+		// Select datawarehous
+		print '<select name="id_entrepot_destination">';
 		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql .= " WHERE statut = 1";
 		$sql .= " ORDER BY lower(e.label)";
@@ -303,6 +320,7 @@ if ($_GET["id"] || $_GET["ref"])
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
+			if ($num > 1) print '<option value="-1">&nbsp;';
 			$i = 0;
 			while ($i < $num)
 			{
@@ -311,7 +329,9 @@ if ($_GET["id"] || $_GET["ref"])
 				$i++;
 			}
 		}
-		print '</select></td>';
+		print '</select>';
+		
+		print '</td>';
 		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
 		print '<tr><td colspan="6" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
@@ -329,8 +349,10 @@ if ($_GET["id"] || $_GET["ref"])
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
 		print '<input type="hidden" name="action" value="create_stock">';
 		print '<table class="border" width="100%"><tr>';
-		print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="40%"><select name="id_entrepot">';
+		print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="40%">';
 
+		// Select datawarehouse
+		print '<select name="id_entrepot">';
 		$sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql .= " ORDER BY lower(e.label)";
 
@@ -338,6 +360,7 @@ if ($_GET["id"] || $_GET["ref"])
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
+			if ($num > 1) print '<option value="-1">&nbsp;';
 			$i = 0;
 			while ($i < $num)
 			{
@@ -346,7 +369,8 @@ if ($_GET["id"] || $_GET["ref"])
 				$i++;
 			}
 		}
-		print '</select></td><td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
+		print '</select>';
+		print '</td><td width="20%">'.$langs->trans("NbOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
 		print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';
 		print '</table>';
