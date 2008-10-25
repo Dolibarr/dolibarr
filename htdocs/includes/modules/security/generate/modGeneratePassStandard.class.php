@@ -15,23 +15,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/includes/modules/security/generate/modGeneratePassStandard.class.php
-        \ingroup    core
-        \brief      Fichier de gestion de la generation de mot de passe selon règle standard
-*/
+ *      \file       htdocs/includes/modules/security/generate/modGeneratePassStandard.class.php
+ *      \ingroup    core
+ *		\brief      File to manage password generation according to standard rule
+ *		\version	$Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/security/generate/modules_genpassword.php");
 
 
 /**
 	    \class      modGeneratePassNone
-		\brief      Classe permettant de générer un mot de passe selon règle standard
+		\brief      Classe permettant de gï¿½nï¿½rer un mot de passe selon rï¿½gle standard
 */
 class modGeneratePassStandard extends ModeleGenPassword
 {
@@ -46,10 +44,10 @@ class modGeneratePassStandard extends ModeleGenPassword
 	
 	/**
 	 *		\brief      Constructeur
-	 *		\param		db			Handler d'accès base
+	 *		\param		db			Handler d'accï¿½s base
 	 *		\param		conf		Handler de conf
 	 *		\param		lang		Handler de langue
-	 *		\param		user		Handler du user connecté
+	 *		\param		user		Handler du user connectï¿½
 	 */
 	function modGeneratePassStandard($db, $conf, $langs, $user)
 	{
@@ -68,11 +66,12 @@ class modGeneratePassStandard extends ModeleGenPassword
 	 */
 	function getDescription()
 	{
-		return "Renvoie un mot de passe généré selon algorithme interne Dolibarr: 8 caractères, chiffres et caractères en minuscules mélangés";
+		global $langs;
+		return $langs->trans("PasswordGenerationStandard");
 	}
 
 	/**
-	 * 		\brief		Renvoie exemple de mot de passe généré par cette règle
+	 * 		\brief		Renvoie exemple de mot de passe gï¿½nï¿½rï¿½ par cette rï¿½gle
  	 *      \return     string      Exemple
 	 */
 	function getExample()
@@ -81,8 +80,8 @@ class modGeneratePassStandard extends ModeleGenPassword
 	}
 
 	/**
-	 * 		\brief		Génère le mot de passe
- 	 *      \return     string      Renvoi mot de passe généré
+	 * 		\brief		Gï¿½nï¿½re le mot de passe
+ 	 *      \return     string      Renvoi mot de passe gï¿½nï¿½rï¿½
 	 */
 	function getNewGeneratedPassword()
 	{

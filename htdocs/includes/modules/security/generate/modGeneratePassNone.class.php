@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2007 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,23 +15,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/includes/modules/security/generate/modGeneratePassNone.class.php
-        \ingroup    core
-        \brief      Fichier de gestion de la generation de mot de passe selon règle standard
-*/
+ *      \file       htdocs/includes/modules/security/generate/modGeneratePassNone.class.php
+ *      \ingroup    core
+ *      \brief      File to manage no password generation.
+ *		\version	$Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/security/generate/modules_genpassword.php");
 
 
 /**
 	    \class      modGeneratePassNone
-		\brief      Classe permettant de générer un mot de passe selon règle standard
+		\brief      Classe permettant de gï¿½nï¿½rer un mot de passe selon rï¿½gle standard
 */
 class modGeneratePassNone extends ModeleGenPassword
 {
@@ -46,10 +44,10 @@ class modGeneratePassNone extends ModeleGenPassword
 	
 	/**
 	 *		\brief      Constructeur
-	 *		\param		db			Handler d'accès base
+	 *		\param		db			Handler d'accï¿½s base
 	 *		\param		conf		Handler de conf
 	 *		\param		lang		Handler de langue
-	 *		\param		user		Handler du user connecté
+	 *		\param		user		Handler du user connectï¿½
 	 */
 	function modGeneratePassNone($db, $conf, $langs, $user)
 	{
@@ -68,11 +66,12 @@ class modGeneratePassNone extends ModeleGenPassword
 	 */
 	function getDescription()
 	{
-		return "Ne propose pas de mots de passe générés. Le mot de passe est à saisir manuellement.";
+		global $langs;
+		return $langs->trans("PasswordGenerationNone");
 	}
 
 	/**
-	 * 		\brief		Renvoie exemple de mot de passe généré par cette règle
+	 * 		\brief		Renvoie exemple de mot de passe gï¿½nï¿½rï¿½ par cette rï¿½gle
  	 *      \return     string      Exemple
 	 */
 	function getExample()
@@ -81,8 +80,8 @@ class modGeneratePassNone extends ModeleGenPassword
 	}
 
 	/**
-	 * 		\brief		Génère le mot de passe
- 	 *      \return     string      Renvoi mot de passe généré
+	 * 		\brief		Gï¿½nï¿½re le mot de passe
+ 	 *      \return     string      Renvoi mot de passe gï¿½nï¿½rï¿½
 	 */
 	function getNewGeneratedPassword()
 	{

@@ -607,7 +607,9 @@ ParameterActiveForNextInputOnly=Parameter effective for next input only
 NoEventOrNoAuditSetup=No security event has been recorded yet. This can be normal if audit has not been enabled on "setup - security - audit" page.
 NoEventFoundWithCriteria=No security event has been found for such search criterias.
 SeeLocalSendMailSetup=See your local sendmail setup
-
+##### Module password generation
+PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
+PasswordGenerationNone=Do not suggest any generated password. Password must be type in manually.
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Suggest a generated password
