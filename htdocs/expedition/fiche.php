@@ -290,7 +290,7 @@ if ($_GET["action"] == 'create')
 			print '<td colspan="3">';
 
 			$expe->fetch_delivery_methods();
-			$html->select_array("expedition_method_id",$expe->meths);
+			$html->select_array("expedition_method_id",$expe->meths,'',0,0,0,0,"",1);
 			print "</td></tr>\n";
 			// Tracking number
 			print "<tr><td>".$langs->trans("TrackingNumber")."</td>";
