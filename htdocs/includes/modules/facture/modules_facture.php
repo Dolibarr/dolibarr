@@ -237,7 +237,7 @@ function facture_meta_create($db, $facid, $message="")
 
 	if ($conf->facture->dir_output)
 	{
-		$facref = sanitize_string($fac->ref);
+		$facref = sanitizeFileName($fac->ref);
 		$dir = $conf->facture->dir_output . "/" . $facref ;
 		$file = $dir . "/" . $facref . ".meta";
 
@@ -291,7 +291,7 @@ function facture_delete_preview($db, $facid)
 
 	if ($conf->facture->dir_output)
 	{
-		$facref = sanitize_string($fac->ref);
+		$facref = sanitizeFileName($fac->ref);
 		$dir = $conf->facture->dir_output . "/" . $facref ;
 		$file = $dir . "/" . $facref . ".pdf.png";
 

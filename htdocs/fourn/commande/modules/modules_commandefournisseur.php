@@ -212,7 +212,7 @@ function supplier_order_delete_preview($db, $propalid)
 
         if ($conf->fournisseur->commande->dir_output)
                 {
-                $comfournref = sanitize_string($comfourn->ref); 
+                $comfournref = sanitizeFileName($comfourn->ref); 
                 $dir = $conf->commande->dir_output . "/" . $comfournref ; 
                 $file = $dir . "/" . $comfournref . ".pdf.png";
 

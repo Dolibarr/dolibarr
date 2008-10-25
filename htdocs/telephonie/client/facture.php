@@ -62,7 +62,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
     $fac = new Facture($db,"",$_POST["facid"]);
     if ( $fac->fetch($_POST["facid"]) )
     {
-      $facref = sanitize_string($fac->ref);
+      $facref = sanitizeFileName($fac->ref);
       $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
 
       if (is_readable($file))
@@ -497,7 +497,7 @@ if ($_GET["facid"] > 0)
        * REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
        */
 
-      $facref = sanitize_string($fac->ref);
+      $facref = sanitizeFileName($fac->ref);
       $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
       $relativepath = "${facref}/${facref}.pdf";
 

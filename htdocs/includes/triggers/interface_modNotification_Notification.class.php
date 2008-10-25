@@ -106,7 +106,7 @@ class InterfaceNotification
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 2;
-            $ref = sanitize_string($object->ref);
+            $ref = sanitizeFileName($object->ref);
             $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             $mesg = 'La facture '.$object->ref." a été validée.\n";
 
@@ -119,7 +119,7 @@ class InterfaceNotification
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 1;
-            $ref = sanitize_string($object->ref);
+            $ref = sanitizeFileName($object->ref);
             $filepdf = $conf->facture->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             $mesg = 'La fiche intervention '.$object->ref." a été validée.\n";
 
@@ -132,7 +132,7 @@ class InterfaceNotification
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 3;
-            $ref = sanitize_string($object->ref);
+            $ref = sanitizeFileName($object->ref);
             $filepdf = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
             $mesg = 'La commande fournisseur '.$object->ref." a été validée.\n";
 

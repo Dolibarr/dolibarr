@@ -888,9 +888,9 @@ elseif ($_GET["id"] > 0)
 
 	print '<table width="100%"><tr><td width="50%" valign="top">';
 	/*
-	 * Documents g�n�r�s
+	 * Built documents
 	 */
-	$filename=sanitize_string($fichinter->ref);
+	$filename=sanitizeFileName($fichinter->ref);
 	$filedir=$conf->fichinter->dir_output . "/".$fichinter->ref;
 	$urlsource=$_SERVER["PHP_SELF"]."?id=".$fichinter->id;
 	$genallowed=$user->rights->ficheinter->creer;

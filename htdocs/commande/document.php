@@ -74,7 +74,7 @@ if (!$commande->fetch($id)) {
 // Envoi fichier
 if ($_POST["sendit"] && $conf->upload)
 {
-  $upload_dir = $conf->commande->dir_output . "/" . sanitize_string($commande->ref);
+  $upload_dir = $conf->commande->dir_output . "/" . sanitizeFileName($commande->ref);
   if (! is_dir($upload_dir)) create_exdir($upload_dir);
   
   if (is_dir($upload_dir))
@@ -96,7 +96,7 @@ if ($_POST["sendit"] && $conf->upload)
 // Delete
 if ($action=='delete')
 {
-  $upload_dir = $conf->commande->dir_output . "/" . sanitize_string($commande->ref);
+  $upload_dir = $conf->commande->dir_output . "/" . sanitizeFileName($commande->ref);
   $file = $upload_dir . '/' . urldecode($_GET['urlfile']);
   dol_delete_file($file);
   $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -110,7 +110,7 @@ if ($id > 0)
 {
   llxHeader();
 
-  $upload_dir = $conf->commande->dir_output.'/'.sanitize_string($commande->ref);
+  $upload_dir = $conf->commande->dir_output.'/'.sanitizeFileName($commande->ref);
   
   $societe = new Societe($db);
   $societe->fetch($commande->socid);

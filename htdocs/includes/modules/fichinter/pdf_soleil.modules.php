@@ -107,7 +107,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				}
 			}
 				
-			$fichref = sanitize_string($fichinter->ref);
+			$fichref = sanitizeFileName($fichinter->ref);
 			$dir = $conf->fichinter->dir_output;
 			if (! eregi('specimen',$fichref)) $dir.= "/" . $fichref;
 			$file = $dir . "/" . $fichref . ".pdf";

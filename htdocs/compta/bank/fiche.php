@@ -42,7 +42,7 @@ if ($_POST["action"] == 'add')
     // Creation compte
     $account = new Account($db,0);
     
-    $account->ref           = sanitize_string(trim($_POST["ref"]));
+    $account->ref           = sanitizeFileName(trim($_POST["ref"]));
     $account->label         = trim($_POST["label"]);
     $account->courant       = $_POST["type"];
     $account->clos          = $_POST["clos"];

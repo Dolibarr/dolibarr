@@ -140,7 +140,7 @@ class pdf_einstein extends ModelePDFCommandes
 			}
 			else
 			{
-				$comref = sanitize_string($com->ref);
+				$comref = sanitizeFileName($com->ref);
 				$dir = $conf->commande->dir_output . "/" . $comref;
 				$file = $dir . "/" . $comref . ".pdf";
 			}

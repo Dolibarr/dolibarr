@@ -135,7 +135,7 @@ if ($_GET["id"] > 0) {
 				/*
   				 * Documents
  				 */
-				$commanderef = sanitize_string($commande->ref);
+				$commanderef = sanitizeFileName($commande->ref);
 				$dir_output = $conf->commande->dir_output . "/";
 				$filepath = $dir_output . $commanderef . "/";
 				$file = $filepath . $commanderef . ".pdf";

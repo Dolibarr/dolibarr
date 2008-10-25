@@ -676,7 +676,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 	$result=$commande->fetch($_POST['orderid']);
 	if ($result)
 	{
-		$ref = sanitize_string($commande->ref);
+		$ref = sanitizeFileName($commande->ref);
 		$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 		if (is_readable($file))
@@ -1876,7 +1876,7 @@ else
 					{
 						if ($user->rights->commande->envoyer)
 						{
-							$comref = sanitize_string($commande->ref);
+							$comref = sanitizeFileName($commande->ref);
 							$file = $conf->commande->dir_output . '/'.$comref.'/'.$comref.'.pdf';
 							if (file_exists($file))
 							{
@@ -1979,7 +1979,7 @@ else
 				 * Documents generes
 				 *
 				 */
-				$comref = sanitize_string($commande->ref);
+				$comref = sanitizeFileName($commande->ref);
 				$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
 				$relativepath = $comref.'/'.$comref.'.pdf';
 				$filedir = $conf->commande->dir_output . '/' . $comref;
@@ -2046,7 +2046,7 @@ else
 			 */
 			if ($_GET['action'] == 'presend')
 			{
-				$ref = sanitize_string($commande->ref);
+				$ref = sanitizeFileName($commande->ref);
 				$file = $conf->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 				print '<br>';

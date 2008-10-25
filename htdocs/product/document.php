@@ -68,7 +68,7 @@ if ($_GET['id'] || $_GET["ref"])
     if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
     if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
-    $upload_dir = $conf->produit->dir_output.'/'.sanitize_string($product->ref);
+    $upload_dir = $conf->produit->dir_output.'/'.sanitizeFileName($product->ref);
 }
 $modulepart='produit';
 

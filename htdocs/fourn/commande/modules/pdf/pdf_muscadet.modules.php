@@ -142,7 +142,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			}
 			else
 			{
-				$comref = sanitize_string($com->ref);
+				$comref = sanitizeFileName($com->ref);
 				$dir = $conf->fournisseur->commande->dir_output . "/" . $comref;
 				$file = $dir . "/" . $comref . ".pdf";
 			}

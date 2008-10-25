@@ -217,7 +217,7 @@ function delivery_order_delete_preview($db, $deliveryid)
 
 	if ($conf->livraison->dir_output)
 	{
-		$deliveryref = sanitize_string($delivery->ref);
+		$deliveryref = sanitizeFileName($delivery->ref);
 		$dir = $conf->livraison->dir_output . "/" . $deliveryref ;
 		$file = $dir . "/" . $deliveryref . ".pdf.png";
 

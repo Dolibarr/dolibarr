@@ -249,7 +249,7 @@ function commande_delete_preview($db, $commandeid, $commanderef='')
 
         if ($conf->commande->dir_output)
         {
-        	$comref = sanitize_string($commanderef);
+        	$comref = sanitizeFileName($commanderef);
         	$dir = $conf->commande->dir_output . "/" . $comref ;
         	$file = $dir . "/" . $comref . ".pdf.png";
         	$multiple = $file . ".";

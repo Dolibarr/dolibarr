@@ -84,8 +84,8 @@ class Expedition extends CommonObject
 
 		$this->user = $user;
 
-		$this->expedition_method = sanitize_string($this->expedition_method);
-		$this->tracking_number = sanitize_string($this->tracking_number);
+		$this->expedition_method = sanitizeFileName($this->expedition_method);
+		$this->tracking_number = sanitizeFileName($this->tracking_number);
 
 		$this->db->begin();
 
@@ -359,9 +359,9 @@ class Expedition extends CommonObject
 		    while($i < $num)
 		    {
 		    	dolibarr_syslog("Expedition::valid movment nb ".$i);
-		    		
+
 		    	$obj = $this->db->fetch_object($resql);
-		    		
+
 		    	$mouvS = new MouvementStock($this->db);
 		    	$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty);
 		    	if ($result < 0)
@@ -371,7 +371,7 @@ class Expedition extends CommonObject
 		    		dolibarr_syslog("Expedition::valid ".$this->error);
 		    		return -3;
 		    	}
-		    		
+
 		    	$i++;
 		    }
 
@@ -386,7 +386,7 @@ class Expedition extends CommonObject
 	  	}
 	  	 
 	  	// On efface le répertoire de pdf provisoire
-	  	$expeditionref = sanitize_string($provref);
+	  	$expeditionref = sanitizeFileName($provref);
 	  	if ($conf->expedition->dir_output)
 	  	{
 	  		$dir = $conf->expedition->dir_output . "/" . $expeditionref;
@@ -513,11 +513,11 @@ class Expedition extends CommonObject
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition WHERE rowid = ".$this->id;
 			if ( $this->db->query($sql) )
-	  {
-	  	$this->db->commit();
-	  	 
+			{
+				$this->db->commit();
+				 
 				// On efface le répertoire de pdf provisoire
-				$expref = sanitize_string($this->ref);
+				$expref = sanitizeFileName($this->ref);
 				if ($conf->expedition->dir_output)
 				{
 					$dir = $conf->expedition->dir_output . "/" . $expref ;
@@ -740,7 +740,7 @@ class Expedition extends CommonObject
 	}
 	/*
 	 Fetch deliveries method and return an array
-  */
+	 */
 	function fetch_delivery_methods()
 	{
 		$meths = array();
@@ -760,7 +760,7 @@ class Expedition extends CommonObject
 	}
 	/*
 	 Get tracking url status
-  */
+	 */
 	function GetUrlTrackingStatus()
 	{
 		$sql = "SELECT em.code";

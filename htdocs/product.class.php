@@ -131,7 +131,7 @@ class Product extends CommonObject
 	 */
 	function check()
 	{
-		$this->ref = sanitize_string(stripslashes($this->ref));
+		$this->ref = sanitizeFileName(stripslashes($this->ref));
 
 		$err = 0;
 		if (strlen(trim($this->ref)) == 0)

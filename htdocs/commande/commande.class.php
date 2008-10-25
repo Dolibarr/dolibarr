@@ -248,7 +248,7 @@ class Commande extends CommonObject
 			// On efface le repertoire de pdf provisoire
 			if (eregi('^\(PROV', $this->ref))
 			{
-				$comref = sanitize_string($this->ref);
+				$comref = sanitizeFileName($this->ref);
 				if ($conf->commande->dir_output)
 				{
 					$dir = $conf->commande->dir_output . "/" . $comref ;
@@ -1752,7 +1752,7 @@ class Commande extends CommonObject
 		}
 
 		// On efface le repertoire de pdf provisoire
-		$comref = sanitize_string($this->ref);
+		$comref = sanitizeFileName($this->ref);
 		if ($conf->commande->dir_output)
 		{
 			$dir = $conf->commande->dir_output . "/" . $comref ;

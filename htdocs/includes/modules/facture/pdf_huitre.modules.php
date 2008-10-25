@@ -122,7 +122,7 @@ class pdf_huitre extends ModelePDFFactures
 			}
 			else
 			{
-				$facref = sanitize_string($fac->ref);
+				$facref = sanitizeFileName($fac->ref);
 				$dir = $conf->facture->dir_output . "/" . $facref;
 				$file = $dir . "/" . $facref . ".pdf";
 			}

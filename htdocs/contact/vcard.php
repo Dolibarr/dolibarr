@@ -85,8 +85,8 @@ $db->close();
 $output = $v->getVCard();
 
 $filename =trim(urldecode($v->getFileName()));      // "Nom prenom.vcf"
-$filenameurlencoded = sanitize_string(urlencode($filename));
-//$filename = sanitize_string($filename);
+$filenameurlencoded = sanitizeFileName(urlencode($filename));
+//$filename = sanitizeFileName($filename);
 
 Header("Content-Disposition: attachment; filename=\"$filename\"");
 Header("Content-Length: ".strlen($output));

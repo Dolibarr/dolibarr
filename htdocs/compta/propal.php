@@ -488,8 +488,8 @@ if ($_GET["propalid"] > 0)
     /*
      * Documents g�n�r�s
      */
-    $filename=sanitize_string($propal->ref);
-    $filedir=$conf->propal->dir_output . "/" . sanitize_string($propal->ref);
+    $filename=sanitizeFileName($propal->ref);
+    $filedir=$conf->propal->dir_output . "/" . sanitizeFileName($propal->ref);
     $urlsource=$_SERVER["PHP_SELF"]."?propalid=".$propal->id;
     $genallowed=0;
     $delallowed=0;
@@ -758,8 +758,8 @@ else
                     
             print '<td width="16" align="right" class="nobordernopadding">';
                     
-            $filename=sanitize_string($objp->ref);
-            $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
+            $filename=sanitizeFileName($objp->ref);
+            $filedir=$conf->propal->dir_output . '/' . sanitizeFileName($objp->ref);
             $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
             $formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
                     

@@ -461,7 +461,7 @@ class Fichinter extends CommonObject
 			{
 
 				// Remove directory with files
-				$fichinterref = sanitize_string($this->ref);
+				$fichinterref = sanitizeFileName($this->ref);
 				if ($conf->fichinter->dir_output)
 				{
 					$dir = $conf->fichinter->dir_output . "/" . $fichinterref ;

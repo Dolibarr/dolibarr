@@ -71,7 +71,7 @@ if ( $_POST["sendit"] && $conf->upload )
     /*
      * Creation répertoire si n'existe pas
      */
-	$upload_dir = $conf->actions->dir_output.'/'.sanitize_string($objectid);
+	$upload_dir = $conf->actions->dir_output.'/'.sanitizeFileName($objectid);
 	if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
     if (is_dir($upload_dir))
@@ -95,7 +95,7 @@ if ( $_POST["sendit"] && $conf->upload )
  */
 if ($_GET["action"] == 'delete')
 {
-	$upload_dir = $conf->actions->dir_output.'/'.sanitize_string($objectid);
+	$upload_dir = $conf->actions->dir_output.'/'.sanitizeFileName($objectid);
 	$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
 	dol_delete_file($file);
 }
@@ -113,7 +113,7 @@ if ($objectid > 0)
 	$act = new ActionComm($db);
 	if ($act->fetch($objectid))
 	{
-		$upload_dir = $conf->actions->dir_output.'/'.sanitize_string($objectid);
+		$upload_dir = $conf->actions->dir_output.'/'.sanitizeFileName($objectid);
 		
 		$res=$act->societe->fetch($act->societe->id);
 		$res=$act->author->fetch();     // Le paramètre est le login, hors seul l'id est chargé.

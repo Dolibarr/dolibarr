@@ -503,7 +503,7 @@ if ($_GET["id"] > 0)
 		 * Documents générés
 		 *
 		 */
-		$comref = sanitize_string($commande->ref);
+		$comref = sanitizeFileName($commande->ref);
 		$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
 		$relativepath = $comref.'/'.$comref.'.pdf';
 		$filedir = $conf->commande->dir_output . '/' . $comref;

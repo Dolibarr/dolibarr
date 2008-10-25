@@ -359,7 +359,7 @@ if ($_POST['action'] == 'send' && ! $_POST['addfile'] && ! $_POST['cancel'])
 	$propal= new Propal($db);
 	if ( $propal->fetch($_POST['propalid']) )
 	{
-		$propalref = sanitize_string($propal->ref);
+		$propalref = sanitizeFileName($propal->ref);
 		$file = $conf->propal->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
 
 		if (is_readable($file))
@@ -1687,7 +1687,7 @@ if ($_GET['propalid'] > 0)
 			// Send
 			if ($propal->statut == 1 && $user->rights->propale->envoyer)
 			{
-				$propref = sanitize_string($propal->ref);
+				$propref = sanitizeFileName($propal->ref);
 				$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
 				if (file_exists($file))
 				{
@@ -1745,8 +1745,8 @@ if ($_GET['propalid'] > 0)
 		/*
 		 * Documents generes
 		 */
-		$filename=sanitize_string($propal->ref);
-		$filedir=$conf->propal->dir_output . "/" . sanitize_string($propal->ref);
+		$filename=sanitizeFileName($propal->ref);
+		$filedir=$conf->propal->dir_output . "/" . sanitizeFileName($propal->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?propalid=".$propal->id;
 		$genallowed=$user->rights->propale->creer;
 		$delallowed=$user->rights->propale->supprimer;
@@ -1806,7 +1806,7 @@ if ($_GET['propalid'] > 0)
 	 */
 	if ($_GET['action'] == 'presend')
 	{
-		$ref = sanitize_string($propal->ref);
+		$ref = sanitizeFileName($propal->ref);
 		$file = $conf->propal->dir_output . '/' . $ref . '/' . $ref . '.pdf';
 
 		print '<br>';
@@ -2003,8 +2003,8 @@ else
 
 			print '<td width="16" align="right" class="nobordernopadding">';
 
-			$filename=sanitize_string($objp->ref);
-			$filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
+			$filename=sanitizeFileName($objp->ref);
+			$filedir=$conf->propal->dir_output . '/' . sanitizeFileName($objp->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
 			$formfile->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
 

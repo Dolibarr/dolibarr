@@ -23,18 +23,18 @@
  */
 
 /**
- \file       htdocs/societe.class.php
- \ingroup    societe
- \brief      Fichier de la classe des societes
- \version    $Id$
+ *	\file       htdocs/societe.class.php
+ *	\ingroup    societe
+ *	\brief      Fichier de la classe des societes
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 
 
 /**
- \class 		Societe
- \brief 		Classe permettant la gestion des societes
+ *	\class 		Societe
+ *	\brief 		Classe permettant la gestion des societes
  */
 class Societe extends CommonObject
 {
@@ -336,7 +336,7 @@ class Societe extends CommonObject
 		$this->prefix_comm=trim($this->prefix_comm);
 
 		$this->tva_assuj=trim($this->tva_assuj);
-		$this->tva_intra=sanitize_string($this->tva_intra,'');
+		$this->tva_intra=sanitizeFileName($this->tva_intra,'');
 
 		$this->capital=trim($this->capital);
 		if (strlen($this->capital) == 0) $this->capital = 0;

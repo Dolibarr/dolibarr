@@ -1418,7 +1418,7 @@ class Propal extends CommonObject
 			{
 
 				// On efface le r�pertoire du pdf
-				$propalref = sanitize_string($this->ref);
+				$propalref = sanitizeFileName($this->ref);
 				if ($conf->propal->dir_output)
 				{
 					$dir = $conf->propal->dir_output . "/" . $propalref ;

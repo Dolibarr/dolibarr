@@ -115,7 +115,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 				}
 			}
 
-			$deliveryref = sanitize_string($delivery->ref);
+			$deliveryref = sanitizeFileName($delivery->ref);
 			$dir = $conf->livraison_bon->dir_output;
 			if (! eregi('specimen',$deliveryref)) $dir.= "/" . $deliveryref;
 			$file = $dir . "/" . $deliveryref . ".pdf";

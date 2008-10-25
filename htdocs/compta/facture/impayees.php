@@ -92,8 +92,8 @@ if ($_POST["action"] == "builddoc" && $user->rights->facture->lire)
 		create_exdir($diroutputpdf);
 
 		// enregistre le fichier pdf concatene
-		$filename=sanitize_string(strtolower($langs->transnoentities("Unpayed")));
-		if ($option=='late') $filename.='_'.sanitize_string(strtolower($langs->transnoentities("Late")));
+		$filename=sanitizeFileName(strtolower($langs->transnoentities("Unpayed")));
+		if ($option=='late') $filename.='_'.sanitizeFileName(strtolower($langs->transnoentities("Late")));
 		if ($pagecount) 
 		{
 			$file=$diroutputpdf.'/'.$filename.'_'.dolibarr_print_date(mktime(),'dayhourlog').'.pdf';
@@ -316,8 +316,8 @@ if ($result)
 			
 			print '<td width="16" align="right" class="nobordernopadding">';
 				
-			$filename=sanitize_string($objp->facnumber);
-			$filedir=$conf->facture->dir_output . '/' . sanitize_string($objp->facnumber);
+			$filename=sanitizeFileName($objp->facnumber);
+			$filedir=$conf->facture->dir_output . '/' . sanitizeFileName($objp->facnumber);
 			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
 			$formfile->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
 				

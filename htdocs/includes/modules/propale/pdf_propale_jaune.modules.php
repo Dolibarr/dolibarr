@@ -124,7 +124,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 			}
 			else
 			{
-				$propref = sanitize_string($propale->ref);
+				$propref = sanitizeFileName($propale->ref);
 				$dir = $conf->propal->dir_output . "/" . $propref;
 				$file = $dir . "/" . $propref . ".pdf";
 			}

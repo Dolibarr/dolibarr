@@ -234,7 +234,7 @@ function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
    
    if ($conf->fichinter->dir_output)
    {
-   	$fichinterref = sanitize_string($fichinterref);
+   	$fichinterref = sanitizeFileName($fichinterref);
     $dir = $conf->fichinter->dir_output . "/" . $fichinterref ;
     $file = $dir . "/" . $fichinterref . ".pdf.png";
     $multiple = $file . ".";

@@ -75,29 +75,26 @@ function check_mail ($mail)
 }
 
 /**
- \brief          Nettoie chaine de caractere iso des accents
+ \brief          Nettoie chaine de caractere des accents
  \param          str             Chaine a nettoyer
  \return         string          Chaine nettoyee
  */
 function unaccent_isostring($str)
 {
-	$translation = array(
-	"\xE0" => "a",
-	"\xE1" => "a",
-	"\xE2" => "a",
-	"\xE8" => "e",
-	"\xE9" => "e",
-	"\xEA" => "e",
-	"\xEB" => "e",
-	"\xEE" => "i",
-	"\xEF" => "i",
-	"\xF4" => "o",
-	"\xF6" => "o",
-	"\xFB" => "u",
-	"\xFC" => "u"
-	  	);
-
-	return str_replace(array_keys($translation), array_values($translation), $str);
+	if (utf8_check($str))
+	{
+		// TODO add utf8 convertion
+		$translationutf=array(	);
+		return str_replace(array_keys($translationutf), array_values($translationutf), $str);
+	}
+	else
+	{
+		$translationiso=array(	"\xE0" => "a",	"\xE1" => "a", 	"\xE2" => "a",
+								"\xE8" => "e",	"\xE9" => "e",	"\xEA" => "e",	"\xEB" => "e",
+								"\xEE" => "i",	"\xEF" => "i",	
+								"\xF4" => "o",	"\xF6" => "o",	"\xFB" => "u",	"\xFC" => "u");
+		return str_replace(array_keys($translationiso), array_values($translationiso), $str);
+	}
 }
 
 /**
@@ -116,6 +113,17 @@ function sanitize_string($str,$newstr='_')
 	return str_replace($forbidden_chars_to_underscore,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
 }
 
+/**
+ *	\brief          Nettoie chaine de caractere de ces caracteres speciaux
+ *	\remarks		Fonction appelee par exemple pour definir un nom de fichier depuis un identifiant chaine libre
+ *	\param          str             String to clean
+ * 	\param			newstr			String to replace bad chars by
+ *	\return         string          String cleaned (a-zA-Z_)
+ */
+function sanitizeFileName($str,$newstr='_')
+{
+	return sanitize_string(unaccent_isostring($str,$newstr));
+}
 
 /**
  *  \brief       Returns text escaped for inclusion in javascript code

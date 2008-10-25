@@ -73,7 +73,7 @@ if ($_POST["sendit"] && $conf->upload)
 	$facture = new Facture($db);
 	if ($facture->fetch($facid))
 	{
-		$upload_dir = $conf->facture->dir_output . "/" . sanitize_string($facture->ref);
+		$upload_dir = $conf->facture->dir_output . "/" . sanitizeFileName($facture->ref);
 		if (! is_dir($upload_dir)) create_exdir($upload_dir);
 
 		if (is_dir($upload_dir))
@@ -101,7 +101,7 @@ if ($action=='delete')
 	$facid=$_GET["id"];
 	if ($facture->fetch($facid))
 	{
-		$upload_dir = $conf->facture->dir_output . "/" . sanitize_string($facture->ref);
+		$upload_dir = $conf->facture->dir_output . "/" . sanitizeFileName($facture->ref);
 		$file = $upload_dir . '/' . urldecode($_GET['urlfile']);
 		dol_delete_file($file);
 		$mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
@@ -119,7 +119,7 @@ if ($facid > 0)
 	$facture = new Facture($db);
 	if ($facture->fetch($facid))
 	{
-		$upload_dir = $conf->facture->dir_output.'/'.sanitize_string($facture->ref);
+		$upload_dir = $conf->facture->dir_output.'/'.sanitizeFileName($facture->ref);
 
 		$societe = new Societe($db);
 		$societe->fetch($facture->socid);

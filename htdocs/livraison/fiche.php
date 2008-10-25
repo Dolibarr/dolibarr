@@ -565,7 +565,7 @@ else
 		 	 * Documents generated
 			 */
 
-			$livraisonref = sanitize_string($livraison->ref);
+			$livraisonref = sanitizeFileName($livraison->ref);
 			$filedir = $conf->livraison_bon->dir_output . '/' . $livraisonref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$livraison->id;
 

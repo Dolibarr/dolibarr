@@ -973,7 +973,7 @@ if ($id > 0)
 		 * Documents	generes
 		 *
 		 */
-		$comfournref = sanitize_string($commande->ref);
+		$comfournref = sanitizeFileName($commande->ref);
 		$file =	$conf->fournisseur->commande->dir_output . '/' . $comfournref .	'/'	. $comfournref . '.pdf';
 		$relativepath =	$comfournref.'/'.$comfournref.'.pdf';
 		$filedir = $conf->fournisseur->commande->dir_output	. '/' .	$comfournref;

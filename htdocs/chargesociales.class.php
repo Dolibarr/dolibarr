@@ -24,15 +24,20 @@
 		\version    $Id$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
+
 
 /**     \class      ChargeSociales
 		\brief      Classe permettant la gestion des paiements des charges
                     La tva collectée n'est calculée que sur les factures payées.
 */
-class ChargeSociales
+class ChargeSociales extends CommonObject
 {
     var $db;
-
+	var $error;
+	var $element='rowid';
+	var $table_element='chargesociales';
+	
     var $id;
     var $date_ech;
     var $lib;

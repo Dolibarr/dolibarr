@@ -1114,8 +1114,8 @@ class Facture extends CommonObject
 			{
 				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
 				// afin de ne pas perdre les fichiers attachés
-				$facref = sanitize_string($this->ref);
-				$snumfa = sanitize_string($numfa);
+				$facref = sanitizeFileName($this->ref);
+				$snumfa = sanitizeFileName($numfa);
 				$dirsource = $conf->facture->dir_output.'/'.$facref;
 				$dirdest = $conf->facture->dir_output.'/'.$snumfa;
 				if (file_exists($dirsource))

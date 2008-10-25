@@ -146,8 +146,8 @@ if ($resql)
         print '</td>';
         
         print '<td width="16" align="right" class="nobordernopadding">';
-        $filename=sanitize_string($objp->ref);
-        $filedir=$conf->commande->dir_output . '/' . sanitize_string($objp->ref);
+        $filename=sanitizeFileName($objp->ref);
+        $filedir=$conf->commande->dir_output . '/' . sanitizeFileName($objp->ref);
         $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
         $formfile->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
         print '</td></tr></table>';
