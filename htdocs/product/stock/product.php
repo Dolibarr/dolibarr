@@ -30,6 +30,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
 
 $langs->load("products");
 $langs->load("orders");
@@ -47,14 +48,14 @@ if (! $user->rights->produit->lire || ! $product->type == 0 || ! $conf->stock->e
  *	Actions
  */
 
-if ($_POST["action"] == "create_stock")
+if ($_POST["action"] == "create_stock" && ! $_POST["cancel"])
 {
 	$product = new Product($db);
 	$product->id = $_GET["id"];
 	$product->create_stock($_POST["id_entrepot"], $_POST["nbpiece"]);
 }
 
-if ($_POST["action"] == "correct_stock" && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($_POST["action"] == "correct_stock" && ! $_POST["cancel"])
 {
 	if (is_numeric($_POST["nbpiece"]))
 	{
@@ -67,7 +68,7 @@ if ($_POST["action"] == "correct_stock" && $_POST["cancel"] <> $langs->trans("Ca
 	}
 }
 
-if ($_POST["action"] == "transfert_stock" && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($_POST["action"] == "transfert_stock" && ! $_POST["cancel"])
 {
 	if ($_POST["id_entrepot_source"] <> $_POST["id_entrepot_destination"])
 	{
@@ -90,10 +91,14 @@ if ($_POST["action"] == "transfert_stock" && $_POST["cancel"] <> $langs->trans("
 	}
 }
 
+
 /*
- * Fiche stock
- *
+ * View
  */
+
+$formproduct=new FormProduct($db);
+
+
 if ($_GET["id"] || $_GET["ref"])
 {
 	$product = new Product($db);
@@ -114,18 +119,18 @@ if ($_GET["id"] || $_GET["ref"])
 
 		print '<table class="border" width="100%">';
 
-		// Reference
+		// Ref
 		print '<tr>';
 		print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
 		print $html->showrefnav($product,'ref','',1,'ref');
 		print '</td>';
 		print '</tr>';
 
-		// Libell�
+		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 		print '</tr>';
 
-		// Prix
+		// Price
 		print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
 		if ($product->price_base_type == 'TTC')
 		{
@@ -220,7 +225,7 @@ if ($_GET["id"] || $_GET["ref"])
 	print '</div>';
 
 	/*
-	 * Correction du stock
+	 * Correct stock
 	 */
 	if ($_GET["action"] == "correction")
 	{
@@ -232,29 +237,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 		// Entrepot
 		print '<td width="20%">';
-		
-		print '<select class="flat" name="id_entrepot">';
-		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " WHERE statut = 1";
-		$sql .= " ORDER BY lower(e.label)";
-
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			if ($num > 1) print '<option value="-1">&nbsp;';
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				print '<option value="'.$obj->rowid.'"';
-				if ($_GET["dwid"]==$obj->rowid) print ' selected="true"';
-				print '>'.$obj->label ;
-				$i++;
-			}
-		}
-		print '</select>';
-		
+		$formproduct->selectWarehouses($_GET["dwid"],'id_entrepot','',1);
 		print '</td>';
 		print '<td width="20%">';
 		print '<select name="mouvement" class="flat">';
@@ -281,57 +264,13 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<input type="hidden" name="action" value="transfert_stock">';
 		print '<table class="border" width="100%"><tr>';
 		print '<td width="20%">'.$langs->trans("Source").'</td><td width="20%">';
-		
-		// Select datewarehous
-		print '<select name="id_entrepot_source">';
-
-		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " WHERE statut = 1";
-		$sql .= " ORDER BY lower(e.label)";
-
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			if ($num > 1) print '<option value="-1">&nbsp;';
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				print '<option value="'.$obj->rowid.'"';
-				if ($_GET["dwid"]==$obj->rowid) print ' selected="true"';
-				print '>'.$obj->label ;
-				$i++;
-			}
-		}
-		print '</select>';
-		
+		$formproduct->selectWarehouses($_GET["dwid"],'id_entrepot_source','',1);
 		print '</td>';
 
 		print '<td width="20%">'.$langs->trans("Target").'</td><td width="20%">';
-		
-		// Select datawarehous
-		print '<select name="id_entrepot_destination">';
-		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " WHERE statut = 1";
-		$sql .= " ORDER BY lower(e.label)";
-
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			if ($num > 1) print '<option value="-1">&nbsp;';
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				print '<option value="'.$obj->rowid.'">'.$obj->label ;
-				$i++;
-			}
-		}
-		print '</select>';
-		
+		$formproduct->selectWarehouses('','id_entrepot_destination','',1);
 		print '</td>';
+
 		print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
 		print '<tr><td colspan="6" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
@@ -341,7 +280,7 @@ if ($_GET["id"] || $_GET["ref"])
 	}
 
 	/*
-	 *
+	 * Set initial stock
 	 */
 	if ($_GET["action"] == "definir")
 	{
@@ -350,27 +289,8 @@ if ($_GET["id"] || $_GET["ref"])
 		print '<input type="hidden" name="action" value="create_stock">';
 		print '<table class="border" width="100%"><tr>';
 		print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="40%">';
-
-		// Select datawarehouse
-		print '<select name="id_entrepot">';
-		$sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
-		$sql .= " ORDER BY lower(e.label)";
-
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			if ($num > 1) print '<option value="-1">&nbsp;';
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				print '<option value="'.$obj->rowid.'">'.$obj->label ;
-				$i++;
-			}
-		}
-		print '</select>';
-		print '</td><td width="20%">'.$langs->trans("NbOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
+		$formproduct->selectWarehouses('','id_entrepot','',1);
+		print '</td><td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
 		print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';
 		print '</table>';
