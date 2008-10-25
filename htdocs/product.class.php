@@ -717,15 +717,41 @@ class Product extends CommonObject
 				return -1;
 			}
 			else
-			return 1;
-
-
+			{
+				return 1;
+			}
 		}
 	}
 
 
 	/**
-	 *    \brief		Lit le prix pratiqu� par un fournisseur
+	 *   	\brief  	Delete a price line
+	 * 		\param		user	Object user
+	 * 		\param		rowid	Line id to delete
+	 * 		\return		int		<0 if KO, >0 if OK
+	 */
+	function log_price_delete($user,$rowid)
+	{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
+			$sql.= " WHERE rowid=".$rowid;
+
+			dolibarr_syslog("Product::log_price_delete sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
+		
+	}
+
+	
+	/**
+	 *    \brief		Lit le prix pratique par un fournisseur
 	 *				On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref)
 	 *    \param     prodfournprice      Id du tarif = rowid table product_fournisseur_price
 	 *    \param     qty                 Quantit� du produit
