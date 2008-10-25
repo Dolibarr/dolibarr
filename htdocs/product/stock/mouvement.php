@@ -41,6 +41,11 @@ if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
 
 
+/*
+ * View
+ */
+
+$form=new Form($db);
 
 $sql = "SELECT p.rowid, p.label as produit,";
 $sql.= " s.label as stock, s.rowid as entrepot_id,";
@@ -116,13 +121,15 @@ if ($resql)
 		$head[$h][1] = $langs->trans("Info");
 		$h++;
 	
-		dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
+		dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse"));
 	
 	    print '<table class="border" width="100%">';
 	
 		// Ref
-	    print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
-	
+		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
+		print '</td>';
+	    
 	    print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 	
 		// Statut

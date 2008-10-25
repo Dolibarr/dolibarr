@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/product/stock/fiche.php
- \ingroup    stock
- \brief      Page fiche entrepot
- \version    $Id$
+ *	\file       htdocs/product/stock/fiche.php
+ *	\ingroup    stock
+ *	\brief      Page fiche entrepot
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -123,9 +123,10 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
  * View
  */
 
+$form=new Form($db);
+
 llxHeader("","",$langs->trans("WarehouseCard"));
 
-$form=new Form($db);
 
 if ($_GET["action"] == 'create')
 {
@@ -143,7 +144,7 @@ if ($_GET["action"] == 'create')
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
-
+	
 	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
 
 	// Description
@@ -235,13 +236,15 @@ else
 			$head[$h][1] = $langs->trans("Info");
 			$h++;
 
-			dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
+			dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse"));
 
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$entrepot->libelle.'</td>';
-
+			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+			print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
+			print '</td>';
+			
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 
 			// Description
