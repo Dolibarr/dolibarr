@@ -2937,16 +2937,16 @@ class Form
 
 
 	/**
-	 \brief  Affiche un select à partir d'un tableau
-	 \param	htmlname        Nom de la zone select
-	 \param	array           Tableau de key+valeur
-	 \param	id              Preselected key
-	 \param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
-	 \param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
-	 \param	value_as_key    1 pour utiliser la valeur comme clé
-	 \param	optionType      Type de l'option: 1 pour des fonctions javascript
-	 \param  option          Valeur de l'option en fonction du type choisi
-	 \param  translate       Traduire la valeur
+	 *	\brief  Show a select form from an array
+	 *	\param	htmlname        Nom de la zone select
+	 *	\param	array           Tableau de key+valeur
+	 *	\param	id              Preselected key
+	 *	\param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
+	 *	\param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
+	 *	\param	value_as_key    1 pour utiliser la valeur comme clé
+	 *	\param	optionType      Type de l'option: 1 pour des fonctions javascript
+	 *	\param  option          Valeur de l'option en fonction du type choisi
+	 *	\param  translate       Traduire la valeur
 	 */
 	function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0)
 	{
