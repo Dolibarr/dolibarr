@@ -60,7 +60,7 @@ if ($_GET["action"] == 'specimen')
 	//$sending->fetch_commande();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/livraison/mods/pdf/";
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/livraison/pdf/";
 	$file = "pdf_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
@@ -141,7 +141,7 @@ if ($_POST["action"] == 'set_DELIVERY_FREE_TEXT')
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activ�
+    // \todo Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
 	dolibarr_set_const($db, "LIVRAISON_ADDON",$_GET["value"]);
@@ -149,9 +149,10 @@ if ($_GET["action"] == 'setmod')
 
 
 /*
- * Affiche page
+ * View
  */
-$dir = DOL_DOCUMENT_ROOT."/livraison/mods/";
+
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/livraison/";
 $html=new Form($db);
 
 llxHeader("","");
@@ -209,7 +210,7 @@ if ($handle)
 		{
 			$file = substr($file, 0, strlen($file)-4);
 
-			require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/".$file.".php");
+			require_once(DOL_DOCUMENT_ROOT ."/includes/modules/livraison/".$file.".php");
 
 			$module = new $file;
 
@@ -312,7 +313,7 @@ print "</tr>\n";
 
 clearstatcache();
 
-$dir = DOL_DOCUMENT_ROOT."/livraison/mods/pdf/";
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/livraison/pdf/";
 
 if(is_dir($dir))
 {

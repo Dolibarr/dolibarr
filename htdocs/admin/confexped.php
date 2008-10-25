@@ -65,7 +65,7 @@ else if ($_GET["action"] == 'disable_delivery')
 /*
  * Affiche page
  */
-$dir = DOL_DOCUMENT_ROOT."/expedition/mods/";
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/";
 $html=new Form($db);
 
 llxHeader("","");

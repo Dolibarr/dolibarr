@@ -53,7 +53,7 @@ if ($_GET["action"] == 'specimen')
 	//$exp->fetch_commande();
 
 	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/expedition/mods/pdf/";
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/expedition/pdf/";
 	$file = "pdf_expedition_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
@@ -134,7 +134,7 @@ if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 	$moduleid=$_GET["moduleid"];
 	$statut=$_GET["statut"];
 
-	require_once(DOL_DOCUMENT_ROOT."/expedition/mods/methode_expedition_$module.modules.php");
+	require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_$module.modules.php");
 
 	$class = "methode_expedition_$module";
 	$expem = new $class($db);
@@ -208,7 +208,7 @@ if ($_GET["action"] == 'setmod')
 /*
  * Affiche page
  */
-$dir = DOL_DOCUMENT_ROOT."/expedition/mods/";
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/";
 $html=new Form($db);
 
 
@@ -379,7 +379,7 @@ print "</tr>\n";
 
 clearstatcache();
 
-$dir = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/";
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/";
 
 if(is_dir($dir))
 {
