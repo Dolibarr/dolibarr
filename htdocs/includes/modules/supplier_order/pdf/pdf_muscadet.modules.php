@@ -20,14 +20,14 @@
  */
 
 /**
- *	\file       htdocs/fourn/commande/modules/pdf_muscadet.modules.php
+ *	\file       htdocs/includes/modules/supplier_order/pdf/pdf_muscadet.modules.php
  *	\ingroup    fournisseur
  *	\brief      Fichier de la classe permettant de g�n�rer les commandes fournisseurs au mod�le Muscadet
  *	\author	    Regis Houssin
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/fourn/commande/modules/modules_commandefournisseur.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/supplier_order/modules_commandefournisseur.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
@@ -53,7 +53,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$this->db = $db;
 		$this->name = "muscadet";
-		$this->description = "Mod�le de commandes fournisseur complet (logo...)";
+		$this->description = "Modele de commandes fournisseur complet (logo...)";
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';

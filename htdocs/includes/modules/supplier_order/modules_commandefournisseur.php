@@ -21,12 +21,12 @@
  */
 
 /**
-            \file       htdocs/includes/modules/commande/modules_commandefournisseur.php
-                \ingroup    commande
-                \brief      Fichier contenant la classe mère de generation des commandes fournisseurs en PDF
-                            et la classe mère de numérotation des commandes fournisseurs
-                \version    $Id$
-*/
+ *		\file       htdocs/includes/modules/supplier_order/modules_commandefournisseur.php
+ *      \ingroup    commande
+ *      \brief      Fichier contenant la classe mère de generation des commandes fournisseurs en PDF
+ *                  et la classe mère de numérotation des commandes fournisseurs
+ *      \version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
@@ -158,7 +158,7 @@ function supplier_order_pdf_create($db, $comid, $modele='',$outputlangs='')
   global $langs;
   $langs->load("suppliers");
  
-  $dir = DOL_DOCUMENT_ROOT."/fourn/commande/modules/pdf/";
+  $dir = DOL_DOCUMENT_ROOT."//includes/modules/supplier_order/pdf/";
 
   // Positionne modele sur le nom du modele de commande fournisseur à utiliser
   if (! strlen($modele))

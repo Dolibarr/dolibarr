@@ -60,7 +60,7 @@ if ($_GET["action"] == 'specimen')
   $commande->initAsSpecimen();
   
   // Charge le modele
-  $dir = DOL_DOCUMENT_ROOT . "/fourn/commande/modules/pdf/";
+  $dir = DOL_DOCUMENT_ROOT . "/includes/modules/supplier_order/pdf/";
   $file = "pdf_".$modele.".modules.php";
   if (file_exists($dir.$file))
     {
@@ -152,16 +152,20 @@ if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "COMMANDE_FOURN
 /*
  * View
  */
- 
-llxHeader();
 
-$dir = "../fourn/commande/modules/pdf/";
 $html=new Form($db);
+
+llxHeader();
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("SuppliersSetup"),$linkback,'setup');
 
 print "<br>";
+
+
+// Supplier order numbering module
+
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/supplier_order/";
 
 print_titre($langs->trans("OrdersNumberingModules"));
 
@@ -176,7 +180,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$dir = "../fourn/commande/modules/";
 $handle = opendir($dir);
 if ($handle)
 {
@@ -188,7 +191,7 @@ if ($handle)
         {
             $file = substr($file, 0, strlen($file)-4);
 
-            require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/".$file.".php");
+            require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier_order/".$file.".php");
 
             $module = new $file;
 
@@ -251,9 +254,13 @@ if ($handle)
 
 print '</table><br>';
 
+
 /*
- * Modeles de documents
+ * Modeles documents for supplier orders
  */
+
+$dir = DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/pdf/';
+
 print_titre($langs->trans("OrdersModelModule"));
 
 // Defini tableau def de modele
@@ -278,8 +285,6 @@ else
 {
 	dolibarr_print_error($db);
 }
-
-$dir = "../fourn/commande/modules/pdf/";
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";

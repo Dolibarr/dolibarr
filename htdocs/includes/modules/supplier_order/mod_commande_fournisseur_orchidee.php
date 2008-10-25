@@ -20,13 +20,13 @@
  */
 
 /**
-	\file       htdocs/fourn/commande/modules/mod_commande_fournisseur_orchidee.php
-	\ingroup    commande
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de commande fournisseur Orchidee
-	\version    $Id$
-*/
+ *	\file       htdocs/includes/modules/supplier_order/mod_commande_fournisseur_orchidee.php
+ *	\ingroup    commande
+ *	\brief      Fichier contenant la classe du modèle de numérotation de référence de commande fournisseur Orchidee
+ *	\version    $Id$
+ */
 
-require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/modules_commandefournisseur.php");
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/supplier_order/modules_commandefournisseur.php");
 
 
 /**
