@@ -75,7 +75,7 @@ class EcmDirectory // extends CommonObject
 		$now=time();
 		
 		// Clean parameters
-    	$this->label=sanitizeFileName($this->label);
+    	$this->label=dol_string_nospecial(trim($this->label));
 		$this->fk_parent=trim($this->fk_parent);
 		$this->description=trim($this->description);
 		if (! $this->cachenbofdoc) $this->cachenbofdoc=0;
