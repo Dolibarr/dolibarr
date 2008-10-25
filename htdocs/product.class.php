@@ -814,7 +814,7 @@ class Product extends CommonObject
 	{
 		//multiprix
 		global $conf,$langs;
-		dolibarr_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase);
+		dolibarr_syslog("Product::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase, LOG_DEBUG);
 
 		if ($newvat == '') $newvat=$this->tva_tx;
 
@@ -826,10 +826,16 @@ class Product extends CommonObject
 				$price = price2num($newprice) / (1 + ($newvat / 100));
 				$price = price2num($price,'MU');
 
-				if($newminprice!=''){
+				if($newminprice!='')
+				{
 					$price_min_ttc = price2num($newminprice,'MU');
 					$price_min = price2num($newminprice) / (1 + ($newvat / 100));
 					$price_min = price2num($price_min,'MU');
+				}
+				else 
+				{
+					$price_min=0;
+					$price_min_ttc=0;
 				}
 			}
 			else
@@ -838,15 +844,22 @@ class Product extends CommonObject
 				$price_ttc = price2num($newprice) * (1 + ($newvat / 100));
 				$price_ttc = price2num($price_ttc,'MU');
 
-				if($newminprice!=''){
+				if ($newminprice!='')
+				{
 					$price_min = price2num($newminprice,'MU');
 					$price_min_ttc = price2num($newminprice) * (1 + ($newvat / 100));
 					$price_min_ttc = price2num($price_min_ttc,'MU');
 				}
+				else 
+				{
+					$price_min=0;
+					$price_min_ttc=0;
+				}
 			}
-
-			// Ne pas mettre de quote sur le num�riques decimaux.
-			// Ceci provoque des sotckage avec arrondis en base au lieu des valeurs exactes.
+			//print 'x'.$id.'-'.$newprice.'-'.$newpricebase.'-'.$price.'-'.$price_ttc.'-'.$price_min.'-'.$price_min_ttc;
+			
+			// Ne pas mettre de quote sur le numeriques decimaux.
+			// Ceci provoque des stockage avec arrondis en base au lieu des valeurs exactes.
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product SET";
 			$sql.= " price_base_type='".$newpricebase."',";
 			$sql.= " price=".$price.",";
