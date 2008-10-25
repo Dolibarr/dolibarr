@@ -20,18 +20,18 @@
  */
 
 /**
- *	\file       htdocs/expedition/mods/pdf/pdf_expedition_merou.modules.php
+ *	\file       htdocs/includes/modules/expedition/pdf/pdf_expedition_merou.modules.php
  *	\ingroup    expedition
- *	\brief      Fichier de la classe permettant de générer les bordereaux envoi au modèle Merou
+ *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modï¿½le Merou
  *	\version    $Id$
  */
 
-require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php";
+require_once DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php";
 require_once DOL_DOCUMENT_ROOT."/contact.class.php";
 
 /**
- *	\class      pdf_expedition_dorade
- *	\brief      Classe permettant de générer les borderaux envoi au modèle Merou
+ *	\class      pdf_expedition_merou
+ *	\brief      Classe permettant de generer les borderaux envoi au modele Merou
  */
 Class pdf_expedition_merou extends ModelePdfExpedition
 {
@@ -40,7 +40,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 	/**
 	 \brief  Constructeur
-	 \param	db		Handler accès base de donnée
+	 \param	db		Handler accï¿½s base de donnï¿½e
 	 */
 	function pdf_expedition_merou($db=0)
 	{
@@ -49,7 +49,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$this->db = $db;
 		$this->name = "Merou";
 		$this->description = "Modele Merou 2xA5 \n
-	Attention !! Il est nécessaire de creer 4 nouveaux types de contact : \n 
+	Attention !! Il est necessaire de creer 4 nouveaux types de contact : \n 
 	 |element->commande,source->internal,code->LIVREUR \n
 	 |element->commande,source->external,code->LIVREUR \n
 	 |element->commande,source->external,code->EXPEDITEUR \n
@@ -65,13 +65,13 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 	}
 
 
 	/**
-	 *		\brief      Fonction générant le document sur le disque
-	 *		\param	    obj		Objet expedition à générer (ou id si ancienne methode)
+	 *		\brief      Fonction generant le document sur le disque
+	 *		\param	    obj		Objet expedition a generer (ou id si ancienne methode)
 	 *		\return	    int     1=ok, 0=ko
 	 */
 	function write_file(&$obj, $outputlangs='')
@@ -116,7 +116,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			if ($idcontact[0]) $this->livreur->fetch();
 				
 
-			// Définition de $dir et $file
+			// Dï¿½finition de $dir et $file
 			if ($this->expe->specimen)
 			{
 				$dir = $conf->expedition_bon->dir_output;
@@ -149,7 +149,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				{
 					$pdfrights = array('print'); // Ne permet que l'impression du document
 					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
 					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
 				}
 
@@ -168,7 +168,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				//Insertion de l entete
 				$this->_pagehead($pdf, $this->expe, $outputlangs);
 
-				//Initialisation des coordonnées
+				//Initialisation des coordonnï¿½es
 				$tab_top = 53;
 				$tab_height = 70;
 				$pdf->SetFillColor(240,240,240);
@@ -188,7 +188,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					//Generation du produit
 					$Prod = new Product($this->db);
 					$Prod->fetch($Produits[$i]->fk_product);
-					//Creation des cases à cocher
+					//Creation des cases ï¿½ cocher
 					$pdf->rect(10+3, $curY+1, 3, 3);
 					$pdf->rect(20+3, $curY+1, 3, 3);
 					//Insertion de la reference du produit
@@ -199,11 +199,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (50, $curY );
 					$pdf->MultiCell(90, 5, $Prod->libelle, 0, 'L', 0);
-					//Insertion de la quantite commandée
+					//Insertion de la quantite commandï¿½e
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (140, $curY );
 					$pdf->MultiCell(30, 5, $this->expe->lignes[$i]->qty_asked, 0, 'C', 0);
-					//Insertion de la quantite à envoyer
+					//Insertion de la quantite ï¿½ envoyer
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (170, $curY );
 					$pdf->MultiCell(30, 5, $this->expe->lignes[$i]->qty_shipped, 0, 'C', 0);

@@ -14,17 +14,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * $Id$
- * $Source$
+ */
+
+/*
+ * 	\version	$Id$
  */
 
 include_once "methode_expedition.modules.php";
 
+
 Class methode_expedition_colsui extends methode_expedition
 {
 
-  Function methode_expedition_colsui($db=0)
+  	function methode_expedition_colsui($db=0)
     { 
       $this->db = $db;
       $this->id = 3; // Do not change this value

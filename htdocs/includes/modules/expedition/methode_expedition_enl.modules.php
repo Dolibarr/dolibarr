@@ -13,25 +13,27 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * $Id$
- * $Source$
- *
+ */
+
+/*
+ * 	\version	$Id$
  */
 
 include_once "methode_expedition.modules.php";
 
-Class methode_expedition_trans extends methode_expedition
+
+Class methode_expedition_enl extends methode_expedition
 {
 
-  Function methode_expedition_trans($db=0)
-    { 
-      $this->db = $db;
-      $this->id = 2; // Ne pas changer cette valeur
-      $this->code = "TRANS";
-      $this->name = "Transporteur";
-      $this->description = "Transporteur générique";
-    }
+	function methode_expedition_enl($db=0)
+	{
+		global $langs;
+		$this->db = $db;
+		$this->id = 1; // Do not change this value
+		$this->name = "Enlevement";
+		$this->code = "ENL";
+		$this->description = $langs->trans("Enlevement");
+	}
 }
 
 ?>

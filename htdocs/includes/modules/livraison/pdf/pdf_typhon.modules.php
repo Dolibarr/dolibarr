@@ -21,14 +21,14 @@
  */
 
 /**
- *	\file       htdocs/livraison/mods/pdf/pdf_typhon.modules.php
+ *	\file       htdocs/includes/modules/livraison/pdf/pdf_typhon.modules.php
  *	\ingroup    livraison
- *	\brief      Fichier de la classe permettant de g�n�rer les bons de livraison au mod�le Typho
+ *	\brief      Fichier de la classe permettant de generer les bons de livraison au mod�le Typho
  *	\author	    Laurent Destailleur
  *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
@@ -55,7 +55,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		
         $this->db = $db;
 		$this->name = "typhon";
-		$this->description = "Modele de bon de r�ception livraison complet (logo...)";
+		$this->description = $langs->trans("DocumentModelTyphon");
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';

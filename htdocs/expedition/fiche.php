@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2008 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2008 Régis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
 if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
@@ -73,8 +72,8 @@ if ($_POST["action"] == 'add')
 	$expedition->origin           = $origin;
 	$expedition->origin_id        = $origin_id;
 
-	// On boucle sur chaque ligne du document d'origine pour compléter objet expedition
-	// avec qté à livrer
+	// On boucle sur chaque ligne du document d'origine pour complï¿½ter objet expedition
+	// avec qtï¿½ ï¿½ livrer
 	$class = ucfirst($expedition->origin);
 	$object = new $class($db);
 	$object->fetch($expedition->origin_id);
@@ -113,7 +112,7 @@ if ($_POST["action"] == 'add')
 }
 
 /*
- * Génère un bon de livraison
+ * Gï¿½nï¿½re un bon de livraison
  */
 if ($_GET["action"] == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 {
@@ -152,11 +151,13 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 }
 
 /*
- * Générer ou regénérer le PDF
+ * Build doc
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-	// Sauvegarde le dernier modèle choisi pour générer un document
+	require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php");
+	
+	// Sauvegarde le dernier modele choisi pour generer un document
 	$expedition = new Expedition($db, 0, $_REQUEST['id']);
 	$expedition->fetch($_REQUEST['id']);
 
@@ -269,7 +270,7 @@ if ($_GET["action"] == 'create')
 			print "<tr><td>".$langs->trans("Date")."</td>";
 			print '<td colspan="3">'.dolibarr_print_date($object->date,"day")."</td></tr>\n";
 
-			// Entrepot (si forcé)
+			// Entrepot (si forcï¿½)
 			if ($conf->stock->enabled && $_GET["entrepot_id"])
 			{
 				print '<tr><td>'.$langs->trans("Warehouse").'</td>';
@@ -307,7 +308,7 @@ if ($_GET["action"] == 'create')
 			//$lignes = $object->fetch_lines(1);
 			$numAsked = sizeof($object->lignes);
 
-			/* Lecture des expeditions déjà effectuées */
+			/* Lecture des expeditions dï¿½jï¿½ effectuï¿½es */
 			$object->loadExpeditions();
 
 			if ($numAsked)
@@ -370,12 +371,12 @@ if ($_GET["action"] == 'create')
 					if ($_GET["entrepot_id"])
 					{
 						$stock = $product->stock_entrepot[$_GET["entrepot_id"]];
-						$stock+=0;  // Convertit en numérique
+						$stock+=0;  // Convertit en numï¿½rique
 						$defaultqty=min($quantityToBeDelivered, $stock);
 						if ($defaultqty < 0) $defaultqty=0;
 					}
 
-					// Quantité à livrer
+					// Quantitï¿½ ï¿½ livrer
 					print '<td align="center">';
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$ligne->id.'">';
 					print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
@@ -428,7 +429,7 @@ if ($_GET["action"] == 'create')
 				}
 				else
 				{
-					// Quantité à livrer
+					// Quantitï¿½ ï¿½ livrer
 					print '<td align="center">';
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$ligne->id.'">';
 					print '<input name="qtyl'.$indiceAsked.'" type="text" size="6" value="'.$quantityToBeDelivered.'">';
@@ -543,7 +544,7 @@ else
 			}
 
 			// calcul du poids total et du volume total des produits
-			//TODO: ajouter conversion pour le poids et le volume et selection de l'unité de mesure la plus utilisée
+			//TODO: ajouter conversion pour le poids et le volume et selection de l'unitï¿½ de mesure la plus utilisï¿½e
 			$totalWeight = '';
 			$totalVolume = '';
 			for ($i = 0 ; $i < $num_prod ; $i++)
@@ -565,7 +566,7 @@ else
 			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 			print "</tr>";
 
-			// Document liée
+			// Document liï¿½e
 			print '<tr><td>';
 			if ($conf->commande->enabled)
 			{
@@ -661,7 +662,7 @@ else
 					print "<td>".nl2br($lignes[$i]->description)."</td>\n";
 				}
 
-				// Qte commandé
+				// Qte commandï¿½
 				print '<td align="center">'.$lignes[$i]->qty_asked.'</td>';
 
 				// Qte a expedier ou expedier
@@ -758,7 +759,7 @@ else
 	}
 	else
 	{
-		print "Expedition inexistante ou accés refusé";
+		print "Expedition inexistante ou accï¿½s refusï¿½";
 	}
 }
 

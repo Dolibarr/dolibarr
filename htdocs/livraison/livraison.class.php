@@ -336,9 +336,9 @@ class Livraison extends CommonObject
 		{
 			if (defined('LIVRAISON_ADDON'))
 			{
-				if (is_readable(DOL_DOCUMENT_ROOT .'/livraison/mods/'.LIVRAISON_ADDON.'.php'))
+				if (is_readable(DOL_DOCUMENT_ROOT .'/includes/modules/livraison/'.LIVRAISON_ADDON.'.php'))
 				{
-					require_once DOL_DOCUMENT_ROOT .'/livraison/mods/'.LIVRAISON_ADDON.'.php';
+					require_once DOL_DOCUMENT_ROOT .'/includes/modules/livraison/'.LIVRAISON_ADDON.'.php';
 	
 					// Definition du nom de module de numerotation de commande
 					$modName=LIVRAISON_ADDON;
@@ -348,14 +348,14 @@ class Livraison extends CommonObject
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 	
-					// on verifie si le bon de livraison est en numérotation provisoire
+					// on verifie si le bon de livraison est en numï¿½rotation provisoire
 					$livref = substr($this->ref, 1, 4);
 					if ($livref == 'PROV')
 					{
 						$this->ref = $objMod->livraison_get_num($soc,$this);
 					}
 	
-					// Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
+					// Tester si non dejï¿½ au statut validï¿½. Si oui, on arrete afin d'ï¿½viter
           // de decrementer 2 fois le stock.
           $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."livraison where ref='".$this->ref."' AND fk_statut <> 0";
           $resql=$this->db->query($sql);
@@ -374,7 +374,7 @@ class Livraison extends CommonObject
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
-						// Si module stock géré et que expedition faite depuis un entrepot
+						// Si module stock gï¿½rï¿½ et que expedition faite depuis un entrepot
 						if (!$conf->expedition->enabled && $conf->stock->enabled && $this->entrepot_id && $conf->global->STOCK_CALCULATE_ON_SHIPMENT == 1)
 						{
 	
@@ -469,9 +469,9 @@ class Livraison extends CommonObject
 		return 1;
 	}
 	
-	/**     \brief      Créé le bon de livraison depuis une expédition existante
-	 *		\param      user            Utilisateur qui crée
-	 *		\param      sending_id      Id de l'expédition qui sert de modèle
+	/**     \brief      Crï¿½ï¿½ le bon de livraison depuis une expï¿½dition existante
+	 *		\param      user            Utilisateur qui crï¿½e
+	 *		\param      sending_id      Id de l'expï¿½dition qui sert de modï¿½le
 	*/
 	function create_from_sending($user, $sending_id)
 	{
@@ -671,8 +671,8 @@ class Livraison extends CommonObject
 
 
     /**
-     *    \brief      Retourne le libellé du statut d'une expedition
-     *    \return     string      Libellé
+     *    \brief      Retourne le libellï¿½ du statut d'une expedition
+     *    \return     string      Libellï¿½
      */
     function getLibStatut($mode=0)
     {
@@ -680,10 +680,10 @@ class Livraison extends CommonObject
     }
     
 	/**
-	 *		\brief      Renvoi le libellé d'un statut donné
+	 *		\brief      Renvoi le libellï¿½ d'un statut donnï¿½
 	 *    	\param      statut      Id statut
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string		Libellé
+	 *    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string		Libellï¿½
 	 */
     function LibStatut($statut,$mode)
     {

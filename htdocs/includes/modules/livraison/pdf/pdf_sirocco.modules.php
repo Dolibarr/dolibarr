@@ -21,18 +21,18 @@
  */
 
 /**
- \file       htdocs/livraison/mods/pdf/pdf_sirocco.modules.php
- \ingroup    livraison
- \brief      Fichier de la classe permettant de g�n�rer les bons de livraison au mod�le Sirocco
- \version    $Id$
+ *	\file       htdocs/includes/modules/livraison/pdf/pdf_sirocco.modules.php
+ *	\ingroup    livraison
+ *	\brief      Fichier de la classe permettant de generer les bons de livraison au mod�le Sirocco
+ *	\version    $Id$
  */
 
-require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
 
 
 /**
- \class      pdf_sirocco
- \brief      Classe permettant de g�n�rer les bons de livraison au mod�le Sirocco
+ *	\class      pdf_sirocco
+ *	\brief      Classe permettant de generer les bons de livraison au modele Sirocco
  */
 
 class pdf_sirocco extends ModelePDFDeliveryOrder
@@ -50,8 +50,8 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		
         $this->db = $db;
 		$this->name = "sirocco";
-		$this->description = "Modele de bon de r�ception livraison simple";
-
+		$this->description = $langs->trans("DocumentModelSirocco");
+		
 		// Dimension page pour format A4
 		$this->type = 'pdf';
 		$this->page_largeur = 210;

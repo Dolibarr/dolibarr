@@ -20,18 +20,18 @@
  */
 
 /** 
-    \file       htdocs/includes/modules/commande/mod_livraison_jade.php
+    \file       htdocs/includes/modules/livraison/mod_livraison_jade.php
     \ingroup    livraison
-    \brief      Fichier contenant la classe du modèle de numérotation de référence de bon de livraison Jade
+    \brief      Fichier contenant la classe du modele de numerotation de reference de bon de livraison Jade
     \version    $Id$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/modules_livraison.php");
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/livraison/modules_livraison.php");
 
 
 /**
    \class      mod_livraison_jade
-   \brief      Classe du modèle de numérotation de référence de bon de livraison Jade
+   \brief      Classe du modele de numerotation de reference de bon de livraison Jade
 */
 
 class mod_livraison_jade extends ModeleNumRefDeliveryOrder
@@ -41,15 +41,16 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 	var $nom = "Jade";
 
 
-	/**     \brief      Renvoi la description du modele de numérotation
+	/**     \brief      Renvoi la description du modele de numerotation
 	*      \return     string      Texte descripif
 	*/
 	function info()
 	{
-		return "Renvoie le numéro sous la forme numérique BLYY00001, BLYY00002, BLYY00003, ... où YY représente l'année. Le numéro d'incrément qui suit l'année n'est PAS remis à zéro en début d'année.";
+		global $langs;
+		return $langs->trans("NumRefModelJade");
 	}
   
-      /**     \brief      Renvoi un exemple de numérotation
+      /**     \brief      Renvoi un exemple de numerotation
      *      \return     string      Example
      */
     function getExample()
@@ -66,7 +67,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     {
         global $db;
 
-        // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
+        // D'abord on rï¿½cupï¿½re la valeur max (rï¿½ponse immï¿½diate car champ indï¿½xï¿½)
         $blyy='';
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
@@ -77,10 +78,10 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
             if ($row) $blyy = substr($row[0],0,4);
         }
     
-        // Si au moins un champ respectant le modèle a été trouvée
+        // Si au moins un champ respectant le modï¿½le a ï¿½tï¿½ trouvï¿½e
         if (eregi('BL[0-9][0-9]',$blyy))
         {
-            // Recherche rapide car restreint par un like sur champ indexé
+            // Recherche rapide car restreint par un like sur champ indexï¿½
             $posindice=5;
             $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
@@ -105,8 +106,8 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
   
-    /**     \brief      Renvoie la référence de commande suivante non utilisée
-     *      \param      objsoc      Objet société
+    /**     \brief      Renvoie la rï¿½fï¿½rence de commande suivante non utilisï¿½e
+     *      \param      objsoc      Objet sociï¿½tï¿½
      *      \param      livraison	Objet livraison
      *      \return     string      Texte descripif
      */

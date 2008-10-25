@@ -20,11 +20,11 @@
  */
 
 /**
-   \file       htdocs/expedition/mods/pdf/ModelePdfExpedition.class.php
-   \ingroup    shipping
-   \brief      Fichier contenant la classe mère de generation des expeditions
-   \version    $Id$
-*/
+ *  \file       htdocs/includes/module/expedition/pdf/ModelePdfExpedition.class.php
+ *  \ingroup    shipping
+ *  \brief      Fichier contenant la classe mere de generation des expeditions
+ *  \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 require_once DOL_DOCUMENT_ROOT.'/includes/fpdf/DolibarrPdfBarCode.class.php';
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/fpdf/DolibarrPdfBarCode.class.php';
 
 /**
    \class      ModelePdfExpedition
-   \brief      Classe mère des modèles de bon d'expedition
+   \brief      Classe mï¿½re des modï¿½les de bon d'expedition
 */
 
 class ModelePdfExpedition extends DolibarrPdfBarCode
@@ -41,7 +41,7 @@ class ModelePdfExpedition extends DolibarrPdfBarCode
 
 
    /** 
-        \brief Renvoi le dernier message d'erreur de création de PDF de commande
+        \brief Renvoi le dernier message d'erreur de crï¿½ation de PDF de commande
     */
     function pdferror()
     {
@@ -50,7 +50,7 @@ class ModelePdfExpedition extends DolibarrPdfBarCode
 
 
     /** 
-     *      \brief      Renvoi la liste des modèles actifs
+     *      \brief      Renvoi la liste des modï¿½les actifs
      *      \return    array        Tableau des modeles (cle=id, valeur=libelle)
      */
     function liste_modeles($db)
@@ -84,11 +84,11 @@ class ModelePdfExpedition extends DolibarrPdfBarCode
 }
 
 
-/*
-		\brief      Crée un bon d'expedition sur disque
-		\param	    db  			objet base de donnée
-		\param	    id				id de la expedition à créer
-		\param	    modele			force le modele à utiliser ('' par defaut)
+/**
+		\brief      Cree un bon d'expedition sur disque
+		\param	    db  			objet base de donnee
+		\param	    id				id de la expedition a creer
+		\param	    modele			force le modele a utiliser ('' par defaut)
 		\param		outputlangs		objet lang a utiliser pour traduction
 */
 function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
@@ -96,10 +96,10 @@ function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
 	global $conf,$langs;
 	$langs->load("sendings");
 	
-	$dir = DOL_DOCUMENT_ROOT."/expedition/mods/pdf/";
+	$dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/";
 	$modelisok=0;
 
-	// Positionne modele sur le nom du modele de commande à utiliser
+	// Positionne modele sur le nom du modele de commande a utiliser
 	$file = "pdf_expedition_".$modele.".modules.php";
 	if ($modele && file_exists($dir.$file)) $modelisok=1;
 
@@ -117,7 +117,7 @@ function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
 	    $liste=array();
 		$model=new ModelePDFExpedition();
 		$liste=$model->liste_modeles($db);
-        $modele=key($liste);        // Renvoie premiere valeur de clé trouvé dans le tableau
+        $modele=key($liste);        // Renvoie premiere valeur de clï¿½ trouvï¿½ dans le tableau
       	$file = "pdf_expedition_".$modele.".modules.php";
     	if (file_exists($dir.$file)) $modelisok=1;
 	}

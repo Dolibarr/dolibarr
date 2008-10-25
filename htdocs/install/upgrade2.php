@@ -1526,7 +1526,7 @@ function migrate_modeles($db,$langs,$conf)
 
 	if ($conf->expedition->enabled)
 	{
-		include_once(DOL_DOCUMENT_ROOT.'/expedition/mods/pdf/ModelePdfExpedition.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/expedition/pdf/ModelePdfExpedition.class.php');
 		$model=new ModelePDFExpedition();
 		$modellist=$model->liste_modeles($db);
 		if (sizeof($modellist)==0)

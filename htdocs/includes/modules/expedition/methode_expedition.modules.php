@@ -16,24 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
- \file       htdocs/expedition/mods/methode_expedition.modules.php
- \ingroup    expedition
- \brief      Fichier contenant la classe m�re de generation de bon de livraison en PDF
- et la classe m�re de num�rotation des bons de livraisons
- \version    $Revision$
+ *	\file       htdocs/includes/modules/expedition/methode_expedition.modules.php
+ *	\ingroup    expedition
+ *	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
+ *				et la classe mere de numerotation des bons de livraisons
+ * 	\version	$Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
+
 /**
- \class      methode_expedition
- \brief      Classe m�re des methodes expeditions
+ *	\class      methode_expedition
+ *	\brief      Classe mere des methodes expeditions
  */
 class methode_expedition
 {

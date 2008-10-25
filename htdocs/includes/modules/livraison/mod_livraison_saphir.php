@@ -20,17 +20,17 @@
  */
 
 /**
-	\file       htdocs/includes/modules/commande/mod_livraison_saphir.php
+	\file       htdocs/includes/modules/livraison/mod_livraison_saphir.php
 	\ingroup    expedition
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de livraison Saphir
+	\brief      Fichier contenant la classe du modele de numerotation de reference de livraison Saphir
 	\version    $Id$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/modules_livraison.php");
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/livraison/modules_livraison.php");
 
 /**
 	\class      mod_livraison_saphir
-	\brief      Classe du modèle de numérotation de référence de livraison Saphir
+	\brief      Classe du modï¿½le de numï¿½rotation de rï¿½fï¿½rence de livraison Saphir
 */
 class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 {
@@ -39,7 +39,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	var $nom = 'Saphir';
 	
 	
-    /**     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numerotation
      *      \return     string      Texte descripif
      */
 	function info()
@@ -70,7 +70,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 		return $texte;
     }
 
-    /**     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numï¿½rotation
      *      \return     string      Example
      */
     function getExample()
@@ -101,7 +101,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 
 		require_once(DOL_DOCUMENT_ROOT ."/lib/functions2.lib.php");
 		
-		// On défini critere recherche compteur
+		// On dï¿½fini critere recherche compteur
 		$mask=$conf->global->LIVRAISON_SAPHIR_MASK;
 		
 		if (! $mask) 
@@ -127,8 +127,8 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
     }
     
 
-	/**     \brief      Renvoie la référence de commande suivante non utilisée
-     *      \param      objsoc      Objet société
+	/**     \brief      Renvoie la rï¿½fï¿½rence de commande suivante non utilisï¿½e
+     *      \param      objsoc      Objet sociï¿½tï¿½
      *      \param      livraison	Objet livraison
      *      \return     string      Texte descripif
      */

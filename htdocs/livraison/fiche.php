@@ -28,7 +28,7 @@
  */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/livraison/modules_livraison.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
 if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT."/product.class.php");

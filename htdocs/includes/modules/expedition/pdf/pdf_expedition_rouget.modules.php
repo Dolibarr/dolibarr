@@ -19,18 +19,18 @@
  */
 
 /**
- *	\file       htdocs/expedition/mods/pdf/pdf_expedition_rouget.modules.php
+ *	\file       htdocs/includes/modules/expedition/pdf/pdf_expedition_rouget.modules.php
  *	\ingroup    expedition
- *	\brief      Fichier de la classe permettant de générer les bordereaux envoi au modèle Rouget
+ *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modï¿½le Rouget
  *	\version    $Id$
  */
 
-require_once DOL_DOCUMENT_ROOT."/expedition/mods/pdf/ModelePdfExpedition.class.php";
+require_once DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php";
 
 
 /**
  *	\class      pdf_expedition_dorade
- *	\brief      Classe permettant de générer les borderaux envoi au modèle Rouget
+ *	\brief      Classe permettant de generer les borderaux envoi au modele Rouget
  */
 Class pdf_expedition_rouget extends ModelePdfExpedition
 {
@@ -39,7 +39,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 	/**
 	 \brief  Constructeur
-	 \param	db		Handler accès base de donnée
+	 \param	db		Handler accï¿½s base de donnï¿½e
 	 */
 	function pdf_expedition_rouget($db=0)
 	{
@@ -47,7 +47,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		$this->db = $db;
 		$this->name = "rouget";
-		$this->description = "Modèle simple.";
+		$this->description = $langs->trans("DocumentModelSimple");
 
 		$this->type = 'pdf';
 		$this->page_largeur = 210;
@@ -62,7 +62,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 		// Recupere emmetteur
 		$this->emetteur=$mysoc;
-		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'ï¿½tait pas dï¿½fini
 	}
 
 	/*
@@ -112,8 +112,8 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 
 	/**
-	 *		\brief      Fonction générant le document sur le disque
-	 *		\param	    obj		Objet expedition à générer (ou id si ancienne methode)
+	 *		\brief      Fonction gï¿½nï¿½rant le document sur le disque
+	 *		\param	    obj		Objet expedition ï¿½ gï¿½nï¿½rer (ou id si ancienne methode)
 	 *		\return	    int     1=ok, 0=ko
 	 */
 	function write_file(&$obj, $outputlangs='')
@@ -136,7 +136,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		{
 			$this->expe = $obj;
 
-			// Définition de $dir et $file
+			// Dï¿½finition de $dir et $file
 			if ($this->expe->specimen)
 			{
 				$dir = $conf->expedition_bon->dir_output;
@@ -220,7 +220,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 						if ($libelleproduitservice) $libelleproduitservice.="<br>";
 						$libelleproduitservice.=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
 					}
-					// Si ligne associée à un code produit
+					// Si ligne associï¿½e ï¿½ un code produit
 					if ($this->expe->lignes[$i]->fk_product)
 					{
 						$prodser = new Product($this->db);
@@ -240,7 +240,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 					}
 
-					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gï¿½rer multi-page
 
 					$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $libelleproduitservice, 0, 1);
 
