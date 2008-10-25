@@ -84,7 +84,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account = new Account($db, $_POST["id"]);
     $account->fetch($_POST["id"]);
 
-    $account->ref             = sanitize_string(trim($_POST["ref"]));
+    $account->ref             = dol_string_nospecial(trim($_POST["ref"]));
     $account->label           = trim($_POST["label"]);
     $account->courant         = $_POST["type"];
     $account->clos            = $_POST["clos"];

@@ -161,7 +161,7 @@ class Product extends CommonObject
 		$this->errno = 0;
 
 		// Clean parameters
-		$this->ref = trim(sanitize_string($this->ref));
+		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->libelle = trim($this->libelle);
 		if ($this->tva_tx=='') $this->tva_tx = 0;
 		if ($this->price=='')  $this->price = 0;
@@ -357,7 +357,7 @@ class Product extends CommonObject
 		if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
 
 		// Nettoyage parametres
-		$this->ref = trim(sanitize_string($this->ref));
+		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->libelle = trim($this->libelle);
 		$this->description = trim($this->description);
 		$this->note = trim($this->note);

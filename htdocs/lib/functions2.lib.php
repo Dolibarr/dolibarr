@@ -61,7 +61,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		$maskrefclient_maskoffset=0; //default value of maskrefclient_counter offset
 		$maskrefclient_clientcode=substr($valueforccc,0,strlen($maskrefclient_maskclientcode));//get n first characters of client code to form maskrefclient_clientcode
 		$maskrefclient_clientcode=str_pad($maskrefclient_clientcode,strlen($maskrefclient_maskclientcode),"#",STR_PAD_RIGHT);//padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
-		$maskrefclient_clientcode=sanitize_string($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
+		$maskrefclient_clientcode=dol_string_nospecial($maskrefclient_clientcode);//sanitize maskrefclient_clientcode for sql insert and sql select like
 		if (strlen($maskrefclient_maskcounter) > 0 && strlen($maskrefclient_maskcounter) < 3) return 'CounterMustHaveMoreThan3Digits';
 	}
 	else $maskrefclient='';
@@ -121,16 +121,16 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	//print "x".$sqlstring;
 
 	// Define $maskLike
-	$maskLike = sanitize_string($mask);
+	$maskLike = dol_string_nospecial($mask);
 	$maskLike = str_replace("%","_",$maskLike);
 	// Replace protected special codes with matching number of _ as wild card caracter
-	$maskLike = str_replace(sanitize_string('{yyyy}'),'____',$maskLike);
-	$maskLike = str_replace(sanitize_string('{yy}'),'__',$maskLike);
-	$maskLike = str_replace(sanitize_string('{y}'),'_',$maskLike);
-	$maskLike = str_replace(sanitize_string('{mm}'),'__',$maskLike);
-	$maskLike = str_replace(sanitize_string('{dd}'),'__',$maskLike);
-	$maskLike = str_replace(sanitize_string('{'.$masktri.'}'),str_pad("",strlen($maskcounter),"_"),$maskLike);
-	if ($maskrefclient) $maskLike = str_replace(sanitize_string('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{yyyy}'),'____',$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{yy}'),'__',$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{y}'),'_',$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{mm}'),'__',$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{dd}'),'__',$maskLike);
+	$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",strlen($maskcounter),"_"),$maskLike);
+	if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",strlen($maskrefclient),"_"),$maskLike);
 
 	// Get counter in database
 	$counter=0;
@@ -163,16 +163,16 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 		//print "x".$sqlstring;
 
 		// Define $maskrefclient_maskLike
-		$maskrefclient_maskLike = sanitize_string($mask);
+		$maskrefclient_maskLike = dol_string_nospecial($mask);
 		$maskrefclient_maskLike = str_replace("%","_",$maskrefclient_maskLike);
 		// Replace protected special codes with matching number of _ as wild card caracter
-		$maskrefclient_maskLike = str_replace(sanitize_string('{yyyy}'),'____',$maskrefclient_maskLike);
-		$maskrefclient_maskLike = str_replace(sanitize_string('{yy}'),'__',$maskrefclient_maskLike);
-		$maskrefclient_maskLike = str_replace(sanitize_string('{y}'),'_',$maskrefclient_maskLike);
-		$maskrefclient_maskLike = str_replace(sanitize_string('{mm}'),'__',$maskrefclient_maskLike);
-		$maskrefclient_maskLike = str_replace(sanitize_string('{dd}'),'__',$maskrefclient_maskLike);
-		$maskrefclient_maskLike = str_replace(sanitize_string('{'.$masktri.'}'),str_pad("",strlen($maskcounter),"_"),$maskrefclient_maskLike);
-		$maskrefclient_maskLike = str_replace(sanitize_string('{'.$maskrefclient.'}'),$maskrefclient_clientcode.str_pad("",strlen($maskrefclient_maskcounter),"_"),$maskrefclient_maskLike);
+		$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yyyy}'),'____',$maskrefclient_maskLike);
+		$maskrefclient_maskLike = str_replace(dol_string_nospecial('{yy}'),'__',$maskrefclient_maskLike);
+		$maskrefclient_maskLike = str_replace(dol_string_nospecial('{y}'),'_',$maskrefclient_maskLike);
+		$maskrefclient_maskLike = str_replace(dol_string_nospecial('{mm}'),'__',$maskrefclient_maskLike);
+		$maskrefclient_maskLike = str_replace(dol_string_nospecial('{dd}'),'__',$maskrefclient_maskLike);
+		$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'),str_pad("",strlen($maskcounter),"_"),$maskrefclient_maskLike);
+		$maskrefclient_maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),$maskrefclient_clientcode.str_pad("",strlen($maskrefclient_maskcounter),"_"),$maskrefclient_maskLike);
 
 		// Get counter in database
 		$maskrefclient_counter=0;

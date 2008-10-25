@@ -37,9 +37,9 @@ if (! defined('ADODB_DATE_VERSION')) include_once(DOL_DOCUMENT_ROOT."/includes/a
 
 
 /**
- \brief      Renvoi vrai si l'email est syntaxiquement valide
- \param	    address     adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- \return     boolean     true si email valide, false sinon
+ *	\brief      Renvoi vrai si l'email est syntaxiquement valide
+ *	\param	    address     adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	\return     boolean     true si email valide, false sinon
  */
 function ValidEmail($address)
 {
@@ -57,11 +57,11 @@ function ValidEmail($address)
 }
 
 /**
- \brief      Renvoi vrai si l'email a un nom de domaine qui r�soud via dns
- \param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
- \return     boolean     true si email valide, false sinon
+ *	\brief      Renvoi vrai si l'email a un nom de domaine qui r�soud via dns
+ *	\param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+ *	\return     boolean     true si email valide, false sinon
  */
-function check_mail ($mail)
+function check_mail($mail)
 {
 	list($user, $domain) = split("@", $mail, 2);
 	if (checkdnsrr($domain, "MX"))
@@ -75,15 +75,25 @@ function check_mail ($mail)
 }
 
 /**
- \brief          Nettoie chaine de caractere des accents
- \param          str             Chaine a nettoyer
- \return         string          Chaine nettoyee
+ *	\brief          Clean a string to use it as a file name.
+ *	\param          str             String to clean
+ * 	\param			newstr			String to replace bad chars by
+ *	\return         string          String cleaned (a-zA-Z_)
  */
-function unaccent_isostring($str)
+function sanitizeFileName($str,$newstr='_')
+{
+	return dol_string_nospecial(dol_string_unaccent($str),$newstr);
+}
+
+/**
+ *	\brief          Clean a string from all accent characters
+ *	\param          str             String to clean
+ *	\return         string          Cleaned string
+ */
+function dol_string_unaccent($str)
 {
 	if (utf8_check($str))
 	{
-		// TODO add utf8 convertion
 		$translationutf=array(	);
 		return str_replace(array_keys($translationutf), array_values($translationutf), $str);
 	}
@@ -98,31 +108,18 @@ function unaccent_isostring($str)
 }
 
 /**
- *	\brief          Nettoie chaine de caractere de ces caracteres speciaux
- *	\remarks		Fonction appelee par exemple pour definir un nom de fichier depuis un identifiant chaine libre
+ *	\brief          Clean a string from all punctuation characters
  *	\param          str             String to clean
  * 	\param			newstr			String to replace bad chars by
- *	\return         string          String cleaned (a-zA-Z_)
+ * 	\return         string          Cleaned string
  */
-function sanitize_string($str,$newstr='_')
+function dol_string_nospecial($str,$newstr='_')
 {
 	$forbidden_chars_to_underscore=array(" ","'","/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 	//$forbidden_chars_to_remove=array("(",")");
 	$forbidden_chars_to_remove=array();
 
 	return str_replace($forbidden_chars_to_underscore,$newstr,str_replace($forbidden_chars_to_remove,"",$str));
-}
-
-/**
- *	\brief          Nettoie chaine de caractere de ces caracteres speciaux
- *	\remarks		Fonction appelee par exemple pour definir un nom de fichier depuis un identifiant chaine libre
- *	\param          str             String to clean
- * 	\param			newstr			String to replace bad chars by
- *	\return         string          String cleaned (a-zA-Z_)
- */
-function sanitizeFileName($str,$newstr='_')
-{
-	return sanitize_string(unaccent_isostring($str,$newstr));
 }
 
 /**

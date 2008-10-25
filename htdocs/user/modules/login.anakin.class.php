@@ -119,7 +119,7 @@ class LoginAnakin
 	// 8 premieres lettre desaccentuees du nom en minuscule
 	function generate_login_1()
 	{
-		$nom = strtolower(unaccent_isostring(sanitize_string($this->user->nom)));
+		$nom = strtolower(dol_string_unaccent(dol_string_nospecial($this->user->nom)));
 
 		$this->login = substr($nom, 0, 8);
 	}
@@ -128,7 +128,7 @@ class LoginAnakin
 	// Regle de defaut
 	function generate_login_else()
 	{
-		$login = strtolower(unaccent_isostring(sanitize_string($this->user->nom)));
+		$login = strtolower(dol_string_unaccent(dol_string_nospecial($this->user->nom)));
 
 		$le = strlen($this->else_step);
 
@@ -140,8 +140,8 @@ class LoginAnakin
 	// premiere lettre du prenom + 7 premieres lettres du nom, desaccentuees en minuscule
 	function generate_login_2()
 	{
-		$nom = strtolower(unaccent_isostring(sanitize_string($this->user->nom)));
-		$prenom = strtolower(unaccent_isostring(sanitize_string($this->user->prenom)));
+		$nom = strtolower(dol_string_unaccent(dol_string_nospecial($this->user->nom)));
+		$prenom = strtolower(dol_string_unaccent(dol_string_nospecial($this->user->prenom)));
 
 		$this->login = substr($prenom, 0, 1) . substr($nom, 0, 7);
 	}
@@ -150,8 +150,8 @@ class LoginAnakin
 	// 2 premieres lettres du prenom + 6 premieres lettres du nom, desaccentuees en minuscule
 	function generate_login_3()
 	{
-		$nom = strtolower(unaccent_isostring(sanitize_string($this->user->nom)));
-		$prenom = strtolower(unaccent_isostring(sanitize_string($this->user->prenom)));
+		$nom = strtolower(dol_string_unaccent(dol_string_nospecial($this->user->nom)));
+		$prenom = strtolower(dol_string_unaccent(dol_string_nospecial($this->user->prenom)));
 
 		$this->login = substr($prenom, 0, 2) . substr($nom, 0, 6);
 	}
