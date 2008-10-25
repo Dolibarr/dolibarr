@@ -18,12 +18,13 @@
 
 
 /**
-    	\file       htdoc/ecm/docmine.php
-		\ingroup    ecm
-		\brief      Main page for a section
-		\version    $Id$
-		\author		Laurent Destailleur
-*/
+ *  \file       htdoc/ecm/docmine.php
+ *	\ingroup    ecm
+ *	\brief     	Card of a directory for ECM module
+ *	\version    $Id$
+ *	\author		Laurent Destailleur
+ */
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
