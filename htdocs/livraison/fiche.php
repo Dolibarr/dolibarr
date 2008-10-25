@@ -434,7 +434,7 @@ else
 				$order=new Commande($db);
 				$order->fetch($expedition->origin_id);
 				print '<td colspan="3">';
-				print $order->getNomUrl(1,4);
+				print $order->getNomUrl(1,'commande');
 				print "</td>\n";
 				print '</tr>';
 			}

@@ -566,7 +566,7 @@ else
 			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 			print "</tr>";
 
-			// Document li�e
+			// Linked documents
 			print '<tr><td>';
 			if ($conf->commande->enabled)
 			{
@@ -574,7 +574,7 @@ else
 				$order->fetch($expedition->$typeobject->id);
 				print $langs->trans("RefOrder").'</td>';
 				print '<td colspan="3">';
-				print $order->getNomUrl(1,4);
+				print $order->getNomUrl(1,'commande');
 				print "</td>\n";
 			}
 			else
