@@ -18,14 +18,15 @@
  */
 
 /**
-        \file       htdocs/install/index.php
-        \ingroup    install
-        \brief      Affichage page selectin langue si premiere install.
-					 Si reinstall, passe directement a la page check.php
-        \version    $Id$
-*/
+ *       \file       htdocs/install/index.php
+ *       \ingroup    install
+ *       \brief      Affichage page selectin langue si premiere install.
+ *					 Si reinstall, passe directement a la page check.php
+ *       \version    $Id$
+ */
 include_once("./inc.php");
 include_once("../html.form.class.php");
+include_once("../html.formadmin.class.php");
 
 
 $err = 0;
@@ -39,6 +40,12 @@ if (file_exists($conffile) && isset($dolibarr_main_url_root))
 }
 
 
+/*
+ * View
+ */
+
+$formadmin=new FormAdmin($db);
+
 pHeader("", "check");   // Etape suivante = index2
 
 
@@ -51,8 +58,7 @@ $langs_available=$langs->get_available_languages("..");
 print '<br><br><center>';
 print '<table><tr>';
 print '<td>'.$langs->trans("DefaultLanguage").' : </td><td align="left">';
-$html=new Form('');
-$html->select_lang('auto','selectlang',1);
+$formadmin->select_lang('auto','selectlang',1);
 print '</td>';
 print '</tr></table></center>';
 

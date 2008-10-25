@@ -270,7 +270,7 @@ if ($_GET["action"] == 'create')
 			print "<tr><td>".$langs->trans("Date")."</td>";
 			print '<td colspan="3">'.dolibarr_print_date($object->date,"day")."</td></tr>\n";
 
-			// Entrepot (si forc�)
+			// Warehouse (id forced)
 			if ($conf->stock->enabled && $_GET["entrepot_id"])
 			{
 				print '<tr><td>'.$langs->trans("Warehouse").'</td>';
@@ -288,10 +288,10 @@ if ($_GET["action"] == 'create')
 			// Delivery method
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
-
 			$expe->fetch_delivery_methods();
 			$html->select_array("expedition_method_id",$expe->meths,'',0,0,0,0,"",1);
 			print "</td></tr>\n";
+
 			// Tracking number
 			print "<tr><td>".$langs->trans("TrackingNumber")."</td>";
 			print '<td colspan="3">';
@@ -336,22 +336,23 @@ if ($_GET["action"] == 'create')
 			$indiceAsked = 0;
 			while ($indiceAsked < $numAsked)
 			{
+				$product = new Product($db);
+				
 				$ligne = $object->lignes[$indiceAsked];
 				$var=!$var;
 				print "<tr ".$bc[$var].">\n";
 				if ($ligne->fk_product > 0)
 				{
-					$product = new Product($db);
 					$product->fetch($ligne->fk_product);
 
 					print '<td>';
 					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$ligne->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-					if ($ligne->desc) print nl2br($ligne->desc);
+					if ($ligne->desc) print dol_nl2br(dol_htmlcleanlastbr($ligne->desc),1);
 					print '</td>';
 				}
 				else
-				{var_dump($ligne);
-				print "<td>".nl2br($ligne->desc)."</td>\n";
+				{	//var_dump($ligne);
+					print "<td>".nl2br($ligne->desc)."</td>\n";
 				}
 
 				print '<td align="center">'.$ligne->qty.'</td>';
@@ -376,7 +377,7 @@ if ($_GET["action"] == 'create')
 						if ($defaultqty < 0) $defaultqty=0;
 					}
 
-					// Quantit� � livrer
+					// Quantity
 					print '<td align="center">';
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$ligne->id.'">';
 					print '<input name="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
@@ -429,7 +430,7 @@ if ($_GET["action"] == 'create')
 				}
 				else
 				{
-					// Quantit� � livrer
+					// Quantity
 					print '<td align="center">';
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$ligne->id.'">';
 					print '<input name="qtyl'.$indiceAsked.'" type="text" size="6" value="'.$quantityToBeDelivered.'">';
@@ -439,16 +440,19 @@ if ($_GET["action"] == 'create')
 				print "</tr>\n";
 
 				// associations sous produits
-				$product->get_sousproduits_arbo ();
-				$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-				if(sizeof($prods_arbo) > 0)
+				if ($ligne->fk_product > 0)
 				{
-					foreach($prods_arbo as $key => $value)
+					$product->get_sousproduits_arbo ();
+					$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+					if(sizeof($prods_arbo) > 0)
 					{
-						print $value[0];
+						foreach($prods_arbo as $key => $value)
+						{
+							print $value[0];
+						}
 					}
 				}
-
+				
 				$indiceAsked++;
 			}
 

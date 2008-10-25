@@ -29,6 +29,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -529,8 +530,13 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 }
 
 
+/*
+ * View
+ */
 
 $html = new Form($db);
+$formproduct = new FormProduct($db);
+
 
 /*
  * Fiche création du produit
@@ -639,11 +645,11 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 			// Le poids et le volume ne concerne que les produits et pas les services
 			print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 			print '<input name="weight" size="4" value="">';
-			print $html->select_measuring_units("weight_units","weight");
+			print $formproduct->select_measuring_units("weight_units","weight");
 			print '</td></tr>';
 			print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 			print '<input name="volume" size="4" value="">';
-			print $html->select_measuring_units("volume_units","volume");
+			print $formproduct->select_measuring_units("volume_units","volume");
 			print '</td></tr>';
 		}
 
@@ -1041,11 +1047,11 @@ if ($_GET["id"] || $_GET["ref"])
 	  	// Weight / Volume
 	  	print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 	  	print '<input name="weight" size="5" value="'.$product->weight.'"> ';
-	  	print $html->select_measuring_units("weight_units", "weight", $product->weight_units);
+	  	print $formproduct->select_measuring_units("weight_units", "weight", $product->weight_units);
 	  	print '</td></tr>';
 	  	print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 	  	print '<input name="volume" size="5" value="'.$product->volume.'"> ';
-	  	print $html->select_measuring_units("volume_units", "volume", $product->volume_units);
+	  	print $formproduct->select_measuring_units("volume_units", "volume", $product->volume_units);
 	  	print '</td></tr>';
 	  }
 

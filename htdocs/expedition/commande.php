@@ -184,11 +184,39 @@ if ($_GET["id"] > 0)
 		print '</td>';
 		print '</tr>';
 			
-		// Société
+		// Third party
 		print '<tr><td>'.$langs->trans('Company').'</td>';
 		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 		print '</tr>';
 			
+		// Discounts for third party
+		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
+		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		else print $langs->trans("CompanyHasNoRelativeDiscount");
+		$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
+		$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
+		print '. ';
+		if ($absolute_discount)
+		{
+			if ($commande->statut > 0)
+			{
+				print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
+			}
+			else
+			{
+				// Remise dispo de type non avoir
+				$filter='fk_facture_source IS NULL';
+				print '<br>';
+				$html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$commande->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
+			}
+		}
+		if ($absolute_creditnote)
+		{
+			print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
+		}
+		if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+		print '</td></tr>';
+
 		// Date
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">'.dolibarr_print_date($commande->date,'daytext').'</td>';
@@ -336,14 +364,16 @@ if ($_GET["id"] > 0)
 		 */
 		print '<table class="liste" width="100%">';
 
-		$sql = "SELECT cd.fk_product, cd.description, cd.price, sum(cd.qty) as qty, cd.rowid, cd.tva_tx, cd.subprice";
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.price, cd.tva_tx, cd.subprice,";
+		$sql.= " qty";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 		$sql.= " WHERE cd.fk_commande = ".$commande->id;
 		// $sql.= " AND p.fk_product_type <> 1";		Why this line ?
-		$sql.= " group by (cd.fk_product)";
+		$sql.= " GROUP by cd.rowid, cd.fk_product";
 		$sql.= " ORDER BY cd.rowid";
-
+		
+		//print $sql;
 		dolibarr_syslog("commande.php sql=".$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
@@ -370,18 +400,33 @@ if ($_GET["id"] > 0)
 			$reste_a_livrer = array();
 			while ($i < $num)
 			{
+				$product = new Product($db);
+				
 				$objp = $db->fetch_object($resql);
 					
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				if ($objp->fk_product > 0)
 				{
-					$product = new Product($db);
-					$product->fetch($objp->fk_product);
 					print '<td>';
-					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-					print img_object($langs->trans("Product"),"product").' '.$product->ref.'</a>';
-					print $product->libelle?' - '.$product->libelle:'';
+					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+
+					$product->fetch($objp->fk_product);
+					// LDR Add a product line from object product
+					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$product->id.'">';
+					if ($product->type==1) $text.= img_object($langs->trans('ShowService'),'service');
+					else $text.= img_object($langs->trans('ShowProduct'),'product');
+					$text.= ' '.$product->ref.'</a>';
+					$text.= ' - '.$product->libelle;
+					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description));
+					print $html->textwithtooltip($text,$description,3,'','',$i);
+					// Print the start and end dates
+					print_date_range($objp->date_start,$objp->date_end);
+					if ($conf->global->PRODUIT_DESC_IN_FORM)
+					{
+						print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
+					}
+
 					print '</td>';
 				}
 				else
@@ -421,18 +466,20 @@ if ($_GET["id"] > 0)
 				print "</tr>";
 
 				// associations sous produits
-				$product->get_sousproduits_arbo ();
-				$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-				if(sizeof($prods_arbo) > 0)
+				if ($objp->fk_product > 0)
 				{
-					foreach($prods_arbo as $key => $value)
+					$product->get_sousproduits_arbo ();
+					$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+					if(sizeof($prods_arbo) > 0)
 					{
-						print $value[0];
+						foreach($prods_arbo as $key => $value)
+						{
+							print $value[0];
+						}
 					}
 				}
 				
 				$i++;
-				$var=!$var;
 			}
 			$db->free($resql);
 

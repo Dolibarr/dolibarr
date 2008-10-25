@@ -24,6 +24,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
 $langs->load("companies");
 $langs->load("products");
@@ -60,6 +61,7 @@ $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAI
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
 
 $html = new Form($db);
+$formadmin=new FormAdmin($db);
 
 
 /*
@@ -156,7 +158,7 @@ if ($_GET["action"] == 'edit')
     print '> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>';
     $html=new Form($db);
-    $html->select_lang($fuser->conf->MAIN_LANG_DEFAULT,'main_lang_default',1);
+    $formadmin->select_lang($fuser->conf->MAIN_LANG_DEFAULT,'main_lang_default',1);
     print '</td></tr>';
 
     // Taille max des listes

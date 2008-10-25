@@ -25,6 +25,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
 $langs->load("companies");
 $langs->load("products");
@@ -73,9 +74,14 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 }
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 $html=new Form($db);
+$formadmin=new FormAdmin($db);
 
 print_fiche_titre($langs->trans("GUISetup"),'','setup');
 
@@ -99,7 +105,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     // Langue par defaut
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
-    $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default',1);
+    $formadmin->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default',1);
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';

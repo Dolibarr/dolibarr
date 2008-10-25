@@ -26,6 +26,7 @@
  
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formother.class.php");
 require_once(DOL_DOCUMENT_ROOT."/exports/export.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
 
@@ -73,6 +74,7 @@ $objexport->load_arrays($user,$datatoexport);
 
 $objmodelexport=new ModeleExports();
 $html = new Form($db);
+$htmlother = new FormOther($db);
 $formfile = new FormFile($db);
 
 
@@ -336,7 +338,7 @@ if ($step == 2 && $datatoexport)
     print '<table><tr><td>';
     print $langs->trans("SelectExportFields");
 	print '</td><td>';
-    $html->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
+    $htmlother->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
     print '</td></tr></table>';
     print '</form>';

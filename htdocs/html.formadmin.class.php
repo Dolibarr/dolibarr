@@ -45,6 +45,46 @@ class FormAdmin
 		return 1;
 	}
   
+
+	/**
+	 *    \brief      Retourne la liste déroulante des langues disponibles
+	 *    \param      selected        Langue pré-sélectionnée
+	 *    \param      htmlname        Nom de la zone select
+	 *    \param      showauto        Affiche choix auto
+	 */
+	function select_lang($selected='',$htmlname='lang_id',$showauto=0)
+	{
+		global $langs;
+
+		$langs_available=$langs->get_available_languages();
+
+		print '<select class="flat" name="'.$htmlname.'">';
+		if ($showauto)
+		{
+			print '<option value="auto"';
+			if ($selected == 'auto') print ' selected="true"';
+			print '>'.$langs->trans("AutoDetectLang").'</option>';
+		}
+		$num = count($langs_available);
+		$i = 0;
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				if ($selected == $langs_available[$i])
+				{
+					print '<option value="'.$langs_available[$i].'" selected="true">'.$langs_available[$i].'</option>';
+				}
+				else
+				{
+					print '<option value="'.$langs_available[$i].'">'.$langs_available[$i].'</option>';
+				}
+				$i++;
+			}
+		}
+		print '</select>';
+	}
+
 	/**
      *    \brief      Retourne la liste dï¿½roulante des menus disponibles (eldy_backoffice, ...)
      *    \param      selected        Menu prï¿½-sï¿½lectionnï¿½e

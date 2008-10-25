@@ -31,6 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formactions.class.php");
 
 $langs->load("companies");
 $langs->load("commercial");
@@ -409,6 +410,7 @@ if ($_POST["action"] == 'update')
 llxHeader();
 
 $html = new Form($db);
+$htmlactions = new FormActions($db);
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -549,7 +551,7 @@ if ($_GET["action"] == 'create')
 		if ($_REQUEST["afaire"] == 1) $percent=0;
 		if ($_REQUEST["afaire"] == 2) $percent=100;
 	}
-	print $html->form_select_status_action('formaction',$percent,1);
+	print $htmlactions->form_select_status_action('formaction',$percent,1);
 	print '</td></tr>';
 
 	// Priority
@@ -721,7 +723,7 @@ if ($_GET["id"])
 		// Status
         print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
 		$percent=isset($_REQUEST["percentage"])?$_REQUEST["percentage"]:$act->percentage;
-		print $html->form_select_status_action('formaction',$percent,1);
+		print $htmlactions->form_select_status_action('formaction',$percent,1);
         print '</td></tr>';
 
 		// Priority

@@ -482,46 +482,6 @@ class Form
 
 
 	/**
-	 *    \brief      Retourne la liste déroulante des langues disponibles
-	 *    \param      selected        Langue pré-sélectionnée
-	 *    \param      htmlname        Nom de la zone select
-	 *    \param      showauto        Affiche choix auto
-	 */
-	function select_lang($selected='',$htmlname='lang_id',$showauto=0)
-	{
-		global $langs;
-
-		$langs_available=$langs->get_available_languages();
-
-		print '<select class="flat" name="'.$htmlname.'">';
-		if ($showauto)
-		{
-			print '<option value="auto"';
-			if ($selected == 'auto') print ' selected="true"';
-			print '>'.$langs->trans("AutoDetectLang").'</option>';
-		}
-		$num = count($langs_available);
-		$i = 0;
-		if ($num)
-		{
-			while ($i < $num)
-			{
-				if ($selected == $langs_available[$i])
-				{
-					print '<option value="'.$langs_available[$i].'" selected="true">'.$langs_available[$i].'</option>';
-				}
-				else
-				{
-					print '<option value="'.$langs_available[$i].'">'.$langs_available[$i].'</option>';
-				}
-				$i++;
-			}
-		}
-		print '</select>';
-	}
-
-
-	/**
 	 *    \brief      Retourne la liste des types de comptes financiers
 	 *    \param      selected        Type pré-sélectionné
 	 *    \param      htmlname        Nom champ formulaire
@@ -1583,45 +1543,6 @@ class Form
 	}
 
 
-
-	/**
-	 *      \brief      Show list of action status
-	 */
-	function form_select_status_action($formname,$selected,$canedit=1)
-	{
-		global $langs,$conf;
-
-		$listofstatus=array('0'=>$langs->trans("ActionRunningNotStarted"),'50'=>$langs->trans("ActionRunningShort"),'100'=>$langs->trans("ActionDoneShort"));
-
-		if ($conf->use_javascript_ajax)
-		{
-			print "\n";
-			print '<script type="text/javascript">'."\n";
-			print 'function select_status(mypercentage) {'."\n";
-			print 'document.'.$formname.'.percentageshown.value=mypercentage;'."\n";
-			print 'document.'.$formname.'.percentage.value=mypercentage;'."\n";
-			print 'if (mypercentage == 0) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
-			print 'else if (mypercentage == 100) { document.'.$formname.'.percentageshown.disabled=true; }'."\n";
-			print 'else { document.'.$formname.'.percentageshown.disabled=false; }'."\n";
-			print '}'."\n";
-			print '</script>'."\n";
-			print '<select '.($canedit?'':'disabled="true" ').'name="status" class="flat" onChange="select_status(document.'.$formname.'.status.value)">';
-			foreach($listofstatus as $key => $val)
-			{
-				print '<option value="'.$key.'"'.($selected == $key?' selected="true"':'').'>'.$val.'</option>';
-			}
-			print '</select>';
-			if ($selected == 0 || $selected == 100) $canedit=0;
-			print ' <input type="text" name="percentageshown" class="flat" value="'.$selected.'" size="2"'.($canedit?'':' disabled="true"').' onChange="select_status(document.'.$formname.'.percentageshown.value)">%';
-			print ' <input type="hidden" name="percentage" value="'.$selected.'">';
-		}
-		else
-		{
-			print ' <input type="text" name="percentage" class="flat" value="'.$selected.'" size="2"'.($canedit?'':' disabled="true"').'>%';
-		}
-	}
-
-	
 	/**
 	 *      \brief      Retourne la liste des types de paiements possibles
 	 *      \param      selected        Id du type de paiement pré-sélectionné
@@ -2274,39 +2195,6 @@ class Form
 		print '</tr></table></form>';
 	}
 
-
-	/**
-	 *    \brief      Affiche formulaire de selection de la remise relative
-	 *    \param      page        Page
-	 *    \param      selected    Valeur remise
-	 *    \param      htmlname    Nom du formulaire select. Si none, non modifiable
-	 */
-	function form_remise_percent($page, $selected='', $htmlname='remise_percent')
-	{
-		global $langs;
-		if ($htmlname != "none")
-		{
-			print '<form method="post" action="'.$page.'">';
-			print '<input type="hidden" name="action" value="setremisepercent">';
-			print '<table class="noborder" cellpadding="0" cellspacing="0">';
-			print '<tr><td>';
-			print '<input type="text" name="'.$htmlname.'" size="1" value="'.$selected.'">%';
-			print '</td>';
-			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-			print '</tr></table></form>';
-		}
-		else
-		{
-			if ($selected)
-			{
-				print $selected;
-			} else {
-				print "0%";
-			}
-		}
-	}
-
-
 	/**
 	 *    	\brief      Affiche formulaire de selection de la remise fixe
 	 *    	\param      page        	Page URL where form is shown
@@ -2497,7 +2385,7 @@ class Form
 
 
 	/**
-	 *      \brief      Selection du taux de tva à appliquer
+	 *      \brief      Output an HTML select vat rate
 	 *      \param      name                Nom champ html
 	 *      \param      selectedrate        Forçage du taux tva pré-sélectionné. Mettre '' pour aucun forcage.
 	 *      \param      societe_vendeuse    Objet société vendeuse
@@ -2616,51 +2504,6 @@ class Form
 			}
 			print '</select>';
 		}
-	}
-
-
-
-
-	/**
-	 *  \brief      Selection des unites de mesure
-	 *  \param      name                Nom champ html
-	 *  \param      measuring_style     Le style de mesure : weight, volume,...
-	 *  \param      default             Forçage de l'unite
-	 *  \remarks pour l'instant on ne definit pas les unites dans la base
-	 */
-	function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
-	{
-		global $langs,$conf,$mysoc;
-		$langs->load("other");
-
-		if ($measuring_style == 'weight')
-		{
-			$measuring_units[3] = $langs->trans("WeightUnitton");
-			$measuring_units[0] = $langs->trans("WeightUnitkg");
-			$measuring_units[-3] = $langs->trans("WeightUnitg");
-			$measuring_units[-6] = $langs->trans("WeightUnitmg");
-		}
-		else if ($measuring_style == 'volume')
-		{
-			$measuring_units[0] = $langs->trans("VolumeUnitm3");
-			$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
-			$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
-			$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
-		}
-
-		print '<select class="flat" name="'.$name.'">';
-		if ($adddefault) print '<option value="0">'.$langs->trans("Default").'</option>';
-
-		foreach ($measuring_units as $key => $value)
-		{
-			print '<option value="'.$key.'"';
-			if ($key == $default)
-			{
-				print ' selected="true"';
-			}
-			print '>'.$value.'</option>';
-		}
-		print '</select>';
 	}
 
 
@@ -3178,58 +3021,6 @@ class Form
 			$ret.='</td></tr></table>';
 		}
 		return $ret;
-	}
-
-
-	/**
-	 *    \brief     Retourne la liste des ecotaxes avec tooltip sur le libelle
-	 *    \param     selected    code ecotaxes pre-selectionne
-	 *    \param     htmlname    nom de la liste deroulante
-	 */
-	function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
-	{
-		global $langs;
-
-		$sql = "SELECT e.rowid, e.code, e.libelle, e.price, e.organization,";
-		$sql.= " p.libelle as pays";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_pays as p";
-		$sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
-		$sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
-
-		if ($this->db->query($sql))
-		{
-			print '<select class="flat" name="'.$htmlname.'">';
-			$num = $this->db->num_rows();
-			$i = 0;
-			print '<option value="-1">&nbsp;</option>'."\n";
-			if ($num)
-			{
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object();
-					if ($selected && $selected == $obj->rowid)
-					{
-						print '<option value="'.$obj->rowid.'" selected="true">';
-					}
-					else
-					{
-						print '<option value="'.$obj->rowid.'">';
-						//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
-					}
-					$selectOptionValue = $obj->code.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
-					print $selectOptionValue;
-					print '</option>';
-					$i++;
-				}
-			}
-			print '</select>';
-			return 0;
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-			return 1;
-		}
 	}
 
 }

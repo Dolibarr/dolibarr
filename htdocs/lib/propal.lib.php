@@ -72,7 +72,7 @@ function propal_prepare_head($propal)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
-	$head[$h][1] = $langs->trans('Note');
+	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
 	$h++;
 

@@ -20,13 +20,14 @@
  */
 
 /**
-	    \file       htdocs/admin/dict.php
-		\ingroup    setup
-		\brief      Page to administer data tables
-		\version    $Id$
-*/
+ *	    \file       htdocs/admin/dict.php
+ *		\ingroup    setup
+ *		\brief      Page to administer data tables
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
 $langs->load("other");
 $langs->load("admin");
@@ -411,6 +412,7 @@ if ($_GET["action"] == $acts[1])       // disable
  */
 
 $html = new Form($db);
+$formadmin=new FormAdmin($db);
 
 llxHeader();
 
@@ -712,7 +714,8 @@ function fieldList($fieldlist,$obj='')
 	global $region_id;
 
 	$html = new Form($db);
-
+	$formadmin = new FormAdmin($db);
+	
 	foreach ($fieldlist as $field => $value)
 	{
 		if ($fieldlist[$field] == 'pays') {
@@ -736,7 +739,7 @@ function fieldList($fieldlist,$obj='')
 		}
 		elseif ($fieldlist[$field] == 'lang') {
 			print '<td>';
-			$html->select_lang($conf->global->MAIN_LANG_DEFAULT,'lang');
+			$formadmin->select_lang($conf->global->MAIN_LANG_DEFAULT,'lang');
 			print '</td>';
 		}
 		// Le type de l'element (pour les type de contact).'

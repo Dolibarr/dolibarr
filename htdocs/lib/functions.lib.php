@@ -2679,6 +2679,16 @@ function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 }
 
 /**
+ *	\brief		This function remove all ending \n and br at end
+ *	\param		stringtodecode		String to decode
+ */
+function dol_htmlcleanlastbr($stringtodecode)
+{
+	$ret=eregi_replace('(<br>|<br( [ a-zA-Z_="]*)?/?>|\n|\r)+$',"",$stringtodecode);
+	return $ret;
+}
+
+/**
  *	\brief		This function is called to decode a HTML string (it decodes entities tags)
  * 	\param   	string      stringhtml
  * 	\return  	string	  	decodestring

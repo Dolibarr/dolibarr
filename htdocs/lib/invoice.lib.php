@@ -58,7 +58,7 @@ function facture_prepare_head($fac)
 	}
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
-	$head[$h][1] = $langs->trans('Note');
+	$head[$h][1] = $langs->trans('Notes');
 	$head[$h][2] = 'note';
 	$h++;
 
