@@ -108,7 +108,7 @@ function dol_string_unaccent($str)
 		'%C3%99' => 'U','%C3%9A' => 'U'
 		);
 		$ret=strtr($string, $replacements);
-		return $ret;
+		return rawurldecode($ret);
 	}
 	else
 	{
