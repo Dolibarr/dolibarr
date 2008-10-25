@@ -94,16 +94,32 @@ function dol_string_unaccent($str)
 {
 	if (utf8_check($str))
 	{
-		$translationutf=array(	);
-		return str_replace(array_keys($translationutf), array_values($translationutf), $str);
+		$string = rawurlencode($str);
+		$replacements = array(
+		'%C3%A0' => 'a','%C3%A1' => 'a','%C3%A2' => 'a',
+		'%C3%A8' => 'e','%C3%A9' => 'e','%C3%AA' => 'e','%C3%AB' => 'e',
+		'%C3%AC' => 'i','%C3%AD' => 'i',
+		'%C3%B2' => 'o','%C3%B3' => 'o',
+		'%C3%B9' => 'u','%C3%BA' => 'u',
+		'%C3%80' => 'A','%C3%81' => 'A',
+		'%C3%88' => 'E','%C3%89' => 'E',
+		'%C3%8C' => 'I','%C3%8D' => 'I',
+		'%C3%92' => 'O','%C3%93' => 'O',
+		'%C3%99' => 'U','%C3%9A' => 'U'
+		);
+		$ret=strtr($string, $replacements);
+		return $ret;
 	}
 	else
 	{
-		$translationiso=array(	"\xE0" => "a",	"\xE1" => "a", 	"\xE2" => "a",
-								"\xE8" => "e",	"\xE9" => "e",	"\xEA" => "e",	"\xEB" => "e",
-								"\xEE" => "i",	"\xEF" => "i",	
-								"\xF4" => "o",	"\xF6" => "o",	"\xFB" => "u",	"\xFC" => "u");
-		return str_replace(array_keys($translationiso), array_values($translationiso), $str);
+		$translationiso=array(	
+		"\xE0" => "a",	"\xE1" => "a", 	"\xE2" => "a",
+		"\xE8" => "e",	"\xE9" => "e",	"\xEA" => "e",	"\xEB" => "e",
+		"\xEE" => "i",	"\xEF" => "i",	
+		"\xF4" => "o",	"\xF6" => "o",
+		"\xFB" => "u",	"\xFC" => "u");
+		$ret=str_replace(array_keys($translationiso), array_values($translationiso), $str);
+		return $ret;
 	}
 }
 
@@ -3076,7 +3092,7 @@ function array2tr($data,$troptions='',$tdoptions=''){
 /**
  *      \brief      Check if a string is in UTF8
  *      \param      $Str        String to check
- * 		\return		boolean		True if string is UTF8, false if not
+ * 		\return		boolean		True if string is UTF8 or ISO compatible with UTF8, False if not (ISO with special char or Binary)
  */
 function utf8_check($Str)
 {
