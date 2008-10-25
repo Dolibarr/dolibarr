@@ -421,7 +421,8 @@ class EcmDirectory // extends CommonObject
 			
 			if ($cursorindex >= 0)
 			{
-				$ret=$this->cats[$cursorindex]['label'].'/'.$ret;
+				// Path is label sanitized (no space and no special char) and concatenated
+				$ret=sanitize_string($this->cats[$cursorindex]['label']).'/'.$ret;
 			
 				$idtosearch=$this->cats[$cursorindex]['id_mere'];
 				$i++;
