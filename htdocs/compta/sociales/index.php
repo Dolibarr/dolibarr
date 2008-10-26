@@ -68,8 +68,8 @@ $sql.= " WHERE s.fk_type = c.id";
 if ($year > 0)
 {
     $sql .= " AND (";
-    // Si period renseigné on l'utilise comme critere de date, sinon on prend date échéance,
-    // ceci afin d'etre compatible avec les cas ou la période n'etait pas obligatoire
+    // Si period renseignï¿½ on l'utilise comme critere de date, sinon on prend date ï¿½chï¿½ance,
+    // ceci afin d'etre compatible avec les cas ou la pï¿½riode n'etait pas obligatoire
     $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = $year) ";
     $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
     $sql .= ")";
@@ -102,6 +102,9 @@ if ($resql)
 	$i = 0;
 	$var=true;
 
+	$param='';
+	if ($year) $param.='&amp;year='.$year;
+	
 	if ($year)
 	{
 		print_fiche_titre($langs->trans("SocialContributions"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
@@ -120,13 +123,13 @@ if ($resql)
 	print "<table class=\"noborder\" width=\"100%\">";
 	
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"index.php","id","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateDue"),"index.php","de","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Period"),"index.php","periode","","",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Type"),"index.php","type","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","","",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","","",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),"index.php","id","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateDue"),"index.php","de","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Period"),"index.php","periode","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Type"),"index.php","type","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","",$param,'align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 		
 
