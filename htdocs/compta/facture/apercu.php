@@ -166,7 +166,7 @@ if ($_GET["facid"] > 0)
 
                 print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$fac->ref.'-detail.pdf</a></td>';
                 print '<td align="right">'.filesize($filedetail). ' bytes</td>';
-                print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedetail)).'</td>';
+                print '<td align="right">'.dolibarr_print_date(filemtime($filedetail),"%d %b %Y %H:%M:%S").'</td>';
                 print '</tr>';
             }
 

@@ -248,7 +248,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 	{
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print '<td nowrap>'.strftime("%b %Y",dolibarr_mktime(0,0,0,$m,1,$y)).'</td>';
+		print '<td nowrap>'.dolibarr_print_date(dolibarr_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
 	
 		$x_coll = tva_coll($db, $y, $m);
 		print "<td nowrap align=\"right\">".price($x_coll)."</td>";

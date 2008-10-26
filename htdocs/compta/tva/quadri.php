@@ -217,7 +217,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 	$subtot_paye_vat = 0;
 	for ($q = 1 ; $q <= 4 ; $q++ )
 	{
-		print "<tr class=\"liste_titre\"><td colspan=\"8\">".$langs->trans("Quadri")." $q (".strftime("%b %Y",mktime(0,0,0,(($q-1)*3)+1,1,$y)).' - '.strftime("%b %Y",mktime(0,0,0,($q*3),1,$y)).")</td></tr>";
+		print "<tr class=\"liste_titre\"><td colspan=\"8\">".$langs->trans("Quadri")." $q (".dolibarr_print_date(dolibarr_mktime(0,0,0,(($q-1)*3)+1,1,$y),"%b %Y").' - '.dolibarr_print_date(dolibarr_mktime(0,0,0,($q*3),1,$y),"%b %Y").")</td></tr>";
 		$var=true;
 	
 		$x_coll = tva_coll($db, $y, $q);

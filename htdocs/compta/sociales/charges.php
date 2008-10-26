@@ -284,7 +284,7 @@ if ($chid > 0)
 		print "<td>";
 		if ($cha->paye==0 && $_GET['action'] == 'edit')
 		{
-			print "<input type=\"text\" name=\"period\" value=\"".strftime("%Y%m%d",$cha->periode)."\"> (YYYYMMDD)";
+			print "<input type=\"text\" name=\"period\" value=\"".dolibarr_print_date($cha->periode,"%Y%m%d")."\"> (YYYYMMDD)";
 		}
 		else
 		{

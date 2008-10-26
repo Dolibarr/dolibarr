@@ -48,7 +48,7 @@ class pdf_courrier_droit_editeur
 		$this->marge_haute=10;
 		$this->marge_basse=10;
 
-		$this->name = "Courrier des droits ".strftime("%Y", time());
+		$this->name = "Courrier des droits ".dolibarr_print_date(time(),"%Y");
 		$this->file = '1'.strftime("%Y", time()).'.pdf';
 	}
 

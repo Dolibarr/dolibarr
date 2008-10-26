@@ -158,14 +158,15 @@ if ($resql)
         print "</td>";
 
         print "<td align=\"center\">";
-        $y = strftime("%Y",$objp->date_commande);
-        $m = strftime("%m",$objp->date_commande);
-
-        print strftime("%d",$objp->date_commande)."\n";
+        $y = dolibarr_print_date($objp->date_commande,"%Y");
+        $m = dolibarr_print_date($objp->date_commande,"%m");
+        $mt = dolibarr_print_date($objp->date_commande,"%b");
+        $d = dolibarr_print_date($objp->date_commande,"%d");
+        print $d."\n";
         print " <a href=\"liste.php?year=$y&amp;month=$m\">";
-        print strftime("%B",$objp->date_commande)."</a>\n";
+        print $mt."</a>\n";
         print " <a href=\"liste.php?year=$y\">";
-        print strftime("%Y",$objp->date_commande)."</a></td>\n";
+        print $y."</a></td>\n";
 
 		print '<td align="right">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facture,5).'</td>';
         print "</tr>\n";

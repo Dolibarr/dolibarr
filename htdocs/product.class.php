@@ -1418,7 +1418,7 @@ class Product extends CommonObject
 
 		for ($j = 0 ; $j < 12 ; $j++)
 		{
-			$idx=ucfirst(substr( strftime("%b",mktime(12,0,0,$month,1,$year)) ,0,3) );
+			$idx=ucfirst(substr(dolibarr_print_date(dolibarr_mktime(12,0,0,$month,1,$year),"%b") ,0,3) );
 			$monthnum=sprintf("%02s",$month);
 
 			$result[$j] = array($idx,isset($tab[$year.$month])?$tab[$year.$month]:0);

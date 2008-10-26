@@ -140,7 +140,6 @@ if ($socid > 0)
     $objsoc->id=$socid;
     $objsoc->fetch($socid,$to);
 
-    $dac = strftime("%Y-%m-%d %H:%M", time());
     if ($errmesg)
     {
         print "<b>$errmesg</b><br>";

@@ -968,7 +968,7 @@ else
 				//print '<br />';
 				$dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",strftime("%A %d %B %Y", $dateactstart)),"confirm_active");
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dolibarr_print_date($dateactstart,"%A %d %B %Y")),"confirm_active");
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}
 
@@ -980,7 +980,7 @@ else
 				//print '<br />';
 				$dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 				$dateactend   = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("CloseService"),$langs->trans("ConfirmCloseService",strftime("%A %d %B %Y", $dateactend)),"confirm_closeline");
+				$html->form_confirm($_SERVER["PHP_SELF"]."?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("CloseService"),$langs->trans("ConfirmCloseService",dolibarr_print_date($dateactend,"%A %d %B %Y")),"confirm_closeline");
 				print '<table class="noborder" width="100%"><tr '.$bc[false].' height="6"><td></td></tr></table>';
 			}		
 			

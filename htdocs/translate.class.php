@@ -163,7 +163,7 @@ class Translate {
 	 *  \brief      Load in a memory array, translation key-value for a particular file.
      *              If data for file already loaded, do nothing.
      * 				All data in translation array are stored in ISO-8859-1 format.
-     *  \param      domain      File name to load (.lang file)
+     *  \param      domain      File name to load (.lang file). Use @ before value if domain is in a module directory.
      *  \param      alt         Use alternate file even if file in target language is found
 	 *	\return		int			<0 if KO, >0 if OK
      *	\remarks	tab_loaded is completed with $domain key. 

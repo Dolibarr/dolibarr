@@ -85,7 +85,7 @@ class ExpeditionStats
     
     for ($i = 1 ; $i < 13 ; $i++)
       {
-	$data[$i-1] = array(strftime("%b",dolibarr_mktime(12,12,12,$i,1,$year)), $res[$i]);
+	$data[$i-1] = array(dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b"), $res[$i]);
       }
 
     return $data;
@@ -101,7 +101,7 @@ class ExpeditionStats
 
     for ($i = 1 ; $i < 13 ; $i++)
       {
-	$data[$i-1] = array(strftime("%b",dolibarr_mktime(12,12,12,$i,1,$year)), 
+	$data[$i-1] = array(dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b"), 
 			    $data1[$i][1],
 			    $data2[$i][1]);
       }

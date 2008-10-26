@@ -188,7 +188,7 @@ function pt ($db, $sql, $year) {
       if ($obj->dm > $month ) {
 	for ($b = $month ; $b < $obj->dm ; $b++) {
 	  print "<tr $bc[$var]>";
-	  print "<td>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</td>\n";
+	  print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
 	  print "<td align=\"right\">0</td>\n";	  
 	  print "</tr>\n";
 	  $var=!$var;
@@ -199,7 +199,7 @@ function pt ($db, $sql, $year) {
       if ($obj->sum > 0) {
 	print "<tr $bc[$var]>";
 	print "<td><a href=\"comp.php?details=1&year=$year&month=$obj->dm\">";
-	print strftime("%B",mktime(12,0,0,$obj->dm, 1, $year))."</td>\n";
+	print dolibarr_print_date(dolibarr_mktime(12,0,0,$obj->dm, 1, $year),"%b")."</td>\n";
 	print "<td align=\"right\">".price($obj->sum)."</td>\n";
 	
 	print "</TR>\n";
@@ -220,7 +220,7 @@ function pt ($db, $sql, $year) {
       for ($b = $beg + 1 ; $b < 13 ; $b++) {
 	$var=!$var;
 	print "<tr $bc[$var]>";
-	print "<td>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</td>\n";
+	print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
 	print "<td align=\"right\">0</td>\n";	  
 	print "</tr>\n";
 	$ca[$b] = 0;
@@ -295,7 +295,7 @@ function ppt ($db, $year, $socid)
       $delta = $ca[$b] - $prev[$b];
       $deltat = $deltat + $delta ;
       print "<tr $bc[$var]>";
-      print "<td>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</td>\n";
+      print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
       print "<td align=\"right\">".price($delta)."</td>\n";	  
       print "</tr>\n";
     }

@@ -177,12 +177,12 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
     $var=!$var;
     print "<tr $bc[$var]>";
 
-    print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
+    print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$mois,1,2000),"%b")."</td>";
     for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
-        $casenow = strftime("%Y-%m",mktime());
-        $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-        $caseprev = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee-1));
+        $casenow = dolibarr_print_date(mktime(),"%Y-%m");
+        $case = dolibarr_print_date(mktime(1,1,1,$mois,1,$annee),"%Y-%m");
+        $caseprev = dolibarr_print_date(mktime(1,1,1,$mois,1,$annee-1),"%Y-%m");
 
         if ($annee == $year_current) {
             $total_CA += $cum[$case];

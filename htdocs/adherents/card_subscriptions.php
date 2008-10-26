@@ -452,7 +452,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 
 		print '<tr><td>'.$langs->trans("Label").'</td>';
 		print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
-		print strftime("%Y",($datefrom?$datefrom:time())).'" ></td></tr>';
+		print dolibarr_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
 	}
 	
 	print '<tr><td>'.$langs->trans("SendAcknowledgementByMail").'</td>';

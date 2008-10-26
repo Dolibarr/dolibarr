@@ -2024,14 +2024,15 @@ else
 
 			// Date propale
 			print '<td align="center">';
-			$y = strftime('%Y',$objp->dp);
-			$m = strftime('%m',$objp->dp);
-
-			print strftime('%d',$objp->dp)."\n";
+			$y = dolibarr_print_date($objp->dp,'%Y');
+			$m = dolibarr_print_date($objp->dp,'%m');
+			$mt= dolibarr_print_date($objp->dp,'%b');
+			$d = dolibarr_print_date($objp->dp,'%d');
+			print $d."\n";
 			print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
-			print dolibarr_print_date($objp->dp,'%b')."</a>\n";
+			print $mt."</a>\n";
 			print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
-			print strftime('%Y',$objp->dp)."</a></td>\n";
+			print $y."</a></td>\n";
 
 			// Date fin validite
 			if ($objp->dfv)

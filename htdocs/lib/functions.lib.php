@@ -2400,13 +2400,13 @@ function create_exdir($dir)
 
 
 /**
- \brief   Retourne le num�ro de la semaine par rapport a une date
+ \brief   Retourne le numero de la semaine par rapport a une date
  \param   time   	Date au format 'timestamp'
- \return  int		Num�ro de semaine
+ \return  int		Numero de semaine
  */
 function numero_semaine($time)
 {
-	$stime = strftime( '%Y-%m-%d',$time);
+	$stime = strftime('%Y-%m-%d',$time);
 
 	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?',$stime,$reg))
 	{

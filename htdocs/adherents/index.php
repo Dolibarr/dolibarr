@@ -254,7 +254,7 @@ if ($result)
   while ($i < $num)
     {
       $objp = $db->fetch_object($result);
-      $year=strftime("%Y",$objp->dateadh);
+      $year=dolibarr_print_date($objp->dateadh,"%Y");
       $Total[$year]+=$objp->cotisation;
       $Number[$year]+=1;
       $tot+=$objp->cotisation;

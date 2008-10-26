@@ -196,7 +196,7 @@ class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$data[$i-1] = array(ucfirst(substr(strftime("%b",dolibarr_mktime(12,0,0,$i,1,$year)),0,3)), $res[$i]);
+			$data[$i-1] = array(ucfirst(substr(dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
 		}
 
 		return $data;
@@ -236,7 +236,7 @@ class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$data[$i-1] = array(ucfirst(substr(strftime("%b",dolibarr_mktime(12,0,0,$i,1,$year)),0,3)), $res[$i]);
+			$data[$i-1] = array(ucfirst(substr(dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
 		}
 
 		return $data;

@@ -777,13 +777,15 @@ else
 		
 			// Date
 			print "<td align=\"right\">";
-			$y = strftime("%Y",$objp->dp);
-			$m = strftime("%m",$objp->dp);
-			print strftime("%d",$objp->dp)."\n";
+			$y = dolibarr_print_date($objp->dp,"%Y");
+			$m = dolibarr_print_date($objp->dp,"%m");
+			$mt = dolibarr_print_date($objp->dp,"%b");
+			$d = dolibarr_print_date($objp->dp,"%d");
+			print $d."\n";
 			print " <a href=\"propal.php?year=$y&month=$m\">";
-			print strftime("%B",$objp->dp)."</a>\n";
+			print $b."</a>\n";
 			print " <a href=\"propal.php?year=$y\">";
-			print strftime("%Y",$objp->dp)."</a></td>\n";
+			print $y."</a></td>\n";
 		
 			// Prix
 			print "<td align=\"right\">".price($objp->total_ht)."</td>\n";

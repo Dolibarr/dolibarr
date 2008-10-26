@@ -495,7 +495,7 @@ for ($mois = 1 ; $mois <= 12 ; $mois++)
 {
 	$var=!$var;
 	print '<tr '.$bc[$var].'>';
-	print "<td>".strftime("%B",dolibarr_mktime(12,0,0,$mois,1,$annee))."</td>";
+	print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$mois,1,$annee),"%b")."</td>";
 	for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	{
 		$case = strftime("%Y-%m",dolibarr_mktime(12,0,0,$mois,1,$annee));

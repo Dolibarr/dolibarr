@@ -226,7 +226,7 @@ if ($result)
 		print '<td>';
         if ($allowinsertbankafter && $user->rights->banque->modifier && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
 		{
-			print "<input name=\"label\" type=\"text\" class=\"flat\" size=\"30\" value=\"".$langs->trans("Subscriptions").' '.strftime("%Y",$objp->dateadh)."\" >\n";
+			print "<input name=\"label\" type=\"text\" class=\"flat\" size=\"30\" value=\"".$langs->trans("Subscriptions").' '.dolibarr_print_date($objp->dateadh,"%Y")."\" >\n";
 	                //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
 	                //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
 			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';

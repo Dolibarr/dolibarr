@@ -149,14 +149,15 @@ if ($resql)
     }
     
     print "<td align=\"right\">";
-    $y = strftime("%Y",$objp->date_expedition);
-    $m = strftime("%m",$objp->date_expedition);
-     
-    print strftime("%d",$objp->date_expedition)."\n";
+    $y = dolibarr_print_date($objp->date_expedition,"%Y");
+    $m = dolibarr_print_date($objp->date_expedition,"%m");
+    $mt = dolibarr_print_date($objp->date_expedition,"%b");
+    $d = dolibarr_print_date($objp->date_expedition,"%d");
+    print $d."\n";
     print " <a href=\"propal.php?year=$y&amp;month=$m\">";
-    print strftime("%B",$objp->date_expedition)."</a>\n";
+    print $b."</a>\n";
     print " <a href=\"propal.php?year=$y\">";
-    print strftime("%Y",$objp->date_expedition)."</a></TD>\n";      
+    print $y."</a></TD>\n";      
     
     print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';
     print "</tr>\n";

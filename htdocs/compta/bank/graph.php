@@ -50,9 +50,9 @@ if ($_GET["account"] || $_GET["ref"])
 	if (! empty($_GET["lib"])) $conf->global->MAIN_GRAPH_LIBRARY=$_GET["lib"];
 	
     $datetime = time();
-    $year = strftime("%Y", $datetime);
-    $month = strftime("%m", $datetime);
-    $day = strftime("%d", $datetime);
+    $year = dolibarr_print_date($datetime, "%Y");
+    $month = dolibarr_print_date($datetime, "%m");
+    $day = dolibarr_print_date($datetime, "%d");
     if (! empty($_GET["year"]))  $year=sprintf("%04d",$_GET["year"]);
     if (! empty($_GET["month"])) $month=sprintf("%02d",$_GET["month"]);
     
@@ -166,7 +166,6 @@ if ($_GET["account"] || $_GET["ref"])
 			$i = 0;
 			while ($xmonth == $month)
 			{
-				//print strftime ("%e %d %m %y",$day)."\n";
 				$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 				if ($day > time())
 				{
@@ -601,7 +600,7 @@ if ($_GET["account"] || $_GET["ref"])
 			{
 				$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
 				$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
-				$labels[$i] = strftime("%b",dolibarr_mktime(12,0,0,$i+1,1,2000));
+				$labels[$i] = dolibarr_print_date(dolibarr_mktime(12,0,0,$i+1,1,2000),"%b");
 				$datamin[$i] = $acct->min_desired;
 			}
 		

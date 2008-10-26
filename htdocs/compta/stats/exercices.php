@@ -123,7 +123,7 @@ function pt ($db, $sql, $year) {
       if ($obj->dm > $month ) {
         	for ($b = $month ; $b < $obj->dm ; $b++) {
         	  print "<tr $bc[$var]>";
-        	  print "<td>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</td>\n";
+        	  print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
         	  print "<td align=\"right\">0</td>\n";	  
         	  print "</tr>\n";
         	  $var=!$var;
@@ -134,7 +134,7 @@ function pt ($db, $sql, $year) {
       if ($obj->sum > 0) {
 	print "<tr $bc[$var]>";
 	print "<td>";
-	print strftime("%B",mktime(12,0,0,$obj->dm, 1, $year))."</td>\n";
+	print dolibarr_print_date(dolibarr_mktime(12,0,0,$obj->dm, 1, $year),"%b")."</td>\n";
 	print "<td align=\"right\">".price($obj->sum)."</td>\n";
 	
 	print "</tr>\n";
@@ -155,7 +155,7 @@ function pt ($db, $sql, $year) {
       for ($b = $beg + 1 ; $b < 13 ; $b++) {
 	$var=!$var;
 	print "<tr $bc[$var]>";
-	print "<td>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</td>\n";
+	print "<td>".dolibarr_print_date(dolibarr_mktime(12,0,0,$b, 1, $year),"%b")."</td>\n";
 	print "<td align=\"right\">0</td>\n";	  
 	print "</tr>\n";
 	$ca[$b] = 0;
@@ -234,7 +234,7 @@ function ppt ($db, $year, $socid)
       $delta = $ca[$b] - $prev[$b];
       $deltat = $deltat + $delta ;
       print "<TR $bc[$var]>";
-      print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
+      print "<TD>".dolibarr_print_date(dolibarr_mktime(12,0,0,$b, 1, $year),"%b")."</TD>\n";
       print "<TD align=\"right\">".price($delta)."</TD>\n";
       print "<TD align=\"right\">".price($deltat)."</TD>\n";
       print "</TR>\n";
@@ -255,5 +255,5 @@ ppt($db, $cyear, $socid);
 $db->close();
 
 
-llxFooter('$Date$ r&eacute;vision $Revision$');
+llxFooter('$Date$ - $Revision$');
 ?>
