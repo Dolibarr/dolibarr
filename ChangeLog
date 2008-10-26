@@ -4,8 +4,10 @@ English Dolibarr changelog
 
 For users:
 - Sessions timeout can be configured to overwrite PHP setup.
+- Can filter on date in services list.
 - Support bookmark add of product cards.
-- Enhancement in stock management.
+- Enhancement in stock management (Automatic increase/decrease
+  from order or invoice is possible).
 - New view in ecm module.
 - Look enhancements for graphics (add transparency).
 - Added statistics report for supplier invoices.
@@ -14,7 +16,7 @@ For users:
 - Add an export definition to export interventions.
 - Can set umask file permissions on Unix/Linux/BSD systems.
 - Miscelanous bug fixes.
-- A lot of enhancement to increase productivity.
+- A lot of other enhancements to increase productivity.
 
 For translators:
 - The errors language file contains only error or warning messages with 
@@ -25,6 +27,7 @@ For developers:
 - Update skeletons.
 - Add an experimental Cash Desk module.
 - All submodules are moved in the includes directory.
+- Removed some deprecated files.
 
 
 ***** Changelog for 2.4 compared to 2.2 *****
