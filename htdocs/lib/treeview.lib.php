@@ -78,28 +78,34 @@ function is_in_subtree($fulltree,$parentid,$childid)
  *
  * @param 	fulltree	Array of entries in correct order
  * @param 	key			Key of value to show picto
- * @return	int			1
+ * @return	array		(0 or 1 if at least one of this level after, 0 or 1 if at least one of higher level after)
  */
 function tree_showpad(&$fulltree,$key,$selected=0)
 {
 	$pos=1;
+	
+	// Loop on each pos, because we will output an img for each pos
 	while ($pos <= $fulltree[$key]['level'] && $fulltree[$key]['level'] > 0)
 	{
 		// Process picto for column $pos
 
 		$atleastonofthislevelafter=0;
+		$nbofhigherlevelafter=0;
 		$found=0;
 		//print 'x'.$key;
 		foreach($fulltree as $key2 => $val2)
 		{
-			if ($found == 1)
+			if ($found == 1) // We are after the entry to show
 			{
+				if ($fulltree[$key2]['level'] > $pos)
+				{
+					$nbofhigherlevelafter++;
+				} 
 				if ($fulltree[$key2]['level'] == $pos)
 				{
 					$atleastonofthislevelafter=1;
-					break;
 				} 
-				if ($fulltree[$key2]['level'] < $pos)
+				if ($fulltree[$key2]['level'] <= $pos)
 				{
 					break;
 				} 
@@ -121,7 +127,7 @@ function tree_showpad(&$fulltree,$key,$selected=0)
 		$pos++;
 	}
 	
-	return 1;
+	return array($atleastonofthislevelafter,$nbofhigherlevelafter);
 }
 
 

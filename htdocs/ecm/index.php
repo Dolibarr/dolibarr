@@ -480,19 +480,23 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			if (in_array($val['id'],$expandedsectionarray)) $option='indexexpanded';
 			else $option='indexnotexpanded'; 
 			//print $option;
-			
+
 			print '<tr>';
 
 			// Show tree graph pictos
 			print '<td align="left">';
 			print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
-			tree_showpad($fulltree,$key);
+			$resarray=tree_showpad($fulltree,$key);
+			$a=$resarray[0];
+			$b=$resarray[1];
 			print '</td>';
 			// Show picto
 			print '<td valign="top">';
 			//print $val['fullpath']."(".$showline.")";
-			if (! in_array($val['id'],$expandedsectionarray)) $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop2.gif','',1);
-			else $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop2.gif','',1);
+			$n='2';
+			if ($b == 0 || ! in_array($val['id'],$expandedsectionarray)) $n='3';
+			if (! in_array($val['id'],$expandedsectionarray)) $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop'.$n.'.gif','',1);
+			else $ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/minustop'.$n.'.gif','',1);
 			$oldref=$ecmdirstatic->ref;
 			$ecmdirstatic->ref=$ref;
 			print $ecmdirstatic->getNomUrl(0,$option);
