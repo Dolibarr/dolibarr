@@ -1173,6 +1173,7 @@ class Societe extends CommonObject
 		global $langs;
 
 		$result='';
+		$lien=$lienfin='';
 
 		if ($option == 'customer')
 		{
@@ -1184,11 +1185,6 @@ class Societe extends CommonObject
 			elseif($this->client == 2)
 			{
 				$lien= '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$this->id.'">';
-				$lienfin='</a>';
-			}
-			else
-			{
-				$lien = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">';
 				$lienfin='</a>';
 			}
 		}
@@ -1203,8 +1199,14 @@ class Societe extends CommonObject
 			$lienfin='</a>';
 		}
 		
+		if (empty($lien))
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">';
+			$lienfin='</a>';
+		}
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin.' ');
 		$result.=$lien.($maxlen?dolibarr_trunc($this->nom,$maxlen):$this->nom).$lienfin;
+
 		return $result;
 	}
 

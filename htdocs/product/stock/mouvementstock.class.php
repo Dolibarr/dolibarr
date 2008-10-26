@@ -404,7 +404,7 @@ class MouvementStock
 
 	/**
 	 *	\brief		Decrease stock for product and subproducts
-	 *
+	 *	\return		int		<0 if KO, >0 if OK
 	 */
 	function livraison($user, $fk_product, $entrepot_id, $qty)
 	{
@@ -414,7 +414,7 @@ class MouvementStock
 
 	/**
 	 *	\brief		Increase stock for product and subproducts
-	 *
+	 *	\return		int		<0 if KO, >0 if OK
 	 */
 	function reception($user, $fk_product, $entrepot_id, $qty, $price=0)
 	{
