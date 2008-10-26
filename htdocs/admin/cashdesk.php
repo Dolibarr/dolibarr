@@ -39,7 +39,12 @@ $langs->load("cashdesk");
  */
 if ($_POST["action"] == 'set')
 {
-	dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",$_POST["socid"]);
+	if ($_POST["CASHDESK_ID_THIRDPARTY"] < 0) $_POST["CASHDESK_ID_THIRDPARTY"]='';
+	if ($_POST["CASHDESK_ID_WAREHOUSE"] < 0)  $_POST["CASHDESK_ID_WAREHOUSE"]='';
+
+	dolibarr_set_const($db,"CASHDESK_ID_THIRDPARTY",$_POST["CASHDESK_ID_THIRDPARTY"]);
+	dolibarr_set_const($db,"CASHDESK_ID_WAREHOUSE",$_POST["CASHDESK_ID_WAREHOUSE"]);
+
 	dolibarr_syslog("admin/cashdesk: level ".$_POST["level"]);
 }
 
@@ -72,7 +77,7 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
 print '<td colspan="2">';
-print $form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'socid','',1);
+print $form->select_societes($conf->global->CASHDESK_ID_THIRDPARTY,'CASHDESK_ID_THIRDPARTY','',1);
 print '</td></tr>';
 if ($conf->global->MAIN_MODULE_BANQUE)
 {
@@ -88,7 +93,7 @@ if ($conf->global->MAIN_MODULE_STOCK)
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';
 	print '<td colspan="2">';
-	$formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'CASHDESK_ID_WAREHOUSE');
+	$formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'CASHDESK_ID_WAREHOUSE','',1);
 	print '</td></tr>';
 }
 
