@@ -394,10 +394,10 @@ class FactureFournisseur extends Facture
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$result=0;
+			$error=0;
 			
 			// Si activé on décrémente le produit principal et ses composants à la validation de facture
-			if ($result >= 0 && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
+			if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
 
@@ -409,11 +409,12 @@ class FactureFournisseur extends Facture
 						// We increase stock for product
 						$entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
 						$result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+						if ($result < 0) { $error++; }
 					}
 				}
 			}
 			
-			if ($result > 0)
+			if ($error == 0)
 			{
 				// Appel des triggers
 				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -421,7 +422,10 @@ class FactureFournisseur extends Facture
 				$result=$interface->run_triggers('BILL_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
 				if ($result < 0) { $error++; $this->errors=$interface->errors; }
 				// Fin appel triggers
-	
+			}
+			
+			if ($error == 0)
+			{
 				$this->db->commit();
 				return 1;
 			}
