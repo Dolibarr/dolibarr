@@ -16,54 +16,49 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-	require ('classes/Facturation.class.php');
+require ('classes/Facturation.class.php');
 
-	// Si nouvelle vente, réinitialisation des données (destruction de l'objet et vidage de la table contenant la liste des articles)
-	if ( $_GET['id'] == 'NOUV' ) {
+// Si nouvelle vente, réinitialisation des données (destruction de l'objet et vidage de la table contenant la liste des articles)
+if ( $_GET['id'] == 'NOUV' ) {
 
-		unset ($_SESSION['serObjFacturation']);
+	unset ($_SESSION['serObjFacturation']);
 
-		$sql->query ('DELETE FROM '.MAIN_DB_PREFIX.'tmp_caisse');
+	$sql->query ('DELETE FROM '.MAIN_DB_PREFIX.'tmp_caisse');
 
-	}
+}
 
-	// Récupération, s'il existe, de l'objet contenant les infos de la vente en cours ...
-	if ( isset ($_SESSION['serObjFacturation']) ) {
+// Récupération, s'il existe, de l'objet contenant les infos de la vente en cours ...
+if ( isset ($_SESSION['serObjFacturation']) ) {
 
-		$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
-		unset ($_SESSION['serObjFacturation']);
+	$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
+	unset ($_SESSION['serObjFacturation']);
 
 	// ... sinon, c'est une nouvelle vente
-	} else {
+} else {
 
-		$obj_facturation = new Facturation;
+	$obj_facturation = new Facturation;
 
-	}
+}
 
 ?>
 
-<div class="liste_articles">
-	<?php include ('liste_articles.php'); ?>
-</div>
+<div class="liste_articles"><?php include ('liste_articles.php'); ?></div>
 
-<div class="principal">
+<div class="principal"><?php
+if ( $_GET['menu'] ) {
 
-	<?php
-		if ( $_GET['menu'] ) {
+	include ($_GET['menu'].'.php');
 
-			include ($_GET['menu'].'.php');
+} else {
 
-		} else {
+	include ('facturation.php');
 
-			include ('facturation.php');
-
-		}
-	?>
-</div>
+}
+?></div>
 
 <?php
 
-	$_SESSION['serObjFacturation'] = serialize ($obj_facturation);
+$_SESSION['serObjFacturation'] = serialize ($obj_facturation);
 
 ?>
 

@@ -16,11 +16,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-	// Récupération de la liste des articles
-	if ( $_GET['filtre'] ) {
+// Récupération de la liste des articles
+if ( $_GET['filtre'] ) {
 
-		// Avec filtre
-		$tab_designations = $sql->fetchAll ( $sql->query (
+	// Avec filtre
+	$tab_designations = $sql->fetchAll ( $sql->query (
 			'SELECT '.MAIN_DB_PREFIX.'product.rowid, ref, label, tva_tx
 			FROM '.MAIN_DB_PREFIX.'product
 			LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
@@ -32,10 +32,10 @@
 			ORDER BY label
 		;'));
 
-	} else {
+} else {
 
-		// Sans filtre
-		$tab_designations = $sql->fetchAll ( $sql->query ('
+	// Sans filtre
+	$tab_designations = $sql->fetchAll ( $sql->query ('
 			SELECT '.MAIN_DB_PREFIX.'product.rowid, ref, label, tva_tx
 			FROM '.MAIN_DB_PREFIX.'product
 			LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
@@ -45,50 +45,50 @@
 			ORDER BY label
 		;'));
 
-	}
+}
 
-	$nbr_enreg = count ($tab_designations);
+$nbr_enreg = count ($tab_designations);
 
-	if ( $nbr_enreg > 1 ) {
+if ( $nbr_enreg > 1 ) {
 
-		if ( $nbr_enreg > $conf_taille_listes ) {
+	if ( $nbr_enreg > $conf_taille_listes ) {
 
-			$top_liste_produits = '----- '.$conf_taille_listes.' produits affichés sur un total de '.$nbr_enreg.' -----';
-
-		} else {
-
-			$top_liste_produits = '----- '.$nbr_enreg.' produits affichés sur un total de '.$nbr_enreg.' -----';
-
-		}
-
-	} else if ( $nbr_enreg == 1 ) {
-
-		$top_liste_produits = '----- 1 article trouvé -----';
+		$top_liste_produits = '----- '.$conf_taille_listes.' produits affichés sur un total de '.$nbr_enreg.' -----';
 
 	} else {
 
-		$top_liste_produits = '----- Aucun article trouvé -----';
+		$top_liste_produits = '----- '.$nbr_enreg.' produits affichés sur un total de '.$nbr_enreg.' -----';
 
 	}
 
+} else if ( $nbr_enreg == 1 ) {
 
-	// Récupération des taux de tva
-	global $mysoc;
-	$request="SELECT t.rowid, t.taux
+	$top_liste_produits = '----- 1 article trouvé -----';
+
+} else {
+
+	$top_liste_produits = '----- Aucun article trouvé -----';
+
+}
+
+
+// Récupération des taux de tva
+global $mysoc;
+$request="SELECT t.rowid, t.taux
 		FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p
 		WHERE t.fk_pays = p.rowid AND t.active = 1 AND p.code = '".$mysoc->pays_code."'"; 
-	//print $request;
-	$tab_tva = $sql->fetchAll ($sql->query ($request));
+//print $request;
+$tab_tva = $sql->fetchAll ($sql->query ($request));
 
 
-	// Réinitialisation du mode de paiement, en cas de retour aux achats après validation
-	$obj_facturation->mode_reglement ('RESET');
-	$obj_facturation->montant_encaisse ('RESET');
-	$obj_facturation->montant_rendu ('RESET');
-	$obj_facturation->paiement_le ('RESET');
+// Réinitialisation du mode de paiement, en cas de retour aux achats après validation
+$obj_facturation->mode_reglement ('RESET');
+$obj_facturation->montant_encaisse ('RESET');
+$obj_facturation->montant_rendu ('RESET');
+$obj_facturation->paiement_le ('RESET');
 
 
-	// Affichage des templates
-	require ('templates/facturation1.tpl.php');
+// Affichage des templates
+require ('templates/facturation1.tpl.php');
 
 ?>

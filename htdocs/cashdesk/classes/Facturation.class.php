@@ -49,8 +49,6 @@
 		*
 		* @var int $prix_total_ht	=> Prix total hors taxes
 		* @var int $montant_tva		=> Montant total de la TVA, tous taux confondus
-		* @var int $montant_tva_19_6	=> Montant de la TVA à 19.6%
-		* @var int $montant_tva_5_5	=> Montant de la TVA à 5.5%
 		* @var int $prix_total_ttc	=> Prix total TTC
 		*/
 		protected $num_facture;
@@ -61,8 +59,6 @@
 
 		protected $prix_total_ht;
 		protected $montant_tva;
-		protected $montant_tva_19_6;
-		protected $montant_tva_5_5;
 		protected $prix_total_ttc;
 
 
@@ -85,9 +81,11 @@
 
 			$tab_tva = $sql->fetchFirst ( $sql->query ('SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$this->tva().';') );
 
+			
+			// TODO Mettre methode de calcul arrondi TVA de Dolibarr
+
 			// Calcul du total ht sans remise
 			$total_ht = ( $this->qte * $this->prix() );
-
 			// Calcul du montant de la remise
 			if ( $this->remise_percent() ) {
 
@@ -98,13 +96,12 @@
 				$remise_percent = 0;
 
 			}
-
 			$montant_remise = $total_ht * $remise_percent / 100;
 			$this->montant_remise ($montant_remise);
-
 			// Calcul du total ttc
 			$total_ttc = ($total_ht - $montant_remise) * (($tab_tva['taux'] / 100) + 1);
 
+			
 			$sql->query('
 				INSERT INTO '.MAIN_DB_PREFIX.'tmp_caisse (
 					fk_article,
@@ -123,9 +120,6 @@
 					'.price2num($total_ht).',
 					'.price2num($total_ttc).')');
 
-			// On modifie les totaux
-			$this->calculTotaux();
-
 			$this->raz();
 
 		}
@@ -143,7 +137,7 @@
 		}
 
 		/**
-		* Calcul du total HT, total TTC et montants TVA par types
+		* Calcul du total HT, total TTC et montants TVA
 		*/
 		public function calculTotaux () {
 			global $conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base;
@@ -151,13 +145,13 @@
 			$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 
 			// Incrémentation des compteurs
-			$res = $sql->query ('SELECT remise, total_ht, taux FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
+			$res = $sql->query ('SELECT remise, total_ht, total_ttc, taux FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
 				LEFT JOIN '.MAIN_DB_PREFIX.'c_tva as t ON c.fk_tva = t.rowid
 				ORDER BY id');
 
-			$total_tva_19_6 = 0;
-			$total_tva_5_5 = 0;
-			$total_tva_0 = 0;
+			$total_ht=0;
+			$total_ttc=0;
+			
 			if ( $sql->numRows($res) ) {
 
 				$tab = $sql->fetchAll($res);
@@ -166,35 +160,15 @@
 
 					// Total HT
 					$remise = $tab[$i]['remise'];
-					$total = ($tab[$i]['total_ht'] - $remise);
-
-					// Calcul des totaux HT par taux de tva
-					if ( $tab[$i]['taux'] == '19.6' ) {
-
-						$total_tva_19_6 += $total;
-
-					} elseif ( $tab[$i]['taux'] == '5.5' ) {
-
-						$total_tva_5_5 += $total;
-
-					} else {
-
-						$total_tva_0 += $total;
-
-					}
-
+					$total_ht += ($tab[$i]['total_ht']);
+					$total_ttc += ($tab[$i]['total_ttc']);
 				}
 
-				$this->prix_total_ht = $total_tva_0 + $total_tva_19_6 + $total_tva_5_5;
-
-				$total_ttc_19_6 = round ( ($total_tva_19_6 * 1.196), 2 );
-				$total_ttc_5_5 = round ( ($total_tva_5_5 * 1.055), 2 );
-				$this->prix_total_ttc = $total_ttc_19_6 + $total_ttc_5_5 + $total_tva_0;
-
-				$this->montant_tva_19_6 = ($total_ttc_19_6 - $total_tva_19_6);
-				$this->montant_tva_5_5 = ($total_ttc_5_5 - $total_tva_5_5);
-				$this->montant_tva = ($this->montant_tva_19_6 + $this->montant_tva_5_5);
-
+				$this->prix_total_ttc = $total_ttc;
+				$this->prix_total_ht = $total_ht;
+				
+				$this->montant_tva = $total_ttc - $total_ht;
+				//print $this->prix_total_ttc.'eeee'; exit;
 			}
 
 		}
@@ -228,8 +202,6 @@
 
 			$this->prix_total_ht ('RESET');
 			$this->montant_tva ('RESET');
-			$this->montant_tva_19_6 ('RESET');
-			$this->montant_tva_5_5 ('RESET');
 			$this->prix_total_ttc ('RESET');
 
 		}
@@ -500,42 +472,6 @@
 			} else {
 
 				$this->montant_tva = $aMontantTva;
-
-			}
-
-		}
-
-		public function montant_tva_19_6 ( $aMontantTva=null ) {
-
-			if ( !$aMontantTva ) {
-
-				return $this->montant_tva_19_6;
-
-			} else if ( $aMontantTva == 'RESET' ) {
-
-				$this->montant_tva_19_6 = NULL;
-
-			} else {
-
-				$this->montant_tva_19_6 = $aMontantTva;
-
-			}
-
-		}
-
-		public function montant_tva_5_5 ( $aMontantTva=null ) {
-
-			if ( !$aMontantTva ) {
-
-				return $this->montant_tva_5_5;
-
-			} else if ( $aMontantTva == 'RESET' ) {
-
-				$this->montant_tva_5_5 = NULL;
-
-			} else {
-
-				$this->montant_tva_5_5 = $aMontantTva;
 
 			}
 

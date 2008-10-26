@@ -146,23 +146,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 <table class="totaux">
 	<?php
-		echo '<tr><th>Total HT</th><td>'.number_format ($obj_facturation->prix_total_ht(),2, '.', '')." &#8364;</td></tr>\n";
-		if ( $obj_facturation->montant_tva_19_6() ) {
+		echo '<tr><th>Total HT</th><td>'.price2num($obj_facturation->prix_total_ht())." ".$conf->monnaie."</td></tr>\n";
+		if ( $obj_facturation->montant_tva() ) {
 
-			echo '<tr><th>TVA 19.6%</th><td>'.number_format ($obj_facturation->montant_tva_19_6(),2, '.', '')." &#8364;</td></tr>\n";
-
-		}
-		if ( $obj_facturation->montant_tva_5_5() ) {
-
-			echo '<tr><th>TVA 5.5%</th><td>'.number_format ($obj_facturation->montant_tva_5_5(),2, '.', '')." &#8364;</td></tr>\n";
+			echo '<tr><th>TVA</th><td>'.price2num($obj_facturation->montant_tva())." ".$conf->monnaie."</td></tr>\n";
 
 		}
-		if ( !$obj_facturation->montant_tva_19_6() && !$obj_facturation->montant_tva_5_5() ) {
+		else {
 
 			echo '<tr><th></th><td>Pas de TVA</td><tr>'."\n";
 
 		}
-		echo '<tr><th>Total TTC</th><td>'.number_format ($obj_facturation->prix_total_ttc(), 2, '.', '')." &#8364;</td></tr>\n";
+		echo '<tr><th>Total TTC</th><td>'.price2num($obj_facturation->prix_total_ttc())." ".$conf->monnaie."</td></tr>\n";
 	?>
 </table>
 
