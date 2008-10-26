@@ -137,9 +137,8 @@
 			$this->passwd ($aPasswd);
 
 			$this->sql = "SELECT rowid, pass_crypted, statut
-					FROM llx_user
-					WHERE login = '".$this->login."'
-				;";
+					FROM ".MAIN_DB_PREFIX."user
+					WHERE login = '".$this->login."'";
 
 
 			$this->verif_utilisateurs();

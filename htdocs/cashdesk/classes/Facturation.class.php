@@ -83,7 +83,7 @@
 			
 			$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 
-			$tab_tva = $sql->fetchFirst ( $sql->query ('SELECT taux FROM llx_c_tva WHERE rowid = '.$this->tva().';') );
+			$tab_tva = $sql->fetchFirst ( $sql->query ('SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$this->tva().';') );
 
 			// Calcul du total ht sans remise
 			$total_ht = ( $this->qte * $this->prix() );
@@ -106,7 +106,7 @@
 			$total_ttc = ($total_ht - $montant_remise) * (($tab_tva['taux'] / 100) + 1);
 
 			$sql->query('
-				INSERT INTO llx_tmp_caisse (
+				INSERT INTO '.MAIN_DB_PREFIX.'tmp_caisse (
 					fk_article,
 					qte,
 					fk_tva,
@@ -119,10 +119,9 @@
 					'.$this->qte().',
 					'.$this->tva().',
 					'.$remise_percent.',
-					'.$montant_remise.',
-					'.$total_ht.',
-					'.$total_ttc.')
-			;');
+					'.price2num($montant_remise).',
+					'.price2num($total_ht).',
+					'.price2num($total_ttc).')');
 
 			// On modifie les totaux
 			$this->calculTotaux();
@@ -139,7 +138,7 @@
 
 			$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 
-			$sql->query('DELETE FROM llx_tmp_caisse WHERE id = '.$aArticle.' LIMIT 1;');
+			$sql->query('DELETE FROM '.MAIN_DB_PREFIX.'tmp_caisse WHERE id = '.$aArticle.' LIMIT 1');
 
 		}
 
@@ -152,10 +151,9 @@
 			$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
 
 			// Incrémentation des compteurs
-			$res = $sql->query ('SELECT remise, total_ht, taux FROM `llx_tmp_caisse` as c
-				LEFT JOIN llx_c_tva as t ON c.fk_tva = t.rowid
-				ORDER BY id
-				;');
+			$res = $sql->query ('SELECT remise, total_ht, taux FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
+				LEFT JOIN '.MAIN_DB_PREFIX.'c_tva as t ON c.fk_tva = t.rowid
+				ORDER BY id');
 
 			$total_tva_19_6 = 0;
 			$total_tva_5_5 = 0;

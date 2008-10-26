@@ -31,16 +31,16 @@
 				if ( $_POST['hdnSource'] == 'LISTE' ) {
 
 					$res = $sql->query('SELECT fk_product, ref, stock_propale, stock_commande, price, reel, tva_tx
-								FROM llx_product
-								LEFT JOIN llx_product_stock ON llx_product.rowid = llx_product_stock.fk_product
+								FROM '.MAIN_DB_PREFIX.'product
+								LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
 								WHERE fk_product = '.$_POST['selProduit'].'
 								;');
 
 				} else if ( $_POST['hdnSource'] == 'REF' ) {
 
 					$res = $sql->query('SELECT fk_product, ref, stock_propale, stock_commande, price, reel, tva_tx
-								FROM llx_product
-								LEFT JOIN llx_product_stock ON llx_product.rowid = llx_product_stock.fk_product
+								FROM '.MAIN_DB_PREFIX.'product
+								LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
 								WHERE ref = \''.$_POST['txtRef'].'\'
 								;');
 

@@ -20,10 +20,10 @@
 	if ( $_GET['filtre'] ) {
 
 		// Avec filtre
-		$tab_designations = $sql->fetchAll ( $sql->query ('
-			SELECT llx_product.rowid, ref, label, tva_tx
-			FROM llx_product
-			LEFT JOIN llx_product_stock ON llx_product.rowid = llx_product_stock.fk_product
+		$tab_designations = $sql->fetchAll ( $sql->query (
+			'SELECT '.MAIN_DB_PREFIX.'product.rowid, ref, label, tva_tx
+			FROM '.MAIN_DB_PREFIX.'product
+			LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
 			WHERE envente = 1
 				AND fk_product_type = 0
 				AND fk_entrepot = '.$conf_fkentrepot.'
@@ -36,9 +36,9 @@
 
 		// Sans filtre
 		$tab_designations = $sql->fetchAll ( $sql->query ('
-			SELECT llx_product.rowid, ref, label, tva_tx
-			FROM llx_product
-			LEFT JOIN llx_product_stock ON llx_product.rowid = llx_product_stock.fk_product
+			SELECT '.MAIN_DB_PREFIX.'product.rowid, ref, label, tva_tx
+			FROM '.MAIN_DB_PREFIX.'product
+			LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'product.rowid = '.MAIN_DB_PREFIX.'product_stock.fk_product
 			WHERE envente = 1
 				AND fk_product_type = 0
 				AND fk_entrepot = '.$conf_fkentrepot.'
@@ -75,7 +75,7 @@
 	// Récupération des taux de tva
 	global $mysoc;
 	$request="SELECT t.rowid, t.taux
-		FROM llx_c_tva as t, llx_c_pays as p
+		FROM ".MAIN_DB_PREFIX."c_tva as t, llx_c_pays as p
 		WHERE t.fk_pays = p.rowid AND t.active = 1 AND p.code = '".$mysoc->pays_code."'"; 
 	//print $request;
 	$tab_tva = $sql->fetchAll ($sql->query ($request));

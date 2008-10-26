@@ -15,15 +15,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-	include('../master.inc.php');
-	
-	session_start ();
+include('../master.inc.php');
 
-	if ( $_SESSION['uid'] > 0 ) {
+// Init session
+$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
+session_name($sessionname);
+session_start();
+dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"].", ".ini_get("session.gc_maxlifetime"));
 
-		header ('Location: affIndex.php');
+if ( $_SESSION['uid'] > 0 ) {
 
-	}
+	header ('Location: affIndex.php');
+
+}
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -31,67 +36,74 @@
 
 <html>
 <head>
-	<title>Caisse : identification</title>
+<title>Caisse : identification</title>
 
-	<meta name="robots" content="none" />
+<meta name="robots" content="none" />
 
-	<meta name="author" content="Jérémie Ollivier - jeremie.o@laposte.net" />
-	<meta name="Generator" content="Kwrite, Gimp, Inkscape" />
+<meta name="author" content="Jérémie Ollivier - jeremie.o@laposte.net" />
+<meta name="Generator" content="Kwrite, Gimp, Inkscape" />
 
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
-	<meta http-equiv="Content-Language" content="fr" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+<meta http-equiv="Content-Language" content="fr" />
 
-	<meta http-equiv="Content-Style-Type" content="text/css" />
-	<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
 </head>
 
 <body>
-	<div class="conteneur">
-		<div class="conteneur_img_gauche">
-			<div class="conteneur_img_droite">
+<div class="conteneur">
+<div class="conteneur_img_gauche">
+<div class="conteneur_img_droite">
 
-				<h1 class="entete"><span>CAISSE : identification</span></h1>
+<h1 class="entete"><span>CAISSE : identification</span></h1>
 
-				<div class="menu_principal">
-				</div>
+<div class="menu_principal"></div>
 
-				<div class="contenu">
-					<div class="principal_login">
-						<fieldset class="cadre_facturation"><legend class="titre1">Identification</legend>
-							<form class="formulaire_login" id="frmLogin" method="post" action="index_verif.php">
+<div class="contenu">
+<div class="principal_login">
+<fieldset class="cadre_facturation"><legend class="titre1">Identification</legend>
+<form class="formulaire_login" id="frmLogin" method="post"
+	action="index_verif.php">
 
-								<table>
+<table>
 
-									<tr><td class="label1">Nom d'utilisateur</td><td><input name="txtUsername" class="texte_login" type="text" value="<?php echo $_GET['user']; ?>" /></td></tr>
-									<tr><td class="label1">Mot de passe</td><td><input name="pwdPassword" class="texte_login" type="password" value="" /></td></tr>
+	<tr>
+		<td class="label1">Nom d'utilisateur</td>
+		<td><input name="txtUsername" class="texte_login" type="text"
+			value="<?php echo $_GET['user']; ?>" /></td>
+	</tr>
+	<tr>
+		<td class="label1">Mot de passe</td>
+		<td><input name="pwdPassword" class="texte_login" type="password"
+			value="" /></td>
+	</tr>
 
-								</table>
+</table>
 
-								<span class="bouton_login"><input name="sbmtConnexion" type="submit" value="Connexion" /></span>
+<span class="bouton_login"><input name="sbmtConnexion" type="submit"
+	value="Connexion" /></span>
 
-							</form>
-						</fieldset>
+</form>
+</fieldset>
 
-						<?php
-							if ($_GET['err'] < 0) {
+<?php
+if ($_GET['err'] < 0) {
 
-								echo ('<script type="text/javascript">');
-								echo ('	document.getElementById(\'frmLogin\').pwdPassword.focus();');
-								echo ('</script>');
+	echo ('<script type="text/javascript">');
+	echo ('	document.getElementById(\'frmLogin\').pwdPassword.focus();');
+	echo ('</script>');
 
-							} else {
+} else {
 
-								echo ('<script type="text/javascript">');
-								echo ('	document.getElementById(\'frmLogin\').txtUsername.focus();');
-								echo ('</script>');
+	echo ('<script type="text/javascript">');
+	echo ('	document.getElementById(\'frmLogin\').txtUsername.focus();');
+	echo ('</script>');
 
-							}
-						?>
-					</div>
-				</div>
+}
+?></div>
+</div>
 
-				<?php include ('affPied.php'); ?>
-			</div>
-		</div>
-	</div>
+<?php include ('affPied.php'); ?></div>
+</div>
+</div>
 </body>

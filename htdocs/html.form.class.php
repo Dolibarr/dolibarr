@@ -1700,7 +1700,7 @@ class Form
 	 *    \brief      Retourne la liste des comptes
 	 *    \param      selected          Id compte pré-sélectionné
 	 *    \param      htmlname          Nom de la zone select
-	 *    \param      statut            Statut des comptes recherchés
+	 *    \param      statut            Statut des comptes recherchés (0=open, 1=closed)
 	 *    \param      filtre            Pour filtre sur la liste
 	 *    \param      useempty          Affiche valeur vide dans liste
 	 */

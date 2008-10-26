@@ -15,8 +15,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-	session_start ();
-	session_destroy ();
+include('../master.inc.php');
 
-	header ('Location: index.php');
+// Init session
+$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
+session_name($sessionname);
+session_start();
+dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"].", ".ini_get("session.gc_maxlifetime"));
+
+// Destroy session
+$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetime',$conf->global->MAIN_SESSION_TIMEOUT);
+session_name($sessionname);
+session_destroy();
+dolibarr_syslog("End session in DOLSESSID_".$dolibarr_main_db_name);
+
+
+header ('Location: index.php');
 ?>

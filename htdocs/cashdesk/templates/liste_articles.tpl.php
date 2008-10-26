@@ -21,10 +21,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 <?php
 	// Récupération du contenu de la vente
-	$res = $sql->query ('SELECT id, ref, label, qte, price, remise_percent, remise, total_ht, total_ttc FROM `llx_tmp_caisse` as c
-				LEFT JOIN llx_product as p ON c.fk_article = p.rowid
-				ORDER BY id
-				;');
+	$res = $sql->query (
+			'SELECT id, ref, label, qte, price, remise_percent, remise, total_ht, total_ttc FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
+			LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON c.fk_article = p.rowid
+			ORDER BY id');
 
 	if ( $sql->numRows($res) ) {
 
@@ -54,7 +54,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 		}
 
 		$total_ttc = $obj_facturation->prix_total_ttc();
-		echo ('<p class="cadre_prix_total">TOTAL : '.number_format ($total_ttc, 2, '.', '').' &#8364;<br /><span style="font-size: 0.8em;" >('.number_format ( ($total_ttc * 6.55957), 2, '.', '').' F)</span></p>'."\n");
+		echo ('<p class="cadre_prix_total">TOTAL : '.number_format ($total_ttc, 2, '.', '').' '.$conf->monnaie.'<br /></p>'."\n");
 
 	} else {
 

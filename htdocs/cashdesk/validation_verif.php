@@ -32,12 +32,11 @@
 		case 'valide_achat':
 
 				// Récupération du dernier numéro de facture
-				$res = $sql->query ("
-					SELECT facnumber
-					FROM llx_facture
+				$res = $sql->query (
+					"SELECT facnumber
+					FROM ".MAIN_DB_PREFIX."facture
 					WHERE facnumber LIKE 'FA%'
-					ORDER BY rowid DESC
-				;");
+					ORDER BY rowid DESC");
 
 				if ( $sql->numRows ($res) ) {
 
@@ -137,8 +136,8 @@
 			if ( $obj_facturation->mode_reglement() == 'DIF' ) {
 
 				// ... ajout d'une facture sans mode de réglement, avec la date d'échéance
-				$sql->query ("
-					INSERT INTO llx_facture (
+				$sql->query (
+				"INSERT INTO ".MAIN_DB_PREFIX."facture (
 							facnumber,
 							type,
 							ref_client,
@@ -200,12 +199,11 @@
 
 
 					// Récupération de l'id de la facture nouvellement créée
-					$tab_id_facture = $sql->fetchFirst ( $sql->query ("
-						SELECT rowid
-						FROM llx_facture
+					$tab_id_facture = $sql->fetchFirst ( $sql->query (
+						"SELECT rowid
+						FROM ".MAIN_DB_PREFIX."facture
 						WHERE 1
-						ORDER BY rowid DESC
-					;") );
+						ORDER BY rowid DESC") );
 
 					$id = $tab_id_facture['rowid'];
 
@@ -214,8 +212,7 @@
 			} else {
 
 				// ... ajout d'une facture et d'un paiement
-				$sql->query ("
-					INSERT INTO llx_facture (
+				$sql->query ("INSERT INTO ".MAIN_DB_PREFIX."facture (
 							facnumber,
 							type,
 							ref_client,
@@ -278,12 +275,11 @@
 
 
 					// Récupération de l'id de la facture nouvellement créée
-					$tab_id_facture = $sql->fetchFirst ( $sql->query ("
-						SELECT rowid
-						FROM llx_facture
+					$tab_id_facture = $sql->fetchFirst ( $sql->query (
+					"SELECT rowid
+						FROM ".MAIN_DB_PREFIX."facture
 						WHERE 1
-						ORDER BY rowid DESC
-					;") );
+						ORDER BY rowid DESC") );
 
 					$id = $tab_id_facture['rowid'];
 
@@ -292,8 +288,8 @@
 				// Ajout d'une opération sur le compte de caisse, uniquement si le paiement est en espèces
 				if ( $obj_facturation->mode_reglement() == 'ESP' ) {
 
-					$sql->query ("
-						INSERT INTO llx_bank (
+					$sql->query (
+						"INSERT INTO ".MAIN_DB_PREFIX."bank (
 								datec,
 								datev,
 								dateo,
@@ -323,19 +319,18 @@
 				}
 
 					// Récupération de l'id de l'opération nouvellement créée
-					$tab_id_operation = $sql->fetchFirst ( $sql->query ("
-						SELECT rowid
-						FROM llx_bank
+					$tab_id_operation = $sql->fetchFirst ( $sql->query (
+					"SELECT rowid
+						FROM ".MAIN_DB_PREFIX."bank
 						WHERE 1
-						ORDER BY rowid DESC
-					;") );
+						ORDER BY rowid DESC") );
 
 					$id_op = $tab_id_operation['rowid'];
 
 
 				// Ajout d'un nouveau paiement
-				$sql->query ("
-					INSERT INTO llx_paiement (
+				$sql->query (
+				"INSERT INTO ".MAIN_DB_PREFIX."paiement (
 							fk_facture,
 							datec,
 							datep,
@@ -363,23 +358,21 @@
 							NULL,
 							1,
 							0
-						)
-				;");
+						)");
 
 
 				// Récupération de l'id du paiement nouvellement créé
-				$tab_id_paiement = $sql->fetchFirst ( $sql->query ("
-					SELECT rowid
-					FROM llx_paiement
+				$tab_id_paiement = $sql->fetchFirst ( $sql->query (
+				"SELECT rowid
+					FROM ".MAIN_DB_PREFIX."paiement
 					WHERE 1
-					ORDER BY rowid DESC
-				;") );
+					ORDER BY rowid DESC") );
 
 				$id_paiement = $tab_id_paiement['rowid'];
 
 
-				$sql->query ("
-					INSERT INTO llx_paiement_facture (
+				$sql->query (
+				"INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (
 							fk_paiement,
 							fk_facture,
 							amount
@@ -395,8 +388,8 @@
 			}
 
 			// Ajout d'un réglement tva
-			$sql->query ("
-				INSERT INTO llx_facture_tva_sum (
+			$sql->query (
+			"INSERT INTO llx_facture_tva_sum (
 						fk_facture,
 						amount,
 						tva_tx
@@ -411,27 +404,24 @@
 
 
 			// Récupération de la liste des articles du panier
-			$tab_liste = $sql->fetchAll ( $sql->query ("
+			$tab_liste = $sql->fetchAll ( $sql->query ('
 				SELECT fk_article, qte, fk_tva, remise_percent, remise, total_ht, total_ttc, reel
-				FROM llx_tmp_caisse
-				LEFT JOIN llx_product_stock ON llx_tmp_caisse.fk_article = llx_product_stock.fk_product
-				WHERE 1
-			;") );
+				FROM '.MAIN_DB_PREFIX.'tmp_caisse
+				LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'tmp_caisse.fk_article = '.MAIN_DB_PREFIX.'product_stock.fk_product
+				WHERE 1') );
 
 			for ($i = 0; $i < count ($tab_liste); $i++) {
 
 				// Récupération de l'article
-				$tab_article = $sql->fetchFirst ( $sql->query ("
-					SELECT label, tva_tx, price
-					FROM llx_product
-					WHERE rowid = ".$tab_liste[$i]['fk_article']."
-				;") );
+				$tab_article = $sql->fetchFirst ( $sql->query (
+					'SELECT label, tva_tx, price
+					FROM '.MAIN_DB_PREFIX.'product
+					WHERE rowid = '.$tab_liste[$i]['fk_article']) );
 
-				$tab_tva = $sql->fetchFirst ( $sql->query ("
-					SELECT taux
-					FROM llx_c_tva
-					WHERE rowid = ".$tab_liste[$i]['fk_tva']."
-				;") );
+				$tab_tva = $sql->fetchFirst ( $sql->query (
+					'SELECT taux
+					FROM '.MAIN_DB_PREFIX.'c_tva
+					WHERE rowid = '.$tab_liste[$i]['fk_tva']) );
 
 				// Calcul du montant de la TVA
 				$montant_tva = $tab_liste[$i]['total_ttc'] - $tab_liste[$i]['total_ht'];
@@ -445,17 +435,16 @@
 				$stock = $reel - $qte;
 
 				// Mise à jour du stock
-				$sql->query ("
-					UPDATE llx_product_stock
-					SET reel = ".$stock."
+				$sql->query (
+					'UPDATE '.MAIN_DB_PREFIX.'product_stock
+					SET reel = '.$stock."
 					WHERE fk_product = ".$tab_liste[$i]['fk_article']."
-					LIMIT 1
-				;");
+					LIMIT 1");
 
 
 				// Ajout d'une entrée dans le détail de la facture
-				$sql->query ("
-					INSERT INTO llx_facturedet (
+				$sql->query (
+					'INSERT INTO '.MAIN_DB_PREFIX.'facturedet (
 							fk_facture,
 							fk_product,
 							description,
@@ -478,7 +467,7 @@
 						)
 
 						VALUES (
-							".$id.",
+							'.$id.",
 							".$tab_liste[$i]['fk_article'].",
 							'".$tab_article['label']."',
 							".$tab_tva['taux'].",
@@ -496,9 +485,7 @@
 							0,
 							0,
 							0,
-							".$position."
-						)
-				;");
+							".$position.")");
 
 			}
 

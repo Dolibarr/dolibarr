@@ -65,6 +65,7 @@ class Conf
 	var $propal;
 	var $categorie;
 	var $oscommerce2;
+	var $monnaie;
 	var $css;
 	var $css_modules=array();
 

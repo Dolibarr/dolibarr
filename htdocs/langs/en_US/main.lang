@@ -36,6 +36,7 @@ ErrorNoVATRateDefinedForSellerCountry=Error, no vat rates defined for country '%
 ErrorFailedToSaveFile=Error, failed to save file.
 ErrorOnlyPngJpgSupported=Error, only .png and .jpg image format file are supported.
 ErrorImageFormatNotSupported=Your PHP does not support functions to convert images of this format.
+RecordSaved=Record saved
 LevelOfFeature=Level of features
 NotDefined=Not defined
 DefinedAndHasThisValue=Defined and value to

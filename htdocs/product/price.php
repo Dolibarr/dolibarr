@@ -21,10 +21,10 @@
  */
 
 /**
- \file       htdocs/product/price.php
- \ingroup    product
- \brief      Page de la fiche produit
- \version    $Id$
+ *	\file       htdocs/product/price.php
+ *	\ingroup    product
+ *	\brief      Page de la fiche produit
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -96,7 +96,7 @@ if ($_POST["action"] == 'update_price' && ! $_POST["cancel"] && $user->rights->p
 	if ($product->update_price($product->id, $newprice, $newpricebase, $user, $newvat,$newprice_min) > 0)
 	{
 		$_GET["action"] = '';
-		$mesg = $langs->trans("RecordSaved");
+		$mesg = '<div class="ok">'.$langs->trans("RecordSaved").'</div>';
 	}
 	else
 	{
@@ -124,8 +124,6 @@ if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
-
-if ($mesg) print $mesg;
 
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
@@ -211,6 +209,7 @@ print "</table>\n";
 
 print "</div>\n";
 
+if ($mesg) print $mesg;
 
 
 /* ************************************************************************** */

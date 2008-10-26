@@ -23,7 +23,7 @@
 
 		unset ($_SESSION['serObjFacturation']);
 
-		$sql->query ('TRUNCATE TABLE llx_tmp_caisse;');
+		$sql->query ('DELETE FROM '.MAIN_DB_PREFIX.'tmp_caisse');
 
 	}
 

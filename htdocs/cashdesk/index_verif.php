@@ -32,11 +32,10 @@
 		$db = mysql_connect ($conf_db_host,$conf_db_user, $conf_db_pass);
 		mysql_select_db ($conf_db_base, $db);
 
-		$tab = $sql->fetchFirst ($sql->query ("
-			SELECT rowid, name, firstname
-			FROM llx_user
-			WHERE login = '".$username."'
-		;"));
+		$tab = $sql->fetchFirst ($sql->query (
+			"SELECT rowid, name, firstname
+			FROM ".MAIN_DB_PREFIX."user
+			WHERE login = '".$username."'"));
 
 		$_SESSION['uid'] = $tab['rowid'];
 		$_SESSION['uname'] = $username;

@@ -21,17 +21,16 @@
 	// Verification
 	if ( strlen ($_GET["code"]) > 1 ) {
 
-		$res = $sql->query ("
-			SELECT llx_product.rowid, ref, label, tva_tx
-			FROM llx_product
-			LEFT JOIN llx_product_stock ON llx_product.rowid = llx_product_stock.fk_product
+		$res = $sql->query (
+			"SELECT ".MAIN_DB_PREFIX."product.rowid, ref, label, tva_tx
+			FROM ".MAIN_DB_PREFIX."product
+			LEFT JOIN ".MAIN_DB_PREFIX."product_stock ON ".MAIN_DB_PREFIX."product.rowid = ".MAIN_DB_PREFIX."product_stock.fk_product
 			WHERE envente = 1
 				AND fk_product_type = 0
 				AND fk_entrepot = '".$conf_fkentrepot."'
 				AND ref LIKE '%".$_GET['code']."%'
 				OR label LIKE '%".$_GET['code']."%'
-			ORDER BY label
-		;");
+			ORDER BY label");
 
 		if ( $nbr = $sql->numRows($res) ) {
 

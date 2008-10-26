@@ -15,98 +15,100 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-	require_once ('Sql.interface.php');
 
-	class Sql implements intSql {
+require_once ('Sql.interface.php');
 
-		/**
+
+class Sql implements intSql {
+
+	/**
 		* Constructeur : initialise la connection à la base de données
 		* @param $aHost Domaine ou adresse IP du serveur de base de données (ex : localhost ou db.monsite.fr)
 		* @param $aUser Utilisateur de la base de données
 		* @param $aPass Mot de passe de l'utilisateur de la base de données
 		* @param $aBase Nom de la base de données à utiliser
 		*/
-		public function __construct ($aHost, $aUser, $aPass, $aBase) {
+	public function __construct ($aHost, $aUser, $aPass, $aBase) {
 
-			$db = mysql_connect ($aHost, $aUser, $aPass);
-			mysql_select_db ($aBase, $db);
+		$db = mysql_connect ($aHost, $aUser, $aPass);
+		mysql_select_db ($aBase, $db);
 
-		}
+	}
 
-		/**
+	/**
 		* Destructeur : ferme la connection à la base de données
 		*/
-		// Désactivation pour cause bug avec 1and1
-// 		public function __destruct () {
-//
-// 			mysql_close ();
-//
-// 		}
+	// Désactivation pour cause bug avec 1and1
+	// 		public function __destruct () {
+	//
+	// 			mysql_close ();
+	//
+	// 		}
 
-		/**
+	/**
 		* Effectue une requête sur la base de données, et renvoi la ressource correspondante
 		* @param $aRequete Requête SQL (ex : SELECT nom, prenom FROM table1 WHERE id = 127)
 		* @return Ressource vers la requête venant d'être effectuée
 		*/
-		public function query ($aRequete) {
+	public function query ($aRequete) {
+		dolibarr_syslog("cashdesk query sql=".$aRequete, LOG_DEBUG);
+		return mysql_query($aRequete);
 
-			return mysql_query($aRequete);
+	}
 
-		}
-
-		/**
+	/**
 		* Renvoi le nombre de résultats d'une requête
 		* @param $aRes Ressource d'une requête effectuée précédemment
 		* @return Entier : nombre de résultats de la requête
 		*/
-		public function numRows ($aRes) {
+	public function numRows ($aRes) {
 
-			return mysql_num_rows($aRes);
+		return mysql_num_rows($aRes);
 
-		}
+	}
 
-		/**
+	/**
 		* Enregistre tous les résultats d'une requête dans un tableau à deux dimensions
 		* @param $aRes Ressource d'une requête effectuée précédemment
 		* @return Tableau à deux dimensions : $tab[indice_resultat(integer)][indice_champ(integer) / nom_champ(string)]
 		*/
-		public function fetchAll ($aRes) {
+	public function fetchAll ($aRes) {
 
-			$i = 0;
-			while ( $tab = mysql_fetch_array($aRes) ) {
+		$i = 0;
+		while ( $tab = mysql_fetch_array($aRes) ) {
 
-				foreach ( $tab as $cle => $valeur ) {
+			foreach ( $tab as $cle => $valeur ) {
 
-					$ret[$i][$cle] = $valeur;
-
-				}
-				$i++;
+				$ret[$i][$cle] = $valeur;
 
 			}
-
-			return $ret;
+			$i++;
 
 		}
 
-		/**
+		return $ret;
+
+	}
+
+	/**
 		* Enregistre seulement le premier résultat d'une requête dans un tableau à une dimension
 		* @param $aRes Ressource d'une requête effectuée précédemment
 		* @return Tableau à une dimension : $tab[indice_champ(integer) / nom_champ(string)]
 		*/
-		public function fetchFirst ($aRes) {
+	public function fetchFirst ($aRes) {
 
-			$tab = mysql_fetch_array($aRes);
+		$tab = mysql_fetch_array($aRes);
 
-			foreach ( $tab as $cle => $valeur ) {
+		foreach ( $tab as $cle => $valeur ) {
 
-				$ret[$cle] = $valeur;
-
-			}
-
-			return $ret;
+			$ret[$cle] = $valeur;
 
 		}
 
+		return $ret;
+
 	}
+
+}
 
 ?>
