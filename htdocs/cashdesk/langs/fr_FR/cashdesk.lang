@@ -1,2 +1,5 @@
 # Language file - fr_FR - cashdesk
 CashDesk=Caisse
+CashDeskBank=Compte bancaire
+CashDeskWarehouse=Entrepôt
+CashDeskThirdParty=Tiers

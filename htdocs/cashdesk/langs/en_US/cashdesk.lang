@@ -1,2 +1,5 @@
 # Language file - en_US - cashdesk
 CashDesk=Cash desk
+CashDeskBank=Bank accountre
+CashDeskWarehouse=Warehouse
+CashDeskThirdParty=Third party

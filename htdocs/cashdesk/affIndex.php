@@ -15,37 +15,41 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-	include('../master.inc.php');
-	require ('include/environnement.php');
-	if ( $_SESSION['uid'] <= 0 ) {
 
-		header ('Location: index.php');
-
-	}
+include('../master.inc.php');
+require ('include/environnement.php');
+if ( $_SESSION['uid'] <= 0 ) {
+	header ('Location: index.php');
+	exit;
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html>
 <head>
-	<title>Caisse</title>
+<title>Caisse</title>
 
-	<meta name="robots" content="none" />
+<meta name="robots" content="none" />
 
-	<meta name="author" content="Jérémie Ollivier - jeremie.o@laposte.net" />
-	<meta name="Generator" content="Kwrite, Gimp, Inkscape" />
+<meta name="author" content="Jérémie Ollivier - jeremie.o@laposte.net" />
+<meta name="Generator" content="Kwrite, Gimp, Inkscape" />
 
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
-	<meta http-equiv="Content-Language" content="fr" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
+<meta http-equiv="Content-Language" content="fr" />
 
-	<meta http-equiv="Content-Style-Type" content="text/css" />
-	<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
 
-	<!-- Import des fichiers nécessaires à JsCalendar -->
-	<style type="text/css">@import url(include/jscalendar/calendar-blue.css);</style>
-	<script type="text/javascript" src="include/jscalendar/calendar.js"></script>
-	<script type="text/javascript" src="include/jscalendar/lang/calendar-fr.js"></script>
-	<script type="text/javascript" src="include/jscalendar/calendar-setup.js"></script>
+<!-- Import des fichiers nécessaires à JsCalendar -->
+<style type="text/css">
+@import url(include/jscalendar/calendar-blue.css);
+</style>
+<script type="text/javascript" src="include/jscalendar/calendar.js"></script>
+<script type="text/javascript"
+	src="include/jscalendar/lang/calendar-fr.js"></script>
+<script type="text/javascript"
+	src="include/jscalendar/calendar-setup.js"></script>
 </head>
 
 <body>
@@ -54,23 +58,17 @@
 <div class="conteneur_img_gauche">
 <div class="conteneur_img_droite">
 
-	<h1 class="entete"><span>CAISSE</span></h1>
+<h1 class="entete"><span>CAISSE</span></h1>
 
-	<div class="menu_principal">
-		<?php
-			include ('templates/menu.tpl.php');
-		?>
-	</div>
+<div class="menu_principal"><?php
+include ('templates/menu.tpl.php');
+?></div>
 
-	<div class="contenu">
-		<?php
-			include ('affContenu.php');
-		?>
-	</div>
+<div class="contenu"><?php
+include ('affContenu.php');
+?></div>
 
-	<?php include ('affPied.php'); ?>
-
-</div>
+<?php include ('affPied.php'); ?></div>
 </div>
 </div>
 
