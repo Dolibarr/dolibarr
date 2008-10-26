@@ -114,7 +114,7 @@ $formecm=new FormEcm($db);
 
 
 $head = ecm_prepare_head($ecmdir);
-dolibarr_fiche_head($head, 'card', $langs->trans("ECMManualOrg"));
+dolibarr_fiche_head($head, 'card', $langs->trans("ECMSectionManual"));
 
 if ($_GET["action"] == 'edit')
 {

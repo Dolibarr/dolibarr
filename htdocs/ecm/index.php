@@ -247,7 +247,7 @@ if (eregi('search',$action))
 	print "<tr ".$bc[false]."><td>".$langs->trans("Keyword").':</td><td align="right"><input type="text" name="search_keyword" class="flat" size="14"></td></tr>';
 	print "<tr ".$bc[false].'><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 	print "</table></form>";
-	//print $langs->trans("ECMManualOrgDesc");
+	//print $langs->trans("ECMSectionManualDesc");
 
 	//print_fiche_titre($langs->trans("ECMSectionAuto"));
 

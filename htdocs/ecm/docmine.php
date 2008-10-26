@@ -223,7 +223,7 @@ foreach($filearray as $key => $file)
 
 
 $head = ecm_prepare_head($ecmdir);
-dolibarr_fiche_head($head, 'card', $langs->trans("ECMManualOrg"));
+dolibarr_fiche_head($head, 'card', $langs->trans("ECMSectionManual"));
 
 if ($_GET["action"] == 'edit')
 {
@@ -353,6 +353,7 @@ if ($_GET['action'] == 'delete_dir')
 
 $formfile=new FormFile($db);
 
+/*
 // Affiche formulaire upload
 if ($user->rights->ecm->create)
 {
@@ -360,12 +361,12 @@ if ($user->rights->ecm->create)
 }
 
 // List of document
-// TODO: prevoir un droit sur la suppression des documents
 if ($user->rights->ecm->read)
 {
 	$param='&amp;section='.$section;
 	$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->create);
 }
+*/
 
 // End of page
 $db->close();
