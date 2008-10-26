@@ -236,7 +236,7 @@ print '<table class="nobordernopadding" width="100%"><tr><td valign="top">';
 
 if (eregi('search',$action))
 {
-	//print_fiche_titre($langs->trans("ECMManualOrg"));
+	//print_fiche_titre($langs->trans("ECMSectionsManual"));
 
 	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 	print '<table class="nobordernopadding" width="100%">';
@@ -249,7 +249,7 @@ if (eregi('search',$action))
 	print "</table></form>";
 	//print $langs->trans("ECMManualOrgDesc");
 
-	//print_fiche_titre($langs->trans("ECMAutoOrg"));
+	//print_fiche_titre($langs->trans("ECMSectionAuto"));
 
 	print '<form method="post" action="'.DOL_URL_ROOT.'/ecm/search.php">';
 	print '<table class="noborder" width="100%">';
@@ -279,7 +279,7 @@ if (eregi('search',$action))
 
 	print '<tr '. $bc[false].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 	print "</table></form>";
-	//print $langs->trans("ECMAutoOrgDesc");
+	//print $langs->trans("ECMSectionAutoDesc");
 }
 
 
@@ -300,7 +300,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre" align="left">'.$langs->trans("ECMSections").'</td>';
-	print '<td class="liste_titre" colspan="4" align="right">';
+	print '<td class="liste_titre" colspan="5" align="right">';
 	print '<a href="'.$_SERVER["PHP_SELF"].'?action=refreshmanual'.($section?'&amp;section='.$section:'').'">'.$langs->trans("Refresh").' '.img_picto($langs->trans("Refresh"),'refresh').'</a>';
 	print '</td>';
 	print '</tr>';
@@ -313,10 +313,11 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		print '<table class="nobordernopadding"><tr class="nobordernopadding">';
 		print '<td align="left" width="24px">';
 		print img_picto_common('','treemenu/base.gif');
-		print '</td><td align="left">'.$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionAuto").')';
+		print '</td><td align="left">'.$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
 		print '</td>';
 		print '</tr></table>';
 		print '</td>';
+		print '<td align="right">&nbsp;</td>';
 		print '<td align="right">&nbsp;</td>';
 		print '<td align="right">&nbsp;</td>';
 		print '<td align="right">&nbsp;</td>';
@@ -343,15 +344,28 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 				print '<td align="left">';
 				print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
 				tree_showpad($sectionauto,$key);
-				print '</td><td valign="top">';
-				print img_picto('','object_dir');
-				print '</td><td valign="middle">&nbsp;';
+				print '</td>';
+				
+				print '<td valign="top">';
+				$n=3;
+				$ref=img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/plustop'.$n.'.gif','',1);
+				$oldref=$ecmdirstatic->ref;
+				$ecmdirstatic->ref=$ref;
+				print $ecmdirstatic->getNomUrl(0,$option);
+				$ecmdirstatic->ref=$oldref;
+				print img_picto('',DOL_URL_ROOT.'/theme/common/treemenu/folder.gif','',1);
+				print '</td>';
+				
+				print '<td valign="middle">';
 				print '<a href="'.DOL_URL_ROOT.'/ecm/docother.php">';
 				print $val['label'];
 				print '</a></td></tr></table>';
 				print "</td>\n";
 					
-				// Nb of doc
+				// Nb of doc in dir
+				print '<td align="right">&nbsp;</td>';
+
+				// Nb of doc in subdir
 				print '<td align="right">&nbsp;</td>';
 
 				// Edit link
@@ -363,7 +377,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 				// Info
 				print '<td align="center">';
 				$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMAutoOrg").'<br>';
+				$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionAuto").'<br>';
 				$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
 				$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
 				print $form->textwithhelp('',$htmltooltip,1,0);
@@ -382,13 +396,14 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 	print '<table class="nobordernopadding"><tr class="nobordernopadding">';
 	print '<td align="left" width="24px">';
 	print img_picto_common('','treemenu/base.gif');
-	print '</td><td align="left">'.$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionManual").')';
+	print '</td><td align="left">'.$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
 	print '</td>';
 	print '</tr></table></td>';
 	print '<td align="right">';
 	print '</td>';
 	print '<td align="right">&nbsp;</td>';
 	//print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docdir.php?action=create">'.img_edit_add().'</a></td>';
+	print '<td align="right">&nbsp;</td>';
 	print '<td align="right">&nbsp;</td>';
 	print '<td align="center">';
 	$htmltooltip=$langs->trans("ECMAreaDesc2");
@@ -488,8 +503,11 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			print '<table class="nobordernopadding"><tr class="nobordernopadding"><td>';
 			$resarray=tree_showpad($fulltree,$key);
 			$a=$resarray[0];
-			$b=$resarray[1];
+			$nbofsubdir=$resarray[1];
+			$c=$resarray[2];
+			$nboffilesinsubdir=$resarray[3];
 			print '</td>';
+
 			// Show picto
 			print '<td valign="top">';
 			//print $val['fullpath']."(".$showline.")";
@@ -515,8 +533,13 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			print "</td>\n";
 
 			// Nb of docs
-			print '<td align="right">'.$val['cachenbofdoc'].'</td>';
-				
+			print '<td align="right">';
+			print $val['cachenbofdoc'];
+			print '</td>';
+			print '<td align="left">';
+			if ($nbofsubdir && $nboffilesinsubdir) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
+			print '</td>';
+			
 			// Edit link
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/ecm/docmine.php?section='.$val['id'].'">'.img_edit().'</a></td>';
 				
@@ -529,10 +552,13 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 			$userstatic->id=$val['fk_user_c'];
 			$userstatic->nom=$val['login_c'];
 			$htmltooltip='<b>'.$langs->trans("ECMSection").'</b>: '.$val['label'].'<br>';
-			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMManualOrg").'<br>';
+			$htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionManual").'<br>';
 			$htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$userstatic->getNomUrl(1).'<br>';
 			$htmltooltip.='<b>'.$langs->trans("ECMCreationDate").'</b>: '.dolibarr_print_date($val['date_c'],"dayhour").'<br>';
-			$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'];
+			$htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['description'].'<br>';
+			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
+			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
+			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
 			print $form->textwithhelp('',$htmltooltip,1,0);
 			print "</td>";
 				

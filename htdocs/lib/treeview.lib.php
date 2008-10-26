@@ -91,6 +91,8 @@ function tree_showpad(&$fulltree,$key,$selected=0)
 
 		$atleastonofthislevelafter=0;
 		$nbofhigherlevelafter=0;
+		$nbofdirinsub=0;
+		$nbofdocinsub=0;
 		$found=0;
 		//print 'x'.$key;
 		foreach($fulltree as $key2 => $val2)
@@ -99,6 +101,8 @@ function tree_showpad(&$fulltree,$key,$selected=0)
 			{
 				if ($fulltree[$key2]['level'] > $pos)
 				{
+					$nbofdirinsub++;
+					$nbofdocinsub+=$fulltree[$key2]['cachenbofdoc'];
 					$nbofhigherlevelafter++;
 				} 
 				if ($fulltree[$key2]['level'] == $pos)
@@ -110,7 +114,10 @@ function tree_showpad(&$fulltree,$key,$selected=0)
 					break;
 				} 
 			}
-			if ($key2 == $key) $found=1;	
+			if ($key2 == $key) 
+			{
+				$found=1;
+			}
 		}
 		//print $atleastonofthislevelafter;
 		
@@ -127,7 +134,7 @@ function tree_showpad(&$fulltree,$key,$selected=0)
 		$pos++;
 	}
 	
-	return array($atleastonofthislevelafter,$nbofhigherlevelafter);
+	return array($atleastonofthislevelafter,$nbofhigherlevelafter,$nbofdirinsub,$nbofdocinsub);
 }
 
 
