@@ -900,10 +900,10 @@ function img_picto_common($alt, $picto, $options='', $pictoisfullpath=0)
 }
 
 /**
- \brief      Affiche logo action
- \param      alt         Texte sur le alt de l'image
- \param      numaction   Determine image action
- \return     string      Retourne tag img
+ *	\brief      Affiche logo action
+ *	\param      alt         Texte sur le alt de l'image
+ *	\param      numaction   Determine image action
+ *	\return     string      Retourne tag img
  */
 function img_action($alt = "default", $numaction)
 {
