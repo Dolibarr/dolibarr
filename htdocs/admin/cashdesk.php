@@ -25,6 +25,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
 
 if (!$user->admin)
 accessforbidden();
@@ -49,6 +50,7 @@ if ($_POST["action"] == 'set')
  */
 
 $form=new Form($db);
+$formproduct=new FormProduct($db);
 
 llxHeader();
 
@@ -85,9 +87,8 @@ if ($conf->global->MAIN_MODULE_STOCK)
 {
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskIdWareHouse").'</td>';
-	print '<td colspan="2"><select class="flat" name="level">';
-	//$conf->global->CASHDESK_ID_WAREHOUSE
-	print '</select>';
+	print '<td colspan="2">';
+	$formproduct->selectWarehouses($conf->global->CASHDESK_ID_WAREHOUSE,'CASHDESK_ID_WAREHOUSE');
 	print '</td></tr>';
 }
 
