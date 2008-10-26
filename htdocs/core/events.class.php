@@ -97,7 +97,7 @@ class Events // extends CommonObject
 		$sql.= " '".$_SERVER['REMOTE_ADDR']."',";
 		$sql.= " ".$this->db->idate($this->dateevent).",";
 		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
-		$sql.= " '".$this->description."'";
+		$sql.= " '".addslashes($this->description)."'";
 
 		$sql.= ")";
 
