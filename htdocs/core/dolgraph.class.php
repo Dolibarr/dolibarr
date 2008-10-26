@@ -18,29 +18,28 @@
  */
 
 /**
- \file       htdocs/dolgraph.class.php
- \brief      Fichier de la classe mere de gestion des graph
- \version    $Id$
- \remarks    Usage:
- $graph_data = array(array('labelA',yA),array('labelB',yB));
- array(array('labelA',yA1,...,yAn),array('labelB',yB1,...yBn));
- $px = new DolGraph();
- $px->SetData($graph_data);
- $px->SetMaxValue($px->GetCeilMaxValue());
- $px->SetMinValue($px->GetFloorMinValue());
- $px->SetTitle("title");
- $px->SetLegend(array("Val1","Val2"));
- $px->SetWidth(width);
- $px->SetHeight(height);
- $px->draw("file.png");
+ *	\file       htdocs/dolgraph.class.php
+ *	\brief      Fichier de la classe mere de gestion des graph
+ *	\version    $Id$
+ *	\remarks    Usage:
+ *	$graph_data = array(array('labelA',yA),array('labelB',yB));
+ *	array(array('labelA',yA1,...,yAn),array('labelB',yB1,...yBn));
+ *	$px = new DolGraph();
+ *	$px->SetData($graph_data);
+ *	$px->SetMaxValue($px->GetCeilMaxValue());
+ *	$px->SetMinValue($px->GetFloorMinValue());
+ *	$px->SetTitle("title");
+ *	$px->SetLegend(array("Val1","Val2"));
+ *	$px->SetWidth(width);
+ *	$px->SetHeight(height);
+ *	$px->draw("file.png");
  */
 
 
 /**
- \class      Graph
- \brief      Classe mere permettant la gestion des graph
+ *	\class      Graph
+ *	\brief      Classe mere permettant la gestion des graph
  */
-
 class DolGraph
 {
 	//! Type du graphique
@@ -96,7 +95,7 @@ class DolGraph
 		}
 		if (! $isgdinstalled)
 		{
-			$this->error="Erreur: Le module GD pour php ne semble pas disponible. Il est requis pour generer les graphiques.";
+			$this->error="Error: PHP GD module is not available. It is required to build graphics.";
 			return -1;
 		}
 
@@ -555,6 +554,8 @@ class DolGraph
 		
 			//$plot->reduce(80);		// Evite temps d'affichage trop long et nombre de ticks absisce satures
 
+			$group->legend->setTextFont(new Tuffy(10)); // This is to force Artichow to use awFileFontDriver to
+														// solve a bug in Artichow with UTF8
 			if (sizeof($this->Legend))
 			{
 				if ($this->type == 'bars')  $group->legend->add($plot, $this->Legend[$i], LEGEND_BACKGROUND);
@@ -579,7 +580,7 @@ class DolGraph
 
 
 
-	/*
+	/**
 	 * Special function
 	 * \TODO Replace by standard code
 	 */
@@ -665,7 +666,7 @@ class DolGraph
 		$graph->draw($file);
 	}
 
-	/*
+	/**
 	 * Special function
 	 * \TODO Replace by standard code
 	 */
@@ -765,7 +766,7 @@ class DolGraph
 		}
 	}
 
-	/*
+	/**
 	 * Special function
 	 * \TODO Replace by standard code
 	 */
