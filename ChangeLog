@@ -24,6 +24,7 @@ For translators:
 For developers:
 - Update skeletons.
 - Add an experimental Cash Desk module.
+- All submodules are moved in the includes directory.
 
 
 ***** Changelog for 2.4 compared to 2.2 *****
