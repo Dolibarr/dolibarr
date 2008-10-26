@@ -36,13 +36,13 @@ class Export
 	
 	var $array_export_code=array();             // Tableau de "idmodule_numlot"
     var $array_export_module=array();           // Tableau de "nom de modules"
-    var $array_export_label=array();            // Tableau de "libellé de lots"
+    var $array_export_label=array();            // Tableau de "libelle de lots"
     var $array_export_sql=array();              // Tableau des "requetes sql"
-    var $array_export_fields=array();           // Tableau des listes de champ+libellé à exporter
-    var $array_export_alias=array();            // Tableau des listes de champ+alias à exporter
+    var $array_export_fields=array();           // Tableau des listes de champ+libellï¿½ ï¿½ exporter
+    var $array_export_alias=array();            // Tableau des listes de champ+alias ï¿½ exporter
     var $array_export_special=array();          // Tableau des operations speciales sur champ
     
-    // Création des modéles d'export
+    // To store export modules
     var $hexa;
     var $datatoexport;
     var $model_name;
@@ -50,7 +50,7 @@ class Export
     
     /**
      *    \brief  Constructeur de la classe
-     *    \param  DB        Handler accès base de données
+     *    \param  DB        Handler acces base de donnees
      */
     function Export($DB)
     {
@@ -59,9 +59,9 @@ class Export
         
     
     /**
-     *    \brief  Charge les lots de données exportables
+     *    \brief  Charge les lots de donnï¿½es exportables
      *    \param  user      Objet utilisateur qui exporte
-     *    \param  filter    Code export pour charger un lot de données particulier
+     *    \param  filter    Code export pour charger un lot de donnï¿½es particulier
      */
     function load_arrays($user,$filter='')
     {
@@ -124,13 +124,13 @@ class Export
                             $this->array_export_module[$i]=$module;
                             // Code du dataset export
                             $this->array_export_code[$i]=$module->export_code[$r];
-                            // Libellé du dataset export
+                            // Libellï¿½ du dataset export
                             $this->array_export_label[$i]=$module->getDatasetLabel($r);
-                            // Tableau des champ à exporter (clé=champ, valeur=libellé)
+                            // Tableau des champ ï¿½ exporter (clï¿½=champ, valeur=libellï¿½)
                             $this->array_export_fields[$i]=$module->export_fields_array[$r];
-                            // Tableau des entites à exporter (clé=champ, valeur=entite)
+                            // Tableau des entites ï¿½ exporter (clï¿½=champ, valeur=entite)
                             $this->array_export_entities[$i]=$module->export_entities_array[$r];
-                            // Tableau des alias à exporter (clé=champ, valeur=alias)
+                            // Tableau des alias ï¿½ exporter (clï¿½=champ, valeur=alias)
                             $this->array_export_alias[$i]=$module->export_alias_array[$r];
                             // Tableau des operations speciales sur champ
                             $this->array_export_special[$i]=$module->export_special_array[$r];
@@ -154,10 +154,10 @@ class Export
      *      \brief      Lance la generation du fichier
      *      \param      user                User qui exporte
      *      \param      model               Modele d'export
-     *      \param      datatoexport        Lot de donnée à exporter
-     *      \param      array_selected      Tableau des champs à exporter
-     *      \remarks    Les tableaux array_export_xxx sont déjà chargées pour le bon datatoexport
-     *                  aussi le parametre datatoexport est inutilisé
+     *      \param      datatoexport        Lot de donnï¿½e ï¿½ exporter
+     *      \param      array_selected      Tableau des champs ï¿½ exporter
+     *      \remarks    Les tableaux array_export_xxx sont dï¿½jï¿½ chargï¿½es pour le bon datatoexport
+     *                  aussi le parametre datatoexport est inutilisï¿½
      */ 
     function build_file($user, $model, $datatoexport, $array_selected)
     {
@@ -201,17 +201,19 @@ class Export
             $filename.='.'.$objmodel->getDriverExtension();
             $dirname=$conf->export->dir_temp.'/'.$user->id;
 
-            // Open file
+			$outputlangs=$langs;	// Lang for output
+            
+			// Open file
             create_exdir($dirname);
-            $result=$objmodel->open_file($dirname."/".$filename);
+            $result=$objmodel->open_file($dirname."/".$filename, $outputlangs);
 
 			if ($result >= 0)
 			{
 	            // Genere en-tete
-	            $objmodel->write_header($langs);
+	            $objmodel->write_header($outputlangs);
 
 	            // Genere ligne de titre
-	            $objmodel->write_title($this->array_export_fields[$indice],$array_selected,$langs);
+	            $objmodel->write_title($this->array_export_fields[$indice],$array_selected,$outputlangs);
 
 				while ($objp = $this->db->fetch_object($resql))
 				{
@@ -239,11 +241,11 @@ class Export
 					}
 					// end of special operation processing
 					
-					$objmodel->write_record($this->array_export_alias[$indice],$array_selected,$objp);
+					$objmodel->write_record($this->array_export_alias[$indice],$array_selected,$objp,$outputlangs);
 	            }
 	            
 	            // Genere en-tete
-	            $objmodel->write_footer($langs);
+	            $objmodel->write_footer($outputlangs);
 	            
 	            // Close file
 	            $objmodel->close_file();
@@ -264,8 +266,8 @@ class Export
     }
     
 	/**
-	*  \brief	Créé un modéle d'export
-	*  \param	user Objet utilisateur qui crée
+	*  \brief	Crï¿½ï¿½ un modï¿½le d'export
+	*  \param	user Objet utilisateur qui crï¿½e
 	*/
 	function create($user)
 	{
@@ -296,8 +298,8 @@ class Export
 	}
 
 	/**
-	*    \brief      Recupère de la base les caractéristiques d'un modele d'export
-	*    \param      rowid       id du modéle à récupérer
+	*    \brief      Recupï¿½re de la base les caractï¿½ristiques d'un modele d'export
+	*    \param      rowid       id du modï¿½le ï¿½ rï¿½cupï¿½rer
 	*/
 	function fetch($id)
 	{

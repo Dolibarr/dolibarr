@@ -111,7 +111,11 @@ if (sizeof($export->array_export_code))
 
     }
 
-    print '<tr class="total"><td class="total" colspan="2" align="center"><form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"></form></td></tr>';
+    print '<tr class="total"><td class="total" colspan="2" align="center">';
+   	print '<form action="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><input type="submit" class="button" value="'.$langs->trans("NewExport").'"';
+   	print ($user->rights->export->creer?'':' disabled="true"');
+   	print '></form>';
+    print '</td></tr>';
 }
 else
 {

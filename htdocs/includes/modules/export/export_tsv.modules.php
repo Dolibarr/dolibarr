@@ -20,7 +20,7 @@
 /**
  *		\file       htdocs/includes/modules/export/export_csv.modules.php
  *		\ingroup    export
- *		\brief      Fichier de la classe permettant de générer les export au format CSV
+ *		\brief      Fichier de la classe permettant de gï¿½nï¿½rer les export au format CSV
  *		\author	    Laurent Destailleur
  *		\version    $Id$
 */
@@ -30,7 +30,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/export/modules_export.php");
 
 /**
  *	    \class      ExportCsv
- *		\brief      Classe permettant de générer les factures au modèle Crabe
+ *		\brief      Classe permettant de gï¿½nï¿½rer les factures au modï¿½le Crabe
  */
 class ExportTsv extends ModeleExports
 {
@@ -49,11 +49,11 @@ class ExportTsv extends ModeleExports
     
     /**
     		\brief      Constructeur
-    		\param	    db      Handler accès base de donnée
+    		\param	    db      Handler accï¿½s base de donnï¿½e
     */
     function ExportTsv($db)
     {
-        global $conf,$langs;
+        global $conf;
         $this->db = $db;
 
         $this->id='tsv';                // Same value then xxx in file name export_xxx.modules.php
@@ -103,14 +103,15 @@ class ExportTsv extends ModeleExports
 	*	\param		file		Path of filename
 	*	\return		int			<0 if KO, >=0 if OK
 	*/
-	function open_file($file)
+	function open_file($file,$outputlangs)
     {
         global $langs;
+        
         dolibarr_syslog("ExportTsv::open_file file=".$file);
 
 		$ret=1;
 		
-        $langs->load("exports");
+        $outputlangs->load("exports");
 		$this->handle = fopen($file, "wt");
         if (! $this->handle)
 		{
@@ -126,7 +127,7 @@ class ExportTsv extends ModeleExports
 	 * 	\brief		Output header into file
 	 * 	\param		langs		Output language
 	 */
-    function write_header($langs)
+    function write_header($outputlangs)
     {
         return 0;
     }
@@ -136,11 +137,11 @@ class ExportTsv extends ModeleExports
 	 * 	\brief		Output title line into file
 	 * 	\param		langs		Output language
 	 */
-    function write_title($array_export_fields_label,$array_selected_sorted,$langs)
+    function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
     {
         foreach($array_selected_sorted as $code => $value)
         {
-            $newvalue=$langs->transnoentities($array_export_fields_label[$code]);
+            $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);
 			$newvalue=$this->tsv_clean($newvalue);
             
 			fwrite($this->handle,$newvalue.$this->separator);
@@ -153,10 +154,8 @@ class ExportTsv extends ModeleExports
 	/**
 	 * 	\brief		Output record line into file
 	 */
-    function write_record($array_alias,$array_selected_sorted,$objp)
+    function write_record($array_alias,$array_selected_sorted,$objp,$outputlangs)
     {
-        global $langs;
-		
 		$this->col=0;
  		foreach($array_selected_sorted as $code => $value)
         {
@@ -167,7 +166,7 @@ class ExportTsv extends ModeleExports
             // Translation newvalue
 			if (eregi('^\((.*)\)$',$newvalue,$reg))
 			{
-				$newvalue=$langs->transnoentities($reg[1]);
+				$newvalue=$outputlangs->transnoentities($reg[1]);
 			}
 			
 			$newvalue=$this->tsv_clean($newvalue);
@@ -181,11 +180,11 @@ class ExportTsv extends ModeleExports
 
 	/**
 	 * 	\brief		Output footer into file
-	 * 	\param		langs		Output language
+	 * 	\param		outputlangs		Output language
 	 */
-    function write_footer($langs)
+    function write_footer($outputlangs)
     {
-        return 0;
+		return 0;
     }
     
 	/**

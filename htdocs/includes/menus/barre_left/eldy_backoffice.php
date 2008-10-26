@@ -804,6 +804,7 @@ class MenuLeft {
 					$langs->load("exports");
 					$newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("FormatedExport"),0, $user->rights->export->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/exports/export.php?leftmenu=export",$langs->trans("NewExport"),1, $user->rights->export->creer);
+					//$newmenu->add_submenu(DOL_URL_ROOT."/exports/export.php?leftmenu=export",$langs->trans("List"),1, $user->rights->export->lire);
 				}
 
 				if ($conf->global->MAIN_MODULE_IMPORT)
