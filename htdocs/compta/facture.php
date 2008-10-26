@@ -3453,14 +3453,16 @@ else
 
 					if ($objp->df > 0)
 					{
+						$y = dolibarr_print_date($objp->df,'%Y');
+						$m = dolibarr_print_date($objp->df,'%m');
+						$mt = dolibarr_print_date($objp->df,'%b');
+						$d = dolibarr_print_date($objp->df,'%d');
 						print '<td align="center" nowrap>';
-						$y = strftime('%Y',$objp->df);
-						$m = strftime('%m',$objp->df);
-						print strftime('%d',$objp->df);
+						print $d;
 						print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
-						print substr(strftime('%B',$objp->df),0,3).'</a>';
+						print $mt.'</a>';
 						print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
-						print strftime('%Y',$objp->df).'</a></td>';
+						print $y.'</a></td>';
 					}
 					else
 					{
