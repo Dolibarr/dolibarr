@@ -20,7 +20,7 @@
 /**
  *		\file        htdocs/compta/bank/annuel.php
  *		\ingroup     banque
- *		\brief       Page reporting mensuel Entrées/Sorties d'un compte bancaire
+ *		\brief       Page reporting mensuel Entrï¿½es/Sorties d'un compte bancaire
  *		\version     $Id$
 */
 
@@ -41,7 +41,7 @@ else
   $year_end=$year_start+2;   
 }
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0) 
 {
   $socid = $user->societe_id;
@@ -53,7 +53,7 @@ llxHeader();
 
 $form = new Form($db);
 
-// Récupère info du compte
+// Rï¿½cupï¿½re info du compte
 $acct = new Account($db);
 if ($_GET["account"]) 
 {
@@ -66,7 +66,7 @@ if ($_GET["ref"])
 }
 
 
-# Ce rapport de trésorerie est basé sur llx_bank (car doit inclure les transactions sans facture)
+# Ce rapport de trï¿½sorerie est basï¿½ sur llx_bank (car doit inclure les transactions sans facture)
 # plutot que sur llx_paiement + llx_paiementfourn
 
 $sql = "SELECT sum(f.amount), date_format(f.dateo,'%Y-%m') as dm";

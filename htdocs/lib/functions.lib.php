@@ -493,6 +493,8 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$convtooutput=true)
 
 	// Page code for text from strftime functions
 	$pagecodefrom='ISO-8859-1';
+	$localtime=setlocale(LC_TIME,0);
+	if (eregi('UTF',$localtime)) $pagecodefrom='UTF-8';
 
 	return ($convtooutput?$langs->convToOuptutCharset($ret,$pagecodefrom):$ret);
 }
