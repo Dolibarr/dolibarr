@@ -600,7 +600,7 @@ EncryptedPasswordInDatabase						   =Per consentire la crittografia della passwo
 DisableForgetPasswordLinkOnLogonPage					   =Non mostrare il link "Hai dimenticato la password" a pagina di accesso
 ##### Company setup #####						   
 CompanySetup								   =Impostazioni modulo aziende
-CompanyCodeChecker							   =Modulo per la verifica dei codici di terzi  (cliente o fornitore)
+CompanyCodeChecker							   =Modulo per la generazione e verifica dei codici di terzi  (cliente o fornitore)
 AccountCodeManager							   =Modulo per la generazione di codice di contabilità (cliente o fornitore)
 ModuleCompanyCodeAquarium						   =Restituisce di un codice contabile costruito da "401" seguito dal  codice del fornitore terzo per un codice contabile fornitori, e "411" seguito dal  codice del cliente terzo per un codice contabile cliente.
 ModuleCompanyCodePanicum						   =Restituisce un codice contabile vuoto.

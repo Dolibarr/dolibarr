@@ -16,16 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
-        \file       htdocs/includes/modules/societe/mod_codeclient_lion.class.php
-        \ingroup    societe
-        \brief      Fichier de la classe des gestion lion des codes clients
-        \version    $Revision$
-*/
+ *       \file       htdocs/includes/modules/societe/mod_codeclient_lion.class.php
+ *       \ingroup    societe
+ *       \brief      Fichier de la classe des gestion lion des codes clients
+ *       \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
@@ -42,7 +40,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	var $code_modifiable_null;			// Code modifiables si il est null
 	var $code_null;						// Code facultatif
 	var $version;		// 'development', 'experimental', 'dolibarr'
-	var $code_auto; // Numérotation automatique
+	var $code_auto; // Numerotation automatique
 
 	
 	/**		\brief      Constructeur classe
@@ -64,7 +62,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	*/
 	function info($langs)
 	{
-		return "Vérifie si le code client est de la forme numérique 999 et sur au moins 3 chiffres.";
+		return "Verifie si le code client est de la forme numerique 999 et sur au moins 3 chiffres. Verification mais pas de generation automatique.";
 	}
 
 
@@ -78,9 +76,9 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 
 
 	/**
-	* 		\brief		Vérifie la validité du code
+	* 		\brief		Vï¿½rifie la validitï¿½ du code
 	*		\param		$db			Handler acces base
-	*		\param		$code		Code a vérifier/corriger
+	*		\param		$code		Code a vï¿½rifier/corriger
 	*		\param		$soc		Objet societe
 	*		\return		int			<0 si KO, 0 si OK
 	*/

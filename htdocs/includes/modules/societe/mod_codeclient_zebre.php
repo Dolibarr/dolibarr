@@ -16,16 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
 
 /**
-        \file       htdocs/includes/modules/societe/mod_codeclient_zebre.class.php
-        \ingroup    societe
-        \brief      Fichier de la classe des gestion zebre des codes clients
-        \version    $Revision$
-*/
+ *       \file       htdocs/includes/modules/societe/mod_codeclient_zebre.class.php
+ *       \ingroup    societe
+ *       \brief      Fichier de la classe des gestion zebre des codes clients
+ *       \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
@@ -42,14 +40,14 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	var $code_modifiable_null;			// Can be changed if not defined
 	var $code_null;						// Can be undefined
 	var $version;		// 'development', 'experimental', 'dolibarr'
-	var $code_auto; 	// Numérotation automatique
+	var $code_auto; 	// Numerotation automatique
 
 	
 	/**		\brief      Constructeur classe
 	*/
 	function mod_codeclient_zebre()
 	{
-		$this->nom = "Zèbre";
+		$this->nom = "Zebre";
 		$this->version = "dolibarr";
 		$this->code_modifiable = 0;				// Can be changed if valid
 		$this->code_modifiable_invalide = 1;	// Can be changed if not valid
@@ -65,7 +63,7 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	*/
 	function info($langs)
 	{
-		return "Vérifie si le code client est de la forme CCCC9999. Les quatres premières lettres étant une représentation mnémotechnique, suivi du code postal en 2 chiffres et un numéro d'ordre pour la prise en compte des doublons.";
+		return "Verifie si le code client est de la forme CCCC9999. Les quatres premieres lettres etant une representation mnemotechnique, suivi du code postal en 2 chiffres et un numero d'ordre pour la prise en compte des doublons. Verification mais pas de generation automatique.";
 	}
 
 	
@@ -79,9 +77,9 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 
 	
 	/**
-	* 		\brief		Vérifie la validité du code
+	* 		\brief		Vï¿½rifie la validitï¿½ du code
 	*		\param		$db			Handler acces base
-	*		\param		$code		Code a vérifier/corriger
+	*		\param		$code		Code a vï¿½rifier/corriger
 	*		\param		$soc		Objet societe
 	*		\return		int			<0 si KO, 0 si OK
 	*/
@@ -234,7 +232,7 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	function is_alpha($str)
 	{
 		$ok = 0;
-		// Je n'ai pas trouvé de fonction pour tester une chaine alpha sans les caractère accentués
+		// Je n'ai pas trouvï¿½ de fonction pour tester une chaine alpha sans les caractï¿½re accentuï¿½s
 		// dommage
 		$alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';      
 

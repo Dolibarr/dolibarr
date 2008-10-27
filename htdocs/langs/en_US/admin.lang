@@ -619,7 +619,7 @@ EncryptedPasswordInDatabase=To allow the encryption of the passwords in the data
 DisableForgetPasswordLinkOnLogonPage=Do not show the link "Forget password" on login page
 ##### Company setup #####
 CompanySetup=Companies module setup
-CompanyCodeChecker=Module for third parties code checking (customer or supplier)
+CompanyCodeChecker=Module for third parties code generation and checking (customer or supplier)
 AccountCodeManager=Module for accountancy code generation (customer or supplier)
 ModuleCompanyCodeAquarium=Return an accountancy code built by "401" followed by third party supplier code for a supplier accountancy code, and "411" followed by third party customer code for a customer accountancy code.
 ModuleCompanyCodePanicum=Return an empty accountancy code.

@@ -20,11 +20,11 @@
  */
 
 /**
-        \file       htdocs/includes/modules/societe/mod_codeclient_tigre.class.php
-        \ingroup    societe
-        \brief      Fichier de la classe des gestion tigre des codes clients
-        \version    $Id$
-*/
+ *       \file       htdocs/includes/modules/societe/mod_codeclient_tigre.class.php
+ *       \ingroup    societe
+ *       \brief      Fichier de la classe des gestion tigre des codes clients
+ *       \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
@@ -41,13 +41,13 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	var $code_modifiable_null;			// Code modifiables si il est null
 	var $code_null;						// Code facultatif
 	var $version;		// 'development', 'experimental', 'dolibarr'
-	var $code_auto; // Numérotation automatique
+	var $code_auto; // Numerotation automatique
 	
 	var $searchcode; // String de recherche
 	var $numbitcounter; // Nombre de chiffres du compteur
-	var $prefixIsRequired; // Le champ préfix du tiers doit etre renseigné quand on utilise {pre}
+	var $prefixIsRequired; // Le champ prefix du tiers doit etre renseignï¿½ quand on utilise {pre}
 
-	
+
 	/**		\brief      Constructeur classe
 	*/
 	function mod_codeclient_tigre()
@@ -79,7 +79,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
       $texte.= '<input type="hidden" name="action" value="updateMask">';
       $texte.= '<table class="nobordernopadding" width="100%">';
       
-      // Paramétrage du masque
+      // Parametrage du masque
       $texte.= '<tr><td>'.$langs->trans("CustomerCodeModel").'</td>';
       $texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcustomer" value="'.$conf->global->CODE_TIGRE_MASK_CUSTOMER.'">',$langs->trans("TigreMaskCodes"),1,1).'</td>';
       $texte.= '</tr>';
@@ -118,7 +118,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 		return $example;
 	}
 	
-	/**		\brief      Renvoi prochaine valeur attribuée
+	/**		\brief      Renvoi prochaine valeur attribuï¿½e
 	*     \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
 	*     \return     string      Valeur
 	*/
@@ -137,7 +137,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		$field = 'code_fournisseur';
   	}
 
-    // On récupère la valeur max (réponse immédiate car champ indéxé)
+    // On rï¿½cupï¿½re la valeur max (rï¿½ponse immï¿½diate car champ indï¿½xï¿½)
     $posindice  = $this->numbitcounter;
 
     $sql = "SELECT MAX(0+SUBSTRING(".$field.",-".$posindice."))";
@@ -163,8 +163,8 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
     return $mask;
   }
   
- /**		\brief      Construction du masque de numérotation
- 	*     \param      objsoc      Objet société
+ /**		\brief      Construction du masque de numï¿½rotation
+ 	*     \param      objsoc      Objet sociï¿½tï¿½
 	*     \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
 	*     \return     string      Valeur
 	*/
@@ -214,7 +214,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		    $error++;
   	    }
   	
-  	    // Ajout de l'année en cours
+  	    // Ajout de l'annï¿½e en cours
   	    if ($maskElement[$i] == '{aa}')
   	    {
   		    $maskRebuild .= substr(strftime("%Y",time()),2);
@@ -230,7 +230,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		    $error++;
   	    }
   	
-  	    // Ajout du préfix de la société
+  	    // Ajout du prï¿½fix de la sociï¿½tï¿½
   	    if (is_object($objsoc) && $objsoc->prefix_comm && $maskElement[$i] == '{pre}')
   	    {
   		    if ((!$objsoc->fournisseur && !$objsoc->code_fournisseur) || (!$objsoc->client && !$objsoc->code_client))
@@ -269,7 +269,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    	}
   	    }
   	    
-  	    // Ajout des séparateurs éventuels : \ / -
+  	    // Ajout des sï¿½parateurs ï¿½ventuels : \ / -
   	    if (eregi('[\/-]{1}',$maskElement[$i]))
   	    {
   	    	$maskRebuild .= $maskElement[$i];
@@ -280,17 +280,17 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    	$error++;
   	    }
   	    
-  	    // Ajout des champs libres éventuels
+  	    // Ajout des champs libres ï¿½ventuels
   	    if (eregi('^[0-9A-Z]+$',$maskElement[$i]))
   	    {
   	    	$maskRebuild .= strtoupper($maskElement[$i]);
   	    	$this->searchcode .= '([0-9A-Z]+)';
   	    }
   	
-  	    // Définition du compteur
+  	    // Dï¿½finition du compteur
   	    if (eregi('\{0+\}',$maskElement[$i]))
   	    {
-  		    // Défini le nombre de chiffres du compteur
+  		    // Dï¿½fini le nombre de chiffres du compteur
   		    $this->numbitcounter = strlen(substr($maskElement[$i],1,-1));
   		    // Permettra d'effectuer une recherche dans la table
   		    $this->searchcode .= '([0-9]{'.$this->numbitcounter.'})';
@@ -308,7 +308,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   }
   
  /**
-  *   \brief  Vérifie si le mask utilise le préfix
+  *   \brief  Vï¿½rifie si le mask utilise le prï¿½fix
   *
   */
   function verif_prefixIsUsed()
@@ -326,9 +326,9 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 
 
 	/**
-	* 		\brief		Vérifie la validité du code
+	* 		\brief		Vï¿½rifie la validitï¿½ du code
 	*		\param		$db			Handler acces base
-	*		\param		$code		Code a vérifier/corriger
+	*		\param		$code		Code a vï¿½rifier/corriger
 	*		\param		$soc		Objet societe
 	*   \param    $type   0 = client/prospect , 1 = fournisseur
 	*		\return		int			<0 si KO, 0 si OK

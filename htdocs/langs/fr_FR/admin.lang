@@ -618,7 +618,7 @@ EncryptedPasswordInDatabase=Permettre l'encryption des mots de passe dans la bas
 DisableForgetPasswordLinkOnLogonPage=Ne pas afficher le lien "Mot de passe oublié" sur la page de connexion
 ##### Company setup #####
 CompanySetup=Configuration du module Sociétés
-CompanyCodeChecker=Module de contrôle des codes tiers (clients/fournisseurs)
+CompanyCodeChecker=Module de génération et contrôle des codes tiers (clients/fournisseurs)
 AccountCodeManager=Module de génération des codes compta (clients/fournisseurs)
 ModuleCompanyCodeAquarium=Renvoie un code compta composé de 401 suivi du code tiers fournisseur pour le code compta fournisseur, et 411 suivi du code tiers client pour le code compta client.
 ModuleCompanyCodePanicum=Renvoie un code compta vide.

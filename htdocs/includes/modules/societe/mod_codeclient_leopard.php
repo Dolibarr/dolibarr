@@ -16,16 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
  */
  
 /**
-        \file       htdocs/includes/modules/societe/mod_codeclient_leopard.class.php
-        \ingroup    societe
-        \brief      Fichier de la classe des gestion leopard des codes clients
-        \version    $Revision$
-*/
+ *       \file       htdocs/includes/modules/societe/mod_codeclient_leopard.class.php
+ *       \ingroup    societe
+ *       \brief      Fichier de la classe des gestion leopard des codes clients
+ *       \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
@@ -37,8 +35,8 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
 class mod_codeclient_leopard extends ModeleThirdPartyCode
 {
 	/*
-	* Attention ce module est utilisé par défaut si aucun module n'a 
-	* été définit dans la configuration
+	* Attention ce module est utilise par defaut si aucun module n'a 
+	* ete definit dans la configuration
 	*
 	* Le fonctionnement de celui-ci doit dont rester le plus ouvert
 	* possible
@@ -50,14 +48,14 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	var $code_modifiable_null;			// Code modifiables si il est null
 	var $code_null;						// Code facultatif
 	var $version;		// 'development', 'experimental', 'dolibarr'
-	var $code_auto; // Numérotation automatique
+	var $code_auto; // Numerotation automatique
 
 	
 	/**		\brief      Constructeur classe
 	*/
 	function mod_codeclient_leopard()
 	{
-		$this->nom = "Léopard";
+		$this->nom = "Leopard";
 		$this->version = "dolibarr";
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
@@ -73,14 +71,14 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	*/
 	function info($langs)
 	{
-		return "Renvoie toujours ok, pour ceux qui ne veulent pas faire de test.";
+		return "Renvoie toujours ok, pour ceux qui ne veulent pas faire de test. Verification mais pas de generation automatique.";
 	}
 
 	
 	/**
-	* 		\brief		Vérifie la validité du code
+	* 		\brief		Vï¿½rifie la validitï¿½ du code
 	*		\param		$db			Handler acces base
-	*		\param		$code		Code a vérifier
+	*		\param		$code		Code a vï¿½rifier
 	*		\param		$soc		Objet societe
 	*/
 	function verif($db, $code, $soc)

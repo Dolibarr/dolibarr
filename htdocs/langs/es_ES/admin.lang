@@ -617,7 +617,7 @@ DisableForgetPasswordLinkOnLogonPage=No mostrar el vínculo "Contraseña olvidada"
 
 
 CompanySetup=Configuración del módulo empresas
-CompanyCodeChecker=Módulo de control de los códigos de terceros (clientes/proveedores)
+CompanyCodeChecker=Módulo de generación e control de los códigos de terceros (clientes/proveedores)
 AccountCodeManager=Módulo de generación de los códigos contables (clientes/proveedores)
 ModuleCompanyCodeAquarium=Devuelve un código contable compuesto de 401 seguido del código tercero de proveedor para el código contable de proveedor, y 411 seguido del código tercero de cliente para el código contable de cliente.
 ModuleCompanyCodePanicum=Devuelve un código contable vacío.
