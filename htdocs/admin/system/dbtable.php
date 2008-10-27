@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file           htdocs/admin/system/dbtable.php
-        \brief          Page d'info des contraintes d'une table
-        \version        $Revision$
-*/
+ \file           htdocs/admin/system/dbtable.php
+ \brief          Page d'info des contraintes d'une table
+ \version        $Id$
+ */
 
 require("./pre.inc.php");
 include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
@@ -35,93 +32,107 @@ $langs->load("admin");
 
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
+
+/*
+ * View
+ */
 
 llxHeader();
 
 
 print_fiche_titre($langs->trans("Table") . " ".$_GET["table"],'','setup');
 
-if ($conf->db->type == 'mysql')
+// Define request to get table description
+$base=0;
+if (eregi('mysql',$conf->db->type))
 {
-  $sql = "SHOW TABLE STATUS LIKE '".$_GET["table"]."'";
-  $base=1;
+	$sql = "SHOW TABLE STATUS LIKE '".$_GET["table"]."'";
+	$base=1;
 }
 
 if ($conf->db->type == 'pgsql')
 {
-  $sql = "SELECT conname,contype FROM pg_constraint;";
-  $base=2;
-}
-
-print '<br>';
-
-$result = $db->query($sql);
-if ($result) 
-{
-  $num = $db->num_rows();
-  $var=True;
-  $i=0;
-  while ($i < $num)
-    {
-      $row = $db->fetch_row();
-      $i++;
-    }
+	$sql = "SELECT conname,contype FROM pg_constraint";
+	$base=2;
 }
 
 
-if ($base==1)
+if (! $base)
 {
+	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
+}
+else
+{
+	print '<br>';
 
-  $cons = explode(";",$row[14]);
-  
-  foreach  ($cons as $cc)
-    {
-      $cx = ereg_replace("\) REFER", "", $cc);
-      $cx = ereg_replace("\(`", "", $cx);
-      $cx = ereg_replace("`\)", "", $cx);
-      $cx = ereg_replace("` ", "", $cx);
-      
-      $val = explode("`",$cx);
-      
-      $link[trim($val[0])][0] = $val[1];
-      $link[trim($val[0])][1] = $val[2];
-      
-    }
-
-  //  var_dump($link);
-
-  print '<table>';
-  print '<tr class="liste_titre"><td>Champs</td><td>Type</td><td>Index</td><td>Champ lié</td></tr>';  
-
-  $sql = "DESCRIBE ".$_GET["table"];
-  $result = $db->query($sql);
-  if ($result) 
-    {
-      $num = $db->num_rows();
-      $var=True;
-      $i=0;
-      while ($i < $num)
+	$result = $db->query($sql);
+	if ($result)
 	{
-	  $row = $db->fetch_row($i);
-	  $var=!$var;
-	  print "<tr $bc[$var]>";
-	  
-
-	  print "<td>$row[0]</td>";
-	  print "<td>$row[1]</td>";
-	  print "<td>$row[3]</td>";
-	  print "<td>".$link[$row[0]][0].".";
-	  print $link[$row[0]][1]."</td>";
-	  
-      
-	  print '</tr>';
-	  $i++;
+		$num = $db->num_rows($resql);
+		$var=True;
+		$i=0;
+		while ($i < $num)
+		{
+			$row = $db->fetch_row($resql);
+			$i++;
+		}
 	}
-    }
-  print '</table>';
 
+
+	if ($base==1)
+	{
+
+		$cons = explode(";",$row[14]);
+
+		foreach  ($cons as $cc)
+		{
+			$cx = ereg_replace("\) REFER", "", $cc);
+			$cx = ereg_replace("\(`", "", $cx);
+			$cx = ereg_replace("`\)", "", $cx);
+			$cx = ereg_replace("` ", "", $cx);
+
+			$val = explode("`",$cx);
+
+			$link[trim($val[0])][0] = $val[1];
+			$link[trim($val[0])][1] = $val[2];
+
+		}
+
+		//  var_dump($link);
+
+		print '<table>';
+		print '<tr class="liste_titre"><td>'.$langs->trans("Fields").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Index").'</td>';
+		print '<td>'.$langs->trans("FieldsLinked").'</td></tr>';
+
+		$sql = "DESCRIBE ".$_GET["table"];
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$num = $db->num_rows();
+			$var=True;
+			$i=0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($i);
+				$var=!$var;
+				print "<tr $bc[$var]>";
+
+
+				print "<td>$row[0]</td>";
+				print "<td>$row[1]</td>";
+				print "<td>$row[3]</td>";
+				print "<td>".$link[$row[0]][0].".";
+				print $link[$row[0]][1]."</td>";
+
+
+				print '</tr>';
+				$i++;
+			}
+		}
+		print '</table>';
+	}
 }
 
 llxFooter('$Date$ - $Revision$');

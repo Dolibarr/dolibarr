@@ -37,6 +37,7 @@ UsePopupCalendar=Use popup for dates input
 UsePreviewTabs=Use preview tabs
 ShowPreview=Show preview
 ThemeCurrentlyActive=Theme currently active
+Fields=Fields
 Mask=Mask
 NextValue=Next value
 NextValueForInvoices=Next value (invoices)

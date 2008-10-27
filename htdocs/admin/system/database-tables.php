@@ -22,11 +22,11 @@
  * $Source$
  */
 
-/**	
-        \file       htdocs/admin/system/database-tables.php
-		\brief      Page d'infos des tables de la base
-		\version    $Revision$
-*/
+/**
+ \file       htdocs/admin/system/database-tables.php
+ \brief      Page d'infos des tables de la base
+ \version    $Revision$
+ */
 
 require("./pre.inc.php");
 include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
@@ -34,36 +34,41 @@ include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".li
 $langs->load("admin");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
-	
 
 if ($_GET["action"] == 'convert')
 {
-  $db->query("alter table ".$_GET["table"]." type=INNODB");
+	$db->query("alter table ".$_GET["table"]." type=INNODB");
 }
+
+
+/*
+ * View
+ */
 
 llxHeader();
 
-
 print_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type),'','setup');
 
+
+// Define request to get table description
 $base=0;
-if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
+if (eregi('mysql',$conf->db->type))
 {
-    $sql = "SHOW TABLE STATUS";
-    $base=1;
+	$sql = "SHOW TABLE STATUS";
+	$base=1;
 }
 else if ($conf->db->type == 'pgsql')
 {
-    $sql = "SELECT conname, contype FROM pg_constraint;";
-    $base=2;
+	$sql = "SELECT conname, contype FROM pg_constraint;";
+	$base=2;
 }
 else if ($conf->db->type == 'mssql')
 {
 	//TODO: récupérer les infos du serveur
 	//$sqls[0] = "";
-  //$base=3;
+	//$base=3;
 }
 
 
@@ -75,99 +80,98 @@ else
 {
 	if ($base == 1)
 	{
-	    print '<br>';
-	    print '<table class="noborder">';
-	    print '<tr class="liste_titre">';
-	    print '<td>'.$langs->trans("TableName").'</td>';
-	    print '<td colspan="2">'.$langs->trans("Type").'</td>';
-	    print '<td>'.$langs->trans("Format").'</td>';
-	    print '<td>'.$langs->trans("NbOfRecord").'</td>';
-	    print '<td>Avg_row_length</td>';
-	    print '<td>Data_length</td>';
-	    print '<td>Max_Data_length</td>';
-	    print '<td>Index_length</td>';
-	    print '<td>Increment</td>';
-	    print '<td>Last check</td>';
-	    print "</tr>\n";
-	    
-	    $sql = "SHOW TABLE STATUS";
-	    
-	    $result = $db->query($sql);
-	    if ($result) 
-	    {
-	      $num = $db->num_rows($result);
-	      $var=True;
-	      $i=0;
-	      while ($i < $num)
-	        {
-	          $obj = $db->fetch_object($result);
-	          $var=!$var;
-	          print "<tr $bc[$var]>";
-	    
-	          print '<td>'.$obj->Name.'</td>';
-	          print '<td>'.$obj->Engine.'</td>';
-	          if ($row[1] == "MyISAM")
-	    	{
-	    	  print '<td><a href="database-tables.php?action=convert&amp;table='.$row[0].'">'.$langs->trans("Convert").'</a></td>';
-	    	}
-	          else
-	    	{
-	    	  print '<td>&nbsp;</td>';
-	    	}
-	          print '<td>'.$obj->Row_format.'</td>';
-	          print '<td align="right">'.$obj->Rows.'</td>';
-	          print '<td align="right">'.$obj->Avg_row_length.'</td>';
-	          print '<td align="right">'.$obj->Data_length.'</td>';
-	          print '<td align="right">'.$obj->Max_data_length.'</td>';
-	          print '<td align="right">'.$obj->Index_length.'</td>';
-	          print '<td align="right">'.$obj->Auto_increment.'</td>';
-	          print '<td align="right">'.$obj->Check_time.'</td>';
-	          print '</tr>';
-	          $i++;
-	        }
-	    }
-	    print '</table>';
+		print '<br>';
+		print '<table class="noborder">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("TableName").'</td>';
+		print '<td colspan="2">'.$langs->trans("Type").'</td>';
+		print '<td>'.$langs->trans("Format").'</td>';
+		print '<td>'.$langs->trans("NbOfRecord").'</td>';
+		print '<td>Avg_row_length</td>';
+		print '<td>Data_length</td>';
+		print '<td>Max_Data_length</td>';
+		print '<td>Index_length</td>';
+		print '<td>Increment</td>';
+		print '<td>Last check</td>';
+		print "</tr>\n";
+	  
+		$sql = "SHOW TABLE STATUS";
+	  
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$var=True;
+			$i=0;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				$var=!$var;
+				print "<tr $bc[$var]>";
+				 
+				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
+				print '<td>'.$obj->Engine.'</td>';
+				if ($row[1] == "MyISAM")
+				{
+					print '<td><a href="database-tables.php?action=convert&amp;table='.$row[0].'">'.$langs->trans("Convert").'</a></td>';
+				}
+				else
+				{
+					print '<td>&nbsp;</td>';
+				}
+				print '<td>'.$obj->Row_format.'</td>';
+				print '<td align="right">'.$obj->Rows.'</td>';
+				print '<td align="right">'.$obj->Avg_row_length.'</td>';
+				print '<td align="right">'.$obj->Data_length.'</td>';
+				print '<td align="right">'.$obj->Max_data_length.'</td>';
+				print '<td align="right">'.$obj->Index_length.'</td>';
+				print '<td align="right">'.$obj->Auto_increment.'</td>';
+				print '<td align="right">'.$obj->Check_time.'</td>';
+				print '</tr>';
+				$i++;
+			}
+		}
+		print '</table>';
 	}
-	
+
 	if ($base == 2)
 	{
-	    print '<br>';
-	    print '<table class="noborder">';
-	    print '<tr class="liste_titre">';
-	    print '<td>'.$langs->trans("TableName").'</td>';
-	    print '<td>Nombre de tuples lu</td>';
-	    print '<td>Nb index fetcher.</td>';
-	    print '<td>Nbre de tuples inserer</td>';
-	    print '<td>Nbre de tuple modifier</td>';
-	    print '<td>Nbre de tuple supprimer</td>';
-	    print "</tr>\n";
-	    $sql = "select relname,seq_tup_read,idx_tup_fetch,n_tup_ins,n_tup_upd,n_tup_del from pg_stat_user_tables;";
-	    				
-	    $result = $db->query($sql);
-	    if ($result) 
-	    {
-	      $num = $db->num_rows();
-	      $var=True;
-	      $i=0;
-	      while ($i < $num)
-	        {
-	            $row = $db->fetch_row($i);
-	            $var=!$var;
-	            print "<tr $bc[$var]>";
-	            print '<td align="right">'.$row[0].'</td>';
-	            print '<td align="right">'.$row[1].'</td>';
-	            print '<td align="right">'.$row[2].'</td>';
-	            print '<td align="right">'.$row[3].'</td>';
-	            print '<td align="right">'.$row[4].'</td>';
-	            print '<td align="right">'.$row[5].'</td>';
-	            print '</tr>';
-	            $i++;
-	    		}
-	    }
-	    print '</table>';
+		print '<br>';
+		print '<table class="noborder">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("TableName").'</td>';
+		print '<td>Nombre de tuples lu</td>';
+		print '<td>Nb index fetcher.</td>';
+		print '<td>Nbre de tuples inserer</td>';
+		print '<td>Nbre de tuple modifier</td>';
+		print '<td>Nbre de tuple supprimer</td>';
+		print "</tr>\n";
+		$sql = "select relname,seq_tup_read,idx_tup_fetch,n_tup_ins,n_tup_upd,n_tup_del from pg_stat_user_tables;";
+		 
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$var=True;
+			$i=0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$var=!$var;
+				print "<tr $bc[$var]>";
+				print '<td align="right">'.$row[0].'</td>';
+				print '<td align="right">'.$row[1].'</td>';
+				print '<td align="right">'.$row[2].'</td>';
+				print '<td align="right">'.$row[3].'</td>';
+				print '<td align="right">'.$row[4].'</td>';
+				print '<td align="right">'.$row[5].'</td>';
+				print '</tr>';
+				$i++;
+			}
+		}
+		print '</table>';
 	}
 }
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

@@ -17,16 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/admin/system/database-tables-contraintes.php
-        \brief      Page d'info des contraintes de la base
-        \version    $Revision$
-*/
+ *       \file       htdocs/admin/system/database-tables-contraintes.php
+ *       \brief      Page d'info des contraintes de la base
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".lib.php";
@@ -38,12 +35,18 @@ if (!$user->admin)
 accessforbidden();
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 print_fiche_titre($langs->trans("Constraints"),'','setup');
 
+
+// Define request to get table description
 $base=0;
-if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
+if (eregi('mysql',$conf->db->type))
 {
     $sql = "SHOW TABLE STATUS";
     $base=1;
