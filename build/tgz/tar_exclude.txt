@@ -28,8 +28,7 @@ htdocs/includes/jpgraph2
 htdocs/includes/fckeditor/_samples
 htdocs/includes/fckeditor/_testcases
 htdocs/includes/nusoap/samples
-htdocs/includes/phplot5/doc
-htdocs/includes/phplot5/examples
+htdocs/includes/phplot5
 htdocs/includes/scriptaculous/test
 htdocs/includes/treemenu/docs
 htdocs/includes/treemenu/images
