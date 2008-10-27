@@ -826,6 +826,7 @@ class Categorie
 
 		return implode($sep, $w);
 	}
+	
 	/**
 	* Retourne un tableau contenant la liste des catégories mères
 	*/
@@ -837,13 +838,20 @@ class Categorie
 		$sql .= "WHERE fk_categorie_fille = ".$this->id;
 
 		$res  = $this->db->query ($sql);
-
-		while ($cat = $this->db->fetch_array ($res))
+		
+		if ($res)
 		{
-			$meres[] = new Categorie ($this->db, $cat['fk_categorie_mere']);
+			while ($cat = $this->db->fetch_array ($res))
+			{
+				$meres[] = new Categorie ($this->db, $cat['fk_categorie_mere']);
+			}
+			return $meres;
 		}
-
-		return $meres;
+		else
+		{
+			dolibarr_print_error ($this->db);
+			return -1;
+		}
 	}
 
 	/**

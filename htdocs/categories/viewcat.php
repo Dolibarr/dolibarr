@@ -132,6 +132,20 @@ if ($type == 0 && $conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER)
 		print $langs->trans("AssignedToTheCustomer").'</td><td>';
 		print $soc->getNomUrl(1);
 		print '</td></tr>';
+		
+		$catsMeres = $c->get_meres ();
+
+		if ($catsMeres < 0)
+		{
+			dolibarr_print_error();
+		}
+		else if (count($catsMeres) > 0)
+		{
+			print '<tr><td width="20%" class="notopnoleft">';
+			print $langs->trans("CategoryContents").'</td><td>';
+			print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
+			print '</td></tr>';
+		}
 	}
 	else
 	{
