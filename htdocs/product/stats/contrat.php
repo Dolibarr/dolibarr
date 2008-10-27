@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/product/stats/contrat.php
-        \ingroup    product, service, contrat
-        \brief      Page des stats des contrats pour un produit
-        \version    $Id$
-*/
+ *       \file       htdocs/product/stats/contrat.php
+ *       \ingroup    product, service, contrat
+ *       \brief      Page des stats des contrats pour un produit
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
@@ -60,9 +60,12 @@ else
 
 
 /*
- * Affiche fiche
- *
+ * View
  */
+
+$staticcontrat=new Contrat($db);
+$staticcontratligne=new ContratLigne($db);
+
 $html = new Form($db);
 
 if ($_GET["id"] || $_GET["ref"])
@@ -123,19 +126,23 @@ if ($_GET["id"] || $_GET["ref"])
         print '</div>';
         
 
-        $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, c.rowid, ";
-        $sql.= " ".$db->pdate("c.datec")." as date, c.statut as statut, c.rowid as contratid";
-        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as d";
-        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		    $sql.= " WHERE c.fk_soc = s.rowid";
-        $sql.= " AND d.fk_contrat = c.rowid AND d.fk_product =".$product->id;
-        if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-        if ($socid)
-        {
-            $sql .= " AND c.fk_soc = $socid";
-        }
-        $sql.= " ORDER BY $sortfield $sortorder ";
+        $sql = "SELECT";
+		$sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
+		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > ".$db->idate(mktime()),1,0).') as nb_running,';
+		$sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= ".$db->idate(mktime()).")",1,0).') as nb_late,';
+		$sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
+		$sql.= " ".$db->pdate("c.datec")." as date, c.statut as statut, c.rowid as rowid,";
+		$sql.= " s.nom, s.rowid as socid, s.code_client";
+        if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+        $sql.= " ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."contratdet as cd";
+		$sql.= " WHERE c.rowid = cd.fk_contrat AND c.fk_soc = s.rowid";
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		$sql.= " AND cd.fk_product =".$product->id;
+		if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
+		$sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.rowid";
+		$sql.= " ORDER BY $sortfield $sortorder";
         $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
         $result = $db->query($sql);
@@ -154,7 +161,9 @@ if ($_GET["id"] || $_GET["ref"])
             print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"c.datec","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
             //print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"c.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"c.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+		    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
+		    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3).'</td>';
+		    print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
             print "</tr>\n";
 
             $contratstatic=new Contrat($db);
@@ -168,7 +177,7 @@ if ($_GET["id"] || $_GET["ref"])
                     $var=!$var;
 
                     print "<tr $bc[$var]>";
-                    print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->contratid.'">'.img_object($langs->trans("ShowContract"),"contract").' ';
+                    print '<td><a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowContract"),"contract").' ';
                     print $objp->rowid;
                     print "</a></td>\n";
                     print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
@@ -176,7 +185,11 @@ if ($_GET["id"] || $_GET["ref"])
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";
                     //print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
-                    print '<td align="right">'.$contratstatic->LibStatut($objp->statut,5).'</td>';
+                    //print '<td align="right">';
+                    print '<td align="center">'.($objp->nb_initial>0?$objp->nb_initial:'').'</td>';
+			        print '<td align="center">'.($objp->nb_running+$objp->nb_late>0?$objp->nb_running+$objp->nb_late:'').'</td>';
+			        print '<td align="center">'.($objp->nb_closed>0?$objp->nb_closed:'').'</td>';
+                    //$contratstatic->LibStatut($objp->statut,5).'</td>';
                     print "</tr>\n";
                     $i++;
                 }
