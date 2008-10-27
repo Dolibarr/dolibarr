@@ -1,9 +1,0 @@
-# Dolibarr language file - fr_BE - deliveries=
-Delivery=Livraison
-Deliveries=Livraisons
-DeliveryCard=Fiche livraison
-DeliveryOrder=Commande livraison
-DeliveryOrders=Commandes livraison
-DeliveryDate=Date livraison
-CreateDeliveryOrder=Générer une commande de livraison
-SetDateLivraison=Configurer la date de livraison
