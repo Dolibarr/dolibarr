@@ -51,7 +51,7 @@ class InterfaceWebcalsynchro
     
         $this->name = eregi_replace('Interface','',get_class($this));
         $this->family = "webcal";
-        $this->description = "Les triggers de ce composant permettent d'insérer un évênement dans le calendrier webcalendar pour chaque grand évênement Dolibarr.";
+        $this->description = "Triggers of this module allows to add an event inside Webcalendar for each Dolibarr business event.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     }
     

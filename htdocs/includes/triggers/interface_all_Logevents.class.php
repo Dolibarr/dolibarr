@@ -49,7 +49,7 @@ class InterfaceLogevents
     
         $this->name = eregi_replace('^Interface','',get_class($this));
         $this->family = "core";
-        $this->description = "Les triggers de ce composant permettent de logguer les evenements de securite Dolibarr.";
+        $this->description = "Triggers of this module allows to add security event records inside Dolibarr.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     }
 

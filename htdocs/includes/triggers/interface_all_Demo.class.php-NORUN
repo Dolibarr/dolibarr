@@ -50,9 +50,10 @@ class InterfaceDemo
     
         $this->name = eregi_replace('^Interface','',get_class($this));
         $this->family = "demo";
-        $this->description = "Les triggers de ce composant sont des fonctions vierges. Elles n'ont aucun effet. Ce composant est fourni à des fins de tutorial.";
+        $this->description = "Triggers of this module are empty functions. They have no effect. They are provided for tutorial purpose only.";
         $this->version = 'dolibarr';            // 'development', 'experimental', 'dolibarr' or version
     }
+    
     
     /**
      *   \brief      Renvoi nom du lot de triggers

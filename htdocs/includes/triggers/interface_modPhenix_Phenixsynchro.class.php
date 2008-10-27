@@ -15,14 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/includes/triggers/interface_modPhenix_Phenixsynchro.class.php
         \ingroup    phenix
         \brief      Fichier de gestion des triggers phenix
+		\version	$Id$
 */
 
 include_once(DOL_DOCUMENT_ROOT.'/phenix/phenix.class.php');
@@ -53,7 +52,7 @@ class InterfacePhenixsynchro
     
         $this->name = eregi_replace('Interface','',get_class($this));
         $this->family = "phenix";
-        $this->description = "Les triggers de ce composant permettent d'insérer un évênement dans le calendrier phenix pour chaque grand évênement Dolibarr.";
+        $this->description = "Triggers of this module allows to add an event inside Phenix calenar for each Dolibarr business event.";
         $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
     }
     

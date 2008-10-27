@@ -14,14 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/includes/triggers/interface_modNotification_notification.class.php
         \ingroup    notification
         \brief      Fichier de gestion des notifications sur evenement Dolibarr
+		\version	$Id$
 */
 
 
@@ -44,7 +43,7 @@ class InterfaceNotification
     
         $this->name = eregi_replace('Interface','',get_class($this));
         $this->family = "notification";
-        $this->description = "Les triggers de ce composant envoie les notifications par mail selon configuration du module Notification.";
+        $this->description = "Triggers of this module send email notifications according to Notification module setup.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     }
     

@@ -47,7 +47,7 @@ class InterfaceLdapsynchro
     
         $this->name = eregi_replace('Interface','',get_class($this));
         $this->family = "ldap";
-        $this->description = "Les triggers de ce composant permettent d'effectuer les synchro de Dolibarr vers un annuaire LDAP.";
+        $this->description = "Triggers of this module allows to synchronize Dolibarr toward a LDAP database.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     }
     
