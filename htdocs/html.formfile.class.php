@@ -57,51 +57,59 @@ class FormFile
 	{
 		global $conf,$langs;
 
-		if ($conf->upload != 0)
-		{
-			print "\n\n<!-- Start form attach new file -->\n";
-				
-			if (! $titre) $titre=$langs->trans("AttachANewFile");
-			print_titre($titre);
+		print "\n\n<!-- Start form attach new file -->\n";
+			
+		if (! $titre) $titre=$langs->trans("AttachANewFile");
+		print_titre($titre);
 
-			print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
-			print '<input type="hidden" name="section" value="'.$sectionid.'">';
-				
-			print '<table width="100%" class="noborder">';
-			print '<tr><td width="50%" valign="top">';
-				
-			$max=$conf->upload;							// En Kb
-			$maxphp=@ini_get('upload_max_filesize');	// En inconnu
-			if (eregi('m$',$maxphp)) $maxphp=$maxphp*1024;
-			if (eregi('k$',$maxphp)) $maxphp=$maxphp;
-			// Now $max and $maxphp are in Kb
-			if ($maxphp > 0) $max=min($max,$maxphp);
-				
-			if ($conf->upload > 0)
-			{
-				print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
-			}
-			print '<input class="flat" type="file" name="userfile" size="70">';
+		print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
+		print '<input type="hidden" name="section" value="'.$sectionid.'">';
+			
+		print '<table width="100%" class="noborder">';
+		print '<tr><td width="50%" valign="top">';
+			
+		$max=$conf->upload;							// En Kb
+		$maxphp=@ini_get('upload_max_filesize');	// En inconnu
+		if (eregi('m$',$maxphp)) $maxphp=$maxphp*1024;
+		if (eregi('k$',$maxphp)) $maxphp=$maxphp;
+		// Now $max and $maxphp are in Kb
+		if ($maxphp > 0) $max=min($max,$maxphp);
+			
+		if ($conf->upload > 0)
+		{
+			print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
+		}
+		print '<input class="flat" type="file" name="userfile" size="70"';
+		print (empty($conf->upload)?' disabled="true"':'');
+		print '>';
+		print ' &nbsp; ';
+		print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
+		print (empty($conf->upload)?' disabled="true"':'');
+		print '>';
+			
+		if ($addcancel)
+		{
 			print ' &nbsp; ';
-			print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'">';
-				
-			if ($addcancel)
-			{
-				print ' &nbsp; ';
-				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-			}
-				
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+		}
+		
+		if (! empty($conf->upload))
+		{
 			print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
 			print ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);
 			print ')';
-			print "</td></tr>";
-			print "</table>";
-
-			print '</form>';
-			if (empty($sectionid)) print '<br>';
-				
-			print "\n<!-- End form attach new file -->\n\n";
 		}
+		else
+		{
+			print ' ('.$langs->trans("UploadDisabled").')';
+		}
+		print "</td></tr>";
+		print "</table>";
+
+		print '</form>';
+		if (empty($sectionid)) print '<br>';
+			
+		print "\n<!-- End form attach new file -->\n\n";
 
 		return 1;
 	}
@@ -402,7 +410,7 @@ class FormFile
 		$url=$_SERVER["PHP_SELF"];
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Document"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Documents2"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Size"),$_SERVER["PHP_SELF"],"size","",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"date","",$param,'align="center"',$sortfield,$sortorder);
 		print '<td>&nbsp;</td>';

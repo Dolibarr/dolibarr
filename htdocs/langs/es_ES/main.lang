@@ -422,6 +422,7 @@ TotalMan=Total
 YouCanChangeValuesForThisListFromDictionnarySetup=Puede cambiar estos valores en el menú configuración->diccionarios
 Color=Color
 Documents=Documentos
+Documents2=Documentos
 MenuECM=Documentos
 MenuAWStats=AWStats
 MenuMembers=Members
