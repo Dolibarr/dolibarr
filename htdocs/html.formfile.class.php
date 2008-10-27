@@ -288,9 +288,9 @@ class FormFile
 			print '<td align="center">';
 			if($conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
 			{
-				require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
-				$htmlAdmin = new FormAdmin($db);
-				$htmlAdmin->select_lang($langs->getDefaultLang());
+				include_once(DOL_DOCUMENT_ROOT.'/html.formadmin.class.php');
+				$formadmin=new FormAdmin($this->db);
+				$formadmin->select_lang($langs->getDefaultLang());
 			}
 			else
 			{
