@@ -340,7 +340,7 @@ if ($account || $_GET["ref"])
 		$html->select_date(-1,'op',0,0,0,'transaction');
 		print '</td>';
 		print '<td nowrap="nowrap">';
-		$html->select_types_paiements('','operation','1,2',1,1);
+		$html->select_types_paiements('','operation','1,2',2,1);
 		print '<input name="num_chq" class="flat" type="text" size="4"></td>';
 		print '<td colspan="2">';
 		print '<input name="label" class="flat" type="text" size="32">';
@@ -471,7 +471,7 @@ if ($account || $_GET["ref"])
 	            
 	            print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"day")."</td>\n";
 	            
-	            print "<td nowrap>&nbsp;".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
+	            print "<td nowrap>&nbsp;".$langs->trans($objp->fk_type)." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
 	            
 	            // Description
 	            print '<td>';
