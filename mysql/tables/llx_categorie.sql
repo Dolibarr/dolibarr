@@ -25,7 +25,7 @@ create table llx_categorie
 	rowid 		    integer AUTO_INCREMENT PRIMARY KEY,
 	label 		    VARCHAR(255),                       -- category name
 	description 	text,                               -- description of the category
-	fk_soc        integer DEFAULT NULL,						  		-- attribution of the category has a company (for product only)
+	fk_soc        integer DEFAULT NULL,						  	-- attribution of the category has a company (for product only)
 	visible       tinyint DEFAULT 1 NOT NULL,         -- determine if the products are visible or not
 	type	        tinyint DEFAULT 1 NOT NULL          -- category type (product, supplier, customer)
 )type=innodb;
