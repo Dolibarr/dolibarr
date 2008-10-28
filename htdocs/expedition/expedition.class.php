@@ -89,12 +89,12 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (ref, date_creation, fk_user_author, date_expedition";
-		$sql.= ", fk_soc, fk_expedition_methode, tracking_number";
-		$sql.= ")";
-		$sql.= " VALUES ('(PROV)', ".$this->db->idate(mktime()).", $user->id, ".$this->db->idate($this->date_expedition);
-		$sql.= ", ".$this->socid.",'". $this->expedition_method_id."','". $this->tracking_number."'";
-		$sql.= ")";
+  		$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (ref, date_creation, fk_user_author, date_expedition,";
+ 		$sql.= " fk_soc, fk_expedition_methode, tracking_number, weight, size, width, height, weight_units, size_units";
+  		$sql.= ")";
+  		$sql.= " VALUES ('(PROV)', now(), $user->id, ".$this->db->idate($this->date_expedition);
+ 		$sql.= ", ".$this->socid.",'". $this->expedition_method_id."','". $this->tracking_number."',".$this->weight.",".$this->sizeS.",".$this->sizeW.",".$this->sizeH.",".$this->weight_units.",".$this->size_units;
+  		$sql.= ")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -205,6 +205,7 @@ class Expedition extends CommonObject
 		global $conf;
 
 		$sql = "SELECT e.rowid, e.fk_soc as socid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut";
+		$sql.= ", weight, weight_units, size, size_units, width, height";
 		$sql.= ", ".$this->db->pdate("e.date_expedition")." as date_expedition, e.model_pdf, e.fk_adresse_livraison";
 		$sql.= ", e.fk_expedition_methode, e.tracking_number";
 		if ($conf->commande->enabled)
@@ -250,7 +251,11 @@ class Expedition extends CommonObject
 	  	$this->modelpdf             = $obj->model_pdf;
 	  	$this->expedition_method_id = $obj->fk_expedition_methode;
 	  	$this->tracking_number      = $obj->tracking_number;
-
+	  	$this->trueWeight           = $obj->weight;
+		$this->weight_units         = $obj->weight_units;
+		$this->trueSize           	= $obj->size."x".$obj->width."x".$obj->height;
+		$this->size_units           = $obj->size_units;
+	  	
 	  	if ($conf->commande->enabled)
 	  	{
 	  		$this->origin = "commande";

@@ -2554,6 +2554,13 @@ function measuring_units_string($unit,$measuring_style='')
 		$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
 		$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
 	}
+	else if ($measuring_style == 'size')
+	{
+		 $measuring_units[0] = $langs->trans("SizeUnitm");
+		 $measuring_units[-1] = $langs->trans("SizeUnitdm");
+		 $measuring_units[-2] = $langs->trans("SizeUnitcm"); 
+		 $measuring_units[-3] = $langs->trans("SizeUnitmm");
+	}
 
 	return $measuring_units[$unit];
 }

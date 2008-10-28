@@ -53,3 +53,9 @@ update llx_c_prospectlevel set code='PL_NONE', label='None' where code='PL_UNKOW
 
 update llx_societe set fk_prospectlevel=null where fk_prospectlevel='PL_UNKOWN';
 
+alter table llx_expedition add height integer;
+alter table llx_expedition add width integer;
+alter table llx_expedition add size_units integer;
+alter table llx_expedition add size integer;
+alter table llx_expedition add weight_units integer;
+alter table llx_expedition add weight integer;

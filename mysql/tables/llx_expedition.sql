@@ -34,6 +34,12 @@ create table llx_expedition
   fk_expedition_methode integer,
   tracking_number       varchar(50),
   fk_statut             smallint  DEFAULT 0,
+  height 				integer,
+  width 				integer,
+  size_units 			integer,
+  size 					integer,
+  weight_units 			integer,
+  weight 				integer,
   note                  text,
   model_pdf             varchar(50)
 )type=innodb;
