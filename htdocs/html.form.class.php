@@ -2166,7 +2166,7 @@ class Form
 		$sql = "SELECT code, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql.= " WHERE active > 0";
-		$sql.= " ORDER BY label";
+		$sql.= " ORDER BY sortorder";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
