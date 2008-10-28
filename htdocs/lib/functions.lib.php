@@ -3122,4 +3122,26 @@ function utf8_check($Str)
 	return true;
 }
 
+
+
+/**
+ * \brief			Search for prospect state selection in $_GET, $_POST, and $_REQUEST 
+ * \return 			prospect state selection (array of prospect_state_id => 'true'/'false')
+ * \author			Matelli (www.matelli.fr)
+ * \remarks			See http://matelli.fr/showcases/patchs-dolibarr/add-icons-for-prospect-status.html for details
+ */
+function get_prospect_state_selection()
+{
+	$sts = array(-1,0,1,2,3);
+	
+	if (isSet($_POST["nouvel_etat"]))
+		return $_POST["nouvel_etat"];
+	else if (isSet($_GET["nouvel_etat"]))
+		return $_GET["nouvel_etat"];
+	else if (isSet($_REQUEST["nouvel_etat"]))
+		return $_REQUEST["nouvel_etat"];
+	else
+		return false;
+}
+
 ?>

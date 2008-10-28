@@ -28,6 +28,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
 
 $langs->load("propal");
+$langs->load("companies");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -47,7 +48,97 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 
+// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)
+// Load potentiels filters
+$search_level_from = isset($_GET["search_level_from"])?$_GET["search_level_from"]:(isSet($_POST["search_level_from"])?$_POST["search_level_from"]:'');
+$search_level_to = isset($_GET["search_level_to"])?$_GET["search_level_to"]:(isSet($_POST["search_level_to"])?$_POST["search_level_to"]:'');
 
+// If both parameters are set, search for everything BETWEEN them
+if ($search_level_from != '' && $search_level_to != '')
+{	
+	// Ensure that these parameters are numbers
+	$search_level_from = (int) $search_level_from;
+	$search_level_to = (int) $search_level_to;
+	
+	// If from is greater than to, reverse orders
+	if ($search_level_from > $search_level_to)
+	{
+		$tmp = $search_level_to;
+		$search_level_to = $search_level_from;
+		$search_level_from = $tmp;
+	}
+
+	// Generate the SQL request
+	$sortwhere = '(sortorder BETWEEN '.$search_level_from.' AND '.$search_level_to.') AS is_in_range';
+}
+// If only "from" parameter is set, search for everything GREATER THAN it
+else if ($search_level_from != '')
+{
+	// Ensure that this parameter is a number
+	$search_level_from = (int) $search_level_from;
+	
+	// Generate the SQL request
+	$sortwhere = '(sortorder >= '.$search_level_from.') AS is_in_range';
+}
+// If only "to" parameter is set, search for everything LOWER THAN it
+else if ($search_level_to != '')
+{
+	// Ensure that this parameter is a number
+	$search_level_to = (int) $search_level_to;
+	
+	// Generate the SQL request
+	$sortwhere = '(sortorder <= '.$search_level_to.') AS is_in_range';
+}
+// If no parameters are set, dont search for anything
+else
+{
+	$sortwhere = '0 as is_in_range';
+}
+
+// Select every potentiels, and note each potentiels which fit in search parameters
+dolibarr_syslog('prospects::prospects_prospect_level',LOG_DEBUG);
+$sql = "SELECT code, label, sortorder, ".$sortwhere;
+$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+$sql.= " WHERE active > 0";
+$sql.= " ORDER BY sortorder";
+$resql = $db->query($sql);
+if ($resql)
+{
+	$tab_level = array();
+	$search_levels = array();
+	
+	while ($obj = $db->fetch_object($resql))
+	{
+		// Compute level text
+		$level=$langs->trans($obj->code);
+		if ($level == $obj->code) $level=$langs->trans($obj->label);
+		
+		// Put it in the array sorted by sortorder
+		$tab_level[$obj->sortorder] = $level;
+		
+		// If this potentiel fit in parameters, add its code to the $search_levels array
+		if ($obj->is_in_range == 1)
+		{
+			$search_levels[] = '"'.preg_replace('[^A-Za-z0-9_-]', '', $obj->code).'"';
+		}
+		
+		$i++;
+	}
+	
+	// Implode the $search_levels array so that it can be use in a "IN (...)" where clause.
+	// If no paramters was set, $search_levels will be empty
+	$search_levels = implode(',', $search_levels);
+}
+else dolibarr_print_error($db);
+
+// Load sale and categ filters
+$search_sale = isset($_GET["search_sale"])?$_GET["search_sale"]:$_POST["search_sale"];
+$search_categ = isset($_GET["search_categ"])?$_GET["search_categ"]:$_POST["search_categ"];
+// If the user must only see his prospect, force searching by him
+if (!$user->rights->societe->client->voir && !$socid) $search_sale = $user->id;
+
+// List of avaible states; we'll need that for each lines (quick changing prospect states) and for search bar (filter by prospect state)
+$sts = array(-1,0,1,2,3);
 
 /*
  * Actions
@@ -67,13 +158,23 @@ if ($_GET["action"] == 'cstc')
 $sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,";
 $sql.= " st.libelle as stcomm, s.prefix_comm, s.fk_stcomm, s.fk_prospectlevel,";
 $sql.= " d.nom as departement";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
+// Updated by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)
+// We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
+if ($search_sale) $sql .= ", sc.fk_soc, sc.fk_user";
+// We'll need these fields in order to filter by categ
+if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// We'll need this table joined to the select in order to filter by sale
+if ($search_sale) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+// We'll need this table joined to the select in order to filter by categ
+if ($search_categ) $sql .= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
 $sql.= " WHERE s.fk_stcomm = st.id AND s.client = 2";
-if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+// Join for the needed table to filter by sale
+if ($search_sale) $sql .= " AND s.rowid = sc.fk_soc";
+// Join for the needed table to filter by categ
+if ($search_categ) $sql .= " AND s.rowid = cs.fk_societe";
 
 if (isset($stcomm) && $stcomm != '')
 {
@@ -86,6 +187,21 @@ if ($user->societe_id)
 
 if ($_GET["search_nom"])   $sql .= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
 if ($_GET["search_ville"]) $sql .= " AND s.ville like '%".addslashes(strtolower($_GET["search_ville"]))."%'";
+// Insert levels filters
+if ($search_levels)
+{
+	$sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
+}
+// Insert salee filter
+if ($search_sale)
+{
+	$sql .= " AND sc.fk_user = ".$search_sale;
+}
+// Insert categ filter
+if ($search_categ)
+{
+	$sql .= " AND cs.fk_categorie = ".$search_categ;
+}
 
 if ($socname)
 {
@@ -122,9 +238,109 @@ if ($resql)
 	}
 
 	$param='&amp;stcomm='.$stcomm.'&amp;search_nom='.urlencode($_GET["search_nom"]).'&amp;search_ville='.urlencode($_GET["search_ville"]);
-
+ 	// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)
+ 	// Store the status filter in the URL
+ 	if (isSet($search_cstc))
+ 	{
+ 		foreach ($search_cstc as $key => $value)
+ 		{
+ 			if ($value == 'true')
+ 				$param.='&amp;search_cstc['.((int) $key).']=true';
+ 			else
+ 				$param.='&amp;search_cstc['.((int) $key).']=false';
+ 		}
+ 	}
+ 	// Store the potentiels filters in the URL
+ 	if ($search_level_from != '')
+ 	{
+ 		$param.='&amp;search_level_from='.$search_level_from;
+ 	}
+ 	if ($search_level_to != '')
+ 	{
+ 		$param.='&amp;search_level_to='.$search_level_to;
+ 	}
+ 	// Store the categ filter in the URL
+ 	if ($search_categ != '')
+ 	{
+ 		$param.='&amp;search_categ='.$search_categ;
+ 	}
+ 	// Store the sale filter in the URL
+ 	if ($search_sale != '')
+ 	{
+ 		$param.='&amp;search_sale='.$search_sale;
+ 	}
+ 	// $param and $urladd should have the same value
+ 	$urladd = $param;
+	
 	print_barre_liste($langs->trans("ListOfProspects"), $page, $_SERVER["PHP_SELF"], $param, $sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
+ 	
+ 	// Print the search-by-sale and search-by-categ filters
+ 	print '<form method="get" action="prospects.php" id="formulaire_recherche">';
+ 	
+ 	// If the user can view prospects other than his'
+ 	if ($user->rights->societe->client->voir || $socid)
+ 	{
+ 		// Select each sales and print them in a select input
+ 		print $langs->trans('SalesRepresentatives'). ': ';
+ 		print '<select class="flat" name="search_sale">';
+ 		print '<option value="">'.$langs->trans('All').'</option>';
+ 		
+ 		$sql_usr = "SELECT u.rowid, u.name, u.firstname, u.login";
+ 		$sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u";
+ 		$sql_usr .= " ORDER BY u.name ASC ";
+ 	    
+ 		$resql_usr = $db->query($sql_usr);
+ 		if ($resql_usr)
+ 		{
+ 			while ($obj_usr = $db->fetch_object($resql_usr))
+ 			{			
+ 				print '<option value="'.$obj_usr->rowid.'"';
+ 				
+ 				if ($obj_usr->rowid == $search_sale)
+ 					print ' selected="true"';
+ 				
+ 				print '>';
+ 				print stripslashes($obj_usr->firstname)." ".stripslashes($obj_usr->name)." (".$obj_usr->login.')';
+ 				print '</option>';
+ 				$i++;
+ 			}
+ 			$db->free($resql_usr);
+ 		}
+ 		else
+ 		{
+ 			dolibarr_print_error($db);
+ 		}
+ 		print '</select> &nbsp;  &nbsp;  &nbsp; ';
+ 	}
+ 	
+ 	// Include Categorie class
+	if ($conf->categorie->enabled)
+	{
+	 	require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
+	 
+	 	// Load list of "categories"
+	 	$static_categs = new Categorie($db);
+	 	$tab_categs = $static_categs->get_full_arbo(2);
+	 	
+	 	// Print a select with each of them
+	 	print $langs->trans('Categories'). ': ';
+	 	print '<select class="flat" name="search_categ">';
+	 	print '<option value="">'.$langs->trans('All').'</option>';
+	 	
+	 	if (is_array($tab_categs))
+	 	{
+	 		foreach ($tab_categs as $categ)
+	 		{
+	 			print '<option value="'.$categ['id'].'"';
+	 			if ($categ['id'] == $search_categ)
+	 				print ' selected="true"';
+	 			print '>'.$categ['fulllabel'].'</option>';
+	 		}
+	 	}
+	 	print '</select><br/>';
+	}
+		
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","",$param,"valign=\"center\"",$sortfield,$sortorder);
@@ -136,14 +352,54 @@ if ($resql)
 	print '<td class="liste_titre" colspan="4">&nbsp;</td>';
 	print "</tr>\n";
 
-	print '<form method="get" action="prospects.php">';
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'">';
 	print '</td><td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_ville" size="12" value="'.$_GET["search_ville"].'">';
 	print '</td>';
-	print '<td class="liste_titre" colspan="7" align="right">';
+ 	print '<td class="liste_titre">';
+    print '&nbsp;';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '&nbsp;';
+    print '</td>';
+ 	
+ 	// Added by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/enhance-prospect-searching.html)	
+ 	print '<td class="liste_titre">';
+ 	// Generate in $options_from the list of each option sorted
+ 	$options_from = '<option value="">&nbsp;</option>';
+ 	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
+ 	{
+ 		$options_from .= '<option value="'.$tab_level_sortorder.'"'.($search_level_from == $tab_level_sortorder ? ' selected="true"':'').'>';
+ 		$options_from .= $langs->trans($tab_level_label);
+ 		$options_from .= '</option>';			
+ 	}
+ 	
+ 	// Reverse the list
+ 	array_reverse($tab_level, true);
+ 	
+ 	// Generate in $options_to the list of each option sorted in the reversed order
+ 	$options_to = '<option value="">&nbsp;</option>';
+ 	foreach ($tab_level as $tab_level_sortorder => $tab_level_label)
+ 	{
+ 		$options_to .= '<option value="'.$tab_level_sortorder.'"'.($search_level_to == $tab_level_sortorder ? ' selected="true"':'').'>';
+ 		$options_to .= $langs->trans($tab_level_label);
+ 		$options_to .= '</option>';			
+ 	}
+ 
+ 	// Print these two select
+ 	print $langs->trans("From").' <select class="flat" name="search_level_from">'.$options_from.'</select>';
+ 	print ' ';	
+ 	print $langs->trans("To").' <select class="flat" name="search_level_to">'.$options_to.'</select>';
+
+    print '</td>';
+    print '<td class="liste_titre" align="center">';
+	print '&nbsp;';
+    print '</td>';
+ 	
+ 	// Print the search button
+    print '<td class="liste_titre" colspan="3" align="right">';
 	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '</td>';
 
@@ -180,7 +436,7 @@ if ($resql)
 		print $prospectstatic->LibStatut($obj->fk_stcomm,2);
 		print "</td>";
 
-		$sts = array(-1,0,1,2,3);
+		//$sts = array(-1,0,1,2,3);
 		print '<td align="right" nowrap>';
 		foreach ($sts as $key => $value)
 		{
