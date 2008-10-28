@@ -224,10 +224,8 @@ if ($_GET["action"] == 'show_day')
 else
 {
 	// To limit array
-	$startmonth=$month-2; $startyear=$year; if ($startmonth < 1) { $startmonth+=12; $startyear--; } 
-	$endmonth=$month+2; $endyear=$year; if ($endmonth > 12) { $endmonth-=12; $endyear++; }
-	$sql.= ' AND datep BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$startmonth,1,$startyear));
-	$sql.= ' AND '.$db->idate(dolibarr_mktime(0,0,0,$endmonth,1,$endyear));
+    $sql.= ' AND datep BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$month,1,$year)-(60*60*24*2));
+    $sql.= ' AND '.$db->idate(dolibarr_mktime(0,0,0,$month,28,$year)+(60*60*24*5));
 }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
