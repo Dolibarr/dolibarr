@@ -251,8 +251,18 @@ class Expedition extends CommonObject
 	  	$this->modelpdf             = $obj->model_pdf;
 	  	$this->expedition_method_id = $obj->fk_expedition_methode;
 	  	$this->tracking_number      = $obj->tracking_number;
+
 	  	$this->trueWeight           = $obj->weight;
 		$this->weight_units         = $obj->weight_units;
+
+		$this->trueWidth            = $obj->width;
+		$this->width_units          = $obj->size_units;
+		$this->trueHeight           = $obj->height;
+		$this->height_units         = $obj->size_units;
+		$this->trueDepth            = $obj->size;
+		$this->depth_units          = $obj->size_units;
+
+		// A denormalized value		
 		$this->trueSize           	= $obj->size."x".$obj->width."x".$obj->height;
 		$this->size_units           = $obj->size_units;
 	  	

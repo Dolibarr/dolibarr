@@ -277,7 +277,7 @@ class FormFile
 			if (empty($noform)) print '<form action="'.$urlsource.'#builddoc" method="post">';
 			print '<input type="hidden" name="action" value="builddoc">';
 			 
-			print_titre($langs->trans("Documents"));
+			print_titre($langs->trans("BuildDocuments"));
 			print '<table class="border" width="100%">';
 
 			print '<tr '.$bc[$var].'>';

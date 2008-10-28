@@ -29,11 +29,12 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
-if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if ($conf->produit->enabled)  require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+if ($conf->stock->enabled)    require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 $langs->load("companies");
 $langs->load("bills");
@@ -194,6 +195,7 @@ llxHeader('',$langs->trans('Sending'),'Expedition');
 
 $html = new Form($db);
 $formfile = new FormFile($db);
+$formproduct = new FormProduct($db);
 
 /*********************************************************************
  *
@@ -295,16 +297,16 @@ if ($_GET["action"] == 'create')
 			print '<table><tr><td>';
  			print $langs->trans("Weight");
  			print '</td><td><input name="weight" size="4" value=""></td><td>';
- 			print $html->select_measuring_units("weight_units","weight");
+ 			print $formproduct->select_measuring_units("weight_units","weight");
  			print '</td></tr><tr><td>';
- 			print $langs->trans("width");
+ 			print $langs->trans("Width");
  			print ' </td><td><input name="sizeW" size="4" value=""></td>';
  			print '<td>&nbsp;</td></tr><tr><td>';
- 			print $langs->trans("height");
+ 			print $langs->trans("Height");
  			print '</td><td><input name="sizeH" size="4" value=""></td><td>';
- 			print $html->select_measuring_units("size_units","size");
+ 			print $formproduct->select_measuring_units("size_units","size");
  			print '</td></tr><tr><td>';
- 			print $langs->trans("depth");
+ 			print $langs->trans("Depth");
  			print '</td><td><input name="sizeS" size="4" value=""></td>';
  			print '<td>&nbsp;</td></tr></table>';
 
@@ -671,7 +673,7 @@ else
  			// Taille
             print '<tr><td>'.$langs->trans("Size").'</td>';
             print '<td colspan="3">';
-            if ($expedition->trueSize != 'xx' || measuring_units_string($expedition->size_units,"size"))
+            if ($expedition->trueWidth || $expedition->trueHeight || $expedition->trueDepth)
             {
             	// If sending size defined
             	print $expedition->trueSize.' '.measuring_units_string($expedition->size_units,"size");

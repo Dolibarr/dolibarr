@@ -65,7 +65,7 @@ class FormProduct
 		$sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql .= " WHERE statut = 1";
 		$sql .= " ORDER BY e.label";
-		
+
 		dolibarr_syslog('FormProduct::loadWarehouses sql='.$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -82,13 +82,13 @@ class FormProduct
 			}
 			return $num;
 		}
-		else 
+		else
 		{
 			dolibarr_print_error($this->db);
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *      \brief      Retourne la liste des modes de paiements possibles
 	 *      \param      selected        Id du mode de paiement pré-sélectionné
@@ -118,7 +118,7 @@ class FormProduct
 		print '</select>';
 	}
 
-	
+
 	/**
 	 *  \brief      Selection des unites de mesure
 	 *  \param      name                Nom champ html
@@ -145,6 +145,13 @@ class FormProduct
 			$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
 			$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
 		}
+		else if ($measuring_style == 'size')
+		{
+			$measuring_units[0] = $langs->trans("SizeUnitm");
+			$measuring_units[-1] = $langs->trans("SizeUnitdm");
+			$measuring_units[-2] = $langs->trans("SizeUnitcm");
+			$measuring_units[-3] = $langs->trans("SizeUnitmm");
+		}
 
 		print '<select class="flat" name="'.$name.'">';
 		if ($adddefault) print '<option value="0">'.$langs->trans("Default").'</option>';
@@ -160,7 +167,7 @@ class FormProduct
 		}
 		print '</select>';
 	}
-		
+
 }
 
 ?>

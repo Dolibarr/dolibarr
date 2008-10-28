@@ -437,6 +437,7 @@ YouCanChangeValuesForThisListFromDictionnarySetup=Vous pouvez changer ces valeur
 Color=Couleur
 Documents=Fichiers joints
 Documents2=Documents
+BuildDocuments=Documents générés
 UploadDisabled=Transfert désactivé
 MenuECM=Documents
 MenuAWStats=AWStats
