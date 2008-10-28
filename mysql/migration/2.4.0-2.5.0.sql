@@ -49,3 +49,7 @@ alter table llx_facture_fourn_det add column import_key         varchar(14);
 
 alter table llx_commande    modify column source smallint NULL;
 
+update llx_c_prospectlevel set code='PL_NONE', label='None' where code='PL_UNKOWN' or code='PL_NONE';
+
+update llx_societe set fk_prospectlevel=null where fk_prospectlevel='PL_UNKOWN';
+
