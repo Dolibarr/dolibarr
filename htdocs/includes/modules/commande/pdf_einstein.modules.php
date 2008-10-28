@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
  */
 
 /**
- \file       htdocs/includes/modules/commande/pdf_einstein.modules.php
- \ingroup    commande
- \brief      Fichier de la classe permettant de g�n�rer les commandes au mod�le Einstein
- \author	    Laurent Destailleur
- \version    $Id$
+ *	\file       htdocs/includes/modules/commande/pdf_einstein.modules.php
+ *	\ingroup    commande
+ *	\brief      Fichier de la classe permettant de generer les commandes au modele Einstein
+ *	\author	    Laurent Destailleur
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
@@ -33,18 +33,17 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
- \class      pdf_einstein
- \brief      Classe permettant de g�n�rer les commandes au mod�le Einstein
+ *	\class      pdf_einstein
+ *	\brief      Classe permettant de g�n�rer les commandes au mod�le Einstein
  */
-
 class pdf_einstein extends ModelePDFCommandes
 {
 	var $emetteur;	// Objet societe qui emet
 
 
 	/**
-	 \brief      Constructeur
-	 \param	    db		Handler acc�s base de donn�e
+	 *	\brief      Constructeur
+	 *	\param	    db		Handler acc�s base de donn�e
 	 */
 	function pdf_einstein($db)
 	{
@@ -821,7 +820,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$posy+=6;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOuptutCharset($object->ref), '', 'R');
 
 		$posy+=1;
 		$pdf->SetFont('Arial','',10);
@@ -829,7 +828,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dolibarr_print_date($object->date,"%d %b %Y"), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dolibarr_print_date($object->date,"%d %b %Y",'',$outputlangs), '', 'R');
 
 		if ($showadress)
 		{
@@ -853,14 +852,14 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('Arial','B',11);
 			if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-			else $pdf->MultiCell(80, 4, $this->emetteur->nom, 0, 'L');
+			else $pdf->MultiCell(80, 4, $outputlangs->convToOuptutCharset($this->emetteur->nom), 0, 'L');
 
 			// Caract�ristiques emetteur
 			$carac_emetteur = '';
 			if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
 			else {
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->adresse;
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->cp.' '.$this->emetteur->ville;
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOuptutCharset($this->emetteur->adresse);
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOuptutCharset($this->emetteur->cp).' '.$outputlangs->convToOuptutCharset($this->emetteur->ville);
 			}
 			$carac_emetteur .= "\n";
 	   
@@ -912,18 +911,18 @@ class pdf_einstein extends ModelePDFCommandes
 				// Nom societe
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->MultiCell(96,4, $object->client->nom, 0, 'L');
+				$pdf->MultiCell(96,4, $outputlangs->convToOuptutCharset($object->client->nom), 0, 'L');
 					
 				// Nom client
-				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
+				$carac_client = "\n".$outputlangs->convToOuptutCharset($object->contact->getFullName($outputlangs,1,1));
 					
 				// Caract�ristiques client
-				$carac_client.="\n".$object->contact->adresse;
-				$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
+				$carac_client.="\n".$outputlangs->convToOuptutCharset($object->contact->adresse);
+				$carac_client.="\n".$outputlangs->convToOuptutCharset($object->contact->cp) . " " . $outputlangs->convToOuptutCharset($object->contact->ville)."\n";
 				//Pays si different de l'emetteur
 				if ($this->emetteur->pays_code != $object->contact->pays_code)
 				{
-					dol_entity_decode($carac_client.=$object->contact->pays)."\n";
+					$carac_client.=$outputlangs->convToOuptutCharset($carac_client.=$object->contact->pays)."\n";
 				}
 			}
 			else
@@ -931,7 +930,7 @@ class pdf_einstein extends ModelePDFCommandes
 				// Nom client
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->MultiCell(96,4, $object->client->nom, 0, 'L');
+				$pdf->MultiCell(96,4, $outputlangs->convToOuptutCharset($object->client->nom), 0, 'L');
 					
 				// Nom du contact suivi commande si c'est une soci�t�
 				$arrayidcontact = $object->getIdContact('external','CUSTOMER');
@@ -941,18 +940,18 @@ class pdf_einstein extends ModelePDFCommandes
 					// On v�rifie si c'est une soci�t� ou un particulier
 					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
 					{
-						$carac_client .= "\n".$object->contact->getFullName($outputlangs,1,1);
+						$carac_client .= "\n".$outputlangs->convToOuptutCharset($object->contact->getFullName($outputlangs,1,1));
 					}
 				}
 					
 				// Caract�ristiques client
-				$carac_client.="\n".$object->client->adresse;
-				$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
+				$carac_client.="\n".$outputlangs->convToOuptutCharset($object->client->adresse);
+				$carac_client.="\n".$outputlangs->convToOuptutCharset($object->client->cp) . " " . $outputlangs->convToOuptutCharset($object->client->ville)."\n";
 
 				//Pays si different de l'emetteur
 				if ($this->emetteur->pays_code != $object->client->pays_code)
 				{
-					$carac_client.=dol_entity_decode($object->client->pays)."\n";
+					$carac_client.=$outputlangs->convToOuptutCharset($object->client->pays)."\n";
 				}
 			}
 			// Num�ro TVA intracom
