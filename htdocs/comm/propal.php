@@ -22,10 +22,10 @@
  */
 
 /**
- \file       	htdocs/comm/propal.php
- \ingroup    	propale
- \brief      	Page liste des propales (vision commercial)
- \version		$Id$
+ *	\file       	htdocs/comm/propal.php
+ *	\ingroup    	propale
+ *	\brief      	Page liste des propales (vision commercial)
+ *	\version		$Id$
  */
 
 require("./pre.inc.php");

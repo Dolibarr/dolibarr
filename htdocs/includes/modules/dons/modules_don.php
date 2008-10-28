@@ -159,7 +159,7 @@ class ModeleNumRefDons
 	\param		outputlangs		objet lang a utiliser pour traduction
     \return     int         	0 si KO, 1 si OK
 */
-function don_create($db, $id, $message='', $modele='', $outputlangs='')
+function don_create($db, $id, $message, $modele, $outputlangs)
 {
     global $conf, $langs;
     $langs->load("bills");
@@ -192,19 +192,23 @@ function don_create($db, $id, $message='', $modele='', $outputlangs='')
     
         $obj->message = $message;
     
-        if ( $obj->write_file($id,$outputlangs) > 0)
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output=$outputlangs->charset_output;
+        if ($obj->write_file($id,$outputlangs) > 0)
         {
             // Succès de la création de la facture. On génère le fichier meta
             don_meta_create($db, $id);
-    
             // et on supprime l'image correspondant au preview
             don_delete_preview($db, $id);
     
+			$outputlangs->charset_output=$sav_charset_output;
             return 1;
         }
         else
         {
-            dolibarr_syslog("Erreur dans don_create");
+			$outputlangs->charset_output=$sav_charset_output;
+        	dolibarr_syslog("Erreur dans don_create");
             dolibarr_print_error($db,$obj->pdferror());
             return 0;
         }

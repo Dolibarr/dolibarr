@@ -49,7 +49,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 		$langs->load("main");
 		$langs->load("bills");
-		
+
 		$this->db = $db;
 		$this->name = "jaune";
 		$this->description = $langs->trans('DocModelJauneDescription');
@@ -94,9 +94,10 @@ class pdf_propale_jaune extends ModelePDFPropales
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$outputlangs->charset_output=$outputlangs->character_set_client='ISO-8859-1';
-		
+		// Force output charset to ISO, because FPDF expect text to be encoded in ISO
+		$sav_charset_output=$outputlangs->charset_output;
+		$outputlangs->charset_output='ISO-8859-1';
+
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
@@ -156,15 +157,15 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 				$pdf->Open();
 				$pdf->AddPage();
-				
+
 				$pdf->SetTitle($propale->ref);
-				$pdf->SetSubject("Proposition commerciale");
+				$pdf->SetSubject($outputlangs->transnoentities("CommercialProposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($user->fullname);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
-				
+
 				// Tete de page
 				$this->_pagehead($pdf, $propale, $outputlangs);
 
@@ -227,7 +228,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 					}
 				}
 
-				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 				/*
 				 *
 				 */
@@ -270,16 +271,16 @@ class pdf_propale_jaune extends ModelePDFPropales
 				$pdf->Close();
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+				if (! empty($conf->global->MAIN_UMASK))
+				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}
 		}
 	}
 
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
 		global $langs,$conf;
 		$langs->load("main");
@@ -288,26 +289,26 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetFont('Arial','',11);
 
 		$pdf->SetXY(10,$tab_top);
-		$pdf->MultiCell(20,10,$langs->transnoentities("Ref"),0,'C',1);
+		$pdf->MultiCell(20,10,$outputlangs->transnoentities("Ref"),0,'C',1);
 
 		$pdf->SetXY(30,$tab_top);
-		$pdf->MultiCell(102,10,$langs->transnoentities("Designation"),0,'L',1);
+		$pdf->MultiCell(102,10,$outputlangs->transnoentities("Designation"),0,'L',1);
 
 		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
 		$pdf->SetXY(132,$tab_top);
-		$pdf->MultiCell(12, 10,$langs->transnoentities("VAT"),0,'C',1);
+		$pdf->MultiCell(12, 10,$outputlangs->transnoentities("VAT"),0,'C',1);
 
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
 		$pdf->SetXY(144,$tab_top);
-		$pdf->MultiCell(10,10,$langs->transnoentities("Qty"),0,'C',1);
+		$pdf->MultiCell(10,10,$outputlangs->transnoentities("Qty"),0,'C',1);
 
 		$pdf->line(154, $tab_top, 154, $tab_top + $tab_height);
 		$pdf->SetXY(154,$tab_top);
-		$pdf->MultiCell(22,10,$langs->transnoentities("PriceU"),0,'R',1);
+		$pdf->MultiCell(22,10,$outputlangs->transnoentities("PriceU"),0,'R',1);
 
 		$pdf->line(176, $tab_top, 176, $tab_top + $tab_height);
 		$pdf->SetXY(176,$tab_top);
-		$pdf->MultiCell(24,10,$langs->transnoentities("Total"),0,'R',1);
+		$pdf->MultiCell(24,10,$outputlangs->transnoentities("Total"),0,'R',1);
 
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 
@@ -315,6 +316,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetFont('Arial','',10);
 	}
 
+	
 	function _pagehead(&$pdf, $propale, $outputlangs)
 	{
 		//Affiche le filigrane brouillon - Print Draft Watermark
@@ -356,20 +358,20 @@ class pdf_propale_jaune extends ModelePDFPropales
 		{
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, "T�l : ".FAC_PDF_TEL);
+	  $pdf->MultiCell(76, 5, $outputlangs->trans("Tel")." : ".FAC_PDF_TEL);
 		}
 		if (defined("MAIN_INFO_SIREN"))
 		{
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, "SIREN : ".MAIN_INFO_SIREN);
+	  $pdf->MultiCell(76, 5, $outputlangs->trans("SIREN")." : ".MAIN_INFO_SIREN);
 		}
 		$pdf->rect(10, 40, 80, 40);
 
 		$pdf->SetXY(10,5);
 		$pdf->SetFont('Arial','B',16);
 		$pdf->SetTextColor(0,0,200);
-		$pdf->MultiCell(200, 20, "PROPOSITION COMMERCIALE", '' , 'C');
+		$pdf->MultiCell(200, 20, $outputlangs->transnoentities("CommercialProposal"), '' , 'C');
 
 		/*
 		 * Adresse Client

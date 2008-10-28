@@ -97,6 +97,7 @@ OrderMode=Order method
 AuthorRequest=Request author
 UseCustomerContactAsOrderRecipientIfExist=Use customer contact address if defined instead of third party address as order recipient address
 RunningOrders=Orders on process
+UserWithApproveOrderGrant=Useres granted with "approve orders" permission.
 
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON not defined
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON not defined

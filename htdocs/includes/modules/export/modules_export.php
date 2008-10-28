@@ -19,160 +19,160 @@
  */
 
 /**
-        \file       htdocs/includes/modules/export/modules_export.php
-        \ingroup    export
-        \brief      Fichier contenant la classe mère de generation des exports
-        \version    $Id$
-*/
+ \file       htdocs/includes/modules/export/modules_export.php
+ \ingroup    export
+ \brief      Fichier contenant la classe mère de generation des exports
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 
 
 /**
-   \class      ModeleExports
-   \brief      Classe mère des modèles de format d'export
-*/
+ \class      ModeleExports
+ \brief      Classe mère des modèles de format d'export
+ */
 
 class ModeleExports
 {
-    var $error='';
-    
-    var $driverlabel;
-    var $driverversion;
+	var $error='';
 
-    var $libabel;
-    var $libversion;
+	var $driverlabel;
+	var $driverversion;
 
-    
-    /**
-     *      \brief      Constructeur
-     */
-    function ModeleExports()
-    {
-    }
-    
-    /**
-     *      \brief      Charge en memoire et renvoie la liste des modèles actifs
-     *      \param      db      Handler de base
-     */
-    function liste_modeles($db)
-    {
-        dolibarr_syslog("ModeleExport::loadFormat");
-
-        $dir=DOL_DOCUMENT_ROOT."/includes/modules/export/";
-        $handle=opendir($dir);
-
-        // Recherche des fichiers drivers exports disponibles
-        $var=True;
-        $i=0;
-        while (($file = readdir($handle))!==false)
-        {
-            if (eregi("^export_(.*)\.modules\.php",$file,$reg))
-            {
-                $moduleid=$reg[1];
-    
-                // Chargement de la classe
-                $file = $dir."/export_".$moduleid.".modules.php";
-                $classname = "Export".ucfirst($moduleid);
-                
-                require_once($file);
-                $module = new $classname($db);
-
-                // Driver properties
-                $this->driverlabel[$module->id]=$module->getDriverLabel();
-                $this->driverversion[$module->id]=$module->getDriverVersion();
-                // If use an external lib
-                $this->liblabel[$module->id]=$module->getLibLabel();
-                $this->libversion[$module->id]=$module->getLibVersion();
-                
-                $i++;
-            }
-        }                
-    
-        return array_keys($this->driverlabel);
-    }
-
-    
-    /**
-     *      \brief      Renvoi libelle d'un driver export
-     */
-    function getDriverLabel($key)
-    {
-        return $this->driverlabel[$key];
-    }
-
-    /**
-     *      \brief      Renvoi version d'un driver export
-     */
-    function getDriverVersion($key)
-    {
-        return $this->driverversion[$key];
-    }
-
-    /**
-     *      \brief      Renvoi libelle de librairie externe du driver
-     */
-    function getLibLabel($key)
-    {
-        return $this->liblabel[$key];
-    }
-
-    /**
-     *      \brief      Renvoi version de librairie externe du driver
-     */
-    function getLibVersion($key)
-    {
-        return $this->libversion[$key];
-    }
+	var $libabel;
+	var $libversion;
 
 
+	/**
+	 *      \brief      Constructeur
+	 */
+	function ModeleExports()
+	{
+	}
 
-    /**
-     *      \brief      Lance la generation du fichier
-     *      \remarks    Les tableaux array_export_xxx sont déjà chargées pour le bon datatoexport
-     *                  aussi le parametre datatoexport est inutilisé
-     */ 
-    function build_file($model, $datatoexport, $array_selected)
-    {
-        global $langs;
+	/**
+	 *      \brief      Charge en memoire et renvoie la liste des modèles actifs
+	 *      \param      db      Handler de base
+	 */
+	function liste_modeles($db)
+	{
+		dolibarr_syslog("ModeleExport::loadFormat");
 
-        dolibarr_syslog("Export::build_file $model, $datatoexport, $array_selected");
-        
-        // Creation de la classe d'export du model ExportXXX
-        $dir = DOL_DOCUMENT_ROOT . "/includes/modules/export/";
-        $file = "export_".$model.".modules.php";
-        $classname = "Export".$model;
-        require_once($dir.$file);
-        $obj = new $classname($db);
-        
-        // Execute requete export        
-        $sql=$this->array_export_sql[0];
-		    $resql = $this->db->query($sql);
-		    if ($resql)
-		    {
-            // Genere en-tete
-            $obj->write_header();		    
-		    
-            // Genere ligne de titre
-            $obj->write_title();
+		$dir=DOL_DOCUMENT_ROOT."/includes/modules/export/";
+		$handle=opendir($dir);
 
-			     while ($objp = $this->db->fetch_object($resql))
-			     {
-				      $var=!$var;
-              $obj->write_record($objp,$array_selected);
-            }
-            
-            // Genere en-tete
-            $obj->write_footer();
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            dolibarr_syslog("Error: sql=$sql ".$this->error);
-            return -1;
-        }
-    }
-    
+		// Recherche des fichiers drivers exports disponibles
+		$var=True;
+		$i=0;
+		while (($file = readdir($handle))!==false)
+		{
+			if (eregi("^export_(.*)\.modules\.php",$file,$reg))
+			{
+				$moduleid=$reg[1];
+
+				// Chargement de la classe
+				$file = $dir."/export_".$moduleid.".modules.php";
+				$classname = "Export".ucfirst($moduleid);
+
+				require_once($file);
+				$module = new $classname($db);
+
+				// Driver properties
+				$this->driverlabel[$module->id]=$module->getDriverLabel();
+				$this->driverversion[$module->id]=$module->getDriverVersion();
+				// If use an external lib
+				$this->liblabel[$module->id]=$module->getLibLabel();
+				$this->libversion[$module->id]=$module->getLibVersion();
+
+				$i++;
+			}
+		}
+
+		return array_keys($this->driverlabel);
+	}
+
+
+	/**
+	 *      \brief      Renvoi libelle d'un driver export
+	 */
+	function getDriverLabel($key)
+	{
+		return $this->driverlabel[$key];
+	}
+
+	/**
+	 *      \brief      Renvoi version d'un driver export
+	 */
+	function getDriverVersion($key)
+	{
+		return $this->driverversion[$key];
+	}
+
+	/**
+	 *      \brief      Renvoi libelle de librairie externe du driver
+	 */
+	function getLibLabel($key)
+	{
+		return $this->liblabel[$key];
+	}
+
+	/**
+	 *      \brief      Renvoi version de librairie externe du driver
+	 */
+	function getLibVersion($key)
+	{
+		return $this->libversion[$key];
+	}
+
+
+
+	/**
+	 *      \brief      Lance la generation du fichier
+	 *      \remarks    Les tableaux array_export_xxx sont déjà chargées pour le bon datatoexport
+	 *                  aussi le parametre datatoexport est inutilisé
+	 */
+	function build_file($model, $datatoexport, $array_selected)
+	{
+		global $langs;
+
+		dolibarr_syslog("Export::build_file $model, $datatoexport, $array_selected");
+
+		// Creation de la classe d'export du model ExportXXX
+		$dir = DOL_DOCUMENT_ROOT . "/includes/modules/export/";
+		$file = "export_".$model.".modules.php";
+		$classname = "Export".$model;
+		require_once($dir.$file);
+		$obj = new $classname($db);
+
+		// Execute requete export
+		$sql=$this->array_export_sql[0];
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			// Genere en-tete
+			$obj->write_header();
+
+			// Genere ligne de titre
+			$obj->write_title();
+
+			while ($objp = $this->db->fetch_object($resql))
+			{
+				$var=!$var;
+				$obj->write_record($objp,$array_selected);
+			}
+
+			// Genere en-tete
+			$obj->write_footer();
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("Error: sql=$sql ".$this->error);
+			return -1;
+		}
+	}
+
 }
 
 

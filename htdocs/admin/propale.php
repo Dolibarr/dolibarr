@@ -70,11 +70,21 @@ if ($_GET["action"] == 'specimen')
 
 		$module = new $classname($db);
 
-		if ($module->write_file($propal) > 0)
+		if ($module->write_file($propal,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
 			return;
 		}
+		else
+		{
+			$mesg='<div class="error">'.$module->error.'</div>';
+			dolibarr_syslog($module->error, LOG_ERR);
+		}		
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+		dolibarr_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
 

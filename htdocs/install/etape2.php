@@ -156,7 +156,7 @@ if ($_POST["action"] == "set")
 					$requestnb++;
 					if ($conf->character_set_client == "UTF-8")
 					{
-						$buffer=utf8_encode ($buffer);
+						$buffer=utf8_encode($buffer);
 					}
 					
 					dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
@@ -268,7 +268,7 @@ if ($_POST["action"] == "set")
 							$requestnb++;
 							if ($conf->character_set_client == "UTF-8")
 							{
-								$buffer=utf8_encode ($buffer);
+								$buffer=utf8_encode($buffer);
 							}
 							
 							dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);

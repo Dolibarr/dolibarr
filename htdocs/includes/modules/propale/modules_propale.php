@@ -156,11 +156,11 @@ class ModeleNumRefPropales
 		\brief      Crée une propale sur disque en fonction du modèle de PROPALE_ADDON_PDF
 		\param	    db  			objet base de donnée
 		\param	    id				id de la propale à créer
-		\param	    modele			force le modele à utiliser ('' par defaut)
+		\param	    modele			force le modele à utiliser ('' to not force)
 		\param		outputlangs		objet lang a utiliser pour traduction
         \return     int         	0 si KO, 1 si OK
 */
-function propale_pdf_create($db, $id, $modele='', $outputlangs='')
+function propale_pdf_create($db, $id, $modele, $outputlangs)
 {
 	global $langs;
 	$langs->load("propale");
@@ -200,15 +200,20 @@ function propale_pdf_create($db, $id, $modele='', $outputlangs='')
 
 		$obj = new $classname($db);
 
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output=$outputlangs->charset_output;
 		if ($obj->write_file($id, $outputlangs) > 0)
 		{
+			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
 			propale_delete_preview($db, $id);
 			return 1;
 		}
 		else
 		{
-			dolibarr_syslog("Erreur dans propale_pdf_create");
+			$outputlangs->charset_output=$sav_charset_output;
+			dolibarr_syslog("modules_propale::propale_pdf_create error");
 			dolibarr_print_error($db,$obj->pdferror());
 			return 0;
 		}

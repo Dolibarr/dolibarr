@@ -43,7 +43,6 @@ class pdf_paiement extends FPDF
 		$langs->load("bills");
 		
 		$this->db = $db;
-		$this->description = $langs->transnoentities("ListOfCustomerPayments");
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -62,43 +61,45 @@ class pdf_paiement extends FPDF
 		$this->tab_height = 230;	//$this->line_height * $this->line_per_page;
 		
 	}
+	
 	/**	
 	\brief  Generate Header
 	\param  pdf pdf object
 	\param  page current page number
 	\param  pages number of pages
-*/  
-	function Header(&$pdf, $page, $pages)
+	*/  
+	function Header(&$pdf, $page, $pages, $outputlangs)
 	{
 		global $langs;
 		
-		$title=$this->description.' - '.dolibarr_print_date(dolibarr_mktime(0,0,0,$this->month,1,$this->year),"%B %Y");
+		$title=$outputlangs->transnoentities("ListOfCustomerPayments");
+		$title.=' - '.dolibarr_print_date(dolibarr_mktime(0,0,0,$this->month,1,$this->year),"%B %Y");
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text(76, 10, $title);
 		
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 16, $langs->transnoentities("Date")." : ".dolibarr_print_date(time(),"day"));
+		$pdf->Text(11, 16, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date(time(),"day"));
 		
 		$pdf->SetFont('Arial','',12);
-		$pdf->Text(11, 22, $langs->transnoentities("Page")." : ".$page);
+		$pdf->Text(11, 22, $outputlangs->transnoentities("Page")." : ".$page);
 		
 		$pdf->SetFont('Arial','',12);
 		
 		$pdf->Text(11,$this->tab_top + 6,'Date');
 		
 		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(42, $this->tab_top + 6, $langs->transnoentities("PaymentMode"));
+		$pdf->Text(42, $this->tab_top + 6, $outputlangs->transnoentities("PaymentMode"));
 		
 		$pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(82, $this->tab_top + 6, $langs->transnoentities("Invoice"));
+		$pdf->Text(82, $this->tab_top + 6, $outputlangs->transnoentities("Invoice"));
 		
 		$pdf->line(120, $this->tab_top, 120, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(122, $this->tab_top + 6, $langs->transnoentities("AmountInvoice"));
+		$pdf->Text(122, $this->tab_top + 6, $outputlangs->transnoentities("AmountInvoice"));
 		
 		$pdf->line(160, $this->tab_top, 160, $this->tab_top + $this->tab_height + 10);
 		
 		$pdf->SetXY (160, $this->tab_top);
-		$pdf->MultiCell(40, 10, $langs->transnoentities("AmountPayment"), 0, 'R');
+		$pdf->MultiCell(40, 10, $outputlangs->transnoentities("AmountPayment"), 0, 'R');
 		
 		$pdf->line(10, $this->tab_top + 10, 200, $this->tab_top + 10 );
 
@@ -106,7 +107,7 @@ class pdf_paiement extends FPDF
 	}
 
 
-	function Body(&$pdf, $page, $lines)
+	function Body(&$pdf, $page, $lines, $outputlangs)
 	{
 		$pdf->SetFont('Arial','', 9);
 		$oldprowid = 0;
@@ -163,13 +164,13 @@ class pdf_paiement extends FPDF
 		\param	month		mois du rapport
 		\param	year		annee du rapport
 	*/
-	function write_file($_dir, $month, $year, $outputlangs='')
+	function write_file($_dir, $month, $year, $outputlangs)
 	{
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because FPDF expect text to be encoded in ISO
-		$outputlangs->charset_output=$outputlangs->character_set_client='ISO-8859-1';
+		$outputlangs->charset_output='ISO-8859-1';
 
 		$outputlangs->setPhpLang();
 		
@@ -274,9 +275,9 @@ class pdf_paiement extends FPDF
 		
 		$pdf->AddPage();
 		
-		$this->Header($pdf, 1, $pages);
+		$this->Header($pdf, 1, $pages, $outputlangs);
 		
-		$this->Body($pdf, 1, $lines);
+		$this->Body($pdf, 1, $lines, $outputlangs);
 		
 		$pdf->Output($_file);
 		if (! empty($conf->global->MAIN_UMASK)) 

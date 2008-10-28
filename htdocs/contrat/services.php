@@ -62,11 +62,14 @@ $staticcontratligne=new ContratLigne($db);
  * View
  */
 
+$now=mktime();
+
 $form=new Form($db);
 
 llxHeader();
 
-$sql = "SELECT s.rowid as socid, s.nom, c.rowid as cid,";
+$sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut,";
+$sql.= " s.rowid as socid, s.nom,";
 $sql.= " cd.rowid, cd.description, cd.statut, p.rowid as pid, p.label as label,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_ouverture_prevue,";
@@ -165,14 +168,19 @@ if ($resql)
     print "</tr>\n";
     print '</form>';
 
-    $now=mktime();
     $var=True;
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($resql);
         $var=!$var;
         print "<tr $bc[$var]>";
-        print '<td><a href="fiche.php?id='.$obj->cid.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a></td>';
+        print '<td>';
+        $contractstatic=new Contrat($db);
+        $contractstatic->id=$obj->cid;
+        $contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
+        print $contractstatic->getNomUrl(1); 
+        //'<a href="fiche.php?id='.$obj->cid.'">'.img_object($langs->trans("ShowContract"),"contract").' '.$obj->cid.'</a>';
+        print '</td>';
         print '<td>';
         if ($obj->pid)
         {
@@ -202,9 +210,17 @@ if ($resql)
         else print '&nbsp;&nbsp;&nbsp;&nbsp;';
         print '</td>';
         print '<td align="right">';
-        print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->cid.'&line='.$obj->rowid.'">';
-		print $staticcontratligne->LibStatut($obj->statut,5);
-        print '</a></td>';
+        if ($obj->cstatut == 0)
+        {
+        	print $contractstatic->LibStatut(0,5);
+        }
+        else
+        {
+        	print '<a href="'.DOL_URL_ROOT.'/contrat/fiche.php?id='.$obj->cid.'&line='.$obj->rowid.'">';
+			print $staticcontratligne->LibStatut($obj->statut,5);
+        	print '</a>';
+        }
+        print '</td>';
         print "</tr>\n";
         $i++;
     }

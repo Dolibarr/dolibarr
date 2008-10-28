@@ -78,10 +78,16 @@ if ($_GET["action"] == 'specimen')
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=ficheinter&file=SPECIMEN.pdf");
 			return;
 		}
+		else
+		{
+			$mesg='<div class="error">'.$obj->error.'</div>';
+			dolibarr_syslog($obj->error, LOG_ERR);
+		}
 	}
 	else
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+		dolibarr_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
 

@@ -18,11 +18,11 @@
  */
 
 /**
-   \file       htdocs/fourn/commande/index.php
-   \ingroup    commande
-   \brief      Page accueil commandes fournisseurs
-   \version    $Revision$
-*/
+ *	 \file       htdocs/fourn/commande/index.php
+ *	 \ingroup    commande
+ *	 \brief      Page accueil commandes fournisseurs
+ *   \version    $Revision$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -40,6 +40,7 @@ $result = restrictedArea($user, 'commande_fournisseur', $orderid,'');
 llxHeader('',$langs->trans("SuppliersOrdersArea"));
 
 $commande = new CommandeFournisseur($db);
+$userstatic=new User($db);
 
 print_barre_liste($langs->trans("SuppliersOrdersArea"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
 
@@ -64,7 +65,9 @@ if ($resql)
   $i = 0;
   
   print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
+  
+  print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td>';
+  print '<td align="right">'.$langs->trans("Nb").'</td>';
   print "</tr>\n";
   $var=True;
 
@@ -75,8 +78,7 @@ if ($resql)
 
       print "<tr $bc[$var]>";
       print '<td>'.$commande->statuts[$row[1]].'</td>';
-      print '<td align="center">'.$row[0].'</td>';
-      print '<td align="center"><a href="liste.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
+      print '<td align="right"><a href="liste.php?statut='.$row[1].'">'.$row[0].' '.$commande->LibStatut($row[1],3).'</a></td>';
 
       print "</tr>\n";
       $i++;
@@ -93,11 +95,11 @@ else
 print '</td><td width="70%" valign="top" class="notopnoleft">';
 
 
-$sql = "SELECT u.name, u.firstname";
-$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql .= " , ".MAIN_DB_PREFIX."user_rights as ur";
-$sql .= " WHERE u.rowid = ur.fk_user";
-$sql .= " AND ur.fk_id = 184";
+$sql = "SELECT u.rowid, u.name, u.firstname";
+$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
+$sql.= " ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as rd";
+$sql.= " WHERE u.rowid = ur.fk_user AND ur.fk_id = rd.id";
+$sql.= " AND module='fournisseur' AND perms='commande' AND subperms='approuver'";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -106,17 +108,22 @@ if ($resql)
   $i = 0;
   
   print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre"><td>Personnes habilitées à approuver les commandes</td>';
+  print '<tr class="liste_titre"><td>'.$langs->trans("UserWithApproveOrderGrant").'</td>';
   print "</tr>\n";
   $var=True;
 
   while ($i < $num)
     {
-      $row = $db->fetch_row($resql);
+      $obj = $db->fetch_object($resql);
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td>'.$row[1].' '.$row[0].'</td>';
+      print '<td>';
+      $userstatic->id=$obj->rowid;
+      $userstatic->nom=$obj->name;
+      $userstatic->prenom=$obj->firstname;
+      print $userstatic->getNomUrl(1);
+      print '</td>';
       print "</tr>\n";
       $i++;
     }

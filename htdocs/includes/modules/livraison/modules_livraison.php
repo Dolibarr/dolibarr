@@ -155,7 +155,14 @@ class ModeleNumRefDeliveryOrder
 
 
 
-
+/**
+ *		\brief      Create object on disk
+ *		\param	    db  			objet base de donnée
+ *		\param	    deliveryid		id object
+ *		\param	    modele			force le modele à utiliser ('' to not force)
+ *		\param		outputlangs		objet lang a utiliser pour traduction
+ *      \return     int         	0 si KO, 1 si OK
+ */
 function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs='')
 {
 	global $langs;
@@ -185,14 +192,20 @@ function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs=''
 
 		$obj = new $classname($db);
 
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output=$outputlangs->charset_output;
 		if ($obj->write_file($deliveryid,$outputlangs) > 0)
 		{
 			// on supprime l'image correspondant au preview
 			delivery_order_delete_preview($db, $deliveryid);
+			
+			$outputlangs->charset_output=$sav_charset_output;
 			return 1;
 		}
 		else
 		{
+			$outputlangs->charset_output=$sav_charset_output;
 			dolibarr_syslog("Erreur dans delivery_order_pdf_create");
 			dolibarr_print_error($db,$obj->pdferror());
 			return 0;

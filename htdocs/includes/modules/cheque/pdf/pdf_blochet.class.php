@@ -15,30 +15,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
  \file       htdocs/compta/paiement/cheque/pdf/pdf_blochet.class.php
  \ingroup    banque
  \brief      Fichier de la classe permettant de gï¿½nï¿½rer les bordereau de remise de cheque
- \version    $Revision$
+ \version    $Id$
  */
+
+require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
- \class      BordereauChequeBlochet
- \brief      Classe permettant de gï¿½nï¿½rer les bordereau de remise de cheque
+ *	\class      BordereauChequeBlochet
+ *	\brief      Classe permettant de gï¿½nï¿½rer les bordereau de remise de cheque
  */
-
-class BordereauChequeBlochet
+class BordereauChequeBlochet extends FPDF
 {
+    var $error='';
+
 	var $emetteur;	// Objet societe qui emet
 
 	/**
-	 \brief  Constructeur
+	 *	\brief  Constructeur
 	 */
 	function BordereauChequeBlochet($db)
 	{
@@ -49,7 +50,6 @@ class BordereauChequeBlochet
 
 		$this->db = $db;
 		$this->name = "blochet";
-		$this->description = $langs->transnoentities("CheckReceipt");
 
 		$this->tab_top = 60;
 
@@ -68,29 +68,36 @@ class BordereauChequeBlochet
 		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;
 	}
 
-
+    /**
+     *      \brief      Renvoi le dernier message d'erreur de création de propale
+     */
+    function pdferror()
+    {
+        return $this->error;
+    }
+    
 	/**
 		\brief  Generate Header
 		\param  pdf pdf object
 		\param  page current page number
 		\param  pages number of pages
 		*/
-	function Header(&$pdf, $page, $pages)
+	function Header(&$pdf, $page, $pages, $outputlangs)
 	{
 		global $langs;
 
-		$title = $this->description;
+		$title = $outputlangs->transnoentities("CheckReceipt");
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Text(10, 10, $title);
 
 		$pdf->SetFont('Arial','',10);
-		$pdf->Text(10, 19, $langs->transnoentities("Numero"));
+		$pdf->Text(10, 19, $outputlangs->transnoentities("Numero"));
 
 		$pdf->SetFont('Arial','',10);
-		$pdf->Text(10, 27, $langs->transnoentities("Date") );
+		$pdf->Text(10, 27, $outputlangs->transnoentities("Date") );
 
 		$pdf->SetFont('Arial','',10);
-		$pdf->Text(10, 35, $langs->transnoentities("Owner"));
+		$pdf->Text(10, 35, $outputlangs->transnoentities("Owner"));
 
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Text(32, 35, $this->account->proprio);
@@ -103,7 +110,7 @@ class BordereauChequeBlochet
 
 
 		$pdf->SetFont('Arial','',10);
-		$pdf->Text(10, 43, "Compte");
+		$pdf->Text(10, 43, $outputlangs->transnoentities("Account"));
 
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Text(32, 43, $this->account->code_banque);
@@ -112,7 +119,7 @@ class BordereauChequeBlochet
 		$pdf->Text(104, 43, $this->account->cle_rib);
 
 		$pdf->SetFont('Arial','',10);
-		$pdf->Text(114, 19, "Signature");
+		$pdf->Text(114, 19, $outputlangs->transnoentities("Sign"));
 
 		$pdf->Rect(9, 47, 192, 7);
 		$pdf->line(55, 47, 55, 54);
@@ -120,7 +127,7 @@ class BordereauChequeBlochet
 		$pdf->line(170, 47, 170, 54);
 
 		$pdf->SetFont('Arial','',10);
-		$pdf->Text(10, 52, "Nombre de chï¿½que");
+		$pdf->Text(10, 52, $outputlangs->transnoentities("ChequeNumber"));
 
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Text(57, 52, $this->nbcheque);
@@ -134,16 +141,16 @@ class BordereauChequeBlochet
 
 		// Tableau
 		$pdf->SetFont('Arial','',8);
-		$pdf->Text(11,$this->tab_top + 6,$langs->transnoentities("Num"));
+		$pdf->Text(11,$this->tab_top + 6,$outputlangs->transnoentities("Num"));
 		$pdf->line(30, $this->tab_top, 30, $this->tab_top + $this->tab_height + 10);
 
-		$pdf->Text(31,$this->tab_top + 6,$langs->transnoentities("Bank"));
+		$pdf->Text(31,$this->tab_top + 6,$outputlangs->transnoentities("Bank"));
 		$pdf->line(100, $this->tab_top, 100, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(101, $this->tab_top + 6, $langs->transnoentities("CheckTransmitter"));
+		$pdf->Text(101, $this->tab_top + 6, $outputlangs->transnoentities("CheckTransmitter"));
 
 		$pdf->line(180, $this->tab_top, 180, $this->tab_top + $this->tab_height + 10);
 		$pdf->SetXY (180, $this->tab_top);
-		$pdf->MultiCell(20, 10, $langs->transnoentities("Amount"), 0, 'R');
+		$pdf->MultiCell(20, 10, $outputlangs->transnoentities("Amount"), 0, 'R');
 		$pdf->line(9, $this->tab_top + 10, 201, $this->tab_top + 10 );
 
 		$pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
@@ -162,7 +169,7 @@ class BordereauChequeBlochet
 	}
 
 
-	function Body(&$pdf, $page)
+	function Body(&$pdf, $page, $outputlangs)
 	{
 		// x=10 - Num
 		// x=30 - Banque
@@ -191,15 +198,27 @@ class BordereauChequeBlochet
 			$yp = $yp + $this->line_height;
 		}
 	}
+	
 	/**
-		\brief  Fonction gï¿½nï¿½rant le rapport sur le disque
-		\param	_dir		repertoire
-		\param	month		mois du rapport
-		\param	year		annee du rapport
-		*/
-	function write_file($_dir, $number)
+	 *	\brief  Fonction generant le rapport sur le disque
+	 *	\param	_dir			Directory
+	 *	\param	number			Number
+	 *	\param	outputlangs		Lang output object
+	 */
+	function write_file($_dir, $number, $outputlangs)
 	{
-		global $langs;
+		global $user,$conf,$langs,$mysoc;
+
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		// Force output charset to ISO, because, FPDF expect text encoded in ISO
+		$outputlangs->charset_output='ISO-8859-1';
+		
+		$outputlangs->load("main");
+		$outputlangs->load("companies");
+		$outputlangs->load("bills");
+		$outputlangs->load("products");
+
+		$outputlangs->setPhpLang();
 
 		$dir = $_dir . "/".get_exdir($number);
 
@@ -252,9 +271,9 @@ class BordereauChequeBlochet
 
 		$pdf->AddPage();
 
-		$this->Header($pdf, 1, $pages);
+		$this->Header($pdf, 1, $pages, $outputlangs);
 
-		$this->Body($pdf, 1);
+		$this->Body($pdf, 1, $outputlangs);
 
 		$pdf->Output($_file);
 		if (! empty($conf->global->MAIN_UMASK))

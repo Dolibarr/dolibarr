@@ -788,8 +788,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	{
 		print "<head>\n";
 
-		print $langs->lang_header();
-		print $head;
+        print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->character_set_client."\">\n";
 
 		// Affiche meta
 		print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots

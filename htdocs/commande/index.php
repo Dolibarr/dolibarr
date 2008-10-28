@@ -18,10 +18,10 @@
  */
 
 /**
- \file       htdocs/commande/index.php
- \ingroup    commande
- \brief      Page acceuil espace commandes
- \version    $Id$
+ *	\file       htdocs/commande/index.php
+ *	\ingroup    commande
+ *	\brief      Page acceuil espace commandes
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -41,6 +41,11 @@ if ($user->societe_id > 0)
 	$socid = $user->societe_id;
 }
 
+
+
+/*
+ * View
+ */
 
 $commandestatic=new Commande($db);
 $html = new Form($db);

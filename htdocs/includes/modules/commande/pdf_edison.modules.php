@@ -90,7 +90,7 @@ class pdf_edison extends ModelePDFCommandes
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$outputlangs->charset_output=$outputlangs->character_set_client='ISO-8859-1';
+		$outputlangs->charset_output='ISO-8859-1';
 		
 		$outputlangs->load("main");
 		$outputlangs->load("companies");

@@ -162,11 +162,11 @@ class ModeleNumRefFactures
  \param   	db  			objet base de donnee
  \param   	id				id de la facture a creer
  \param	    message			message
- \param	    modele			force le modele a utiliser ('' par defaut)
+ \param	    modele			force le modele a utiliser ('' to not force)
  \param		outputlangs		objet lang a utiliser pour traduction
  \return  	int        		<0 si KO, >0 si OK
  */
-function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
+function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
 {
 	global $conf,$langs;
 	$langs->load("bills");
@@ -197,19 +197,23 @@ function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 		$obj = new $classname($db);
 		$obj->message = $message;
 
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output=$outputlangs->charset_output;
 		if ($obj->write_file($id, $outputlangs) > 0)
 		{
 			// Success in building document. We build meta file.
 			facture_meta_create($db, $id);
-
 			// et on supprime l'image correspondant au preview
 			facture_delete_preview($db, $id);
 
+			$outputlangs->charset_output=$sav_charset_output;
 			return 1;
 		}
 		else
 		{
-			dolibarr_print_error('',"facture_pdf_create Error: ".$obj->error);
+			$outputlangs->charset_output=$sav_charset_output;
+			dolibarr_print_error($db,"facture_pdf_create Error: ".$obj->error);
 			return -1;
 		}
 

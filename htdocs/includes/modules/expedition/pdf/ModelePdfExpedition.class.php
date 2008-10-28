@@ -88,10 +88,10 @@ class ModelePdfExpedition extends DolibarrPdfBarCode
 		\brief      Cree un bon d'expedition sur disque
 		\param	    db  			objet base de donnee
 		\param	    id				id de la expedition a creer
-		\param	    modele			force le modele a utiliser ('' par defaut)
+		\param	    modele			force le modele a utiliser ('' to not force)
 		\param		outputlangs		objet lang a utiliser pour traduction
 */
-function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
+function expedition_pdf_create($db, $id, $modele, $outputlangs)
 {
 	global $conf,$langs;
 	$langs->load("sendings");
@@ -134,14 +134,19 @@ function expedition_pdf_create($db, $id, $modele='', $outputlangs='')
 		$result=$expedition->fetch($id);
 		$result=$expedition->fetch_object($expedition->origin);
 		
-        if ($obj->write_file($expedition, $langs) > 0)
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output=$outputlangs->charset_output;
+		if ($obj->write_file($expedition, $langs) > 0)
 		{
+			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
-//			expedition_delete_preview($db, $id);
+			//expedition_delete_preview($db, $id);
 			return 1;
 		}
 		else
 		{
+			$outputlangs->charset_output=$sav_charset_output;
 			dolibarr_syslog("Erreur dans expedition_pdf_create");
 			dolibarr_print_error($db,$obj->pdferror());
 			return 0;

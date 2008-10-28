@@ -456,17 +456,6 @@ class Translate {
         return $langs_available;
     }
     
-    /**
-     *  \brief       Exp�die le header correct et retourne le d�but de la page html
-     *  [en]         Send header and return a string of html start page
-     *  \return      string      html header avec charset
-     */
-    function lang_header()
-    {
-        $texte = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$this->charset_output."\">\n";
-        return $texte;
-    }
-
 
    /**
      *  \brief      Renvoi si le fichier $filename existe dans la version de la langue courante ou alternative

@@ -20,11 +20,11 @@
  */
 
 /**
- \file       htdocs/includes/modules/propale/pdf_propale_azur.modules.php
- \ingroup    propale
- \brief      Fichier de la classe permettant de générer les propales au modèle Azur
- \author	    Laurent Destailleur
- \version    $Id$
+ *	\file       htdocs/includes/modules/propale/pdf_propale_azur.modules.php
+ *	\ingroup    propale
+ *	\brief      Fichier de la classe permettant de générer les propales au modèle Azur
+ *	\author	    Laurent Destailleur
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/propale/modules_propale.php");
@@ -33,8 +33,8 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
- \class      pdf_propale_azur
- \brief      Classe permettant de générer les propales au modèle Azur
+ *	\class      pdf_propale_azur
+ *	\brief      Classe permettant de générer les propales au modèle Azur
  */
 
 class pdf_propale_azur extends ModelePDFPropales
@@ -43,8 +43,8 @@ class pdf_propale_azur extends ModelePDFPropales
 
 
 	/**
-	 \brief      Constructeur
-	 \param	    db		Handler accès base de donnée
+	 *	\brief      Constructeur
+	 *	\param	    db		Handler accès base de donnée
 	 */
 	function pdf_propale_azur($db)
 	{
@@ -99,19 +99,20 @@ class pdf_propale_azur extends ModelePDFPropales
 	}
 
 	/**
-	 \brief      Fonction générant la propale sur le disque
-	 \param	    propale			Objet propal à générer (ou id si ancienne methode)
-		\param		outputlangs		Lang object for output language
-		\return	    int     		1=ok, 0=ko
-		*/
-	function write_file($propale,$outputlangs='')
+	 *	\brief      Fonction générant la propale sur le disque
+	 *	\param	    propale			Objet propal à générer (ou id si ancienne methode)
+	 *	\param		outputlangs		Lang object for output language
+	 *	\return	    int     		1=ok, 0=ko
+	 */
+	function write_file($propale,$outputlangs)
 	{
 		global $user,$langs,$conf;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because FPDF expect text to be encoded in ISO
-		$outputlangs->charset_output=$outputlangs->character_set_client='ISO-8859-1';
-		
+		$sav_charset_output=$outputlangs->charset_output;
+		$outputlangs->charset_output='ISO-8859-1';
+
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
@@ -400,6 +401,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				if (! empty($conf->global->MAIN_UMASK)) 
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 				
+				$outputlangs->charset_output=$sav_charset_output;
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}

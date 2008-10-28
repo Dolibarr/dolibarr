@@ -18,29 +18,29 @@
  *
  * $Id$
  */
- 
+
 /**
-   \file       htdocs/compta/paiement/rapport.php
-   \ingroup    facture
-   \brief      Rapports de paiements
-   \version    $Revision$
-*/
+ \file       htdocs/compta/paiement/rapport.php
+ \ingroup    facture
+ \brief      Rapports de paiements
+ \version    $Revision$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/rapport/pdf_paiement.class.php");
 
 // Sécurité accés
 if (! $user->rights->facture->lire)
-  accessforbidden();
+accessforbidden();
 
 $dir = $conf->compta->dir_output.'/payments';
 
 $socid=0;
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
-  $dir = DOL_DATA_ROOT.'/private/'.$user->id.'/compta';
+	$action = '';
+	$socid = $user->societe_id;
+	$dir = DOL_DATA_ROOT.'/private/'.$user->id.'/compta';
 }
 
 $year = $_GET["year"];
@@ -51,11 +51,26 @@ if (! $year) { $year=date("Y"); }
  */
 if ($_POST["action"] == 'gen')
 {
-  $rap = new pdf_paiement($db);
-  $rap->write_file($dir, $_POST["remonth"], $_POST["reyear"]);
-  
-  $year = $_POST["reyear"];
+	$rap = new pdf_paiement($db);
+
+	// We save charset_output to restore it because write_file can change it if needed for
+	// output format that does not support UTF8.
+	$sav_charset_output=$outputlangs->charset_output;
+	if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0)
+	{
+		$outputlangs->charset_output=$sav_charset_output;
+	}
+	else
+	{
+		$outputlangs->charset_output=$sav_charset_output;
+		dolibarr_syslog("Erreur dans commande_pdf_create");
+		dolibarr_print_error($db,$obj->pdferror());
+	}
+			
+	$year = $_POST["reyear"];
 }
+
+
 
 llxHeader();
 
@@ -71,32 +86,32 @@ print '<br><form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="action" value="gen">';
 $cmonth = date("n", time());
 $syear = date("Y", time());
-    
+
 print '<select name="remonth">';
 for ($month = 1 ; $month < 13 ; $month++)
 {
-  if ($month == $cmonth)
-    {
-      print "<option value=\"$month\" selected=\"true\">" . dolibarr_print_date(mktime(0,0,0,$month),"%B");
-    }
-  else
-    {
-      print "<option value=\"$month\">" . dolibarr_print_date(mktime(0,0,0,$month),"%B");
-    }
+	if ($month == $cmonth)
+	{
+		print "<option value=\"$month\" selected=\"true\">" . dolibarr_print_date(mktime(0,0,0,$month),"%B");
+	}
+	else
+	{
+		print "<option value=\"$month\">" . dolibarr_print_date(mktime(0,0,0,$month),"%B");
+	}
 }
 print "</select>";
 print '<select name="reyear">';
 
 for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
 {
-  if ($formyear == $syear)
-    {
-      print "<option value=\"$formyear\" selected=\"true\">".$formyear."</option>";
-    }
-  else
-    {
-      print "<option value=\"$formyear\">".$formyear."</option>";
-    }
+	if ($formyear == $syear)
+	{
+		print "<option value=\"$formyear\" selected=\"true\">".$formyear."</option>";
+	}
+	else
+	{
+		print "<option value=\"$formyear\">".$formyear."</option>";
+	}
 }
 print "</select>\n";
 print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
@@ -109,46 +124,46 @@ clearstatcache();
 $found=0;
 if (is_dir($dir))
 {
-  $handle=opendir($dir);
-  while (($file = readdir($handle))!==false)
-    {
-      if (is_dir($dir.'/'.$file) && ! eregi('^\.',$file))
+	$handle=opendir($dir);
+	while (($file = readdir($handle))!==false)
 	{
+		if (is_dir($dir.'/'.$file) && ! eregi('^\.',$file))
+		{
 	  $found=1;
 	  print '<a href="rapport.php?year='.$file.'">'.$file.'</a> ';
+		}
 	}
-    }
 }
 
 if ($year)
 {
-  if (is_dir($dir.'/'.$year))
-    {
-      $handle=opendir($dir.'/'.$year);
-      
-      if ($found) print '<br>';
-      print '<br>';      
-      print '<table width="100%" class="noborder">';
-      print '<tr class="liste_titre">';
-      print '<td>'.$langs->trans("Reporting").'</td>';
-      print '<td align="right">'.$langs->trans("Size").'</td>';
-      print '<td align="right">'.$langs->trans("Date").'</td>';
-      print '</tr>';
-      $var=true;
-      while (($file = readdir($handle))!==false)
+	if (is_dir($dir.'/'.$year))
 	{
+		$handle=opendir($dir.'/'.$year);
+
+		if ($found) print '<br>';
+		print '<br>';
+		print '<table width="100%" class="noborder">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Reporting").'</td>';
+		print '<td align="right">'.$langs->trans("Size").'</td>';
+		print '<td align="right">'.$langs->trans("Date").'</td>';
+		print '</tr>';
+		$var=true;
+		while (($file = readdir($handle))!==false)
+		{
 	  if (eregi('^payment',$file))
-	    {
-	      $var=!$var;
-	      $tfile = $dir . '/'.$year.'/'.$file;
-	      $relativepath = $year.'/'.$file;
-	      print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
-	      print '<td align="right">'.filesize($tfile). ' '.$langs->trans("Bytes").'</td>';
-	      print '<td align="right">'.dolibarr_print_date(filemtime($tfile),"dayhour").'</td></tr>';
-	    }
+	  {
+	  	$var=!$var;
+	  	$tfile = $dir . '/'.$year.'/'.$file;
+	  	$relativepath = $year.'/'.$file;
+	  	print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+	  	print '<td align="right">'.filesize($tfile). ' '.$langs->trans("Bytes").'</td>';
+	  	print '<td align="right">'.dolibarr_print_date(filemtime($tfile),"dayhour").'</td></tr>';
+	  }
+		}
+		print '</table>';
 	}
-      print '</table>';
-    }
 }
 $db->close();
 

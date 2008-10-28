@@ -161,10 +161,10 @@ class ModeleNumRefCommandes
 		\brief      Crée un bon de commande sur disque en fonction d'un modèle
 		\param	    db  			objet base de donnée
 		\param	    id				id de la propale à créer
-		\param	    modele			force le modele à utiliser ('' par defaut)
+		\param	    modele			force le modele à utiliser ('' to not force)
 		\param		outputlangs		objet lang a utiliser pour traduction
 */
-function commande_pdf_create($db, $id, $modele='', $outputlangs='')
+function commande_pdf_create($db, $id, $modele, $outputlangs)
 {
 	global $conf,$langs;
 	$langs->load("orders");
@@ -203,14 +203,19 @@ function commande_pdf_create($db, $id, $modele='', $outputlangs='')
 
 		$obj = new $classname($db);
 
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output=$outputlangs->charset_output;
 		if ($obj->write_file($id, $outputlangs) > 0)
 		{
+			$outputlangs->charset_output=$sav_charset_output;
 			// on supprime l'image correspondant au preview
 			commande_delete_preview($db, $id);
 			return 1;
 		}
 		else
 		{
+			$outputlangs->charset_output=$sav_charset_output;
 			dolibarr_syslog("Erreur dans commande_pdf_create");
 			dolibarr_print_error($db,$obj->pdferror());
 			return 0;

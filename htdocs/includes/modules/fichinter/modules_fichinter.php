@@ -18,133 +18,133 @@
  * or see http://www.gnu.org/
  */
 
-/**	
-        \file       htdocs/includes/modules/fichinter/modules_fichinter.php
-		\ingroup    ficheinter
-		\brief      Fichier contenant la classe mère de generation des fiches interventions en PDF
-		            et la classe mère de numérotation des fiches interventions
-		\version    $Id$
-*/
+/**
+ \file       htdocs/includes/modules/fichinter/modules_fichinter.php
+ \ingroup    ficheinter
+ \brief      Fichier contenant la classe mère de generation des fiches interventions en PDF
+ et la classe mère de numérotation des fiches interventions
+ \version    $Id$
+ */
 
 require_once(DOL_DOCUMENT_ROOT.'/lib/functions.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
-    	\class      ModelePDFFicheinter
-		\brief      Classe mère des modèles de fiche intervention
-*/
+ \class      ModelePDFFicheinter
+ \brief      Classe mère des modèles de fiche intervention
+ */
 class ModelePDFFicheinter extends FPDF
 {
-    var $error='';
+	var $error='';
 
-    /**
-        \brief      Constructeur
-     */
-    function ModelePDFFicheinter()
-    {
-    
-    }
+	/**
+	 \brief      Constructeur
+	 */
+	function ModelePDFFicheinter()
+	{
 
-    /** 
-        \brief      Renvoi le dernier message d'erreur de création de fiche intervention
-     */
-    function pdferror()
-    {
-        return $this->error;
-    }
+	}
 
-    /** 
-     *      \brief      Renvoi la liste des modèles actifs
-     */
-    function liste_modeles($db)
-    {
-        $type='ficheinter';
-        $liste=array();
-        $sql ="SELECT nom as id, nom as lib";
-        $sql.=" FROM ".MAIN_DB_PREFIX."document_model";
-        $sql.=" WHERE type = '".$type."'";
-        
-        $resql = $db->query($sql);
-        if ($resql)
-        {
-            $num = $db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
-            {
-                $row = $db->fetch_row($resql);
-                $liste[$row[0]]=$row[1];
-                $i++;
-            }
-        }
-        else
-        {
-            return -1;
-        }
-        return $liste;
-    }
+	/**
+	 \brief      Renvoi le dernier message d'erreur de création de fiche intervention
+	 */
+	function pdferror()
+	{
+		return $this->error;
+	}
+
+	/**
+	 *      \brief      Renvoi la liste des modèles actifs
+	 */
+	function liste_modeles($db)
+	{
+		$type='ficheinter';
+		$liste=array();
+		$sql ="SELECT nom as id, nom as lib";
+		$sql.=" FROM ".MAIN_DB_PREFIX."document_model";
+		$sql.=" WHERE type = '".$type."'";
+
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$liste[$row[0]]=$row[1];
+				$i++;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+		return $liste;
+	}
 
 }
 
 
 /**
-        \class      ModeleNumRefFicheinter
-		\brief      Classe mère des modèles de numérotation des références de fiches d'intervention
-*/
+ \class      ModeleNumRefFicheinter
+ \brief      Classe mère des modèles de numérotation des références de fiches d'intervention
+ */
 
 class ModeleNumRefFicheinter
 {
-    var $error='';
+	var $error='';
 
 	/**     \brief     	Return if a module can be used or not
-	*      	\return		boolean     true if module can be used
-	*/
+	 *      	\return		boolean     true if module can be used
+	 */
 	function isEnabled()
 	{
 		return true;
 	}
 
-    /**     \brief      Renvoi la description par defaut du modele de numérotation
-     *      \return     string      Texte descripif
-     */
-    function info()
-    {
-        global $langs;
-        $langs->load("ficheinter");
-        return $langs->trans("NoDescription");
-    }
+	/**     \brief      Renvoi la description par defaut du modele de numérotation
+	 *      \return     string      Texte descripif
+	 */
+	function info()
+	{
+		global $langs;
+		$langs->load("ficheinter");
+		return $langs->trans("NoDescription");
+	}
 
-    /**     \brief      Renvoi un exemple de numérotation
-     *      \return     string      Example
-     */
-    function getExample()
-    {
-        global $langs;
-        $langs->load("ficheinter");
-        return $langs->trans("NoExample");
-    }
+	/**     \brief      Renvoi un exemple de numérotation
+	 *      \return     string      Example
+	 */
+	function getExample()
+	{
+		global $langs;
+		$langs->load("ficheinter");
+		return $langs->trans("NoExample");
+	}
 
-    /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-     *                  de conflits qui empechera cette numérotation de fonctionner.
-     *      \return     boolean     false si conflit, true si ok
-     */
-    function canBeActivated()
-    {
-        return true;
-    }
+	/**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numérotation de fonctionner.
+	 *      \return     boolean     false si conflit, true si ok
+	 */
+	function canBeActivated()
+	{
+		return true;
+	}
 
-    /**     \brief      Renvoi prochaine valeur attribuée
-     *      \return     string      Valeur
-     */
-    function getNextValue()
-    {
-        global $langs;
-        return $langs->trans("NotAvailable");
-    }
+	/**     \brief      Renvoi prochaine valeur attribuée
+	 *      \return     string      Valeur
+	 */
+	function getNextValue()
+	{
+		global $langs;
+		return $langs->trans("NotAvailable");
+	}
 
 	/**     \brief      Renvoi version du module numerotation
-	*      	\return     string      Valeur
-	*/
+	 *      	\return     string      Valeur
+	 */
 	function getVersion()
 	{
 		global $langs;
@@ -154,25 +154,25 @@ class ModeleNumRefFicheinter
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
 		return $langs->trans("NotAvailable");
-	}	
+	}
 }
 
 
 /**
-		\brief      Crée une fiche intervention sur disque en fonction du modèle de FICHEINTER_ADDON_PDF
-		\param	    db  			objet base de donnée
-		\param	    object			Object fichinter
-		\param	    modele			force le modele à utiliser ('' par defaut)
-		\param		outputlangs		objet lang a utiliser pour traduction
-        \return     int         	0 si KO, 1 si OK
-*/
+ \brief      Crée une fiche intervention sur disque en fonction du modèle de FICHEINTER_ADDON_PDF
+ \param	    db  			objet base de donnée
+ \param	    object			Object fichinter
+ \param	    modele			force le modele à utiliser ('' par defaut)
+ \param		outputlangs		objet lang a utiliser pour traduction
+ \return     int         	0 si KO, 1 si OK
+ */
 function fichinter_create($db, $object, $modele='', $outputlangs='')
 {
 	global $conf,$langs;
 	$langs->load("ficheinter");
-	
+
 	$dir = DOL_DOCUMENT_ROOT."/includes/modules/fichinter/";
-	
+
 	// Positionne modele sur le nom du modele de facture à utiliser
 	if (! strlen($modele))
 	{
@@ -187,23 +187,29 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 			return 0;
 		}
 	}
-	
+
 	// Charge le modele
 	$file = "pdf_".$modele.".modules.php";
 	if (file_exists($dir.$file))
 	{
 		$classname = "pdf_".$modele;
 		require_once($dir.$file);
-	
+
 		$obj = new $classname($db);
-	
+
 		dolibarr_syslog("fichinter_create build PDF", LOG_DEBUG);
+
+		// We save charset_output to restore it because write_file can change it if needed for
+		// output format that does not support UTF8.
+		$sav_charset_output=$outputlangs->charset_output;
 		if ($obj->write_file($object,$outputlangs) > 0)
 		{
+			$outputlangs->charset_output=$sav_charset_output;
 			return 1;
 		}
 		else
 		{
+			$outputlangs->charset_output=$sav_charset_output;
 			dolibarr_print_error($db,$obj->pdferror());
 			return 0;
 		}
@@ -216,53 +222,53 @@ function fichinter_create($db, $object, $modele='', $outputlangs='')
 }
 
 /**
-   \brief     Supprime l'image de prévisualitation, pour le cas de régénération de propal
-   \param	    db  		objet base de donnée
-   \param	    propalid	id de la propal à effacer
-   \param     propalref référence de la propal si besoin
-*/
+ \brief     Supprime l'image de prévisualitation, pour le cas de régénération de propal
+ \param	    db  		objet base de donnée
+ \param	    propalid	id de la propal à effacer
+ \param     propalref référence de la propal si besoin
+ */
 function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
 {
 	global $langs,$conf;
-	
-	if (!$fichinterref)
-  {
-  	$fichinter = new Fichinter($db,"",$fichinterid);
-    $fichinter->fetch($fichinterid);
-    $fichinterref = $fichinter->ref;
-   }
-   
-   if ($conf->fichinter->dir_output)
-   {
-   	$fichinterref = sanitizeFileName($fichinterref);
-    $dir = $conf->fichinter->dir_output . "/" . $fichinterref ;
-    $file = $dir . "/" . $fichinterref . ".pdf.png";
-    $multiple = $file . ".";
 
-    if ( file_exists( $file ) && is_writable( $file ) )
-    {
-    	if ( ! unlink($file) )
-    	{
-    		$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
-    		return 0;
-    	}
-   	}
-   	else
-    {
-    	for ($i = 0; $i < 20; $i++)
-    	{
-    		$preview = $multiple.$i;
-     		if ( file_exists( $preview ) && is_writable( $preview ) )
-     		{
-    			if ( ! unlink($preview) )
-     			{
-    				$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
-     				return 0;
-     			}
-     		}
-     	}
-    }
-  }
+	if (!$fichinterref)
+	{
+		$fichinter = new Fichinter($db,"",$fichinterid);
+		$fichinter->fetch($fichinterid);
+		$fichinterref = $fichinter->ref;
+	}
+	 
+	if ($conf->fichinter->dir_output)
+	{
+		$fichinterref = sanitizeFileName($fichinterref);
+		$dir = $conf->fichinter->dir_output . "/" . $fichinterref ;
+		$file = $dir . "/" . $fichinterref . ".pdf.png";
+		$multiple = $file . ".";
+
+		if ( file_exists( $file ) && is_writable( $file ) )
+		{
+			if ( ! unlink($file) )
+			{
+				$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+				return 0;
+			}
+		}
+		else
+		{
+			for ($i = 0; $i < 20; $i++)
+			{
+				$preview = $multiple.$i;
+				if ( file_exists( $preview ) && is_writable( $preview ) )
+				{
+					if ( ! unlink($preview) )
+					{
+						$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
+						return 0;
+					}
+				}
+			}
+		}
+	}
 }
 
 ?>
