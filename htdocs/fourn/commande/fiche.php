@@ -172,7 +172,8 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 		//print "xx".$tva_tx; exit;
 		if ($result > 0)
 		{
-			if ($_REQUEST['lang_id'])
+			$outputlangs = $langs;
+			if (! empty($_REQUEST['lang_id']))
 			{
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -204,12 +205,13 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 
 	if ($result	>= 0)
 	{
-		if ($_REQUEST['lang_id'])
-		{
-	  $outputlangs = new Translate("",$conf);
-	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-		}
-		supplier_order_pdf_create($db, $commande->id,	$commande->modelpdf, $outputlangs);
+			$outputlangs = $langs;
+			if (! empty($_REQUEST['lang_id']))
+			{
+				$outputlangs = new Translate("",$conf);
+				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			}
+			supplier_order_pdf_create($db, $commande->id,	$commande->modelpdf, $outputlangs);
 	}
 	else
 	{
@@ -231,7 +233,9 @@ if ($_REQUEST['action'] == 'confirm_deleteproductline' && ($_POST['confirm'] == 
 		$commande = new CommandeFournisseur($db);
 		$commande->fetch($id);
 		$result = $commande->delete_line($_GET['lineid']);
-		if ($_REQUEST['lang_id'])
+
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -252,7 +256,8 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 	$result = $commande->valid($user);
 	if ($result	>= 0)
 	{
-		if ($_REQUEST['lang_id'])
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -338,7 +343,9 @@ if ($_GET['action']	== 'up'	&& $user->rights->fournisseur->commande->creer)
 	$commande =	new	CommandeFournisseur($db,'',$id);
 	$commande->fetch($id);
 	$commande->line_up($_GET['rowid']);
-	if ($_REQUEST['lang_id'])
+
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -353,7 +360,9 @@ if ($_GET['action']	== 'down' && $user->rights->fournisseur->commande->creer)
 	$commande =	new	CommandeFournisseur($db,'',$id);
 	$commande->fetch($id);
 	$commande->line_down($_GET['rowid']);
-	if ($_REQUEST['lang_id'])
+
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -379,7 +388,8 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
 		$commande->setDocModel($user, $_REQUEST['model']);
 	}
 
-	if ($_REQUEST['lang_id'])
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);

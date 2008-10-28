@@ -102,7 +102,9 @@ if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes
 		$propal = new Propal($db);
 		$propal->fetch($_GET['propalid']);
 		$result = $propal->delete_product($_GET['lineid']);
-		if ($_REQUEST['lang_id'])
+
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -123,7 +125,8 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 	$result=$propal->valid($user);
 	if ($result >= 0)
 	{
-		if ($_REQUEST['lang_id'])
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -199,7 +202,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$propal->note      = $_POST['note'];
 			$propal->ref       = $_POST['ref'];
 			$propal->statut    = 0;
-				
+
 			$id = $propal->create_from($user);
 		}
 		else
@@ -263,7 +266,8 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			$db->commit();
 
 			// Generation document PDF
-			if ($_REQUEST['lang_id'])
+			$outputlangs = $langs;
+			if (! empty($_REQUEST['lang_id']))
 			{
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -521,8 +525,8 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 	$propal->fetch($_GET['propalid']);
 	$propal->set_draft($user);
 
-	//reg�n�ration pdf
-	if ($_REQUEST['lang_id'])
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -577,10 +581,10 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 		{
 			$prod = new Product($db, $_POST['idprod']);
 			$prod->fetch($_POST['idprod']);
-				
+
 			$tva_tx = get_default_tva($mysoc,$propal->client,$prod->tva_tx);
 			$tva_npr = get_default_npr($mysoc,$propal->client,$prod->tva_tx);
-				
+
 			// On defini prix unitaire
 			if ($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
@@ -608,7 +612,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
 				}
 			}
-				
+
 			$desc = $prod->description;
 			$desc.= ($prod->description && $_POST['np_desc']) ? "\n" : "";
 			$desc.= $_POST['np_desc'];
@@ -643,10 +647,11 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$pu_ttc,
 			$info_bits
 			);
-	
+
 			if ($result > 0)
 			{
-				if ($_REQUEST['lang_id'])
+				$outputlangs = $langs;
+				if (! empty($_REQUEST['lang_id']))
 				{
 					$outputlangs = new Translate("",$conf);
 					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -668,7 +673,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST["save"] == $langs->trans("Save"))
 {
 	$propal = new Propal($db);
-	if (! $propal->fetch($_POST['propalid']) > 0) 
+	if (! $propal->fetch($_POST['propalid']) > 0)
 	{
 		dolibarr_print_error($db,$propal->error);
 		exit;
@@ -703,8 +708,9 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
 		$_POST['desc'],
 			'HT',
 		$info_bits);
-	
-		if ($_REQUEST['lang_id'])
+
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -725,7 +731,8 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 		$propal->setDocModel($user, $_REQUEST['model']);
 	}
 
-	if ($_REQUEST['lang_id'])
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -793,13 +800,16 @@ if ($_GET['action'] == 'up' && $user->rights->propale->creer)
 	$propal = new Propal($db, '', $_GET["propalid"]);
 	$propal->fetch($_GET['propalid']);
 	$propal->line_up($_GET['rowid']);
-	if ($_REQUEST['lang_id'])
+
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
 	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET["propalid"].'#'.$_GET['rowid']);
+	exit;
 }
 
 if ($_GET['action'] == 'down' && $user->rights->propale->creer)
@@ -807,7 +817,9 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 	$propal = new Propal($db, '', $_GET["propalid"]);
 	$propal->fetch($_GET['propalid']);
 	$propal->line_down($_GET['rowid']);
-	if ($_REQUEST['lang_id'])
+
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -1220,7 +1232,7 @@ if ($_GET['propalid'] > 0)
 					{
 						print ($objp->description && $objp->description!=$objp->product)?'<br>'.dol_htmlentitiesbr($objp->description):'';
 					}
-						
+
 					print '</td>';
 				}
 				else
@@ -1282,7 +1294,7 @@ if ($_GET['propalid'] > 0)
 
 
 					print '<td align="right">'."\n";
-						
+
 					print '<div id="calc_markup'.$i.'" style="display:none">'."\n";
 					print $formMarkup."\n";
 					print '</div>'."\n";
@@ -1588,7 +1600,7 @@ if ($_GET['propalid'] > 0)
 				$html->select_produits('','idprod','',$conf->produit->limit_size);
 			}
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
-				
+
 			// editeur wysiwyg
 			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 			{
@@ -1866,9 +1878,9 @@ else
 	$sortfield=$_GET['sortfield'];
 	$page=$_GET['page'];
 	$viewstatut=addslashes($_GET['viewstatut']);
-    $propal_statut = addslashes($_GET['propal_statut']);
-    if($propal_statut != '')
-        $viewstatut=$propal_statut;
+	$propal_statut = addslashes($_GET['propal_statut']);
+	if($propal_statut != '')
+	$viewstatut=$propal_statut;
 
 	if (! $sortfield) $sortfield='p.datep';
 	if (! $sortorder) $sortorder='DESC';
@@ -1910,9 +1922,9 @@ else
 	if ($month > 0)
 	{
 		if ($year > 0)
-            $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
-        else
-            $sql .= " AND date_format(p.datep, '%m') = '$month'";
+		$sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+		else
+		$sql .= " AND date_format(p.datep, '%m') = '$month'";
 	}
 	if ($year > 0)
 	{
@@ -1930,14 +1942,14 @@ else
 	if ($result)
 	{
 		$propalstatic=new Propal($db);
-		
+
 		$num = $db->num_rows($result);
-		
+
 		$param='&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut;
 		if ($month) $param.='&amp;month='.$month;
 		if ($year) $param.='&amp;year='.$year;
 		print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php',$param,$sortfield,$sortorder,'',$num);
-		
+
 		$i = 0;
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre">';
@@ -1948,7 +1960,7 @@ else
 		print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 		print '<td class="liste_titre">&nbsp;</td>';
-        print "</tr>\n";
+		print "</tr>\n";
 		// Lignes des champs de filtre
 		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
@@ -1959,21 +1971,21 @@ else
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
 		print '</td>';
-        print '<td class="liste_titre" colspan="1" align="right">';
-        print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-        print '&nbsp;'.$langs->trans('Year').': ';
-        $max_year = date("Y");
-        $syear = $year;
-        //if($syear == '') $syear = date("Y");
-        $html->select_year($syear,'year',1, '', $max_year);
-        print '</td>';
+		print '<td class="liste_titre" colspan="1" align="right">';
+		print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+		print '&nbsp;'.$langs->trans('Year').': ';
+		$max_year = date("Y");
+		$syear = $year;
+		//if($syear == '') $syear = date("Y");
+		$html->select_year($syear,'year',1, '', $max_year);
+		print '</td>';
 		print '<td class="liste_titre" colspan="1">&nbsp;</td>';
 		print '<td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
 		print '</td>';
-        print '<td align="right">';
-        $html->select_propal_statut($viewstatut);
-        print '</td>';
+		print '<td align="right">';
+		$html->select_propal_statut($viewstatut);
+		print '</td>';
 		print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 		print '</td>';
 		print "</tr>\n";
@@ -2048,7 +2060,7 @@ else
 			print '<td align="right">'.price($objp->total_ht)."</td>\n";
 			$propal=New Propal($db);
 			print '<td align="right">'.$propal->LibStatut($objp->fk_statut,5)."</td>\n";
-            print "<td>&nbsp;</td>";
+			print "<td>&nbsp;</td>";
 			print "</tr>\n";
 
 			$total = $total + $objp->total_ht;

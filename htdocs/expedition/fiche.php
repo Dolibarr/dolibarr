@@ -72,13 +72,13 @@ if ($_POST["action"] == 'add')
 	$expedition->note             = $_POST["note"];
 	$expedition->origin           = $origin;
 	$expedition->origin_id        = $origin_id;
-   $expedition->weight			= $_POST["weight"]==""?"NULL":$_POST["weight"];
-   $expedition->sizeH			= $_POST["sizeH"]==""?"NULL":$_POST["sizeH"];
-   $expedition->sizeW			= $_POST["sizeW"]==""?"NULL":$_POST["sizeW"];
-   $expedition->sizeS			= $_POST["sizeS"]==""?"NULL":$_POST["sizeS"];
-   $expedition->size_units		= $_POST["size_units"];
-   $expedition->weight_units	= $_POST["weight_units"];
-	
+	$expedition->weight			= $_POST["weight"]==""?"NULL":$_POST["weight"];
+	$expedition->sizeH			= $_POST["sizeH"]==""?"NULL":$_POST["sizeH"];
+	$expedition->sizeW			= $_POST["sizeW"]==""?"NULL":$_POST["sizeW"];
+	$expedition->sizeS			= $_POST["sizeS"]==""?"NULL":$_POST["sizeS"];
+	$expedition->size_units		= $_POST["size_units"];
+	$expedition->weight_units	= $_POST["weight_units"];
+
 	// On boucle sur chaque ligne du document d'origine pour completer objet expedition
 	// avec qte a livrer
 	$class = ucfirst($expedition->origin);
@@ -163,7 +163,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
 	require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/pdf/ModelePdfExpedition.class.php");
-	
+
 	// Sauvegarde le dernier modele choisi pour generer un document
 	$expedition = new Expedition($db, 0, $_REQUEST['id']);
 	$expedition->fetch($_REQUEST['id']);
@@ -173,7 +173,8 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$expedition->setDocModel($user, $_REQUEST['model']);
 	}
 
-	if ($_REQUEST['lang_id'])
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -293,27 +294,27 @@ if ($_GET["action"] == 'create')
 				print '<tr><td colspan="3">'.$langs->trans("NotePrivate").': '.nl2br($object->note)."</td></tr>";
 			}
 			print "</table>";
-			
+				
 			print '<table><tr><td>';
- 			print $langs->trans("Weight");
- 			print '</td><td><input name="weight" size="4" value=""></td><td>';
- 			print $formproduct->select_measuring_units("weight_units","weight");
- 			print '</td></tr><tr><td>';
- 			print $langs->trans("Width");
- 			print ' </td><td><input name="sizeW" size="4" value=""></td>';
- 			print '<td>&nbsp;</td></tr><tr><td>';
- 			print $langs->trans("Height");
- 			print '</td><td><input name="sizeH" size="4" value=""></td><td>';
- 			print $formproduct->select_measuring_units("size_units","size");
- 			print '</td></tr><tr><td>';
- 			print $langs->trans("Depth");
- 			print '</td><td><input name="sizeS" size="4" value=""></td>';
- 			print '<td>&nbsp;</td></tr></table>';
+			print $langs->trans("Weight");
+			print '</td><td><input name="weight" size="4" value=""></td><td>';
+			print $formproduct->select_measuring_units("weight_units","weight");
+			print '</td></tr><tr><td>';
+			print $langs->trans("Width");
+			print ' </td><td><input name="sizeW" size="4" value=""></td>';
+			print '<td>&nbsp;</td></tr><tr><td>';
+			print $langs->trans("Height");
+			print '</td><td><input name="sizeH" size="4" value=""></td><td>';
+			print $formproduct->select_measuring_units("size_units","size");
+			print '</td></tr><tr><td>';
+			print $langs->trans("Depth");
+			print '</td><td><input name="sizeS" size="4" value=""></td>';
+			print '<td>&nbsp;</td></tr></table>';
 
- 			
- 			print '<table>';
- 			
- 			// Delivery method
+
+			print '<table>';
+
+			// Delivery method
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
 			$expe->fetch_delivery_methods();
@@ -325,9 +326,9 @@ if ($_GET["action"] == 'create')
 			print '<td colspan="3">';
 			print '<input name="tracking_number" size="20">';
 			print "</td></tr>\n";
-			
+				
 			print "</table>";
-			
+				
 			/*
 			 * Lignes de commandes
 			 *
@@ -366,7 +367,7 @@ if ($_GET["action"] == 'create')
 			while ($indiceAsked < $numAsked)
 			{
 				$product = new Product($db);
-				
+
 				$ligne = $object->lignes[$indiceAsked];
 				$var=!$var;
 				print "<tr ".$bc[$var].">\n";
@@ -455,7 +456,7 @@ if ($_GET["action"] == 'create')
 						$html->select_array('entl'.$i,$array,'',1,0,0);
 						print '</td>';
 					}
-						
+
 				}
 				else
 				{
@@ -481,7 +482,7 @@ if ($_GET["action"] == 'create')
 						}
 					}
 				}
-				
+
 				$indiceAsked++;
 			}
 
@@ -579,19 +580,19 @@ else
 			// Calcul du poids total et du volume total des produits
 			$totalWeight = '';
 			$totalVolume = '';
- 			for ($i = 0 ; $i < $num_prod ; $i++)
+			for ($i = 0 ; $i < $num_prod ; $i++)
 			{
- 				$weightUnit=0;
- 				$volumeUnit=0;
+				$weightUnit=0;
+				$volumeUnit=0;
 				if (! empty($lignes[$i]->weight_units)) $weightUnit = $lignes[$i]->weight_units;
- 				$trueWeightUnit=pow(10,$weightUnit);
-             	$totalWeight += $lignes[$i]->weight*$lignes[$i]->qty_shipped*$trueWeightUnit;
-  				if (! empty($lignes[$i]->volume_units)) $volumeUnit = $lignes[$i]->volume_units;
-             	$trueVolumeUnit=pow(10,$volumeUnit);
- 				$totalVolume += $lignes[$i]->volume*$lignes[$i]->qty_shipped*$trueVolumeUnit;
+				$trueWeightUnit=pow(10,$weightUnit);
+				$totalWeight += $lignes[$i]->weight*$lignes[$i]->qty_shipped*$trueWeightUnit;
+				if (! empty($lignes[$i]->volume_units)) $volumeUnit = $lignes[$i]->volume_units;
+				$trueVolumeUnit=pow(10,$volumeUnit);
+				$totalVolume += $lignes[$i]->volume*$lignes[$i]->qty_shipped*$trueVolumeUnit;
 			}
- 			$totalVolume=$totalVolume;
-				
+			$totalVolume=$totalVolume;
+
 			print '<table class="border" width="100%">';
 
 			// Ref
@@ -636,27 +637,27 @@ else
 			print '</tr>';
 
 			// Weight
-		    print '<tr><td>'.$langs->trans("TotalWeight").'</td>';
- 			print '<td colspan="3">';
- 			if ($expedition->trueWeight)
- 			{
- 				// If sending weigth defined
- 				print $expedition->trueWeight.' '.measuring_units_string($expedition->weight_units,"weight");
- 			}
- 			else
- 			{
+			print '<tr><td>'.$langs->trans("TotalWeight").'</td>';
+			print '<td colspan="3">';
+			if ($expedition->trueWeight)
+			{
+				// If sending weigth defined
+				print $expedition->trueWeight.' '.measuring_units_string($expedition->weight_units,"weight");
+			}
+			else
+			{
 				// If sending Weight not defined we use sum of products
 				// TODO Show in best unit
- 				if ($totalWeight > 0) print $totalWeight.' '.measuring_units_string(0,"weight");
-              	else print '&nbsp;';
- 			}
+				if ($totalWeight > 0) print $totalWeight.' '.measuring_units_string(0,"weight");
+				else print '&nbsp;';
+			}
 			print '</td></tr>';
 
 			// Volume Total
 			print '<tr><td>'.$langs->trans("TotalVolume").'</td>';
 			print '<td colspan="3">';
 			if ($expedition->trueVolume)
-			{	
+			{
 				// If sending volume defined
 				print $expedition->trueVolume.' '.measuring_units_string($expedition->volumeUnit,"volume");
 			}
@@ -670,18 +671,18 @@ else
 			print "</td>\n";
 			print '</tr>';
 
- 			// Taille
-            print '<tr><td>'.$langs->trans("Size").'</td>';
-            print '<td colspan="3">';
-            if ($expedition->trueWidth || $expedition->trueHeight || $expedition->trueDepth)
-            {
-            	// If sending size defined
-            	print $expedition->trueSize.' '.measuring_units_string($expedition->size_units,"size");
-            }
-            else print '&nbsp;';
-            print "</td>\n";
-            print '</tr>';
- 
+			// Taille
+			print '<tr><td>'.$langs->trans("Size").'</td>';
+			print '<td colspan="3">';
+			if ($expedition->trueWidth || $expedition->trueHeight || $expedition->trueDepth)
+			{
+				// If sending size defined
+				print $expedition->trueSize.' '.measuring_units_string($expedition->size_units,"size");
+			}
+			else print '&nbsp;';
+			print "</td>\n";
+			print '</tr>';
+
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td>';
 			print '<td colspan="3">'.$expedition->getLibStatut(4)."</td>\n";

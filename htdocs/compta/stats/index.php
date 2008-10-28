@@ -181,8 +181,8 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
     for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
         $casenow = dolibarr_print_date(mktime(),"%Y-%m");
-        $case = dolibarr_print_date(mktime(1,1,1,$mois,1,$annee),"%Y-%m");
-        $caseprev = dolibarr_print_date(mktime(1,1,1,$mois,1,$annee-1),"%Y-%m");
+        $case = dolibarr_print_date(dolibarr_mktime(1,1,1,$mois,1,$annee),"%Y-%m");
+        $caseprev = dolibarr_print_date(dolibarr_mktime(1,1,1,$mois,1,$annee-1),"%Y-%m");
 
         if ($annee == $year_current) {
             $total_CA += $cum[$case];

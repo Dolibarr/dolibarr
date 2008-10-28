@@ -95,7 +95,8 @@ if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes
 		$result = $commande->delete_line($_GET['lineid']);
 		if ($result > 0)
 		{
-			if ($_REQUEST['lang_id'])
+			$outputlangs = $langs;
+			if (! empty($_REQUEST['lang_id']))
 			{
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -164,17 +165,17 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 		// Insertion contact par defaut si defini
 		if ($_POST["contactidp"])
 		{
-	  		$result=$commande->add_contact($_POST["contactidp"],'CUSTOMER','external');
+			$result=$commande->add_contact($_POST["contactidp"],'CUSTOMER','external');
 
-	  		if ($result > 0)
-	  		{
-	  			$error=0;
-	  		}
-	  		else
-	  		{
-	  			$mesg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
-	  			$error=1;
-	  		}
+			if ($result > 0)
+			{
+				$error=0;
+			}
+			else
+			{
+				$mesg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
+				$error=1;
+			}
 		}
 
 		$_GET['id'] = $commande->id;
@@ -401,7 +402,8 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 
 			if ($result > 0)
 			{
-				if ($_REQUEST['lang_id'])
+				$outputlangs = $langs;
+				if (! empty($_REQUEST['lang_id']))
 				{
 					$outputlangs = new Translate("",$conf);
 					$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -474,10 +476,11 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
 
 		if ($result >= 0)
 		{
-			if ($_REQUEST['lang_id'])
+			$outputlangs = $langs;
+			if (! empty($_REQUEST['lang_id']))
 			{
-		  $outputlangs = new Translate("",$conf);
-		  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+				$outputlangs = new Translate("",$conf);
+				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 		}
@@ -504,7 +507,8 @@ if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' &
 	$result=$commande->valid($user);
 	if ($result	>= 0)
 	{
-		if ($_REQUEST['lang_id'])
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -538,8 +542,9 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
 
 	$result = $commande->set_draft($user);
 	if ($result	>= 0)
-	{	//regeneration pdf
-		if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
 		{
 			$outputlangs = new Translate("",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -557,7 +562,9 @@ if ($_GET['action'] == 'up' && $user->rights->commande->creer)
 	$commande = new Commande($db,'',$_GET['id']);
 	$commande->fetch($_GET['id']);
 	$commande->line_up($_GET['rowid']);
-	if ($_REQUEST['lang_id'])
+
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -572,7 +579,9 @@ if ($_GET['action'] == 'down' && $user->rights->commande->creer)
 	$commande = new Commande($db,'',$_GET['id']);
 	$commande->fetch($_GET['id']);
 	$commande->line_down($_GET['rowid']);
-	if ($_REQUEST['lang_id'])
+
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -597,12 +606,12 @@ if ($_REQUEST['action'] == 'builddoc')	// In get or post
 		$commande->setDocModel($user, $_REQUEST['model']);
 	}
 
-	if ($_REQUEST['lang_id'])
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-
 	$result=commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
@@ -1896,7 +1905,7 @@ else
 							{
 								print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$_GET['id'].'&amp;action=create&amp;commande_id='.$_GET["id"].'&entrepot_id='.$user->entrepots[0]['id'].'">';
 								print $langs->trans('ShipProduct').'</a>';
-	
+
 							}
 							else
 							{

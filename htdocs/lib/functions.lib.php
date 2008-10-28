@@ -444,11 +444,11 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
  *								"%d/%m/%Y %H:%M:%S",
  *								"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
  * 	\param		to_gmt			false=output string if for local server TZ users, true=output string is for GMT users
- *	\param		convtooutput	true=Output string is encoded into encoding defined into $langs->charset_output
+ *	\param		outputlangs		Object lang that contains charset_output property to define output
  * 								This means output is endoded in UTF-8 in default case.
  * 	\return     string      	Formated date or '' if time is null
  */
-function dolibarr_print_date($time,$format='',$to_gmt=false,$convtooutput=true)
+function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 {
 	global $conf,$langs;
 
@@ -496,7 +496,9 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$convtooutput=true)
 	$localtime=setlocale(LC_TIME,0);
 	if (eregi('UTF',$localtime)) $pagecodefrom='UTF-8';
 
-	return ($convtooutput?$langs->convToOuptutCharset($ret,$pagecodefrom):$ret);
+	if (! is_object($outputlangs)) $outputlangs=$langs;
+
+	return $outputlangs->convToOuptutCharset($ret,$pagecodefrom);
 }
 
 
@@ -2873,21 +2875,23 @@ function make_substitutions($chaine,$substitutionarray)
  *    \remarks   	Updated by Matelli : added format paramter
  *    \remarks   	See http://matelli.fr/showcases/patchs-dolibarr/update-date-range-format.html for details
  */
-function print_date_range($date_start,$date_end,$format = '')
+function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 {
 	global $langs;
 
+	if (! is_object($outputlangs)) $outputlangs=$langs;
+	
 	if ($date_start && $date_end)
 	{
-		print ' ('.$langs->trans('DateFromTo',dolibarr_print_date($date_start, $format, false, false),dolibarr_print_date($date_end, $format, false, false)).')';
+		print ' ('.$langs->trans('DateFromTo',dolibarr_print_date($date_start, $format, false, $outputlangs),dolibarr_print_date($date_end, $format, false, $outputlangs)).')';
 	}
 	if ($date_start && ! $date_end)
 	{
-		print ' ('.$langs->trans('DateFrom',dolibarr_print_date($date_start, $format, false, false)).')';
+		print ' ('.$langs->trans('DateFrom',dolibarr_print_date($date_start, $format, false, $outputlangs)).')';
 	}
 	if (! $date_start && $date_end)
 	{
-		print ' ('.$langs->trans('DateUntil',dolibarr_print_date($date_end, $format, false, false)).')';
+		print ' ('.$langs->trans('DateUntil',dolibarr_print_date($date_end, $format, false, $outputlangs)).')';
 	}
 }
 

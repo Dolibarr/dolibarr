@@ -79,7 +79,9 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 		{
 			$fac = new Facture($db);
 			$fac->fetch($id);
-			if ($_REQUEST['lang_id'])
+
+			$outputlangs = $langs;
+			if (! empty($_REQUEST['lang_id']))
 			{
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);

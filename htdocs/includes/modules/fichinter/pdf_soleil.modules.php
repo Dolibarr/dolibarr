@@ -78,7 +78,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 \param	    fichinter		Object fichinter
 	 \return	    int     		1=ok, 0=ko
 	 */
-	function write_file($fichinter,$outputlangs='')
+	function write_file($fichinter,$outputlangs)
 	{
 		global $user,$langs,$conf,$mysoc;
 
@@ -243,7 +243,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetTextColor(0,0,100);
 				$pdf->SetFont('Arial','B',14);
-				$pdf->Text(11, 94, $langs->trans("InterventionCard")." : ".$fichinter->ref);
+				$pdf->Text(11, 94, $outputlangs->trans("InterventionCard")." : ".$fichinter->ref);
 
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetTextColor(0,0,0);
@@ -253,7 +253,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$tab_height = 16;
 
 				$pdf->SetXY (10, $tab_top);
-				$pdf->MultiCell(190,8,$langs->transnoentities("Description"),0,'L',0);
+				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 				$pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );
 
 				$pdf->Rect(10, $tab_top, 190, $tab_height);
@@ -279,7 +279,7 @@ class pdf_soleil extends ModelePDFFicheinter
 						{
 							$pdf->SetXY (10, $tab_top + 16 + $j * 20);
 							$pdf->writeHTMLCell(0, 4, 20, $tab_top + 16 + $j * 20,
-							dol_htmlentitiesbr($langs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei)." - ".$langs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration), 1), 0, 0, 0);
+							dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei,'',false,$outputlangs)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration), 1), 0, 0, 0);
 
 							$pdf->SetXY (10, $tab_top + 22 + $j * 20);
 							$pdf->writeHTMLCell(0, 4, 20, $tab_top + 22 + $j * 20,
@@ -296,13 +296,13 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->MultiCell(60, 5, '', 0, 'J', 0);
 
 				$pdf->SetXY(20,220);
-				$pdf->MultiCell(66,5, $langs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
+				$pdf->MultiCell(66,5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
 
 				$pdf->SetXY(20,225);
 				$pdf->MultiCell(80,30, '', 1);
 
 				$pdf->SetXY(110,220);
-				$pdf->MultiCell(80,5, $langs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
+				$pdf->MultiCell(80,5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
 
 				$pdf->SetXY(110,225);
 				$pdf->MultiCell(80,30, '', 1);

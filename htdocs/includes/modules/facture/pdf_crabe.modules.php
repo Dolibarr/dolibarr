@@ -56,7 +56,7 @@ class pdf_crabe extends ModelePDFFactures
         $this->db = $db;
         $this->name = "crabe";
         $this->description = $langs->trans('PDFCrabeDescription');
-
+        
         // Dimension page pour format A4
         $this->type = 'pdf';
         $this->page_largeur = 210;
@@ -105,10 +105,10 @@ class pdf_crabe extends ModelePDFFactures
 	 *		\param		outputlangs		Lang object for output language
      *		\return	    int     		1=ok, 0=ko
      */
-    function write_file($fac,$outputlangs='')
+    function write_file($fac,$outputlangs)
 	{
 		global $user,$langs,$conf;
-		
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
@@ -292,7 +292,7 @@ class pdf_crabe extends ModelePDFFactures
 					if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end)
 					{
 						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")",1);
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end,'',false,$outputlangs).")",1);
 					}
 					//if ($i==0) { print $libelleproduitservice; exit; }
 

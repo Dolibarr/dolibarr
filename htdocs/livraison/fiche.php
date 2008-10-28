@@ -143,7 +143,8 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$delivery->setDocModel($user, $_REQUEST['model']);
 	}
 
-	if ($_REQUEST['lang_id'])
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);

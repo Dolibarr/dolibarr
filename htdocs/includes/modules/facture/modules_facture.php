@@ -206,7 +206,7 @@ function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
 			facture_meta_create($db, $id);
 			// et on supprime l'image correspondant au preview
 			facture_delete_preview($db, $id);
-
+			
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;
 		}
