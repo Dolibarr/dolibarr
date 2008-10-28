@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,12 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   import      Module Import
- \brief      Module g�n�rique pour r�aliser des imports de donn�es en base
+ 		\brief      Module g�n�rique pour r�aliser des imports de donn�es en base
+		\version	$Id$
  */
 
 /**
@@ -86,7 +85,7 @@ class modImport extends DolibarrModules
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 1402;
-		$this->rights[2][1] = 'Cr�er/modifier un import';
+		$this->rights[2][1] = 'Creer/modifier un import';
 		$this->rights[2][2] = 'w';
 		$this->rights[2][3] = 0;
 		$this->rights[2][4] = 'creer';

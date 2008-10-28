@@ -92,7 +92,7 @@ class modComptabilite extends DolibarrModules
 	
 		$r++;
 		$this->rights[$r][0] = 95;
-		$this->rights[$r][1] = 'Lire CA, bilans, r�sultats';
+		$this->rights[$r][1] = 'Lire CA, bilans, resultats';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'resultat';
@@ -100,7 +100,7 @@ class modComptabilite extends DolibarrModules
 	
 		$r++;
 		$this->rights[$r][0] = 96;
-		$this->rights[$r][1] = 'Param�trer la ventilation';
+		$this->rights[$r][1] = 'Parametrer la ventilation';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'ventilation';

@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**     \defgroup   export      Module export
- \brief      Module g�n�rique pour r�aliser des exports de donn�es en base
+ *		\brief      Module g�n�rique pour r�aliser des exports de donn�es en base
+ * 		\version	$Id$
  */
 
 /**
@@ -85,7 +84,7 @@ class modExport extends DolibarrModules
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 1202;
-		$this->rights[2][1] = 'Cr�er/modifier un export';
+		$this->rights[2][1] = 'Creer/modifier un export';
 		$this->rights[2][2] = 'w';
 		$this->rights[2][3] = 0;
 		$this->rights[2][4] = 'creer';

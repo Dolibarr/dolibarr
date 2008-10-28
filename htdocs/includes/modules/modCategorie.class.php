@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \defgroup   category       Module categorie
         \brief      Module pour gérer les catégories
+		\version	$Id$
 */
 
 /**
@@ -79,28 +78,28 @@ class modCategorie extends DolibarrModules
 		$r=0;
 	
 		$this->rights[$r][0] = 241; // id de la permission
-		$this->rights[$r][1] = 'Lire les catégories'; // libelle de la permission
+		$this->rights[$r][1] = 'Lire les categories'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
 		$this->rights[$r][4] = 'lire';
 		$r++;
 	
 		$this->rights[$r][0] = 242; // id de la permission
-		$this->rights[$r][1] = 'Créer/modifier les catégories'; // libelle de la permission
+		$this->rights[$r][1] = 'Creer/modifier les categories'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
 		$this->rights[$r][4] = 'creer';
 		$r++;
 	
 		$this->rights[$r][0] = 243; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les catégories'; // libelle de la permission
+		$this->rights[$r][1] = 'Supprimer les categories'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
 	
 		$this->rights[$r][0] = 244; // id de la permission
-		$this->rights[$r][1] = 'Voir le contenu des catégories cachées'; // libelle de la permission
+		$this->rights[$r][1] = 'Voir le contenu des categories cachees'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
 		$this->rights[$r][4] = 'voir';

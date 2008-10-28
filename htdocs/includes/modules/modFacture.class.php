@@ -157,7 +157,7 @@ class modFacture extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 1321;
-        $this->rights[$r][1] = 'Exporter les factures clients, attributs et r�glements';
+        $this->rights[$r][1] = 'Exporter les factures clients, attributs et reglements';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'facture';

@@ -19,15 +19,15 @@
  */
 
 /**
- \defgroup   barcode         Module code barre
- \brief      Module pour gerer les codes barres
- \version	$Id$
+ *	\defgroup   barcode         Module code barre
+ *	\brief      Module pour gerer les codes barres
+ *	\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modBarcode.class.php
- \ingroup    barcode,produit
- \brief      Fichier de description et activation du module Barcode
+ *	\file       htdocs/includes/modules/modBarcode.class.php
+ *	\ingroup    barcode,produit
+ *	\brief      Fichier de description et activation du module Barcode
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -42,7 +42,7 @@ class modBarcode extends DolibarrModules
 
 	/**
 	 *   \brief      Constructeur. Definit les noms, constantes et boites
-	 *   \param      DB      handler d'acc�s base
+	 *   \param      DB      handler d'acces base
 	 */
 	function modBarcode($DB)
 	{
@@ -85,7 +85,7 @@ class modBarcode extends DolibarrModules
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 301; // id de la permission
-		$this->rights[2][1] = 'Cr�er/modifier les codes barres'; // libelle de la permission
+		$this->rights[2][1] = 'Creer/modifier les codes barres'; // libelle de la permission
 		$this->rights[2][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
 		$this->rights[2][3] = 0; // La permission est-elle une permission par d�faut
 		$this->rights[2][4] = 'creer';

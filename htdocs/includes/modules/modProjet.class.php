@@ -17,17 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
-/**  \defgroup   projet     Module projet
- \brief      Module pour inclure le detail par projets dans les autres modules
+/** \defgroup   projet     Module projet
+ *	\brief      Module pour inclure le detail par projets dans les autres modules
+ * 	\version	$Id$
  */
 
 /** \file       htdocs/includes/modules/modProjet.class.php
- \ingroup    projet
- \brief      Fichier de description et activation du module Projet
+ *	\ingroup    projet
+ *	\brief      Fichier de description et activation du module Projet
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
@@ -81,7 +80,7 @@ class modProjet extends DolibarrModules
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 42; // id de la permission
-		$this->rights[2][1] = 'Cr�er modifier les projets'; // libelle de la permission
+		$this->rights[2][1] = 'Creer/modifier les projets'; // libelle de la permission
 		$this->rights[2][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
 		$this->rights[2][3] = 0; // La permission est-elle une permission par d�faut
 		$this->rights[2][4] = 'creer';

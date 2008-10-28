@@ -691,11 +691,12 @@ class DolibarrModules
 						$sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
 					}
 
-					dolibarr_syslog("DolibarrModules::insert_permissions sql=".$sql);
+					dolibarr_syslog("DolibarrModules::insert_permissions sql=".$sql, LOG_DEBUG);
 					$resql=$this->db->query($sql);
 					if (! $resql)
 					{
 						if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS") {
+							dolibarr_syslog("DolibarrModules::insert_permissions error ".$this->db->lasterror(), LOG_ERR);
 							$err++;
 						}
 					}

@@ -105,7 +105,7 @@ class modProduit extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 32; // id de la permission
-		$this->rights[$r][1] = 'Cr�er modifier les produits/services'; // libelle de la permission
+		$this->rights[$r][1] = 'Creer modifier les produits/services'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (d�pr�ci� � ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
 		$this->rights[$r][4] = 'creer';

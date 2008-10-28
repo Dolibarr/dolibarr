@@ -77,18 +77,16 @@ class modDroitPret  extends DolibarrModules
 		$this->rights_class = 'droitpret';
 
 		$this->rights[1][0] = 2200;
-		$this->rights[1][1] = 'Lire les droits de pr�ts';
+		$this->rights[1][1] = 'Lire les droits de prets';
 		$this->rights[1][2] = 'r';
 		$this->rights[1][3] = 1;
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 2201;
-		$this->rights[2][1] = 'Cr�er/modifier les droits de pr�ts';
+		$this->rights[2][1] = 'Creer/modifier les droits de prets';
 		$this->rights[2][2] = 'w';
 		$this->rights[2][3] = 0;
 		$this->rights[2][4] = 'creer';
-
-
 	}
 
 
