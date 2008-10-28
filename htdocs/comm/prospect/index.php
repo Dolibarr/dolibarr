@@ -198,7 +198,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
     
                 print "<td><a href=\"fiche.php?id=".$obj->socid."\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
                 print "<td align=\"right\">";
-                print dolibarr_print_date($obj->dp)."</td>\n";
+                print dolibarr_print_date($obj->dp,'day')."</td>\n";
                 print "<td align=\"right\">".price($obj->total_ttc)."</td></tr>\n";
                 $i++;
                 $total += $obj->price;

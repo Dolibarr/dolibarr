@@ -296,7 +296,7 @@ if ($user->rights->agenda->myactions->read)
 }
 
 /*
- * Derniers clients enregistr�s
+ * Derniers clients enregistres
  */
 if ($user->rights->societe->lire)
 {
@@ -356,7 +356,7 @@ if ($user->rights->societe->lire)
 
 
 /*
- * Derniers contrat
+ * Derniers contrats
  *
  */
 if ($conf->contrat->enabled && $user->rights->contrat->lire && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
