@@ -8,6 +8,7 @@ For users:
 - Support bookmark add of product cards.
 - Enhancement in stock management (Automatic increase/decrease
   from order or invoice is possible).
+- New filter options in prospect lists (category and level).
 - New view in ecm module.
 - Look enhancements for graphics (add transparency).
 - Added statistics report for supplier invoices.
