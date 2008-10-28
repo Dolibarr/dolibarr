@@ -81,8 +81,8 @@ $catotal=0;
 if ($modecompta == 'CREANCES-DETTES')
 {
     $sql = "SELECT u.rowid as rowid, u.name as name, u.firstname as firstname, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
-    $sql .= " WHERE f.fk_statut in (1,2) ";
+    $sql.= " FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid";
+    $sql.= " WHERE f.fk_statut in (1,2) ";
     if ($year) $sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
 else
@@ -92,12 +92,12 @@ else
      * vieilles versions, ils n'�taient pas li�s via paiement_facture. On les ajoute plus loin)
      */
 	$sql = "SELECT u.rowid as rowid, u.name as name, u.firstname as firstname, sum(pf.amount) as amount_ttc";
-	$sql .= " FROM ".MAIN_DB_PREFIX."user as u" ;
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid ";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_facture = f.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.rowid = pf.fk_paiement";
+	$sql.= " FROM ".MAIN_DB_PREFIX."user as u" ;
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.fk_user_author = u.rowid ";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_facture = f.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.rowid = pf.fk_paiement";
+	$sql.= " WHERE 1=1";
 	if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
-    
 }
 if ($socid) $sql .= " AND f.fk_soc = $socid";
 $sql .= " GROUP BY rowid";
