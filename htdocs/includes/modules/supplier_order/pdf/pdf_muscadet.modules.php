@@ -86,7 +86,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$this->posxqty=151;
 		$this->posxdiscount=162;
 		$this->postotalht=177;
-		 
+			
 		$this->tva=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
@@ -114,7 +114,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
@@ -216,7 +216,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->MultiCell(190, 3, $com->note_public, 0, 'J');
 					$nexY = $pdf->GetY();
 					$height_note=$nexY-$tab_top;
-					 
+
 					// Rect prend une longueur en 3eme param
 					$pdf->SetDrawColor(192,192,192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
@@ -301,12 +301,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					{
 						$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
 						$this->_pagefoot($pdf, $outputlangs);
-						 
+							
 						// Nouvelle page
 						$pdf->AddPage();
 						$pagenb++;
 						$this->_pagehead($pdf, $com, 0, $outputlangs);
-						 
+							
 						$nexY = $tab_top_newpage + 8;
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('Arial','', 10);
@@ -409,7 +409,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				 $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
 				 $pdf->SetXY ($this->marges['g']+60, $cury+5);
 				 $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
-				  
+
 				 $pdf->SetXY ($this->marges['g'], $cury+12);
 				 $pdf->MultiCell(90, 3, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
 				 $pdf->SetXY ($this->marges['g'], $cury+22);
@@ -444,9 +444,9 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->Close();
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+				if (! empty($conf->global->MAIN_UMASK))
+				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -526,7 +526,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			if ($tvakey)    // On affiche pas taux 0
 			{
 				$this->atleastoneratenotnull++;
-				 
+					
 				$index++;
 				$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 
@@ -601,7 +601,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
 		global $conf;
-		 
+			
 		// Montants exprim�s en     (en tab_top - 1)
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
@@ -687,10 +687,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
-		else if(defined("MAIN_INFO_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)
-		{
-			$pdf->MultiCell(100, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
-		}
+		else $pdf->MultiCell(100, 4, $this->emetteur->nom, 0, 'L');
 
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY(100,$posy);
@@ -724,29 +721,21 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			// Nom emetteur
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('Arial','B',11);
-			if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-			else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($mysoc->nom), 0, 'L');
 
 			// Caract�ristiques emetteur
 			$carac_emetteur = '';
-			if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
-			else {
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->adresse);
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->cp).' '.$outputlangs->convToOutputCharset($mysoc->ville);
-			}
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->adresse);
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->cp).' '.$outputlangs->convToOutputCharset($mysoc->ville);
 			$carac_emetteur .= "\n";
 			// Tel
-			if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
-			elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($mysoc->tel);
+			if ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($mysoc->tel);
 			// Fax
-			if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
-			elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($mysoc->fax);
+			if ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($mysoc->fax);
 			// EMail
-			if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
-			elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($mysoc->email);
+			if ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($mysoc->email);
 			// Web
-			if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
-			elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($mysoc->url);
+			if ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($mysoc->url);
 
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);
@@ -763,7 +752,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$client->fetch($object->socid);
 			$object->client = $client;
 			//
-				
+
 			// Cadre client destinataire
 			$pdf->rect(100, $posy, 100, $hautcadre);
 
