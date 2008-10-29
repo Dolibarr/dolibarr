@@ -18,7 +18,7 @@ alter table llx_commande_fournisseur_dispatch drop index fk_commande_5;
 ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_commande (fk_commande);
 
 --V4.1 UPDATE llx_product_fournisseur_price set fk_user = null where fk_user not in (select rowid from llx_user);
---V4.1 delete llx_commande where fk_soc not in (select rowid fomr llx_societe);
+--V4.1 delete llx_commande where fk_soc not in (select rowid from llx_societe);
 
 alter table llx_categorie add column type tinyint DEFAULT 1 NOT NULL;
 
