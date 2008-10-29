@@ -252,7 +252,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
 					{
 						// Affichage dur�e si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end).")",1);
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end,'',false,$outputlangs).")",1);
 					}
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
@@ -700,7 +700,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$posy+=6;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($object->date,"day"), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($object->date,"day",false,$outputlangs), '', 'R');
 
 		if ($showadress)
 		{

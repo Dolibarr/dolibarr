@@ -43,6 +43,7 @@ class methode_expedition
 		$this->description = "ERREUR DANS LA DEFINITION DU MODULE.";
 	}
 
+
 	function Active($statut)
 	{
 		// Mise a jour du statut
@@ -57,7 +58,7 @@ class methode_expedition
 
 			if ($af == 0 && $statut == 1)
 	  {
-	  	// On cr�� la m�thode dans la base
+	  	// On cre la methode dans la base
 	  	 
 	  	$sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode";
 	  	$sql .= " (rowid, statut, code, libelle, description)";
@@ -77,15 +78,14 @@ class methode_expedition
 		}
 	}
 
-	function write_file($id)
+	
+	function write_file($id,$outputlangs)
 	{
 		global $conf, $user;
 
 		$propale = new Propal($this->db,"",$id);
 		if ($propale->fetch($id))
 		{
-
-
 			$file = $dir . "/" . $propale->ref . ".pdf";
 
 			if (file_exists($dir))
@@ -108,7 +108,7 @@ class methode_expedition
 				$pdf->AddPage();
 
 				$pdf->SetTitle($propale->ref);
-				$pdf->SetSubject("Proposition commerciale");
+				$pdf->SetSubject($outputlangs->trans("Proposal"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($user->fullname);
 
@@ -298,10 +298,8 @@ class methode_expedition
 
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Courier','B',12);
-		$pdf->Text(11, 88, "Date : " . dolibarr_print_date($propale->date,'day'));
-		$pdf->Text(11, 94, "Proposition commerciale : ".$propale->ref);
-
-
+		$pdf->Text(11, 88, $outputlangs->trans("Date")." : " . dolibarr_print_date($propale->date,'day',false,$outputlangs));
+		$pdf->Text(11, 94, $outputlangs->trans("Proposal")." : ".$propale->ref);
 	}
 
 }

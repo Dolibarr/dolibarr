@@ -73,12 +73,12 @@ class pdf_paiement extends FPDF
 		global $langs;
 		
 		$title=$outputlangs->transnoentities("ListOfCustomerPayments");
-		$title.=' - '.dolibarr_print_date(dolibarr_mktime(0,0,0,$this->month,1,$this->year),"%B %Y");
+		$title.=' - '.dolibarr_print_date(dolibarr_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs);
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text(76, 10, $title);
 		
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 16, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date(time(),"day"));
+		$pdf->Text(11, 16, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date(time(),"day",false,$outputlangs));
 		
 		$pdf->SetFont('Arial','',12);
 		$pdf->Text(11, 22, $outputlangs->transnoentities("Page")." : ".$page);
@@ -236,7 +236,7 @@ class pdf_paiement extends FPDF
 				$var=!$var;
 				
 				$lines[$i][0] = $objp->facnumber;
-				$lines[$i][1] = dolibarr_print_date($objp->dp,"%d %B %Y");
+				$lines[$i][1] = dolibarr_print_date($objp->dp,"%d %B %Y",false,$outputlangs);
 				//$lines[$i][2] = $objp->paiement_type ;
 				$lines[$i][2] = $langs->transnoentities("PaymentTypeShort".$objp->paiement_code);
 				$lines[$i][3] = $objp->num_paiement;

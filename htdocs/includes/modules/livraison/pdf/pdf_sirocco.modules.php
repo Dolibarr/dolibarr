@@ -205,7 +205,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 					if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
 					{
 						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")",1);
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end,'',false,$outputlangs).")",1);
 					}
 
 					$pdf->SetXY (30, $curY );
@@ -372,7 +372,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"day"));
+		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"day",false,$outputlangs));
 		$pdf->Text(11, 94, $outputlangs->transnoentities("DeliveryOrder")." ".$delivery->ref);
 
 		$pdf->SetFont('Arial','B',9);

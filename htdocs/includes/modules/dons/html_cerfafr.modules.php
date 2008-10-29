@@ -66,10 +66,13 @@ class html_cerfafr extends ModeleDon
     		\param	    id	        Id du recu � g�n�rer
     		\return	    int         >0 si ok, <0 si ko
     */
-    function write_file($don)
+    function write_file($don,$outputlangs)
     {
-        global $conf,$langs,$user,$mysoc;
-        $langs->load("main");
+		global $user,$conf,$langs,$mysoc;
+
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+    	
+		$langs->load("main");
         
         if ($conf->don->dir_output)
         {
@@ -109,10 +112,10 @@ class html_cerfafr extends ModeleDon
 		        $donmodel=DOL_DOCUMENT_ROOT ."/includes/modules/dons/html_cerfafr.html";
 		        $html = implode('', file($donmodel));
 		        $html = eregi_replace('__REF__',$id,$html);
-		        $html = eregi_replace('__DATE__',dolibarr_print_date($don->date),$html);
+		        $html = eregi_replace('__DATE__',dolibarr_print_date($don->date,'',false,$outputlangs),$html);
 		        $html = eregi_replace('__IP__',$user->ip,$html);
 		        $html = eregi_replace('__AMOUNT__',$don->amount,$html);
-		        $html = eregi_replace('__CURRENCY__',$langs->trans("Currency".$conf->monnaie),$html);
+		        $html = eregi_replace('__CURRENCY__',$outputlangs->trans("Currency".$conf->monnaie),$html);
 		        $html = eregi_replace('__CURRENCYCODE__',$conf->monnaie,$html);
 		        $html = eregi_replace('__MAIN_INFO_SOCIETE_NOM__',$mysoc->nom,$html);
 		        $html = eregi_replace('__MAIN_INFO_SOCIETE_ADRESSE__',$mysoc->adresse,$html);
@@ -123,7 +126,7 @@ class html_cerfafr extends ModeleDon
 		        $html = eregi_replace('__DONATOR_ZIP__',$don->cp,$html);
 		        $html = eregi_replace('__DONATOR_TOWN__',$don->ville,$html);
 		        $html = eregi_replace('__PAYMENTMODE_LIB__ ',$don->modepaiement,$html);
-		        $html = eregi_replace('__NOW__',dolibarr_print_date(time()),$html);
+		        $html = eregi_replace('__NOW__',dolibarr_print_date(time(),'',false,$outputlangs),$html);
 		        
 		        // Sauve fichier sur disque
 		        dolibarr_syslog("html_cerfafr::write_file $file");
@@ -137,18 +140,18 @@ class html_cerfafr extends ModeleDon
             }
             else
             {
-                $this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
 				$langs->setPhpLang();	// On restaure langue session
                 return 0;
             }
 	    }
         else
         {
-            $this->error=$outputlangs->trans("ErrorConstantNotDefined","DON_OUTPUTDIR");
+            $this->error=$langs->trans("ErrorConstantNotDefined","DON_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
             return 0;
 		}
-        $this->error=$outputlangs->trans("ErrorUnknown");
+        $this->error=$langs->trans("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
         return 0;   // Erreur par defaut
 	        

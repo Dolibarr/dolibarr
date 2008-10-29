@@ -106,7 +106,7 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->Text(32, 19, $this->number);
 
 		$pdf->SetFont('Arial','B',10);
-		$pdf->Text(32, 27, dolibarr_print_date($this->date,"day"));
+		$pdf->Text(32, 27, dolibarr_print_date($this->date,"day",false,$outputlangs));
 
 
 		$pdf->SetFont('Arial','',10);
@@ -187,10 +187,10 @@ class BordereauChequeBlochet extends FPDF
 			$pdf->MultiCell(20, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'J', 0);
 				
 			$pdf->SetXY (30, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(70, $this->line_height, dolibarr_trunc($this->lines[$j]->bank_chq,44), 0, 'J', 0);
+			$pdf->MultiCell(70, $this->line_height, dolibarr_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq),44), 0, 'J', 0);
 				
 			$pdf->SetXY (100, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(80, $this->line_height, dolibarr_trunc($this->lines[$j]->emetteur_chq,50), 0, 'J', 0);
+			$pdf->MultiCell(80, $this->line_height, dolibarr_trunc($outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq),50), 0, 'J', 0);
 				
 			$pdf->SetXY (180, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);

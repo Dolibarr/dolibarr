@@ -395,7 +395,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetXY(10,90);
 		$pdf->MultiCell(110, 10, $outputlangs->transnoentities("Ref")." : ".$propale->ref);
 		$pdf->SetXY(110,90);
-		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($propale->date,'day'));
+		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($propale->date,'day',false,$outputlangs));
 	}
 
 	/*

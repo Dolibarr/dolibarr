@@ -273,7 +273,7 @@ class pdf_einstein extends ModelePDFCommandes
 					if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
 					{
 						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end).")",1);
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end,'',false,$outputlangs).")",1);
 					}
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
@@ -828,7 +828,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dolibarr_print_date($object->date,"%d %b %Y",'',$outputlangs), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dolibarr_print_date($object->date,"%d %b %Y",false,$outputlangs), '', 'R');
 
 		if ($showadress)
 		{

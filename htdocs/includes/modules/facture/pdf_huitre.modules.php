@@ -588,7 +588,7 @@ class pdf_huitre extends ModelePDFFactures
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',14);
 		$pdf->Text(11, 88, $outputlangs->transnoentities('Date'));
-		$pdf->Text(35, 88, ": " . dolibarr_print_date($fac->date,'day'));
+		$pdf->Text(35, 88, ": " . dolibarr_print_date($fac->date,'day',false,$outputlangs));
 		$pdf->Text(11, 94, $outputlangs->transnoentities('Invoice'));
 		$pdf->Text(35, 94, ": ".$fac->ref);
 

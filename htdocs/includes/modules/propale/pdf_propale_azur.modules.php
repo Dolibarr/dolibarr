@@ -276,7 +276,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					if ($propale->lignes[$i]->date_start && $propale->lignes[$i]->date_end)
 					{
 						// Affichage durée si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end).")",1);
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end,'',false,$outputlangs).")",1);
 					}
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
@@ -851,12 +851,12 @@ class pdf_propale_azur extends ModelePDFPropales
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($object->date,"day"), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($object->date,"day",false,$outputlangs), '', 'R');
 
 		$posy+=5;
 		$pdf->SetXY(100,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : " . dolibarr_print_date($object->fin_validite,"day"), '', 'R');
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : " . dolibarr_print_date($object->fin_validite,"day",false,$outputlangs), '', 'R');
 
 		if ($showadress)
 		{

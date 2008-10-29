@@ -207,7 +207,7 @@ class pdf_oursin extends ModelePDFFactures
 					}
 					if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
 						// Affichage dur�e si il y en a une
-						$codeproduitservice.=" (".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
+						$codeproduitservice.=" (".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start,'',false,$outputlangs)." ".$langs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end,'',false,$outputlangs).")";
 					}
 					$pdf->MultiCell(108, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
 
@@ -467,7 +467,7 @@ class pdf_oursin extends ModelePDFFactures
 				$row = $this->db->fetch_row($resql);
 
 				$pdf->SetXY ($tab3_posx, $tab3_top+$y );
-				$pdf->MultiCell(20, 4, dolibarr_print_date($row[0],'day'), 0, 'L', 0);
+				$pdf->MultiCell(20, 4, dolibarr_print_date($row[0],'day',false,$outputlangs), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
 				$pdf->MultiCell(20, 4, price($row[1]), 0, 'L', 0);
 				$pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
@@ -748,7 +748,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY($this->marges['g'],$posy);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(100, 10, $langs->transnoentities("Bill").' '.$langs->transnoentities("Of").' '.dolibarr_print_date($fac->date,"%d %B %Y"), '' , 'L');
+		$pdf->MultiCell(100, 10, $langs->transnoentities("Bill").' '.$langs->transnoentities("Of").' '.dolibarr_print_date($fac->date,"%d %B %Y",false,$outputlangs), '' , 'L');
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY($this->marges['g'],$posy+6);
 		$pdf->SetTextColor(22,137,210);

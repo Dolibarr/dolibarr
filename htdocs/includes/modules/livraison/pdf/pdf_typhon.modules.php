@@ -240,7 +240,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
 					{
 						// Affichage duree si il y en a une
-						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")",1);
+						$libelleproduitservice.="<br>".dol_htmlentitiesbr("(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start,'',false,$outputlangs)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end,'',false,$outputlangs).")",1);
 					}
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
@@ -436,7 +436,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0,0,60);
 		if ($delivery->date_valid)
 		{
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"), '', 'R');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y",false,$outputlangs), '', 'R');
 		}
 		else
 		{
