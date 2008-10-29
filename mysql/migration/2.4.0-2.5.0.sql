@@ -60,5 +60,8 @@ alter table llx_expedition add size integer;
 alter table llx_expedition add weight_units integer;
 alter table llx_expedition add weight integer;
 
+ALTER TABLE llx_paiement_facture ADD UNIQUE INDEX uk_paiement_facture(fk_paiement, fk_facture);
+ALTER TABLE llx_paiementfourn_facturefourn ADD UNIQUE INDEX uk_paiementfourn_facturefourn(fk_paiementfourn, fk_facturefourn);
+
 update llx_expedition_methode set code='ENL', libelle='Enlevement' where code='enlevement';
 update llx_expedition_methode set code='TRANS', libelle='Transporteur' where code='transporteur';
