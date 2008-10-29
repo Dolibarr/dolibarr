@@ -28,7 +28,7 @@
 require_once(FPDFI_PATH.'fpdi_protection.php');
 require_once(DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_indexes.php");
 require_once(DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_html.php");
-
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 /**
         \class      CommActionRapport

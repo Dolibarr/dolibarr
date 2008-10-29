@@ -25,6 +25,7 @@
 */
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/dons/modules_don.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
