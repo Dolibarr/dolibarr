@@ -119,7 +119,7 @@ if ($_POST["action"] == 'add')
 }
 
 /*
- * G�n�re un bon de livraison
+ * Genere un bon de livraison
  */
 if ($_GET["action"] == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 {
@@ -338,7 +338,7 @@ if ($_GET["action"] == 'create')
 			//$lignes = $object->fetch_lines(1);
 			$numAsked = sizeof($object->lignes);
 
-			/* Lecture des expeditions d�j� effectu�es */
+			/* Lecture des expeditions deja effectuees */
 			$object->loadExpeditions();
 
 			if ($numAsked)
@@ -402,7 +402,7 @@ if ($_GET["action"] == 'create')
 					if ($_GET["entrepot_id"])
 					{
 						$stock = $product->stock_entrepot[$_GET["entrepot_id"]];
-						$stock+=0;  // Convertit en num�rique
+						$stock+=0;  // Convertit en numerique
 						$defaultqty=min($quantityToBeDelivered, $stock);
 						if ($defaultqty < 0) $defaultqty=0;
 					}
@@ -737,7 +737,7 @@ else
 					print "<td>".nl2br($lignes[$i]->description)."</td>\n";
 				}
 
-				// Qte command�
+				// Qte commande
 				print '<td align="center">'.$lignes[$i]->qty_asked.'</td>';
 
 				// Qte a expedier ou expedier
@@ -834,7 +834,7 @@ else
 	}
 	else
 	{
-		print "Expedition inexistante ou acc�s refus�";
+		print "Expedition inexistante ou acces refuse";
 	}
 }
 

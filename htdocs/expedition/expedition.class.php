@@ -768,9 +768,9 @@ class Expedition extends CommonObject
 		if ($resql)
 		{
 			while ($obj = $this->db->fetch_object($resql))
-	  {
-	  	$this->meths[$obj->rowid] = $obj->libelle;
-	  }
+			{
+				$this->meths[$obj->rowid] = $obj->libelle;
+			}
 		}
 	}
 	/*

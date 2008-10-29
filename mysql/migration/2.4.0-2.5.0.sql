@@ -59,3 +59,6 @@ alter table llx_expedition add size_units integer;
 alter table llx_expedition add size integer;
 alter table llx_expedition add weight_units integer;
 alter table llx_expedition add weight integer;
+
+update llx_expedition_methode set code='ENL', libelle='Enlevement' where code='enlevement';
+update llx_expedition_methode set code='TRANS', libelle='Transporteur' where code='transporteur';
