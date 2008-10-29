@@ -2,8 +2,8 @@
 /* Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin         <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2008      Chiptronik            
- 
+ * Copyright (C) 2008      Chiptronik
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -41,19 +41,19 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 class pdf_typhon extends ModelePDFDeliveryOrder
 {
 	var $emetteur;	// Objet societe qui emet
-	
-    /**
-     *		\brief  Constructor
-     *		\param	db		Database handler
-     */
+
+	/**
+	 *		\brief  Constructor
+	 *		\param	db		Database handler
+	 */
 	function pdf_typhon($db)
 	{
 		global $conf,$langs,$mysoc;
 
-        $langs->load("main");
-        $langs->load("bills");
-		
-        $this->db = $db;
+		$langs->load("main");
+		$langs->load("bills");
+
+		$this->db = $db;
 		$this->name = "typhon";
 		$this->description = $langs->trans("DocumentModelTyphon");
 
@@ -72,11 +72,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$this->option_modereg = 1;                 // Gere choix mode reglement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
 		$this->option_codeproduitservice = 1;      // Affiche code produit-service
 		if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
-			$this->franchise=1;
+		$this->franchise=1;
 
-        // Recupere emmetteur
-        $this->emetteur=$mysoc;
-        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
+		// Recupere emmetteur
+		$this->emetteur=$mysoc;
+		if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'�tait pas d�fini
 
 		$this->tva=array();
 
@@ -115,14 +115,14 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 		$outputlangs->load("deliveries");
-		
+
 		$outputlangs->setPhpLang();
 
 		if ($conf->livraison_bon->dir_output)
@@ -321,9 +321,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->Close();
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+				if (! empty($conf->global->MAIN_UMASK))
+				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
 				return 1;   // Pas d'erreur
 			}
 			else
@@ -380,11 +380,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->Rect($this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
 		$pdf->SetXY ($this->marge_gauche + 2, $tab_top + $tab_height + 5);
 		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("For").' '.$outputlangs->convToOutputCharset($mysoc->nom).":",'','L');
-		
+
 		$pdf->Rect(2*$larg_sign+$this->marge_gauche, ($tab_top + $tab_height + 3), $larg_sign, 25 );
 		$pdf->SetXY (2*$larg_sign+$this->marge_gauche + 2, $tab_top + $tab_height + 5);
 		$pdf->MultiCell($larg_sign,2, $outputlangs->trans("ForCustomer").':','','L');
-		
+
 	}
 
 	/**
@@ -420,10 +420,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
-		else if(defined("MAIN_INFO_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)
-		{
-			$pdf->MultiCell(100, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
-		}
+		else $pdf->MultiCell(100, 4, $this->emetteur->nom, 0, 'L');
 
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY(100,$posy);
@@ -474,34 +471,26 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			// Nom emetteur
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('Arial','B',11);
-			if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-			else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 			// Caracteristiques emetteur
 			$carac_emetteur = '';
-			if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
-			else {
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->adresse);
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->cp).' '.$outputlangs->convToOutputCharset($mysoc->ville);
-			}
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
 			$carac_emetteur .= "\n";
 			// Tel
-			if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
-			elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($mysoc->tel);
+			if ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
 			// Fax
-			if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
-			elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($mysoc->fax);
+			if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
 			// EMail
-			if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
-			elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($mysoc->email);
+			if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
 			// Web
-			if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
-			elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($mysoc->url);
+			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
 			$pdf->SetFont('Arial','',9);
-			$pdf->SetXY($this->marge_gauche+2,$posy+8);
-			$pdf->MultiCell(80,4, $carac_emetteur);
-
+			$pdf->SetXY($this->marge_gauche+2,$posy+9);
+			$pdf->MultiCell(80,3, $carac_emetteur);
+				
 			// Client destinataire
 			$posy=42;
 			$pdf->SetTextColor(0,0,0);

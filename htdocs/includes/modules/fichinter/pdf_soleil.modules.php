@@ -86,7 +86,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("companies");
@@ -107,7 +107,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					dolibarr_print_error($db,$fichinter->error);
 				}
 			}
-				
+
 			$fichref = sanitizeFileName($fichinter->ref);
 			$dir = $conf->fichinter->dir_output;
 			if (! eregi('specimen',$fichref)) $dir.= "/" . $fichref;
@@ -121,7 +121,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					return 0;
 				}
 			}
-				
+
 			if (file_exists($dir))
 			{
 				// Protection et encryption du pdf
@@ -143,7 +143,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
-				
+
 				//Affiche le filigrane brouillon - Print Draft Watermark
 				if($fichinter->statut==0 && (! empty($conf->global->FICHINTER_DRAFT_WATERMARK)) )
 				{
@@ -199,33 +199,25 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetTextColor(0,0,60);
 				$pdf->SetFont('Arial','B',11);
-				if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-				else $pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($mysoc->nom), 0, 'L');
+				$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 				// Caracteristiques emetteur
 				$carac_emetteur = '';
-				if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
-				else {
-					$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->adresse);
-					$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->cp).' '.$outputlangs->convToOutputCharset($mysoc->ville);
-				}
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
 				$carac_emetteur .= "\n";
 				// Tel
-				if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
-				elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($mysoc->tel);
+				if ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
 				// Fax
-				if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
-				elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($mysoc->fax);
+				if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
 				// EMail
-				if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
-				elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($mysoc->email);
+				if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
 				// Web
-				if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
-				elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($mysoc->url);
+				if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
 				$pdf->SetFont('Arial','',9);
-				$pdf->SetXY($this->marge_gauche+2,$posy+8);
-				$pdf->MultiCell(80,4, $carac_emetteur);
+				$pdf->SetXY($this->marge_gauche+2,$posy+9);
+				$pdf->MultiCell(80,3, $carac_emetteur);
 
 
 				/*
@@ -286,10 +278,10 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pdf->writeHTMLCell(0, 4, 20, $tab_top + 22 + $j * 20,
 							dol_htmlentitiesbr($fichinterligne->desc,1), 0, 0, 0);
 							$tab_height+=20;
-							
+								
 							$j++;
 						}
-						$i++; 
+						$i++;
 					}
 				}
 				$pdf->Rect(10, $tab_top, 190, $tab_height);
@@ -309,16 +301,16 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->MultiCell(80,30, '', 1);
 
 				$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
-				
+
 				$this->_pagefoot($pdf,$outputlangs);
 				$pdf->AliasNbPages();
-				
+
 				$pdf->Close();
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+				if (! empty($conf->global->MAIN_UMASK))
+				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;
 			}

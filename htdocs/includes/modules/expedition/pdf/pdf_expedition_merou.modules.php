@@ -84,7 +84,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
@@ -117,7 +117,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			$idcontact = $this->expe->commande->getIdContact('internal','LIVREUR');
 			$this->livreur = new User($this->db,$idcontact[0]);
 			if ($idcontact[0]) $this->livreur->fetch();
-				
+
 
 			// D�finition de $dir et $file
 			if ($this->expe->specimen)
@@ -140,7 +140,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					return 0;
 				}
 			}
-				
+
 			//Si le dossier existe
 			if (file_exists($dir))
 			{
@@ -161,7 +161,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				//Generation de l entete du fichier
 				$pdf->SetTitle($this->expe->ref);
 				$pdf->SetSubject($langs->transnoentities("Sending"));
-				$pdf->SetCreator("EXPRESSIV Dolibarr ".DOL_VERSION);
+				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($user->fullname);
 				$pdf->SetMargins(10, 10, 10);
 				$pdf->SetAutoPageBreak(1,0);
@@ -210,7 +210,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 					$pdf->SetFont('Arial','', 7);
 					$pdf->SetXY (170, $curY );
 					$pdf->MultiCell(30, 5, $this->expe->lignes[$i]->qty_shipped, 0, 'C', 0);
-					
+						
 					//Generation de la page 2
 					$curY += 4;
 					$nexY = $curY;
@@ -329,21 +329,19 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
 		}
-		else if(defined("MAIN_INFO_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)
-		{
-			$pdf->MultiCell(100, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
-		}
+		else $pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
 		//*********************Entete****************************
 		//Nom du Document
+		$Xoff = 94;
 		$Yoff = 0;
-		$pdf->SetXY(60,7);
-		$pdf->SetFont('Arial','B',14);
+		$pdf->SetXY($Xoff,7);
+		$pdf->SetFont('Arial','B',12);
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("SendingSheet"), '' , 'L');	// Bordereau expedition
 		//Num Expedition
 		$Yoff = $Yoff+7;
-		$Xoff = 140;
+		$Xoff = 160;
 		//		$pdf->rect($Xoff, $Yoff, 85, 8);
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
@@ -358,67 +356,32 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("RefOrder").': '.$outputlangs->convToOutputCharset($exp->commande->ref), '' , 'L');
 
-		$Xoff = 115;
 		//$this->Code39($Xoff+43, $Yoff+1, $exp->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Definition Emplacement du bloc Societe
+		$Xoff = 115;
 		$blSocX=11;
 		$blSocY=25;
 		$blSocW=50;
 		$blSocX2=$blSocW+$blSocXs;
 		$pdf->SetTextColor(0,0,0);
-		//Adresse Internet
-		if (defined("FAC_PDF_WWW")){
-			$pdf->SetXY($blSocX,$blSocY);
-			$pdf->SetFont('Arial','B',8);
-			$pdf->MultiCell($blSocW, 3, FAC_PDF_WWW, '' , 'L');
-		}
-		if (defined("FAC_PDF_ADRESSE")){
-			$pdf->SetFont('Arial','',7);
-			$pdf->SetXY($blSocX,$blSocY+3);
-			$pdf->MultiCell($blSocW, 3, FAC_PDF_ADRESSE, '' , 'L');
-		}
 
-		if (defined("FAC_PDF_ADRESSE2")){
-			$pdf->SetFont('Arial','',7);
-			$pdf->SetXY($blSocX,$blSocY+6);
-			$pdf->MultiCell($blSocW, 3, FAC_PDF_ADRESSE2, '' , 'L');
-		}
+		// Caracteristiques emetteur
+		$carac_emetteur = '';
+		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
+		$carac_emetteur .= "\n";
+		// Tel
+		if ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
+		// Fax
+		if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
+		// EMail
+		if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
+		// Web
+		if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
-		if (defined("FAC_PDF_TEL")){
-			$pdf->SetFont('Arial','',7);
-			$pdf->SetXY($blSocX,$blSocY+10);
-			$pdf->MultiCell($blSocW, 3, $outputlangs->transnoentities("Tel")." : " . FAC_PDF_TEL, '' , 'L');
-		}
-
-		if (defined("FAC_PDF_MEL")){
-			$pdf->SetFont('Arial','',7);
-			$pdf->SetXY($blSocX,$blSocY+13);
-			$pdf->MultiCell(40, 3, $outputlangs->transnoentities("Email")." : " . FAC_PDF_MEL, '' , 'L');
-		}
-
-		if (defined("FAC_PDF_FAX")){
-			$pdf->SetFont('Arial','',7);
-			$pdf->SetXY($blSocX,$blSocY+16);
-			$pdf->MultiCell(40, 3, $outputlangs->transnoentities("Fax")." : " . FAC_PDF_FAX, '' , 'L');
-		}
-
-		if (defined("MAIN_INFO_SIRET")){
-			$pdf->SetFont('Arial','',7);
-			$pdf->SetXY($blSocX2,$blSocY+10);
-			$pdf->MultiCell($blSocW, 3, $outputlangs->transnoentities("SIRET")." : "  . MAIN_INFO_SIRET, '' , 'L');
-		}
-
-		if (defined("MAIN_INFO_APE")){
-			$pdf->SetFont('Arial','',7);
-			$pdf->SetXY($blSocX2,$blSocY+13);
-			$pdf->MultiCell($blSocW, 3, $outputlangs->transnoentities("APE")." : "  . MAIN_INFO_APE, '' , 'L');
-		}
-
-		if (defined("MAIN_INFO_TVAINTRA")){
-			$pdf->SetFont('Arial','',7);
-			$pdf->SetXY($blSocX2,$blSocY+16);
-			$pdf->MultiCell($blSocW, 3, $outputlangs->transnoentities("VATIntra")." : " . MAIN_INFO_TVAINTRA, '' , 'L');
-		}
+		$pdf->SetFont('Arial','',7);
+		$pdf->SetXY($blSocX,$blSocY+4);
+		$pdf->MultiCell(80,2, $carac_emetteur);
 
 		//Date Expedition
 		$Yoff = $Yoff+7;
@@ -432,6 +395,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,0);
 		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($livreur->fullname), '' , 'L');
 
+		
 		/**********************************/
 		//Emplacement Informations Expediteur (Client)
 		/**********************************/

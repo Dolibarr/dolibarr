@@ -63,11 +63,11 @@ class pdf_oursin extends ModelePDFFactures
 		$this->page_largeur = 210;
 		$this->page_hauteur = 297;
 		$this->format = array($this->page_largeur,$this->page_hauteur);
-        $this->marge_gauche=10;
-        $this->marge_droite=10;
-        $this->marge_haute=10;
-        $this->marge_basse=10;
-		
+		$this->marge_gauche=10;
+		$this->marge_droite=10;
+		$this->marge_haute=10;
+		$this->marge_basse=10;
+
 		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
 		$this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
 		$this->option_modereg = 1;                 // Gere choix mode r�glement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
@@ -100,7 +100,7 @@ class pdf_oursin extends ModelePDFFactures
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
 		$outputlangs->charset_output='ISO-8859-1';
-		
+
 		$outputlangs->load("main");
 		$outputlangs->load("companies");
 		$outputlangs->load("bills");
@@ -121,7 +121,7 @@ class pdf_oursin extends ModelePDFFactures
 			$deja_regle = $fac->getSommePaiement();
 			$amount_credit_not_included = $fac->getSommeCreditNote();
 
-				
+
 			// D�finition de $dir et $file
 			if ($fac->specimen)
 			{
@@ -165,7 +165,7 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->Open();
 				$pdf->AddPage();
 
-				$this->_pagehead($pdf, $fac);
+				$this->_pagehead($pdf, $fac, $outputlangs);
 
 				$pdf->SetTitle($fac->ref);
 				$pdf->SetSubject($outputlangs->transnoentities("Invoice"));
@@ -244,7 +244,7 @@ class pdf_oursin extends ModelePDFFactures
 						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac);
 						$pdf->AddPage();
 						$nexY = $iniY;
-						$this->_pagehead($pdf, $fac);
+						$this->_pagehead($pdf, $fac, $outputlangs);
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('Arial','', 10);
 					}
@@ -354,9 +354,9 @@ class pdf_oursin extends ModelePDFFactures
 				$pdf->Close();
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+				if (! empty($conf->global->MAIN_UMASK))
+				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
@@ -623,7 +623,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *   \param      pdf     objet PDF
 	 *   \param      fac     objet facture
 	 */
-	function _pagehead(&$pdf, $fac)
+	function _pagehead(&$pdf, $fac, $outputlangs)
 	{
 		global $langs,$conf;
 		$langs->load("main");
@@ -698,33 +698,26 @@ class pdf_oursin extends ModelePDFFactures
 		// Nom emetteur
 		$pdf->SetTextColor(0,0,60);
 		$pdf->SetFont('Arial','B',12);
-		if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)  // Prioritaire sur MAIN_INFO_SOCIETE_NOM
-		{
-			$pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-		}
-		else                                                        // Par defaut
-		{
-			$pdf->MultiCell(80, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
-		}
+		$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
 
-		// Caract�ristiques emetteur
+		// Caracteristiques emetteur
+		$carac_emetteur = '';
+		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
+		$carac_emetteur .= "\n";
+		// Tel
+		if ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
+		// Fax
+		if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
+		// EMail
+		if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
+		// Web
+		if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
+
 		$pdf->SetFont('Arial','',9);
-		if (defined("FAC_PDF_ADRESSE"))
-		{
-			$pdf->MultiCell(80, 4, FAC_PDF_ADRESSE);
-		}
-		if (defined("FAC_PDF_TEL") && FAC_PDF_TEL)
-		{
-			$pdf->MultiCell(80, 4, $langs->transnoentities("Phone").": ".FAC_PDF_TEL);
-		}
-		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL)
-		{
-			$pdf->MultiCell(80, 4, $langs->transnoentities("Email").": ".FAC_PDF_MEL);
-		}
-		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW)
-		{
-			$pdf->MultiCell(80, 4, $langs->transnoentities("Web").": ".FAC_PDF_WWW);
-		}
+		$pdf->SetXY($this->marge_gauche,$posy+9);
+		$pdf->MultiCell(80,3, $carac_emetteur);
+
 
 		/*
 		 * Client

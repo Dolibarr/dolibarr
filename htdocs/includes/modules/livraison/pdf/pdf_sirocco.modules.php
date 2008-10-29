@@ -316,34 +316,28 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		if (defined("MAIN_INFO_SOCIETE_NOM"))
 		{
 			$pdf->SetTextColor(0,0,200);
-			$pdf->SetFont('Arial','B',14);
-			$pdf->MultiCell(76, 8, $outputlangs->convToOutputCharset(MAIN_INFO_SOCIETE_NOM), 0, 'L');
+			$pdf->SetFont('Arial','B',12);
+			$pdf->MultiCell(76, 4, $outputlangs->convToOutputCharset(MAIN_INFO_SOCIETE_NOM), 0, 'L');
 		}
 
-		$pdf->SetTextColor(70,70,170);
-		if (defined("FAC_PDF_ADRESSE"))
-		{
-			$pdf->SetFont('Arial','',12);
-			$pdf->MultiCell(76, 5, $outputlangs->convToOutputCharset(FAC_PDF_ADRESSE));
-		}
-		if (defined("FAC_PDF_TEL"))
-		{
-			$pdf->SetFont('Arial','',10);
-			$pdf->MultiCell(76, 5, "Tel : ".$outputlangs->convToOutputCharset(FAC_PDF_TEL));
-		}
-		if (defined("MAIN_INFO_SIREN"))
-		{
-			$pdf->SetFont('Arial','',10);
-			$pdf->MultiCell(76, 5, "SIREN : ".$outputlangs->convToOutputCharset(MAIN_INFO_SIREN));
-		}
+		// Caracteristiques emetteur
+		$carac_emetteur = '';
+		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
+		$carac_emetteur .= "\n";
+		// Tel
+		if ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
+		// Fax
+		if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
+		// EMail
+		if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
+		// Web
+		if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
-		if (defined("FAC_PDF_INTITULE2"))
-		{
-			$pdf->SetXY(100,5);
-			$pdf->SetFont('Arial','B',14);
-			$pdf->SetTextColor(0,0,200);
-			$pdf->MultiCell(100, 10, $outputlangs->convToOutputCharset(FAC_PDF_INTITULE2), '' , 'R');
-		}
+		$pdf->SetFont('Arial','',9);
+		$pdf->SetXY(10,10);
+		$pdf->MultiCell(80,3, $carac_emetteur);
+
 		/*
 		 * Adresse Client
 		 */

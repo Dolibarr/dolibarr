@@ -327,7 +327,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					$this->tva[$vatrate] += $tvaligne;
 
 					$nexY+=2;    // Passe espace entre les lignes
-						
+
 					// Cherche nombre de lignes a venir pour savoir si place suffisante
 					if ($i < ($nblignes - 1))	// If it's not last line
 					{
@@ -340,7 +340,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					{
 						$nblineFollowDesc = 0;
 					}
-					
+						
 					// test si besoin nouvelle page
 					if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
@@ -398,9 +398,9 @@ class pdf_propale_azur extends ModelePDFPropales
 				$pdf->Close();
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+				if (! empty($conf->global->MAIN_UMASK))
+				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
 				$outputlangs->charset_output=$sav_charset_output;
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
@@ -879,29 +879,21 @@ class pdf_propale_azur extends ModelePDFPropales
 			// Nom emetteur
 			$pdf->SetTextColor(0,0,60);
 			$pdf->SetFont('Arial','B',11);
-			if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-			else $pdf->MultiCell(80, 4, $this->emetteur->nom, 0, 'L');
-
-			// Caractéristiques emetteur
+			$pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($this->emetteur->nom), 0, 'L');
+			
+			// Caracteristiques emetteur
 			$carac_emetteur = '';
-			if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
-			else {
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->adresse;
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->cp.' '.$this->emetteur->ville;
-			}
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+			$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
 			$carac_emetteur .= "\n";
 			// Tel
-			if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
-			elseif ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
+			if ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
 			// Fax
-			if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
-			elseif ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
+			if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
 			// EMail
-			if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
-			elseif ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
+			if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
 			// Web
-			if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
-			elseif ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
+			if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
 			$pdf->SetFont('Arial','',9);
 			$pdf->SetXY($this->marge_gauche+2,$posy+8);

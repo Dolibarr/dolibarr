@@ -274,9 +274,9 @@ class pdf_huitre extends ModelePDFFactures
 				$pdf->Close();
 
 				$pdf->Output($file);
-				if (! empty($conf->global->MAIN_UMASK)) 
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				
+				if (! empty($conf->global->MAIN_UMASK))
+				@chmod($file, octdec($conf->global->MAIN_UMASK));
+
 				$langs->setPhpLang();	// On restaure langue session
 				return 1;   // Pas d'erreur
 			}
@@ -498,64 +498,53 @@ class pdf_huitre extends ModelePDFFactures
 			$pdf->_out('Q');
 		}
 		//Print content
-
 		$pdf->SetXY(10,5);
+		$posy=5;
+		
+			// Logo
+        $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
+        if ($this->emetteur->logo)
+        {
+            if (is_readable($logo))
+			{
+                $pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+            }
+            else
+			{
+                $pdf->SetTextColor(200,0,0);
+                $pdf->SetFont('Arial','B',8);
+                $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+                $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
+            }
+        }
+        else if (defined("FAC_PDF_INTITULE"))
+        {
+            $pdf->MultiCell(100, 4, FAC_PDF_INTITULE, 0, 'L');
+        }
 
-		// Logo
-		$logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
-		if ($this->emetteur->logo)
-		{
-			if (is_readable($logo))
-	  {
-	  	$pdf->Image($logo, 10, 5,45.0, 25.0);
-	  }
-	  else
-	  {
-	  	$pdf->SetTextColor(200,0,0);
-	  	$pdf->SetFont('Arial','B',8);
-	  	$pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
-	  	$pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
-	  }
-		}
-		else if (defined("FAC_PDF_INTITULE"))
-		{
-			$pdf->MultiCell(80, 6, FAC_PDF_INTITULE, 0, 'L');
-		}
-
+		$pdf->SetTextColor(0,0,0);
 		$pdf->SetDrawColor(192,192,192);
 		$pdf->line(9, 5, 200, 5 );
 		$pdf->line(9, 30, 200, 30 );
 
-		$pdf->SetFont('Arial','B',7);
-		$pdf->SetTextColor(128,128,128);
+		// Caracteristiques emetteur
+		$carac_emetteur = '';
+		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
+		$carac_emetteur .= "\n";
+		// Tel
+		if ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
+		// Fax
+		if ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
+		// EMail
+		if ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
+		// Web
+		if ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
-		if (defined("FAC_PDF_ADRESSE"))
-		{
-			$pdf->SetXY( $tab4_top , $tab4_hl );
-			$pdf->MultiCell(80, 3, FAC_PDF_ADRESSE, '' , 'L');
-		}
-		$pdf->SetFont('Arial','',7);
-		if (defined("FAC_PDF_TEL"))
-		{
-			$pdf->SetXY( $tab4_top , $tab4_hl + 2*$tab4_sl );
-			$pdf->MultiCell(80, 3, $outputlangs->transnoentities('FullPhoneNumber').' : ' . FAC_PDF_TEL, '' , 'L');
-		}
-		if (defined("FAC_PDF_FAX"))
-		{
-			$pdf->SetXY( $tab4_top , $tab4_hl + 3*$tab4_sl );
-			$pdf->MultiCell(80, 3, $outputlangs->transnoentities('TeleFax').' : ' . FAC_PDF_FAX, '' , 'L');
-		}
-		if (defined("FAC_PDF_MEL"))
-		{
-			$pdf->SetXY( $tab4_top , $tab4_hl + 4*$tab4_sl );
-			$pdf->MultiCell(80, 3, $outputlangs->transnoentities('Email').' : ' . FAC_PDF_MEL, '' , 'L');
-		}
-		if (defined("FAC_PDF_WWW"))
-		{
-			$pdf->SetXY( $tab4_top , $tab4_hl + 5*$tab4_sl );
-			$pdf->MultiCell(80, 3, $outputlangs->transnoentities('Web').' : ' . FAC_PDF_WWW, '' , 'L');
-		}
-		$pdf->SetTextColor(70,70,170);
+		$pdf->SetFont('Arial','',9);
+		$pdf->SetXY($tab4_top+28,$tab4_hl);
+		$pdf->MultiCell(110,3, $carac_emetteur);
+
 
 
 		/*
