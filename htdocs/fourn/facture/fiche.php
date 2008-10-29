@@ -317,9 +317,11 @@ if ($_POST['action'] == 'classin')
 	$facture->setProject($_POST['projetid']);
 }
 
+
 /*
-*	Affichage page
+*	View
 */
+
 $addons='';
 llxHeader('','', $addons);
 

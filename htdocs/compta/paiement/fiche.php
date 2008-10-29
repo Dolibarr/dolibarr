@@ -145,7 +145,7 @@ if ($_GET['action'] == 'delete')
 if ($_GET['action'] == 'valide')
 {
 	$facid = $_GET['facid'];
-	$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), 'Etes-vous sûr de vouloir valider ce règlement, auncune modification n\'est possible une fois le règlement validé ?', 'confirm_valide');
+	$html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
 	print '<br>';
 }
 
@@ -267,12 +267,14 @@ print '</div>';
 
 print '<div class="tabsAction">';
 
-if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
+if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
 {
-	if ($user->rights->facture->paiement)
+	if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
 	{
-		print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-
+		if ($user->rights->facture->paiement)
+		{
+			print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+		}
 	}
 }
 if ($user->societe_id == 0 && $allow_delete && $_GET['action'] == '')
@@ -282,6 +284,7 @@ if ($user->societe_id == 0 && $allow_delete && $_GET['action'] == '')
 		print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 	}
 }
+
 print '</div>';      
 
 $db->close();

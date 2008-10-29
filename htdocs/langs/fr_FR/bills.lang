@@ -148,6 +148,7 @@ ConfirmClassifyPayedPartiallyReasonOtherDesc=Ce choix sera celui dans tout autre
 ConfirmClassifyAbandonReasonOther=Autre
 ConfirmClassifyAbandonReasonOtherDesc=Ce choix sera celui dans tout autre cas. Par exemple suite à intention de créer une facture de remplacement.
 ConfirmCustomerPayment=Confirmez-vous la saisie de ce réglement de <b>%s</b> %s ?
+ConfirmValidatePayment=Etes-vous sur de vouloir valider ce paiment, auncune modification n'est possible une fois le paiement validé ?
 ValidateBill=Valider facture
 NumberOfBills=Nb de factures
 NumberOfBillsByMonth=Nb de factures par mois

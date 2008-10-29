@@ -100,7 +100,7 @@ if ($action == 'add_paiement')
 	 $mesg = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Amount')).'</div>';
 	 $error++;
 	 }
-  */
+	 */
 
 	if (! $error)
 	{
@@ -182,7 +182,7 @@ if ($action == 'add_paiement')
 }
 
 /*
- * Affichage
+ * View
  */
 
 llxHeader();
@@ -199,6 +199,9 @@ if ($action == 'create' || $action == 'add_paiement')
 	$facture = new FactureFournisseur($db);
 	$facture->fetch($facid);
 
+	$datefacture=dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+	$dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
+
 	$sql = 'SELECT s.nom, s.rowid as socid,';
 	$sql.= ' f.rowid as ref, f.facnumber, f.amount, f.total_ttc as total';
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -213,134 +216,130 @@ if ($action == 'create' || $action == 'add_paiement')
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
-	  $obj = $db->fetch_object($resql);
-	  $total = $obj->total;
+			$obj = $db->fetch_object($resql);
+			$total = $obj->total;
 
-	  print_fiche_titre($langs->trans('DoPayment'));
-	  print '<form name="addpaiement" action="paiement.php" method="post">';
-	  print '<input type="hidden" name="action" value="add_paiement">';
-	  print '<input type="hidden" name="facid" value="'.$facid.'">';
-	  print '<input type="hidden" name="facnumber" value="'.$obj->facnumber.'">';
-	  print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
-	  print '<input type="hidden" name="societe" value="'.$obj->nom.'">';
+			print_fiche_titre($langs->trans('DoPayment'));
+			print '<form name="addpaiement" action="paiement.php" method="post">';
+			print '<input type="hidden" name="action" value="add_paiement">';
+			print '<input type="hidden" name="facid" value="'.$facid.'">';
+			print '<input type="hidden" name="facnumber" value="'.$obj->facnumber.'">';
+			print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
+			print '<input type="hidden" name="societe" value="'.$obj->nom.'">';
 
-	  print '<table class="border" width="100%">';
+			print '<table class="border" width="100%">';
 
-	  print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Payment').'</td>';
-	  print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$obj->nom.'</td></tr>';
-	  print '<tr><td>'.$langs->trans('Date').'</td><td>';
-	  if (!empty($_POST['remonth']) && !empty($_POST['reday']) && !empty($_POST['reyear']))
-	  $sel_date=mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-	  else
-	  $sel_date='';
-	  $html->select_date($sel_date,'','','','',"addpaiement");
-	  print '</td>';
-	  print '<td>'.$langs->trans('Comments').'</td></tr>';
-	  print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	  $html->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
-	  print '</td>';
-	  print '<td rowspan="3" valign="top">';
-	  print '<textarea name="comment" wrap="soft" cols="40" rows="4">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
-	  print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
-	  if ($conf->banque->enabled)
-	  {
-	  	print '<tr><td>'.$langs->trans('Account').'</td><td>';
-	  	$html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',1);
-	  	print '</td></tr>';
-	  }
-	  else
-	  {
-	  	print '<tr><td colspan="2">&nbsp;</td></tr>';
-	  }
-	  /*
-	   * Autres factures impayees
-	   */
-	  $sql = 'SELECT f.rowid as facid,f.rowid as ref,f.facnumber,f.total_ttc,'.$db->pdate('f.datef').' as df';
-	  $sql .= ', sum(pf.amount) as am';
-	  $sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
-	  $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
-	  $sql .= ' WHERE f.fk_soc = '.$facture->socid;
-	  $sql .= ' AND f.paye = 0';
-	  $sql .= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-	  $sql .= ' GROUP BY f.facnumber';
-	  $resql = $db->query($sql);
-	  if ($resql)
-	  {
-	  	$num = $db->num_rows($resql);
-	  	if ($num > 0)
-	  	{
-	  		$i = 0;
-	  		print '<tr><td colspan="3">';
-	  		print $langs->trans('Invoices').'<br>';
-	  		print '<table class="noborder" width="100%">';
-	  		print '<tr class="liste_titre">';
-	  		print '<td>'.$langs->trans('Ref').'</td>';
-	  		print '<td>'.$langs->trans('RefSupplier').'</td>';
-	  		print '<td align="center">'.$langs->trans('Date').'</td>';
-	  		print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
-	  		print '<td align="right">'.$langs->trans('AlreadyPayed').'</td>';
-	  		print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
-	  		print '<td align="center">'.$langs->trans('Amount').'</td>';
-	  		print '</tr>';
+			print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Payment').'</td>';
+			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">'.$obj->nom.'</td></tr>';
+			print '<tr><td>'.$langs->trans('Date').'</td><td>';
+			$html->select_date($dateinvoice,'','','','',"addpaiement");
+			print '</td>';
+			print '<td>'.$langs->trans('Comments').'</td></tr>';
+			print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+			$html->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
+			print '</td>';
+			print '<td rowspan="3" valign="top">';
+			print '<textarea name="comment" wrap="soft" cols="60" rows="'._ROWS_3.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
+			print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
+			if ($conf->banque->enabled)
+			{
+				print '<tr><td>'.$langs->trans('Account').'</td><td>';
+				$html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',1);
+				print '</td></tr>';
+			}
+			else
+			{
+				print '<tr><td colspan="2">&nbsp;</td></tr>';
+			}
+			/*
+			 * Autres factures impayees
+			 */
+			$sql = 'SELECT f.rowid as facid,f.rowid as ref,f.facnumber,f.total_ttc,'.$db->pdate('f.datef').' as df';
+			$sql .= ', sum(pf.amount) as am';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
+			$sql .= ' WHERE f.fk_soc = '.$facture->socid;
+			$sql .= ' AND f.paye = 0';
+			$sql .= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
+			$sql .= ' GROUP BY f.facnumber';
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$num = $db->num_rows($resql);
+				if ($num > 0)
+				{
+					$i = 0;
+					print '<tr><td colspan="3">';
+					print $langs->trans('Invoices').'<br>';
+					print '<table class="noborder" width="100%">';
+					print '<tr class="liste_titre">';
+					print '<td>'.$langs->trans('Ref').'</td>';
+					print '<td>'.$langs->trans('RefSupplier').'</td>';
+					print '<td align="center">'.$langs->trans('Date').'</td>';
+					print '<td align="right">'.$langs->trans('AmountTTC').'</td>';
+					print '<td align="right">'.$langs->trans('AlreadyPayed').'</td>';
+					print '<td align="right">'.$langs->trans('RemainderToPay').'</td>';
+					print '<td align="center">'.$langs->trans('Amount').'</td>';
+					print '</tr>';
 
-	  		$var=True;
-	  		$total=0;
-	  		$totalrecu=0;
-	  		while ($i < $num)
-	  		{
-	  			$objp = $db->fetch_object($resql);
-	  			$var=!$var;
-	  			print '<tr '.$bc[$var].'>';
-	  			print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->ref;
-	  			print '</a></td>';
-	  			print '<td>'.$objp->facnumber.'</td>';
-	  			if ($objp->df > 0 )
-	  			{
-	  				print '<td align="center">';
-	  				print dolibarr_print_date($objp->df).'</td>';
-	  			}
-	  			else
-	  			{
-	  				print '<td align="center"><b>!!!</b></td>';
-	  			}
-	  			print '<td align="right">'.price($objp->total_ttc).'</td>';
-	  			print '<td align="right">'.price($objp->am).'</td>';
-	  			print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
-	  			print '<td align="center">';
-	  			$namef = 'amount_'.$objp->facid;
-	  			print '<input type="text" size="8" name="'.$namef.'">';
-	  			print "</td></tr>\n";
-	  			$total+=$objp->total;
-	  			$total_ttc+=$objp->total_ttc;
-	  			$totalrecu+=$objp->am;
-	  			$i++;
-	  		}
-	  		if ($i > 1)
-	  		{
-	  			// Print total
-	  			print '<tr class="liste_total">';
-	  			print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
-	  			print '<td align="right"><b>'.price($total_ttc).'</b></td>';
-	  			print '<td align="right"><b>'.price($totalrecu).'</b></td>';
-	  			print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
-	  			print '<td align="center">&nbsp;</td>';
-	  			print "</tr>\n";
-	  		}
-	  		print "</table></td></tr>\n";
-	  	}
-	  	$db->free($resql);
-	  }
-	  else
-	  {
-	  	dolibarr_print_error($db);
-	  }
+					$var=True;
+					$total=0;
+					$totalrecu=0;
+					while ($i < $num)
+					{
+						$objp = $db->fetch_object($resql);
+						$var=!$var;
+						print '<tr '.$bc[$var].'>';
+						print '<td><a href="fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.$objp->ref;
+						print '</a></td>';
+						print '<td>'.$objp->facnumber.'</td>';
+						if ($objp->df > 0 )
+						{
+							print '<td align="center">';
+							print dolibarr_print_date($objp->df).'</td>';
+						}
+						else
+						{
+							print '<td align="center"><b>!!!</b></td>';
+						}
+						print '<td align="right">'.price($objp->total_ttc).'</td>';
+						print '<td align="right">'.price($objp->am).'</td>';
+						print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
+						print '<td align="center">';
+						$namef = 'amount_'.$objp->facid;
+						print '<input type="text" size="8" name="'.$namef.'">';
+						print "</td></tr>\n";
+						$total+=$objp->total;
+						$total_ttc+=$objp->total_ttc;
+						$totalrecu+=$objp->am;
+						$i++;
+					}
+					if ($i > 1)
+					{
+						// Print total
+						print '<tr class="liste_total">';
+						print '<td colspan="3" align="left">'.$langs->trans('TotalTTC').':</td>';
+						print '<td align="right"><b>'.price($total_ttc).'</b></td>';
+						print '<td align="right"><b>'.price($totalrecu).'</b></td>';
+						print '<td align="right"><b>'.price($total_ttc - $totalrecu).'</b></td>';
+						print '<td align="center">&nbsp;</td>';
+						print "</tr>\n";
+					}
+					print "</table></td></tr>\n";
+				}
+				$db->free($resql);
+			}
+			else
+			{
+				dolibarr_print_error($db);
+			}
 
-	  /*
-	   *
-	   */
-	  print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'"></td></tr>';
-	  print '</table>';
-	  print '</form>';
+			/*
+			 *
+			 */
+			print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'"></td></tr>';
+			print '</table>';
+			print '</form>';
 		}
 	}
 }
