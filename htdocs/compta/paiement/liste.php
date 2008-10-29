@@ -126,7 +126,10 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
 	//print_liste_field_titre($langs->trans("Invoices"),"","","",$paramlist,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
+	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+	{
+		print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
+	}
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -134,9 +137,13 @@ if ($resql)
 	print '<td colspan="5">&nbsp;</td>';
 	print '<td align="right">';
 	print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';
-	print '</td><td align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '</td>';
+	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+	{
+		print '<td align="right">';
+		print '</td>';
+	}
 	print "</tr>\n";
 
 	$var=true;
@@ -175,12 +182,16 @@ if ($resql)
 		else print '&nbsp;';
 		print '</td>';
 		print '<td align="right">'.price($objp->amount).'</td>';
-		print '<td align="right">';
-		if ($objp->statut == 0) print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">';
-		print $paymentstatic->LibStatut($objp->statut,5);
-		if ($objp->statut == 0) print '</a>';
-		print '</td>';
 
+		if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+		{
+			print '<td align="right">';
+			if ($objp->statut == 0) print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">';
+			print $paymentstatic->LibStatut($objp->statut,5);
+			if ($objp->statut == 0) print '</a>';
+			print '</td>';
+		}
+		
 		print '</tr>';
 		
 		$i++;

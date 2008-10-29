@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,16 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
- 
-/**   
-      \file   	    htdocs/compta/paiement/pre.inc.php
-      \ingroup      compta
-      \brief  	    Fichier gestionnaire du menu compta paiement
-*/
+
+/**
+ *	\file   	    htdocs/compta/paiement/pre.inc.php
+ *	\ingroup      	compta
+ *	\brief  	    Fichier gestionnaire du menu compta paiement
+ *	\version		$Id$ 
+ */
 
 require("../../main.inc.php");
 
@@ -32,26 +30,31 @@ $langs->load("bills");
 $langs->load("compta");
 $langs->load("propal");
 
-function llxHeader($head = "", $title="") {
-  global $user, $langs;
-  $langs->load("bills");
-  
-  top_menu($head, $title);
+function llxHeader($head = "", $title="")
+{
 
-  $menu = new Menu();
+	global $conf, $user, $langs;
 
-  $menu->add("liste.php",$langs->trans("Payments"));
-  $menu->add_submenu("liste.php",$langs->trans("List"));
+	$langs->load("bills");
 
-  $menu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php",$langs->trans("MenuChequeDeposits"));
+	top_menu($head, $title);
 
-  $menu->add("rapport.php",$langs->trans("Reportings"));
+	$menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
-  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
+	$menu->add("liste.php",$langs->trans("Payments"));
+	$menu->add_submenu("liste.php",$langs->trans("List"));
 
-  $menu->add_submenu("avalider.php",$langs->trans("MenuToValid"));
+	$menu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php",$langs->trans("MenuChequeDeposits"));
 
-  left_menu($menu->liste);
+	$menu->add("rapport.php",$langs->trans("Reportings"));
+
+	$menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
+	$menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
+
+	if ($conf->global->BILL_ADD_PAYMENT_VALIDATION)
+	{
+		$menu->add_submenu("avalider.php",$langs->trans("MenuToValid"));
+	}
+	left_menu($menu->liste);
 }
 ?>
