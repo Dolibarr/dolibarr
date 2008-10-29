@@ -11,13 +11,13 @@ QtyDelivered=Qté livrée
 SetDeliveryDate=Définir la date de livraison
 ValidateDeliveryReceipt=Valider le bon de livraison
 ValidateDeliveryReceiptConfirm=Etes-vous sur de vouloir valider ce bon de livraison ?
-DeliveryMethod=Methode de livraison
+DeliveryMethod=Méthode de livraison
 TrackingNumber=Numero de suivi
 
 # merou PDF model						   
-NameAndSignature				=Nom et Signature : 
-ToAndDate 						=A___________________________________ le ____/_____/__________
-GoodStatusDeclaration 			=Déclare avoir reçu les marchandises ci-dessus en bon état,
-Deliverer						=Livreur(s) : 
-Sender							=Expéditeur
-Recipient						=Destinataire
+NameAndSignature=Nom et Signature : 
+ToAndDate=A___________________________________ le ____/_____/__________
+GoodStatusDeclaration=Déclare avoir reçu les marchandises ci-dessus en bon état,
+Deliverer=Livreur(s) : 
+Sender=Expéditeur
+Recipient=Destinataire

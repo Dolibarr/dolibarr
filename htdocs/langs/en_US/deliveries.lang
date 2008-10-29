@@ -7,6 +7,17 @@ DeliveryOrders=Delivery orders
 DeliveryDate=Delivery date
 DeliveryDateShort=Deliv. date
 CreateDeliveryOrder=Generate delivery order
+QtyDelivered=Qty delivered
 SetDeliveryDate=Set shipping date
 ValidateDeliveryReceipt=Validate delivery receipt
 ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt ?
+DeliveryMethod=Delivery method
+TrackingNumber=Tracking number
+
+# merou PDF model						   
+NameAndSignature=Name and Signature : 
+ToAndDate=To___________________________________ on ____/_____/__________
+GoodStatusDeclaration=Have received the goods above in good condition,
+Deliverer=Deliverer : 
+Sender=Sender
+Recipient=Recipient
