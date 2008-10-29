@@ -89,7 +89,7 @@ class pdf_huitre extends ModelePDFFactures
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int     		1=ok, 0=ko
 	 */
-	function write_file($fac,$outputlangs='')
+	function write_file($fac,$outputlangs)
 	{
 		global $user,$langs,$conf;
 
@@ -184,7 +184,7 @@ class pdf_huitre extends ModelePDFFactures
 					$curY = $nexY;
 
 					$pdf->SetXY (11, $curY );
-					$pdf->MultiCell(118, 5, $fac->lignes[$i]->desc, 0, 'J');
+					$pdf->MultiCell(118, 5, $outputlangs->convToOutputCharset($fac->lignes[$i]->desc), 0, 'J');
 
 					$nexY = $pdf->GetY();
 
@@ -232,13 +232,13 @@ class pdf_huitre extends ModelePDFFactures
 						$pdf->SetFont('Arial','U',8);
 						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BankDetails"), 0, 'L', 0);
 						$pdf->SetFont('Arial','',8);
-						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BankCode").' : ' . $account->code_banque, 0, 'L', 0);
-						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("DeskCode").' : ' . $account->code_guichet, 0, 'L', 0);
-						$pdf->MultiCell(50, 4, $outputlangs->transnoentities("BankAccountNumber").' : ' . $account->number, 0, 'L', 0);
-						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BankAccountNumberKey").' : ' . $account->cle_rib, 0, 'L', 0);
-						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
-						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
-						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BIC").' : ' . $account->bic, 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BankCode").' : ' . $outputlangs->convToOutputCharset($account->code_banque), 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("DeskCode").' : ' . $outputlangs->convToOutputCharset($account->code_guichet), 0, 'L', 0);
+						$pdf->MultiCell(50, 4, $outputlangs->transnoentities("BankAccountNumber").' : ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BankAccountNumberKey").' : ' . $outputlangs->convToOutputCharset($account->cle_rib), 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("Residence").' : ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("IbanPrefix").' : ' . $outputlangs->convToOutputCharset($account->iban_prefix), 0, 'L', 0);
+						$pdf->MultiCell(40, 4, $outputlangs->transnoentities("BIC").' : ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 					}
 				}
 
@@ -251,7 +251,7 @@ class pdf_huitre extends ModelePDFFactures
 				{
 					$pdf->SetFont('Arial','',7);
 					$pdf->SetXY(10, 211);
-					$note = $outputlangs->transnoentities("Note").' : '.$fac->note_public;
+					$note = $outputlangs->transnoentities("Note").' : '.$outputlangs->convToOutputCharset($fac->note_public);
 					$pdf->MultiCell(110, 3, $note, 0, 'J');
 				}
 
@@ -577,10 +577,10 @@ class pdf_huitre extends ModelePDFFactures
 		$pdf->SetFont('Arial','B',12);
 		$fac->fetch_client();
 		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96,5, $fac->client->nom, 0, 'C');
+		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($fac->client->nom), 0, 'C');
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY(102,$pdf->GetY()+3);
-		$pdf->MultiCell(96,5, $fac->client->adresse . "\n\n" . $fac->client->cp . " " . $fac->client->ville ,  0, 'C');
+		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($fac->client->adresse) . "\n\n" . $outputlangs->convToOutputCharset($fac->client->cp) . " " . $outputlangs->convToOutputCharset($fac->client->ville), 0, 'C');
 
 
 

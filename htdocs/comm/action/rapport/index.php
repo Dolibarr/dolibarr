@@ -28,6 +28,7 @@
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/action/rapport.pdf.php");
 
 $page = $_GET["page"];
 $sortfield=$_GET["sortfield"];

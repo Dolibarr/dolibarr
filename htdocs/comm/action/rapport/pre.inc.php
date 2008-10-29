@@ -24,7 +24,6 @@
 */
 
 require("../../../main.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/comm/action/rapport/rapport.pdf.php");
 
 
 function llxHeader($head = "", $urlp = "")

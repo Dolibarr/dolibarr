@@ -37,7 +37,6 @@ class html_cerfafr extends ModeleDon
 			\brief      Constructeur
     		\param	    db		Handler acc�s base de donn�e
     */
-
     function html_cerfafr($db)
     {
         global $conf,$langs;
@@ -61,6 +60,15 @@ class html_cerfafr extends ModeleDon
     }
 
 
+	/**     \brief     	Return if a module can be used or not
+	*      	\return		boolean     true if module can be used
+	*/
+	function isEnabled()
+	{
+		return true;
+	}
+	
+	
     /**
     		\brief      Fonction g�n�rant le recu sur le disque
     		\param	    id	        Id du recu � g�n�rer

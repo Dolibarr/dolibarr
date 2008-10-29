@@ -80,9 +80,10 @@ class pdf_edison extends ModelePDFCommandes
 
 
 	/**
-	 \brief      	Fonction generant la commande sur le disque
-	 \param	    	com		id de la propale a generer
-	 \return	    int     1=ok, 0=ko
+	 *	\brief      Fonction generant la commande sur le disque
+	 *	\param	    com				id de la propale a generer
+	 *	\param		outputlangs		Lang output object
+	 *	\return	    int     		1=ok, 0=ko
 	 */
 	function write_file($com,$outputlangs)
 	{
@@ -162,7 +163,7 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 				$pdf->SetAutoPageBreak(1,0);
 
-				$this->_pagehead($pdf, $com, 1, $outputlangs);
+				$this->_pagehead($pdf, $com, $outputlangs);
 
 
 				$tab_top = 100;
@@ -185,43 +186,43 @@ class pdf_edison extends ModelePDFCommandes
 
 					$curY = $nexY;
 
-					$pdf->SetXY (30, $curY );
+					$pdf->SetXY(30, $curY);
 
-					$pdf->MultiCell(100, 5, $com->lignes[$i]->desc, 0, 'J', 0);
+					$pdf->MultiCell(100, 5, $outputlangs->convToOutputCharset($com->lignes[$i]->desc), 0, 'J', 0);
 
 					$nexY = $pdf->GetY();
 
-					$pdf->SetXY (10, $curY );
+					$pdf->SetXY (10, $curY);
 
-					$pdf->MultiCell(20, 5, $com->lignes[$i]->ref, 0, 'C');
+					$pdf->MultiCell(20, 5, $outputlangs->convToOutputCharset($com->lignes[$i]->ref), 0, 'C');
 
-					$pdf->SetXY (133, $curY );
-					$pdf->MultiCell(10, 5, $com->lignes[$i]->tva_tx, 0, 'C');
+					$pdf->SetXY (133, $curY);
+					$pdf->MultiCell(10, 5, $outputlangs->convToOutputCharset($com->lignes[$i]->tva_tx), 0, 'C');
 
-					$pdf->SetXY (145, $curY );
-					$pdf->MultiCell(10, 5, $com->lignes[$i]->qty, 0, 'C');
+					$pdf->SetXY (145, $curY);
+					$pdf->MultiCell(10, 5, $outputlangs->convToOutputCharset($com->lignes[$i]->qty), 0, 'C');
 
-					$pdf->SetXY (156, $curY );
+					$pdf->SetXY (156, $curY);
 					$pdf->MultiCell(18, 5, price($com->lignes[$i]->price), 0, 'R', 0);
 
-					$pdf->SetXY (174, $curY );
+					$pdf->SetXY (174, $curY);
 					$total = price($com->lignes[$i]->total_ht);
 					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 
-					$pdf->line(10, $curY, 200, $curY );
+					$pdf->line(10, $curY, 200, $curY);
 
 					if ($nexY > 240 && $i < $nblignes - 1)
 					{
-						$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 						$pdf->AddPage();
 						$nexY = $iniY;
-						$this->_pagehead($pdf, $com, 0, $outputlangs);
+						$this->_pagehead($pdf, $com,$outputlangs);
 						$pdf->SetTextColor(0,0,0);
 						$pdf->SetFont('Arial','', 10);
 					}
 				}
 
-				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $outputlangs);
 				/*
 				 *
 				 */
@@ -279,17 +280,17 @@ class pdf_edison extends ModelePDFCommandes
 		}
 		else
 		{
-			$this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
+			$this->error=$langs->transnoentities("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
 			return 0;
 		}
 			
-		$this->error=$outputlangs->transnoentities("ErrorUnknown");
+		$this->error=$langs->transnoentities("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
 	}
 
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
 	{
 		global $langs,$conf;
 		$langs->load("main");
@@ -297,19 +298,19 @@ class pdf_edison extends ModelePDFCommandes
 
 		$pdf->SetFont('Arial','',11);
 
-		$pdf->Text(30,$tab_top + 5,$langs->transnoentities("Designation"));
+		$pdf->Text(30,$tab_top + 5,$outputlangs->transnoentities("Designation"));
 
 		$pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-		$pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
+		$pdf->Text(134,$tab_top + 5,$outputlangs->transnoentities("VAT"));
 
 		$pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-		$pdf->Text(147,$tab_top + 5,$langs->transnoentities("Qty"));
+		$pdf->Text(147,$tab_top + 5,$outputlangs->transnoentities("Qty"));
 
 		$pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-		$pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
+		$pdf->Text(160,$tab_top + 5,$outputlangs->transnoentities("PriceU"));
 
 		$pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-		$pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
+		$pdf->Text(187,$tab_top + 5,$outputlangs->transnoentities("Total"));
 
 		//      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
@@ -319,10 +320,9 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->SetFont('Arial','',10);
 		$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
 		$pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
-
 	}
 
-	function _pagehead(&$pdf, $com)
+	function _pagehead(&$pdf, $com, $outputlangs)
 	{
 		global $conf,$langs,$mysoc;
 		$langs->load("orders");
@@ -364,7 +364,7 @@ class pdf_edison extends ModelePDFCommandes
 		if (defined("FAC_PDF_TEL"))
 		{
 			$pdf->SetFont('Arial','',10);
-			$pdf->MultiCell(76, 5, "T�l : ".FAC_PDF_TEL);
+			$pdf->MultiCell(76, 5, $outputlangs->trans("Tel")." : ".FAC_PDF_TEL);
 		}
 		if (defined("MAIN_INFO_SIREN"))
 		{
@@ -388,17 +388,17 @@ class pdf_edison extends ModelePDFCommandes
 		$client->fetch($com->socid);
 		$com->client = $client;
 		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96,5, $com->client->nom);
+		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($com->client->nom));
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY(102,$pdf->GetY());
-		$pdf->MultiCell(96,5, $com->client->adresse . "\n" . $com->client->cp . " " . $com->client->ville);
+		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($com->client->adresse) . "\n" . $outputlangs->convToOutputCharset($com->client->cp) . " " . $outputlangs->convToOutputCharset($com->client->ville));
 		$pdf->rect(100, 40, 100, 40);
 
 
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 88, "Date : " . dolibarr_print_date($com->date,'day',false,$outputlangs));
-		$pdf->Text(11, 94, $langs->transnoentities("Order")." ".$com->ref);
+		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($com->date,'day',false,$outputlangs));
+		$pdf->Text(11, 94, $outputlangs->transnoentities("Order")." ".$outputlangs->convToOutputCharset($com->ref));
 	}
 	
     /*

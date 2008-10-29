@@ -706,7 +706,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$outputlangs->load("dict");
 	
 	// Line of free text
-	$ligne=(! empty($conf->global->$paramfreetext))?$conf->global->$paramfreetext:"";
+	$ligne=(! empty($conf->global->$paramfreetext))?$outputlangs->convToOutputCharset($conf->global->$paramfreetext):"";
 
 	// First line of company infos
 
@@ -726,14 +726,14 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId1",$fromcompany->pays_code);
 		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
-		$ligne1.=($ligne1?" - ":"").$field.": ".$fromcompany->profid1;
+		$ligne1.=($ligne1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid1);
 	}
 	// Prof Id 2
 	if ($fromcompany->profid2)
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId2",$fromcompany->pays_code);
 		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
-		$ligne1.=($ligne1?" - ":"").$field.": ".$fromcompany->profid2;
+		$ligne1.=($ligne1?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid2);
 	}
 
 	// Second line of company infos
@@ -743,19 +743,19 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId3",$fromcompany->pays_code);
 		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
-		$ligne2.=($ligne2?" - ":"").$field.": ".$fromcompany->profid3;
+		$ligne2.=($ligne2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid3);
 	}
 	// Prof Id 4
 	if ($fromcompany->profid4)
 	{
 		$field=$outputlangs->transcountrynoentities("ProfId4",$fromcompany->pays_code);
 		if (eregi('\((.*)\)',$field,$reg)) $field=$reg[1];
-		$ligne2.=($ligne2?" - ":"").$field.": ".$fromcompany->profid4;
+		$ligne2.=($ligne2?" - ":"").$field.": ".$outputlangs->convToOutputCharset($fromcompany->profid4);
 	}
 	// IntraCommunautary VAT
 	if ($fromcompany->tva_intra != '')
 	{
-		$ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
+		$ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$outputlangs->convToOutputCharset($fromcompany->tva_intra);
 	}
 
 	$pdf->SetFont('Arial','',7);

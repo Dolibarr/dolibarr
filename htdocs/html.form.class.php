@@ -1896,7 +1896,7 @@ class Form
 						}
 						// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
 						print $obj->code . ' - ';
-						print ($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code?$langs->trans("JuridicalStatus".$obj->code):($obj->nom!='-'?$langs->convToOuptutCharset($obj->nom):''));
+						print ($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code?$langs->trans("JuridicalStatus".$obj->code):($obj->nom!='-'?$langs->convToOutputCharset($obj->nom):''));
 						print '</option>';
 					}
 					$i++;

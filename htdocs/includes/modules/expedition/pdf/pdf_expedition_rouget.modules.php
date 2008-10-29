@@ -113,10 +113,11 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 	/**
 	 *		\brief      Fonction g�n�rant le document sur le disque
-	 *		\param	    obj		Objet expedition � g�n�rer (ou id si ancienne methode)
-	 *		\return	    int     1=ok, 0=ko
+	 *		\param	    obj				Objet expedition � g�n�rer (ou id si ancienne methode)
+	 *		\param		outputlangs		Lang output object
+	 * 	 	\return	    int     		1=ok, 0=ko
 	 */
-	function write_file(&$obj, $outputlangs='')
+	function write_file(&$obj, $outputlangs)
 	{
 		global $user,$conf,$langs;
 
@@ -215,7 +216,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 						
 					// Description de la ligne produit
 					$libelleproduitservice=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
-					if ($this->expe->lignes[$i]->description&&$this->expe->lignes[$i]->description!=$com->lignes[$i]->libelle)
+					if ($this->expe->lignes[$i]->description && $this->expe->lignes[$i]->description!=$com->lignes[$i]->libelle)
 					{
 						if ($libelleproduitservice) $libelleproduitservice.="<br>";
 						$libelleproduitservice.=dol_htmlentitiesbr($this->expe->lignes[$i]->description,1);
@@ -235,14 +236,14 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 							else
 							$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
 
-							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
+							$libelleproduitservice=$prefix_prodserv.$outputlangs->convToOutputCharset($prodser->ref)." - ".$outputlangs->convToOutputCharset($libelleproduitservice);
 						}
 
 					}
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour g�rer multi-page
 
-					$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $libelleproduitservice, 0, 1);
+					$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetXY (160, $curY);
 					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_asked);
@@ -261,18 +262,18 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			}
 			else
 			{
-				$this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 				$langs->setPhpLang();	// On restaure langue session
 				return 0;
 			}
 		}
 		else
 		{
-			$this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
+			$this->error=$langs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
 			return 0;
 		}
-		$this->error=$outputlangs->transnoentities("ErrorUnknown");
+		$this->error=$langs->transnoentities("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
 		return 0;   // Erreur par defaut
 	}

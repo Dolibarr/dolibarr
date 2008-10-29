@@ -19,7 +19,7 @@
  */
 
 /**
-	    \file       htdocs/comm/action/rapport/rapport.pdf.php
+	    \file       htdocs/includes/modules/action/rapport.pdf.php
         \ingroup    commercial
 		\brief      Fichier de generation de PDF pour les rapports d'actions
 		\version    $Id$
@@ -34,7 +34,6 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_html.php");
         \class      CommActionRapport
 	    \brief      Classe permettant la generation des rapports d'actions
 */
-
 class CommActionRapport
 {
     var $db;
@@ -203,16 +202,16 @@ class CommActionRapport
                 $y0 = $pdf->GetY();
 
                 $pdf->SetXY(26, $y);
-                $pdf->MultiCell(32, $height, dolibarr_trunc($outputlangs->convToOuptutCharset($obj->societe),32), 0, 'L', 0);
+                $pdf->MultiCell(32, $height, dolibarr_trunc($outputlangs->convToOutputCharset($obj->societe),32), 0, 'L', 0);
                 $y1 = $pdf->GetY();
 
                 $pdf->SetXY(60,$y);
-                $pdf->MultiCell(32, $height, dolibarr_trunc($outputlangs->convToOuptutCharset($obj->libelle),32), 0, 'L', 0);
+                $pdf->MultiCell(32, $height, dolibarr_trunc($outputlangs->convToOutputCharset($obj->libelle),32), 0, 'L', 0);
                 $y2 = $pdf->GetY();
 
                 $pdf->SetXY(106,$y);
                 //$pdf->Cell(94, 4, eregi_replace('<br>',"\n",dolibarr_trunc($obj->note,150)), 0, 'L', 0);
-                $pdf->MultiCell(94, $height, $outputlangs->convToOuptutCharset($text), 0, 'L', 0);
+                $pdf->MultiCell(94, $height, $outputlangs->convToOutputCharset($text), 0, 'L', 0);
                 //$pdf->writeHTMLCell(dol_htmlentitiesbr($obj->note,1));
                 $y3 = $pdf->GetY();
                 

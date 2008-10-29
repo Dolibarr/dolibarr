@@ -43,7 +43,8 @@ class pdf_paiement extends FPDF
 		$langs->load("bills");
 		
 		$this->db = $db;
-
+		$this->description = $langs->transnoentities("ListOfCustomerPayments");
+		
 		// Dimension page pour format A4
 		$this->type = 'pdf';
 		$this->page_largeur = 210;
@@ -62,108 +63,14 @@ class pdf_paiement extends FPDF
 		
 	}
 	
-	/**	
-	\brief  Generate Header
-	\param  pdf pdf object
-	\param  page current page number
-	\param  pages number of pages
-	*/  
-	function Header(&$pdf, $page, $pages, $outputlangs)
-	{
-		global $langs;
-		
-		$title=$outputlangs->transnoentities("ListOfCustomerPayments");
-		$title.=' - '.dolibarr_print_date(dolibarr_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs);
-		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(76, 10, $title);
-		
-		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 16, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date(time(),"day",false,$outputlangs));
-		
-		$pdf->SetFont('Arial','',12);
-		$pdf->Text(11, 22, $outputlangs->transnoentities("Page")." : ".$page);
-		
-		$pdf->SetFont('Arial','',12);
-		
-		$pdf->Text(11,$this->tab_top + 6,'Date');
-		
-		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(42, $this->tab_top + 6, $outputlangs->transnoentities("PaymentMode"));
-		
-		$pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(82, $this->tab_top + 6, $outputlangs->transnoentities("Invoice"));
-		
-		$pdf->line(120, $this->tab_top, 120, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(122, $this->tab_top + 6, $outputlangs->transnoentities("AmountInvoice"));
-		
-		$pdf->line(160, $this->tab_top, 160, $this->tab_top + $this->tab_height + 10);
-		
-		$pdf->SetXY (160, $this->tab_top);
-		$pdf->MultiCell(40, 10, $outputlangs->transnoentities("AmountPayment"), 0, 'R');
-		
-		$pdf->line(10, $this->tab_top + 10, 200, $this->tab_top + 10 );
-
-		$pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
-	}
-
-
-	function Body(&$pdf, $page, $lines, $outputlangs)
-	{
-		$pdf->SetFont('Arial','', 9);
-		$oldprowid = 0;
-		$pdf->SetFillColor(220,220,220);
-		$yp = 0;
-		for ($j = 0 ; $j < sizeof($lines) ; $j++)
-		{
-			$i = $j;
-			if ($oldprowid <> $lines[$j][7])
-			{
-				if ($yp > 200)
-				{
-					$page++;
-					$pdf->AddPage();
-					$this->Header($pdf, $page, $pages);
-					$pdf->SetFont('Arial','', 9);
-					$yp = 0;
-				}
-				
-				$pdf->SetXY (10, $this->tab_top + 10 + $yp);
-				$pdf->MultiCell(30, $this->line_height, $lines[$j][1], 0, 'J', 1);
-				
-				$pdf->SetXY (40, $this->tab_top + 10 + $yp);
-				$pdf->MultiCell(80, $this->line_height, $lines[$j][2].' '.$lines[$j][3], 0, 'J', 1);
-				
-				$pdf->SetXY (120, $this->tab_top + 10 + $yp);
-				$pdf->MultiCell(40, $this->line_height, '', 0, 'J', 1);
-				
-				$pdf->SetXY (160, $this->tab_top + 10 + $yp);
-				$pdf->MultiCell(40, $this->line_height, $lines[$j][4], 0, 'R', 1);
-				$yp = $yp + 5;
-			}
-			
-			$pdf->SetXY (80, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(40, $this->line_height, $lines[$j][0], 0, 'J', 0);
-			
-			$pdf->SetXY (120, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(40, $this->line_height, $lines[$j][5], 0, 'J', 0);
-			
-			$pdf->SetXY (160, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(40, $this->line_height, $lines[$j][6], 0, 'R', 0);
-			$yp = $yp + 5;
-			
-			if ($oldprowid <> $lines[$j][7])
-			{
-				$oldprowid = $lines[$j][7];
-			}	
-		}
-	}
 	
 	/**
-		\brief  Fonction generant le rapport sur le disque
-		\param	_dir		repertoire
-		\param	month		mois du rapport
-		\param	year		annee du rapport
-	*/
+	 *	\brief  Fonction generant le rapport sur le disque
+	 *	\param	_dir		repertoire
+	 *	\param	month		mois du rapport
+	 *	\param	year		annee du rapport
+	 *	\param	outputlangs		Lang output object
+	 */
 	function write_file($_dir, $month, $year, $outputlangs)
 	{
 		global $user,$langs,$conf;
@@ -286,6 +193,103 @@ class pdf_paiement extends FPDF
 		$langs->setPhpLang();	// On restaure langue session
 		return 1;
 	}  
+
+	/**	
+	\brief  Generate Header
+	\param  pdf pdf object
+	\param  page current page number
+	\param  pages number of pages
+	*/  
+	function Header(&$pdf, $page, $pages, $outputlangs)
+	{
+		global $langs;
+		
+		$title=$outputlangs->transnoentities("ListOfCustomerPayments");
+		$title.=' - '.dolibarr_print_date(dolibarr_mktime(0,0,0,$this->month,1,$this->year),"%B %Y",false,$outputlangs);
+		$pdf->SetFont('Arial','B',12);
+		$pdf->Text(76, 10, $title);
+		
+		$pdf->SetFont('Arial','B',12);
+		$pdf->Text(11, 16, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date(time(),"day",false,$outputlangs));
+		
+		$pdf->SetFont('Arial','',12);
+		$pdf->Text(11, 22, $outputlangs->transnoentities("Page")." : ".$page);
+		
+		$pdf->SetFont('Arial','',12);
+		
+		$pdf->Text(11,$this->tab_top + 6,'Date');
+		
+		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
+		$pdf->Text(42, $this->tab_top + 6, $outputlangs->transnoentities("PaymentMode"));
+		
+		$pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
+		$pdf->Text(82, $this->tab_top + 6, $outputlangs->transnoentities("Invoice"));
+		
+		$pdf->line(120, $this->tab_top, 120, $this->tab_top + $this->tab_height + 10);
+		$pdf->Text(122, $this->tab_top + 6, $outputlangs->transnoentities("AmountInvoice"));
+		
+		$pdf->line(160, $this->tab_top, 160, $this->tab_top + $this->tab_height + 10);
+		
+		$pdf->SetXY (160, $this->tab_top);
+		$pdf->MultiCell(40, 10, $outputlangs->transnoentities("AmountPayment"), 0, 'R');
+		
+		$pdf->line(10, $this->tab_top + 10, 200, $this->tab_top + 10 );
+
+		$pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
+	}
+
+
+	function Body(&$pdf, $page, $lines, $outputlangs)
+	{
+		$pdf->SetFont('Arial','', 9);
+		$oldprowid = 0;
+		$pdf->SetFillColor(220,220,220);
+		$yp = 0;
+		for ($j = 0 ; $j < sizeof($lines) ; $j++)
+		{
+			$i = $j;
+			if ($oldprowid <> $lines[$j][7])
+			{
+				if ($yp > 200)
+				{
+					$page++;
+					$pdf->AddPage();
+					$this->Header($pdf, $page, $pages);
+					$pdf->SetFont('Arial','', 9);
+					$yp = 0;
+				}
+				
+				$pdf->SetXY (10, $this->tab_top + 10 + $yp);
+				$pdf->MultiCell(30, $this->line_height, $lines[$j][1], 0, 'J', 1);
+				
+				$pdf->SetXY (40, $this->tab_top + 10 + $yp);
+				$pdf->MultiCell(80, $this->line_height, $lines[$j][2].' '.$lines[$j][3], 0, 'J', 1);
+				
+				$pdf->SetXY (120, $this->tab_top + 10 + $yp);
+				$pdf->MultiCell(40, $this->line_height, '', 0, 'J', 1);
+				
+				$pdf->SetXY (160, $this->tab_top + 10 + $yp);
+				$pdf->MultiCell(40, $this->line_height, $lines[$j][4], 0, 'R', 1);
+				$yp = $yp + 5;
+			}
+			
+			$pdf->SetXY (80, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(40, $this->line_height, $lines[$j][0], 0, 'J', 0);
+			
+			$pdf->SetXY (120, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(40, $this->line_height, $lines[$j][5], 0, 'J', 0);
+			
+			$pdf->SetXY (160, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(40, $this->line_height, $lines[$j][6], 0, 'R', 0);
+			$yp = $yp + 5;
+			
+			if ($oldprowid <> $lines[$j][7])
+			{
+				$oldprowid = $lines[$j][7];
+			}	
+		}
+	}
+	
 }
 
 ?>

@@ -201,7 +201,7 @@ class ExportExcel extends ModeleExports
 			}
 			else
 			{
-				$newvalue=$outputlangs->convToOuptutCharset($newvalue);
+				$newvalue=$outputlangs->convToOutputCharset($newvalue);
 			}
 
 			if (eregi('^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',$newvalue))

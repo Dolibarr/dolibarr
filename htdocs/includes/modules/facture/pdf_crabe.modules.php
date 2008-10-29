@@ -299,7 +299,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gerer multi-page
 
 					// Description
-					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+					$pdf->writeHTMLCell($this->posxtva-$this->posxdesc-1, 3, $this->posxdesc-1, $curY, $outputlangs->convToOutputCharset($libelleproduitservice), 0, 1);
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 					$nexY = $pdf->GetY();
@@ -503,7 +503,7 @@ class pdf_crabe extends ModelePDFFactures
 		}
 		else
 		{
-            $this->error=$outputlangs->trans("ErrorSQL")." sql=".$sql;
+            $this->error=$this->db->lasterror();
 			dolibarr_syslog($this->db,$this->error);
             return -1;
 		}
@@ -563,7 +563,7 @@ class pdf_crabe extends ModelePDFFactures
         }
         else
         {
-            $this->error=$outputlangs->trans("ErrorSQL")." sql=".$sql;
+            $this->error=$this->db->lasterror();
 			dolibarr_syslog($this->db,$this->error);
             return -1;
         }
@@ -729,20 +729,20 @@ class pdf_crabe extends ModelePDFFactures
 		
 		                $pdf->SetFont('Arial','',8);
 		                $pdf->SetXY ($this->marges['g'], $cury+5);
-		                $pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
+		                $pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
 		                $pdf->SetXY ($this->marges['g']+18, $cury+5);
-		                $pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
+		                $pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_guichet), 0, 'C', 0);
 		                $pdf->SetXY ($this->marges['g']+36, $cury+5);
-		                $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
+		                $pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($account->number), 0, 'C', 0);
 		                $pdf->SetXY ($this->marges['g']+60, $cury+5);
-		                $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
+		                $pdf->MultiCell(13, 3, $outputlangs->convToOutputCharset($account->cle_rib), 0, 'C', 0);
 		
 		                $pdf->SetXY ($this->marges['g'], $cury+12);
-		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
 		                $pdf->SetXY ($this->marges['g'], $cury+22);
-		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("IbanPrefix").' : ' . $outputlangs->convToOutputCharset($account->iban_prefix), 0, 'L', 0);
 		                $pdf->SetXY ($this->marges['g'], $cury+25);
-		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("BIC").' : ' . $account->bic, 0, 'L', 0);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities("BIC").' : ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 		
 			            $posy=$pdf->GetY()+2;
 		            }
@@ -1008,7 +1008,7 @@ class pdf_crabe extends ModelePDFFactures
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'R');
+        $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
 
         $posy+=1;
         $pdf->SetFont('Arial','',10);
@@ -1022,7 +1022,7 @@ class pdf_crabe extends ModelePDFFactures
 	        $posy+=5;
 	        $pdf->SetXY(100,$posy);
 	        $pdf->SetTextColor(0,0,60);
-	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ReplacementByInvoice").' : '.$objectreplacing->ref, '', 'R');
+	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ReplacementByInvoice").' : '.$outputlangs->convToOutputCharset($objectreplacing->ref), '', 'R');
 		}
         if ($object->type == 1)
 	    {
@@ -1032,7 +1032,7 @@ class pdf_crabe extends ModelePDFFactures
 	        $posy+=5;
 	        $pdf->SetXY(100,$posy);
 	        $pdf->SetTextColor(0,0,60);
-	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$objectreplaced->ref, '', 'R');
+	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ReplacementInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
 		}
         if ($object->type == 2)
 	    {
@@ -1042,13 +1042,13 @@ class pdf_crabe extends ModelePDFFactures
 	        $posy+=5;
 	        $pdf->SetXY(100,$posy);
 	        $pdf->SetTextColor(0,0,60);
-	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$objectreplaced->ref, '', 'R');
+	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
 		}
 		
         $posy+=5;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dolibarr_print_date($object->date,"day"), '', 'R');
+        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dolibarr_print_date($object->date,"day",false,$outpulangs), '', 'R');
 
         if ($object->type != 2)
         {
@@ -1086,22 +1086,22 @@ class pdf_crabe extends ModelePDFFactures
             $carac_emetteur = '';
             if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;	// deprecated
             else {
-                $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->adresse;
-                $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->cp.' '.$this->emetteur->ville;
+                $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->adresse);
+                $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($this->emetteur->cp).' '.$outputlangs->convToOutputCharset($this->emetteur->ville);
             }
             $carac_emetteur .= "\n";
             // Tel
             if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
-            elseif ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$this->emetteur->tel;
+            elseif ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($this->emetteur->tel);
             // Fax
             if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
-            elseif ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$this->emetteur->fax;
+            elseif ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($this->emetteur->fax);
             // EMail
     		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
-            elseif ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$this->emetteur->email;
+            elseif ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($this->emetteur->email);
             // Web
     		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
-            elseif ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$this->emetteur->url;
+            elseif ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($this->emetteur->url);
 
             $pdf->SetFont('Arial','',9);
             $pdf->SetXY($this->marge_gauche+2,$posy+8);
@@ -1143,14 +1143,14 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$socname = $object->client->nom;
 				}
-				$pdf->MultiCell(96,4, $socname, 0, 'L');
+				$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($socname), 0, 'L');
 				
 				// Nom client
 				$carac_client = "\n".$object->contact->getFullName($outputlangs,1,1);
 
 				// Caracteristiques client
-				$carac_client.="\n".$object->contact->adresse;
-				$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->adresse);
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->contact->cp) . " " . $outputlangs->convToOutputCharset($object->contact->ville)."\n";
 				//Pays si different de l'emetteur
 				if ($this->emetteur->pays_code != $object->contact->pays_code)
 				{
@@ -1162,7 +1162,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Nom client
 				$pdf->SetXY(102,$posy+3);
 				$pdf->SetFont('Arial','B',11);
-				$pdf->MultiCell(96,4, $object->client->nom, 0, 'L');
+				$pdf->MultiCell(96,4, $outputlangs->convToOutputCharset($object->client->nom), 0, 'L');
 				
 				// Nom du contact facturation si c'est une societe
 				$arrayidcontact = $object->getIdContact('external','BILLING');
@@ -1177,8 +1177,8 @@ class pdf_crabe extends ModelePDFFactures
 				}
 
 				// Caracteristiques client
-				$carac_client.="\n".$object->client->adresse;
-				$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->adresse);
+				$carac_client.="\n".$outputlangs->convToOutputCharset($object->client->cp) . " " . $outputlangs->convToOutputCharset($object->client->ville)."\n";
 
 					//Pays si different de l'emetteur
 					if ($this->emetteur->pays_code != $object->client->pays_code)
@@ -1187,7 +1187,7 @@ class pdf_crabe extends ModelePDFFactures
 					}
 			}
 			// Numero TVA intracom
-			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
+			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($object->client->tva_intra);
 		  	$pdf->SetFont('Arial','',9);
 			$posy=$pdf->GetY()-9; //Auto Y coord readjust for multiline name
 			$pdf->SetXY(102,$posy+6);

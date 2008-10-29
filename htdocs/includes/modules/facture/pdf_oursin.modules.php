@@ -93,7 +93,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *		\param		outputlangs		Lang object for output language
 	 *		\return	    int     		1=ok, 0=ko
 	 */
-	function write_file($fac,$outputlangs='')
+	function write_file($fac,$outputlangs)
 	{
 		global $user,$langs,$conf;
 
@@ -209,7 +209,7 @@ class pdf_oursin extends ModelePDFFactures
 						// Affichage dur�e si il y en a une
 						$codeproduitservice.=" (".$outputlangs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start,'',false,$outputlangs)." ".$langs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end,'',false,$outputlangs).")";
 					}
-					$pdf->MultiCell(108, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
+					$pdf->MultiCell(108, 5, $outputlangs->convToOutputCharset($fac->lignes[$i]->desc).$codeproduitservice, 0, 'J');
 
 					$nexY = $pdf->GetY();
 
@@ -283,7 +283,7 @@ class pdf_oursin extends ModelePDFFactures
 						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo').' '.$account->proprio.' '.$langs->transnoentities('SendTo').':',0,'L',0);
 						$pdf->SetXY ($this->marges['g'], 230);
 						$pdf->SetFont('Arial','',8);
-						$pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
+						$pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
 					}
 				}
 
@@ -326,11 +326,11 @@ class pdf_oursin extends ModelePDFFactures
 						$pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
 
 						$pdf->SetXY ($this->marges['g'], $cury+14);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
 						$pdf->SetXY ($this->marges['g'], $cury+19);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("IbanPrefix").' : ' . $outputlangs->convToOutputCharset($account->iban_prefix), 0, 'L', 0);
 						$pdf->SetXY ($this->marges['g'], $cury+24);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BIC").' : ' . $account->bic, 0, 'L', 0);
+						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BIC").' : ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 					}
 				}
 

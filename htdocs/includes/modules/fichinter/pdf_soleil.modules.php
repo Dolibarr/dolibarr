@@ -40,7 +40,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 	/**
 	 \brief      Constructeur
-	 \param	    db		Handler acc�s base de donn�e
+	 \param	    db		Handler acces base de donnee
 	 */
 	function pdf_soleil($db=0)
 	{
@@ -48,7 +48,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 		$this->db = $db;
 		$this->name = 'soleil';
-		$this->description = "Modele de fiche d'intervention standard";
+		$this->description = $langs->trans("DocumentModelStandard");
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -74,9 +74,10 @@ class pdf_soleil extends ModelePDFFicheinter
 	}
 
 	/**
-	 \brief      Fonction g�n�rant la fiche d'intervention sur le disque
-	 \param	    fichinter		Object fichinter
-	 \return	    int     		1=ok, 0=ko
+	 *	\brief      Fonction g�n�rant la fiche d'intervention sur le disque
+	 *	\param	    fichinter		Object fichinter
+	 *	\param		outputlangs		Lang output object
+	 *	\return	    int     		1=ok, 0=ko
 	 */
 	function write_file($fichinter,$outputlangs)
 	{
@@ -199,28 +200,28 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetTextColor(0,0,60);
 				$pdf->SetFont('Arial','B',11);
 				if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-				else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
+				else $pdf->MultiCell(80, 4, $outputlangs->convToOutputCharset($mysoc->nom), 0, 'L');
 
 				// Caracteristiques emetteur
 				$carac_emetteur = '';
 				if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
 				else {
-					$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->adresse;
-					$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->cp.' '.$mysoc->ville;
+					$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->adresse);
+					$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($mysoc->cp).' '.$outputlangs->convToOutputCharset($mysoc->ville);
 				}
 				$carac_emetteur .= "\n";
 				// Tel
 				if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
-				elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$mysoc->tel;
+				elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$outputlangs->convToOutputCharset($mysoc->tel);
 				// Fax
 				if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
-				elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$mysoc->fax;
+				elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($mysoc->fax);
 				// EMail
 				if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
-				elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$mysoc->email;
+				elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($mysoc->email);
 				// Web
 				if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
-				elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$mysoc->url;
+				elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($mysoc->url);
 
 				$pdf->SetFont('Arial','',9);
 				$pdf->SetXY($this->marge_gauche+2,$posy+8);
@@ -234,16 +235,16 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetFont('Arial','B',12);
 				$fichinter->fetch_client();
 				$pdf->SetXY(102,42);
-				$pdf->MultiCell(86,5, $fichinter->client->nom);
+				$pdf->MultiCell(86,5, $outputlangs->convToOutputCharset($fichinter->client->nom));
 				$pdf->SetFont('Arial','B',11);
 				$pdf->SetXY(102,$pdf->GetY());
-				$pdf->MultiCell(66,5, $fichinter->client->adresse . "\n" . $fichinter->client->cp . " " . $fichinter->client->ville);
+				$pdf->MultiCell(66,5, $outputlangs->convToOutputCharset($fichinter->client->adresse) . "\n" . $outputlangs->convToOutputCharset($fichinter->client->cp) . " " . $outputlangs->convToOutputCharset($fichinter->client->ville));
 				$pdf->rect(100, 40, 100, 40);
 
 
 				$pdf->SetTextColor(0,0,100);
 				$pdf->SetFont('Arial','B',14);
-				$pdf->Text(11, 94, $outputlangs->trans("InterventionCard")." : ".$fichinter->ref);
+				$pdf->Text(11, 94, $outputlangs->trans("InterventionCard")." : ".$outputlangs->convToOutputCharset($fichinter->ref));
 
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetTextColor(0,0,0);

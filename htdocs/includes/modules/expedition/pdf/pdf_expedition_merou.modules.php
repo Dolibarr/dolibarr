@@ -71,10 +71,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 
 	/**
 	 *		\brief      Fonction generant le document sur le disque
-	 *		\param	    obj		Objet expedition a generer (ou id si ancienne methode)
-	 *		\return	    int     1=ok, 0=ko
+	 *		\param	    obj				Objet expedition a generer (ou id si ancienne methode)
+	 *		\param		outputlangs		Lang output object
+	 * 	 	\return	    int     		1=ok, 0=ko
 	 */
-	function write_file(&$obj, $outputlangs='')
+	function write_file(&$obj, $outputlangs)
 	{
 		global $user,$conf,$langs;
 
@@ -345,7 +346,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("RefSending").': '.$exp->ref, '' , 'L');
+		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("RefSending").': '.$outputlangs->convToOutputCharset($exp->ref), '' , 'L');
 		//$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Num Commande
 		$Yoff = $Yoff+4;
@@ -353,7 +354,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("RefOrder").': '.$exp->commande->ref, '' , 'L');
+		$pdf->MultiCell(0, 8, $outputlangs->transnoentities("RefOrder").': '.$outputlangs->convToOutputCharset($exp->commande->ref), '' , 'L');
 
 		$Xoff = 115;
 		//$this->Code39($Xoff+43, $Yoff+1, $exp->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
@@ -427,7 +428,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($blSocX2,$blSocY+20);
 		$pdf->SetFont('Arial','B',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer").$livreur->fullname, '' , 'L');
+		$pdf->MultiCell(50, 8, $outputlangs->transnoentities("Deliverer")." ".$outputlangs->convToOutputCharset($livreur->fullname), '' , 'L');
 
 		/**********************************/
 		//Emplacement Informations Expediteur (Client)
@@ -446,24 +447,24 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Nom Client
 		$pdf->SetXY($blExpX,$Yoff+$blSocY);
 		$pdf->SetFont('Arial','B',7);
-		$pdf->MultiCell($blW,3, $this->expediteur->nom, 0, 'C');
+		$pdf->MultiCell($blW,3, $outputlangs->convToOutputCharset($this->expediteur->nom), 0, 'C');
 		$pdf->SetFont('Arial','',7);
 		$blSocY+=3;
 		//Adresse Client
 		//Gestion des Retours chariots
-		$Out=split("\n",$this->expediteur->adresse);
+		$Out=split("\n",$outputlangs->convToOutputCharset($this->expediteur->adresse));
 		for ($i=0;$i<count($Out);$i++) {
 			$pdf->SetXY($blExpX,$Yoff+$blSocY);
 			$pdf->MultiCell($blW,5,urldecode($Out[$i]),  0, 'L');
 			$blSocY+=3;
 		}
 		$pdf->SetXY($blExpX,$Yoff+$blSocY);
-		$pdf->MultiCell($blW,5, $this->expediteur->cp . " " . $this->expediteur->ville,  0, 'L');
+		$pdf->MultiCell($blW,5, $outputlangs->convToOutputCharset($this->expediteur->cp) . " " . $outputlangs->convToOutputCharset($this->expediteur->ville),  0, 'L');
 		$blSocY+=4;
 		//Tel Client
 		$pdf->SetXY($blExpX,$Yoff+$blSocY);
 		$pdf->SetFont('Arial','',7);
-		$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Tel")." : ".$this->expediteur->tel, 0, 'L');
+		$pdf->MultiCell($blW,3, $outputlangs->transnoentities("Tel")." : ".$outputlangs->convToOutputCharset($this->expediteur->tel), 0, 'L');
 
 		/**********************************/
 		//Emplacement Informations Destinataire (Contact livraison)
@@ -480,19 +481,19 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		//Nom Client
 		$pdf->SetXY($blDestX,$Yoff+$blSocY);
 		$pdf->SetFont('Arial','B',7);
-		$pdf->MultiCell($blW,3, $this->destinataire->fullname, 0, 'C');
+		$pdf->MultiCell($blW,3, $outputlangs->convToOutputCharset($this->destinataire->fullname), 0, 'C');
 		$pdf->SetFont('Arial','',7);
 		$blSocY+=3;
 		//Adresse Client
 		//Gestion des Retours chariots
-		$Out=split("\n",$this->destinataire->address);
+		$Out=split("\n",$outputlangs->convToOutputCharset($this->destinataire->address));
 		for ($i=0;$i<count($Out);$i++) {
 			$pdf->SetXY($blDestX,$Yoff+$blSocY);
 			$pdf->MultiCell($blW,5,urldecode($Out[$i]),  0, 'L');
 			$blSocY+=3;
 		}
 		$pdf->SetXY($blDestX,$Yoff+$blSocY);
-		$pdf->MultiCell($blW,5, $this->destinataire->cp . " " . $this->destinataire->ville,  0, 'L');
+		$pdf->MultiCell($blW,5, $outputlangs->convToOutputCharset($this->destinataire->cp) . " " . $outputlangs->convToOutputCharset($this->destinataire->ville),  0, 'L');
 		$blSocY+=4;
 		//Tel Client
 		$pdf->SetXY($blDestX,$Yoff+$blSocY);

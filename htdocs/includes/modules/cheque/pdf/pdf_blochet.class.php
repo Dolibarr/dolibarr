@@ -68,7 +68,89 @@ class BordereauChequeBlochet extends FPDF
 		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;
 	}
 
-    /**
+	/**
+	 *	\brief  Fonction generant le rapport sur le disque
+	 *	\param	_dir			Directory
+	 *	\param	number			Number
+	 *	\param	outputlangs		Lang output object
+	 */
+	function write_file($_dir, $number, $outputlangs)
+	{
+		global $user,$conf,$langs,$mysoc;
+
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		// Force output charset to ISO, because, FPDF expect text encoded in ISO
+		$outputlangs->charset_output='ISO-8859-1';
+		
+		$outputlangs->load("main");
+		$outputlangs->load("companies");
+		$outputlangs->load("bills");
+		$outputlangs->load("products");
+
+		$outputlangs->setPhpLang();
+
+		$dir = $_dir . "/".get_exdir($number);
+
+		if (! is_dir($dir))
+		{
+			$result=create_exdir($dir);
+
+			if ($result < 0)
+			{
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+				return -1;
+			}
+		}
+
+		$month = sprintf("%02d",$month);
+		$year = sprintf("%04d",$year);
+		$_file = $dir . "bordereau-00".$number.".pdf"; //Todo: rï¿½paration provisoire, ajout de 2 zero
+
+		// Protection et encryption du pdf
+		if ($conf->global->PDF_SECURITY_ENCRYPTION)
+		{
+			require_once(FPDFI_PATH.'fpdi_protection.php');
+			$pdf = new FPDI_Protection('P','mm','A4');
+			$pdfrights = array('print'); // Ne permet que l'impression du document
+			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+			$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
+			$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+		}
+		else
+		{
+			require_once(FPDFI_PATH.'fpdi.php');
+			$pdf=new FPDI('P','mm',$this->format);
+		}
+
+		$pdf->Open();
+
+
+		$pages = intval($lignes / $this->line_per_page);
+
+		if (($lignes % $this->line_per_page)>0)
+		{
+			$pages++;
+		}
+
+		if ($pages == 0)
+		{
+			// force to build at least one page if report has no lines
+			$pages = 1;
+		}
+
+		$pdf->AddPage();
+
+		$this->Header($pdf, 1, $pages, $outputlangs);
+
+		$this->Body($pdf, 1, $outputlangs);
+
+		$pdf->Output($_file);
+		if (! empty($conf->global->MAIN_UMASK))
+			@chmod($file, octdec($conf->global->MAIN_UMASK));
+	}
+
+	
+	/**
      *      \brief      Renvoi le dernier message d'erreur de création de propale
      */
     function pdferror()
@@ -199,86 +281,6 @@ class BordereauChequeBlochet extends FPDF
 		}
 	}
 	
-	/**
-	 *	\brief  Fonction generant le rapport sur le disque
-	 *	\param	_dir			Directory
-	 *	\param	number			Number
-	 *	\param	outputlangs		Lang output object
-	 */
-	function write_file($_dir, $number, $outputlangs)
-	{
-		global $user,$conf,$langs,$mysoc;
-
-		if (! is_object($outputlangs)) $outputlangs=$langs;
-		// Force output charset to ISO, because, FPDF expect text encoded in ISO
-		$outputlangs->charset_output='ISO-8859-1';
-		
-		$outputlangs->load("main");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-
-		$outputlangs->setPhpLang();
-
-		$dir = $_dir . "/".get_exdir($number);
-
-		if (! is_dir($dir))
-		{
-			$result=create_exdir($dir);
-
-			if ($result < 0)
-			{
-				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
-				return -1;
-			}
-		}
-
-		$month = sprintf("%02d",$month);
-		$year = sprintf("%04d",$year);
-		$_file = $dir . "bordereau-00".$number.".pdf"; //Todo: rï¿½paration provisoire, ajout de 2 zero
-
-		// Protection et encryption du pdf
-		if ($conf->global->PDF_SECURITY_ENCRYPTION)
-		{
-			require_once(FPDFI_PATH.'fpdi_protection.php');
-			$pdf = new FPDI_Protection('P','mm','A4');
-			$pdfrights = array('print'); // Ne permet que l'impression du document
-			$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-			$pdfownerpass = NULL; // Mot de passe du propriï¿½taire, crï¿½ï¿½ alï¿½atoirement si pas dï¿½fini
-			$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-		}
-		else
-		{
-			require_once(FPDFI_PATH.'fpdi.php');
-			$pdf=new FPDI('P','mm',$this->format);
-		}
-
-		$pdf->Open();
-
-
-		$pages = intval($lignes / $this->line_per_page);
-
-		if (($lignes % $this->line_per_page)>0)
-		{
-			$pages++;
-		}
-
-		if ($pages == 0)
-		{
-			// force to build at least one page if report has no lines
-			$pages = 1;
-		}
-
-		$pdf->AddPage();
-
-		$this->Header($pdf, 1, $pages, $outputlangs);
-
-		$this->Body($pdf, 1, $outputlangs);
-
-		$pdf->Output($_file);
-		if (! empty($conf->global->MAIN_UMASK))
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
-	}
 }
 
 ?>

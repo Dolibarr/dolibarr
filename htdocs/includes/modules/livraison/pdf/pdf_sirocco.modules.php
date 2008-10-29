@@ -80,12 +80,12 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 
 	/**
-		\brief      Fonction g�n�rant le bon de livraison sur le disque
-		\param	    delivery		Object livraison � g�n�rer
-		\param		outputlangs		Output language
-		\return	    int         	1 if OK, <=0 if KO
+	 *	\brief      Fonction g�n�rant le bon de livraison sur le disque
+	 *	\param	    delivery		Object livraison � g�n�rer
+	 *	\param		outputlangs		Lang output object
+	 *	\return	    int         	1 if OK, <=0 if KO
 	 */
-	function write_file($delivery,$outputlangs='')
+	function write_file($delivery,$outputlangs)
 	{
 		global $user,$conf,$langs;
 
@@ -216,7 +216,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
 					$pdf->SetXY (10, $curY );
 
-					$pdf->MultiCell(20, 5, $delivery->lignes[$i]->ref, 0, 'C');
+					$pdf->MultiCell(20, 5, $outputlangs->convToOutputCharset($delivery->lignes[$i]->ref), 0, 'C');
 
 					// \TODO Field not yet saved in database
 					//$pdf->SetXY (133, $curY );
@@ -316,24 +316,24 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		{
 			$pdf->SetTextColor(0,0,200);
 			$pdf->SetFont('Arial','B',14);
-			$pdf->MultiCell(76, 8, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+			$pdf->MultiCell(76, 8, $outputlangs->convToOutputCharset(MAIN_INFO_SOCIETE_NOM), 0, 'L');
 		}
 
 		$pdf->SetTextColor(70,70,170);
 		if (defined("FAC_PDF_ADRESSE"))
 		{
 			$pdf->SetFont('Arial','',12);
-			$pdf->MultiCell(76, 5, FAC_PDF_ADRESSE);
+			$pdf->MultiCell(76, 5, $outputlangs->convToOutputCharset(FAC_PDF_ADRESSE));
 		}
 		if (defined("FAC_PDF_TEL"))
 		{
 			$pdf->SetFont('Arial','',10);
-			$pdf->MultiCell(76, 5, "Tel : ".FAC_PDF_TEL);
+			$pdf->MultiCell(76, 5, "Tel : ".$outputlangs->convToOutputCharset(FAC_PDF_TEL));
 		}
 		if (defined("MAIN_INFO_SIREN"))
 		{
 			$pdf->SetFont('Arial','',10);
-			$pdf->MultiCell(76, 5, "SIREN : ".MAIN_INFO_SIREN);
+			$pdf->MultiCell(76, 5, "SIREN : ".$outputlangs->convToOutputCharset(MAIN_INFO_SIREN));
 		}
 
 		if (defined("FAC_PDF_INTITULE2"))
@@ -341,7 +341,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 			$pdf->SetXY(100,5);
 			$pdf->SetFont('Arial','B',14);
 			$pdf->SetTextColor(0,0,200);
-			$pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
+			$pdf->MultiCell(100, 10, $outputlangs->convToOutputCharset(FAC_PDF_INTITULE2), '' , 'R');
 		}
 		/*
 		 * Adresse Client
@@ -363,23 +363,23 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 		$delivery->client = $client;
 
 		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96,5, $delivery->client->nom);
+		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($delivery->client->nom));
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY(102,47);
-		$pdf->MultiCell(96,5, $delivery->client->adresse . "\n" . $delivery->client->cp . " " . $delivery->client->ville);
+		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($delivery->client->adresse) . "\n" . $outputlangs->convToOutputCharset($delivery->client->cp) . " " . $outputlangs->convToOutputCharset($delivery->client->ville));
 		$pdf->rect(100, 40, 100, 40);
 
 
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text(11, 88, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"day",false,$outputlangs));
-		$pdf->Text(11, 94, $outputlangs->transnoentities("DeliveryOrder")." ".$delivery->ref);
+		$pdf->Text(11, 94, $outputlangs->transnoentities("DeliveryOrder")." ".$outputlangs->convToOutputCharset($delivery->ref));
 
 		$pdf->SetFont('Arial','B',9);
 		$commande = new Commande ($this->db);
 		if ($commande->fetch($delivery->commande_id) >0)
 		{
-			$pdf->Text(11, 98, $outputlangs->transnoentities("RefOrder")." ".$commande->ref);
+			$pdf->Text(11, 98, $outputlangs->transnoentities("RefOrder")." ".$outputlangs->convToOutputCharset($commande->ref));
 		}
 	}
 

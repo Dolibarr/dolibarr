@@ -498,7 +498,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 
 	if (! is_object($outputlangs)) $outputlangs=$langs;
 
-	return $outputlangs->convToOuptutCharset($ret,$pagecodefrom);
+	return $outputlangs->convToOutputCharset($ret,$pagecodefrom);
 }
 
 

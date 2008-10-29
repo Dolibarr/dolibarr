@@ -340,7 +340,7 @@ class Translate {
             $newstr=ereg_replace('>','__gt__',$newstr);
             $newstr=ereg_replace('"','__quot__',$newstr);
 
-			$newstr=$this->convToOuptutCharset($newstr);	// Convert string to this->charset_output
+			$newstr=$this->convToOutputCharset($newstr);	// Convert string to this->charset_output
 			
             // Cryptage en html de la chaine
 			// $newstr est une chaine stockee en memoire au format $this->charset_output
@@ -368,7 +368,7 @@ class Translate {
 				$newstr=$this->getLabelFromKey($db,$reg[1],'c_currencies','code_iso','label');
 				//print "xxx".$key."-".$value."\n";
 			}
-			return $this->convToOuptutCharset($newstr);
+			return $this->convToOutputCharset($newstr);
 		}
     }
 
@@ -393,7 +393,7 @@ class Translate {
             // Si la traduction est disponible
             $newstr=sprintf($this->tab_translate[$newstr],$param1,$param2,$param3,$param4);
         }
-        return $this->convToOuptutCharset($newstr);
+        return $this->convToOutputCharset($newstr);
     }
 
 
@@ -429,7 +429,7 @@ class Translate {
      *  \param		pagecodefrom	Page code of src string
      *  \return     string         	chaine traduite
      */
-    function convToOuptutCharset($str,$pagecodefrom='UTF-8')
+    function convToOutputCharset($str,$pagecodefrom='UTF-8')
     {
     	if ($pagecodefrom == 'ISO-8859-1' && $this->charset_output == 'UTF-8')  $str=utf8_encode($str);
 		if ($pagecodefrom == 'UTF-8' && $this->charset_output == 'ISO-8859-1')	$str=utf8_decode($str);

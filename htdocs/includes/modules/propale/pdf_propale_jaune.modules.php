@@ -84,12 +84,12 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 
 	/**
-	 \brief      Fonction g�n�rant la propale sur le disque
-	 \param	    propale			Objet propal
-		\param		outputlangs		Lang object for output language
-		\return	    int     		1=ok, 0=ko
-		*/
-	function write_file($propale,$outputlangs='')
+	 *	\brief      Fonction g�n�rant la propale sur le disque
+	 *	\param	    propale			Objet propal
+	 *	\param		outputlangs		Lang object for output language
+	 *	\return	    int     		1=ok, 0=ko
+	 */
+	function write_file($propale,$outputlangs)
 	{
 		global $user,$langs,$conf;
 
@@ -194,12 +194,12 @@ class pdf_propale_jaune extends ModelePDFPropales
 					$curY = $nexY;
 
 					$pdf->SetXY (30, $curY );
-					$pdf->MultiCell(102, 5, $propale->lignes[$i]->desc, 0, 'J', 0);
+					$pdf->MultiCell(102, 5, $outputlangs->convToOutputCharset($propale->lignes[$i]->desc), 0, 'J', 0);
 
 					$nexY = $pdf->GetY();
 
 					$pdf->SetXY (10, $curY );
-					$pdf->MultiCell(20, 5, $propale->lignes[$i]->ref, 0, 'C', 0);
+					$pdf->MultiCell(20, 5, $outputlangs->convToOutputCharset($propale->lignes[$i]->ref), 0, 'C', 0);
 
 					$pdf->SetXY (132, $curY );
 					$pdf->MultiCell(12, 5, $propale->lignes[$i]->tva_tx, 0, 'C', 0);
@@ -344,7 +344,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		{
 	  $pdf->SetTextColor(0,0,200);
 	  $pdf->SetFont('Arial','B',14);
-	  $pdf->MultiCell(76, 8, FAC_PDF_INTITULE, 0, 'L');
+	  $pdf->MultiCell(76, 8, $outputlangs->convToOutputCharset(FAC_PDF_INTITULE), 0, 'L');
 		}
 
 		$pdf->SetTextColor(70,70,170);
@@ -352,19 +352,19 @@ class pdf_propale_jaune extends ModelePDFPropales
 		{
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',12);
-	  $pdf->MultiCell(76, 5, FAC_PDF_ADRESSE);
+	  $pdf->MultiCell(76, 5, $outputlangs->convToOutputCharset(FAC_PDF_ADRESSE));
 		}
 		if (defined("FAC_PDF_TEL"))
 		{
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, $outputlangs->trans("Tel")." : ".FAC_PDF_TEL);
+	  $pdf->MultiCell(76, 5, $outputlangs->trans("Tel")." : ".$outputlangs->convToOutputCharset(FAC_PDF_TEL));
 		}
 		if (defined("MAIN_INFO_SIREN"))
 		{
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(76, 5, $outputlangs->trans("SIREN")." : ".MAIN_INFO_SIREN);
+	  $pdf->MultiCell(76, 5, $outputlangs->trans("SIREN")." : ".$outputlangs->convToOutputCharset(MAIN_INFO_SIREN));
 		}
 		$pdf->rect(10, 40, 80, 40);
 
@@ -380,10 +380,10 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->SetFont('Arial','B',12);
 		$propale->fetch_client();
 		$pdf->SetXY(102,42);
-		$pdf->MultiCell(96,5, $propale->client->nom);
+		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($propale->client->nom));
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY(102,$pdf->GetY());
-		$pdf->MultiCell(96,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
+		$pdf->MultiCell(96,5, $outputlangs->convToOutputCharset($propale->client->adresse) . "\n" . $outputlangs->convToOutputCharset($propale->client->cp) . " " . $outputlangs->convToOutputCharset($propale->client->ville));
 		$pdf->rect(100, 40, 100, 40);
 
 		$pdf->SetTextColor(200,0,0);
@@ -393,7 +393,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 		$pdf->rect(110, 90, 90, 10);
 
 		$pdf->SetXY(10,90);
-		$pdf->MultiCell(110, 10, $outputlangs->transnoentities("Ref")." : ".$propale->ref);
+		$pdf->MultiCell(110, 10, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($propale->ref));
 		$pdf->SetXY(110,90);
 		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($propale->date,'day',false,$outputlangs));
 	}
