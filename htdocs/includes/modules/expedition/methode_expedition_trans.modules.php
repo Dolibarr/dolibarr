@@ -35,6 +35,11 @@ Class methode_expedition_trans extends methode_expedition
 		$this->name = "Transporteur";
 		$this->description = $langs->trans("GenericTransport");
 	}
+	
+	Function provider_url_status($tracking_number)
+  {
+  	return '';
+  }
 }
 
 ?>

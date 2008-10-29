@@ -34,6 +34,11 @@ Class methode_expedition_enl extends methode_expedition
 		$this->code = "ENL";
 		$this->description = $langs->trans("Enlevement");
 	}
+	
+	Function provider_url_status($tracking_number)
+  {
+  	return '';
+  }
 }
 
 ?>

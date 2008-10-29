@@ -318,7 +318,8 @@ if ($_GET["action"] == 'create')
 			print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
 			print '<td colspan="3">';
 			$expe->fetch_delivery_methods();
-			$html->select_array("expedition_method_id",$expe->meths,'',0,0,0,0,"",1);
+			$expe->GetIdOfDefault();
+			$html->select_array("expedition_method_id",$expe->meths,$expe->default_method_id,0,0,0,0,"",1);
 			print "</td></tr>\n";
 
 			// Tracking number
@@ -690,7 +691,11 @@ else
 
 			// Tracking Number
 			print '<tr><td>'.$langs->trans("TrackingNumber").'</td>';
-			print '<td>'.$expedition->tracking_number.'</td><td colspan="2">'.$expedition->tracking_url."</td>\n";
+			print '<td>'.$expedition->tracking_number.'</td>';
+			if ($expedition->tracking_url)
+			{
+				print '<td colspan="2">'.$expedition->tracking_url."</td>\n";
+			}
 			print '</tr>';
 
 			print "</table>\n";

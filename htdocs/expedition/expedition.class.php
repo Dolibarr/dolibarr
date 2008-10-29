@@ -773,6 +773,28 @@ class Expedition extends CommonObject
 			}
 		}
 	}
+	
+	/*
+	 Get id of default expedition method
+	 */
+	function GetIdOfDefault()
+	{
+		global $conf;
+
+		$sql = "SELECT em.rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expedition_methode as em";
+		$sql.= " WHERE em.code = '".strtoupper($conf->global->EXPEDITION_ADDON)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			if ($obj = $this->db->fetch_object($resql))
+			{
+				$this->default_method_id = $obj->rowid;
+			}
+		}
+	}
+	
 	/*
 	 Get tracking url status
 	 */
@@ -786,9 +808,9 @@ class Expedition extends CommonObject
 		if ($resql)
 		{
 			if ($obj = $this->db->fetch_object($resql))
-	  {
-	  	$code = $obj->code;
-	  }
+			{
+				$code = $obj->code;
+			}
 		}
 
 		if ($code) {
@@ -796,8 +818,17 @@ class Expedition extends CommonObject
 			require_once(DOL_DOCUMENT_ROOT."/includes/modules/expedition/methode_expedition_".strtolower($code).".modules.php");
 			$obj = new $classe;
 			$url = $obj->provider_url_status($this->tracking_number);
-			$this->tracking_url = sprintf('<a target="_blank" href="%s">url</a>',$url,$url);
-		} else {
+			if ($url)
+			{
+				$this->tracking_url = sprintf('<a target="_blank" href="%s">url</a>',$url,$url);
+			}
+			else
+			{
+				$this->tracking_url = '';
+			}
+		}
+		else
+		{
 			$this->tracking_url = '';
 		}
 	}
