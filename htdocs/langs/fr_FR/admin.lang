@@ -964,7 +964,7 @@ OptionVatDefaultDesc=L'exigibilité de la TVA est:<br>- sur livraison pour les bi
 OptionVatDebitOptionDesc=L'exigibilité de la TVA est:<br>- sur livraison pour les biens<br>- sur facturation (débit) pour les services
 ##### Agenda #####
 AgendaSetup=Configuration du module actions et agenda
-PasswordTogetVCalExport=Clé pour autoriser export vcal
+PasswordTogetVCalExport=Clé pour autoriser lien export
 ##### ClickToDial #####
 ClickToDialDesc=Ce module permet d'ajouter un petit picto a coté des numéros de téléphones des contacts. Un clic sur ce picto provoque l'appel de l'URL définie dans ce paramétrage. Ceci permet de provoquer des appels à un serveur de téléphonie depuis Dolibarr qui peut alors composer le numéro sur un system SIP par exemple.
 ##### CashDesk #####
