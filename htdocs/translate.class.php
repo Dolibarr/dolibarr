@@ -424,10 +424,10 @@ class Translate {
 
     
 	/**
-     *  \brief      Convert a string into output charset (this->charset_output)
-     *  \param      str            	chaine a convertir
+     *  \brief      Convert a string into output charset (this->charset_output that should be defined to conf->character_set_client)
+     *  \param      str            	String to convert
      *  \param		pagecodefrom	Page code of src string
-     *  \return     string         	chaine traduite
+     *  \return     string         	Converted string
      */
     function convToOutputCharset($str,$pagecodefrom='UTF-8')
     {

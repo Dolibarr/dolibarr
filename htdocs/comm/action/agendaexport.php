@@ -103,15 +103,15 @@ if ($format == 'ical' || $format == 'vcal')
 	$result=$agenda->build_exportfile($format,$type,0,$filename,$filters);
 	if ($result >= 0)
 	{
-		$encoding='UTF-8';
 		$attachment = true;
 		$type='text/calendar';
 		//$type='text/plain';		// OK
 		//$attachment = false;		// OK
 		
-		if ($encoding)   header('Content-Encoding: '.$encoding);
-		if ($type)       header('Content-Type: '.$type);
-		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+		$outputencoding='UTF-8';
+		if ($outputencoding)   	header('Content-Encoding: '.$outputencoding);
+		if ($type)       		header('Content-Type: '.$type);
+		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 		
 		// Ajout directives pour resoudre bug IE
 		//header('Cache-Control: Public, must-revalidate');
@@ -132,15 +132,15 @@ if ($format == 'rss')
 	$result=$agenda->build_exportfile($format,$type,0,$filename,$filters);
 	if ($result >= 0)
 	{
-		$encoding='iso-8859-1';
 		$attachment = false;
 		$type='application/rss+xml';
 		//$type='text/plain';		// OK
 		//$attachment = false;		// OK
 		
-		if ($encoding)   header('Content-Encoding: '.$encoding);
-		if ($type)       header('Content-Type: '.$type);
-		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+		$outputencoding='UTF-8';
+		if ($outputencoding)   	header('Content-Encoding: '.$outputencoding);
+		if ($type)       		header('Content-Type: '.$type);
+		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 		
 		// Ajout directives pour resoudre bug IE
 		//header('Cache-Control: Public, must-revalidate');

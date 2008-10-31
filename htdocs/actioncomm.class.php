@@ -547,18 +547,18 @@ class ActionComm
 
 	
     /**
-    		\brief      Export fichier cal depuis base webcalendar
-			\param		format			'ical' or 'vcal'
-			\param		type			'event' or 'journal'
-			\param		cachedelay		Do not rebuild file if date older than cachedelay seconds	
-			\param		filename		Force filename
-			\param		filters			Array of filters
-    		\return     int     		<0 if error, nb of events in new file if ok
-    */
+     *		\brief      Export events from database into a cal file.
+	 *		\param		format			'ical' or 'vcal'
+	 *		\param		type			'event' or 'journal'
+	 *		\param		cachedelay		Do not rebuild file if date older than cachedelay seconds	
+	 *		\param		filename		Force filename
+	 *		\param		filters			Array of filters
+     *		\return     int     		<0 if error, nb of events in new file if ok
+     */
 	function build_exportfile($format,$type,$cachedelay,$filename,$filters)
 	{
 		global $conf,$langs,$dolibarr_main_url_root;
-		
+
 		require_once (DOL_DOCUMENT_ROOT ."/lib/xcal.lib.php");
 
 		dolibarr_syslog("ActionComm::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".sizeof($filters), LOG_DEBUG);
@@ -592,12 +592,12 @@ class ActionComm
 			$eventarray=array();
 			
 			$sql = "SELECT a.id,";
-			$sql.= " ".$this->db->pdate("a.datep")." as datep,";
-			$sql.= " ".$this->db->pdate("a.datep2")." as datep2,";
-			//$sql.= " ".$this->db->pdate("a.datea")." as datea,";
-			//$sql.= " ".$this->db->pdate("a.datea2")." as datea2,";
+			$sql.= " a.datep,";
+			$sql.= " a.datep2,";
+			//$sql.= " datea,";
+			//$sql.= " datea2,";
 			$sql.= " a.durationp, a.durationa,";
-			$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
+			$sql.= " a.datec, tms as datem,";
 			$sql.= " a.note, a.label, a.fk_action as type_id,";
 			$sql.= " a.fk_soc,";
 			$sql.= " a.fk_user_author, a.fk_user_mod,";
@@ -644,13 +644,15 @@ class ActionComm
 					$sql.= " AND a.fk_user_done = ".$userforfilter->id;
 				}
 			}
-			$sql.= " AND a.datep != 'null' ";	// To exclude corrupted events and avoid errors in lightning/sunbird import
+			$sql.= " AND a.datep IS NOT NULL";		// To exclude corrupted events and avoid errors in lightning/sunbird import
+			//$sql.= " AND a.datep != 'null'";	// To exclude corrupted events and avoid errors in lightning/sunbird import
 			$sql.= " ORDER by datep";
 
 			dolibarr_syslog("ActionComm::build_exportfile select events sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
+				// Note: Output of sql request is encoded in $conf->character_set_client
 				while ($obj=$this->db->fetch_object($resql))
 				{
 					$qualified=true;
@@ -662,19 +664,20 @@ class ActionComm
 					//$datestart=$obj->datea?$obj->datea:$obj->datep;
 					//$dateend=$obj->datea2?$obj->datea2:$obj->datep2;
 					//$duration=$obj->durationa?$obj->durationa:$obj->durationp;
-					$datestart=$obj->datep;
-					$dateend=$obj->datep2;
+					$datestart=dolibarr_stringtotime($obj->datep);
+					//print $datestart.'x'; exit;
+					$dateend=dolibarr_stringtotime($obj->datep2);
 					$duration=$obj->durationp;
-					$event['summary']=$obj->label;
-					$event['desc']=$obj->note;
+					$event['summary']=$langs->convToOutputCharset($obj->label);
+					$event['desc']=$langs->convToOutputCharset($obj->note);
 					$event['startdate']=$datestart;
 					$event['duration']=$duration;	// Not required with type 'journal'
 					$event['enddate']=$dateend;		// Not required with type 'journal'
 					$event['author']=$obj->fk_user_author;
 					$event['priority']=$obj->priority;
-					$event['location']=$obj->location;
+					$event['location']=$langs->convToOutputCharset($obj->location);
 					$event['transparency']='TRANSPARENT';		// TRANSPARENT or OPAQUE
-					$event['category']=$obj->libelle;	// libelle type action
+					$event['category']=$langs->convToOutputCharset($obj->libelle);	// libelle type action
 					$url=$dolibarr_main_url_root;
 					if (! eregi('\/$',$url)) $url.='/';
 					$url.='comm/action/fiche.php?id='.$obj->id;
@@ -695,23 +698,24 @@ class ActionComm
 			
 			$langs->load("agenda");
 			
-			// Write file
+			// Define title and desc
 			$more='';
-			if ($login)  $more=$langs->transnoentities("User").' '.$login;
-			if ($logina) $more=$langs->transnoentities("ActionsAskedBy").' '.$logina;
-			if ($logint) $more=$langs->transnoentities("ActionsToDoBy").' '.$logint;
-			if ($logind) $more=$langs->transnoentities("ActionsDoneBy").' '.$logind;
+			if ($login)  $more=$langs->transnoentities("User").' '.$langs->convToOutputCharset($login);
+			if ($logina) $more=$langs->transnoentities("ActionsAskedBy").' '.$langs->convToOutputCharset($logina);
+			if ($logint) $more=$langs->transnoentities("ActionsToDoBy").' '.$langs->convToOutputCharset($logint);
+			if ($logind) $more=$langs->transnoentities("ActionsDoneBy").' '.$langs->convToOutputCharset($logind);
 			if ($more)
 			{ 
-				$title='Dolibarr actions - '.$more;
-				$desc=$more.' - built by Dolibarr';
+				$title=$langs->convToOutputCharset('Dolibarr actions - ').$more;
+				$desc=$more.$langs->convToOutputCharset(' - built by Dolibarr');
 			}
 			else
 			{
-				$title='Dolibarr actions';
-				$desc=$langs->transnoentities('ListOfActions').' - built by Dolibarr';
+				$title=$langs->convToOutputCharset('Dolibarr actions');
+				$desc=$langs->transnoentities('ListOfActions').$langs->convToOutputCharset(' - built by Dolibarr');
 			}
 			
+			// Write file
 			if ($format == 'ical') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
 			if ($format == 'vcal') $result=build_calfile($format,$title,$desc,$eventarray,$outputfile);
 			if ($format == 'rss')  $result=build_rssfile($format,$title,$desc,$eventarray,$outputfile);

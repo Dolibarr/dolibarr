@@ -24,25 +24,32 @@
 */
 
 /**
-	\brief		Build a file from an array of events
-	\param		format				'vcal' or 'ical'
-	\param		title				Title of export
-	\param		desc				Description of export
-	\param		events_array		Array of events ('eid','startdate','duration','enddate','title','summary','category','email','url','desc','author')
-	\param		outputfile			Output file
-	\param		filter				Filter
-	\return		int					<0 if ko, Nb of events in file if ok
-*/
+ *	\brief		Build a file from an array of events
+ *	\param		format				'vcal' or 'ical'
+ *	\param		title				Title of export
+ *	\param		desc				Description of export
+ *	\param		events_array		Array of events ('eid','startdate','duration','enddate','title','summary','category','email','url','desc','author')
+ *	\param		outputfile			Output file
+ *	\param		filter				Filter
+ *	\return		int					<0 if ko, Nb of events in file if ok
+ *	\remarks	All input params and data must be encoded in $conf->charset_output
+ */
 function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$filter='')
 {
+	global $langs;
+	
 	dolibarr_syslog("xcal.lib.php::build_calfile Build cal file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) return -1;
 	
+	// Note: A cal file is an UTF8 encoded file
 	$calfileh=fopen($outputfile,'w');
 	if ($calfileh)
 	{
 		$now=mktime();
+		
+		$encoding='';
+		if ($format == 'vcal') $encoding='ENCODING=QUOTED-PRINTABLE:';
 		
 		// Print header
 		fwrite($calfileh,"BEGIN:VCALENDAR\n");
@@ -50,8 +57,8 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 		fwrite($calfileh,"METHOD:PUBLISH\n");
 		fwrite($calfileh,"PRODID:-//DOLIBARR ".DOL_VERSION."//EN\n");
 		fwrite($calfileh,"CALSCALE:GREGORIAN\n");
-		fwrite($calfileh,"X-WR-CALNAME:".utf8_encode($title)."\n");
-		fwrite($calfileh,"X-WR-CALDESC:".utf8_encode($desc)."\n");
+		fwrite($calfileh,"X-WR-CALNAME:".$encoding.format_cal($format,$title)."\n");
+		fwrite($calfileh,"X-WR-CALDESC:".$encoding.format_cal($format,$desc)."\n");
 		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
 		
 		foreach ($events_array as $date => $event)
@@ -92,9 +99,6 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				$description=format_cal($format,$description);
 				$category=format_cal($format,$category);
 				$location=format_cal($format,$location);
-				
-				$encoding='';
-				if ($format == 'vcal') $encoding='ENCODING=QUOTED-PRINTABLE:';
 				
 				// Output the vCard/iCal VEVENT object
 				if ($type == 'event')
@@ -212,15 +216,16 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 }
 
 /**
-	\brief		Build a file from an array of events
-	\param		format				'rss'
-	\param		title				Title of export
-	\param		desc				Description of export
-	\param		events_array		Array of events ('uid','startdate','summary','url','desc','author','category')
-	\param		outputfile			Output file
-	\param		filter				Filter
-	\return		int					<0 if ko, Nb of events in file if ok
-*/
+ *	\brief		Build a file from an array of events
+ *	\param		format				'rss'
+ *	\param		title				Title of export
+ *	\param		desc				Description of export
+ *	\param		events_array		Array of events ('uid','startdate','summary','url','desc','author','category')
+ *	\param		outputfile			Output file
+ *	\param		filter				Filter
+ *	\return		int					<0 if ko, Nb of events in file if ok
+ *	\remarks	All input data must be encoded in $conf->charset_output
+ */
 function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$filter='')
 {
 	global $user,$conf,$langs;
@@ -236,7 +241,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 		$date=date("r");
 
 		// Print header
-		$html='<?xml version="1.0" encoding="iso-8859-1"?>';
+		$html='<?xml version="1.0" encoding="'.$langs->charset_output.'"?>';
 		fwrite($fichier, $html);
 		fwrite($fichier, "\n");
 		$html='<rss version="2.0">';
@@ -320,11 +325,21 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 }
 
 
-
+/**
+ * 	\brief		Encode for cal export
+ * 	\param		format		vcal or ical
+ * 	\param 		string		string to encode
+ * 	\return		string		string encoded
+ * 	\remarks	string must be encoded in conf->character_set_client
+ */
 function format_cal($format,$string)
 {
-	$newstring=$string;
+	global $conf;
 	
+	if ($conf->character_set_client == 'ISO-8859-1') $newstring=utf8_encode($string);
+	else $newstring=$string;
+
+	// Now newstring is always UTF8 string
 	if ($format == 'vcal')
 	{
 		$newstring=QPEncode($newstring);
@@ -343,30 +358,50 @@ function format_cal($format,$string)
 }
 
 /**
-	\brief		Cut string after 75 chars. Add CRLF+Space.
-	\param		string		String to convert
-	\return		string 		String converted
+ *	\brief		Cut string after 75 chars. Add CRLF+Space.
+ *	\param		string		String to convert
+ *	\return		string 		String converted
+ *	\remarks	line must be encoded in UTF-8
 */
 function CalEncode($line)
 {
 	$out = '';
 
 	$newpara = '';
-
-	for ($j = 0; $j <= strlen($line) - 1; $j++)
+	
+	// If mb_ functions exists, it's better to use them
+	if (function_exists('mb_strlen'))
 	{
-		$char = substr ( $line, $j, 1 );
-
-		if ( ( strlen ( $newpara ) + strlen ( $char ) ) >= 75 )
+		for ($j = 0; $j <= mb_strlen($line, 'UTF-8') - 1; $j++)
 		{
-			$out .= $newpara . "\r\n ";	// CRLF + Space for cal
-			$newpara = '';
+			$char = mb_substr ( $line, $j, 1, 'UTF-8' );	// Take char at position $j
+	
+			if ( ( mb_strlen ( $newpara, 'UTF-8') + mb_strlen ( $char, 'UTF-8' ) ) >= 75 )
+			{
+				$out .= $newpara . "\r\n ";	// CRLF + Space for cal
+				$newpara = '';
+			}
+			$newpara .= $char;
 		}
-		$newpara .= $char;
+		$out .= $newpara;
 	}
-	$out .= $newpara;
-
-	return utf8_encode(trim($out));
+	else
+	{
+		for ($j = 0; $j <= strlen($line) - 1; $j++)
+		{
+			$char = substr ( $line, $j, 1 );	// Take char at position $j
+	
+			if ( ( strlen ( $newpara ) + strlen ( $char ) ) >= 75 )
+			{
+				$out .= $newpara . "\r\n ";	// CRLF + Space for cal
+				$newpara = '';
+			}
+			$newpara .= $char;
+		}
+		$out .= $newpara;
+	}
+	
+	return trim($out);
 }
 
 
