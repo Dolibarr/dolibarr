@@ -908,7 +908,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 				$outputlangs = new Translate("",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
-			facture_pdf_create($db, $fac->id, $fac->modelpdf, $outputlangs);
+			facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
 	else
 	{
