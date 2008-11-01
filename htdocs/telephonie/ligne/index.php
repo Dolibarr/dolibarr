@@ -30,7 +30,7 @@ $sortorder = $_GET["sortorder"];
 llxHeader('','Telephonie - Lignes');
 
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0) 
 {
@@ -54,7 +54,7 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Recherche ligne</td>';
 print "</tr>\n";
 print "<tr $bc[1]>";
-print '<td>Numéro <input name="search_ligne" size="12"></td></tr>';
+print '<td>Numï¿½ro <input name="search_ligne" size="12"></td></tr>';
 print '</table>';
 
 print '<br />';
@@ -179,7 +179,7 @@ if ($resql)
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td>'.min(10,$num).' Dernières lignes</td>';
+  print '<td>'.min(10,$num).' Derniï¿½res lignes</td>';
   print '<td>Client (Agence/Filiale)</td>';
   print '<td align="center">Statut</td>';
 
@@ -204,7 +204,7 @@ if ($resql)
       print img_file();      
       print '</a>&nbsp;';
 
-      print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
+      print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
 
       $nom = stripslashes($obj->nom);
       if (strlen(stripslashes($obj->nom)) > 20)

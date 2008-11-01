@@ -27,7 +27,7 @@ $sortfield = $_GET["sortfield"];
 
 llxHeader('','Telephonie - Ligne - Liste');
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0) 
 {
@@ -121,7 +121,7 @@ if ($result)
   print_liste_field_titre("Ligne","groupe.php","l.ligne");
   print_liste_field_titre("Client","groupe.php","s.nom");
 
-  print '<td>Client facturé</td>';
+  print '<td>Client facturï¿½</td>';
   print '<td align="center">Statut</td>';
 
   print_liste_field_titre("Remise LMN","groupe.php","l.remise","","",' align="center"');
@@ -162,7 +162,7 @@ if ($result)
       print img_file();      
       print '</a>&nbsp;';
 
-      print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
+      print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
 
       print '<td>'.$obj->nom.'</td>';
       print '<td>'.$obj->nom_facture.'</td>';

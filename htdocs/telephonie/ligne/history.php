@@ -55,7 +55,7 @@ llxHeader("","","Historique Ligne");
 
       if (!$client_comm->perm_read)
 	{
-	  print "Lecture non authorisée";
+	  print "Lecture non authorisï¿½e";
 	}
 
 
@@ -99,7 +99,7 @@ llxHeader("","","Historique Ligne");
       
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	      print '<tr><td width="20%">Numéro</td><td colspan="3">'.dolibarr_print_phone($ligne->numero).'</td></tr>';
+	      print '<tr><td width="20%">Numï¿½ro</td><td colspan="3">'.dolibarr_print_phone($ligne->numero,0,0,true).'</td></tr>';
 	      	     
 	      $client = new Societe($db, $ligne->client_id);
 	      $client->fetch($ligne->client_id);
@@ -115,7 +115,7 @@ llxHeader("","","Historique Ligne");
 
 	      if ($ligne->user_creat)
 		{
-		  print '<tr><td width="20%">Créé par</td><td colspan="3">';
+		  print '<tr><td width="20%">Crï¿½ï¿½ par</td><td colspan="3">';
 
 		  $cuser = new User($db, $ligne->user_creat);
 		  $cuser->fetch();
@@ -125,7 +125,7 @@ llxHeader("","","Historique Ligne");
 		}
 	      if ($ligne->user_commande)
 		{
-		  print '<tr><td width="20%">Commandé par</td><td colspan="3">';
+		  print '<tr><td width="20%">Commandï¿½ par</td><td colspan="3">';
 
 		  $couser = new User($db, $ligne->user_commande);
 		  $couser->fetch();
@@ -220,7 +220,7 @@ llxHeader("","","Historique Ligne");
 	    {
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr class="liste_titre"><td>Mode</td><td>Resultat</td>';
-	      print '<td align="center">Date MeS</td><td>Résil</td></td><td>Commentaire</td><td align="center">D.T. / Fichier</td>';
+	      print '<td align="center">Date MeS</td><td>Rï¿½sil</td></td><td>Commentaire</td><td align="center">D.T. / Fichier</td>';
 	      print "</tr>\n";
 	      $var=True;
 	      

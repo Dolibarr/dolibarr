@@ -99,7 +99,7 @@ if($_GET["socid"])
     dolibarr_fiche_head($head, 'links', $langs->trans("ThirdParty"));
     
     /*
-     * Fiche société en mode visu
+     * Fiche sociï¿½tï¿½ en mode visu
      */
     
     print '<table class="border" width="100%">';
@@ -118,8 +118,8 @@ if($_GET["socid"])
     
     print "<tr><td>".$langs->trans('Country')."</td><td colspan=\"3\">".$soc->pays."</td></tr>";
     
-    print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
-    print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
+    print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel,$soc->pays_code,0,$soc->id).'</td>';
+    print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax,$soc->pays_code,0,$soc->id).'</td></tr>';
     
     print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
     if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
@@ -132,7 +132,7 @@ if($_GET["socid"])
     print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td>'.$soc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3">'.$soc->capital.' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
     
-    // Société mère
+    // Societe mere
     print '<tr><td>'.$langs->trans("ParentCompany").'</td><td colspan="3">';
     if ($soc->parent)
     {
@@ -258,7 +258,7 @@ if($_GET["socid"])
                     }
     
                     print '</td>';
-                    // Lien Sélectionner
+                    // Lien Sï¿½lectionner
                     print '<td align="center"><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->socid.'">'.$langs->trans("Select").'</a>';
                     print '</td>';
     

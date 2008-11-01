@@ -107,8 +107,10 @@ $form=new Form($db);
 $sql = "SELECT s.rowid as socid, s.nom,";
 $sql.= " p.rowid as cidp, p.name, p.firstname, p.email,";
 $sql.= " p.phone, p.phone_mobile, p.fax, p.fk_pays, p.priv,";
-$sql.= " ".$db->pdate("p.tms")." as tms";
+$sql.= " ".$db->pdate("p.tms")." as tms,";
+$sql.= " cp.code as pays_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as cp ON cp.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 $sql.= " WHERE 1=1 ";
@@ -312,17 +314,14 @@ if ($result)
 		
 		// Phone
         print '<td>';
-    	if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-        	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.dolibarr_print_phone($obj->phone,$obj->pays_code).'</a>';
-		else
-			print dolibarr_print_phone($obj->phone,$obj->pays_code);
+		print dolibarr_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->socid);
     	print '</td>';
 		
         if ($_GET["view"] == 'phone')
         {
-            print '<td>'.dolibarr_print_phone($obj->phone_mobile,$obj->fk_pays).'&nbsp;</td>';
+            print '<td>'.dolibarr_print_phone($obj->phone_mobile,$obj->pays_code,$obj->cidp,$obj->socid).'&nbsp;</td>';
 
-            print '<td>'.dolibarr_print_phone($obj->fax,$obj->fk_pays).'&nbsp;</td>';
+            print '<td>'.dolibarr_print_phone($obj->fax,$obj->pays_code,$obj->cidp,$obj->socid).'&nbsp;</td>';
         }
         else
         {
@@ -332,7 +331,7 @@ if ($result)
             }
             elseif (! ValidEmail($obj->email))
             {
-                print "Email Invalide !";
+                print "Bad email";
             }
             else {
                 print '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>';

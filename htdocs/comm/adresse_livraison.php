@@ -161,7 +161,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 	if ($user->rights->societe->creer)
   {
   	/*
-     * Fiche adresse de livraison en mode création
+     * Fiche adresse de livraison en mode crï¿½ation
      */
 
 		$livraison = new AdresseLivraison($db);
@@ -362,7 +362,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 else
 {
 	/*
-	* Fiche société en mode visu
+	* Fiche sociï¿½tï¿½ en mode visu
 	*/
 	$livraison = new AdresseLivraison($db);
 	$result=$livraison->fetch($socid);
@@ -413,9 +413,9 @@ else
 	
 			print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$livraison->lignes[$i]->pays.'</td>';
 			
-			print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($livraison->lignes[$i]->tel).'</td></tr>';
+			print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($livraison->lignes[$i]->tel,$livraison->lignes[$i]->pays_code,0,$livraison->socid).'</td></tr>';
         
-      print '<tr><td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($livraison->lignes[$i]->fax).'</td></tr>';
+      print '<tr><td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($livraison->lignes[$i]->fax,$livraison->lignes[$i]->pays_code,0,$livraison->socid).'</td></tr>';
 			
 			print '</td></tr>';
 	

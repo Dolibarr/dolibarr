@@ -29,7 +29,7 @@ $sortfield = $_GET["sortfield"];
 
 llxHeader('','Telephonie - Ligne - Liste');
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0) 
 {
@@ -131,7 +131,7 @@ if ($resql)
       print img_file();      
       print '</a>&nbsp;';
 
-      print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->numero_ligne)."</a></td>\n";
+      print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->numero_ligne,0,0,true)."</a></td>\n";
 
       print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("Fiche Compta"),"bill")."</a> ";
 

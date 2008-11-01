@@ -68,7 +68,7 @@ if ($_GET["id"])
 
   if (!$soc->perm_read)
     {
-      print "Lecture non authorisée";
+      print "Lecture non authorisï¿½e";
     }
 
   if ( $result == 1 && $soc->perm_read)
@@ -148,8 +148,8 @@ if ($_GET["id"])
       print $client_comm->nom.'</a></td><td>'.$client_comm->code_client;
       print '</td></tr>';
       
-      print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
-      print '<td>Facturée : '.$ligne->facturable.'</td></tr>';
+      print '<tr><td width="20%">Numï¿½ro</td><td>'.dolibarr_print_phone($ligne->numero,0,0,true).'</td>';
+      print '<td>Facturï¿½e : '.$ligne->facturable.'</td></tr>';
       
       $client = new Societe($db, $ligne->client_id);
       $client->fetch($ligne->client_id);

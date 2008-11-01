@@ -49,7 +49,7 @@ if ($result == 1)
 
 if (!$client_comm->perm_read)
 {
-  print "Lecture non authorisée";
+  print "Lecture non authorisï¿½e";
 }
 
 if ($result == 1 && $client_comm->perm_read)
@@ -72,7 +72,7 @@ if ($result == 1 && $client_comm->perm_read)
       
       print '<table class="border" width="100%">';
 
-      print '<tr><td width="20%">Numéro</td><td colspan="2">'.dolibarr_print_phone($ligne->numero).'</td></tr>';
+      print '<tr><td width="20%">Numï¿½ro</td><td colspan="2">'.dolibarr_print_phone($ligne->numero,0,0,true).'</td></tr>';
 	      	     
       $client = new Societe($db, $ligne->client_id);
       $client->fetch($ligne->client_id);
@@ -88,7 +88,7 @@ if ($result == 1 && $client_comm->perm_read)
 
       if ($ligne->user_creat)
 	{
-	  print '<tr><td width="20%">Créé par</td><td colspan="2">';
+	  print '<tr><td width="20%">Crï¿½ï¿½ par</td><td colspan="2">';
 
 	  $cuser = new User($db, $ligne->user_creat);
 	  $cuser->fetch();
@@ -98,7 +98,7 @@ if ($result == 1 && $client_comm->perm_read)
 	}
       if ($ligne->user_commande)
 	{
-	  print '<tr><td width="20%">Commandé par</td><td colspan="2">';
+	  print '<tr><td width="20%">Commandï¿½ par</td><td colspan="2">';
 
 	  $couser = new User($db, $ligne->user_commande);
 	  $couser->fetch();

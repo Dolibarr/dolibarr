@@ -153,7 +153,7 @@ if ($_GET["action"] == 'delete' && $user->rights->telephonie->tarif->client_modi
     }
 }
 
-llxHeader("","Téléphonie - Fiche Tarif client");
+llxHeader("","Tï¿½lï¿½phonie - Fiche Tarif client");
 
 if ($cancel == $langs->trans("Cancel"))
 {
@@ -172,7 +172,7 @@ if ($_GET["id"])
 
   if (!$soc->perm_read)
     {
-      print "Lecture non authorisée";
+      print "Lecture non authorisï¿½e";
     }
 
   if ( $result == 1 && $soc->perm_read)
@@ -209,8 +209,8 @@ if ($_GET["id"])
 	  
 	  print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
 	  
-	  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
-	  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
+	  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel,$soc->pays_code,0,$soc->id).'</td>';
+	  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax,$soc->pays_code,0,$soc->id).'</td></tr>';
 	  	  
 	  print "</table>\n<br />\n";
 
@@ -219,7 +219,7 @@ if ($_GET["id"])
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  
-	  print '<tr class="liste_titre"><td width="15%" valign="center">Tarif (coût en euros par minutes)';
+	  print '<tr class="liste_titre"><td width="15%" valign="center">Tarif (coï¿½t en euros par minutes)';
 	  print '</td><td align="center">Temporel</td><td align="center">Fixe</td>';
 	  if ($user->rights->telephonie->tarif->client_modifier)
 	    {

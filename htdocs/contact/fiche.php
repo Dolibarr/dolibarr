@@ -23,7 +23,7 @@
 /**
  *       \file       htdocs/contact/fiche.php
  *       \ingroup    societe
- *       \brief      Onglet général d'un contact
+ *       \brief      Onglet gï¿½nï¿½ral d'un contact
  *       \version    $Id$
  */
 
@@ -268,7 +268,7 @@ if ($user->rights->societe->contact->creer)
 		// Company
 		if ($socid)
 		{
-			// On remplit avec le numéro de la société par défaut
+			// On remplit avec le numï¿½ro de la sociï¿½tï¿½ par dï¿½faut
 			if (strlen(trim($contact->phone_pro)) == 0)
 			{
 				$contact->phone_pro = $objsoc->tel;
@@ -526,11 +526,11 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print $contact->pays;
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dolibarr_print_phone($contact->phone_pro,$objsoc->pays_code).'</td>';
-	print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dolibarr_print_phone($contact->phone_perso,$objsoc->pays_code).'</td></tr>';
+	print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dolibarr_print_phone($contact->phone_pro,$contact->pays_code,$contact->id,$contact->socid).'</td>';
+	print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dolibarr_print_phone($contact->phone_perso,$contact->pays_code,$contact->id,$contact->socid).'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dolibarr_print_phone($contact->phone_mobile,$objsoc->pays_code).'</td>';
-	print '<td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($contact->fax,$objsoc->pays_code).'</td></tr>';
+	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dolibarr_print_phone($contact->phone_mobile,$contact->pays_code,$contact->id,$contact->socid).'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($contact->fax,$contact->pays_code,$contact->id,$contact->socid).'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("EMail").'</td><td>';
 	if ($contact->email && ! ValidEmail($contact->email))

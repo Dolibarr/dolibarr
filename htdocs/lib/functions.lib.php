@@ -712,42 +712,61 @@ function dolibarr_print_object_info($object)
 }
 
 /**
- \brief      Formatage des num�ros de telephone en fonction du format d'un pays
- \param	    phone			Num�ro de telephone a formater
- \param	    country			Pays selon lequel formatter
- \return     string			Num�ro de t�l�phone format�
+ *	\brief      Format phone numbers according to country
+ *	\param	    phone			Phone number to format
+ *	\param	    country			Country to use for formatting
+ * 	\param		cid				Id of contact if known
+ * 	\param		socid			Id of third party if known
+ * 	\param		nolinks			true means no HTML links is added
+ *	\return     string			Formated phone number
  */
-function dolibarr_print_phone($phone,$country="FR")
+function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=false)
 {
-	$phone=trim($phone);
-	if (! $phone) { return $phone; }
+	global $conf,$user;
 
+	$phone = ereg_replace("[ .-]","",trim($phone));
+	if (empty($phone)) { return ''; }
+
+	$newphone=$phone;
 	if (strtoupper($country) == "FR")
 	{
 		// France
-		if (strlen($phone) == 10) {
-			return substr($phone,0,2)."&nbsp;".substr($phone,2,2)."&nbsp;".substr($phone,4,2)."&nbsp;".substr($phone,6,2)."&nbsp;".substr($phone,8,2);
+		if (strlen($newphone) == 10) {
+			$newphone=substr($newphone,0,2)."&nbsp;".substr($newphone,2,2)."&nbsp;".substr($newphone,4,2)."&nbsp;".substr($newphone,6,2)."&nbsp;".substr($newphone,8,2);
 		}
-		elseif (strlen($phone) == 7)
+		elseif (strlen($newphone) == 7)
 		{
 
-			return substr($phone,0,3)."&nbsp;".substr($phone,3,2)."&nbsp;".substr($phone,5,2);
+			$newphone=substr($newphone,0,3)."&nbsp;".substr($newphone,3,2)."&nbsp;".substr($newphone,5,2);
 		}
-		elseif (strlen($phone) == 9)
+		elseif (strlen($newphone) == 9)
 		{
-			return substr($phone,0,2)."&nbsp;".substr($phone,2,3)."&nbsp;".substr($phone,5,2)."&nbsp;".substr($phone,7,2);
+			$newphone=substr($newphone,0,2)."&nbsp;".substr($newphone,2,3)."&nbsp;".substr($newphone,5,2)."&nbsp;".substr($newphone,7,2);
 		}
-		elseif (strlen($phone) == 11)
+		elseif (strlen($newphone) == 11)
 		{
-			return substr($phone,0,3)."&nbsp;".substr($phone,3,2)."&nbsp;".substr($phone,5,2)."&nbsp;".substr($phone,7,2)."&nbsp;".substr($phone,9,2);
+			$newphone=substr($newphone,0,3)."&nbsp;".substr($newphone,3,2)."&nbsp;".substr($newphone,5,2)."&nbsp;".substr($newphone,7,2)."&nbsp;".substr($newphone,9,2);
 		}
-		elseif (strlen($phone) == 12)
+		elseif (strlen($newphone) == 12)
 		{
-			return substr($phone,0,4)."&nbsp;".substr($phone,4,2)."&nbsp;".substr($phone,6,2)."&nbsp;".substr($phone,8,2)."&nbsp;".substr($phone,10,2);
+			$newphone=substr($newphone,0,4)."&nbsp;".substr($newphone,4,2)."&nbsp;".substr($newphone,6,2)."&nbsp;".substr($newphone,8,2)."&nbsp;".substr($newphone,10,2);
 		}
 	}
 
-	return $phone;
+	if (empty($nolinks))
+	{
+		if (($cid || $socid) && $conf->agenda->enabled && $user->rights->agenda->myactions->create)
+		{
+			$newphone='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode=AC_TEL&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.$newphone.'</a>';
+		}
+		$clicktodiallink=dol_phone_link($phone);
+		if ($clicktodiallink) 
+		{
+			$newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>'.$clicktodiallink.'</td></tr></table>';
+		}
+	}
+	
+	return $newphone;
 }
 
 
@@ -778,11 +797,11 @@ function dol_phone_link($phone,$option=0)
 	//if (! empty($conf->global->CLICKTODIAL_URL))
 	if ($conf->clicktodial->enabled)
 	{
-		$phone=trim($phone);
-		$url = $conf->global->CLICKTODIAL_URL;
-		$url.= "?login=".urlencode($user->clicktodial_login)."&password=".urlencode($user->clicktodial_password);
-		$url.= "&caller=".urlencode($user->clicktodial_poste)."&called=".urlencode(trim($phone));
-		$link.='<a href="URL_DEFINED_IN_CLICKTODIAL_MODULE" onclick="newpopup(\''.$url.'\',\'\'); return false;">'.img_phone("default",0).'</a>';
+		// Cleaning phone number
+		$phone = ereg_replace("[ .-]","",trim($phone));
+		
+		$url = sprintf($conf->global->CLICKTODIAL_URL, urlencode($phone), urlencode($user->clicktodial_poste), urlencode($user->clicktodial_login), urlencode($user->clicktodial_password));
+		$link.='<a href="'.$url.'">'.img_phone("default",0).'</a>';
 	}
 	return $link;
 }
@@ -2584,7 +2603,7 @@ function clean_url($url,$http=1)
 		$domain=$regs[2];
 		$port=$regs[3];
 		//print $url." -> ".$proto." - ".$domain." - ".$port;
-		$url = unaccent_isostring(trim($url));
+		$url = dol_string_nospecial(trim($url));
 
 		// Si http: defini on supprime le http (Si https on ne supprime pas)
 		if ($http==0)

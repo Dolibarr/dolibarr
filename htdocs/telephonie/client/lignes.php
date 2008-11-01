@@ -42,7 +42,7 @@ if ($_GET["id"])
 
   if (!$soc->perm_read)
     {
-      print "Lecture non authorisée";
+      print "Lecture non authorisï¿½e";
     }
 
   if ( $result == 1 && $soc->perm_read)
@@ -101,15 +101,15 @@ if ($_GET["id"])
 	  
 	  print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
 	  
-	  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
-	  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
+	  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel,$soc->pays_code,0,$soc->id).'</td>';
+	  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax,$soc->pays_code,0,$soc->id).'</td></tr>';
 	  	  	  
 	  print '</table><br />';
 
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  
-	  //print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
-	  //print '<td>Facturée : '.$ligne->facturable.'</td></tr>';
+	  //print '<tr><td width="20%">Numï¿½ro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
+	  //print '<td>Facturï¿½e : '.$ligne->facturable.'</td></tr>';
 	  
 	  /* Lignes */
 	     
@@ -157,7 +157,7 @@ if ($_GET["id"])
       
 		      print '</a>&nbsp;';
 
-		      print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
+		      print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
 
 		      print '<td>'.$obj->code_client."</td>\n";
 		      print '<td>'.$obj->agence."</td>\n";

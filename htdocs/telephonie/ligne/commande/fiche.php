@@ -48,7 +48,7 @@ llxHeader("","Telephonie - Ligne - Commande");
 print $mesg_erreur;
 
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0) 
 {
@@ -83,7 +83,7 @@ if ($result)
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>Fournisseur</td>';
-  print '<td align="center">Nb Lignes</td><td>&nbsp;</td><td>Email envoyé à</td>';
+  print '<td align="center">Nb Lignes</td><td>&nbsp;</td><td>Email envoyï¿½ ï¿½</td>';
   print "</tr>\n";
 
   $var=True;
@@ -104,11 +104,11 @@ if ($result)
       print '<td>';
       if ($row[3] == 1)
 	{
-	  print "Les commandes sont bloquées";
+	  print "Les commandes sont bloquï¿½es";
 	}
       else
 	{
-	  print '<a class="butAction" href="fiche.php?action=create&amp;fournid='.$row[1].'">Créer la commande</a>';
+	  print '<a class="butAction" href="fiche.php?action=create&amp;fournid='.$row[1].'">Crï¿½er la commande</a>';
 	}
       print "</td><td>\n";
       print $fournisseur->email_commande;
@@ -146,7 +146,7 @@ if ($db->query($sql))
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td valign="center">Ligne';
   print '</td><td align="center">Statut</td><td>Client';
-  print '</td><td>Client Facturé</td><td align="center">Rib OK</td><td>Fournisseur</td>';
+  print '</td><td>Client Facturï¿½</td><td align="center">Rib OK</td><td>Fournisseur</td>';
   print "</tr>\n";
 
   $var=True;
@@ -162,7 +162,7 @@ if ($db->query($sql))
       $socf->fetch($obj->sfidp);
 
       print "<tr $bc[$var]>";
-      print '<td><a href="../fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
+      print '<td><a href="../fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
       print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.$obj->sfnom.'</a></td>';

@@ -30,7 +30,7 @@ $sortfield = $_GET["sortfield"];
 llxHeader();
 
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0) 
 {
@@ -114,7 +114,7 @@ if ($result)
 
   if ($user->rights->telephonie->ligne->gain)
     {
-      print '<td align="right">Coût fournisseur HT</td>';
+      print '<td align="right">Coï¿½t fournisseur HT</td>';
       print_liste_field_titre("Marge","liste.php","f.gain",'','','align="right"');
     }
   print '<td align="center">Facture</td>';
@@ -156,7 +156,7 @@ if ($result)
       print '</a>&nbsp;';
 
       print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$obj->nom."</a></td>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?numero='.$obj->ligne.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?numero='.$obj->ligne.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
       print '<td align="center">'.$obj->date."</td>\n";
       print '<td align="right">'.sprintf("%01.4f",$obj->cout_vente)."</td>\n";
 

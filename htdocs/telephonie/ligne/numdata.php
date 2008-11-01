@@ -75,7 +75,7 @@ if ($_GET["action"] == 'delete')
 
 llxHeader('','Telephonie - Ligne - Liste');
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0) 
 {
@@ -104,11 +104,11 @@ $pagenext = $page + 1;
  */
 
 
-print_barre_liste("Numéros data", $page, "numdata.php", $urladd, $sortfield, $sortorder, '', $num);
+print_barre_liste("Numï¿½ros data", $page, "numdata.php", $urladd, $sortfield, $sortorder, '', $num);
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre">';
-print_liste_field_titre("Numéro","numdata.php","l.ligne");
+print_liste_field_titre("Numï¿½ro","numdata.php","l.ligne");
 
 print_liste_field_titre("Client","numdata.php","s.nom");
 print '<td>&nbsp;</td>';
@@ -185,7 +185,7 @@ if ($result)
 
       print "<tr $bc[$var]><td>";
 
-      print dolibarr_print_phone($obj->numero)."</td>\n";
+      print dolibarr_print_phone($obj->numero,0,0,true)."</td>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
 
       print '<td align="center"><a href="'.DOL_URL_ROOT.'/telephonie/ligne/numdata.php?action=delete&amp;id='.$obj->rowid.'">';

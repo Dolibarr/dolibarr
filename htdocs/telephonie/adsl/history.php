@@ -58,7 +58,7 @@ if ($_GET["id"])
 
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-      print '<tr><td width="20%">Numéro de support</td><td colspan="2">'.dolibarr_print_phone($ligne->numero).'</td></tr>';
+      print '<tr><td width="20%">Numï¿½ro de support</td><td colspan="2">'.dolibarr_print_phone($ligne->numero,0,0,true).'</td></tr>';
 
 	      	     
       $client = new Societe($db, $ligne->client_id);

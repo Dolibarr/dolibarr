@@ -296,12 +296,12 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
     {
       $action = '';
-      $mesg = 'Fiche mise à jour';
+      $mesg = 'Fiche mise ï¿½ jour';
     }
   else
     {
       $action = 're-edit';
-      $mesg = 'Fiche non mise à jour !' . "<br>" . $entrepot->mesg_error;
+      $mesg = 'Fiche non mise ï¿½ jour !' . "<br>" . $entrepot->mesg_error;
     }
 }
 
@@ -313,7 +313,7 @@ if ($cancel == $langs->trans("Cancel"))
 }
 
 /*
- * Création en 2 étape
+ * Crï¿½ation en 2 ï¿½tape
  *
  */
 if ($_GET["action"] == 'create')
@@ -323,7 +323,7 @@ if ($_GET["action"] == 'create')
 
   if (is_object($ligne))
     {
-      // La création a échouée
+      // La crï¿½ation a ï¿½chouï¿½e
       print $ligne->error_message;
     }
   else
@@ -358,7 +358,7 @@ if ($_GET["action"] == 'create')
   $form->select_array("client",$ff,$ligne->client_comm);
   print '</td></tr>';
 
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
+  print '<tr><td>&nbsp;</td><td><input type="submit" value="Crï¿½er"></td></tr>'."\n";
   print '</table>'."\n";
   print '</form>';
 }
@@ -369,7 +369,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 
   if (is_object($ligne))
     {
-      // La création a échouée
+      // La crï¿½ation a ï¿½chouï¿½e
       print '<div class="errormessage">'.$ligne->error_message.'</div>';
     }
   else
@@ -394,7 +394,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	  print $socc->code_client;
 	  print '</td></tr>';
 	  print '</table><br /><br />';
-	  print 'Impossible de créer une ligne pour cette société, vous devez au préalablement lui affecter un code client.';
+	  print 'Impossible de crï¿½er une ligne pour cette sociï¿½tï¿½, vous devez au prï¿½alablement lui affecter un code client.';
 	}
       elseif (strlen($socc->code_client) > 0 && $socc->check_codeclient() <> 0)
 	{
@@ -407,7 +407,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	  print $socc->code_client;
 	  print '</td></tr>';
 	  print '</table><br /><br />';
-	  print 'Le code client de cette société est incorrect, vous devez lui affecter un code client correct.';
+	  print 'Le code client de cette sociï¿½tï¿½ est incorrect, vous devez lui affecter un code client correct.';
 	}
       else
 	{
@@ -461,7 +461,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	  // On continue si il existe des contrats
 	  if (sizeof($contrats) > 0)
 	    {
-	      print '<tr><td width="20%">Numéro de la ligne téléphonique</td><td><input name="numero" size="12" value="'.$ligne->numero.'"></td></tr>';
+	      print '<tr><td width="20%">Numï¿½ro de la ligne tï¿½lï¿½phonique</td><td><input name="numero" size="12" value="'.$ligne->numero.'"></td></tr>';
 	  
 	  print '<tr><td width="20%">Client (Agence/Filiale)</td><td >';
 	  $ff = array();
@@ -482,9 +482,9 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	      $db->free();      
 	    }
 	  $form->select_array("client_install",$ff,$ligne->client_install_id);
-	  print " (Correspond à l'adresse d'installation)</td></tr>";
+	  print " (Correspond ï¿½ l'adresse d'installation)</td></tr>";
 	  
-	  print '<tr><td width="20%">Client à facturer</td><td >';
+	  print '<tr><td width="20%">Client ï¿½ facturer</td><td >';
 	  $ff = array();
 	  $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
 	  if ( $db->query( $sql) )
@@ -509,7 +509,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	   * Type
 	   */
 
-	  print '<tr><td width="20%">Débit de la ligne</td><td >';
+	  print '<tr><td width="20%">Dï¿½bit de la ligne</td><td >';
 	  $ff = array();
 	  $sql = "SELECT rowid, intitule FROM ".MAIN_DB_PREFIX."telephonie_adsl_type WHERE commande_active = 1 ORDER BY intitule ";
 	  if ( $db->query( $sql) )
@@ -592,7 +592,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	  print stripslashes($ligne->note);
 	  print '</textarea></td></tr>'."\n";
 	  
-	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
+	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Crï¿½er"></td></tr>'."\n";
 	  print '</table>'."\n";
 	  print '</form>';
 	    }
@@ -659,10 +659,10 @@ else
 	      print $client->nom.'</a></td><td>'.$client->code_client;
 	      print '</td></tr>';
 
-	      print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
+	      print '<tr><td width="20%">Numï¿½ro</td><td>'.dolibarr_print_phone($ligne->numero,0,0,true).'</td>';
 	      print '<td>&nbsp;</td></tr>';
 
-	      print '<tr><td width="20%">Débit de la liaison</td><td>'.$ligne->type.'</td>';
+	      print '<tr><td width="20%">Dï¿½bit de la liaison</td><td>'.$ligne->type.'</td>';
 	      print '<td>Prix de vente : '.price($ligne->prix).' euros HT</td></tr>';
 	      	     
 	      $client_install = new Societe($db, $ligne->client_install_id);
@@ -677,7 +677,7 @@ else
 	      $client_facture = new Societe($db);
 	      $client_facture->fetch($ligne->client_facture_id);
 
-	      print '<tr><td width="20%">Client Facturé</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid=';
+	      print '<tr><td width="20%">Client Facturï¿½</td><td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid=';
 	      print $client_facture->id.'">';
 	      print $client_facture->nom.'</a><br />';
 	      print $client_facture->cp . " " .$client_facture->ville;
@@ -767,14 +767,14 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 2)
 
   print '<form name="activefourn" action="fiche.php?id='.$ligne->id.'&amp;action=activefourn" method="POST">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
-  print '<tr class="liste_titre"><td colspan="2">Activée chez le fournisseur</td><td>';
+  print '<tr class="liste_titre"><td colspan="2">Activï¿½e chez le fournisseur</td><td>';
   print "<tr><td>Date de l'activation</td><td>";
   print $form->select_date('','','','','',"activefourn");
   print '</td></tr>';
 
   print '<tr><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
 
-  print '<tr><td>Adresse IP affectée</td><td><input size="30" type="text" name="ip"></td></tr>';
+  print '<tr><td>Adresse IP affectï¿½e</td><td><input size="30" type="text" name="ip"></td></tr>';
   print '<tr><td>Login</td><td><input size="30" type="text" name="login"></td></tr>';
   print '<tr><td>Password</td><td><input size="30" type="text" name="password"></td></tr>';
 
@@ -793,7 +793,7 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 3)
 
   print '<form name="backbone" action="fiche.php?id='.$ligne->id.'&amp;action=backbone" method="POST">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
-  print '<tr class="liste_titre"><td colspan="2">Programmé sur le backbone</td><td>';
+  print '<tr class="liste_titre"><td colspan="2">Programmï¿½ sur le backbone</td><td>';
   print "<tr><td>Date de la programmation</td><td>";
   print $form->select_date('','','','','',"backbone");
   print '</td>';
@@ -810,7 +810,7 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 9)
 
   print '<form name="livraison" action="fiche.php?id='.$ligne->id.'&amp;action=livraison" method="POST">';
   print '<table class="noborder" cellpadding="2" cellspacing="0">';
-  print '<tr class="liste_titre"><td colspan="2">Livrée au client</td><td>';
+  print '<tr class="liste_titre"><td colspan="2">Livrï¿½e au client</td><td>';
   print "<tr><td>Date de la livraison client</td><td>";
   print $form->select_date('','','','','',"livraison");
   print '</td>';
@@ -826,8 +826,8 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 4)
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
   print '<form name="resilier" action="fiche.php?id='.$ligne->id.'&amp;action=resilier" method="POST">';
   print '<table class="noborder" cellpadding="4" cellspacing="0">';
-  print '<tr class="liste_titre"><td colspan="2">A résilier</td><td>';
-  print '<tr class="pair"><td>Date de résiliation demandée</td><td>';
+  print '<tr class="liste_titre"><td colspan="2">A rï¿½silier</td><td>';
+  print '<tr class="pair"><td>Date de rï¿½siliation demandï¿½e</td><td>';
   print $form->select_date('','','','','',"resilier");
   print '</td></tr>';
   print '<tr class="pair"><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
@@ -841,8 +841,8 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 5)
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
   print '<form name="resilierfourn" action="fiche.php?id='.$ligne->id.'&amp;action=resilierfourn" method="POST">';
   print '<table class="noborder" cellpadding="4" cellspacing="0">';
-  print '<tr class="liste_titre"><td colspan="2">Demande de résiliatin fournisseur</td><td>';
-  print '<tr class="pair"><td>Date de la demande de résiliation</td><td>';
+  print '<tr class="liste_titre"><td colspan="2">Demande de rï¿½siliatin fournisseur</td><td>';
+  print '<tr class="pair"><td>Date de la demande de rï¿½siliation</td><td>';
   print $form->select_date('','','','','',"resilierfourn");
   print '</td></tr>';
   print '<tr class="pair"><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
@@ -856,8 +856,8 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 6)
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
   print '<form name="acquitresilierfourn" action="fiche.php?id='.$ligne->id.'&amp;action=acquitresilierfourn" method="POST">';
   print '<table class="noborder" cellpadding="4" cellspacing="0">';
-  print '<tr class="liste_titre"><td colspan="2">Confirmation de résiliatin fournisseur</td><td>';
-  print '<tr class="pair"><td>Date de la confirmation de résiliation</td><td>';
+  print '<tr class="liste_titre"><td colspan="2">Confirmation de rï¿½siliatin fournisseur</td><td>';
+  print '<tr class="pair"><td>Date de la confirmation de rï¿½siliation</td><td>';
   print $form->select_date('','','','','',"acquitresilierfourn");
   print '</td></tr>';
   print '<tr class="pair"><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
@@ -890,7 +890,7 @@ if ($_GET["action"] == '')
 
   if ( $user->rights->telephonie->adsl->requete && $ligne->statut == 5)
     {
-      print "<a class=\"butAction\" href=\"fiche.php?action=annuleresilier&amp;id=$ligne->id\">".$langs->trans("Annuler la demande de résiliation")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=annuleresilier&amp;id=$ligne->id\">".$langs->trans("Annuler la demande de rï¿½siliation")."</a>";
 
     }
 

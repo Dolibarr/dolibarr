@@ -29,7 +29,7 @@ $sortfield = $_GET["sortfield"];
 
 llxHeader('','Telephonie - Ligne - Liste');
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0) 
 {
@@ -140,7 +140,7 @@ if ($result)
     {
       $cuser = new User($db, $_GET["commercial_sign"]);
       $cuser->fetch();
-      $titre = "Lignes signées par ".$cuser->fullname;
+      $titre = "Lignes signï¿½es par ".$cuser->fullname;
       $urladd .= "&amp;commercial_sign=". $_GET["commercial_sign"];
     }
 
@@ -152,7 +152,7 @@ if ($result)
   print_liste_field_titre("Ligne","liste.php","l.ligne");
   print_liste_field_titre("Client (Agence/Filiale)","liste.php","s.nom");
 
-  //print '<td>Client facturé</td>';
+  //print '<td>Client facturï¿½</td>';
   print '<td align="center">Statut</td>';
 
   if ($user->rights->telephonie->fournisseur->lire)
@@ -193,7 +193,7 @@ if ($result)
       print img_file();      
       print '</a>&nbsp;';
 
-      print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
+      print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
 
       print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.stripslashes($obj->nom).'</a></td>';
       //print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->nom_facture).'</a></td>';

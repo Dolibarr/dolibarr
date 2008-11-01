@@ -50,7 +50,7 @@ if ($_GET["action"] == "commande" && $user->rights->telephonie->ligne_commander)
 llxHeader("","Telephonie - Ligne - Commande");
 
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0) 
 {
@@ -103,7 +103,7 @@ if ($result)
   print_liste_field_titre("Ligne","liste.php","l.ligne");
   print '<td align="center">Statut</td>';
   print_liste_field_titre("Client","liste.php","s.nom");
-  print '<td>Client Facturé</td><td align="center">Rib OK</td><td>Fournisseur</td>';
+  print '<td>Client Facturï¿½</td><td align="center">Rib OK</td><td>Fournisseur</td>';
   print "</tr>\n";
 
   $var=True;
@@ -139,7 +139,7 @@ if ($result)
 	}
       else
 	{
-	  print dolibarr_print_phone($obj->ligne);
+	  print dolibarr_print_phone($obj->ligne,0,0,true);
 	  $ok_commande = 1;
 	}
 

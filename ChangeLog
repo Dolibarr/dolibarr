@@ -18,6 +18,7 @@ For users:
 - Can set umask file permissions on Unix/Linux/BSD systems.
 - Miscelanous bug fixes.
 - A lot of other enhancements to increase productivity.
+- All phone numbers show the clicktodial link if module is enabled.
 
 For translators:
 - The errors language file contains only error or warning messages with 

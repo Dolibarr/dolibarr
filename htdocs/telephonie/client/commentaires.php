@@ -58,7 +58,7 @@ if ($_GET["id"])
 
   if (!$soc->perm_read)
     {
-      print "Lecture non authorisée";
+      print "Lecture non authorisï¿½e";
     }
 
   if ( $result == 1 && $soc->perm_read)
@@ -114,8 +114,8 @@ if ($_GET["id"])
       
       print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
       
-      print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
-      print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
+      print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel,$soc->pays_code,0,$soc->id).'</td>';
+      print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax,$soc->pays_code,0,$soc->id).'</td></tr>';
       
       print '<tr><td><a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit() ."</a>&nbsp;";
       print $langs->trans('RIB').'</td><td colspan="3">';

@@ -44,7 +44,7 @@ if ($_GET["id"] or $_GET["numero"])
   
   if (!$client_comm->perm_read)
     {
-      print "Lecture non authorisée";
+      print "Lecture non authorisï¿½e";
     }
   
   
@@ -95,8 +95,8 @@ if ($_GET["id"] or $_GET["numero"])
 	        
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	  print '<tr><td width="25%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
-	  print '<td>Facturée : '.$ligne->facturable.'</td><td>&nbsp;</td></tr>';
+	  print '<tr><td width="25%">Numï¿½ro</td><td>'.dolibarr_print_phone($ligne->numero,0,0,true).'</td>';
+	  print '<td>Facturï¿½e : '.$ligne->facturable.'</td><td>&nbsp;</td></tr>';
 	      	     
 	  $client = new Societe($db, $ligne->client_id);
 	  $client->fetch($ligne->client_id);
@@ -109,7 +109,7 @@ if ($_GET["id"] or $_GET["numero"])
 	  $client_facture = new Societe($db);
 	  $client_facture->fetch($ligne->client_facture_id);
 
-	  print '<td width="25%">Client Facturé</td><td>'.$client_facture->nom.'</td></tr>';
+	  print '<td width="25%">Client Facturï¿½</td><td>'.$client_facture->nom.'</td></tr>';
 
 	  print '<tr><td width="25%">Statut</td><td colspan="3">';
 	  print '<img src="./graph'.$ligne->statut.'.png">&nbsp;';
@@ -125,7 +125,7 @@ if ($_GET["id"] or $_GET["numero"])
 
 	  print '<tr><td width="50%" valign="top" align="center">';
 
-	  $mesg_no_graph = 'Nous avons pas assez de données à ce jour pour générer ce graphique.';
+	  $mesg_no_graph = 'Nous avons pas assez de donnï¿½es ï¿½ ce jour pour gï¿½nï¿½rer ce graphique.';
 
 	  $img_root = DOL_DATA_ROOT."/graph/".substr($ligne->id,-1)."/telephonie/ligne/";
 

@@ -70,13 +70,13 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel") 
   if ( $contrat->update($user) == 0)
     {
       $action = '';
-      $mesg = 'Fiche mise à jour';
+      $mesg = 'Fiche mise ï¿½ jour';
       Header("Location: fiche.php?id=".$contrat->id);
     }
   else
     {
       $action = 're-edit';
-      $mesg = 'Fiche non mise à jour !' . "<br>" . $entrepot->mesg_error;
+      $mesg = 'Fiche non mise ï¿½ jour !' . "<br>" . $entrepot->mesg_error;
     }
 }
 
@@ -131,7 +131,7 @@ if ($cancel == $langs->trans("Cancel"))
 }
 
 /*
- * Création en 2 étape
+ * Crï¿½ation en 2 ï¿½tape
  *
  */
 if ($_GET["action"] == 'create' && $user->rights->telephonie->ligne->creer)
@@ -141,7 +141,7 @@ if ($_GET["action"] == 'create' && $user->rights->telephonie->ligne->creer)
 
   if (is_object($ligne))
     {
-      // La création a échouée
+      // La crï¿½ation a ï¿½chouï¿½e
       print $ligne->error_message;
     }
   else
@@ -176,7 +176,7 @@ if ($_GET["action"] == 'create' && $user->rights->telephonie->ligne->creer)
   $form->select_array("client_comm",$ff,$ligne->client_comm);
   print '</td></tr>';
 
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
+  print '<tr><td>&nbsp;</td><td><input type="submit" value="Crï¿½er"></td></tr>'."\n";
   print '</table>'."\n";
   print '</form>';
 }
@@ -187,7 +187,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 
   if (is_object($ligne))
     {
-      // La création a échouée
+      // La crï¿½ation a ï¿½chouï¿½e
       print $ligne->error_message;
     }
   else
@@ -212,7 +212,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 	  print $socc->code_client;
 	  print '</td></tr>';
 	  print '</table><br /><br />';
-	  print 'Impossible de créer un contrat pour cette société, vous devez au préalablement lui affecter un code client.';
+	  print 'Impossible de crï¿½er un contrat pour cette sociï¿½tï¿½, vous devez au prï¿½alablement lui affecter un code client.';
 	}
       elseif (strlen($socc->code_client) > 0 && $socc->check_codeclient() <> 0)
 	{
@@ -225,7 +225,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 	  print $socc->code_client;
 	  print '</td></tr>';
 	  print '</table><br /><br />';
-	  print 'Le code client de cette société est incorrect, vous devez lui affecter un code client correct.';
+	  print 'Le code client de cette sociï¿½tï¿½ est incorrect, vous devez lui affecter un code client correct.';
 	}
       else
 	{
@@ -271,7 +271,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 	  $form->select_array("client",$ff,$ligne->client);
 	  print '</td></tr>';
 	  
-	  print '<tr><td width="20%">Client à facturer</td><td >';
+	  print '<tr><td width="20%">Client ï¿½ facturer</td><td >';
 	  $ff = array();
 	  $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
 	  $sql .= " AND (rowid = ".$socc->id." OR parent = ".$socc->id.")";
@@ -331,7 +331,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 	  print stripslashes($ligne->note);
 	  print '</textarea></td></tr>'."\n";
 	  
-	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
+	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Crï¿½er"></td></tr>'."\n";
 	  print '</table>'."\n";
 	  print '</form>';
 	  
@@ -360,9 +360,9 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 		  print"<br />\n<!-- debut table -->\n";
 		  print_titre("Contrats existants");
 		  print '<br /><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-		  print '<tr class="liste_titre"><td>Réf</td>';	     
+		  print '<tr class="liste_titre"><td>Rï¿½f</td>';	     
 		  print '<td>Client</td><td>Client (Agence/Filiale)</td>';	      
-		  print '<td>Client facturé</td>';
+		  print '<td>Client facturï¿½</td>';
 		  print "</tr>\n";
 		  
 		  $var=True;
@@ -425,7 +425,7 @@ else
 
       if (!$client_comm->perm_read)
 	{
-	  print "Lecture non authorisée";
+	  print "Lecture non authorisï¿½e";
 	}
 
       if ( $result && $client_comm->perm_read)
@@ -493,8 +493,8 @@ else
 	      //$client_comm = new Societe($db);
 	      //$client_comm->fetch($contrat->client_comm_id);
 
-	      print '<tr><td width="20%">Référence</td><td>'.$contrat->ref.'</td>';
-	      print '<td>Facturé : '.$contrat->facturable.'</td><td align="right">';
+	      print '<tr><td width="20%">Rï¿½fï¿½rence</td><td>'.$contrat->ref.'</td>';
+	      print '<td>Facturï¿½ : '.$contrat->facturable.'</td><td align="right">';
 	      print '<img src="statut'.$contrat->statut.'.png">&nbsp;';
 	      print $contrat->statuts[$contrat->statut].'</td></tr>';
 	      print '<tr><td width="20%">Client</td><td>';
@@ -518,7 +518,7 @@ else
 	      $client_facture = new Societe($db);
 	      $client_facture->fetch($contrat->client_facture_id);
 
-	      print '<tr><td width="20%">Client Facturé</td><td>';
+	      print '<tr><td width="20%">Client Facturï¿½</td><td>';
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id=';
 	      print $client_facture->id.'">';
 	      print $client_facture->nom.'</a><br />';
@@ -644,7 +644,7 @@ else
 			  
 			  print '</a>&nbsp;';
 			  
-			  print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
+			  print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->ligne,0,0,true)."</a></td>\n";
 			  
 			  print '<td>'.$obj->code_client."&nbsp;".$obj->agence."</td>\n";
 			  print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
@@ -758,8 +758,8 @@ else
 	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	      print '<tr><td width="20%">Référence</td><td>'.$contrat->ref.'</td>';
-	      print '<td>Facturé : '.$contrat->facturable.'</td></tr>';
+	      print '<tr><td width="20%">Rï¿½fï¿½rence</td><td>'.$contrat->ref.'</td>';
+	      print '<td>Facturï¿½ : '.$contrat->facturable.'</td></tr>';
 
 	      $client_comm = new Societe($db, $contrat->client_comm_id);
 	      $client_comm->fetch($contrat->client_comm_id);
@@ -800,7 +800,7 @@ else
 	      
 	      print '</select></td></tr>';
 	      
-	      print '<tr><td width="20%">Client à facturer</td><td colspan="2">'."\n";
+	      print '<tr><td width="20%">Client ï¿½ facturer</td><td colspan="2">'."\n";
 	      print '<select name="client_facture">'."\n";
 	      
 	      
@@ -834,7 +834,7 @@ else
 	      /*
 	       *
 	       */
-	      print '<tr><td width="20%">Mode de réglement</td>';
+	      print '<tr><td width="20%">Mode de rï¿½glement</td>';
 	      print '<td colspan="2">';
 
 	      if ($user->rights->telephonie->contrat->paiement)
@@ -843,12 +843,12 @@ else
 	      	     
 		  if ($contrat->mode_paiement == 'pre')
 		    {
-		      print '<option value="pre" SELECTED>Prélèvement</option>';
+		      print '<option value="pre" SELECTED>Prï¿½lï¿½vement</option>';
 		      print '<option value="vir">Virement</option>';
 		    }
 		  else
 		    {
-		      print '<option value="pre">Prélèvement</option>';
+		      print '<option value="pre">Prï¿½lï¿½vement</option>';
 		      print '<option value="vir" SELECTED>Virement</option>';
 		    }
 		  print '</select>';
@@ -859,7 +859,7 @@ else
 
 		  if ($contrat->mode_paiement == 'pre')
 		    {
-		      print 'Prélèvement';
+		      print 'Prï¿½lï¿½vement';
 		    }
 		  else
 		    {
@@ -944,7 +944,7 @@ else
 	      print '<textarea name="note" rows="4" cols="50">';
 	      print "</textarea></td></tr>";
 	  
-	      print '<tr><td align="center" colspan="3"><input type="submit" value="Mettre à jour">';
+	      print '<tr><td align="center" colspan="3"><input type="submit" value="Mettre ï¿½ jour">';
 	      print '<a class="butAction" href="fiche.php?id='.$contrat->id.'">Annuler</a></td></tr>';
 	      print '</table>'."\n";
 	      print '</form>'."\n";
@@ -1029,7 +1029,7 @@ else
 		  print $sql;
 		}
 	  
-	      print '<p>Contact auquel est envoyé la facture par email</p></td></tr>';
+	      print '<p>Contact auquel est envoyï¿½ la facture par email</p></td></tr>';
 	  	  
 	      print '<tr><td colspan="3" align="center">';
 	      if ($num > 0)

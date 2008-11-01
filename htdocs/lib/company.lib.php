@@ -298,20 +298,11 @@ function show_contacts($conf,$langs,$db,$objsoc)
 
 			// Lien click to dial
 			print '<td>';
-			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-			print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
-			print dolibarr_print_phone($obj->phone);
-			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-			print '</a>';
-			if ($obj->phone) print dol_phone_link($obj->phone);
+			print dolibarr_print_phone($obj->phone,$obj->pays_code,$obj->rowid,$objsoc->id);
 			print '</td>';
 			print '<td>';
-			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-			print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
-			print dolibarr_print_phone($obj->fax);
-			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
-			print '</a>';
-			print '&nbsp;</td>';
+			print dolibarr_print_phone($obj->fax,$obj->pays_code,$obj->rowid,$objsoc->id);
+			print '</td>';
 			print '<td>';
 			if ($conf->agenda->enabled && $user->rights->agenda->myactions->create)
 			print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&backtopage=1&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';

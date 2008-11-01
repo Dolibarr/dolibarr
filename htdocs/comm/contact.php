@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2003      ï¿½ric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -125,10 +125,10 @@ if ($socid) {
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result) 
+$resql = $db->query($sql);
+if ($resql) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   
   print_barre_liste($langs->trans("ListOfContacts").($label?" (".$label.")":""),$page, $_SERVER["PHP_SELF"], "&amp;type=$type",$sortfield,$sortorder,"",$num);
   
@@ -155,7 +155,7 @@ if ($result)
   $i = 0;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object();
+      $obj = $db->fetch_object($resql);
     
       $var=!$var;
 
@@ -169,13 +169,13 @@ if ($result)
       
       print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->email.'</a>&nbsp;</td>';
       
-      print '<td><a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->cidp.'&socid='.$obj->rowid.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+      print '<td>'.dolibarr_print_phone($obj->phone,$obj->pays_code,$obj->cidp,$obj->rowid).'&nbsp;</td>';
       
       print "</tr>\n";
       $i++;
     }
-  print "</table></p>";
-  $db->free();
+  	print "</table></p>";
+  	$db->free($resql);
 }
 else
 {
@@ -184,5 +184,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

@@ -76,7 +76,7 @@ if ($_GET["id"] or $_GET["numero"])
       
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-      print '<tr><td width="25%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td></tr>';
+      print '<tr><td width="25%">Numï¿½ro</td><td>'.dolibarr_print_phone($ligne->numero,0,0,true).'</td></tr>';
 	      	     
       $client = new Societe($db, $ligne->client_id);
       $client->fetch($ligne->client_id);
@@ -89,7 +89,7 @@ if ($_GET["id"] or $_GET["numero"])
       $client_facture = new Societe($db);
       $client_facture->fetch($ligne->client_facture_id);
 
-      print '<tr><td width="25%">Client Facturé</td><td>'.$client_facture->nom.'</td></tr>';
+      print '<tr><td width="25%">Client Facturï¿½</td><td>'.$client_facture->nom.'</td></tr>';
       print '</table>';
 
       $ftx = new FournisseurTelephonie($db, $ligne->fournisseur_id);
@@ -105,11 +105,11 @@ if ($_GET["id"] or $_GET["numero"])
 	}
 
       print '<table>';
-      print "<tr><td>Numéro correct </td><td> ".$ok_commande .'</td></tr>';
-      print "<tr><td>Commandes ouvertes auprès du fournisseur </td><td> ".$ftx->commande_enable .'</td></tr>';
+      print "<tr><td>Numï¿½ro correct </td><td> ".$ok_commande .'</td></tr>';
+      print "<tr><td>Commandes ouvertes auprï¿½s du fournisseur </td><td> ".$ftx->commande_enable .'</td></tr>';
       print "<tr><td>Permission pour l'utilisateur de commander des lignes </td><td> ".$user->rights->telephonie->ligne_commander.'</td></tr>';
       print "<tr><td>Statut de la ligne compatible </td><td> ".($ligne->statut == 1 or $ligne->statut == -1) .'</td></tr>';
-      print "<tr><td>Rib ok ou mode de règlement par virement </td><td> ".($client_facture->verif_rib() or $ligne->mode_paiement == 'vir').'</td></tr>';
+      print "<tr><td>Rib ok ou mode de rï¿½glement par virement </td><td> ".($client_facture->verif_rib() or $ligne->mode_paiement == 'vir').'</td></tr>';
       print '</table>';
 
     }

@@ -52,7 +52,7 @@ if ($_GET["id"] or $_GET["numero"])
   
   if (!$client_comm->perm_read)
     {
-      print "Lecture non authorisée";
+      print "Lecture non authorisï¿½e";
     }
 
   
@@ -71,7 +71,7 @@ if ($_GET["id"] or $_GET["numero"])
 	  
       /*
       $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/facturesdet.php?id=".$ligne->id;
-      $head[$h][1] = $langs->trans('Factures détaillées');
+      $head[$h][1] = $langs->trans('Factures dï¿½taillï¿½es');
       $h++;
       */
 
@@ -138,13 +138,13 @@ if ($_GET["id"] or $_GET["numero"])
       
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-      print '<tr><td width="25%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
+      print '<tr><td width="25%">Numï¿½ro</td><td>'.dolibarr_print_phone($ligne->numero,0,0,true).'</td>';
       print '<td>';
 
       if ($facnum > 1)
 	{
 	  print '<a href="factures.php?id='.$ligne->id.'&amp;facnum='.($facnum-1).'">';
-	  print '<- Facture précédente</a>';
+	  print '<- Facture prï¿½cï¿½dente</a>';
 	}
 
       print "&nbsp;</td><td>";
@@ -168,7 +168,7 @@ if ($_GET["id"] or $_GET["numero"])
       $client_facture = new Societe($db);
       $client_facture->fetch($ligne->client_facture_id);
 
-      print '<td width="25%">Client Facturé</td><td>'.$client_facture->nom.'</td></tr>';
+      print '<td width="25%">Client Facturï¿½</td><td>'.$client_facture->nom.'</td></tr>';
 
       $fac = new Facture($db);
       $fac->fetch($facs[$facnum]);
