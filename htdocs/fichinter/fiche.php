@@ -474,21 +474,10 @@ if ($_GET["action"] == 'create')
 		$html->select_array('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
 		print "</td></tr>";
 
+		// Description (must be a textarea and not html must be allowed (used in list view)
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 		print "<td>";
-
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
-		{
-			// Editeur wysiwyg
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('description','',280,'dolibarr_notes','In',true);
-			$doleditor->Create();
-		}
-		else
-		{
-			print '<textarea name="description" wrap="soft" cols="70" rows="12"></textarea>';
-		}
-
+		print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'"></textarea>';
 		print '</td></tr>';
 
 		print '<tr><td colspan="2" align="center">';
@@ -630,7 +619,7 @@ elseif ($_GET["id"] > 0)
 	// Duration
 	print '<tr><td>'.$langs->trans("TotalDuration").'</td><td>'.ConvertSecondToTime($fichinter->duree).'</td></tr>';
 
-	// Description
+	// Description (must be a textarea and not html must be allowed (used in list view)
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Description');
@@ -642,17 +631,7 @@ elseif ($_GET["id"] > 0)
 	{
 		print '<form name="editdescription" action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'" method="post">';
 		print '<input type="hidden" name="action" value="setdescription">';
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
-		{
-			// Editeur wysiwyg
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('description',$fichinter->description,280,'dolibarr_notes','In',true);
-			$doleditor->Create();
-		}
-		else
-		{
-			print '<textarea name="description" wrap="soft" cols="70" rows="12">'.dol_htmlentitiesbr_decode($fichinter->description).'</textarea>';
-		}
+		print '<textarea name="description" wrap="soft" cols="70" rows="'.ROWS_3.'">'.dol_htmlentitiesbr_decode($fichinter->description).'</textarea><br>';
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
@@ -666,13 +645,12 @@ elseif ($_GET["id"] > 0)
 	// Statut
 	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$fichinter->getLibStatut(4).'</td></tr>';
 
-	print "</table><br>";
+	print "</table>";
 
 	/*
 	 * Lignes d'intervention
 	 */
-	print '<table class="noborder" width="100%">';
-
+	
 	$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang';
 	$sql.= ', '.$db->pdate('ft.date').' as date_intervention';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
@@ -686,6 +664,8 @@ elseif ($_GET["id"] > 0)
 
 		if ($num)
 		{
+			print '<br><table class="noborder" width="100%">';
+			
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('Description').'</td>';
 			print '<td align="center">'.$langs->trans('Date').'</td>';
@@ -816,68 +796,72 @@ elseif ($_GET["id"] > 0)
 		}
 
 		$db->free($resql);
+		
+		/*
+		 * Ajouter une ligne
+		 */
+		if ($fichinter->statut == 0 && $user->rights->ficheinter->creer && $_GET["action"] <> 'editline')
+		{
+			if (! $num) print '<br><table class="noborder" width="100%">';
+			
+			print '<tr class="liste_titre">';
+			print '<td>';
+			print '<a name="add"></a>'; // ancre
+			print $langs->trans('Description').'</td>';
+			print '<td align="center">'.$langs->trans('Date').'</td>';
+			print '<td align="right">'.$langs->trans('Duration').'</td>';
+	
+			print '<td colspan="4">&nbsp;</td>';
+			print "</tr>\n";
+	
+			// Ajout ligne d'intervention
+			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'#add" name="addinter" method="post">';
+			print '<input type="hidden" name="fichinterid" value="'.$fichinter->id.'">';
+			print '<input type="hidden" name="action" value="addligne">';
+	
+			$var=false;
+	
+			print '<tr '.$bc[$var].">\n";
+			print '<td>';
+			// �diteur wysiwyg
+			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+				$doleditor->Create();
+			}
+			else
+			{
+				print '<textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea>';
+			}
+			print '</td>';
+	
+			// Date intervention
+			print '<td align="center" nowrap="nowrap">';
+			$timearray=dolibarr_getdate(mktime());
+			$timewithnohour=dolibarr_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+			$html->select_date($timewithnohour,'di',1,1,0,"addinter");
+			print '</td>';
+	
+			// Duration
+			print '<td align="right">';
+			$html->select_duree('duration');
+			print '</td>';
+	
+			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
+			print '</tr>';
+	
+			print '</form>';
+			
+			if (! $num) print '</table>';
+		}		
+		
+		if ($num) print '</table>';
 	}
 	else
 	{
 		dolibarr_print_error($db);
 	}
-
-	/*
-	 * Ajouter une ligne
-	 */
-	if ($fichinter->statut == 0 && $user->rights->ficheinter->creer && $_GET["action"] <> 'editline')
-	{
-		print '<tr class="liste_titre">';
-		print '<td>';
-		print '<a name="add"></a>'; // ancre
-		print $langs->trans('Description').'</td>';
-		print '<td align="center">'.$langs->trans('Date').'</td>';
-		print '<td align="right">'.$langs->trans('Duration').'</td>';
-
-		print '<td colspan="4">&nbsp;</td>';
-		print "</tr>\n";
-
-		// Ajout ligne d'intervention
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'#add" name="addinter" method="post">';
-		print '<input type="hidden" name="fichinterid" value="'.$fichinter->id.'">';
-		print '<input type="hidden" name="action" value="addligne">';
-
-		$var=true;
-
-		print '<tr '.$bc[$var].">\n";
-		print '<td>';
-		// �diteur wysiwyg
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-		{
-			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
-			$doleditor->Create();
-		}
-		else
-		{
-			print '<textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea>';
-		}
-		print '</td>';
-
-		// Date d'intervention
-		print '<td align="center" nowrap="nowrap">';
-		$timearray=dolibarr_getdate(mktime());
-		$timewithnohour=dolibarr_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
-		$html->select_date($timewithnohour,'di',1,1,0,"addinter");
-		print '</td>';
-
-		// Dur�e
-		print '<td align="right">';
-		$html->select_duree('duration');
-		print '</td>';
-
-		print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addligne"></td>';
-		print '</tr>';
-
-		print '</form>';
-	}
-
-	print '</table>';
 
 	print '</div>';
 	print "\n";
@@ -891,52 +875,55 @@ elseif ($_GET["id"] > 0)
 
 	if ($user->societe_id == 0)
 	{
-		// Validate
-		if ($fichinter->statut == 0 && $user->rights->ficheinter->creer)
+		if ($_GET['action'] != 'editdescription')
 		{
-			print '<a class="butAction" ';
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+			// Validate
+			if ($fichinter->statut == 0 && $user->rights->ficheinter->creer)
 			{
-				$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_validate&confirm=yes';
-				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateIntervention')).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+				print '<a class="butAction" ';
+				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+				{
+					$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_validate&confirm=yes';
+					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmValidateIntervention')).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+				}
+				else
+				{
+					print 'href="fiche.php?id='.$_GET["id"].'&action=validate"';
+				}
+				print '>'.$langs->trans("Valid").'</a>';
 			}
-			else
+	
+			// Modify
+			if ($fichinter->statut == 1 && $user->rights->ficheinter->creer)
 			{
-				print 'href="fiche.php?id='.$_GET["id"].'&action=validate"';
+				print '<a class="butAction" ';
+				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+				{
+					$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_modify&confirm=yes';
+					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmModifyIntervention')).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+				}
+				else
+				{
+					print 'href="fiche.php?id='.$_GET["id"].'&action=modify"';
+				}
+				print '>'.$langs->trans("Modify").'</a>';
 			}
-			print '>'.$langs->trans("Valid").'</a>';
-		}
-
-		// Modify
-		if ($fichinter->statut == 1 && $user->rights->ficheinter->creer)
-		{
-			print '<a class="butAction" ';
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+	
+			// Delete
+			if (($fichinter->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
 			{
-				$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_modify&confirm=yes';
-				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans('ConfirmModifyIntervention')).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
+				print '<a class="butActionDelete" ';
+				if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+				{
+					$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_delete&confirm=yes';
+					print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans("ConfirmDeleteIntervention",$fichinter->ref)).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
+				}
+				else
+				{
+					print 'href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=delete"';
+				}
+				print '>'.$langs->trans('Delete').'</a>';
 			}
-			else
-			{
-				print 'href="fiche.php?id='.$_GET["id"].'&action=modify"';
-			}
-			print '>'.$langs->trans("Modify").'</a>';
-		}
-
-		// Delete
-		if (($fichinter->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
-		{
-			print '<a class="butActionDelete" ';
-			if ($conf->use_javascript_ajax && $conf->global->MAIN_CONFIRM_AJAX)
-			{
-				$url = $_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&action=confirm_delete&confirm=yes';
-				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.dol_escape_js($langs->trans("ConfirmDeleteIntervention",$fichinter->ref)).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
-			}
-			else
-			{
-				print 'href="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'&amp;action=delete"';
-			}
-			print '>'.$langs->trans('Delete').'</a>';
 		}
 	}
 

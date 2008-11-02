@@ -61,8 +61,8 @@ llxHeader();
 
 
 $sql = "SELECT";
-$sql.= " f.ref, f.rowid as fichid, f.fk_statut,";
-$sql.= " fd.description, ".$db->pdate("fd.date")." as dp, fd.duree,";
+$sql.= " f.ref, f.rowid as fichid, f.fk_statut, f.description,";
+$sql.= " fd.description as descriptiondetail, ".$db->pdate("fd.date")." as dp, fd.duree,";
 $sql.= " s.nom,s.rowid as socid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
@@ -93,7 +93,8 @@ if ($result)
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","",$urlparam,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Description"),"index.php","fd.description","",$urlparam,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Description"),"index.php","f.description","",$urlparam,'',$sortfield,$sortorder);
+    print '<td>&nbsp;</td>';
     print_liste_field_titre($langs->trans("Date"),"index.php","fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Duration"),"index.php","fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),"index.php","f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
@@ -107,7 +108,8 @@ if ($result)
         print "<tr $bc[$var]>";
         print "<td><a href=\"fiche.php?id=".$objp->fichid."\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
         print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44)."</a></td>\n";
-        print '<td>'.nl2br($objp->description).'</td>';
+        print '<td>'.dol_htmlentitiesbr(dolibarr_trunc($objp->description,20)).'</td>';
+        print '<td>'.dol_htmlentitiesbr(dolibarr_trunc($objp->descriptiondetail,20)).'</td>';
         print '<td align="center">'.dolibarr_print_date($objp->dp,'dayhour')."</td>\n";
         print '<td align="right">'.ConvertSecondToTime($objp->duree).'</td>';
         print '<td align="right">'.$fichinter_static->LibStatut($objp->fk_statut,5).'</td>';
