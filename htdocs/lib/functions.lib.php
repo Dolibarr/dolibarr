@@ -1408,8 +1408,9 @@ function info_admin($texte,$infoonimgalt=0)
  *	\param      objectid      	Object ID if we want to check permission on on object (optionnal)
  *	\param      dbtablename    	Table name where object is stored. Not used if objectid is null (optionnel)
  *	\param      feature2		Feature to check (second level of permission)
+ *  \param      dbt_socfield    Field name for socid foreign key if not fk_soc. (optionnel)
  */
-function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',$feature2='')
+function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',$feature2='',$dbt_socfield='fk_soc')
 {
 	global $db;
 
@@ -1530,7 +1531,7 @@ function restrictedArea($user, $feature='societe', $objectid=0, $dbtablename='',
 
 				$sql = "SELECT sc.fk_soc";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.fk_soc";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = dbt.".$dbt_socfield;
 				$sql.= " WHERE dbt.rowid = ".$objectid;
 				$sql.= " AND IFNULL(sc.fk_user, ".$user->id.") = ".$user->id;
 			}
