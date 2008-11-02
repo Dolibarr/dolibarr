@@ -17,11 +17,11 @@
  */
 
 /**
-        \file       htdocs/fichinter/note.php
-        \ingroup    fichinter
-        \brief      Fiche d'information sur une fiche d'intervention
-        \version    $Id$
-*/
+ \file       htdocs/fichinter/note.php
+ \ingroup    fichinter
+ \brief      Fiche d'information sur une fiche d'intervention
+ \version    $Id$
+ */
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
@@ -46,7 +46,7 @@ if ($_POST["action"] == 'update_public' && $user->rights->ficheinter->creer)
 	$fichinter->fetch($_GET['id']);
 
 	$db->begin();
-	
+
 	$res=$fichinter->update_note_public($_POST["note_public"],$user);
 	if ($res < 0)
 	{
@@ -91,7 +91,7 @@ $html = new Form($db);
 if ($_GET['id'])
 {
 	if ($mesg) print $mesg;
-	
+
 	$fichinter = new Fichinter($db);
 	if ( $fichinter->fetch($_GET['id']) )
 	{
@@ -101,57 +101,51 @@ if ($_GET['id'])
 			$head = fichinter_prepare_head($fichinter);
 			dolibarr_fiche_head($head, 'note', $langs->trans('InterventionCard'));
 
-      print '<table class="border" width="100%">';
+			print '<table class="border" width="100%">';
 
-	    print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fichinter->ref.'</td></tr>';
+			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fichinter->ref.'</td></tr>';
 
-      // Société
-      print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
-    
-			// Date
-      print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-      print dolibarr_print_date($fichinter->date,'daytext');
-      print '</td>';
-    	print '</tr>';
+			// Société
+			print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
 
 			// Note publique
-		  print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
+			print '<tr><td valign="top">'.$langs->trans("NotePublic").' :</td>';
 			print '<td valign="top" colspan="3">';
-		  if ($_GET["action"] == 'edit')
-		  {
-		    print '<form method="post" action="note.php?id='.$fichinter->id.'">';
-		    print '<input type="hidden" name="action" value="update_public">';
-		    print '<textarea name="note_public" cols="80" rows="8">'.$fichinter->note_public."</textarea><br>";
-		    print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-		    print '</form>';
-		  }
-		  else
-		  {
-			  print ($fichinter->note_public?nl2br($fichinter->note_public):"&nbsp;");
-		  }
+			if ($_GET["action"] == 'edit')
+			{
+				print '<form method="post" action="note.php?id='.$fichinter->id.'">';
+				print '<input type="hidden" name="action" value="update_public">';
+				print '<textarea name="note_public" cols="80" rows="8">'.$fichinter->note_public."</textarea><br>";
+				print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+				print '</form>';
+			}
+			else
+			{
+				print ($fichinter->note_public?nl2br($fichinter->note_public):"&nbsp;");
+			}
 			print "</td></tr>";
-		
+
 			// Note privée
 			if (! $user->societe_id)
 			{
 				print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
 				print '<td valign="top" colspan="3">';
-			  if ($_GET["action"] == 'edit')
-			  {
-			    print '<form method="post" action="note.php?id='.$fichinter->id.'">';
-			    print '<input type="hidden" name="action" value="update">';
-			    print '<textarea name="note_private" cols="80" rows="8">'.$fichinter->note_private."</textarea><br>";
-			    print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-			    print '</form>';
-			  }
+				if ($_GET["action"] == 'edit')
+				{
+					print '<form method="post" action="note.php?id='.$fichinter->id.'">';
+					print '<input type="hidden" name="action" value="update">';
+					print '<textarea name="note_private" cols="80" rows="8">'.$fichinter->note_private."</textarea><br>";
+					print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+					print '</form>';
+				}
 				else
 				{
-				  print ($fichinter->note_private?nl2br($fichinter->note_private):"&nbsp;");
+					print ($fichinter->note_private?nl2br($fichinter->note_private):"&nbsp;");
 				}
 				print "</td></tr>";
 			}
-			
-		  print "</table>";
+				
+			print "</table>";
 
 			print '</div>';
 
@@ -166,7 +160,7 @@ if ($_GET['id'])
 			}
 			print '</div>';
 		}
-    }
+	}
 }
 $db->close();
 llxFooter('$Date$ - $Revision: 1.15 ');

@@ -782,7 +782,7 @@ class CommonObject
 		}
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql.= " SET note = '".addslashes($note)."'";
+		$sql.= " SET note_private = '".addslashes($note)."'";
 		$sql.= " WHERE rowid =". $this->id;
 
 		dolibarr_syslog("CommonObject::update_note sql=".$sql, LOG_DEBUG);
