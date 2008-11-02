@@ -19,23 +19,22 @@
  */
 
 /**     \defgroup   fournisseur     Module fournisseur
- \brief      Module pour gerer des societes et contacts de type fournisseurs
- \version	$Id$
+ *		\brief      Module pour gerer des societes et contacts de type fournisseurs
+ *		\version	$Id$
  */
 
 /**
- \file       htdocs/includes/modules/modFournisseur.class.php
- \ingroup    fournisseur
- \brief      Fichier de description et activation du module Fournisseur
+ *		\file       htdocs/includes/modules/modFournisseur.class.php
+ *		\ingroup    fournisseur
+ *		\brief      Fichier de description et activation du module Fournisseur
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**     \class      modFournisseur
- \brief      Classe de description et activation du module Fournisseur
+ *		\brief      Classe de description et activation du module Fournisseur
  */
-
 class modFournisseur extends DolibarrModules
 {
 

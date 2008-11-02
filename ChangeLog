@@ -21,7 +21,9 @@ For users:
 - All phone numbers show the clicktodial link if module is enabled.
 - Can define hour and minutes in intervention cards.
 - Can edit a validated intervention.
-
+- Add juridical status and number of employees in third party 
+  export definition.
+  
 For translators:
 - The errors language file contains only error or warning messages with 
   prefix Error or Warning.
