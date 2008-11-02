@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $fichinterid,'');
 
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="f.datei";
+if (! $sortfield) $sortfield="fd.date";
 if ($page == -1) { $page = 0 ; }
 
 $limit = $conf->liste_limit;
@@ -60,12 +60,14 @@ $pagenext = $page + 1;
 llxHeader();
 
 
-$sql = "SELECT s.nom,s.rowid as socid, f.ref, f.rowid as fichid, f.fk_statut,";
-$sql.= " fd.description, ".$db->pdate("fd.date")." as dp, fd.duree";
+$sql = "SELECT";
+$sql.= " f.ref, f.rowid as fichid, f.fk_statut,";
+$sql.= " fd.description, ".$db->pdate("fd.date")." as dp, fd.duree,";
+$sql.= " s.nom,s.rowid as socid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= ", ".MAIN_DB_PREFIX."fichinter as f ";
+$sql.= ", ".MAIN_DB_PREFIX."fichinter as f)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 $sql.= " WHERE f.fk_soc = s.rowid ";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -73,7 +75,7 @@ if ($socid > 0)
 {
 	$sql .= " AND s.rowid = " . $socid;
 }
-$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= " ORDER BY ".$sortfield." ".$sortorder;
 $sql.= $db->plimit( $limit + 1 ,$offset);
 
 $result=$db->query($sql);
@@ -91,10 +93,10 @@ if ($result)
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","",$urlparam,'',$sortfield,$sortorder);
-    print '<td>'.$langs->trans("Description").'</td>';
-    print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","",$urlparam,'align="center"',$sortfield);
-    print '<td align="right">'.$langs->trans("Duration").'</td>';
-    print '<td align="right">'.$langs->trans("Status").'</td>';
+    print_liste_field_titre($langs->trans("Description"),"index.php","fd.description","",$urlparam,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),"index.php","fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Duration"),"index.php","fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"index.php","f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
     $total = 0;
@@ -106,7 +108,7 @@ if ($result)
         print "<td><a href=\"fiche.php?id=".$objp->fichid."\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
         print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44)."</a></td>\n";
         print '<td>'.nl2br($objp->description).'</td>';
-        print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
+        print '<td align="center">'.dolibarr_print_date($objp->dp,'dayhour')."</td>\n";
         print '<td align="right">'.ConvertSecondToTime($objp->duree).'</td>';
         print '<td align="right">'.$fichinter_static->LibStatut($objp->fk_statut,5).'</td>';
 
@@ -114,7 +116,7 @@ if ($result)
         $total += $objp->duree;
         $i++;
     }
-    print '<tr class="liste_total"><td colspan="3"></td><td>'.$langs->trans("Total").'</td>';
+    print '<tr class="liste_total"><td colspan="3"></td><td align="center">'.$langs->trans("Total").'</td>';
     print '<td align="right" nowrap>'.ConvertSecondToTime($total).'</td><td></td>';
     print '</tr>';
 

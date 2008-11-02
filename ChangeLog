@@ -19,6 +19,8 @@ For users:
 - Miscelanous bug fixes.
 - A lot of other enhancements to increase productivity.
 - All phone numbers show the clicktodial link if module is enabled.
+- Can define hour and minutes in intervention cards.
+- Can edit a validated intervention.
 
 For translators:
 - The errors language file contains only error or warning messages with 

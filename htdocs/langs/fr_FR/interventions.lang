@@ -16,6 +16,7 @@ ValidateIntervention=Valider intervention
 DeleteInterventionLine=Supprimer ligne d'intervention
 ConfirmDeleteIntervention=Êtes-vous sûr de vouloir effacer cette intervention ?
 ConfirmValidateIntervention=Êtes-vous sûr de vouloir valider cette intervention ?
+ConfirmModifyIntervention=Êtes-vous sûr de vouloir modifier cette intervention ?
 ConfirmDeleteInterventionLine=Êtes-vous sûr de vouloir effacer cette ligne ?
 NameAndSignatureOfInternalContact=Nom et signature de l'intervenant :
 NameAndSignatureOfExternalContact=Nom et signature du client :

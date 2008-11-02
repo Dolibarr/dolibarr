@@ -646,11 +646,11 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0,$check=1)
 
 
 /**
- \brief  	Returns formated date
- \param		fmt				Format (Exemple: 'Y-m-d H:i:s')
- \param		timestamp		Date. Exemple: Si timestamp=0 et gm=1, renvoi 01/01/1970 00:00:00
- \param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
- \return		string			Formated date
+ *	\brief  	Returns formated date
+ *	\param		fmt				Format (Exemple: 'Y-m-d H:i:s')
+ *	\param		timestamp		Date. Exemple: Si timestamp=0 et gm=1, renvoi 01/01/1970 00:00:00
+ *	\param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
+ *	\return		string			Formated date
  */
 function dolibarr_date($fmt, $timestamp, $gm=0)
 {
@@ -672,8 +672,8 @@ function dolibarr_date($fmt, $timestamp, $gm=0)
 
 
 /**
- \brief  Affiche les informations d'un objet
- \param	object			objet a afficher
+ *	\brief  Affiche les informations d'un objet
+ *	\param	object			objet a afficher
  */
 function dolibarr_print_object_info($object)
 {

@@ -23,7 +23,7 @@ create table llx_fichinterdet
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_fichinter      integer,
-  date              date,              -- date de la ligne d'intervention
+  date              datetime,          -- date de la ligne d'intervention
   description       text,              -- description de la ligne d'intervention
   duree             integer,           -- duree de la ligne d'intervention
   rang              integer DEFAULT 0  -- ordre affichage sur la fiche

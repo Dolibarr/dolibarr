@@ -528,11 +528,11 @@ class DoliDb
 
 
 	/**
-	 *   \brief      Formatage (par la base de donn�es) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
-	 *               afin de retourner une donn�e toujours au format universel date TMS unix.
-	 *               Fonction � utiliser pour g�n�rer les SELECT.
+	 *   \brief     Formatage (par la base de donnees) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
+	 *              afin de retourner une donnee toujours au format universel date TMS unix.
+	 *              Fonction a utiliser pour generer les SELECT.
 	 *   \param	    param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
-	 *   \return	    date        Date au format TMS.
+	 *   \return	date        Date au format TMS.
 	 *	\TODO		Remove unix_timestamp functions
 	 */
 	function pdate($param)
@@ -542,8 +542,8 @@ class DoliDb
 
 	/**
 	 *   \brief     Formatage (par PHP) d'une date vers format texte pour insertion dans champ date.
-	 *              Fonction � utiliser pour g�n�rer les INSERT, UPDATE ou les clauses WHERE
-	 *   \param	    param       Date TMS � convertir
+	 *              Fonction a utiliser pour generer les INSERT, UPDATE ou les clauses WHERE
+	 *   \param	    param       Date TMS to convert
 	 *   \return	date        Date au format texte YYYYMMDDHHMMSS.
 	 */
 	function idate($param)

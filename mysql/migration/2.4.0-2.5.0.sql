@@ -65,3 +65,5 @@ ALTER TABLE llx_paiementfourn_facturefourn ADD UNIQUE INDEX uk_paiementfourn_fac
 
 update llx_expedition_methode set code='ENL', libelle='Enlevement' where code='enlevement';
 update llx_expedition_methode set code='TRANS', libelle='Transporteur' where code='transporteur';
+
+alter table llx_fichinterdet modify date datetime;

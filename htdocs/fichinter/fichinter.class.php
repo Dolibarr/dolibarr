@@ -19,9 +19,9 @@
  */
 
 /**	    \file       htdocs/fichinter/fichinter.class.php
- \ingroup    ficheinter
- \brief      Fichier de la classe des gestion des fiches interventions
- \version    $Id$
+ *		\ingroup    ficheinter
+ *		\brief      Fichier de la classe des gestion des fiches interventions
+ *		\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
@@ -46,9 +46,11 @@ class Fichinter extends CommonObject
 
 	var $author;
 	var $ref;
-	var $date;
-	var $date_delivery;
+	var $datec;
+	var $datev;
+	var $datem;
 	var $duree;
+	var $statut;		// 0=draft, 1=validated
 	var $description;
 	var $note_private;
 	var $note_public;
@@ -146,7 +148,6 @@ class Fichinter extends CommonObject
 		 *  Insertion dans la base
 		 */
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
-		$sql .= " datei = ".$this->db->idate($this->date);
 		$sql .= ", description  = '".addslashes($this->description)."'";
 		$sql .= ", duree = ".$this->duree;
 		$sql .= ", fk_projet = ".$this->projet_id;
@@ -171,7 +172,10 @@ class Fichinter extends CommonObject
 	function fetch($rowid)
 	{
 		$sql = "SELECT ref, description, fk_soc, fk_statut,";
-		$sql.= " ".$this->db->pdate(datei)." as di, duree, fk_projet, note_public, note_private, model_pdf";
+		$sql.= " ".$this->db->pdate("datec")." as datec,";
+		$sql.= " ".$this->db->pdate("date_valid")." as datev,";
+		$sql.= " ".$this->db->pdate("tms")." as datem,";
+		$sql.= " duree, fk_projet, note_public, note_private, model_pdf";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql.= " WHERE rowid=".$rowid;
 
@@ -188,8 +192,10 @@ class Fichinter extends CommonObject
 				$this->description  = $obj->description;
 				$this->socid        = $obj->fk_soc;
 				$this->statut       = $obj->fk_statut;
-				$this->date         = $obj->di;
 				$this->duree        = $obj->duree;
+				$this->datec        = $obj->datec;
+				$this->datev        = $obj->datev;
+				$this->datem        = $obj->datem;
 				$this->projetidp    = $obj->fk_projet;
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
@@ -210,32 +216,24 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *		\brief		Valide une fiche intervention
-	 *		\param		user		User qui valide
-	 *		\return		int			<0 si ko, >0 si ok
+	 *		\brief		Set status to draft
+	 *		\return		int			<0 if KO, >0 if OK
 	 */
-	function valid($user, $outputdir)
+	function setDraft($user)
 	{
 		global $langs, $conf;
 
-		$this->db->begin();
-		
-		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
-		$sql.= " SET fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=".$user->id;
-		$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-
-		dolibarr_syslog("Fichinter::valid sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
+		if ($this->statut != 0)
 		{
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('FICHEINTER_VALIDATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
-
-			if (! $error)
+			$this->db->begin();
+			
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+			$sql.= " SET fk_statut = 0";
+			$sql.= " WHERE rowid = ".$this->id;
+	
+			dolibarr_syslog("Fichinter::setDraft sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
 			{
 				$this->db->commit();
 				return 1;
@@ -243,17 +241,61 @@ class Fichinter extends CommonObject
 			else
 			{
 				$this->db->rollback();
-				$this->error=join(',',$this->errors);
-				dolibarr_syslog("Fichinter::update ".$this->error,LOG_ERR);
+				$this->error=$this->db->lasterror();
+				dolibarr_syslog("Fichinter::setDraft ".$this->error,LOG_ERR);
 				return -1;
 			}
-		}
-		else
+		}		
+	}
+	
+	/**
+	 *		\brief		Valide une fiche intervention
+	 *		\param		user		User qui valide
+	 *		\return		int			<0 if KO, >0 if OK
+	 */
+	function setValid($user, $outputdir)
+	{
+		global $langs, $conf;
+
+		if ($this->statut != 1)
 		{
-			$this->db->rollback();
-			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Fichinter::update ".$this->error,LOG_ERR);
-			return -1;
+			$this->db->begin();
+			
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+			$sql.= " SET fk_statut = 1, date_valid=".$this->db->idate(mktime()).", fk_user_valid=".$user->id;
+			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+	
+			dolibarr_syslog("Fichinter::setValid sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('FICHEINTER_VALIDATE',$this,$user,$langs,$conf);
+				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				// Fin appel triggers
+	
+				if (! $error)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=join(',',$this->errors);
+					dolibarr_syslog("Fichinter::setValid ".$this->error,LOG_ERR);
+					return -1;
+				}
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				dolibarr_syslog("Fichinter::setValid ".$this->error,LOG_ERR);
+				return -1;
+			}
 		}
 	}
 
@@ -810,7 +852,7 @@ class FichinterLigne
 		$sql.= ' (fk_fichinter, description, date, duree, rang)';
 		$sql.= " VALUES (".$this->fk_fichinter.",";
 		$sql.= " '".addslashes($this->desc)."',";
-		$sql.= " ".$this->datei.",";
+		$sql.= " ".$this->db->idate($this->datei).",";
 		$sql.= " ".$this->duration.",";
 		$sql.= ' '.$rangToUse;
 		$sql.= ')';
@@ -870,13 +912,15 @@ class FichinterLigne
 			}
 			else
 			{
+				$this->error=$this->db->lasterror();
+				dolibarr_syslog("FichinterLigne::update Error ".$this->error);
 				$this->db->rollback();
 				return -1;
 			}
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			dolibarr_syslog("FichinterLigne::update Error ".$this->error);
 			$this->db->rollback();
 			return -1;
