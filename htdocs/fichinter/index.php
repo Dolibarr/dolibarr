@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,10 +115,11 @@ if ($result)
         print '<td align="right">'.$fichinter_static->LibStatut($objp->fk_statut,5).'</td>';
 
         print "</tr>\n";
+        
         $total += $objp->duree;
         $i++;
     }
-    print '<tr class="liste_total"><td colspan="3"></td><td align="center">'.$langs->trans("Total").'</td>';
+    print '<tr class="liste_total"><td colspan="4"></td><td align="center">'.$langs->trans("Total").'</td>';
     print '<td align="right" nowrap>'.ConvertSecondToTime($total).'</td><td></td>';
     print '</tr>';
 

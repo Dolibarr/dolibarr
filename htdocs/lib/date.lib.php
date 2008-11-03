@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +44,18 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
  *    \return     sTime       Temps formaté 	
  */
 function ConvertSecondToTime($iSecond,$format='all'){
+	global $langs;
+	
 	if ($format == 'all'){
-		$sTime=date("H",$iSecond)-1;
+		if ($iSecond > 86400)
+		{
+			$sDay=date("d",$iSecond)-1;
+			$dayTranslate = $langs->trans("Day");
+			if ($iSecond >= 172800) $dayTranslate = $langs->trans("Days");
+		}
+		$sTime='';
+		if ($sDay) $sTime.=$sDay.' '.$dayTranslate.' ';
+		$sTime.=date("H",$iSecond)-1;
 		$sTime.='h'.date("i",$iSecond);
 	}else if ($format == 'hour'){
 		$sTime=date("H",$iSecond)-1;
