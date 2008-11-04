@@ -186,9 +186,9 @@ function pt ($db, $sql, $date)
             $var=!$var;
             print "<tr $bc[$var]>";
             print "<td nowrap>$obj->dm</td>\n";
-            $total = $total + $obj->amount;
+            $total = $total + $obj->mm;
 
-            print "<td nowrap align=\"right\">".price($obj->amount)."</td><td nowrap align=\"right\">".$total."</td>\n";
+            print "<td nowrap align=\"right\">".price($obj->mm)."</td><td >&nbsp;</td>\n";
             print "</tr>\n";
 
             $i++;
@@ -234,6 +234,7 @@ print "<td width=\"30%\">".$langs->trans("Year")." $y</td>";
 print "<td align=\"right\">".$langs->trans("VATToPay")."</td>";
 print "<td align=\"right\">".$langs->trans("VATToCollect")."</td>";
 print "<td align=\"right\">".$langs->trans("TotalToPay")."</td>";
+print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
 if ($conf->compta->mode == "CREANCES-DETTES")
@@ -261,11 +262,12 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 		$subtotal = $subtotal + $diff;
 	
 		print "<td nowrap align=\"right\">".price($diff)."</td>\n";
+		print "<td>&nbsp;</td>\n";
 		print "</tr>\n";
 	
 		$i++;
 		if ($i > 2) {
-			print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td></tr>';
+			print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td><td>&nbsp;</td></tr>';
 			$i = 0;
 			$subtotal = 0;
 		}
@@ -291,9 +293,9 @@ echo '</td><td>&nbsp;</td><td valign="top" width="50%">';
 * Réglée
 */
 
-$sql = "SELECT SUM(amount), date_format(f.datev,'%Y-%m') as dm";
+$sql = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."tva as f WHERE f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
-$sql .= " GROUP BY dm DESC";
+$sql .= " GROUP BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");
 
