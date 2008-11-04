@@ -54,6 +54,7 @@ if($min == 0 or $min!=floatval(strval($min))){
 }
 
 // Define modetax (0 or 1)
+// 0=normal, 1=option vat for services is on debit
 $modetax = $conf->global->TAX_MODE;
 if ($_GET["modetax"]) $modetax=$_GET["modetax"];
 

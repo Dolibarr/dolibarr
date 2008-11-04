@@ -34,6 +34,9 @@ $langs->load('taxes');
 if (!$user->admin)
   accessforbidden();
 
+/*
+ * View
+ */
 
 llxHeader();
 
