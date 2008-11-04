@@ -15,15 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/compta/prelevement/stats.php
         \brief      Page de stats des prélèvements
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -43,7 +40,7 @@ llxHeader('','Statistiques prélèvements');
  *
  */
 
-print_titre("Statistiques prélèvements");
+print_titre($langs->trans("WithdrawStatistics"));
 
 
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
@@ -123,14 +120,16 @@ if ($db->query($sql))
 else 
 {
   dolibarr_print_error($db);
-}  
+} 
+
+
 /*
  *
  * Stats sur les rejets
  *
  */
 print '<br />';
-print_titre("Statistiques des rejets de prélèvements");
+print_titre($langs->trans("WithdrawRejectStatistics"));
 
 
 $sql = "SELECT sum(pl.amount), count(pl.amount)";

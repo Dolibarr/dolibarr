@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/compta/prelevement/liste.php
         \ingroup    prelevement
         \brief      Page liste des prelevements
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -33,6 +30,7 @@ if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
 
 $langs->load("withdrawals");
+$langs->load("companies");
 
 // Sécurité accés client
 if ($user->societe_id > 0) 

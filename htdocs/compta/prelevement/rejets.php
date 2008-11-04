@@ -14,14 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
+ */
+
+/*
+ * 	\version	$Id$
  */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
+
+$langs->load("companies");
+
 
 if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
@@ -29,6 +33,9 @@ if (!$user->rights->prelevement->bons->lire)
 // Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
 
+/*
+ * View
+ */
 
 llxHeader('','Bon de prélèvement - Rejet');
 
@@ -92,13 +99,13 @@ if ($result)
   $num = $db->num_rows($result);
   $i = 0;
   
-  print_barre_liste("Prélèvements rejetés", $page, "rejets.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste($langs->trans("WithdrawsRefused"), $page, "rejets.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre("Ligne N°","rejets.php","p.ref",'',$urladd);
-  print_liste_field_titre("Société","rejets.php","s.nom",'',$urladd);
-  print_liste_field_titre("Motif","rejets.php","pr.motif","",$urladd);
+  print_liste_field_titre($langs->trans("Nb"),"rejets.php","p.ref",'',$urladd);
+  print_liste_field_titre($langs->trans("ThirdParty"),"rejets.php","s.nom",'',$urladd);
+  print_liste_field_titre($langs->trans("Reason"),"rejets.php","pr.motif","",$urladd);
   print '</tr>';
 
   $var=True;

@@ -18,218 +18,218 @@
  */
 
 /**
-        \file       htdocs/compta/prelevement/config.php
-        \ingroup    prelevement
-        \brief      Page configuration des prelevements
-        \version    $Id$
-*/
+ \file       htdocs/compta/prelevement/config.php
+ \ingroup    prelevement
+ \brief      Page configuration des prelevements
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 
 
 if (!$user->rights->prelevement->bons->lire)
-  accessforbidden();
+accessforbidden();
 
 
 if ($_GET["action"] == "set" && $user->rights->prelevement->bons->configurer)
 {
-  for ($i = 1 ; $i < 7 ; $i++)
-    {
-      dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"], $type='chaine');
-    }
+	for ($i = 1 ; $i < 7 ; $i++)
+	{
+		dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"], $type='chaine');
+	}
 
-  Header("Location: config.php");
+	Header("Location: config.php");
+	exit;
 }
 
 if ($_GET["action"] == "addnotif" && $user->rights->prelevement->bons->configurer)
 {
-  $bon = new BonPrelevement($db);
-  $bon->AddNotification($_POST["user"],$_POST["action"]);
-  
-  Header("Location: config.php");
+	$bon = new BonPrelevement($db);
+	$bon->AddNotification($_POST["user"],$_POST["action"]);
+
+	Header("Location: config.php");
+	exit;
 }
 
 if ($_GET["action"] == "deletenotif" && $user->rights->prelevement->bons->configurer)
 {
-  $bon = new BonPrelevement($db);
-  $bon->DeleteNotificationById($_GET["notif"]);
-  
-  Header("Location: config.php");
+	$bon = new BonPrelevement($db);
+	$bon->DeleteNotificationById($_GET["notif"]);
+
+	Header("Location: config.php");
+	exit;
 }
 
 /*
- *
- *
- *
+ *	View
  */
+
 llxHeader('',$langs->trans("WithdrawalsSetup"));
 
 print_fiche_titre($langs->trans("WithdrawalsSetup"));
 
 print "<br>";
 
-/*
- *
- *
- */
 if ($user->rights->prelevement->bons->configurer)
-  print '<form method="post" action="config.php?action=set">';
+print '<form method="post" action="config.php?action=set">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="30%">Nom</td>';
+print '<td width="30%">'.$langs->trans("Parameter").'</td>';
 if ($user->rights->prelevement->bons->configurer)
-  print '<td width="40%">Valeur</td>';
+print '<td width="40%">'.$langs->trans("Value").'</td>';
 
-print '<td width="30%">Valeur Actuelle</td>';
+print '<td width="30%">'.$langs->trans("CurrentValue").'</td>';
 print "</tr>\n";
 
-print '<tr class="pair"><td>Num�ro National Emetteur</td>';
+print '<tr class="pair"><td>'.$langs->trans("NumeroNationalEmetter").'</td>';
 if ($user->rights->prelevement->bons->configurer)
 {
-  print '<td align="left">';
-  print '<input type="hidden" name="nom1" value="PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR">'; 
-  print '<input type="text"   name="value1" value="'.PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'" size="9" ></td>';
+	print '<td align="left">';
+	print '<input type="hidden" name="nom1" value="PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR">';
+	print '<input type="text"   name="value1" value="'.PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'" size="9" ></td>';
 }
 print '<td>'.PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'</td></tr>';
 
-print '<tr class="impair"><td>Raison sociale</td>';
+print '<tr class="impair"><td>'.$langs->trans("Name").'</td>';
 if ($user->rights->prelevement->bons->configurer)
 {
-  print '<td align="left">';
-  print '<input type="hidden" name="nom2" value="PRELEVEMENT_RAISON_SOCIALE">';
-  print '<input type="text"   name="value2" value="'.PRELEVEMENT_RAISON_SOCIALE.'" size="14" ></td>';
+	print '<td align="left">';
+	print '<input type="hidden" name="nom2" value="PRELEVEMENT_RAISON_SOCIALE">';
+	print '<input type="text"   name="value2" value="'.PRELEVEMENT_RAISON_SOCIALE.'" size="14" ></td>';
 }
 print '<td>'.PRELEVEMENT_RAISON_SOCIALE.'</td></tr>';
 
-print '<tr class="pair"><td>Code Banque</td>';
+print '<tr class="pair"><td>'.$langs->trans("BankCode").'</td>';
 if ($user->rights->prelevement->bons->configurer)
 {
-  print '<td align="left">';
-  print '<input type="hidden" name="nom3" value="PRELEVEMENT_CODE_BANQUE">';
-  print '<input type="text"   name="value3" value="'.PRELEVEMENT_CODE_BANQUE.'" size="6" ></td>';
+	print '<td align="left">';
+	print '<input type="hidden" name="nom3" value="PRELEVEMENT_CODE_BANQUE">';
+	print '<input type="text"   name="value3" value="'.PRELEVEMENT_CODE_BANQUE.'" size="6" ></td>';
 }
 print '<td>'.PRELEVEMENT_CODE_BANQUE.'</td></tr>';
 
-print '<tr class="impair"><td>Code Guichet</td>';
+print '<tr class="impair"><td>'.$langs->trans("DeskCode").'</td>';
 if ($user->rights->prelevement->bons->configurer)
 {
-  print '<td align="left">';
-  print '<input type="hidden" name="nom4" value="PRELEVEMENT_CODE_GUICHET">';
-  print '<input type="text"   name="value4" value="'.PRELEVEMENT_CODE_GUICHET.'" size="6" ></td>';
+	print '<td align="left">';
+	print '<input type="hidden" name="nom4" value="PRELEVEMENT_CODE_GUICHET">';
+	print '<input type="text"   name="value4" value="'.PRELEVEMENT_CODE_GUICHET.'" size="6" ></td>';
 }
 print '<td>'.PRELEVEMENT_CODE_GUICHET.'</td></tr>';
 
-print '<tr class="pair"><td>Num�ro compte</td>';
+print '<tr class="pair"><td>'.$langs->trans("AccountNumber").'</td>';
 if ($user->rights->prelevement->bons->configurer)
 {
-  print '<td align="left">';
-  print '<input type="hidden" name="nom5" value="PRELEVEMENT_NUMERO_COMPTE">';
-  print '<input type="text"   name="value5" value="'.PRELEVEMENT_NUMERO_COMPTE.'" size="11" ></td>';
+	print '<td align="left">';
+	print '<input type="hidden" name="nom5" value="PRELEVEMENT_NUMERO_COMPTE">';
+	print '<input type="text"   name="value5" value="'.PRELEVEMENT_NUMERO_COMPTE.'" size="11" ></td>';
 }
 print '<td>'.PRELEVEMENT_NUMERO_COMPTE.'</td></tr>';
-  
-print '<tr class="impair"><td>Utilisateur responsable des pr�l�vements</td>';
+
+print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
 if ($user->rights->prelevement->bons->configurer)
 {
-  print '<td align="left">';
-  print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
-  print '<select name="value6">';
-  $sql = "SELECT rowid, name, firstname";
-  $sql .= " FROM ".MAIN_DB_PREFIX."user";
-  
-  if ($db->query($sql))
-    {
-      $num = $db->num_rows();
-      $i = 0;
-      while ($i < $num)
+	print '<td align="left">';
+	print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
+	print '<select name="value6">';
+	$sql = "SELECT rowid, name, firstname";
+	$sql .= " FROM ".MAIN_DB_PREFIX."user";
+
+	if ($db->query($sql))
 	{
-	  $obj = $db->fetch_object();
-	  print '<option value="'.$obj->rowid.'">'.stripslashes($obj->firstname)." ".stripslashes($obj->name);
-	  $i++;
+		$num = $db->num_rows();
+		$i = 0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object();
+			print '<option value="'.$obj->rowid.'">'.$obj->firstname." ".$obj->name;
+			$i++;
+		}
+		$db->free();
 	}
-      $db->free();
-    }
-  
-  print '</select></td>';
+
+	print '</select></td>';
 }
 print '<td>';
 if (defined("PRELEVEMENT_USER") && PRELEVEMENT_USER > 0)
 {
-  $cuser = new User($db, PRELEVEMENT_USER);
-  $cuser->fetch();
-  print $cuser->fullname;
+	$cuser = new User($db, PRELEVEMENT_USER);
+	$cuser->fetch();
+	print $cuser->fullname;
 }
 else
 {
-  print PRELEVEMENT_USER;
+	print PRELEVEMENT_USER;
 }
 
 print '</td></tr>';
 
 if ($user->rights->prelevement->bons->configurer)
-  print '<tr><td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+print '<tr><td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
 print '</table>';
 
 if ($user->rights->prelevement->bons->configurer)
-  print '</form>';
+print '</form>';
 
 print '<br>';
 
 
+
+
 /*
  * Notifications
- *
+ * TODO Use notification module instead
  */
 
 print_titre($langs->trans("Notifications"));
 
 if ($user->rights->prelevement->bons->configurer)
-  print '<form method="post" action="config.php?action=addnotif">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="30%">Nom</td>';
 print '<td width="40%">Valeur</td>';
 if ($user->rights->prelevement->bons->configurer)
-  print '<td width="30%">Action</td>';
+print '<td width="30%">Action</td>';
 print "</tr>\n";
 
 if ($user->rights->prelevement->bons->configurer)
 {
-  print '<tr class="impair"><td align="left">';
-  print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
-  print '<select name="user">';
-  $sql = "SELECT rowid, name, firstname";
-  $sql .= " FROM ".MAIN_DB_PREFIX."user";
-  $sql .= " ORDER BY name ASC";
-  
-  if ($db->query($sql))
-    {
-      $num = $db->num_rows();
-      $i = 0;
-      while ($i < $num)
+	print '<tr class="impair"><td align="left">';
+	print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
+	print '<select name="user">';
+	$sql = "SELECT rowid, name, firstname";
+	$sql .= " FROM ".MAIN_DB_PREFIX."user";
+	$sql .= " ORDER BY name ASC";
+
+	if ($db->query($sql))
 	{
+		$num = $db->num_rows();
+		$i = 0;
+		while ($i < $num)
+		{
 	  $obj = $db->fetch_object();
-	  print '<option value="'.$obj->rowid.'">'.stripslashes($obj->firstname)." ".stripslashes($obj->name);
+	  print '<option value="'.$obj->rowid.'">'.$obj->firstname." ".$obj->name;
 	  $i++;
+		}
+		$db->free();
 	}
-      $db->free();
-    }
-  
-  print '</select></td>';
-  
-  print '<td align="left">';
-  print '<select name="action">';
-  
-  print '<option value="tr">Transmission du bon</option>';
-  print '<option value="em">Emission du bon</option>';
-  print '<option value="cr">Cr�dit du bon</option>'; 
-  print '</select></td>';
-  
-  print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+
+	print '</select></td>';
+
+	print '<td align="left">';
+	print '<select name="action">';
+
+	print '<option value="tr">Transmission du bon</option>';
+	print '<option value="em">Emission du bon</option>';
+	print '<option value="cr">Credit du bon</option>';
+	print '</select></td>';
+
+	print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 }
 
 
@@ -241,35 +241,35 @@ $sql .= " WHERE u.rowid = pn.fk_user";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  $var = True;
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object($resql);
-
-      $var=!$var;
-      print "<tr $bc[$var]>";
-
-      print '<td>'.stripslashes($obj->firstname)." ".stripslashes($obj->name).'</td>';
-      print '<td>'.$obj->action.'</td>';
-
-      if ($user->rights->prelevement->bons->configurer)
+	$num = $db->num_rows($resql);
+	$i = 0;
+	$var = True;
+	while ($i < $num)
 	{
-	  print '<td><a href="config.php?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td></tr>';
+		$obj = $db->fetch_object($resql);
+
+		$var=!$var;
+		print "<tr $bc[$var]>";
+
+		print '<td>'.$obj->firstname." ".$obj->name.'</td>';
+		print '<td>'.$obj->action.'</td>';
+
+		if ($user->rights->prelevement->bons->configurer)
+		{
+			print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td></tr>';
+		}
+		else
+		{
+			print '</tr>';
+		}
+		$i++;
 	}
-      else
-	{
-	  print '</tr>';
-	}
-      $i++;
-    }
-  $db->free($resql);
+	$db->free($resql);
 }
 print '</table>';
 
 if ($user->rights->prelevement->bons->configurer)
-  print '</form>';
+print '</form>';
 
 
 $db->close();

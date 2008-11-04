@@ -14,19 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/compta/prelevement/create.php
         \brief      Prelevement
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php");
+
+$langs->load("widthdrawals");
+$langs->load("companies");
+$langs->load("banks");
+$langs->load("bills");
+
 
 if (!$user->rights->prelevement->bons->creer)
   accessforbidden();
@@ -51,6 +54,10 @@ if ($_GET["action"] == 'create')
 }
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 $h=0;
@@ -70,16 +77,16 @@ if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
     dolibarr_print_error($bprev->error);
 }
 print '<table class="border" width="100%">';
-print '<tr><td>Nb de facture à prélever :</td>';
+print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td align="right">';
 print $nb;
-print '</td><td>Notre banque :</td><td align="right">';
+print '</td><td>'.$langs->trans("BankCode").'</td><td align="right">';
 print $nb1;
-print '</td><td>Notre agence :</td><td align="right">';
+print '</td><td>'.$langs->trans("DeskCode").'</td><td align="right">';
 print $nb11;
 print '</td></tr>';
 
-print '<tr><td>Somme à prélever</td>';
+print '<tr><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td align="right">';
 print price($bprev->SommeAPrelever());
 print '</td>';
@@ -103,7 +110,7 @@ if ($nb)
 }
 else
 {
-    print "Aucune facture en mode de paiement 'Prélevement' n'a de demande de prélèvements en attente.<br>";
+    print $langs->trans("NoInvoiceToWithdraw").'<br>';
 }
 print '<br>';
 

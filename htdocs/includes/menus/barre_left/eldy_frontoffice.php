@@ -510,11 +510,11 @@ class MenuLeft {
 
 					$newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php?leftmenu=withdraw",$langs->trans("StandingOrders"),0,$user->rights->prelevement->bons->lire);
 
+					if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/create.php",$langs->trans("NewStandingOrder"),1,$user->rights->prelevement->bons->creer);
+
 					//if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrder"),1,$user->rights->prelevement->bons->lire);
 					if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=0",$langs->trans("StandingOrderToProcess"),1,$user->rights->prelevement->bons->lire);
 					//if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php?status=1",$langs->trans("StandingOrderProcessed"),2,$user->rights->prelevement->bons->lire);
-
-					if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/create.php",$langs->trans("NewStandingOrder"),1,$user->rights->prelevement->bons->creer);
 
 					if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("WithdrawalsReceipts"),1,$user->rights->prelevement->bons->lire);
 					if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php",$langs->trans("WithdrawalsLines"),1,$user->rights->prelevement->bons->lire);

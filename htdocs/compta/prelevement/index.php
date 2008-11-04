@@ -16,15 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/compta/prelevement/index.php
         \brief      Prelevement
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -61,12 +58,12 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
 $var=!$var;
-print '<tr '.$bc[$var].'><td>Nb de facture à prélever</td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td align="right">';
 print $bprev->NbFactureAPrelever();
 print '</td></tr>';
 $var=!$var;
-print '<tr '.$bc[$var].'><td>Somme à prélever</td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td align="right">';
 print price($bprev->SommeAPrelever());
 print '</td></tr></table><br>';
