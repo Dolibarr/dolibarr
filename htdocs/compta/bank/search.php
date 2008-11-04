@@ -37,6 +37,10 @@ $type=$_POST["type"];
 $account=$_POST["account"];
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
 $html = new Form($db);
@@ -50,7 +54,7 @@ print '<br>';
 
 print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
-print '<td class="liste_titre">'.$langs->trans("Date").'</td>';
+print '<td class="liste_titre" align="left">'.$langs->trans("Date").'</td>';
 print '<td class="liste_titre">'.$langs->trans("Description").'</td>';
 print '<td class="liste_titre" align="right">'.$langs->trans("Debit").'</td>';
 print '<td class="liste_titre" align="right">'.$langs->trans("Credit").'</td>';
@@ -161,7 +165,7 @@ if ($result)
     $var=!$var;
 
     print "<tr $bc[$var]>";
-    print '<td align="center">'.dolibarr_print_date($objp->do,"day")."</td>\n";
+    print '<td align="left">'.dolibarr_print_date($objp->do,"day")."</td>\n";
       
     print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">";
 	$reg=array();

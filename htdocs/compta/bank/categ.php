@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/compta/bank/categ.php
         \ingroup    compta
         \brief      Page ajout de catégories bancaires
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -41,7 +38,7 @@ if ($_POST["action"] == 'add')
 {
 	if ($_POST["label"])
 	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (label) VALUES ('".$_POST["label"]."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (label) VALUES ('".addslashes($_POST["label"])."')";
 		$result = $db->query($sql);
 
 		if (!$result)
