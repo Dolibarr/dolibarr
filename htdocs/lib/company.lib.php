@@ -705,7 +705,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$ligne1="";
 	if ($fromcompany->forme_juridique_code)
 	{
-		$ligne1.=($ligne1?" - ":"").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
+		$ligne1.=($ligne1?" - ":"").$outputlangs->convToOutputCharset(getFormeJuridiqueLabel($fromcompany->forme_juridique_code));
 	}
 	// Capital
 	if ($fromcompany->capital)
