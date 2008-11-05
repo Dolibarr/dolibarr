@@ -38,15 +38,17 @@ function ConvertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
 }
 
 
-/**	  \brief      Converti les secondes en heures et minutes
- *    \param      iSecond     Nombre de secondes
- *    \param      format      Choix de l'affichage (all:affichage complet, hour: n'affiche que les heures, min: n'affiche que les minutes)
- *    \return     sTime       Temps formaté 	
+/**	  \brief      Return, in clear text, value of a number of seconds in days, hours and minutes
+ *    \param      iSecond     Number of seconds
+ *    \param      format      Output format (all:affichage complet, hour: n'affiche que les heures, min: n'affiche que les minutes)
+ *    \return     sTime       Formated text of duration
  */
-function ConvertSecondToTime($iSecond,$format='all'){
+function ConvertSecondToTime($iSecond,$format='all')
+{
 	global $langs;
-	
-	if ($format == 'all'){
+
+	if ($format == 'all')
+	{
 		if ($iSecond > 86400)
 		{
 			$sDay=date("d",$iSecond)-1;
