@@ -15,26 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/compta/prelevement/factures.php
         \ingroup    prelevement
         \brief      Page liste des factures prélevées
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 
+$langs->load("companies");
+
 // Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
 
-llxHeader('','Bon de prélèvement');
+llxHeader('',$langs->trans("WithdrawalReceipt"));
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
@@ -74,11 +73,13 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-      dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
+      dolibarr_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
 
       print '<table class="border" width="100%">';
-      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->ref.'</td></tr>';
-      print '</table><br />';
+      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
+      print '</table>';
+      
+      print '</div>';
     }
   else
     {
@@ -128,7 +129,7 @@ if ($result)
   
   $urladd = "&amp;id=".$_GET["id"];
 
-  print_barre_liste($langs->trans("Bills"), $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste("", $page, "factures.php", $urladd, $sortfield, $sortorder, '', $num);
 
   print"\n<!-- debut table -->\n";
   print '<table class="liste" width="100%">';
@@ -138,7 +139,7 @@ if ($result)
   print_liste_field_titre($langs->trans("Amount"),"factures.php","f.total_ttc","",$urladd,'class="liste_titre" align="center"',$sortfield,$sortorder);
   print '<td class="liste_titre" colspan="2">&nbsp;</td></tr>';
 
-  $var=True;
+  $var=false;
 
   $total = 0;
 

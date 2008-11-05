@@ -184,92 +184,96 @@ print '<br>';
  * TODO Use notification module instead
  */
 
-print_titre($langs->trans("Notifications"));
-
-if ($user->rights->prelevement->bons->configurer)
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td width="30%">Nom</td>';
-print '<td width="40%">Valeur</td>';
-if ($user->rights->prelevement->bons->configurer)
-print '<td width="30%">Action</td>';
-print "</tr>\n";
-
-if ($user->rights->prelevement->bons->configurer)
+if ($conf->global->MAIN_MODULE_NOTIFICATION)
 {
-	print '<tr class="impair"><td align="left">';
-	print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
-	print '<select name="user">';
-	$sql = "SELECT rowid, name, firstname";
-	$sql .= " FROM ".MAIN_DB_PREFIX."user";
-	$sql .= " ORDER BY name ASC";
-
-	if ($db->query($sql))
+	
+	print_titre($langs->trans("Notifications"));
+	
+	if ($user->rights->prelevement->bons->configurer)
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=addnotif">';
+	
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td width="30%">Nom</td>';
+	print '<td width="40%">Valeur</td>';
+	if ($user->rights->prelevement->bons->configurer)
+	print '<td width="30%">Action</td>';
+	print "</tr>\n";
+	
+	if ($user->rights->prelevement->bons->configurer)
 	{
-		$num = $db->num_rows();
+		print '<tr class="impair"><td align="left">';
+		print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
+		print '<select name="user">';
+		$sql = "SELECT rowid, name, firstname";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user";
+		$sql .= " ORDER BY name ASC";
+	
+		if ($db->query($sql))
+		{
+			$num = $db->num_rows();
+			$i = 0;
+			while ($i < $num)
+			{
+		  $obj = $db->fetch_object();
+		  print '<option value="'.$obj->rowid.'">'.$obj->firstname." ".$obj->name;
+		  $i++;
+			}
+			$db->free();
+		}
+	
+		print '</select></td>';
+	
+		print '<td align="left">';
+		print '<select name="action">';
+	
+		print '<option value="tr">Transmission du bon</option>';
+		print '<option value="em">Emission du bon</option>';
+		print '<option value="cr">Credit du bon</option>';
+		print '</select></td>';
+	
+		print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+	}
+	
+	
+	$sql = "SELECT u.name, u.firstname, pn.action, pn.rowid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement_notifications as pn";
+	$sql .= " WHERE u.rowid = pn.fk_user";
+	
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
 		$i = 0;
+		$var = True;
 		while ($i < $num)
 		{
-	  $obj = $db->fetch_object();
-	  print '<option value="'.$obj->rowid.'">'.$obj->firstname." ".$obj->name;
-	  $i++;
+			$obj = $db->fetch_object($resql);
+	
+			$var=!$var;
+			print "<tr $bc[$var]>";
+	
+			print '<td>'.$obj->firstname." ".$obj->name.'</td>';
+			print '<td>'.$obj->action.'</td>';
+	
+			if ($user->rights->prelevement->bons->configurer)
+			{
+				print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td></tr>';
+			}
+			else
+			{
+				print '</tr>';
+			}
+			$i++;
 		}
-		$db->free();
+		$db->free($resql);
 	}
-
-	print '</select></td>';
-
-	print '<td align="left">';
-	print '<select name="action">';
-
-	print '<option value="tr">Transmission du bon</option>';
-	print '<option value="em">Emission du bon</option>';
-	print '<option value="cr">Credit du bon</option>';
-	print '</select></td>';
-
-	print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+	print '</table>';
+	
+	if ($user->rights->prelevement->bons->configurer)
+	print '</form>';
 }
-
-
-$sql = "SELECT u.name, u.firstname, pn.action, pn.rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql .= " , ".MAIN_DB_PREFIX."prelevement_notifications as pn";
-$sql .= " WHERE u.rowid = pn.fk_user";
-
-$resql = $db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	$i = 0;
-	$var = True;
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($resql);
-
-		$var=!$var;
-		print "<tr $bc[$var]>";
-
-		print '<td>'.$obj->firstname." ".$obj->name.'</td>';
-		print '<td>'.$obj->action.'</td>';
-
-		if ($user->rights->prelevement->bons->configurer)
-		{
-			print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td></tr>';
-		}
-		else
-		{
-			print '</tr>';
-		}
-		$i++;
-	}
-	$db->free($resql);
-}
-print '</table>';
-
-if ($user->rights->prelevement->bons->configurer)
-print '</form>';
 
 
 $db->close();

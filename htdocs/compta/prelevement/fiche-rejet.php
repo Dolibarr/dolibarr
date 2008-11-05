@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
+ */
+
+/*
+ * \version	$Id$
  */
 
 require("./pre.inc.php");
@@ -27,7 +28,7 @@ require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 // Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
 
-llxHeader('','Bon de prélèvement - Rejet');
+llxHeader('',$langs->trans("WithdrawalReceipt"));
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
@@ -66,11 +67,13 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-      dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
+      dolibarr_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
 
       print '<table class="border" width="100%">';
-      print '<tr><td width="20%">Référence</td><td>'.$bon->ref.'</td></tr>';
-      print '</table><br />';
+      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
+      print '</table>';
+      
+      print '</div>';
     }
   else
     {
@@ -111,11 +114,11 @@ if ($resql)
   $num = $db->num_rows($resql);
   $i = 0;
   
-  print_barre_liste("Lignes de prélèvement rejetées", $page, "fiche-rejet.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td>Ligne</td><td>Société</td><td align="right">Montant</td><td>Motif</td><td align="center">A Facturer</td><td align="center">Facture</td></tr>';
+  print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td align="right">'.$langs->trans("Amount").'</td>';
+  print '<td>'.$langs->trans("Reason").'</td><td align="center">'.$langs->trans("ToBill").'</td><td align="center">'.$langs->trans("Invoice").'</td></tr>';
 
   $var=True;
   $total = 0;
@@ -144,8 +147,8 @@ if ($resql)
       $i++;
     }
 
-  print "<tr $bc[$var]><td>&nbsp;</td>";
-  print "<td>Total</td>\n";
+  print '<tr class="liste_total"><td>&nbsp;</td>';
+  print '<td class="liste_total">'.$langs->trans("Total").'</td>';
   print '<td align="right">'.price($total)."</td>\n";
   print '<td>&nbsp;</td>';
   print "</tr>\n</table>\n";

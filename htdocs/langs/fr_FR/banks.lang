@@ -43,6 +43,7 @@ IOMonthlyReporting=Rapport mensuel E/S
 BankAccountDomiciliation=Domiciliation du compte
 BankAccountOwner=Nom du propriétaire du compte
 BankAccountOwnerAddress=Adresse du propriétaire du compte
+RIBControlError=Le contrôle de la clé indique que les informations de ce compte bancaire sont incomplètes ou incorrectes.
 CreateAccount=Créer compte
 StandingOrderToProcess=À traiter
 StandingOrderProcessed=Traités

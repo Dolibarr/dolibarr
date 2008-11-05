@@ -105,7 +105,7 @@ if ($result)
   print_liste_field_titre($langs->trans("WithdrawalReceipt"),"liste.php","p.ref");
   print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom");
   print_liste_field_titre($langs->trans("Date"),"liste.php","p.datec","","",'align="center"');
-  print_liste_field_titre($langs->trans("Amount"),"liste.php","pl.amount");
+  print_liste_field_titre($langs->trans("Amount"),"liste.php","pl.amount","","",'align="right"');
   print_liste_field_titre($langs->trans("CustomerCode"),"liste.php","s.code_client",'','','align="center"');
   print '<td class="liste_titre">&nbsp;</td>';
   print '</tr>';
@@ -140,9 +140,9 @@ if ($result)
       print '<td><img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
-      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.stripslashes($obj->nom)."</a></td>\n";
-      print '<td align="center">'.dolibarr_print_date($obj->datec)."</td>\n";
-      print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie)."</td>\n";
+      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->nom."</a></td>\n";
+      print '<td align="center">'.dolibarr_print_date($obj->datec,'day')."</td>\n";
+      print '<td align="right">'.price($obj->amount)."</td>\n";
       print '<td align="center"><a href="fiche.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
       print '<td>&nbsp;</td>';
       

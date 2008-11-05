@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
+/*
+ * \version	$Id$
+ */
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
@@ -27,59 +27,66 @@ require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 // Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
 
-llxHeader('','Bon de prélèvement');
+
+/*
+ * View
+ */
+
+llxHeader('',$langs->trans("WithdrawalReceipt"));
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Card");
-$h++;      
+$h++;
 
 if ($conf->use_preview_tabs)
 {
-    $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("Preview");
-    $h++;  
+	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans("Preview");
+	$h++;
 }
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Lines");
 $hselected = $h;
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Bills");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Rejects");
-$h++;  
+$h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Statistics");
-$h++;  
+$h++;
 
 $prev_id = $_GET["id"];
 
 if ($_GET["id"])
 {
-  $bon = new BonPrelevement($db,"");
+	$bon = new BonPrelevement($db,"");
 
-  if ($bon->fetch($_GET["id"]) == 0)
-    {
+	if ($bon->fetch($_GET["id"]) == 0)
+	{
 
-      dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
+		dolibarr_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
 
 
-      print '<table class="border" width="100%">';
+		print '<table class="border" width="100%">';
 
-      print '<tr><td width="20%">Référence</td><td>'.$bon->ref.'</td></tr>';
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
 
-      print '</table><br />';
-    }
-  else
-    {
-      print "Erreur";
-    }
+		print '</table>';
+		
+		print '</div>';
+	}
+	else
+	{
+		print "Erreur";
+	}
 }
 
 $page = $_GET["page"];
@@ -93,10 +100,10 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if ($sortorder == "") {
-  $sortorder="DESC";
+	$sortorder="DESC";
 }
 if ($sortfield == "") {
-  $sortfield="pl.fk_soc";
+	$sortfield="pl.fk_soc";
 }
 
 /*
@@ -113,7 +120,7 @@ $sql .= " AND pl.fk_soc = s.rowid";
 
 if ($_GET["socid"])
 {
-  $sql .= " AND s.rowid = ".$_GET["socid"];
+	$sql .= " AND s.rowid = ".$_GET["socid"];
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -122,76 +129,76 @@ $result = $db->query($sql);
 
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
-  
-  $urladd = "&amp;id=".$_GET["id"];
+	$num = $db->num_rows($result);
+	$i = 0;
 
-  print_barre_liste("Lignes de prélèvement", $page, "lignes.php", $urladd, $sortfield, $sortorder, '', $num);
-  print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre("Lignes","lignes.php","pl.rowid",'',$urladd);
-  print_liste_field_titre("Société","lignes.php","s.nom",'',$urladd);
-  print_liste_field_titre("Montant","lignes.php","f.total_ttc","",$urladd,'align="center"');
-  print '<td colspan="2">&nbsp;</td></tr>';
+	$urladd = "&amp;id=".$_GET["id"];
 
-  $var=True;
+	print_barre_liste("", $page, "lignes.php", $urladd, $sortfield, $sortorder, '', $num);
+	print"\n<!-- debut table -->\n";
+	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Lines"),"lignes.php","pl.rowid",'',$urladd);
+	print_liste_field_titre($langs->trans("ThirdParty"),"lignes.php","s.nom",'',$urladd);
+	print_liste_field_titre($langs->trans("Amount"),"lignes.php","f.total_ttc","",$urladd,'align="center"');
+	print '<td colspan="2">&nbsp;</td></tr>';
 
-  $total = 0;
+	$var=false;
 
-  while ($i < min($num,$conf->liste_limit))
-    {
-      $obj = $db->fetch_object($result);	
+	$total = 0;
 
-      print "<tr $bc[$var]><td>";
-
-      print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
-      print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
-      print substr('000000'.$obj->rowid, -6);
-      print '</a></td>';
-
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
-
-      print '<td align="center">'.price($obj->amount)."</td>\n";
-
-      print '<td>';
-
-      if ($obj->statut == 3)
+	while ($i < min($num,$conf->liste_limit))
 	{
-	  print '<b>Rejeté</b>';
+		$obj = $db->fetch_object($result);
+
+		print "<tr $bc[$var]><td>";
+
+		print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
+		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+		print substr('000000'.$obj->rowid, -6);
+		print '</a></td>';
+
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
+
+		print '<td align="center">'.price($obj->amount)."</td>\n";
+
+		print '<td>';
+
+		if ($obj->statut == 3)
+		{
+	  		print '<b>Rejeté</b>';
+		}
+		else
+		{
+	  		print "&nbsp;";
+		}
+
+		print '</td></tr>';
+
+		$total += $obj->total_ttc;
+		$var=!$var;
+		$i++;
 	}
-      else
+
+	if($_GET["socid"])
 	{
-	  print "&nbsp;";
+		print "<tr $bc[$var]><td>";
+
+		print '<td>Total</td>';
+
+		print '<td align="center">'.price($total)."</td>\n";
+
+		print '<td>&nbsp;</td>';
+
+		print "</tr>\n";
 	}
 
-      print '</td></tr>';
-
-      $total += $obj->total_ttc;
-      $var=!$var;
-      $i++;
-    }
-
-  if($_GET["socid"])
-    {
-      print "<tr $bc[$var]><td>";
-
-      print '<td>Total</td>';
-
-      print '<td align="center">'.price($total)."</td>\n";
-
-      print '<td>&nbsp;</td>';
-
-      print "</tr>\n";
-    }
-
-  print "</table>";
-  $db->free($result);
+	print "</table>";
+	$db->free($result);
 }
-else 
+else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 $db->close();

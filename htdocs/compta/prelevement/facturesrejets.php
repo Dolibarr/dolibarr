@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT."/paiement.class.php";
  */
 if ($user->societe_id > 0) accessforbidden();
 
-llxHeader('','Bon de prélèvement - Rejet');
+llxHeader('',$langs->trans("WithdrawalReceipt"));
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
@@ -105,9 +105,9 @@ if ($result)
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
   print_liste_field_titre("Bon N°","rejets.php","p.ref",'',$urladd);
-  print_liste_field_titre("Facture","rejets.php","p.facnumber",'',$urladd);
-  print_liste_field_titre("Société","rejets.php","s.nom",'',$urladd);
-  print_liste_field_titre("Montant","rejets.php","f.total_ttc","",$urladd,'align="center"');
+  print_liste_field_titre($langs->trans("Invoice"),"rejets.php","p.facnumber",'',$urladd);
+  print_liste_field_titre($langs->trans("ThirdParty"),"rejets.php","s.nom",'',$urladd);
+  print_liste_field_titre($langs->trans("Amount"),"rejets.php","f.total_ttc","",$urladd,'align="center"');
   print '<td colspan="2">&nbsp;</td></tr>';
 
   $var=True;
@@ -156,5 +156,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

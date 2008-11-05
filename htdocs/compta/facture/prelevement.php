@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,73 +16,74 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/compta/facture/prelevement.php
-        \ingroup    facture
-        \brief      Gestion des prelevement d'une facture
-        \version    $Revision$
-*/
+ *	\file       htdocs/compta/facture/prelevement.php
+ *	\ingroup    facture
+ *	\brief      Gestion des prelevement d'une facture
+ *	\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 if (!$user->rights->facture->lire)
-  accessforbidden();
+accessforbidden();
 
 $langs->load("bills");
 $langs->load("banks");
 $langs->load("withdrawals");
 
 // Sécurité accés client
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
 }
 
 
 /*
  * Actions
  */
- 
+
 if ($_GET["action"] == "new")
 {
-    $fact = new Facture($db);
-    if ($fact->fetch($_GET["facid"]))
-    {
-        $result = $fact->demande_prelevement($user);
-        if ($result > 0)
-        {
-            Header("Location: prelevement.php?facid=".$fact->id);
-            exit;
-        }
-        else
-        {
-            $mesg='<div class="error">'.$fact->error.'</div>';
-        }
-    }
+	$fact = new Facture($db);
+	if ($fact->fetch($_GET["facid"]))
+	{
+		$result = $fact->demande_prelevement($user);
+		if ($result > 0)
+		{
+			Header("Location: prelevement.php?facid=".$fact->id);
+			exit;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$fact->error.'</div>';
+		}
+	}
 }
 
 if ($_GET["action"] == "delete")
 {
-  $fact = new Facture($db);
-  if ($fact->fetch($_GET["facid"]))
-  {
-    $result = $fact->demande_prelevement_delete($user,$_GET["did"]);
-    if ($result == 0)
-      {
-	Header("Location: prelevement.php?facid=".$fact->id);
-      }
-  }
+	$fact = new Facture($db);
+	if ($fact->fetch($_GET["facid"]))
+	{
+		$result = $fact->demande_prelevement_delete($user,$_GET["did"]);
+		if ($result == 0)
+		{
+			Header("Location: prelevement.php?facid=".$fact->id);
+			exit;
+		}
+	}
 }
 
 
+/*
+ * View
+ */
 
 llxHeader('',$langs->trans("Bill"));
 
@@ -96,210 +97,210 @@ $html = new Form($db);
 
 if ($_GET["facid"] > 0)
 {
-    $fac = New Facture($db);
-    if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
-    {
-        if ($mesg) print $mesg.'<br>';
+	$fac = New Facture($db);
+	if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
+	{
+		if ($mesg) print $mesg.'<br>';
 
-        $soc = new Societe($db, $fac->socid);
-        $soc->fetch($fac->socid);
+		$soc = new Societe($db, $fac->socid);
+		$soc->fetch($fac->socid);
 
-        $author = new User($db);
-        if ($fac->user_author)
-        {
-            $author->id = $fac->user_author;
-            $author->fetch();
-        }
+		$author = new User($db);
+		if ($fac->user_author)
+		{
+			$author->id = $fac->user_author;
+			$author->fetch();
+		}
 
 		$head = facture_prepare_head($fac);
 		dolibarr_fiche_head($head, 'standingorders', $langs->trans('InvoiceCustomer'));
 
-        /*
-         *   Facture
-         */
-        print '<table class="border" width="100%">';
+		/*
+		 *   Facture
+		 */
+		print '<table class="border" width="100%">';
 
 		// Reference du facture
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $fac->ref;
 		print "</td></tr>";
 
-        // Societe
-        print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
-        print '<td colspan="5">';
-        print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
-        print '</tr>';
+		// Societe
+		print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
+		print '<td colspan="5">';
+		print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
+		print '</tr>';
 
-        // Dates
-        print '<tr><td>'.$langs->trans("Date").'</td>';
-        print '<td colspan="3">'.dolibarr_print_date($fac->date,"daytext").'</td>';
-        print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"daytext");
-        if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans("Late"));
-        print "</td></tr>";
+		// Dates
+		print '<tr><td>'.$langs->trans("Date").'</td>';
+		print '<td colspan="3">'.dolibarr_print_date($fac->date,"daytext").'</td>';
+		print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"daytext");
+		if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans("Late"));
+		print "</td></tr>";
 
-        // Conditions et modes de réglement
-        print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td colspan="3">';
-        $html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->cond_reglement_id,"none");
-        print '</td>';
-        print '<td width="25%">'.$langs->trans("PaymentMode").'</td><td width="25%">';
-        $html->form_modes_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->mode_reglement_id,"none");
-        print '</td></tr>';
+		// Conditions et modes de réglement
+		print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td colspan="3">';
+		$html->form_conditions_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->cond_reglement_id,"none");
+		print '</td>';
+		print '<td width="25%">'.$langs->trans("PaymentMode").'</td><td width="25%">';
+		$html->form_modes_reglement($_SERVER["PHP_SELF"]."?facid=$fac->id",$fac->mode_reglement_id,"none");
+		print '</td></tr>';
 
-        print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-        print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td colspan="2">&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
+		print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td colspan="2">&nbsp;</td></tr>';
 
-        print '<tr><td>'.$langs->trans("AmountTTC").'</td>';
-        print '<td align="right" colspan="2"><b>'.price($fac->total_ttc).'</b></td>';
-        print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td colspan="2">&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("AmountTTC").'</td>';
+		print '<td align="right" colspan="2"><b>'.price($fac->total_ttc).'</b></td>';
+		print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td><td colspan="2">&nbsp;</td></tr>';
 
-        print '<tr><td>RIB</td><td colspan="5">';
-        print $soc->display_rib();
-        print '</td></tr>';
+		print '<tr><td>'.$langs->trans("RIB").'</td><td colspan="5">';
+		print $soc->display_rib();
+		print '</td></tr>';
 
-        print '</table>';
-        print '</div>';
-        
-        /*
-        * Demande de prélèvement
-        *
-        */
+		print '</table>';
+		print '</div>';
 
-        $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
-        $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
-        $sql .= " , pfd.amount";
-        $sql .= " , u.rowid as user_id, u.name, u.firstname, u.login";
-        $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-        $sql .= " , ".MAIN_DB_PREFIX."user as u";
-        $sql .= " WHERE fk_facture = ".$fac->id;
-        $sql .= " AND pfd.fk_user_demande = u.rowid";
-        $sql .= " AND pfd.traite = 0";
-        $sql .= " ORDER BY pfd.date_demande DESC";
+		/*
+		 * Demande de prélèvement
+		 *
+		 */
 
-        $result_sql = $db->query($sql);
-        if ($result_sql)
-        {
-            $num = $db->num_rows($result_sql);
-        }
+		$sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
+		$sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
+		$sql .= " , pfd.amount";
+		$sql .= " , u.rowid as user_id, u.name, u.firstname, u.login";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " , ".MAIN_DB_PREFIX."user as u";
+		$sql .= " WHERE fk_facture = ".$fac->id;
+		$sql .= " AND pfd.fk_user_demande = u.rowid";
+		$sql .= " AND pfd.traite = 0";
+		$sql .= " ORDER BY pfd.date_demande DESC";
+
+		$result_sql = $db->query($sql);
+		if ($result_sql)
+		{
+			$num = $db->num_rows($result_sql);
+		}
 
 
-        print "<div class=\"tabsAction\">\n";
+		print "<div class=\"tabsAction\">\n";
 
-        // Valider
-        if ($fac->statut > 0 && $fac->paye == 0 && $fac->mode_reglement_code == 'PRE' && $num == 0)
-        {
-            if ($user->rights->facture->creer)
-            {
-                print '<a class="butAction" href="prelevement.php?facid='.$fac->id.'&amp;action=new">Faire une demande de prélèvement</a>';
-            }
-        }
-        print "</div><br/>";
+		// Add a withdraw request
+		if ($fac->statut > 0 && $fac->paye == 0 && $fac->mode_reglement_code == 'PRE' && $num == 0)
+		{
+			if ($user->rights->facture->creer)
+			{
+				print '<a class="butAction" href="prelevement.php?facid='.$fac->id.'&amp;action=new">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			}
+		}
+		print "</div><br/>";
 
-        
-        /*
-         * Prélèvement
-         */
-        print '<table class="noborder" width="100%">';
 
-        print '<tr class="liste_titre">';
-        print '<td align="center">'.$langs->trans("DateRequest").'</td>';
-        print '<td align="center">'.$langs->trans("DateProcess").'</td>';
-        print '<td align="center">'.$langs->trans("Amount").'</td>';
-        print '<td align="center">'.$langs->trans("WithdrawalReceipt").'</td>';
-        print '<td align="center">'.$langs->trans("User").'</td><td>&nbsp;</td><td>&nbsp;</td>';
-        print '</tr>';
-        $var=True;
+		/*
+		 * Prélèvement
+		 */
+		print '<table class="noborder" width="100%">';
 
-        if ($result_sql)
-        {
-            $i = 0;
+		print '<tr class="liste_titre">';
+		print '<td align="left">'.$langs->trans("DateRequest").'</td>';
+		print '<td align="center">'.$langs->trans("DateProcess").'</td>';
+		print '<td align="center">'.$langs->trans("Amount").'</td>';
+		print '<td align="center">'.$langs->trans("WithdrawalReceipt").'</td>';
+		print '<td align="center">'.$langs->trans("User").'</td><td>&nbsp;</td><td>&nbsp;</td>';
+		print '</tr>';
+		$var=True;
 
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($result_sql);
-                $var=!$var;
+		if ($result_sql)
+		{
+			$i = 0;
 
-                print "<tr $bc[$var]>";
-                print '<td align="center">'.dolibarr_print_date($obj->date_demande)."</td>\n";
-                print '<td align="center">En attente de traitement</td>';
-                print '<td align="center">'.price($obj->amount).'</td>';
-                print '<td align="center">-</td>';
-                print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
-                print '<td>&nbsp;</td>';
-                print '<td>';
-                print '<a href="prelevement.php?facid='.$fac->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
-                print img_delete();
-                print '</a></td>';
-                print "</tr>\n";
-                $i++;
-            }
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($result_sql);
+				$var=!$var;
 
-            $db->free($result_sql);
-        }
-        else
-        {
-            dolibarr_print_error($db);
-        }
+				print "<tr $bc[$var]>";
+				print '<td align="left">'.dolibarr_print_date($obj->date_demande,'day')."</td>\n";
+				print '<td align="center">En attente de traitement</td>';
+				print '<td align="center">'.price($obj->amount).'</td>';
+				print '<td align="center">-</td>';
+				print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+				print '<td>&nbsp;</td>';
+				print '<td>';
+				print '<a href="prelevement.php?facid='.$fac->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
+				print img_delete();
+				print '</a></td>';
+				print "</tr>\n";
+				$i++;
+			}
 
-        $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
-        $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
-        $sql .= " , pfd.fk_prelevement_bons, pfd.amount";
-        $sql .= " , u.rowid as user_id, u.name, u.firstname, u.login";
-        $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-        $sql .= " , ".MAIN_DB_PREFIX."user as u";
-        $sql .= " WHERE fk_facture = ".$fac->id;
-        $sql .= " AND pfd.fk_user_demande = u.rowid";
-        $sql .= " AND pfd.traite = 1";
-        $sql .= " ORDER BY pfd.date_demande DESC";
+			$db->free($result_sql);
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
 
-        $result = $db->query($sql);
-        if ($result)
-        {
-            $num = $db->num_rows($result);
-            $i = 0;
+		$sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
+		$sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
+		$sql .= " , pfd.fk_prelevement_bons, pfd.amount";
+		$sql .= " , u.rowid as user_id, u.name, u.firstname, u.login";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " , ".MAIN_DB_PREFIX."user as u";
+		$sql .= " WHERE fk_facture = ".$fac->id;
+		$sql .= " AND pfd.fk_user_demande = u.rowid";
+		$sql .= " AND pfd.traite = 1";
+		$sql .= " ORDER BY pfd.date_demande DESC";
 
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($result);
-                $var=!$var;
+		$result = $db->query($sql);
+		if ($result)
+		{
+			$num = $db->num_rows($result);
+			$i = 0;
 
-                print "<tr $bc[$var]>";
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($result);
+				$var=!$var;
 
-                print '<td align="center">'.dolibarr_print_date($obj->date_demande)."</td>\n";
+				print "<tr $bc[$var]>";
 
-                print '<td align="center">'.dolibarr_print_date($obj->date_traite)."</td>\n";
+				print '<td align="center">'.dolibarr_print_date($obj->date_demande)."</td>\n";
 
-                print '<td align="center">'.price($obj->amount).'</td>';
+				print '<td align="center">'.dolibarr_print_date($obj->date_traite)."</td>\n";
 
-                print '<td align="center">';
-                print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$obj->fk_prelevement_bons;
-                print '">'.$obj->fk_prelevement_bons."</a></td>\n";
+				print '<td align="center">'.price($obj->amount).'</td>';
 
-                print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+				print '<td align="center">';
+				print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$obj->fk_prelevement_bons;
+				print '">'.$obj->fk_prelevement_bons."</a></td>\n";
 
-                print '<td>&nbsp;</td>';
-                print '<td>&nbsp;</td>';
+				print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
-                print "</tr>\n";
-                $i++;
-            }
+				print '<td>&nbsp;</td>';
+				print '<td>&nbsp;</td>';
 
-            $db->free($result);
-        }
-        else
-        {
-            dolibarr_print_error($db);
-        }
+				print "</tr>\n";
+				$i++;
+			}
 
-        print "</table>";
+			$db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
 
-    }
-    else
-    {
-        /* Facture non trouvée */
-        print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
-    }
-} 
+		print "</table>";
+
+	}
+	else
+	{
+		/* Facture non trouvée */
+		print $langs->trans("ErrorBillNotFound",$_GET["facid"]);
+	}
+}
 
 print '</div>';
 

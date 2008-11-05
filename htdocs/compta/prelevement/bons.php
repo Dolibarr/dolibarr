@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/compta/prelevement/bons.php
         \ingroup    prelevement
         \brief      Page liste des bons de prelevements
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -108,7 +105,7 @@ if ($result)
 
       print '<td align="center">'.dolibarr_print_date($obj->datec,'day')."</td>\n";
 
-      print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie)."</td>\n";
+      print '<td align="right">'.price($obj->amount)."</td>\n";
 
       print "</tr>\n";
       $i++;

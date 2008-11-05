@@ -2990,12 +2990,13 @@ class Form
 	 *    \param      object		Object to show
 	 *    \param      paramid   	Nom du parametre a utiliser pour nommer id dans liens URL
 	 *    \param      morehtml  	Code html supplementaire a afficher avant barre nav
-	 *	  \param	  shownav	  	Show Condition
-	 *    \param      fieldid   	Nom du champ id a utiliser pour select next et previous
-	 *    \param      fieldref   	Nom du champ ref a utiliser pour select next et previous
+	 *    \param	  shownav	  	Show Condition
+	 *    \param      fieldid   	Nom du champ en base a utiliser pour select next et previous
+	 *    \param      fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+	 *    \param      morehtmlref  	Code html supplementaire a afficher apres ref
 	 * 	  \return     string    	Portion HTML avec ref + boutons nav
 	 */
-	function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref')
+	function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='')
 	{
 		$ret='';
 
@@ -3009,7 +3010,10 @@ class Form
 		}
 
 		$ret.=$object->$fieldref;
-
+		if ($morehtmlref) {
+			$ret.=' '.$morehtmlref;
+		}
+		
 		if ($morehtml) {
 			$ret.='</td><td class="nobordernopadding" align="right">'.$morehtml;
 		}

@@ -26,11 +26,16 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
-require_once (DOL_DOCUMENT_ROOT."/facture.class.php");
-require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 
-class BonPrelevement
+/**
+ *	\class      BonPrelevement
+ *	\brief      Classe permettant la gestion des bons de prelevements
+ */
+class BonPrelevement extends CommonObject
 {
     var $db;
 
@@ -43,6 +48,7 @@ class BonPrelevement
     var $total;
     var $_fetched;
 
+    
     function BonPrelevement($DB, $filename='')
     {
         $error = 0;
@@ -195,7 +201,7 @@ class BonPrelevement
      *
      *
      */
-    function Fetch($rowid)
+    function fetch($rowid)
     {
         $sql = "SELECT p.rowid, p.ref, p.amount, p.note, p.credite";
         $sql .= ",".$this->db->pdate("p.datec")." as dc";
@@ -205,9 +211,9 @@ class BonPrelevement
         $sql .= " , fk_user_credit";
         $sql .= " , statut";
         $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-
         $sql .= " WHERE p.rowid=".$rowid;
 
+        dolibarr_syslog("Bon-prelevement::fetch sql=".$sql, LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -595,26 +601,23 @@ class BonPrelevement
     }
 
     /**
-     *      \brief      Renvoi nombre de factures a pr�lever
+     *      \brief      Renvoi nombre de factures a prelever
      *      \param      banque      bank
      *      \param      agence      agence
      *      \return     int         <O si erreur, sinon nbre de factures
      */
     function NbFactureAPrelever($banque=0,$agence=0)
     {
-        $sql = "SELECT count(f.total_ttc)";
-        $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-        $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-        $sql .= " , ".MAIN_DB_PREFIX."societe_rib as sr";
-
+        $sql = "SELECT count(f.rowid)";
+        $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
+        $sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+        if ($banque == 1 || $agence == 1) $sql.=", ".MAIN_DB_PREFIX."societe_rib as sr";
         $sql .= " WHERE f.fk_statut = 1";
         $sql .= " AND f.rowid = pfd.fk_facture";
-        $sql .= " AND f.fk_soc = sr.fk_soc";
         $sql .= " AND f.paye = 0";
         $sql .= " AND pfd.traite = 0";
         $sql .= " AND f.total_ttc > 0";
-        $sql .= " AND f.fk_mode_reglement = 3";
-
+        if ($banque == 1 || $agence == 1) $sql .= " AND f.fk_soc = sr.rowid";
         if ($banque == 1)
         {
             $sql .= " AND sr.code_banque = '".PRELEVEMENT_CODE_BANQUE."'";
@@ -643,17 +646,18 @@ class BonPrelevement
         }
     }
 
+    
     /**
-     *      \brief      Cree prelevement
-     *      \return     int     <0 si ko, nbre de facture pr�lev� sinon
+     *      \brief      Create a withdraw
+     *      \return     int     <0 if KO, nbre of invoice withdrawed if OK
      */
     function Create($banque=0, $guichet=0)
     {
         global $conf;
         
-        dolibarr_syslog("BonPrelevement::Create");
+        dolibarr_syslog("BonPrelevement::Create banque=$banque guichet=$guichet");
 
-        require_once (DOL_DOCUMENT_ROOT."/bon-prelevement.class.php");
+        require_once (DOL_DOCUMENT_ROOT."/compta/prelevement/bon-prelevement.class.php");
         require_once (DOL_DOCUMENT_ROOT."/facture.class.php");
         require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
         require_once (DOL_DOCUMENT_ROOT."/paiement.class.php");
@@ -665,7 +669,7 @@ class BonPrelevement
         $month = strftime("%m", $datetimeprev);
         $year = strftime("%Y", $datetimeprev);
 
-        $user = new user($this->db, PRELEVEMENT_USER);
+        $user = new User($this->db, $conf->global->PRELEVEMENT_USER);
 
         /**
          * Lectures des factures
@@ -676,7 +680,6 @@ class BonPrelevement
 
         if (! $error)
         {
-
             $sql = "SELECT f.rowid, pfd.rowid as pfdrowid, f.fk_soc";
             $sql .= ", pfd.code_banque, pfd.code_guichet, pfd.number, pfd.cle_rib";
             $sql .= ", pfd.amount";
@@ -684,17 +687,14 @@ class BonPrelevement
             $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
             $sql .= " , ".MAIN_DB_PREFIX."societe as s";
             $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-            $sql .= " , ".MAIN_DB_PREFIX."societe_rib as sr";
-
+            if ($banque == 1 || $agence ==1) $sql .= " , ".MAIN_DB_PREFIX."societe_rib as sr";
             $sql .= " WHERE f.rowid = pfd.fk_facture";
             $sql .= " AND s.rowid = f.fk_soc";
-            $sql .= " AND s.rowid = sr.fk_soc";
+            if ($banque == 1 || $agence ==1) $sql .= " AND s.rowid = sr.fk_soc";
             $sql .= " AND f.fk_statut = 1";
             $sql .= " AND f.paye = 0";
             $sql .= " AND pfd.traite = 0";
             $sql .= " AND f.total_ttc > 0";
-            $sql .= " AND f.fk_mode_reglement = 3"; // Mode pr�l�vement
-
             if ($banque == 1)
             {
                 $sql .= " AND sr.code_banque = '".PRELEVEMENT_CODE_BANQUE."'";
@@ -704,8 +704,8 @@ class BonPrelevement
                 $sql .= " AND sr.code_guichet = '".PRELEVEMENT_CODE_GUICHET."'";
             }
 
+            dolibarr_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
             $resql = $this->db->query($sql);
-
             if ($resql)
             {
                 $num = $this->db->num_rows($resql);
@@ -718,7 +718,7 @@ class BonPrelevement
                     $i++;
                 }
                 $this->db->free($resql);
-                dolibarr_syslog("$i factures � pr�lever");
+                dolibarr_syslog($i." invoices to withdraw");
             }
             else
             {
@@ -728,20 +728,11 @@ class BonPrelevement
             }
         }
 
-        /*
-         *
-         * Verif des clients
-         *
-         */
-
         if (! $error)
         {
-            /*
-             * V�rification des RIB
-             *
-             */
-            $i = 0;
-            dolibarr_syslog("D�but v�rification des RIB");
+            // Check RIB
+        	$i = 0;
+            dolibarr_syslog("Start RIB check");
 
             if (sizeof($factures) > 0)
             {
@@ -763,18 +754,18 @@ class BonPrelevement
                             }
                             else
                             {
-                                dolibarr_syslog("Erreur de RIB societe $fact->socid $soc->nom");
+                                dolibarr_syslog("Erreur de RIB societe $fact->socid $soc->nom", LOG_ERROR);
                                 $facture_errors[$fac[0]]="Erreur de RIB societe $fact->socid $soc->nom";
                             }
                         }
                         else
                         {
-                            dolibarr_syslog("Impossible de lire la soci�t�");
+                            dolibarr_syslog("Failed to read company", LOG_ERROR);
                         }
                     }
                     else
                     {
-                        dolibarr_syslog("Impossible de lire la facture");
+                        dolibarr_syslog("Impossible de lire la facture", LOG_ERROR);
                     }
                 }
             }
@@ -785,12 +776,8 @@ class BonPrelevement
         }
 
 
-        /*
-         *
-         *
-         */
-
-        dolibarr_syslog(sizeof($factures_prev)." factures seront pr�lev�es");
+        // Withdraw invoices in factures_prev array
+        dolibarr_syslog(sizeof($factures_prev)." invoices will be withdrawed");
 
         if (sizeof($factures_prev) > 0)
         {
@@ -815,6 +802,7 @@ class BonPrelevement
                 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."prelevement_bons";
                 $sql .= " WHERE ref LIKE '$ref%'";
 
+            	dolibarr_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
                 $resql = $this->db->query($sql);
 
                 if ($resql)
@@ -831,14 +819,11 @@ class BonPrelevement
 
                 $filebonprev = $ref;
 
-                /*
-                 * Creation du bon de prelevement
-                 *
-                 */
-
+                // Create withdraw receipt in database
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (ref,datec)";
                 $sql .= " VALUES ('".$ref."',".$this->db->idate(mktime()).")";
 
+            	dolibarr_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
                 $resql = $this->db->query($sql);
 
                 if ($resql)
@@ -855,7 +840,7 @@ class BonPrelevement
                 else
                 {
                     $error++;
-                    dolibarr_syslog("Erreur cr�ation du bon de prelevement");
+                    dolibarr_syslog("Erreur creation du bon de prelevement");
                 }
             }
 
@@ -865,25 +850,26 @@ class BonPrelevement
              */
             if (!$error)
             {
-                dolibarr_syslog("D�but g�n�ration des paiements");
-                dolibarr_syslog("Nombre de factures ".sizeof($factures_prev));
+                dolibarr_syslog("Start generation payments for the ".sizeof($factures_prev)." invoices");
 
                 if (sizeof($factures_prev) > 0)
                 {
                     foreach ($factures_prev as $fac)
                     {
+                    	// Fetch invoice
                         $fact = new Facture($this->db);
                         $fact->fetch($fac[0]);
 
+                        // Create payment
                         $pai = new Paiement($this->db);
 
                         $pai->amounts = array();
                         $pai->amounts[$fac[0]] = $fact->total_ttc;
-                        $pai->datepaye = $this->db->idate($datetimeprev);
+                        $pai->datepaye = $datetimeprev;
                         $pai->paiementid = 3; // pr�l�vement
                         $pai->num_paiement = $ref;
 
-                        if ($pai->create($user, 1) == -1)  // on appelle en no_commit
+                        if ($pai->create($user, 1) < 0)  // on appelle en no_commit
                         {
                             $error++;
                             dolibarr_syslog("Erreur creation paiement facture ".$fac[0]);
@@ -925,6 +911,7 @@ class BonPrelevement
                             $sql .= ", fk_prelevement_bons = ".$prev_id;
                             $sql .= " WHERE rowid=".$fac[1];
 
+            				dolibarr_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
                             if ($this->db->query($sql))
                             {
 
@@ -984,11 +971,12 @@ class BonPrelevement
             $sql .= " SET amount = ".price2num($bonprev->total);
             $sql .= " WHERE rowid = ".$prev_id;
 
+            dolibarr_syslog("Bon-Prelevement::Create sql=".$sql, LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
             {
                 $error++;
-                dolibarr_syslog("Erreur mise � jour du total - $sql");
+                dolibarr_syslog("Erreur mise a jour du total - $sql");
             }
 
             /*
@@ -998,12 +986,10 @@ class BonPrelevement
             if (!$error)
             {
                 $this->db->commit();
-                dolibarr_syslog("COMMIT");
             }
             else
             {
                 $this->db->rollback();
-                dolibarr_syslog("ROLLBACK");
             }
 
             return sizeof($factures_prev);
@@ -1014,6 +1000,34 @@ class BonPrelevement
         }
     }
 
+    
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		option			Sur quoi pointe le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+
+		$result='';
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		if ($option == 'xxx')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$this->id.'">';
+			$lienfin='</a>';
+		}
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowWithdraw"),'payment').$lienfin.' ');
+		$result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}    
+    
+    
     /**
      *
      *
@@ -1023,7 +1037,7 @@ class BonPrelevement
         $result = 0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_notifications ";
-        $sql .= " WHERE rowid = '".$rowid."';";
+        $sql .= " WHERE rowid = '".$rowid."'";
 
         if ($this->db->query($sql))
         {
@@ -1044,7 +1058,7 @@ class BonPrelevement
         $result = 0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."prelevement_notifications ";
-        $sql .= " WHERE fk_user = '".$user."' AND action = '".$action."';";
+        $sql .= " WHERE fk_user = '".$user."' AND action = '".$action."'";
 
         if ($this->db->query($sql))
         {
@@ -1086,7 +1100,7 @@ class BonPrelevement
     }
 
     /**
-     * G�n�ration d'un bon de pr�l�vement
+     * Generation d'un bon de pr�l�vement
      *
      */
     function Generate()

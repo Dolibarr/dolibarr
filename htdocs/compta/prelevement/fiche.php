@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
  
 /**
         \file       htdocs/compta/prelevement/fiche.php
         \ingroup    prelevement
         \brief      Fiche prelevement
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -33,11 +30,18 @@ if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
 
 $langs->load("bills");
+$langs->load("withdrawals");
+
 
 /*
  * Sécurité accés client
  */
 if ($user->societe_id > 0) accessforbidden();
+
+
+/*
+ * Actions
+ */
 
 if ($_POST["action"] == 'confirm_credite' && $_POST["confirm"] == yes)
 {
@@ -57,7 +61,7 @@ if ($_POST["action"] == 'infotrans')
     {      
       $dir = $conf->prelevement->dir_output.'/bon/';
 
-      if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1))
+      if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name'],1) > 0)
 	{
 	  $dt = dolibarr_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	  
@@ -91,7 +95,7 @@ if ($_POST["action"] == 'infocredit')
     }
 }
 
-llxHeader('','Bon de prélèvement');
+llxHeader('',$langs->trans("WithdrawalReceipt"));
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
@@ -132,7 +136,7 @@ if ($_GET["id"])
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-      dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
+      dolibarr_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
 
       if (isset($_GET["error"]))
 	{
@@ -149,7 +153,7 @@ if ($_GET["id"])
 
       print '<table class="border" width="100%">';
 
-      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->ref.'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dolibarr_print_date($bon->datec,'dayhour').'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
@@ -172,13 +176,13 @@ if ($_GET["id"])
 	  print '<tr><td width="20%">Date Transmission / Par</td><td>';
 	  print dolibarr_print_date($bon->date_trans,'dayhour');
 	  print ' par '.$muser->fullname.'</td></tr>';
-	  print '<tr><td width="20%">Méthode Transmission</td><td>';
+	  print '<tr><td width="20%">Methode Transmission</td><td>';
 	  print $bon->methodes_trans[$bon->method_trans];
 	  print '</td></tr>';
 	}
       if($bon->date_credit <> 0)
 	{
-	  print '<tr><td width="20%">Crédité le</td><td>';
+	  print '<tr><td width="20%">Credit on</td><td>';
 	  print dolibarr_print_date($bon->date_credit,'dayhour');
 	  print '</td></tr>';
 	}
@@ -193,10 +197,10 @@ if ($_GET["id"])
 	  print '<tr><td width="20%">Date Transmission</td><td>';
 	  print $html->select_date('','','','','',"userfile");
 	  print '</td></tr>';
-	  print '<tr><td width="20%">Méthode Transmission</td><td>';
+	  print '<tr><td width="20%">Methode Transmission</td><td>';
 	  print $html->select_array("methode",$bon->methodes_trans);
 	  print '</td></tr>';
-	  print '<tr><td width="20%">Fichier</td><td>';
+	  print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
       print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 	  print '<input class="flat" type="file" name="userfile" size="80"><br />';
 	  print '</td></tr>';
@@ -240,7 +244,7 @@ if ($_GET["action"] == '')
   
   if ($bon->credite == 0)
     {      
-      print "<a class=\"butAction\" href=\"fiche.php?action=credite&amp;id=$bon->id\">".$langs->trans("Classer crédité")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=credite&amp;id=$bon->id\">".$langs->trans("ClassCredited")."</a>";
     }
 
 
@@ -250,5 +254,5 @@ if ($_GET["action"] == '')
 print "</div>";
 
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

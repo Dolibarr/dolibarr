@@ -1820,7 +1820,8 @@ if ($_GET['action'] == 'create')
 else
 {
 	$id = $_GET['facid'];
-	if ($id > 0)
+	$ref= $_GET['ref'];
+	if ($id > 0 || ! empty($ref))
 	{
 		/* *************************************************************************** */
 		/*                                                                             */
@@ -1832,7 +1833,7 @@ else
 		$facstatic = new Facture($db);
 
 		$fac = new Facture($db);
-		$result=$fac->fetch($_GET['facid']);
+		$result=$fac->fetch($_GET['facid'],$_GET['ref']);
 		if ($result > 0)
 		{
 			if ($user->societe_id>0 && $user->societe_id!=$fac->socid)  accessforbidden('',0);
@@ -2026,17 +2027,19 @@ else
 
 			// Reference
 			print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
-			print '<td colspan="5">'.$fac->ref;
+			print '<td colspan="5">';
+			$morehtmlref='';
 			$discount=new DiscountAbsolute($db);
 			$result=$discount->fetch(0,$fac->id);
 			if ($result > 0)
 			{
-				print ' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
+				$morehtmlref=' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
 			}
 			if ($result < 0)
 			{
 				dolibarr_print_error('',$discount->error);
 			}
+			print $html->showrefnav($fac,'ref','',1,'facnumber','ref',$morehtmlref);
 			print '</td></tr>';
 
 			// Ref client

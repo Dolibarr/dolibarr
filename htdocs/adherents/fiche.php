@@ -507,7 +507,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && 
 
 
 /*
- * 
+ * View
  */
 
 llxHeader();

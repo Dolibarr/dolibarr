@@ -337,10 +337,10 @@ class Facture extends CommonObject
 
 
 	/**
-	\brief      Create a new invoice in database from current invoice
-	\param      user    		Object user that ask creation
-	\param		invertdetail	Reverse sign of amounts for lines
-	\return		int				<0 si ko, >0 si ok
+	 \brief      Create a new invoice in database from current invoice
+	 \param      user    		Object user that ask creation
+	 \param		invertdetail	Reverse sign of amounts for lines
+	 \return		int				<0 si ko, >0 si ok
 	 */
 	function create_clone($user,$invertdetail=0)
 	{
@@ -388,7 +388,7 @@ class Facture extends CommonObject
 	/**
 	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	\param		option			Sur quoi pointe le lien
+	 *	\param		option			Sur quoi pointe le lien ('', 'withdraw')
 	 *	\return		string			Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
@@ -397,8 +397,16 @@ class Facture extends CommonObject
 
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->id.'">';
-		$lienfin='</a>';
+		if ($option == 'withdraw')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id.'">';
+			$lienfin='</a>';
+		}
+		else
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->id.'">';
+			$lienfin='</a>';
+		}
 
 		$picto='bill';
 		if ($this->type == 1) $picto.='r';
@@ -416,16 +424,14 @@ class Facture extends CommonObject
 
 
 	/**
-		\brief      Recupére l'objet facture et ses lignes de factures
-		\param      rowid       id de la facture a récupérer
-		\param      societe_id  id de societe
-		\return     int         >0 si ok, <0 si ko
-		*/
-	function fetch($rowid, $societe_id=0)
+	 *	\brief      Recupére l'objet facture et ses lignes de factures
+	 *	\param      rowid       id de la facture a récupérer
+	 * 	\param		ref			Ref of invoice
+	 *	\return     int         >0 si ok, <0 si ko
+	 */
+	function fetch($rowid,$ref='')
 	{
-		dolibarr_syslog("Facture::Fetch rowid=".$rowid.", societe_id=".$societe_id, LOG_DEBUG);
-
-		$sql = 'SELECT f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
+		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
 		$sql.= ','.$this->db->pdate('f.datef').' as df';
 		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
 		$sql.= ','.$this->db->pdate('f.datec').' as datec';
@@ -440,20 +446,18 @@ class Facture extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_fa as cf ON cf.fk_facture = f.rowid';
-		$sql.= ' WHERE f.rowid='.$rowid;
-		if ($societe_id > 0)
-		{
-			$sql.= ' AND f.fk_soc = '.$societe_id;
-		}
-		$result = $this->db->query($sql);
+		if ($ref) $sql.= " WHERE f.facnumber='".$ref."'";
+		else $sql.= " WHERE f.rowid=".$rowid;
 
+		dolibarr_syslog("Facture::Fetch sql=".$sql, LOG_DEBUG);
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			if ($this->db->num_rows($result))
 			{
 				$obj = $this->db->fetch_object($result);
 
-				$this->id                     = $rowid;
+				$this->id                     = $obj->rowid;
 				$this->ref                    = $obj->facnumber;
 				$this->ref_client             = $obj->ref_client;
 				$this->type                   = $obj->type;
@@ -927,7 +931,7 @@ class Facture extends CommonObject
 		$sql.= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
 		$sql.= ' WHERE rowid = '.$this->id;
 		$resql = $this->db->query($sql);
-		
+
 		dolibarr_syslog("Facture::set_unpayed sql=".$sql);
 		if ($resql)
 		{
@@ -1094,7 +1098,7 @@ class Facture extends CommonObject
 				$sql.= ', date_lim_reglement='.$this->db->idate($datelim);
 			}
 			$sql.= ' WHERE rowid = '.$this->id;
-			
+				
 			dolibarr_syslog("Facture::set_valid() sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -1171,7 +1175,7 @@ class Facture extends CommonObject
 					$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
-	
+
 					$this->db->commit();
 					return 1;
 				}
@@ -1180,7 +1184,7 @@ class Facture extends CommonObject
 					$this->db->rollback();
 					return -1;
 				}
-				
+
 			}
 			else
 			{
@@ -1303,7 +1307,7 @@ class Facture extends CommonObject
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
-			
+				
 			if ($price_base_type=='HT')
 			{
 				$pu=$pu_ht;
@@ -2229,42 +2233,42 @@ class Facture extends CommonObject
 			$sql .= ' WHERE fk_facture='.$this->id;
 			$sql .= ' AND traite = 0';
 			if ( $this->db->query( $sql) )
-	  {
-	  	$row = $this->db->fetch_row();
-	  	if ($row[0] == 0)
-	  	{
-	  		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
-	  		$sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
-	  		$sql .= ' VALUES ('.$this->id;
-	  		$sql .= ",'".price2num($this->total_ttc)."'";
-	  		$sql .= ",".$this->db->idate(mktime()).",".$user->id;
-	  		$sql .= ",'".$soc->bank_account->code_banque."'";
-	  		$sql .= ",'".$soc->bank_account->code_guichet."'";
-	  		$sql .= ",'".$soc->bank_account->number."'";
-	  		$sql .= ",'".$soc->bank_account->cle_rib."')";
-	  		if ( $this->db->query( $sql) )
-	  		{
-		    return 1;
-	  		}
-	  		else
-	  		{
-		    $this->error=$this->db->error();
-		    dolibarr_syslog('Facture::DemandePrelevement Erreur');
-		    return -1;
-	  		}
-	  	}
-	  	else
-	  	{
-	  		$this->error="Une demande existe déjà";
-	  		dolibarr_syslog('Facture::DemandePrelevement Impossible de créer une demande, demande déja en cours');
-	  	}
-	  }
-	  else
-	  {
-	  	$this->error=$this->db->error();
-	  	dolibarr_syslog('Facture::DemandePrelevement Erreur -2');
-	  	return -2;
-	  }
+			{
+				$row = $this->db->fetch_row();
+				if ($row[0] == 0)
+				{
+					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
+					$sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
+					$sql .= ' VALUES ('.$this->id;
+					$sql .= ",'".price2num($this->total_ttc)."'";
+					$sql .= ",".$this->db->idate(mktime()).",".$user->id;
+					$sql .= ",'".$soc->bank_account->code_banque."'";
+					$sql .= ",'".$soc->bank_account->code_guichet."'";
+					$sql .= ",'".$soc->bank_account->number."'";
+					$sql .= ",'".$soc->bank_account->cle_rib."')";
+					if ( $this->db->query( $sql) )
+					{
+						return 1;
+					}
+					else
+					{
+						$this->error=$this->db->error();
+						dolibarr_syslog('Facture::DemandePrelevement Erreur');
+						return -1;
+					}
+				}
+				else
+				{
+					$this->error="Une demande existe déjà";
+					dolibarr_syslog('Facture::DemandePrelevement Impossible de créer une demande, demande déja en cours');
+				}
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog('Facture::DemandePrelevement Erreur -2');
+				return -2;
+			}
 		}
 		else
 		{

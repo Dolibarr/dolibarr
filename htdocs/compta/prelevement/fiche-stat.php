@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
+ */
+
+/*
+ * 	\version	$Id$
  */
 
 require("./pre.inc.php");
@@ -25,7 +26,12 @@ require("./pre.inc.php");
 // Sécurité accés client
 if ($user->societe_id > 0) accessforbidden();
 
-llxHeader('','Statistique Bon de prélèvement');
+
+/*
+ * View
+ */
+
+llxHeader('',$langs->trans("WithdrawalReceipt"));
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$_GET["id"];
@@ -64,13 +70,15 @@ if ($prev_id)
 
   if ($bon->fetch($_GET["id"]) == 0)
     {
-      dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
+      dolibarr_fiche_head($head, $hselected, $langs->trans("WithdrawalReceipt"));
 
       print '<table class="border" width="100%">';
 
-      print '<tr><td width="20%">Référence</td><td>'.$bon->ref.'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->getNomUrl(1).'</td></tr>';
 
-      print '</table><br />';
+      print '</table>';
+      
+      print '</div>';
     }
   else
     {
@@ -97,7 +105,7 @@ if ($prev_id)
       print '<tr class="liste_titre">';
       print '<td>Statut</td><td align="right">Montant</td><td align="right">%</td></tr>';
       
-      $var=True;
+      $var=false;
       
       while ($i < $num)
 	{
@@ -116,7 +124,8 @@ if ($prev_id)
 	  elseif ($row[1] == 1)
 	    {
 	      print 'En attente';
-	    }	  
+	    }
+	    else print 'Unknown';	  
 
 	  print '</td><td align="right">';	  
 	  print price($row[0]);	  
@@ -142,5 +151,5 @@ if ($prev_id)
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

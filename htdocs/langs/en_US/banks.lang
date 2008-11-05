@@ -43,6 +43,7 @@ IOMonthlyReporting=Monthly reporting
 BankAccountDomiciliation=Account address
 BankAccountOwner=Account owner name
 BankAccountOwnerAddress=Account owner address
+RIBControlError=Control of key says informations for this account number are not complete or wrong.
 CreateAccount=Create account
 StandingOrderToProcess=To process
 StandingOrderProcessed=Processed

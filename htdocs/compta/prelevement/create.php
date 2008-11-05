@@ -17,13 +17,15 @@
  */
 
 /**
-        \file       htdocs/compta/prelevement/create.php
-        \brief      Prelevement
-        \version    $Id$
-*/
+ \file       htdocs/compta/prelevement/create.php
+ \brief      Prelevement
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php");
+require_once DOL_DOCUMENT_ROOT."/facture.class.php";
+require_once DOL_DOCUMENT_ROOT."/societe.class.php";
 
 $langs->load("widthdrawals");
 $langs->load("companies");
@@ -32,7 +34,7 @@ $langs->load("bills");
 
 
 if (!$user->rights->prelevement->bons->creer)
-  accessforbidden();
+accessforbidden();
 
 
 /*
@@ -41,22 +43,26 @@ if (!$user->rights->prelevement->bons->creer)
 
 if ($_GET["action"] == 'create')
 {
-    $bprev = new BonPrelevement($db);
-    $result=$bprev->create($_GET["banque"],$_GET["guichet"]);
-    if ($result < 0)
-    {
-        $mesg='<div class="error">'.$bprev->error.'</div>';
-    }
-    if ($result == 0)
-    {
-        $mesg='<div class="error">Aucune facture prélevable, prélevé avec succès</div>';
-    }
+	$bprev = new BonPrelevement($db);
+	$result=$bprev->create($_GET["banque"],$_GET["guichet"]);
+	if ($result < 0)
+	{
+		$mesg='<div class="error">'.$bprev->error.'</div>';
+	}
+	if ($result == 0)
+	{
+		$mesg='<div class="error">'.$langs->trans("NoInvoiceCouldBeWithdrawed").'</div>';
+	}
 }
 
 
 /*
  * View
  */
+
+$thirdpartystatic=new Societe($db);
+$invoicestatic=new Facture($db);
+$bprev = new BonPrelevement($db);
 
 llxHeader();
 
@@ -67,22 +73,24 @@ $h++;
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("StandingOrders"));
 
-$bprev = new BonPrelevement($db);
 
 $nb=$bprev->NbFactureAPrelever();
 $nb1=$bprev->NbFactureAPrelever(1);
 $nb11=$bprev->NbFactureAPrelever(1,1);
 if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
 {
-    dolibarr_print_error($bprev->error);
+	dolibarr_print_error($bprev->error);
 }
 print '<table class="border" width="100%">';
+
 print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td align="right">';
 print $nb;
-print '</td><td>'.$langs->trans("BankCode").'</td><td align="right">';
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").' '.$langs->trans("ThirdPartyBankCode").'='.PRELEVEMENT_CODE_BANQUE.'</td><td align="right">';
 print $nb1;
-print '</td><td>'.$langs->trans("DeskCode").'</td><td align="right">';
+print '</td></tr>';
+print '<tr><td>'.$langs->trans("NbOfInvoiceToWithdraw").' '.$langs->trans("ThirdPartyDeskCode").'='.PRELEVEMENT_CODE_GUICHET.'</td><td align="right">';
 print $nb11;
 print '</td></tr>';
 
@@ -90,9 +98,9 @@ print '<tr><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td align="right">';
 print price($bprev->SommeAPrelever());
 print '</td>';
-print '<td colspan="4">&nbsp;</td>';
- 
-print '</tr></table>';
+print '</tr>';
+
+print '</table>';
 
 print '</div>';
 
@@ -100,17 +108,17 @@ if ($mesg) print $mesg;
 
 if ($nb)
 {
-    print "<div class=\"tabsAction\">\n";
-    
-    if ($nb) print '<a class="butAction" href="create.php?action=create">'.$langs->trans("Create")."</a>\n";
-    if ($nb1) print '<a class="butAction" href="create.php?action=create&amp;banque=1&amp;guichet=1">'.$langs->trans("CreateGuichet")."</a>\n";
-    if ($nb11) print '<a class="butAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
-    
-    print "</div>\n";
+	print "<div class=\"tabsAction\">\n";
+
+	if ($nb) print '<a class="butAction" href="create.php?action=create">'.$langs->trans("Create")."</a>\n";
+	if ($nb1) print '<a class="butAction" href="create.php?action=create&amp;banque=1&amp;guichet=1">'.$langs->trans("CreateGuichet")."</a>\n";
+	if ($nb11) print '<a class="butAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
+
+	print "</div>\n";
 }
 else
 {
-    print $langs->trans("NoInvoiceToWithdraw").'<br>';
+	print $langs->trans("NoInvoiceToWithdraw").'<br>';
 }
 print '<br>';
 
@@ -126,42 +134,44 @@ $sql.= ", p.statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql.= " ORDER BY datec DESC";
 $sql.=$db->plimit($limit);
- 
+
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0;
+	$num = $db->num_rows($result);
+	$i = 0;
 
-  print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("LastWithdrawalReceipts",$limit).'</td>';
-  print '<td><Date</td><td align="right">'.$langs->trans("Amount").'</td>';
-  print '</tr>';
+	print"\n<!-- debut table -->\n";
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("LastWithdrawalReceipts",$limit).'</td>';
+	print '<td><Date</td><td align="right">'.$langs->trans("Amount").'</td>';
+	print '</tr>';
 
-  $var=True;
+	$var=True;
 
-  while ($i < min($num,$limit))
-    {
-      $obj = $db->fetch_object($result);
-      $var=!$var;
+	while ($i < min($num,$limit))
+	{
+		$obj = $db->fetch_object($result);
+		$var=!$var;
 
-      print "<tr $bc[$var]><td>";
-      print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
-      print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
-      print '<td align="center">'.dolibarr_print_date($obj->datec,'day')."</td>\n";
+		print "<tr $bc[$var]><td>";
+		$bprev->id=$obj->rowid;
+		$bprev->ref=$obj->ref;
+		print $bprev->getNomUrl(1);
+		print "</td>\n";
+		print '<td align="center">'.dolibarr_print_date($obj->datec,'day')."</td>\n";
 
-      print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie)."</td>\n";
+		print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie)."</td>\n";
 
-      print "</tr>\n";
-      $i++;
-    }
-  print "</table><br>";
-  $db->free($result);
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table><br>";
+	$db->free($result);
 }
-else 
+else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 
@@ -178,39 +188,46 @@ $sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
 
 if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socid";
+	$sql .= " AND f.fk_soc = $socid";
 }
 
 if ( $db->query($sql) )
 {
-  $num = $db->num_rows();
-  $i = 0;
-  
-  if ($num)
-    {
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="2">Factures en attente de prélèvement ('.$num.')</td></tr>';
-      $var = True;
-      while ($i < $num && $i < 20)
-	{
-	  $obj = $db->fetch_object();
-	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td>';
-	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().' '.$obj->facnumber.'</a></td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom.'</a></td>';
-	  print '</tr>';
-	  $i++;
-	}
-      
-      print "</table><br>";
+	$num = $db->num_rows();
+	$i = 0;
 
-    }
+	if ($num)
+	{
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="2">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</td></tr>';
+		$var = True;
+		while ($i < $num && $i < 20)
+		{
+			  $obj = $db->fetch_object();
+			  $var=!$var;
+			  print '<tr '.$bc[$var].'><td>';
+				$invoicestatic->id=$obj->rowid;
+				$invoicestatic->ref=$obj->facnumber;
+				print $invoicestatic->getNomUrl(1,'withdraw');
+			  print '</td>';
+			  print '<td>';
+			$thirdpartystatic->id=$obj->socid;
+			$thirdpartystatic->nom=$obj->nom;
+			print $thirdpartystatic->getNomUrl(1,'customer');
+			  print '</td>';
+			  print '</tr>';
+			  $i++;
+		}
+
+		print "</table><br>";
+
+	}
 }
 else
 {
-  dolibarr_print_error($db);
-}  
+	dolibarr_print_error($db);
+}
 
 
 llxFooter('$Date$ - $Revision$');

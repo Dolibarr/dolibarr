@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,13 +19,15 @@
  */
 
 /**
-        \file       htdocs/compta/prelevement/demandes.php
-        \brief      Page de la liste des demandes de prélèvements
-        \version    $Id$
-*/
+ \file       htdocs/compta/prelevement/demandes.php
+ \brief      Page de la liste des demandes de prélèvements
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
+require_once DOL_DOCUMENT_ROOT."/facture.class.php";
+require_once DOL_DOCUMENT_ROOT."/societe.class.php";
 
 $langs->load("widthdrawals");
 $langs->load("companies");
@@ -36,11 +38,14 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement','','');
 
 
+/*
+ * View
+ */
+
 llxHeader();
 
-/*
- *
- */
+$thirdpartystatic=new Societe($db);
+$invoicestatic=new Facture($db);
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
@@ -73,79 +78,89 @@ if ($statut) $sql.= " AND pfd.traite = ".$statut;
 $sql.= " AND pfd.fk_facture = f.rowid";
 if (strlen(trim($_GET["search_societe"])))
 {
-  $sql .= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
+	$sql .= " AND s.nom LIKE '%".$_GET["search_societe"]."%'";
 }
 if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socid";
+	$sql .= " AND f.fk_soc = $socid";
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 if ( $db->query($sql) )
 {
-  $num = $db->num_rows();
-  $i = 0;
-  
-if (! $statut)
-{  
-  print_barre_liste($langs->trans("RequestStandingOrderToTreat"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
-}
-else
-{
-	print_barre_liste($langs->trans("RequestStandingOrderTreated"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
-}
-  
-  print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre">';
-  print '<td class="liste_titre">'.$langs->trans("Bill").'</td><td class="liste_titre">'.$langs->trans("Company").'</td>';
-  print '<td class="liste_titre" align="center">'.$langs->trans("Date").'</td>';
-  print '<td class="liste_titre" align="center">'.$langs->trans("Author").'</td>';
-  print '</tr>';
-  
-  print '<form action="demandes.php" method="GET">';
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.$GET["search_facture"].'"></td>';
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.$GET["search_societe"].'"></td>';
-  print '<td colspan="2" class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
-  print '</tr>';
-  print '</form>';
+	$num = $db->num_rows();
+	$i = 0;
 
-  $var = True;
-
-  $users = array();
-
-  while ($i < min($num,$conf->liste_limit))
-    {
-      $obj = $db->fetch_object();
-      $var=!$var;
-      print '<tr '.$bc[$var].'>';
-      
-      // Ref facture
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().' '.$obj->facnumber.'</a></td>';
-
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom.'</a></td>';
-
-      print '<td align="center">'.dolibarr_print_date($obj->date_demande).'</td>';
-
-      if (!array_key_exists($obj->fk_user_demande,$users))
+	if (! $statut)
 	{
-	  $users[$obj->fk_user_demande] = new User($db, $obj->fk_user_demande);
-	  $users[$obj->fk_user_demande]->fetch();
+		print_barre_liste($langs->trans("RequestStandingOrderToTreat"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+	}
+	else
+	{
+		print_barre_liste($langs->trans("RequestStandingOrderTreated"), $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
 	}
 
-      // User
-      print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$users[$obj->fk_user_demande]->id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$users[$obj->fk_user_demande]->code.'</a></td>';
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre">'.$langs->trans("Bill").'</td><td class="liste_titre">'.$langs->trans("Company").'</td>';
+	print '<td class="liste_titre" align="center">'.$langs->trans("DateRequest").'</td>';
+	print '<td class="liste_titre" align="center">'.$langs->trans("Author").'</td>';
+	print '</tr>';
 
-      print '</tr>';
-      $i++;
-    }
-  
-  print "</table><br />";
+	print '<form action="demandes.php" method="GET">';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.$GET["search_facture"].'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.$GET["search_societe"].'"></td>';
+	print '<td colspan="2" class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
+	print '</tr>';
+	print '</form>';
+
+	$var = True;
+
+	$users = array();
+
+	while ($i < min($num,$conf->liste_limit))
+	{
+		$obj = $db->fetch_object();
+		$var=!$var;
+		print '<tr '.$bc[$var].'>';
+
+		// Ref facture
+		print '<td>';
+		$invoicestatic->id=$obj->rowid;
+		$invoicestatic->ref=$obj->facnumber;
+		print $invoicestatic->getNomUrl(1,'withdraw');
+		print '</td>';
+
+		print '<td>';
+		$thirdpartystatic->id=$obj->socid;
+		$thirdpartystatic->nom=$obj->nom;
+		print $thirdpartystatic->getNomUrl(1,'customer');
+		print '</td>';
+
+		print '<td align="center">'.dolibarr_print_date($obj->date_demande,'day').'</td>';
+
+		if (!array_key_exists($obj->fk_user_demande,$users))
+		{
+			$users[$obj->fk_user_demande] = new User($db, $obj->fk_user_demande);
+			$users[$obj->fk_user_demande]->fetch();
+		}
+
+		// User
+		print '<td align="center">';
+		print $users[$obj->fk_user_demande]->getNomUrl(1);
+		print '</td>';
+
+		print '</tr>';
+		$i++;
+	}
+
+	print "</table><br />";
 
 }
 else
 {
-  dolibarr_print_error($db);
-}  
+	dolibarr_print_error($db);
+}
 
 
 llxFooter('$Date$ - $Revision$');
