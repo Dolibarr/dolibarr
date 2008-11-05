@@ -23,6 +23,7 @@ For users:
 - Can edit a validated intervention.
 - Add juridical status and number of employees in third party 
   export definition.
+- A lot of enhancements and translation in withdraw module.
   
 For translators:
 - The errors language file contains only error or warning messages with 
