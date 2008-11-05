@@ -900,7 +900,7 @@ FCKeditorForUsers=WYSIWIG creation/edition of users' description and note
 FCKeditorForCompany=WYSIWIG creation/edition of companies' description and note
 FCKeditorForProduct=WYSIWIG creation/edition of products/services' description and note
 FCKeditorForMembers=WYSIWIG creation/edition of members' description and note
-FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...)
+FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...)<br>Warning: Using this option is seriously not recommanded as it can create problems with special characters and page formating when building PDF files.
 FCKeditorForProductDetailsPerso=WYSIWIG creation/edition of products personalized details lines for all entities (proposals, orders, invoices, etc...)
 FCKeditorForMailing=WYSIWIG creation/edition of mailings
 ##### OSCommerce 1 #####
