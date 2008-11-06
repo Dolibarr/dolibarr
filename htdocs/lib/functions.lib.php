@@ -2754,9 +2754,8 @@ function dol_htmlcleanlastbr($stringtodecode)
  */
 function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 {
-	//print 'x'.$stringhtml;
-	//$ret=html_entity_decode($stringhtml,ENT_COMPAT,$pagecodeto);
-	$ret=html_entity_decode($stringhtml,ENT_COMPAT);
+	// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
+	$ret=@html_entity_decode($stringhtml,ENT_COMPAT,$pagecodeto);
 	return $ret;
 }
 
