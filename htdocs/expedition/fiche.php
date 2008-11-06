@@ -42,6 +42,7 @@ $langs->load('deliveries');
 $langs->load('orders');
 $langs->load('stocks');
 $langs->load('other');
+$langs->load('propal');
 
 if (! $user->rights->expedition->lire)
 accessforbidden();
