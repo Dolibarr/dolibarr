@@ -157,7 +157,7 @@ class pdf_soleil extends ModelePDFFicheinter
 					$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',cos($watermark_angle),sin($watermark_angle),-sin($watermark_angle),cos($watermark_angle),$watermark_x*$pdf->k,($pdf->h-$watermark_y)*$pdf->k,-$watermark_x*$pdf->k,-($pdf->h-$watermark_y)*$pdf->k));
 					//print watermark
 					$pdf->SetXY($watermark_x,$watermark_y);
-					$pdf->Cell($watermark_width,25,clean_html($conf->global->FICHINTER_DRAFT_WATERMARK),0,2,"C",0);
+					$pdf->Cell($watermark_width,25,$outputlangs->convToOutputCharset($conf->global->FICHINTER_DRAFT_WATERMARK),0,2,"C",0);
 					//antirotate
 					$pdf->_out('Q');
 				}
