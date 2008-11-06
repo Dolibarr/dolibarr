@@ -204,7 +204,7 @@ class ExportTsv extends ModeleExports
     function tsv_clean($newvalue)
     {
 		// Rule Dolibarr: No HTML
-		$newvalue=clean_html($newvalue);
+		$newvalue=dol_string_nohtmltag($newvalue);
 
 		// Rule 1 TSV: No CR, LF in cells
     	$newvalue=ereg_replace("\r",'',$newvalue);

@@ -87,7 +87,7 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 				$url		  = $event['url'];
 				$transparency = $event['transparency'];		// OPAQUE or TRANSPARENT
 				$description=eregi_replace('<br[ \/]?>',"\n",$event['desc']);
- 				$description=clean_html($description,0);	// Remove html tags
+ 				$description=dol_string_nohtmltag($description,0);	// Remove html tags
 
 				// Uncomment for tests
 				//$summary="Resume";
@@ -296,7 +296,7 @@ function build_rssfile($format='rss',$title,$desc,$events_array,$outputfile,$fil
 				$author		  = $event['author'];
 				$category	  = $event['category'];
 				$description=eregi_replace('<br[ \/]?>',"\n",$event['desc']);
- 				$description=clean_html($description,0);	// Remove html tags
+ 				$description=dol_string_nohtmltag($description,0);	// Remove html tags
  				
 				fwrite ($fichier, "<item>\n");
 				fwrite ($fichier, "<title><![CDATA[".$summary."]]></title>"."\n");

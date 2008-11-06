@@ -192,8 +192,9 @@ class ExportExcel extends ModeleExports
 		{
 			$alias=$array_alias[$code];
 			$newvalue=$objp->$alias;
-			// Nettoyage newvalue
-			$newvalue=clean_html($newvalue);
+
+			$newvalue=$this->excel_clean($newvalue);
+
 			// Traduction newvalue
 			if (eregi('^\((.*)\)$',$newvalue,$reg))
 			{
@@ -241,6 +242,19 @@ class ExportExcel extends ModeleExports
 		return 0;
 	}
 
+	
+	/**
+     * Clean a cell to respect rules of Excel file cells
+     * @param 	newvalue	String to clean
+     * @return 	string		Value cleaned
+     */
+    function excel_clean($newvalue)
+    {
+		// Rule Dolibarr: No HTML
+    	$newvalue=dol_string_nohtmltag($newvalue);
+    	
+    	return $newvalue;
+    }
 }
 
 ?>

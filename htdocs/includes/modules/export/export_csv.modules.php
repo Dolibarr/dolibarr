@@ -206,7 +206,7 @@ class ExportCsv extends ModeleExports
     	$addquote=0;
     	
 		// Rule Dolibarr: No HTML
-		$newvalue=clean_html($newvalue);
+		$newvalue=dol_string_nohtmltag($newvalue);
 
 		// Rule 1 CSV: No CR, LF in cells
     	$newvalue=ereg_replace("\r",'',$newvalue);

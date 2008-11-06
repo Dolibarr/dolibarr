@@ -2626,12 +2626,12 @@ function clean_url($url,$http=1)
 
 
 /**
- *	\brief   	Clean a string from all html tags
+ *	\brief   	Clean a string from all HTML tags and entities
  *	\param   	StringHtml			String to clean
  *	\param		removelinefeed		Replace also all lines feeds by a space
  *	\return  	string	    		String cleaned
  */
-function clean_html($StringHtml,$removelinefeed=1)
+function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
 {
 	$pattern = "<[^>]+>";
 	$temp = dol_entity_decode($StringHtml);
@@ -2748,13 +2748,15 @@ function dol_htmlcleanlastbr($stringtodecode)
 }
 
 /**
- *	\brief		This function is called to decode a HTML string (it decodes entities tags)
+ *	\brief		This function is called to decode a string with HTML entities (it decodes entities tags)
  * 	\param   	string      stringhtml
  * 	\return  	string	  	decodestring
  */
 function dol_entity_decode($stringhtml,$pagecodeto='UTF-8')
 {
-	$ret=html_entity_decode($stringhtml,ENT_COMPAT,$pagecodeto);
+	//print 'x'.$stringhtml;
+	//$ret=html_entity_decode($stringhtml,ENT_COMPAT,$pagecodeto);
+	$ret=html_entity_decode($stringhtml,ENT_COMPAT);
 	return $ret;
 }
 
