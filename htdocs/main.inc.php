@@ -618,7 +618,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print "<html>\n";
 	print "<head>\n";
 	print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
-	print "<title>Dolibarr login</title>\n";
+	print "<title>".$langs->trans("Login")."</title>\n";
 
 	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
 
@@ -796,7 +796,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 		// Affiche title
 		$appli='Dolibarr';
-		if (! empty($conf->global->MAIN_TITLE)) $appli=$conf->global->MAIN_TITLE;
+		if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
 		if ($title) print '<title>'.$appli.' - '.$title.'</title>';
 		else print "<title>".$appli."</title>";
