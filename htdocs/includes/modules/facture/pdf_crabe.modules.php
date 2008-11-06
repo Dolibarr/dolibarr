@@ -585,9 +585,7 @@ class pdf_crabe extends ModelePDFFactures
 
         $pdf->SetFont('Arial','', 9);
 
-        /*
-        *	If France, show VAT mention if not applicable
-        */
+        // If France, show VAT mention if not applicable
     	if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
       	{
 	        $pdf->SetFont('Arial','B',8);
@@ -597,9 +595,7 @@ class pdf_crabe extends ModelePDFFactures
             $posy=$pdf->GetY()+4;
         }
 
-        /*
-        *	Conditions de reglements
-        */
+        // Show payments conditions
         if ($object->type != 2 && ($object->cond_reglement_code || $object->cond_reglement))
         {
             $pdf->SetFont('Arial','B',8);
@@ -609,7 +605,7 @@ class pdf_crabe extends ModelePDFFactures
 
             $pdf->SetFont('Arial','',8);
             $pdf->SetXY(50, $posy);
-            $lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$object->cond_reglement;
+            $lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement);
             $pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
 
             $posy=$pdf->GetY()+3;
@@ -618,9 +614,7 @@ class pdf_crabe extends ModelePDFFactures
 
         if ($object->type != 2)
         {
-	        /*
-	        *	Check si absence mode reglement
-	        */
+	        // Check a payment mode is defined
 	        if (empty($object->mode_reglement_code) 
 	        	&& ! $conf->global->FACTURE_CHQ_NUMBER
 	        	&& ! $conf->global->FACTURE_RIB_NUMBER)
@@ -646,7 +640,7 @@ class pdf_crabe extends ModelePDFFactures
 		
 		            $pdf->SetFont('Arial','',8);
 		            $pdf->SetXY(50, $posy);
-		            $lib_mode_reg=$outputlangs->transnoentities("PaymentMode".$object->mode_reglement_code)!=('PaymentMode'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentMode".$object->mode_reglement_code):$object->mode_reglement;
+		            $lib_mode_reg=$outputlangs->transnoentities("PaymentMode".$object->mode_reglement_code)!=('PaymentMode'.$object->mode_reglement_code)?$outputlangs->transnoentities("PaymentMode".$object->mode_reglement_code):$outputlangs->convToOutputCharset($object->mode_reglement);
 		            $pdf->MultiCell(80, 5, $lib_mode_reg,0,'L');
            		 	
 		            $posy=$pdf->GetY()+2;

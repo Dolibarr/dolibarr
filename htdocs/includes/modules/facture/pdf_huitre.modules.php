@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008 Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,11 @@
  */
 
 /**
- \file       htdocs/includes/modules/facture/pdf_huitre.modules.php
- \ingroup    facture
- \brief      Fichier de la classe permettant de g�n�rer les factures au mod�le Huitre
- \author	    Laurent Destailleur
- \version    $Id$
+ *	\file       htdocs/includes/modules/facture/pdf_huitre.modules.php
+ *	\ingroup    facture
+ *	\brief      Fichier de la classe permettant de g�n�rer les factures au mod�le Huitre
+ *	\author	    Laurent Destailleur
+ *	\version    $Id$
  */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/facture/modules_facture.php");
@@ -32,17 +32,16 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
 
 /**
- \class      pdf_huitre
- \brief      Classe permettant de g�n�rer les factures au mod�le Huitre
+ *	\class      pdf_huitre
+ *	\brief      Classe permettant de g�n�rer les factures au mod�le Huitre
  */
-
 class pdf_huitre extends ModelePDFFactures
 {
 	var $emetteur;	// Objet societe qui emet
 
 
 	/**		\brief  Constructeur
-	 \param	db		handler acc�s base de donn�e
+	 *		\param	db		handler acc�s base de donn�e
 	 */
 	function pdf_huitre($db)
 	{
@@ -69,12 +68,12 @@ class pdf_huitre extends ModelePDFFactures
 
 		$this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
 		$this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
-		$this->option_modereg = 0;                 // Gere choix mode r�glement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
-		$this->option_condreg = 1;                 // Affiche conditions r�glement
+		$this->option_modereg = 0;                 // Gere choix mode reglement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
+		$this->option_condreg = 1;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
 		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 0;                // Affiche si il y a eu escompte
-		$this->option_credit_note = 0;             // G�re les avoirs
+		$this->option_credit_note = 0;             // Gere les avoirs
 		$this->option_draft_watermark = 1;		   //Support add of a watermark on drafts
 
 		// Recupere emmetteur
@@ -343,7 +342,7 @@ class pdf_huitre extends ModelePDFFactures
 		$x2*$this->k, ($h-$y2)*$this->k, $x3*$this->k, ($h-$y3)*$this->k));
 	}
 
-	function _tableau_compl(&$pdf, $fac)
+	function _tableau_compl(&$pdf, $fac, $outputlangs)
 	{
 		global $langs;
 		$langs->load("main");
@@ -362,13 +361,13 @@ class pdf_huitre extends ModelePDFFactures
 
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetXY (10, $tab3_top - 6);
-		$pdf->MultiCell(60, 6, $langs->transnoentities("ExtraInfos"), 0, 'L', 0);
+		$pdf->MultiCell(60, 6, $outputlangs->transnoentities("ExtraInfos"), 0, 'L', 0);
 		$pdf->SetXY (10, $tab3_top );
-		$pdf->MultiCell(20, 6, $langs->transnoentities("RegulatedOn"), 0, 'L', 0);
+		$pdf->MultiCell(20, 6, $outputlangs->transnoentities("RegulatedOn"), 0, 'L', 0);
 		$pdf->SetXY (10, $tab3_top + 6);
-		$pdf->MultiCell(60, 6, $langs->transnoentities("ChequeOrTransferNumber"), 0, 'L', 0);
+		$pdf->MultiCell(60, 6, $outputlangs->transnoentities("ChequeOrTransferNumber"), 0, 'L', 0);
 		$pdf->SetXY (10, $tab3_top + 12);
-		$pdf->MultiCell(20, 6, $langs->transnoentities("Bank"), 0, 'L', 0);
+		$pdf->MultiCell(20, 6, $outputlangs->transnoentities("Bank"), 0, 'L', 0);
 	}
 
 	/*

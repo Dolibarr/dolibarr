@@ -241,7 +241,7 @@ class pdf_oursin extends ModelePDFFactures
 
 					if ($nexY > 200 && $i < $nblignes - 1)
 					{
-						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac);
+						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac, $outputlangs);
 						$pdf->AddPage();
 						$nexY = $iniY;
 						$this->_pagehead($pdf, $fac, $outputlangs);
@@ -250,9 +250,9 @@ class pdf_oursin extends ModelePDFFactures
 					}
 
 				}
-				$posy=$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac);
+				$posy=$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac, $outputlangs);
 
-				$posy=$this->_tableau_tot($pdf, $fac, $deja_regle);
+				$posy=$this->_tableau_tot($pdf, $fac, $deja_regle, $outputlangs);
 
 				// Affiche zone versements
 				if ($deja_regle || $amount_credit_not_included)
@@ -519,7 +519,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *   \param      fac         objet facture
 	 *   \param      deja_regle  montant deja regle
 	 */
-	function _tableau_tot(&$pdf, $fac, $deja_regle)
+	function _tableau_tot(&$pdf, $fac, $deja_regle, $outputlangs)
 	{
 		global $langs;
 		$langs->load("main");
@@ -537,13 +537,13 @@ class pdf_oursin extends ModelePDFFactures
 		 */
 		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
 		{
-			$pdf->MultiCell(100, $tab2_hl, $langs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+			$pdf->MultiCell(100, $tab2_hl, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 		}
 
 		// Tableau total
 		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
 		$pdf->SetXY ($col1x, $tab2_top + 0);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalHT"), 0, 'L', 0);
+		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 0);
 
 		$pdf->SetXY ($col2x, $tab2_top + 0);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
@@ -551,7 +551,7 @@ class pdf_oursin extends ModelePDFFactures
 		$index = 1;
 
 		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalVAT"), 0, 'L', 0);
+		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 0);
 
 		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
@@ -559,7 +559,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+1));
 		$pdf->SetTextColor(22,137,210);
 		$pdf->SetFont('Arial','B', 11);
-		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalTTC"), 0, 'L', 0);
+		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), 0, 'L', 0);
 
 		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+1));
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 0);
@@ -568,7 +568,7 @@ class pdf_oursin extends ModelePDFFactures
 		if ($deja_regle > 0)
 		{
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+2));
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("AlreadyPayed"), 0, 'L', 0);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPayed"), 0, 'L', 0);
 
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+2));
 			$pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
@@ -576,7 +576,7 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+3));
 			$pdf->SetTextColor(22,137,210);
 			$pdf->SetFont('Arial','B', 11);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("RemainderToPay"), 0, 'L', 0);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), 0, 'L', 0);
 
 			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+3));
 			$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 0);
@@ -588,7 +588,7 @@ class pdf_oursin extends ModelePDFFactures
 	 *   \brief      Affiche la grille des lignes de factures
 	 *   \param      pdf     objet PDF
 	 */
-	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $fac)
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $fac, $outputlangs)
 	{
 		global $langs;
 		$langs->load("main");
@@ -599,10 +599,10 @@ class pdf_oursin extends ModelePDFFactures
 
 		$pdf->SetFont('Arial','B',10);
 
-		$pdf->Text($this->marges['g']+2,$tab_top + 5, $langs->transnoentities("Designation"));
-		if ($this->franchise!=1) $pdf->Text($this->marges['g']+120, $tab_top + 5, $langs->transnoentities("VAT"));
-		$pdf->Text($this->marges['g']+135, $tab_top + 5,$langs->transnoentities("PriceUHT"));
-		$pdf->Text($this->marges['g']+153, $tab_top + 5, $langs->transnoentities("Qty"));
+		$pdf->Text($this->marges['g']+2,$tab_top + 5, $outputlangs->transnoentities("Designation"));
+		if ($this->franchise!=1) $pdf->Text($this->marges['g']+120, $tab_top + 5, $outputlangs->transnoentities("VAT"));
+		$pdf->Text($this->marges['g']+135, $tab_top + 5,$outputlangs->transnoentities("PriceUHT"));
+		$pdf->Text($this->marges['g']+153, $tab_top + 5, $outputlangs->transnoentities("Qty"));
 
 		$nblignes = sizeof($fac->lignes);
 		$rem=0;
@@ -613,9 +613,9 @@ class pdf_oursin extends ModelePDFFactures
 		}
 		if ($rem==1)
 		{
-			$pdf->Text($this->marges['g']+163, $tab_top + 5,'Rem.');
+			$pdf->Text($this->marges['g']+163, $tab_top + 5,$outputlangs->transnoentities("Note"));
 		}
-		$pdf->Text($this->marges['g']+175, $tab_top + 5, $langs->transnoentities("TotalHT"));
+		$pdf->Text($this->marges['g']+175, $tab_top + 5, $outputlangs->transnoentities("TotalHT"));
 	}
 
 	/*
@@ -741,11 +741,11 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetFont('Arial','B',13);
 		$pdf->SetXY($this->marges['g'],$posy);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(100, 10, $langs->transnoentities("Bill").' '.$langs->transnoentities("Of").' '.dolibarr_print_date($fac->date,"%d %B %Y",false,$outputlangs), '' , 'L');
+		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("Bill").' '.$outputlangs->transnoentities("Of").' '.dolibarr_print_date($fac->date,"%d %B %Y",false,$outputlangs), '' , 'L');
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY($this->marges['g'],$posy+6);
 		$pdf->SetTextColor(22,137,210);
-		$pdf->MultiCell(100, 10, $langs->transnoentities("RefBill")." : " . $fac->ref, '', 'L');
+		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("RefBill")." : " . $fac->ref, '', 'L');
 		$pdf->SetTextColor(0,0,0);
 
 		/*
@@ -756,28 +756,33 @@ class pdf_oursin extends ModelePDFFactures
 			$projet = New Project($fac->db);
 			$projet->fetch($fac->projetid);
 			$pdf->SetFont('Arial','',9);
-			$pdf->MultiCell(60, 4, $langs->transnoentities("Project")." : ".$projet->title);
+			$pdf->MultiCell(60, 4, $outputlangs->transnoentities("Project")." : ".$projet->title);
 		}
 
 		/*
 		 * ref propal
 		 */
-		$sql = "SELECT ".$fac->db->pdate("p.datep")." as dp, p.ref, p.rowid as propalid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
-		$result = $fac->db->query($sql);
-		if ($result)
+		if ($conf->propal->enabled)
 		{
-			$objp = $fac->db->fetch_object();
-			$pdf->SetFont('Arial','',9);
-			$pdf->MultiCell(60, 4, $langs->transnoentities("RefProposal")." : ".$objp->ref);
+			$outputlangs->load('propal');
+			
+			$sql = "SELECT ".$fac->db->pdate("p.datep")." as dp, p.ref, p.rowid as propalid";
+			$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
+			$result = $fac->db->query($sql);
+			if ($result)
+			{
+				$objp = $fac->db->fetch_object();
+				$pdf->SetFont('Arial','',9);
+				$pdf->MultiCell(60, 4, $outputlangs->transnoentities("RefProposal")." : ".$objp->ref);
+			}
 		}
-
+		
 		/*
 		 * monnaie
 		 */
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',10);
-		$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
+		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentities("Currency".$conf->monnaie));
 		$pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
 		/*
 		 */
