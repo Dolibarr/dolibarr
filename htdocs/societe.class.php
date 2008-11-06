@@ -500,7 +500,7 @@ class Societe extends CommonObject
 		}
 
 		$sql = 'SELECT s.rowid, s.nom, s.address,'.$this->db->pdate('s.datec').' as dc, s.prefix_comm';
-		if ($conf->global->PRODUIT_MULTIPRICES == 1)	$sql .= ', s.price_level';
+		if($conf->global->PRODUIT_MULTIPRICES == 1) $sql .= ', s.price_level';
 		$sql .= ','. $this->db->pdate('s.tms').' as date_update';
 		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, s.client, s.fournisseur';
 		$sql .= ', s.siren, s.siret, s.ape, s.idprof4';
@@ -537,15 +537,15 @@ class Societe extends CommonObject
 
 				$this->date_update = $obj->date_update;
 
-				$this->nom = stripslashes($obj->nom);
-				$this->adresse =  stripslashes($obj->address);
+				$this->nom = $obj->nom;
+				$this->adresse = $obj->address;
 				$this->cp = $obj->cp;
-				$this->ville =  stripslashes($obj->ville);
-				$this->adresse_full =  stripslashes($obj->address) . "\n". $obj->cp . ' '. stripslashes($obj->ville);
+				$this->ville = $obj->ville;
+				$this->adresse_full = $obj->address . "\n". $obj->cp . ' '. $obj->ville;
 
 				$this->pays_id = $obj->fk_pays;
 				$this->pays_code = $obj->fk_pays?$obj->pays_code:'';
-				$this->pays = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?strtoupper(clean_html($langs->trans('Country'.$obj->pays_code))):$obj->pays):'';
+				$this->pays = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
 
 				$this->departement_id = $obj->fk_departement;
 				$this->departement= $obj->fk_departement?$obj->departement:'';
@@ -604,8 +604,7 @@ class Societe extends CommonObject
 				$this->rubrique = $obj->rubrique;
 				$this->note = $obj->note;
 				// multiprix
-				if($conf->global->PRODUIT_MULTIPRICES == 1)
-				$this->price_level = $obj->price_level;
+				if($conf->global->PRODUIT_MULTIPRICES == 1) $this->price_level = $obj->price_level;
 
 				$result = 1;
 			}
@@ -666,7 +665,7 @@ class Societe extends CommonObject
 			$this->ville          = $obj->ville;
 			$this->pays_id        = $obj->fk_pays;
 			$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
-			$this->pays           = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?strtoupper(clean_html($langs->trans('Country'.$obj->pays_code))):$obj->pays):'';
+			$this->pays           = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?$langs->trans('Country'.$obj->pays_code):$obj->pays):'';
 			$this->tel            = $obj->tel;
 			$this->fax            = $obj->fax;
 			$this->note           = $obj->note;
