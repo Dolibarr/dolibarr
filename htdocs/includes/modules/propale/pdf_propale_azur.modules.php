@@ -938,7 +938,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				//Pays si different de l'emetteur
 				if ($this->emetteur->pays_code != $object->contact->pays_code)
 				{
-					$carac_client.=dol_entity_decode($object->contact->pays)."\n";
+					$carac_client.=$outputlangs->convToOutputCharset($object->contact->pays)."\n";
 				}
 			}
 			else
@@ -967,7 +967,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				//Pays si different de l'emetteur
 				if ($this->emetteur->pays_code != $object->client->pays_code)
 				{
-					$carac_client.=dol_entity_decode($object->client->pays)."\n";
+					$carac_client.=$outputlangs->convToOutputCharset($object->client->pays)."\n";
 				}
 			}
 			// Numéro TVA intracom
