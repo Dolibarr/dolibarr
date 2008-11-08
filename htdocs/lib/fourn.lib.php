@@ -16,17 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/lib/fourn.lib.php
 		\brief      Ensemble de fonctions de base pour le module fournisseur
-		\version    $Revision$
-
-		Ensemble de fonctions de base de dolibarr sous forme d'include
+		\version    $Id$
 */
 
 function facturefourn_prepare_head($fac)

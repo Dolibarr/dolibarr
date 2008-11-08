@@ -140,7 +140,48 @@ function run_sql($sqlfile,$silent=1)
 		fclose($fp);
 	}
 
-	// Loop on each request
+	// Loop on each request to see if there is a __+MAX_table__ key
+	$listofmaxrowid=array();
+	foreach($arraysql as $i => $sql)
+	{
+		if ($sql)
+		{
+			$newsql=$sql;
+		
+			// Replace __+MAX_table__ with max of table
+			while (eregi('__\+MAX_([A-Za-z_]+)__',$newsql,$reg))
+			{
+				$table=$reg[1];
+				if (! isset($listofmaxrowid[$table]))
+				{
+					$sqlgetrowid='SELECT MAX(rowid) as max from '.$table;
+					$resql=$db->query($sqlgetrowid);
+					if ($resql)
+					{
+						$obj=$db->fetch_object($resql);
+						$listofmaxrowid[$table]=$obj->max;
+						if (empty($listofmaxrowid[$table])) $listofmaxrowid[$table]=0;
+					}
+					else
+					{
+						if (! $silent) print '<tr><td valign="top" colspan="2">';
+						if (! $silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
+						if (! $silent) print '</tr>';
+						$error++;
+						break;
+					}
+				}
+				$from='__+MAX_'.$table.'__';
+				$to='+'.$listofmaxrowid[$table];
+				$newsql=str_replace($from,$to,$newsql);
+				dolibarr_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+			
+				$arraysql[$i]=$newsql;
+			}
+		}
+	}
+
+	// Loop on each request to execute request
 	$cursorinsert=0;
 	$listofinsertedrowid=array();
 	foreach($arraysql as $i => $sql)
