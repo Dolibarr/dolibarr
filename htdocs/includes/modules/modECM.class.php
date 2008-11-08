@@ -143,7 +143,7 @@ class modECM extends DolibarrModules
 							  'mainmenu'=>'ecm',
 							  'url'=>'/ecm/index.php',
 							  'langs'=>'ecm',
-							  'position'=>100,
+							  'position'=>101,
 							  'perms'=>'$user->rights->ecm->read',
 							  'target'=>'',
 							  'user'=>0);
@@ -155,7 +155,7 @@ class modECM extends DolibarrModules
 							  'mainmenu'=>'ecm',
 							  'url'=>'/ecm/index.php?action=file_manager',
 							  'langs'=>'ecm',
-							  'position'=>100,
+							  'position'=>102,
 							  'perms'=>'$user->rights->ecm->read',
 							  'target'=>'',
 							  'user'=>0);
@@ -167,7 +167,7 @@ class modECM extends DolibarrModules
 							  'mainmenu'=>'ecm',
 							  'url'=>'/ecm/index.php?action=search_form',
 							  'langs'=>'ecm',
-							  'position'=>100,
+							  'position'=>103,
 							  'perms'=>'$user->rights->ecm->read',
 							  'target'=>'',
 							  'user'=>0);
