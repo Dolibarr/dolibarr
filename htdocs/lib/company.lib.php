@@ -404,7 +404,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 						
 					// Picto warning
 					print '<td width="16">';
-					if (date("U",$obj->dp) < time()) print ' '.img_warning("Late");
+					if ($obj->dp && date("U",$obj->dp) < time()) print ' '.img_warning("Late");
 					else print '&nbsp;';
 					print '</td>';
 
