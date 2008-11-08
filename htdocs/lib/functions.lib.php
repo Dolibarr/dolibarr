@@ -2707,7 +2707,7 @@ function dol_nl2br($stringtoencode,$nl2brmode=0)
  *				Because writeHTMLCell convert also \n into <br>, if function
  *				is used to build PDF, nl2brmode must be 1.
  */
-function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0)
+function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0,$pagecodefrom='UTF-8')
 {
 	if (dol_textishtml($stringtoencode))
 	{
@@ -2716,7 +2716,8 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0)
 		return $stringtoencode;
 	}
 	else {
-		$newstring=dol_nl2br(htmlentities($stringtoencode),$nl2brmode);
+		// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
+		$newstring=dol_nl2br(@htmlentities($stringtoencode,ENT_COMPAT,$pagecodefrom),$nl2brmode);
 		// Other substitutions that htmlentities does not do
 		$newstring=str_replace(chr(128),'&euro;',$newstring);	// 128 = 0x80
 		return $newstring;
@@ -2729,7 +2730,8 @@ function dol_htmlentitiesbr($stringtoencode,$nl2brmode=0)
  */
 function dol_htmlentitiesbr_decode($stringtodecode,$pagecodeto='UTF-8')
 {
-	$ret=html_entity_decode($stringtodecode,ENT_COMPAT,$pagecodeto);
+	// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
+	$ret=@html_entity_decode($stringtodecode,ENT_COMPAT,$pagecodeto);
 	$ret=eregi_replace("\r\n".'<br( [ a-zA-Z_="]*)?/?>',"<br>",$ret);
 	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>'."\r\n","\r\n",$ret);
 	$ret=eregi_replace('<br( [ a-zA-Z_="]*)?/?>'."\n","\n",$ret);

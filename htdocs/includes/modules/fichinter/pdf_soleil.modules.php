@@ -240,7 +240,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetFillColor(220,220,220);
 				$pdf->SetTextColor(0,0,0);
-				$pdf->SetFont('Arial','',12);
+				$pdf->SetFont('Arial','',10);
 
 				$tab_top = 100;
 				$tab_height = 16;
@@ -249,18 +249,22 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
 				$pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );
 
-				$pdf->Rect(10, $tab_top, 190, $tab_height);
-
 				$pdf->SetFont('Arial','', 9);
 
 				$pdf->SetXY (10, $tab_top + 8 );
 				$desc=dol_htmlentitiesbr($fichinter->description,1);
-				//print $desc; exit;
-				$pdf->writeHTMLCell(190, 4, 10, $tab_top + 8, dol_htmlentitiesbr($desc,1), 0, 0, 0);
-
+				//print $outputlangs->convToOutputCharset($desc); exit;
+				$pdf->writeHTMLCell(180, 1, 10, $tab_top + 8, $outputlangs->convToOutputCharset($desc), 0, 1);
+				$nexY = $pdf->GetY();
+				
+				$pdf->line(10, $nexY, 200, $nexY);
+				$tab_top=$nexY;
+				
+				
 				//dolibarr_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
 				$num = sizeof($fichinter->lignes);
 				$i=0;$j=0;
+				$height=16;
 				if ($num)
 				{
 					while ($i < $num)
@@ -270,13 +274,13 @@ class pdf_soleil extends ModelePDFFicheinter
 						$valide = $fichinterligne->id ? $fichinterligne->fetch($fichinterligne->id) : 0;
 						if ($valide>0)
 						{
-							$pdf->SetXY (10, $tab_top + 16 + $j * 20);
-							$pdf->writeHTMLCell(0, 4, 20, $tab_top + 16 + $j * 20,
-							dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei,'',false,$outputlangs)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration), 1), 0, 0, 0);
+							$pdf->SetXY (10, $tab_top + $j * $height);
+							$pdf->writeHTMLCell(0, 4, 20, $tab_top + $j * $height,
+							dol_htmlentitiesbr($outputlangs->transnoentities("Date")." : ".dolibarr_print_date($fichinterligne->datei,'',false,$outputlangs)." - ".$outputlangs->transnoentities("Duration")." : ".ConvertSecondToTime($fichinterligne->duration),1,$outputlangs->charset_output), 0, 0, 0);
 
-							$pdf->SetXY (10, $tab_top + 22 + $j * 20);
-							$pdf->writeHTMLCell(0, 4, 20, $tab_top + 22 + $j * 20,
-							dol_htmlentitiesbr($fichinterligne->desc,1), 0, 0, 0);
+							$pdf->SetXY (10, $tab_top + 4 + $j * $height);
+							$pdf->writeHTMLCell(0, 4, 20, $tab_top + 4 + $j * $height,
+							dol_htmlentitiesbr($outputlangs->convToOutputCharset($fichinterligne->desc),1), 0, 0, 0);
 							$tab_height+=20;
 								
 							$j++;
@@ -284,8 +288,9 @@ class pdf_soleil extends ModelePDFFicheinter
 						$i++;
 					}
 				}
-				$pdf->Rect(10, $tab_top, 190, $tab_height);
-				$pdf->SetXY (10, $pdf->GetY() + 20 );
+
+				$pdf->Rect(10, 100, 190, $tab_height);
+				$pdf->SetXY (10, $pdf->GetY() + 20);
 				$pdf->MultiCell(60, 5, '', 0, 'J', 0);
 
 				$pdf->SetXY(20,220);
