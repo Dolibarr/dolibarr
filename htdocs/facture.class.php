@@ -1098,7 +1098,7 @@ class Facture extends CommonObject
 				$sql.= ', date_lim_reglement='.$this->db->idate($datelim);
 			}
 			$sql.= ' WHERE rowid = '.$this->id;
-				
+
 			dolibarr_syslog("Facture::set_valid() sql=".$sql, LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -1268,7 +1268,7 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 * 		\brief    	Ajoute une ligne de facture (associé à un produit/service prédéfini ou non)
+	 * 		\brief    	Ajoute une ligne de facture (associé à un produit/service prédéfini ou non
 	 * 		\param    	facid           	Id de la facture
 	 * 		\param    	desc            	Description de la ligne
 	 * 		\param    	pu_ht              	Prix unitaire HT
@@ -1307,7 +1307,7 @@ class Facture extends CommonObject
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
-				
+
 			if ($price_base_type=='HT')
 			{
 				$pu=$pu_ht;
@@ -1759,7 +1759,7 @@ class Facture extends CommonObject
 
 	/**
 	 *	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	 *	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé lon
 	 *	\param		alreadypayed	0=Not payment already done, 1=Some payments already done
 	 *	\return     string        	Libelle
 	 */
@@ -1772,7 +1772,7 @@ class Facture extends CommonObject
 	 *    	\brief      Renvoi le libellé d'un statut donné
 	 *    	\param      paye          	Etat paye
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Pict
 	 *		\param		alreadypayed	Montant deja payé
 	 *		\param		type			Type facture
 	 *    	\return     string        	Libellé du statut
@@ -2114,10 +2114,10 @@ class Facture extends CommonObject
 
 
 	/**
-	 \brief     	Renvoi liste des factures remplacables
-	 Statut validée ou abandonnée pour raison autre + non payée + aucun paiement + pas deja remplacée
-	 \param			socid		Id societe
-	 \return    	array		Tableau des factures ('id'=>id, 'ref'=>ref, 'statut'=>status)
+	 *	\brief     	Renvoi liste des factures remplacables
+	 *				Statut validée ou abandonnée pour raison autre + non payée + aucun paiement + pas deja remplacée
+	 *	\param		socid		Id societe
+	 *	\return    	array		Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
 	 */
 	function list_replacable_invoices($socid=0)
 	{
@@ -2137,23 +2137,23 @@ class Facture extends CommonObject
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.facnumber";
 
-		dolibarr_syslog("Facture.class::list_replacable_invoices sql=$sql");
+		dolibarr_syslog("Facture::list_replacable_invoices sql=$sql");
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			while ($obj=$this->db->fetch_object($resql))
-	  {
-	  	$return[$obj->rowid]=array(	'id' => $obj->rowid,
-					'ref' => $obj->facnumber,
-					'status' => $obj->fk_status);
-	  }
-	  //print_r($return);
-	  return $return;
+			{
+			  	$return[$obj->rowid]=array(	'id' => $obj->rowid,
+			  	'ref' => $obj->facnumber,
+			  	'status' => $obj->fk_statut);
+			}
+			//print_r($return);
+			return $return;
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Facture.class::list_replacable_invoices ".$this->error);
+			dolibarr_syslog("Facture::list_replacable_invoices ".$this->error);
 			return -1;
 		}
 	}
@@ -2161,9 +2161,9 @@ class Facture extends CommonObject
 
 	/**
 	 *  	\brief     	Renvoi liste des factures qualifiables pour correction par avoir
-	 *				Les factures qui respectent les regles suivantes sont retournees:
-	 * 				(validée + paiement en cours) ou classée (payée completement ou payée partiellement) + pas deja remplacée + pas deja avoir
-	 *	\param		socid		Id societe
+	 *					Les factures qui respectent les regles suivantes sont retournees:
+	 * 					(validée + paiement en cours) ou classée (payée completement ou payée partiellement) + pas deja remplacée + pas deja avoir
+	 *		\param		socid		Id societe
 	 *   	\return    	array		Tableau des factures ($id => $ref)
 	 */
 	function list_qualified_avoir_invoices($socid=0)
@@ -2184,32 +2184,29 @@ class Facture extends CommonObject
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.facnumber";
 
-		dolibarr_syslog("Facture.class::list_qualified_avoir_invoices sql=$sql");
+		dolibarr_syslog("Facture::list_qualified_avoir_invoices sql=$sql");
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			while ($obj=$this->db->fetch_object($resql))
-	  {
-	  	$qualified=0;
-	  	// if statut is 1, record is qualified only if some paiement
-	  	// has already been made.
-	  	// If not, we must not do credit note but a replacement invoice.
-	  	if ($obj->fk_statut == 1 && $obj->fk_paiement) $qualified=1;
-	  	if ($obj->fk_statut == 2) $qualified=1;
-	  	if ($qualified)
-	  	{
-	  		//$ref=$obj->facnumber;
-	  		$paymentornot=($obj->fk_paiement?1:0);
-	  		$return[$obj->rowid]=$paymentornot;
-	  	}
-	  }
+			{
+				$qualified=0;
+				if ($obj->fk_statut == 1) $qualified=1;
+				if ($obj->fk_statut == 2) $qualified=1;
+				if ($qualified)
+				{
+					//$ref=$obj->facnumber;
+					$paymentornot=($obj->fk_paiement?1:0);
+					$return[$obj->rowid]=$paymentornot;
+				}
+			}
 
-	  return $return;
+			return $return;
 		}
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Facture.class::list_avoir_invoices ".$this->error);
+			dolibarr_syslog("Facture::list_avoir_invoices ".$this->error);
 			return -1;
 		}
 	}
@@ -2364,7 +2361,7 @@ class Facture extends CommonObject
 
 	/**
 	 *		\brief		Initialise la facture avec valeurs fictives aléatoire
-	 *					Sert à générer une facture pour l'aperu des modèles ou demo
+	 *					Sert à générer une facture pour l'aperu des modèles ou dem
 	 */
 	function initAsSpecimen()
 	{

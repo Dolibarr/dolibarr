@@ -44,7 +44,7 @@ $langs->load("compta");
 $langs->load("bills");
 if ($conf->commande->enabled) $langs->load("orders");
 
-// Sécurité accés client
+// Security check
 $socid='';
 if ($user->societe_id > 0)
 {
@@ -747,7 +747,7 @@ if ($resql)
   print "</tr>\n";
   $var = True;
   $i = 0;
-  while ($i < $db->num_rows($resql) )
+  while ($i < $db->num_rows($resql))
     {
       $obj = $db->fetch_object($resql);
       $var=!$var;

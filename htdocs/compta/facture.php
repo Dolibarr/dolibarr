@@ -1389,24 +1389,36 @@ if ($_GET['action'] == 'create')
 	$options="";
 	foreach ($facids as $facparam)
 	{
-		$options.='<option value="'.$facparam['id'].'">'.$facparam['ref'].'</option>';
+		$options.='<option value="'.$facparam['id'].'"';
+		if ($facparam['id'] == $_POST['fac_replacement']) $options.=' selected="true"';
+		$options.='>'.$facparam['ref'];
+		$options.=' ('.$facturestatic->LibStatut(0,$facparam['status']).')';
+		$options.='</option>';
 	}
+	
 	$facids=$facturestatic->list_qualified_avoir_invoices($soc->id);
+	if ($facids < 0)
+	{
+		dolibarr_print_error($db,$facturestatic);
+		exit;
+	}
 	$optionsav="";
 	foreach ($facids as $key => $value)
 	{
 		$newinvoice=new Facture($db);
 		$newinvoice->fetch($key);
-		$optionsav.='<option value="'.$key.'">';
+		$optionsav.='<option value="'.$key.'"';
+		if ($key == $_POST['fac_avoir']) $optionsav.=' selected="true"';
+		$optionsav.='>';
 		$optionsav.=$newinvoice->ref;
 		$optionsav.=' ('.$newinvoice->getLibStatut(1,$value).')';
 		$optionsav.='</option>';
 	}
 
+	// Type
 	print '<tr><td valign="top">'.$langs->trans('Type').'</td><td colspan="2">';
 	print '<table class="nobordernopadding">'."\n";
 
-	// Type
 	print '<tr><td width="16px" valign="middle">';
 	print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked="true"':'').'>';
 	print '</td><td valign="middle">';
