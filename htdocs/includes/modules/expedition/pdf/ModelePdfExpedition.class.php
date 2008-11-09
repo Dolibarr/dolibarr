@@ -20,7 +20,7 @@
  */
 
 /**
- *  \file       htdocs/includes/module/expedition/pdf/ModelePdfExpedition.class.php
+ *  \file       htdocs/includes/modules/expedition/pdf/ModelePdfExpedition.class.php
  *  \ingroup    shipping
  *  \brief      Fichier contenant la classe mere de generation des expeditions
  *  \version    $Id$
@@ -31,9 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/includes/fpdf/DolibarrPdfBarCode.class.php';
 
 
 /**
-   \class      ModelePdfExpedition
-   \brief      Classe m�re des mod�les de bon d'expedition
-*/
+ *  \class      ModelePdfExpedition
+ *  \brief      Parent class of ssending receipts models
+ */
 
 class ModelePdfExpedition extends DolibarrPdfBarCode
 {

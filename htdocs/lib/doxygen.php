@@ -23,5 +23,5 @@
 *		This is source documentation for Dolibarr.<br>
 *		This documentation can be built or updated running the script <b>dolibarr-doxygen-build.pl</b><br>
 *		<br>
-*		Dolibarr official web site: <a href="http://dolibarr.org">dolibarr.org</a><br>
+*		Dolibarr official web site: <a href="http://www.dolibarr.org">www.dolibarr.org</a><br>
 */

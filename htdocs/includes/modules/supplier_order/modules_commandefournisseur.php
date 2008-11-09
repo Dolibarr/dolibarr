@@ -23,16 +23,16 @@
 /**
  *		\file       htdocs/includes/modules/supplier_order/modules_commandefournisseur.php
  *      \ingroup    commande
- *      \brief      Fichier contenant la classe mère de generation des commandes fournisseurs en PDF
- *                  et la classe mère de numérotation des commandes fournisseurs
+ *      \brief      File that contain parent class for supplier orders models
+ *                  and parent class for supplier orders numbering models
  *      \version    $Id$
  */
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
- \class      ModelePDFSuppliersorders
- \brief      Classe mère des modèles de commandes fournisseurs
+ *	\class      ModelePDFSuppliersOrders
+ *	\brief      Parent class for supplier orders models
  */
 
 class ModelePDFSuppliersOrders extends FPDF
@@ -40,7 +40,7 @@ class ModelePDFSuppliersOrders extends FPDF
 	var $error='';
 
 	/**
-	 \brief Renvoi le dernier message d'erreur de création de PDF de commande
+	 \brief Renvoi le dernier message d'erreur de crï¿½ation de PDF de commande
 	 */
 	function pdferror()
 	{
@@ -48,7 +48,7 @@ class ModelePDFSuppliersOrders extends FPDF
 	}
 
 	/**
-	 *      \brief      Renvoi la liste des modèles actifs
+	 *      \brief      Renvoi la liste des modï¿½les actifs
 	 */
 	function liste_modeles($db)
 	{
@@ -84,7 +84,7 @@ class ModelePDFSuppliersOrders extends FPDF
 
 /**
  \class      ModeleNumRefSuppliersOrders
- \brief      Classe mère des modèles de numérotation des références de commandes fournisseurs
+ \brief      Classe mï¿½re des modï¿½les de numï¿½rotation des rï¿½fï¿½rences de commandes fournisseurs
  */
 
 class ModeleNumRefSuppliersOrders
@@ -99,7 +99,7 @@ class ModeleNumRefSuppliersOrders
 		return true;
 	}
 
-	/**     \brief      Renvoi la description par defaut du modele de numérotation
+	/**     \brief      Renvoi la description par defaut du modele de numï¿½rotation
 	 *      \return     string      Texte descripif
 	 */
 	function info()
@@ -109,7 +109,7 @@ class ModeleNumRefSuppliersOrders
 		return $langs->trans("NoDescription");
 	}
 
-	/**     \brief      Renvoi un exemple de numérotation
+	/**     \brief      Renvoi un exemple de numï¿½rotation
 	 *      \return     string      Example
 	 */
 	function getExample()
@@ -119,8 +119,8 @@ class ModeleNumRefSuppliersOrders
 		return $langs->trans("NoExample");
 	}
 
-	/**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-	 *                  de conflits qui empechera cette numérotation de fonctionner.
+	/**     \brief      Test si les numï¿½ros dï¿½jï¿½ en vigueur dans la base ne provoquent pas de
+	 *                  de conflits qui empechera cette numï¿½rotation de fonctionner.
 	 *      \return     boolean     false si conflit, true si ok
 	 */
 	function canBeActivated()
@@ -128,7 +128,7 @@ class ModeleNumRefSuppliersOrders
 		return true;
 	}
 
-	/**     \brief      Renvoi prochaine valeur attribuée
+	/**     \brief      Renvoi prochaine valeur attribuï¿½e
 	 *      \return     string      Valeur
 	 */
 	function getNextValue()
@@ -155,9 +155,9 @@ class ModeleNumRefSuppliersOrders
 
 /**
  *		\brief      Create object on disk
- *		\param	    db  			objet base de donnée
+ *		\param	    db  			objet base de donnï¿½e
  *		\param	    deliveryid		id object
- *		\param	    modele			force le modele à utiliser ('' to not force)
+ *		\param	    modele			force le modele ï¿½ utiliser ('' to not force)
  *		\param		outputlangs		objet lang a utiliser pour traduction
  *      \return     int         	0 si KO, 1 si OK
  */
@@ -168,7 +168,7 @@ function supplier_order_pdf_create($db, $comid, $modele,$outputlangs)
 
 	$dir = DOL_DOCUMENT_ROOT."//includes/modules/supplier_order/pdf/";
 
-	// Positionne modele sur le nom du modele de commande fournisseur à utiliser
+	// Positionne modele sur le nom du modele de commande fournisseur ï¿½ utiliser
 	if (! strlen($modele))
 	{
 		if (defined("COMMANDE_SUPPLIER_ADDON_PDF") && COMMANDE_SUPPLIER_ADDON_PDF)

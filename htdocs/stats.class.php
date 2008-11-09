@@ -23,6 +23,11 @@
  *       \brief      Common class to manage statistics reports
  *       \version    $Id$
  */
+
+/**
+ * 		\class		Stats
+ * 		\brief		Parent class of statistics class
+ */
 class Stats
 {
 	var $db ;
