@@ -19,10 +19,10 @@
  */
 
 /**
-   \file		htdocs/lib/images.lib.php
-   \brief		Ensemble de fonctions de base de traitement d'images
-   \version		$Id$
-*/
+ *  \file		htdocs/lib/images.lib.php
+ *  \brief		Ensemble de fonctions de base de traitement d'images
+ * 	\version	$Id$
+ */
 
 
 
@@ -30,31 +30,31 @@
  *    	\brief     Create a thumbnail from an image file (une small et un mini)
  *    	\brief     Les extensions prises en compte sont jpg et png
  *    	\param     file           	Chemin du fichier image a redimensionner
- *    	\param     maxWidth       	Largeur maximum que dois faire la miniature (160 par défaut)
- *    	\param     maxHeight      	Hauteur maximum que dois faire l'image (120 par défaut)
- *    	\param     extName        	Extension pour différencier le nom de la vignette
- *    	\param     quality        	Qualité de compression (0=worst, 100=best)
+ *    	\param     maxWidth       	Largeur maximum que dois faire la miniature (160 par defaut)
+ *    	\param     maxHeight      	Hauteur maximum que dois faire l'image (120 par defaut)
+ *    	\param     extName        	Extension pour differencier le nom de la vignette
+ *    	\param     quality        	Quality of compression (0=worst, 100=best)
  *    	\return    string			Full path of thumb
  *		\remarks					With file=myfile.jpg -> myfile_small.jpg
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50)
 {
-	global $langs;
+	global $conf,$langs;
 
 	dolibarr_syslog("functions.inc::vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality);
 	
-	// Nettoyage parametres
+	// Clean parameters
 	$file=trim($file);
 
-	// Vérification des paramétres
+	// Check parameters
 	if (! $file)
 	{
-		// Si le fichier n'a pas été indiqué
+		// Si le fichier n'a pas ete indique
 		return 'Bad parameter file';
 	}
 	elseif (! file_exists($file))
 	{
-		// Si le fichier passé en paramétre n'existe pas
+		// Si le fichier passe en parametre n'existe pas
 		return $langs->trans("ErrorFileNotFound",$file);
 	}
 	elseif(image_format_supported($file) < 0)
@@ -62,11 +62,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 		return 'This file '.$file.' does not seem to be an image format file name.';
 	}
 	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < 0){
-		// Si la largeur max est incorrecte (n'est pas numérique, est vide, ou est inférieure a 0)
+		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
 		return 'Valeur de la largeur incorrecte.';
 	}
 	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < 0){
-		// Si la hauteur max est incorrecte (n'est pas numérique, est vide, ou est inférieure a 0)
+		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
 		return 'Valeur de la hauteur incorrecte.';
 	}
 
@@ -74,16 +74,16 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	$dir = dirname($file).'/'; // Chemin du dossier contenant l'image
 	$dirthumb = $dir.'thumbs/'; // Chemin du dossier contenant les vignettes
 
-	$infoImg = getimagesize($fichier); // Récupération des infos de l'image
+	$infoImg = getimagesize($fichier); // Recuperation des infos de l'image
 	$imgWidth = $infoImg[0]; // Largeur de l'image
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
-	// Si l'image est plus petite que la largeur et la hauteur max, on ne crée pas de vignette
+	// Si l'image est plus petite que la largeur et la hauteur max, on ne cree pas de vignette
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight)
 	{
 		// On cree toujours les vignettes
 		dolibarr_syslog("File size is smaller than thumb size",LOG_DEBUG);
-		//return 'Le fichier '.$file.' ne nécessite pas de création de vignette';
+		//return 'Le fichier '.$file.' ne necessite pas de creation de vignette';
 	}
 
 	$imgfonction='';
@@ -111,7 +111,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 		}
 	}
 
-	// On crée le répertoire contenant les vignettes
+	// On cree le repertoire contenant les vignettes
 	if (! file_exists($dirthumb))
 	{
 		create_exdir($dirthumb);
@@ -143,7 +143,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 			break;
 	}
 
-	// Initialisation des dimensions de la vignette si elles sont supérieures a l'original
+	// Initialisation des dimensions de la vignette si elles sont superieures a l'original
 	if($maxWidth > $imgWidth){ $maxWidth = $imgWidth; }
 	if($maxHeight > $imgHeight){ $maxHeight = $imgHeight; }
 
@@ -152,11 +152,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	// Fixe les dimensions de la vignette
 	if($whFact < $imgWhFact){
-		// Si largeur déterminante
+		// Si largeur determinante
 		$thumbWidth  = $maxWidth;
 		$thumbHeight = $thumbWidth / $imgWhFact;
 	} else {
-		// Si hauteur déterminante
+		// Si hauteur determinante
 		$thumbHeight = $maxHeight;
 		$thumbWidth  = $thumbHeight * $imgWhFact;
 	}
@@ -166,7 +166,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	// Create empty image
 	if ($infoImg[2] == 1)
 	{
-		// Compatibilité image GIF
+		// Compatibilite image GIF
 		$imgThumb = imagecreate($thumbWidth, $thumbHeight);
 	}
 	else
@@ -190,14 +190,14 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	switch($infoImg[2])
 	{
 		case 1:	// Gif
-			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // On procéde autrement pour le format GIF
+			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // On procede autrement pour le format GIF
 			imagecolortransparent($imgThumb,$trans_colour);
 			break;
 		case 2:	// Jpg
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
 			break;
 		case 3:	// Png
-			imagealphablending($imgThumb,false); // Pour compatibilité sur certain systéme
+			imagealphablending($imgThumb,false); // Pour compatibilite sur certain systeme
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127);	// Keep transparent channel
 			break;
 		case 4:	// Bmp
@@ -207,8 +207,8 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	if (function_exists("imagefill")) imagefill($imgThumb, 0, 0, $trans_colour);
 
 	dolibarr_syslog("vignette: convert image from ($imgWidth x $imgHeight) to ($thumbWidth x $thumbHeight) as $extImg, newquality=$newquality");
-	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insére l'image de base redimensionnée
-	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insére l'image de base redimensionnée
+	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
+	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insere l'image de base redimensionnee
 
 	$fileName = eregi_replace('(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$','',$file);	// On enleve extension quelquesoit la casse
 	$fileName = basename($fileName);
@@ -234,6 +234,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 			image2wmp($imgThumb, $imgThumbName);
 			break;
 	}
+
+	// Set permissions on file
+	if (! empty($conf->global->MAIN_UMASK)) @chmod($imgThumbName, octdec($conf->global->MAIN_UMASK));
 
 	// Free memory
 	imagedestroy($imgThumb);
@@ -309,7 +312,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
   $htmlLegenda = '
 
         <table cellpadding="0" cellspacing="0" border="0">
-          <tr><td><img src="' . $imageColorActual . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><b>Payé:<br />' . $legendaActual . '</b></font></td></tr>
+          <tr><td><img src="' . $imageColorActual . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><b>Payï¿½:<br />' . $legendaActual . '</b></font></td></tr>
           <tr><td><img src="' . $imageColorPending . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">En attente:<br />' . $legendaPending . '</font></td></tr>
           <tr><td><img src="' . $imageColorIntent . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">Promesses:<br />' . $legendaIntent . '</font></td></tr>
           <tr><td>&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">Total:<br />' . $legendaTotal . '</font></td></tr>
