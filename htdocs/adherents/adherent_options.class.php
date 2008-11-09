@@ -17,26 +17,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
- *
  */
 
-/*!	\file htdocs/adherents/adherent_options.class.php
- \ingroup    adherent
- \brief      Fichier de la classe de gestion de la table des champs optionels adhérents
- \author     Rodolphe Quiedville
- \author	    Jean-Louis Bergamo
- \author     Sebastien Di Cintio
- \author     Benoit Mortier
- \version    $Revision$
+/**
+ * 	\file 		htdocs/adherents/adherent_options.class.php
+ *	\ingroup    adherent
+ *	\brief      Fichier de la classe de gestion de la table des champs optionels adherents
+ *	\author     Rodolphe Quiedville
+ *	\author	    Jean-Louis Bergamo
+ *	\author     Sebastien Di Cintio
+ *	\author     Benoit Mortier
+ *	\version    $Id$
  */
 
-/*! \class AdherentOptions
- \brief      Classe de gestion de la table des champs optionels adhérents
+/**
+ * 	\class 		AdherentOptions
+ *	\brief      Classe de gestion de la table des champs optionels adherents
  */
-
 class AdherentOptions
 {
 	var $id;
@@ -60,8 +57,8 @@ class AdherentOptions
 
 	/*!
 		\brief AdherentOptions
-		\param DB			base de données
-		\param id			id de l'adhérent
+		\param DB			base de donnï¿½es
+		\param id			id de l'adhï¿½rent
 		*/
 
 	function AdherentOptions($DB, $id='')
@@ -86,7 +83,7 @@ class AdherentOptions
 	}
 
 	/*!
-		\brief fonction qui vérifie les données entrées
+		\brief fonction qui vï¿½rifie les donnï¿½es entrï¿½es
 		\param	minimum
 		*/
 	function check($minimum=0)
@@ -97,7 +94,7 @@ class AdherentOptions
 		{
 	  if ((strlen(trim($this->nom)) + strlen(trim($this->prenom))) == 0)
 	  {
-	  	$error_string[$err] = "Vous devez saisir vos nom et prénom ou le nom de votre société.";
+	  	$error_string[$err] = "Vous devez saisir vos nom et prï¿½nom ou le nom de votre sociï¿½tï¿½.";
 	  	$err++;
 	  }
 		}
@@ -126,7 +123,7 @@ class AdherentOptions
 	}
 
 	/**
-		\brief  fonction qui crée un attribut optionnel
+		\brief  fonction qui crï¿½e un attribut optionnel
 		\param	attrname			nom de l'atribut
 		\param	type				type de l'attribut
 		\param	length				longuer de l'attribut
@@ -169,7 +166,7 @@ class AdherentOptions
 	}
 
 	/**
-		\brief fonction qui crée un label
+		\brief fonction qui crï¿½e un label
 		\param	attrname			nom de l'atribut
 		\param	label				nom du label
 		*/
