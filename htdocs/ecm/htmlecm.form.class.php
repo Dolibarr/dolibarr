@@ -17,16 +17,16 @@
  */
 
 /**
- * \file       	htdocs/ecm/htmlecm.form.class.php
- * \brief      	Fichier de la classe des fonctions prédéfinie de composants html
- * \version		$Id$
+ * 	\file       	htdocs/ecm/htmlecm.form.class.php
+ * 	\brief      	Fichier de la classe des fonctions predefinie de composants html
+ * 	\version		$Id$
  */
 require_once(DOL_DOCUMENT_ROOT."/ecm/ecmdirectory.class.php");
 
 
 /**
  * \class      	FormEcm
- * \brief      	Classe permettant la génération de composants html
+ * \brief      	Classe permettant la gï¿½nï¿½ration de composants html
  * \remarks		Only common components must be here.
  */
 class FormEcm
@@ -44,7 +44,7 @@ class FormEcm
 
 	/**
 	 * 	\brief     Constructeur
-	 * 	\param     DB      handler d'accès base de donnée
+	 * 	\param     DB      handler d'accï¿½s base de donnï¿½e
 	 */
 	function FormEcm($DB)
 	{
@@ -55,7 +55,7 @@ class FormEcm
 
 
 	/**
-	 *	\brief    Retourne la liste des catégories du type choisi
+	 *	\brief    Retourne la liste des catï¿½gories du type choisi
 	 *  \param    selected    		Id categorie preselectionnee
 	 *  \param    select_name		Nom formulaire HTML
 	 */

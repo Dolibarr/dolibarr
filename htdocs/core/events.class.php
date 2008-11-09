@@ -17,13 +17,13 @@
  */
 
 /**
-        \file       core/events.class.php
-        \ingroup    core
-        \brief      Events class file.
-		\version    $Id$
-		\author		Laurent Destailleur
-		\remarks	An event is when status of an object change.
-*/
+ *      \file       htdocs/core/events.class.php
+ *      \ingroup    core
+ *		\brief      Events class file.
+ *		\version    $Id$
+ *		\author		Laurent Destailleur
+ *		\remarks	An event is when status of an object change.
+ */
 
 // Put here all includes required by your class file
 //require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");

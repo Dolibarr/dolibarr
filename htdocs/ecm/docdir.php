@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file      	htdoc/ecm/docdir.php
+ *	\file      	htdocs/ecm/docdir.php
  *	\ingroup   	ecm
  *	\brief     	Main page for ECM section area
  *	\version   	$Id$

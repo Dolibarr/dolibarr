@@ -3,12 +3,12 @@
  */
 
 /**
-    	\file       htdoc/ecm/earch.php
-		\ingroup    ecm
-		\brief      Page for search results
-		\version    $Id$
-		\author		Laurent Destailleur
-*/
+ *    	\file       htdocs/ecm/search.php
+ *		\ingroup    ecm
+ *		\brief      Page for search results
+ *		\version    $Id$
+ *		\author		Laurent Destailleur
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");

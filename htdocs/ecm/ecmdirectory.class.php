@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       dev/skeletons/ecm_directories.class.php
-        \ingroup    mymodule othermodule1 othermodule2
+        \file       htdocs/ecm/ecm_directories.class.php
+        \ingroup    ecm
         \brief      This file is an example for a class file
 		\version    $Id$
-		\author		Put author name here
+		\author		Laurent Destailleur
 		\remarks	Initialy built by build_class_from_table on 2008-02-24 19:24
 */
 
@@ -465,8 +465,8 @@ class EcmDirectory // extends CommonObject
 		
 
 	/**
-	* 	\brief		Reconstruit l'arborescence des catégories sous la forme d'un tableau
-	*				Renvoi un tableau de tableau('id','id_mere',...) trié selon
+	* 	\brief		Reconstruit l'arborescence des catï¿½gories sous la forme d'un tableau
+	*				Renvoi un tableau de tableau('id','id_mere',...) triï¿½ selon
 	*				arbre et avec:
 	*				id = id de la categorie
 	*				id_mere = id de la categorie mere
@@ -546,7 +546,7 @@ class EcmDirectory // extends CommonObject
 			return -1;
 		}
 		
-		// On ajoute la propriete fullpath a tous les éléments
+		// On ajoute la propriete fullpath a tous les ï¿½lï¿½ments
 		foreach($this->cats as $key => $val)
 		{
 			if (isset($motherof[$key])) continue;	
@@ -560,7 +560,7 @@ class EcmDirectory // extends CommonObject
 	}
 	
 	/**
-	*	\brief		Calcule les propriétés fullpath et fulllabel d'une categorie
+	*	\brief		Calcule les propriï¿½tï¿½s fullpath et fulllabel d'une categorie
 	*				du tableau this->cats et de toutes ces enfants
 	* 	\param		id_categ		id_categ entry to update
 	* 	\param		protection		Deep counter to avoid infinite loop

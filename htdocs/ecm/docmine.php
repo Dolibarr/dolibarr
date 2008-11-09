@@ -18,7 +18,7 @@
 
 
 /**
- *  \file       htdoc/ecm/docmine.php
+ *  \file       htdocs/ecm/docmine.php
  *	\ingroup    ecm
  *	\brief     	Card of a directory for ECM module
  *	\version    $Id$

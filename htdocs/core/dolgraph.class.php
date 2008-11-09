@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/dolgraph.class.php
+ *	\file       htdocs/core/dolgraph.class.php
  *	\brief      Fichier de la classe mere de gestion des graph
  *	\version    $Id$
  *	\remarks    Usage:

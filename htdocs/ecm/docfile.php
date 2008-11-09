@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file      	htdoc/ecm/docfile.php
+ *	\file      	htdocs/ecm/docfile.php
  *	\ingroup   	ecm
  *	\brief     	Card of a file for ECM module
  *	\version   	$Id$

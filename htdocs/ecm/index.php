@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdoc/ecm/index.php
+ *	\file       htdocs/ecm/index.php
  *	\ingroup    ecm
  *	\brief      Main page for ECM section area
  *	\version    $Id$
@@ -295,7 +295,7 @@ if (empty($action) || $action == 'file_manager' || eregi('refresh',$action) || $
 		print '<br>';
 	}
 
-	// Construit liste des répertoires
+	// Construit liste des rï¿½pertoires
 	print '<table width="100%" class="nobordernopadding">';
 
 	print '<tr class="liste_titre">';
