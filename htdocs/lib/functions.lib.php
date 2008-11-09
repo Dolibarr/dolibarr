@@ -96,36 +96,36 @@ function dol_string_unaccent($str)
 	{
 		$string = rawurlencode($str);
 		$replacements = array(
-			'%C3%80' => 'A','%C3%81' => 'A',
-			'%C3%88' => 'E','%C3%89' => 'E',
-			'%C3%8C' => 'I','%C3%8D' => 'I',
-			'%C3%92' => 'O','%C3%93' => 'O',
-			'%C3%99' => 'U','%C3%9A' => 'U',
-			'%C3%A0' => 'a','%C3%A1' => 'a','%C3%A2' => 'a',
-			'%C3%A8' => 'e','%C3%A9' => 'e','%C3%AA' => 'e','%C3%AB' => 'e',
-			'%C3%AC' => 'i','%C3%AD' => 'i',
-			'%C3%B2' => 'o','%C3%B3' => 'o',
-			'%C3%B9' => 'u','%C3%BA' => 'u'
+		'%C3%80' => 'A','%C3%81' => 'A',
+		'%C3%88' => 'E','%C3%89' => 'E',
+		'%C3%8C' => 'I','%C3%8D' => 'I',
+		'%C3%92' => 'O','%C3%93' => 'O',
+		'%C3%99' => 'U','%C3%9A' => 'U',
+		'%C3%A0' => 'a','%C3%A1' => 'a','%C3%A2' => 'a',
+		'%C3%A8' => 'e','%C3%A9' => 'e','%C3%AA' => 'e','%C3%AB' => 'e',
+		'%C3%AC' => 'i','%C3%AD' => 'i',
+		'%C3%B2' => 'o','%C3%B3' => 'o',
+		'%C3%B9' => 'u','%C3%BA' => 'u'
 		);
 		$string=strtr($string, $replacements);
 		return rawurldecode($string);
 	}
 	else
 	{
- 		$string = strtr($str,
-	       "xC0\xC1\xC2\xC3\xC5\xC7
+		$string = strtr($str,
+		"xC0\xC1\xC2\xC3\xC5\xC7
 	        \xC8\xC9\xCA\xCB\xCC\xCD\xCE\xCF\xD0\xD1
 	        \xD2\xD3\xD4\xD5\xD8\xD9\xDA\xDB\xDD
 	        \xE0\xE1\xE2\xE3\xE5\xE7\xE8\xE9\xEA\xEB
 	        \xEC\xED\xEE\xEF\xF0\xF1\xF2\xF3\xF4\xF5\xF8
 	        \xF9\xFA\xFB\xFD\xFF",
-	       "AAAAAC
+		"AAAAAC
 	        EEEEIIIIDN
 	        OOOOOUUUY
 	        aaaaaceeee
 	        iiiidnooooo
 	        uuuyy");  
-    	$string = strtr($string, array("\xC4"=>"Ae", "\xC6"=>"AE", "\xD6"=>"Oe", "\xDC"=>"Ue", "\xDE"=>"TH", "\xDF"=>"ss", "\xE4"=>"ae", "\xE6"=>"ae", "\xF6"=>"oe", "\xFC"=>"ue", "\xFE"=>"th"));
+		$string = strtr($string, array("\xC4"=>"Ae", "\xC6"=>"AE", "\xD6"=>"Oe", "\xDC"=>"Ue", "\xDE"=>"TH", "\xDF"=>"ss", "\xE4"=>"ae", "\xE6"=>"ae", "\xF6"=>"oe", "\xFC"=>"ue", "\xFE"=>"th"));
 		return $string;
 	}
 }
@@ -182,7 +182,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 		//print $level.' - '.$conf->global->SYSLOG_LEVEL.' - '.$conf->syslog->enabled." \n";
 		if ($level > $conf->global->SYSLOG_LEVEL) return;
 
-		// Load error message files if this is an error message (rare) 
+		// Load error message files if this is an error message (rare)
 		if ($level == LOG_ERR)
 		{
 			$langs->load("errors");
@@ -248,9 +248,9 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 				{
 					$facility = LOG_USER;
 				}
-	
+
 				openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
-	
+
 				if (! $level)
 				{
 					syslog(LOG_ERR, $message);
@@ -259,7 +259,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 				{
 					syslog($level, $message);
 				}
-	
+
 				closelog();
 			}
 		}
@@ -712,15 +712,16 @@ function dolibarr_print_object_info($object)
 }
 
 /**
- *	\brief      Format phone numbers according to country
- *	\param	    phone			Phone number to format
- *	\param	    country			Country to use for formatting
- * 	\param		cid				Id of contact if known
- * 	\param		socid			Id of third party if known
- * 	\param		nolinks			true means no HTML links is added
- *	\return     string			Formated phone number
+ * 	\brief 		Format phone numbers according to country
+ * 	\param 		phone 		Phone number to format
+ * 	\param 		country 	Country to use for formatting
+ * 	\param 		cid 		Id of contact if known
+ * 	\param 		socid 		Id of third party if known
+ * 	\param 		nolinks 	true means no HTML links is added
+ * 	\param 		separ 		separation between numbers for a better visibility example : xx.xx.xx.xx.xx
+ * 	\return 	string 		Formated phone number
  */
-function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=false)
+function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=false,$separ="&nbsp;")
 {
 	global $conf,$user;
 
@@ -731,25 +732,24 @@ function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=fals
 	if (strtoupper($country) == "FR")
 	{
 		// France
-		if (strlen($newphone) == 10) {
-			$newphone=substr($newphone,0,2)."&nbsp;".substr($newphone,2,2)."&nbsp;".substr($newphone,4,2)."&nbsp;".substr($newphone,6,2)."&nbsp;".substr($newphone,8,2);
+		if (strlen($phone) == 10) {
+			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,2).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2);
 		}
 		elseif (strlen($newphone) == 7)
 		{
-
-			$newphone=substr($newphone,0,3)."&nbsp;".substr($newphone,3,2)."&nbsp;".substr($newphone,5,2);
+			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2);
 		}
 		elseif (strlen($newphone) == 9)
 		{
-			$newphone=substr($newphone,0,2)."&nbsp;".substr($newphone,2,3)."&nbsp;".substr($newphone,5,2)."&nbsp;".substr($newphone,7,2);
+			$newphone=substr($newphone,0,2).$separ.substr($newphone,2,3).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2);
 		}
 		elseif (strlen($newphone) == 11)
 		{
-			$newphone=substr($newphone,0,3)."&nbsp;".substr($newphone,3,2)."&nbsp;".substr($newphone,5,2)."&nbsp;".substr($newphone,7,2)."&nbsp;".substr($newphone,9,2);
+			$newphone=substr($newphone,0,3).$separ.substr($newphone,3,2).$separ.substr($newphone,5,2).$separ.substr($newphone,7,2).$separ.substr($newphone,9,2);
 		}
 		elseif (strlen($newphone) == 12)
 		{
-			$newphone=substr($newphone,0,4)."&nbsp;".substr($newphone,4,2)."&nbsp;".substr($newphone,6,2)."&nbsp;".substr($newphone,8,2)."&nbsp;".substr($newphone,10,2);
+			$newphone=substr($newphone,0,4).$separ.substr($newphone,4,2).$separ.substr($newphone,6,2).$separ.substr($newphone,8,2).$separ.substr($newphone,10,2);
 		}
 	}
 
@@ -760,12 +760,12 @@ function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=fals
 			$newphone='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode=AC_TEL&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.$newphone.'</a>';
 		}
 		$clicktodiallink=dol_phone_link($phone);
-		if ($clicktodiallink) 
+		if ($clicktodiallink)
 		{
 			$newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>'.$clicktodiallink.'</td></tr></table>';
 		}
 	}
-	
+
 	return $newphone;
 }
 
@@ -799,7 +799,7 @@ function dol_phone_link($phone,$option=0)
 	{
 		// Cleaning phone number
 		$phone = ereg_replace("[ .-]","",trim($phone));
-		
+
 		$url = sprintf($conf->global->CLICKTODIAL_URL, urlencode($phone), urlencode($user->clicktodial_poste), urlencode($user->clicktodial_login), urlencode($user->clicktodial_password));
 		$link.='<a href="'.$url.'">'.img_phone("default",0).'</a>';
 	}
@@ -2370,7 +2370,7 @@ function get_exdir($num,$level=3)
 function create_exdir($dir)
 {
 	global $conf;
-	
+
 	dolibarr_syslog("functions.lib::create_exdir: dir=".$dir,LOG_INFO);
 
 	if (@is_dir($dir)) return 0;
@@ -2396,7 +2396,7 @@ function create_exdir($dir)
 
 				umask(0);
 				$dirmaskdec=octdec('0755');
-				if (! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK); 
+				if (! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
 				$dirmaskdec |= octdec('0110');
 				if (! @mkdir($ccdir, $dirmaskdec))
 				{
@@ -2578,10 +2578,10 @@ function measuring_units_string($unit,$measuring_style='')
 	}
 	else if ($measuring_style == 'size')
 	{
-		 $measuring_units[0] = $langs->trans("SizeUnitm");
-		 $measuring_units[-1] = $langs->trans("SizeUnitdm");
-		 $measuring_units[-2] = $langs->trans("SizeUnitcm"); 
-		 $measuring_units[-3] = $langs->trans("SizeUnitmm");
+		$measuring_units[0] = $langs->trans("SizeUnitm");
+		$measuring_units[-1] = $langs->trans("SizeUnitdm");
+		$measuring_units[-2] = $langs->trans("SizeUnitcm");
+		$measuring_units[-3] = $langs->trans("SizeUnitmm");
 	}
 
 	return $measuring_units[$unit];
@@ -2903,7 +2903,7 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 	global $langs;
 
 	if (! is_object($outputlangs)) $outputlangs=$langs;
-	
+
 	if ($date_start && $date_end)
 	{
 		print ' ('.$langs->trans('DateFromTo',dolibarr_print_date($date_start, $format, false, $outputlangs),dolibarr_print_date($date_end, $format, false, $outputlangs)).')';
@@ -3159,7 +3159,7 @@ function utf8_check($Str)
 
 
 /**
- * \brief			Search for prospect state selection in $_GET, $_POST, and $_REQUEST 
+ * \brief			Search for prospect state selection in $_GET, $_POST, and $_REQUEST
  * \return 			prospect state selection (array of prospect_state_id => 'true'/'false')
  * \author			Matelli (www.matelli.fr)
  * \remarks			See http://matelli.fr/showcases/patchs-dolibarr/add-icons-for-prospect-status.html for details
@@ -3167,15 +3167,15 @@ function utf8_check($Str)
 function get_prospect_state_selection()
 {
 	$sts = array(-1,0,1,2,3);
-	
+
 	if (isSet($_POST["nouvel_etat"]))
-		return $_POST["nouvel_etat"];
+	return $_POST["nouvel_etat"];
 	else if (isSet($_GET["nouvel_etat"]))
-		return $_GET["nouvel_etat"];
+	return $_GET["nouvel_etat"];
 	else if (isSet($_REQUEST["nouvel_etat"]))
-		return $_REQUEST["nouvel_etat"];
+	return $_REQUEST["nouvel_etat"];
 	else
-		return false;
+	return false;
 }
 
 ?>
