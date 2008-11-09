@@ -680,7 +680,7 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	print '<td align="left" valign="bottom"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
 	print '<td valign="bottom"><input type="text" id="username" name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
 
-	$title.=$langs->trans("SessionName").': '.session_name();
+	$title=$langs->trans("SessionName").': '.session_name();
 	if ($conf->main_authentication) $title.=", ".$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
 
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
