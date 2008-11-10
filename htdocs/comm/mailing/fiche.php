@@ -20,7 +20,7 @@
 /**
         \file       htdocs/comm/mailing/fiche.php
         \ingroup    mailing
-        \brief      Fiche mailing, onglet général
+        \brief      Fiche mailing, onglet gï¿½nï¿½ral
         \version    $Id$
 */
 
@@ -50,12 +50,32 @@ $substitutionarrayfortest=array(
 );
 
 
+
+// Action envoi mailing pour tous
+if ($_POST["action"] == 'confirm_clone')
+{
+	if (empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
+	{
+		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+	}
+	else
+	{
+		$mil=new Mailing($db);
+		$result=$mil->createFromClone($_REQUEST['id'],$_REQUEST["clone_content"],$_REQUEST["clone_receivers"]);
+		if ($result > 0)
+		{
+			header("Location: ".DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$result);
+			exit;
+		}
+	}
+}
+
 // Action envoi mailing pour tous
 if ($_POST["action"] == 'sendallconfirmed')
 {
     if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 	{
-		// Pour des raisons de sécurité, on ne permet pas cette fonction via l'IHM,
+		// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 	    // on affiche donc juste un message
 	    $message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
 	    $message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
@@ -64,51 +84,31 @@ if ($_POST["action"] == 'sendallconfirmed')
 	}
 	else
 	{
-	    $id=$_GET['id'];
-
-		$error = 0;
-
-		// On récupére données du mail
-		$sql = "SELECT m.rowid, m.titre, m.sujet, m.body";
-		$sql .= " , m.email_from, m.email_replyto, m.email_errorsto";
-		$sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-		$sql .= " WHERE m.statut >= 1";
-		$sql .= " AND m.rowid= ".$id;
-		$sql .= " LIMIT 1";
-
-		$resql=$db->query($sql);
-		if ($resql) 
+		$mil=new Mailing($db);
+		$result=$mil->fetch($_GET['id']);
+		
+		if ($mil->statut == 0)
 		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-
-			if ($num == 1)
-			{
-				$obj = $db->fetch_object($resql);
-
-				dolibarr_syslog("mailing-send: mailing ".$id, LOG_DEBUG);
-
-				$id       = $obj->rowid;
-				$subject  = $obj->sujet;
-				$message  = $obj->body;
-				$from     = $obj->email_from;
-				$errorsto = $obj->email_errorsto;
-
-				// Le message est-il en html
-				$msgishtml=-1;	// Unknown by default
-				if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
-				
-				$i++;
-			}
+			dolibarr_print_error('','ErrorMailIsNotValidated');
+			exit;
 		}
-
+		
+		$id       = $mil->id;
+		$subject  = $mil->sujet;
+		$message  = $mil->body;
+		$from     = $mil->email_from;
+		$errorsto = $mil->email_errorsto;
+		// Le message est-il en html
+		$msgishtml=-1;	// Unknown by default
+		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
+		
 		// Warning, we must not use begin-commit transaction here
 		// because we want to save update for each mail sent.
 		
 		$nbok=0; $nbko=0;
 
-		// On choisit les mails non déjà envoyés pour ce mailing (statut=0)
-		// ou envoyés en erreur (statut=-1)
+		// On choisit les mails non deja envoyes pour ce mailing (statut=0)
+		// ou envoyes en erreur (statut=-1)
 		$sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
@@ -420,7 +420,7 @@ $mil = new Mailing($db);
 
 if ($_GET["action"] == 'create')
 {
-	// Mailing en mode création
+	// EMailing in creation mode
 	print '<form action="fiche.php" method="post">'."\n";
     print '<input type="hidden" name="action" value="add">';
 
@@ -441,7 +441,7 @@ if ($_GET["action"] == 'create')
 	}
     print '</i></td>';
     print '<td>';
-    // éditeur wysiwyg
+    // Editeur wysiwyg
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
     {
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -461,7 +461,6 @@ else
 {
     if ($mil->fetch($_GET["id"]) >= 0)
     {
-
         $h=0;
         $head[$h][0] = DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$mil->id;
         $head[$h][1] = $langs->trans("MailCard");
@@ -477,7 +476,7 @@ else
         $head[$h][1] = $langs->trans("MailHistory");
         $h++;
 */
-        dolibarr_fiche_head($head, $hselected, $langs->trans("Mailing").": ".substr($mil->titre,0,20));
+        dolibarr_fiche_head($head, $hselected, $langs->trans("Mailing"));
 
         // Confirmation de la validation du mailing
         if ($_GET["action"] == 'valide')
@@ -504,7 +503,7 @@ else
 			{
 			    if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 				{
-					// Pour des raisons de sécurité, on ne permet pas cette fonction via l'IHM,
+					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 				    // on affiche donc juste un message
 				    $message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
 				    $message.='<br><textarea cols="50" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
@@ -561,11 +560,29 @@ else
 
             print '</table>';
 
-            print "</div>";
+        	print "</div>";
+            
+        	
+        	// Clone confirmation
+			if ($_GET["action"] == 'clone')
+			{
+				// CrÃ©e un tableau formulaire
+				$formquestion=array(
+				'text' => $langs->trans("ConfirmClone"),
+				array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneContent"),   'value' => 1),
+				array('type' => 'checkbox', 'name' => 'clone_receviers', 'label' => $langs->trans("CloneReceivers").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
+				);
+				// Paiement incomplet. On demande si motif = escompte ou autre
+				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$mil->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$mil->ref),'confirm_clone',$formquestion,'yes');
+			}
+			
+            
+			if ($mesg) print $mesg;
+            
 
 		    if ($_GET["action"] == 'sendall')
 			{
-				// Pour des raisons de sécurité, on ne permet pas cette fonction via l'IHM,
+				// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 				// on affiche donc juste un message
 				$message='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
 				$message.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/mailing/mailing-send.php '.$_GET["id"].'</textarea>';
@@ -599,6 +616,11 @@ else
                     print '<a class="butAction" href="fiche.php?action=sendall&amp;id='.$mil->id.'">'.$langs->trans("SendMailing").'</a>';
                 }
 
+                if ($user->rights->mailing->creer)
+                {
+                    print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?action=clone&amp;object=emailing&amp;id='.$mil->id.'">'.$langs->trans("ToClone").'</a>';
+                }
+
                 if ($mil->statut <= 1 && $user->rights->mailing->supprimer)
                 {
                     print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$mil->id.'">'.$langs->trans("DeleteMailing").'</a>';
@@ -612,7 +634,7 @@ else
             {
             	      print_titre($langs->trans("TestMailing"));
             	      
-            	      // Créé l'objet formulaire mail
+            	      // Create l'objet formulaire mail
             	      include_once("../../html.formmail.class.php");
             	      $formmail = new FormMail($db);	    
             	      $formmail->fromname = $mil->email_from;
@@ -630,7 +652,7 @@ else
             	      $formmail->withdeliveryreceipt=0;
                       // Tableau des substitutions
 					  $formmail->substit=$substitutionarrayfortest;
-                      // Tableau des paramètres complémentaires du post
+                      // Tableau des parametres complementaires du post
                       $formmail->param["action"]="send";
                       $formmail->param["models"]="body";
                       $formmail->param["mailid"]=$mil->id;
@@ -670,7 +692,7 @@ else
             print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
             print '</i></td>';
             print '<td colspan="3">';
-            // éditeur wysiwyg
+            // Editeur wysiwyg
             if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
             {
             	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");

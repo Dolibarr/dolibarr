@@ -1947,20 +1947,14 @@ else
 				$i=0;
 				$close[$i]['code']='discount_vat';$i++;
 				$close[$i]['code']='badcustomer';$i++;
-				//$close[$i]['code']='product_returned';$i++;
-				//$close[$i]['code']='abandon';$i++;
 				// Help
 				$i=0;
 				$close[$i]['label']=$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyReasonDiscountVatDesc");$i++;
 				$close[$i]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonBadCustomerDesc");$i++;
-				//$close[$i]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonProductReturned");$i++;
-				//$close[$i]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonOtherDesc");$i++;
 				// Texte
 				$i=0;
 				$close[$i]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
 				$close[$i]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
-				//$close[$i]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonProductReturned",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
-				//$close[$i]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonOther",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
 				// arrayreasons[code]=reason
 				foreach($close as $key => $val)
 				{

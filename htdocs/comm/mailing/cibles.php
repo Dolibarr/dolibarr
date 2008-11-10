@@ -157,7 +157,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
     $head[$h][1] = $langs->trans("MailHistory");
     $h++;
     */
-    dolibarr_fiche_head($head, $hselected, $langs->trans("Mailing").": ".substr($mil->titre,0,20));
+    dolibarr_fiche_head($head, $hselected, $langs->trans("Mailing"));
     
     
     print '<table class="border" width="100%">';
@@ -175,7 +175,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 
     $var=!$var;
 
-    // Affiche les listes de sélection
+    // Affiche les listes de sï¿½lection
     if ($mil->statut == 0)
     {
         print_titre($langs->trans("ToAddRecipientsChooseHere"));
@@ -222,12 +222,12 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	                        if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
 	                        {
 	                            $qualified=0;
-	                            //print "Les prérequis d'activation du module mailing ne sont pas respectés. Il ne sera pas actif";
+	                            //print "Les prï¿½requis d'activation du module mailing ne sont pas respectï¿½s. Il ne sera pas actif";
 	                            break;
 	                        }
 	                    }
 	                    
-	                    // Si le module mailing est qualifié
+	                    // Si le module mailing est qualifiï¿½
 	                    if ($qualified)
 	                    {
 	                        $var = !$var;
@@ -301,7 +301,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
     
 
 
-    // Liste des destinataires sélectionnés
+    // Liste des destinataires sï¿½lectionnï¿½s
 	print "\n<!-- Liste destinataires selectionnes -->\n";
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';

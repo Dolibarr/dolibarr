@@ -1914,14 +1914,15 @@ class Form
 
 
 	/**
-	 *    \brief  Affiche formulaire de demande de confirmation
-	 *    \param  page        	page
-	 *    \param  title       	title
-	 *    \param  question    	question
-	 *    \param  action      	action
-	 *	\param	formquestion	an array with forms complementary inputs
+	 *    	\brief  Affiche formulaire de demande de confirmation
+	 *    	\param  page        	page
+	 *    	\param  title       	title
+	 *    	\param  question    	question
+	 *    	\param  action      	action
+	 *		\param	formquestion	an array with forms complementary inputs
+	 * 		\param	selectedchoice	"" or "no" or "yes"
 	 */
-	function form_confirm($page, $title, $question, $action, $formquestion='')
+	function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="")
 	{
 		global $langs;
 
@@ -1957,6 +1958,7 @@ class Form
 					print '<td valign="top">'.$input['label'].' &nbsp;';
 					print '<input type="checkbox" class="flat" name="'.$input['name'].'"';
 					if ($input['value'] != 'false') print ' checked="true"';
+					if ($input['disabled']) print ' disabled="true"';
 					print '></td>';
 					print '<td valign="top" align="left">&nbsp;</td>';
 					print '<td valign="top" align="left">&nbsp;</td>';
@@ -1970,7 +1972,9 @@ class Form
 						print '<tr>';
 						if ($i==0) print '<td valign="top">'.$input['label'].'</td>';
 						else print '<td>&nbsp;</td>';
-						print '<td valign="top" width="20"><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"></td>';
+						print '<td valign="top" width="20"><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"';
+						if ($input['disabled']) print ' disabled="true"';
+						print '></td>';
 						print '<td valign="top" align="left">';
 						print $selval;
 						print '</td></tr>';
@@ -1988,7 +1992,8 @@ class Form
 		print '<tr class="valid">';
 		print '<td class="valid">'.$question.'</td>';
 		print '<td class="valid">';
-		print $this->selectyesno("confirm","no");
+		$newselectedchoice=empty($selectedchoice)?"no":$selectedchoice;
+		print $this->selectyesno("confirm",$newselectedchoice);
 		print '</td>';
 		print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
 		print '</tr>';
