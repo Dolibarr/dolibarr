@@ -111,6 +111,9 @@ class Deplacement extends CommonObject
 	{
 		global $langs;
 
+		// Clean parameters
+		$this->km=price2num($this->km);
+		
 		// Check parameters
 		if (! is_numeric($this->km)) $this->km = 0;
 		if (empty($this->type) || $this->type < 0)
@@ -125,7 +128,7 @@ class Deplacement extends CommonObject
 		}
 		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
-		$sql .= " SET km = ".$this->km;
+		$sql .= " SET km = ".$this->km;		// This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->type."'";
 		$sql .= " , fk_user = ".$this->fk_user;
