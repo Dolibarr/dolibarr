@@ -474,7 +474,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg))
 	{
 		// This part of code should not be used.
-		dolibarr_syslog("Functions.lib::dolibarr_print_date call to function with deprecated parameter", LOG_WARN);
+		dolibarr_syslog("Functions.lib::dolibarr_print_date function call with deprecated parameter", LOG_WARNING);
 		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
 		$syear = $reg[1];
 		$smonth = $reg[2];
