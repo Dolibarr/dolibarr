@@ -305,10 +305,11 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Validation d'une transaction
-	 \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
+	 *	\brief      Validation d'une transaction
+	 * 	\param		log			Add more log to default log line
+	 * 	\return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
 	 */
-	function commit()
+	function commit($log='')
 	{
 		if ($this->transaction_opened<=1)
 		{
@@ -316,7 +317,7 @@ class DoliDb
 			if ($ret)
 			{
 				$this->transaction_opened=0;
-				dolibarr_syslog("COMMIT Transaction",LOG_DEBUG);
+				dolibarr_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
 			}
 			return $ret;
 		}
@@ -328,16 +329,17 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Annulation d'une transaction et retour aux anciennes valeurs
-	 \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 *	\brief      Annulation d'une transaction et retour aux anciennes valeurs
+	 * 	\param		log			Add more log to default log line
+	 * 	\return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
-	function rollback()
+	function rollback($log='')
 	{
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK");
 			$this->transaction_opened=0;
-			dolibarr_syslog("ROLLBACK Transaction",LOG_DEBUG);
+			dolibarr_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
 			return $ret;
 		}
 		else
