@@ -263,11 +263,11 @@ if ($_GET["id"] || $_GET["ref"])
 		print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
 		print '<input type="hidden" name="action" value="transfert_stock">';
 		print '<table class="border" width="100%"><tr>';
-		print '<td width="20%">'.$langs->trans("Source").'</td><td width="20%">';
+		print '<td width="20%">'.$langs->trans("WarehouseSource").'</td><td width="20%">';
 		$formproduct->selectWarehouses($_GET["dwid"],'id_entrepot_source','',1);
 		print '</td>';
 
-		print '<td width="20%">'.$langs->trans("Target").'</td><td width="20%">';
+		print '<td width="20%">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
 		$formproduct->selectWarehouses('','id_entrepot_destination','',1);
 		print '</td>';
 
