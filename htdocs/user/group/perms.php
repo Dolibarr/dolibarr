@@ -17,15 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/user/group/perms.php
         \brief      Onglet user et permissions de la fiche utilisateur
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -58,14 +55,13 @@ if ($_GET["action"] == 'delrights' && $caneditperms)
 }
 
 
-llxHeader('',$langs->trans("Permissions"));
-
-
 /* ************************************************************************** */
 /*                                                                            */
 /* Visu et edition                                                            */
 /*                                                                            */
 /* ************************************************************************** */
+
+llxHeader('',$langs->trans("Permissions"));
 
 if ($_GET["id"])
 {
@@ -184,9 +180,9 @@ if ($_GET["id"])
                 if ($caneditperms)
                 {
                    print '<tr '. $bc[$var].'>';
-                   print '<td>'.img_object('',$picto).' '.$objMod->getName();
+                   print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName();
                    print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';    
-                   print '<td align="center" nowrap>';
+                   print '<td align="center" nowrap="nowrap">';
                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="perms.php?id='.$fgroup->id.'&amp;action=addrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
                    print '/';
                    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="perms.php?id='.$fgroup->id.'&amp;action=delrights&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
@@ -198,8 +194,8 @@ if ($_GET["id"])
 
             print '<tr '. $bc[$var].'>';
 
-            print '<td>'.img_object('',$picto).' '.$objMod->getName();
-            print '</td>';
+			// Module
+            print '<td nowrap="nowrap">'.img_object('',$picto).' '.$objMod->getName().'</td>';
 
             if (in_array($obj->id, $permsgroup))
             {
@@ -235,5 +231,5 @@ if ($_GET["id"])
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
