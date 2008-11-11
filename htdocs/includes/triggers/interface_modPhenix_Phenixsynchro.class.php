@@ -288,7 +288,18 @@ class InterfacePhenixsynchro
         // Members
         elseif ($action == 'MEMBER_CREATE')
         {
-		}
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("members");
+
+        	$this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("NewMemberCreated",$object->ref);
+            $this->desc=$langs->transnoentities("NewMemberCreated",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
+            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
+        }
         elseif ($action == 'MEMBER_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -297,8 +308,8 @@ class InterfacePhenixsynchro
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("MemberValidatedInDolibarr",$object->id);
-            $this->desc=$langs->transnoentities("MemberValidatedInDolibarr",$object->id);
+            $this->texte=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
@@ -311,8 +322,8 @@ class InterfacePhenixsynchro
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("MemberSubscriptionInDolibarr",$object->id);
-            $this->desc=$langs->transnoentities("MemberSubscriptionInDolibarr",$object->id);
+            $this->texte=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
@@ -327,8 +338,8 @@ class InterfacePhenixsynchro
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("MemberModifiedInDolibarr",$object->id);
-            $this->desc=$langs->transnoentities("MemberModifiedInDolibarr",$object->id);
+            $this->texte=$langs->transnoentities("MemberModifiedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("MemberModifiedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
@@ -341,8 +352,8 @@ class InterfacePhenixsynchro
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("MemberResiliatedInDolibarr",$object->id);
-            $this->desc=$langs->transnoentities("MemberResiliatedInDolibarr",$object->id);
+            $this->texte=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
@@ -355,8 +366,8 @@ class InterfacePhenixsynchro
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->transnoentities("MemberDeletedInDolibarr",$object->id);
-            $this->desc=$langs->transnoentities("MemberDeletedInDolibarr",$object->id);
+            $this->texte=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;

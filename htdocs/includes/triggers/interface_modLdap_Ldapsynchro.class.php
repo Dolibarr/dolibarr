@@ -101,6 +101,12 @@ class InterfaceLdapsynchro
     
         if (! $conf->ldap->enabled) return 0;     // Module non actif
 
+        if (! function_exists('ldap_connect'))
+        {
+        	dolibarr_syslog("Warning, module LDAP is enabled but LDAP functions not available in this PHP", LOG_WARNING);
+        	return 0;	
+        }
+        
         // Users
         if ($action == 'USER_CREATE')
         {

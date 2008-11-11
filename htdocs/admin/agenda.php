@@ -53,8 +53,10 @@ $eventstolog=array(
 	array('id'=>'BILL_SUPPLIER_VALIDATE', 'test'=>$conf->fournisseur->enabled),
 //	array('id'=>'PAYMENT_CUSTOMER_CREATE','test'=>$conf->facture->enabled),
 //	array('id'=>'PAYMENT_SUPPLIER_CREATE','test'=>$conf->fournisseur->enabled),
-//	array('id'=>'MEMBER_VALIDATE',        'test'=>$conf->adherent->enabled),
-//	array('id'=>'MEMBER_SUBSCRIPTION',    'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_VALIDATE',        'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_SUBSCRIPTION',    'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_RESILIATE',       'test'=>$conf->adherent->enabled),
+	array('id'=>'MEMBER_DELETE',          'test'=>$conf->adherent->enabled),
 );
 
 

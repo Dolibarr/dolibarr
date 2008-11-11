@@ -104,8 +104,8 @@ class InterfaceActionsAuto
 		
 		// Following properties must be filled:
 		// $object->actiontypecode;
-		// $object->actionmsg (label)
-		// $object->actionmsg2 (note)
+		// $object->actionmsg (note, long text)
+		// $object->actionmsg2 (label, short text)
 		// $object->sendtoid
 		// $object->socid
 		// Optionnal:
@@ -328,7 +328,87 @@ class InterfaceActionsAuto
 			$ok=1;
 		}
 		
-		
+        // Members
+        elseif ($action == 'MEMBER_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("members");
+            $langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("MemberValidatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
+            $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            
+			$object->sendtoid=0;
+			$object->facid=0;	// Supplier invoice not yet supported
+			$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+        }
+        elseif ($action == 'MEMBER_SUBSCRIPTION')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("members");
+            $langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("MemberSubscriptionAddedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
+            $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $object->actionmsg.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
+            $object->actionmsg.="\n".$langs->transnoentities("Period").': '.dolibarr_print_date($object->last_subscription_date_start,'day').' - '.dolibarr_print_date($object->last_subscription_date_end,'day');
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            
+			$object->sendtoid=0;
+			$object->facid=$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+        }
+        elseif ($action == 'MEMBER_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'MEMBER_RESILIATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("members");
+            $langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("MemberResiliatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
+            $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            
+			$object->sendtoid=0;
+			$object->facid=$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+        }
+        elseif ($action == 'MEMBER_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("members");
+            $langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH';
+            $object->actionmsg2=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("MemberDeletedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Member").': '.$object->fullname;
+            $object->actionmsg.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+            
+			$object->sendtoid=0;
+			$object->facid=$object->orderrowid=$object->propalrowid=0;
+			$ok=1;
+        }
+        		
 		// If not found
 /*
         else

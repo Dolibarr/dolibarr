@@ -18,19 +18,17 @@
  */
 
 /**
-        \file       htdocs/actioncomm.class.php
-        \ingroup    commercial
-        \brief      Fichier de la classe des actions commerciales
-        \version    $Id$
-*/
-
+ *       \file       htdocs/actioncomm.class.php
+ *       \ingroup    commercial
+ *       \brief      Fichier de la classe des actions commerciales
+ *       \version    $Id$
+ */
 require_once(DOL_DOCUMENT_ROOT.'/cactioncomm.class.php');
 
 
 /**     \class      ActionComm
-	    \brief      Classe permettant la gestion des actions commerciales
-*/
-
+ *	    \brief      Classe permettant la gestion des actions commerciales
+ */
 class ActionComm
 {
     var $db;
@@ -133,7 +131,7 @@ class ActionComm
 		}
 		
 		
-		$this->db->begin();
+		$this->db->begin("ActionComm::add");
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
@@ -143,7 +141,9 @@ class ActionComm
         $sql.= "datea2,";
         $sql.= "durationp,";
         $sql.= "durationa,";
-        $sql.= "fk_action,fk_soc,note,";
+        $sql.= "fk_action,";
+        $sql.= "fk_soc,";
+        $sql.= "note,";
 		$sql.= "fk_contact,";
 		$sql.= "fk_user_author,";
 		$sql.= "fk_user_action,";
@@ -158,7 +158,9 @@ class ActionComm
         $sql.= (strval($this->dateend)!=''?"'".$this->db->idate($this->dateend)."'":"null").",";
         $sql.= ($this->durationp >= 0 && $this->durationp != ''?"'".$this->durationp."'":"null").",";
         $sql.= ($this->durationa >= 0 && $this->durationa != ''?"'".$this->durationa."'":"null").",";
-        $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
+        $sql.= " '".$this->type_id."',";
+        $sql.= ($this->societe->id>0?" '".$this->societe->id."'":"null").",";
+        $sql.= " '".addslashes($this->note)."',";
         $sql.= ($this->contact->id > 0?"'".$this->contact->id."'":"null").",";
         $sql.= ($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= ($this->usertodo->id > 0?"'".$this->usertodo->id."'":"null").",";
@@ -185,13 +187,13 @@ class ActionComm
 	            // Fin appel triggers
 			}
 			
-			$this->db->commit();
+			$this->db->commit("ActionComm::add");
             return $this->id;
         }
         else
         {
 			$this->error=$this->db->lasterror().' sql='.$sql;
-			$this->db->rollback();
+			$this->db->rollback("ActionComm::add");
             return -1;
         }
     

@@ -118,6 +118,7 @@ SupplierPaymentDoneInDolibarr=Supplier payment %s done in Dolibarr
 MemberValidatedInDolibarr=Member %s validated in Dolibarr
 MemberResiliatedInDolibarr=Member %s resiliated in Dolibarr
 MemberDeletedInDolibarr=Member %s deleted from Dolibarr
+MemberSubscriptionAddedInDolibarr=Subscription for member %s added in Dolibarr
 ##### Export #####
 ExportsArea=Exports area
 AvailableFormats=Available formats

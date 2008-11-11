@@ -120,6 +120,7 @@ SupplierPaymentDoneInDolibarr=Paiement fournisseur %s dans Dolibarr
 MemberValidatedInDolibarr=Adhérent %s validé dans Dolibarr
 MemberResiliatedInDolibarr=Adhérent %s résilié dans Dolibarr
 MemberDeletedInDolibarr=Adhérent %s supprimé de Dolibarr
+MemberSubscriptionAddedInDolibarr=Souscription adhérent %s ajoutée dans Dolibarr
 ##### Export #####
 ExportsArea=Espace exports
 AvailableFormats=Formats disponibles

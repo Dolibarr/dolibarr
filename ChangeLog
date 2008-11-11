@@ -24,7 +24,9 @@ For users:
 - Add juridical status and number of employees in third party 
   export definition.
 - A lot of enhancements and translation in withdraw module.
-  
+- Full support of Mysql option mode=strict.
+- Added new event from member module to possible agenda tracked events.
+
 For translators:
 - The errors language file contains only error or warning messages with 
   prefix Error or Warning.
@@ -33,6 +35,7 @@ For translators:
 For developers:
 - Update skeletons.
 - Add an experimental Cash Desk module.
+- Added new triggers events in agenda module.
 - All submodules are moved in the includes directory.
 - Removed some deprecated files.
 

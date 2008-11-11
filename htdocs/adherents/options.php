@@ -130,7 +130,7 @@ if (sizeof($array_options)>0)
       print "<td>".$adho->attribute_label[$key]."&nbsp;</td>\n";
       print "<td>$key</td>\n";
       print "<td>$value</td>\n";
-      print "<td align=\"center\"><a href=\"options.php?action=edit&attrname=$key\">".img_edit()."</a>";
+      print "<td align=\"right\"><a href=\"options.php?action=edit&attrname=$key\">".img_edit()."</a>";
       print "&nbsp; <a href=\"options.php?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
       print "</tr>";
       //      $i++;

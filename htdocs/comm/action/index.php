@@ -68,6 +68,8 @@ $day=isset($_REQUEST["day"])?$_REQUEST["day"]:0;
 
 $langs->load("other");
 
+if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
+
 
 /*
  * Actions
@@ -413,7 +415,7 @@ if ($_GET["action"] != 'show_day')
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $style, $actionarray,3);
+				show_day_events ($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 				echo "  </td>\n";
 			}
 			/* Show days of the current month */
@@ -429,7 +431,7 @@ if ($_GET["action"] != 'show_day')
 				$style='cal_current_month';
 
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday, $month, $year, $style, $actionarray, 3);
+				show_day_events($db, $tmpday, $month, $year, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 				echo "  </td>\n";
 			}
 			/* Show days after the current month (next month) */
@@ -437,7 +439,7 @@ if ($_GET["action"] != 'show_day')
 			{
 				$style='cal_other_month';
 				echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $style, $actionarray, 3);
+				show_day_events($db, $tmpday - $max_day_in_month, $next_month, $next_year, $style, $actionarray, $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 				echo "</td>\n";
 			}
 			$tmpday++;
@@ -448,6 +450,7 @@ if ($_GET["action"] != 'show_day')
 }
 else
 {
+	// Code to show just one day
 	$style='cal_current_month';
 	$timestamp=dolibarr_mktime(12,0,0,$month,$_GET["day"],$year);
 	$arraytimestamp=adodb_getdate(dolibarr_mktime(12,0,0,$month,$_GET["day"],$year));
@@ -458,7 +461,7 @@ else
 	echo " </tr>\n";
 	echo " <tr>\n";
 	echo '  <td class="'.$style.'" width="14%" valign="top"  nowrap="nowrap">';
-	show_day_events ($db, $_GET["day"], $month, $year, $style, $actionarray);
+	show_day_events ($db, $_GET["day"], $month, $year, $style, $actionarray, 0, 0);
 	echo "</td>\n";
 	echo " </tr>\n";
 	echo '</table>';
@@ -480,16 +483,17 @@ llxFooter('$Date$ - $Revision$');
  * @param unknown_type $year			Year
  * @param unknown_type $style			Style to use for this day
  * @param unknown_type $actionarray		Array of actions
- * @param unknown_type $maxPrint		Nb of actions to show each day on month view
+ * @param unknown_type $maxPrint		Nb of actions to show each day on month view (0 means non limit)
+ * @param unknown_type nbofchartoshow	Nb of characters to show for event line
  */
-function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPrint=-1)
+function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPrint=0, $nbofchartoshow=14)
 {
 	global $user, $conf, $langs;
 	global $filtera, $filtert, $filted;
 	global $theme_datacolor;
 	if ($_GET["action"] == 'maxPrint')
 	{
-		$maxPrint=-1;
+		$maxPrint=0;
 	}
 	$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
 
@@ -517,7 +521,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 			foreach ($actionarray[$daykey] as $index => $action)
 			{
 					
-				if ($i < $maxPrint || $maxPrint == -1)
+				if ($i < $maxPrint || $maxPrint == 0)
 				{
 					$ponct=($action->date_start_in_calendar == $action->date_end_in_calendar);
 					// Show rect of event
@@ -562,11 +566,11 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 							print dolibarr_print_date($action->date_end_in_calendar,'%H:%M');
 						}
 						print '<br>';
-						print $action->getNomUrl(0,14,'cal_event');
+						print $action->getNomUrl(0,$nbofchartoshow,'cal_event');
 					}
 					else	// It's a birthday
 					{
-						print $action->getNomUrl(0,14,'cal_event','birthday');
+						print $action->getNomUrl(0,$nbofchartoshow,'cal_event','birthday');
 					}
 					print '</td>';
 					print '<td align="right" nowrap="nowrap">';
