@@ -22,7 +22,7 @@
 /**
  \file       htdocs/includes/modules/fichinter/pdf_soleil.modules.php
  \ingroup    ficheinter
- \brief      Fichier de la classe permettant de g�n�rer les fiches d'intervention au mod�le Soleil
+ \brief      Fichier de la classe permettant de generer les fiches d'intervention au modele Soleil
  \version    $Id$
  */
 
@@ -117,7 +117,7 @@ class pdf_soleil extends ModelePDFFicheinter
 			{
 				if (create_exdir($dir) < 0)
 				{
-					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					$this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
 			}
@@ -179,8 +179,8 @@ class pdf_soleil extends ModelePDFFicheinter
 					{
 						$pdf->SetTextColor(200,0,0);
 						$pdf->SetFont('Arial','B',8);
-						$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
-						$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+						$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 					}
 				}
 
@@ -243,7 +243,6 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetFont('Arial','',10);
 
 				$tab_top = 100;
-				$tab_height = 16;
 
 				$pdf->SetXY (10, $tab_top);
 				$pdf->MultiCell(190,8,$outputlangs->transnoentities("Description"),0,'L',0);
@@ -258,8 +257,9 @@ class pdf_soleil extends ModelePDFFicheinter
 				$nexY = $pdf->GetY();
 				
 				$pdf->line(10, $nexY, 200, $nexY);
-				$tab_top=$nexY;
+				$tab_height = $nexY - $tab_top;
 				
+				$tab_top=$nexY;
 				
 				//dolibarr_syslog("desc=".dol_htmlentitiesbr($fichinter->description));
 				$num = sizeof($fichinter->lignes);
@@ -281,14 +281,16 @@ class pdf_soleil extends ModelePDFFicheinter
 							$pdf->SetXY (10, $tab_top + 4 + $j * $height);
 							$pdf->writeHTMLCell(0, 4, 20, $tab_top + 4 + $j * $height,
 							dol_htmlentitiesbr($outputlangs->convToOutputCharset($fichinterligne->desc),1), 0, 0, 0);
-							$tab_height+=20;
-								
+							//$tab_height+=num_lines($fichinterligne->desc,52)*4;
+							$tab_height+=($height+4);
+							
 							$j++;
 						}
 						$i++;
 					}
 				}
 
+				// Rectangle for title and all lines
 				$pdf->Rect(10, 100, 190, $tab_height);
 				$pdf->SetXY (10, $pdf->GetY() + 20);
 				$pdf->MultiCell(60, 5, '', 0, 'J', 0);
