@@ -333,11 +333,11 @@ class Adherent extends CommonObject
 
 
 	/**
-	 \brief 		Fonction qui met a jour l'adherent (sauf mot de passe)
-	 \param		user			Utilisateur qui realise la mise a jour
-	 \param		notrigger		1=desactive le trigger UPDATE (quand appele par creation)
-	 \param		nosyncuser		Do not synchronize linked user
-	 \return		int				<0 si KO, >0 si OK
+	 *	\brief 		Fonction qui met a jour l'adherent (sauf mot de passe)
+	 *	\param		user			User making update
+	 *	\param		notrigger		1=desactive le trigger UPDATE (quand appele par creation)
+	 *	\param		nosyncuser		Do not synchronize linked user
+	 *	\return		int				<0 si KO, >0 si OK
 	 */
 	function update($user,$notrigger=0,$nosyncuser=0)
 	{
@@ -379,6 +379,7 @@ class Adherent extends CommonObject
 		$sql.= ", naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
 		if ($this->datefin)   $sql.= ", datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifie que par effacement cotisation
 		if ($this->datevalid) $sql.= ", datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifie que par validation adherent
+		$sql.= ", fk_user_mod=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dolibarr_syslog("Adherent::update sql=".$sql);
@@ -1808,12 +1809,12 @@ class Adherent extends CommonObject
 	}
 
 
-	/*
+	/**
 	 *	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *	\param		info		Info string loaded by _load_ldap_info
 	 *	\param		mode		0=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 2=Return key only (uid=qqq)
+	 *							1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *							2=Return key only (uid=qqq)
 	 *	\return		string		DN
 	 */
 	function _load_ldap_dn($info,$mode=0)
@@ -1827,7 +1828,7 @@ class Adherent extends CommonObject
 	}
 
 
-	/*
+	/**
 	 *	\brief		Initialise tableau info (tableau des attributs LDAP)
 	 *	\return		array		Tableau info des attributs
 	 */
@@ -1883,6 +1884,8 @@ class Adherent extends CommonObject
 		$sql.= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
 		$sql.= ' WHERE a.rowid = '.$id;
+		
+		dolibarr_syslog("Adherent::info sql=".$sql, LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -1908,7 +1911,7 @@ class Adherent extends CommonObject
 				{
 					$muser = new User($this->db, $obj->fk_user_mod);
 					$muser->fetch();
-					$this->user_modification = $mluser;
+					$this->user_modification = $muser;
 				}
 
 				$this->date_creation     = $obj->datec;
