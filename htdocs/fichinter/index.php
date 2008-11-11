@@ -19,11 +19,11 @@
  */
 
 /**
-     	\file       htdocs/fichinter/index.php
-		\brief      Page accueil espace fiches interventions
-		\ingroup    ficheinter
-		\version    $Id$
-*/
+ \file       htdocs/fichinter/index.php
+ \brief      Page accueil espace fiches interventions
+ \ingroup    ficheinter
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -52,10 +52,14 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+$search_ref=isset($_GET["search_ref"])?$_GET["search_ref"]:$_POST["search_ref"];
+$search_company=isset($_GET["search_company"])?$_GET["search_company"]:$_POST["search_company"];
+$search_desc=isset($_GET["search_desc"])?$_GET["search_desc"]:$_POST["search_desc"];
+
 
 /*
-*	View
-*/
+ *	View
+ */
 
 llxHeader();
 
@@ -63,13 +67,16 @@ llxHeader();
 $sql = "SELECT";
 $sql.= " f.ref, f.rowid as fichid, f.fk_statut, f.description,";
 $sql.= " fd.description as descriptiondetail, ".$db->pdate("fd.date")." as dp, fd.duree,";
-$sql.= " s.nom,s.rowid as socid";
+$sql.= " s.nom, s.rowid as socid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."fichinter as f)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 $sql.= " WHERE f.fk_soc = s.rowid ";
+if ($search_ref)     $sql .= " AND f.ref like '%".addslashes($search_ref)."%'";
+if ($search_company) $sql .= " AND s.nom like '%".addslashes($search_company)."%'";
+if ($search_desc)    $sql .= " AND (f.description like '%".addslashes($search_desc)."%' OR fd.description like '%".addslashes($search_desc)."%')";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid > 0)
 {
@@ -81,54 +88,72 @@ $sql.= $db->plimit( $limit + 1 ,$offset);
 $result=$db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows($result);
+	$num = $db->num_rows($result);
 
-    $fichinter_static=new Fichinter($db);
-	
+	$fichinter_static=new Fichinter($db);
+
 	$urlparam="&amp;socid=$socid";
-    print_barre_liste($langs->trans("ListOfInterventions"), $page, "index.php",$urlparam,$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("ListOfInterventions"), $page, "index.php",$urlparam,$sortfield,$sortorder,'',$num);
 
-    $i = 0;
-    print '<table class="noborder" width="100%">';
-    print "<tr class=\"liste_titre\">";
-    print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","",$urlparam,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Description"),"index.php","f.description","",$urlparam,'',$sortfield,$sortorder);
-    print '<td>&nbsp;</td>';
-    print_liste_field_titre($langs->trans("Date"),"index.php","fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Duration"),"index.php","fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),"index.php","f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
-    print "</tr>\n";
-    $var=True;
-    $total = 0;
-    while ($i < min($num, $limit))
-    {
-        $objp = $db->fetch_object($result);
-        $var=!$var;
-        print "<tr $bc[$var]>";
-        print "<td><a href=\"fiche.php?id=".$objp->fichid."\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
-        print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44)."</a></td>\n";
-        print '<td>'.dol_htmlentitiesbr(dolibarr_trunc($objp->description,20)).'</td>';
-        print '<td>'.dol_htmlentitiesbr(dolibarr_trunc($objp->descriptiondetail,20)).'</td>';
-        print '<td align="center">'.dolibarr_print_date($objp->dp,'dayhour')."</td>\n";
-        print '<td align="right">'.ConvertSecondToTime($objp->duree).'</td>';
-        print '<td align="right">'.$fichinter_static->LibStatut($objp->fk_statut,5).'</td>';
+	print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<table class="noborder" width="100%">';
 
-        print "</tr>\n";
-        
-        $total += $objp->duree;
-        $i++;
-    }
-    print '<tr class="liste_total"><td colspan="4"></td><td align="center">'.$langs->trans("Total").'</td>';
-    print '<td align="right" nowrap>'.ConvertSecondToTime($total).'</td><td></td>';
-    print '</tr>';
+	print "<tr class=\"liste_titre\">";
+	print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","",$urlparam,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Description"),"index.php","f.description","",$urlparam,'',$sortfield,$sortorder);
+	print '<td>&nbsp;</td>';
+	print_liste_field_titre($langs->trans("Date"),"index.php","fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Duration"),"index.php","fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"index.php","f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
 
-    print '</table>';
-    $db->free($result);
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
+	print '</td><td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
+	print '</td><td class="liste_titre" colspan="2">';
+	print '<input type="text" class="flat" name="search_desc" value="'.$search_desc.'" size="24">';
+	print '</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
+	print "</tr>\n";
+
+
+	$var=True;
+	$total = 0;
+	$i = 0;
+	while ($i < min($num, $limit))
+	{
+		$objp = $db->fetch_object($result);
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print "<td><a href=\"fiche.php?id=".$objp->fichid."\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
+		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44)."</a></td>\n";
+		print '<td>'.dol_htmlentitiesbr(dolibarr_trunc($objp->description,20)).'</td>';
+		print '<td>'.dol_htmlentitiesbr(dolibarr_trunc($objp->descriptiondetail,20)).'</td>';
+		print '<td align="center">'.dolibarr_print_date($objp->dp,'dayhour')."</td>\n";
+		print '<td align="right">'.ConvertSecondToTime($objp->duree).'</td>';
+		print '<td align="right">'.$fichinter_static->LibStatut($objp->fk_statut,5).'</td>';
+
+		print "</tr>\n";
+
+		$total += $objp->duree;
+		$i++;
+	}
+	print '<tr class="liste_total"><td colspan="4"></td><td align="center">'.$langs->trans("Total").'</td>';
+	print '<td align="right" nowrap>'.ConvertSecondToTime($total).'</td><td></td>';
+	print '</tr>';
+
+	print '</table>';
+	print "</form>\n";
+	$db->free($result);
 }
 else
 {
-    dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 $db->close();
