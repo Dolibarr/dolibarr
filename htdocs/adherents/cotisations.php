@@ -285,6 +285,7 @@ if ($result)
 		$i++;
     }
 
+    // Total
     $var=!$var;
     print '<tr class="liste_total">';
     print "<td>".$langs->trans("Total")."</td>\n";
@@ -296,7 +297,8 @@ if ($result)
     	print '<td>&nbsp;</td>';
     }
    	print '<td>&nbsp;</td>';
-    print "<td align=\"right\">".price($total)."</td>\n";
+   	print '<td>&nbsp;</td>';
+   	print "<td align=\"right\">".price($total)."</td>\n";
     print "</tr>\n";
     
     print "</table>";
