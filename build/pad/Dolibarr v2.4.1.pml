@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PADGEN_PML>
-	<AppVerInfo>PADGen 3.0.1.37</AppVerInfo>
+	<AppVerInfo>PADGen 3.0.1.38</AppVerInfo>
 	<CompanyName />
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
-		<Program_Version>2.4</Program_Version>
-		<Program_Release_Month>08</Program_Release_Month>
-		<Program_Release_Day>21</Program_Release_Day>
+		<Program_Version>2.4.1</Program_Version>
+		<Program_Release_Month>10</Program_Release_Month>
+		<Program_Release_Day>30</Program_Release_Day>
 		<Program_Release_Year>2008</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
@@ -59,11 +59,11 @@
 			<Application_Order_URL>http://www.dolibarr.org</Application_Order_URL>
 			<Application_Screenshot_URL>http://www.dolibarr.org/images/dolibarr_screenshot2.png</Application_Screenshot_URL>
 			<Application_Icon_URL>http://www.dolibarr.org/images/dolibarr.gif</Application_Icon_URL>
-			<Application_XML_File_URL>http://www.dolibarr.org/images/pad_dolibarr.xml</Application_XML_File_URL>
+			<Application_XML_File_URL>http://www.dolibarr.org/files/pad_dolibarr.xml</Application_XML_File_URL>
 		</Application_URLs>
 		<Download_URLs>
-			<Primary_Download_URL>http://www.nltechno.com/files/dolibarr.tgz</Primary_Download_URL>
-			<Secondary_Download_URL>http://www.nltechno.com/files/dolibarr.tgz</Secondary_Download_URL>
+			<Primary_Download_URL>http://www.dolibarr.org/files/dolibarr.tgz</Primary_Download_URL>
+			<Secondary_Download_URL>http://www.dolibarr.org/files/dolibarr.tgz</Secondary_Download_URL>
 			<Additional_Download_URL_1 />
 			<Additional_Download_URL_2 />
 		</Download_URLs>

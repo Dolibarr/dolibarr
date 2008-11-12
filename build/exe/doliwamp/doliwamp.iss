@@ -152,7 +152,7 @@ var value: String;
 
 function InitializeSetup(): Boolean;
 begin
-  Result := MsgBox('You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install Dolibarr and third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you want to share your Apache, Mysql and PHP with other projects than Dolibarr, it is recommended to make ' #13 'a manual installation of Dolibarr on your own Apache, Mysql and PHP installation.' #13#13 'Do you want to continue install ?', mbConfirmation, MB_YESNO) = idYes;
+  Result := MsgBox('You will install or upgrade DoliWamp (Apache+Mysql+PHP+Dolibarr) on your computer.' #13#13 'This setup install Dolibarr and third party softwares (Apache, Mysql and PHP) configured for a Dolibarr usage.' #13#13 'If you want to share your Apache, Mysql and PHP with other projects than Dolibarr, it is recommended to make ' #13 'a manual installation of Dolibarr on your own Apache, Mysql and PHP installation.' #13#13 'Do you want to start installation process ?', mbConfirmation, MB_YESNO) = idYes;
 end;
 
 procedure InitializeWizard();
@@ -197,7 +197,7 @@ begin
   // Create a page wpInstalling
   Page := CreateInputQueryPage(wpInstalling,
   'Technical parameters', '',
-  'Please specify some technical parameters.' #13 'If you don''t understand, are not sure, or are doing an upgrade, just leave the ' #13 'default values.');
+  'Please specify some technical parameters. If you don''t understand, are not sure, or are doing an upgrade, just leave the default values.');
 
   // TODO Add control differently if first install or update
   Page.Add('SMTP server (your own or ISP SMTP server) :', False);
