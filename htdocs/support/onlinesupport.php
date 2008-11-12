@@ -20,7 +20,6 @@
  *       \file      htdocs/install/phpinfo.php
  *       \ingroup   install
  *       \brief     Provide an Online Help support
- * 					This page must not 
  *       \version   $Id$
  */
 
