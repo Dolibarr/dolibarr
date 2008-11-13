@@ -226,8 +226,8 @@ if ($_GET["action"] == 'show_day')
 else
 {
 	// To limit array
-    $sql.= ' AND datep BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$month,1,$year)-(60*60*24*2));
-    $sql.= ' AND '.$db->idate(dolibarr_mktime(0,0,0,$month,28,$year)+(60*60*24*5));
+    $sql.= ' AND datep BETWEEN '.$db->idate(dolibarr_mktime(0,0,0,$month,1,$year)-(60*60*24*7));	// Start 7 days before
+    $sql.= ' AND '.$db->idate(dolibarr_mktime(0,0,0,$month,28,$year)+(60*60*24*10));	// End 7 days after + 3 to go from 28 to 31
 }
 if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 {
