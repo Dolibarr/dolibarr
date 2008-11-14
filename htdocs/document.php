@@ -335,7 +335,7 @@ if ($modulepart)
     }
 	
     // Wrapping pour les dons
-    if ($modulepart == 'don')
+    if ($modulepart == 'donation')
     {
         $user->getrights('don');
         if ($user->rights->don->lire || eregi('^specimen',$original_file))

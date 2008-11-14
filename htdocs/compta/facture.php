@@ -1261,6 +1261,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 	else
 	{
 		Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'#builddoc');
+		exit;
 	}
 }
 

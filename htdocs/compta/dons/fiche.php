@@ -15,18 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-	    \file       htdocs/compta/dons/fiche.php
-		\ingroup    don
-		\brief      Page de fiche de don
-		\version    $Revision$
-*/
+ *	    \file       htdocs/compta/dons/fiche.php
+ *		\ingroup    don
+ *		\brief      Page de fiche de don
+ *		\version    $Id$
+ */
 
 require_once("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/dons/modules_don.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
@@ -45,7 +44,6 @@ $mesg="";
  
 if ($_POST["action"] == 'update')
 {
-
     if ($_POST["amount"] > 0)
     {
 
@@ -83,7 +81,6 @@ if ($_POST["action"] == 'update')
 
 if ($_POST["action"] == 'add')
 {
-
     if ($_POST["amount"] > 0)
     {
         $don = new Don($db);
@@ -162,13 +159,39 @@ if ($_GET["action"] == 'set_encaisse')
 /*
  * Générer ou regénérer le document
  */
-if ($_GET['action'] == 'builddoc')
+if ($_REQUEST['action'] == 'builddoc')
 {
-    require_once(DOL_DOCUMENT_ROOT ."/includes/modules/dons/modules_don.php");
-	$result=don_create($db, $_GET['rowid']);
+	$donation = new Don($db, 0, $_GET['rowid']);
+	$donation->fetch($_GET['rowid']);
+
+	if ($_REQUEST['model'])
+	{
+		$donation->setDocModel($user, $_REQUEST['model']);
+	}
+
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+	$result=don_create($db, $donation->id, '', $donation->modelpdf, $outputlangs);
+	if ($result <= 0)
+	{
+		dolibarr_print_error($db,$result);
+		exit;
+	}
+	else
+	{
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?rowid='.$donation->id.'#builddoc');
+		exit;
+	}
 }
 
 
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -427,13 +450,13 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 	$urlsource=$_SERVER['PHP_SELF'].'?rowid='.$don->id;
 //            $genallowed=($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer);
 //            $delallowed=$user->rights->facture->supprimer;
-	$genallowed=0;
+	$genallowed=1;
 	$delallowed=0;
 
 	$var=true;
 
 	print '<br>';
-	$formfile->show_documents('don',$filename,$filedir,$urlsource,$genallowed,$delallowed);
+	$formfile->show_documents('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed);
 
     print '</td><td>&nbsp;</td>';
 
@@ -446,5 +469,4 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

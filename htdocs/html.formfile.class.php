@@ -259,6 +259,16 @@ class FormFile
 					// ??
 				}
 			}
+			elseif ($modulepart == 'donation')
+			{
+				if (is_array($genallowed)) $modellist=$genallowed;
+				else
+				{
+					include_once(DOL_DOCUMENT_ROOT.'/includes/modules/dons/modules_don.php');
+					$model=new ModeleDon();
+					$modellist=$model->liste_modeles($this->db);
+				}
+			}
 			else if ($modulepart == 'unpayed')
 			{
 				$modellist='';
@@ -337,7 +347,7 @@ class FormFile
 			$relativepath=$file["name"];								// Cas general
 			if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
 			// Autre cas
-			if ($modulepart == 'don')        { $relativepath = get_exdir($filename,2).$file["name"]; }
+			if ($modulepart == 'donation')   { $relativepath = get_exdir($filename,2).$file["name"]; }
 			if ($modulepart == 'export')     { $relativepath = $file["name"]; }
 
 			if (!$iconPDF) print "<tr ".$bc[$var].">";
