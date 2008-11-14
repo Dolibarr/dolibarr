@@ -37,8 +37,8 @@ create table llx_don
   pays            varchar(50),
   email           varchar(255),
   public          smallint DEFAULT 1 NOT NULL, -- le don est-il public (0,1)
-  fk_don_projet   integer NOT NULL, -- projet auquel est fait le don
+  fk_don_projet   integer NULL, -- projet auquel est fait le don
   fk_user_author  integer NOT NULL,
-  fk_user_valid   integer NOT NULL,
+  fk_user_valid   integer NULL,
   note            text
 )type=innodb;

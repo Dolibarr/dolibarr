@@ -67,3 +67,6 @@ update llx_expedition_methode set code='ENL', libelle='Enlevement' where code='e
 update llx_expedition_methode set code='TRANS', libelle='Transporteur' where code='transporteur';
 
 alter table llx_fichinterdet modify date datetime;
+
+alter table llx_don modify fk_don_projet   integer NULL;
+alter table llx_don modify fk_user_valid   integer NULL;
