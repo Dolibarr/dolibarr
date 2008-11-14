@@ -759,7 +759,7 @@ function dolibarr_print_phone($phone,$country="FR",$cid=0,$socid=0,$nolinks=fals
 		{
 			$newphone='<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;backtopage=1&amp;actioncode=AC_TEL&amp;contactid='.$cid.'&amp;socid='.$socid.'">'.$newphone.'</a>';
 		}
-		$clicktodiallink=dol_phone_link($phone);
+		$clicktodiallink=dol_print_phone_link($phone);
 		if ($clicktodiallink)
 		{
 			$newphone='<table class="nobordernopadding"><tr><td>'.$newphone.' </td><td>'.$clicktodiallink.'</td></tr></table>';
@@ -784,12 +784,31 @@ function dol_print_size($size)
 
 
 /**
+ * \brief		Show Url link
+ * \param		url			Url to show
+ * \param		target		Target for link
+ * \param		max			Max number of characters to show
+ * \return		string		HTML Link
+ */
+function dol_print_url($url,$target='_blank',$max=32)
+{
+	$link='<a href="';
+	if (! eregi('^http',$url)) $link.='http://';
+	$link.=$url;
+	if ($target) $link.='" target="'.$target.'">';
+	if (! eregi('^http',$url)) $link.='http://';
+	$link.=dolibarr_trunc($url,$max);
+	$link.='</a>';
+	return $link;
+}
+
+/**
  * \brief		Show click to dial link
  * \param		phone		Phone to call
  * \param		option		Type of picto
  * \return		string		Link
  */
-function dol_phone_link($phone,$option=0)
+function dol_print_phone_link($phone,$option=0)
 {
 	global $conf,$user;
 
@@ -2604,20 +2623,22 @@ function clean_url($url,$http=1)
 		$domain=$regs[2];
 		$port=$regs[3];
 		//print $url." -> ".$proto." - ".$domain." - ".$port;
-		$url = dol_string_nospecial(trim($url));
-
+		//$url = dol_string_nospecial(trim($url));
+		$url = trim($url);
+		
 		// Si http: defini on supprime le http (Si https on ne supprime pas)
+		$newproto=$proto;
 		if ($http==0)
 		{
 			if (eregi('^http:[\\\/]+',$url))
 			{
 				$url = eregi_replace('^http:[\\\/]+','',$url);
-				$proto = '';
+				$newproto = '';
 			}
 		}
 
 		// On passe le nom de domaine en minuscule
-		$url = eregi_replace('^(https?:[\\\/]+)?'.$domain,$proto.strtolower($domain),$url);
+		$url = eregi_replace('^'.$proto.$domain, $newproto.strtolower($domain), $url);
 
 		return $url;
 	}
