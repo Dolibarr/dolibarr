@@ -539,7 +539,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	}
 	else
 	{
-		print $contact->email;
+		print dol_print_email($contact->email);
 	}
 	print '</td>';
 	if ($conf->mailing->enabled)

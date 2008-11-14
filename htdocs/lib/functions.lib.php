@@ -782,7 +782,6 @@ function dol_print_size($size)
 	return $size.' '.$langs->trans("Bytes");
 }
 
-
 /**
  * \brief		Show Url link
  * \param		url			Url to show
@@ -798,6 +797,23 @@ function dol_print_url($url,$target='_blank',$max=32)
 	if ($target) $link.='" target="'.$target.'">';
 	if (! eregi('^http',$url)) $link.='http://';
 	$link.=dolibarr_trunc($url,$max);
+	$link.='</a>';
+	return $link;
+}
+
+/**
+ * \brief		Show EMail link
+ * \param		email		EMail to show
+ * \param		max			Max number of characters to show
+ * \return		string		HTML Link
+ */
+function dol_print_email($email,$max=32)
+{
+	$link='<a href="';
+	if (! eregi('^mailto:',$email)) $link.='mailto:';
+	$link.=$email;
+	$link.='">';
+	$link.=dolibarr_trunc($email,$max);
 	$link.='</a>';
 	return $link;
 }

@@ -334,7 +334,7 @@ if ($result)
                 print "Bad email";
             }
             else {
-                print '<a href="mailto:'.$obj->email.'">'.$obj->email.'</a>';
+                print dol_print_email($obj->email);
             }
             print '</td>';
         }

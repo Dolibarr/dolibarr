@@ -512,10 +512,10 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Fax").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_FAX . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Mail").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Mail").'</td><td>' . dol_print_email($conf->global->MAIN_INFO_SOCIETE_MAIL) . '</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Web").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_WEB . '</td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_SOCIETE_WEB) . '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Gencod").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_GENCOD . '</td></tr>';
