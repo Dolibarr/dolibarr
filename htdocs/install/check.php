@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/install/check.php
- \ingroup    install
- \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
- \version    $Id$
+ *	\file       htdocs/install/check.php
+ *	\ingroup    install
+ *	\brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
+ *	\version    $Id$
  */
 include_once("./inc.php");
 
@@ -98,7 +98,7 @@ else
 }
 
 
-// Check if GD installed
+// Check if GD supported
 if (! function_exists("imagecreate"))
 {
 	$langs->load("errors");
@@ -108,6 +108,19 @@ if (! function_exists("imagecreate"))
 else
 {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportGD")."<br>\n";
+}
+
+
+// Check if UTF8 supported
+if (! function_exists("utf8_encode"))
+{
+	$langs->load("errors");
+	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8")."<br>\n";
+	// $checksok=0;		// If image ko, just warning. So check must still be 1 (otherwise no way to install)
+}
+else
+{
+	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportUTF8")."<br>\n";
 }
 
 
