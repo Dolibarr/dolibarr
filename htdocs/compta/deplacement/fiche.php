@@ -197,13 +197,13 @@ else
 				print '</td></tr>';
 
 				print "<tr>";
-				print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
-				print $html->select_societes($soc->id,'socid','',1);
+				print '<td>'.$langs->trans("Type").'</td><td>';
+				print $html->select_type_fees($deplacement->type,'type',1);
 				print '</td></tr>';
 
 				print "<tr>";
-				print '<td>'.$langs->trans("Type").'</td><td>';
-				print $html->select_type_fees($deplacement->type,'type',1);
+				print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
+				print $html->select_societes($soc->id,'socid','',1);
 				print '</td></tr>';
 
 				print "<tr>";
@@ -254,13 +254,13 @@ else
 				print $deplacement->ref;
 				print '</td></tr>';
 				
+				print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
+				
 				print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td>';
 				print '<td>';
 				if ($soc->id) print $soc->getNomUrl(1);
 				print '</td></tr>';
 
-				print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
-				
 				print '<tr><td>'.$langs->trans("Person").'</td><td>';
 				$userfee=new User($db,$deplacement->fk_user);
 				$userfee->fetch();

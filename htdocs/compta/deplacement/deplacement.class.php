@@ -40,9 +40,11 @@ class Deplacement extends CommonObject
 	var $fk_user;
 	var $km;
 	var $note;
-
+	var $socid;
+	
+	
 	/*
-	* Initialistation automatique de la classe
+	* Constructor
 	*/
 	function Deplacement($DB)
 	{
@@ -104,9 +106,10 @@ class Deplacement extends CommonObject
 		
 	}
 
-	/*
-	*
-	*/
+	/**
+	 * 
+	 *
+	 */
 	function update($user)
 	{
 		global $langs;
@@ -164,6 +167,7 @@ class Deplacement extends CommonObject
 			$obj = $this->db->fetch_object($result);
 
 			$this->id       = $obj->rowid;
+			$this->ref      = $obj->rowid;
 			$this->date     = $obj->dated;
 			$this->fk_user  = $obj->fk_user;
 			$this->socid    = $obj->fk_soc;
