@@ -2795,8 +2795,9 @@ class Form
 	 *	\param	optionType      Type de l'option: 1 pour des fonctions javascript
 	 *	\param  option          Valeur de l'option en fonction du type choisi
 	 *	\param  translate       Traduire la valeur
+	 * 	\param	maxlen			Length maximum for labels
 	 */
-	function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0)
+	function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0, $maxlen=0)
 	{
 		global $langs;
 		// \TODO Simplify optionType and option (only one should be necessary)
@@ -2827,12 +2828,14 @@ class Form
 
 			if ($key_in_label)
 			{
-				$selectOptionValue = $key.' - '.($translate?$langs->trans($value):$value);
+				$newval=($translate?$langs->trans($value):$value);
+				$selectOptionValue = $key.' - '.($maxlen?dolibarr_trunc($newval,$maxlen):$newval);
 				print $selectOptionValue;
 			}
 			else
 			{
-				$selectOptionValue = ($translate?$langs->trans($value):$value);
+				$newval=($translate?$langs->trans($value):$value);
+				$selectOptionValue = ($maxlen?dolibarr_trunc($newval,$maxlen):$newval); 
 				if ($value == '' || $value == '-') { $selectOptionValue='&nbsp;'; }
 				print $selectOptionValue;
 			}

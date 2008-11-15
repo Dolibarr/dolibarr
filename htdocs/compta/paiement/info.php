@@ -55,7 +55,16 @@ $hselected = $h;
 $h++;      
 
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Payment").": ".$paiement->ref);
+dolibarr_fiche_head($head, $hselected, $langs->trans("Payment"));
+
+print '<table class="border" width="100%">';
+
+// Ref
+print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
+
+print '</table>';
+
+print '<br>';
 
 print '<table width="100%"><tr><td>';
 dolibarr_print_object_info($paiement);

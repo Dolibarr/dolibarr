@@ -122,3 +122,4 @@ PaymentNumberUpdateSucceeded=Payment number updated succesfully
 PaymentNumberUpdateFailed=Payment number could not be updated
 PaymentDateUpdateSucceeded=Payment date update succesfully
 PaymentDateUpdateFailed=Payment date could not be updated
+BankTransactionLine=Bank transaction

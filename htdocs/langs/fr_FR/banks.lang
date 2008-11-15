@@ -122,3 +122,4 @@ PaymentNumberUpdateSucceeded=Numéro de paiement mis à jour
 PaymentNumberUpdateFailed=Impossible de mettre le numéro de paiement à jour
 PaymentDateUpdateSucceeded=Date de paiement mise à jour
 PaymentDateUpdateFailed=Impossible de mettre la date de paiement à jour
+BankTransactionLine=Ecriture bancaire

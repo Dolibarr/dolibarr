@@ -88,6 +88,7 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 			// Modifie valeures
 			$subscription->dateh=dolibarr_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
 			$subscription->datef=dolibarr_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
+			$subscription->note=$_POST["note"];
 			$subscription->amount=$_POST["amount"];
 			//print 'datef='.$subscription->datef.' '.$_POST['datesubendday'];
 
@@ -143,7 +144,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'confirm_d
 
 
 /*
- * 
+ * View
  */
 
 llxHeader();
@@ -168,7 +169,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	 ********************************************/
 
     $subscription->fetch($rowid);
-	 
+	$result=$adh->fetch($subscription->fk_adherent);
+    
 	/*
 	 * Affichage onglets
 	 */
@@ -197,6 +199,12 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$subscription->ref.'&nbsp;</td></tr>';
 	
+    // Member
+	$adh->ref=$adh->fullname;
+    print '<tr>';
+	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
+    print '</tr>';
+
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
 	$form->select_date($subscription->dateh,'datesub',1,1,0,'update',1);
@@ -213,6 +221,19 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur" colspan="2">';
 	print '<input type="text" class="flat" size="10" name="amount" value="'.price($subscription->amount).'"></td></tr>';
 
+    // Label
+    print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="2">';
+	print '<input type="text" class="flat" size="60" name="note" value="'.$subscription->note.'"></td></tr>';
+	
+	if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+	{
+    	print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
+		$bankline=new AccountLine($db);
+		$result=$bankline->fetch($subscription->fk_bank);
+		print $bankline->getNomUrl(1,0,'showall');
+    	print '</td></tr>';
+	}
+		
 	print '<tr><td colspan="3" align="center">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; &nbsp; ';
@@ -296,8 +317,11 @@ if ($rowid && $action != 'edit')
 
     // Amount
     print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur" colspan="3">'.price($subscription->amount).'</td></tr>';
-
-	// Bank account
+    
+    // Amount
+    print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="3">'.$subscription->note.'</td></tr>';
+    
+    // Bank account
 	if ($conf->banque->enabled)
 	{
 	    if ($subscription->fk_bank) 
@@ -309,13 +333,17 @@ if ($rowid && $action != 'edit')
 	    	$result=$bank->fetch($bankline->fk_account);
 
 	    	print '<tr>';
-	    	print '<td valign="top" width="140">'.$langs->trans('BankAccount').'</td>';
-			print '<td>'.$bank->getNomUrl(1).'</td>';
-	    	print '<td>'.$langs->trans("BankLineConciliated").'</td><td>'.yn($bankline->rappro).'</td>';
+	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+			print '<td colspan="3">';
+			$bankline=new AccountLine($db);
+			$result=$bankline->fetch($subscription->fk_bank);
+			print $bankline->getNomUrl(1,0,'showall');			
+	    	print '</td>';
 	    	print '</tr>';
 	    }
 	}
 
+	
     print "</table>\n";
     print '</form>';
     

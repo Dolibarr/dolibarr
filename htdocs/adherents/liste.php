@@ -19,14 +19,15 @@
  */
 
 /** 
-        \file       htdocs/adherents/liste.php
-        \ingroup    adherent
-		\brief      Page listant les adh�rents
-		\version    $Id$
-*/
+ *      \file       htdocs/adherents/liste.php
+ *      \ingroup    adherent
+ *		\brief      Page to list all members of fundation
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
 $langs->load("members");
 $langs->load("companies");
@@ -37,6 +38,10 @@ $langs->load("companies");
  */
 
 llxHeader();
+
+$form=new Form($db);
+
+$membertypestatic=new AdherentType($db);
 
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
@@ -66,9 +71,9 @@ if ($sall)
     $sql.=" OR d.email like '%".$sall."%' OR d.login like '%".$sall."%' OR d.adresse like '%".$sall."%'";
     $sql.=" OR d.ville like '%".$sall."%' OR d.note like '%".$sall."%')";
 }
-if ($_GET["type"])
+if ($_REQUEST["type"] > 0)
 {
-    $sql.=" AND t.rowid=".$_GET["type"];
+    $sql.=" AND t.rowid=".$_REQUEST["type"];
 }
 if (isset($_GET["statut"]))
 {   
@@ -111,10 +116,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= " ".$db->order($sortfield,$sortorder);
 $sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result) 
+$resql = $db->query($sql);
+if ($resql) 
 {
-    $num = $db->num_rows($result);
+    $num = $db->num_rows($resql);
     $i = 0;
 
     $titre=$langs->trans("MembersList");
@@ -131,9 +136,11 @@ if ($result)
         $titre=$langs->trans("MembersListQualified");
     }
 
-    if ($_GET["type"]) {
-        $objp = $db->fetch_object($result);
-        $titre.=" (".$objp->type.")";
+    if ($_REQUEST["type"] > 0) 
+    {
+		$membertype=new AdherentType($db);
+        $result=$membertype->fetch($_REQUEST["type"]);
+		$titre.=" (".$membertype->libelle.")";
     }
 
     $param="";
@@ -165,9 +172,12 @@ if ($result)
 	print '<input class="flat" type="text" name="search_nom" value="'.$_REQUEST["search_nom"].'" size="12"></td>';
 
 	print '<td align="left">';
-	print '<input class="flat" type="text" name="search_login" value="'.$_REQUEST["search_login"].'" size="12"></td>';
+	print '<input class="flat" type="text" name="search_login" value="'.$_REQUEST["search_login"].'" size="8"></td>';
 	
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">';
+    $listetype=$membertypestatic->liste_array();
+    $form->select_array("type", $listetype, $_REQUEST["type"], 1, 0, 0, 0, '', 0, 16);
+    print '</td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
@@ -186,12 +196,7 @@ if ($result)
     $var=True;
     while ($i < $num && $i < $conf->liste_limit)
     {
-        if ($_GET["type"] && $i==0)
-        {
-        	# Fetch deja fait
-        } else {
-            $objp = $db->fetch_object($result);
-        }
+        $objp = $db->fetch_object($resql);
 
         $adh=new Adherent($db);
 
@@ -211,17 +216,21 @@ if ($result)
         print "<td>".$objp->login."</td>\n";
 
         // Type
-        print '<td><a href="type.php?rowid='.$objp->type_id.'">'.img_object($langs->trans("ShowType"),"group").' '.$objp->type.'</a></td>';
+        print '<td nowrap="nowrap">';
+        $membertypestatic->id=$objp->type_id;
+        $membertypestatic->libelle=$objp->type;
+        print $membertypestatic->getNomUrl(1,16);
+        print '</td>';
         
         // Moral/Physique
         print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
 
         // EMail
-        print "<td>".$objp->email."</td>\n";
+        print "<td>".dol_print_email($objp->email)."</td>\n";
         
         // Statut
         print "<td>";
-        print $adh->LibStatut($objp->statut,$objp->cotisation,$objp->datefin,4);
+        print $adh->LibStatut($objp->statut,$objp->cotisation,$objp->datefin,2);
         print "</td>";
 
         // Date fin cotisation

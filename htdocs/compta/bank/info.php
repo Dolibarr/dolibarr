@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,16 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
     	\file       htdocs/compta/bank/info.php
 		\ingroup    banque
 		\brief      Onglet info d'une ecriture bancaire
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -57,7 +54,7 @@ $hselected = $h;
 $h++;      
 
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("LineRecord").": ".$line->ref);
+dolibarr_fiche_head($head, $hselected, $langs->trans("LineRecord"));
 
 print '<table width="100%"><tr><td>';
 dolibarr_print_object_info($line);

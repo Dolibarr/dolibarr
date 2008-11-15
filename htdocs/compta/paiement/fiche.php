@@ -128,7 +128,7 @@ $head[$h][1] = $langs->trans("Info");
 $h++;      
 
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Payment").": ".$paiement->ref);
+dolibarr_fiche_head($head, $hselected, $langs->trans("Payment"));
 
 /*
  * Confirmation de la suppression du paiement
@@ -158,25 +158,6 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
 
-// Bank account
-if ($conf->banque->enabled)
-{
-    if ($paiement->bank_account) 
-    {
-    	$bankline=new AccountLine($db);
-    	$bankline->fetch($paiement->bank_line);
-    
-    	$bank=new Account($db);
-    	$bank->fetch($bankline->fk_account);
-
-    	print '<tr>';
-    	print '<td valign="top" width="140">'.$langs->trans('BankAccount').'</td>';
-    	print '<td>'.$bank->getNomUrl(1).'</td>';
-    	print '<td>'.$langs->trans("BankLineConciliated").'</td><td>'.yn($bankline->rappro).'</td>';
-    	print '</tr>';
-    }
-}
-
 // Date
 print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dolibarr_print_date($paiement->date,'day').'</td></tr>';
 
@@ -195,6 +176,23 @@ print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.pr
 
 // Note
 print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
+
+// Bank account
+if ($conf->banque->enabled)
+{
+    if ($paiement->bank_account) 
+    {
+    	$bankline=new AccountLine($db);
+    	$bankline->fetch($paiement->bank_line);
+    
+    	print '<tr>';
+    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+		print '<td colspan="3">';
+		print $bankline->getNomUrl(1,0,'showall');			
+    	print '</td>';
+    	print '</tr>';
+    }
+}
 
 print '</table>';
 

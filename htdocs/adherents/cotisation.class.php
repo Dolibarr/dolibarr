@@ -152,12 +152,12 @@ class Cotisation extends CommonObject
 		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."cotisation SET ";
 		$sql .= " fk_adherent = ".$this->fk_adherent.",";
-		$sql .= " fk_bank = ".($this->fk_bank ? $this->fk_bank : 'null').",";
 		$sql .= " note=".($this->note ? "'".addslashes($this->note)."'" : 'null').",";
 		$sql .= " cotisation = '".price2num($this->amount)."',";
 		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
 		$sql .= " datef='".$this->db->idate($this->datef)."',";
-		$sql .= " datec='".$this->db->idate($this->datec)."'";
+		$sql .= " datec='".$this->db->idate($this->datec)."',";
+		$sql .= " fk_bank = ".($this->fk_bank ? $this->fk_bank : 'null');
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dolibarr_syslog("Cotisation::update sql=".$sql);

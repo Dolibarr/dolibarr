@@ -131,3 +131,4 @@ DescADHERENT_ETIQUETTE_TYPE=Format étiquettes
 DescADHERENT_CARD_HEADER_TEXT=Texte imprimé sur le haut des cartes adhérents
 DescADHERENT_CARD_TEXT=Texte imprimé sur les cartes adhérents
 DescADHERENT_CARD_FOOTER_TEXT=Texte imprimé sur le bas des cartes adhérents
+ShowTypeCard=Voir type %s

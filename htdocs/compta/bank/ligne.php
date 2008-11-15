@@ -20,10 +20,10 @@
  */
 
 /**
- \file       htdocs/compta/bank/ligne.php
- \ingroup    compta
- \brief      Page edition d'une ecriture bancaire
- \version    $Id$
+ *	\file       htdocs/compta/bank/ligne.php
+ *	\ingroup    compta
+ *	\brief      Page edition d'une ecriture bancaire
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -90,7 +90,7 @@ if ($_POST["action"] == "update")
 	{
 		$objp = $db->fetch_object($result);
 		if ($objp->rappro)
-		die ("Vous ne pouvez pas modifier une �criture d�j� rapproch�e");
+		die ("Conciliation of a line already conciliated is not possible");
 	}
 
 	$db->begin();
@@ -198,7 +198,7 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$_GET["rowid"];
 $head[$h][1] = $langs->trans("Info");
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans('LineRecord').': '.$_GET["rowid"]);
+dolibarr_fiche_head($head, $hselected, $langs->trans('LineRecord'));
 
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro,";
@@ -217,8 +217,8 @@ if ($result)
 		// Confirmations
 		if ($_GET["action"] == 'delete_categ')
 		{
-	  $html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,$langs->trans("RemoveFromCategory"),$langs->trans("RemoveFromCategoryConfirm"),"confirm_delete_categ");
-	  print '<br>';
+			$html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,$langs->trans("RemoveFromCategory"),$langs->trans("RemoveFromCategoryConfirm"),"confirm_delete_categ");
+			print '<br>';
 		}
 
 		print '<table class="border" width="100%">';
@@ -232,20 +232,23 @@ if ($result)
 
 		$links=$acct->get_url($rowid);
 
-		// Tableau sur 4 colonne si deja rapproche, sinon sur 5 colonnes
-
+		// Ref
+		print '<tr><td width="20%">'.$langs->trans("Ref")."</td>";
+		print '<td colspan="4">'.$objp->rowid.'</td>';
+		print '</tr>';
+		
 		// Author
 		print '<tr><td width="20%">'.$langs->trans("Author")."</td>";
 		if ($objp->fk_user_author)
 		{
-	  $author=new User($db,$objp->fk_user_author);
-	  $author->fetch();
-	  print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$author->id.'">';
-	  print img_object($langs->trans("ShowUser"),'user').' '.$author->fullname.'</a></td>';
+			$author=new User($db,$objp->fk_user_author);
+			$author->fetch();
+			print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$author->id.'">';
+			print img_object($langs->trans("ShowUser"),'user').' '.$author->fullname.'</a></td>';
 		}
 		else
 		{
-	  print '<td colspan="4">&nbsp;</td>';
+			print '<td colspan="4">&nbsp;</td>';
 		}
 		print "</tr>";
 
@@ -267,14 +270,14 @@ if ($result)
 		print '<tr><td>'.$langs->trans("DateOperation").'</td>';
 		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 		{
-	  print '<td colspan="3">';
-	  $html->select_date($objp->do,'dateo','','','','update');
-	  print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
+			print '<td colspan="3">';
+			$html->select_date($objp->do,'dateo','','','','update');
+			print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
 		}
 		else
 		{
-	  print '<td colspan="4">';
-	  print dolibarr_print_date($objp->do);
+			print '<td colspan="4">';
+			print dolibarr_print_date($objp->do);
 		}
 		print '</td></tr>';
 
@@ -308,7 +311,7 @@ if ($result)
 			print '<input name="label" class="flat" value="';
 			if (eregi('^\((.*)\)$',$objp->label,$reg))
 			{
-				// Label g�n�rique car entre parenth�ses. On l'affiche en le traduisant	
+				// Label g�n�rique car entre parenth�ses. On l'affiche en le traduisant
 				print $langs->trans($reg[1]);
 			}
 			else
@@ -321,16 +324,16 @@ if ($result)
 		}
 		else
 		{
-			  print '<td colspan="4">';
-			  if (eregi('^\((.*)\)$',$objp->label,$reg))
-			  {
-			  	// Label g�n�rique car entre parenth�ses. On l'affiche en le traduisant	
-			  	print $langs->trans($reg[1]);
-			  }
-			  else
-			  {
-			  	print $objp->label;
-			  }
+			print '<td colspan="4">';
+			if (eregi('^\((.*)\)$',$objp->label,$reg))
+			{
+				// Label g�n�rique car entre parenth�ses. On l'affiche en le traduisant
+				print $langs->trans($reg[1]);
+			}
+			else
+			{
+				print $objp->label;
+			}
 		}
 		print '</td></tr>';
 
@@ -397,14 +400,14 @@ if ($result)
 		print "<tr><td>".$langs->trans("Amount")."</td>";
 		if (! $objp->rappro && $user->rights->banque->modifier)
 		{
-	  print '<td colspan="3">';
-	  print '<input name="amount" class="flat" size="10" value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->monnaie);
-	  print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
+			print '<td colspan="3">';
+			print '<input name="amount" class="flat" size="10" value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->monnaie);
+			print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
 		}
 		else
 		{
-	  print '<td colspan="4">';
-	  print price($objp->amount);
+			print '<td colspan="4">';
+			print price($objp->amount);
 		}
 		print "</td></tr>";
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,16 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-        \file       htdocs/adherents/card_subscriptions.php
-        \ingroup    adherent
-        \brief      Onglet d'ajout, edition, suppression des adh�sions d'un adh�rent
-        \version    $Revision$
-*/
+ *       \file       htdocs/adherents/card_subscriptions.php
+ *       \ingroup    adherent
+ *       \brief      Onglet d'ajout, edition, suppression des adh�sions d'un adh�rent
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
@@ -54,7 +52,7 @@ $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
 
 if (! $user->rights->adherent->cotisation->lire)
-	 accessforbidden();
+accessforbidden();
 
 
 /*
@@ -63,50 +61,53 @@ if (! $user->rights->adherent->cotisation->lire)
 
 if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisation' && ! $_POST["cancel"])
 {
-    $langs->load("banks");
+	$langs->load("banks");
 
 	$adh->id = $rowid;
-    $result=$adh->fetch($rowid);
+	$result=$adh->fetch($rowid);
 
 	$adht->fetch($adh->typeid);
 
-    $datecotisation=0;
+	// Subscription informations
+	$datecotisation=0;
 	$datesubend=0;
-    if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"])
-    {
- 		$datecotisation=dolibarr_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-    }
-    if ($_POST["endyear"] && $_POST["endmonth"] && $_POST["endday"])
-    {
- 		$datesubend=dolibarr_mktime(0, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
-    }
-    $cotisation=$_POST["cotisation"];
-
-	$accountid=$_POST["accountid"];
-	$operation=$_POST["operation"];
+	if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"])
+	{
+		$datecotisation=dolibarr_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+	}
+	if ($_POST["endyear"] && $_POST["endmonth"] && $_POST["endday"])
+	{
+		$datesubend=dolibarr_mktime(0, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+	}
+	$cotisation=$_POST["cotisation"];	// Amount of subscription
 	$label=$_POST["label"];
-	$num_chq=$_POST["num_chq"];
-	$emetteur_nom=$_POST["chqemetteur"];
-	$emetteur_banque=$_POST["chqbank"];
 	
 	if (! $datecotisation)
 	{
 		$errmsg=$langs->trans("BadDateFormat");
-	    $action='addsubscription';
+		$action='addsubscription';
 	}
 	if (! $datesubend)
 	{
 		$datesubend=dolibarr_time_plus_duree(dolibarr_time_plus_duree($datecotisation,$defaultdelay,$defaultdelayunit),-1,'d');
 	}
 	
+	// Payment informations
+	$accountid=$_POST["accountid"];
+	$operation=$_POST["operation"];	// Payment mode
+	$num_chq=$_POST["num_chq"];
+	$emetteur_nom=$_POST["chqemetteur"];
+	$emetteur_banque=$_POST["chqbank"];
+
+
 	if ($adht->cotisation)	// Type adherent soumis a cotisation
 	{
-	    if (! is_numeric($_POST["cotisation"]))
-	    {
+		if (! is_numeric($_POST["cotisation"]))
+		{
 			// If field is '' or not a numeric value
-		    $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
-		    $action='addsubscription';
-	    }
+			$errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
+			$action='addsubscription';
+		}
 		else
 		{
 			if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
@@ -125,37 +126,37 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 			}
 		}
 	}
-	
-    if ($action=='cotisation')
-    {
-        $db->begin();
+
+	if ($action=='cotisation')
+	{
+		$db->begin();
 
 		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
-		
-        if ($crowid > 0)
-        {
-            $db->commit();
 
-	        // Envoi mail
-	        if ($_POST["sendmail"])
-	        {
-	            $result=$adh->send_an_email($conf->global->ADHERENT_MAIL_COTIS,$conf->global->ADHERENT_MAIL_COTIS_SUBJECT,array(),array(),array(),"","",0,-1);
+		if ($crowid > 0)
+		{
+			$db->commit();
+
+			// Envoi mail
+			if ($_POST["sendmail"])
+			{
+				$result=$adh->send_an_email($conf->global->ADHERENT_MAIL_COTIS,$conf->global->ADHERENT_MAIL_COTIS_SUBJECT,array(),array(),array(),"","",0,-1);
 				if ($result < 0) $errmsg=$adh->error;
 			}
 
-		    $_POST["cotisation"]='';
+			$_POST["cotisation"]='';
 			$_POST["accountid"]='';
 			$_POST["operation"]='';
 			$_POST["label"]='';
 			$_POST["num_chq"]='';
-        }
-        else
-        {
-            $db->rollback();
-            $errmsg=$adh->error;
+		}
+		else
+		{
+			$db->rollback();
+			$errmsg=$adh->error;
 			$action = 'addsubscription';
-        }
-    }
+		}
+	}
 }
 
 
@@ -181,8 +182,8 @@ $adho->fetch_optionals();
 
 
 /*
-* Affichage onglets
-*/
+ * Affichage onglets
+ */
 $head = member_prepare_head($adh);
 
 dolibarr_fiche_head($head, 'subscription', $langs->trans("Member"));
@@ -227,15 +228,15 @@ if ($errmsg)
 		$langs->load("errors");
 		$errmsg=$langs->trans($errmsg);
 	}
-    print '<div class="error">'.$errmsg.'</div>';
-    print "\n";
+	print '<div class="error">'.$errmsg.'</div>';
+	print "\n";
 }
 
 
 /*
-* Barre d'actions
-*
-*/
+ * Barre d'actions
+ *
+ */
 print '<div class="tabsAction">';
 
 // Lien nouvelle cotisation si non brouillon et non r�sili�
@@ -252,9 +253,9 @@ print "<br>\n";
 
 
 /*
-* Bandeau des cotisations
-*
-*/
+ * Bandeau des cotisations
+ *
+ */
 
 print '<table border=0 width="100%">';
 
@@ -263,9 +264,9 @@ print '<td valign="top" width="50%">';
 
 
 /*
-* Liste des cotisations
-*
-*/
+ * Liste des cotisations
+ *
+ */
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
 $sql.= " c.rowid as crowid, c.cotisation,";
 $sql.= " ".$db->pdate("c.dateadh")." as dateadh,";
@@ -281,60 +282,60 @@ $sql.= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
 $result = $db->query($sql);
 if ($result)
 {
-$cotisationstatic=new Cotisation($db);
-$accountstatic=new Account($db);
+	$cotisationstatic=new Cotisation($db);
+	$accountstatic=new Account($db);
 
-$num = $db->num_rows($result);
-$i = 0;
+	$num = $db->num_rows($result);
+	$i = 0;
 
-print "<table class=\"noborder\" width=\"100%\">\n";
+	print "<table class=\"noborder\" width=\"100%\">\n";
 
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Ref").'</td>';
-print '<td align="center">'.$langs->trans("DateSubscription").'</td>';
-print '<td align="center">'.$langs->trans("DateEnd").'</td>';
-print '<td align="right">'.$langs->trans("Amount").'</td>';
-if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
-{
-	print '<td align="right">'.$langs->trans("Account").'</td>';
-}
-print "</tr>\n";
-
-$var=True;
-while ($i < $num)
-{
-	$objp = $db->fetch_object($result);
-	$var=!$var;
-	print "<tr $bc[$var]>";
-	$cotisationstatic->ref=$objp->crowid;
-	$cotisationstatic->id=$objp->crowid;
-	print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
-	print '<td align="center">'.dolibarr_print_date($objp->dateadh,'day')."</td>\n";
-	print '<td align="center">'.dolibarr_print_date($objp->datef,'day')."</td>\n";
-	print '<td align="right">'.price($objp->cotisation).'</td>';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Ref").'</td>';
+	print '<td align="center">'.$langs->trans("DateSubscription").'</td>';
+	print '<td align="center">'.$langs->trans("DateEnd").'</td>';
+	print '<td align="right">'.$langs->trans("Amount").'</td>';
 	if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 	{
-		print '<td align="right">';
-		if ($objp->bid) 
-		{
-			$accountstatic->label=$objp->label;
-			$accountstatic->id=$objp->baid;
-			print $accountstatic->getNomUrl(1);
-		}
-		else
-		{
-			print '&nbsp;';	
-		}
-		print '</td>';
+		print '<td align="right">'.$langs->trans("Account").'</td>';
 	}
-	print "</tr>";
-	$i++;
-}
-print "</table>";
+	print "</tr>\n";
+
+	$var=True;
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($result);
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		$cotisationstatic->ref=$objp->crowid;
+		$cotisationstatic->id=$objp->crowid;
+		print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
+		print '<td align="center">'.dolibarr_print_date($objp->dateadh,'day')."</td>\n";
+		print '<td align="center">'.dolibarr_print_date($objp->datef,'day')."</td>\n";
+		print '<td align="right">'.price($objp->cotisation).'</td>';
+		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+		{
+			print '<td align="right">';
+			if ($objp->bid)
+			{
+				$accountstatic->label=$objp->label;
+				$accountstatic->id=$objp->baid;
+				print $accountstatic->getNomUrl(1);
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
+		}
+		print "</tr>";
+		$i++;
+	}
+	print "</table>";
 }
 else
 {
-dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 print '</td><td valign="top">';
@@ -366,10 +367,10 @@ print '</td>';
 print '</tr>';
 print '</table>';
 
-	
+
 /*
-* Ajout d'une nouvelle cotisation
-*/
+ * Ajout d'une nouvelle cotisation
+ */
 if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 {
 	print '<br>';
@@ -380,6 +381,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 	print "<table class=\"border\" width=\"100%\">\n";
 
+	// Title subscription
 	print '<tr><td colspan="2"><b>'.$langs->trans("NewCotisation").'</b></td></tr>';
 
 	$today=mktime();
@@ -422,42 +424,51 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 
 	if ($adht->cotisation)
 	{
+		// Amount
 		print '<tr><td>'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
-		{
-			print '<tr><td>'.$langs->trans("FinancialAccount").'</td><td>';
-			$html->select_comptes($_POST["accountid"],'accountid',0,'',1);
-			print "</td></tr>\n";
-		}
-		
-		print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
-		$html->select_types_paiements($_POST["operation"],'operation');
-		print "</td></tr>\n";
-
-		print '<tr><td>'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';	// \todo a traduire
-		print '</td>';
-		print '<td><input name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
-
-		print '<tr><td>'.$langs->trans('CheckTransmitter');
-		print ' <em>('.$langs->trans("ChequeMaker").')</em>';	// \todo a traduire
-		print '</td>';
-		print '<td><input name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
-
-		print '<tr><td>'.$langs->trans('Bank');
-		print ' <em>('.$langs->trans("ChequeBank").')</em>';	// \todo a traduire
-		print '</td>';
-		print '<td><input name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
-
+		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td>';
 		print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
 		print dolibarr_print_date(($datefrom?$datefrom:time()),"%Y").'" ></td></tr>';
-	}
+		
+		// Bank account
+		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+		{
+			// Title payments
+			print '<tr><td colspan="2"><b>'.$langs->trans("Payment").'</b></td></tr>';
+			
+			// Bank account
+			print '<tr><td>'.$langs->trans("FinancialAccount").'</td><td>';
+			$html->select_comptes($_POST["accountid"],'accountid',0,'',1);
+			print "</td></tr>\n";
+
+			// Payment mode
+			print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
+			$html->select_types_paiements($_POST["operation"],'operation');
+			print "</td></tr>\n";
 	
+			print '<tr><td>'.$langs->trans('Numero');
+			print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+			print '</td>';
+			print '<td><input name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
+	
+			print '<tr><td>'.$langs->trans('CheckTransmitter');
+			print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+			print '</td>';
+			print '<td><input name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
+	
+			print '<tr><td>'.$langs->trans('Bank');
+			print ' <em>('.$langs->trans("ChequeBank").')</em>';
+			print '</td>';
+			print '<td><input name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
+
+		}
+	}
+
 	print '<tr><td>'.$langs->trans("SendAcknowledgementByMail").'</td>';
 	print '<td>';
-	if (! $adh->email) 
+	if (! $adh->email)
 	{
 		print $langs->trans("NoEMail");
 	}

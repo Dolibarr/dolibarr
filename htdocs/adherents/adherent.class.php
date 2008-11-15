@@ -1000,18 +1000,18 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 \brief      Fonction qui insere la cotisation dans la base de donnees
-	 et eventuellement liens dans banques, mailman, etc...
-	 \param	    date        	Date d'effet de la cotisation
-	 \param	    montant     	Montant cotisation (accepte 0 pour les adherents non soumis e cotisation)
-	 \param		account_id		Id compte bancaire
-	 \param		operation		Type operation (si Id compte bancaire fourni)
-	 \param		label			Label operation (si Id compte bancaire fourni)
-	 \param		num_chq			Numero cheque (si Id compte bancaire fourni)
-	 \param		emetteur_nom	Nom emetteur cheque
-	 \param		emetteur_banque	Nom banque emetteur cheque
-	 \param		datesubend		Date fin adhesion
-	 \return     int         	rowid de l'entree ajoutee, <0 si erreur
+	 *	\brief      Fonction qui insere la cotisation dans la base de donnees
+	 *				et eventuellement liens dans banques, mailman, etc...
+	 *	\param	    date        	Date d'effet de la cotisation
+	 *	\param	    montant     	Montant cotisation (accepte 0 pour les adherents non soumis e cotisation)
+	 *	\param		account_id		Id compte bancaire
+	 *	\param		operation		Type operation (si Id compte bancaire fourni)
+	 *	\param		label			Label operation (si Id compte bancaire fourni)
+	 *	\param		num_chq			Numero cheque (si Id compte bancaire fourni)
+	 *	\param		emetteur_nom	Nom emetteur cheque
+	 *	\param		emetteur_banque	Nom banque emetteur cheque
+	 *	\param		datesubend		Date fin adhesion
+	 *	\return     int         	rowid de l'entree ajoutee, <0 si erreur
 	 */
 	function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
 	{

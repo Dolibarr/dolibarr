@@ -756,6 +756,7 @@ class Account extends CommonObject
  */
 class AccountLine
 {
+	var $error;
 	var $db;
 
 	var $rowid;
@@ -766,8 +767,11 @@ class AccountLine
 	var $amount;
 	var $label;
 	var $note;
+	var $fk_account;
 
-
+	var $bank_account_label;
+	
+	
 	/**
 	 *  Constructeur
 	 */
@@ -788,11 +792,12 @@ class AccountLine
 	 */
 	function fetch($rowid)
 	{
-		$sql = "SELECT datec, datev, dateo, amount, label, fk_account,";
-		$sql.= " fk_user_author, fk_user_rappro,";
-		$sql.= " fk_type, num_releve, num_chq, rappro, note";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-		$sql.= " WHERE rowid  = ".$rowid;
+		$sql = "SELECT b.datec, b.datev, b.dateo, b.amount, b.label as label, b.fk_account,";
+		$sql.= " b.fk_user_author, b.fk_user_rappro,";
+		$sql.= " b.fk_type, b.num_releve, b.num_chq, b.rappro, b.note,";
+		$sql.= " ba.label as bank_account_label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql.= " WHERE b.fk_account = ba.rowid AND b.rowid  = ".$rowid;
 
 		dolibarr_syslog("AccountLine::fetch sql=".$sql);
 		$result = $this->db->query($sql);
@@ -821,6 +826,8 @@ class AccountLine
 				$this->num_chq        = $obj->num_chq;
 
 				$this->rappro        = $obj->rappro;
+
+				$this->bank_account_label = $obj->bank_account_label;
 			}
 			$this->db->free($result);
 			return 1;
@@ -955,7 +962,15 @@ class AccountLine
 		}
 	}
 
-	function getNomUrl($withpicto=0)
+	
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *		\param		maxlen			Longueur max libelle
+	 *		\param		option			Option ('showall')
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$maxlen=0,$option='')
 	{
 		global $langs;
 
@@ -966,6 +981,20 @@ class AccountLine
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"),'account').$lienfin.' ');
 		$result.=$lien.$this->rowid.$lienfin;
+
+		if ($option == 'showall')
+		{
+			$result.=' (';
+			$result.=$langs->trans("BankAccount").': ';
+			$accountstatic=new Account($this->db);
+			$accountstatic->id=$this->fk_account;
+			$accountstatic->label=$this->bank_account_label;
+			$result.=$accountstatic->getNomUrl(0).', ';
+			$result.=$langs->trans("BankLineConciliated").': ';
+	    	$result.=yn($this->rappro);
+	    	$result.=')';			
+		}
+		
 		return $result;
 	}
 }
