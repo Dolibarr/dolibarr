@@ -18,11 +18,10 @@
  */
 
 /**
-   \file       	htdocs/compta/deplacement/fiche.php
-   \brief      	Page fiche d'un deplacement
-   \version		$Id$
-*/
-
+ *  \file       	htdocs/compta/deplacement/fiche.php
+ *  \brief      	Page fiche d'un deplacement
+ *  \version		$Id$
+ */
 require("./pre.inc.php");
 
 $langs->load("trips");
@@ -51,18 +50,18 @@ if ($_POST["action"] == 'add' && $user->rights->deplacement->creer)
 {
 	if (! $_POST["cancel"])
 	{
-	 	$deplacement = new Deplacement($db);
+		$deplacement = new Deplacement($db);
 
 		$deplacement->date = dolibarr_mktime(12, 0, 0,
-						$_POST["remonth"],
-						$_POST["reday"],
-						$_POST["reyear"]);
+		$_POST["remonth"],
+		$_POST["reday"],
+		$_POST["reyear"]);
 
 		$deplacement->km = $_POST["km"];
 		$deplacement->type = $_POST["type"];
 		$deplacement->socid = $_POST["socid"];
 		$deplacement->fk_user = $_POST["fk_user"];
-		
+
 		$id = $deplacement->create($user);
 
 		if ($id > 0)
@@ -89,18 +88,17 @@ if ($_POST["action"] == 'update' && $user->rights->deplacement->creer)
 	{
 		$deplacement = new Deplacement($db);
 		$result = $deplacement->fetch($_POST["id"]);
-		
+
 		$deplacement->date = dolibarr_mktime(12, 0 , 0,
-					$_POST["remonth"],
-					$_POST["reday"],
-					$_POST["reyear"]);
-		
-		$deplacement->km     = $_POST["km"];
-		$deplacement->type   = $_POST["type"];
+		$_POST["remonth"],
+		$_POST["reday"],
+		$_POST["reyear"]);
+		$deplacement->km      = $_POST["km"];
+		$deplacement->type    = $_POST["type"];
 		$deplacement->fk_user = $_POST["fk_user"];
-		
+		$deplacement->socid   = $_POST["socid"];
 		$result = $deplacement->update($user);
-		
+
 		if ($result > 0)
 		{
 			Header("Location: fiche.php?id=".$_POST["id"]);
@@ -129,144 +127,163 @@ $html = new Form($db);
  */
 if ($_GET["action"] == 'create')
 {
-  print_fiche_titre($langs->trans("NewTrip"));
+	print_fiche_titre($langs->trans("NewTrip"));
 
 	if ($mesg) print $mesg."<br>";
-  
-  print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
-  print '<input type="hidden" name="action" value="add">';
-	
-  print '<table class="border" width="100%">';
 
-  print "<tr>";
-  print '<td width="25%">'.$langs->trans("CompanyVisited").'</td><td>';
-  print $html->select_societes($_GET["socid"],'socid','',1);
-  print '</td></tr>';
+	print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
+	print '<input type="hidden" name="action" value="add">';
 
-  print "<tr>";
-  print '<td>'.$langs->trans("Type").'</td><td>';
-  print $html->select_type_fees($_GET["type"],'type',1);
-  print '</td></tr>';
-  
-  print "<tr>";
-  print '<td>'.$langs->trans("Person").'</td><td>';
-  print $html->select_users($_GET["fk_user"],'fk_user',1);
-  print '</td></tr>';
-  
-  print "<tr>";
-  print '<td>'.$langs->trans("Date").'</td><td>';
-  print $html->select_date('','','','','','add');
-  print '</td></tr>';
+	print '<table class="border" width="100%">';
 
-  print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value=""></td></tr>';
-  print '<tr><td colspan="2" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-  print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-  print '</table>';
-  print '</form>';
+	print "<tr>";
+	print '<td width="25%">'.$langs->trans("CompanyVisited").'</td><td>';
+	print $html->select_societes($_GET["socid"],'socid','',1);
+	print '</td></tr>';
+
+	print "<tr>";
+	print '<td>'.$langs->trans("Type").'</td><td>';
+	print $html->select_type_fees($_GET["type"],'type',1);
+	print '</td></tr>';
+
+	print "<tr>";
+	print '<td>'.$langs->trans("Person").'</td><td>';
+	print $html->select_users($_GET["fk_user"],'fk_user',1);
+	print '</td></tr>';
+
+	print "<tr>";
+	print '<td>'.$langs->trans("Date").'</td><td>';
+	print $html->select_date('','','','','','add');
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" size="10" value=""></td></tr>';
+	print '<tr><td colspan="2" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+	print '</table>';
+	print '</form>';
 }
 else
 {
-  if ($id)
-    {
-      $deplacement = new Deplacement($db);
-      $result = $deplacement->fetch($id);
-      if ($result)
+	if ($id)
 	{
+		$deplacement = new Deplacement($db);
+		$result = $deplacement->fetch($id);
+		if ($result)
+		{
 
-      if ($mesg) print $mesg."<br>";
-		
-	  if ($_GET["action"] == 'edit')
-	    {
-          $h=0;
+			if ($mesg) print $mesg."<br>";
 
-          $head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
-          $head[$h][1] = $langs->trans("TripCard");
+			if ($_GET["action"] == 'edit')
+			{
+				$soc = new Societe($db);
+				$soc->fetch($deplacement->socid);
 
-          dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").' '.$deplacement->id);
+				$h=0;
 
-	      print "<form name='update' action=\"fiche.php\" method=\"post\">\n";
-	      print '<input type="hidden" name="action" value="update">';
-	      print '<input type="hidden" name="id" value="'.$id.'">';
+				$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
+				$head[$h][1] = $langs->trans("Card");
 
-	      print '<table class="border" width="100%">';
+				dolibarr_fiche_head($head, $hselected, $langs->trans("TripCard"));
 
-	      $soc = new Societe($db);
-	      $soc->fetch($deplacement->socid);
+				print "<form name='update' action=\"fiche.php\" method=\"post\">\n";
+				print '<input type="hidden" name="action" value="update">';
+				print '<input type="hidden" name="id" value="'.$id.'">';
 
-	      print "<tr>";
-	      print '<td width="20%">'.$langs->trans("CompanyVisited").'</td><td>';
-	      print $html->select_societes($soc->id,'socid','',1);
-	      print '</td></tr>';
+				print '<table class="border" width="100%">';
 
-		  print "<tr>";
-		  print '<td>'.$langs->trans("Type").'</td><td>';
-		  print $html->select_type_fees($deplacement->type,'type',1);
-		  print '</td></tr>';
-		  
-		  print "<tr>";
-		  print '<td>'.$langs->trans("Person").'</td><td>';
-		  print $html->select_users($deplacement->fk_user,'fk_user',1);
-		  print '</td></tr>';
-		  
-  		  print '<tr><td>'.$langs->trans("Date").'</td><td>';
-	      print $html->select_date($deplacement->date,'','','','','update');
-	      print '</td></tr>';
-	      print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
+				print "<tr>";
+				print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
+				print $deplacement->ref;
+				print '</td></tr>';
 
-	      print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-	      print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
-	      print '</table>';
-	      print '</form>';
+				print "<tr>";
+				print '<td>'.$langs->trans("CompanyVisited").'</td><td>';
+				print $html->select_societes($soc->id,'socid','',1);
+				print '</td></tr>';
 
-	      print '</div>';
-	    }
-	  else
-	    {
-          $h=0;
+				print "<tr>";
+				print '<td>'.$langs->trans("Type").'</td><td>';
+				print $html->select_type_fees($deplacement->type,'type',1);
+				print '</td></tr>';
 
-          $head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
-          $head[$h][1] = $langs->trans("TripCard");
+				print "<tr>";
+				print '<td>'.$langs->trans("Person").'</td><td>';
+				print $html->select_users($deplacement->fk_user,'fk_user',1);
+				print '</td></tr>';
 
-          dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").' '.$deplacement->id);
+				print '<tr><td>'.$langs->trans("Date").'</td><td>';
+				print $html->select_date($deplacement->date,'','','','','update');
+				print '</td></tr>';
+				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td><input name="km" class="flat" size="10" value="'.$deplacement->km.'"></td></tr>';
 
-    	  /*
-    	   * Confirmation de la suppression du déplacement
-    	   */
-          if ($_GET["action"] == 'delete')
-    	    {
+				print '<tr><td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+				print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
+				print '</table>';
+				print '</form>';
 
-                $html = new Form($db);
-                $html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
+				print '</div>';
+			}
+			else
+			{
+				$h=0;
 
-                print '<br>';
-    	    }
+				$head[$h][0] = DOL_URL_ROOT."/compta/deplacement/fiche.php?id=$deplacement->id";
+				$head[$h][1] = $langs->trans("Card");
 
-	      $soc = new Societe($db);
-	      $soc->fetch($deplacement->socid);
+				dolibarr_fiche_head($head, $hselected, $langs->trans("TripCard"));
 
-	      print '<table class="border" width="100%">';
-	      print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
-	      print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
-	      print '<tr><td>'.$langs->trans("Person").'</td><td>';
-	      $userfee=new User($db,$deplacement->fk_user);
-	      $userfee->fetch();
-	      print $userfee->getNomUrl(1);
-	      print '</td></tr>';
-	      print '<tr><td>'.$langs->trans("Date").'</td><td>';
-	      print dolibarr_print_date($deplacement->date);
-	      print '</td></tr>';
-	      print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td>'.$deplacement->km.'</td></tr>';
-	      print "</table>";
+				/*
+				 * Confirmation de la suppression du déplacement
+				 */
+				if ($_GET["action"] == 'delete')
+				{
 
-	      print '</div>';
-	    }
+					$html = new Form($db);
+					$html->form_confirm("fiche.php?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
 
+					print '<br>';
+				}
+
+				$soc = new Societe($db);
+				if ($deplacement->socid) $soc->fetch($deplacement->socid);
+
+				print '<table class="border" width="100%">';
+
+				print "<tr>";
+				print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
+				print $deplacement->ref;
+				print '</td></tr>';
+				
+				print '<tr><td width="20%">'.$langs->trans("CompanyVisited").'</td>';
+				print '<td>';
+				if ($soc->id) print $soc->getNomUrl(1);
+				print '</td></tr>';
+
+				print '<tr><td>'.$langs->trans("Type").'</td><td>'.$langs->trans($deplacement->type).'</td></tr>';
+				
+				print '<tr><td>'.$langs->trans("Person").'</td><td>';
+				$userfee=new User($db,$deplacement->fk_user);
+				$userfee->fetch();
+				print $userfee->getNomUrl(1);
+				print '</td></tr>';
+				
+				print '<tr><td>'.$langs->trans("Date").'</td><td>';
+				print dolibarr_print_date($deplacement->date);
+				print '</td></tr>';
+				
+				print '<tr><td>'.$langs->trans("FeesKilometersOrAmout").'</td><td>'.$deplacement->km.'</td></tr>';
+				
+				print "</table>";
+
+				print '</div>';
+			}
+
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
 	}
-      else
-	{
-	  dolibarr_print_error($db);
-	}
-    }
 }
 
 
@@ -279,8 +296,8 @@ print '<div class="tabsAction">';
 
 if ($_GET["action"] != 'create' && $_GET["action"] != 'edit')
 {
-  print '<a class="butAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
-  print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+	print '<a class="butAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+	print '<a class="butActionDelete" href="fiche.php?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
 }
 
 print '</div>';
