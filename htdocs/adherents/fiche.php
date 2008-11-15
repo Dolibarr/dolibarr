@@ -846,9 +846,14 @@ if ($rowid && $action != 'edit')
     // Confirmation de la Resiliation
     if ($action == 'resign')
     {
-		// Cree un tableau formulaire
+		$langs->load("mails");
+		
+    	// Cree un tableau formulaire
 		$formquestion=array();
-		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $langs->trans("SendAnEMailToMember",$adh->email),  'value' => 'false');
+		$label=$langs->trans("SendAnEMailToMember").' ('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
+		$label.=$langs->trans("MailRecipient").': <b>'.$adh->email.'</b>';
+		$label.=')';
+		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?'true':'false'));
 
 		$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
         print '<br>';

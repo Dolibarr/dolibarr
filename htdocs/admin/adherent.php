@@ -94,7 +94,7 @@ print "</tr>\n";
 $var=true;
 $form = new Form($db);
 
-// Mail obligatoire
+// Mail required for members
 $var=!$var;
 print '<form action="adherent.php" method="POST">';
 print '<input type="hidden" name="action" value="update">';
@@ -106,6 +106,22 @@ print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print "</td></tr>\n";
 print '</form>';
+
+// Send mail information is on by default
+$var=!$var;
+print '<form action="adherent.php" method="POST">';
+print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+print '<input type="hidden" name="constname" value="ADHERENT_DEFAULT_SENDINFOBYMAIL">';
+print "<tr $bc[$var] class=value><td>".$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
+print $form->selectyesno('constvalue',$conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL,1);
+print '</td><td align="center" width="80">';
+print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print "</td></tr>\n";
+print '</form>';
+
+
+
 
 // Insertion cotisations dans compte financier
 $var=!$var;

@@ -474,7 +474,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	}
 	else
 	{
-		$s1='<input name="sendmail" type="checkbox"'.($conf->global->ADHERENT_MAIL_COTIS?' checked="true"':'').'>';
+		$s1='<input name="sendmail" type="checkbox"'.($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?' checked="true"':'').'>';
 		$s2=$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b><br>';
 		$s2.=$langs->trans("MailRecipient").': <b>'.$adh->email.'</b>';
 		//$s2.='<br>'.$langs->trans("Content").': '.nl2br($conf->global->ADHERENT_MAIL_COTIS);

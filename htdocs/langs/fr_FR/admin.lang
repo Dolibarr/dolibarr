@@ -707,6 +707,7 @@ MembersSetup=Configuration du module Adhérents
 MemberMainOptions=Options principales
 AddSubscriptionIntoAccount=Enregistrer cotisations dans compte bancaire ou caisse, du module banque
 AdherentMailRequired=EMail obligatoire pour créer un nouvel adhérent
+MemberSendInformationByMailByDefault=Case à cocher pour envoyer mail de confirmation aux adhérents est à oui par défaut
 ##### LDAP setup #####
 LDAPSetup=Configuration du module LDAP
 LDAPGlobalParameters=Paramètres globals
