@@ -19,11 +19,10 @@
  */
 
 /**
-        \file       htdocs/comm/index.php
-        \ingroup    commercial
-        \brief      Page acceuil de la zone commercial cliente
-        \version    $Id$
-*/
+ *       \file       htdocs/compta/stats/comm.php
+ *       \ingroup    commercial
+ *       \version    $Id$
+ */
  
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");

@@ -484,9 +484,9 @@ class MenuLeft {
 				/*
 				if ($conf->compta->enabled)
 				{
-					$newmenu->add(DOL_URL_ROOT."/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Ventilation"),0,$user->rights->compta->ventilation->lire);
-					if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("A ventiler"),1,$user->rights->compta->ventilation->lire);
-					if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Ventilées"),1,$user->rights->compta->ventilation->lire);
+					$newmenu->add(DOL_URL_ROOT."/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Dispatch"),0,$user->rights->compta->ventilation->lire);
+					if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("ToDispatch"),1,$user->rights->compta->ventilation->lire);
+					if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Dispatched"),1,$user->rights->compta->ventilation->lire);
 					if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Setup"),1,$user->rights->compta->ventilation->parametrer);
 					if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/param/comptes/fiche.php?action=create",$langs->trans("New"),2,$user->rights->compta->ventilation->parametrer);
 					if ($leftmenu=="ventil") $newmenu->add(DOL_URL_ROOT."/compta/param/comptes/liste.php",$langs->trans("List"),2,$user->rights->compta->ventilation->parametrer);

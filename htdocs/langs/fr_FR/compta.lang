@@ -100,3 +100,6 @@ RulesVATDue=- Pour les services, le rapport inclut les TVA des factures dues, pa
 OptionVatInfoModuleComptabilite=Remarque : Pour les biens matériels, il faudrait utiliser la date de livraison pour être plus juste.
 PercentOfInvoice=%%/facture
 OrderStats=Statistiques sur les commandes
+Dispatch=Ventilation
+Dispatched=Ventilés
+ToDispatch=A ventiler

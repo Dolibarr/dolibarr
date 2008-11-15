@@ -158,7 +158,7 @@ print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("User"),$_SERVER["PHP_SELF"],"name","",'&amp;year='.($year).'&modecompta='.$modecompta,"",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Percentage"),$_SERVER["PHP_SELF"],"amount_ttc","",'&amp;year='.($year).'&modecompta='.$modecompta,'align="right"',$sortfield,$sortorder);
-if ($conf->global->MAIN_FEATURES_LEVEL == 2) print_liste_field_titre($langs->trans("OrderStats"),$_SERVER["PHP_SELF"],"","","",'align="center" width="20%"');
+if ($conf->commande->enabled && $conf->global->MAIN_FEATURES_LEVEL == 2) print_liste_field_titre($langs->trans("OrderStats"),$_SERVER["PHP_SELF"],"","","",'align="center" width="20%"');
 print "</tr>\n";
 $var=true;
 
@@ -199,7 +199,7 @@ if (sizeof($amount))
         print "<td>".$linkname."</td>\n";
         print '<td align="right">'.price($amount[$key]).'</td>';
         print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal,2).'%' : '&nbsp;').'</td>';
-        if ($conf->global->MAIN_FEATURES_LEVEL == 2) 
+        if ($conf->commande->enabled && $conf->global->MAIN_FEATURES_LEVEL == 2) 
         {
         	if($key>0){
            		print '<td align="center"><a href="comm.php?id='.$key.'">'.img_picto($langs->trans("Show"),"vcard").'</a></td>';
@@ -213,7 +213,7 @@ if (sizeof($amount))
 
     // Total
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($catotal).'</td><td>&nbsp;</td>';
-    if ($conf->global->MAIN_FEATURES_LEVEL == 2) print '<td>&nbsp;</td>';
+    if ($conf->commande->enabled && $conf->global->MAIN_FEATURES_LEVEL == 2) print '<td>&nbsp;</td>';
     print '</tr>';
 
     $db->free($result);

@@ -19,10 +19,10 @@
  */
 
 /**
-   \file		htdocs/lib/admin.lib.php
-   \brief		Library of admin functions
-   \version		$Id$
-*/
+ *	\file			htdocs/lib/admin.lib.php
+ *  \brief			Library of admin functions
+ *  \version		$Id$
+ */
 
 
 /**
