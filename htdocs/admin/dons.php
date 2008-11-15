@@ -17,11 +17,11 @@
  */
 
 /**	
-        \file       htdocs/admin/dons.php
-		\ingroup    dons
-		\brief      Page d'administration/configuration du module Dons
-		\version    $Id$
-*/
+ *      \file       htdocs/admin/dons.php
+ *		\ingroup    dons
+ *		\brief      Page d'administration/configuration du module Dons
+ *		\version    $Id$
+ */
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
@@ -57,7 +57,7 @@ if ($_GET["action"] == 'specimen')
 
 		if ($obj->write_file($don,$langs) > 0)
 		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=don&file=SPECIMEN.html");
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
 			return;
 		}
 		else
@@ -85,7 +85,7 @@ if ($_GET["action"] == 'setdoc')
     // On active le modele
     $type='donation';
     $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+    $sql_del.= " WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
     $result1=$db->query($sql_del);
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
     $result2=$db->query($sql);
