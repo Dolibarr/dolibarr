@@ -89,7 +89,7 @@ else
 {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-     * vieilles versions, ils n'�taient pas li�s via paiement_facture. On les ajoute plus loin)
+     * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
      */
 	$sql = "SELECT u.rowid as rowid, u.name as name, u.firstname as firstname, sum(pf.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."user as u" ;
@@ -194,7 +194,7 @@ if (sizeof($amount))
             $linkname='<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowUser"),'user').' '.$fullname.'</a>';
         }
         else {
-            $linkname=$langs->trans("PaymentsLinkedToNoUsers");
+            $linkname=$langs->trans("PaymentsNotLinkedToUser");
         }
         print "<td>".$linkname."</td>\n";
         print '<td align="right">'.price($amount[$key]).'</td>';

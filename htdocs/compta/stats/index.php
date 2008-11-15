@@ -83,7 +83,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 } else {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-     * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
+     * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
      */
 	$sql  = "SELECT sum(pf.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";

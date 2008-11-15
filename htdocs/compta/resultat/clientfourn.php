@@ -90,7 +90,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 } else {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-     * vieilles versions, ils n'�taient pas li�s via paiement_facture. On les ajoute plus loin)
+     * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
      */
 	$sql = "SELECT s.nom as nom, s.rowid as socid, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
@@ -149,7 +149,7 @@ if ($modecompta != 'CREANCES-DETTES')
                 $var=!$var;
                     
                 print "<tr $bc[$var]><td>&nbsp;</td>";
-                print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (anciens paiements li�s � aucune facture)\n";
+                print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (".$langs->trans("PaymentsNotLinkedToInvoice").")\n";
                 
                 if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
                 print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";

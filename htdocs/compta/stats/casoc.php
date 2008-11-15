@@ -84,7 +84,7 @@ else
 {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
-     * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
+     * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
      */
 	$sql = "SELECT s.rowid as socid, s.nom as name, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
@@ -185,7 +185,7 @@ if (sizeof($amount))
             $linkname='<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$key.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$fullname.'</a>';
         }
         else {
-            $linkname=$langs->trans("Autres paiements liés à aucune facture, donc aucune société");
+            $linkname=$langs->trans("PaymentsNotLinkedToInvoice");
         }
         print "<td>".$linkname."</td>\n";
         print '<td align="right">'.price($amount[$key]).'</td>';
