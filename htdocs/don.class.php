@@ -24,12 +24,14 @@
  *		\version    $Id$
  */
 
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+
 
 /**
  *      \class      Don
  *		\brief      Classe permettant la gestion des dons
  */
-class Don
+class Don extends CommonObject
 {
 	var $db;
 	var $error;
@@ -358,18 +360,18 @@ class Don
 		if ( $this->db->query( $sql) )
 		{
 			if ( $this->db->affected_rows() )
-	  {
-	  	return 1;
-	  }
-	  else
-	  {
-	  	return -1;
-	  }
+			  {
+			  	return 1;
+			  }
+			  else
+			  {
+			  	return -1;
+			  }
 		}
 		else
 		{
 			dolibarr_print_error($this->db);
-	  return -1;
+	 	 return -1;
 		}
 	}
 
@@ -539,5 +541,29 @@ class Don
 		return $result;
 	}
 
+	
+	/**
+	 *	\brief      Return clicable name (with picto eventually)
+	 *	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *	\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+
+		$result='';
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/dons/fiche.php?rowid='.$this->id.'">';
+		$lienfin='</a>';
+
+		$picto='generic';
+
+		$label=$langs->trans("ShowDonation").': '.$this->ref;
+
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}	
 }
 ?>

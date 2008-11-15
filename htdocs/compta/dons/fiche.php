@@ -273,7 +273,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
     $hselected=$h;
     $h++;
     
-    dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
+    dolibarr_fiche_head($head, $hselected, $langs->trans("Ref"));
     
     print '<form name="update" action="fiche.php" method="post">';
     print '<table class="border" width="100%">';
@@ -281,16 +281,24 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="rowid" value="'.$don->id.'">';
     
+    // Ref
+    print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
+    print $don->getNomUrl();
+    print '</td>';
+	print '</tr>';    
+
+	// Date
     print "<tr>".'<td>'.$langs->trans("Date").'</td><td>';
     $html->select_date($don->date,'','','','',"update");
     print '</td>';
-    
-    $nbrows=12;
+
+	$nbrows=12;
     if ($conf->projet->enabled) $nbrows++;
     
     print '<td rowspan="'.$nbrows.'" valign="top">'.$langs->trans("Comments").' :<br>';
     print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\">".$don->note."</textarea></td></tr>";
     
+	// Project    
     if ($conf->projet->enabled)
     {
         print "<tr><td>".$langs->trans("Project")."</td><td><select name=\"projetid\">\n";
@@ -314,7 +322,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
         print "</select><br>";
         print "</td></tr>\n";
     }
-    
+
     print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
     print $html->selectyesno("public",1,1);
     print "</td>";
@@ -370,16 +378,24 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
     print "<form action=\"fiche.php\" method=\"post\">";
     print '<table class="border" width="100%">';
     
+    // Ref
+    print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
+    print $don->getNomUrl();
+    print '</td>';
+	print '</tr>';
+	    
+	// Date
     print "<tr><td>".$langs->trans("Date")."</td><td>";
     print dolibarr_print_date($don->date,"day");
     print "</td>";
-    
+	
     $nbrows=12;
     if ($conf->projet->enabled) $nbrows++;
     
     print '<td rowspan="'.$nbrows.'" valign="top" width="50%">'.$langs->trans("Comments").' :<br>';
     print nl2br($don->note).'</td></tr>';
     
+    // Project
     if ($conf->projet->enabled)
     {
         print "<tr>".'<td>'.$langs->trans("Project").'</td><td>'.$don->projet.'</td></tr>';
