@@ -18,16 +18,16 @@
  */
 
 /**
-        \file       htdocs/compta/clients.php
-        \ingroup    compta
-        \brief      Page accueil des clients
-        \version    $Id$
-*/
- 
+ \file       htdocs/compta/clients.php
+ \ingroup    compta
+ \brief      Page accueil des clients
+ \version    $Id$
+ */
+
 require_once("./pre.inc.php");
 
 if (! $user->rights->societe->lire)
-  accessforbidden();
+accessforbidden();
 
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
@@ -49,22 +49,22 @@ $pagenext = $page + 1;
 llxHeader();
 
 // Sécurité accés client
-if ($user->societe_id > 0) 
+if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
 }
 
 if ($action == 'attribute_prefix')
 {
-  $societe = new Societe($db, $socid);
-  $societe->attribute_prefix($db, $socid);
+	$societe = new Societe($db, $socid);
+	$societe->attribute_prefix($db, $socid);
 }
 
 if ($action == 'note')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$note."' WHERE rowid=".$socid;
-  $result = $db->query($sql);
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$note."' WHERE rowid=".$socid;
+	$result = $db->query($sql);
 }
 
 
@@ -73,18 +73,18 @@ if ($action == 'note')
  *
  */
 if ($mode == 'search') {
-  if ($mode-search == 'soc') {
-    $sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".addslashes(strtolower($socname))."%'";
-  }
-      
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object();
-      $socid = $obj->rowid;
-    }
-    $db->free();
-  }
+	if ($mode-search == 'soc') {
+		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
+		$sql .= " WHERE lower(s.nom) like '%".addslashes(strtolower($socname))."%'";
+	}
+
+	if ( $db->query($sql) ) {
+		if ( $db->num_rows() == 1) {
+			$obj = $db->fetch_object();
+			$socid = $obj->rowid;
+		}
+		$db->free();
+	}
 }
 
 
@@ -104,39 +104,39 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc
 
 if (strlen($stcomm))
 {
-  $sql .= " AND s.fk_stcomm=$stcomm";
+	$sql .= " AND s.fk_stcomm=$stcomm";
 }
 
 if ($socname)
 {
-  $sql .= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
-  $sortfield = "s.nom";
-  $sortorder = "ASC";
+	$sql .= " AND s.nom like '%".addslashes(strtolower($socname))."%'";
+	$sortfield = "s.nom";
+	$sortorder = "ASC";
 }
 
 if ($_GET["search_nom"])
 {
-  $sql .= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
+	$sql .= " AND s.nom like '%".addslashes(strtolower($_GET["search_nom"]))."%'";
 }
 
 if ($_GET["search_compta"])
 {
-  $sql .= " AND s.code_compta like '%".addslashes($_GET["search_compta"])."%'";
+	$sql .= " AND s.code_compta like '%".addslashes($_GET["search_compta"])."%'";
 }
 
 if ($_GET["search_code_client"])
 {
-  $sql .= " AND s.code_client like '%".addslashes($_GET["search_code_client"])."%'";
+	$sql .= " AND s.code_client like '%".addslashes($_GET["search_code_client"])."%'";
 }
 
 if (strlen($begin))
 {
-  $sql .= " AND s.nom like '".addslashes($begin)."'";
+	$sql .= " AND s.nom like '".addslashes($begin)."'";
 }
 
 if ($socid)
 {
-  $sql .= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".$socid;
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -144,91 +144,80 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  
-  if ($action == 'facturer') {
-  	print_barre_liste("Liste des clients facturables", $page, "clients.php","",$sortfield,$sortorder,'',$num);
-  }
-  else {
-  	print_barre_liste($langs->trans("ListOfCustomers"), $page, "clients.php","",$sortfield,$sortorder,'',$num);
-  }
-  
-  print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre">';
+	$num = $db->num_rows();
+	$i = 0;
 
-  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","","",'valign="center"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec",$addu,"",'align="center"',$sortfield,$sortorder);
-  print '<td class="liste_titre">&nbsp;</td>';
-  print "</tr>\n";
-
-  // Lignes des champs de filtre
-  print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-  print '<tr class="liste_titre">';
-
-  print '<td align="left" class="liste_titre">';
-  print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
-
-  print '<td class="liste_titre">&nbsp;</td>';
-
-  print '<td align="left" class="liste_titre">';
-  print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
-  print '</td>';
-
-  print '<td align="left" class="liste_titre">';
-  print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
-  print '</td>';
-
-  print '<td align="right" colspan="2" class="liste_titre">';
-  print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
-  print '</td>';
-  print "</tr>\n";
-  print '</form>';
-
-  $var=True;
-
-  while ($i < min($num,$conf->liste_limit))
-    {
-      $obj = $db->fetch_object();
-      
-      $var=!$var;
-
-      print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->rowid.'">';
-      print img_object($langs->trans("ShowCustomer"),"company");
-      print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->rowid.'">'.$obj->nom.'</a></td>';
-      print '<td>'.$obj->ville.'&nbsp;</td>';
-      print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
-      print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
-      print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
-      print '<td align="center">';
-      if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
-	{
-	  print '<a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->rowid.'">';
-	  print img_folder();
-	  print '</a>';
+	if ($action == 'facturer') {
+		print_barre_liste("Liste des clients facturables", $page, "clients.php","",$sortfield,$sortorder,'',$num);
 	}
-      else
-	{
-	  print "&nbsp;";
+	else {
+		print_barre_liste($langs->trans("ListOfCustomers"), $page, "clients.php","",$sortfield,$sortorder,'',$num);
 	}
 
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre">';
 
-      print "</td></tr>\n";
-      $i++;
-    }
-  print "</table>";
-  $db->free();
+	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec",$addu,"",'align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
+
+	// Lignes des champs de filtre
+	print '<tr class="liste_titre">';
+
+	print '<td align="left" class="liste_titre">';
+	print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+
+	print '<td class="liste_titre">&nbsp;</td>';
+
+	print '<td align="left" class="liste_titre">';
+	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
+	print '</td>';
+
+	print '<td align="left" class="liste_titre">';
+	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
+	print '</td>';
+
+	print '<td align="right" colspan="2" class="liste_titre">';
+	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+	print '</td>';
+	print "</tr>\n";
+
+	$var=True;
+
+	while ($i < min($num,$conf->liste_limit))
+	{
+		$obj = $db->fetch_object();
+
+		$var=!$var;
+
+		print "<tr $bc[$var]>";
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->rowid.'">';
+		print img_object($langs->trans("ShowCustomer"),"company");
+		print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->rowid.'">'.$obj->nom.'</a></td>';
+		print '<td>'.$obj->ville.'&nbsp;</td>';
+		print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
+		print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
+		print '<td align="right">'.dolibarr_print_date($obj->datec).'</td>';
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table>";
+
+	print '</form>';
+	
+	$db->free();
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - 1.46 $');
 ?>

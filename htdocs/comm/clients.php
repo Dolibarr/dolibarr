@@ -101,8 +101,7 @@ if ($result)
 	print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec","",$param,'align="center"',$sortfield,$sortorder);
-	print '<td class="liste_titre">&nbsp;</td>';
+	print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -112,8 +111,8 @@ if ($result)
 	print '<input type="text" class="flat" name="search_ville" value="'.$search_ville.'" size="10">';
 	print '</td><td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_code" value="'.$search_code.'" size="10">';
-	print '</td><td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="center"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
+	print '</td>';
+	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
 	print "</tr>\n";
 
 	$var=True;
@@ -130,19 +129,8 @@ if ($result)
 		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->rowid.'">'.stripslashes($obj->nom).'</a></td>';
 		print '<td>'.$obj->ville.'</td>';
 		print '<td>'.$obj->code_client.'</td>';
-		print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
-		print '<td align="center">';
-		if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
-		{
-			print '<a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->rowid.'">';
-			print img_folder();
-			print '</a>';
-		}
-		else
-		{
-			print "&nbsp;";
-		}
-		print "</td></tr>\n";
+		print '<td align="right">'.dolibarr_print_date($obj->datec).'</td>';
+		print "</tr>\n";
 		$i++;
 	}
 	//print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
