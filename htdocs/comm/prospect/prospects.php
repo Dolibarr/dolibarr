@@ -18,10 +18,10 @@
  */
 
 /**
- \file       htdocs/comm/prospect/prospects.php
- \ingroup    prospect
- \brief      Page de la liste des prospects
- \version    $Id$
+ *	\file       htdocs/comm/prospect/prospects.php
+ *	\ingroup    prospect
+ *	\brief      Page de la liste des prospects
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -354,9 +354,9 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'">';
+	print '<input type="text" class="flat" name="search_nom" size="10" value="'.$_GET["search_nom"].'">';
 	print '</td><td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ville" size="12" value="'.$_GET["search_ville"].'">';
+	print '<input type="text" class="flat" name="search_ville" size="8" value="'.$_GET["search_ville"].'">';
 	print '</td>';
  	print '<td class="liste_titre">';
     print '&nbsp;';
@@ -399,8 +399,8 @@ if ($resql)
     print '</td>';
  	
  	// Print the search button
-    print '<td class="liste_titre" colspan="3" align="right">';
-	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+    print '<td colspan="3" class="liste_titre" align="right">';
+	print '<input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '</td>';
 
 	print "</tr>\n";
@@ -432,7 +432,7 @@ if ($resql)
 		print $prospectstatic->LibLevel($obj->fk_prospectlevel);
 		print "</td>";
 		// Statut
-		print "<td align=\"center\">";
+		print '<td align="center" nowrap="nowrap">';
 		print $prospectstatic->LibStatut($obj->fk_stcomm,2);
 		print "</td>";
 

@@ -214,7 +214,7 @@ a.tmenu:visited
   font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
 }
-a.tmenu#sel
+a.tmenusel
 {
   color: #234046;
   padding: 0px 5px 0px 5px;
@@ -249,7 +249,7 @@ a.tmenu:active
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 0px 0px;
   text-decoration: none;
-    font-size: 12px;
+  font-size: 12px;
   font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
   background:#F4F4F4;
@@ -271,6 +271,9 @@ font.tmenudisabled
 
 
 /* Pour menu TOP auguria uniquement */
+* html div.tmenu li a{
+	width:40px;
+}
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -280,51 +283,76 @@ div.tmenu ul {
 div.tmenu li {
 	float: left;
 	border-right: solid 1px #7699A9;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top: 2px;
 	height: 18px;
 	position:relative;
 	display: block;
 	margin:0;
 	padding:0;
+	font-weight: normal;
 	}
-div.tmenu li a{
+div.tmenu li a
+{
   	font-size: 13px;
 	color:#000000;
 	text-decoration:none;
-	padding-left:10px;
-	padding-right:10px;
+	padding-left:5px;
+	padding-right:5px;
 	padding-top: 2px;
 	height: 18px;
 	display: block;
+	margin:0;
+	padding:0;
 	font-weight: normal;
 }
-* html div.tmenu li a{
-	width:40px;
-}
-div.tmenu li a#sel
+div.tmenu li a.tmenusel
 {
 	background:#F4F4F4;
 	color:#000000;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top: 2px;
+	height: 18px;
 	font-weight: normal;
 }
 div.tmenu li a:visited
 {
 	color:#000000;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top: 2px;
+	height: 18px;
 	font-weight: normal;
 }
 div.tmenu li a:hover
 {
 	background:#F4F4F4;
 	color:#000000;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top: 2px;
+	height: 18px;
 	font-weight: normal;
+	border-bottom: 0px;
 }
 div.tmenu li a:active
 {
 	color:#4F9EC9;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top: 2px;
+	height: 18px;
 	font-weight: normal;
 }
 div.tmenu li a:link
 {
-	
+	color:#000000;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top: 2px;
+	height: 18px;
 	font-weight: normal;
 }
 

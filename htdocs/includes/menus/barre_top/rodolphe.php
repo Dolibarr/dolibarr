@@ -19,14 +19,13 @@
 
 /**
         \file       htdocs/includes/menus/barre_top/rodolphe.php
-        \brief      Gestionnaire par d�faut du menu du haut
+        \brief      Gestionnaire menu haut Rodolphe
 		\version	$Id$
         
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
         \remarks    Toutes les entrees de menu e faire apparaitre dans la barre du haut
+        \remarks    Toutes les entetes de menu a faire apparaitre dans la barre du haut
         \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
-        \remarks    On peut eventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entree du menu qui est selectionnee.
 */
 
 

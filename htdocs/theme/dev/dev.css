@@ -74,7 +74,7 @@ a.tmenu
   font-size:11px;
 }
 
-a.tmenu#sel
+a.tmenusel
 { 
   border-bottom:4px solid #9d9da1;	
   color: #000000;
@@ -89,6 +89,10 @@ a.tmenu:hover
 
 
 /* Pour menu TOP auguria uniquement */
+* html div.tmenu li a
+{
+	width:40px;
+}
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -115,10 +119,7 @@ div.tmenu li a{
 	display: block;
 	font-weight: normal;
 }
-* html div.tmenu li a{
-	width:40px;
-}
-div.tmenu li a#sel
+div.tmenu li a.tmenusel
 {
 	background:#FFFFFF;
 	color:#000000;
@@ -229,7 +230,7 @@ a.vsmenu:hover
 {
   border-color:gray;
   color: #000000;
-  }
+}
 
 font.vmenudisabled
 {
@@ -247,6 +248,7 @@ font.vsmenudisabled
   color: #A0A0A0;
   font-weight:bold;
   font-size:11px;
+  cursor: not-allowed;
 }
 
 
@@ -294,7 +296,8 @@ table.liste td
 /***** Styles par défaut *****/
 input
 { 
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: 11px;
+    font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #9CACAB;
     padding: 0px 0px 0px 0px;
@@ -302,22 +305,34 @@ input
 }
 input.flat
 { 
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: 11px;
+    font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #9CACAB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: 11px;
+    font-family: helvetica, verdana, arial, sans-serif;
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea.flat
 { 
-    font: 12px helvetica, verdana, arial, sans-serif;
-    border: 1px solid #8C9C9B;
+    font-size: 11px;
+    font-family: helvetica, verdana, arial, sans-serif;
+	border: 1px solid #8C9C9B;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+select.flat
+{
+	font-size: 11px;
+	font-family: helvetica, verdana, arial, sans-serif;
+	font-weight: normal;
+    border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }

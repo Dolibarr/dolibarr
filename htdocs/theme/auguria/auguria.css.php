@@ -57,7 +57,6 @@ a:active  {font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   {font-weight: bold; color: #000000; text-decoration: none; }
 input
 {
-
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -65,14 +64,12 @@ input
 }
 input.flat
 {
-
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -80,7 +77,6 @@ textarea  {
 }
 textarea.flat
 {
-
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -88,6 +84,8 @@ textarea.flat
 }
 select.flat
 {
+    font-size: 12px;
+	font-family: helvetica, verdana, arial, sans-serif;
 	font-weight: normal;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -156,7 +154,7 @@ div.tmenu
 }
 div.tmenu  .tmenudisabled
 {
-	color: #757575;
+	color: #9FCED9;
 	font-size: 12px;
 	padding-left: 6px;
 	padding-right: 6px;
@@ -174,8 +172,8 @@ a.tmenu:link
 {
   	color:#FFFFFF;
 	text-decoration:none;
-	padding-left:10px;
-	padding-right:10px;
+	padding-left:5px;
+	padding-right:5px;
 	padding-top: 2px;
 	height: 21px;
 	font-weight: normal;
@@ -185,19 +183,19 @@ a.tmenu:visited
 {
   	color:#FFFFFF;
 	text-decoration:none;
-	padding-left:10px;
-	padding-right:10px;
+	padding-left:5px;
+	padding-right:5px;
 	padding-top: 2px;
 	height: 21px;
 	font-weight: normal;
 }
 
-a.tmenu#sel
+a.tmenusel
 {
 	color:#234046;
 	text-decoration:none;
-	padding-left:10px;
-	padding-right:10px;
+	padding-left:5px;
+	padding-right:5px;
 	padding-top: 2px;
 	height: 21px;
 	font-weight: normal;
@@ -207,8 +205,8 @@ a.tmenu:hover
 {
 	color:#234046;
 	text-decoration:none;
-	padding-left:10px;
-	padding-right:10px;
+	padding-left:5px;
+	padding-right:5px;
 	padding-top: 2px;
 	height: 21px;
 	font-weight: normal;
@@ -217,25 +215,30 @@ a.tmenu:hover
 
 a.tmenu:active
 {
+	color:#234046;
 	background:#4F9EC9;
 	text-decoration:none;
-	padding-left:10px;
-	padding-right:10px;
+	padding-left:5px;
+	padding-right:5px;
 	padding-top: 2px;
 	height: 21px;
-  font-weight: normal;
+    font-weight: normal;
 }
 
 font.tmenudisabled
 {
-  color: #93a5aa;
-  font-weight: normal;
-  font-size: 12px;
-  cursor: not-allowed;  
+    color: #9FCED9;
+    font-weight: normal;
+    font-size: 12px;
+    cursor: not-allowed;  
 }
 
 
 /* Pour menu TOP auguria uniquement */
+* html div.tmenu li a
+{
+	width:40px;
+}
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -250,7 +253,8 @@ div.tmenu li {
 	margin:0;
 	padding:0;
 }
-div.tmenu li a{
+div.tmenu li a
+{
   	font-size: 13px;
 	color:#FFFFFF;
 	text-decoration:none;
@@ -261,18 +265,8 @@ div.tmenu li a{
 	display: block;
 	font-weight: normal;
 }
-* html div.tmenu li a{
-	width:40px;
-}
-div.tmenu li a#sel
-{
-	background:#FFFFFF;
-	color:#4F9EC9;
-	font-weight: normal;
-}
 div.tmenu li a:visited
 {
-	color:#FFFFFF;
 	font-weight: normal;
 }
 div.tmenu li a:hover
@@ -288,6 +282,12 @@ div.tmenu li a:active
 }
 div.tmenu li a:link
 {
+	font-weight: normal;
+}
+div.tmenu li a.tmenusel
+{
+	background:#FFFFFF;
+	color:#4F9EC9;
 	font-weight: normal;
 }
 
@@ -331,13 +331,13 @@ a.vmenu:link        { font-size:11px; text-align:left; font-weight: bold; color:
 a.vmenu:visited     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
 a.vmenu:active      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
 a.vmenu:hover       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1px 1px 1px 4px; }
-font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; margin: 1px 1px 1px 4px; }
+font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #9FCED9; margin: 1px 1px 1px 4px; }
 
 a.vsmenu:link       { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 4px; }
 a.vsmenu:visited    { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 4px; }
 a.vsmenu:active     { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); margin: 1px 1px 1px 4px; }
 a.vsmenu:hover      { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); margin: 1px 1px 1px 4px; }
-font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #757575; margin: 1px 1px 1px 4px; }
+font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #9FCED9; margin: 1px 1px 1px 4px; }
 
 a.help:link         { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
@@ -754,7 +754,7 @@ white-space: nowrap;
 td.liste_titre_sel
 {
 background: #68ACCF;
-color: #FFFFFF;
+color: #556262;
 font-size: 12px;
 font-family: arial, helvetica, verdana, sans-serif;
 font-weight: normal;
@@ -764,8 +764,7 @@ white-space: normal;
   -moz-border-radius-topright:6px;
 }
 input.liste_titre {
-background: #7699A9;
-background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/liste_titre.png' ?>);
+background: #68ACCF;
 border: 0px;
 }
 

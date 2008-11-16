@@ -158,7 +158,7 @@ if ($conf->fournisseur->enabled)
             {
                 $var=!$var;
                 $obj = $db->fetch_object($resql);
-                print '<tr $bc[$var]><td  nowrap="nowrap">';
+                print '<tr '.$bc[$var].'><td  nowrap="nowrap">';
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
 				print $commandestatic->getNomUrl(1,'',16);

@@ -1806,7 +1806,7 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 	global $conf;
 	//print "$name, $file, $field, $begin, $options, $td, $sortfield, $sortorder<br>\n";
 
-	// Le champ de tri est mis en �vidence.
+	// Le champ de tri est mis en evidence.
 	// Exemple si (sortfield,field)=("nom","xxx.nom") ou (sortfield,field)=("nom","nom")
 	if ($sortfield == $field || $sortfield == ereg_replace("^[^\.]+\.","",$field))
 	{

@@ -216,7 +216,7 @@ a.tmenu:visited
   font-weight: bold;
   font-size:12px;
 }
-a.tmenu#sel
+a.tmenusel
 { 
   color: #202020;
   background: #bbbbcc;
@@ -239,13 +239,18 @@ font.tmenudisabled
   color: #93a5aa;
   padding: 0px 8px;
   margin: 0px 0px 6px 0px;
-  border: 1px solid #b3c5cc;
+  border: 0px;
   font-weight:bold;
   font-size:12px;
+  cursor: not-allowed;
 }
 
 
 /* Pour menu TOP auguria uniquement */
+* html div.tmenu li a
+{
+	width:40px;
+}
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -272,10 +277,7 @@ div.tmenu li a{
 	display: block;
 	font-weight: normal;
 }
-* html div.tmenu li a{
-	width:40px;
-}
-div.tmenu li a#sel
+div.tmenu li a.tmenusel
 {
 	background:#FFFFFF;
 	color:#000000;

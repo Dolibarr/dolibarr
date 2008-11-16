@@ -24,8 +24,7 @@
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
         \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
         \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
-        \remarks    On peut eventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entree du menu qui est selectionnee.
+		\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a> 
 */
 
 
@@ -86,10 +85,11 @@ class MenuTop {
 					else $url.='&';
 					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
 					$url.="&idmenu=".$tabMenu[$i]['rowid'];
+					if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $class='class="tmenusel"';
+					else  $class='class="tmenu"';
 					// Define idsel
-					if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
-					else $idsel='';
-	        		print '<li><a '.$tabMenu[$i]['class'].' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$tabMenu[$i]['atarget']":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
+					$idsel='';
+	        		print '<li><a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$tabMenu[$i]['atarget']":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
 	        	}
 	        	else
 	        	{

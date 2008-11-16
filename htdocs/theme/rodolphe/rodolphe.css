@@ -14,11 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
+/* $Id$ */
 
 /***** Style du fond *****/
 body {
@@ -153,7 +151,7 @@ a.tmenu:visited
   font-weight:bold;
   font-size:12px;
 }
-a.tmenu#sel
+a.tmenusel
 { 
   color: #ffffff;
   background: #78746d;
@@ -211,7 +209,7 @@ div.tmenu li a{
 * html div.tmenu li a{
 	width:40px;
 }
-div.tmenu li a#sel
+div.tmenu li a.tmenusel
 {
 	background:#FFFFFF;
 	color:#000000;

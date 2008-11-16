@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,20 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-	    \file       htdocs/includes/menus/barre_top/empty.php
-		\brief      This is an example of an empty top menu handler
-		\version    $Revision$
-*/
+ *	    \file       htdocs/includes/menus/barre_top/empty.php
+ *		\brief      This is an example of an empty top menu handler
+ *		\version    $Id$
+ */
 
 /**
-        \class      MenuTop
-	    \brief      Class for top empty menu
-*/
+ *      \class      MenuTop
+ *	    \brief      Class for top empty menu
+ */
 class MenuTop {
 
     var $require_left=array("empty");   // If this top menu handler must be used with a particular left menu handler
