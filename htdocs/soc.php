@@ -30,6 +30,7 @@
 
 require("pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 $langs->load("companies");
@@ -266,6 +267,8 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
 llxHeader();
 
 $form = new Form($db);
+$formcompany = new FormCompany($db);
+
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 
@@ -390,7 +393,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 			print '<td colspan=2>&nbsp;</td></tr>';
 
 			print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-			print $form->select_civilite($contact->civilite_id).'</td>';
+			print $formcompany->select_civilite($contact->civilite_id).'</td>';
 			print '<td colspan=2>&nbsp;</td></tr>';
 		}
 
@@ -483,7 +486,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
 		if ($soc->pays_id)
 		{
-			$form->select_departement($soc->departement_id,$soc->pays_code);
+			$formcompany->select_departement($soc->departement_id,$soc->pays_code);
 		}
 		else
 		{
@@ -546,7 +549,7 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '<td colspan="3">';
 		if ($soc->pays_id)
 		{
-			$form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
+			$formcompany->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
 		}
 		else
 		{
@@ -555,11 +558,11 @@ $_GET["action"] == 'create' || $_POST["action"] == 'create')
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
-		$form->select_array("typent_id",$form->typent_array(0), $soc->typent_id);
+		$form->select_array("typent_id",$formcompany->typent_array(0), $soc->typent_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td>';
 		print '<td>'.$langs->trans("Staff").'</td><td>';
-		$form->select_array("effectif_id",$form->effectif_array(0), $soc->effectif_id);
+		$form->select_array("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
@@ -834,7 +837,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-		$form->select_departement($soc->departement_id,$soc->pays_code);
+		$formcompany->select_departement($soc->departement_id,$soc->pays_code);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
@@ -920,15 +923,15 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
-		$form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
+		$formcompany->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Type").'</td><td>';
-		$form->select_array("typent_id",$form->typent_array(0), $soc->typent_id);
+		$form->select_array("typent_id",$formcompany->typent_array(0), $soc->typent_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td>';
 		print '<td>'.$langs->trans("Staff").'</td><td>';
-		$form->select_array("effectif_id",$form->effectif_array(0), $soc->effectif_id);
+		$form->select_array("effectif_id",$formcompany->effectif_array(0), $soc->effectif_id);
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 		print '</td></tr>';
 
@@ -1147,7 +1150,7 @@ else
 	print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
 
 	// Type + Staff
-	$arr = $form->typent_array(1);
+	$arr = $formcompany->typent_array(1);
 	$soc->typent= $arr[$soc->typent_code];
 	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 

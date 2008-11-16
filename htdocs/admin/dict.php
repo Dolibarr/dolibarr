@@ -28,6 +28,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
 
 $langs->load("other");
 $langs->load("admin");
@@ -715,6 +716,7 @@ function fieldList($fieldlist,$obj='')
 
 	$html = new Form($db);
 	$formadmin = new FormAdmin($db);
+	$formcompany = new FormCompany($db);
 	
 	foreach ($fieldlist as $field => $value)
 	{
@@ -730,7 +732,7 @@ function fieldList($fieldlist,$obj='')
 		}
 		elseif ($fieldlist[$field] == 'region') {
 			print '<td>';
-			$html->select_region($region_id,'region');
+			$formcompany->select_region($region_id,'region');
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'region_id') {

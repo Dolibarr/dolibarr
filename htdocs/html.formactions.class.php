@@ -148,4 +148,27 @@ class FormActions
 		}
 	}
 
+	
+	/**
+	 *    \brief      Retourne la liste des types de comptes financiers
+	 *    \param      selected        Type pré-sélectionné
+	 *    \param      htmlname        Nom champ formulaire
+	 */
+	function select_type_actions($selected='',$htmlname='actioncode')
+	{
+		global $langs,$user;
+
+		require_once(DOL_DOCUMENT_ROOT."/cactioncomm.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/html.form.class.php");
+		$caction=new CActionComm($this->db);
+		$form=new Form($this->db);
+		
+		$arraylist=$caction->liste_array(1,'code');
+		$arraylist[0]='&nbsp;';
+		asort($arraylist);
+
+		$form->select_array($htmlname, $arraylist, $selected);
+		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+	}
+		
 }

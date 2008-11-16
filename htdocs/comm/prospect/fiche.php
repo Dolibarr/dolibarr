@@ -28,6 +28,7 @@
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
@@ -72,7 +73,9 @@ if ($_POST["action"] == 'setprospectlevel' && $user->rights->societe->creer)
  *********************************************************************************/  
 
 llxHeader();
+
 $form=new Form($db);
+$formcompany=new FormCompany($db);
 
 if ($socid > 0)
 {
@@ -127,12 +130,12 @@ if ($socid > 0)
 	print '</td><td colspan="3">';
 	if ($_GET['action'] == 'editlevel')
 	{
-		$form->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$societe->id,$societe->fk_prospectlevel,'prospect_level_id',1);
+		$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$societe->id,$societe->fk_prospectlevel,'prospect_level_id',1);
 	}
 	else
 	{
 		print $societe->getLibLevel();
-		//$html->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
+		//$formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$objsoc->id,$objsoc->mode_reglement,'none');
 	}
 	print "</td>";
 	print '</tr>';

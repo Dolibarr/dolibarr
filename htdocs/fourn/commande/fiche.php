@@ -28,6 +28,7 @@
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formorder.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_commandefournisseur.php');
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.product.class.php";
 if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
@@ -464,6 +465,7 @@ llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
 
 $html =	new	Form($db);
 $formfile = new FormFile($db);
+$formorder = new FormOrder($db);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -1015,7 +1017,7 @@ if ($id > 0)
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
-			$html->select_methodes_commande('',"methodecommande",1);
+			$formorder->select_methodes_commande('',"methodecommande",1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="30" type="text" name="commentaire"></td></tr>';

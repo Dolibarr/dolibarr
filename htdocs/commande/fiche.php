@@ -29,7 +29,8 @@
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formorder.class.php");
+require_once(DOL_DOCUMENT_ROOT."/includes/modules/commande/modules_commande.php");
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
@@ -837,6 +838,8 @@ llxHeader('',$langs->trans('Order'),'Commande');
 
 $html = new Form($db);
 $formfile = new FormFile($db);
+$formorder = new FormOrder($db);
+
 
 /*********************************************************************
  *
@@ -971,7 +974,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			}
 
 			print '<tr><td>'.$langs->trans('Source').'</td><td colspan="2">';
-			$html->selectSourcesCommande('','source_id',1);
+			$formorder->selectSourcesCommande('','source_id',1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans('Model').'</td>';

@@ -448,7 +448,7 @@ if ($_GET["action"] == 'create')
 	}
 	else
 	{
-		$html->select_type_actions($actioncomm->type_code, "actioncode");
+		$htmlactions->select_type_actions($actioncomm->type_code, "actioncode");
 	}
 	print '</td></tr>';
 

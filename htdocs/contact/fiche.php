@@ -32,6 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/html.formcompany.class.php");
 
 $langs->load("companies");
 $langs->load("users");
@@ -195,6 +196,7 @@ if ($user->rights->societe->contact->creer)
 llxHeader();
 
 $form = new Form($db);
+$formcompany = new FormCompany($db);
 
 if ($socid)
 {
@@ -289,7 +291,7 @@ if ($user->rights->societe->contact->creer)
 
 		// Civility
 		print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-		print $form->select_civilite($contact->civilite_id);
+		print $formcompany->select_civilite($contact->civilite_id);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td>';
@@ -372,7 +374,7 @@ if ($user->rights->societe->contact->creer)
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-		print $form->select_civilite($contact->civilite_id);
+		print $formcompany->select_civilite($contact->civilite_id);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("PostOrFunction" ).'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td></tr>';
