@@ -25,12 +25,13 @@ For users:
   export definition.
 - A lot of enhancements and translation in withdraw module.
 - Full support of Mysql option mode=strict.
-- Added new event from member module to possible agenda tracked events.
+- Added a new event from member module to agenda tracked events.
 
 For translators:
 - The errors language file contains only error or warning messages with 
   prefix Error or Warning.
-- HTML Output is by default in UTF8.
+- HTML Output is by default in UTF8 and language files can be provided
+  in UTF8.
 
 For developers:
 - Update skeletons.
@@ -38,7 +39,9 @@ For developers:
 - Added new triggers events in agenda module.
 - All submodules are moved in the includes directory.
 - Removed some deprecated files.
-
+- Menu managers now use same class name for their menu entry
+  and add a different value in an HTML id for each entry. This allows
+  to build skins that use different style for each menu entry.
 
 ***** Changelog for 2.4 compared to 2.2 *****
 
