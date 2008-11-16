@@ -18,7 +18,7 @@
  */
 
 /**
-	    \file       htdocs/includes/menus/barre_top/eldy_backoffice.php
+	    \file       htdocs/includes/menus/barre_top/eldy_frontoffice.php
 		\brief      Gestionnaire nomme eldy du menu du haut
 		\version    $Id$
 

@@ -141,15 +141,6 @@ a.tmenu:hover
   font-size:12px;
 }
 
-font.tmenudisabled
-{
-  color: #93a5aa;
-  padding: 0em 1em;
-  margin: 0em 0em 1em 0em;
-  font-size:12px;
-}
-
-
 
 /* Pour menu TOP auguria uniquement */
 * html div.tmenu li a

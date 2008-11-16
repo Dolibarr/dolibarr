@@ -29,6 +29,8 @@
 class MenuTop {
 
     var $require_left=array("empty");   // If this top menu handler must be used with a particular left menu handler
+    var $hideifnotallowed=false;		// Put 0 for back office menu, 1 for front office menu
+    
     var $atarget="";               		// To store arget to use in menu links
 
     
@@ -68,12 +70,14 @@ class MenuTop {
 		// Code to show personalized menus
        	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
-        $menuArbo = new Menubase($this->db,'eldy','top');
- 		$tabMenu = $menuArbo->menuTopCharger(2,$_SESSION['mainmenu'],'');
-        for($i=0;$i<count($tabMenu);$i++)
+        $menuArbo = new Menubase($this->db,'empty','top');
+ 		$tabMenu = $menuArbo->menuTopCharger(2,$_SESSION['mainmenu'],'empty');
+
+        for($i=0; $i<count($tabMenu); $i++)
         {
         	if ($tabMenu[$i]['enabled'] == true)
         	{
+        		$idsel=(empty($tabMenu[$i]['mainmenu'])?'id="none" ':'id="'.$tabMenu[$i]['mainmenu'].'" ');
 	        	if ($tabMenu[$i]['right'] == true)
 	        	{
 					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
@@ -81,14 +85,15 @@ class MenuTop {
 					else $url.='&';
 					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
 					$url.="&idmenu=".$tabMenu[$i]['rowid'];
-					// Define idsel
-					if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
-					else $idsel='';
-	        		print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
+					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
+					else $class='class="tmenu"';
+					print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>';
+					print $tabMenu[$i]['titre'];
+					print '</a></td>';
 	        	}
 	        	else
 	        	{
-	        		print '<td class="tmenu"><font class="tmenudisabled">'.$tabMenu[$i]['titre'].'</font></td>';
+	        		if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$tabMenu[$i]['titre'].'</a></td>';
 	        	}
 			}      	
         }

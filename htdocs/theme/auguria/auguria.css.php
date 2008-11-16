@@ -160,6 +160,7 @@ div.tmenu  .tmenudisabled
 	padding-right: 6px;
 	padding-top: 3px;
 	cursor: not-allowed;
+    font-weight: normal;
 }
 
 table.tmenu
@@ -178,7 +179,6 @@ a.tmenu:link
 	height: 21px;
 	font-weight: normal;
 }
-
 a.tmenu:visited
 {
   	color:#FFFFFF;
@@ -188,18 +188,6 @@ a.tmenu:visited
 	padding-top: 2px;
 	height: 21px;
 	font-weight: normal;
-}
-
-a.tmenusel
-{
-	color:#234046;
-	text-decoration:none;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top: 2px;
-	height: 21px;
-	font-weight: normal;
-	background: #FFFFFF;
 }
 a.tmenu:hover
 {
@@ -212,7 +200,6 @@ a.tmenu:hover
 	font-weight: normal;
 	background: #FFFFFF;
 }
-
 a.tmenu:active
 {
 	color:#234046;
@@ -224,13 +211,32 @@ a.tmenu:active
 	height: 21px;
     font-weight: normal;
 }
-
-font.tmenudisabled
+a.tmenusel
 {
-    color: #9FCED9;
-    font-weight: normal;
-    font-size: 12px;
-    cursor: not-allowed;  
+	color:#234046;
+	text-decoration:none;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top: 2px;
+	height: 21px;
+	font-weight: normal;
+	background: #FFFFFF;
+}
+a.tmenusel:link
+{
+  font-weight: normal;
+}
+a.tmenusel:visited
+{
+  font-weight: normal;
+}
+a.tmenusel:hover
+{
+  font-weight: normal;
+}
+a.tmenusel:active
+{
+  font-weight: normal;
 }
 
 

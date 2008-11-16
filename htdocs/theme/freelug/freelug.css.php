@@ -177,9 +177,8 @@ div.tmenu  .tmenudisabled
 {
 	color: #757575;
 	font-size: 12px;
-	padding-left:10px;
-	padding-right:10px;
-	padding-top:3px;
+    padding: 0px 8px;
+    margin: 0px 0px 6px 0px;
 	cursor: not-allowed;
 }
 
@@ -216,14 +215,6 @@ a.tmenu:visited
   font-weight: bold;
   font-size:12px;
 }
-a.tmenusel
-{ 
-  color: #202020;
-  background: #bbbbcc;
-  padding: 0px 8px;
-  margin: 0px 0px 6px 0px;
-  border: 1px solid #eeeeff;
-}
 a.tmenu:hover
 {
   color: #202020;
@@ -234,15 +225,13 @@ a.tmenu:hover
   text-decoration: none;
 }
 
-font.tmenudisabled
-{
-  color: #93a5aa;
+a.tmenusel
+{ 
+  color: #202020;
+  background: #bbbbcc;
   padding: 0px 8px;
   margin: 0px 0px 6px 0px;
-  border: 0px;
-  font-weight:bold;
-  font-size:12px;
-  cursor: not-allowed;
+  border: 1px solid #eeeeff;
 }
 
 

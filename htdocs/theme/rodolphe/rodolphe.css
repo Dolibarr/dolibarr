@@ -169,17 +169,6 @@ a.tmenu:hover
   text-decoration: none;
 }
 
-font.tmenudisabled
-{
-  color: #93a5aa;
-  padding: 0em 1em;
-  margin: 0em 0em 1.5em 0em;
-  border: 1px solid #b3c5cc;
-  font-weight:bold;
-  font-size:12px;
-}
-
-
 
 /* Pour menu TOP auguria uniquement */
 div.tmenu ul {

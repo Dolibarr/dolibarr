@@ -140,8 +140,6 @@ form
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-/* Removed div.vmenuplusfiche, replaced div.vmenu by td.vmenu, removed div.fiche */
-
 td.vmenu
 {
     margin-right: 2px;
@@ -187,6 +185,7 @@ div.tmenu  .tmenudisabled
 	padding-right: 6px;
 	padding-top: 3px;
 	cursor: not-allowed;
+    font-weight: normal;
 }
 
 table.tmenu
@@ -214,20 +213,6 @@ a.tmenu:visited
   font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
 }
-a.tmenusel
-{
-  color: #234046;
-  padding: 0px 5px 0px 5px;
-  margin: 0px 0px 0px 0px;
-  font-size: 12px;
-  font-family: helvetica, verdana, arial, sans-serif;
-  font-weight: normal;
-  background: #F4F4F4;
-  border-right: 1px solid #555555;
-  border-top: 1px solid #D8D8D8;
-  border-left: 1px solid #D8D8D8;
-  border-bottom: 2px solid #F4F4F4;
-}
 a.tmenu:hover
 {
   color: #234046;
@@ -243,7 +228,6 @@ a.tmenu:hover
   border-left: 1px solid #D8D8D8;
   border-bottom: 2px solid #dee7ec;
 }
-
 a.tmenu:active
 {
   padding: 0px 5px 0px 5px;
@@ -258,15 +242,35 @@ a.tmenu:active
   border-left: 1px solid #D8D8D8;
   border-bottom: 2px solid #dee7ec;
 }
-
-font.tmenudisabled
+a.tmenusel
 {
-  color: #93a5aa;
+  color: #234046;
   padding: 0px 5px 0px 5px;
-  margin: 0px 0px 2px 0px;
-  font-weight: normal;
+  margin: 0px 0px 0px 0px;
   font-size: 12px;
-  cursor: not-allowed;
+  font-family: helvetica, verdana, arial, sans-serif;
+  font-weight: normal;
+  background: #F4F4F4;
+  border-right: 1px solid #555555;
+  border-top: 1px solid #D8D8D8;
+  border-left: 1px solid #D8D8D8;
+  border-bottom: 2px solid #F4F4F4;
+}
+a.tmenusel:link
+{
+  font-weight: normal;
+}
+a.tmenusel:visited
+{
+  font-weight: normal;
+}
+a.tmenusel:hover
+{
+  font-weight: normal;
+}
+a.tmenusel:active
+{
+  font-weight: normal;
 }
 
 

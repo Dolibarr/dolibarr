@@ -123,8 +123,6 @@ form
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-/* Removed div.vmenuplusfiche, replaced div.vmenu by td.vmenu, removed div.fiche */
-
 td.vmenu
 {
     margin-right: 2px;
@@ -155,12 +153,19 @@ div.tmenu
     border-bottom: 1px solid #555555;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 2px 0px;
-    font-weight:bold;
-    font-size:12px;
+    font-weight: bold;
+    font-size: 12px;
     height: 20px;
     background: #dcdcb3; 
     color: #000000; 
     text-decoration: none;
+}
+div.tmenu  .tmenudisabled
+{
+	color: #757575;
+	font-size: 12px;
+    padding: 0px 5px;
+	cursor: not-allowed;
 }
 
 table.tmenu
@@ -186,13 +191,6 @@ a.tmenu:visited
   font-weight:bold;
   font-size:12px;
 }
-a.tmenusel
-{ 
-  color: #234046;
-  background: #eeeecc;
-  padding: 0px 5px;
-  border: 1px solid #eeeecc;
-}
 a.tmenu:hover
 {
   color: #234046;
@@ -202,15 +200,14 @@ a.tmenu:hover
   text-decoration: none;
 }
 
-font.tmenudisabled
-{
-  color: #93a5aa;
+a.tmenusel
+{ 
+  color: #234046;
+  background: #eeeecc;
   padding: 0px 5px;
-  border: 0px;
-  font-weight:bold;
-  font-size:12px;
-  cursor: not-allowed;
+  border: 1px solid #eeeecc;
 }
+
 
 
 /* Pour menu TOP auguria uniquement */
