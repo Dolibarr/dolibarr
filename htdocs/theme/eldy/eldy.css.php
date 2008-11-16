@@ -177,7 +177,8 @@ div.tmenu
     color: #000000;
     text-decoration: none;
 }
-div.tmenu  .tmenudisabled
+
+a.tmenudisabled
 {
 	color: #757575;
 	font-size: 12px;
@@ -185,6 +186,26 @@ div.tmenu  .tmenudisabled
 	padding-right: 6px;
 	padding-top: 3px;
 	cursor: not-allowed;
+    font-weight: normal;
+}
+a.tmenudisabled:link
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:visited
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:hover
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:active
+{
+	color: #757575;
     font-weight: normal;
 }
 

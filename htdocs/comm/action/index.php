@@ -155,7 +155,7 @@ $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$re
 // Must be after the nav definition
 $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 
-print_fiche_titre($title,$nav,"");
+print_fiche_titre($title,$nav);
 
 // Filters
 if ($canedit)

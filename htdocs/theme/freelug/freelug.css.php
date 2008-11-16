@@ -173,13 +173,34 @@ div.tmenu
     color: #000000; 
     text-decoration: none;
 }
-div.tmenu  .tmenudisabled
+
+a.tmenudisabled
 {
 	color: #757575;
 	font-size: 12px;
     padding: 0px 8px;
     margin: 0px 0px 6px 0px;
 	cursor: not-allowed;
+}
+a.tmenudisabled:link
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:visited
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:hover
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:active
+{
+	color: #757575;
+    font-weight: normal;
 }
 
 table.tmenu

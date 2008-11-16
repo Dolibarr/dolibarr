@@ -1706,15 +1706,15 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 
 
 /**
- \brief      Show title line of an array
- \param	    name        libelle champ
- \param	    file        url pour clic sur tri
- \param	    field       champ de tri
- \param	    begin       ("" par defaut)
- \param	    options     ("" par defaut)
- \param      td          options de l'attribut td ("" par defaut)
- \param      sortfield   nom du champ sur lequel est effectu� le tri du tableau
- \param      sortorder   ordre du tri
+ *	\brief      Show title line of an array
+ *	\param	    name        libelle champ
+ *	\param	    file        url pour clic sur tri
+ *	\param	    field       champ de tri
+ *	\param	    begin       ("" par defaut)
+ *	\param	    options     ("" par defaut)
+ *	\param      td          options de l'attribut td ("" par defaut)
+ *	\param      sortfield   nom du champ sur lequel est effectu� le tri du tableau
+ *	\param      sortorder   ordre du tri
  */
 function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="", $sortorder="")
 {
@@ -1767,8 +1767,8 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 }
 
 /**
- \brief  Affichage d'un titre
- \param	titre			Le titre a afficher
+ *	\brief  Affichage d'un titre
+ *	\param	titre			Le titre a afficher
  */
 function print_titre($titre)
 {
@@ -1776,31 +1776,157 @@ function print_titre($titre)
 }
 
 /**
- \brief  Affichage d'un titre d'une fiche, align� a gauche
- \param	titre				Le titre a afficher
- \param	mesg				Message supl�mentaire a afficher a droite
- \param	picto				Picto pour ligne de titre
- \param	pictoisfullpath		1=Picto is a full absolute url of image
+ *	\brief  Affichage d'un titre d'une fiche, align� a gauche
+ *	\param	titre				Le titre a afficher
+ *	\param	mesg				Message suplementaire a afficher a droite
+ *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
  */
-function print_fiche_titre($titre, $mesg='', $picto='', $pictoisfullpath=0)
+function print_fiche_titre($titre, $mesg='', $picto='title.gif', $pictoisfullpath=0)
 {
 	print "\n";
-	print '<table width="100%" border="0" class="notopnoleftnoright"><tr>';
-	if ($picto) print '<td width="24" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
-	print '<td class="notopnoleftnoright" valign="middle">';
-	print '<div class="titre">'.$titre.'</div>';
+	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
+	if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+	print '<td class="nobordernopadding" valign="middle">';
+	print '<div class="titre" valign="middle">'.$titre.'</div>';
 	print '</td>';
 	if (strlen($mesg))
 	{
-		print '<td align="right" valign="middle"><b>'.$mesg.'</b></td>';
+		print '<td class="nobordernopadding" align="right" valign="middle"><b>'.$mesg.'</b></td>';
 	}
 	print '</tr></table>'."\n";
 }
 
 /**
- \brief  Effacement d'un fichier
- \param	file			Fichier a effacer ou masque de fichier a effacer
- \param	boolean			true if file deleted, false if error
+ *	\brief  Print a title with navigation controls for pagination
+ *	\param	titre				Title to show (required)
+ *	\param	page				Numero of page (required)
+ *	\param	file				Url of page (required)
+ *	\param	options         	parametres complementaires lien ('' par defaut)
+ *	\param	sortfield       	champ de tri ('' par defaut)
+ *	\param	sortorder       	ordre de tri ('' par defaut)
+ *	\param	center          	chaine du centre ('' par defaut)
+ *	\param	num					number of records found by select with limit+1
+ *	\param	totalnboflines		Total number of records/lines for all pages (if known)
+ *	\param	picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	\param	pictoisfullpath		1=Icon name is a full absolute url of image
+ */
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title.gif', $pictoisfullpath=0)
+{
+	global $conf,$langs;
+
+	if ($num > $conf->liste_limit or $num == -1)
+	{
+		$nextpage = 1;
+	}
+	else
+	{
+		$nextpage = 0;
+	}
+
+	print '<table width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
+	
+	$pagelist = '';
+
+	// Left
+	if ($page > 0 || $num > $conf->liste_limit)
+	{
+		if ($totalnboflines)
+		{
+			if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+			print '<td class="nobordernopadding">';
+			print '<div class="titre">'.$titre.'</div>';
+			print '</td>';
+
+			$maxnbofpage=10;
+
+			$nbpages=ceil($totalnboflines/$conf->liste_limit);
+			$cpt=($page-$maxnbofpage);
+			if ($cpt < 0) { $cpt=0; }
+			$pagelist.=$langs->trans('Page');
+			if ($cpt>=1)
+			{
+				$pagelist.=' <a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a>';
+				if ($cpt >= 2) $pagelist.=' ...';
+			}
+			do
+			{
+				if($cpt==$page)
+				{
+					$pagelist.= ' <u>'.($page+1).'</u>';
+				}
+				else
+				{
+					$pagelist.= ' <a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a>';
+				}
+				$cpt++;
+			}
+			while ($cpt < $nbpages && $cpt<=$page+$maxnbofpage);
+			if ($cpt<$nbpages)
+			{
+				if ($cpt<$nbpages-1) $pagelist.= ' ...';
+				$pagelist.= ' <a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a>';
+			}
+		}
+		else
+		{
+			if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+			print '<td class="nobordernopadding">';
+			print '<div class="titre">'.$titre.'</div>';
+			$pagelist.= $langs->trans('Page').' '.($page+1);
+			print '</td>';
+		}
+	}
+	else
+	{
+		if ($picto && $titre) print '<td class="nobordernopadding" width="40" align="left" valign="middle">'.img_picto('',$picto, '', $pictoisfullpath).'</td>';
+		print '<td class="nobordernopadding"><div class="titre">'.$titre.'</div></td>';
+	}
+
+	// Center
+	if ($center)
+	{
+		print '<td class="nobordernopadding" align="left" valign="middle">'.$center.'</td>';
+	}
+
+	// Right
+	print '<td class="nobordernopadding" align="right" valign="middle">';
+	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
+	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
+	// Affichage des fleches de navigation
+	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist);
+	print '</td>';
+
+	print '</tr></table>';
+}
+
+/**
+ *	\brief  	Fonction servant a afficher les fleches de navigation dans les pages de listes
+ *	\param	page				Numero of page
+ *	\param	file				Lien
+ *	\param	options         	Autres parametres d'url a propager dans les liens ("" par defaut)
+ *	\param	nextpage	    	Faut-il une page suivante
+ *	\param	betweenarraows		HTML Content to show between arrows
+ */
+function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrows='')
+{
+	global $conf, $langs;
+	if ($page > 0)
+	{
+		print '<a href="'.$file.'?page='.($page-1).$options.'">'.img_previous($langs->trans("Previous")).'</a>';
+	}
+	if ($betweenarrows) print ($page > 0?' ':'').$betweenarrows.($nextpage>0?' ':'');
+	if ($nextpage > 0)
+	{
+		print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
+	}
+}
+
+
+/**
+ *	\brief  Effacement d'un fichier
+ *	\param	file			Fichier a effacer ou masque de fichier a effacer
+ *	\param	boolean			true if file deleted, false if error
  */
 function dol_delete_file($file)
 {
@@ -1882,124 +2008,6 @@ function dol_avscan_file($file)
 	}
 
 	return $malware;
-}
-
-/**
- \brief  Fonction print_barre_liste
- \param	titre				Titre de la page
- \param	page				numero de la page
- \param	file				lien
- \param	options         	parametres complementaires lien ('' par defaut)
- \param	sortfield       	champ de tri ('' par defaut)
- \param	sortorder       	ordre de tri ('' par defaut)
- \param	center          	chaine du centre ('' par defaut)
- \param	num					number of records found by select with limit+1
- \param	totalnboflines		Total number of records/lines for all pages (if known)
- */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0)
-{
-	global $conf,$langs;
-
-	if ($num > $conf->liste_limit or $num == -1)
-	{
-		$nextpage = 1;
-	}
-	else
-	{
-		$nextpage = 0;
-	}
-
-	print '<table width="100%" border="0" class="notopnoleftnoright">';
-
-	$pagelist = '';
-
-	if ($page > 0 || $num > $conf->liste_limit)
-	{
-		if ($totalnboflines)
-		{
-			print '<tr><td class="notopnoleftnoright">';
-			print '<div class="titre">'.$titre.'</div>';
-			print '</td>';
-
-			$maxnbofpage=10;
-
-			$nbpages=ceil($totalnboflines/$conf->liste_limit);
-			$cpt=($page-$maxnbofpage);
-			if ($cpt < 0) { $cpt=0; }
-			$pagelist.=$langs->trans('Page');
-			if ($cpt>=1)
-			{
-				$pagelist.=' <a href="'.$file.'?page=0'.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">1</a>';
-				if ($cpt >= 2) $pagelist.=' ...';
-			}
-			do
-			{
-				if($cpt==$page)
-				{
-					$pagelist.= ' <u>'.($page+1).'</u>';
-				}
-				else
-				{
-					$pagelist.= ' <a href="'.$file.'?page='.$cpt.$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.($cpt+1).'</a>';
-				}
-				$cpt++;
-			}
-			while ($cpt < $nbpages && $cpt<=$page+$maxnbofpage);
-			if ($cpt<$nbpages)
-			{
-				if ($cpt<$nbpages-1) $pagelist.= ' ...';
-				$pagelist.= ' <a href="'.$file.'?page='.($nbpages-1).$options.'&amp;sortfield='.$sortfield.'&amp;sortorder='.$sortorder.'">'.$nbpages.'</a>';
-			}
-		}
-		else
-		{
-			print '<tr><td class="notopnoleftnoright">';
-			print '<div class="titre">'.$titre.'</div>';
-			$pagelist.= $langs->trans('Page').' '.($page+1);
-			print '</td>';
-		}
-	}
-	else
-	{
-		print '<tr><td class="notopnoleftnoright"><div class="titre">'.$titre.'</div></td>';
-	}
-
-	if ($center)
-	{
-		print '<td align="left">'.$center.'</td>';
-	}
-
-	print '<td align="right">';
-
-	if ($sortfield) $options .= "&amp;sortfield=".$sortfield;
-	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
-
-	// Affichage des fleches de navigation
-	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist);
-
-	print '</td></tr></table>';
-}
-
-/**
- \brief  	Fonction servant a afficher les fleches de navigation dans les pages de listes
- \param	page				Num�ro de la page
- \param	file				Lien
- \param	options         	Autres parametres d'url a propager dans les liens ("" par defaut)
- \param	nextpage	    	Faut-il une page suivante
- \param	betweenarraows		HTML Content to show between arrows
- */
-function print_fleche_navigation($page,$file,$options='',$nextpage,$betweenarrows='')
-{
-	global $conf, $langs;
-	if ($page > 0)
-	{
-		print '<a href="'.$file.'?page='.($page-1).$options.'">'.img_previous($langs->trans("Previous")).'</a>';
-	}
-	if ($betweenarrows) print ($page > 0?' ':'').$betweenarrows.($nextpage>0?' ':'');
-	if ($nextpage > 0)
-	{
-		print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
-	}
 }
 
 

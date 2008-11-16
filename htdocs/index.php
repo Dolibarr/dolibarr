@@ -19,10 +19,10 @@
  */
 
 /**
-        \file       htdocs/index.php
-        \brief      Page accueil par defaut
-        \version    $Id$
-*/
+ \file       htdocs/index.php
+ \brief      Page accueil par defaut
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");
@@ -37,8 +37,8 @@ $infobox=new InfoBox($db);
 
 
 /*
-* Affichage page
-*/
+ * Affichage page
+ */
 
 llxHeader();
 
@@ -51,9 +51,9 @@ if (! empty($conf->global->MAIN_MOTD))
 	{
 		print "\n<!-- Start of welcome text -->\n";
 		print '<table width="100%" class="notopnoleftnoright"><tr><td>';
-	    print dol_htmlentitiesbr($conf->global->MAIN_MOTD);
-	    print '</td></tr></table><br>';
-	    print "\n<!-- End of welcome text -->\n";
+		print dol_htmlentitiesbr($conf->global->MAIN_MOTD);
+		print '</td></tr></table><br>';
+		print "\n<!-- End of welcome text -->\n";
 	}
 }
 
@@ -81,10 +81,10 @@ print '<tr><td valign="top" class="notopnoleft">';
 
 if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 {
-  print '<table class="noborder" width="100%">';
-  print '<tr><td colspan="3" style="text-align:center;">';
-  print '<img src="/logo.png"></td></tr>';
-  print "</table><br />\n";
+	print '<table class="noborder" width="100%">';
+	print '<tr><td colspan="3" style="text-align:center;">';
+	print '<img src="/logo.png"></td></tr>';
+	print "</table><br />\n";
 }
 
 
@@ -110,41 +110,41 @@ $langs->load("commercial");
 $langs->load("bills");
 if ($user->societe_id == 0)
 {
-    print '<br>';
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("DolibarrStateBoard").'</td>';
-    print '<td align="right">&nbsp;</td>';
-    print '</tr>';
-    
-    $var=true;
-    
-    // Condition à vérifier pour affichage de chaque ligne du tableau de bord
-    $conditions=array($conf->societe->enabled && $user->rights->societe->lire,
-                      $conf->societe->enabled && $user->rights->societe->lire,
-                      $conf->fournisseur->enabled && $user->rights->fournisseur->lire,
-                      $conf->adherent->enabled && $user->rights->adherent->lire,
-                      $conf->produit->enabled && $user->rights->produit->lire,
-                      $conf->service->enabled && $user->rights->produit->lire,
-                      $conf->propal->enabled && $user->rights->propale->lire,
-                      $conf->commande->enabled && $user->rights->commande->lire,
-                      $conf->facture->enabled && $user->rights->facture->lire,
-                      $conf->telephonie->enabled && $user->rights->telephonie->lire,
-					  $conf->societe->enabled && $user->rights->contrat->activer);
-    // Fichier des classes qui contiennent la methode load_state_board pour chaque ligne
-    $includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
-                    DOL_DOCUMENT_ROOT."/prospect.class.php",
-                    DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php",
-                    DOL_DOCUMENT_ROOT."/adherents/adherent.class.php",
-                    DOL_DOCUMENT_ROOT."/product.class.php",
-                    DOL_DOCUMENT_ROOT."/service.class.php",
-                    DOL_DOCUMENT_ROOT."/propal.class.php",
-                    DOL_DOCUMENT_ROOT."/commande/commande.class.php",
-                    DOL_DOCUMENT_ROOT."/facture.class.php",
-                    DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php",
-					DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
-    // Nom des classes qui contiennent la methode load_state_board pour chaque ligne
-    $classes=array('Client',
+	print '<br>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="2">'.$langs->trans("DolibarrStateBoard").'</td>';
+	print '<td align="right">&nbsp;</td>';
+	print '</tr>';
+
+	$var=true;
+
+	// Condition à vérifier pour affichage de chaque ligne du tableau de bord
+	$conditions=array($conf->societe->enabled && $user->rights->societe->lire,
+	$conf->societe->enabled && $user->rights->societe->lire,
+	$conf->fournisseur->enabled && $user->rights->fournisseur->lire,
+	$conf->adherent->enabled && $user->rights->adherent->lire,
+	$conf->produit->enabled && $user->rights->produit->lire,
+	$conf->service->enabled && $user->rights->produit->lire,
+	$conf->propal->enabled && $user->rights->propale->lire,
+	$conf->commande->enabled && $user->rights->commande->lire,
+	$conf->facture->enabled && $user->rights->facture->lire,
+	$conf->telephonie->enabled && $user->rights->telephonie->lire,
+	$conf->societe->enabled && $user->rights->contrat->activer);
+	// Fichier des classes qui contiennent la methode load_state_board pour chaque ligne
+	$includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
+	DOL_DOCUMENT_ROOT."/prospect.class.php",
+	DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php",
+	DOL_DOCUMENT_ROOT."/adherents/adherent.class.php",
+	DOL_DOCUMENT_ROOT."/product.class.php",
+	DOL_DOCUMENT_ROOT."/service.class.php",
+	DOL_DOCUMENT_ROOT."/propal.class.php",
+	DOL_DOCUMENT_ROOT."/commande/commande.class.php",
+	DOL_DOCUMENT_ROOT."/facture.class.php",
+	DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php",
+	DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+	// Nom des classes qui contiennent la methode load_state_board pour chaque ligne
+	$classes=array('Client',
                    'Prospect',
                    'Fournisseur',
                    'Adherent',
@@ -155,8 +155,8 @@ if ($user->societe_id == 0)
 				   'Facture',
                    'LigneTel',
                    'Contrat');
-    // Clé de tableau retourné par la methode load_state_board pour chaque ligne
-    $keys=array('customers',
+	// Clé de tableau retourné par la methode load_state_board pour chaque ligne
+	$keys=array('customers',
                 'prospects',
                 'suppliers',
                 'members',
@@ -167,8 +167,8 @@ if ($user->societe_id == 0)
 				'invoices',
                 'sign',
 				'Contracts');
-    // Icon des lignes du tableau de bord
-    $icons=array('company',
+	// Icon des lignes du tableau de bord
+	$icons=array('company',
                  'company',
                  'company',
                  'user',
@@ -179,8 +179,8 @@ if ($user->societe_id == 0)
 				 'bill',
                  'phoning',
 				 'order');
-    // Translation keyword
-    $titres=array("Customers",
+	// Translation keyword
+	$titres=array("Customers",
                   "Prospects",
                   "Suppliers",
                   "Members",
@@ -191,20 +191,20 @@ if ($user->societe_id == 0)
                   "BillsCustomers",
                   "Lignes de telephonie suivis",
                   "Contracts");
-    // Lien des lignes du tableau de bord
-    $links=array(DOL_URL_ROOT.'/comm/clients.php',
-                 DOL_URL_ROOT.'/comm/prospect/prospects.php',
-                 DOL_URL_ROOT.'/fourn/index.php',
-                 DOL_URL_ROOT.'/adherents/liste.php?statut=1&amp;mainmenu=members',
-                 DOL_URL_ROOT.'/product/liste.php?type=0&amp;mainmenu=products',
-                 DOL_URL_ROOT.'/product/liste.php?type=1&amp;mainmenu=products',
-                 DOL_URL_ROOT.'/comm/propal.php?mainmenu=commercial',
-                 DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
-                 DOL_URL_ROOT.'/compta/facture.php?mainmenu=accountancy',
-                 DOL_URL_ROOT.'/telephonie/ligne/index.php',
-				 DOL_URL_ROOT.'/contrat/liste.php');
-    // Translation lang files
-    $langfile=array("bills",
+	// Lien des lignes du tableau de bord
+	$links=array(DOL_URL_ROOT.'/comm/clients.php',
+	DOL_URL_ROOT.'/comm/prospect/prospects.php',
+	DOL_URL_ROOT.'/fourn/index.php',
+	DOL_URL_ROOT.'/adherents/liste.php?statut=1&amp;mainmenu=members',
+	DOL_URL_ROOT.'/product/liste.php?type=0&amp;mainmenu=products',
+	DOL_URL_ROOT.'/product/liste.php?type=1&amp;mainmenu=products',
+	DOL_URL_ROOT.'/comm/propal.php?mainmenu=commercial',
+	DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
+	DOL_URL_ROOT.'/compta/facture.php?mainmenu=accountancy',
+	DOL_URL_ROOT.'/telephonie/ligne/index.php',
+	DOL_URL_ROOT.'/contrat/liste.php');
+	// Translation lang files
+	$langfile=array("bills",
                     "prospects",
                     "suppliers",
                     "members",
@@ -215,39 +215,39 @@ if ($user->societe_id == 0)
                     "bills",
                     "",
 					"Contracts");
-                 
+	 
 	//print memory_get_usage()."<br>";
 
 	// Boucle et affiche chaque ligne du tableau
-    foreach ($keys as $key=>$val)
-    {
-        if ($conditions[$key])
-        {
-            $classe=$classes[$key];
-            // Cherche dans cache si le load_state_board deja réalisé
-            if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
-            {
-                include_once($includes[$key]);
+	foreach ($keys as $key=>$val)
+	{
+		if ($conditions[$key])
+		{
+			$classe=$classes[$key];
+			// Cherche dans cache si le load_state_board deja réalisé
+			if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
+			{
+				include_once($includes[$key]);
 
-                $board=new $classe($db);
-                $board->load_state_board($user);
-                $boardloaded[$classe]=$board;
-            }
-            else $board=$boardloaded[$classe];
+				$board=new $classe($db);
+				$board->load_state_board($user);
+				$boardloaded[$classe]=$board;
+			}
+			else $board=$boardloaded[$classe];
 
-            $var=!$var;
-            if ($langfile[$key]) $langs->load($langfile[$key]);
-            $title=$langs->trans($titres[$key]);
-            print '<tr '.$bc[$var].'><td width="16">'.img_object($title,$icons[$key]).'</td>';
-            print '<td>'.$title.'</td>';
-            print '<td align="right"><a href="'.$links[$key].'">'.$board->nb[$val].'</a></td>';
-            print '</tr>';
+			$var=!$var;
+			if ($langfile[$key]) $langs->load($langfile[$key]);
+			$title=$langs->trans($titres[$key]);
+			print '<tr '.$bc[$var].'><td width="16">'.img_object($title,$icons[$key]).'</td>';
+			print '<td>'.$title.'</td>';
+			print '<td align="right"><a href="'.$links[$key].'">'.$board->nb[$val].'</a></td>';
+			print '</tr>';
 
 			//print $includes[$key].' '.memory_get_usage()."<br>";
-        }
-    }
+		}
+	}
 
-    print '</table>';
+	print '</table>';
 }
 
 print '</td><td width="65%" valign="top" class="notopnoleftnoright">';
@@ -275,284 +275,284 @@ $var=true;
 // Nbre actions à faire (en retard)
 if ($conf->agenda->enabled && $user->rights->agenda->myactions->read)
 {
-  include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
-  $board=new ActionComm($db);
-  $board->load_board($user);
-  $board->warning_delay=$conf->actions->warning_delay/60/60/24;
-  $board->label=$langs->trans("ActionsToDo");
+	include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
+	$board=new ActionComm($db);
+	$board->load_board($user);
+	$board->warning_delay=$conf->actions->warning_delay/60/60/24;
+	$board->label=$langs->trans("ActionsToDo");
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Actions"),"task").'</td><td>'.$board->label.'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?status=todo">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?status=todo">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
-print "\n";
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Actions"),"task").'</td><td>'.$board->label.'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?status=todo">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?status=todo">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
+	print "\n";
 }
 
 // Nbre commandes clients à traiter
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
-  include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-  $board=new Commande($db);
-  $board->load_board($user);
+	include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
+	$board=new Commande($db);
+	$board->load_board($user);
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Orders"),"order").'</td><td>'.$langs->trans("OrdersToProcess").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=-2">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=-2">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($conf->commande->traitement->warning_delay/60/60/24).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
-print "\n";
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Orders"),"order").'</td><td>'.$langs->trans("OrdersToProcess").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=-2">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/commande/liste.php?viewstatut=-2">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($conf->commande->traitement->warning_delay/60/60/24).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
+	print "\n";
 }
 
 // Nbre propales ouvertes (expirées)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-  $langs->load("propal");
-  
-  include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-  $board=new Propal($db);
-  $board->load_board($user,"opened");
+	$langs->load("propal");
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Propals"),"propal").'</td><td>'.$langs->trans("PropalsToClose").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?viewstatut=1">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?viewstatut=1">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($conf->propal->cloture->warning_delay/60/60/24).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
+	include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+	$board=new Propal($db);
+	$board->load_board($user,"opened");
+
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Propals"),"propal").'</td><td>'.$langs->trans("PropalsToClose").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?viewstatut=1">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?viewstatut=1">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($conf->propal->cloture->warning_delay/60/60/24).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
 }
 
 // Nbre propales fermées signées (à facturer)
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-  $langs->load("propal");
+	$langs->load("propal");
 
-  include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-  $board=new Propal($db);
-  $board->load_board($user,"signed");
+	include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+	$board=new Propal($db);
+	$board->load_board($user,"signed");
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Propals"),"propal").'</td><td>'.$langs->trans("PropalsToBill").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?viewstatut=2">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?viewstatut=2">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($conf->propal->facturation->warning_delay/60/60/24).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
-print "\n";
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Propals"),"propal").'</td><td>'.$langs->trans("PropalsToBill").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?viewstatut=2">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?viewstatut=2">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($conf->propal->facturation->warning_delay/60/60/24).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
+	print "\n";
 }
 
 // Nbre services à activer (en retard)
 if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
-  $langs->load("contracts");
+	$langs->load("contracts");
 
-  include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
-  $board=new Contrat($db);
-  $board->load_board($user,"inactives");
+	include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+	$board=new Contrat($db);
+	$board->load_board($user,"inactives");
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Contract"),"contract").'</td><td>'.$langs->trans("BoardNotActivatedServices").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=0">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=0">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($conf->contrat->services->inactifs->warning_delay/60/60/24).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
-print "\n";
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Contract"),"contract").'</td><td>'.$langs->trans("BoardNotActivatedServices").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=0">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=0">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($conf->contrat->services->inactifs->warning_delay/60/60/24).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
+	print "\n";
 }
 
 // Nbre services actifs (à renouveler)
 if ($conf->contrat->enabled && $user->rights->contrat->lire)
 {
-  $langs->load("contracts");
+	$langs->load("contracts");
 
-  include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
-  $board=new Contrat($db);
-  $board->load_board($user,"expired");
+	include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
+	$board=new Contrat($db);
+	$board->load_board($user,"expired");
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Contract"),"contract").'</td><td>'.$langs->trans("BoardRunningServices").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=4">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=4">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($conf->contrat->services->expires->warning_delay/60/60/24).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
-print "\n";
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Contract"),"contract").'</td><td>'.$langs->trans("BoardRunningServices").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=4">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/contrat/services.php?mainmenu=commercial&leftmenu=contracts&mode=4">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($conf->contrat->services->expires->warning_delay/60/60/24).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
+	print "\n";
 }
 
 // Nbre factures fournisseurs (à payer)
 if ($conf->fournisseur->enabled && $conf->facture->enabled && $user->rights->facture->lire)
 {
-  $langs->load("bills");
+	$langs->load("bills");
 
-  include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
-  $board=new FactureFournisseur($db);
-  $board->load_board($user);
+	include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
+	$board=new FactureFournisseur($db);
+	$board->load_board($user);
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Bills"),"bill").'</td><td>'.$langs->trans("SupplierBillsToPay").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/facture/index.php?filtre=paye:0">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/fourn/facture/index.php?filtre=paye:0">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($conf->facture->fournisseur->warning_delay/60/60/24).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
-print "\n";
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Bills"),"bill").'</td><td>'.$langs->trans("SupplierBillsToPay").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/facture/index.php?filtre=paye:0">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/fourn/facture/index.php?filtre=paye:0">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($conf->facture->fournisseur->warning_delay/60/60/24).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
+	print "\n";
 }
 
 // Nbre factures clients (à payer)
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
-  $langs->load("bills");
-  
-  include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
-  $board=new Facture($db);
-  $board->load_board($user);
+	$langs->load("bills");
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Bills"),"bill").'</td><td>'.$langs->trans("CustomerBillsUnpayed").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($conf->facture->client->warning_delay/60/60/24).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
-print "\n";
+	include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+	$board=new Facture($db);
+	$board->load_board($user);
+
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Bills"),"bill").'</td><td>'.$langs->trans("CustomerBillsUnpayed").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/compta/facture/impayees.php">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($conf->facture->client->warning_delay/60/60/24).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
+	print "\n";
 }
 
 // Nbre ecritures à rapprocher
 if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
 {
-  $langs->load("banks");
+	$langs->load("banks");
 
-  include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
-  $board=new Account($db);
-  $board->load_board($user);
+	include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+	$board=new Account($db);
+	$board->load_board($user);
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("TransactionsToConciliate"),"payment").'</td><td>'.$langs->trans("TransactionsToConciliate").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&mainmenu=bank">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&mainmenu=bank">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($conf->bank->rappro->warning_delay/60/60/24).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
-print "\n";
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("TransactionsToConciliate"),"payment").'</td><td>'.$langs->trans("TransactionsToConciliate").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&mainmenu=bank">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php?leftmenu=bank&mainmenu=bank">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($conf->bank->rappro->warning_delay/60/60/24).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
+	print "\n";
 }
 
-  // Nbre ecritures à rapprocher
+// Nbre ecritures à rapprocher
 if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
 {
-  $langs->load("banks");
+	$langs->load("banks");
 
-  include_once(DOL_DOCUMENT_ROOT."/compta/paiement/cheque/remisecheque.class.php");
-  $board=new RemiseCheque($db);
-  $board->load_board($user);
+	include_once(DOL_DOCUMENT_ROOT."/compta/paiement/cheque/remisecheque.class.php");
+	$board=new RemiseCheque($db);
+	$board->load_board($user);
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("BankChecksToReceipt"),"payment").'</td><td>'.$langs->trans("BankChecksToReceipt").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=accountancy">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=accountancy">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($conf->bank->cheque->warning_delay/60/60/24).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
-print "\n";
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("BankChecksToReceipt"),"payment").'</td><td>'.$langs->trans("BankChecksToReceipt").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=accountancy">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=accountancy">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($conf->bank->cheque->warning_delay/60/60/24).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
+	print "\n";
 }
 
 // Nbre adhérent valides (attente cotisation)
 if ($conf->adherent->enabled && $user->rights->adherent->lire && ! $user->societe_id)
 {
-  $langs->load("members");
+	$langs->load("members");
 
-  include_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-  $board=new Adherent($db);
-  $board->load_board($user);
+	include_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+	$board=new Adherent($db);
+	$board->load_board($user);
 
-  $var=!$var;
-  print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Members"),"user").'</td><td>'.$langs->trans("Members").'</td>';
-  print '<td align="right"><a href="'.DOL_URL_ROOT.'/adherents/liste.php?mainmenu=members&statut=1">'.$board->nbtodo.'</a></td>';
-  print '<td align="right">';
-  print '<a href="'.DOL_URL_ROOT.'/adherents/liste.php?mainmenu=members&statut=1">';
-  print $board->nbtodolate;
-  print '</a></td><td nowrap align="right">';
-  print ' (>'.ceil($conf->adherent->cotisation->warning_delay/60/60/24).' '.$langs->trans("days").')';
-  print '</td>';
-  print '<td>';
-  if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
-  else print '&nbsp;';
-  print '</td>';
-  print '</tr>';
-print "\n";
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("Members"),"user").'</td><td>'.$langs->trans("Members").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/adherents/liste.php?mainmenu=members&statut=1">'.$board->nbtodo.'</a></td>';
+	print '<td align="right">';
+	print '<a href="'.DOL_URL_ROOT.'/adherents/liste.php?mainmenu=members&statut=1">';
+	print $board->nbtodolate;
+	print '</a></td><td nowrap align="right">';
+	print ' (>'.ceil($conf->adherent->cotisation->warning_delay/60/60/24).' '.$langs->trans("days").')';
+	print '</td>';
+	print '<td>';
+	if ($board->nbtodolate > 0) { print img_picto($langs->trans("NActionsLate",$board->nbtodolate),"warning"); $nboflate+=$board->nbtodolate; }
+	else print '&nbsp;';
+	print '</td>';
+	print '</tr>';
+	print "\n";
 }
 
 print '</table>';
@@ -562,7 +562,7 @@ if ($nboflate > 0)
 	print '<br><table width="100%" class="border"><tr><td><font class="warning">'.img_picto($langs->trans("Alert"),'warning').' '.$langs->trans("WarningYouHaveAtLeastOneTaskLate").'</font></td></tr></table>';
 }
 
-print '</td></tr></table>'; 
+print '</td></tr></table>';
 
 
 /*
@@ -576,15 +576,15 @@ $boxid_right = array();
 if (sizeof($boxarray))
 {
 	print '<br>';
-	print_fiche_titre($langs->trans("OtherInformationsBoxes"));
+	print_fiche_titre($langs->trans("OtherInformationsBoxes"),'','');
 	print '<table width="100%" class="notopnoleftnoright">';
 	print '<tr><td class="notopnoleftnoright">'."\n";
-	
+
 	// Affichage colonne gauche
 	print "\n<!-- Box container -->\n";
 	print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr><td width="50%" valign="top">'."\n";
 	print '<div id="left">'."\n";
-	
+
 	$ii=0;
 	foreach ($boxarray as $key => $box)
 	{
@@ -593,8 +593,8 @@ if (sizeof($boxarray))
 		{
 			$ii++;
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
-		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-		  $boxid_left[$key] = $boxarray[$key]->box_id;
+			//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+			$boxid_left[$key] = $boxarray[$key]->box_id;
 			// Affichage boite key
 			$box->loadBox($conf->box_max_lines);
 			$box->showBox();
@@ -609,18 +609,18 @@ if (sizeof($boxarray))
 		$box->info_box_contents=array();
 		$box->showBox();
 	}
-	
+
 	print "</div>\n";
 	print '</td>';
 	print "<!-- End box container -->\n";
-    print "\n";
-  
+	print "\n";
+
 	// Affichage colonne droite
 	print "\n<!-- Box container -->\n";
 	print '<td width="50%" valign="top">';
 	//	print '<div id="right" style="position: absolute; display: block; width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
 	print '<div id="right">'."\n";
-	
+
 	$ii=0;
 	$boxarray=$infobox->listboxes("0",$user);       // on régénère la liste pour éviter les erreurs avec les empty box
 	foreach ($boxarray as $key => $box)
@@ -630,8 +630,8 @@ if (sizeof($boxarray))
 			$ii++;
 			//print 'key:'.$key.'<br>';
 			//print 'box_id '.$boxarray[$key]->box_id.' ';
-		  	//print 'box_order '.$boxarray[$key]->box_order.'<br>';
-		  	$boxid_right[$key] = $boxarray[$key]->box_id;
+			//print 'box_order '.$boxarray[$key]->box_order.'<br>';
+			$boxid_right[$key] = $boxarray[$key]->box_id;
 			// Affichage boite key
 			$box->loadBox($conf->box_max_lines);
 			$box->showBox();
@@ -646,7 +646,7 @@ if (sizeof($boxarray))
 		$box->info_box_contents=array();
 		$box->showBox();
 	}
-	
+
 	print "</div>\n";
 	print "</td></tr></table>\n";
 	print "<!-- End box container -->\n";
@@ -680,7 +680,7 @@ if ($conf->use_javascript_ajax)
 	print "handle: 'boxhandle',"."\n";
 	print 'onUpdate:updateOrder';
 	print "});\n";
-		
+
 	print 'Sortable.create(\'right\', {'."\n";
 	print 'tag:\'div\', '."\n";
 	print 'containment:["right","left"], '."\n";
@@ -688,7 +688,7 @@ if ($conf->use_javascript_ajax)
 	print "handle: 'boxhandle',"."\n";
 	print 'onUpdate:updateOrder';
 	print "});\n";
-		
+
 	print '// ]]>'."\n";
 	print '</script>'."\n";
 }

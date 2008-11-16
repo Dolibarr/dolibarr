@@ -18,10 +18,10 @@
  */
 
 /**
-		\file       htdocs/theme/auguria/auguria.css.php
-		\brief      Fichier de style CSS du theme Auguria
-		\version    $Id$
-*/
+ *		\file       htdocs/theme/auguria/auguria.css.php
+ *		\brief      Fichier de style CSS du theme Auguria
+ *		\version    $Id$
+ */
 
 require("../../conf/conf.php");
 
@@ -152,7 +152,7 @@ div.tmenu
     background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/nav.jpg' ?>) ;
     height: 22px;
 }
-div.tmenu  .tmenudisabled
+a.tmenudisabled
 {
 	color: #9FCED9;
 	font-size: 12px;
@@ -160,6 +160,26 @@ div.tmenu  .tmenudisabled
 	padding-right: 6px;
 	padding-top: 3px;
 	cursor: not-allowed;
+    font-weight: normal;
+}
+a.tmenudisabled:link
+{
+	color: #9FCED9;
+    font-weight: normal;
+}
+a.tmenudisabled:visited
+{
+	color: #9FCED9;
+    font-weight: normal;
+}
+a.tmenudisabled:hover
+{
+	color: #9FCED9;
+    font-weight: normal;
+}
+a.tmenudisabled:active
+{
+	color: #9FCED9;
     font-weight: normal;
 }
 

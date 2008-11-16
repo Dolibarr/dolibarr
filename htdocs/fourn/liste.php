@@ -19,11 +19,11 @@
  */
 
 /**
-        \file       htdocs/fourn/liste.php
-        \ingroup    fournisseur
-        \brief      Page accueil de la zone fournisseurs
-        \version    $Id$
-*/
+ *       \file       htdocs/fourn/liste.php
+ *       \ingroup    fournisseur
+ *       \brief      Page accueil de la zone fournisseurs
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 

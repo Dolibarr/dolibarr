@@ -39,7 +39,7 @@ body
 a
 { 
   text-decoration: none;
- }
+}
 
 div.tmenu
 {
@@ -56,6 +56,33 @@ div.tmenu
   border-right: 0px;
   border-bottom:1px solid #9d9da1;
   height: 20px;	
+}
+
+a.tmenudisabled
+{
+	color: #757575;
+    font-weight: normal;
+	cursor: not-allowed;
+}
+a.tmenudisabled:link
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:visited
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:hover
+{
+	color: #757575;
+    font-weight: normal;
+}
+a.tmenudisabled:active
+{
+	color: #757575;
+    font-weight: normal;
 }
 
 table.tmenu
