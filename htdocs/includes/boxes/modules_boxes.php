@@ -209,17 +209,12 @@ class ModeleBoxes
 	                    $maxlength=$this->MAXLENGTHBOX;
 	                    if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
-	                    if ($maxlength && strlen($textewithnotags) > $maxlength)
-	                    {
-	                        $texte=substr($texte,0,$maxlength)."...";
-	                    }
-	                    if ($maxlength && strlen($texte2withnotags) > $maxlength)
-	                    {
-	                        $texte2=substr($texte2,0,$maxlength)."...";
-	                    }
-	                    print $texte;
+	                    if ($maxlength) $textewithnotags=dolibarr_trunc($textewithnotags,$maxlength);
+	                    print $textewithnotags;
+
+	                    //print $texte;
 	                    if (isset($contents[$i][$j]['url'])) print '</a>';
-	                    print $texte2;
+	                    print $texte2withnotags;
 	                    print "</td>";
 	                }
 

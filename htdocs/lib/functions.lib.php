@@ -844,6 +844,60 @@ function dol_print_phone_link($phone,$option=0)
 	return $link;
 }
 
+
+/**
+ * Make a strlen call. Works even in mbstring module not enabled
+ *
+ * @param unknown_type $string
+ * @param unknown_type $stringencoding
+ * @return unknown
+ */
+function dol_strlen($string,$stringencoding='')
+{
+	global $langs;
+	
+	if (empty($stringencoding)) $stringencoding=$langs->charset_output;
+
+	$ret='';
+	if (function_exists('mb_strlen'))
+	{
+		$ret=mb_strlen($string,$stringencoding);
+	}
+	else
+	{
+		$ret=strlen($string);
+	}
+	return $ret;
+}
+
+/**
+ * Make a substring. Works even in mbstring module not enabled
+ *
+ * @param unknown_type $string
+ * @param unknown_type $start
+ * @param unknown_type $length
+ * @param unknown_type $stringencoding
+ * @return unknown
+ */
+function dol_substr($string,$start,$length,$stringencoding='')
+{
+	global $langs;
+	
+	if (empty($stringencoding)) $stringencoding=$langs->charset_output;
+
+	$ret='';
+	if (function_exists('mb_substr'))
+	{
+		$ret=mb_substr($string,$start,$length,$stringencoding);
+	}
+	else
+	{
+		$ret=substr($string,$start,$length);
+	}
+	return $ret;
+}
+
+	
 /**
  *	\brief      Truncate a string to a particular length adding '...' if string larger than length
  *	\param      string				String to truncate
@@ -852,7 +906,7 @@ function dol_print_phone_link($phone,$option=0)
  *	\return     string				Truncated string
  *	\remarks	USE_SHORT_TITLE=0 can disable all truncings
  */
-function dolibarr_trunc($string,$size=40,$trunc='right')
+function dolibarr_trunc($string,$size=40,$trunc='right',$stringencoding='')
 {
 	global $conf;
 
@@ -862,29 +916,26 @@ function dolibarr_trunc($string,$size=40,$trunc='right')
 		// We go always here
 		if ($trunc == 'right')
 		{
-			//mb_internal_encoding("UTF-8");
-			//print $conf->character_set_client.'-'.mb_strlen($string).'-'.strlen($string);
-			//print 'ee'.$string.$size.mb_strcut($string,0,$size,'UTF-8').'rr';
-			if (strlen($string) > $size)
-			return substr($string,0,$size).'...';
+			if (dol_strlen($string,$stringencoding) > $size)
+			return dol_substr($string,0,$size,$stringencoding).'...';
 			else
 			return $string;
 		}
 		if ($trunc == 'middle')
 		{
-			if (strlen($string) > 2 && strlen($string) > $size)
+			if (dol_strlen($string,$stringencoding) > 2 && dol_strlen($string,$stringencoding) > $size)
 			{
 				$size1=round($size/2);
 				$size2=round($size/2);
-				return substr($string,0,$size1).'...'.substr($string,strlen($string) - $size2,$size2);
+				return dol_substr($string,0,$size1,$stringencoding).'...'.dol_substr($string,dol_strlen($string,$stringencoding) - $size2,$size2,$stringencoding);
 			}
 			else
 			return $string;
 		}
 		if ($trunc == 'left')
 		{
-			if (strlen($string) > $size)
-			return '...'.substr($string,strlen($string) - $size,$size);
+			if (dol_strlen($string,$stringencoding) > $size)
+			return '...'.dol_substr($string,dol_strlen($string,$stringencoding) - $size,$size,$stringencoding);
 			else
 			return $string;
 		}
@@ -896,12 +947,12 @@ function dolibarr_trunc($string,$size=40,$trunc='right')
 }
 
 /**
- \brief      Compl�te une chaine a une taille donn�e par des espaces
- \param      string		Chaine a compl�ter
- \param      size		Longueur de la chaine.
- \param      side		0=Compl�tion a droite, 1=Compl�tion a gauche
- \param		char		Chaine de compl�tion
- \return     string		Chaine compl�t�e
+ *	\brief      Complete une chaine a une taille donnee par des espaces
+ *	\param      string		Chaine a completer
+ *	\param      size		Longueur de la chaine.
+ *	\param      side		0=Completion a droite, 1=Completion a gauche
+ *	\param		char		Chaine de completion
+ *	\return     string		Chaine complete
  */
 function dolibarr_pad($string,$size,$side,$char=' ')
 {
@@ -917,10 +968,10 @@ function dolibarr_pad($string,$size,$side,$char=' ')
 }
 
 /**
- \brief      Affiche picto propre a une notion/module (fonction g�n�rique)
- \param      alt         Texte sur le alt de l'image
- \param      object      Objet pour lequel il faut afficher le logo (exemple: user, group, action, bill, contract, propal, product, ...)
- \return     string      Retourne tag img
+ *	\brief      Affiche picto propre a une notion/module (fonction g�n�rique)
+ *	\param      alt         Texte sur le alt de l'image
+ *	\param      object      Objet pour lequel il faut afficher le logo (exemple: user, group, action, bill, contract, propal, product, ...)
+ *	\return     string      Retourne tag img
  */
 function img_object($alt, $object)
 {

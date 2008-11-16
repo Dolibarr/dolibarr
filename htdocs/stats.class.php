@@ -191,7 +191,11 @@ class Stats
 			}
 			$this->db->free($resql);
 		}
-
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+		
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
 			$res[$i] = $result[$i] + 0;
@@ -201,7 +205,9 @@ class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$data[$i-1] = array(ucfirst(substr(dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
+			$month=dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_substr($month,0,3);
+			$data[$i-1] = array(ucfirst($month), $res[$i]);
 		}
 
 		return $data;
@@ -241,14 +247,16 @@ class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$data[$i-1] = array(ucfirst(substr(dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b"),0,3)), $res[$i]);
+			$month=dolibarr_print_date(dolibarr_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_substr($month,0,3);
+			$data[$i-1] = array(ucfirst($month), $res[$i]);
 		}
 
 		return $data;
 	}
 
 	/**
-	 *
+	 *	\brief  Renvoie le montant moyen par mois pour une annee donnee
 	 *
 	 */
 	function _getAverageByMonth($year, $sql)

@@ -70,9 +70,9 @@ $stats = new FactureStats($db, $socid, $mode);
 
 
 // Build graphic number of object
+// $data = array(array('Lib',val1,val2,val3),...)
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
 //var_dump($data);
-// $data = array(array('Lib',val1,val2,val3),...)
 
 $filenamenb = $dir."/invoicesnbinyear-".$year.".png";
 if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$year.'.png';

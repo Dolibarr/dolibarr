@@ -82,8 +82,9 @@ class FactureStats extends Stats
 	 */
 	function getNbByYear()
 	{
-		$sql = "SELECT date_format(datef,'%Y') as dm, count(*)";
-		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." GROUP BY dm DESC";
+		$sql = "SELECT YEAR(datef) as dm, count(*)";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " GROUP BY dm DESC";
 		$sql.= " WHERE ".$this->where;
 		
 		return $this->_getNbByYear($sql);
@@ -97,9 +98,9 @@ class FactureStats extends Stats
 	 */
 	function getNbByMonth($year)
 	{
-		$sql = "SELECT date_format(datef,'%m') as dm, count(*)";
+		$sql = "SELECT MONTH(datef) as dm, count(*)";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-		$sql.= " WHERE date_format(datef,'%Y') = ".$year;
+		$sql.= " WHERE YEAR(datef) = ".$year;
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm DESC";
 
