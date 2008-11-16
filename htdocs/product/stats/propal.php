@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -16,16 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/product/stats/propal.php
         \ingroup    product, service, propal
 		\brief      Page des stats des propals pour un produit
-		\version    $Revision$
+		\version    $Id$
 */
 
 
@@ -148,7 +145,7 @@ if ($_GET["id"] || $_GET["ref"])
         {
             $num = $db->num_rows($result);
 
-            print_barre_liste($langs->trans("Proposals"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num);
+            print_barre_liste($langs->trans("Proposals"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
 
             $i = 0;
             print "<table class=\"noborder\" width=\"100%\">";

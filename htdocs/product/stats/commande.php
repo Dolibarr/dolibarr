@@ -147,7 +147,7 @@ if ($_GET["id"] || $_GET["ref"])
         {
             $num = $db->num_rows($result);
 
-            print_barre_liste($langs->trans("CustomersOrders"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num);
+            print_barre_liste($langs->trans("CustomersOrders"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
 
             $i = 0;
             print "<table class=\"noborder\" width=\"100%\">";

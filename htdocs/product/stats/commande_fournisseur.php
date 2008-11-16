@@ -130,7 +130,7 @@ if ($_GET["id"] || $_GET["ref"])
       if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
       if ($socid)
         {
-	  $sql .= " AND c.fk_soc = ".$socid;
+	  	$sql .= " AND c.fk_soc = ".$socid;
         }
       $sql.= " ORDER BY $sortfield $sortorder ";
       $sql.= $db->plimit($conf->liste_limit +1, $offset);
@@ -140,7 +140,7 @@ if ($_GET["id"] || $_GET["ref"])
         {
 	  $num = $db->num_rows($result);
 	  
-	  print_barre_liste($langs->trans("SuppliersOrders"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num);
+	  print_barre_liste($langs->trans("SuppliersOrders"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,0,'');
 	  
 	  $i = 0;
 	  print "<table class=\"noborder\" width=\"100%\">";
