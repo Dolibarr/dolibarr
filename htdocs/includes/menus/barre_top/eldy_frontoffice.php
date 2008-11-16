@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +18,12 @@
  */
 
 /**
-	    \file       htdocs/includes/menus/barre_top/eldy_frontoffice.php
+	    \file       htdocs/includes/menus/barre_top/eldy_backoffice.php
 		\brief      Gestionnaire nomme eldy du menu du haut
 		\version    $Id$
 
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entetes de menu a faire apparaitre dans la barre du haut
+        \remarks    Toutes les entrees de menu a faire apparaitre dans la barre du haut
         \remarks    doivent etre affichees par <a class="tmenu" href="...?mainmenu=...">...</a>
 		\remarks    ou si menu selectionne <a class="tmenusel" href="...?mainmenu=...">...</a> 
 */
@@ -35,6 +36,8 @@
 class MenuTop {
 
     var $require_left=array("eldy_frontoffice");    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
+    var $hideifnotallowed=true;						// Put 0 for back office menu, 1 for front office menu
+    
     var $atarget="";                                // Valeur du target a utiliser dans les liens
 
     
@@ -71,14 +74,14 @@ class MenuTop {
         $class="";
         if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home")
         {
-            $class='class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
+            $class='class="tmenusel"'; $_SESSION['idmenu']='';
         }
         else
         {
             $class = 'class="tmenu"';
         }
-    
-        print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a></td>';
+    	$idsel='id="home" ';
+        print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a></td>';
 
 
         // Third parties
@@ -90,19 +93,25 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies")
             {
-                $class='class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
+                $class='class="tmenusel"'; $_SESSION['idmenu']='';
             }
             else
             {
                 $class = 'class="tmenu"';
             }
-        
-			if (($conf->societe->enabled && $user->rights->societe->lire)
+
+    		$idsel='id="companies" ';
+            if (($conf->societe->enabled && $user->rights->societe->lire)
 				|| ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
-            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=companies&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("ThirdParties").'</a></td>';
-            else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("ThirdParties").'</font></td>';
-        }
+			{
+            	print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/index.php?mainmenu=companies&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("ThirdParties").'</a></td>';
+			}
+			else
+			{
+            	if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$langs->trans("ThirdParties").'</a></td>';
+			}
+		}
+
 
         // Products-Services
         if ($conf->produit->enabled || $conf->service->enabled)
@@ -112,7 +121,7 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "products")
             {
-                $class='class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
+                $class='class="tmenusel"'; $_SESSION['idmenu']='';
             }
             else
             {
@@ -123,36 +132,17 @@ class MenuTop {
             if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
             if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
         
-/*
+    		$idsel='id="products" ';
             if ($user->rights->produit->lire)
-                print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a></td>';
+            {
+                print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a></td>';
+            }
             else
-                print '<td class="tmenu"><font class="tmenudisabled">'.$chaine.'</font></td>';
-*/
+            {
+                if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$chaine.'</a></td>';
+            }
         }
 
-        // Suppliers
-/*
-        if ($conf->fournisseur->enabled)
-        {
-            $langs->load("suppliers");
-        
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "suppliers")
-            {
-                $class='class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
-            }
-            else
-            {
-                $class = 'class="tmenu"';
-            }
-       
-			if ($user->rights->fournisseur->lire)
-            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
-            else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Suppliers").'</font></td>';
-        }
-*/        
         // Commercial
         /*$showcommercial=0;
         if ($conf->societe->enabled)   $showcommercial=1;
@@ -168,18 +158,23 @@ class MenuTop {
 	        $class="";
 	        if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
 	        {
-	            $class='class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
+	            $class='class="tmenusel"'; $_SESSION['idmenu']='';
 	        }
 	        else
 	        {
 	            $class = 'class="tmenu"';
 	        }
-
-			if($user->rights->societe->lire)
-				print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
+        
+    		$idsel='id="commercial" ';
+	        if($user->rights->societe->lire)
+			{
+				print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
+			}
 			else
-				print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Commercial").'</font></td>';
-        }
+			{
+				if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$langs->trans("Commercial").'</a></td>';
+			}
+		}
 
         // Financial
         if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled
@@ -190,18 +185,23 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "accountancy")
             {
-                $class='class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
+                $class='class="tmenusel"'; $_SESSION['idmenu']='';
             }
             else
             {
                 $class = 'class="tmenu"';
             }
-        
+            
+    		$idsel='id="accountancy" ';
             if ($user->rights->compta->resultat->lire || $user->rights->comptaexpert->plancompte->lire
             	|| $user->rights->facture->lire || $user->rights->banque->lire)
-            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';
+            {
+            	print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';
+            }
             else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("MenuFinancial").'</font></td>';
+            {
+            	if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$langs->trans("MenuFinancial").'</a></td>';
+            }
         }
 
         // Projects
@@ -212,19 +212,22 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "project")
             {
-                $class = 'class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
+                $class='class="tmenusel"'; $_SESSION['idmenu']='';
             }
             else
             {
                 $class = 'class="tmenu"';
             }
-        
-/*
+            
+    		$idsel='id="project" ';
             if ($user->rights->projet->lire)
-            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Projects").'</a></td>';
+            {
+            	print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Projects").'</a></td>';
+            }
             else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Projects").'</font></td>';
-*/
+            {
+            	if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$langs->trans("Projects").'</a></td>';
+        	}
         }
 
         // Tools
@@ -236,35 +239,39 @@ class MenuTop {
             $class="";
             if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "tools")
             {
-                $class = 'class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
+                $class='class="tmenusel"'; $_SESSION['idmenu']='';
             }
             else
             {
                 $class = 'class="tmenu"';
             }
             
+    		$idsel='id="tools" ';
             if ($user->rights->mailing->lire || $user->rights->bookmark->lire || $user->rights->export->lire)
-            		//print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/mailing/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
-            		//print '<a '.$class.' href="'.DOL_URL_ROOT.'/societe.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
-            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a></td>';
+            {
+           		print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a></td>';
+            }
             else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Tools").'</font></td>';
+            {
+           		if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$langs->trans("Tools").'</a></td>';
+        	}
         }
         
-         // Telephonie
+        // Telephonie
         if ($conf->telephonie->enabled && $user->rights->telephonie->lire)
         {
             $class="";
             if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
+                $class='class="tmenusel"'; $_SESSION['idmenu']='';
             }
             else
             {
                 $class = 'class="tmenu"';
             }
 
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/telephonie/index.php?mainmenu=telephonie"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a></td>';
+    		$idsel='id="telephonie" ';
+            print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/telephonie/index.php?mainmenu=telephonie"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a></td>';
         }
 
         // Energie
@@ -274,70 +281,117 @@ class MenuTop {
             $class="";
             if (ereg("^".DOL_URL_ROOT."\/energie\/",$_SERVER["PHP_SELF"]))
             {
-                $class='class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
+                $class='class="tmenusel"'; $_SESSION['idmenu']='';
             }
             else
             {
                 $class = 'class="tmenu"';
             }
 
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/energie/index.php?mainmenu=energie"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a></td>';
+            $idsel='id="energie" ';
+            print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/energie/index.php?mainmenu=energie"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a></td>';
         }
  
-		// Members
-        if ($conf->adherent->enabled)
+		// OSCommerce 1
+        if ($conf->boutique->enabled)
         {
-            // $langs->load("members"); Added in main file to increase
+            $langs->load("shop");
         
             $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "shop")
             {
-                $class='class="tmenusel" id="xxx"'; $_SESSION['idmenu']='';
+                $class='class="tmenusel"'; $_SESSION['idmenu']='';
             }
             else
             {
                 $class = 'class="tmenu"';
             }
         
-            if ($user->rights->adherent->lire)
-            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuMembers").'</a></td>';
-            else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("MenuMembers").'</font></td>';
+            $idsel='id="shop" ';
+            print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
         
+        // OSCommerce 2
+        if ($conf->oscommerce2->enabled)
+        {
+            $langs->load("shop");
+        
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "shop")
+            {
+                $class='class="tmenusel"'; $_SESSION['idmenu']='';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+        
+            $idsel='id="shop" ';
+            print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
+        }
+        
+        // Members
+        if ($conf->adherent->enabled)
+        {
+            // $langs->load("members"); Added in main file
+        
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
+            {
+                $class='class="tmenusel"'; $_SESSION['idmenu']='';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+        
+            $idsel='id="members" ';
+            if ($user->rights->adherent->lire)
+            {
+            	print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuMembers").'</a></td>';
+            }
+            else
+            {
+            	if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$langs->trans("MenuMembers").'</a></td>';
+        	}
+        }
+
 
 		// Affichage des menus personnalises
        	require_once(DOL_DOCUMENT_ROOT."/core/menubase.class.php");
 
         $menuArbo = new Menubase($this->db,'eldy','top');
- 		$tabMenu = $menuArbo->menuTopCharger(1,$_SESSION['mainmenu'],'eldy');
-        for($i=0; $i<count($tabMenu); $i++)
+ 		$tabMenu = $menuArbo->menuTopCharger(0,$_SESSION['mainmenu'],'eldy');
+
+ 		for($i=0; $i<count($tabMenu); $i++)
         {
         	if ($tabMenu[$i]['enabled'] == true)
         	{
-	        	if ($tabMenu[$i]['right'] == true)
+        		$idsel=(empty($tabMenu[$i]['mainmenu'])?'id="none" ':'id="'.$tabMenu[$i]['mainmenu'].'" ');
+        		if ($tabMenu[$i]['right'] == true)
 	        	{
 					$url=DOL_URL_ROOT.$tabMenu[$i]['url'];
 					if (! eregi('\?',DOL_URL_ROOT.$tabMenu[$i]['url'])) $url.='?';
 					else $url.='&';
 					$url.='mainmenu='.$tabMenu[$i]['mainmenu'].'&leftmenu=';
 					$url.="&idmenu=".$tabMenu[$i]['rowid'];
-					if (! empty($_GET["idmenu"]) && $tabMenu[$i]['rowid'] == $_GET["idmenu"]) $idsel='id="sel" ';
-					// Define idsel
-					$idsel='';
-	        		print '<td class="tmenu"><a class="tmenu" '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></td>';
+					if (! empty($_SESSION['idmenu']) && $tabMenu[$i]['rowid'] == $_SESSION['idmenu']) $class='class="tmenusel"';
+					else $class='class="tmenu"';
+					print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.$url.'"'.($this->atarget?" target=$this->atarget":"").'>';
+					print $tabMenu[$i]['titre'];
+					print '</a></td>';
 	        	}
 	        	else
 	        	{
-	        		print '<td class="tmenu"><font class="tmenudisabled">'.$tabMenu[$i]['titre'].'</font></td>';
+	        		if (! $this->hideifnotallowed) print '<td class="tmenu"><a class="tmenudisabled" '.$idsel.'href="#">'.$tabMenu[$i]['titre'].'</a></td>';
 	        	}
-        	}      	
+        	}
         }
+		
         
         print '</tr></table>';
-
     }
-    
+
 }
 
 ?>
