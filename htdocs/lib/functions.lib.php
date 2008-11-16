@@ -792,6 +792,8 @@ function dol_print_size($size)
  */
 function dol_print_url($url,$target='_blank',$max=32)
 {
+	if (empty($url)) return '';
+	
 	$link='<a href="';
 	if (! eregi('^http',$url)) $link.='http://';
 	$link.=$url;
