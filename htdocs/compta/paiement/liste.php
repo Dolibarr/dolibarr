@@ -18,11 +18,11 @@
  */
  
 /**
-   \file       htdocs/compta/paiement/liste.php
-    \ingroup    compta
-     \brief      Page liste des paiements des factures clients
-      \version    $Id$
-*/
+ *	\file       htdocs/compta/paiement/liste.php
+ *  \ingroup    compta
+ *  \brief      Page liste des paiements des factures clients
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
@@ -154,7 +154,8 @@ if ($resql)
 		print "<tr $bc[$var]>";
 
 		print '<td width="40">';
-		$paymentstatic->rowid=$objp->rowid;
+		$paymentstatic->id=$objp->rowid;
+		$paymentstatic->ref=$objp->rowid;
 		print $paymentstatic->getNomUrl(1);
 		print '</td>';
 

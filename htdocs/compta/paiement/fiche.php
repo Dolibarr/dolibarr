@@ -128,7 +128,7 @@ $head[$h][1] = $langs->trans("Info");
 $h++;      
 
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Payment"));
+dolibarr_fiche_head($head, $hselected, $langs->trans("PaymentCustomerInvoice"));
 
 /*
  * Confirmation de la suppression du paiement

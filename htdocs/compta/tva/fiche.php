@@ -18,11 +18,11 @@
  */
 
 /**
-	    \file       htdocs/compta/tva/fiche.php
-        \ingroup    tax
-		\brief      Page des règlements de TVA
-		\version    $Id$
-*/
+ *	    \file       htdocs/compta/tva/fiche.php
+ *      \ingroup    tax
+ *		\brief      Page des règlements de TVA
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
@@ -50,10 +50,13 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     
     $db->begin();
     
+    $datev=dolibarr_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
+    $datep=dolibarr_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+    
     $tva->accountid=$_POST["accountid"];
     $tva->paymenttype=$_POST["paiementtype"];
-    $tva->datev=dolibarr_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-    $tva->datep=dolibarr_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+    $tva->datev=$datev;
+    $tva->datep=$datep;
     $tva->amount=$_POST["amount"];
 	$tva->label=$_POST["label"];
 
@@ -150,27 +153,27 @@ if ($_GET["action"] == 'create')
     
     print "<tr>";
     print '<td>'.$langs->trans("DatePayment").'</td><td>';
-    print $html->select_date("","datev",'','','','add');
+    print $html->select_date($datep,"datep",'','','','add');
     print '</td></tr>';
 
     print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
-    print $html->select_date("","datep",'','','','add');
+    print $html->select_date($datev,"datev",'','','','add');
     print '</td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.$langs->trans("VATPayment").'"></td></tr>';    
+	print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("VATPayment")).'"></td></tr>';    
 
 	// Amount
-	print '<tr><td>'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value=""></td></tr>';    
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';    
 
     if ($conf->banque->enabled)
     {
 		print '<tr><td>'.$langs->trans("Account").'</td><td>';
-        $html->select_comptes($vatpayment->fk_account,"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+        $html->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
 
 	    print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
-	    $html->select_types_paiements($vatpayment->fk_type, "paiementtype");
+	    $html->select_types_paiements($_POST["paiementtype"], "paiementtype");
 	    print "</td>\n";
 	}
         
@@ -216,29 +219,24 @@ if ($id)
 	print dolibarr_print_date($vatpayment->datev,'day');
 	print '</td></tr>';
 
-	if ($conf->banque->enabled)
-	{
-		print '<tr><td>'.$langs->trans("Account").'</td>';
-		if ($vatpayment->fk_account > 0)
-		{
-			$account=new Account($db);
-			$result=$account->fetch($vatpayment->fk_account);
-			print '<td>'.$account->getNomUrl(1).'</td>';
-			print '<td width="25%">'.$langs->trans("BankLineConciliated").'</td><td width="25%">'.yn($vatpayment->rappro).'</td>';
-		}
-		else
-		{
-			print '<td colspan="3">&nbsp;</td>';
-		}
-		print '</tr>';
-
-		print '<tr><td>'.$langs->trans("PaymentMode").'</td><td colspan="3">';
-		print $vatpayment->fk_type ? $langs->trans("PaymentTypeShort".$vatpayment->fk_type) : '&nbsp;';
-		print "</td>\n";
-	}
-
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';
 	
+	if ($conf->banque->enabled)
+	{
+		if ($vatpayment->fk_account > 0)
+		{
+ 		   	$bankline=new AccountLine($db);
+    		$bankline->fetch($vatpayment->fk_bank);
+
+	    	print '<tr>';
+	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+			print '<td colspan="3">';
+			print $bankline->getNomUrl(1,0,'showall');			
+	    	print '</td>';
+	    	print '</tr>';
+		}
+	}
+
 	print '</table>';
 	
 	print '</div>';

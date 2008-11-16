@@ -42,6 +42,7 @@ class Tva extends CommonObject
 	//var $table_element='tva';	//!< Name of table without prefix where object is stored
     
     var $id;
+    var $ref;
     
 	var $tms;
 	var $datep;
@@ -461,7 +462,7 @@ class Tva extends CommonObject
     }
 
 
-    /*
+    /**
      *      \brief      Ajoute un paiement de TVA
 	 *		\param		user		Object user that insert
 	 *		\return		int			<0 if KO, rowid in tva table if OK
@@ -538,16 +539,13 @@ class Tva extends CommonObject
 						$ok=0;
 					}
             	  
-                    // Mise a jour liens (pour chaque charge concernée par le paiement)
-                    //foreach ($paiement->amounts as $key => $value)
-            	    //{
-                    //    $chid = $key;
-                    //    $fac = new Facture($db);
-                    //    $fac->fetch($chid);
-                    //    $fac->fetch_client();
-                    //    $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
-                    //    $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
-            	    //}
+                    // Mise a jour liens 
+                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/tva/fiche.php?id=', "(VATPayment)", "payment_vat");
+                    if ($result < 0)
+                    {
+                    	$this->error=$acc->error;
+                    	$ok=0;
+                    }
 	            }
                 
 				if ($ok) 

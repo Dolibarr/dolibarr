@@ -32,6 +32,7 @@ if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate)
 accessforbidden();
 
 $langs->load("banks");
+$langs->load("compta");
 $langs->load("bills");
 $langs->load("categories");
 if ($conf->adherent->enabled) $langs->load("members");
@@ -311,7 +312,7 @@ if ($result)
 			print '<input name="label" class="flat" value="';
 			if (eregi('^\((.*)\)$',$objp->label,$reg))
 			{
-				// Label g�n�rique car entre parenth�ses. On l'affiche en le traduisant
+				// Label generique car entre parentheses. On l'affiche en le traduisant
 				print $langs->trans($reg[1]);
 			}
 			else
@@ -327,7 +328,7 @@ if ($result)
 			print '<td colspan="4">';
 			if (eregi('^\((.*)\)$',$objp->label,$reg))
 			{
-				// Label g�n�rique car entre parenth�ses. On l'affiche en le traduisant
+				// Label generique car entre parentheses. On l'affiche en le traduisant
 				print $langs->trans($reg[1]);
 			}
 			else
@@ -373,6 +374,12 @@ if ($result)
 					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('ShowPayment'),'payment').' ';
 					print $langs->trans("SocialContributionPayment");
+					print '</a>';
+				}
+				else if ($links[$key]['type']=='payment_vat') {
+					print '<a href="'.DOL_URL_ROOT.'/compta/tva/fiche.php?id='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('ShowVAT'),'payment').' ';
+					print $langs->trans("VATPayment");
 					print '</a>';
 				}
 				else if ($links[$key]['type']=='member') {

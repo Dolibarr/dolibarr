@@ -21,11 +21,11 @@
  */
 
 /**
-	    \file       htdocs/compta/bank/account.php
-		\ingroup    banque
-		\brief      Page de détail des transactions bancaires
-		\version    $Id$
-*/
+ *	    \file       htdocs/compta/bank/account.php
+ *		\ingroup    banque
+ *		\brief      Page de détail des transactions bancaires
+ *		\version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
@@ -33,6 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/tva/tva.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");
 
 // Security check
@@ -121,6 +122,7 @@ $chargestatic=new ChargeSociales($db);
 $memberstatic=new Adherent($db);
 $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
+$paymentvatstatic=new TVA($db);
 
 $html = new Form($db);
 
@@ -427,9 +429,8 @@ if ($account || $_GET["ref"])
 	}
 	if ($mode_search && $conf->tax->enabled)
 	{
-		// \TODO Mettre jointure sur charges sociales pour recherche sur une charge 
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='payment_vat'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."tva as t ON bu.url_id = t.rowid";
 	}
 	$sql.= " WHERE fk_account=".$acct->id;
 	$sql.= $sql_rech;
@@ -503,18 +504,19 @@ if ($account || $_GET["ref"])
 	            foreach($links as $key=>$val)
 	            {
 	                if ($links[$key]['type']=='payment') {
-	                    $paymentstatic->rowid=$links[$key]['url_id'];
+	                    $paymentstatic->id=$links[$key]['url_id'];
 	                    print ' '.$paymentstatic->getNomUrl(2);
 	                }
 	                else if ($links[$key]['type']=='payment_supplier') {
-
-	                	$paymentsupplierstatic->rowid=$links[$key]['url_id'];
-	                    print ' '.$paymentsupplierstatic->getNomUrl(2);
+	                	$paymentsupplierstatic->id=$links[$key]['url_id'];
+	                	$paymentsupplierstatic->ref=$links[$key]['url_id'];
+	                	print ' '.$paymentsupplierstatic->getNomUrl(2);
 	                }
 	                else if ($links[$key]['type']=='company') {
 	                }
 					else if ($links[$key]['type']=='sc') {	// This is waiting for card to link to payment_sc
 	                	$chargestatic->id=$links[$key]['url_id'];
+	                    $chargestatic->ref=$links[$key]['url_id'];
 	                    print ' '.$chargestatic->getNomUrl(2);
 					}
 					else if ($links[$key]['type']=='payment_sc') 
@@ -526,6 +528,12 @@ if ($account || $_GET["ref"])
 						print $langs->trans("SocialContributionPayment");
 						print '</a>';
 						*/
+					}
+					else if ($links[$key]['type']=='payment_vat') 
+					{
+	                    $paymentvatstatic->id=$links[$key]['url_id'];
+						$paymentvatstatic->ref=$links[$key]['url_id'];
+	                    print ' '.$paymentvatstatic->getNomUrl(2);
 					}
 					else if ($links[$key]['type']=='banktransfert') {
 						/* Do not show this link (avoid confusion). Can already be accessed from transaction detail */
@@ -551,9 +559,7 @@ if ($account || $_GET["ref"])
 	            print '</td>';
 
 
-	            /*
-	             * Ajout les liens tiers
-	             */
+	            // Add third party column
 				print '<td>';
 				foreach($links as $key=>$val)
 	            {

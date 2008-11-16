@@ -223,7 +223,7 @@ if ($resql)
         // Date value
 		if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 		{
-			print '<td align="center">';
+			print '<td align="center" nowrap="nowrap">';
 			print dolibarr_print_date($objp->dv,"day");
 			print ' &nbsp; ';
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';

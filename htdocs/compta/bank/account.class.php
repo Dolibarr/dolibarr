@@ -43,7 +43,7 @@ class Account extends CommonObject
 	var $rowid;
 	var $ref;
 	var $label;
-	var $type;
+	var $type;		// 'payment', 'company', 'member', 'banktransfert', 'payment_supplier', 'sc', 'payment_vat', ...
 	var $bank;
 	var $clos;
 	var $rappro;
@@ -97,13 +97,13 @@ class Account extends CommonObject
 
 
 	/**
-	 *      \brief      Ajoute lien entre ecriture bancaire et sources
-	 *      \param      line_id     Id ecriture bancaire
-	 *      \param      url_id      Id parametre url
-	 *      \param      url         Url
-	 *      \param      label       Libell� du lien
-	 *      \param      type        Type de lien (payment, company, member, ...)
-	 *      \return     int         <0 si ko, id line si ok
+	 *      Add a link between bank line record and its source
+	 *      @param      line_id     Id ecriture bancaire
+	 *      @param      url_id      Id parametre url
+	 *      @param      url         Url
+	 *      @param      label       Link label
+	 *      @param      type        Type of link ('payment', 'company', 'member', ...)
+	 *      @return     int         <0 if KO, id line if OK
 	 */
 	function add_url_line($line_id, $url_id, $url, $label, $type)
 	{

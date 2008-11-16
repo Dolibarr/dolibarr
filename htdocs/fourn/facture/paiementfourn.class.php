@@ -479,12 +479,12 @@ class PaiementFourn
 		
 		$result='';
 
-		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$this->rowid.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowPayment"),'payment').$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$lien.$this->rowid.$lienfin;
+		if ($withpicto != 2) $result.=$lien.$this->ref.$lienfin;
 		return $result;
 	}
     /**
