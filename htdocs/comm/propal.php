@@ -1309,7 +1309,7 @@ if ($_GET['propalid'] > 0)
 					else
 					{
 						$picto = '<a href="#" onClick="dialogWindow($(\'calc_markup'.$i.'\').innerHTML,\''.$langs->trans('ToCalculateMarkup').'\')">';
-						$picto.= img_calc();
+						$picto.= img_picto($langs->trans("Calculate"),'calc.png');
 						$picto.= '</a>';
 						print $html->textwithtooltip($picto,$langs->trans("ToCalculateMarkup"),3,'','',$i);
 					}

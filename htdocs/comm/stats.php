@@ -27,6 +27,7 @@
  
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/core/dolgraph.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
 
 
 /*
@@ -212,9 +213,7 @@ foreach($graphfiles as $graph){
 </table>' ;
 }
 
-/**************
- * Fin de page
- **************/
 $db->close();
+
 llxFooter();
 ?>

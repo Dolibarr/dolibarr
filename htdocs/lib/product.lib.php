@@ -257,4 +257,46 @@ function show_stats_for_company($product,$socid)
 }
 
 
+/**
+ *	\brief   Renvoi le texte d'une unite
+ *	\param   int                 Unit
+ *	\param   measuring_style     Le style de mesure : weight, volume,...
+ *	\return  string	            Unite
+ *	\TODO gerer les autres unites de mesure comme la livre, le gallon, le litre, ...
+ */
+function measuring_units_string($unit,$measuring_style='')
+{
+	/* Note Rodo aux dev :)
+	 * Ne pas ins�rer dans la base de donn�es ces valeurs
+	 * cela surchagerait inutilement d'une requete suppl�mentaire
+	 * pour quelque chose qui est somme toute peu variable
+	 */
+
+	global $langs;
+
+	if ($measuring_style == 'weight')
+	{
+		$measuring_units[3] = $langs->trans("WeightUnitton");
+		$measuring_units[0] = $langs->trans("WeightUnitkg");
+		$measuring_units[-3] = $langs->trans("WeightUnitg");
+		$measuring_units[-6] = $langs->trans("WeightUnitmg");
+	}
+	else if ($measuring_style == 'volume')
+	{
+		$measuring_units[0] = $langs->trans("VolumeUnitm3");
+		$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
+		$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
+		$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
+	}
+	else if ($measuring_style == 'size')
+	{
+		$measuring_units[0] = $langs->trans("SizeUnitm");
+		$measuring_units[-1] = $langs->trans("SizeUnitdm");
+		$measuring_units[-2] = $langs->trans("SizeUnitcm");
+		$measuring_units[-3] = $langs->trans("SizeUnitmm");
+	}
+
+	return $measuring_units[$unit];
+}
+
 ?>

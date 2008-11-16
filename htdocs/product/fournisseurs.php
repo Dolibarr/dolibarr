@@ -386,7 +386,7 @@ if ($_GET["id"] || $_GET["ref"])
 						if ($user->rights->produit->creer)
 						{
 							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$objp->socid.'&amp;action=add_price&amp;rowid='.$objp->rowid.'">'.img_edit()."</a>";
-							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$objp->socid.'&amp;action=remove_pf&amp;rowid='.$objp->rowid.'">'.img_disable($langs->trans("Remove")).'</a>';
+							print '<a href="fournisseurs.php?id='.$product->id.'&amp;socid='.$objp->socid.'&amp;action=remove_pf&amp;rowid='.$objp->rowid.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
 						}
 
 						print '</td>';

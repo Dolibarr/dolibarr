@@ -30,6 +30,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formfile.class.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formproduct.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/sendings.lib.php");
 if ($conf->produit->enabled)  require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT."/propal.class.php");

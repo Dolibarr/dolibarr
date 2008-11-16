@@ -18,22 +18,22 @@
  */
 
 /**
-   \file		htdocs/lib/files.lib.php
-   \brief		Library for file managing functions
-   \version		$Id$
-*/
+ *  \file		htdocs/lib/files.lib.php
+ *  \brief		Library for file managing functions
+ *  \version		$Id$
+ */
 
 /**
-   \brief		Scan a directory and return a list of files/directories
-   \param		$path        	Starting path from which to search
-   \param		$types        	Can be "directories", "files", or "all"
-   \param		$recursive		Determines whether subdirectories are searched
-   \param		$filter        	Regex for filter
-   \param		$exludefilter  	Regex for exclude filter (example: '\.meta$')
-   \param		$sortcriteria	Sort criteria ("name","date","size")
-   \param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
-	\param		$mode			0=Return array with only keys needed, 1=Force all keys to be loaded
-   \return		array			Array of array('name'=>xxx,'date'=>yyy,'size'=>zzz)
+ *  \brief		Scan a directory and return a list of files/directories
+ *  \param		$path        	Starting path from which to search
+ *  \param		$types        	Can be "directories", "files", or "all"
+ *  \param		$recursive		Determines whether subdirectories are searched
+ *  \param		$filter        	Regex for filter
+ *  \param		$exludefilter  	Regex for exclude filter (example: '\.meta$')
+ *  \param		$sortcriteria	Sort criteria ("name","date","size")
+ *  \param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ *	\param		$mode			0=Return array with only keys needed, 1=Force all keys to be loaded
+ *  \return		array			Array of array('name'=>xxx,'date'=>yyy,'size'=>zzz)
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
 {
@@ -181,4 +181,32 @@ function dol_mimetype($file)
 	if (eregi('\.(zip|rar|gz|tgz|z|cab|bz2)$',$file)) $mime='archive';
 	return $mime;
 }
+
+
+/**
+ * 	\brief	Test if a folder is empty
+ * 	\return true is empty or non-existing, false if it contains files
+ */
+function dol_dir_is_emtpy($folder)
+{
+	if (is_dir($folder))
+	{
+		$handle = opendir($folder);
+		while( (gettype( $name = readdir($handle)) != "boolean")){
+			$name_array[] = $name;
+		}
+		foreach($name_array as $temp)
+		$folder_content .= $temp;
+
+		if($folder_content == "...")
+		return true;
+		else
+		return false;
+			
+		closedir($handle);
+	}
+	else
+	return true; // Le repertoire n'existe pas
+}
+
 ?>

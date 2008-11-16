@@ -348,7 +348,7 @@ if ($result)
 		// Link export vcard
         print '<td align="right">';
         print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
-        print img_vcard($langs->trans("VCard")).' ';
+        print img_picto($langs->trans("VCard"),'vcard.png').' ';
         print '</a></td>';
 
         print "</tr>\n";

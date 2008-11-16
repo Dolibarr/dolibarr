@@ -19,11 +19,28 @@
  */
 
 /**
-	\file       htdocs/lib/excel.lib.php
-	\brief      Ensemble de fonctions de base de dolibarr sous forme d'include
-	\version 	$Id$
-*/
+ *	\file       htdocs/lib/viewfiles.lib.php
+ *	\brief      Set of function to view file content
+ *	\version 	$Id$
+ */
 
+
+/**
+ *
+ */
+function make_alpha_from_numbers($number)
+{
+	$numeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	if($number<strlen($numeric))
+	{
+		return $numeric[$number];
+	}
+	else
+	{
+		$dev_by = floor($number/strlen($numeric));
+		return "" . make_alpha_from_numbers($dev_by-1) . make_alpha_from_numbers($number-($dev_by*strlen($numeric)));
+	}
+}
 
 /**
  *    \brief      Affiche le contenu d'un fichier CSV sous forme de tableau

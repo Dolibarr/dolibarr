@@ -20,11 +20,44 @@
 
 /**
  *	\file			htdocs/lib/functions2.lib.php
- *	\brief			Ensemble de fonctions de base de dolibarr sous forme d'include.
- *					This file contains rare functions.
+ *	\brief			A set of functions for Dolibarr
+ *					This file contains all rare functions.
  *	\version		$Id$
  */
 
+
+/**
+ * 	\brief		Return lines of an html table from an array
+ * 	\remarks	Used by array2table function only
+ */
+function array2tr($data,$troptions='',$tdoptions=''){
+	$text = '<tr '.$troptions.'>' ;
+	foreach($data as $key => $item){
+		$text.= '<td '.$tdoptions.'>'.$item.'</td>' ;
+	}
+	$text.= '</tr>' ;
+	return $text ;
+}
+
+/**
+ * 	\brief	Return an html table from an array
+ */
+function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdoptions=''){
+	$text='' ;
+	if($tableMarkup) $text = '<table '.$tableoptions.'>' ;
+	foreach($data as $key => $item){
+		if(is_array($item)){
+			$text.=array2tr($item,$troptions,$tdoptions) ;
+		} else {
+			$text.= '<tr '.$troptions.'>' ;
+			$text.= '<td '.$tdoptions.'>'.$key.'</td>' ;
+			$text.= '<td '.$tdoptions.'>'.$item.'</td>' ;
+			$text.= '</tr>' ;
+		}
+	}
+	if($tableMarkup) $text.= '</table>' ;
+	return $text ;
+}
 
 
 /**
@@ -225,3 +258,184 @@ function get_next_value($db,$mask,$table,$field,$where='',$valueforccc='',$date=
 	dolibarr_syslog("functions2::get_next_value return ".$numFinal,LOG_DEBUG);
 	return $numFinal;
 }
+
+
+/**
+ *	\brief   Convert a binary data to string that represent hexadecimal value
+ *	\param   bin		Value to convert
+ *	\param   pad      	Add 0
+ *	\param   upper		Convert to tupper
+ *	\return  string		x
+ */
+function binhex($bin, $pad=false, $upper=false)
+{
+	$last = strlen($bin)-1;
+	for($i=0; $i<=$last; $i++){ $x += $bin[$last-$i] * pow(2,$i); }
+	$x = dechex($x);
+	if($pad){ while(strlen($x) < intval(strlen($bin))/4){ $x = "0$x"; } }
+	if($upper){ $x = strtoupper($x); }
+	return $x;
+}
+
+
+/**
+ *	\brief   Convertir de l'hexadecimal en binaire
+ *	\param   string     hexa
+ *	\return  string	    bin
+ */
+function hexbin($hexa)
+{
+	$bin='';
+	for($i=0;$i<strlen($hexa);$i++)
+	{
+		$bin.=str_pad(decbin(hexdec($hexa{$i})),4,'0',STR_PAD_LEFT);
+	}
+	return $bin;
+}
+
+
+/**
+ *	\brief      Return if a filename is file name of a supported image format
+ *	\param      file		Filename
+ *	\return		int			-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported
+ */
+function image_format_supported($file)
+{
+	// Case filename is not a format image
+	if (! eregi('(\.gif|\.jpg|\.jpeg|\.png|\.bmp)$',$file,$reg)) return -1;
+
+	// Case filename is a format image but not supported by this PHP
+	$imgfonction='';
+	if (strtolower($reg[1]) == '.gif')  $imgfonction = 'imagecreatefromgif';
+	if (strtolower($reg[1]) == '.png')  $imgfonction = 'imagecreatefrompng';
+	if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
+	if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
+	if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
+	if ($imgfonction)
+	{
+		if (! function_exists($imgfonction))
+		{
+			// Fonctions de conversion non presente dans ce PHP
+			return 0;
+		}
+	}
+
+	// Filename is a format image and supported by this PHP
+	return 1;
+}
+
+
+/**
+ *	\brief   Retourne le numero de la semaine par rapport a une date
+ *	\param   time   	Date au format 'timestamp'
+ *	\return  int		Numero de semaine
+ */
+function numero_semaine($time)
+{
+	$stime = strftime('%Y-%m-%d',$time);
+
+	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?',$stime,$reg))
+	{
+		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+		$annee = $reg[1];
+		$mois = $reg[2];
+		$jour = $reg[3];
+	}
+
+	/*
+	 * Norme ISO-8601:
+	 * - La semaine 1 de toute ann�e est celle qui contient le 4 janvier ou que la semaine 1 de toute ann�e est celle qui contient le 1er jeudi de janvier.
+	 * - La majorit� des ann�es ont 52 semaines mais les ann�es qui commence un jeudi et les ann�es bissextiles commen�ant un mercredi en poss�de 53.
+	 * - Le 1er jour de la semaine est le Lundi
+	 */
+
+	// D�finition du Jeudi de la semaine
+	if (date("w",mktime(12,0,0,$mois,$jour,$annee))==0) // Dimanche
+	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-3*24*60*60;
+	else if (date("w",mktime(12,0,0,$mois,$jour,$annee))<4) // du Lundi au Mercredi
+	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)+(4-date("w",mktime(12,0,0,$mois,$jour,$annee)))*24*60*60;
+	else if (date("w",mktime(12,0,0,$mois,$jour,$annee))>4) // du Vendredi au Samedi
+	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-(date("w",mktime(12,0,0,$mois,$jour,$annee))-4)*24*60*60;
+	else // Jeudi
+	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee);
+
+	// D�finition du premier Jeudi de l'ann�e
+	if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==0) // Dimanche
+	{
+		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+4*24*60*60;
+	}
+	else if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))<4) // du Lundi au Mercredi
+	{
+		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+(4-date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine))))*24*60*60;
+	}
+	else if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))>4) // du Vendredi au Samedi
+	{
+		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+(7-(date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))-4))*24*60*60;
+	}
+	else // Jeudi
+	{
+		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine));
+	}
+
+	// D�finition du num�ro de semaine: nb de jours entre "premier Jeudi de l'ann�e" et "Jeudi de la semaine";
+	$numeroSemaine =     (
+	(
+	date("z",mktime(12,0,0,date("m",$jeudiSemaine),date("d",$jeudiSemaine),date("Y",$jeudiSemaine)))
+	-
+	date("z",mktime(12,0,0,date("m",$premierJeudiAnnee),date("d",$premierJeudiAnnee),date("Y",$premierJeudiAnnee)))
+	) / 7
+	) + 1;
+
+	// Cas particulier de la semaine 53
+	if ($numeroSemaine==53)
+	{
+		// Les ann�es qui commence un Jeudi et les ann�es bissextiles commen�ant un Mercredi en poss�de 53
+		if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==4 || (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==3 && date("z",mktime(12,0,0,12,31,date("Y",$jeudiSemaine)))==365))
+		{
+			$numeroSemaine = 53;
+		}
+		else
+		{
+			$numeroSemaine = 1;
+		}
+	}
+
+	//echo $jour."-".$mois."-".$annee." (".date("d-m-Y",$premierJeudiAnnee)." - ".date("d-m-Y",$jeudiSemaine).") -> ".$numeroSemaine."<BR>";
+
+	return sprintf("%02d",$numeroSemaine);
+}
+
+
+/**
+ *	\brief   Convertit une masse d'une unite vers une autre unite
+ *	\param   weight    float	Masse a convertir
+ *	\param   from_unit int     Unite originale en puissance de 10
+ *	\param   to_unit   int     Nouvelle unite  en puissance de 10
+ *	\return  float	        Masse convertie
+ */
+function weight_convert($weight,&$from_unit,$to_unit)
+{
+	/* Pour convertire 320 gr en Kg appeler
+	 *  $f = -3
+	 *  weigh_convert(320, $f, 0) retournera 0.32
+	 *
+	 */
+	while ($from_unit  <> $to_unit)
+	{
+		if ($from_unit > $to_unit)
+		{
+		  $weight = $weight * 10;
+		  $from_unit = $from_unit - 1;
+		  $weight = weight_convert($weight,$from_unit, $to_unit);
+		}
+		if ($from_unit < $to_unit)
+		{
+		  $weight = $weight / 10;
+		  $from_unit = $from_unit + 1;
+		  $weight = weight_convert($weight,$from_unit, $to_unit);
+		}
+	}
+
+	return $weight;
+}
+

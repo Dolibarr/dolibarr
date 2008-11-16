@@ -2613,10 +2613,18 @@ class Form
 					print '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
 					print '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
 					print '<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
-					if($form_name =="")
-					print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">'.img_cal().'</a>';
+					if ($form_name =="")
+					{
+						print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">';
+						print '<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
+						print '</a>';
+					}
 					else
-					print '<A HREF="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">'.img_cal().'</a>';
+					{
+						print '<A HREF="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">';
+						print '<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
+						print '</a>';
+					}
 				}
 			}
 			 

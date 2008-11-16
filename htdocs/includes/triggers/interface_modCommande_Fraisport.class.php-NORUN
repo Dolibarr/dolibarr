@@ -14,22 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
-   \file       htdocs/includes/triggers/interface_modCommande_fraisport.class.php
-   \ingroup    core
-   \brief      Fichier trigger pour ajout frais port
+   \file       	htdocs/includes/triggers/interface_modCommande_fraisport.class.php
+   \ingroup    	core
+   \brief      	Fichier trigger pour ajout frais port
+   \version		$Id$
 */
+
+include_once(DOL_DOCUMENT_ROOT.'/lib/functions2.lib.php');
 
 
 /**
    \class      InterfaceFraisport
    \brief      Classe des fonctions triggers des actions personalisées du workflow
 */
-
 class InterfaceFraisport
 {
   var $db;

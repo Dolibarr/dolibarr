@@ -39,6 +39,8 @@
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50)
 {
+	require_once(DOL_DOCUMENT_ROOT."/lib/functions2.lib.php");
+
 	global $conf,$langs;
 
 	dolibarr_syslog("functions.inc::vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality);

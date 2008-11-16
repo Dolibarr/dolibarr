@@ -315,7 +315,7 @@ if ($_GET["action"] == 'create')
 				// Stock
 				if ($stock < $quantite_a_livrer)
 				{
-					print '<td align="center">'.$stock.' '.img_alerte().'</td>';
+					print '<td align="center">'.$stock.' '.img_warning().'</td>';
 				}
 				else
 				{
@@ -324,7 +324,7 @@ if ($_GET["action"] == 'create')
 			}
 			else
 			{
-				// Quantit� � livrer
+				// Quantite a livrer
 				print '<td align="center">';
 				print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
 				print '<input name="qtyl'.$i.'" type="text" size="6" value="'.$quantite_a_livrer.'">';

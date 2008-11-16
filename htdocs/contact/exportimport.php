@@ -98,7 +98,7 @@ print '<br>';
 
 print $langs->trans("ExportCardToFormat").': ';
 print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$_GET["id"].'">';
-print img_vcard($langs->trans("VCard")).' ';
+print img_picto($langs->trans("VCard"),'vcard.png').' ';
 print $langs->trans("VCard");
 print '</a>';
 

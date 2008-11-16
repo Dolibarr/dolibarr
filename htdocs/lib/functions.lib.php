@@ -26,7 +26,8 @@
 
 /**
  *	\file			htdocs/lib/functions.lib.php
- *	\brief			Ensemble de fonctions de base de dolibarr sous forme d'include
+ *	\brief			A set of functions for Dolibarr
+ *					This file contains all frequently used functions.
  *	\version		$Id$
  */
 
@@ -926,12 +927,12 @@ function img_object($alt, $object)
 }
 
 /**
- \brief      Affiche picto (fonction g�n�rique)
- \param      alt         		Texte sur le alt de l'image
- \param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
- \param		options				Attribut supplementaire a la balise img
- \param		pictoisfullpath		If 1, image path is a full path
- \return     string      		Retourne tag img
+ *	\brief      Affiche picto (fonction generique)
+ *	\param      alt         		Texte sur le alt de l'image
+ *	\param      picto       		Nom de l'image a afficher (Si pas d'extension, on met '.png')
+ *	\param		options				Attribut supplementaire a la balise img
+ *	\param		pictoisfullpath		If 1, image path is a full path
+ *	\return     string      		Retourne tag img
  */
 function img_picto($alt, $picto, $options='', $pictoisfullpath=0)
 {
@@ -1002,9 +1003,9 @@ function img_refresh($alt = "default")
 }
 
 /**
- \brief      Affiche logo dossier
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
+ *	\brief      Affiche logo dossier
+ *	\param      alt         Texte sur le alt de l'image
+ *	\return     string      Retourne tag img
  */
 function img_folder($alt = "default")
 {
@@ -1014,9 +1015,9 @@ function img_folder($alt = "default")
 }
 
 /**
- \brief      Affiche logo nouveau fichier
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
+ *	\brief      Affiche logo nouveau fichier
+ *	\param      alt         Texte sur le alt de l'image
+ *	\return     string      Retourne tag img
  */
 function img_file_new($alt = "default")
 {
@@ -1039,21 +1040,9 @@ function img_pdf($alt = "default",$size=3)
 }
 
 /**
- \brief      Affiche logo vcard
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
- */
-function img_vcard($alt = "default")
-{
-	global $conf,$langs;
-	if ($alt=="default") $alt=$langs->trans("VCard");
-	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/vcard.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-}
-
-/**
- \brief      Affiche logo +
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
+ *	\brief      Affiche logo +
+ *	\param      alt         Texte sur le alt de l'image
+ *	\return     string      Retourne tag img
  */
 function img_edit_add($alt = "default")
 {
@@ -1062,9 +1051,9 @@ function img_edit_add($alt = "default")
 	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit_add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 /**
- \brief      Affiche logo -
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
+ *	\brief      Affiche logo -
+ *	\param      alt         Texte sur le alt de l'image
+ *	\return     string      Retourne tag img
  */
 function img_edit_remove($alt = "default")
 {
@@ -1074,10 +1063,10 @@ function img_edit_remove($alt = "default")
 }
 
 /**
- \brief      Affiche logo editer/modifier fiche
- \param      alt         Texte sur le alt de l'image
- \param      float       Si il faut y mettre le style "float: right"
- \return     string      Retourne tag img
+ *	\brief      Affiche logo editer/modifier fiche
+ *	\param      alt         Texte sur le alt de l'image
+ *	\param      float       Si il faut y mettre le style "float: right"
+ *	\return     string      Retourne tag img
  */
 function img_edit($alt = "default", $float=0, $other='')
 {
@@ -1091,10 +1080,10 @@ function img_edit($alt = "default", $float=0, $other='')
 }
 
 /**
- \brief      Affiche logo voir fiche
- \param      alt         Texte sur le alt de l'image
- \param      float       Si il faut y mettre le style "float: right"
- \return     string      Retourne tag img
+ *	\brief      Affiche logo voir fiche
+ *	\param      alt         Texte sur le alt de l'image
+ *	\param      float       Si il faut y mettre le style "float: right"
+ *	\return     string      Retourne tag img
  */
 function img_view($alt = "default", $float=0, $other='')
 {
@@ -1119,22 +1108,10 @@ function img_delete($alt = "default")
 	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/**
- \brief      Affiche logo d�sactiver
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
- */
-function img_disable($alt = "default")
-{
-	global $conf,$langs;
-	if ($alt=="default") $alt=$langs->trans("Disable");
-	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/disable.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-}
-
 
 /**
- \brief      Affiche logo help avec curseur "?"
- \return     string      Retourne tag img
+ *	\brief      Affiche logo help avec curseur "?"
+ *	\return     string      Retourne tag img
  */
 function img_help($usehelpcursor=1,$usealttitle=1)
 {
@@ -1148,19 +1125,9 @@ function img_help($usehelpcursor=1,$usealttitle=1)
 }
 
 /**
- \brief      Affiche picto calendrier "?"
- \return     string      Retourne tag img
- */
-function img_cal()
-{
-	global $conf,$langs;
-	return '<img style="vertical-align:middle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calendar.png" border="0" alt="" title="">';
-}
-
-/**
- \brief      Affiche logo info
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
+ *	\brief      Affiche logo info
+ *	\param      alt         Texte sur le alt de l'image
+ *	\return     string      Retourne tag img
  */
 function img_info($alt = "default")
 {
@@ -1170,22 +1137,10 @@ function img_info($alt = "default")
 }
 
 /**
- \brief      Affiche logo calculatrice
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
- */
-function img_calc($alt = "default")
-{
-	global $conf,$langs;
-	if ($alt=="default") $alt=$langs->trans("Calculate");
-	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calc.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-}
-
-/**
- \brief      Affiche logo warning
- \param      alt         Texte sur le alt de l'image
- \param      float       Si il faut afficher le style "float: right"
- \return     string      Retourne tag img
+ *	\brief      Affiche logo warning
+ *	\param      alt         Texte sur le alt de l'image
+ *	\param      float       Si il faut afficher le style "float: right"
+ *	\return     string      Retourne tag img
  */
 function img_warning($alt = "default",$float=0)
 {
@@ -1199,7 +1154,7 @@ function img_warning($alt = "default",$float=0)
 }
 
 /**
- \brief      Affiche logo warning
+ \brief      Affiche logo error
  \param      alt         Texte sur le alt de l'image
  \return     string      Retourne tag img
  */
@@ -1211,22 +1166,10 @@ function img_error($alt = "default")
 }
 
 /**
- \brief      Affiche logo alerte
- \param      alt         Texte sur le alt de l'image
- \return     string      Retourne tag img
- */
-function img_alerte($alt = "default")
-{
-	global $conf,$langs;
-	if ($alt=="default") $alt=$langs->trans("Alert");
-	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-}
-
-/**
- \brief      Affiche logo t�l�phone
- \param      alt         Texte sur le alt de l'image
- \param		option		Choose of logo
- \return     string      Retourne tag img
+ *	\brief      Affiche logo telephone
+ *	\param      alt         Texte sur le alt de l'image
+ *	\param		option		Choose of logo
+ *	\return     string      Retourne tag img
  */
 function img_phone($alt = "default",$option=0)
 {
@@ -1381,40 +1324,10 @@ function img_mime($file,$alt='')
 
 
 /**
- \brief      Return if a filename is file name of a supported image format
- \param      file		Filename
- \return		int			-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported
- */
-function image_format_supported($file)
-{
-	// Case filename is not a format image
-	if (! eregi('(\.gif|\.jpg|\.jpeg|\.png|\.bmp)$',$file,$reg)) return -1;
-
-	// Case filename is a format image but not supported by this PHP
-	$imgfonction='';
-	if (strtolower($reg[1]) == '.gif')  $imgfonction = 'imagecreatefromgif';
-	if (strtolower($reg[1]) == '.png')  $imgfonction = 'imagecreatefrompng';
-	if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
-	if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
-	if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
-	if ($imgfonction)
-	{
-		if (! function_exists($imgfonction))
-		{
-			// Fonctions de conversion non presente dans ce PHP
-			return 0;
-		}
-	}
-
-	// Filename is a format image and supported by this PHP
-	return 1;
-}
-
-/**
- \brief      Affiche info admin
- \param      text			Text info
- \param      infoonimgalt	Info is shown on alt of star picto
- \return		string			String with info text
+ *	\brief      Affiche info admin
+ *	\param      text			Text info
+ *	\param      infoonimgalt	Info is shown on alt of star picto
+ *	\return		string			String with info text
  */
 function info_admin($texte,$infoonimgalt=0)
 {
@@ -2246,18 +2159,18 @@ function get_product_vat_for_country($idprod, $countrycode)
 
 
 /**
- \brief      	Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
- \remarks    	Si vendeur non assujeti a TVA, TVA par d�faut=0. Fin de r�gle.
- Si le (pays vendeur = pays acheteur) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle.
- Si (vendeur et acheteur dans Communaut� europ�enne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par d�faut=0 (La TVA doit �tre pay� par acheteur au centre d'impots de son pays et non au vendeur). Fin de r�gle.
- Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle
- Si (vendeur et acheteur dans Communaut� europ�enne) et (acheteur = entreprise avec num TVA) intra alors TVA par d�faut=0. Fin de r�gle
- Sinon TVA propos�e par d�faut=0. Fin de r�gle.
- \param      	societe_vendeuse    	Objet soci�t� vendeuse
- \param      	societe_acheteuse   	Objet soci�t� acheteuse
- \param      	taux_produit        	Taux par defaut du produit vendu (old way to get product vat rate)
- \param      	idprod					Id product (new way to get product vat rate)
- \return     	float               	Taux de tva a appliquer, -1 si ne peut etre d�termin�
+ *	\brief      	Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
+ *	\remarks    	Si vendeur non assujeti a TVA, TVA par d�faut=0. Fin de r�gle.
+ *					Si le (pays vendeur = pays acheteur) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle.
+ *					Si (vendeur et acheteur dans Communaute europeenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par d�faut=0 (La TVA doit �tre pay� par acheteur au centre d'impots de son pays et non au vendeur). Fin de r�gle.
+ *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par d�faut=TVA du produit vendu. Fin de r�gle
+ *					Si (vendeur et acheteur dans Communaute europeenne) et (acheteur = entreprise avec num TVA) intra alors TVA par d�faut=0. Fin de r�gle
+ *					Sinon TVA proposee par defaut=0. Fin de regle.
+ *	\param      	societe_vendeuse    	Objet societe vendeuse
+ *	\param      	societe_acheteuse   	Objet societe acheteuse
+ *	\param      	taux_produit        	Taux par defaut du produit vendu (old way to get product vat rate)
+ *	\param      	idprod					Id product (new way to get product vat rate)
+ *	\return     	float               	Taux de tva a appliquer, -1 si ne peut etre d�termin�
  */
 function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit, $idprod=0)
 {
@@ -2349,43 +2262,10 @@ function yn($yesno, $case=1, $color=0)
 
 
 /**
- \brief  Fonction pour qui retourne le rowid d'un departement par son code
- \param  db          handler d'acc�s base
- \param	code		Code r�gion
- \param	pays_id		Id du pays
- */
-function departement_rowid($db,$code, $pays_id)
-{
-	$sql = "SELECT c.rowid FROM ".MAIN_DB_PREFIX."c_departements as c,".MAIN_DB_PREFIX."c_regions as r";
-	$sql .= " WHERE c.code_departement=". $code;
-	$sql .= " AND c.fk_region = r.code_region";
-	$sql .= " AND r.fk_pays =".$pays_id;
-
-	if ($db->query($sql))
-	{
-		$num = $db->num_rows();
-		if ($num)
-		{
-	  $obj = $db->fetch_object();
-	  return  $obj->rowid;
-		}
-		else
-		{
-	  return 0;
-		}
-		$db->free();
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-/**
- \brief      Renvoi un chemin de classement r�pertoire en fonction d'un i
- \remarks    Examples: 1->"0/0/1/", 15->"0/1/5/"
- \param      $num        	Id a d�composer
- \param      $level		Niveau de decoupage (1, 2 ou 3 niveaux)
+ *	\brief      Return a path to class a directory according to an id
+ *	\remarks    Examples: 1->"0/0/1/", 15->"0/1/5/"
+ *	\param      $num        Id to develop
+ *	\param      $level		Level of development (1, 2 or 3 level)
  */
 function get_exdir($num,$level=3)
 {
@@ -2456,177 +2336,21 @@ function create_exdir($dir)
 }
 
 
-
-
 /**
- \brief   Retourne le numero de la semaine par rapport a une date
- \param   time   	Date au format 'timestamp'
- \return  int		Numero de semaine
- */
-function numero_semaine($time)
-{
-	$stime = strftime('%Y-%m-%d',$time);
-
-	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?',$stime,$reg))
-	{
-		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
-		$annee = $reg[1];
-		$mois = $reg[2];
-		$jour = $reg[3];
-	}
-
-	/*
-	 * Norme ISO-8601:
-	 * - La semaine 1 de toute ann�e est celle qui contient le 4 janvier ou que la semaine 1 de toute ann�e est celle qui contient le 1er jeudi de janvier.
-	 * - La majorit� des ann�es ont 52 semaines mais les ann�es qui commence un jeudi et les ann�es bissextiles commen�ant un mercredi en poss�de 53.
-	 * - Le 1er jour de la semaine est le Lundi
-	 */
-
-	// D�finition du Jeudi de la semaine
-	if (date("w",mktime(12,0,0,$mois,$jour,$annee))==0) // Dimanche
-	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-3*24*60*60;
-	else if (date("w",mktime(12,0,0,$mois,$jour,$annee))<4) // du Lundi au Mercredi
-	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)+(4-date("w",mktime(12,0,0,$mois,$jour,$annee)))*24*60*60;
-	else if (date("w",mktime(12,0,0,$mois,$jour,$annee))>4) // du Vendredi au Samedi
-	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee)-(date("w",mktime(12,0,0,$mois,$jour,$annee))-4)*24*60*60;
-	else // Jeudi
-	$jeudiSemaine = mktime(12,0,0,$mois,$jour,$annee);
-
-	// D�finition du premier Jeudi de l'ann�e
-	if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==0) // Dimanche
-	{
-		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+4*24*60*60;
-	}
-	else if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))<4) // du Lundi au Mercredi
-	{
-		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+(4-date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine))))*24*60*60;
-	}
-	else if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))>4) // du Vendredi au Samedi
-	{
-		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine))+(7-(date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))-4))*24*60*60;
-	}
-	else // Jeudi
-	{
-		$premierJeudiAnnee = mktime(12,0,0,1,1,date("Y",$jeudiSemaine));
-	}
-
-	// D�finition du num�ro de semaine: nb de jours entre "premier Jeudi de l'ann�e" et "Jeudi de la semaine";
-	$numeroSemaine =     (
-	(
-	date("z",mktime(12,0,0,date("m",$jeudiSemaine),date("d",$jeudiSemaine),date("Y",$jeudiSemaine)))
-	-
-	date("z",mktime(12,0,0,date("m",$premierJeudiAnnee),date("d",$premierJeudiAnnee),date("Y",$premierJeudiAnnee)))
-	) / 7
-	) + 1;
-
-	// Cas particulier de la semaine 53
-	if ($numeroSemaine==53)
-	{
-		// Les ann�es qui commence un Jeudi et les ann�es bissextiles commen�ant un Mercredi en poss�de 53
-		if (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==4 || (date("w",mktime(12,0,0,1,1,date("Y",$jeudiSemaine)))==3 && date("z",mktime(12,0,0,12,31,date("Y",$jeudiSemaine)))==365))
-		{
-			$numeroSemaine = 53;
-		}
-		else
-		{
-			$numeroSemaine = 1;
-		}
-	}
-
-	//echo $jour."-".$mois."-".$annee." (".date("d-m-Y",$premierJeudiAnnee)." - ".date("d-m-Y",$jeudiSemaine).") -> ".$numeroSemaine."<BR>";
-
-	return sprintf("%02d",$numeroSemaine);
-}
-
-
-/**
- \brief   Retourne le picto champ obligatoire
- \return  string		Chaine avec picto obligatoire
+ *	\brief   Retourne le picto champ obligatoire
+ *	\return  string		Chaine avec picto obligatoire
  */
 function picto_required()
 {
 	return '<b>*</b>';
 }
-/**
- \brief   Convertit une masse d'une unite vers une autre unite
- \param   weight    float	Masse a convertir
- \param   from_unit int     Unite originale en puissance de 10
- \param   to_unit   int     Nouvelle unite  en puissance de 10
- \return  float	        Masse convertie
- */
-function weight_convert($weight,&$from_unit,$to_unit)
-{
-	/* Pour convertire 320 gr en Kg appeler
-	 *  $f = -3
-	 *  weigh_convert(320, $f, 0) retournera 0.32
-	 *
-	 */
-	while ($from_unit  <> $to_unit)
-	{
-		if ($from_unit > $to_unit)
-		{
-	  $weight = $weight * 10;
-	  $from_unit = $from_unit - 1;
-	  $weight = weight_convert($weight,$from_unit, $to_unit);
-		}
-		if ($from_unit < $to_unit)
-		{
-	  $weight = $weight / 10;
-	  $from_unit = $from_unit + 1;
-	  $weight = weight_convert($weight,$from_unit, $to_unit);
-		}
-	}
 
-	return $weight;
-}
 
 /**
- \brief   Renvoi le texte d'une unite
- \param   int                 Unit
- \param   measuring_style     Le style de mesure : weight, volume,...
- \return  string	            Unite
- \todo    gerer les autres unit�s de mesure comme la livre, le gallon, le litre, ...
- */
-function measuring_units_string($unit,$measuring_style='')
-{
-	/* Note Rodo aux dev :)
-	 * Ne pas ins�rer dans la base de donn�es ces valeurs
-	 * cela surchagerait inutilement d'une requete suppl�mentaire
-	 * pour quelque chose qui est somme toute peu variable
-	 */
-
-	global $langs;
-
-	if ($measuring_style == 'weight')
-	{
-		$measuring_units[3] = $langs->trans("WeightUnitton");
-		$measuring_units[0] = $langs->trans("WeightUnitkg");
-		$measuring_units[-3] = $langs->trans("WeightUnitg");
-		$measuring_units[-6] = $langs->trans("WeightUnitmg");
-	}
-	else if ($measuring_style == 'volume')
-	{
-		$measuring_units[0] = $langs->trans("VolumeUnitm3");
-		$measuring_units[-3] = $langs->trans("VolumeUnitdm3");
-		$measuring_units[-6] = $langs->trans("VolumeUnitcm3");
-		$measuring_units[-9] = $langs->trans("VolumeUnitmm3");
-	}
-	else if ($measuring_style == 'size')
-	{
-		$measuring_units[0] = $langs->trans("SizeUnitm");
-		$measuring_units[-1] = $langs->trans("SizeUnitdm");
-		$measuring_units[-2] = $langs->trans("SizeUnitcm");
-		$measuring_units[-3] = $langs->trans("SizeUnitmm");
-	}
-
-	return $measuring_units[$unit];
-}
-
-/**
- \brief   	Clean an url
- \param   	url			Url
- \param   	http		1: keep http, 0: remove also http
- \return  	string	    CleanUrl
+ *	\brief   	Clean an url
+ *	\param   	url			Url
+ *	\param   	http		1: keep http, 0: remove also http
+ *	\return  	string	    CleanUrl
  */
 function clean_url($url,$http=1)
 {
@@ -2684,36 +2408,6 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1)
 	}
 	$CleanString = $temp;
 	return $CleanString;
-}
-
-/**
- \brief   Convert a binaray data to string that represent hexadecimal value
- \param   bin			Value to convert
- \param   pad      	Add 0
- \param   upper		Convert to tupper
- \return  string		x
- */
-function binhex($bin, $pad=false, $upper=false){
-	$last = strlen($bin)-1;
-	for($i=0; $i<=$last; $i++){ $x += $bin[$last-$i] * pow(2,$i); }
-	$x = dechex($x);
-	if($pad){ while(strlen($x) < intval(strlen($bin))/4){ $x = "0$x"; } }
-	if($upper){ $x = strtoupper($x); }
-	return $x;
-}
-
-/**
- \brief   Convertir de l'h�xad�cimal en binaire
- \param   string      hexa
- \return  string	    bin
- */
-function hexbin($hexa){
-	$bin='';
-	for($i=0;$i<strlen($hexa);$i++)
-	{
-		$bin.=str_pad(decbin(hexdec($hexa{$i})),4,'0',STR_PAD_LEFT);
-	}
-	return $bin;
 }
 
 
@@ -2837,9 +2531,9 @@ function dol_nboflines($s,$maxchar=0)
 
 /**
  *	\brief     Fonction retournant le nombre de lignes dans un texte formate
- *	\param	    texte      Texte
- *	\param	    maxlinesize      Largeur de ligne en caracteres(ou 0 si pas de limite - defaut)
- *	\return    nblines    Nombre de lignes
+ *	\param	   texte      	Texte
+ *	\param	   maxlinesize  Largeur de ligne en caracteres(ou 0 si pas de limite - defaut)
+ *	\return    nblines    	Nombre de lignes
  */
 function num_lines($texte,$maxlinesize=0)
 {
@@ -2911,7 +2605,7 @@ function dol_textishtml($msg,$option=0)
 	}
 }
 
-/*
+/**
  *    \brief      Effectue les substitutions des mots cl�s par les donn�es en fonction du tableau
  *    \param      chaine      			Chaine dans laquelle faire les substitutions
  *    \param      substitutionarray		Tableau cl� substitution => valeur a mettre
@@ -2956,28 +2650,11 @@ function print_date_range($date_start,$date_end,$format = '',$outputlangs='')
 }
 
 
-/*
- *
- */
-function make_alpha_from_numbers($number)
-{
-	$numeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	if($number<strlen($numeric))
-	{
-		return $numeric[$number];
-	}
-	else
-	{
-		$dev_by = floor($number/strlen($numeric));
-		return "" . make_alpha_from_numbers($dev_by-1) . make_alpha_from_numbers($number-($dev_by*strlen($numeric)));
-	}
-}
-
 
 /**
- \brief   Retourne un tableau des mois ou le mois s�lectionn�
- \param   selected			Mois � s�lectionner ou -1
- \return  string or array		Month string or array if selected < 0
+ *	\brief   Retourne un tableau des mois ou le mois selectionne
+ *	\param   selected			Mois a selectionner ou -1
+ *	\return  string or array	Month string or array if selected < 0
  */
 function monthArrayOrSelected($selected=0)
 {
@@ -3017,9 +2694,9 @@ function monthArrayOrSelected($selected=0)
 }
 
 /**
- \brief  	Returns formated reduction
- \param		reduction		Reduction percentage
- \return		string			Formated reduction
+ *	\brief  	Returns formated reduction
+ *	\param		reduction		Reduction percentage
+ *	\return		string			Formated reduction
  */
 function dolibarr_print_reduction($reduction=0)
 {
@@ -3027,7 +2704,6 @@ function dolibarr_print_reduction($reduction=0)
 	$langs->load("main");
 
 	$string = '';
-
 	if ($reduction == 100)
 	{
 		$string = $langs->trans("Offered");
@@ -3042,9 +2718,9 @@ function dolibarr_print_reduction($reduction=0)
 
 
 /**
- \brief  	Returns formated reduction
- \param		reduction		Reduction percentage
- \return		int				Return number of error messages shown
+ *	\brief  	Returns formated reduction
+ *	\param		reduction		Reduction percentage
+ *	\return		int				Return number of error messages shown
  */
 function dol_htmloutput_errors($mesgstring='',$mesgarray='')
 {
@@ -3112,62 +2788,6 @@ function dol_sort_array($array, $index, $order='asc', $natsort, $case_sensitive)
 	return $array;
 }
 
-/**
- * 	\brief	Test if a folder is empty
- * 	\return true is empty or non-existing, false if it contains files
- */
-function is_emtpy_folder($folder){
-	if(is_dir($folder) ){
-		$handle = opendir($folder);
-		while( (gettype( $name = readdir($handle)) != "boolean")){
-			$name_array[] = $name;
-		}
-		foreach($name_array as $temp)
-		$folder_content .= $temp;
-
-		if($folder_content == "...")
-		return true;
-		else
-		return false;
-			
-		closedir($handle);
-	}
-	else
-	return true; // Le r�pertoire n'existe pas
-}
-
-/**
- * 	\brief	Return an html table from an array
- */
-function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdoptions=''){
-	$text='' ;
-	if($tableMarkup) $text = '<table '.$tableoptions.'>' ;
-	foreach($data as $key => $item){
-		if(is_array($item)){
-			$text.=array2tr($item,$troptions,$tdoptions) ;
-		} else {
-			$text.= '<tr '.$troptions.'>' ;
-			$text.= '<td '.$tdoptions.'>'.$key.'</td>' ;
-			$text.= '<td '.$tdoptions.'>'.$item.'</td>' ;
-			$text.= '</tr>' ;
-		}
-	}
-	if($tableMarkup) $text.= '</table>' ;
-	return $text ;
-}
-
-/**
- * 	\brief	Return lines of an html table from an array
- */
-function array2tr($data,$troptions='',$tdoptions=''){
-	$text = '<tr '.$troptions.'>' ;
-	foreach($data as $key => $item){
-		$text.= '<td '.$tdoptions.'>'.$item.'</td>' ;
-	}
-	$text.= '</tr>' ;
-	return $text ;
-}
-
 
 /**
  *      \brief      Check if a string is in UTF8
@@ -3193,26 +2813,5 @@ function utf8_check($Str)
 	return true;
 }
 
-
-
-/**
- * \brief			Search for prospect state selection in $_GET, $_POST, and $_REQUEST
- * \return 			prospect state selection (array of prospect_state_id => 'true'/'false')
- * \author			Matelli (www.matelli.fr)
- * \remarks			See http://matelli.fr/showcases/patchs-dolibarr/add-icons-for-prospect-status.html for details
- */
-function get_prospect_state_selection()
-{
-	$sts = array(-1,0,1,2,3);
-
-	if (isSet($_POST["nouvel_etat"]))
-	return $_POST["nouvel_etat"];
-	else if (isSet($_GET["nouvel_etat"]))
-	return $_GET["nouvel_etat"];
-	else if (isSet($_REQUEST["nouvel_etat"]))
-	return $_REQUEST["nouvel_etat"];
-	else
-	return false;
-}
 
 ?>

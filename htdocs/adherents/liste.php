@@ -271,7 +271,7 @@ if ($resql)
 		print '&nbsp;';
 		if ($user->rights->adherent->supprimer)
 		{
-			print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign&return=liste.php\">".img_disable($langs->trans("Resiliate"))."</a>";
+			print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign&return=liste.php\">".img_picto($langs->trans("Resiliate"),'disable.png')."</a>";
         }
 		print "</td>";
 
