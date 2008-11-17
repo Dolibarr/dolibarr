@@ -19,11 +19,11 @@
  */
 
 /**
-   \file       htdocs/product/liste.php
-   \ingroup    produit
-   \brief      Page liste des produits ou services
-   \version    $Id$
-*/
+ *  \file       htdocs/product/liste.php
+ *  \ingroup    produit
+ *  \brief      Page to list products and services
+ *  \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
@@ -305,18 +305,18 @@ if ($resql)
 				print '<td align="center">';
 				if (eregi('([0-9]+)y',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
 				elseif (eregi('([0-9]+)m',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+				elseif (eregi('([0-9]+)w',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
 				elseif (eregi('([0-9]+)d',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
 				else print $objp->duration;
 				print '</td>';
 			}
-			
+
 			// Price
 			print '<td align="right">';
 			if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
 			else print price($objp->price).' '.$langs->trans("HT");
-			
 			print '</td>';
-			
+
 			// Affichage du stock
 			if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
 			{

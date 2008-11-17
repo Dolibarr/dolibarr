@@ -915,7 +915,7 @@ if ($_GET["id"] || $_GET["ref"])
 				{
 					$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 				}
-				else
+				else if ($product->duration_value > 0)
 				{
 					$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 				}
@@ -936,6 +936,7 @@ if ($_GET["id"] || $_GET["ref"])
 					print '&nbsp;';
 				}
 				print "</td></tr>\n";
+				
 				print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 				if ($product->volume != '')
 				{
@@ -947,8 +948,10 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print "</td></tr>\n";
 			}
+			
 			// Note
 			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';
+
 			print "</table>\n";
 			print "</div>\n<!-- CUT HERE -->\n";
 		}
