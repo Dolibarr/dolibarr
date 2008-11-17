@@ -70,3 +70,6 @@ alter table llx_fichinterdet modify date datetime;
 
 alter table llx_don modify fk_don_projet   integer NULL;
 alter table llx_don modify fk_user_valid   integer NULL;
+alter table llx_don add note_public     text;
+alter table llx_don add model_pdf       varchar(50);
+alter table llx_don add import_key      varchar(14);
