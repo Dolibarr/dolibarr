@@ -508,7 +508,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->SetFont('Arial','B',8);
-					$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$outputlangs->convToutputCharset($account->proprio)).':',0,'L',0);
+					$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$outputlangs->convToOutputCharset($account->proprio)).':',0,'L',0);
 					$posy=$pdf->GetY()+1;
 
 					$pdf->SetXY($this->marge_gauche, $posy);

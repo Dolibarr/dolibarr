@@ -661,12 +661,12 @@ class pdf_crabe extends ModelePDFFactures
 		
 		                $pdf->SetXY($this->marge_gauche, $posy);
 		                $pdf->SetFont('Arial','B',8);
-		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$outputlangs->convToutputCharset($account->proprio)).':',0,'L',0);
+		                $pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo',$outputlangs->convToOutputCharset($account->proprio)).':',0,'L',0);
 			            $posy=$pdf->GetY()+1;
 		
 		                $pdf->SetXY($this->marge_gauche, $posy);
 		                $pdf->SetFont('Arial','',8);
-		                $pdf->MultiCell(80, 3, $outputlangs->convToutputCharset($account->adresse_proprio), 0, 'L', 0);
+		                $pdf->MultiCell(80, 3, $outputlangs->convToOutputCharset($account->adresse_proprio), 0, 'L', 0);
 		
 			            $posy=$pdf->GetY()+2;
 		            }
