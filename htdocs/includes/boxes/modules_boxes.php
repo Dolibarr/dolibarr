@@ -18,18 +18,17 @@
  */
 
 /**
-	    \file       htdocs/includes/boxes/modules_boxes.php
-		\ingroup    facture
-		\brief      Fichier contenant la classe m�re des boites
-		\version    $Id$
-*/
+ *	    \file       htdocs/includes/boxes/modules_boxes.php
+ *		\ingroup    facture
+ *		\brief      Fichier contenant la classe mere des boites
+ *		\version    $Id$
+ */
 
 
 /**
-	    \class      ModeleBoxes
-		\brief      Classe m�re des boites
-*/
-
+ *	    \class      ModeleBoxes
+ *		\brief      Classe mere des boites
+ */
 class ModeleBoxes
 {
     var $MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite

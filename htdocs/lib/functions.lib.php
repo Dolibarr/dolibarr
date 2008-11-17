@@ -1699,6 +1699,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite)
 	// If we need to make a virus scan
 	if ($conf->global->MAIN_USE_AVSCAN)
 	{
+		require_once(DOL_DOCUMENT_ROOT.'/lib/security.lib.php');
 		$malware = dol_avscan_file($src_file);
 		if ($malware) return $malware;
 	}
@@ -2034,31 +2035,6 @@ function dol_delete_dir_recursive($dir,$count=0)
 
 	//echo "return=".$count;
 	return $count;
-}
-
-/**
- \brief  Scan les fichiers avec un anti-virus
- \param	 file			Fichier a scanner
- \return	 malware	Nom du virus si infect� sinon retourne "null"
- */
-function dol_avscan_file($file)
-{
-	$malware = '';
-
-	// Clamav
-	if (function_exists("cl_scanfile"))
-	{
-		$maxreclevel = 5 ; // maximal recursion level
-		$maxfiles = 1000; // maximal number of files to be scanned within archive
-		$maxratio = 200; // maximal compression ratio
-		$archivememlim = 0; // limit memory usage for bzip2 (0/1)
-		$maxfilesize = 10485760; // archived files larger than this value (in bytes) will not be scanned
-
-		cl_setlimits($maxreclevel, $maxfiles, $maxratio, $archivememlim, $maxfilesize);
-		$malware = cl_scanfile($file);
-	}
-
-	return $malware;
 }
 
 
@@ -2408,7 +2384,7 @@ function picto_required()
 
 
 /**
- *	\brief   	Clean an url
+ *	\brief   	Clean an url string
  *	\param   	url			Url
  *	\param   	http		1: keep http, 0: remove also http
  *	\return  	string	    CleanUrl

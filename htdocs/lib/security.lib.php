@@ -18,19 +18,19 @@
  */
 
 /**
-   \file		htdocs/lib/security.lib.php
-   \brief		Ensemble de fonctions de securite de dolibarr sous forme de lib
-   \version		$Id$
-*/
+ *  \file			htdocs/lib/security.lib.php
+ *  \brief			Ensemble de fonctions de securite de dolibarr sous forme de lib
+ *  \version		$Id$
+ */
 
 
 /**
-   \brief      	Fonction pour initialiser un salt pour la fonction crypt
-   \param		$type		2=>renvoi un salt pour cryptage DES
-							12=>renvoi un salt pour cryptage MD5
-							non defini=>renvoi un salt pour cryptage par defaut
-   \return		string		Chaine salt
-*/
+ *  \brief      Fonction pour initialiser un salt pour la fonction crypt
+ *  \param		$type		2=>renvoi un salt pour cryptage DES
+ *							12=>renvoi un salt pour cryptage MD5
+ *							non defini=>renvoi un salt pour cryptage par defaut
+ *	\return		string		Chaine salt
+ */
 function makesalt($type=CRYPT_SALT_LENGTH)
 {
 	dolibarr_syslog("security.lib.php::makesalt type=".$type);
@@ -144,6 +144,32 @@ function dol_decode($chain)
 
 	$string_decoded = implode ("",$output_tab);
 	return $string_decoded;
+}
+
+
+/**
+ *	\brief  Scan les fichiers avec un anti-virus
+ *	\param	 file			Fichier a scanner
+ *	\return	 malware	Nom du virus si infect� sinon retourne "null"
+ */
+function dol_avscan_file($file)
+{
+	$malware = '';
+
+	// Clamav
+	if (function_exists("cl_scanfile"))
+	{
+		$maxreclevel = 5 ; // maximal recursion level
+		$maxfiles = 1000; // maximal number of files to be scanned within archive
+		$maxratio = 200; // maximal compression ratio
+		$archivememlim = 0; // limit memory usage for bzip2 (0/1)
+		$maxfilesize = 10485760; // archived files larger than this value (in bytes) will not be scanned
+
+		cl_setlimits($maxreclevel, $maxfiles, $maxratio, $archivememlim, $maxfilesize);
+		$malware = cl_scanfile($file);
+	}
+
+	return $malware;
 }
 
 ?>

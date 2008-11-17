@@ -95,7 +95,7 @@ class FormMail
 	}
 
 	/**
-	 * Clear list of attached files (store in SECTION array)
+	 * Clear list of attached files in send mail form (stored in session)
 	 */
 	function clear_attached_files()
 	{	

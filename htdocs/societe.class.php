@@ -775,7 +775,7 @@ class Societe extends CommonObject
 
 				$this->db->commit();
 
-				// Suppression du r�pertoire document
+				// Suppression du repertoire document
 				$docdir = $conf->societe->dir_output . "/" . $id;
 				if (file_exists ($docdir))
 				{
