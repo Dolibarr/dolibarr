@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
- *
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+ * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -90,22 +91,34 @@
 
 			/**
 			* Authentification d'un demandeur
-			* @return (int) 0 = Ok; -1 = login incorrect; -2 = login ok, mais compte désactivé; -10 = aucune entrée trouvée dans la base
+			* @return (int) 0 = Ok; -1 = login incorrect; -2 = login ok, mais compte dï¿½sactivï¿½; -10 = aucune entrï¿½e trouvï¿½e dans la base
 			*/
 			protected function verif_utilisateurs () {
 
-				$sql = new Sql ($this->host, $this->user, $this->pass, $this->base);
-
-				// Vérification des informations dans la base
+				global $conf, $db;
+				
+				//var_dump($conf->db);
+				//$sql = new Sql ($conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name);
+				$sql = $db;
+				
+				// Verification des informations dans la base
 				$res = $sql->query ($this->sql);
+				$num = $sql->num_rows ($res);
 
-				if ( $sql->numRows ($res) ) {
+				if ( $num ) {
 
-					$tab = $sql->fetchFirst ($res);
+					// fetchFirst
+					$ret=array();
+					$tab = mysql_fetch_array($res);
+					foreach ( $tab as $cle => $valeur )
+					{
+						$ret[$cle] = $valeur;
+					}
+					$tab=$ret;
 
 					if ( ($tab['pass_crypted'] == md5 ($this->passwd)) || (($tab['pass'] == $this->passwd) && ($tab['pass'] != ''))) {
 
-						// On vérifie que le compte soit bien actif
+						// On verifie que le compte soit bien actif
 						if ( $tab['statut'] ) {
 
 							$this->reponse(0);

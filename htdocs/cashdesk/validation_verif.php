@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
- *
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+ * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -15,129 +16,137 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-	require ('../master.inc.php');
-	require ('include/environnement.php');
-	require ('classes/Facturation.class.php');
 
-	$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
-	unset ($_SESSION['serObjFacturation']);
+require ('../master.inc.php');
+require ('include/environnement.php');
+require ('classes/Facturation.class.php');
 
-	switch ( $_GET['action'] ) {
+$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
+unset ($_SESSION['serObjFacturation']);
 
-		default:
+switch ( $_GET['action'] ) {
 
-			$redirection = 'affIndex.php?menu=validation';
-			break;
+	default:
 
-		case 'valide_achat':
+		$redirection = 'affIndex.php?menu=validation';
+		break;
 
-				// Récupération du dernier numéro de facture
-				$res = $sql->query (
-					"SELECT facnumber
+	case 'valide_achat':
+
+		// Rï¿½cupï¿½ration du dernier numï¿½ro de facture
+		$res = $sql->query (
+		"SELECT facnumber
 					FROM ".MAIN_DB_PREFIX."facture
 					WHERE facnumber LIKE 'FA%'
 					ORDER BY rowid DESC");
 
-				if ( $sql->numRows ($res) ) {
+		if ( $sql->num_rows ($res) ) {
 
-					$tab_num_facture = $sql->fetchFirst ( $res );
-
-					$tab = explode ('-', $tab_num_facture['facnumber']);
-					$num_txt = $tab[1];
-					$num = $num_txt + 1;
-
-					// Formatage du numéro sur quatre caractères
-					if ( $num < 1000 ) { $num = '0'.$num; }
-					if ( $num < 100 ) { $num = '0'.$num; }
-					if ( $num < 10 ) { $num = '0'.$num; }
-
-					$obj_facturation->num_facture ('FA'.date('ym').'-'.$num);
-
-				} else {
-
-					$obj_facturation->num_facture ( 'FA'.date('ym').'-0001' );
-
-				}
-
-
-			$obj_facturation->mode_reglement ($_POST['hdnChoix']);
-
-				// Si paiement autre qu'en espèces, montant encaissé = prix total
-				$mode_reglement = $obj_facturation->mode_reglement();
-				if ( $mode_reglement != 'ESP' ) {
-
-					$montant = $obj_facturation->prix_total_ttc();
-
-				} else {
-
-					$montant = $_POST['txtEncaisse'];
-
-				}
-
-			if ( $mode_reglement != 'DIF') {
-
-				$obj_facturation->montant_encaisse ($montant);
-
-					//Détermination de la somme rendue
-					$total = $obj_facturation->prix_total_ttc ();
-					$encaisse = $obj_facturation->montant_encaisse();
-
-				$obj_facturation->montant_rendu ( $encaisse - $total );
-
-			} else {
-
-				$obj_facturation->paiement_le ($_POST['txtDatePaiement']);
-
+			$ret=array();
+			$tab = mysql_fetch_array($res);
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$cle] = $valeur;
 			}
+				
+			$tab_num_facture = $ret;
 
-			$redirection = 'affIndex.php?menu=validation';
-			break;
+			$tab = explode ('-', $tab_num_facture['facnumber']);
+			$num_txt = $tab[1];
+			$num = $num_txt + 1;
 
-		case 'retour':
+			// Formatage du numï¿½ro sur quatre caractï¿½res
+			if ( $num < 1000 ) { $num = '0'.$num; }
+			if ( $num < 100 ) { $num = '0'.$num; }
+			if ( $num < 10 ) { $num = '0'.$num; }
 
-			$redirection = 'affIndex.php?menu=facturation';
-			break;
+			$obj_facturation->num_facture ('FA'.date('ym').'-'.$num);
 
-		case 'valide_facture':
+		} else {
 
-			// Récupération de la date et de l'heure
-			$date = date ('Y-m-d');
-			$heure = date ('H:i:s');
+			$obj_facturation->num_facture ( 'FA'.date('ym').'-0001' );
 
-			// Récupération du mode de réglement et création de la note privée ...
-			$note = '';
+		}
 
-			switch ( $obj_facturation->mode_reglement() ) {
 
-				case 'ESP':
-					$mode_reglement = 4;
+		$obj_facturation->mode_reglement ($_POST['hdnChoix']);
 
-					$note .= 'Réglement en espèces'."\n";
-					$note .= 'Somme encaissée : '.$obj_facturation->montant_encaisse()." euro\n";
-					$note .= 'Somme rendue : '.$obj_facturation->montant_rendu()." euro\n";
-					$note .= "\n";
-					$note .= '--------------------------------------'."\n\n";
-					break;
+		// Si paiement autre qu'en espï¿½ces, montant encaissï¿½ = prix total
+		$mode_reglement = $obj_facturation->mode_reglement();
+		if ( $mode_reglement != 'ESP' ) {
 
-				case 'CB':
-					$mode_reglement = 6;
-					break;
+			$montant = $obj_facturation->prix_total_ttc();
 
-				case 'CHQ':
-					$mode_reglement = 7;
-					break;
+		} else {
 
-			}
+			$montant = $_POST['txtEncaisse'];
 
-			// ... on termine la note
-			$note .= addslashes ($_POST['txtaNotes']);
+		}
 
-			// Si paiement différé ...
-			if ( $obj_facturation->mode_reglement() == 'DIF' ) {
+		if ( $mode_reglement != 'DIF') {
 
-				// ... ajout d'une facture sans mode de réglement, avec la date d'échéance
-				$sql->query (
-				"INSERT INTO ".MAIN_DB_PREFIX."facture (
+			$obj_facturation->montant_encaisse ($montant);
+
+			//Dï¿½termination de la somme rendue
+			$total = $obj_facturation->prix_total_ttc ();
+			$encaisse = $obj_facturation->montant_encaisse();
+
+			$obj_facturation->montant_rendu ( $encaisse - $total );
+
+		} else {
+
+			$obj_facturation->paiement_le ($_POST['txtDatePaiement']);
+
+		}
+
+		$redirection = 'affIndex.php?menu=validation';
+		break;
+
+	case 'retour':
+
+		$redirection = 'affIndex.php?menu=facturation';
+		break;
+
+	case 'valide_facture':
+
+		// Rï¿½cupï¿½ration de la date et de l'heure
+		$date = date ('Y-m-d');
+		$heure = date ('H:i:s');
+
+		// Rï¿½cupï¿½ration du mode de rï¿½glement et crï¿½ation de la note privï¿½e ...
+		$note = '';
+
+		switch ( $obj_facturation->mode_reglement() ) {
+
+			case 'ESP':
+				$mode_reglement = 4;
+
+				$note .= 'Reglement en especes'."\n";
+				$note .= 'Somme encaissee : '.$obj_facturation->montant_encaisse()." euro\n";
+				$note .= 'Somme rendue : '.$obj_facturation->montant_rendu()." euro\n";
+				$note .= "\n";
+				$note .= '--------------------------------------'."\n\n";
+				break;
+
+			case 'CB':
+				$mode_reglement = 6;
+				break;
+
+			case 'CHQ':
+				$mode_reglement = 7;
+				break;
+
+		}
+
+		// ... on termine la note
+		$note .= addslashes ($_POST['txtaNotes']);
+
+		// Si paiement differe ...
+		if ( $obj_facturation->mode_reglement() == 'DIF' ) {
+
+			// ... ajout d'une facture sans mode de rï¿½glement, avec la date d'ï¿½chï¿½ance
+			$sql->query (
+			"INSERT INTO ".MAIN_DB_PREFIX."facture (
 							facnumber,
 							type,
 							ref_client,
@@ -198,21 +207,28 @@
 						);");
 
 
-					// Récupération de l'id de la facture nouvellement créée
-					$tab_id_facture = $sql->fetchFirst ( $sql->query (
-						"SELECT rowid
+			// Recuperation de l'id de la facture nouvellement creee
+			$resql=$sql->query ("SELECT rowid
 						FROM ".MAIN_DB_PREFIX."facture
 						WHERE 1
-						ORDER BY rowid DESC") );
+						ORDER BY rowid DESC");
+			
+			$ret=array();
+			$tab = mysql_fetch_array($resql);
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$cle] = $valeur;
+			}
+			$tab_id_facture=$ret;
 
-					$id = $tab_id_facture['rowid'];
+			$id = $tab_id_facture['rowid'];
 
 
 			// Sinon ...
-			} else {
+		} else {
 
-				// ... ajout d'une facture et d'un paiement
-				$sql->query ("INSERT INTO ".MAIN_DB_PREFIX."facture (
+			// ... ajout d'une facture et d'un paiement
+			$sql->query ("INSERT INTO ".MAIN_DB_PREFIX."facture (
 							facnumber,
 							type,
 							ref_client,
@@ -274,22 +290,31 @@
 				;");
 
 
-					// Récupération de l'id de la facture nouvellement créée
-					$tab_id_facture = $sql->fetchFirst ( $sql->query (
-					"SELECT rowid
+			// Recuperation de l'id de la facture nouvellement creee
+			$resql=$sql->query (
+			"SELECT rowid
 						FROM ".MAIN_DB_PREFIX."facture
 						WHERE 1
-						ORDER BY rowid DESC") );
+						ORDER BY rowid DESC");
+			
+			$ret=array();
+			$tab = mysql_fetch_array($resql);
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$cle] = $valeur;
+			}
 
-					$id = $tab_id_facture['rowid'];
+			$tab_id_facture = $tab;
+
+			$id = $tab_id_facture['rowid'];
 
 
 
-				// Ajout d'une opération sur le compte de caisse, uniquement si le paiement est en espèces
-				if ( $obj_facturation->mode_reglement() == 'ESP' ) {
+			// Ajout d'une opï¿½ration sur le compte de caisse, uniquement si le paiement est en espï¿½ces
+			if ( $obj_facturation->mode_reglement() == 'ESP' ) {
 
-					$sql->query (
-						"INSERT INTO ".MAIN_DB_PREFIX."bank (
+				$sql->query (
+				"INSERT INTO ".MAIN_DB_PREFIX."bank (
 								datec,
 								datev,
 								dateo,
@@ -316,21 +341,30 @@
 							)
 					;");
 
-				}
+			}
 
-					// Récupération de l'id de l'opération nouvellement créée
-					$tab_id_operation = $sql->fetchFirst ( $sql->query (
-					"SELECT rowid
+			// Recuperation de l'id de l'operation nouvellement creee
+			$resql=$sql->query (
+			"SELECT rowid
 						FROM ".MAIN_DB_PREFIX."bank
 						WHERE 1
-						ORDER BY rowid DESC") );
+						ORDER BY rowid DESC");
 
-					$id_op = $tab_id_operation['rowid'];
+			$ret=array();
+			$tab = mysql_fetch_array($resql);
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$cle] = $valeur;
+			}
+
+			$tab_id_operation = $tab;
+
+			$id_op = $tab_id_operation['rowid'];
 
 
-				// Ajout d'un nouveau paiement
-				$sql->query (
-				"INSERT INTO ".MAIN_DB_PREFIX."paiement (
+			// Ajout d'un nouveau paiement
+			$sql->query (
+			"INSERT INTO ".MAIN_DB_PREFIX."paiement (
 							fk_facture,
 							datec,
 							datep,
@@ -361,18 +395,27 @@
 						)");
 
 
-				// Récupération de l'id du paiement nouvellement créé
-				$tab_id_paiement = $sql->fetchFirst ( $sql->query (
-				"SELECT rowid
+			// Rï¿½cupï¿½ration de l'id du paiement nouvellement crï¿½
+ 			$resql=$sql->query (
+			"SELECT rowid
 					FROM ".MAIN_DB_PREFIX."paiement
 					WHERE 1
-					ORDER BY rowid DESC") );
+					ORDER BY rowid DESC");
+			
+			$ret=array();
+			$tab = mysql_fetch_array($resql);
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$cle] = $valeur;
+			}
 
-				$id_paiement = $tab_id_paiement['rowid'];
+			$tab_id_paiement = $tab;
+
+			$id_paiement = $tab_id_paiement['rowid'];
 
 
-				$sql->query (
-				"INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (
+			$sql->query (
+			"INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (
 							fk_paiement,
 							fk_facture,
 							amount
@@ -385,11 +428,11 @@
 						)
 				;");
 
-			}
+		}
 
-			// Ajout d'un réglement tva
-			$sql->query (
-			"INSERT INTO llx_facture_tva_sum (
+		// Ajout d'un rï¿½glement tva
+		$sql->query (
+		"INSERT INTO llx_facture_tva_sum (
 						fk_facture,
 						amount,
 						tva_tx
@@ -403,48 +446,74 @@
 			;");
 
 
-			// Récupération de la liste des articles du panier
-			$tab_liste = $sql->fetchAll ( $sql->query ('
+		// Recuperation de la liste des articles du panier
+		$res=$sql->query ('
 				SELECT fk_article, qte, fk_tva, remise_percent, remise, total_ht, total_ttc, reel
 				FROM '.MAIN_DB_PREFIX.'tmp_caisse
 				LEFT JOIN '.MAIN_DB_PREFIX.'product_stock ON '.MAIN_DB_PREFIX.'tmp_caisse.fk_article = '.MAIN_DB_PREFIX.'product_stock.fk_product
-				WHERE 1') );
+				WHERE 1');
+		$ret=array(); $i=0;
+		while ( $tab = mysql_fetch_array($res) )
+		{
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$i][$cle] = $valeur;
+			}
+			$i++;
+		}
 
-			for ($i = 0; $i < count ($tab_liste); $i++) {
+		$tab_liste = $ret;
 
-				// Récupération de l'article
-				$tab_article = $sql->fetchFirst ( $sql->query (
-					'SELECT label, tva_tx, price
+		for ($i = 0; $i < count ($tab_liste); $i++) {
+
+			// Recuperation de l'article
+			$res = $sql->query (
+			'SELECT label, tva_tx, price
 					FROM '.MAIN_DB_PREFIX.'product
-					WHERE rowid = '.$tab_liste[$i]['fk_article']) );
+					WHERE rowid = '.$tab_liste[$i]['fk_article']);
+			$ret=array();
+			$tab = mysql_fetch_array($res);
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$cle] = $valeur;
+			}
+			$tab_article = $ret;
 
-				$tab_tva = $sql->fetchFirst ( $sql->query (
-					'SELECT taux
+			$res = $sql->query (
+			'SELECT taux
 					FROM '.MAIN_DB_PREFIX.'c_tva
-					WHERE rowid = '.$tab_liste[$i]['fk_tva']) );
+					WHERE rowid = '.$tab_liste[$i]['fk_tva']);
+			$ret=array();
+			$tab = mysql_fetch_array($res);
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$cle] = $valeur;
+			}
+			$tab_tva = $ret;
+				
+				
+			// Calcul du montant de la TVA
+			$montant_tva = $tab_liste[$i]['total_ttc'] - $tab_liste[$i]['total_ht'];
 
-				// Calcul du montant de la TVA
-				$montant_tva = $tab_liste[$i]['total_ttc'] - $tab_liste[$i]['total_ht'];
-
-				// Calcul de la position de l'article dans la liste
-				$position = $i + 1;
+			// Calcul de la position de l'article dans la liste
+			$position = $i + 1;
 
 
-				$reel = $tab_liste[$i]['reel'];
-				$qte = $tab_liste[$i]['qte'];
-				$stock = $reel - $qte;
+			$reel = $tab_liste[$i]['reel'];
+			$qte = $tab_liste[$i]['qte'];
+			$stock = $reel - $qte;
 
-				// Mise à jour du stock
-				$sql->query (
-					'UPDATE '.MAIN_DB_PREFIX.'product_stock
+			// Mise ï¿½ jour du stock
+			$sql->query (
+			'UPDATE '.MAIN_DB_PREFIX.'product_stock
 					SET reel = '.$stock."
 					WHERE fk_product = ".$tab_liste[$i]['fk_article']."
 					LIMIT 1");
 
 
-				// Ajout d'une entrée dans le détail de la facture
-				$sql->query (
-					'INSERT INTO '.MAIN_DB_PREFIX.'facturedet (
+			// Ajout d'une entrï¿½e dans le dï¿½tail de la facture
+			$sql->query (
+			'INSERT INTO '.MAIN_DB_PREFIX.'facturedet (
 							fk_facture,
 							fk_product,
 							description,
@@ -487,14 +556,14 @@
 							0,
 							".$position.")");
 
-			}
+		}
 
-			$redirection = 'affIndex.php?menu=validation_ok&facid='.$id;	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
-			break;
+		$redirection = 'affIndex.php?menu=validation_ok&facid='.$id;	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
+		break;
 
-	}
+}
 
-	$_SESSION['serObjFacturation'] = serialize ($obj_facturation);
+$_SESSION['serObjFacturation'] = serialize ($obj_facturation);
 
-	header ('Location: '.$redirection);
+header ('Location: '.$redirection);
 ?>

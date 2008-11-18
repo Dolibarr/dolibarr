@@ -1,4 +1,4 @@
-<!--Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
+<!--Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,15 +20,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 <p class="titre">Panier</p>
 
 <?php
-	// Récupération du contenu de la vente
-	$res = $sql->query (
-			'SELECT id, ref, label, qte, price, remise_percent, remise, total_ht, total_ttc FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
+	// Recuperation du contenu de la vente
+	$res = $sql->query ('SELECT id, ref, label, qte, price, remise_percent, remise, total_ht, total_ttc FROM '.MAIN_DB_PREFIX.'tmp_caisse as c
 			LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON c.fk_article = p.rowid
 			ORDER BY id');
 
-	if ( $sql->numRows($res) ) {
+	if ( $sql->num_rows($res) ) {
 
-		$tab = $sql->fetchAll($res);
+		$ret=array(); $i=0;
+		while ( $tab = mysql_fetch_array($res) )
+		{
+			foreach ( $tab as $cle => $valeur )
+			{
+				$ret[$i][$cle] = $valeur;
+			}
+			$i++;
+		}
+		$tab = $ret;
 
 		for ( $i = 0; $i < count($tab); $i++ ) {
 

@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
- *
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+ * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -22,23 +23,23 @@ require_once ('Sql.interface.php');
 class Sql implements intSql {
 
 	/**
-		* Constructeur : initialise la connection à la base de données
-		* @param $aHost Domaine ou adresse IP du serveur de base de données (ex : localhost ou db.monsite.fr)
-		* @param $aUser Utilisateur de la base de données
-		* @param $aPass Mot de passe de l'utilisateur de la base de données
-		* @param $aBase Nom de la base de données à utiliser
+		* Constructeur : initialise la connection ï¿½ la base de donnï¿½es
+		* @param $aHost Domaine ou adresse IP du serveur de base de donnï¿½es (ex : localhost ou db.monsite.fr)
+		* @param $aUser Utilisateur de la base de donnï¿½es
+		* @param $aPass Mot de passe de l'utilisateur de la base de donnï¿½es
+		* @param $aBase Nom de la base de donnï¿½es ï¿½ utiliser
 		*/
 	public function __construct ($aHost, $aUser, $aPass, $aBase) {
-
+	
 		$db = mysql_connect ($aHost, $aUser, $aPass);
 		mysql_select_db ($aBase, $db);
 
 	}
 
 	/**
-		* Destructeur : ferme la connection à la base de données
+		* Destructeur : ferme la connection ï¿½ la base de donnï¿½es
 		*/
-	// Désactivation pour cause bug avec 1and1
+	// Dï¿½sactivation pour cause bug avec 1and1
 	// 		public function __destruct () {
 	//
 	// 			mysql_close ();
@@ -46,9 +47,9 @@ class Sql implements intSql {
 	// 		}
 
 	/**
-		* Effectue une requête sur la base de données, et renvoi la ressource correspondante
-		* @param $aRequete Requête SQL (ex : SELECT nom, prenom FROM table1 WHERE id = 127)
-		* @return Ressource vers la requête venant d'être effectuée
+		* Effectue une requï¿½te sur la base de donnï¿½es, et renvoi la ressource correspondante
+		* @param $aRequete Requï¿½te SQL (ex : SELECT nom, prenom FROM table1 WHERE id = 127)
+		* @return Ressource vers la requï¿½te venant d'ï¿½tre effectuï¿½e
 		*/
 	public function query ($aRequete) {
 		dolibarr_syslog("cashdesk query sql=".$aRequete, LOG_DEBUG);
@@ -57,33 +58,31 @@ class Sql implements intSql {
 	}
 
 	/**
-		* Renvoi le nombre de résultats d'une requête
-		* @param $aRes Ressource d'une requête effectuée précédemment
-		* @return Entier : nombre de résultats de la requête
+		* Renvoi le nombre de rï¿½sultats d'une requï¿½te
+		* @param $aRes Ressource d'une requï¿½te effectuï¿½e prï¿½cï¿½demment
+		* @return Entier : nombre de rï¿½sultats de la requï¿½te
 		*/
-	public function numRows ($aRes) {
+	public function num_rows ($aRes) {
 
 		return mysql_num_rows($aRes);
 
 	}
 
 	/**
-		* Enregistre tous les résultats d'une requête dans un tableau à deux dimensions
-		* @param $aRes Ressource d'une requête effectuée précédemment
-		* @return Tableau à deux dimensions : $tab[indice_resultat(integer)][indice_champ(integer) / nom_champ(string)]
+		* Enregistre tous les rï¿½sultats d'une requï¿½te dans un tableau ï¿½ deux dimensions
+		* @param $aRes Ressource d'une requï¿½te effectuï¿½e prï¿½cï¿½demment
+		* @return Tableau ï¿½ deux dimensions : $tab[indice_resultat(integer)][indice_champ(integer) / nom_champ(string)]
 		*/
-	public function fetchAll ($aRes) {
+	public function fetch_array ($aRes) {
 
-		$i = 0;
-		while ( $tab = mysql_fetch_array($aRes) ) {
-
-			foreach ( $tab as $cle => $valeur ) {
-
+		$ret=array(); $i=0;
+		while ( $tab = mysql_fetch_array($aRes) )
+		{
+			foreach ( $tab as $cle => $valeur )
+			{
 				$ret[$i][$cle] = $valeur;
-
 			}
 			$i++;
-
 		}
 
 		return $ret;
@@ -91,22 +90,21 @@ class Sql implements intSql {
 	}
 
 	/**
-		* Enregistre seulement le premier résultat d'une requête dans un tableau à une dimension
-		* @param $aRes Ressource d'une requête effectuée précédemment
-		* @return Tableau à une dimension : $tab[indice_champ(integer) / nom_champ(string)]
+		* Enregistre seulement le premier rï¿½sultat d'une requï¿½te dans un tableau ï¿½ une dimension
+		* @param $aRes Ressource d'une requï¿½te effectuï¿½e prï¿½cï¿½demment
+		* @return Tableau ï¿½ une dimension : $tab[indice_champ(integer) / nom_champ(string)]
 		*/
-	public function fetchFirst ($aRes) {
+	public function fetchFirst ($aRes)
+	{
 
+		$ret=array();
 		$tab = mysql_fetch_array($aRes);
-
-		foreach ( $tab as $cle => $valeur ) {
-
+		foreach ( $tab as $cle => $valeur )
+		{
 			$ret[$cle] = $valeur;
-
 		}
 
 		return $ret;
-
 	}
 
 }

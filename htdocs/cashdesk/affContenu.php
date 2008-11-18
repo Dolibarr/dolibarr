@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
- *
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+ * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +19,7 @@
 
 require ('classes/Facturation.class.php');
 
-// Si nouvelle vente, réinitialisation des données (destruction de l'objet et vidage de la table contenant la liste des articles)
+// Si nouvelle vente, reinitialisation des donnees (destruction de l'objet et vidage de la table contenant la liste des articles)
 if ( $_GET['id'] == 'NOUV' ) {
 
 	unset ($_SESSION['serObjFacturation']);
@@ -27,7 +28,7 @@ if ( $_GET['id'] == 'NOUV' ) {
 
 }
 
-// Récupération, s'il existe, de l'objet contenant les infos de la vente en cours ...
+// Recuperation, s'il existe, de l'objet contenant les infos de la vente en cours ...
 if ( isset ($_SESSION['serObjFacturation']) ) {
 
 	$obj_facturation = unserialize ($_SESSION['serObjFacturation']);
@@ -45,6 +46,7 @@ if ( isset ($_SESSION['serObjFacturation']) ) {
 <div class="liste_articles"><?php include ('liste_articles.php'); ?></div>
 
 <div class="principal"><?php
+
 if ( $_GET['menu'] ) {
 
 	include ($_GET['menu'].'.php');

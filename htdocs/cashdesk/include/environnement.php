@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,20 +26,20 @@ dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id()
 
 $conf_db_type = $dolibarr_main_db_type;
 
-// Paramètres de connexion à la base
+// Parametres de connexion a la base
 $conf_db_host = $dolibarr_main_db_host;
 $conf_db_user = $dolibarr_main_db_user;
 $conf_db_pass = $dolibarr_main_db_pass;
 $conf_db_base = $dolibarr_main_db_name;
 
-// Paramètres généraux
+// Parametres generaux
 $conf_url_racine = $dolibarr_main_url_root.'/cashdesk';
 
 // Identifiant unique correspondant au tiers generique pour la vente
 $conf_fksoc = $conf->global->CASHDESK_ID_THIRDPARTY;
 // Identifiant unique correspondant au compte caisse / liquide
 $conf_fkaccount = $conf->global->CASHDESK_ID_BANKACCOUNT > 0?$conf->global->CASHDESK_ID_BANKACCOUNT:$_SESSION["CASHDESK_ID_BANKACCOUNT"];
-// Identifiant unique correspondant à l'entrepôt associé à la caisse
+// Identifiant unique correspondant a l'entrepot associe a la caisse
 $conf_fkentrepot = $conf->global->CASHDESK_ID_WAREHOUSE > 0?$conf->global->CASHDESK_ID_WAREHOUSE:$_SESSION["CASHDESK_ID_WAREHOUSE"];
 
 // Check if setup ok
@@ -47,13 +47,14 @@ if (empty($conf_fksoc))      dolibarr_print_error("Setup of CashDesk module not 
 if ($conf->bank->enabled && empty($conf_fkaccount))  dolibarr_print_error("Setup of CashDesk module not complete. Bank account not defined.");
 if ($conf->stock->enabled && empty($conf_fkentrepot)) dolibarr_print_error("Setup of CashDesk module not complete. Warehous not defined.");
 
-// Paramètres d'affichage
-$conf_taille_listes = 200;	// Nombre max de lignes à afficher dans les listes
-$conf_nbr_car_listes = 60;	// Nombre max de caractères par ligne dans les listes
+// Parametres d'affichage
+$conf_taille_listes = 200;	// Nombre max de lignes a afficher dans les listes
+$conf_nbr_car_listes = 60;	// Nombre max de caracteres par ligne dans les listes
 
 $new_conf_db_type=$conf_db_type;
 if (eregi('mysql',$new_conf_db_type)) $new_conf_db_type='Mysql';
 
 require ('classes/'.$new_conf_db_type.'.class.php');
-$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
+//$sql = new Sql ($conf_db_host, $conf_db_user, $conf_db_pass, $conf_db_base);
+$sql=$db;
 ?>

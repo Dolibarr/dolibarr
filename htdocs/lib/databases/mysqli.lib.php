@@ -397,11 +397,10 @@ class DoliDb
 
 
 	/**
-	 \brief      Renvoie les donn�es dans un tableau.
-	 \param      resultset   Curseur de la requete voulue
-	 \return	    array
+	 *	\brief      Renvoie les donnees dans un tableau.
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return	    array
 	 */
-
 	function fetch_array($resultset=0)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion
@@ -410,11 +409,10 @@ class DoliDb
 	}
 
 	/**
-	 \brief      Renvoie les donn�es comme un tableau.
-	 \param      resultset   Curseur de la requete voulue
-	 \return	    array
+	 *	\brief      Renvoie les donnees comme un tableau.
+	 *	\param      resultset   Curseur de la requete voulue
+	 *	\return	    array
 	 */
-
 	function fetch_row($resultset=0)
 	{
 		// Si le resultset n'est pas fourni, on prend le dernier utilise sur cette connexion

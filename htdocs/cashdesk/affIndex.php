@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
- *
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+ * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -32,7 +33,7 @@ if ( $_SESSION['uid'] <= 0 ) {
 
 <meta name="robots" content="none" />
 
-<meta name="author" content="Jérémie Ollivier - jeremie.o@laposte.net" />
+<meta name="author" content="Jeremie Ollivier - jeremie.o@laposte.net" />
 <meta name="Generator" content="Kwrite, Gimp, Inkscape" />
 
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15" />
@@ -41,7 +42,7 @@ if ( $_SESSION['uid'] <= 0 ) {
 <meta http-equiv="Content-Style-Type" content="text/css" />
 <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
 
-<!-- Import des fichiers nécessaires à JsCalendar -->
+<!-- Import des fichiers necessaires a JsCalendar -->
 <style type="text/css">
 @import url(include/jscalendar/calendar-blue.css);
 </style>

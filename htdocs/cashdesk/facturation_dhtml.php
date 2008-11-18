@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2008 Jérémie Ollivier <jeremie.o@laposte.net>
- *
+/* Copyright (C) 2007-2008 Jeremie Ollivier <jeremie.o@laposte.net>
+ * Copyright (C) 2008 Laurent Destailleur   <eldy@uers.sourceforge.net>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -32,11 +33,21 @@
 				OR label LIKE '%".$_GET['code']."%'
 			ORDER BY label");
 
-		if ( $nbr = $sql->numRows($res) ) {
+		if ( $nbr = $sql->num_rows($res) ) {
 
 			$resultat = '<ul class="dhtml_bloc">';
 
-			$tab = $sql->fetchAll($res);
+			$ret=array(); $i=0;
+			while ( $tab = mysql_fetch_array($res) )
+			{
+				foreach ( $tab as $cle => $valeur )
+				{
+					$ret[$i][$cle] = $valeur;
+				}
+				$i++;
+			}
+			$tab=$ret;
+			
 			for ( $i = 0; $i < count ($tab); $i++ ) {
 
 				$resultat .= '
@@ -56,7 +67,7 @@
 
 			echo ('
 				<ul class="dhtml_bloc">
-					<li class="dhtml_defaut">'.htmlentities ('Aucun résultat').'</li>
+					<li class="dhtml_defaut">'.htmlentities ('Aucun rï¿½sultat').'</li>
 				</ul>
 			');
 
