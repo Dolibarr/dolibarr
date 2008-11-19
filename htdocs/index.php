@@ -19,9 +19,9 @@
  */
 
 /**
- \file       htdocs/index.php
- \brief      Page accueil par defaut
- \version    $Id$
+ *	\file       htdocs/index.php
+ *	\brief      Page accueil par defaut
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");

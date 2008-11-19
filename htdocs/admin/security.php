@@ -61,9 +61,11 @@ if ($_GET["action"] == 'activate_encrypt')
 	$db->begin();
 	
     dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1");
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."user as u";
-	$sql.= " SET u.pass = NULL AND u.pass_crypted = MD5(u.pass)";
+	$sql.= " SET u.pass_crypted = MD5(u.pass), u.pass = NULL";
 	$sql.= " WHERE u.pass IS NOT NULL AND LENGTH(u.pass) < 32";	// Not a MD5 value
+	$sql.= " AND MD5(u.pass) IS NOT NULL";
 
 	//print $sql;
 	$result = $db->query($sql);
@@ -75,6 +77,7 @@ if ($_GET["action"] == 'activate_encrypt')
 	}
 	else
 	{
+		$db->rollback();
 		dolibarr_print_error($db,'');
 	}
 }
