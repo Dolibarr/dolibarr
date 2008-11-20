@@ -111,4 +111,8 @@ This is feature Dolibarr does not support completely yet:
 - Dolibarr does not support the double Canadian Tax.
 - Dolibarr does not make coffee (not yet).
 - The module to manage stock is not stable yet.
+- Stock management with option increase/decrease on invoice works on
+  warehouse number one only (no way to choose warehouse).
+- Stock management with option increase/decrease on orders works on
+  warehouse number one only (no way to choose warehouse).
 
