@@ -270,7 +270,7 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf->SetTextColor(0,0,0);
 				}
 
-				// Propose mode r�glement par CHQ
+				// Propose mode reglement par CHQ
 				if (defined("FACTURE_CHQ_NUMBER"))
 				{
 					if (FACTURE_CHQ_NUMBER > 0)
@@ -287,7 +287,7 @@ class pdf_oursin extends ModelePDFFactures
 					}
 				}
 
-				// Propose mode r�glement par RIB
+				// Propose mode reglement par RIB
 				if (defined("FACTURE_RIB_NUMBER"))
 				{
 					if (FACTURE_RIB_NUMBER > 0)
@@ -296,45 +296,13 @@ class pdf_oursin extends ModelePDFFactures
 						$account->fetch(FACTURE_RIB_NUMBER);
 
 						$cury=240;
-						$pdf->SetXY ($this->marges['g'], $cury);
-						$pdf->SetFont('Arial','B',8);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
-						$cury=245;
-						$pdf->SetFont('Arial','B',6);
-						$pdf->line($this->marges['g'], $cury, $this->marges['g'], $cury+10 );
-						$pdf->SetXY ($this->marges['g'], $cury);
-						$pdf->MultiCell(18, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
-						$pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
-						$pdf->SetXY ($this->marges['g']+18, $cury);
-						$pdf->MultiCell(18, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
-						$pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
-						$pdf->SetXY ($this->marges['g']+36, $cury);
-						$pdf->MultiCell(24, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
-						$pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
-						$pdf->SetXY ($this->marges['g']+60, $cury);
-						$pdf->MultiCell(13, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
-						$pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
+						$curx=$this->marges['g'];
 
-						$pdf->SetFont('Arial','',8);
-						$pdf->SetXY ($this->marges['g'], $cury+5);
-						$pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
-						$pdf->SetXY ($this->marges['g']+18, $cury+5);
-						$pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
-						$pdf->SetXY ($this->marges['g']+36, $cury+5);
-						$pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
-						$pdf->SetXY ($this->marges['g']+60, $cury+5);
-						$pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
-
-						$pdf->SetXY ($this->marges['g'], $cury+14);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
-						$pdf->SetXY ($this->marges['g'], $cury+19);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("IbanPrefix").' : ' . $outputlangs->convToOutputCharset($account->iban_prefix), 0, 'L', 0);
-						$pdf->SetXY ($this->marges['g'], $cury+24);
-						$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BIC").' : ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+						$posy=pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
 					}
 				}
 
-				// Conditions de r�glements
+				// Conditions de reglements
 				if ($fac->cond_reglement_code)
 				{
 					$pdf->SetFont('Arial','B',10);
@@ -729,10 +697,10 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetFont('Arial','B',11);
 		$fac->fetch_client();
 		$pdf->SetXY($this->marges['g']+100,$posy+4);
-		$pdf->MultiCell(86,4, $fac->client->nom, 0, 'L');
+		$pdf->MultiCell(86,4, $outputlangs->transnoentities($fac->client->nom), 0, 'L');
 		$pdf->SetFont('Arial','B',10);
 		$pdf->SetXY($this->marges['g']+100,$posy+12);
-		$pdf->MultiCell(86,4, $fac->client->adresse . "\n\n" . $fac->client->cp . " " . $fac->client->ville);
+		$pdf->MultiCell(86,4, $outputlangs->transnoentities($fac->client->adresse) . "\n\n" . $outputlangs->transnoentities($fac->client->cp) . " " . $outputlangs->transnoentities($fac->client->ville));
 
 		/*
 		 * ref facture
@@ -745,7 +713,7 @@ class pdf_oursin extends ModelePDFFactures
 		$pdf->SetFont('Arial','B',11);
 		$pdf->SetXY($this->marges['g'],$posy+6);
 		$pdf->SetTextColor(22,137,210);
-		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("RefBill")." : " . $fac->ref, '', 'L');
+		$pdf->MultiCell(100, 10, $outputlangs->transnoentities("RefBill")." : " . $outputlangs->transnoentities($fac->ref), '', 'L');
 		$pdf->SetTextColor(0,0,0);
 
 		/*

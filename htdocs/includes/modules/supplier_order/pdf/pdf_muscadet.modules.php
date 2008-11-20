@@ -368,7 +368,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				 */
 
 				/*
-				 * Propose mode r�glement par RIB
+				 * Propose mode reglement par RIB
 				 */
 				/*
 				 if (defined("FACTURE_RIB_NUMBER"))
@@ -378,45 +378,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				 $account = new Account($this->db);
 				 $account->fetch(FACTURE_RIB_NUMBER);
 
-				 $this->marges['g']=$this->marge_gauche;
-
+				 $curx=$this->marge_gauche;
 				 $cury=242;
-				 $pdf->SetXY ($this->marges['g'], $cury);
-				 $pdf->SetFont('Arial','B',8);
-				 $pdf->MultiCell(90, 3, "R�glement par virement sur le compte bancaire suivant:", 0, 'L', 0);
-				 $cury+=4;
-				 $pdf->SetFont('Arial','B',6);
-				 $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
-				 $pdf->SetXY ($this->marges['g'], $cury);
-				 $pdf->MultiCell(18, 3, "Code banque", 0, 'C', 0);
-				 $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
-				 $pdf->SetXY ($this->marges['g']+18, $cury);
-				 $pdf->MultiCell(18, 3, "Code guichet", 0, 'C', 0);
-				 $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
-				 $pdf->SetXY ($this->marges['g']+36, $cury);
-				 $pdf->MultiCell(24, 3, "Num�ro compte", 0, 'C', 0);
-				 $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
-				 $pdf->SetXY ($this->marges['g']+60, $cury);
-				 $pdf->MultiCell(13, 3, "Cl� RIB", 0, 'C', 0);
-				 $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
 
-				 $pdf->SetFont('Arial','',8);
-				 $pdf->SetXY ($this->marges['g'], $cury+5);
-				 $pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
-				 $pdf->SetXY ($this->marges['g']+18, $cury+5);
-				 $pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
-				 $pdf->SetXY ($this->marges['g']+36, $cury+5);
-				 $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
-				 $pdf->SetXY ($this->marges['g']+60, $cury+5);
-				 $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
-
-				 $pdf->SetXY ($this->marges['g'], $cury+12);
-				 $pdf->MultiCell(90, 3, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
-				 $pdf->SetXY ($this->marges['g'], $cury+22);
-				 $pdf->MultiCell(90, 3, $outputlangs->trans("IBAN")." : " . $account->iban_prefix, 0, 'L', 0);
-				 $pdf->SetXY ($this->marges['g'], $cury+25);
-				 $pdf->MultiCell(90, 3, $outputlangs->trans("BIC")." : " . $account->bic, 0, 'L', 0);
-
+				 pdf_bank($pdf,$outputlangs,$curx,$cury,$account);
 				 }
 				 }
 				 */
@@ -602,7 +567,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	{
 		global $conf;
 			
-		// Montants exprim�s en     (en tab_top - 1)
+		// Montants exprim�s en     (en tab_top - 1
 		$pdf->SetTextColor(0,0,0);
 		$pdf->SetFont('Arial','',8);
 		$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentities("Currency".$conf->monnaie));

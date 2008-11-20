@@ -241,7 +241,7 @@ function getFormeJuridiqueLabel($code)
  *		\param		conf		Object conf
  * 		\param		lang		Object lang
  * 		\param		db			Database handler
- * 		\param		objsoc		Third party object 
+ * 		\param		objsoc		Third party object
  */
 function show_contacts($conf,$langs,$db,$objsoc)
 {
@@ -286,7 +286,7 @@ function show_contacts($conf,$langs,$db,$objsoc)
 			$var = !$var;
 
 			print "<tr ".$bc[$var].">";
-			 
+
 			print '<td>';
 			$contactstatic->id = $obj->rowid;
 			$contactstatic->name = $obj->name;
@@ -324,7 +324,7 @@ function show_contacts($conf,$langs,$db,$objsoc)
 				print img_object($langs->trans("Rendez-Vous"),"action");
 				print '</a></td>';
 			}
-			 
+
 			print "</tr>\n";
 			$i++;
 		}
@@ -359,7 +359,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 		$actionstatic=new ActionComm($db);
 		$userstatic=new User($db);
 		$contactstatic = new Contact($db);
-		 
+			
 		if (is_object($objcon) && $objcon->id) print_titre($langs->trans("TasksHistoryForThisContact"));
 		else print_titre($langs->trans("ActionsOnCompany"));
 
@@ -390,7 +390,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 			$i = 0 ;
 			$num = $db->num_rows($result);
 			$var=true;
-			 
+
 			if ($num)
 			{
 				while ($i < $num)
@@ -401,7 +401,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 					print "<tr ".$bc[$var].">";
 
 					print '<td width="100" align="left">'.dolibarr_print_date($obj->dp,'dayhour')."</td>\n";
-						
+
 					// Picto warning
 					print '<td width="16">';
 					if ($obj->dp && date("U",$obj->dp) < time()) print ' '.img_warning("Late");
@@ -423,7 +423,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 						$actionstatic->id=$obj->id;
 						print '<td width="140">'.$actionstatic->getNomUrl(1,16).'</td>';
 					}
-					
+						
 					print '<td colspan="2">'.$obj->label.'</td>';
 
 					// Contact pour cette action
@@ -438,7 +438,7 @@ function show_actions_todo($conf,$langs,$db,$objsoc,$objcon='')
 					{
 						print '<td>&nbsp;</td>';
 					}
-					
+						
 					print '<td width="80" nowrap="nowrap">';
 					$userstatic->id=$obj->fk_user_author;
 					$userstatic->login=$obj->login;
@@ -504,7 +504,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		$sql.= " AND c.id=a.fk_action";
 		$sql.= " AND a.percent = 100";
 		$sql.= " ORDER BY a.datea DESC, a.id DESC";
-	
+
 		dolibarr_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
@@ -529,11 +529,11 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 			dolibarr_print_error($db);
 		}
 	}
-	
+
 	if ($conf->mailing->enabled && $objcon->email)
 	{
 		$langs->load("mails");
-		
+
 		// Recherche histo sur mailing
 		$sql = "SELECT m.rowid as id, ".$db->pdate("mc.date_envoi")." as da, m.titre as note, '100' as percentage,";
 		$sql.= " 'AC_EMAILING' as acode,";
@@ -569,7 +569,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		}
 	}
 
-	
+
 	if ($conf->agenda->enabled || ($conf->mailing->enabled && $objcon->email))
 	{
 		require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
@@ -582,7 +582,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 		$propalstatic=new Propal($db);
 		$orderstatic=new Commande($db);
 		$facturestatic=new Facture($db);
-		
+
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="8"><a href="'.DOL_URL_ROOT.'/comm/action/listactions.php?socid='.$objsoc->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td>';
@@ -619,7 +619,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 
 			// Note
 			print '<td>'.dolibarr_trunc($histo[$key]['note'], 30).'</td>';
-			
+				
 			// Objet lie
 			print '<td>';
 			if ($histo[$key]['pid'] && $conf->propal->enabled)
@@ -656,7 +656,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 			{
 				print '<td>&nbsp;</td>';
 			}
-			
+				
 			// Auteur
 			print '<td nowrap="nowrap" width="80">';
 			$userstatic->id=$histo[$key]['userid'];
@@ -679,6 +679,50 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
 }
 
 
+/**
+ *   	\brief      Show bank informations for PDF generation
+ */
+function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
+{
+	$pdf->SetXY ($curx, $cury);
+	$pdf->SetFont('Arial','B',8);
+	$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
+	$cury+=4;
+	$pdf->SetFont('Arial','B',6);
+	$pdf->line($curx+1, $cury, $curx+1, $cury+10 );
+	$pdf->SetXY ($curx, $cury);
+	$pdf->MultiCell(18, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
+	$pdf->line($curx+18, $cury, $curx+18, $cury+10 );
+	$pdf->SetXY ($curx+18, $cury);
+	$pdf->MultiCell(18, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
+	$pdf->line($curx+36, $cury, $curx+36, $cury+10 );
+	$pdf->SetXY ($curx+36, $cury);
+	$pdf->MultiCell(24, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
+	$pdf->line($curx+60, $cury, $curx+60, $cury+10 );
+	$pdf->SetXY ($curx+60, $cury);
+	$pdf->MultiCell(13, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
+	$pdf->line($curx+73, $cury, $curx+73, $cury+10 );
+
+	$pdf->SetFont('Arial','',8);
+	$pdf->SetXY ($curx, $cury+5);
+	$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
+	$pdf->SetXY ($curx+18, $cury+5);
+	$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_guichet), 0, 'C', 0);
+	$pdf->SetXY ($curx+36, $cury+5);
+	$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($account->number), 0, 'C', 0);
+	$pdf->SetXY ($curx+60, $cury+5);
+	$pdf->MultiCell(13, 3, $outputlangs->convToOutputCharset($account->cle_rib), 0, 'C', 0);
+
+	$pdf->SetXY ($curx, $cury+12);
+	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
+	$pdf->SetXY ($curx, $cury+22);
+	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("IbanPrefix").' : ' . $outputlangs->convToOutputCharset($account->iban_prefix), 0, 'L', 0);
+	$pdf->SetXY ($curx, $cury+25);
+	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BIC").' : ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+
+	return $pdf->getY();
+}
+
 
 /**
  *   	\brief      Show footer of page for PDF generation
@@ -695,7 +739,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	global $conf;
 
 	$outputlangs->load("dict");
-	
+
 	// Line of free text
 	$ligne=(! empty($conf->global->$paramfreetext))?$outputlangs->convToOutputCharset($conf->global->$paramfreetext):"";
 
