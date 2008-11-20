@@ -1,4 +1,6 @@
 # Dolibarr language file - es_ES - errors
+ErrorLoginAlreadyExists=El usuario %s ya existe.
+ErrorGroupAlreadyExists=El grupo %s ya existe.
 ErrorDuplicateTrigger=Un archvio trigger de nombre '<b>%s</b>' está cargado. Elimine el dobre de la carpeta '<b>%s</b>'.
 ErrorFailToDeleteFile=Error al eliminar el archivo '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=Este contacto ya está definido como contacto para este tipo.
