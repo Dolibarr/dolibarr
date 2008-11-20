@@ -18,13 +18,13 @@
  */
 
 /**
-        \file       dev/skeletons/skeleton_class.class.php
-        \ingroup    mymodule othermodule1 othermodule2
-        \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
-		\version    $Id$
-		\author		Put author name here
-		\remarks	Put here some comments
-*/
+ *      \file       dev/skeletons/skeleton_class.class.php
+ *      \ingroup    mymodule othermodule1 othermodule2
+ *      \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
+ *		\version    $Id$
+ *		\author		Put author name here
+ *		\remarks	Put here some comments
+ */
 
 // Put here all includes required by your class file
 //require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
@@ -33,10 +33,10 @@
 
 
 /**
-        \class      Skeleton_class
-        \brief      Put here description of your class
-		\remarks	Put here some comments
-*/
+ *      \class      Skeleton_class
+ *      \brief      Put here description of your class
+ *		\remarks	Put here some comments
+ */
 class Skeleton_class // extends CommonObject
 {
 	var $db;							//!< To store db handler
@@ -245,11 +245,11 @@ class Skeleton_class // extends CommonObject
   
   
  	/**
-	*   \brief      Delete object in database
-    *	\param      user        	User that delete
-    *   \param      notrigger	    0=launch triggers after, 1=disable triggers
-	*	\return		int				<0 if KO, >0 if OK
-	*/
+	 *   \brief      Delete object in database
+     *	\param      user        	User that delete
+     *   \param      notrigger	    0=launch triggers after, 1=disable triggers
+	 *	\return		int				<0 if KO, >0 if OK
+	 */
 	function delete($user, $notrigger=0)
 	{
 		global $conf, $langs;
@@ -298,7 +298,63 @@ class Skeleton_class // extends CommonObject
 		}
 	}
 
-  
+
+	
+	/**
+	 *		\brief      Load an object from its id and create a new one in database
+	 *		\param      fromid     		Id of object to clone
+	 *		\param		invertdetail	Reverse sign of amounts for lines
+	 * 	 	\return		int				New id of clone
+	 */
+	function createFromClone($fromid,$invertdetail=0)
+	{
+		global $user,$langs;
+		
+		$error=0;
+		
+		$object=new Skeleton_class($this->db);
+
+		$this->db->begin();
+
+		// Load source object
+		$object->fetch($fromid);
+		$object->id=0;
+		$object->statut=0;
+
+		// Clear fields
+		// ...
+				
+		// Create clone
+		$result=$object->create($user);
+
+		// Other options
+		if ($result < 0) 
+		{
+			$this->error=$object->error;
+			$error++;
+		}
+		
+		if (! $error)
+		{
+			
+			
+			
+		}
+		
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $object->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	
 	/**
 	 *		\brief		Initialise object with example values
 	 *		\remarks	id must be 0 if object instance is a specimen.
