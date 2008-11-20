@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/user/group/fiche.php
-        \brief      Onglet groupes utilisateurs
-        \version    $Revision$
-*/
+ *       \file       htdocs/user/group/fiche.php
+ *       \brief      Onglet groupes utilisateurs
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
@@ -182,7 +179,7 @@ if ($action == 'create')
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('note','',240,'dolibarr_notes','',true);
+		$doleditor=new DolEditor('note','',240,'dolibarr_notes','',false);
 		$doleditor->Create();
 	}
 	else
@@ -275,7 +272,7 @@ else
              * Liste des utilisateurs dans le groupe
              */
     
-            print_fiche_titre($langs->trans("ListOfUsersInGroup"));
+            print_fiche_titre($langs->trans("ListOfUsersInGroup"),'','');
             
             // On sélectionne les users qui ne sont pas déjà dans le groupe
             $uss = array();

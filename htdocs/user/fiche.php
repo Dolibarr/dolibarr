@@ -1066,7 +1066,7 @@ else
 			 * Liste des groupes dans lequel est l'utilisateur
 			 */
 
-			print_fiche_titre($langs->trans("ListOfGroupsForUser"));
+			print_fiche_titre($langs->trans("ListOfGroupsForUser"),'','');
 
 			// On selectionne les groups
 			$uss = array();
