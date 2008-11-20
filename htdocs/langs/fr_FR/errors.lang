@@ -1,4 +1,6 @@
 # Dolibarr language file - fr_FR - errors
+ErrorLoginAlreadyExists=Le login %s existe déjà.
+ErrorGroupAlreadyExists=Le groupe %s existe déjà.
 ErrorDuplicateTrigger=Un fichier trigger de classe '<b>%s</b>' est present plusieurs fois. Supprimer le doublon du répertoire '<b>%s</b>'.
 ErrorFailToCreateFile=Echec de la création du fichier '<b>%s</b>'.
 ErrorFailToDeleteFile=Echec de l'effacement du fichier '<b>%s</b>'.

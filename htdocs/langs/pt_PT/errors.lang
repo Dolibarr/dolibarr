@@ -1,0 +1,3 @@
+# Dolibarr language file - pt_PT - errors          
+ErrorLoginAlreadyExists=Login %s já existe.
+ErrorGroupAlreadyExists=Grupo %s já existe.

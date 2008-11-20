@@ -85,8 +85,8 @@ if ($_POST["action"] == 'add')
         }
         else
         {
-            $db->rollback();
-
+			$langs->trans("errors");
+        	$db->rollback();
             $message='<div class="error">'.$langs->trans("ErrorGroupAlreadyExists",$editgroup->nom).'</div>';
             $action="create";       // Go back to create page
         }

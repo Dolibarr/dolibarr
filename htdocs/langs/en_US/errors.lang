@@ -1,4 +1,6 @@
 # Dolibarr language file - en_US - errors
+ErrorLoginAlreadyExists=Login %s already exists.
+ErrorGroupAlreadyExists=Group %s already exists.
 ErrorDuplicateTrigger=A trigger file with class nam '<b>%s</b>' is present sevaral times. Remove duplicate trigger file in directory '<b>%s</b>'.
 ErrorFailToDeleteFile=Failed to remove file '<b>%s</b>'.
 ErrorFailToCreateFile=Failed to create file '<b>%s</b>'.

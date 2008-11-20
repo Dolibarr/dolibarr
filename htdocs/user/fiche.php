@@ -175,10 +175,7 @@ if ($_POST["action"] == 'add' && $canadduser)
 		else
 		{
 			$db->rollback();
-				
-			//$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
 			$message='<div class="error">'.$edituser->error.'</div>';
-				
 			$action="create";       // Go back to create page
 		}
 
@@ -252,6 +249,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		{
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
+				$langs->load("errors");
 				$message.='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
 			}
 			else

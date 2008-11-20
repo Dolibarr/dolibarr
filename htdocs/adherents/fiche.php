@@ -285,6 +285,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
         }
         if ($num) {
             $error++;
+            $langs->load("errors");
             $errmsg .= $langs->trans("ErrorLoginAlreadyExists",$login)."<br>\n";
         }
     }

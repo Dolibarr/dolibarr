@@ -147,7 +147,7 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	        {
 	            if ($newuser->error == 'ErrorLoginAlreadyExists')
 	            {
-					dolibarr_install_syslog('install/etape5.php ErrorLoginAlreadyExists', LOG_WARNING);
+					dolibarr_install_syslog('install/etape5.php AdminLoginAlreadyExists', LOG_WARNING);
 	                print '<br><div class="warning">'.$langs->trans("AdminLoginAlreadyExists",$_POST["login"])."</div><br>";
 	                $success = 1;
 	            }
