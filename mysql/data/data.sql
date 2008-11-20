@@ -116,12 +116,6 @@ insert into llx_const(name,value,type,visible,note) values('SOCIETE_CODECOMPTA_A
 
 
 --
--- Facture
---
-insert into llx_const(name,value,type,visible,note) values('FACTURE_DISABLE_RECUR','1','yesno',0,'Desactivation facture recurrentes');
-
-
---
 -- Mail Adherent
 --
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_REQUIRED','1','yesno','Le mail est obligatoire pour créer un adhérent',0);

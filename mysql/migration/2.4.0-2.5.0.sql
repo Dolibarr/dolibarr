@@ -73,3 +73,8 @@ alter table llx_don modify fk_user_valid   integer NULL;
 alter table llx_don add note_public     text;
 alter table llx_don add model_pdf       varchar(50);
 alter table llx_don add import_key      varchar(14);
+
+-- Reverse option
+update llx_const set visible = 1, name = 'FACTURE_ENABLE_RECUR', value='1' where name = 'FACTURE_DISABLE_RECUR' and value = '0';
+delete from llx_const where name = 'FACTURE_DISABLE_RECUR' and value = '1';
+
