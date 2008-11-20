@@ -303,10 +303,9 @@ class Skeleton_class // extends CommonObject
 	/**
 	 *		\brief      Load an object from its id and create a new one in database
 	 *		\param      fromid     		Id of object to clone
-	 *		\param		invertdetail	Reverse sign of amounts for lines
 	 * 	 	\return		int				New id of clone
 	 */
-	function createFromClone($fromid,$invertdetail=0)
+	function createFromClone($fromid)
 	{
 		global $user,$langs;
 		

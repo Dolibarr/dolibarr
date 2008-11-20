@@ -17,11 +17,11 @@
  */
 
 /**
-        \file       dev/skeletons/build_class_from_table.php
-        \ingroup    core
-        \brief      Create a complete class file from a table in database
-        \version    $Id$
-*/
+ *       \file       dev/skeletons/build_class_from_table.php
+ *       \ingroup    core
+ *       \brief      Create a complete class file from a table in database
+ *       \version    $Id$
+ */
 
 // Test if batch mode
 $sapi_type = php_sapi_name();

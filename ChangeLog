@@ -34,7 +34,7 @@ For translators:
   in UTF8.
 
 For developers:
-- Update skeletons.
+- Update skeletons (fixes and add function createFromClass).
 - Add an experimental Cash Desk module.
 - Added new triggers events in agenda module.
 - All submodules are moved in the includes directory.
@@ -42,6 +42,7 @@ For developers:
 - Menu managers now use same class name for their menu entry
   and add a different value in an HTML id for each entry. This allows
   to build skins that use different style for each menu entry.
+
 
 ***** Changelog for 2.4 compared to 2.2 *****
 
