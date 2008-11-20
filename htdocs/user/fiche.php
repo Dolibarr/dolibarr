@@ -174,8 +174,9 @@ if ($_POST["action"] == 'add' && $canadduser)
 		}
 		else
 		{
+			$langs->load("errors");
 			$db->rollback();
-			$message='<div class="error">'.$edituser->error.'</div>';
+			$message='<div class="error">'.$langs->trans($edituser->error).'</div>';
 			$action="create";       // Go back to create page
 		}
 
