@@ -213,7 +213,7 @@ class Mailing
 
 
 	/**
-	 *		\brief      Get object from database
+	 *		\brief      Load an object from its id and create a new one in database
 	 *		\param      fromid     	Id of object to clone
 	 *		\return		int			New id of clone
 	 */
@@ -231,27 +231,29 @@ class Mailing
 		$object->fetch($fromid);
 		$object->id=0;
 		$object->statut=0;
+
+		// Clear fields
 		$object->titre=$langs->trans("CopyOf").' '.$object->titre;
 
 		// If no option copy content
 		if (empty($option1))
 		{
 			// Clear values	
-			$this->nbemail            = 0;
-			$this->titre              = $langs->trans("Draft").' '.mktime();
-			$this->sujet              = '';
-			$this->body               = '';
+			$object->nbemail            = 0;
+			$object->titre              = $langs->trans("Draft").' '.mktime();
+			$object->sujet              = '';
+			$object->body               = '';
 
-			$this->email_from         = '';
-			$this->email_replyto      = '';
-			$this->email_errorsto     = '';
+			$object->email_from         = '';
+			$object->email_replyto      = '';
+			$object->email_errorsto     = '';
 
-			$this->user_creat         = $user->id;
-			$this->user_valid         = '';
+			$object->user_creat         = $user->id;
+			$object->user_valid         = '';
 
-			$this->date_creat         = '';
-			$this->date_valid         = '';
-			$this->date_envoi         = '';
+			$object->date_creat         = '';
+			$object->date_valid         = '';
+			$object->date_envoi         = '';
 		}
 
 		// Create clone

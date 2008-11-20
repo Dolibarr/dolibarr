@@ -21,10 +21,10 @@
  */
 
 /**
-        \file       htdocs/admin/facture.php
-		\ingroup    facture
-		\brief      Page d'administration/configuration du module Facture
-		\version    $Id$
+ *      \file       htdocs/admin/facture.php
+ *		\ingroup    facture
+ *		\brief      Page d'administration/configuration du module Facture
+ *		\version    $Id$
 */
 
 require("./pre.inc.php");
@@ -165,11 +165,6 @@ if ($_POST["action"] == 'set_FACTURE_FREE_TEXT')
 if ($_POST["action"] == 'setforcedate')
 {
     dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_POST["forcedate"]);
-}
-
-if ($_POST["action"] == 'set_disable_repeatable')
-{
-    dolibarr_set_const($db, "FACTURE_DISABLE_RECUR",$_POST["disable_repeatable"]);
 }
 
 if ($_POST["action"] == 'set_enable_editdelete')
@@ -581,20 +576,7 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-// Active facture r�currentes
-$var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="action" value="set_disable_repeatable">';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("DisableRepeatable");
-print '</td><td width="60" align="center">';
-print $html->selectyesno("disable_repeatable",$conf->global->FACTURE_DISABLE_RECUR,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
-
-// Active la possibilit� d'�diter/supprimer une facture valid�e sans paiement
+// Active la possibilite d'editer/supprimer une facture validee sans paiement
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="set_enable_editdelete">';

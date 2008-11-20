@@ -69,6 +69,31 @@ $usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 /*                     Actions                                                */
 /******************************************************************************/
 
+// Action clone object
+if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
+{
+	if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
+	{
+		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+	}
+	else
+	{
+		$object=new Facture($db);
+		$result=$object->createFromClone($_REQUEST['facid']);
+		if ($result > 0)
+		{
+			header("Location: ".$_SERVER['PHP_SELF'].'?facid='.$result);
+			exit;
+		}
+		else
+		{
+			$mesg=$object->error;
+			$_GET['action']='';
+			$_GET['id']=$_REQUEST['id'];
+		}
+	}
+}
+
 if ($_GET['action'] == 'reopen' && $user->rights->facture->creer)
 {
 	$fac = new Facture($db);
@@ -200,6 +225,15 @@ if ($_POST['action'] == 'setconditions')
 	$facture = new Facture($db);
 	$facture->fetch($_GET['facid']);
 	$result=$facture->cond_reglement($_POST['cond_reglement_id']);
+	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
+}
+
+if ($_POST['action'] == 'setpaymentterm')
+{
+	$facture = new Facture($db);
+	$facture->fetch($_GET['facid']);
+	$date_lim_reglement=dolibarr_mktime(12,0,0,$_POST['paymenttermmonth'],$_POST['paymenttermday'],$_POST['paymenttermyear']);
+	$result=$facture->cond_reglement($facture->cond_reglement_id,$date_lim_reglement);
 	if ($result < 0) dolibarr_print_error($facture->db,$facture->error);
 }
 
@@ -444,7 +478,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 
 	$db->begin();
 
-	// Facture remplacement
+	// Replacement invoice
 	if ($_POST['type'] == 1)
 	{
 		$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -462,8 +496,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 
 		if (! $error)
 		{
-			// Si facture remplacement
-
+			// This is a replacement invoice
 			$result=$facture->fetch($_POST['fac_replacement']);
 
 			$facture->date           = $datefacture;
@@ -481,7 +514,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 			$facture->fk_facture_source = $_POST['fac_replacement'];
 			$facture->type              = 1;
 
-			$facid=$facture->create_clone($user);
+			$facid=$facture->createFromCurrent($user);
 		}
 	}
 
@@ -1373,6 +1406,41 @@ if ($_GET['action'] == 'create')
 		print '</td></tr>';
 	}
 
+	// Factures prédéfinnies	
+	// TODO Use instead invoice in llx_facture table with a particular status
+	if ($conf->global->FACTURE_ENABLE_RECUR)
+	{
+		if ($_GET['propalid'] == 0 && $_GET['commandeid'] == 0 && $_GET['contratid'] == 0)
+		{
+			$sql = 'SELECT r.rowid, r.titre, r.amount FROM '.MAIN_DB_PREFIX.'facture_rec as r';
+			$sql.= ' WHERE r.fk_soc = '.$soc->id;
+			$resql=$db->query($sql);
+			if ($resql)
+			{
+				$num = $db->num_rows($resql);
+				$i = 0;
+
+				if ($num > 0)
+				{
+					print '<tr><td>'.$langs->trans('CreateFromRepeatableInvoice').'</td><td><select class="flat" name="fac_rec">';
+					print '<option value="0" selected="true"></option>';
+					while ($i < $num)
+					{
+						$objp = $db->fetch_object($resql);
+						print '<option value="'.$objp->rowid.'">'.$objp->titre.' : '.$objp->amount.'</option>';
+						$i++;
+					}
+					print '</select></td></tr>';
+				}
+				$db->free();
+			}
+			else
+			{
+				dolibarr_print_error($db);
+			}
+		}
+	}
+
 	// Tiers
 	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
 	print $soc->getNomUrl(1);
@@ -1664,41 +1732,6 @@ if ($_GET['action'] == 'create')
 		}
 	}
 
-	/*
-	 * Factures récurrentes
-	 */
-	if (! $conf->global->FACTURE_DISABLE_RECUR)
-	{
-		if ($_GET['propalid'] == 0 && $_GET['commandeid'] == 0 && $_GET['contratid'] == 0)
-		{
-			$sql = 'SELECT r.rowid, r.titre, r.amount FROM '.MAIN_DB_PREFIX.'facture_rec as r';
-			$sql .= ' WHERE r.fk_soc = '.$soc->id;
-			if ( $db->query($sql) )
-			{
-				$num = $db->num_rows();
-				$i = 0;
-
-				if ($num > 0)
-				{
-					print '<tr><td colspan="3">'.$langs->trans('CreateFromRepeatableInvoice').' : <select class="flat" name="fac_rec">';
-					print '<option value="0" selected="true"></option>';
-					while ($i < $num)
-					{
-						$objp = $db->fetch_object();
-						print '<option value="'.$objp->rowid.'">'.$objp->titre.' : '.$objp->amount.'</option>';
-						$i++;
-					}
-					print '</select></td></tr>';
-				}
-				$db->free();
-			}
-			else
-			{
-				dolibarr_print_error($db);
-			}
-		}
-	}
-
 	// Bouton "Create Draft"
 	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></td></tr>';
 	print "</table>\n";
@@ -1885,9 +1918,7 @@ else
 
 			dolibarr_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'));
 
-			/*
-			 * Confirmation de la conversion de l'avoir en reduc
-			 */
+			// Confirmation de la conversion de l'avoir en reduc
 			if ($_GET['action'] == 'converttoreduc')
 			{
 				$text=$langs->trans('ConfirmConvertToReduc');
@@ -1895,9 +1926,7 @@ else
 				print '<br />';
 			}
 
-			/*
-			 * Confirmation de la suppression de la facture
-			 */
+			// Confirmation de la suppression de la facture
 			if ($_GET['action'] == 'delete')
 			{
 				$text=$langs->trans('ConfirmDeleteBill');
@@ -1905,9 +1934,7 @@ else
 				print '<br />';
 			}
 
-			/*
-			 * Confirmation de la validation
-			 */
+			// Confirmation de la validation
 			if ($_GET['action'] == 'valid')
 			{
 				// on vérifie si la facture est en numérotation provisoire
@@ -1934,9 +1961,7 @@ else
 				print '<br />';
 			}
 
-			/*
-			 * Confirmation du classement payé
-			 */
+			// Confirmation du classement payé
 			if ($_GET['action'] == 'payed' && $resteapayer <= 0)
 			{
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedBill',$fac->ref),'confirm_payed');
@@ -1970,12 +1995,10 @@ else
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedPartially',$fac->ref),'confirm_payed_partially',$formquestion);
-				print '<br />';
+				print '<br>';
 			}
 
-			/*
-			 * Confirmation du classement abandonne
-			 */
+			// Confirmation du classement abandonne
 			if ($_GET['action'] == 'canceled')
 			{
 				// S'il y a une facture de remplacement pas encore validée (etat brouillon),
@@ -2013,22 +2036,32 @@ else
 					);
 
 					$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled',$formquestion);
-					print '<br />';
+					print '<br>';
 				}
 			}
 
-			/*
-			 * Confirmation de la suppression d'une ligne produit
-			 */
+			// Confirmation de la suppression d'une ligne produit
 			if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 			{
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;rowid='.$_GET["rowid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
-				print '<br />';
+				print '<br>';
 			}
 
-			/*
-			 *   Facture
-			 */
+        	// Clone confirmation
+			if ($_GET["action"] == 'clone')
+			{
+				// Create an array for form
+				$formquestion=array(
+					//'text' => $langs->trans("ConfirmClone"),
+					//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
+				);
+				// Paiement incomplet. On demande si motif = escompte ou autre
+				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes');
+				print '<br>';
+			}
+			
+			
+			// Invoice content
 
 			print '<table class="border" width="100%">';
 
@@ -2307,13 +2340,24 @@ else
 			print '</td></tr>';
 
 			// Date limite reglement
-			print '<tr>';
-			print '<td>'.$langs->trans('DateMaxPayment').'</td>';
-			print '<td colspan="3">';
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DateMaxPayment');
+			print '</td>';
+			if ($fac->type != 2 && $_GET['action'] != 'editpaymentterm' && $fac->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
 			if ($fac->type != 2)
 			{
-				print dolibarr_print_date($fac->date_lim_reglement,'daytext');
-				if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans('Late'));
+				if ($_GET['action'] == 'editpaymentterm')
+				{
+					$html->form_date($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->date_lim_reglement,'paymentterm');
+				}
+				else
+				{
+					print dolibarr_print_date($fac->date_lim_reglement,'daytext');
+					if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans('Late'));
+				}
 			}
 			else
 			{
@@ -2667,7 +2711,7 @@ else
 						else print '&nbsp;';
 						print '</td>';
 						print '<td align="center" rowspan="1" colspan="5" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
+						print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>' . "\n";
 						if ($conf->service->enabled)
 						{
@@ -2868,15 +2912,6 @@ else
 						}
 					}
 						
-					// Récurrente
-					if (! $conf->global->FACTURE_DISABLE_RECUR && $fac->type == 0)
-					{
-						if (! $facidnext)
-						{
-							print '<a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
-						}
-					}
-
 					// Valider
 					if ($fac->statut == 0 && $num_lignes > 0 && (($fac->type < 2 && $fac->total_ttc >= 0) || ($fac->type == 2 && $fac->total_ttc <= 0)))
 					{
@@ -2988,12 +3023,27 @@ else
 						}
 					}
 
+					// Clone
+					if ($fac->type == 0 && $user->rights->facture->creer)
+					{
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=clone&amp;object=invoice">'.$langs->trans("ToClone").'</a>';
+					}
+					
+					// Clone as predefined
+					if ($conf->global->FACTURE_ENABLE_RECUR && $fac->type == 0 && $fac->statut == 0 && $user->rights->facture->creer)
+					{
+						if (! $facidnext)
+						{
+							print '<a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
+						}
+					}
+
 					// Supprimer
 					if ($fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
 					{
 						if ($facidnext)
 						{
-							print '<span class="butActionDeleteRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Delete').'</span>';
+							print '<a class="butActionRefused" href="#" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('Delete').'</a>';
 						}
 						else
 						{
@@ -3190,7 +3240,7 @@ else
 				$formmail->withto=$liste;
 				$formmail->withtocc=1;
 				$formmail->withtoccc=$conf->global->FACTURE_EMAIL_USECCC;
-				$formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
+				$formmail->withtopic=$langs->transnoentities('SendBillRef','__FACREF__');
 				$formmail->withfile=2;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;
@@ -3254,7 +3304,7 @@ else
 				$formmail->withfrom=1;
 				$formmail->withto=$liste;
 				$formmail->withtocc=1;
-				$formmail->withtopic=$langs->trans('SendReminderBillRef','__FACREF__');
+				$formmail->withtopic=$langs->transnoentities('SendReminderBillRef','__FACREF__');
 				$formmail->withfile=2;
 				$formmail->withbody=1;
 				$formmail->withdeliveryreceipt=1;

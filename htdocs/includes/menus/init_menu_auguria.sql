@@ -298,7 +298,7 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (10, '$conf->contra
 insert into `llx_menu_constraint` (`rowid`, `action`) values (11, '$conf->fichinter->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (12, '$conf->societe->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (13, '$conf->facture->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (14, '! $conf->global->FACTURE_DISABLE_RECUR');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (14, '$conf->global->FACTURE_ENABLE_RECUR');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (15, '$conf->don->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (16, '$conf->deplacement->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (17, '$conf->tax->enabled');

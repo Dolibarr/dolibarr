@@ -1605,7 +1605,7 @@ class Form
 	 *    	\brief      Affiche formulaire de selection de conditions de paiement
 	 *    	\param      page        	Page
 	 *    	\param      selected    	Id condition pré-sélectionné
-	 *    	\param      htmlname    	Nom du formulaire select
+	 *    	\param      htmlname    	Name of select html field
 	 *		\param		addempty		Ajoute entrée vide
 	 */
 	function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id', $addempty=0)
@@ -1636,10 +1636,44 @@ class Form
 
 
 	/**
+	 *    \brief      Affiche formulaire de selection d'une date
+	 *    \param      page        Page
+	 *    \param      selected    Date preselected
+	 *    \param      htmlname    Name of input html field
+	 */
+	function form_date($page, $selected='', $htmlname)
+	{
+		global $langs;
+		
+		if ($htmlname != "none")
+		{
+			print '<form method="post" action="'.$page.'" name="form'.$htmlname.'">';
+			print '<input type="hidden" name="action" value="set'.$htmlname.'">';
+			print '<table class="noborder" cellpadding="0" cellspacing="0">';
+			print '<tr><td>';
+			print $this->select_date($selected,$htmlname,0,0,1,'form'.$htmlname);
+			print '</td>';
+			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+			print '</tr></table></form>';
+		}
+		else
+		{
+			if ($selected)
+			{
+				$this->load_cache_types_paiements();
+				print $this->cache_types_paiements[$selected]['label'];
+			} else {
+				print "&nbsp;";
+			}
+		}
+	}
+	
+
+	/**
 	 *    \brief      Affiche formulaire de selection des modes de reglement
 	 *    \param      page        Page
 	 *    \param      selected    Id mode pré-sélectionné
-	 *    \param      htmlname    Nom du formulaire select
+	 *    \param      htmlname    Name of select html field
 	 */
 	function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id')
 	{
@@ -1992,7 +2026,7 @@ class Form
 	 *		@param	h				1=Affiche aussi les heures
 	 *		@param	m				1=Affiche aussi les minutes
 	 *		@param	empty			0=Champ obligatoire, 1=Permet une saisie vide
-	 *		@param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup style andre.
+	 *		@param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup.
 	 *		@param	d				1=Affiche aussi les jours, mois, annees
 	 */
 	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1)

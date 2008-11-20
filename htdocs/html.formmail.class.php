@@ -312,7 +312,7 @@ class FormMail
 			print "</td></tr>\n";
 		}
 
-		// CC
+		// CCC
 		if ($this->withtoccc || is_array($this->withtoccc))
 		{
 			print '<tr><td width="180">'.$langs->trans("MailCCC").'</td><td>';
@@ -332,7 +332,7 @@ class FormMail
 			print "</td></tr>\n";
 		}
 		
-		// Accusé réception
+		// Ask delivery receipt
 		if ($this->withdeliveryreceipt)
 		{
 			print '<tr><td width="180">'.$langs->trans("DeliveryReceipt").'</td><td>';
@@ -403,12 +403,12 @@ class FormMail
 		{
 			$defaultmessage="";
 
-			// \todo    A partir du type, proposer liste de messages dans table llx_models
-			if ($this->param["models"]=='body') { $defaultmessage=$this->withbody; }
-			if ($this->param["models"]=='facture_send')    { $defaultmessage="Veuillez trouver ci-joint la facture __FACREF__\n\nCordialement\n\n"; }
-			if ($this->param["models"]=='facture_relance') { $defaultmessage="Nous apportons à votre connaissance que la facture  __FACREF__ ne semble pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n"; }
-			if ($this->param["models"]=='propal_send') { $defaultmessage="Veuillez trouver ci-joint la proposition commerciale __PROPREF__\n\nCordialement\n\n"; }
-			if ($this->param["models"]=='order_send') { $defaultmessage="Veuillez trouver ci-joint la commande __ORDERREF__\n\nCordialement\n\n"; }
+			// \TODO    A partir du type, proposer liste de messages dans table llx_models
+			if ($this->param["models"]=='body') 			{ $defaultmessage=$this->withbody; }
+			if ($this->param["models"]=='facture_send')    	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
+			if ($this->param["models"]=='facture_relance') 	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
+			if ($this->param["models"]=='propal_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
+			if ($this->param["models"]=='order_send') 		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
 
 			$defaultmessage=make_substitutions($defaultmessage,$this->substit);
 

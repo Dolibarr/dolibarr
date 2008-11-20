@@ -239,7 +239,7 @@ class pdf_crabe extends ModelePDFFactures
 					
 					// Description de la ligne produit
 					$libelleproduitservice=dol_htmlentitiesbr($fac->lignes[$i]->libelle,1);
-					if ($fac->lignes[$i]->desc&&$fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)
+					if ($fac->lignes[$i]->desc && $fac->lignes[$i]->desc != $fac->lignes[$i]->libelle)
 					{
 						if ($libelleproduitservice) $libelleproduitservice.="<br>";
 						

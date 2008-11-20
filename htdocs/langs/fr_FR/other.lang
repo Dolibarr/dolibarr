@@ -34,6 +34,10 @@ Miscellanous=Divers
 NbOfActiveNotifications=Nombre de notifications
 WarningInstallDirExists=Attention, le répertoire install (%s) existe toujours. Une fois l'install terminée, sa présence n'est plus nécessaire et représente une faille sérieuse de sécurité. Vous devriez l'effacer dès que possible.
 WarningUntilDirRemoved=Cette alerte restera active tant que le répertoire existera (alerte visible pour les utilisateurs admin uniquement).
+PredefinedMailContentSendInvoice=Veuillez trouver ci-joint la facture __FACREF__\n\nCordialement\n\n
+PredefinedMailContentSendInvoiceReminder=Nous apportons à votre connaissance que la facture  __FACREF__ ne semble pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n
+PredefinedMailContentSendProposal=Veuillez trouver ci-joint la proposition commerciale __PROPREF__\n\nCordialement\n\n
+PredefinedMailContentSendOrder=Veuillez trouver ci-joint la commande __ORDERREF__\n\nCordialement\n\n
 ##### Bookmark #####
 Bookmark=Marque page
 Bookmarks=Marque pages

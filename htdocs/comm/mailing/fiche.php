@@ -51,8 +51,8 @@ $substitutionarrayfortest=array(
 
 
 
-// Action envoi mailing pour tous
-if ($_POST["action"] == 'confirm_clone')
+// Action clone object
+if ($_POST["action"] == 'confirm_clone' && $_POST['confirm'] == 'yes')
 {
 	if (empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
 	{
@@ -60,12 +60,18 @@ if ($_POST["action"] == 'confirm_clone')
 	}
 	else
 	{
-		$mil=new Mailing($db);
-		$result=$mil->createFromClone($_REQUEST['id'],$_REQUEST["clone_content"],$_REQUEST["clone_receivers"]);
+		$object=new Mailing($db);
+		$result=$object->createFromClone($_REQUEST['id'],$_REQUEST["clone_content"],$_REQUEST["clone_receivers"]);
 		if ($result > 0)
 		{
-			header("Location: ".DOL_URL_ROOT.'/comm/mailing/fiche.php?id='.$result);
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 			exit;
+		}
+		else
+		{
+			$mesg=$object->error;
+			$_GET['action']='';
+			$_GET['id']=$_REQUEST['id'];
 		}
 	}
 }
@@ -566,11 +572,11 @@ else
         	// Clone confirmation
 			if ($_GET["action"] == 'clone')
 			{
-				// Crée un tableau formulaire
+				// Create an array for form
 				$formquestion=array(
-				'text' => $langs->trans("ConfirmClone"),
-				array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneContent"),   'value' => 1),
-				array('type' => 'checkbox', 'name' => 'clone_receviers', 'label' => $langs->trans("CloneReceivers").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
+					'text' => $langs->trans("ConfirmClone"),
+					array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneContent"),   'value' => 1),
+					array('type' => 'checkbox', 'name' => 'clone_receviers', 'label' => $langs->trans("CloneReceivers").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
 				$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$mil->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$mil->ref),'confirm_clone',$formquestion,'yes');
@@ -599,31 +605,31 @@ else
 
                 if ($mil->statut == 0 && $user->rights->mailing->creer)
                 {
-                    print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$mil->id.'">'.$langs->trans("EditMailing").'</a>';
+                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;id='.$mil->id.'">'.$langs->trans("EditMailing").'</a>';
                 }
 
                 //print '<a class="butAction" href="fiche.php?action=test&amp;id='.$mil->id.'">'.$langs->trans("PreviewMailing").'</a>';
 
-                print '<a class="butAction" href="fiche.php?action=test&amp;id='.$mil->id.'">'.$langs->trans("TestMailing").'</a>';
+                print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=test&amp;id='.$mil->id.'">'.$langs->trans("TestMailing").'</a>';
 
                 if ($mil->statut == 0 && $mil->nbemail > 0 && $user->rights->mailing->valider)
                 {
-                    print '<a class="butAction" href="fiche.php?action=valide&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
+                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valide&amp;id='.$mil->id.'">'.$langs->trans("ValidMailing").'</a>';
                 }
 
                 if (($mil->statut == 1 || $mil->statut == 2) && $mil->nbemail > 0 && $user->rights->mailing->valider)
                 {
-                    print '<a class="butAction" href="fiche.php?action=sendall&amp;id='.$mil->id.'">'.$langs->trans("SendMailing").'</a>';
+                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=sendall&amp;id='.$mil->id.'">'.$langs->trans("SendMailing").'</a>';
                 }
 
                 if ($user->rights->mailing->creer)
                 {
-                    print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/mailing/fiche.php?action=clone&amp;object=emailing&amp;id='.$mil->id.'">'.$langs->trans("ToClone").'</a>';
+                    print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=clone&amp;object=emailing&amp;id='.$mil->id.'">'.$langs->trans("ToClone").'</a>';
                 }
 
                 if ($mil->statut <= 1 && $user->rights->mailing->supprimer)
                 {
-                    print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$mil->id.'">'.$langs->trans("DeleteMailing").'</a>';
+                    print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$mil->id.'">'.$langs->trans("DeleteMailing").'</a>';
                 }
 
                 print '<br /><br /></div>';

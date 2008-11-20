@@ -254,13 +254,17 @@ class pdf_huitre extends ModelePDFFactures
 					$pdf->MultiCell(110, 3, $note, 0, 'J');
 				}
 
-				$pdf->SetFont('Arial','U',11);
 				$pdf->SetXY(10, 225);
-				$titre = $outputlangs->transnoentities("PaymentConditions").' : ';
-				$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$fac->cond_reglement_code)!=('PaymentCondition'.$fac->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
-				$titre.=$lib_condition_paiement;
-				$pdf->MultiCell(190, 5, $titre, 0, 'J');
 
+		        // Show payments conditions
+		        if ($fac->type != 2 && ($fac->cond_reglement_code || $fac->cond_reglement))
+		        {
+					$titre = $outputlangs->transnoentities("PaymentConditions").' : ';
+					$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$fac->cond_reglement_code)!=('PaymentCondition'.$fac->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
+					$titre.=$lib_condition_paiement;
+					$pdf->MultiCell(190, 5, $titre, 0, 'J');
+		        }
+		        
 				$this->_pagefoot($pdf, $fac, $outputlangs);
 				$pdf->AliasNbPages();
 				//----

@@ -125,11 +125,11 @@ class Facture extends CommonObject
 	}
 
 	/**
-		\brief     	Création de la facture en base
-		\param     	user       		Object utilisateur qui crée
-		\param      notrigger		1 ne declenche pas les triggers, 0 sinon
-		\return		int				<0 si ko, >0 si ok
-		*/
+	 *	\brief     	Create invoice in database
+	 *	\param     	user       		Object uset that create
+	 *	\param      notrigger		1 ne declenche pas les triggers, 0 sinon
+	 *	\return		int				<0 si ko, >0 si ok
+	 */
 	function create($user,$notrigger=0)
 	{
 		global $langs,$conf,$mysoc;
@@ -337,12 +337,12 @@ class Facture extends CommonObject
 
 
 	/**
-	 \brief      Create a new invoice in database from current invoice
-	 \param      user    		Object user that ask creation
-	 \param		invertdetail	Reverse sign of amounts for lines
-	 \return		int				<0 si ko, >0 si ok
+	 *	\brief      Create a new invoice in database from current invoice
+	 *	\param      user    		Object user that ask creation
+	 *	\param		invertdetail	Reverse sign of amounts for lines
+	 *	\return		int				<0 si ko, >0 si ok
 	 */
-	function create_clone($user,$invertdetail=0)
+	function createFromCurrent($user,$invertdetail=0)
 	{
 		// Charge facture source
 		$facture=new Facture($this->db);
@@ -376,14 +376,75 @@ class Facture extends CommonObject
 			}
 		}
 
-		dolibarr_syslog("Facture::create_clone invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".sizeof($facture->lignes));
-
+		dolibarr_syslog("Facture::createFromCurrent invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".sizeof($facture->lignes));
 
 		$facid = $facture->create($user);
 
 		return $facid;
 	}
 
+
+	/**
+	 *		\brief      Load an object from its id and create a new one in database
+	 *		\param      fromid     		Id of object to clone
+	 *		\param		invertdetail	Reverse sign of amounts for lines
+	 * 	 	\return		int				New id of clone
+	 */
+	function createFromClone($fromid,$invertdetail=0)
+	{
+		global $user,$langs;
+		
+		$error=0;
+		
+		$object=new Facture($this->db);
+
+		$this->db->begin();
+
+		// Load source object
+		$object->fetch($fromid);
+		$object->id=0;
+		$object->statut=0;
+
+		// Clear fields
+		$object->user_author        = $user->id;
+		$object->user_valid         = '';
+		$object->fk_facture_source  = 0;
+		$object->date_creation      = '';
+		$object->date_validation    = '';
+		$object->ref_client         = '';
+		$object->close_code         = '';
+		$object->close_note         = '';
+		$object->products = $object->lignes;	// Tant que products encore utilisé
+		
+		// Create clone
+		$result=$object->create($user);
+
+		// Other options
+		if ($result < 0) 
+		{
+			$this->error=$object->error;
+			$error++;
+		}
+		
+		if (! $error)
+		{
+			
+			
+			
+		}
+		
+		// End
+		if (! $error)
+		{
+			$this->db->commit();
+			return $object->id;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	/**
 	 *	\brief      Renvoie nom clicable (avec eventuellement le picto)
@@ -436,7 +497,7 @@ class Facture extends CommonObject
 		$sql.= ','.$this->db->pdate('f.date_lim_reglement').' as dlr';
 		$sql.= ','.$this->db->pdate('f.datec').' as datec';
 		$sql.= ','.$this->db->pdate('f.date_valid').' as datev';
-		$sql.= ', f.note, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.model_pdf';
+		$sql.= ', f.note, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
 		$sql.= ', f.fk_facture_source';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -489,8 +550,11 @@ class Facture extends CommonObject
 				$this->note                   = $obj->note;
 				$this->note_public            = $obj->note_public;
 				$this->user_author            = $obj->fk_user_author;
+				$this->user_valid             = $obj->fk_user_valid;
 				$this->modelpdf               = $obj->model_pdf;
+
 				$this->commande_id            = $obj->fk_commande;
+
 				$this->lignes                 = array();
 
 				if ($this->commande_id)
@@ -606,6 +670,128 @@ class Facture extends CommonObject
 			return -3;
 		}
 	}
+
+
+	/**
+	 *      \brief      Update database
+	 *      \param      user        	User that modify
+	 *      \param      notrigger	    0=launch triggers after, 1=disable triggers
+	 *      \return     int         	<0 if KO, >0 if OK
+	 */
+	function update($user=0, $notrigger=0)
+	{
+		global $conf, $langs;
+		$error=0;
+		 
+		// Clean parameters
+
+		if (isset($this->facnumber)) $this->facnumber=trim($this->ref);
+		if (isset($this->type)) $this->type=trim($this->type);
+		if (isset($this->ref_client)) $this->ref_client=trim($this->ref_client);
+		if (isset($this->increment)) $this->increment=trim($this->increment);
+		if (isset($this->socid)) $this->socid=trim($this->socid);
+		if (isset($this->paye)) $this->paye=trim($this->paye);
+		if (isset($this->amount)) $this->amount=trim($this->amount);
+		if (isset($this->remise_percent)) $this->remise_percent=trim($this->remise_percent);
+		if (isset($this->remise_absolue)) $this->remise_absolue=trim($this->remise_absolue);
+		if (isset($this->remise)) $this->remise=trim($this->remise);
+		if (isset($this->close_code)) $this->close_code=trim($this->close_code);
+		if (isset($this->close_note)) $this->close_note=trim($this->close_note);
+		if (isset($this->total_tva)) $this->tva=trim($this->total_tva);
+		if (isset($this->total_ht)) $this->total_ht=trim($this->total_ht);
+		if (isset($this->total_ttc)) $this->total_ttc=trim($this->total_ttc);
+		if (isset($this->statut)) $this->statut=trim($this->statut);
+		if (isset($this->user_author)) $this->user_author=trim($this->user_author);
+		if (isset($this->fk_user_valid)) $this->fk_user_valid=trim($this->fk_user_valid);
+		if (isset($this->fk_facture_source)) $this->fk_facture_source=trim($this->fk_facture_source);
+		if (isset($this->projetid)) $this->projetid=trim($this->projetid);
+		if (isset($this->cond_reglement_id)) $this->cond_reglement_id=trim($this->cond_reglement_id);
+		if (isset($this->mode_reglement_id)) $this->mode_reglement_id=trim($this->mode_reglement_id);
+		if (isset($this->note)) $this->note=trim($this->note);
+		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
+		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
+		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
+		 
+		// Check parameters
+		// Put here code to add control on parameters values
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
+
+		$sql.= " facnumber=".(isset($this->ref)?"'".addslashes($this->ref)."'":"null").",";
+		$sql.= " type=".(isset($this->type)?$this->type:"null").",";
+		$sql.= " ref_client=".(isset($this->ref_client)?"'".addslashes($this->ref_client)."'":"null").",";
+		$sql.= " increment=".(isset($this->increment)?"'".addslashes($this->increment)."'":"null").",";
+		$sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
+		$sql.= " datec=".(strval($this->date_creation)!='' ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
+		$sql.= " datef=".(strval($this->date)!='' ? "'".$this->db->idate($this->date)."'" : 'null').",";
+		$sql.= " date_valid=".(strval($this->date_validation)!='' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
+		$sql.= " paye=".(isset($this->paye)?$this->paye:"null").",";
+		$sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
+		$sql.= " remise_percent=".(isset($this->remise_percent)?$this->remise_percent:"null").",";
+		$sql.= " remise_absolue=".(isset($this->remise_absolue)?$this->remise_absolue:"null").",";
+		$sql.= " remise=".(isset($this->remise)?$this->remise:"null").",";
+		$sql.= " close_code=".(isset($this->close_code)?"'".addslashes($this->close_code)."'":"null").",";
+		$sql.= " close_note=".(isset($this->close_note)?"'".addslashes($this->close_note)."'":"null").",";
+		$sql.= " tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
+		$sql.= " total=".(isset($this->total_ht)?$this->total_ht:"null").",";
+		$sql.= " total_ttc=".(isset($this->total_ttc)?$this->total_ttc:"null").",";
+		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
+		$sql.= " fk_user_author=".(isset($this->user_author)?$this->user_author:"null").",";
+		$sql.= " fk_user_valid=".(isset($this->fk_user_valid)?$this->fk_user_valid:"null").",";
+		$sql.= " fk_facture_source=".(isset($this->fk_facture_source)?$this->fk_facture_source:"null").",";
+		$sql.= " fk_projet=".(isset($this->projetid)?$this->projetid:"null").",";
+		$sql.= " fk_cond_reglement=".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null").",";
+		$sql.= " fk_mode_reglement=".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null").",";
+		$sql.= " date_lim_reglement=".(strval($this->date_lim_reglement)!='' ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'null').",";
+		$sql.= " note=".(isset($this->note)?"'".addslashes($this->note)."'":"null").",";
+		$sql.= " note_public=".(isset($this->note_public)?"'".addslashes($this->note_public)."'":"null").",";
+		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".addslashes($this->modelpdf)."'":"null").",";
+		$sql.= " import_key=".(isset($this->import_key)?"'".addslashes($this->import_key)."'":"null")."";
+
+
+		$sql.= " WHERE rowid=".$this->id;
+
+		$this->db->begin();
+
+		dolibarr_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
+
+				//// Call triggers
+				//include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dolibarr_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+
 
 	/**
 	 *    \brief     Ajout en base d'une ligne remise fixe en ligne de facture
@@ -1971,36 +2157,49 @@ class Facture extends CommonObject
 	}
 
 	/**
-	 *   \brief      Change les conditions de réglement de la facture
-	 *   \param      cond_reglement_id      Id de la nouvelle condition de réglement
-	 *   \return     int                    >0 si ok, <0 si ko
+	 *  \brief      Change les conditions de réglement de la facture
+	 *  \param      cond_reglement_id      	Id de la nouvelle condition de réglement
+	 * 	\param		date					Date to force payment term
+	 *  \return     int                    	>0 si ok, <0 si ko
 	 */
-	function cond_reglement($cond_reglement_id)
+	function cond_reglement($cond_reglement_id,$date='')
 	{
-		dolibarr_syslog('Facture::cond_reglement '.$cond_reglement_id, LOG_DEBUG);
 		if ($this->statut >= 0 && $this->paye == 0)
 		{
-			$datelim=$this->calculate_date_lim_reglement($cond_reglement_id);
+			// Define cond_reglement_id and datelim
+			if (strval($date) != '') 
+			{
+				$datelim=$date;
+				$cond_reglement_id=0;
+			}
+			else
+			{
+				$datelim=$this->calculate_date_lim_reglement($cond_reglement_id);
+				$cond_reglement_id=$cond_reglement_id;
+			}
+
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-			$sql .= ' SET fk_cond_reglement = '.$cond_reglement_id;
-			$sql .= ', date_lim_reglement='.$this->db->idate($datelim);
-			$sql .= ' WHERE rowid='.$this->id;
+			$sql.= ' SET fk_cond_reglement = '.$cond_reglement_id.',';
+			$sql.= ' date_lim_reglement='.$this->db->idate($datelim);
+			$sql.= ' WHERE rowid='.$this->id;
+
+			dolibarr_syslog('Facture::cond_reglement sql='.$sql, LOG_DEBUG);
 			if ( $this->db->query($sql) )
-	  {
-	  	$this->cond_reglement_id = $cond_reglement_id;
-	  	return 1;
-	  }
-	  else
-	  {
-	  	dolibarr_syslog('Facture::cond_reglement Erreur '.$sql.' - '.$this->db->error());
-	  	$this->error=$this->db->error();
-	  	return -1;
-	  }
+			{
+				$this->cond_reglement_id = $cond_reglement_id;
+				return 1;
+			}
+			else
+			{
+				dolibarr_syslog('Facture::cond_reglement Erreur '.$sql.' - '.$this->db->error());
+				$this->error=$this->db->error();
+				return -1;
+			}
 		}
 		else
 		{
 			dolibarr_syslog('Facture::cond_reglement, etat facture incompatible');
-			$this->error='Etat facture incompatible '.$this->statut.' '.$this->paye;
+			$this->error='Entity status not compatible '.$this->statut.' '.$this->paye;
 			return -2;
 		}
 	}
@@ -2143,7 +2342,7 @@ class Facture extends CommonObject
 		{
 			while ($obj=$this->db->fetch_object($resql))
 			{
-			  	$return[$obj->rowid]=array(	'id' => $obj->rowid,
+				$return[$obj->rowid]=array(	'id' => $obj->rowid,
 			  	'ref' => $obj->facnumber,
 			  	'status' => $obj->fk_statut);
 			}
