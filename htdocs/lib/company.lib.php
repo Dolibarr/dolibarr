@@ -684,7 +684,7 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
  */
 function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 {
-	global $mysoc;
+	global $mysoc,$conf;
 	
 	$pdf->SetXY ($curx, $cury);
 	$pdf->SetFont('Arial','B',8);
@@ -692,7 +692,8 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 	$cury+=4;
 	
 	// TODO We use country of company, but we should use country of bank account.
-	if ($mysoc->pays_code == 'FR')
+	if (empty($conf->global->FACTURE_SHOW_BANK_NUMBER_ONLY)
+		|| $mysoc->pays_code == 'FR')
 	{
 		$pdf->SetFont('Arial','B',6);
 		$pdf->line($curx+1, $cury, $curx+1, $cury+10 );
@@ -710,13 +711,13 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 		$pdf->line($curx+73, $cury, $curx+73, $cury+10 );
 	
 		$pdf->SetFont('Arial','',8);
-		$pdf->SetXY ($curx, $cury+5);
+		$pdf->SetXY ($curx, $cury+6);
 		$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
-		$pdf->SetXY ($curx+18, $cury+5);
+		$pdf->SetXY ($curx+18, $cury+6);
 		$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_guichet), 0, 'C', 0);
-		$pdf->SetXY ($curx+36, $cury+5);
+		$pdf->SetXY ($curx+36, $cury+6);
 		$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($account->number), 0, 'C', 0);
-		$pdf->SetXY ($curx+60, $cury+5);
+		$pdf->SetXY ($curx+60, $cury+6);
 		$pdf->MultiCell(13, 3, $outputlangs->convToOutputCharset($account->cle_rib), 0, 'C', 0);
 	}
 	else
