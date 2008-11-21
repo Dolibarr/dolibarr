@@ -684,35 +684,49 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
  */
 function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 {
+	global $mysoc;
+	
 	$pdf->SetXY ($curx, $cury);
 	$pdf->SetFont('Arial','B',8);
 	$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
 	$cury+=4;
-	$pdf->SetFont('Arial','B',6);
-	$pdf->line($curx+1, $cury, $curx+1, $cury+10 );
-	$pdf->SetXY ($curx, $cury);
-	$pdf->MultiCell(18, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
-	$pdf->line($curx+18, $cury, $curx+18, $cury+10 );
-	$pdf->SetXY ($curx+18, $cury);
-	$pdf->MultiCell(18, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
-	$pdf->line($curx+36, $cury, $curx+36, $cury+10 );
-	$pdf->SetXY ($curx+36, $cury);
-	$pdf->MultiCell(24, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
-	$pdf->line($curx+60, $cury, $curx+60, $cury+10 );
-	$pdf->SetXY ($curx+60, $cury);
-	$pdf->MultiCell(13, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
-	$pdf->line($curx+73, $cury, $curx+73, $cury+10 );
-
-	$pdf->SetFont('Arial','',8);
-	$pdf->SetXY ($curx, $cury+5);
-	$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
-	$pdf->SetXY ($curx+18, $cury+5);
-	$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_guichet), 0, 'C', 0);
-	$pdf->SetXY ($curx+36, $cury+5);
-	$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($account->number), 0, 'C', 0);
-	$pdf->SetXY ($curx+60, $cury+5);
-	$pdf->MultiCell(13, 3, $outputlangs->convToOutputCharset($account->cle_rib), 0, 'C', 0);
-
+	
+	// TODO We use country of company, but we should use country of bank account.
+	if ($mysoc->pays_code == 'FR')
+	{
+		$pdf->SetFont('Arial','B',6);
+		$pdf->line($curx+1, $cury, $curx+1, $cury+10 );
+		$pdf->SetXY ($curx, $cury);
+		$pdf->MultiCell(18, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
+		$pdf->line($curx+18, $cury, $curx+18, $cury+10 );
+		$pdf->SetXY ($curx+18, $cury);
+		$pdf->MultiCell(18, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
+		$pdf->line($curx+36, $cury, $curx+36, $cury+10 );
+		$pdf->SetXY ($curx+36, $cury);
+		$pdf->MultiCell(24, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
+		$pdf->line($curx+60, $cury, $curx+60, $cury+10 );
+		$pdf->SetXY ($curx+60, $cury);
+		$pdf->MultiCell(13, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
+		$pdf->line($curx+73, $cury, $curx+73, $cury+10 );
+	
+		$pdf->SetFont('Arial','',8);
+		$pdf->SetXY ($curx, $cury+5);
+		$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
+		$pdf->SetXY ($curx+18, $cury+5);
+		$pdf->MultiCell(18, 3, $outputlangs->convToOutputCharset($account->code_guichet), 0, 'C', 0);
+		$pdf->SetXY ($curx+36, $cury+5);
+		$pdf->MultiCell(24, 3, $outputlangs->convToOutputCharset($account->number), 0, 'C', 0);
+		$pdf->SetXY ($curx+60, $cury+5);
+		$pdf->MultiCell(13, 3, $outputlangs->convToOutputCharset($account->cle_rib), 0, 'C', 0);
+	}
+	else
+	{
+		$pdf->SetFont('Arial','B',6);
+		$pdf->SetXY ($curx, $cury);
+		$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BankAccountNumber").' : ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
+		$cury-=9;
+	}
+		
 	$pdf->SetXY ($curx, $cury+12);
 	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
 	$pdf->SetXY ($curx, $cury+22);
