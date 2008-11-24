@@ -29,6 +29,7 @@
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/supplier_order/modules_commandefournisseur.php');
 require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/fourn.lib.php");
 if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 
 $langs->load('orders');
@@ -108,26 +109,10 @@ if ($id	> 0)
 		$author->id = $commande->user_author_id;
 		$author->fetch();
 
-		$h = 0;
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans("OrderCard");
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans("OrderDispatch");
-		$a = $h;
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans("Note");
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans("OrderFollow");
-		$h++;
-
+		$head = ordersupplier_prepare_head($commande);
+		
 		$title=$langs->trans("SupplierOrder");
-		dolibarr_fiche_head($head, $a, $title);
+		dolibarr_fiche_head($head, 'dispatch', $title);
 			
 		/*
 		 *	Commande

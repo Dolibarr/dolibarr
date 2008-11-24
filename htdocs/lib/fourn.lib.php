@@ -53,4 +53,40 @@ function facturefourn_prepare_head($fac)
 	return $head;
 }
 
+
+function ordersupplier_prepare_head($commande)
+{
+	global $langs, $conf;
+	$h = 0;
+	$head = array();
+	
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans("OrderCard");
+	$head[$h][2] = 'card';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans("OrderDispatch");
+	$head[$h][2] = 'dispatch';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans("Note");
+	$head[$h][2] = 'note';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/document.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans("Documents");
+	$head[$h][2] = 'documents';
+	$h++;
+			
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$commande->id;
+	$head[$h][1] = $langs->trans("OrderFollow");
+	$head[$h][2] = 'info';
+	$h++;
+
+	return $head;
+}
+
+
 ?>

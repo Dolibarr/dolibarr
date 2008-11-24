@@ -15,19 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/fourn/commande/history.php
         \ingroup    commande
         \brief      Fiche commande
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/fourn.lib.php");
 
 $langs->load("orders");
 $langs->load("suppliers");
@@ -62,27 +60,10 @@ if ($_GET["id"] > 0)
 
 		llxHeader('',$langs->trans("History"),"CommandeFournisseur",$addons);
 
-		$h = 0;
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans("OrderCard");
-		$h++;
-		
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$commande->id;
-	  $head[$h][1] = $langs->trans("OrderDispatch");
-	  $h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans("Note");
-		$h++;
-
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$commande->id;
-		$head[$h][1] = $langs->trans("OrderFollow");
-		$a = $h;
-
-		$h++;
+		$head = ordersupplier_prepare_head($commande);
 
 		$title=$langs->trans("SupplierOrder");
-		dolibarr_fiche_head($head, $a, $title);
+		dolibarr_fiche_head($head, 'info', $title);
 
 
 		/*

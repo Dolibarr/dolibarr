@@ -20,11 +20,11 @@
  */
 
 /**
-   \file       htdocs/document.php
-   \brief      Wrapper to allow download of data files
-   \version    $Id$
-   \remarks    L'appel est document.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
-*/
+ *	\file       htdocs/document.php
+ *  \brief      Wrapper to download data files
+ *  \version    $Id$
+ *  \remarks    L'appel est document.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
+ */
 
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
