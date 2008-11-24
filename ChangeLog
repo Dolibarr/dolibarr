@@ -9,7 +9,7 @@ For users:
 - Enhancement in stock management (Automatic increase/decrease
   from order or invoice is possible).
 - New filter options in prospect lists (category and level).
-- New view in ecm module.
+- New view in ECM module.
 - Look enhancements for graphics (add transparency).
 - Added statistics report for supplier invoices.
 - Added average amount in invoices statistics reports.
@@ -21,11 +21,18 @@ For users:
 - All phone numbers show the clicktodial link if module is enabled.
 - Can define hour and minutes in intervention cards.
 - Can edit a validated intervention.
+- Add filters on intervention list.
 - Add juridical status and number of employees in third party 
   export definition.
 - A lot of enhancements and translation in withdraw module.
 - Full support of Mysql option mode=strict.
 - Added a new event from member module to agenda tracked events.
+- Can attach a file to suppliers orders.
+- Change to make Bank Account Number form more "internationnal".
+- Can clone an invoice.
+- Can clone an emailing.
+- Reduce memory usage (about 2%).
+- Add weight and size in sendings module.
 
 For translators:
 - The errors language file contains only error or warning messages with 
@@ -34,7 +41,7 @@ For translators:
   in UTF8.
 
 For developers:
-- Update skeletons (fixes and add function createFromClass).
+- Update skeletons (some fixes and add function createFromClone).
 - Add an experimental Cash Desk module.
 - Added new triggers events in agenda module.
 - All submodules are moved in the includes directory.
@@ -42,6 +49,8 @@ For developers:
 - Menu managers now use same class name for their menu entry
   and add a different value in an HTML id for each entry. This allows
   to build skins that use different style for each menu entry.
+- All emails and url HTML output use same function.
+- Add more integrity check on database
 
 
 ***** Changelog for 2.4 compared to 2.2 *****
