@@ -2422,7 +2422,8 @@ class Facture extends CommonObject
 
 		$soc = new Societe($this->db);
 		$soc->id = $this->socid;
-		$soc->rib();
+		$soc->load_ban();
+		
 		if ($this->statut > 0 && $this->paye == 0 && $this->mode_reglement_id == 3)
 		{
 			$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';

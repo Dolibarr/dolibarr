@@ -48,17 +48,17 @@ class Account extends CommonObject
 	var $clos;
 	var $rappro;
 	var $url;
-	//! Code banque dans le RIB
+	//! BBAN field for French Code banque
 	var $code_banque;
-	//! Code guichet dans le RIB
+	//! BBAN field for French Code guichet
 	var $code_guichet;
-	//! Numero du compte dans le RIB
+	//! BBAN main account number
 	var $number;
-	//! Cle de controle du RIB
+	//! BBAN field for French Cle de controle
 	var $cle_rib;
-	//! Numero BIC/SWIFT du compte
+	//! BIC/SWIFT number
 	var $bic;
-	//! Prefix IBAN a utiliser pour creer la cle IBAN International Bank Account Number
+	//! IBAN number (International Bank Account Number)
 	var $iban_prefix;
 	var $proprio;
 	var $adresse_proprio;
@@ -277,9 +277,10 @@ class Account extends CommonObject
 		// Chargement librairie pour acces fonction controle RIB
 		require_once DOL_DOCUMENT_ROOT.'/lib/bank.lib.php';
 
-		if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
-			$this->error="Le controle de la cle indique que les informations de votre compte bancaire sont incorrectes.";
-			return 0;
+		if (! verif_rib($this)) 
+		{
+			$this->error='RIBControlError';
+			return -1;
 		}
 
 		if (! $this->ref)
@@ -345,6 +346,7 @@ class Account extends CommonObject
 		if (! $this->ref)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
+			dolibarr_syslog("Account::update ".$this->error);
 			return -1;
 		}
 		if (! $this->label) $this->label = "???";
@@ -368,7 +370,7 @@ class Account extends CommonObject
 
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Account::update sql=$sql");
+		dolibarr_syslog("Account::update sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -384,29 +386,24 @@ class Account extends CommonObject
 
 
 	/*
-	 *    	\brief      Mise a jour compte, partie RIB
+	 *    	\brief      Update BBAN (RIB) account fields
 	 *    	\param      user        Object utilisateur qui modifie
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
-	function update_rib($user='')
+	function update_bban($user='')
 	{
 		global $langs;
 
 		// Chargement librairie pour acces fonction controle RIB
 		require_once(DOL_DOCUMENT_ROOT.'/lib/bank.lib.php');
 
-		dolibarr_syslog("Account::update $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix");
+		dolibarr_syslog("Account::update_bban $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban");
 
-		// Verification parametres
-		if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
-			$this->error="Le contr�le de la cl� indique que les informations de votre compte bancaire sont incorrectes.";
-			return 0;
-		}
-
+		// Check parameters
 		if (! $this->ref)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
-			return -1;
+			return -2;
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
@@ -416,13 +413,13 @@ class Account extends CommonObject
 		$sql .= ",number='".$this->number."'";
 		$sql .= ",cle_rib='".$this->cle_rib."'";
 		$sql .= ",bic='".$this->bic."'";
-		$sql .= ",iban_prefix = '".$this->iban_prefix."'";
+		$sql .= ",iban_prefix = '".$this->iban."'";
 		$sql .= ",domiciliation='".addslashes($this->domiciliation)."'";
 		$sql .= ",proprio = '".addslashes($this->proprio)."'";
 		$sql .= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Account::update_rib sql=$sql");
+		dolibarr_syslog("Account::update_bban sql=$sql");
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -446,7 +443,7 @@ class Account extends CommonObject
 	function fetch($id,$ref='')
 	{
 		$sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
-		$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
+		$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
 		$sql.= " domiciliation, proprio, adresse_proprio,";
 		$sql.= " account_number, currency_code,";
 		$sql.= " min_allowed, min_desired, comment";
@@ -478,7 +475,8 @@ class Account extends CommonObject
 				$this->number        = $obj->number;
 				$this->cle_rib       = $obj->cle_rib;
 				$this->bic           = $obj->bic;
-				$this->iban_prefix   = $obj->iban_prefix;
+				$this->iban          = $obj->iban;
+				$this->iban_prefix   = $obj->iban;	// deprecated
 				$this->domiciliation = $obj->domiciliation;
 				$this->proprio       = $obj->proprio;
 				$this->adresse_proprio = $obj->adresse_proprio;
@@ -747,12 +745,32 @@ class Account extends CommonObject
 		return $result;
 	}
 
+	/**
+	 * 	\brief		Return account country code
+	 *	\return		String		country code
+	 */
+	function getCountryCode()
+	{
+		global $mysoc;
+		
+		if (! empty($this->iban))
+		{
+			// If IBAN defined, we can know country of account from it
+			if (eregi("^([a-zA-Z][a-zA-Z])",$this->iban,$reg)) return $reg[1];
+		}
+		
+		// We return country code
+		if (! empty($mysoc->pays_code)) return $mysoc->pays_code;
+
+		return '';
+	}	
+	
 }
 
 
 /**
- \class      AccountLine
- \brief      Classe permettant la gestion des lignes de transactions bancaires
+ *	\class      AccountLine
+ *	\brief      Classe permettant la gestion des lignes de transactions bancaires
  */
 class AccountLine
 {
@@ -997,6 +1015,7 @@ class AccountLine
 		
 		return $result;
 	}
+	
 }
 
 ?>

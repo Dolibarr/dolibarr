@@ -1361,12 +1361,14 @@ class Societe extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
 
-		$bac = new CompanyBankAccount($this->db, $this->id);
-		$bac->fetch();
+		$bac = new CompanyBankAccount($this->db);
+		$bac->socid = $this->id;
+		$bac->fetch($this->id);
 
 		if ($bac->code_banque || $bac->code_guichet || $bac->number || $bac->cle_rib)
 		{
-			$rib = $bac->code_banque." ".$bac->code_guichet." ".$bac->number." (".$bac->cle_rib.")";
+			$rib = $bac->code_banque." ".$bac->code_guichet." ".$bac->number;
+			$rib.=($bac->cle_rib?" (".$bac->cle_rib.")":"");
 		}
 		else
 		{
@@ -1375,23 +1377,24 @@ class Societe extends CommonObject
 		return $rib;
 	}
 
-
-	function rib()
+	/**
+	 * Load this->bank_account attribut
+	 */
+	function load_ban()
 	{
 		require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
 
 		$bac = new CompanyBankAccount($this->db, $this->id);
-		$bac->fetch();
+		$bac->fetch($this->id);
 
 		$this->bank_account = $bac;
-
 		return 1;
 	}
 
 
 	function verif_rib()
 	{
-		$this->rib();
+		$this->load_ban();
 		return $this->bank_account->verif();
 	}
 

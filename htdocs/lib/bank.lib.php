@@ -81,29 +81,32 @@ function bank_prepare_head($obj)
 
 
 /**
-		\brief    Verifie le RIB d'un compte bancaire grace à sa clé
-		\param    code_banque     code banque
-		\param    code_guichet    code guichet
-		\param    num_compte      numero de compte
-		\param    cle             cle
-		\param    iban            Ne sert pas pour le calcul de cle mais sert pour determiner le pays
-		\return   int             true si les infos sont bonnes, false si la clé ne correspond pas
-*/
-function verif_rib($code_banque , $code_guichet , $num_compte , $cle, $iban)
+ *		\brief    Check account number informations for a bank account
+ *		\param    code_banque     code banque
+ *		\param    code_guichet    code guichet
+ *		\param    num_compte      numero de compte
+ *		\param    cle             cle
+ *		\param    iban            Ne sert pas pour le calcul de cle mais sert pour determiner le pays
+ *		\return   int             true si les infos sont bonnes, false si erreur
+ */
+function checkBanForAccount($account)
 {
-	if (eregi("^FR",$iban))
+	$country_code=$account->getCountryCode();
+	
+	dolibarr_syslog("Bank.lib::checkBanForAccount account->iban=".$account->iban." country_code=".$country_code, LOG_DEBUG);
+	
+	
+	if ($country_code == 'FR')
 	{    // Cas de la France
 
 		$coef = array(62, 34, 3) ;
 
 		// Concatenation des differents codes.
-		$rib = strtolower(trim($code_banque).trim($code_guichet).trim($num_compte).trim($cle));
+		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet).trim($account->num_compte).trim($account->cle));
 
 		// On remplace les eventuelles lettres par des chiffres.
 
-		//Ne marche pas
-		//$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");
-
+		//$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");	//Ne marche pas
 		$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678923456789");
 
 		// Separation du rib en 3 groupes de 7 + 1 groupe de 2.
@@ -124,7 +127,19 @@ function verif_rib($code_banque , $code_guichet , $num_compte , $cle, $iban)
 
 		return false;
 	}
+	
+	if ($country_code == 'BE')	// Belgium rules
+	{
+	}
 
+	// No particular rule
+	// If account is CompanyBankAccount class, we use number
+	// If account is Account class, we use num_compte
+	if (empty($account->num_compte) && empty($account->number))
+	{
+		return false;
+	}
+	
 	return true;
 }
 

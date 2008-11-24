@@ -29,5 +29,5 @@ LastWithdrawalReceipt=Last %s withdrawing receipts
 MakeWithdrawRequest=Make a withdraw request
 ThirdPartyBankCode=Third party bank code
 ThirdPartyDeskCode=Third party desk code
-NoInvoiceCouldBeWithdrawed=No invoice withdrawed with success. Check that invoice are on companies with a valid RIB.
+NoInvoiceCouldBeWithdrawed=No invoice withdrawed with success. Check that invoice are on companies with a valid BAN.
 ClassCredited=Classer crédité

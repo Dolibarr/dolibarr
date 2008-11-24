@@ -48,14 +48,15 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 	$account->number          = trim($_POST["number"]);
 	$account->cle_rib         = trim($_POST["cle_rib"]);
 	$account->bic             = trim($_POST["bic"]);
-	$account->iban_prefix     = trim($_POST["iban_prefix"]);
+	$account->iban            = trim($_POST["iban_prefix"]);	
+	$account->iban_prefix     = trim($_POST["iban_prefix"]);	// deprecated
 	$account->domiciliation   = trim($_POST["domiciliation"]);
 	$account->proprio 	      = trim($_POST["proprio"]);
 	$account->adresse_proprio = trim($_POST["adresse_proprio"]);
 
 	if ($account->id)
 	{
-		$result = $account->update_rib($user);
+		$result = $account->update_bban($user);
 		if ($result >= 0)
 		{
 			$_GET["id"]=$_POST["id"];   // Force chargement page en mode visu
@@ -122,6 +123,13 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 		print '<br />';
 	}
 
+	// Check BBAN
+	if (! checkBanForAccount($account)) 
+	{
+		print '<div class="warning">'.$langs->trans("RIBControlError").'</div><br>';
+	}
+	
+	
 	print '<table class="border" width="100%">';
 
 	// Ref
@@ -144,22 +152,28 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 		print '<tr><td valign="top">'.$langs->trans("BankName").'</td>';
 		print '<td colspan="3">'.$account->bank.'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("BankCode").'</td>';
-		print '<td colspan="3">'.$account->code_banque.'</td>';
-		print '</tr>';
-
-		print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-		print '<td colspan="3">'.$account->code_guichet.'</td>';
-		print '</tr>';
-			
+		if ($account->getCountryCode() == 'FR')
+		{
+			print '<tr><td>'.$langs->trans("BankCode").'</td>';
+			print '<td colspan="3">'.$account->code_banque.'</td>';
+			print '</tr>';
+	
+			print '<tr><td>'.$langs->trans("DeskCode").'</td>';
+			print '<td colspan="3">'.$account->code_guichet.'</td>';
+			print '</tr>';
+		}
+	
 		print '<tr><td>'.$langs->trans("BankAccountNumber").'</td>';
 		print '<td colspan="3">'.$account->number.'</td>';
 		print '</tr>';
 			
-		print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
-		print '<td colspan="3">'.$account->cle_rib.'</td>';
-		print '</tr>';
-
+		if ($account->getCountryCode() == 'FR')
+		{
+			print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
+			print '<td colspan="3">'.$account->cle_rib.'</td>';
+			print '</tr>';
+		}
+		
 		print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
 		print '<td colspan="3">'.$account->iban_prefix.'</td></tr>';
 
@@ -245,22 +259,30 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 		print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
 		print '</tr>';
 
-		print '<tr><td>'.$langs->trans("BankCode").'</td>';
-		print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-		print '</tr>';
-
-		print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-		print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
-		print '</tr>';
-
+		// BBAN
+		if ($account->getCountryCode() == 'FR')
+		{
+			print '<tr><td>'.$langs->trans("BankCode").'</td>';
+			print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
+			print '</tr>';
+	
+			print '<tr><td>'.$langs->trans("DeskCode").'</td>';
+			print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
+			print '</tr>';
+		}
+		
 		print '<td>'.$langs->trans("BankAccountNumber").'</td>';
 		print '<td><input size="15" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
 		print '</tr>';
 
-		print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
-		print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';
-		print '</tr>';
+		if ($account->getCountryCode() == 'FR')
+		{
+			print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
+			print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';
+			print '</tr>';
+		}
 
+		// IBAN
 		print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
 		print '<td colspan="3"><input size="24" type="text" class="flat" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
 

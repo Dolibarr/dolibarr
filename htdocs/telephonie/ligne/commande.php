@@ -105,11 +105,11 @@ if ($_GET["id"] or $_GET["numero"])
 	}
 
       print '<table>';
-      print "<tr><td>Num�ro correct </td><td> ".$ok_commande .'</td></tr>';
-      print "<tr><td>Commandes ouvertes aupr�s du fournisseur </td><td> ".$ftx->commande_enable .'</td></tr>';
+      print "<tr><td>Numero correct </td><td> ".$ok_commande .'</td></tr>';
+      print "<tr><td>Commandes ouvertes aupres du fournisseur </td><td> ".$ftx->commande_enable .'</td></tr>';
       print "<tr><td>Permission pour l'utilisateur de commander des lignes </td><td> ".$user->rights->telephonie->ligne_commander.'</td></tr>';
       print "<tr><td>Statut de la ligne compatible </td><td> ".($ligne->statut == 1 or $ligne->statut == -1) .'</td></tr>';
-      print "<tr><td>Rib ok ou mode de r�glement par virement </td><td> ".($client_facture->verif_rib() or $ligne->mode_paiement == 'vir').'</td></tr>';
+      print "<tr><td>Rib ok ou mode de reglement par virement </td><td> ".($client_facture->verif_rib() or $ligne->mode_paiement == 'vir').'</td></tr>';
       print '</table>';
 
     }
@@ -121,5 +121,5 @@ else
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

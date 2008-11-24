@@ -29,5 +29,5 @@ LastWithdrawalReceipt=Les %s derniers bons de prélèvements
 MakeWithdrawRequest=Faire une demande de prélèvement
 ThirdPartyBankCode=Code banque du tiers
 ThirdPartyDeskCode=Code guichet du tiers
-NoInvoiceCouldBeWithdrawed=Aucune facture prélevable, prélevé avec succès. Vérifiez que les factures sont sur des sociétés dont le RIB est correctement renseigné.
+NoInvoiceCouldBeWithdrawed=Aucune facture prélevable, prélevé avec succès. Vérifiez que les factures sont sur des sociétés dont le BAN(RIB) est correctement renseigné.
 ClassCredited=Classer crédité

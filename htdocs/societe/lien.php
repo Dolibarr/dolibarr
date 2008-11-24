@@ -185,12 +185,10 @@ if($_GET["socid"])
             $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
             $sql.= " ".MAIN_DB_PREFIX."c_typent as te";
             $sql.= " WHERE s.fk_typent = te.id";
-    
             if (strlen(trim($_GET["search_nom"])))
             {
                 $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
             }
-    
             $sql .= " ORDER BY s.nom ASC " . $db->plimit($conf->liste_limit+1, $offset);
     
             $resql = $db->query($sql);
@@ -201,7 +199,7 @@ if($_GET["socid"])
     
                 $params = "&amp;socid=".$_GET["socid"];
     
-                print_barre_liste($title, $page, "lien.php",$params,$sortfield,$sortorder,'',$num);
+                print_barre_liste($title, $page, "lien.php",$params,$sortfield,$sortorder,'',$num,0,'');
     
                 // Lignes des titres
                 print '<table class="noborder" width="100%">';

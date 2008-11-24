@@ -36,6 +36,7 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 $langs->load("companies");
 $langs->load("commercial");
 $langs->load("bills");
+$langs->load("banks");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -1154,7 +1155,7 @@ else
 	$soc->typent= $arr[$soc->typent_code];
 	print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 
-	// RIB
+	// Ban
 	print '<tr><td>';
 	print '<table width="100%" class="nobordernopadding"><tr><td>';
 	print $langs->trans('RIB');
@@ -1169,7 +1170,7 @@ else
 	print $soc->display_rib();
 	print '</td></tr>';
 
-	// Maison mère
+	// Parent company
 	print '<tr><td>';
 	print '<table width="100%" class="nobordernopadding"><tr><td>';
 	print $langs->trans('ParentCompany');
@@ -1185,7 +1186,8 @@ else
 	{
 		$socm = new Societe($db);
 		$socm->fetch($soc->parent);
-		print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$socm->id.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$socm->nom.'</a>'.($socm->code_client?"(".$socm->code_client.")":"").' - '.$socm->ville;
+		print $socm->getNomUrl(1).' '.($socm->code_client?"(".$socm->code_client.")":"");
+		print $socm->ville?' - '.$socm->ville:'';
 	}
 	else {
 		print $langs->trans("NoParentCompany");

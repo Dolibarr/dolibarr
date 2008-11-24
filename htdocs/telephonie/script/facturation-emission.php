@@ -788,7 +788,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
       
       $fac->fetch($facid);
       $fac->fetch_client();
-      $fac->client->rib();
+      $fac->client->load_ban();
       
       $message = "";
       
@@ -809,7 +809,8 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
   
   if (!$error && !$cancel_facture)
     {
-      $db->query("COMMIT");      
+      $db->commit();
+
       /* $soc
        * $ligne
        */
@@ -832,8 +833,7 @@ function facture_contrat($db, $user, $contrat_id, $factel_ids, $datetime, &$fact
     }
   else
     {
-      $db->query("ROLLBACK");
-      dolibarr_syslog("ROLLBACK de la transaction $error");
+      $db->rollback();
     }    
 }
 

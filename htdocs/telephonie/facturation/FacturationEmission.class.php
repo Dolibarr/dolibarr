@@ -802,7 +802,7 @@ class FacturationEmission {
       
 	$fac->fetch($facid);
 	$fac->fetch_client();
-	$fac->client->rib();
+	$fac->client->load_ban();
       
 	$message = "";
       

@@ -1152,22 +1152,6 @@ class BonPrelevement extends CommonObject
         {
             $result = -2;
         }
-        /*
-        $nbfactures = sizeof($this->factures);
-        for ($i = 0 ; $i < $nbfactures ; $i++)
-        {
-        $fac = new Facture($this->db);
-        $fac->fetch($this->factures[$i]);
-        $fac->fetch_client();
-        $fac->client->rib();
-        if ($fac->client->bank_account->verif()) {
-        $this->total = $this->total + $fac->total_ttc;
-        $this->EnregDestinataire($fac);
-        }else{
-        print $fac->client->bank_account->error_message;
-        print $fac->client->nom; }
-        }
-        */
 
         /*
         * Pied de page total
