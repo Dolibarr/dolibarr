@@ -684,16 +684,14 @@ function show_actions_done($conf,$langs,$db,$objsoc,$objcon='')
  */
 function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 {
-	global $mysoc,$conf;
-	
 	$pdf->SetXY ($curx, $cury);
 	$pdf->SetFont('Arial','B',8);
 	$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
 	$cury+=4;
 	
-	// TODO We use country of company, but we should use country of bank account.
-	if (empty($conf->global->FACTURE_SHOW_BANK_NUMBER_ONLY)
-		|| $mysoc->pays_code == 'FR')
+	$country_code=$account->getCountryCode();
+	
+	if ($country_code == 'FR')
 	{
 		$pdf->SetFont('Arial','B',6);
 		$pdf->line($curx+1, $cury, $curx+1, $cury+10 );
@@ -724,16 +722,16 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 	{
 		$pdf->SetFont('Arial','B',6);
 		$pdf->SetXY ($curx, $cury);
-		$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BankAccountNumber").' : ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
+		$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BankAccountNumber").': ' . $outputlangs->convToOutputCharset($account->number), 0, 'L', 0);
 		$cury-=9;
 	}
 		
 	$pdf->SetXY ($curx, $cury+12);
-	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").' : ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
+	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("Residence").': ' . $outputlangs->convToOutputCharset($account->domiciliation), 0, 'L', 0);
 	$pdf->SetXY ($curx, $cury+22);
-	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("IbanPrefix").' : ' . $outputlangs->convToOutputCharset($account->iban_prefix), 0, 'L', 0);
+	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("IBANNumber").': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
 	$pdf->SetXY ($curx, $cury+25);
-	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BIC").' : ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
+	$pdf->MultiCell(90, 3, $outputlangs->transnoentities("BICNumber").': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
 
 	return $pdf->getY();
 }
