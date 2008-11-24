@@ -1,15 +1,20 @@
 # Dolibarr language file - es_ES - products
 
 
+
+
 ProductServiceCard=Ficha producto/servicio
 Products=Productos
 Services=Servicios
 Product=Producto
+ProductList=Listado productos
 Service=Servicio
 ProductId=ID producto/servicio
 Reference=Referencia
 NewProduct=Nuevo producto
 NewBook=Nuevo libro
+Book=Libro
+BookList=Listado libros
 NewService=Nuevo servicio
 ProductCode=Código producto
 ServiceCode=Código servicio
@@ -54,6 +59,8 @@ SellingPrice=Precio de venta
 PublicPrice=Precio público
 CurrentPrice=Precio actual
 NewPrice=Nuevo precio
+MinPrice=Precio de venta min.
+CantBeLessThanMinPrice=El precio de venta no debe ser inferior al mínimo para este producto (%s sin IVA)
 ContractStatus=Estado de contrato
 ContractStatusClosed=Cerrado
 ContractStatusRunning=En servicio
@@ -120,7 +127,6 @@ DeleteProductLine=Eliminar línea de producto
 ConfirmDeleteProductLine=¿Está seguro de querer eliminar esta línea de producto?
 NoProductMatching=Ningún producto/servicio responde al criterio
 MatchingProducts=Productos/Servicios encontrados
-NewBook=Nuevo libro
 NoStockForThisProduct=No hay stock de este producto
 NoStock=Sin stock
 Restock=Reponer

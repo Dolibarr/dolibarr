@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - withdrawals
+
 StandingOrdersArea=Area domiciliaciones
 CustomersStandingOrdersArea=Area domiciliaciones de clientes
 StandingOrders=Domiciliaciones
@@ -16,3 +17,18 @@ RequestStandingOrderToTreat=Pedidos de domiciliaciones a tratar
 RequestStandingOrderTreated=Pedidos de domiciliaciones procesados
 CustomersStandingOrders=Domiciliaciones de clientes
 CustomerStandingOrder=Domiciliación cliente
+NbOfInvoiceToWithdraw=Nº de facturas pendientes de domiciliación
+InvoiceWaitingWithdraw=Facturas en espera de domiciliación
+AmountToWithdraw=Cantidad a domiciliar
+WithdrawsRefused=Domiciliaciones devueltas
+NoInvoiceToWithdraw=Ninguna factura a cliente con modo de pago 'Domiciliación' en espera. Ir a la pestaña 'Domiciliación' en la ficha de la factura para hacer una petición.
+ResponsibleUser=Usuario responsable de las domiciliaciones
+WithdrawalsSetup=Configuración de las domiciliaciones
+WithdrawStatistics=Estadísticas de domiciliaciones
+WithdrawRejectStatistics=Estadísticas de domiciliaciones devueltas
+LastWithdrawalReceipt=Las % últimas remesas
+MakeWithdrawRequest=Realizar una petición de domiciliación
+ThirdPartyBankCode=Código banco del tercero
+ThirdPartyDeskCode=Código oficina del tercero
+NoInvoiceCouldBeWithdrawed=Ninguna factura domiciliable, domiciliación con éxito. Asegúrese de que las facturas son de empresas con los datos de cuentas bancarias correctos.
+ClassCredited=Clasificar acreditados

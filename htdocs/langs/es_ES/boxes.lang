@@ -1,5 +1,4 @@
 # Dolibarr language file - es_ES - boxes
-
 BoxLastRssInfos=Hilos de información RSS
 BoxLastProducts=Últimos productos/servicios
 BoxLastProductsInContract=Últimos productos/servicios contratados
@@ -25,6 +24,7 @@ BoxTitleLastProducts=Los %s últimos productos/servicios registrados
 BoxTitleLastCustomerOrders=Los %s últimos pedidos de clientes modificados
 BoxTitleLastSuppliers=Los %s últimos proveedores registrados
 BoxTitleLastCustomers=Los %s últimos clientes registrados
+BoxTitleLastCustomersOrProspects=Los %s últimos clientes o clientes potenciales registrados
 BoxTitleLastPropals=Los %s últimos presupuestos registrados
 BoxTitleLastCustomerBills=Las %s últimas facturas a clientes registradas
 BoxTitleLastSupplierBills=Las %s últimas facturas de proveedores registradas
@@ -38,7 +38,7 @@ BoxTitleTotalUnpayedCustomerBills=Pendiente de clientes
 BoxTitleTotalUnpayedSuppliersBills=Pendiente a proveedores
 BoxMyLastBookmarks=Mis %s últimos bookmarks
 FailedToRefreshDataInfoNotUpToDate=Error en el  refresco del flujo RSS. Fecha del último refresco: %s
-LastRefreshDate=Fecha último refresco
+LastRefreshDate=Fecha última actualización
 NoRecordedBookmarks=No hay bookmarks personales. click aquí para añadir.
 NoRecordedCustomers=Ningún cliente registrado
 BoxTitleLastActionsToDo=Las %s últimas acciones a realizar
@@ -47,3 +47,5 @@ NoRecordedOrders=Sin pedidos de clientes registrados
 NoRecordedProposals=Sin presupuestos registrados
 NoRecordedInvoices=Sin facturas a clientes registrados
 NoUnpayedCustomerBills=Sin facturas a clientes pendientes de pago
+NoRecordedSupplierInvoices=Sin facturas de proveedores
+NoUnpayedSupplierBills=sin facturas de proveedores pendientes de pago

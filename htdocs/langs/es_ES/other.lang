@@ -35,6 +35,10 @@ Miscellanous=Diversos
 NbOfActiveNotifications=Número notificaciones
 WarningInstallDirExists=Atención: La carpeta install (%s) todavía existe. Una vez concluida la instalación su presencia no es necesaria, y representa un fallo serio de seguridad. Debería eliminarla lo antes posible.
 WarningUntilDirRemoved=Esta alerta seguirá activa mientras la carpeta exista (alerta visible para los usuarios admin solamente).
+PredefinedMailContentSendInvoice=Le adjuntamos la factura __FACREF__\n\nCordialmente\n\n
+PredefinedMailContentSendInvoiceReminder=Ponemos en su conocimiento que la factura __FACREF__ parece no estar pagada. Se la adjuntamos pues, para que puede revisarla.\n\nCordialmente\n\n
+PredefinedMailContentSendProposal=Le adjuntamos el presupuesto __PROPREF__\n\nCordialmente\n\n
+PredefinedMailContentSendOrder=Le adjuntamos el el pedido __ORDERREF__\n\nCordialmente\n\n
 Bookmark=bookmark
 Bookmarks=Bookmarks
 NewBookmark=Nueva bookmark
@@ -68,7 +72,7 @@ FeatureExperimental=Funcionalidad experimental. No es estable en esta versión
 FeatureDevelopment=Funcionalidad en desarrollo. No estable en esta versión
 FeaturesSupported=Funcionalidades soportadas
 Width=Largo
-Height=Ancho
+Height=Alto
 Weight=Peso
 TotalWeight=Peso total
 WeightUnitton=Toneladas
@@ -81,16 +85,22 @@ VolumeUnitm3=m3
 VolumeUnitdm3=dm3
 VolumeUnitcm3=cm3
 VolumeUnitmm3=mm3
+Height=ancho
+Width=Largo
+Depth=Fondo
+Size=tamaño
+SizeUnitm=m
+SizeUnitdm=dm
+SizeUnitcm=cm
+SizeUnitmm=mm
 BugTracker=Bug tracker
 SendNewPasswordDesc=Este formulario permite enviar una nueva contraseña. Se enviará al e-mail del usuario<br>La modificación de la contraseña no será efectiva hasta que el usario haga click en el link de confirmación incluido en este e-mail.<br>Supervise su correo.
 BackToLoginPage=Volver a la página de conexión
 AuthenticationDoesNotAllowSendNewPassword=El modo de autentificación de Dolibarr está configurado como "<b>%s</b>".<br>En este modo Dolibarr no puede conocer ni modificar su contraseña<br>Contacte con su administrador para conocer las modalidades de cambio.
 EnableGDLibraryDesc=Debe activar o instalar la librería GD en su PHP para poder activar esta opción
 EnablePhpAVModuleDesc=Debe instalar un módulo PHP compatible con su antivirus. (Clamav : php4-clamavlib ó php5-clamavlib)
+ProfIdShortDesc=<b>Prof Id %s</b> es una información dependiente del país del tercero.<br>Por ejemplo, para el país  <b>%s</b>, és el código <b>%s</b>.
 ##### Webcal #####
-
-
-
 
 LoginWebcal=Login Webcalendar
 ErrorWebcalLoginNotDefined=El login Webcalendar asociado a su usuario Dolibarr <b>%s</b> no está definido
@@ -112,13 +122,11 @@ SupplierPaymentDoneInDolibarr=Pago a proveedor %s en Dolibarr
 MemberValidatedInDolibarr=Miembro %s validado en Dolibarr
 MemberResiliatedInDolibarr=Miembro %s dado de baja en Dolibarr
 MemberDeletedInDolibarr=Miembro %s eliminado de Dolibarr
+MemberSubscriptionAddedInDolibarr=Subscripción del miembro % añadida en Dolibarr
 ##### Export #####
-
-
-
 
 ExportsArea=Area de exportaciones
 AvailableFormats=Formatos disponibles
 LibraryUsed=Librería utilizada
 LibraryVersion=Versión
-ExportableDatas=Datos expoprtables
+ExportableDatas=Datos exportables

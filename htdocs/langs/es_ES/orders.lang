@@ -1,6 +1,8 @@
 # Dolibarr language file - es_ES - orders
 
 
+
+
 OrdersArea=Area pedidos de clientes
 SuppliersOrdersArea=Area pedidos a proveedores
 OrderCard=Ficha pedido
@@ -15,9 +17,10 @@ MakeOrder=Realizar pedido
 SupplierOrder=Pedido a proveedor
 SuppliersOrders=Pedidos a proveedor
 SuppliersOrdersRunning=Pedidos a proveedor en curso
-CustomerOrder=Pedido cliente
+CustomerOrder=Pedido de cliente
 CustomersOrders=Pedidos de cliente
 CustomersOrdersRunning=Pedidos de cliente en curso
+CustomersOrdersAndOrdersLines=Pedidos de clientes y líneasde pedidos
 OrdersToValid=Pedidos a validar
 OrdersToBill=Pedidos a facturar
 OrdersInProcess=Pedidos en proceso
@@ -70,7 +73,9 @@ LastClosedOrders=Los %s últimos pedidos cerrados
 AllOrders=Todos los pedidos
 NbOfOrders=Número de pedidos
 OrdersStatistics=Estadísticas de pedidos
+OrdersStatisticsSuppliers=Estadísticas pedidos a proveedores
 NumberOfOrdersByMonth=Número de pedidos por mes
+AmountOfOrdersByMonthHT=Importe de pedidos por mes (sin impuestos)
 ListOfOrders=Listado de pedidos
 CloseOrder=Cerrar pedido
 ConfirmCloseOrder=¿Está seguro de querer cerrar este pedidi? Una vez cerrado, deberá facturarse
@@ -87,20 +92,24 @@ RelatedOrders=Pedidos adjuntos
 OnProcessOrders=Pedidos en proceso
 RefOrder=Ref. pedido
 RefCustomerOrder=Ref. pedido cliente
-CustomerOrder=Pedido cliente
+CustomerOrder=Pedido de cliente
 RefCustomerOrderShort=Ref. ped. cliente
 SendOrderByMail=Enviar pedido por e-mail
 ActionsOnOrder=Acciones sobre el pedido
 NoArticleOfTypeProduct=No hay artículos de tipo 'producto' y por lo tanto enviables en este pedido
 OrderMode=Método de pedido
 AuthorRequest=Autor/Solicitante
+UseCustomerContactAsOrderRecipientIfExist=Utilizar dirección del contacto del cliente de seguimiento cliente si está definido en vez del tercero como destinatario de los pedidos
+RunningOrders=Pedidos en proceso
+UserWithApproveOrderGrant=Usuarios con permiso  "aprobación pedidos"
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constante COMMANDE_SUPPLIER_ADDON no definida
 Error_COMMANDE_ADDON_NotDefined=Constante COMMANDE_ADDON no definida
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Error en la carga del archivo módulo '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Error en la carga dle archivo módulo '%s'
-UseCustomerContactAsOrderRecipientIfExist=Utilizar dirección del contacto del cliente de seguimiento cliente si está definido en vez del tercero como destinatario de los pedidos
 
 # Sources
+
+
 
 
 
@@ -118,26 +127,7 @@ AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del p
 
 
 
+
+
 PDFEinsteinDescription=Modelo de presupuesto completo (logo...)
-
-# NumRef Modules
-
-
-
-# Emeraude
-
-
-
-EmeraudeNumRefModelDesc1=Devuelve el número bajo el formato CYYNNNNN donde YY es el año y NNNNN el número de incremento que comienza en 1
-EmeraudeNumRefModelDesc2=El año se incrementa en 1 y el número de incremento se vuelve a poner a cero al principio del ejercicio.
-EmeraudeNumRefModelDesc3=Defina el mes de inico de ejercicio en configuración ->empresa, p.ej.: septiembre.
-EmeraudeNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 un pedido nombrado C0800001
-
-# Rubis
-
-
-
-RubisNumRefModelDesc1=Devuelve el número bajo el formato CYYNNNNN donde YY es el año y NNNNN el número de incremento que comienza en 1
-RubisNumRefModelDesc2=El año se incrementa de 1 SIN volver a cero al inicio de ejercicio.
-RubisNumRefModelDesc3=Defina el mes de incio de ejercicio en configuración ->empresa, p.ej.: septiembre.
-RubisNumRefModelDesc4=En este ejemplo tendremos al 1 de septiembre de 2007 un pedido nombrado C0800345
+MarbreNumRefDesc=Devuelve un número con el formato %syymm-nnnn donde yy es el año, mm el mes y nnnn un contador secuencial sin rotura y sin quedar a 0

@@ -1,4 +1,6 @@
 # Dolibarr language file - es_ES - mails
+
+
 Mailing=Mailing
 EMailing=Mailing
 Mailings=Mailings
@@ -13,10 +15,12 @@ MailErrorsTo=Errores a
 MailReply=Responder a
 MailTo=Destinatario(s)
 MailCC=Copia a
+MailCCC=Adjuntar copia a
 MailTopic=Asunto del e-mail
 MailText=Mensaje
 MailFile=Archivo
 MailMessage=Mensaje del e-mail
+ShowEMailing=Mostrar E-Mailing
 ListOfEMailings=Listado de mailings
 NewMailing=Nuevo mailing
 EditMailing=Editar mailing
@@ -53,12 +57,21 @@ RemoveRecipient=Eliminar destinatario
 CommonSubstitutions=Substituciones comunes
 YouCanAddYourOwnPredefindedListHere=Para crear su módulo de selección e-mails, vea htdocs/includes/modules/mailings/README.
 EMailTestSubstitutionReplacedByGenericValues=En modo prueba, las variables de sustitución son sustituidas por valores genéricos
+MailingAddFile=Adjuntar este archivo
+NoAttachedFiles=Sin ficheros adjuntos
 
 # Libelle des modules de liste de destinataires mailing
+
+
 
 MailingModuleDescContactCompanies=Contactos de terceros (clientes potenciales, clientes, proveedores...)
 MailingModuleDescDolibarrUsers=Usuarios de Dolibarr que tienen e-mail
 MailingModuleDescFundationMembers=Miembros que tienen e-mail
+MailingModuleDescEmailsFromFile=E-Mails de un archivo
+MailingModuleDescContactsCategories=Contactos de todos los terceros (por categoría)
+LineInFile=Línea %s en archivo
+
+
 
 
 RecipientSelectionModules=Módulos de selección de los destinatarios
@@ -73,6 +86,8 @@ SendMailing=Enviar mailing
 SendMail=Enviar e-mail
 SentBy=Enviado por
 MailingNeedCommand=Por razones de seguridad, el envío de un mailing en masa puede realizarse en línea de comandos. Pida a su administrador que lance el comando siguiente para para enviar la correspondencia a a todos los destinatarios:
+MailingNeedCommand2=Puede enviar en línea añadiendo el parámetro MAILING_LIMIT_SENDBYWEB con un valor número que indica el máximo nº de e-mails enviados por sesión.
+ConfirmSendingEmailing=¿Confirma el envío del e-mailing?<br>El envío en línea de e-mails están limitados por seguridad a <b>%s</b> destinatarios por sesión.
 TargetsReset=Vaciar lista
 ToClearAllRecipientsClickHere=Para vaciar la lista de los destinatarios de este mailing, haga click en el botón
 ToAddRecipientsChooseHere=Para añadir destinatarios, escoja los que figuran en las listas a continuación
@@ -81,6 +96,8 @@ IdRecord=ID registro
 DeliveryReceipt=Acuso de recibo
 
 # Module Notifications
+
+
 
 Notifications=Notificaciones
 NoNotificationsWillBeSent=Ninguna notificación por e-mail está prevista para este evento y empresa

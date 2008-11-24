@@ -3,7 +3,7 @@ Proposals=Presupuestos
 Proposal=Presupuesto
 ProposalsDraft=Presupuestos borrador
 ProposalDraft=Presupuesto borrador
-Prop=Presup.
+Prop=Presupuestos
 CommercialProposal=Presupuesto
 CommercialProposals=Presupuestos
 ProposalsOpened=Presupuestos abiertos
@@ -25,6 +25,7 @@ LastProposals=Ultimos presupuestos
 SearchAProposal=Buscar un presupuesto
 ProposalsStatistics=Estadísticas de presupuestos
 NumberOfProposalsByMonth=Número por mes
+AmountOfProposalsByMonthHT=Importe por mes (sin impuestos)
 NbOfProposals=Número presupuestos
 ShowPropal=Ver presupuesto
 PropalsDraft=Borrador
@@ -68,16 +69,14 @@ ErrorPropalNotFound=Presupuesto %s inexistente
 Estimate=Presupuesto:
 EstimateShort=Presupuesto
 OtherPropals=Otros presupuestos
-DateDelivery=Fecha de envío
-SetDateLivraison=Definir la fecha de envío
 CopyPropalFrom=Crear presupuesto por copia de uno existente
 CreateEmptyPropal=Crear presupuesto desde la listado de productos predefinidos
 DefaultProposalDurationValidity=Plazo de validez por defecto (en días)
 UseCustomerContactAsPropalRecipientIfExist=Utilizar dirección contacto de seguimiento de cliente definido en vez de la dirección del tercero como destinatario de los presupuestos
 
 # Documents models
+
+
 DocModelAzurDescription=Modelo de presupuestos completo (logo...)
 DocModelJauneDescription=Jaune proposal model
-
-# NumRef Modules
-MarbreNumRefModelDesc=Renvoie le numero sous la forme PRyymm-nnnn où yy est l'annee, mm le mois et nnnn un compteur sequentiel sans rupture et sans remise à 0
+MarbreNumRefModelDesc=Devuelve el número en formato PRyymm-nnnn donde yy es el año, MM el mes y un contador nnnn secuencial sin ruptura y sin quedar a 0

@@ -1,5 +1,4 @@
 # Dolibarr language file - es_ES - categories
-
 Category=Categoría
 Categorie=Categoría
 categories=Categoría(s)
@@ -39,6 +38,7 @@ AddProductToCat=¿Añadir este producto a una categoría?
 ImpossibleAddCat=Imposible añadir la categoría
 ImpossibleAssociateCategory=Imposible asociar la categoría
 WasAddedSuccessfully=se ha añadido con éxito.
+ObjectAlreadyLinkedToCategory=El elemento ya está enlazado a esta categoría
 CategorySuccessfullyCreated=La categoría %s se insertado correctamente.
 ProductIsInCategories=Este producto/servicio se encuentra en las siguientes categorías
 SupplierIsInCategories=Este proveedor se encuentra en las siguientes categorías
@@ -71,3 +71,7 @@ ProductsCategoriesShort=Categorías productos
 ThisCategoryHasNoProduct=Esta categoría no contiene ningún producto.
 ThisCategoryHasNoSupplier=Esta categoría no contiene a ningún proveedor.
 ThisCategoryHasNoCustomer=Esta categoría no contiene a ningún cliente.
+AssignedToCustomer=Asignado a un cliente
+AssignedToTheCustomer=Asignado al cliente
+InternalCategory=Categoría innerente
+CategoryContents=Contenidos categoría

@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - interventions
+
 Intervention=Intervención
 Interventions=Intervenciones
 InterventionCard=Ficha intervención
@@ -16,16 +17,31 @@ ValidateIntervention=Validar intervención
 DeleteInterventionLine=Eliminar línea de intervención
 ConfirmDeleteIntervention=¿Está seguro de querer eliminar esta intervención?
 ConfirmValidateIntervention=¿Está seguro de querer validar esta intervención?
+ConfirmModifyIntervention=¿Está seguro de querer modificar esta intervención?
 ConfirmDeleteInterventionLine=¿Está seguro de querer eliminar esta linea?
 NameAndSignatureOfInternalContact=Nombre y firma del participante:
 NameAndSignatureOfExternalContact=Nombre y firma del cliente:
+InterventionCardsAndInterventionLines=Fichas y líneas de intervención
+InterId=Id intervención
+InterRef=Ref. intervención
+InterDateCreation=Fecha creación
+InterDuration=Duración total
+InterStatus=Estado
+InterNote=Descripción
+InterLine=Línea intervención
+InterLineId=Id línea detalle
+InterLineDate=Fecha línea
+InterLineDuration=Duración línea
+InterLineDesc=Descripción linea
 ##### Types de contacts #####
+
 
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable seguimiento de la intervención
 TypeContact_fichinter_internal_INTERVENING=Interventor
 TypeContact_fichinter_external_BILLING=Contacto cliente facturación intevención
 TypeContact_fichinter_external_CUSTOMER=Contacto cliente seguimiento intervención
 # Modele numérotation
+
 
 ArcticNumRefModelDesc1=Modelo de numeración genérico
 ArcticNumRefModelError=Activación imposible

@@ -1,10 +1,47 @@
-ActionsArea=
 # Dolibarr language file - es_ES - agenda
-Agenda=Agenda
+Actions=Acciones
+ActionsArea=Area de acciones (Eventos y tareas)
+Agenda=Agendas
 Agendas=Agendas
 Calendar=Calendario
 Calendars=Calendarios
 AffectedTo=Afecta a
 DoneBy=Realizado por
 Events=Eventos
-SearchAnAction=Buscar una acción
+ListOfActions=Listado de eventos
+Location=Localización
+SearchAnAction=Buscar una acción/tarea
+MenuToDoActions=Las acciones incompletas
+MenuDoneActions=Las acciones terminadas
+MenuToDoMyActions=Mis acciones incompletas
+MenuDoneMyActions=Mis acciones terminadas
+ListOfEvents=Listado de eventos Dolibarr
+ActionsAskedBy=Acciones registradas por
+ActionsToDoBy=Acciones que afectan a
+ActionsDoneBy=Acciones realizadas por
+AllMyActions=Todas mis acciones/tareas
+AllActions=Todas las acciones/tareas
+ViewList=Ver listado
+ViewCal=Ver calendario
+ViewWithPredefinedFilters=Ver con los filtros predefinidos
+AutoActions=Inclusión automática en la agenda
+AgendaAutoActionDesc=Definir los eventos aquí para los que desea que Dolibarr cree automáticamente una acción en el orden del día. Si no está marcada (por defecto),  se podrán crear manualmente.
+AgendaSetupOtherDesc=Esta página le permite configurar otros parámetros del módulo agenda.
+ActionsEvents=Eventos para que Dolibarr cree una acción de forma automática
+PropalValidatedInDolibarr=Presupuesto validado
+InvoiceValidatedInDolibarr=Factura validada
+OrderValidatedInDolibarr=Pedido validado
+NewCompanyToDolibarr=Tercero creado
+DateActionPlannedStart=Fecha de inicio prevista
+DateActionPlannedEnd=Fecha de fin prevista
+DateActionDoneStart=Fecha real de inicio
+DateActionDoneEnd=Fecha real de finalización
+DateActionStart=Fecha de inicio
+DateActionEnd=Fecha finalización
+AgendaUrlOptions1=Puede también añadir estos parámetros al filtro de salida:
+AgendaUrlOptions2=<b>login=%s</b> para restringir inserciones a acciones creadas , que afecten o realizadas por el usuario <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> para restringir inserciones a accciones creadas por el usuario <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> para restringir inserciones a acciones que afecten al usuario <b>%s</b>.
+AgendaUrlOptions5=<b>logind=%s</b> para restringir inserciones a acciones realizadas por el usuario <b>%s</b>.
+AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
+AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos

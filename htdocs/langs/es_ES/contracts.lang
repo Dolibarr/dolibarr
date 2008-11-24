@@ -1,9 +1,13 @@
 # Dolibarr language file - es_ES - contracts
 
 
+
+
+
+
 ContractsArea=Area contratos
 ListOfContracts=Listado de contratos
-LastContracts=Los %s últimos contratos
+LastContracts=los %s últimos contratos modificados
 AllContracts=Todos los contratos
 ContractCard=Ficha contrato
 ContractStatus=Estado del contrato
@@ -20,6 +24,7 @@ ServicesLegend=Leyenda para los servicios
 Contracts=Contratos
 Contract=Contrato
 ContractContacts=Contactos contrato
+NoContracts=Sin contratos
 MenuServices=Servicios
 MenuInactiveServices=Servicios inactivos
 MenuRunningServices=Servicios activos
@@ -37,6 +42,7 @@ ConfirmCloseService=¿Está seguro de querer cerrar este servicio?
 ValidateAContract=Validar un contrato
 ActivateService=Activar el servicio
 ConfirmActivateService=¿Está seguro de querer activar este servicio en fecha %s?
+DateContract=Fecha contrato
 DateServiceActivate=Fech activación del servicio
 DateServiceUnactivate=Fecha desactivación del servicio
 DateServiceStart=Fecha inicio del servicio
@@ -67,7 +73,17 @@ ServicesNomberShort=%s servicio(s)
 RunningServices=Servicios activos
 BoardRunningServices=Servicios activos expirados
 ServiceStatus=Estado del servicio
+DraftContracts=Contractos borrador
+CloseRefusedBecauseOneServiceActive=El contrato no puede ser cerrado ya que contiene al menos un servicio abierto.
+CloseAllContracts=cerrar todos los contratos
+MoveToAnotherContract=Mover el servicio a otro contrato.
+ConfirmMoveToAnotherContract=He buscado un nuevo contrato y confirmo que quiero mover este servicio a este contrato.
+ConfirmMoveToAnotherContractQuestion=Elejir a que contrato (del mismo tercero) desea mover a este servicio? 
 ##### Types de contacts #####
+
+
+
+
 
 
 

@@ -1,4 +1,8 @@
 # Dolibarr language file - es_ES - ecm
+
+
+
+
 MenuECM=Documentos
 DocsMine=Mis documentos
 DocsGenerated=Documentos generados
@@ -9,23 +13,31 @@ DocsProposals=Documentos presupuestos
 DocsOrders=Documentos pedidos
 DocsInvoices=Documentos facturas
 ECMNbOfDocs=Nº de documentos
+ECMNbOfDocsSmall=Nº Docs.
 ECMSection=Rúbrica
-ECMSections=Rúbricas
+ECMSectionManual=Carpeta manual
+ECMSectionAuto=Carpeta automática
+ECMSectionsManual=Carpetas manuales
+ECMSectionsAuto=Carpetas automáticas
+ECMSections=Carpetas
 ECMRoot=Raíz
-ECMNewSection=Nueva rúbrica
-ECMAddSection=Añadir rúbrica manual
-ECMNewSection=Nueva rúbrica manual
+ECMNewSection=Nueva carpeta
+ECMAddSection=Añadir carpeta manual
+ECMNewSection=Nueva carpeta manual
 ECMNewDocument=Nuevo documento
 ECMCreationDate=Fecha creación
+ECMNbOfFilesInDir=Nº de ficheros en la carpeta
+ECMNbOfSubDir=Nº de subcarpetas
+ECMNbOfFilesInSubDir=Nº de ficheros en las subcarpetas
 ECMCreationUser=Creador
 ECMArea=Area gestión de documentos
 ECMAreaDesc=El área de gestión de documentos le permite controlar rápidamente los documentos en Dolibarr.
-ECMAreaDesc2=Puede crear las rúbricas manuales y adjuntar los documentos<br>Las rúbricas automáticas son alimentadas automáticamente en la adición de un documento en una ficha objeto.
-ECMSectionWasRemoved=La rúbrica <b>%s</b> ha sido eliminada
+ECMAreaDesc2=Puede crear carpetas manuales y adjuntar los documentos<br>Las carpetas automáticas son rellenadas automáticamente en la adición de un documento en una ficha.
+ECMSectionWasRemoved=La carpeta <b>%s</b> ha sido eliminada
 ECMDocumentsSection=Documento de la sección
 ECMSearchByKeywords=Buscar por palabras clave
 ECMSearchByEntity=Buscar por objeto
-ECMSectionOfDocuments=Rúbricas de documetos
+ECMSectionOfDocuments=Carpetas de documetos
 ECMTypeManual=Manual
 ECMTypeAuto=Automático
 ECMDocsByThirdParties=Documentos asociados a terceros
@@ -33,8 +45,12 @@ ECMDocsByProposals=Documentos asoicados a presupuestos
 ECMDocsByOrders=Documentos asociados a pedidos
 ECMDocsByContracts=Documentos asociados a contratos
 ECMDocsByInvoices=Documentos asociados a facturas
-ECMManualOrg=Rúbrica manual
-ECMAutoOrg=Rúbrica automática
-ShowECMSection=Mostrar rúbrica
-DeleteSection=Eleminación rúbrica
-ConfirmDeleteSection=¿Confirma la eliminación de la rúbrica <b>%s</b>?
+ECMDocsByProducts=Documentos enlazados a productos
+ECMNoDirecotyYet=No se ha creado carpeta
+ShowECMSection=Mostrar carpeta
+DeleteSection=Eleminación carpeta
+ConfirmDeleteSection=¿Confirma la eliminación de la carpeta <b>%s</b>?
+ECMDirectoryForFiles=Carpeta relativa para ficheros
+CannotRemoveDirectoryContainsFiles=No se puede eliminar porque contiene archivos
+ECMFileManager=Explorador de archivos
+ECMSelectASection=Seleccione una carpeta del arbol de la izquierda

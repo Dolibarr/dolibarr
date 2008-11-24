@@ -1,4 +1,6 @@
 # Dolibarr language file - es_ES - sendings
+
+
 RefSending=Ref. envío
 Sending=Envío
 Sendings=Envíos
@@ -22,6 +24,7 @@ QtyReceived=Cant. recibida
 KeepToShip=Queda por enviar
 OtherSendingsForSameOrder=Otros envíos de este pedido
 DateSending=Fecha de expedición
+DateSendingShort=Fecha de expedición
 SendingsForSameOrder=Expediciones de este pedido
 SendingsAndReceivingForSameOrder=Envíos y recepciones de este pedido
 SendingsToValidate=Envíos a validar
@@ -34,3 +37,12 @@ Carriers=Transportistas
 Carrier=Transportista
 CarriersArea=Area transportistas
 NewCarrier=Nuevo transportista
+ConfirmDeleteSending=¿Está seguro de querer eliminar esta expedición?
+ConfirmValidateSending=¿Está seguro de querer validar esta expedición?
+ConfirmCancelSending=¿Está seguro de querer anular esta expedición?
+GenericTransport=Transporte genérico
+Enlevement=Pick-up por el cliente
+DocumentModelSimple=Modelo simple
+NumRefModelJade=Devuelve un número de referencia en formato l BLYY00001 ... donde AA es el año. El incremento para el año siguiente no se restablece al inicio de año.
+DocumentModelSirocco=Modelo simple de nota de entrega
+DocumentModelTyphon=Modelo completo de nota de entrega (logo...)

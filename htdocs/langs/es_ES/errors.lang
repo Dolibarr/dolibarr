@@ -1,8 +1,13 @@
-# Dolibarr language file - es_ES - errors
-ErrorLoginAlreadyExists=El usuario %s ya existe.
+ErrorLoginAlreadyExists=El login %s ya existe.
 ErrorGroupAlreadyExists=El grupo %s ya existe.
+# Dolibarr language file - es_ES - errors
+
+
 ErrorDuplicateTrigger=Un archvio trigger de nombre '<b>%s</b>' está cargado. Elimine el dobre de la carpeta '<b>%s</b>'.
+ErrorFailToCreateFile=Error al crear el archivo  '<b>%s</b>'
 ErrorFailToDeleteFile=Error al eliminar el archivo '<b>%s</b>'.
+ErrorFailToRenameDir=Error al renombar la carpeta '<b>%s</b>' a '<b>%s</b>'.
+ErrorFailToCreateDir=Error al crear la carpeta '<b>%s</b>'
 ErrorThisContactIsAlreadyDefinedAsThisType=Este contacto ya está definido como contacto para este tipo.
 ErrorCashAccountAcceptsOnlyCashMoney=Esta cuenta bancaria es de tipo caja y solo acepta el método de pago de tipo <b>especie</b>.
 ErrorFromToAccountsMustDiffers=La cuenta origen y destino deben ser diferentes.
@@ -16,6 +21,7 @@ ErrorSupplierCodeRequired=Código proveedor obligatorio
 ErrorSupplierCodeAlreadyUsed=Código de proveedor ya utilizado
 ErrorBadParameters=Parámetros incorrectos
 ErrorFailedToWriteInDir=Imposible escribir en la carpeta %s
+ErrorFoundBadEmailInFile=Encontrada sintaxis incorrecta en email en %s líneas en archivo (ejemplo linea %s con email=%s)
 ErrorUserCannotBeDelete=El usuario no puede ser eliminado. Quizá esé asociado a elementos de Dolibarr.
 ErrorFieldsRequired=No se indicaron algunos campos obligatorios
 ErrorFailedToCreateDir=Error en la creación de una carpeta. Compruebe que el usuario del servidor Web tiene derechos de escritura en las carpetas de documentos de Dolibarr. Si el  parámetro <b>safe_mode</b> está activo en este PHP, Compruebe que los archivos php dolibarr pertenecen al usuario del servidor Web.
@@ -25,3 +31,10 @@ ErrorTopMenuMustHaveAParentWithId0=Un menú del tipo 'Superior' no puede tener un
 ErrorLeftMenuMustHaveAParentId=Un menú del tipo 'Izquierdo' debe de tener un ID de padre
 ErrorGenbarCodeNotfound=Archivo no encontrado (ruta incorrecta, permisos incorrectos o acceso prohibido por el parámetro openbasedir)
 ErrorFunctionNotAvailableInPHP=La función  <b>%s</b> es requerida por esta funcionalidad, pero no se encuetra disponible en esta versión/instalación de PHP.
+ErrorDirAlreadyExists=Ya existe una carpeta con ese nombre.
+ErrorFieldCanNotContainSpecialCharacters=El campo <b>%s</b> no debe contener carácteres especiales
+WarningAllowUrlFopenMustBeOn=El parámetro <b>allow_url_fopen</b> debe ser especificado a <b>on</b> en el archivo <b>php.ini</b> para disponer de este módulo completamente activo. Debe modificar este archivo manualmente
+WarningBuildScriptNotRunned=El script <b>% s</b> todavía no ha ejecutado la construcción de gráficos.
+WarningBookmarkAlreadyExists=Ya existe un marcador con este título o esta URL.
+WarningPassIsEmpty=Atención: La contraseña de la base de datos está vacía. Esto es unagujero de seguridad. Debe agregar una contraseña a su base de datos y cambiar su archivo conf.php para reflejar esto. 
+ErrorNoAccountancyModuleLoaded=Módulo de contabilidad no activado

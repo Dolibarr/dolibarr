@@ -1,4 +1,6 @@
 # Dolibarr language file - es_ES - members
+
+
 MembersArea=Area miembros
 PublicMembersArea=Area pública de los miembros
 MemberCard=Ficha miembro
@@ -13,6 +15,9 @@ FundationMembers=Miembros de la asociación
 Attributs=Atributos
 Person=Persona
 ErrorMemberTypeNotDefined=No se ha indicado el tipo de miembro
+ListOfPublicMembers=Listado de miembros públicos
+ListOfValidatedPublicMembers=Listado de miembros públicos validados
+ErrorThisMemberIsNotPublic=Este miembro no es público
 MembersCards=Carnés de miembros
 MembersList=Listado de miembros
 MembersListToValid=Listado de miembros borrador (a validar)
@@ -111,11 +116,12 @@ Text=Texto largo
 Int=Numérico
 Date=Fecha
 DateAndTime=Fecha y hora
+PublicMemberCard=Ficha miembro público
 MemberNotOrNoMoreExpectedToSubscribe=No sometida a cotización
 AddSubscription=Añadir afiliación
 ShowSubscription=Mostrar afiliación
 MemberModifiedInDolibarr=Miembro modificado en Dolibarr
-SendAnEMailToMember=Enviar e-mail de inforamción al miembro
+SendAnEMailToMember=Enviar e-mail de inforamción al miembro (E-mail: <b>%s</b>)
 DescADHERENT_MAIL_VALID_SUBJECT=Asunto del e-mail  de validación de miembro
 DescADHERENT_MAIL_VALID=E-mail de validación de miembro
 DescADHERENT_MAIL_COTIS_SUBJECT=Asunto del e-mail de validación de cotización
@@ -127,3 +133,4 @@ DescADHERENT_ETIQUETTE_TYPE=Formato etiquetas
 DescADHERENT_CARD_HEADER_TEXT=Texto a imprimir en la parte superior del carné de miembro
 DescADHERENT_CARD_TEXT=Texto a imprimir en el carné de miembro
 DescADHERENT_CARD_FOOTER_TEXT=Texto a imprimir en la parte inferior del carné de miembro
+ShowTypeCard=Ver tipo %s

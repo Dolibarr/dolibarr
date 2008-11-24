@@ -1,5 +1,4 @@
 # Dolibarr language file - es_ES - banks
-
 Bank=Banco
 Banks=Bancos
 MenuBankCash=Bancos/Cajas
@@ -25,6 +24,7 @@ BalanceMinimalDesired=Saldo mínimo deseado
 InitialBankBalance=Saldo inicial
 EndBankBalance=Saldo final
 CurrentBalance=Saldo actual
+FutureBalance=Saldo previsto
 ShowAllTimeBalance=Mostar balance desde principio
 Reconciliation=Conciliación
 RIB=CCC
@@ -43,6 +43,7 @@ IOMonthlyReporting=Informe mensual E/S
 BankAccountDomiciliation=Domiciliación de cuenta
 BankAccountOwner=Nombre del propietario de la cuenta
 BankAccountOwnerAddress=Dirección del propietario de la cuenta
+RIBControlError=El control de clave indica que la información de esta cuenta bancaria es incompleta o incorrecta.
 CreateAccount=Crear cuenta
 StandingOrderToProcess=A procesar
 StandingOrderProcessed=Procesados
@@ -113,6 +114,7 @@ ConfirmDeleteTransaction=¿Está seguro de querer eliminar esta transacción?
 ThisWillAlsoDeleteBankRecord=Esto eliminará también los registros bancarios generados
 BankMovements=Movimientos
 CashBudget=Presupuesto de tesorería
+PlannedTransactions=Transacciones previstas
 ExportDataset_banque_1=Transacción bancaria y extracto
 TransactionOnTheOtherAccount=Transacción sobre la otra cuenta
 TransactionWithOtherAccount=Transferencia de cuenta
@@ -120,3 +122,4 @@ PaymentNumberUpdateSucceeded=Numero de pago modificado
 PaymentNumberUpdateFailed=Numero de pago no pudo ser modificado
 PaymentDateUpdateSucceeded=Fecha de pago modificada
 PaymentDateUpdateFailed=Fecha de pago no pudo ser modificada
+BankTransactionLine=Transancción bancaria

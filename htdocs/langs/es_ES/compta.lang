@@ -1,8 +1,4 @@
 # Dolibarr language file - es_ES - compta
-
-
-
-
 Accountancy=Contabilidad
 AccountancyCard=Ficha contable
 Treasury=Tesorería
@@ -20,6 +16,9 @@ Accounts=Cuentas
 BillsForSuppliers=Facturas de proveedores
 Income=Ingresos
 Outcome=Gastos
+ReportInOut=Resultado / Ejercicio
+PaymentsNotLinkedToInvoice=Pagos vinculados a ninguna facutra, por lo que ninguún tercero
+PaymentsNotLinkedToUser=Pagos no vinculados a un usuario
 Profit=Beneficio
 Balance=Saldo
 Debit=Débito
@@ -48,6 +47,10 @@ AccountancyTreasuryArea=Area contabilidad/tesorería
 AccountancySetup=Configuración contabilidad
 NewPayment=Nuevo pago
 Payments=Pagos
+PaymentCustomerInvoice=Cobro factura a cliente
+PaymentSupplierInvoice=Pago factura de proveedor
+PaymentSocialContribution=Pago carga social
+PaymentVat=Pago IVA
 ListPayment=Listado de pagos
 ListOfPayments=Listado de pagos
 ListOfCustomerPayments=Listado de pagos de clientes
@@ -56,6 +59,7 @@ DatePayment=Fecha de pago
 NewVATPayment=Nuevo pago de IVA
 VATPayment=Pago IVA
 VATPayments=Pagos IVA
+ShowVatPayment=Ver pagos IVA
 TotalToPay=Total a pagar
 TotalVATReceived=Total IVA percibido
 CustomerAccountancyCode=Código contable cliente
@@ -103,3 +107,7 @@ RulesVATIn=- Para los servicios, el informe incluye el IVA de los pagos efectiva
 RulesVATDue=- Para los servicios, el informe incluye el IVA de las facturas debidas, pagadas o no basándose en la fecha de validación de estas facturas.<br>- Para los bienes materiales, incluye el IVA de las facturas basándose en la fecha de validación de la factura.
 OptionVatInfoModuleComptabilite=Nota: Para los bienes materiales, sería necesario utilizar la fecha de entrega para para ser más justo.
 PercentOfInvoice=%%/factura
+OrderStats=Estadísticas de pedidos
+Dispatch=Desglose
+Dispatched=Desglosados
+ToDispatch=A desglosar

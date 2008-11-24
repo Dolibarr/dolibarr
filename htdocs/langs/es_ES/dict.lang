@@ -1,5 +1,7 @@
 # Dolibarr language file - es_ES - dict
 
+
+
 CountryFR=Francia
 CountryBE=Bélgica
 CountryIT=Italia
@@ -250,20 +252,27 @@ CountryMF=Saint-Martin
 ##### Civilities #####
 
 
+
+
 CivilityMME=Señora
 CivilityMR=Señor
 CivilityMLE=Señorita
-CivilityMTRE=Gerente
+CivilityMTRE=Don
 
 ##### Currencies #####
 
 
+
+
 Currencyeuros=Euros
 CurrencyAUD=Dólares Aus.
+CurrencyCAD=Dólares canadienses
 CurrencyCHF=Francos suizos
 CurrencyEUR=Euros
 CurrencyFRF=Francos franceses
 CurrencyGBP=Libra esterlina
+CurrencyMAD=Dhiram
+CurrencyMGA=Ariary
 CurrencyTND=TND
 CurrencyUSD=Dollar US
 CurrencyXAF=Francs CFA BEAC

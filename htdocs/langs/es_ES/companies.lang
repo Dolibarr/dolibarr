@@ -1,11 +1,16 @@
 # Dolibarr language file - es_ES - soc
 
 
+
+
 ErrorBadEMail=e-mail %s no correcto
 ErrorCompanyNameAlreadyExists=El nombre de la emprea %s ya existe. Indique otro.
 ErrorPrefixAlreadyExists=El prefijo %s ya existe. Indique otro.
 ErrorSetACountryFirst=Defina en primer lugar el país
+DeleteThirdParty=Eliminar un tercero
 ConfirmDeleteCompany=¿Está seguro de querer eliminar esta empresa y toda la información dependiente?
+DeleteContact=Eliminar un contacto
+ConfirmDeleteContact=¿Está seguro de querer eliminar este contacto y toda su información inherente?
 MenuNewThirdParty=Nuevo tercero
 MenuNewCompany=Nueva empresa
 MenuNewCustomer=Nuevo cliente
@@ -25,6 +30,7 @@ IdContact=Id contacto
 Company=Empresa
 CompanyName=Razón social
 Companies=Empresas
+CountryIsInEEC=País de la Comunidad Económica Europea
 ThirdParty=Tercero
 ThirdParties=Terceros
 ThirdPartyAll=Terceros (todos)
@@ -68,7 +74,13 @@ WrongSupplierCode=Código proveedor incorrecto
 CustomerCodeModel=Modelo de código cliente
 SupplierCodeModel=Modelo de código proveedor
 Gencod=Código de barra
+ProfId1Short=Prof. id 1
+ProfId2Short=Prof. id 2
+ProfId3Short=Prof. id 3
+ProfId4Short=Prof. id 4
 ##### Professionnal ID #####
+
+
 
 
 
@@ -148,6 +160,7 @@ SupplierCodeDesc=Código único proveedor para cada proveedor
 RequiredIfCustomer=Requerida si el tercero es un cliente o cliente potencial
 RequiredIfSupplier=Requerida si el tercero es un proveedor
 ValidityControledByModule=Validación controlada por el módulo
+ThisIsModuleRules=Esta es la regla para este módulo
 LastProspect=Ultimo cliente potencial
 ProspectToContact=Cliente potencial a contactar
 CompanyDeleted=La empresa"%s" ha sido eliminada
@@ -187,6 +200,18 @@ ErrorVATCheckMS_UNAVAILABLE=Comprobación imposible. El servicio de comprobación 
 NorProspectNorCustomer=Ni cliente, ni cliente potencial
 JuridicalStatus=Forma jurídica
 Staff=Empleados
+ProspectLevelShort=Potencial
+ProspectLevel=Cliente potencial
+ContactPrivate=Privado
+ContactPublic=Compartido
+ContactVisibility=Visibilidad
+OthersNotLinkedToThirdParty=Otros, no enlazado a un tercero
+PL_NONE=Ninguna
+PL_UNKNOWN=Desconocido
+PL_LOW=Bajo
+PL_MEDIUM=Medio
+PL_HIGH=Alto
+TE_UNKNOWN=-
 TE_STARTUP=Pequeña
 TE_GROUP=Gran empresa
 TE_MEDIUM=PYME
@@ -210,7 +235,6 @@ ProspectsByStatus=Clientes potenciales por estado
 BillingContact=Contacto facturación
 NbOfAttachedFiles=Nª de archivos adjuntos
 AttachANewFile=Adjuntar un nuevo archivo
-FileWasRemoved=El fichero se ha eliminado
 NoRIB=Ningún RIB definido
 NoParentCompany=Ninguna
 ExportImport=Import-Export
@@ -220,7 +244,7 @@ DolibarrLogin=Login Dolibarr
 NoDolibarrAccess=Sin acceso a Dolibarr
 ExportDataset_company_1=Tercero (empresas/instituciones) y atributos
 ExportDataset_company_2=Contactos de tercero y atributos
-PriceLevel=Nivel de precio
+PriceLevel=Nivel de precios
 DeliveriesAddress=Dirección(es) de envío
 DeliveryAddress=Dirección de envío
 DeliveryAddressLabel=Etiqueta de envío
@@ -247,5 +271,7 @@ FiscalMonthStart=Mes de inicio de ejercicio
 
 
 
+
+
 TigreNumRefModelDesc1=Devuelve un código cliente/proveedor personalizable según una máscara que debe definirse.
-TigreMaskCodes=Puede escoger una máscara de numeración. En esta máscara, pueden utilizarse las siguientes balizas :<br><b>{000000}</b> corresponde a un úmero que se incrementara en cada código  cliente/proveedor.Incluir tantos ceros como longuitud desee para la cuenta. La cuenta será completada por ceros a la izquiera.<br><b>{dd}</b> día de la creación del código cliente/proveedor (01 a 31).<br><b>{mm}</b> mes de  la creación del código cliente/proveedor (01 à 12).<br><b>{yy}</b> et/ou {yyyy} año, de 2 o 4 cifras, de  la creación del código cliente/proveedor.<br><b>{pre}</b> prefijo de tercero.<br>Todo otro caracter de la máscara se dejará sin cambios.<br>Puede utilizar los caracteres siguientes como separador: slash, antislash y guión<br>Diferenciar los elementos utilizados con una combinación <b>|</b> (altgr+6).<br>Los espacios no están permitidos.<br><br><u>Ejemplo de código cliente/proveedor simple</u><br><b>CC|{00000}</b> devolverá <b>CC00001</b><br><b>CF|-|{00000}</b> devolverá <b>CF-00001</b><br><br><u>Ejemplo sobre del 99º código a cliente/proveedor hecho el 31/01/2007:</u><br><b>ABC|-|{yy}|{mm}|-|{000000}</b> devolverá <b>ABC-0701-000099</b><br><b>{0000}|-|{pre}|/|{dd}|/|INV</b> devolverá <b>0099-SFR/31/INV</b><br>
+TigreMaskCodes=Usted puede indicar una máscara de numeración. En esta máscara, puede utilizar las etiquetas:<br><b>{000000}</b>corresponde a un número que se incrementa en cada código de cliente/proveedor. Indique tantos ceros como medida desee en el contador. El medidor se completará con 0 a la izquierda para tener tantos  ceros como en la máscara.<br><b>{dd}</b>día de creació del código de cliente/proveedor (01 a 31).<br><b>{mm}</b> mes de creación del código de cliente/proveedor (01 a 12).<br><b>{yy}</b> y/o {yyyy} año, con 2 o 4 cifras, de la creación del código de cliente7proveedor.
