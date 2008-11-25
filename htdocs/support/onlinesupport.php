@@ -28,9 +28,9 @@ include_once("./inc.php");
 $langs->load("other");
 
 
-pHeader("Online Help",$_SERVER["PHP_SELF"]);
+pHeader("Dolibarr Help Service Center",$_SERVER["PHP_SELF"]);
 
-print "This area can be used to get an Online Help service support.<br>\n";
+print "This area can be used to get a Help service support.<br>\n";
 print "This service is available in <b>english only</b>.<br><br>";
 
 print '<br><br>';
