@@ -509,8 +509,7 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 
 	//$curtime = dolibarr_mktime (0, 0, 0, $month, $day, $year);
 	$i=0;
-	$ok=true;
-
+	
 	foreach ($actionarray as $daykey => $notused)
 	{
 		$annee = date('Y',$daykey);
@@ -520,7 +519,6 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 		{
 			foreach ($actionarray[$daykey] as $index => $action)
 			{
-					
 				if ($i < $maxPrint || $maxPrint == 0)
 				{
 					$ponct=($action->date_start_in_calendar == $action->date_end_in_calendar);
@@ -579,12 +577,16 @@ function show_day_events($db, $day, $month, $year, $style, $actionarray, $maxPri
 					print '</td></tr></table>';
 					$i++;
 				}
-				else if($ok)
+				else
 				{
-					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$month.'&year='.$year.'">'.img_picto("all","1downarrow_selected.png").' ...</a>';
-					$ok=false;
+					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=maxPrint&month='.$month.'&year='.$year.'">'.img_picto("all","1downarrow_selected.png").' ...';
+					print ' +'.(sizeof($actionarray[$daykey])-$maxPrint);			
+					print '</a>';
+					break;
+					//$ok=false;		// To avoid to show twice the link
 				}
 			}
+			break;
 		}
 	}
 	if (! $i) print '&nbsp;';
