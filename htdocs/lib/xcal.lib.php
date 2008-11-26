@@ -55,7 +55,8 @@ function build_calfile($format='vcal',$title,$desc,$events_array,$outputfile,$fi
 		fwrite($calfileh,"BEGIN:VCALENDAR\n");
 		fwrite($calfileh,"VERSION:2.0\n");
 		fwrite($calfileh,"METHOD:PUBLISH\n");
-		fwrite($calfileh,"PRODID:-//DOLIBARR ".DOL_VERSION."//EN\n");
+		//fwrite($calfileh,"PRODID:-//DOLIBARR ".DOL_VERSION."//EN\n");
+		fwrite($calfileh,"PRODID:-//DOLIBARR ".DOL_VERSION."\n");
 		fwrite($calfileh,"CALSCALE:GREGORIAN\n");
 		fwrite($calfileh,"X-WR-CALNAME:".$encoding.format_cal($format,$title)."\n");
 		fwrite($calfileh,"X-WR-CALDESC:".$encoding.format_cal($format,$desc)."\n");

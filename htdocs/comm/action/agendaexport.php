@@ -109,10 +109,10 @@ if ($format == 'ical' || $format == 'vcal')
 		$contenttype='text/calendar';
 		if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
 		//$contenttype='text/plain';
-		
 		$outputencoding='UTF-8';
-		if ($outputencoding)   	header('Content-Encoding: '.$outputencoding);
-		if ($contenttype)       header('Content-Type: '.$contenttype);
+		//$contenttype='ISO-8859-1';
+		
+		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
 		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 		
 		// Ajout directives pour resoudre bug IE
@@ -140,10 +140,10 @@ if ($format == 'rss')
 		$contenttype='application/rss+xml';
 		if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
 		//$contenttype='text/plain';
-		
 		$outputencoding='UTF-8';
-		if ($outputencoding)   	header('Content-Encoding: '.$outputencoding);
-		if ($contenttype)       header('Content-Type: '.$contenttype);
+		//$contenttype='ISO-8859-1';
+		
+		if ($contenttype)       header('Content-Type: '.$contenttype.($outputencoding?'; charset='.$outputencoding:''));
 		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 		
 		// Ajout directives pour resoudre bug IE
