@@ -96,19 +96,14 @@ function checkBanForAccount($account)
 	dolibarr_syslog("Bank.lib::checkBanForAccount account->iban=".$account->iban." country_code=".$country_code, LOG_DEBUG);
 	
 	
-	if ($country_code == 'FR')
-	{    // Cas de la France
-
+	if ($country_code == 'FR')	// France rules
+	{
 		$coef = array(62, 34, 3) ;
-
 		// Concatenation des differents codes.
 		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet).trim($account->num_compte).trim($account->cle));
-
 		// On remplace les eventuelles lettres par des chiffres.
-
 		//$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");	//Ne marche pas
 		$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678923456789");
-
 		// Separation du rib en 3 groupes de 7 + 1 groupe de 2.
 		// Multiplication de chaque groupe par les coef du tableau
 		for ($i=0, $s=0; $i<3; $i++)
@@ -116,15 +111,12 @@ function checkBanForAccount($account)
 			$code = substr($rib, 7 * $i, 7) ;
 			$s += (0 + $code) * $coef[$i] ;
 		}
-
-		// Soustraction du modulo 97 de $s à 97 pour obtenir la clé RIB
+		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
 		$cle_rib = 97 - ($s % 97) ;
-
 		if ($cle_rib == $cle)
 		{
 			return true;
 		}
-
 		return false;
 	}
 	
@@ -132,6 +124,10 @@ function checkBanForAccount($account)
 	{
 	}
 
+	if ($country_code == 'ES')	// Spanish rules
+	{
+	}
+	
 	// No particular rule
 	// If account is CompanyBankAccount class, we use number
 	// If account is Account class, we use num_compte

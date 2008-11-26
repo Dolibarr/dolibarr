@@ -224,7 +224,19 @@ class CompanyBankAccount
 		if (! empty($company->pays_code)) return $company->pays_code;
 
 		return '';
+	}
+
+	/**
+	 * 	\brief		Return if a bank account is defined with detailed information (bank code, desk code, number and key)
+	 * 	\return		boolean		true or false
+	 */
+	function useDetailedBBAN()
+	{
+		if ($this->getCountryCode() == 'FR') return true;
+		if ($this->getCountryCode() == 'ES') return true;
+		return false;
 	}	
+	
 }
 
 ?>

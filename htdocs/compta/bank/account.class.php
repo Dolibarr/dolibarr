@@ -764,6 +764,20 @@ class Account extends CommonObject
 
 		return '';
 	}	
+
+	/**
+	 * 	\brief		Return if a bank account is defined with detailed information (bank code, desk code, number and key)
+	 * 	\return		boolean		true or false
+	 */
+	function useDetailedBBAN()
+	{
+		$country_code=$this->getCountryCode();
+
+		if ($country_code == 'FR') return true;
+		if ($country_code == 'ES') return true;
+		
+		return false;
+	}	
 	
 }
 

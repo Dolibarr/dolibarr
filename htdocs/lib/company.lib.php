@@ -689,9 +689,9 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account)
 	$pdf->MultiCell(90, 3, $outputlangs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
 	$cury+=4;
 	
-	$country_code=$account->getCountryCode();
+	$usedetailedbban=$account->useDetailedBBAN();
 	
-	if ($country_code == 'FR')
+	if ($usedetailedbban)
 	{
 		$pdf->SetFont('Arial','B',6);
 		$pdf->line($curx+1, $cury, $curx+1, $cury+10 );

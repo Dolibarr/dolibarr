@@ -117,7 +117,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 	print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
 	print '<td colspan="4">'.$account->bank.'</td></tr>';
 
-	if ($account->getCountryCode() == 'FR')
+	if ($account->useDetailedBBAN())
 	{
 		print '<tr><td>'.$langs->trans("BankCode").'</td>';
 		print '<td colspan="3">'.$account->code_banque.'</td>';
@@ -132,7 +132,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 	print '<td colspan="3">'.$account->number.'</td>';
 	print '</tr>';
 		
-	if ($account->getCountryCode() == 'FR')
+	if ($account->useDetailedBBAN())
 	{
 		print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
 		print '<td colspan="3">'.$account->cle_rib.'</td>';
@@ -201,7 +201,7 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 	print '<td colspan="4"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 
 	// BBAN
-	if ($account->getCountryCode() == 'FR')
+	if ($account->useDetailedBBAN())
 	{
 		print '<tr><td>'.$langs->trans("BankCode").'</td>';
 		print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
@@ -216,7 +216,7 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
 	print '<td><input size="15" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
 	print '</tr>';
 
-	if ($account->getCountryCode() == 'FR')
+	if ($account->useDetailedBBAN())
 	{
 		print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
 		print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';

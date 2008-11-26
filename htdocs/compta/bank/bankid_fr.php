@@ -260,7 +260,7 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 		print '</tr>';
 
 		// BBAN
-		if ($account->getCountryCode() == 'FR')
+		if ($account->useDetailedBBAN())
 		{
 			print '<tr><td>'.$langs->trans("BankCode").'</td>';
 			print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
@@ -272,10 +272,10 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 		}
 		
 		print '<td>'.$langs->trans("BankAccountNumber").'</td>';
-		print '<td><input size="15" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
+		print '<td><input size="18" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
 		print '</tr>';
 
-		if ($account->getCountryCode() == 'FR')
+		if ($account->useDetailedBBAN())
 		{
 			print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
 			print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';
@@ -284,10 +284,10 @@ if ($_GET["id"] && $_GET["action"] == 'edit' && $user->rights->banque->configure
 
 		// IBAN
 		print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-		print '<td colspan="3"><input size="24" type="text" class="flat" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
+		print '<td colspan="3"><input size="26" type="text" class="flat" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-		print '<td colspan="3"><input size="24" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
+		print '<td colspan="3"><input size="26" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
 		print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
