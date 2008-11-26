@@ -21,7 +21,7 @@
 /**
  *  \file       htdocs/compta/bank/bankid_fr.php
  *  \ingroup    banque
- *  \brief      Fiche création compte bancaire
+ *  \brief      Fiche crï¿½ation compte bancaire
  *  \version    $Id$
  */
 
@@ -90,7 +90,7 @@ $form = new Form($db);
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Affichage page en mode création                                            */
+/* Affichage page en mode crï¿½ation                                            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 		print '<tr><td valign="top">'.$langs->trans("BankName").'</td>';
 		print '<td colspan="3">'.$account->bank.'</td></tr>';
 
-		if ($account->getCountryCode() == 'FR')
+		if ($account->useDetailedBBAN())
 		{
 			print '<tr><td>'.$langs->trans("BankCode").'</td>';
 			print '<td colspan="3">'.$account->code_banque.'</td>';
@@ -167,7 +167,7 @@ if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit')
 		print '<td colspan="3">'.$account->number.'</td>';
 		print '</tr>';
 			
-		if ($account->getCountryCode() == 'FR')
+		if ($account->useDetailedBBAN())
 		{
 			print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
 			print '<td colspan="3">'.$account->cle_rib.'</td>';
