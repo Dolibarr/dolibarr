@@ -174,7 +174,7 @@ if ($_GET["action"] == 'edit')
 
 
     // Theme
-    show_theme($fuser,$conf->global->MAIN_DEMO?0:1);
+    show_theme($fuser,$conf->global->MAIN_DEMO?0:1,true);
 
     print '</div>';
 
@@ -209,7 +209,7 @@ else
 
 
     // Skin
-    show_theme($fuser,0);
+    show_theme($fuser,0,true);
 
     print '</div>';
 
@@ -237,70 +237,4 @@ else
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
-
-function show_theme($fuser,$edit=0) 
-{
-    global $conf,$langs,$dirtheme,$bc;
-    
-    $thumbsbyrow=6;
-    
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td colspan="2">&nbsp;</td></tr>';
-
-    $var=false;
-
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultSkin").'</td>';
-    print '<td>'.$conf->global->MAIN_THEME.'</td>';
-    print '<td '.$bc[$var].' align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($fuser->conf->MAIN_THEME?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
-    print '<td '.$bc[$var].'>&nbsp;</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td colspan="4">';
-
-    print '<table class="notopnoleftnoright" width="100%">';
-    $handle=opendir($dirtheme);
-    $i=0;
-    while (($subdir = readdir($handle))!==false)
-    {
-        if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
-        	&& substr($subdir, 0, 3) <> 'CVS' && ! eregi('common',$subdir))
-        {
-            if ($i % $thumbsbyrow == 0)
-            {
-                print '<tr '.$bc[$var].'>';
-            }
-            
-            print '<td align="center">';
-            $file=$dirtheme."/".$subdir."/thumb.png";
-            if (! file_exists($file)) $file=$dirtheme."/common/nophoto.jpg";
-            print '<table><tr><td><img src="'.$file.'" width="80" height="60"></td></tr><tr><td align="center">';
-            if ($subdir == $fuser->conf->MAIN_THEME)
-            {
-                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
-            }
-            else
-            {
-                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
-            }
-            print '</td></tr></table></td>';
-
-            $i++;
-
-            if ($i % $thumbsbyrow == 0) print '</tr>';
-        }
-    }
-    if ($i % $thumbsbyrow != 0) {
-        while ($i % $thumbsbyrow != 0) {
-            print '<td>&nbsp;</td>';
-            $i++;
-        }
-        print '</tr>';
-    }    
-    print '</table>';
-
-    print '</td></tr>';
-    print '</table>';
-}
-
 ?>

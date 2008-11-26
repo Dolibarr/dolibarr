@@ -386,10 +386,10 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
 
 /**
-   \brief      	Define head array for tabs of security setup pages
-   \return		Array of head
-   \version    	$Id$
-*/
+ *  \brief      	Define head array for tabs of security setup pages
+ *  \return			Array of head
+ *  \version    	$Id$
+ */
 function security_prepare_head()
 {
 	global $langs, $conf, $user;
@@ -418,5 +418,6 @@ function security_prepare_head()
 	
 	return $head;
 }
+
 
 ?>

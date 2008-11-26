@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,19 +15,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- *
- * $Id$
- * $Source$
  */
 
+
 /**
-	    \file       htdocs/lib/usergroups.lib.php
-		\brief      Ensemble de fonctions de base pour les utilisaterus et groupes
-		\version    $Revision$
-
-		Ensemble de fonctions de base de dolibarr sous forme d'include
-*/
-
+ *	    \file       htdocs/lib/usergroups.lib.php
+ *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
+ *		\version    $Id$
+ */
 function user_prepare_head($user)
 {
 	global $langs, $conf;
@@ -117,6 +112,109 @@ function group_prepare_head($group)
     $h++;
 
 	return $head;
+}
+
+
+/**
+ * 		\brief		Show themes thumbs tabs
+ * 		\param		fuser		User concerned or '' for global theme
+ * 		\param		edit		1 to add edit form
+ */
+function show_theme($fuser,$edit=0,$foruserprofile=false) 
+{
+    global $conf,$langs,$dirtheme,$bc;
+    
+    
+    $selected_theme=$conf->global->MAIN_THEME;
+    if (! empty($fuser)) $selected_theme=$fuser->conf->MAIN_THEME;
+    
+    $colspan=2;
+    if ($foruserprofile) $colspan=4;
+    
+    $thumbsbyrow=6;
+    print '<table class="noborder" width="100%">';
+    if ($foruserprofile)
+    {
+    	print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td>';
+    	print '<td colspan="2">&nbsp;</td>';
+    }
+    else
+    {
+    	print '<tr class="liste_titre"><td colspan="'.$thumbsbyrow.'">'.$langs->trans("DefaultSkin").'</td></tr>';
+    }
+    print '</tr>';
+
+    $var=false;
+
+    if ($foruserprofile)
+    {
+	    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultSkin").'</td>';
+	    print '<td>'.$conf->global->MAIN_THEME.'</td>';
+	    print '<td '.$bc[$var].' align="left" nowrap="nowrap" width="20%"><input '.$bc[$var].' name="check_MAIN_THEME"'.($edit?'':' disabled').' type="checkbox" '.($selected_theme?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
+	    print '<td '.$bc[$var].'>&nbsp;</td></tr>';
+    }
+    
+    if ($edit) print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
+	if ($edit) 
+	{
+		if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
+		else $title=$langs->trans("ShowPreview");
+	}
+    
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
+
+    print '<table class="notopnoleftnoright" width="100%">';
+    $handle=opendir($dirtheme);
+    $i=0;
+    while (($subdir = readdir($handle))!==false)
+    {
+        if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
+        	&& substr($subdir, 0, 3) <> 'CVS' && ! eregi('common',$subdir))
+        {
+            if ($i % $thumbsbyrow == 0)
+            {
+                print '<tr '.$bc[$var].'>';
+            }
+            
+            print '<td align="center">';
+            $file=$dirtheme."/".$subdir."/thumb.png";
+            if (! file_exists($file)) $file=$dirtheme."/common/nophoto.jpg";
+            print '<table><tr><td>';
+			print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
+			if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
+			else $title=$langs->trans("ShowPreview");
+            print '<img src="'.$file.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'">';
+			print '</a>';
+			print '</td></tr><tr><td align="center">';
+            if ($subdir == $selected_theme)
+            {
+                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
+            }
+            else
+            {
+                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
+            }
+            print '</td></tr></table></td>';
+
+            $i++;
+
+            if ($i % $thumbsbyrow == 0) print '</tr>';
+        }
+    }
+    if ($i % $thumbsbyrow != 0)
+    {
+        while ($i % $thumbsbyrow != 0)
+        {
+            print '<td>&nbsp;</td>';
+            $i++;
+        }
+        print '</tr>';
+    }    
+    print '</table>';
+
+    print '</td></tr>';
+    print '</table>';
 }
 
 ?>

@@ -18,12 +18,13 @@
  */
 
 /**
-        \file       htdocs/admin/ihm.php
-        \brief      Page de configuration de l'interface homme machine
-        \version    $Id$
-*/
+ *       \file       htdocs/admin/ihm.php
+ *       \brief      Page de configuration de l'interface homme machine
+ *       \version    $Id$
+ */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/html.formadmin.class.php");
 
@@ -183,11 +184,11 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
 
     // Themes
-    show_theme(1);
+    show_theme('',1);
     print '<br>';
 
 
-    // Liste des zone de recherche permanantes support�es
+    // Liste des zone de recherche permanantes supportees
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="35%">'.$langs->trans("PermanentLeftSearchForm").'</td><td>'.$langs->trans("Activated").'</td></tr>';
     $var=True;
@@ -317,7 +318,7 @@ else
 
 
     // Themes
-    show_theme(0);
+    show_theme('',0);
     print '<br>';
 
 
@@ -354,72 +355,6 @@ else
 	print '<br>';
 }
 
-
-function show_theme($edit=0) 
-{
-    global $conf,$langs,$dirtheme,$bc;
-    
-    $thumbsbyrow=6;
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="'.$thumbsbyrow.'">'.$langs->trans("DefaultSkin").'</td></tr>';
-    $var=true;
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td colspan="2">';
-
-    print '<table class="notopnoleftnoright" width="100%">';
-    $handle=opendir($dirtheme);
-    $i=0;
-    while (($subdir = readdir($handle))!==false)
-    {
-        if (is_dir($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.'
-        	&& substr($subdir, 0, 3) <> 'CVS' &&  ! eregi('common',$subdir))
-        {
-            if ($i % $thumbsbyrow == 0)
-            {
-                print '<tr '.$bc[$var].'>';
-            }
-            
-            print '<td align="center">';
-            $file=$dirtheme."/".$subdir."/thumb.png";
-            if (! file_exists($file)) $file=$dirtheme."/common/nophoto.jpg";
-            print '<table><tr><td>';
-			if ($edit) print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
-			if ($edit) 
-			{
-				if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
-				else $title=$langs->trans("ShowPreview");
-			}
-			print '<img src="'.$file.'" width="80" height="60" border="0" title="'.$title.'">';
-			if ($edit) print '</a>';
-			print '</td></tr><tr><td align="center">';
-            if ($subdir == $conf->global->MAIN_THEME)
-            {
-                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
-            }
-            else
-            {
-                print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
-            }
-            print '</td></tr></table></td>';
-
-            $i++;
-
-            if ($i % $thumbsbyrow == 0) print '</tr>';
-        }
-    }
-    if ($i % $thumbsbyrow != 0) {
-        while ($i % $thumbsbyrow != 0) {
-            print '<td>&nbsp;</td>';
-            $i++;
-        }
-        print '</tr>';
-    }    
-    print '</table>';
-
-    print '</td></tr>';
-    print '</table>';
-}
 
 $db->close();
 
