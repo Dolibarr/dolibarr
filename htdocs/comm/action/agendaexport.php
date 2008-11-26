@@ -104,13 +104,15 @@ if ($format == 'ical' || $format == 'vcal')
 	if ($result >= 0)
 	{
 		$attachment = true;
-		$type='text/calendar';
-		//$type='text/plain';		// OK
-		//$attachment = false;		// OK
+		if (isset($_GET["attachment"])) $attachment=$_GET["attachment"];
+		//$attachment = false;
+		$contenttype='text/calendar';
+		if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
+		//$contenttype='text/plain';
 		
 		$outputencoding='UTF-8';
 		if ($outputencoding)   	header('Content-Encoding: '.$outputencoding);
-		if ($type)       		header('Content-Type: '.$type);
+		if ($contenttype)       header('Content-Type: '.$contenttype);
 		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 		
 		// Ajout directives pour resoudre bug IE
@@ -133,13 +135,15 @@ if ($format == 'rss')
 	if ($result >= 0)
 	{
 		$attachment = false;
-		$type='application/rss+xml';
-		//$type='text/plain';		// OK
-		//$attachment = false;		// OK
+		if (isset($_GET["attachment"])) $attachment=$_GET["attachment"];
+		//$attachment = false;
+		$contenttype='application/rss+xml';
+		if (isset($_GET["contenttype"])) $contenttype=$_GET["contenttype"];
+		//$contenttype='text/plain';
 		
 		$outputencoding='UTF-8';
 		if ($outputencoding)   	header('Content-Encoding: '.$outputencoding);
-		if ($type)       		header('Content-Type: '.$type);
+		if ($contenttype)       header('Content-Type: '.$contenttype);
 		if ($attachment) 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 		
 		// Ajout directives pour resoudre bug IE
