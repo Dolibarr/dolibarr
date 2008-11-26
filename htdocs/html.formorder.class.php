@@ -18,14 +18,14 @@
 
 /**
  *	\file       htdocs/html.formorder.class.php
- *	\brief      Fichier de la classe des fonctions prédéfinie de composants html
+ *	\brief      File of predefined functions for HTML forms for order module
  *	\version	$Id$
  */
 
 
 /**
  *	\class      FormOrder
- *	\brief      Classe permettant la génération de composants html
+ *	\brief      Classe permettant la gï¿½nï¿½ration de composants html
  *	\remarks	Only common components must be here.
  */
 class FormOrder
@@ -37,7 +37,7 @@ class FormOrder
 
 	/**
 	 *	\brief     Constructeur
-	 *	\param     DB      handler d'accès base de donnée
+	 *	\param     DB      handler d'accï¿½s base de donnï¿½e
 	 */
 	function FormOrder($DB)
 	{
@@ -49,7 +49,7 @@ class FormOrder
 
 	/**
 	 *   	\brief      Renvoie la liste des sources de commandes
-	 *		\param      selected		Id de la source pré-sélectionnée
+	 *		\param      selected		Id de la source prï¿½-sï¿½lectionnï¿½e
 	 *    	\param     	htmlname 		Nom de la liste deroulante
 	 *      \param     	addempty		0=liste sans valeur nulle, 1=ajoute valeur inconnue
 	 *      \return		array			Tableau des sources de commandes
@@ -81,7 +81,10 @@ class FormOrder
 	{
 		global $conf,$langs;
 		$listemethodes=array();
-
+		
+		require_once(DOL_DOCUMENT_ROOT."/html.form.class.php");
+		$form=new Form($this->db);
+		
 		$sql = "SELECT rowid, libelle ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
 		$sql.= " WHERE active = 1";
@@ -105,7 +108,7 @@ class FormOrder
 			return -1;
 		}
 
-		print $this->select_array($htmlname,$listemethodes,$selected,$addempty);
+		print $form->select_array($htmlname,$listemethodes,$selected,$addempty);
 		return 1;
 	}
 
