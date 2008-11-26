@@ -77,7 +77,7 @@ if ($resql)
 		$result = $entrepot->fetch($_GET["id"]);
 		if ($result < 0)
 		{
-	  dolibarr_print_error($db);
+	  		dolibarr_print_error($db);
 		}
 	}
 
@@ -142,7 +142,8 @@ if ($resql)
 
 
 	$param="&id=".$_GET["id"]."&sref=$sref&snom=$snom";
-	print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num,0,'');
+	if ($_GET["id"]) print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num,0,'');
+	else print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num);
 
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";

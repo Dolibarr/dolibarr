@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,16 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/product/stock/liste.php
         \ingroup    stock
         \brief      Page liste des stocks
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -49,16 +46,16 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
   
-$sql  = "SELECT e.rowid as ref, e.label, e.statut, e.lieu, e.address, e.cp, e.ville, e.fk_pays";
+$sql  = "SELECT e.rowid, e.label as ref, e.statut, e.lieu, e.address, e.cp, e.ville, e.fk_pays";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql .= " WHERE 1=1";
 if ($sref)
 {
-    $sql .= " AND e.ref like '%".$sref."%'";
+    $sql .= " AND e.label like '%".$sref."%'";
 }
 if ($sall)
 {
-    $sql .= " AND (e.label like '%".$sall."%' OR e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.ville like '%".$sall."%')";
+    $sql .= " AND (e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.ville like '%".$sall."%')";
 }
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
@@ -91,7 +88,7 @@ if ($result)
 			$objp = $db->fetch_object($result);
 			$var=!$var;
 			print "<tr $bc[$var]>";
-			print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
+			print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->ref.'</a></td>';
 			print '<td>'.$objp->lieu.'</td>';
 			print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
 			print "</tr>\n";

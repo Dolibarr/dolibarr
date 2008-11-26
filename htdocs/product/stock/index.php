@@ -49,7 +49,7 @@ print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="18" name="sf_ref"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="18" name="sref"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "<tr $bc[0]><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
 print "</table></form><br>";
 
@@ -94,6 +94,63 @@ else
 
 print '</td><td valign="top" width="70%" class="notopnoleft">';
 
+// Last movements
+$max=10;
+$sql = "SELECT p.rowid, p.label as produit,";
+$sql.= " s.label as stock, s.rowid as entrepot_id,";
+$sql.= " m.value, ".$db->pdate("m.datem")." as datem";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m, ".MAIN_DB_PREFIX."product as p";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+}
+$sql .= " WHERE m.fk_product = p.rowid AND m.fk_entrepot = s.rowid";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+{
+	$sql.= " AND IFNULL(c.visible,1)=1";
+}
+$sql .= " ORDER BY datem DESC";
+$sql .= $db->plimit($max,0);
+
+dolibarr_syslog("Index:list stock movements sql=".$sql, LOG_DEBUG);
+$resql = $db->query($sql) ;
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+
+	print '<table class="noborder" width="100%">';
+	print "<tr class=\"liste_titre\">";
+	print '<td>'.$langs->trans("LastMovements",min($num,$max)).'</td>';
+	print '<td>'.$langs->trans("Product").'</td>';
+	print '<td>'.$langs->trans("Warehouse").'</td>';
+	print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php">'.$langs->trans("FullList").'</a></td>';
+	print "</tr>\n";
+
+	$var=True;
+	$i=0;
+	while ($i < min($num,$max))
+	{
+		$objp = $db->fetch_object($resql);
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print '<td>'.dolibarr_print_date($objp->datem,'dayhour').'</td>';
+		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
+		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
+		print "</a></td>\n";
+		print '<td><a href="fiche.php?id='.$objp->entrepot_id.'">';
+		print img_object($langs->trans("ShowWarehouse"),"stock").' '.$objp->stock;
+		print "</a></td>\n";
+		print '<td align="right">';
+		if ($objp->value > 0) print '+';
+		print $objp->value.'</td>';
+		print "</tr>\n";
+		$i++;
+	}
+	$db->free($resql);
+
+	print "</table>";	
+}
 
 print '</td></tr></table>';
 
