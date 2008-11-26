@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
+
 /**
-   \file       htdocs/product/stock/mouvement.php
-   \ingroup    stock
-   \brief      Page liste des mouvements de stocks
-   \version    $Id$
-*/
+ \file       htdocs/product/stock/mouvement.php
+ \ingroup    stock
+ \brief      Page liste des mouvements de stocks
+ \version    $Id$
+ */
 
 require("./pre.inc.php");
 
@@ -53,15 +53,15 @@ $sql.= " m.value, ".$db->pdate("m.datem")." as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m, ".MAIN_DB_PREFIX."product as p";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
 $sql .= " WHERE m.fk_product = p.rowid AND m.fk_entrepot = s.rowid";
 if ($_GET["id"])
-  $sql .= " AND s.rowid ='".$_GET["id"]."'";
+$sql .= " AND s.rowid ='".$_GET["id"]."'";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-  $sql.= " AND IFNULL(c.visible,1)=1";
+	$sql.= " AND IFNULL(c.visible,1)=1";
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($conf->liste_limit + 1 ,$offset);
@@ -69,80 +69,81 @@ $resql = $db->query($sql) ;
 
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  
-  if ($_GET["id"])
-    {
-      $entrepot = new Entrepot($db);
-      $result = $entrepot->fetch($_GET["id"]);
-      if ($result < 0)
+	$num = $db->num_rows($resql);
+
+	if ($_GET["id"])
 	{
+		$entrepot = new Entrepot($db);
+		$result = $entrepot->fetch($_GET["id"]);
+		if ($result < 0)
+		{
 	  dolibarr_print_error($db);
+		}
 	}
-    }
-  
-  $i = 0;
-  
-  $texte = $langs->trans("ListOfStockMovements");
-  llxHeader("","",$texte);
-  
-  
-  /*
-   * Affichage onglets
-   */
-  if ($_GET["id"])
-    {
+
+	$i = 0;
+
+	$texte = $langs->trans("ListOfStockMovements");
+	llxHeader("","",$texte);
+
+
+	/*
+	 * Affichage onglets
+	 */
+	if ($_GET["id"])
+	{
 		$h = 0;
-		
+
 		$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
 		$head[$h][1] = $langs->trans("WarehouseCard");
 		$h++;
-	
+
 		$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
 		$head[$h][1] = $langs->trans("StockMovements");
 		$hselected=$h;
 		$h++;
-		
-		$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
-	  $head[$h][1] = $langs->trans("EnhancedValue");
-	  $h++;
 
-	          if ($conf->global->STOCK_USE_WAREHOUSE_BY_USER)
-	          {
-	          	// Add the constant STOCK_USE_WAREHOUSE_BY_USER in cont table to use this feature.
-	          	// Should not be enabled by defaut because does not work yet correctly because
-	          	// there is no way to add values in the table llx_user_entrepot
-				  $head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
-				  $head[$h][1] = $langs->trans("Users");
-				  $h++;
-	          }
-	          
+		$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
+		$head[$h][1] = $langs->trans("EnhancedValue");
+		$h++;
+
+		if ($conf->global->STOCK_USE_WAREHOUSE_BY_USER)
+		{
+			// Add the constant STOCK_USE_WAREHOUSE_BY_USER in cont table to use this feature.
+			// Should not be enabled by defaut because does not work yet correctly because
+			// there is no way to add values in the table llx_user_entrepot
+			$head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
+			$head[$h][1] = $langs->trans("Users");
+			$h++;
+		}
+		 
 		$head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
 		$head[$h][1] = $langs->trans("Info");
 		$h++;
-	
+
 		dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse"));
-	
-	    print '<table class="border" width="100%">';
-	
+
+		print '<table class="border" width="100%">';
+
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
 		print '</td>';
-	    
-	    print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
-	
+	  
+		print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
+
 		// Statut
-	    print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
-	
-	    print "</table>";
-	
-	    print '</div>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
+
+		print "</table>";
+
+		print '</div>';
 	}
 
 
 	$param="&id=".$_GET["id"]."&sref=$sref&snom=$snom";
-	print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num);
+	print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num,0,'');
+
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Date"),"mouvement.php", "m.datem","",$param,"",$sortfield,$sortorder);

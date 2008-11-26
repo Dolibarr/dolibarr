@@ -18,7 +18,7 @@
  */
 
 /**
- *	\file       htdocs/product/stock/fiche.php
+ *	\file       htdocs/product/stock/fiche-valo.php
  *	\ingroup    stock
  *	\brief      Page fiche de valorisation du stock dans l'entrepot
  *	\version    $Id$
@@ -127,8 +127,10 @@ if ($_GET["id"])
 
 	print "<div class=\"graph\">\n";
 	$year = strftime("%Y",time());
+	
+	$file=DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year).'.png';
 
-	if (file_exists(DOL_DATA_ROOT.'/entrepot/temp/entrepot-'.$entrepot->id.'-'.($year).'.png'))
+	if (file_exists($file))
 	{
 		$url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.$year.'.png';
 		print '<img src="'.$url.'" alt="Valorisation du stock année '.($year).'">';

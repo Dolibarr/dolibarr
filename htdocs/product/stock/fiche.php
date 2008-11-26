@@ -144,7 +144,7 @@ if ($_GET["action"] == 'create')
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
-	
+
 	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$entrepot->lieu.'"></td></tr>';
 
 	// Description
@@ -217,7 +217,7 @@ else
 			$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
 			$head[$h][1] = $langs->trans("StockMovements");
 			$h++;
-			 
+
 			$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
 			$head[$h][1] = $langs->trans("EnhancedValue");
 			$h++;
@@ -244,7 +244,7 @@ else
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 			print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
 			print '</td>';
-			
+				
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
 
 			// Description
@@ -375,21 +375,21 @@ else
 					print "</a></td>";
 					print '<td>'.$objp->produit.'</td>';
 					print '<td align="right">'.$objp->value.'</td>';
-					
+						
 					if ($user->rights->stock->mouvement->creer)
 					{
 						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$entrepot->id.'&amp;id='.$objp->rowid.'&amp;action=transfert">';
 						print $langs->trans("StockMovement");
 						print "</a></td>";
 					}
-					
+						
 					if ($user->rights->stock->creer)
 					{
 						print '<td align="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$entrepot->id.'&amp;id='.$objp->rowid.'&amp;action=correction">';
 						print $langs->trans("StockCorrection");
 						print "</a></td>";
 					}
-					
+						
 					print "</tr>";
 					$i++;
 				}
