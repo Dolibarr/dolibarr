@@ -67,7 +67,7 @@ class Conf
 	var $monnaie;
 	var $css;
 	var $css_modules=array();
-	
+
 
 	/**
 	*      \brief      Positionne toutes les variables de configuration
