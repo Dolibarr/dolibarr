@@ -24,10 +24,11 @@
  */
 
 /**
-   \file       htdocs/master.inc.php
-   \brief      File that define environment for install pages
-   \version    $Id$
-*/
+ *	\file       htdocs/master.inc.php
+ * 	\ingroup	core
+ *  \brief      File that defines environment for all Dolibarr process (pages or scripts)
+ *  \version    $Id$
+ */
 
 define('DOL_VERSION','2.5-dev');	// Also defined in htdocs/install/inc.php
 define('EURO',chr(128)); 

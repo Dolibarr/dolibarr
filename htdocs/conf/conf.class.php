@@ -21,18 +21,19 @@
  */
 
 /**
-   \file       	htdocs/conf/conf.class.php
-   \brief      	Fichier de la classe de stockage de la config courante
-   \remarks		La config est stockee dans le fichier conf/conf.php
-   \version    	$Id$
-*/
+ *	\file       	htdocs/conf/conf.class.php
+ *	\ingroup		core
+ *  \brief      	Fichier de la classe de stockage de la config courante
+ *  \remarks		La config est stockee dans le fichier conf/conf.php
+ *  \version    	$Id$
+ */
 
 
 /**
-   \class      Conf
-   \brief      Classe de stockage de la config courante
-   \todo       Deplacer ce fichier dans htdocs/lib
-*/
+ *  \class      Conf
+ *  \brief      Classe de stockage de la config courante
+ *  \todo       Deplacer ce fichier dans htdocs/lib
+ */
 class Conf
 {
     /** \public */
@@ -67,7 +68,7 @@ class Conf
 	var $monnaie;
 	var $css;
 	var $css_modules=array();
-
+	
 
 	/**
 	*      \brief      Positionne toutes les variables de configuration

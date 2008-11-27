@@ -25,7 +25,7 @@
 /**
  *	\file       htdocs/main.inc.php
  *	\ingroup	core
- *	\brief      Fichier de formatage generique des ecrans Dolibarr
+ *	\brief      File that defines environment for Dolibarr pages only (variables not required by scripts)
  *	\version    $Id$
  */
 
@@ -132,7 +132,7 @@ if ($conf->main_force_https)
 	}
 }
 
-// Chargement des includes complementaire de presentation
+// Chargement des includes complementaires de presentation
 if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");			// Need 11ko memory (11ko in 2.2)
 if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");	// Need 690ko memory (800ko in 2.2)
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once(DOL_DOCUMENT_ROOT.'/lib/ajax.lib.php');	// Need 20ko memory
@@ -144,6 +144,17 @@ if (! empty($conf->global->MAIN_SESSION_TIMEOUT)) ini_set('session.gc_maxlifetim
 session_name($sessionname);
 session_start();
 dolibarr_syslog("Start session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"].", ".ini_get("session.gc_maxlifetime"));
+
+// Disable modules (this must be after session_start)
+if (! empty($_REQUEST["disablemodules"])) $_SESSION["disablemodules"]=$_REQUEST["disablemodules"];
+if (! empty($_SESSION["disablemodules"])) 
+{
+	$disabled_modules=split(',',$_SESSION["disablemodules"]);
+	foreach($disabled_modules as $module)
+	{
+		$conf->$module->enabled=false;
+	}
+}
 
 /*
  * Phase identification
