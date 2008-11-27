@@ -80,7 +80,7 @@ if (! empty($_REQUEST["section"]))
  ********************************************************************/
 
 // Envoie fichier
-if ( $_POST["sendit"] && $conf->upload != 0)
+if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	$result=$ecmdir->fetch($_REQUEST["section"]);
 	if (! $result > 0)

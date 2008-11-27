@@ -72,7 +72,7 @@ if (!$commande->fetch($id)) {
  */
  
 // Envoi fichier
-if ($_POST["sendit"] && $conf->upload)
+if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
   $upload_dir = $conf->commande->dir_output . "/" . sanitizeFileName($commande->ref);
   if (! is_dir($upload_dir)) create_exdir($upload_dir);

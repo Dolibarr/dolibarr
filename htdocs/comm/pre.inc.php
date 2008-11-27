@@ -88,7 +88,7 @@ function llxHeader($head = "", $title = "")
       $menu->add(DOL_URL_ROOT."/comm/mailing/", $langs->trans("EMailings"));
     }
 
-  if ($conf->fichinter->enabled  && $user->rights->ficheinter->lire) 
+  if ($conf->ficheinter->enabled  && $user->rights->ficheinter->lire) 
     {
       $langs->load("interventions");
       $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));

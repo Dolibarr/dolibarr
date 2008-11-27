@@ -44,7 +44,7 @@ $upload_dir = $conf->ecm->dir_output.'/'.$section;
 ********************************************************************/
 
 // Envoie fichier
-if ( $_POST["sendit"] && $conf->upload != 0)
+if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
   if (! is_dir($upload_dir)) create_exdir($upload_dir);
   

@@ -34,7 +34,7 @@ if (! is_dir($upload_dir))
     }
 }
 
-if ( $_POST["sendit"] && $conf->upload != 0)
+if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
   if (is_dir($upload_dir))
     {
@@ -42,7 +42,7 @@ if ( $_POST["sendit"] && $conf->upload != 0)
       $nextname = $upload_dir .'/backup';
 
 
-      if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1))
+      if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1) > 0)
 	{
 	  $mesg = "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.\n";
 	}

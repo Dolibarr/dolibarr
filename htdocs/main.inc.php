@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2008      Matteli
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +23,13 @@
  */
 
 /**
- \file       htdocs/main.inc.php
- \ingroup	core
- \brief      Fichier de formatage generique des ecrans Dolibarr
- \version    $Id$
+ *	\file       htdocs/main.inc.php
+ *	\ingroup	core
+ *	\brief      Fichier de formatage generique des ecrans Dolibarr
+ *	\version    $Id$
  */
 
-// Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING est positionnee.
+// For optionnal tuning. Enabled if environment variable DOL_TUNING is defined.
 // A appeler avant tout. Fait l'equivalent de la fonction dol_microtime_float pas encore chargee.
 $micro_start_time=0;
 if (! empty($_SERVER['DOL_TUNING']))
@@ -46,7 +47,7 @@ function stripslashes_deep($value)
 {
 	return (is_array($value) ? array_map('stripslashes_deep', $value) : stripslashes($value));
 }
-if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* plus pris en compte dans PHP6
+if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* removed in PHP6
 {
 	if (get_magic_quotes_gpc())
 	{
@@ -118,7 +119,7 @@ if ($conf->main_force_https)
 	{
 		if ($_SERVER["HTTPS"] != 'on')
 		{
-			dolibarr_syslog("dolibarr_main_force_https is on but https disabled on serveur",LOG_ERR);
+			dolibarr_syslog("dolibarr_main_force_https is on but https disabled on serveur. We ignore option.",LOG_ERR);
 		}
 		else
 		{

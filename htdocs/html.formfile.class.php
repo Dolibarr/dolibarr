@@ -68,23 +68,23 @@ class FormFile
 		print '<table width="100%" class="noborder">';
 		print '<tr><td width="50%" valign="top">';
 			
-		$max=$conf->upload;							// En Kb
+		$max=$conf->global->MAIN_UPLOAD_DOC;		// En Kb
 		$maxphp=@ini_get('upload_max_filesize');	// En inconnu
 		if (eregi('m$',$maxphp)) $maxphp=$maxphp*1024;
 		if (eregi('k$',$maxphp)) $maxphp=$maxphp;
 		// Now $max and $maxphp are in Kb
 		if ($maxphp > 0) $max=min($max,$maxphp);
 			
-		if ($conf->upload > 0)
+		if ($max > 0)
 		{
 			print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
 		}
 		print '<input class="flat" type="file" name="userfile" size="70"';
-		print (empty($conf->upload)?' disabled="true"':'');
+		print (empty($conf->global->MAIN_UPLOAD_DOC)?' disabled="true"':'');
 		print '>';
 		print ' &nbsp; ';
 		print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'"';
-		print (empty($conf->upload)?' disabled="true"':'');
+		print (empty($conf->global->MAIN_UPLOAD_DOC)?' disabled="true"':'');
 		print '>';
 			
 		if ($addcancel)
@@ -93,7 +93,7 @@ class FormFile
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		}
 		
-		if (! empty($conf->upload))
+		if (! empty($conf->global->MAIN_UPLOAD_DOC))
 		{
 			print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb");
 			print ' '.info_admin($langs->trans("ThisLimitIsDefinedInSetup",$max,$maxphp),1);

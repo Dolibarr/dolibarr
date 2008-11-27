@@ -66,7 +66,7 @@ $pagenext = $page + 1;
  */
  
 // Envoi fichier
-if ($_POST["sendit"] && $conf->upload)
+if ($_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	$propal = new Propal($db);
 

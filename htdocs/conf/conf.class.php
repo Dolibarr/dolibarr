@@ -33,14 +33,13 @@
    \brief      Classe de stockage de la config courante
    \todo       Deplacer ce fichier dans htdocs/lib
 */
-
 class Conf
 {
     /** \public */
-	//! Objet des caracteristiques de connexions
+	//! Object with database handler
 	var $db;            
 	//! Charset for HTML output
-	var $character_set_client;	// ISO-8859-1, UTF8
+	var $character_set_client;	// UTF8, ISO-8859-1
 
 	var $externalrss;
 	var $commande;
@@ -68,7 +67,7 @@ class Conf
 	var $monnaie;
 	var $css;
 	var $css_modules=array();
-
+	
 
 	/**
 	*      \brief      Positionne toutes les variables de configuration
@@ -84,7 +83,7 @@ class Conf
 
 		/*
 		 * Definition de toutes les Constantes globales d'environnement
-		 * - En constante php (\todo a virer)
+		 * - En constante php (\TODO a virer)
 		 * - En $this->global->key=value
 		 */
 		$sql = "SELECT name, value FROM ".MAIN_DB_PREFIX."const";
@@ -104,22 +103,29 @@ class Conf
 					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE during install)
 					$this->global->$key=$value;
 					// If this is constant for a css file activated by a module
-					if (eregi('MAIN_MODULE_([A-Z_]+)_CSS',$key)) $this->css_modules[]=$value;
+					if (eregi('^MAIN_MODULE_([A-Z_]+)_CSS$',$key) && $value)
+					{
+						$this->css_modules[]=$value;
+					}
+					if (eregi('^MAIN_MODULE_([A-Z]+)$',$key,$reg) && $value)
+					{
+						$module=strtolower($reg[1]);
+						//print "Module ".$module." is enabled<br>\n";
+						$this->$module->enabled=true;
+					}
 				}
 				$i++;
 			}
 		}
 		$db->free($result);
 
-
+		
 		// On reprend parametres du fichier de config conf.php
 		// \TODO Mettre tous les param de conf DB dans une propriete de la classe
 
 
-		/*
-		 * Nettoyage variables des gestionnaires de menu
-		 * conf->menu_top et conf->menu_left sont definis dans main.inc.php (selon user)
-		 */
+		// Nettoyage variables des gestionnaires de menu
+		// conf->menu_top et conf->menu_left sont definis dans main.inc.php (selon user)
 		if (! $this->global->MAIN_MENU_BARRETOP) $this->global->MAIN_MENU_BARRETOP="eldy_backoffice.php";
 		if (! $this->global->MAIN_MENUFRONT_BARRETOP) $this->global->MAIN_MENUFRONT_BARRETOP="eldy_backoffice.php";
 		if (! $this->global->MAIN_MENU_BARRELEFT) $this->global->MAIN_MENU_BARRELEFT="eldy_backoffice.php";
@@ -133,56 +139,32 @@ class Conf
 		if (! isset($this->global->LDAP_KEY_MEMBERS)) $this->global->LDAP_KEY_MEMBERS=$this->global->LDAP_FIELD_FULLNAME;
 
 
-		/*
-		 * Charge l'objet de traduction et positionne langage courant global
-		 */
+		// Load translation object with current language
 		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
 
-		/*
-		 * Autres parametres globaux de configurations
-		 */
+		// Other global parameters
 		$this->users->dir_output=DOL_DATA_ROOT."/users";
 		
-		/*
-		 * Autorisation globale d'uploader (necessaire pour desactiver dans la demo)
-		 * conf->upload peut etre ecrasee dans main.inc.php (selon user)
-		 */
-		$this->upload = $this->global->MAIN_UPLOAD_DOC;
-
-		/*
-		 * Definition des parametres d'activation de module et dependants des modules
-		 * Chargement d'include selon etat activation des modules
-		 */
-
+		// For backward compatibility
+		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
+		$this->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABILITE:0;
+		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
+		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
+		
 		// Module agenda
-		$this->agenda->enabled=defined('MAIN_MODULE_AGENDA')?MAIN_MODULE_AGENDA:0;
 		$this->agenda->dir_temp=DOL_DATA_ROOT."/agenda/temp";
 
-		// Module bookmark
-		$this->bookmark->enabled=defined('MAIN_MODULE_BOOKMARK')?MAIN_MODULE_BOOKMARK:0;
-
-		// Module deplacement
-		$this->deplacement->enabled=defined("MAIN_MODULE_DEPLACEMENT")?MAIN_MODULE_DEPLACEMENT:0;
-
-		// Module mailing
-		$this->mailing->enabled=defined("MAIN_MODULE_MAILING")?MAIN_MODULE_MAILING:0;
-
-		// Module notification
-		$this->notification->enabled=defined("MAIN_MODULE_NOTIFICATION")?MAIN_MODULE_NOTIFICATION:0;
-
 		// Module externalrss
-		$this->externalrss->enabled=defined("MAIN_MODULE_EXTERNALRSS")?MAIN_MODULE_EXTERNALRSS:0;
 		$this->externalrss->dir_temp=DOL_DATA_ROOT."/rss/temp";
 
 		// Module commande client
-		$this->commande->enabled=defined("MAIN_MODULE_COMMANDE")?MAIN_MODULE_COMMANDE:0;
 		$this->commande->dir_output=DOL_DATA_ROOT."/commande";
 		$this->commande->dir_temp  =DOL_DATA_ROOT."/commande/temp";
 
 		// Module expeditions
-		$this->expedition->enabled=defined("MAIN_MODULE_EXPEDITION")?MAIN_MODULE_EXPEDITION:0;
 		$this->expedition->dir_output=DOL_DATA_ROOT."/expedition";
 		$this->expedition->dir_temp  =DOL_DATA_ROOT."/expedition/temp";
+
 		// Sous module bons d'expedition
 		$this->expedition_bon->enabled=defined("MAIN_SUBMODULE_EXPEDITION")?MAIN_SUBMODULE_EXPEDITION:0;
 		$this->expedition_bon->dir_output=DOL_DATA_ROOT."/expedition/sending";
@@ -193,96 +175,62 @@ class Conf
 		$this->livraison_bon->dir_temp  =DOL_DATA_ROOT."/expedition/receipt/temp";
 
 		// Module societe
-		$this->societe->enabled=defined("MAIN_MODULE_SOCIETE")?MAIN_MODULE_SOCIETE:0;
 		$this->societe->dir_output=DOL_DATA_ROOT."/societe";
 		$this->societe->dir_temp  =DOL_DATA_ROOT."/societe/temp";
 		$this->societe->dir_logos =DOL_DATA_ROOT."/societe/logos";
 		if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $this->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		// Module commercial
-		$this->commercial->enabled=defined("MAIN_MODULE_COMMERCIAL")?MAIN_MODULE_COMMERCIAL:0;
 		$this->commercial->dir_output=DOL_DATA_ROOT."/comm";
 		$this->commercial->dir_temp  =DOL_DATA_ROOT."/comm/temp";
+
 		// Module taxes et charges sociales
-		$this->tax->enabled=defined("MAIN_MODULE_TAX")?MAIN_MODULE_TAX:0;
 		$this->tax->dir_output=DOL_DATA_ROOT."/taxes";
 		$this->tax->dir_temp  =DOL_DATA_ROOT."/taxes/temp";
+
 		// Module comptaexpert
-		$this->comptaexpert->enabled=defined("MAIN_MODULE_COMPTABILITE_EXPERT")?MAIN_MODULE_COMPTABILITE_EXPERT:0;
 		$this->comptaexpert->dir_output=DOL_DATA_ROOT."/comptaexpert";
 		$this->comptaexpert->dir_temp  =DOL_DATA_ROOT."/comptaexpert/temp";
 		// Module compta
-		$this->compta->enabled=defined("MAIN_MODULE_COMPTABILITE")?MAIN_MODULE_COMPTABILITE:0;
 		$this->compta->dir_output=DOL_DATA_ROOT."/compta";
 		$this->compta->dir_temp  =DOL_DATA_ROOT."/compta/temp";
 		// Module banque
-		$this->banque->enabled=defined("MAIN_MODULE_BANQUE")?MAIN_MODULE_BANQUE:0;
 		$this->banque->dir_output=DOL_DATA_ROOT."/banque";
 		$this->banque->dir_temp  =DOL_DATA_ROOT."/banque/temp";
 		// Module don
-		$this->don->enabled=defined("MAIN_MODULE_DON")?MAIN_MODULE_DON:0;
 		$this->don->dir_output=DOL_DATA_ROOT."/dons";
 		$this->don->dir_temp  =DOL_DATA_ROOT."/dons/temp";
-		// Module syslog
-		$this->syslog->enabled=defined("MAIN_MODULE_SYSLOG")?MAIN_MODULE_SYSLOG:0;
 		// Module fournisseur
-		$this->fournisseur->enabled=defined("MAIN_MODULE_FOURNISSEUR")?MAIN_MODULE_FOURNISSEUR:0;
 		$this->fournisseur->dir_output=DOL_DATA_ROOT."/fournisseur";
 		$this->fournisseur->commande->dir_output=DOL_DATA_ROOT."/fournisseur/commande";
 		$this->fournisseur->commande->dir_temp  =DOL_DATA_ROOT."/fournisseur/commande/temp";
 		$this->fournisseur->facture->dir_output =DOL_DATA_ROOT."/fournisseur/facture";
 		$this->fournisseur->facture->dir_temp   =DOL_DATA_ROOT."/fournisseur/facture/temp";
 		// Module ficheinter
-		$this->fichinter->enabled=defined("MAIN_MODULE_FICHEINTER")?MAIN_MODULE_FICHEINTER:0;
 		$this->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
 		$this->fichinter->dir_temp  =DOL_DATA_ROOT."/ficheinter/temp";
 		if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $this->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		// Module adherent
-		$this->adherent->enabled=defined("MAIN_MODULE_ADHERENT")?MAIN_MODULE_ADHERENT:0;
 		$this->adherent->dir_output=DOL_DATA_ROOT."/adherent";
 		$this->adherent->dir_tmp=DOL_DATA_ROOT."/adherent/temp";
 		// Module produit
-		$this->produit->enabled=defined("MAIN_MODULE_PRODUIT")?MAIN_MODULE_PRODUIT:0;
 		$this->produit->dir_output=DOL_DATA_ROOT."/produit";
 		$this->produit->dir_temp  =DOL_DATA_ROOT."/produit/temp";
 		$this->produit->MultiPricesEnabled=defined("PRODUIT_MULTIPRICES")?PRODUIT_MULTIPRICES:0;
 		// Module service
-		$this->service->enabled=defined("MAIN_MODULE_SERVICE")?MAIN_MODULE_SERVICE:0;
 		$this->service->dir_output=DOL_DATA_ROOT."/produit";
 		$this->service->dir_temp  =DOL_DATA_ROOT."/produit/temp";
-		// Module stock
-		$this->stock->enabled=defined("MAIN_MODULE_STOCK")?MAIN_MODULE_STOCK:0;
 		
 		// Module droipret
-		$this->droitpret->enabled=defined("MAIN_MODULE_DROITPRET")?MAIN_MODULE_DROITPRET:0;
 		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
 		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
 		$this->droitpret->dir_temp=DOL_DATA_ROOT."/droitpret/temp";
 
-		// Module code barre
-		$this->barcode->enabled=defined("MAIN_MODULE_BARCODE")?MAIN_MODULE_BARCODE:0;
-		// Module categorie
-		$this->categorie->enabled=defined("MAIN_MODULE_CATEGORIE")?MAIN_MODULE_CATEGORIE:0;
 		// Module contrat
-		$this->contrat->enabled=defined("MAIN_MODULE_CONTRAT")?MAIN_MODULE_CONTRAT:0;
 		$this->contrat->dir_output=DOL_DATA_ROOT."/contracts";
-		// Module projet
-		$this->projet->enabled=defined("MAIN_MODULE_PROJET")?MAIN_MODULE_PROJET:0;
-		// Module oscommerce 1
-		$this->boutique->enabled=defined("MAIN_MODULE_BOUTIQUE")?MAIN_MODULE_BOUTIQUE:0;
-		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
-		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
-		// Module oscommerce 2
-		$this->oscommerce2->enabled=defined("MAIN_MODULE_OSCOMMERCEWS")?MAIN_MODULE_OSCOMMERCEWS:0;
-		// Module postnuke
-		$this->postnuke->enabled=defined("MAIN_MODULE_POSTNUKE")?MAIN_MODULE_POSTNUKE:0;
-		// Module clicktodial
-		$this->clicktodial->enabled=defined("MAIN_MODULE_CLICKTODIAL")?MAIN_MODULE_CLICKTODIAL:0;
 		// Module prelevement
-		$this->prelevement->enabled=defined("MAIN_MODULE_PRELEVEMENT")?MAIN_MODULE_PRELEVEMENT:0;
 		$this->prelevement->dir_output=DOL_DATA_ROOT."/prelevement";
 		$this->prelevement->dir_temp  =DOL_DATA_ROOT."/prelevement/temp";
 		// Module webcal
-		$this->webcal->enabled=defined('MAIN_MODULE_WEBCALENDAR')?MAIN_MODULE_WEBCALENDAR:0;
 		$this->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'__dolibarr_main_db_type__';
 		$this->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
 		$this->webcal->db->port=defined('PHPWEBCALENDAR_PORT')?PHPWEBCALENDAR_PORT:'';
@@ -291,7 +239,6 @@ class Conf
 		$this->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
 		$this->webcal->dir_temp=DOL_DATA_ROOT.'/webcal/temp';
 		// Module phenix
-		$this->phenix->enabled=defined('MAIN_MODULE_PHENIX')?MAIN_MODULE_PHENIX:0;
 		$this->phenix->db->type=defined('PHPPHENIX_TYPE')?PHPPHENIX_TYPE:'__dolibarr_main_db_type__';
 		$this->phenix->db->host=defined('PHPPHENIX_HOST')?PHPPHENIX_HOST:'';
 		$this->phenix->db->port=defined('PHPPHENIX_PORT')?PHPPHENIX_PORT:'';
@@ -300,7 +247,6 @@ class Conf
 		$this->phenix->db->name=defined('PHPPHENIX_DBNAME')?PHPPHENIX_DBNAME:'';
 		$this->phenix->cookie=defined('PHPPHENIX_COOKIE')?PHPPHENIX_COOKIE:'';
 		// Module mantis
-		$this->mantis->enabled=defined('MAIN_MODULE_MANTIS')?MAIN_MODULE_MANTIS:0;
 		$this->mantis->db->type=defined('PHPMANTIS_TYPE')?PHPMANTIS_TYPE:'__dolibarr_main_db_type__';
 		$this->mantis->db->host=defined('PHPMANTIS_HOST')?PHPMANTIS_HOST:'';
 		$this->mantis->db->port=defined('PHPMANTIS_PORT')?PHPMANTIS_PORT:'';
@@ -308,24 +254,17 @@ class Conf
 		$this->mantis->db->pass=defined('PHPMANTIS_PASS')?PHPMANTIS_PASS:'';
 		$this->mantis->db->name=defined('PHPMANTIS_DBNAME')?PHPMANTIS_DBNAME:'';
 		// Module facture
-		$this->facture->enabled=defined("MAIN_MODULE_FACTURE")?MAIN_MODULE_FACTURE:0;
 		$this->facture->dir_output=DOL_DATA_ROOT."/facture";
 		$this->facture->dir_temp  =DOL_DATA_ROOT."/facture/temp";
 		if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $this->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par defaut
 		// Module propal
-		$this->propal->enabled=defined("MAIN_MODULE_PROPALE")?MAIN_MODULE_PROPALE:0;
 		if (! defined("PROPALE_NEW_FORM_NB_PRODUCT")) define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
 		$this->propal->dir_output=DOL_DATA_ROOT."/propale";
 		$this->propal->dir_temp  =DOL_DATA_ROOT."/propale/temp";
 		if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $this->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par defaut
 		// Module telephonie
-		$this->telephonie->enabled=defined("MAIN_MODULE_TELEPHONIE")?MAIN_MODULE_TELEPHONIE:0;
 		$this->telephonie->dir_output=DOL_DATA_ROOT."/telephonie";
 		$this->telephonie->dir_temp  =DOL_DATA_ROOT."/telephonie/temp";
-		// Module document
-		$this->document->enabled=defined("MAIN_MODULE_DOCUMENT")?MAIN_MODULE_DOCUMENT:0;
-		// Module energie
-		$this->energie->enabled=defined("MAIN_MODULE_ENERGIE")?MAIN_MODULE_ENERGIE:0;
 		// Module domaine
 		$this->domaine->enabled=0;
 		// Module voyage
@@ -334,27 +273,22 @@ class Conf
 		$this->actions->dir_output=DOL_DATA_ROOT."/action";
 		$this->actions->dir_temp  =DOL_DATA_ROOT."/action/temp";
 		// Module export
-		$this->export->enabled=defined("MAIN_MODULE_EXPORT")?MAIN_MODULE_EXPORT:0;
 		$this->export->dir_output=DOL_DATA_ROOT."/export";
 		$this->export->dir_temp  =DOL_DATA_ROOT."/export/temp";
 		// Module import
-		$this->import->enabled=defined("MAIN_MODULE_IMPORT")?MAIN_MODULE_IMPORT:0;
 		$this->import->dir_output=DOL_DATA_ROOT."/import";
 		$this->import->dir_temp  =DOL_DATA_ROOT."/import/temp";
 		// Module ldap
-		$this->ldap->enabled=defined("MAIN_MODULE_LDAP")?MAIN_MODULE_LDAP:0;
 		$this->ldap->dir_temp=DOL_DATA_ROOT."/ldap/temp";
 		// Module FCKeditor
-		$this->fckeditor->enabled=defined("MAIN_MODULE_FCKEDITOR")?MAIN_MODULE_FCKEDITOR:0;
 		$this->fckeditor->dir_output=DOL_DATA_ROOT."/fckeditor";
-		// Module etiquette
-		$this->label->enabled=defined("MAIN_MODULE_LABEL")?MAIN_MODULE_LABEL:0;
 		// Module ECM
-		$this->ecm->enabled=defined("MAIN_MODULE_ECM")?MAIN_MODULE_ECM:0;
 		$this->ecm->dir_output=DOL_DATA_ROOT."/ecm";
 		// Module emailing
-		$this->mailings->enabled=defined("MAIN_MODULE_MAILING")?MAIN_MODULE_MAILING:0;
 		$this->mailings->dir_temp=DOL_DATA_ROOT."/mailings/temp";
+		// Module oscommerce 1
+		$this->boutique->livre->enabled=defined("BOUTIQUE_LIVRE")?BOUTIQUE_LIVRE:0;
+		$this->boutique->album->enabled=defined("BOUTIQUE_ALBUM")?BOUTIQUE_ALBUM:0;
 		
 		
 		/*

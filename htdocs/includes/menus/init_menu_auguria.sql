@@ -295,7 +295,7 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (7,  '$conf->propal
 insert into `llx_menu_constraint` (`rowid`, `action`) values (8,  '$conf->commande->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (9,  '$conf->expedition->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (10, '$conf->contrat->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (11, '$conf->fichinter->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (11, '$conf->ficheinter->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (12, '$conf->societe->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (13, '$conf->facture->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (14, '$conf->global->FACTURE_ENABLE_RECUR');
@@ -323,7 +323,7 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (35, '$conf->commer
 insert into `llx_menu_constraint` (`rowid`, `action`) values (36, '$conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->commande->enabled || $conf->facture->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (37, '$conf->mailing->enabled || $conf->export->enabled || $conf->bookmark->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (38, '$conf->boutique->enabled');
-insert into `llx_menu_constraint` (`rowid`, `action`) values (39, '$conf->oscommerce2->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (39, '$conf->oscommercews->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (40, '$conf->webcal->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (41, '$conf->mantis->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (42, '$conf->global->PRODUIT_SPECIAL_LIVRE && $conf->global->PRODUCT_CANVAS_ABILITY');

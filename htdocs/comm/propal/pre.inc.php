@@ -81,7 +81,7 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
     }
 
-  if ($conf->fichinter->enabled ) 
+  if ($conf->ficheinter->enabled) 
     {
       $langs->load("interventions");
       $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));

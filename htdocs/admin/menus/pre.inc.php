@@ -76,7 +76,7 @@ function llxHeader($head = "")
         }
     }
 
-    if ($conf->fichinter->enabled  && $user->rights->ficheinter->lire)
+    if ($conf->ficheinter->enabled  && $user->rights->ficheinter->lire)
     {
         $langs->trans("interventions");
         $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));

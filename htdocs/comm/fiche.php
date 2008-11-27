@@ -41,7 +41,7 @@ $langs->load("companies");
 $langs->load("orders");
 $langs->load("bills");
 $langs->load("contracts");
-if ($conf->fichinter->enabled) $langs->load("interventions");
+if ($conf->ficheinter->enabled) $langs->load("interventions");
 if (!empty($conf->global->MAIN_MODULE_CHRONODOCS)) $langs->load("chronodocs");
 
 // Security check
@@ -506,7 +506,7 @@ if ($socid > 0)
     /*
      * Dernieres interventions
      */
-    if ($conf->fichinter->enabled)
+    if ($conf->ficheinter->enabled)
     {
         print '<table class="noborder" width="100%">';
 
@@ -652,7 +652,7 @@ if ($socid > 0)
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContract").'</a>';
     }
 
-    if ($conf->fichinter->enabled && $user->rights->ficheinter->creer)
+    if ($conf->ficheinter->enabled && $user->rights->ficheinter->creer)
     {
         $langs->load("fichinter");
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a>';

@@ -61,11 +61,11 @@ print "</tr>\n";
 print '</table></form>';
 
 
-if ( $_POST["sendit"] && $conf->upload != 0)
+if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
   $imp = new DolibarrImport($db);
   $imp->CreateBackupDir();  
-  if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $imp->upload_dir . "/" . $_FILES['userfile']['name'],1))
+  if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $imp->upload_dir . "/" . $_FILES['userfile']['name'],1) > 0)
     {
       
       $imp->ImportClients($imp->upload_dir . "/" . $_FILES['userfile']['name']);

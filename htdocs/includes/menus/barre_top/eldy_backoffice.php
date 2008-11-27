@@ -149,7 +149,7 @@ class MenuTop {
         if ($conf->propal->enabled)    $showcommercial=1;
         if ($conf->commande->enabled)  $showcommercial=1;
         if ($conf->contrat->enabled)   $showcommercial=1;
-        if ($conf->fichinter->enabled) $showcommercial=1;
+        if ($conf->ficheinter->enabled) $showcommercial=1;
         if ($showcommercial)*/
 		if ($conf->commercial->enabled)
         {
@@ -311,8 +311,8 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
         
-        // OSCommerce 2
-        if ($conf->oscommerce2->enabled)
+        // OSCommerce WS
+        if ($conf->oscommercews->enabled)
         {
             $langs->load("shop");
         

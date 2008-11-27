@@ -341,7 +341,7 @@ class MenuLeft {
 				}
 
 				// Interventions
-				if ($conf->fichinter->enabled )
+				if ($conf->ficheinter->enabled )
 				{
 					$langs->load("interventions");
 					$newmenu->add(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->rights->ficheinter->lire);

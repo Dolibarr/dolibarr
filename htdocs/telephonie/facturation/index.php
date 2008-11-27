@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/telephonie/fournisseurtel.class.php';
 
 if (!$user->rights->telephonie->facture->ecrire) accessforbidden();
 
-if ( $_POST["sendit"] && $conf->upload != 0)
+if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
   if ($_POST['fournisseur'] > 0)
     {
@@ -35,7 +35,7 @@ if ( $_POST["sendit"] && $conf->upload != 0)
       
       if (is_dir($upload_dir))
 	{
-	  if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1))
+	  if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1) > 0)
 	    {
 	      $mesg = "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.\n";
 	    }

@@ -19,10 +19,10 @@
  */
 
 /**
- \file       htdocs/compta/commande/fiche.php
- \ingroup    commande
- \brief      Fiche commande
- \version    $Id$
+ *	\file       htdocs/compta/commande/fiche.php
+ *	\ingroup    commande
+ *	\brief      Fiche commande
+ *	\version    $Id$
  */
 
 require("./pre.inc.php");
@@ -206,7 +206,7 @@ if ($_GET["id"] > 0)
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">'.dolibarr_print_date($commande->date,'daytext').'</td>';
 		print '<td width="50%">'.$langs->trans('Source').' : '.$commande->getLabelSource();
-		if ($commande->source == 0)
+		if ($commande->source == 0 && $conf->propal->enabled)
 		{
 			// Si source = propal
 			$propal = new Propal($db);

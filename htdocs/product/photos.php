@@ -46,14 +46,14 @@ if (!$user->rights->produit->lire) accessforbidden();
  * Actions
  */
 
-if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && $conf->upload != 0)
+if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($_GET["id"])
     {
         $product = new Product($db);
         $result = $product->fetch($_GET["id"]);
 
-        // if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1))
+        // if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name'],1) > 0)
 
         //      var_dump($_FILES);
 
@@ -156,7 +156,7 @@ if ($_GET["id"] || $_GET["ref"])
 
         print "\n<div class=\"tabsAction\">\n";
 
-        if ($_GET["action"] != 'ajout_photo' && $user->rights->produit->creer && $conf->upload)
+        if ($_GET["action"] != 'ajout_photo' && $user->rights->produit->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
         {
             print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/photos.php?action=ajout_photo&amp;id='.$product->id.'">';
             print $langs->trans("AddPhoto").'</a>';
@@ -167,7 +167,7 @@ if ($_GET["id"] || $_GET["ref"])
         /*
          * Ajouter une photo
          */
-        if ($_GET["action"] == 'ajout_photo' && $conf->upload && $user->rights->produit->creer)
+        if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
         {
         	// Affiche formulaire upload
         	$formfile=new FormFile($db);
