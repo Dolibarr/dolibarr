@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -68,7 +68,7 @@ class modCommande extends DolibarrModules
 
 		// D�pendances
 		$this->depends = array("modCommercial");
-		$this->requiredby = array();
+		$this->requiredby = array("modExpedition");
 		$this->conflictwith = array();
 		$this->langfiles = array("orders","bills","companies");
 

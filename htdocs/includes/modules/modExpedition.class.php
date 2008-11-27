@@ -15,28 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
- \defgroup   expedition     Module expedition
- \brief      Module pour gerer les expeditions de produits
+ *	\defgroup   expedition     Module expedition
+ *	\brief      Module pour gerer les expeditions de produits
  */
 
 /**
- \file       htdocs/includes/modules/modExpedition.class.php
- \ingroup    expedition
- \brief      Fichier de description et activation du module Expedition
+ *	\file       htdocs/includes/modules/modExpedition.class.php
+ *	\ingroup    expedition
+ *	\brief      Fichier de description et activation du module Expedition
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /** \class modExpedition
- \brief      Classe de description et activation du module Expedition
+ *	\brief      Classe de description et activation du module Expedition
  */
-
 class modExpedition extends DolibarrModules
 {
 
@@ -66,7 +63,7 @@ class modExpedition extends DolibarrModules
 		$this->config_page_url = array("confexped.php");
 
 		// Dependances
-		$this->depends = array("modPropale");
+		$this->depends = array("modCommande");
 		$this->requiredby = array();
 
 		// Constantes
