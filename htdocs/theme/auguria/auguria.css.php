@@ -405,8 +405,8 @@ div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
 div.help
 {
 	width: 166px;
-    margin-left:5px;
-    margin-top:15px;
+    padding: 0px;
+    margin-top: 15px;
     text-align: center;
 }
 
