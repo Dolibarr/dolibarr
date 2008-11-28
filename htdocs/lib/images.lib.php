@@ -44,7 +44,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	global $conf,$langs;
 
 	dolibarr_syslog("functions.inc::vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality);
-	
+
 	// Clean parameters
 	$file=trim($file);
 
@@ -164,7 +164,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	}
 	$thumbHeight=round($thumbHeight);
 	$thumbWidth=round($thumbWidth);
-	
+
 	// Create empty image
 	if ($infoImg[2] == 1)
 	{
@@ -187,7 +187,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	{
 		imagesavealpha($imgThumb, true);
 	}
-	
+
 	// Initialisation des variables selon l'extension de l'image
 	switch($infoImg[2])
 	{
@@ -248,37 +248,38 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 
 /**
-		\brief permet d'afficher un thermometre monetaire.
-		\param actualValue
-		\param pendingValue
-		\param intentValue
-		\return thermometer htmlLegenda
-	    This function returns the html for the moneymeter.
-	    cachedValue: amount of actual money
-	    pendingValue: amount of money of pending memberships
-	    intentValue: amount of intended money (that's without the amount of actual money)
-*/
+ \brief permet d'afficher un thermometre monetaire.
+ \param actualValue
+ \param pendingValue
+ \param intentValue
+ \return thermometer htmlLegenda
+ This function returns the html for the moneymeter.
+ cachedValue: amount of actual money
+ pendingValue: amount of money of pending memberships
+ intentValue: amount of intended money (that's without the amount of actual money)
+ */
 function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 {
+	global $langs;
 
-    // variables
-  $height="200";
-  $maximumValue=125000;
-        
-  $imageDir = "http://eucd.info/images/";
-                
-  $imageTop = $imageDir . "therm_top.png";    
-  $imageMiddleActual = $imageDir . "therm_actual.png";
-  $imageMiddlePending = $imageDir . "therm_pending.png";
-  $imageMiddleIntent = $imageDir . "therm_intent.png";
-  $imageMiddleGoal = $imageDir . "therm_goal.png";
-  $imageIndex = $imageDir . "therm_index.png";
-  $imageBottom =  $imageDir . "therm_bottom.png";
-  $imageColorActual = $imageDir . "therm_color_actual.png";
-  $imageColorPending = $imageDir . "therm_color_pending.png";
-  $imageColorIntent = $imageDir . "therm_color_intent.png";
-       
-  $htmlThermTop = '
+	// variables
+	$height="200";
+	$maximumValue=125000;
+
+	$imageDir = "http://eucd.info/images/";
+
+	$imageTop = $imageDir . "therm_top.png";
+	$imageMiddleActual = $imageDir . "therm_actual.png";
+	$imageMiddlePending = $imageDir . "therm_pending.png";
+	$imageMiddleIntent = $imageDir . "therm_intent.png";
+	$imageMiddleGoal = $imageDir . "therm_goal.png";
+	$imageIndex = $imageDir . "therm_index.png";
+	$imageBottom =  $imageDir . "therm_bottom.png";
+	$imageColorActual = $imageDir . "therm_color_actual.png";
+	$imageColorPending = $imageDir . "therm_color_pending.png";
+	$imageColorIntent = $imageDir . "therm_color_intent.png";
+	 
+	$htmlThermTop = '
         <!-- Thermometer Begin -->
         <table cellpadding="0" cellspacing="4" border="0">
         <tr><td>
@@ -289,11 +290,11 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
           <tr>
             <td>
               <table cellpadding="0" cellspacing="0" border="0">';
-                  
-  $htmlSection = '
+
+	$htmlSection = '
           <tr><td><img src="{image}" width="26" height="{height}" border="0"></td></tr>';
-         
-  $htmlThermbottom = '        
+	 
+	$htmlThermbottom = '
               </table>
             </td>
             <td><img src="' . $imageIndex . '" width="32" height="200" border="0"></td>
@@ -305,104 +306,104 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
         </td>
       </tr></table>';        
 
-  // legenda
-    
-  $legendaActual = "&euro; " . round($actualValue);
-  $legendaPending = "&euro; " . round($pendingValue);
-  $legendaIntent = "&euro; " . round($intentValue);
-  $legendaTotal = "&euro; " . round($actualValue + $pendingValue + $intentValue);
-  $htmlLegenda = '
+	// legenda
+
+	$legendaActual = "&euro; " . round($actualValue);
+	$legendaPending = "&euro; " . round($pendingValue);
+	$legendaIntent = "&euro; " . round($intentValue);
+	$legendaTotal = "&euro; " . round($actualValue + $pendingValue + $intentValue);
+	$htmlLegenda = '
 
         <table cellpadding="0" cellspacing="0" border="0">
-          <tr><td><img src="' . $imageColorActual . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><b>Pay�:<br />' . $legendaActual . '</b></font></td></tr>
-          <tr><td><img src="' . $imageColorPending . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">En attente:<br />' . $legendaPending . '</font></td></tr>
-          <tr><td><img src="' . $imageColorIntent . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">Promesses:<br />' . $legendaIntent . '</font></td></tr>
+          <tr><td><img src="' . $imageColorActual . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><b>'.$langs->trans("Payed").':<br />' . $legendaActual . '</b></font></td></tr>
+          <tr><td><img src="' . $imageColorPending . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">'.$langs->trans("Wainting").':<br />' . $legendaPending . '</font></td></tr>
+          <tr><td><img src="' . $imageColorIntent . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">'.$langs->trans("Promesses").':<br />' . $legendaIntent . '</font></td></tr>
           <tr><td>&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">Total:<br />' . $legendaTotal . '</font></td></tr>
         </table>
 
         <!-- Thermometer End -->';
-      
-  // check and edit some values
-      
-  $error = 0;    
-  if ( $maximumValue <= 0 || $height <= 0 || $actualValue < 0 || $pendingValue < 0 || $intentValue < 0)
-    {
-      return "The money meter could not be processed<br>\n";        
-    }
-  if ( $actualValue > $maximumValue ) 
-    {
-      $actualValue = $maximumValue;
-      $pendingValue = 0;
-      $intentValue = 0;
-    }
-  else
-    {
-      if ( ($actualValue + $pendingValue) > $maximumValue )
+
+	// check and edit some values
+
+	$error = 0;
+	if ( $maximumValue <= 0 || $height <= 0 || $actualValue < 0 || $pendingValue < 0 || $intentValue < 0)
 	{
+		return "The money meter could not be processed<br>\n";
+	}
+	if ( $actualValue > $maximumValue )
+	{
+		$actualValue = $maximumValue;
+		$pendingValue = 0;
+		$intentValue = 0;
+	}
+	else
+	{
+		if ( ($actualValue + $pendingValue) > $maximumValue )
+		{
 	  $pendingValue = $maximumValue - $actualValue;
 	  $intentValue = 0;
-	}
-      else
-	{
+		}
+		else
+		{
 	  if ( ($actualValue + $pendingValue + $intentValue) > $maximumValue )
-	    {
-	      $intentValue = $maximumValue - $actualValue - $pendingValue;
-	    }            
+	  {
+	  	$intentValue = $maximumValue - $actualValue - $pendingValue;
+	  }
+		}
 	}
-    }
-    
-  // start writing the html (from bottom to top)
-        
-  // bottom    
-  $thermometer = $htmlThermbottom;
-    
-  // actual
-  $sectionHeight = round(($actualValue / $maximumValue) * $height);
-  $totalHeight = $totalHeight + $sectionHeight;
-  if ( $sectionHeight > 0 )
-    {
-      $section = $htmlSection;
-      $section = str_replace("{image}", $imageMiddleActual, $section);
-      $section = str_replace("{height}", $sectionHeight, $section);
-      $thermometer = $section . $thermometer;
-    }
-  
-  // pending
-  $sectionHeight = round(($pendingValue / $maximumValue) * $height);
-  $totalHeight = $totalHeight + $sectionHeight;
-  if ( $sectionHeight > 0 )
-    {
-      $section = $htmlSection;
-      $section = str_replace("{image}", $imageMiddlePending, $section);
-      $section = str_replace("{height}", $sectionHeight, $section);
-      $thermometer = $section . $thermometer;
-    }
-  
-  // intent
-  $sectionHeight = round(($intentValue / $maximumValue) * $height);
-  $totalHeight = $totalHeight + $sectionHeight;
-  if ( $sectionHeight > 0 )
-    {
-      $section = $htmlSection;
-      $section = str_replace("{image}", $imageMiddleIntent, $section);
-      $section = str_replace("{height}", $sectionHeight, $section);
-      $thermometer = $section . $thermometer;
-    }
-  
-  // goal        
-  $sectionHeight = $height- $totalHeight;
-  if ( $sectionHeight > 0 )
-    {
-      $section = $htmlSection;
-      $section = str_replace("{image}", $imageMiddleGoal, $section);
-      $section = str_replace("{height}", $sectionHeight, $section);
-      $thermometer = $section . $thermometer;
-    }      
-  
-  // top
-  $thermometer = $htmlThermTop . $thermometer;
-  
-  return $thermometer . $htmlLegenda;
+
+	// start writing the html (from bottom to top)
+
+	// bottom
+	$thermometer = $htmlThermbottom;
+
+	// actual
+	$sectionHeight = round(($actualValue / $maximumValue) * $height);
+	$totalHeight = $totalHeight + $sectionHeight;
+	if ( $sectionHeight > 0 )
+	{
+		$section = $htmlSection;
+		$section = str_replace("{image}", $imageMiddleActual, $section);
+		$section = str_replace("{height}", $sectionHeight, $section);
+		$thermometer = $section . $thermometer;
+	}
+
+	// pending
+	$sectionHeight = round(($pendingValue / $maximumValue) * $height);
+	$totalHeight = $totalHeight + $sectionHeight;
+	if ( $sectionHeight > 0 )
+	{
+		$section = $htmlSection;
+		$section = str_replace("{image}", $imageMiddlePending, $section);
+		$section = str_replace("{height}", $sectionHeight, $section);
+		$thermometer = $section . $thermometer;
+	}
+
+	// intent
+	$sectionHeight = round(($intentValue / $maximumValue) * $height);
+	$totalHeight = $totalHeight + $sectionHeight;
+	if ( $sectionHeight > 0 )
+	{
+		$section = $htmlSection;
+		$section = str_replace("{image}", $imageMiddleIntent, $section);
+		$section = str_replace("{height}", $sectionHeight, $section);
+		$thermometer = $section . $thermometer;
+	}
+
+	// goal
+	$sectionHeight = $height- $totalHeight;
+	if ( $sectionHeight > 0 )
+	{
+		$section = $htmlSection;
+		$section = str_replace("{image}", $imageMiddleGoal, $section);
+		$section = str_replace("{height}", $sectionHeight, $section);
+		$thermometer = $section . $thermometer;
+	}
+
+	// top
+	$thermometer = $htmlThermTop . $thermometer;
+
+	return $thermometer . $htmlLegenda;
 }
 
 ?>
