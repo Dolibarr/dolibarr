@@ -224,7 +224,7 @@ if ($_GET["action"] == 'create')
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans('Numero');
-		print ' <em>(Numéro chèque ou virement)</em>';	// \todo a traduire
+		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print "<td><input name=\"num_paiement\" type=\"text\"></td></tr>\n";
 
 		/*

@@ -18,10 +18,10 @@
  */
 
 /**
- \file       htdocs/compta/paiement/cheque/fiche.php
- \ingroup    facture
- \brief      Onglet paiement cheque
- \version    $Id$
+ *	\file       htdocs/compta/paiement/cheque/fiche.php
+ *	\ingroup    facture
+ *	\brief      Onglet paiement cheque
+ *	\version    $Id$
  */
 
 require('./pre.inc.php');
@@ -183,7 +183,7 @@ else
 	 */
 	if ($_GET['action'] == 'delete')
 	{
-		$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), 'Etes-vous sûr de vouloir supprimer ce bordereau ?', 'confirm_delete');
+		$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete');
 		print '<br>';
 	}
 
@@ -193,7 +193,7 @@ else
 	if ($_GET['action'] == 'valide')
 	{
 		$facid = $_GET['facid'];
-		$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), 'Etes-vous sûr de vouloir valider ce bordereau, auncune modification n\'est possible une fois le bordereau validé ?', 'confirm_valide');
+		$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide');
 		print '<br>';
 	}
 }
