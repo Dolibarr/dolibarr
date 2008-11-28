@@ -119,7 +119,7 @@ class Mailing
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Mailing::Create ".$this->error, LOG_ERROR);
+			dolibarr_syslog("Mailing::Create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -147,7 +147,7 @@ class Mailing
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dolibarr_syslog("Mailing::Update ".$this->error, LOG_ERROR);
+			dolibarr_syslog("Mailing::Update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

@@ -281,16 +281,18 @@ class RemiseCheque extends CommonObject
 	function Validate($user)
 	{
 		$this->errno = 0;
+
 		$this->db->begin();
 
 		$num=$this->getNextNumber();
 			
-		if ($this->errno === 0)
+		if ($this->errno == 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql.= " SET statut=1, number='".$num."'";
 			$sql .= " WHERE rowid = $this->id AND statut=0;";
 
+			dolibarr_syslog("RemiseCheque::Validate sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ( $resql )
 			{
@@ -313,12 +315,13 @@ class RemiseCheque extends CommonObject
 			}
 		}
 
-		if ($this->errno === 0)
+		if ($this->errno == 0)
 		{
 			$this->GeneratePdf();
 		}
 
-		if ($this->errno === 0)
+		// Commit/Rollback
+		if ($this->errno == 0)
 		{
 			$this->db->commit();
 		}
@@ -343,6 +346,8 @@ class RemiseCheque extends CommonObject
 
 		// We use +0 to convert varchar to number
 		$sql = "SELECT MAX(number+0) FROM ".MAIN_DB_PREFIX."bordereau_cheque";
+
+		dolibarr_syslog("Remisecheque::getNextNumber sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -353,7 +358,7 @@ class RemiseCheque extends CommonObject
 		else
 		{
 			$this->errno = -1034;
-			dolibarr_syslog("Remisecheque::Validate Erreur SELECT ($this->errno)");
+			dolibarr_syslog("Remisecheque::Validate Erreur SELECT ($this->errno)", LOG_ERR);
 		}
 
 		$num++;

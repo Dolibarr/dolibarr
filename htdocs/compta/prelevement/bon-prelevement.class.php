@@ -754,18 +754,18 @@ class BonPrelevement extends CommonObject
                             }
                             else
                             {
-                                dolibarr_syslog("Erreur de RIB societe $fact->socid $soc->nom", LOG_ERROR);
+                                dolibarr_syslog("Erreur de RIB societe $fact->socid $soc->nom", LOG_ERR);
                                 $facture_errors[$fac[0]]="Erreur de RIB societe $fact->socid $soc->nom";
                             }
                         }
                         else
                         {
-                            dolibarr_syslog("Failed to read company", LOG_ERROR);
+                            dolibarr_syslog("Failed to read company", LOG_ERR);
                         }
                     }
                     else
                     {
-                        dolibarr_syslog("Impossible de lire la facture", LOG_ERROR);
+                        dolibarr_syslog("Impossible de lire la facture", LOG_ERR);
                     }
                 }
             }

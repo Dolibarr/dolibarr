@@ -151,7 +151,7 @@ class MouvementStock
 
 
 	/**
-	 *      \brief      Cr�e un mouvement en base pour tous les sous-produits
+	 *      \brief      Create movement in databse for all subproducts
 	 *      \return     int     <0 si ko, 0 si ok
 	 */
 	function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price=0)
@@ -179,7 +179,7 @@ class MouvementStock
 		}
 		else
 		{
-			dolibarr_syslog("MouvementStock::_createSubProduct ".$this->error, LOG_ERROR);
+			dolibarr_syslog("MouvementStock::_createSubProduct ".$this->error, LOG_ERR);
 			$error = -2;
 		}
 

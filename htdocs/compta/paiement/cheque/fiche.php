@@ -106,7 +106,7 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 	$remisecheque = new RemiseCheque($db);
 	$remisecheque->Fetch($_GET["id"]);
 	$result = $remisecheque->Validate($user);
-	if ($result == 0)
+	if ($result >= 0)
 	{
 		Header("Location: fiche.php?id=".$remisecheque->id);
 		exit;
@@ -421,7 +421,7 @@ if ($user->societe_id == 0 && sizeof($accounts) == 1 && $_GET['action'] == 'new'
 
 if ($user->societe_id == 0 && $remisecheque->statut == 0 && $_GET['action'] == '')
 {
-	print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+	print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 }
 
 if ($user->societe_id == 0 && $remisecheque->statut == 0 && $_GET['action'] == '')
