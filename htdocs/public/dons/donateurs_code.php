@@ -18,7 +18,7 @@
  * $Id$
  */
 
-require("./pre.inc.php");
+require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
 
 $langs->load("donations");

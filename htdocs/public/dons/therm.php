@@ -26,6 +26,7 @@
 
 require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 
 
 /*
@@ -37,7 +38,7 @@ $intentValue  = $dontherm->sum_donations(1);
 $pendingValue = $dontherm->sum_donations(2);
 $actualValue  = $dontherm->sum_donations(3);
 
-$dbt->close();
+$db->close();
 
 
 /* 

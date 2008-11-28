@@ -266,7 +266,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	$height="200";
 	$maximumValue=125000;
 
-	$imageDir = "http://eucd.info/images/";
+	$imageDir = "http://eucd.info/images/therm/";
 
 	$imageTop = $imageDir . "therm_top.png";
 	$imageMiddleActual = $imageDir . "therm_actual.png";
