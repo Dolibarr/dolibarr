@@ -316,7 +316,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 
         <table cellpadding="0" cellspacing="0" border="0">
           <tr><td><img src="' . $imageColorActual . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif"><b>'.$langs->trans("Payed").':<br />' . $legendaActual . '</b></font></td></tr>
-          <tr><td><img src="' . $imageColorPending . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">'.$langs->trans("Wainting").':<br />' . $legendaPending . '</font></td></tr>
+          <tr><td><img src="' . $imageColorPending . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">'.$langs->trans("Waiting").':<br />' . $legendaPending . '</font></td></tr>
           <tr><td><img src="' . $imageColorIntent . '" width="9" height="9">&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">'.$langs->trans("Promesses").':<br />' . $legendaIntent . '</font></td></tr>
           <tr><td>&nbsp;</td><td><font size="1" face="Verdana, Arial, Helvetica, sans-serif">Total:<br />' . $legendaTotal . '</font></td></tr>
         </table>
