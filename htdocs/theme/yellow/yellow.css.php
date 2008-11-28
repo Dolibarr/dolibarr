@@ -1005,7 +1005,6 @@ form.inplaceeditor-form a { /* The cancel link */
 /* Admin Menu                                                                     */
 /* ============================================================================== */
 
-
 /* CSS a  appliquer a  l'arbre hierarchique */
 
 /* Lien plier /deplier tout */
@@ -1047,11 +1046,6 @@ ul.arbre li {
 }
 ul.arbre li li {
     margin: 0 0 0 16px;
-}
-/* Uniquement pour les navigateurs a  moteur gecko */
-ul.arbre li:last-child {
-    border-left: 0;
-    background: url(<?php echo $dolibarr_main_url_root.'/theme/common/treemenu/line.gif' ?>) no-repeat 0 0;
 }
 /* Classe pour masquer */
 .hide {
