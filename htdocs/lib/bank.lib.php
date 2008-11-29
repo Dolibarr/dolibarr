@@ -93,14 +93,18 @@ function checkBanForAccount($account)
 {
 	$country_code=$account->getCountryCode();
 	
+	// For compatibility between 	
+	// account of type CompanyBankAccount class (we use number)
+	// account of type Account class (we use num_compte)
+	if (empty($account->number)) $account->number=$account->num_compte;
+
 	dolibarr_syslog("Bank.lib::checkBanForAccount account->iban=".$account->iban." country_code=".$country_code, LOG_DEBUG);
-	
 	
 	if ($country_code == 'FR')	// France rules
 	{
 		$coef = array(62, 34, 3) ;
 		// Concatenation des differents codes.
-		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet).trim($account->num_compte).trim($account->cle));
+		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet).trim($account->number).trim($account->cle));
 		// On remplace les eventuelles lettres par des chiffres.
 		//$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");	//Ne marche pas
 		$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678923456789");
@@ -126,8 +130,19 @@ function checkBanForAccount($account)
 
 	if ($country_code == 'ES')	// Spanish rules
 	{
-	}
-	
+		$CCC = strtolower(trim($account->number));
+
+		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet));
+    	
+    	$cle_rib=strtolower(CheckES($rib,$CCC));
+    	
+		if ($cle_rib == strtolower($account->cle_rib))
+    	{
+    		return true;
+		}   
+		return false; 
+    }	
+
 	// No particular rule
 	// If account is CompanyBankAccount class, we use number
 	// If account is Account class, we use num_compte
@@ -135,8 +150,45 @@ function checkBanForAccount($account)
 	{
 		return false;
 	}
-	
+
 	return true;
 }
+
+
+/** 
+ * 	Returns the key for Spanish Banks Accounts  
+ *  @return		string		Key
+ */ 
+Function CheckES($IentOfi,$InumCta)
+{
+	$APesos = Array(1,2,4,8,5,10,9,7,3,6); // Array de "pesos"
+	$DC1=0;
+	$DC2=0;
+	$x=8;
+	while($x>0) {
+		$digito=$IentOfi[$x-1];
+		$DC1=$DC1+($APesos[$x+2-1]*($digito));
+		$x = $x - 1;
+	}
+	$Resto = $DC1%11;
+	$DC1=11-$Resto;
+	if ($DC1==10) $DC1=1;
+	if ($DC1==11) $DC1=0;              // Digito control Entidad-Oficina
+
+	$x=10;
+	while($x>0) {
+		$digito=$InumCta[$x-1];
+		$DC2=$DC2+($APesos[$x-1]*($digito));
+		$x = $x - 1;
+	}
+	$Resto = $DC2%11;
+	$DC2=11-$Resto;
+	if ($DC2==10) $DC1=1;
+	if ($DC2==11) $DC1=0;         // Digito Control C/C
+
+	$DigControl=($DC1)."".($DC2);   // los 2 numeros del D.C.
+	return $DigControl;
+}
+
 
 ?>
