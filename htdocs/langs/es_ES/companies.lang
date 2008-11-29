@@ -3,6 +3,7 @@
 
 
 
+
 ErrorBadEMail=e-mail %s no correcto
 ErrorCompanyNameAlreadyExists=El nombre de la emprea %s ya existe. Indique otro.
 ErrorPrefixAlreadyExists=El prefijo %s ya existe. Indique otro.
@@ -79,6 +80,7 @@ ProfId2Short=Prof. id 2
 ProfId3Short=Prof. id 3
 ProfId4Short=Prof. id 4
 ##### Professionnal ID #####
+
 
 
 
@@ -235,7 +237,7 @@ ProspectsByStatus=Clientes potenciales por estado
 BillingContact=Contacto facturación
 NbOfAttachedFiles=Nª de archivos adjuntos
 AttachANewFile=Adjuntar un nuevo archivo
-NoRIB=Ningún RIB definido
+NoRIB=Ninguna cuenta definida
 NoParentCompany=Ninguna
 ExportImport=Import-Export
 ExportCardToFormat=Exportar ficha a formato
@@ -268,6 +270,7 @@ FiscalYearInformation=Información del año fiscal
 FiscalMonthStart=Mes de inicio de ejercicio
 
 # Tigre
+
 
 
 
