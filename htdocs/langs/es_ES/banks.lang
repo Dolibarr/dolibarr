@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - banks
+
 Bank=Banco
 Banks=Bancos
 MenuBankCash=Bancos/Cajas
@@ -27,7 +28,7 @@ CurrentBalance=Saldo actual
 FutureBalance=Saldo previsto
 ShowAllTimeBalance=Mostar balance desde principio
 Reconciliation=Conciliación
-RIB=CCC
+RIB=Cuenta bancaria
 IBAN=Identificador IBAN
 BIC=Identificador BIC/SWIFT
 StandingOrders=Domiciliaciones

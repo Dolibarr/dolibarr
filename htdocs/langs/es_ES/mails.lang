@@ -61,19 +61,12 @@ MailingAddFile=Adjuntar este archivo
 NoAttachedFiles=Sin ficheros adjuntos
 
 # Libelle des modules de liste de destinataires mailing
-
-
-
 MailingModuleDescContactCompanies=Contactos de terceros (clientes potenciales, clientes, proveedores...)
 MailingModuleDescDolibarrUsers=Usuarios de Dolibarr que tienen e-mail
 MailingModuleDescFundationMembers=Miembros que tienen e-mail
 MailingModuleDescEmailsFromFile=E-Mails de un archivo
 MailingModuleDescContactsCategories=Contactos de todos los terceros (por categoría)
 LineInFile=Línea %s en archivo
-
-
-
-
 RecipientSelectionModules=Módulos de selección de los destinatarios
 MailSelectedRecipients=Destinatarios seleccionados
 MailingArea=Area mailings
@@ -96,8 +89,6 @@ IdRecord=ID registro
 DeliveryReceipt=Acuso de recibo
 
 # Module Notifications
-
-
 
 Notifications=Notificaciones
 NoNotificationsWillBeSent=Ninguna notificación por e-mail está prevista para este evento y empresa

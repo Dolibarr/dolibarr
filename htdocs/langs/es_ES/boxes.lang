@@ -1,4 +1,5 @@
 # Dolibarr language file - es_ES - boxes
+
 BoxLastRssInfos=Hilos de información RSS
 BoxLastProducts=Últimos productos/servicios
 BoxLastProductsInContract=Últimos productos/servicios contratados
@@ -48,4 +49,4 @@ NoRecordedProposals=Sin presupuestos registrados
 NoRecordedInvoices=Sin facturas a clientes registrados
 NoUnpayedCustomerBills=Sin facturas a clientes pendientes de pago
 NoRecordedSupplierInvoices=Sin facturas de proveedores
-NoUnpayedSupplierBills=sin facturas de proveedores pendientes de pago
+NoUnpayedSupplierBills=Sin facturas de proveedores pendientes de pago

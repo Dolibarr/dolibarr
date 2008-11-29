@@ -1,5 +1,7 @@
 # Dolibarr language file - es_ES - bills
 
+
+
 Bill=Factura
 Bills=Facturas
 BillsCustomers=Facturas a clientes
@@ -248,6 +250,8 @@ DisabledBecauseReplacedInvoice=Acción desactivada porque sustituye la factura
 
 # PaymentConditions
 
+
+
 PaymentConditionShortRECEP=A la recepción
 PaymentConditionRECEP=A la recepción de la factura
 PaymentConditionShort30D=30 días
@@ -259,6 +263,8 @@ PaymentCondition60D=Pago a los 60 días
 PaymentConditionShort60DENDMONTH=60 días a fin de mes
 PaymentCondition60DENDMONTH=Pago a los 60 días a fin de mes
 # PaymentType
+
+
 
 PaymentTypeVIR=Transferencia bancaria
 PaymentTypeShortVIR=Transferencia
@@ -280,11 +286,12 @@ BankDetails=Datos bancarios
 BankCode=Código banco
 DeskCode=Código sucursal
 BankAccountNumber=Número cuenta
-BankAccountNumberKey=Llave RIB
+BankAccountNumberKey=Dígito Control
 Residence=Domiciliación
-IbanPrefix=Prefijo IBAN
+IBANNumber=Código IBAN
 IBAN=IBAN
 BIC=BIC/SWIFT
+BICNumber=Código BIC/SWIFT
 ExtraInfos=Informaciones complementarias
 RegulatedOn=Pagar el
 ChequeNumber=Cheque nº
@@ -324,37 +331,55 @@ ShowUnpayedLateOnly=Mostrar los pendientes en retraso
 
 # oursin PDF model
 
+
+
 Of=de
 
 # bernique PDF model
+
+
 
 PDFBerniqueDescription=Modelo para las facturas con varios tipos de IVA, incluido también el número de IVA Intracomunitario
 
 # bigorneau PDF Model
 
+
+
 PDFBigorneauDescription=Modelo de factura sin informaciones de pago
 
 # bulot PDF Model
+
+
 
 PDFBulotDescription=Modelo de factura con descuentos e información de pago
 
 # crabe PDF Model
 
+
+
 PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar, logotipo...)
 
 # huitre PDF Model
+
+
 
 PDFHuitreDescription=Modelo de factura con descuento e información de pago
 
 # oursin PDF Model
 
+
+
 PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas, nombre del proyecto, referencias de presupuesto, logotipo...)
 
 # tourteau PDF Model
+
+
 
 PDFTourteauDescription=Modelo de factura sin descuento
 
 # terre
 
+
+
 TerreNumRefModelDesc1=Devuelve el número bajo el formato %syymm-nnnn para las facturas y %syymm-nnnn para los abonos donde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin permanencia a 0
-TerreNumRefModelError=Una factura que comienza por # $$syymm existe en base y es incompatible con esta numeración. Eliminela o renombrela para activar este módulo.
+TerreNumRefModelError=Una factura que comienza por $$syymm existe en base y es incompatible con esta numeración. Eliminela o renombrela para activar este módulo.

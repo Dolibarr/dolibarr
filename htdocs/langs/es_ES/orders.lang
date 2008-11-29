@@ -3,6 +3,7 @@
 
 
 
+
 OrdersArea=Area pedidos de clientes
 SuppliersOrdersArea=Area pedidos a proveedores
 OrderCard=Ficha pedido
@@ -92,7 +93,7 @@ RelatedOrders=Pedidos adjuntos
 OnProcessOrders=Pedidos en proceso
 RefOrder=Ref. pedido
 RefCustomerOrder=Ref. pedido cliente
-CustomerOrder=Pedido de cliente
+CustomerOrder=Pedido cliente
 RefCustomerOrderShort=Ref. ped. cliente
 SendOrderByMail=Enviar pedido por e-mail
 ActionsOnOrder=Acciones sobre el pedido
@@ -113,6 +114,7 @@ Error_FailedToLoad_COMMANDE_ADDON_File=Error en la carga dle archivo módulo '%s'
 
 
 
+
 OrderSource0=Presupuesto
 OrderSource1=Internet
 OrderSource2=Campaña por correo
@@ -124,6 +126,7 @@ QtyOrdered=Cant. pedida
 AddDeliveryCostLine=Añadir una línea de gastos de portes indicando el peso del pedido
 
 # einstein PDF Model
+
 
 
 

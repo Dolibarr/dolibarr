@@ -5,9 +5,10 @@
 
 
 
+
 ContractsArea=Area contratos
 ListOfContracts=Listado de contratos
-LastContracts=los %s últimos contratos modificados
+LastContracts=Los %s últimos contratos modificados
 AllContracts=Todos los contratos
 ContractCard=Ficha contrato
 ContractStatus=Estado del contrato
@@ -80,6 +81,7 @@ MoveToAnotherContract=Mover el servicio a otro contrato.
 ConfirmMoveToAnotherContract=He buscado un nuevo contrato y confirmo que quiero mover este servicio a este contrato.
 ConfirmMoveToAnotherContractQuestion=Elejir a que contrato (del mismo tercero) desea mover a este servicio? 
 ##### Types de contacts #####
+
 
 
 
