@@ -18,14 +18,14 @@
 
 /**
  *	\file       htdocs/html.formcompany.class.php
- *	\brief      Fichier de la classe des fonctions prédéfinie de composants html
+ *	\brief      Fichier de la classe des fonctions prï¿½dï¿½finie de composants html
  *	\version	$Id$
  */
 
 
 /**
  *	\class      FormCompany
- *	\brief      Classe permettant la génération de composants html
+ *	\brief      Classe permettant la gï¿½nï¿½ration de composants html
  *	\remarks	Only common components must be here.
  */
 class FormCompany
@@ -37,7 +37,7 @@ class FormCompany
 
 	/**
 	 *	\brief     Constructeur
-	 *	\param     DB      handler d'accès base de donnée
+	 *	\param     DB      handler d'accï¿½s base de donnï¿½e
 	 */
 	function FormCompany($DB)
 	{
@@ -176,13 +176,13 @@ class FormCompany
 
 
 	/**
-	 *    \brief      Retourne la liste déroulante des départements/province/cantons tout pays confondu ou pour un pays donné.
+	 *    \brief      Retourne la liste dï¿½roulante des dï¿½partements/province/cantons tout pays confondu ou pour un pays donnï¿½.
 	 *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
-	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
-	 *                un code donnée mais dans ce cas, le champ pays diffère).
-	 *                Ainsi les liens avec les départements se font sur un département indépendemment de son nom.
-	 *    \param      selected        code forme juridique a présélectionné
-	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
+	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrï¿½e pour
+	 *                un code donnï¿½e mais dans ce cas, le champ pays diffï¿½re).
+	 *                Ainsi les liens avec les dï¿½partements se font sur un dï¿½partement indï¿½pendemment de son nom.
+	 *    \param      selected        code forme juridique a prï¿½sï¿½lectionnï¿½
+	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays ï¿½ afficher
 	 */
 	function select_departement($selected='',$pays_code=0)
 	{
@@ -194,7 +194,7 @@ class FormCompany
 
 		$htmlname='departement_id';
 
-		// On recherche les départements/cantons/province active d'une region et pays actif
+		// On recherche les dï¿½partements/cantons/province active d'une region et pays actif
 		$sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM";
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
@@ -240,7 +240,7 @@ class FormCompany
 						{
 							print '<option value="'.$obj->rowid.'">';
 						}
-						// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+						// Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
 						print $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
 						print '</option>';
 					}
@@ -258,9 +258,9 @@ class FormCompany
 
 	
 	/**
-	 *    \brief      Retourne la liste déroulante des regions actives dont le pays est actif
-	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
-	 *                un code donnée mais dans ce cas, le champ pays et lang diffère).
+	 *    \brief      Retourne la liste dï¿½roulante des regions actives dont le pays est actif
+	 *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrï¿½e pour
+	 *                un code donnï¿½e mais dans ce cas, le champ pays et lang diffï¿½re).
 	 *                Ainsi les liens avec les regions se font sur une region independemment
 	 *                de son nom.
 	 */
@@ -317,8 +317,8 @@ class FormCompany
 
 	
 	/**
-	 *    \brief      Retourne la liste déroulante des civilite actives
-	 *    \param      selected    civilite pré-sélectionnée
+	 *    \brief      Retourne la liste dï¿½roulante des civilite actives
+	 *    \param      selected    civilite prï¿½-sï¿½lectionnï¿½e
 	 */
 	function select_civilite($selected='')
 	{
@@ -348,7 +348,7 @@ class FormCompany
 					{
 						print '<option value="'.$obj->code.'">';
 					}
-					// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+					// Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
 					print ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
 					print '</option>';
 					$i++;
@@ -365,10 +365,10 @@ class FormCompany
 
 
 	/**
-	 *    \brief      Retourne la liste déroulante des formes juridiques tous pays confondus ou pour un pays donné.
+	 *    \brief      Retourne la liste dï¿½roulante des formes juridiques tous pays confondus ou pour un pays donnï¿½.
 	 *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
-	 *    \param      selected        Code forme juridique a pré-sélectionné
-	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
+	 *    \param      selected        Code forme juridique a prï¿½-sï¿½lectionnï¿½
+	 *    \param      pays_code       0=liste tous pays confondus, sinon code du pays ï¿½ afficher
 	 */
 	function select_forme_juridique($selected='',$pays_code=0)
 	{
@@ -418,9 +418,9 @@ class FormCompany
 						{
 							print '<option value="'.$obj->code.'">';
 						}
-						// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+						// Si translation exists, we use it, otherwise we use default label in database
 						print $obj->code . ' - ';
-						print ($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code?$langs->trans("JuridicalStatus".$obj->code):($obj->nom!='-'?$langs->convToOutputCharset($obj->nom):''));
+						print ($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code?$langs->trans("JuridicalStatus".$obj->code):($obj->nom!='-'?$obj->nom:''));	// $obj->nom is alreay in output charset (converted by database driver)
 						print '</option>';
 					}
 					$i++;

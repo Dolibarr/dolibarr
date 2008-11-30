@@ -24,33 +24,33 @@
 --
 
 --
--- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
--- de l'install et tous les sigles '--' sont supprimés.
+-- Ne pas placer de commentaire en fin de ligne, ce fichier est parsÃ© lors
+-- de l'install et tous les sigles '--' sont supprimÃ©s.
 --
 
 
 INSERT INTO llx_c_methode_commande_fournisseur (rowid, code, libelle, active) VALUES (1, 'OrderByMail',  'Courrier',  1);
 INSERT INTO llx_c_methode_commande_fournisseur (rowid, code, libelle, active) VALUES (2, 'OrderByFax',   'Fax',       1);
 INSERT INTO llx_c_methode_commande_fournisseur (rowid, code, libelle, active) VALUES (3, 'OrderByEMail', 'EMail',     1);
-INSERT INTO llx_c_methode_commande_fournisseur (rowid, code, libelle, active) VALUES (4, 'OrderByPhone', 'Téléphone', 1);
+INSERT INTO llx_c_methode_commande_fournisseur (rowid, code, libelle, active) VALUES (4, 'OrderByPhone', 'TÃ©lÃ©phone', 1);
 INSERT INTO llx_c_methode_commande_fournisseur (rowid, code, libelle, active) VALUES (5, 'OrderByWWW',   'En ligne',  1);
 
 
-insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (1,'RECEP',       1,1, 'A réception','Réception de facture',0,0);
-insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (2,'30D',         2,1, '30 jours','Réglement à 30 jours',0,30);
-insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (3,'30DENDMONTH', 3,1, '30 jours fin de mois','Réglement à 30 jours fin de mois',1,30);
-insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (4,'60D',         4,1, '60 jours','Réglement à 60 jours',0,60);
-insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (5,'60DENDMONTH', 5,1, '60 jours fin de mois','Réglement à 60 jours fin de mois',1,60);
-insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (6,'PROFORMA',    6,1, 'Proforma','Réglement avant livraison',0,0);
+insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (1,'RECEP',       1,1, 'A rÃ©ception','RÃ©ception de facture',0,0);
+insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (2,'30D',         2,1, '30 jours','RÃ©glement Ã  30 jours',0,30);
+insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (3,'30DENDMONTH', 3,1, '30 jours fin de mois','RÃ©glement Ã  30 jours fin de mois',1,30);
+insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (4,'60D',         4,1, '60 jours','RÃ©glement Ã  60 jours',0,60);
+insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (5,'60DENDMONTH', 5,1, '60 jours fin de mois','RÃ©glement Ã  60 jours fin de mois',1,60);
+insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (6,'PROFORMA',    6,1, 'Proforma','RÃ©glement avant livraison',0,0);
 
 
 --
--- Définition des actions de workflow notifications
+-- DÃ©finition des actions de workflow notifications
 --
 delete from llx_action_def;
-insert into llx_action_def (rowid,code,titre,description,objet_type) values (1,'NOTIFY_VAL_FICHINTER','Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention','ficheinter');
-insert into llx_action_def (rowid,code,titre,description,objet_type) values (2,'NOTIFY_VAL_FAC','Validation facture','Déclenché lors de la validation d\'une facture','facture');
-insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_VAL_ORDER_SUPPLIER','Validation commande fournisseur','Déclenché lors de la validation d\'une commande fournisseur','order_supplier');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (1,'NOTIFY_VAL_FICHINTER','Validation fiche intervention','DÃ©clenchÃ© lors de la validation d\'une fiche d\'intervention','ficheinter');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (2,'NOTIFY_VAL_FAC','Validation facture','DÃ©clenchÃ© lors de la validation d\'une facture','facture');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_VAL_ORDER_SUPPLIER','Validation commande fournisseur','DÃ©clenchÃ© lors de la validation d\'une commande fournisseur','order_supplier');
 
 --
 -- Constantes de configuration
@@ -90,21 +90,21 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_BARRELEFT','eldy_backoffice.php','chaine','Module de gestion de la barre de menu gauche pour utilisateurs internes',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENUFRONT_BARRELEFT','eldy_frontoffice.php','chaine','Module de gestion de la barre de menu gauche pour utilisateurs externes',0);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','eldy','chaine','Thème par défaut',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','eldy','chaine','ThÃ¨me par dÃ©faut',0);
 
 --
 -- Delai tolerance
 --
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_ACTIONS_TODO','7','chaine','Tolérance de retard avant alerte (en jours) sur actions planifiées non réalisées',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_ORDERS_TO_PROCESS','2','chaine','Tolérance de retard avant alerte (en jours) sur commandes non traitées',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_PROPALS_TO_CLOSE','31','chaine','Tolérance de retard avant alerte (en jours) sur propales à cloturer',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_PROPALS_TO_BILL','7','chaine','Tolérance de retard avant alerte (en jours) sur propales non facturées',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_SUPPLIER_BILLS_TO_PAY','2','chaine','Tolérance de retard avant alerte (en jours) sur factures fournisseur impayées',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_CUSTOMER_BILLS_UNPAYED','31','chaine','Tolérance de retard avant alerte (en jours) sur factures client impayées',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_NOT_ACTIVATED_SERVICES','0','chaine','Tolérance de retard avant alerte (en jours) sur services à activer',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_RUNNING_SERVICES','0','chaine','Tolérance de retard avant alerte (en jours) sur services expirés',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_MEMBERS','31','chaine','Tolérance de retard avant alerte (en jours) sur cotisations adhérent en retard',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE','62','chaine','Tolérance de retard avant alerte (en jours) sur rapprochements bancaires à faire',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_ACTIONS_TODO','7','chaine','TolÃ©rance de retard avant alerte (en jours) sur actions planifiÃ©es non rÃ©alisÃ©es',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_ORDERS_TO_PROCESS','2','chaine','TolÃ©rance de retard avant alerte (en jours) sur commandes non traitÃ©es',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_PROPALS_TO_CLOSE','31','chaine','TolÃ©rance de retard avant alerte (en jours) sur propales Ã  cloturer',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_PROPALS_TO_BILL','7','chaine','TolÃ©rance de retard avant alerte (en jours) sur propales non facturÃ©es',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_SUPPLIER_BILLS_TO_PAY','2','chaine','TolÃ©rance de retard avant alerte (en jours) sur factures fournisseur impayÃ©es',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_CUSTOMER_BILLS_UNPAYED','31','chaine','TolÃ©rance de retard avant alerte (en jours) sur factures client impayÃ©es',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_NOT_ACTIVATED_SERVICES','0','chaine','TolÃ©rance de retard avant alerte (en jours) sur services Ã  activer',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_RUNNING_SERVICES','0','chaine','TolÃ©rance de retard avant alerte (en jours) sur services expirÃ©s',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_MEMBERS','31','chaine','TolÃ©rance de retard avant alerte (en jours) sur cotisations adhÃ©rent en retard',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE','62','chaine','TolÃ©rance de retard avant alerte (en jours) sur rapprochements bancaires Ã  faire',0);
 
 
 --
@@ -118,12 +118,12 @@ insert into llx_const(name,value,type,visible,note) values('SOCIETE_CODECOMPTA_A
 --
 -- Mail Adherent
 --
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_REQUIRED','1','yesno','Le mail est obligatoire pour créer un adhérent',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_REQUIRED','1','yesno','Le mail est obligatoire pour crÃ©er un adhÃ©rent',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_FROM','adherents@domain.com','chaine','From des mails adherents',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_RESIL','Votre adhesion vient d\'etre resiliee.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_VALID','Votre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante : \r\n%DOL_MAIN_URL_ROOT%/public/adherents/','texte','Mail de validation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_COTIS','Bonjour %PRENOM%,\r\nMerci de votre inscription.\r\nCet email confirme que votre cotisation a ete recue et enregistree.\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%DOL_MAIN_URL_ROOT%/public/adherents/','texte','Mail de validation de cotisation',0);
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_VALID_SUBJECT','Votre adhésion a ete validée','chaine','Sujet du mail de validation',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_VALID_SUBJECT','Votre adhÃ©sion a ete validÃ©e','chaine','Sujet du mail de validation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_RESIL_SUBJECT','Resiliation de votre adhesion','chaine','Sujet du mail de resiliation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_COTIS_SUBJECT','Recu de votre cotisation','chaine','Sujet du mail de validation de cotisation',0);
 
@@ -157,7 +157,7 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_SPIP_
 --
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_HEADER_TEXT','%ANNEE%','chaine','Texte imprime sur le haut de la carte adherent',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_FOOTER_TEXT','Association AZERTY','chaine','Texte imprime sur le bas de la carte adherent',0);
-insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_TEXT','%TYPE% n° %ID%\r\n%PRENOM% %NOM%\r\n<%EMAIL%>\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%','texte','Texte imprime sur la carte adherent',0);
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_TEXT','%TYPE% nÂ° %ID%\r\n%PRENOM% %NOM%\r\n<%EMAIL%>\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%','texte','Texte imprime sur la carte adherent',0);
 
 --
 -- FCKEditor
@@ -198,12 +198,12 @@ insert into llx_const (name, value, type, visible) values ('FACTURE_ADDON_PDF', 
 insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_ALL',      '', 'chaine', 1, 'Pour forcer LC_ALL si pb de locale');
 insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_TIME',     '', 'chaine', 1, 'Pour forcer LC_TIME si pb de locale');
 insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_MONETARY', '', 'chaine', 1, 'Pour forcer LC_MONETARY si pb de locale');
-insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_NUMERIC',  '', 'chaine', 1, 'Mettre la valeur C si problème de centimes');
+insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SETLOCALE_LC_NUMERIC',  '', 'chaine', 1, 'Mettre la valeur C si problÃ¨me de centimes');
 
 --
 -- Duree de validite des propales
 --
-insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION',      '15', 'chaine', 0, 'Durée de validitée des propales');
+insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION',      '15', 'chaine', 0, 'DurÃ©e de validitÃ©e des propales');
 
 
 --
@@ -219,24 +219,24 @@ insert into llx_const (name, value, type, note, visible) values ('GENBARCODE_LOC
 delete from llx_accountingaccount;
 delete from llx_accountingsystem;
 
-insert into llx_accountingsystem (pcg_version, fk_pays, label, datec, fk_author, active) VALUES ('PCG99-ABREGE', 1, 'Plan de compte standard français abrégé', curdate(), null, 0);
+insert into llx_accountingsystem (pcg_version, fk_pays, label, datec, fk_author, active) VALUES ('PCG99-ABREGE', 1, 'Plan de compte standard franÃ§ais abrÃ©gÃ©', curdate(), null, 0);
 
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  1,'PCG99-ABREGE','CAPIT', 'CAPITAL', '101', '1', 'Capital');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  2,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '105', '1', 'Ecarts de réévaluation');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  3,'PCG99-ABREGE','CAPIT', 'XXXXXX', '1061', '1', 'Réserve légale');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  4,'PCG99-ABREGE','CAPIT', 'XXXXXX', '1063', '1', 'Réserves statutaires ou contractuelles');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  5,'PCG99-ABREGE','CAPIT', 'XXXXXX', '1064', '1', 'Réserves réglementées');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  6,'PCG99-ABREGE','CAPIT', 'XXXXXX', '1068', '1', 'Autres réserves');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  2,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '105', '1', 'Ecarts de rÃ©Ã©valuation');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  3,'PCG99-ABREGE','CAPIT', 'XXXXXX', '1061', '1', 'RÃ©serve lÃ©gale');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  4,'PCG99-ABREGE','CAPIT', 'XXXXXX', '1063', '1', 'RÃ©serves statutaires ou contractuelles');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  5,'PCG99-ABREGE','CAPIT', 'XXXXXX', '1064', '1', 'RÃ©serves rÃ©glementÃ©es');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  6,'PCG99-ABREGE','CAPIT', 'XXXXXX', '1068', '1', 'Autres rÃ©serves');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  7,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '108', '1', 'Compte de l''exploitant');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  8,'PCG99-ABREGE','CAPIT', 'XXXXXX',   '12', '1', 'Résultat de l''exercice');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  9,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '145', '1', 'Amortissements dérogatoires');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 10,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '146', '1', 'Provision spéciale de réévaluation');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 11,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '147', '1', 'Plus-values réinvesties');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 12,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '148', '1', 'Autres provisions réglementées');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  8,'PCG99-ABREGE','CAPIT', 'XXXXXX',   '12', '1', 'RÃ©sultat de l''exercice');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES (  9,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '145', '1', 'Amortissements dÃ©rogatoires');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 10,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '146', '1', 'Provision spÃ©ciale de rÃ©Ã©valuation');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 11,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '147', '1', 'Plus-values rÃ©investies');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 12,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '148', '1', 'Autres provisions rÃ©glementÃ©es');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 13,'PCG99-ABREGE','CAPIT', 'XXXXXX',   '15', '1', 'Provisions pour risques et charges');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 14,'PCG99-ABREGE','CAPIT', 'XXXXXX',   '16', '1', 'Emprunts et dettes assimilees');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 15,'PCG99-ABREGE','IMMO',  'XXXXXX',   '20', '2', 'Immobilisations incorporelles');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 16,'PCG99-ABREGE','IMMO',  'XXXXXX',  '201','20', 'Frais d''établissement');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 16,'PCG99-ABREGE','IMMO',  'XXXXXX',  '201','20', 'Frais d''Ã©tablissement');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 17,'PCG99-ABREGE','IMMO',  'XXXXXX',  '206','20', 'Droit au bail');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 18,'PCG99-ABREGE','IMMO',  'XXXXXX',  '207','20', 'Fonds commercial');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 19,'PCG99-ABREGE','IMMO',  'XXXXXX',  '208','20', 'Autres immobilisations incorporelles');
@@ -245,78 +245,78 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 22,'PCG99-ABREGE','IMMO',  'XXXXXX',   '27', '2', 'Autres immobilisations financieres');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 23,'PCG99-ABREGE','IMMO',  'XXXXXX',  '280', '2', 'Amortissements des immobilisations incorporelles');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 24,'PCG99-ABREGE','IMMO',  'XXXXXX',  '281', '2', 'Amortissements des immobilisations corporelles');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 25,'PCG99-ABREGE','IMMO',  'XXXXXX',  '290', '2', 'Provisions pour dépréciation des immobilisations incorporelles');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 26,'PCG99-ABREGE','IMMO',  'XXXXXX',  '291', '2', 'Provisions pour dépréciation des immobilisations corporelles');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 27,'PCG99-ABREGE','IMMO',  'XXXXXX',  '297', '2', 'Provisions pour dépréciation des autres immobilisations financières');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 28,'PCG99-ABREGE','STOCK', 'XXXXXX',   '31', '3', 'Matieres premières');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 25,'PCG99-ABREGE','IMMO',  'XXXXXX',  '290', '2', 'Provisions pour dÃ©prÃ©ciation des immobilisations incorporelles');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 26,'PCG99-ABREGE','IMMO',  'XXXXXX',  '291', '2', 'Provisions pour dÃ©prÃ©ciation des immobilisations corporelles');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 27,'PCG99-ABREGE','IMMO',  'XXXXXX',  '297', '2', 'Provisions pour dÃ©prÃ©ciation des autres immobilisations financiÃ¨res');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 28,'PCG99-ABREGE','STOCK', 'XXXXXX',   '31', '3', 'Matieres premiÃ¨res');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 29,'PCG99-ABREGE','STOCK', 'XXXXXX',   '32', '3', 'Autres approvisionnements');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 30,'PCG99-ABREGE','STOCK', 'XXXXXX',   '33', '3', 'En-cours de production de biens');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 31,'PCG99-ABREGE','STOCK', 'XXXXXX',   '34', '3', 'En-cours de production de services');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 32,'PCG99-ABREGE','STOCK', 'XXXXXX',   '35', '3', 'Stocks de produits');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 33,'PCG99-ABREGE','STOCK', 'XXXXXX',   '37', '3', 'Stocks de marchandises');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 34,'PCG99-ABREGE','STOCK', 'XXXXXX',  '391', '3', 'Provisions pour dépréciation des matières premières');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 35,'PCG99-ABREGE','STOCK', 'XXXXXX',  '392', '3', 'Provisions pour dépréciation des autres approvisionnements');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 36,'PCG99-ABREGE','STOCK', 'XXXXXX',  '393', '3', 'Provisions pour dépréciation des en-cours de production de biens');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 37,'PCG99-ABREGE','STOCK', 'XXXXXX',  '394', '3', 'Provisions pour dépréciation des en-cours de production de services');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 38,'PCG99-ABREGE','STOCK', 'XXXXXX',  '395', '3', 'Provisions pour dépréciation des stocks de produits');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 39,'PCG99-ABREGE','STOCK', 'XXXXXX',  '397', '3', 'Provisions pour dépréciation des stocks de marchandises');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 40,'PCG99-ABREGE','TIERS', 'SUPPLIER','400', '4', 'Fournisseurs et Comptes rattachés');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 41,'PCG99-ABREGE','TIERS', 'XXXXXX',  '409', '4', 'Fournisseurs débiteurs');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 42,'PCG99-ABREGE','TIERS', 'CUSTOMER','410', '4', 'Clients et Comptes rattachés');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 43,'PCG99-ABREGE','TIERS', 'XXXXXX',  '419', '4', 'Clients créditeurs');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 34,'PCG99-ABREGE','STOCK', 'XXXXXX',  '391', '3', 'Provisions pour dÃ©prÃ©ciation des matiÃ¨res premiÃ¨res');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 35,'PCG99-ABREGE','STOCK', 'XXXXXX',  '392', '3', 'Provisions pour dÃ©prÃ©ciation des autres approvisionnements');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 36,'PCG99-ABREGE','STOCK', 'XXXXXX',  '393', '3', 'Provisions pour dÃ©prÃ©ciation des en-cours de production de biens');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 37,'PCG99-ABREGE','STOCK', 'XXXXXX',  '394', '3', 'Provisions pour dÃ©prÃ©ciation des en-cours de production de services');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 38,'PCG99-ABREGE','STOCK', 'XXXXXX',  '395', '3', 'Provisions pour dÃ©prÃ©ciation des stocks de produits');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 39,'PCG99-ABREGE','STOCK', 'XXXXXX',  '397', '3', 'Provisions pour dÃ©prÃ©ciation des stocks de marchandises');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 40,'PCG99-ABREGE','TIERS', 'SUPPLIER','400', '4', 'Fournisseurs et Comptes rattachÃ©s');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 41,'PCG99-ABREGE','TIERS', 'XXXXXX',  '409', '4', 'Fournisseurs dÃ©biteurs');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 42,'PCG99-ABREGE','TIERS', 'CUSTOMER','410', '4', 'Clients et Comptes rattachÃ©s');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 43,'PCG99-ABREGE','TIERS', 'XXXXXX',  '419', '4', 'Clients crÃ©diteurs');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 44,'PCG99-ABREGE','TIERS', 'XXXXXX',  '421', '4', 'Personnel');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 45,'PCG99-ABREGE','TIERS', 'XXXXXX',  '428', '4', 'Personnel');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 46,'PCG99-ABREGE','TIERS', 'XXXXXX',   '43', '4', 'Sécurité sociale et autres organismes sociaux');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 47,'PCG99-ABREGE','TIERS', 'XXXXXX',  '444', '4', 'Etat - impôts sur bénéfice');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 46,'PCG99-ABREGE','TIERS', 'XXXXXX',   '43', '4', 'SÃ©curitÃ© sociale et autres organismes sociaux');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 47,'PCG99-ABREGE','TIERS', 'XXXXXX',  '444', '4', 'Etat - impÃ´ts sur bÃ©nÃ©fice');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 48,'PCG99-ABREGE','TIERS', 'XXXXXX',  '445', '4', 'Etat - Taxes sur chiffre affaire');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 49,'PCG99-ABREGE','TIERS', 'XXXXXX',  '447', '4', 'Autres impôts, taxes et versements assimilés');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 49,'PCG99-ABREGE','TIERS', 'XXXXXX',  '447', '4', 'Autres impÃ´ts, taxes et versements assimilÃ©s');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 50,'PCG99-ABREGE','TIERS', 'XXXXXX',   '45', '4', 'Groupe et associes');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 51,'PCG99-ABREGE','TIERS', 'XXXXXX',  '455','45', 'Associés');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 52,'PCG99-ABREGE','TIERS', 'XXXXXX',   '46', '4', 'Débiteurs divers et créditeurs divers');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 51,'PCG99-ABREGE','TIERS', 'XXXXXX',  '455','45', 'AssociÃ©s');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 52,'PCG99-ABREGE','TIERS', 'XXXXXX',   '46', '4', 'DÃ©biteurs divers et crÃ©diteurs divers');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 53,'PCG99-ABREGE','TIERS', 'XXXXXX',   '47', '4', 'Comptes transitoires ou d''attente');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 54,'PCG99-ABREGE','TIERS', 'XXXXXX',  '481', '4', 'Charges à répartir sur plusieurs exercices');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 55,'PCG99-ABREGE','TIERS', 'XXXXXX',  '486', '4', 'Charges constatées d''avance');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 56,'PCG99-ABREGE','TIERS', 'XXXXXX',  '487', '4', 'Produits constatés d''avance');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 57,'PCG99-ABREGE','TIERS', 'XXXXXX',  '491', '4', 'Provisions pour dépréciation des comptes de clients');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 58,'PCG99-ABREGE','TIERS', 'XXXXXX',  '496', '4', 'Provisions pour dépréciation des comptes de débiteurs divers');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 59,'PCG99-ABREGE','FINAN', 'XXXXXX',   '50', '5', 'Valeurs mobilières de placement');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 60,'PCG99-ABREGE','FINAN', 'BANK',     '51', '5', 'Banques, établissements financiers et assimilés');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 54,'PCG99-ABREGE','TIERS', 'XXXXXX',  '481', '4', 'Charges Ã  rÃ©partir sur plusieurs exercices');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 55,'PCG99-ABREGE','TIERS', 'XXXXXX',  '486', '4', 'Charges constatÃ©es d''avance');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 56,'PCG99-ABREGE','TIERS', 'XXXXXX',  '487', '4', 'Produits constatÃ©s d''avance');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 57,'PCG99-ABREGE','TIERS', 'XXXXXX',  '491', '4', 'Provisions pour dÃ©prÃ©ciation des comptes de clients');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 58,'PCG99-ABREGE','TIERS', 'XXXXXX',  '496', '4', 'Provisions pour dÃ©prÃ©ciation des comptes de dÃ©biteurs divers');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 59,'PCG99-ABREGE','FINAN', 'XXXXXX',   '50', '5', 'Valeurs mobiliÃ¨res de placement');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 60,'PCG99-ABREGE','FINAN', 'BANK',     '51', '5', 'Banques, Ã©tablissements financiers et assimilÃ©s');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 61,'PCG99-ABREGE','FINAN', 'CASH',     '53', '5', 'Caisse');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 62,'PCG99-ABREGE','FINAN', 'XXXXXX',   '54', '5', 'Régies d''avance et accréditifs');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 62,'PCG99-ABREGE','FINAN', 'XXXXXX',   '54', '5', 'RÃ©gies d''avance et accrÃ©ditifs');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 63,'PCG99-ABREGE','FINAN', 'XXXXXX',   '58', '5', 'Virements internes');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 64,'PCG99-ABREGE','FINAN', 'XXXXXX',  '590', '5', 'Provisions pour dépréciation des valeurs mobilières de placement');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 64,'PCG99-ABREGE','FINAN', 'XXXXXX',  '590', '5', 'Provisions pour dÃ©prÃ©ciation des valeurs mobiliÃ¨res de placement');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 65,'PCG99-ABREGE','CHARGE','PRODUCT',  '60', '6', 'Achats');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 66,'PCG99-ABREGE','CHARGE','XXXXXX',  '603','60', 'Variations des stocks');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 67,'PCG99-ABREGE','CHARGE','SERVICE',  '61', '6', 'Services extérieurs');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 68,'PCG99-ABREGE','CHARGE','XXXXXX',   '62', '6', 'Autres services extérieurs');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 69,'PCG99-ABREGE','CHARGE','XXXXXX',   '63', '6', 'Impôts, taxes et versements assimiles');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 70,'PCG99-ABREGE','CHARGE','XXXXXX',  '641', '6', 'Rémunérations du personnel');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 71,'PCG99-ABREGE','CHARGE','XXXXXX',  '644', '6', 'Rémunération du travail de l''exploitant');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 72,'PCG99-ABREGE','CHARGE','SOCIAL',  '645', '6', 'Charges de sécurité sociale et de prévoyance');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 67,'PCG99-ABREGE','CHARGE','SERVICE',  '61', '6', 'Services extÃ©rieurs');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 68,'PCG99-ABREGE','CHARGE','XXXXXX',   '62', '6', 'Autres services extÃ©rieurs');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 69,'PCG99-ABREGE','CHARGE','XXXXXX',   '63', '6', 'ImpÃ´ts, taxes et versements assimiles');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 70,'PCG99-ABREGE','CHARGE','XXXXXX',  '641', '6', 'RÃ©munÃ©rations du personnel');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 71,'PCG99-ABREGE','CHARGE','XXXXXX',  '644', '6', 'RÃ©munÃ©ration du travail de l''exploitant');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 72,'PCG99-ABREGE','CHARGE','SOCIAL',  '645', '6', 'Charges de sÃ©curitÃ© sociale et de prÃ©voyance');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 73,'PCG99-ABREGE','CHARGE','XXXXXX',  '646', '6', 'Cotisations sociales personnelles de l''exploitant');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 74,'PCG99-ABREGE','CHARGE','XXXXXX',   '65', '6', 'Autres charges de gestion courante');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 75,'PCG99-ABREGE','CHARGE','XXXXXX',   '66', '6', 'Charges financières');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 75,'PCG99-ABREGE','CHARGE','XXXXXX',   '66', '6', 'Charges financiÃ¨res');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 76,'PCG99-ABREGE','CHARGE','XXXXXX',   '67', '6', 'Charges exceptionnelles');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 77,'PCG99-ABREGE','CHARGE','XXXXXX',  '681', '6', 'Dotations aux amortissements et aux provisions');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 78,'PCG99-ABREGE','CHARGE','XXXXXX',  '686', '6', 'Dotations aux amortissements et aux provisions');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 79,'PCG99-ABREGE','CHARGE','XXXXXX',  '687', '6', 'Dotations aux amortissements et aux provisions');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 80,'PCG99-ABREGE','CHARGE','XXXXXX',  '691', '6', 'Participation des salariés aux résultats');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 81,'PCG99-ABREGE','CHARGE','XXXXXX',  '695', '6', 'Impôts sur les bénéfices');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 82,'PCG99-ABREGE','CHARGE','XXXXXX',  '697', '6', 'Imposition forfaitaire annuelle des sociétés');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 80,'PCG99-ABREGE','CHARGE','XXXXXX',  '691', '6', 'Participation des salariÃ©s aux rÃ©sultats');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 81,'PCG99-ABREGE','CHARGE','XXXXXX',  '695', '6', 'ImpÃ´ts sur les bÃ©nÃ©fices');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 82,'PCG99-ABREGE','CHARGE','XXXXXX',  '697', '6', 'Imposition forfaitaire annuelle des sociÃ©tÃ©s');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 83,'PCG99-ABREGE','CHARGE','XXXXXX',  '699', '6', 'Produits');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 84,'PCG99-ABREGE','PROD',  'PRODUCT', '701', '7', 'Ventes de produits finis');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 85,'PCG99-ABREGE','PROD',  'SERVICE', '706', '7', 'Prestations de services');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 86,'PCG99-ABREGE','PROD',  'PRODUCT', '707', '7', 'Ventes de marchandises');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 87,'PCG99-ABREGE','PROD',  'PRODUCT', '708', '7', 'Produits des activités annexes');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 88,'PCG99-ABREGE','PROD',  'XXXXXX',  '709', '7', 'Rabais, remises et ristournes accordés par l''entreprise');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 87,'PCG99-ABREGE','PROD',  'PRODUCT', '708', '7', 'Produits des activitÃ©s annexes');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 88,'PCG99-ABREGE','PROD',  'XXXXXX',  '709', '7', 'Rabais, remises et ristournes accordÃ©s par l''entreprise');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 89,'PCG99-ABREGE','PROD',  'XXXXXX',  '713', '7', 'Variation des stocks');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 90,'PCG99-ABREGE','PROD',  'XXXXXX',   '72', '7', 'Production immobilisée');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 91,'PCG99-ABREGE','PROD',  'XXXXXX',   '73', '7', 'Produits nets partiels sur opérations à long terme');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 90,'PCG99-ABREGE','PROD',  'XXXXXX',   '72', '7', 'Production immobilisÃ©e');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 91,'PCG99-ABREGE','PROD',  'XXXXXX',   '73', '7', 'Produits nets partiels sur opÃ©rations Ã  long terme');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 92,'PCG99-ABREGE','PROD',  'XXXXXX',   '74', '7', 'Subventions d''exploitation');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 93,'PCG99-ABREGE','PROD',  'XXXXXX',   '75', '7', 'Autres produits de gestion courante');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 94,'PCG99-ABREGE','PROD',  'XXXXXX',  '753','75', 'Jetons de présence et rémunérations d''administrateurs, gérants,...');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 95,'PCG99-ABREGE','PROD',  'XXXXXX',  '754','75', 'Ristournes perçues des coopératives');
-insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 96,'PCG99-ABREGE','PROD',  'XXXXXX',  '755','75', 'Quotes-parts de résultat sur opérations faites en commun');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 94,'PCG99-ABREGE','PROD',  'XXXXXX',  '753','75', 'Jetons de prÃ©sence et rÃ©munÃ©rations d''administrateurs, gÃ©rants,...');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 95,'PCG99-ABREGE','PROD',  'XXXXXX',  '754','75', 'Ristournes perÃ§ues des coopÃ©ratives');
+insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 96,'PCG99-ABREGE','PROD',  'XXXXXX',  '755','75', 'Quotes-parts de rÃ©sultat sur opÃ©rations faites en commun');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 97,'PCG99-ABREGE','PROD',  'XXXXXX',   '76', '7', 'Produits financiers');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 98,'PCG99-ABREGE','PROD',  'XXXXXX',   '77', '7', 'Produits exceptionnels');
 insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label) VALUES ( 99,'PCG99-ABREGE','PROD',  'XXXXXX',  '781', '7', 'Reprises sur amortissements et provisions');
@@ -333,7 +333,7 @@ insert into llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 --
 
 delete from llx_c_actioncomm where id in (1,2,3,4,5,8,9,50);
-insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 1, 'AC_TEL',  'system', 'Appel Téléphonique' ,NULL);
+insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 1, 'AC_TEL',  'system', 'Appel TÃ©lÃ©phonique' ,NULL);
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 2, 'AC_FAX',  'system', 'Envoi Fax'          ,NULL);
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 3, 'AC_PROP', 'system', 'Envoi Proposition'  ,'propal');
 insert into llx_c_actioncomm (id, code, type, libelle, module) values ( 4, 'AC_EMAIL','system', 'Envoi Email'        ,NULL);
@@ -367,7 +367,7 @@ delete from llx_c_civilite;
 insert into llx_c_civilite (rowid, code, civilite, active) values (1 , 'MME',  'Madame', 1);
 insert into llx_c_civilite (rowid, code, civilite, active) values (3 , 'MR',   'Monsieur', 1);
 insert into llx_c_civilite (rowid, code, civilite, active) values (5 , 'MLE',  'Mademoiselle', 1);
-insert into llx_c_civilite (rowid, code, civilite, active) values (7 , 'MTRE', 'Maître', 1);
+insert into llx_c_civilite (rowid, code, civilite, active) values (7 , 'MTRE', 'MaÃ®tre', 1);
 
 
 --
@@ -402,16 +402,16 @@ insert into llx_c_pays (rowid,code,libelle) values (9,  'CN', 'Chine'          )
 insert into llx_c_pays (rowid,code,libelle) values (10, 'TN', 'Tunisie'        );
 insert into llx_c_pays (rowid,code,libelle) values (11, 'US', 'Etats Unis'     );
 insert into llx_c_pays (rowid,code,libelle) values (12, 'MA', 'Maroc'          );
-insert into llx_c_pays (rowid,code,libelle) values (13, 'DZ', 'Algérie'        );
+insert into llx_c_pays (rowid,code,libelle) values (13, 'DZ', 'AlgÃ©rie'        );
 insert into llx_c_pays (rowid,code,libelle) values (14, 'CA', 'Canada'         );
 insert into llx_c_pays (rowid,code,libelle) values (15, 'TG', 'Togo'           );
 insert into llx_c_pays (rowid,code,libelle) values (16, 'GA', 'Gabon'          );
 insert into llx_c_pays (rowid,code,libelle) values (17, 'NL', 'Pays Bas'       );
 insert into llx_c_pays (rowid,code,libelle) values (18, 'HU', 'Hongrie'        );
 insert into llx_c_pays (rowid,code,libelle) values (19, 'RU', 'Russie'         );
-insert into llx_c_pays (rowid,code,libelle) values (20, 'SE', 'Suède'          );
-insert into llx_c_pays (rowid,code,libelle) values (21, 'CI', 'Côte d\'Ivoire' );
-insert into llx_c_pays (rowid,code,libelle) values (22, 'SN', 'Sénégal'        );
+insert into llx_c_pays (rowid,code,libelle) values (20, 'SE', 'SuÃ¨de'          );
+insert into llx_c_pays (rowid,code,libelle) values (21, 'CI', 'CÃ´te d\'Ivoire' );
+insert into llx_c_pays (rowid,code,libelle) values (22, 'SN', 'SÃ©nÃ©gal'        );
 insert into llx_c_pays (rowid,code,libelle) values (23, 'AR', 'Argentine'      );
 insert into llx_c_pays (rowid,code,libelle) values (24, 'CM', 'Cameroun'       );
 insert into llx_c_pays (rowid,code,libelle) values (25, 'PT', 'Portugal'       );
@@ -422,31 +422,31 @@ insert into llx_c_pays (rowid,code,libelle) values (29, 'SG', 'Singapour'     );
 insert into llx_c_pays (rowid,code,libelle) values (30, 'AF', 'Afghanistan'    );
 insert into llx_c_pays (rowid,code,libelle) values (31, 'AX', 'Iles Aland'     );
 insert into llx_c_pays (rowid,code,libelle) values (32, 'AL', 'Albanie'        );
-insert into llx_c_pays (rowid,code,libelle) values (33, 'AS', 'Samoa américaines');
+insert into llx_c_pays (rowid,code,libelle) values (33, 'AS', 'Samoa amÃ©ricaines');
 insert into llx_c_pays (rowid,code,libelle) values (34, 'AD', 'Andorre'        );
 insert into llx_c_pays (rowid,code,libelle) values (35, 'AO', 'Angola'         );
 insert into llx_c_pays (rowid,code,libelle) values (36, 'AI', 'Anguilla'       );
 insert into llx_c_pays (rowid,code,libelle) values (37, 'AQ', 'Antarctique'    );
 insert into llx_c_pays (rowid,code,libelle) values (38, 'AG', 'Antigua-et-Barbuda');
-insert into llx_c_pays (rowid,code,libelle) values (39, 'AM', 'Arménie'        );
+insert into llx_c_pays (rowid,code,libelle) values (39, 'AM', 'ArmÃ©nie'        );
 insert into llx_c_pays (rowid,code,libelle) values (40, 'AW', 'Aruba'          );
 insert into llx_c_pays (rowid,code,libelle) values (41, 'AT', 'Autriche'       );
-insert into llx_c_pays (rowid,code,libelle) values (42, 'AZ', 'Azerbaïdjan'    );
+insert into llx_c_pays (rowid,code,libelle) values (42, 'AZ', 'AzerbaÃ¯djan'    );
 insert into llx_c_pays (rowid,code,libelle) values (43, 'BS', 'Bahamas'        );
-insert into llx_c_pays (rowid,code,libelle) values (44, 'BH', 'Bahreïn'        );
+insert into llx_c_pays (rowid,code,libelle) values (44, 'BH', 'BahreÃ¯n'        );
 insert into llx_c_pays (rowid,code,libelle) values (45, 'BD', 'Bangladesh'     );
 insert into llx_c_pays (rowid,code,libelle) values (46, 'BB', 'Barbade'        );
-insert into llx_c_pays (rowid,code,libelle) values (47, 'BY', 'Biélorussie'    );
+insert into llx_c_pays (rowid,code,libelle) values (47, 'BY', 'BiÃ©lorussie'    );
 insert into llx_c_pays (rowid,code,libelle) values (48, 'BZ', 'Belize'         );
-insert into llx_c_pays (rowid,code,libelle) values (49, 'BJ', 'Bénin'          );
+insert into llx_c_pays (rowid,code,libelle) values (49, 'BJ', 'BÃ©nin'          );
 insert into llx_c_pays (rowid,code,libelle) values (50, 'BM', 'Bermudes'       );
 insert into llx_c_pays (rowid,code,libelle) values (51, 'BT', 'Bhoutan'        );
 insert into llx_c_pays (rowid,code,libelle) values (52, 'BO', 'Bolivie'        );
-insert into llx_c_pays (rowid,code,libelle) values (53, 'BA', 'Bosnie-Herzégovine');
+insert into llx_c_pays (rowid,code,libelle) values (53, 'BA', 'Bosnie-HerzÃ©govine');
 insert into llx_c_pays (rowid,code,libelle) values (54, 'BW', 'Botswana'       );
 insert into llx_c_pays (rowid,code,libelle) values (55, 'BV', 'Ile Bouvet'     );
-insert into llx_c_pays (rowid,code,libelle) values (56, 'BR', 'Brésil'         );
-insert into llx_c_pays (rowid,code,libelle) values (57, 'IO', 'Territoire britannique de l\'Océan Indien');
+insert into llx_c_pays (rowid,code,libelle) values (56, 'BR', 'BrÃ©sil'         );
+insert into llx_c_pays (rowid,code,libelle) values (57, 'IO', 'Territoire britannique de l\'OcÃ©an Indien');
 insert into llx_c_pays (rowid,code,libelle) values (58, 'BN', 'Brunei'         );
 insert into llx_c_pays (rowid,code,libelle) values (59, 'BG', 'Bulgarie'       );
 insert into llx_c_pays (rowid,code,libelle) values (60, 'BF', 'Burkina Faso'   );
@@ -454,7 +454,7 @@ insert into llx_c_pays (rowid,code,libelle) values (61, 'BI', 'Burundi'        )
 insert into llx_c_pays (rowid,code,libelle) values (62, 'KH', 'Cambodge'       );
 insert into llx_c_pays (rowid,code,libelle) values (63, 'CV', 'Cap-Vert'       );
 insert into llx_c_pays (rowid,code,libelle) values (64, 'KY', 'Iles Cayman'    );
-insert into llx_c_pays (rowid,code,libelle) values (65, 'CF', 'République centrafricaine');
+insert into llx_c_pays (rowid,code,libelle) values (65, 'CF', 'RÃ©publique centrafricaine');
 insert into llx_c_pays (rowid,code,libelle) values (66, 'TD', 'Tchad'          );
 insert into llx_c_pays (rowid,code,libelle) values (67, 'CL', 'Chili'          );
 insert into llx_c_pays (rowid,code,libelle) values (68, 'CX', 'Ile Christmas'  );
@@ -462,64 +462,64 @@ insert into llx_c_pays (rowid,code,libelle) values (69, 'CC', 'Iles des Cocos (K
 insert into llx_c_pays (rowid,code,libelle) values (70, 'CO', 'Colombie'       );
 insert into llx_c_pays (rowid,code,libelle) values (71, 'KM', 'Comores'        );
 insert into llx_c_pays (rowid,code,libelle) values (72, 'CG', 'Congo'          );
-insert into llx_c_pays (rowid,code,libelle) values (73, 'CD', 'République démocratique du Congo');
+insert into llx_c_pays (rowid,code,libelle) values (73, 'CD', 'RÃ©publique dÃ©mocratique du Congo');
 insert into llx_c_pays (rowid,code,libelle) values (74, 'CK', 'Iles Cook'      );
 insert into llx_c_pays (rowid,code,libelle) values (75, 'CR', 'Costa Rica'     );
 insert into llx_c_pays (rowid,code,libelle) values (76, 'HR', 'Croatie'        );
 insert into llx_c_pays (rowid,code,libelle) values (77, 'CU', 'Cuba'           );
 insert into llx_c_pays (rowid,code,libelle) values (78, 'CY', 'Chypre'         );
-insert into llx_c_pays (rowid,code,libelle) values (79, 'CZ', 'République Tchèque');
+insert into llx_c_pays (rowid,code,libelle) values (79, 'CZ', 'RÃ©publique TchÃ¨que');
 insert into llx_c_pays (rowid,code,libelle) values (80, 'DK', 'Danemark'       );
 insert into llx_c_pays (rowid,code,libelle) values (81, 'DJ', 'Djibouti'       );
 insert into llx_c_pays (rowid,code,libelle) values (82, 'DM', 'Dominique'      );
-insert into llx_c_pays (rowid,code,libelle) values (83, 'DO', 'République Dominicaine');
+insert into llx_c_pays (rowid,code,libelle) values (83, 'DO', 'RÃ©publique Dominicaine');
 insert into llx_c_pays (rowid,code,libelle) values (84, 'EC', 'Equateur'       );
 insert into llx_c_pays (rowid,code,libelle) values (85, 'EG', 'Egypte'         );
 insert into llx_c_pays (rowid,code,libelle) values (86, 'SV', 'Salvador'       );
-insert into llx_c_pays (rowid,code,libelle) values (87, 'GQ', 'Guinée Equatoriale');
-insert into llx_c_pays (rowid,code,libelle) values (88, 'ER', 'Erythrée'       );
+insert into llx_c_pays (rowid,code,libelle) values (87, 'GQ', 'GuinÃ©e Equatoriale');
+insert into llx_c_pays (rowid,code,libelle) values (88, 'ER', 'ErythrÃ©e'       );
 insert into llx_c_pays (rowid,code,libelle) values (89, 'EE', 'Estonie'        );
 insert into llx_c_pays (rowid,code,libelle) values (90, 'ET', 'Ethiopie'       );
 insert into llx_c_pays (rowid,code,libelle) values (91, 'FK', 'Iles Falkland'  );
-insert into llx_c_pays (rowid,code,libelle) values (92, 'FO', 'Iles Féroé'     );
+insert into llx_c_pays (rowid,code,libelle) values (92, 'FO', 'Iles FÃ©roÃ©'     );
 insert into llx_c_pays (rowid,code,libelle) values (93, 'FJ', 'Iles Fidji'     );
 insert into llx_c_pays (rowid,code,libelle) values (94, 'FI', 'Finlande'       );
-insert into llx_c_pays (rowid,code,libelle) values (95, 'GF', 'Guyane française');
-insert into llx_c_pays (rowid,code,libelle) values (96, 'PF', 'Polynésie française');
-insert into llx_c_pays (rowid,code,libelle) values (97, 'TF', 'Terres australes françaises');
+insert into llx_c_pays (rowid,code,libelle) values (95, 'GF', 'Guyane franÃ§aise');
+insert into llx_c_pays (rowid,code,libelle) values (96, 'PF', 'PolynÃ©sie franÃ§aise');
+insert into llx_c_pays (rowid,code,libelle) values (97, 'TF', 'Terres australes franÃ§aises');
 insert into llx_c_pays (rowid,code,libelle) values (98, 'GM', 'Gambie'         );
-insert into llx_c_pays (rowid,code,libelle) values (99, 'GE', 'Géorgie'       );
+insert into llx_c_pays (rowid,code,libelle) values (99, 'GE', 'GÃ©orgie'       );
 insert into llx_c_pays (rowid,code,libelle) values (100, 'GH', 'Ghana'         );
 insert into llx_c_pays (rowid,code,libelle) values (101, 'GI', 'Gibraltar'     );
-insert into llx_c_pays (rowid,code,libelle) values (102, 'GR', 'Grèce'         );
+insert into llx_c_pays (rowid,code,libelle) values (102, 'GR', 'GrÃ¨ce'         );
 insert into llx_c_pays (rowid,code,libelle) values (103, 'GL', 'Groenland'     );
 insert into llx_c_pays (rowid,code,libelle) values (104, 'GD', 'Grenade'       );
 insert into llx_c_pays (rowid,code,libelle) values (105, 'GP', 'Guadeloupe'    );
 insert into llx_c_pays (rowid,code,libelle) values (106, 'GU', 'Guam'          );
 insert into llx_c_pays (rowid,code,libelle) values (107, 'GT', 'Guatemala'     );
-insert into llx_c_pays (rowid,code,libelle) values (108, 'GN', 'Guinée'        );
-insert into llx_c_pays (rowid,code,libelle) values (109, 'GW', 'Guinée-Bissao' );
+insert into llx_c_pays (rowid,code,libelle) values (108, 'GN', 'GuinÃ©e'        );
+insert into llx_c_pays (rowid,code,libelle) values (109, 'GW', 'GuinÃ©e-Bissao' );
 insert into llx_c_pays (rowid,code,libelle) values (110, 'GY', 'Guyana'        );
-insert into llx_c_pays (rowid,code,libelle) values (111, 'HT', 'Haïti'         );
+insert into llx_c_pays (rowid,code,libelle) values (111, 'HT', 'HaÃ¯ti'         );
 insert into llx_c_pays (rowid,code,libelle) values (112, 'HM', 'Iles Heard et McDonald');
-insert into llx_c_pays (rowid,code,libelle) values (113, 'VA', 'Saint-Siège (Vatican)');
+insert into llx_c_pays (rowid,code,libelle) values (113, 'VA', 'Saint-SiÃ¨ge (Vatican)');
 insert into llx_c_pays (rowid,code,libelle) values (114, 'HN', 'Honduras'      );
 insert into llx_c_pays (rowid,code,libelle) values (115, 'HK', 'Hong Kong'     );
 insert into llx_c_pays (rowid,code,libelle) values (116, 'IS', 'Islande'       );
 insert into llx_c_pays (rowid,code,libelle) values (117, 'IN', 'Inde'          );
-insert into llx_c_pays (rowid,code,libelle) values (118, 'ID', 'Indonésie'     );
+insert into llx_c_pays (rowid,code,libelle) values (118, 'ID', 'IndonÃ©sie'     );
 insert into llx_c_pays (rowid,code,libelle) values (119, 'IR', 'Iran'          );
 insert into llx_c_pays (rowid,code,libelle) values (120, 'IQ', 'Iraq'          );
-insert into llx_c_pays (rowid,code,libelle) values (121, 'IL', 'Israël'        );
-insert into llx_c_pays (rowid,code,libelle) values (122, 'JM', 'Jamaïque'      );
+insert into llx_c_pays (rowid,code,libelle) values (121, 'IL', 'IsraÃ«l'        );
+insert into llx_c_pays (rowid,code,libelle) values (122, 'JM', 'JamaÃ¯que'      );
 insert into llx_c_pays (rowid,code,libelle) values (123, 'JP', 'Japon'         );
 insert into llx_c_pays (rowid,code,libelle) values (124, 'JO', 'Jordanie'      );
 insert into llx_c_pays (rowid,code,libelle) values (125, 'KZ', 'Kazakhstan'    );
 insert into llx_c_pays (rowid,code,libelle) values (126, 'KE', 'Kenya'         );
 insert into llx_c_pays (rowid,code,libelle) values (127, 'KI', 'Kiribati'      );
-insert into llx_c_pays (rowid,code,libelle) values (128, 'KP', 'Corée du Nord' );
-insert into llx_c_pays (rowid,code,libelle) values (129, 'KR', 'Corée du Sud'  );
-insert into llx_c_pays (rowid,code,libelle) values (130, 'KW', 'Koweït'        );
+insert into llx_c_pays (rowid,code,libelle) values (128, 'KP', 'CorÃ©e du Nord' );
+insert into llx_c_pays (rowid,code,libelle) values (129, 'KR', 'CorÃ©e du Sud'  );
+insert into llx_c_pays (rowid,code,libelle) values (130, 'KW', 'KoweÃ¯t'        );
 insert into llx_c_pays (rowid,code,libelle) values (131, 'KG', 'Kirghizistan'  );
 insert into llx_c_pays (rowid,code,libelle) values (132, 'LA', 'Laos'          );
 insert into llx_c_pays (rowid,code,libelle) values (133, 'LV', 'Lettonie'      );
@@ -531,7 +531,7 @@ insert into llx_c_pays (rowid,code,libelle) values (138, 'LI', 'Liechtenstein' )
 insert into llx_c_pays (rowid,code,libelle) values (139, 'LT', 'Lituanie'      );
 insert into llx_c_pays (rowid,code,libelle) values (140, 'LU', 'Luxembourg'    );
 insert into llx_c_pays (rowid,code,libelle) values (141, 'MO', 'Macao'         );
-insert into llx_c_pays (rowid,code,libelle) values (142, 'MK', 'ex-République yougoslave de Macédoine');
+insert into llx_c_pays (rowid,code,libelle) values (142, 'MK', 'ex-RÃ©publique yougoslave de MacÃ©doine');
 insert into llx_c_pays (rowid,code,libelle) values (143, 'MG', 'Madagascar'    );
 insert into llx_c_pays (rowid,code,libelle) values (144, 'MW', 'Malawi'        );
 insert into llx_c_pays (rowid,code,libelle) values (145, 'MY', 'Malaisie'      );
@@ -544,7 +544,7 @@ insert into llx_c_pays (rowid,code,libelle) values (151, 'MR', 'Mauritanie'    )
 insert into llx_c_pays (rowid,code,libelle) values (152, 'MU', 'Maurice'       );
 insert into llx_c_pays (rowid,code,libelle) values (153, 'YT', 'Mayotte'       );
 insert into llx_c_pays (rowid,code,libelle) values (154, 'MX', 'Mexique'       );
-insert into llx_c_pays (rowid,code,libelle) values (155, 'FM', 'Micronésie'    );
+insert into llx_c_pays (rowid,code,libelle) values (155, 'FM', 'MicronÃ©sie'    );
 insert into llx_c_pays (rowid,code,libelle) values (156, 'MD', 'Moldavie'      );
 insert into llx_c_pays (rowid,code,libelle) values (157, 'MN', 'Mongolie'      );
 insert into llx_c_pays (rowid,code,libelle) values (158, 'MS', 'Monserrat'     );
@@ -552,89 +552,89 @@ insert into llx_c_pays (rowid,code,libelle) values (159, 'MZ', 'Mozambique'    )
 insert into llx_c_pays (rowid,code,libelle) values (160, 'MM', 'Birmanie (Myanmar)'      );
 insert into llx_c_pays (rowid,code,libelle) values (161, 'NA', 'Namibie'       );
 insert into llx_c_pays (rowid,code,libelle) values (162, 'NR', 'Nauru'         );
-insert into llx_c_pays (rowid,code,libelle) values (163, 'NP', 'Népal'         );
-insert into llx_c_pays (rowid,code,libelle) values (164, 'AN', 'Antilles néerlandaises');
-insert into llx_c_pays (rowid,code,libelle) values (165, 'NC', 'Nouvelle-Calédonie');
-insert into llx_c_pays (rowid,code,libelle) values (166, 'NZ', 'Nouvelle-Zélande');
+insert into llx_c_pays (rowid,code,libelle) values (163, 'NP', 'NÃ©pal'         );
+insert into llx_c_pays (rowid,code,libelle) values (164, 'AN', 'Antilles nÃ©erlandaises');
+insert into llx_c_pays (rowid,code,libelle) values (165, 'NC', 'Nouvelle-CalÃ©donie');
+insert into llx_c_pays (rowid,code,libelle) values (166, 'NZ', 'Nouvelle-ZÃ©lande');
 insert into llx_c_pays (rowid,code,libelle) values (167, 'NI', 'Nicaragua'     );
 insert into llx_c_pays (rowid,code,libelle) values (168, 'NE', 'Niger'         );
 insert into llx_c_pays (rowid,code,libelle) values (169, 'NG', 'Nigeria'       );
-insert into llx_c_pays (rowid,code,libelle) values (170, 'NU', 'Nioué'         );
+insert into llx_c_pays (rowid,code,libelle) values (170, 'NU', 'NiouÃ©'         );
 insert into llx_c_pays (rowid,code,libelle) values (171, 'NF', 'Ile Norfolk'   );
 insert into llx_c_pays (rowid,code,libelle) values (172, 'MP', 'Mariannes du Nord');
-insert into llx_c_pays (rowid,code,libelle) values (173, 'NO', 'Norvège'       );
+insert into llx_c_pays (rowid,code,libelle) values (173, 'NO', 'NorvÃ¨ge'       );
 insert into llx_c_pays (rowid,code,libelle) values (174, 'OM', 'Oman'          );
 insert into llx_c_pays (rowid,code,libelle) values (175, 'PK', 'Pakistan'      );
 insert into llx_c_pays (rowid,code,libelle) values (176, 'PW', 'Palaos'         );
-insert into llx_c_pays (rowid,code,libelle) values (177, 'PS', 'territoire Palestinien Occupé');
+insert into llx_c_pays (rowid,code,libelle) values (177, 'PS', 'territoire Palestinien OccupÃ©');
 insert into llx_c_pays (rowid,code,libelle) values (178, 'PA', 'Panama'        );
-insert into llx_c_pays (rowid,code,libelle) values (179, 'PG', 'Papouasie-Nouvelle-Guinée');
+insert into llx_c_pays (rowid,code,libelle) values (179, 'PG', 'Papouasie-Nouvelle-GuinÃ©e');
 insert into llx_c_pays (rowid,code,libelle) values (180, 'PY', 'Paraguay'      );
-insert into llx_c_pays (rowid,code,libelle) values (181, 'PE', 'Pérou'         );
+insert into llx_c_pays (rowid,code,libelle) values (181, 'PE', 'PÃ©rou'         );
 insert into llx_c_pays (rowid,code,libelle) values (182, 'PH', 'Philippines'   );
 insert into llx_c_pays (rowid,code,libelle) values (183, 'PN', 'Iles Pitcairn' );
 insert into llx_c_pays (rowid,code,libelle) values (184, 'PL', 'Pologne'       );
 insert into llx_c_pays (rowid,code,libelle) values (185, 'PR', 'Porto Rico'    );
 insert into llx_c_pays (rowid,code,libelle) values (186, 'QA', 'Qatar'         );
-insert into llx_c_pays (rowid,code,libelle) values (187, 'RE', 'Réunion'       );
+insert into llx_c_pays (rowid,code,libelle) values (187, 'RE', 'RÃ©union'       );
 insert into llx_c_pays (rowid,code,libelle) values (188, 'RO', 'Roumanie'      );
 insert into llx_c_pays (rowid,code,libelle) values (189, 'RW', 'Rwanda'        );
-insert into llx_c_pays (rowid,code,libelle) values (190, 'SH', 'Sainte-Hélène' );
-insert into llx_c_pays (rowid,code,libelle) values (191, 'KN', 'Saint-Christophe-et-Niévès');
+insert into llx_c_pays (rowid,code,libelle) values (190, 'SH', 'Sainte-HÃ©lÃ¨ne' );
+insert into llx_c_pays (rowid,code,libelle) values (191, 'KN', 'Saint-Christophe-et-NiÃ©vÃ¨s');
 insert into llx_c_pays (rowid,code,libelle) values (192, 'LC', 'Sainte-Lucie'  );
 insert into llx_c_pays (rowid,code,libelle) values (193, 'PM', 'Saint-Pierre-et-Miquelon');
 insert into llx_c_pays (rowid,code,libelle) values (194, 'VC', 'Saint-Vincent-et-les-Grenadines');
 insert into llx_c_pays (rowid,code,libelle) values (195, 'WS', 'Samoa'         );
 insert into llx_c_pays (rowid,code,libelle) values (196, 'SM', 'Saint-Marin'   );
-insert into llx_c_pays (rowid,code,libelle) values (197, 'ST', 'Sao Tomé-et-Principe');
+insert into llx_c_pays (rowid,code,libelle) values (197, 'ST', 'Sao TomÃ©-et-Principe');
 insert into llx_c_pays (rowid,code,libelle) values (198, 'RS', 'Serbie'        );
 insert into llx_c_pays (rowid,code,libelle) values (199, 'SC', 'Seychelles'    );
 insert into llx_c_pays (rowid,code,libelle) values (200, 'SL', 'Sierra Leone'  );
 insert into llx_c_pays (rowid,code,libelle) values (201, 'SK', 'Slovaquie'     );
-insert into llx_c_pays (rowid,code,libelle) values (202, 'SI', 'Slovénie'      );
+insert into llx_c_pays (rowid,code,libelle) values (202, 'SI', 'SlovÃ©nie'      );
 insert into llx_c_pays (rowid,code,libelle) values (203, 'SB', 'Iles Salomon'  );
 insert into llx_c_pays (rowid,code,libelle) values (204, 'SO', 'Somalie'       );
 insert into llx_c_pays (rowid,code,libelle) values (205, 'ZA', 'Afrique du Sud');
-insert into llx_c_pays (rowid,code,libelle) values (206, 'GS', 'Iles Géorgie du Sud et Sandwich du Sud');
+insert into llx_c_pays (rowid,code,libelle) values (206, 'GS', 'Iles GÃ©orgie du Sud et Sandwich du Sud');
 insert into llx_c_pays (rowid,code,libelle) values (207, 'LK', 'Sri Lanka'     );
 insert into llx_c_pays (rowid,code,libelle) values (208, 'SD', 'Soudan'        );
 insert into llx_c_pays (rowid,code,libelle) values (209, 'SR', 'Suriname'      );
 insert into llx_c_pays (rowid,code,libelle) values (210, 'SJ', 'Iles Svalbard et Jan Mayen');
 insert into llx_c_pays (rowid,code,libelle) values (211, 'SZ', 'Swaziland'     );
 insert into llx_c_pays (rowid,code,libelle) values (212, 'SY', 'Syrie'         );
-insert into llx_c_pays (rowid,code,libelle) values (213, 'TW', 'Taïwan'        );
+insert into llx_c_pays (rowid,code,libelle) values (213, 'TW', 'TaÃ¯wan'        );
 insert into llx_c_pays (rowid,code,libelle) values (214, 'TJ', 'Tadjikistan'   );
 insert into llx_c_pays (rowid,code,libelle) values (215, 'TZ', 'Tanzanie'      );
-insert into llx_c_pays (rowid,code,libelle) values (216, 'TH', 'Thaïlande'     );
+insert into llx_c_pays (rowid,code,libelle) values (216, 'TH', 'ThaÃ¯lande'     );
 insert into llx_c_pays (rowid,code,libelle) values (217, 'TL', 'Timor Oriental');
-insert into llx_c_pays (rowid,code,libelle) values (218, 'TK', 'Tokélaou'      );
+insert into llx_c_pays (rowid,code,libelle) values (218, 'TK', 'TokÃ©laou'      );
 insert into llx_c_pays (rowid,code,libelle) values (219, 'TO', 'Tonga'         );
-insert into llx_c_pays (rowid,code,libelle) values (220, 'TT', 'Trinité-et-Tobago');
+insert into llx_c_pays (rowid,code,libelle) values (220, 'TT', 'TrinitÃ©-et-Tobago');
 insert into llx_c_pays (rowid,code,libelle) values (221, 'TR', 'Turquie'       );
-insert into llx_c_pays (rowid,code,libelle) values (222, 'TM', 'Turkménistan'  );
+insert into llx_c_pays (rowid,code,libelle) values (222, 'TM', 'TurkmÃ©nistan'  );
 insert into llx_c_pays (rowid,code,libelle) values (223, 'TC', 'Iles Turks-et-Caicos');
 insert into llx_c_pays (rowid,code,libelle) values (224, 'TV', 'Tuvalu'        );
 insert into llx_c_pays (rowid,code,libelle) values (225, 'UG', 'Ouganda'       );
 insert into llx_c_pays (rowid,code,libelle) values (226, 'UA', 'Ukraine'       );
-insert into llx_c_pays (rowid,code,libelle) values (227, 'AE', 'Émirats arabes unis');
-insert into llx_c_pays (rowid,code,libelle) values (228, 'UM', 'Iles mineures éloignées des États-Unis');
+insert into llx_c_pays (rowid,code,libelle) values (227, 'AE', 'Ã‰mirats arabes unis');
+insert into llx_c_pays (rowid,code,libelle) values (228, 'UM', 'Iles mineures Ã©loignÃ©es des Ã‰tats-Unis');
 insert into llx_c_pays (rowid,code,libelle) values (229, 'UY', 'Uruguay'       );
-insert into llx_c_pays (rowid,code,libelle) values (230, 'UZ', 'Ouzbékistan'   );
+insert into llx_c_pays (rowid,code,libelle) values (230, 'UZ', 'OuzbÃ©kistan'   );
 insert into llx_c_pays (rowid,code,libelle) values (231, 'VU', 'Vanuatu'       );
-insert into llx_c_pays (rowid,code,libelle) values (232, 'VE', 'Vénézuela'     );
-insert into llx_c_pays (rowid,code,libelle) values (233, 'VN', 'Viêt Nam'      );
+insert into llx_c_pays (rowid,code,libelle) values (232, 'VE', 'VÃ©nÃ©zuela'     );
+insert into llx_c_pays (rowid,code,libelle) values (233, 'VN', 'ViÃªt Nam'      );
 insert into llx_c_pays (rowid,code,libelle) values (234, 'VG', 'Iles Vierges britanniques');
-insert into llx_c_pays (rowid,code,libelle) values (235, 'VI', 'Iles Vierges américaines');
+insert into llx_c_pays (rowid,code,libelle) values (235, 'VI', 'Iles Vierges amÃ©ricaines');
 insert into llx_c_pays (rowid,code,libelle) values (236, 'WF', 'Wallis-et-Futuna');
 insert into llx_c_pays (rowid,code,libelle) values (237, 'EH', 'Sahara occidental');
-insert into llx_c_pays (rowid,code,libelle) values (238, 'YE', 'Yémen'         );
+insert into llx_c_pays (rowid,code,libelle) values (238, 'YE', 'YÃ©men'         );
 insert into llx_c_pays (rowid,code,libelle) values (239, 'ZM', 'Zambie'        );
 insert into llx_c_pays (rowid,code,libelle) values (240, 'ZW', 'Zimbabwe'      );
 insert into llx_c_pays (rowid,code,libelle) values (241, 'GG', 'Guernesey'     );
 insert into llx_c_pays (rowid,code,libelle) values (242, 'IM', 'Ile de Man'    );
 insert into llx_c_pays (rowid,code,libelle) values (243, 'JE', 'Jersey'        );
-insert into llx_c_pays (rowid,code,libelle) values (244, 'ME', 'Monténégro'    );
-insert into llx_c_pays (rowid,code,libelle) values (245, 'BL', 'Saint-Barthélemy');
+insert into llx_c_pays (rowid,code,libelle) values (244, 'ME', 'MontÃ©nÃ©gro'    );
+insert into llx_c_pays (rowid,code,libelle) values (245, 'BL', 'Saint-BarthÃ©lemy');
 insert into llx_c_pays (rowid,code,libelle) values (246, 'MF', 'Saint-Martin'  );
 
 
@@ -647,79 +647,79 @@ delete from llx_c_forme_juridique;
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, '0','-');
 
 -- Pour la France: Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'11','Artisan Commerçant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'12','Commerçant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'11','Artisan CommerÃ§ant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'12','CommerÃ§ant');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'13','Artisan');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'14','Officier public ou ministériel');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'15','Profession libérale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'14','Officier public ou ministÃ©riel');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'15','Profession libÃ©rale');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'16','Exploitant agricole');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'17','Agent commercial');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'18','Associé Gérant de société');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'18','AssociÃ© GÃ©rant de sociÃ©tÃ©');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'19','(Autre) personne physique');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'21','Indivision');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'22','Société créée de fait');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'23','Société en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'22','SociÃ©tÃ© crÃ©Ã©e de fait');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'23','SociÃ©tÃ© en participation');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'27','Paroisse hors zone concordataire');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'29','Autre groupement de droit privé non doté de la personnalité morale');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'31','Personne morale de droit étranger, immatriculée au RCS');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'32','Personne morale de droit étranger, non immatriculée au RCS');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'29','Autre groupement de droit privÃ© non dotÃ© de la personnalitÃ© morale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'31','Personne morale de droit Ã©tranger, immatriculÃ©e au RCS');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'32','Personne morale de droit Ã©tranger, non immatriculÃ©e au RCS');
                                                                      
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'41','Établissement public ou régie à caractère industriel ou commercial');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'41','Ã‰tablissement public ou rÃ©gie Ã  caractÃ¨re industriel ou commercial');
                                                                      
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'51','Société coopérative commerciale particulière');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'52','Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'53','Société en commandite');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'54','Société à responsabilité limitée (SARL)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'55','Société anonyme à conseil d administration');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'56','Société anonyme à directoire');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'57','Société par actions simplifiée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'58','Entreprise Unipersonnelle à Responsabilité Limitée (EURL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'51','SociÃ©tÃ© coopÃ©rative commerciale particuliÃ¨re');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'52','SociÃ©tÃ© en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'53','SociÃ©tÃ© en commandite');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'54','SociÃ©tÃ© Ã  responsabilitÃ© limitÃ©e (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'55','SociÃ©tÃ© anonyme Ã  conseil d administration');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'56','SociÃ©tÃ© anonyme Ã  directoire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'57','SociÃ©tÃ© par actions simplifiÃ©e');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'58','Entreprise Unipersonnelle Ã  ResponsabilitÃ© LimitÃ©e (EURL)');
                                                                      
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'61','Caisse d\'épargne et de prévoyance');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Groupement d\'intérêt économique (GIE)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'63','Société coopérative agricole');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'64','Société non commerciale d assurances');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'65','Société civile');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'69','Autres personnes de droit privé inscrites au RCS');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'61','Caisse d\'Ã©pargne et de prÃ©voyance');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Groupement d\'intÃ©rÃªt Ã©conomique (GIE)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'63','SociÃ©tÃ© coopÃ©rative agricole');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'64','SociÃ©tÃ© non commerciale d assurances');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'65','SociÃ©tÃ© civile');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'69','Autres personnes de droit privÃ© inscrites au RCS');
                                                                      
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'71','Administration de l état');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'72','Collectivité territoriale');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'73','Établissement public administratif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'71','Administration de l Ã©tat');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'72','CollectivitÃ© territoriale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'73','Ã‰tablissement public administratif');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'74','Autre personne morale de droit public administratif');
                                                                      
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'81','Organisme gérant régime de protection social à adhésion obligatoire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'81','Organisme gÃ©rant rÃ©gime de protection social Ã  adhÃ©sion obligatoire');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'82','Organisme mutualiste');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'83','Comité d entreprise');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'83','ComitÃ© d entreprise');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'84','Organisme professionnel');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'85','Organisme de retraite à adhésion non obligatoire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'85','Organisme de retraite Ã  adhÃ©sion non obligatoire');
                                                                      
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'91','Syndicat de propriétaires');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'92','Association loi 1901 ou assimilé');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'91','Syndicat de propriÃ©taires');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'92','Association loi 1901 ou assimilÃ©');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'93','Fondation');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'99','Autre personne morale de droit privé');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'99','Autre personne morale de droit privÃ©');
 
 -- Pour la Belgique
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '200', 'Indépendant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '201', 'SPRL - Société à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '202', 'SA   - Société Anonyme');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '203', 'SCRL - Société coopérative à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '200', 'IndÃ©pendant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '201', 'SPRL - SociÃ©tÃ© Ã  responsabilitÃ© limitÃ©e');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '202', 'SA   - SociÃ©tÃ© Anonyme');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '203', 'SCRL - SociÃ©tÃ© coopÃ©rative Ã  responsabilitÃ© limitÃ©e');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '204', 'ASBL - Association sans but Lucratif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '205', 'SCRI - Société coopérative à responsabilité illimitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '206', 'SCS  - Société en commandite simple');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '207', 'SCA  - Société en commandite par action');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '208', 'SNC  - Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '209', 'GIE  - Groupement d intérêt économique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '210', 'GEIE - Groupement européen d intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '205', 'SCRI - SociÃ©tÃ© coopÃ©rative Ã  responsabilitÃ© illimitÃ©e');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '206', 'SCS  - SociÃ©tÃ© en commandite simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '207', 'SCA  - SociÃ©tÃ© en commandite par action');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '208', 'SNC  - SociÃ©tÃ© en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '209', 'GIE  - Groupement d intÃ©rÃªt Ã©conomique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '210', 'GEIE - Groupement europÃ©en d intÃ©rÃªt Ã©conomique');
 
 -- Pour la Suisse
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '600', 'Raison Individuelle');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '601', 'Société Simple');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '602', 'Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '603', 'Société en commandite');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '604', 'Société anonyme (SA)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '605', 'Société en commandite par actions');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '606', 'Société à responsabilité limitée (SARL)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '607', 'Société coopérative');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '601', 'SociÃ©tÃ© Simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '602', 'SociÃ©tÃ© en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '603', 'SociÃ©tÃ© en commandite');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '604', 'SociÃ©tÃ© anonyme (SA)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '605', 'SociÃ©tÃ© en commandite par actions');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '606', 'SociÃ©tÃ© Ã  responsabilitÃ© limitÃ©e (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '607', 'SociÃ©tÃ© coopÃ©rative');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '608', 'Association');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (6, '609', 'Fondation');
 
@@ -732,15 +732,15 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '704', 'Wo
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '705', 'Limited Liability Partnership');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (7, '706', 'Franchise');
 
--- Pour la Tunisie (Formes les plus utilisées)
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1000','Société à responsabilité limitée (SARL)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1001','Société en Nom Collectif (SNC)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1002','Société en Commandite Simple (SCS)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1003','société en participation');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1004','Société Anonyme (SA)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','Société Unipersonnelle à Responsabilité Limitée (SUARL)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d\'intérêt économique (GEI)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de sociétés');
+-- Pour la Tunisie (Formes les plus utilisÃ©es)
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1000','SociÃ©tÃ© Ã  responsabilitÃ© limitÃ©e (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1001','SociÃ©tÃ© en Nom Collectif (SNC)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1002','SociÃ©tÃ© en Commandite Simple (SCS)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1003','sociÃ©tÃ© en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1004','SociÃ©tÃ© Anonyme (SA)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','SociÃ©tÃ© Unipersonnelle Ã  ResponsabilitÃ© LimitÃ©e (SUARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d\'intÃ©rÃªt Ã©conomique (GEI)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de sociÃ©tÃ©s');
 
 -- Spain
 INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('401', 4, 'Empresario Individual', 1);
@@ -753,11 +753,11 @@ INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('407
 INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('408', 4, 'Sociedad Comandataria Simple', 1);
 INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('409', 4, 'Sociedad Laboral', 1);
 INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('410', 4, 'Sociedad Cooperativa', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('411', 4, 'Sociedad de Garantía Recíproca', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('411', 4, 'Sociedad de GarantÃ­a RecÃ­proca', 1);
 INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('412', 4, 'Entidad de Capital-Riesgo', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('413', 4, 'Agrupación de Interes Económico', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('414', 4, 'Sociedad de Invarsión Mobiliaria', 1);
-INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('415', 4, 'Agrupación sin Animo de Lucro', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('413', 4, 'AgrupaciÃ³n de Interes EconÃ³mico', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('414', 4, 'Sociedad de InvarsiÃ³n Mobiliaria', 1);
+INSERT INTO llx_c_forme_juridique ( code, fk_pays, libelle, active) VALUES ('415', 4, 'AgrupaciÃ³n sin Animo de Lucro', 1);
 
 
 --
@@ -768,11 +768,11 @@ delete from llx_c_paiement;
 insert into llx_c_paiement (id,code,libelle,type,active) values (0, '',    '-',                 3,1);
 insert into llx_c_paiement (id,code,libelle,type,active) values (1, 'TIP', 'TIP',               2,1);
 insert into llx_c_paiement (id,code,libelle,type,active) values (2, 'VIR', 'Virement',          2,1);
-insert into llx_c_paiement (id,code,libelle,type,active) values (3, 'PRE', 'Prélèvement',       2,1);
-insert into llx_c_paiement (id,code,libelle,type,active) values (4, 'LIQ', 'Espèces',           2,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (3, 'PRE', 'PrÃ©lÃ¨vement',       2,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (4, 'LIQ', 'EspÃ¨ces',           2,1);
 insert into llx_c_paiement (id,code,libelle,type,active) values (5, 'VAD', 'Paiement en ligne', 2,0);
 insert into llx_c_paiement (id,code,libelle,type,active) values (6, 'CB',  'Carte Bancaire',    2,1);
-insert into llx_c_paiement (id,code,libelle,type,active) values (7, 'CHQ', 'Chèque',            2,1);
+insert into llx_c_paiement (id,code,libelle,type,active) values (7, 'CHQ', 'ChÃ¨que',            2,1);
 insert into llx_c_paiement (id,code,libelle,type,active) values (8, 'TRA', 'Traite',            2,0);
 insert into llx_c_paiement (id,code,libelle,type,active) values (9, 'LCR', 'LCR',               2,0);
 insert into llx_c_paiement (id,code,libelle,type,active) values (10,'FAC', 'Factor',            2,0);
@@ -789,8 +789,8 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 101, 1,   1,'97105',3,'Guadeloupe');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 102, 1,   2,'97209',3,'Martinique');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 103, 1,   3,'97302',3,'Guyane');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 104, 1,   4,'97411',3,'Réunion');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 105, 1,  11,'75056',1,'Île-de-France');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 104, 1,   4,'97411',3,'RÃ©union');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 105, 1,  11,'75056',1,'ÃŽle-de-France');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 106, 1,  21,'51108',0,'Champagne-Ardenne');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 107, 1,  22,'80021',0,'Picardie');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 108, 1,  23,'76540',0,'Haute-Normandie');
@@ -800,17 +800,17 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 112, 1,  31,'59350',2,'Nord-Pas-de-Calais');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 113, 1,  41,'57463',0,'Lorraine');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 114, 1,  42,'67482',1,'Alsace');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 115, 1,  43,'25056',0,'Franche-Comté');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 115, 1,  43,'25056',0,'Franche-ComtÃ©');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 116, 1,  52,'44109',4,'Pays de la Loire');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 117, 1,  53,'35238',0,'Bretagne');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 118, 1,  54,'86194',2,'Poitou-Charentes');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 119, 1,  72,'33063',1,'Aquitaine');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 120, 1,  73,'31555',0,'Midi-Pyrénées');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 120, 1,  73,'31555',0,'Midi-PyrÃ©nÃ©es');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 121, 1,  74,'87085',2,'Limousin');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 122, 1,  82,'69123',2,'Rhône-Alpes');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 122, 1,  82,'69123',2,'RhÃ´ne-Alpes');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 123, 1,  83,'63113',1,'Auvergne');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 124, 1,  91,'34172',2,'Languedoc-Roussillon');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 125, 1,  93,'13055',0,'Provence-Alpes-Côte d\'Azur');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 125, 1,  93,'13055',0,'Provence-Alpes-CÃ´te d\'Azur');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 126, 1,  94,'2A004',0,'Corse');
 
 -- Regions de Belgique (id pays=2)
@@ -820,19 +820,19 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 
 -- Regions de Tunisie (id pays=10)
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1001,10,1001, '',0,'Ariana');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1002,10,1002, '',0,'Béja');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1002,10,1002, '',0,'BÃ©ja');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1003,10,1003, '',0,'Ben Arous');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1004,10,1004, '',0,'Bizerte');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1005,10,1005, '',0,'Gabès');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1005,10,1005, '',0,'GabÃ¨s');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1006,10,1006, '',0,'Gafsa');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1007,10,1007, '',0,'Jendouba');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1008,10,1008, '',0,'Kairouan');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1009,10,1009, '',0,'Kasserine');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1010,10,1010, '',0,'Kébili');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1010,10,1010, '',0,'KÃ©bili');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1011,10,1011, '',0,'La Manouba');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1012,10,1012, '',0,'Le Kef');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1013,10,1013, '',0,'Mahdia');
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1014,10,1014, '',0,'Médenine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1014,10,1014, '',0,'MÃ©denine');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1015,10,1015, '',0,'Monastir');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1016,10,1016, '',0,'Nabeul');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1017,10,1017, '',0,'Sfax');
@@ -849,11 +849,11 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 
 -- Regions spain (id pays=4)
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (401,  4, '', 1, 'Andalucia', 1);
-INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (402,  4, '', 2, 'Aragón', 1);
-INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (403,  4, '', 3, 'Castilla y León', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (402,  4, '', 2, 'AragÃ³n', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (403,  4, '', 3, 'Castilla y LeÃ³n', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (404,  4, '', 4, 'Castilla la Mancha', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (405,  4, '', 5, 'Canarias', 1);
-INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (406,  4, '', 6, 'Cataluña', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (406,  4, '', 6, 'CataluÃ±a', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (407,  4, '', 7, 'Comunidad de Ceuta', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (408,  4, '', 8, 'Comunidad Foral de Navarra', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (409,  4, '', 9, 'Comunidad de Melilla', 1);
@@ -864,7 +864,7 @@ INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VA
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (414,  4, '', 14, 'Islas Baleares', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (415,  4, '', 15, 'La Rioja', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (416,  4, '', 16, 'Comunidad de Madrid', 1);
-INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (417,  4, '', 17, 'Región de Murcia', 1);
+INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (417,  4, '', 17, 'RegiÃ³n de Murcia', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (418,  4, '', 18, 'Principado de Asturias', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (419,  4, '', 19, 'Pais Vasco', 1);
 INSERT INTO llx_c_regions (code_region, fk_pays, cheflieu, tncc, nom, active) VALUES (420,  4, '', 20, 'Otros', 1);
@@ -883,39 +883,39 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'04','04070',4,'ALPES-DE-HAUTE-PROVENCE','Alpes-de-Haute-Provence');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'05','05061',4,'HAUTES-ALPES','Hautes-Alpes');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'06','06088',4,'ALPES-MARITIMES','Alpes-Maritimes');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'07','07186',5,'ARDECHE','Ardèche');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'07','07186',5,'ARDECHE','ArdÃ¨che');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (21,'08','08105',4,'ARDENNES','Ardennes');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (73,'09','09122',5,'ARIEGE','Ariège');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (73,'09','09122',5,'ARIEGE','AriÃ¨ge');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (21,'10','10387',5,'AUBE','Aube');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (91,'11','11069',5,'AUDE','Aude');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (73,'12','12202',5,'AVEYRON','Aveyron');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'13','13055',4,'BOUCHES-DU-RHONE','Bouches-du-Rhône');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'13','13055',4,'BOUCHES-DU-RHONE','Bouches-du-RhÃ´ne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (25,'14','14118',2,'CALVADOS','Calvados');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (83,'15','15014',2,'CANTAL','Cantal');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (54,'16','16015',3,'CHARENTE','Charente');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (54,'17','17300',3,'CHARENTE-MARITIME','Charente-Maritime');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'18','18033',2,'CHER','Cher');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (74,'19','19272',3,'CORREZE','Corrèze');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (74,'19','19272',3,'CORREZE','CorrÃ¨ze');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (94,'2A','2A004',3,'CORSE-DU-SUD','Corse-du-Sud');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (94,'2B','2B033',3,'HAUTE-CORSE','Haute-Corse');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (26,'21','21231',3,'COTE-D\'OR','Côte-d\'Or');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (53,'22','22278',4,'COTES-D\'ARMOR','Côtes-d\'Armor');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (26,'21','21231',3,'COTE-D\'OR','CÃ´te-d\'Or');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (53,'22','22278',4,'COTES-D\'ARMOR','CÃ´tes-d\'Armor');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (74,'23','23096',3,'CREUSE','Creuse');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (72,'24','24322',3,'DORDOGNE','Dordogne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (43,'25','25056',2,'DOUBS','Doubs');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'26','26362',3,'DROME','Drôme');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'26','26362',3,'DROME','DrÃ´me');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (23,'27','27229',5,'EURE','Eure');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'28','28085',1,'EURE-ET-LOIR','Eure-et-Loir');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (53,'29','29232',2,'FINISTERE','Finistère');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (53,'29','29232',2,'FINISTERE','FinistÃ¨re');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (91,'30','30189',2,'GARD','Gard');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (73,'31','31555',3,'HAUTE-GARONNE','Haute-Garonne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (73,'32','32013',2,'GERS','Gers');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (72,'33','33063',3,'GIRONDE','Gironde');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (91,'34','34172',5,'HERAULT','Hérault');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (91,'34','34172',5,'HERAULT','HÃ©rault');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (53,'35','35238',1,'ILLE-ET-VILAINE','Ille-et-Vilaine');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'36','36044',5,'INDRE','Indre');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'37','37261',1,'INDRE-ET-LOIRE','Indre-et-Loire');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'38','38185',5,'ISERE','Isère');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'38','38185',5,'ISERE','IsÃ¨re');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (43,'39','39300',2,'JURA','Jura');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (72,'40','40192',4,'LANDES','Landes');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'41','41018',0,'LOIR-ET-CHER','Loir-et-Cher');
@@ -925,7 +925,7 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (24,'45','45234',2,'LOIRET','Loiret');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (73,'46','46042',2,'LOT','Lot');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (72,'47','47001',0,'LOT-ET-GARONNE','Lot-et-Garonne');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (91,'48','48095',3,'LOZERE','Lozère');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (91,'48','48095',3,'LOZERE','LozÃ¨re');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (52,'49','49007',0,'MAINE-ET-LOIRE','Maine-et-Loire');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (25,'50','50502',3,'MANCHE','Manche');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (21,'51','51108',3,'MARNE','Marne');
@@ -935,20 +935,20 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (41,'55','55029',3,'MEUSE','Meuse');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (53,'56','56260',2,'MORBIHAN','Morbihan');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (41,'57','57463',3,'MOSELLE','Moselle');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (26,'58','58194',3,'NIEVRE','Nièvre');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (26,'58','58194',3,'NIEVRE','NiÃ¨vre');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (31,'59','59350',2,'NORD','Nord');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (22,'60','60057',5,'OISE','Oise');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (25,'61','61001',5,'ORNE','Orne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (31,'62','62041',2,'PAS-DE-CALAIS','Pas-de-Calais');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (83,'63','63113',2,'PUY-DE-DOME','Puy-de-Dôme');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (72,'64','64445',4,'PYRENEES-ATLANTIQUES','Pyrénées-Atlantiques');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (73,'65','65440',4,'HAUTES-PYRENEES','Hautes-Pyrénées');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (91,'66','66136',4,'PYRENEES-ORIENTALES','Pyrénées-Orientales');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (83,'63','63113',2,'PUY-DE-DOME','Puy-de-DÃ´me');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (72,'64','64445',4,'PYRENEES-ATLANTIQUES','PyrÃ©nÃ©es-Atlantiques');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (73,'65','65440',4,'HAUTES-PYRENEES','Hautes-PyrÃ©nÃ©es');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (91,'66','66136',4,'PYRENEES-ORIENTALES','PyrÃ©nÃ©es-Orientales');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (42,'67','67482',2,'BAS-RHIN','Bas-Rhin');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (42,'68','68066',2,'HAUT-RHIN','Haut-Rhin');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'69','69123',2,'RHONE','Rhône');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (43,'70','70550',3,'HAUTE-SAONE','Haute-Saône');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (26,'71','71270',0,'SAONE-ET-LOIRE','Saône-et-Loire');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'69','69123',2,'RHONE','RhÃ´ne');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (43,'70','70550',3,'HAUTE-SAONE','Haute-SaÃ´ne');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (26,'71','71270',0,'SAONE-ET-LOIRE','SaÃ´ne-et-Loire');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (52,'72','72181',3,'SARTHE','Sarthe');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'73','73065',3,'SAVOIE','Savoie');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'74','74010',3,'HAUTE-SAVOIE','Haute-Savoie');
@@ -956,13 +956,13 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (23,'76','76540',3,'SEINE-MARITIME','Seine-Maritime');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'77','77288',0,'SEINE-ET-MARNE','Seine-et-Marne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'78','78646',4,'YVELINES','Yvelines');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (54,'79','79191',4,'DEUX-SEVRES','Deux-Sèvres');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (54,'79','79191',4,'DEUX-SEVRES','Deux-SÃ¨vres');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (22,'80','80021',3,'SOMME','Somme');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (73,'81','81004',2,'TARN','Tarn');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (73,'82','82121',0,'TARN-ET-GARONNE','Tarn-et-Garonne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'83','83137',2,'VAR','Var');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (93,'84','84007',0,'VAUCLUSE','Vaucluse');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (52,'85','85191',3,'VENDEE','Vendée');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (52,'85','85191',3,'VENDEE','VendÃ©e');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (54,'86','86194',3,'VIENNE','Vienne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (74,'87','87085',3,'HAUTE-VIENNE','Haute-Vienne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (41,'88','88160',4,'VOSGES','Vosges');
@@ -976,7 +976,7 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 1,'971','97105',3,'GUADELOUPE','Guadeloupe');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 2,'972','97209',3,'MARTINIQUE','Martinique');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 3,'973','97302',3,'GUYANE','Guyane');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 4,'974','97411',3,'REUNION','Réunion');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 4,'974','97411',3,'REUNION','RÃ©union');
 
 -- Provinces de Belgique
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANVERS','Anvers');
@@ -986,7 +986,7 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'05','',1,'FLANDRE-OCCIDENTALE','Flandre-Occidentale');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'06','',1,'FLANDRE-ORIENTALE','Flandre-Orientale');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'07','',2,'HAINAUT','Hainaut');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'08','',2,'LIEGE','Liège');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'08','',2,'LIEGE','LiÃ¨ge');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'09','',1,'LIMBOURG','Limbourg');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'10','',2,'LUXEMBOURG','Luxembourg');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'11','',2,'NAMUR','Namur');
@@ -1002,35 +1002,35 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (2801, 'NT','',1,'','Northern Territory');
 
 -- Provinces Spain
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('01', 419, '', 19, 'PAIS VASCO', 'País Vasco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('01', 419, '', 19, 'PAIS VASCO', 'PaÃ­s Vasco', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('02', 404, '', 4, 'ALBACETE', 'Albacete', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('03', 411, '', 11, 'ALICANTE', 'Alicante', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('04', 401, '', 1, 'ALMERIA', 'Almería', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('04', 401, '', 1, 'ALMERIA', 'AlmerÃ­a', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('05', 403, '', 3, 'AVILA', 'Avila', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('06', 412, '', 12, 'BADAJOZ', 'Badajoz', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('07', 414, '', 14, 'ISLAS BALEARES', 'Islas Baleares', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('08', 406, '', 6, 'BARCELONA', 'Barcelona', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('09', 403, '', 8, 'BURGOS', 'Burgos', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('10', 412, '', 12, 'CACERES', 'Cáceres', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('11', 401, '', 1, 'CADIz', 'Cádiz', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('12', 411, '', 11, 'CASTELLON', 'Castellón', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('10', 412, '', 12, 'CACERES', 'CÃ¡ceres', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('11', 401, '', 1, 'CADIz', 'CÃ¡diz', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('12', 411, '', 11, 'CASTELLON', 'CastellÃ³n', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('13', 404, '', 4, 'CIUDAD REAL', 'Ciudad Real', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('14', 401, '', 1, 'CORDOBA', 'Córdoba', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('15', 413, '', 13, 'LA CORUÑA', 'La Coruña', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('14', 401, '', 1, 'CORDOBA', 'CÃ³rdoba', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('15', 413, '', 13, 'LA CORUÃ‘A', 'La CoruÃ±a', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('16', 404, '', 4, 'CUENCA', 'Cuenca', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('17', 406, '', 6, 'GERONA', 'Gerona', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('18', 401, '', 1, 'GRANADA', 'Granada', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('19', 404, '', 4, 'GUADALAJARA', 'Guadalajara', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('20', 419, '', 19, 'GUIPUZCOA', 'Guipúzcoa', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('20', 419, '', 19, 'GUIPUZCOA', 'GuipÃºzcoa', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('21', 401, '', 1, 'HUELVA', 'Huelva', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('22', 402, '', 2, 'HUESCA', 'Huesca', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('23', 401, '', 1, 'JAEN', 'Jaén', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('24', 403, '', 3, 'LEON', 'León', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('25', 406, '', 6, 'LERIDA', 'Lérida', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('23', 401, '', 1, 'JAEN', 'JaÃ©n', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('24', 403, '', 3, 'LEON', 'LeÃ³n', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('25', 406, '', 6, 'LERIDA', 'LÃ©rida', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('26', 415, '', 15, 'LA RIOJA', 'La Rioja', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('27', 413, '', 13, 'LUGO', 'Lugo', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('28', 416, '', 16, 'MADRID', 'Madrid', 1);
-INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('29', 401, '', 1, 'MALAGA', 'Málaga', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('29', 401, '', 1, 'MALAGA', 'MÃ¡laga', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('30', 417, '', 17, 'MURCIA', 'Murcia', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('31', 408, '', 8, 'NAVARRA', 'Navarra', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('32', 413, '', 13, 'ORENSE', 'Orense', 1);
@@ -1065,9 +1065,9 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 delete from llx_c_propalst;
 insert into llx_c_propalst (id,code,label) values (0, 'PR_DRAFT',     'Brouillon');
 insert into llx_c_propalst (id,code,label) values (1, 'PR_OPEN',      'Ouverte');
-insert into llx_c_propalst (id,code,label) values (2, 'PR_SIGNED',    'Signée');
-insert into llx_c_propalst (id,code,label) values (3, 'PR_NOTSIGNED', 'Non Signée');
-insert into llx_c_propalst (id,code,label) values (4, 'PR_FAC',       'Facturée');
+insert into llx_c_propalst (id,code,label) values (2, 'PR_SIGNED',    'SignÃ©e');
+insert into llx_c_propalst (id,code,label) values (3, 'PR_NOTSIGNED', 'Non SignÃ©e');
+insert into llx_c_propalst (id,code,label) values (4, 'PR_FAC',       'FacturÃ©e');
 
 --
 -- Types action st
@@ -1075,10 +1075,10 @@ insert into llx_c_propalst (id,code,label) values (4, 'PR_FAC',       'Facturée'
 
 delete from llx_c_stcomm;
 insert into llx_c_stcomm (id,code,libelle) values (-1, 'ST_NO',    'Ne pas contacter');
-insert into llx_c_stcomm (id,code,libelle) values ( 0, 'ST_NEVER', 'Jamais contacté');
+insert into llx_c_stcomm (id,code,libelle) values ( 0, 'ST_NEVER', 'Jamais contactÃ©');
 insert into llx_c_stcomm (id,code,libelle) values ( 1, 'ST_TODO',  'A contacter');
 insert into llx_c_stcomm (id,code,libelle) values ( 2, 'ST_PEND',  'Contact en cours');
-insert into llx_c_stcomm (id,code,libelle) values ( 3, 'ST_DONE',  'Contactée');
+insert into llx_c_stcomm (id,code,libelle) values ( 3, 'ST_DONE',  'ContactÃ©e');
 
 --
 -- Types entreprises
@@ -1107,7 +1107,7 @@ insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CN', 'N
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CS', 'SEK', 1, 'Couronnes suedoises'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CZ', 'CZK', 1, 'Couronnes tcheques'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'TD', 'TND', 1, 'Dinar tunisien'); 
-insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DA', 'DZD', 1, 'Dinar algérien'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DA', 'DZD', 1, 'Dinar algÃ©rien'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DH', 'MAD', 1, 'Dirham'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'AD', 'AUD', 1, 'Dollars australiens'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DC', 'CAD', 1, 'Dollars canadiens'); 
@@ -1187,7 +1187,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 4
 -- FRANCE (id 1)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 11, 1,'19.6','0','VAT Rate 19.6 (France hors DOM-TOM)',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 12, 1, '8.5','0','VAT Rate 8.5 (DOM sauf Guyane et Saint-Martin)',0);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 13, 1, '8.5','1','VAT Rate 8.5 (DOM sauf Guyane et Saint-Martin), non perçu par le vendeur mais récupérable par acheteur',0);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 13, 1, '8.5','1','VAT Rate 8.5 (DOM sauf Guyane et Saint-Martin), non perÃ§u par le vendeur mais rÃ©cupÃ©rable par acheteur',0);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 14, 1, '5.5','0','VAT Rate 5.5 (France hors DOM-TOM)',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 15, 1,   '0','0','VAT Rate 0 ou non applicable',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 16, 1, '2.1','0','VAT Rate 2.1',1);
@@ -1237,9 +1237,9 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 6
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (101,10,    '6','0','TVA 6%', 1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (102,10,   '12','0','TVA 12%',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (103,10,   '18','0','VAT 18%',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (104,10,  '7.5','0','TVA 6% Majoré à 25% (7.5%)',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (105,10,   '15','0','TVA 12% Majoré à 25% (15%)',1);
-insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% Majoré à 25% (22.5%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (104,10,  '7.5','0','TVA 6% MajorÃ© Ã  25% (7.5%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (105,10,   '15','0','TVA 12% MajorÃ© Ã  25% (15%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% MajorÃ© Ã  25% (22.5%)',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (107,10,    '0','0','VAT Rate 0',  1);
 
 -- Pour les DOM-TOM, il faut utiliser le pays FRANCE (Sinon pb avec regles de TVA et autres regles propres aux pays et europe)
@@ -1254,7 +1254,7 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (21, 'contrat', 'external', 'CUSTOMER',      'Contact client suivi contrat', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (22, 'contrat', 'external', 'SALESREPSIGN',  'Contact client signataire contrat', 1);
                                                                                                     
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (31, 'propal',  'internal', 'SALESREPFOLL',  'Commercial à l\'origine de la propale', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (31, 'propal',  'internal', 'SALESREPFOLL',  'Commercial Ã  l\'origine de la propale', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (40, 'propal',  'external', 'BILLING',       'Contact client facturation propale', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (41, 'propal',  'external', 'CUSTOMER',      'Contact client suivi propale', 1);
                                                                                                     
@@ -1282,44 +1282,44 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 --
 
 -- France (Organisme ERP)
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (1, 'ER-A-A', 'Matériels électriques < 0,2kg', 0.01000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (2, 'ER-A-B', 'Matériels électriques >= 0,2 kg et < 0,5 kg', 0.03000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (3, 'ER-A-C', 'Matériels électriques >= 0,5 kg et < 1 kg', 0.04000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (4, 'ER-A-D', 'Matériels électriques >= 1 kg et < 2 kg', 0.13000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (5, 'ER-A-E', 'Matériels électriques >= 2 kg et < 4kg', 0.21000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (6, 'ER-A-F', 'Matériels électriques >= 4 kg et < 8 kg', 0.42000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (7, 'ER-A-G', 'Matériels électriques >= 8 kg et < 15 kg', 0.84000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (8, 'ER-A-H', 'Matériels électriques >= 15 kg et < 20 kg', 1.25000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (9, 'ER-A-I', 'Matériels électriques >= 20 kg et < 30 kg', 1.88000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (10, 'ER-A-J', 'Matériels électriques >= 30 kg', 3.34000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (1, 'ER-A-A', 'MatÃ©riels Ã©lectriques < 0,2kg', 0.01000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (2, 'ER-A-B', 'MatÃ©riels Ã©lectriques >= 0,2 kg et < 0,5 kg', 0.03000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (3, 'ER-A-C', 'MatÃ©riels Ã©lectriques >= 0,5 kg et < 1 kg', 0.04000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (4, 'ER-A-D', 'MatÃ©riels Ã©lectriques >= 1 kg et < 2 kg', 0.13000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (5, 'ER-A-E', 'MatÃ©riels Ã©lectriques >= 2 kg et < 4kg', 0.21000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (6, 'ER-A-F', 'MatÃ©riels Ã©lectriques >= 4 kg et < 8 kg', 0.42000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (7, 'ER-A-G', 'MatÃ©riels Ã©lectriques >= 8 kg et < 15 kg', 0.84000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (8, 'ER-A-H', 'MatÃ©riels Ã©lectriques >= 15 kg et < 20 kg', 1.25000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (9, 'ER-A-I', 'MatÃ©riels Ã©lectriques >= 20 kg et < 30 kg', 1.88000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (10, 'ER-A-J', 'MatÃ©riels Ã©lectriques >= 30 kg', 3.34000000, 'ERP', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (11, 'ER-M-1', 'TV, Moniteurs < 9kg', 0.84000000, 'ERP', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (12, 'ER-M-2', 'TV, Moniteurs >= 9kg et < 15kg', 1.67000000, 'ERP', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (13, 'ER-M-3', 'TV, Moniteurs >= 15kg et < 30kg', 3.34000000, 'ERP', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (14, 'ER-M-4', 'TV, Moniteurs >= 30 kg', 6.69000000, 'ERP', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (15, 'EC-A-A', 'Matériels électriques  0,2 kg max', 0.00840000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (16, 'EC-A-B', 'Matériels électriques 0,21 kg min - 0,50 kg max', 0.02500000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (17, 'EC-A-C', 'Matériels électriques  0,51 kg min - 1 kg max', 0.04000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (18, 'EC-A-D', 'Matériels électriques  1,01 kg min - 2,5 kg max', 0.13000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (19, 'EC-A-E', 'Matériels électriques  2,51 kg min - 4 kg max', 0.21000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (20, 'EC-A-F', 'Matériels électriques 4,01 kg min - 8 kg max', 0.42000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (21, 'EC-A-G', 'Matériels électriques  8,01 kg min - 12 kg max', 0.63000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (22, 'EC-A-H', 'Matériels électriques 12,01 kg min - 20 kg max', 1.05000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (23, 'EC-A-I', 'Matériels électriques  20,01 kg min', 1.88000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (15, 'EC-A-A', 'MatÃ©riels Ã©lectriques  0,2 kg max', 0.00840000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (16, 'EC-A-B', 'MatÃ©riels Ã©lectriques 0,21 kg min - 0,50 kg max', 0.02500000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (17, 'EC-A-C', 'MatÃ©riels Ã©lectriques  0,51 kg min - 1 kg max', 0.04000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (18, 'EC-A-D', 'MatÃ©riels Ã©lectriques  1,01 kg min - 2,5 kg max', 0.13000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (19, 'EC-A-E', 'MatÃ©riels Ã©lectriques  2,51 kg min - 4 kg max', 0.21000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (20, 'EC-A-F', 'MatÃ©riels Ã©lectriques 4,01 kg min - 8 kg max', 0.42000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (21, 'EC-A-G', 'MatÃ©riels Ã©lectriques  8,01 kg min - 12 kg max', 0.63000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (22, 'EC-A-H', 'MatÃ©riels Ã©lectriques 12,01 kg min - 20 kg max', 1.05000000, 'Ecologic', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (23, 'EC-A-I', 'MatÃ©riels Ã©lectriques  20,01 kg min', 1.88000000, 'Ecologic', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (24, 'EC-M-1', 'TV, Moniteurs 9 kg max', 0.84000000, 'Ecologic', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (25, 'EC-M-2', 'TV, Moniteurs 9,01 kg min - 18 kg max', 1.67000000, 'Ecologic', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (26, 'EC-M-3', 'TV, Moniteurs 18,01 kg min - 36 kg max', 3.34000000, 'Ecologic', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (27, 'EC-M-4', 'TV, Moniteurs 36,01 kg min', 6.69000000, 'Ecologic', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (28, 'ES-M-1', 'TV, Moniteurs <= 20 pouces', 0.84000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (29, 'ES-M-2', 'TV, Moniteurs > 20 pouces et <= 32 pouces', 3.34000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (30, 'ES-M-3', 'TV, Moniteurs > 32 pouces et autres grands écrans', 6.69000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (31, 'ES-A-A', 'Ordinateur fixe, Audio home systems (HIFI), éléments hifi séparés…', 0.84000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (32, 'ES-A-B', 'Ordinateur portable, CD-RCR, VCR, lecteurs et enregistreurs DVD …  Instruments de musique et caisses de résonance, haut parleurs...', 0.25000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (33, 'ES-A-C', 'Imprimante, photocopieur, télécopieur,…', 0.42000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (34, 'ES-A-D', 'Accessoires, clavier, souris, PDA, imprimante photo, appareil photo, gps, téléphone, répondeur, téléphone sans fil, modem,...   Télécommande, casque, caméscope, baladeur mp3, radio portable, radio K7 et CD portable, set top box, radio réveil …', 0.08400000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (35, 'ES-A-E', 'GSM', 0.00840000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (36, 'ES-A-F', 'Jouets et équipements de loisirs et de sports < 0,5 kg', 0.04200000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (37, 'ES-A-G', 'Jouets et équipements de loisirs et de sports > 0,5 kg', 0.17000000, 'Eco-systèmes', 1, 1);
-INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (38, 'ES-A-H', 'Jouets et équipements de loisirs et de sports > 10 kg', 1.25000000, 'Eco-systèmes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (28, 'ES-M-1', 'TV, Moniteurs <= 20 pouces', 0.84000000, 'Eco-systÃ¨mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (29, 'ES-M-2', 'TV, Moniteurs > 20 pouces et <= 32 pouces', 3.34000000, 'Eco-systÃ¨mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (30, 'ES-M-3', 'TV, Moniteurs > 32 pouces et autres grands Ã©crans', 6.69000000, 'Eco-systÃ¨mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (31, 'ES-A-A', 'Ordinateur fixe, Audio home systems (HIFI), Ã©lÃ©ments hifi sÃ©parÃ©sÂ…', 0.84000000, 'Eco-systÃ¨mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (32, 'ES-A-B', 'Ordinateur portable, CD-RCR, VCR, lecteurs et enregistreurs DVD Â…  Instruments de musique et caisses de rÃ©sonance, haut parleurs...', 0.25000000, 'Eco-systÃ¨mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (33, 'ES-A-C', 'Imprimante, photocopieur, tÃ©lÃ©copieur,Â…', 0.42000000, 'Eco-systÃ¨mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (34, 'ES-A-D', 'Accessoires, clavier, souris, PDA, imprimante photo, appareil photo, gps, tÃ©lÃ©phone, rÃ©pondeur, tÃ©lÃ©phone sans fil, modem,...   TÃ©lÃ©commande, casque, camÃ©scope, baladeur mp3, radio portable, radio K7 et CD portable, set top box, radio rÃ©veil Â…', 0.08400000, 'Eco-systÃ¨mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (35, 'ES-A-E', 'GSM', 0.00840000, 'Eco-systÃ¨mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (36, 'ES-A-F', 'Jouets et Ã©quipements de loisirs et de sports < 0,5 kg', 0.04200000, 'Eco-systÃ¨mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (37, 'ES-A-G', 'Jouets et Ã©quipements de loisirs et de sports > 0,5 kg', 0.17000000, 'Eco-systÃ¨mes', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (38, 'ES-A-H', 'Jouets et Ã©quipements de loisirs et de sports > 10 kg', 1.25000000, 'Eco-systÃ¨mes', 1, 1);
 
 --
 -- Codes barres
