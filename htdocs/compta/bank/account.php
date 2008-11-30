@@ -402,7 +402,8 @@ if ($account || $_GET["ref"])
 	* select sum(amount) from solde ;
 	*/
 
-	$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
+	$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv,";
+	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
 	if ($mode_search)
 	{
 		$sql.= ", s.rowid as socid, s.nom as thirdparty";
@@ -418,19 +419,19 @@ if ($account || $_GET["ref"])
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	if ($mode_search)
 	{
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu1.url_id = s.rowid";
+	}
+	if ($mode_search && $conf->tax->enabled)
+	{
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='payment_vat'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."tva as t ON bu2.url_id = t.rowid";
 	}
 	if ($mode_search && $conf->adherent->enabled)
 	{
 		// \TODO Mettre jointure sur adherent pour recherche sur un adherent
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
-	}
-	if ($mode_search && $conf->tax->enabled)
-	{
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='payment_vat'";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."tva as t ON bu.url_id = t.rowid";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='company'";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu3.url_id = s.rowid";
 	}
 	$sql.= " WHERE fk_account=".$acct->id;
 	$sql.= $sql_rech;
