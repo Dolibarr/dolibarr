@@ -424,7 +424,7 @@ if ($user->societe_id == 0 && $remisecheque->statut == 0 && $_GET['action'] == '
 	print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 }
 
-if ($user->societe_id == 0 && $remisecheque->statut == 0 && $_GET['action'] == '')
+if ($user->societe_id == 0 && $_GET['action'] == '')
 {
 	print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 
