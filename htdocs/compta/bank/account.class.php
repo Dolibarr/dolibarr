@@ -262,7 +262,7 @@ class Account extends CommonObject
 		}
 	}
 
-	/*
+	/**
 	 *      \brief          Creation du compte bancaire en base
 	 *      \return         int     < 0 si erreur, > 0 si ok
 	 */
@@ -270,18 +270,12 @@ class Account extends CommonObject
 	{
 		global $langs;
 
-		// Verification parametres
+		// Check parameters
 		if (! $this->min_allowed) $this->min_allowed=0;
 		if (! $this->min_desired) $this->min_desired=0;
 
 		// Chargement librairie pour acces fonction controle RIB
 		require_once DOL_DOCUMENT_ROOT.'/lib/bank.lib.php';
-
-		if (! verif_rib($this)) 
-		{
-			$this->error='RIBControlError';
-			return -1;
-		}
 
 		if (! $this->ref)
 		{
@@ -332,7 +326,7 @@ class Account extends CommonObject
 		}
 	}
 
-	/*
+	/**
 	 *    	\brief      Mise a jour compte, partie generale
 	 *    	\param      user        Object utilisateur qui modifie
 	 *		\return		int			<0 si ko, >0 si ok
@@ -341,8 +335,10 @@ class Account extends CommonObject
 	{
 		global $langs;
 
-		dolibarr_syslog("Account::update");
-
+		// Check parameters
+		if (! $this->min_allowed) $this->min_allowed=0;
+		if (! $this->min_desired) $this->min_desired=0;
+		
 		if (! $this->ref)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));

@@ -94,11 +94,12 @@ function checkBanForAccount($account)
 	$country_code=$account->getCountryCode();
 	
 	// For compatibility between 	
-	// account of type CompanyBankAccount class (we use number)
-	// account of type Account class (we use num_compte)
+	// account of type CompanyBankAccount class (we use number, cle_rib)
+	// account of type Account class (we use num_compte, cle)
 	if (empty($account->number)) $account->number=$account->num_compte;
-
-	dolibarr_syslog("Bank.lib::checkBanForAccount account->iban=".$account->iban." country_code=".$country_code, LOG_DEBUG);
+	if (empty($account->cle))    $account->cle=$account->cle_rib;
+	
+	dolibarr_syslog("Bank.lib::checkBanForAccount account->code_banque=".$account->code_banque." account->code_guichet=".$account->code_guichet." account->number=".$account->number." account->cle=".$account->cle." account->iban=".$account->iban." country_code=".$country_code, LOG_DEBUG);
 	
 	if ($country_code == 'FR')	// France rules
 	{
@@ -117,7 +118,7 @@ function checkBanForAccount($account)
 		}
 		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
 		$cle_rib = 97 - ($s % 97) ;
-		if ($cle_rib == $cle)
+		if ($cle_rib == $account->cle)
 		{
 			return true;
 		}
@@ -136,7 +137,7 @@ function checkBanForAccount($account)
     	
     	$cle_rib=strtolower(CheckES($rib,$CCC));
     	
-		if ($cle_rib == strtolower($account->cle_rib))
+		if ($cle_rib == strtolower($account->cle))
     	{
     		return true;
 		}   

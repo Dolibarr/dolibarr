@@ -190,7 +190,7 @@ class CompanyBankAccount
 		require_once DOL_DOCUMENT_ROOT . '/lib/bank.lib.php';
 
 		// Call function to check BAN
-		if (! verif_rib($this))
+		if (! checkBanForAccount($this))
 		{
 			$this->error_number = 12;
 			$this->error_message = 'RIBControlError';
