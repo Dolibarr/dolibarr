@@ -214,7 +214,7 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->Text(104, 43, $this->account->cle_rib);
 
 		$pdf->SetFont('Arial','',10);
-		$pdf->Text(114, 19, $outputlangs->transnoentities("Signature"));
+		$pdf->Text(114, 19, $outputlangs->transnoentities("Sign"));
 
 		$pdf->Rect(9, 47, 192, 7);
 		$pdf->line(55, 47, 55, 54);
