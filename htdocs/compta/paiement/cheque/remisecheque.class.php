@@ -405,70 +405,86 @@ class RemiseCheque extends CommonObject
 
 
 	/**
-	 *	\brief  	Génère le fichier PDF
-	 *	\param 		model 		Nom du modele
-	 *	\return 	int			<0 si KO, 0 si OK
+	 *	\brief  	Build document
+	 *	\param 		model 			Model name
+	 *	\return  	int        		<0 if KO, >0 if OK
 	 */
 	function GeneratePdf($model='blochet', $outputlangs)
 	{
-		require_once(DOL_DOCUMENT_ROOT ."/compta/bank/account.class.php");
-		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/cheque/pdf/pdf_".$model.".class.php");
+		global $langs;
+		
+		dolibarr_syslog("RemiseCheque::GeneratePdf model=".$model, LOG_DEBUG);
 
-		$class='BordereauCheque'.ucfirst($model);
-		$pdf = new $class($db);
+		$dir=DOL_DOCUMENT_ROOT ."/includes/modules/cheque/pdf/";
 
-		$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq ";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba ";
-		$sql.= " , ".MAIN_DB_PREFIX."bordereau_cheque as bc";
-		$sql.= " WHERE b.fk_account = ba.rowid AND b.fk_bordereau = bc.rowid";
-		$sql.= " AND bc.rowid = ".$this->id;
-		$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
-
-		dolibarr_syslog("RemiseCheque::GeneratePdf sql=".$sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
+		// Charge le modele
+		$file = "pdf_".$model.".class.php";
+		if (file_exists($dir.$file))
 		{
-			$i = 0;
-			while ( $objp = $this->db->fetch_object($result) )
+			require_once(DOL_DOCUMENT_ROOT ."/compta/bank/account.class.php");
+			require_once($dir.$file);
+
+			$classname='BordereauCheque'.ucfirst($model);
+			$pdf = new $classname($db);
+
+			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq ";
+			$sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba ";
+			$sql.= " , ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+			$sql.= " WHERE b.fk_account = ba.rowid AND b.fk_bordereau = bc.rowid";
+			$sql.= " AND bc.rowid = ".$this->id;
+			$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
+
+			dolibarr_syslog("RemiseCheque::GeneratePdf sql=".$sql, LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if ($result)
 			{
-				$pdf->lines[$i]->bank_chq = $objp->banque;
-			  	$pdf->lines[$i]->emetteur_chq = $objp->emetteur;
-			  	$pdf->lines[$i]->amount_chq = $objp->amount;
-			  	$pdf->lines[$i]->num_chq = $objp->num_chq;
-			  	$i++;
+				$i = 0;
+				while ( $objp = $this->db->fetch_object($result) )
+				{
+					$pdf->lines[$i]->bank_chq = $objp->banque;
+					$pdf->lines[$i]->emetteur_chq = $objp->emetteur;
+					$pdf->lines[$i]->amount_chq = $objp->amount;
+					$pdf->lines[$i]->num_chq = $objp->num_chq;
+					$i++;
+				}
 			}
-		}
-		$pdf->nbcheque = $this->nbcheque;
-		$pdf->number = $this->number;
-		$pdf->amount = $this->amount;
-		$pdf->date   = $this->date_bordereau;
+			$pdf->nbcheque = $this->nbcheque;
+			$pdf->number = $this->number;
+			$pdf->amount = $this->amount;
+			$pdf->date   = $this->date_bordereau;
 
-		$account = new Account($this->db);
-		$account->fetch($this->account_id);
+			$account = new Account($this->db);
+			$account->fetch($this->account_id);
 
-		$pdf->account = &$account;
+			$pdf->account = &$account;
 
-		// We save charset_output to restore it because write_file can change it if needed for
-		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
-		$result=$pdf->write_file(DOL_DATA_ROOT.'/compta/bordereau', $this->number, $outputlangs);
-		if ($result > 0)
-		{
-			$outputlangs->charset_output=$sav_charset_output;
-			return 1;
+			// We save charset_output to restore it because write_file can change it if needed for
+			// output format that does not support UTF8.
+			$sav_charset_output=$outputlangs->charset_output;
+			$result=$pdf->write_file(DOL_DATA_ROOT.'/compta/bordereau', $this->number, $outputlangs);
+			if ($result > 0)
+			{
+				$outputlangs->charset_output=$sav_charset_output;
+				return 1;
+			}
+			else
+			{
+				$outputlangs->charset_output=$sav_charset_output;
+				dolibarr_syslog("Error");
+				dolibarr_print_error($db,$pdf->pdferror());
+				return 0;
+			}
 		}
 		else
 		{
-			$outputlangs->charset_output=$sav_charset_output;
-			dolibarr_syslog("Error");
-			dolibarr_print_error($db,$pdf->pdferror());
-			return 0;
+			$this->error=$langs->trans("ErrorFileDoesNotExists",$dir.$file);
+			return -1;
 		}
 	}
 
 	/**
-	 \brief  Mets a jour le montant total
-	 \return int, 0 en cas de succes
+	 *	\brief  Mets a jour le montant total
+	 *	\return int, 0 en cas de succes
 	 */
 	function UpdateAmount()
 	{

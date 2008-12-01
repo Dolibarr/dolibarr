@@ -158,13 +158,13 @@ class ModeleNumRefFactures
 
 
 /**
- \brief   	Cree un facture sur disque en fonction du modele de FACTURE_ADDON_PDF
- \param   	db  			objet base de donnee
- \param   	id				id de la facture a creer
- \param	    message			message
- \param	    modele			force le modele a utiliser ('' to not force)
- \param		outputlangs		objet lang a utiliser pour traduction
- \return  	int        		<0 si KO, >0 si OK
+ *	\brief   	Cree un facture sur disque en fonction du modele de FACTURE_ADDON_PDF
+ *	\param   	db  			objet base de donnee
+ *	\param   	id				id de la facture a creer
+ *	\param	    message			message
+ *	\param	    modele			force le modele a utiliser ('' to not force)
+ *	\param		outputlangs		objet lang a utiliser pour traduction
+ *	\return  	int        		<0 if KO, >0 if OK
  */
 function facture_pdf_create($db, $id, $message, $modele, $outputlangs)
 {

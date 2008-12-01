@@ -121,7 +121,7 @@ class FormFile
 	 *      \param      filename            Sub dir to scan (vide si filedir deja complet)
 	 *      \param      filedir             Dir to scan
 	 *      \param      urlsource           Url of origin page (for return)
-	 *      \param      genallowed          G�n�ration autoris�e (1/0 ou array des formats)
+	 *      \param      genallowed          Generation is allowed (1/0 or array of formats)
 	 *      \param      delallowed          Suppression autoris�e (1/0)
 	 *      \param      modelselected       Modele � pr�-s�lectionner par d�faut
 	 *      \param      modelliste			Tableau des modeles possibles. Use '' to hide combo select list.

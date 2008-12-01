@@ -137,7 +137,7 @@ if ($_POST['action'] == 'builddoc' && $user->rights->banque)
 	$result = $remisecheque->GeneratePdf($_POST["model"], $outputlangs);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$result);
+		dolibarr_print_error($db,$remisecheque->error);
 		exit;
 	}
 	else
@@ -443,7 +443,7 @@ if ($_GET['action'] != 'new')
 	if ($remisecheque->statut == 1)
 	{
 		$dir = DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir($remisecheque->number);
-		$gen = array('Blochet');
+		$gen = array('blochet'=>'blochet');
 		$formfile->show_documents("remisecheque","",$dir,$_SERVER["PHP_SELF"].'?id='.$remisecheque->id,$gen,1);
 	}
 }

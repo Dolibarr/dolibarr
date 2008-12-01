@@ -111,6 +111,7 @@ DeleteCheckReceipt=Supprimer ce bordereau de remise ?
 ConfirmDeleteCheckReceipt=Etes-vous sûr de vouloir supprimer ce bordereau ?
 BankChecks=Chèques
 BankChecksToReceipt=Chèques à déposer
+NumberOfCheques=Nb de chèques
 DeleteTransaction=Supprimer la transaction
 ConfirmDeleteTransaction=Etes-vous sur de vouloir supprimer cette transaction ?
 ThisWillAlsoDeleteBankRecord=Ceci supprimera aussi les écritures banquaires générées
