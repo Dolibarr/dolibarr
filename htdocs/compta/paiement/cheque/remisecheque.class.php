@@ -57,10 +57,11 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-		\brief 		Load record
-		\param 		id 			Id record
-		\param 		ref		 	Ref record
-		*/
+	 *	\brief 		Load record
+	 *	\param 		id 			Id record
+	 *	\param 		ref		 	Ref record
+	 * 	\return		int			<0 if KO, >= 0 if OK
+	 */
 	function Fetch($id,$ref='')
 	{
 		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author,bc.fk_bank_account,bc.amount,bc.number,bc.statut,bc.nbcheque";
@@ -108,11 +109,11 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-		\brief  	Create a receipt to send cheques
-		\param  	user 			Utilisateur qui effectue l'operation
-		\param  	account_id 		Compte bancaire concerne
-		\return		int				<0 if KO, >0 if OK
-		*/
+	 *	\brief  	Create a receipt to send cheques
+	 *	\param  	user 			Utilisateur qui effectue l'operation
+	 *	\param  	account_id 		Compte bancaire concerne
+	 *	\return		int				<0 if KO, >0 if OK
+	 */
 	function Create($user, $account_id)
 	{
 		$this->errno = 0;
@@ -206,6 +207,7 @@ class RemiseCheque extends CommonObject
 		{
 			$result = -1;
 			$this->error=$this->db->lasterror();
+			$this->errno=$this->db->lasterrno();
 			dolibarr_syslog("RemiseCheque::Create Erreur $result INSERT Mysql");
 		}
 
@@ -286,7 +288,7 @@ class RemiseCheque extends CommonObject
 
 		$num=$this->getNextNumber();
 			
-		if ($this->errno == 0)
+		if ($this->errno == 0 && $num)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql.= " SET statut=1, number='".$num."'";
@@ -305,19 +307,19 @@ class RemiseCheque extends CommonObject
 				else
 				{
 					$this->errno = -1029;
-					dolibarr_syslog("Remisecheque::Validate Erreur UPDATE ($this->errno)");
+					dolibarr_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
 				}
 			}
 			else
 			{
 				$this->errno = -1033;
-				dolibarr_syslog("Remisecheque::Validate Erreur UPDATE ($this->errno)");
+				dolibarr_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
 			}
 		}
 
 		if ($this->errno == 0)
 		{
-			$this->GeneratePdf();
+			$result=$this->GeneratePdf();
 		}
 
 		// Commit/Rollback
@@ -412,8 +414,6 @@ class RemiseCheque extends CommonObject
 		require_once(DOL_DOCUMENT_ROOT ."/compta/bank/account.class.php");
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/cheque/pdf/pdf_".$model.".class.php");
 
-		$result = $this->Fetch($this->id);
-
 		$class='BordereauCheque'.ucfirst($model);
 		$pdf = new $class($db);
 
@@ -424,8 +424,8 @@ class RemiseCheque extends CommonObject
 		$sql.= " AND bc.rowid = ".$this->id;
 		$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
 
+		dolibarr_syslog("RemiseCheque::GeneratePdf sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
-
 		if ($result)
 		{
 			$i = 0;
@@ -451,7 +451,8 @@ class RemiseCheque extends CommonObject
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($pdf->write_file(DOL_DATA_ROOT.'/compta/bordereau', $this->number, $outputlangs) > 0)
+		$result=$pdf->write_file(DOL_DATA_ROOT.'/compta/bordereau', $this->number, $outputlangs);
+		if ($result > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;

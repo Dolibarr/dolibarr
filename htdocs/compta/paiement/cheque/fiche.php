@@ -104,7 +104,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->banque)
 {
 	$remisecheque = new RemiseCheque($db);
-	$remisecheque->Fetch($_GET["id"]);
+	$result = $remisecheque->Fetch($_GET["id"]);
 	$result = $remisecheque->Validate($user);
 	if ($result >= 0)
 	{
@@ -121,15 +121,29 @@ if ($_POST['action'] == 'builddoc' && $user->rights->banque)
 {
 	$remisecheque = new RemiseCheque($db);
 	$result = $remisecheque->Fetch($_GET["id"]);
-	if ($result == 0)
+
+	/*if ($_REQUEST['model'])
 	{
-		$result = $remisecheque->GeneratePdf($_POST["model"], $langs);
-		Header("Location: fiche.php?id=".$remisecheque->id);
+		$remisecheque->setDocModel($user, $_REQUEST['model']);
+	}*/
+
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+	
+	$result = $remisecheque->GeneratePdf($_POST["model"], $outputlangs);
+	if ($result <= 0)
+	{
+		dolibarr_print_error($db,$result);
 		exit;
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+		Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$remisecheque->id.'#builddoc');
+		exit;
 	}
 }
 
@@ -331,7 +345,7 @@ else
 	$sql.= " WHERE b.fk_type= 'CHQ'";
 	$sql.= " AND b.fk_bordereau = ".$remisecheque->id;
 	$sql.= " ORDER BY $sortfield $sortorder";
-
+	//print $sql;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -398,15 +412,6 @@ else
 
 print '</div>';
 
-if ($_GET['action'] != 'new')
-{
-	if ($remisecheque->statut == 1)
-	{
-		$dir = DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir($remisecheque->number);
-		$gen = array('Blochet');
-		$formfile->show_documents("remisecheque","",$dir,'',$gen,0);
-	}
-}
 
 /*
  * Boutons Actions
@@ -430,6 +435,18 @@ if ($user->societe_id == 0 && $_GET['action'] == '')
 
 }
 print '</div>';
+
+
+
+if ($_GET['action'] != 'new')
+{
+	if ($remisecheque->statut == 1)
+	{
+		$dir = DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir($remisecheque->number);
+		$gen = array('Blochet');
+		$formfile->show_documents("remisecheque","",$dir,$_SERVER["PHP_SELF"].'?id='.$remisecheque->id,$gen,1);
+	}
+}
 
 
 $db->close();

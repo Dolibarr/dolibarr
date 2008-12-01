@@ -118,9 +118,9 @@ class FormFile
 	/**
 	 *      \brief      Affiche la cartouche de la liste des documents d'une propale, facture...
 	 *      \param      modulepart          propal=propal, facture=facture, ...
-	 *      \param      filename            Sous rep � scanner (vide si filedir deja complet)
-	 *      \param      filedir             Repertoire � scanner
-	 *      \param      urlsource           Url page origine (pour retour)
+	 *      \param      filename            Sub dir to scan (vide si filedir deja complet)
+	 *      \param      filedir             Dir to scan
+	 *      \param      urlsource           Url of origin page (for return)
 	 *      \param      genallowed          G�n�ration autoris�e (1/0 ou array des formats)
 	 *      \param      delallowed          Suppression autoris�e (1/0)
 	 *      \param      modelselected       Modele � pr�-s�lectionner par d�faut

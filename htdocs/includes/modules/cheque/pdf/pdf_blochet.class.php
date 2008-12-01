@@ -64,20 +64,26 @@ class BordereauChequeBlochet extends FPDF
 		$this->marge_haute=10;
 		$this->marge_basse=10;
 
-		$this->line_height = 5;
+        // Recupere emmetteur
+        $this->emetteur=$mysoc;
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+		
+        // Defini position des colonnes
+        $this->line_height = 5;
 		$this->line_per_page = 25;
 		$this->tab_height = 200;	//$this->line_height * $this->line_per_page;
 	}
 
 	/**
-	 *	\brief  Fonction generant le rapport sur le disque
-	 *	\param	_dir			Directory
-	 *	\param	number			Number
-	 *	\param	outputlangs		Lang output object
+	 *	\brief  	Fonction generant le rapport sur le disque
+	 *	\param		_dir			Directory
+	 *	\param		number			Number
+	 *	\param		outputlangs		Lang output object
+     *	\return	    int     		1=ok, 0=ko
 	 */
 	function write_file($_dir, $number, $outputlangs)
 	{
-		global $user,$conf,$langs,$mysoc;
+		global $user,$conf,$langs;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// Force output charset to ISO, because, FPDF expect text encoded in ISO
@@ -148,6 +154,9 @@ class BordereauChequeBlochet extends FPDF
 		$pdf->Output($_file);
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
+			
+		$langs->setPhpLang();	// On restaure langue session
+		return 1;   // Pas d'erreur
 	}
 
 	
@@ -160,15 +169,18 @@ class BordereauChequeBlochet extends FPDF
     }
     
 	/**
-		\brief  Generate Header
-		\param  pdf pdf object
-		\param  page current page number
-		\param  pages number of pages
-		*/
+	 *	\brief  Generate Header
+	 *	\param  pdf pdf object
+	 *	\param  page current page number
+	 *	\param  pages number of pages
+	 */
 	function Header(&$pdf, $page, $pages, $outputlangs)
 	{
 		global $langs;
 
+		$outputlangs->load("compta");
+		$outputlangs->load("banks");
+		
 		$title = $outputlangs->transnoentities("CheckReceipt");
 		$pdf->SetFont('Arial','B',10);
 		$pdf->Text(10, 10, $title);

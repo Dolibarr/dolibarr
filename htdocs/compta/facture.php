@@ -297,13 +297,13 @@ if ($_REQUEST['action'] == 'confirm_valid' && $_REQUEST['confirm'] == 'yes' && $
 	$result = $fac->set_valid($user);
 	if ($result >= 0)
 	{
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
 	else
 	{
@@ -347,13 +347,13 @@ if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->glo
 	{
 		$fac->set_draft($user);
 
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
 }
 
@@ -838,14 +838,14 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 			$date_start=$_POST['date_start'.$suffixe.'year'].'-'.$_POST['date_start'.$suffixe.'month'].'-'.$_POST['date_start'.$suffixe.'day'];
 			// If hour/minute are specified, append them
 			if (($_POST['date_start'.$suffixe.'hour']) && ($_POST['date_start'.$suffixe.'min']))
-				$date_start.=' '.$_POST['date_start'.$suffixe.'hour'].':'.$_POST['date_start'.$suffixe.'min'];
+			$date_start.=' '.$_POST['date_start'.$suffixe.'hour'].':'.$_POST['date_start'.$suffixe.'min'];
 		}
 		if ($_POST['date_end'.$suffixe.'year'] && $_POST['date_end'.$suffixe.'month'] && $_POST['date_end'.$suffixe.'day'])
 		{
 			$date_end=$_POST['date_end'.$suffixe.'year'].'-'.$_POST['date_end'.$suffixe.'month'].'-'.$_POST['date_end'.$suffixe.'day'];
 			// If hour/minute are specified, append them
 			if (($_POST['date_end'.$suffixe.'hour']) && ($_POST['date_end'.$suffixe.'min']))
-				$date_end.=' '.$_POST['date_end'.$suffixe.'hour'].':'.$_POST['date_end'.$suffixe.'min'];
+			$date_end.=' '.$_POST['date_end'.$suffixe.'hour'].':'.$_POST['date_end'.$suffixe.'min'];
 		}
 
 		$price_base_type = 'HT';
@@ -905,7 +905,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		
+
 		if($prod->price_min && (price2num($pu_ht)*(1-price2num($_POST['remise_percent'])/100) < price2num($prod->price_min)))
 		{
 			$fac->error = $langs->trans("CantBeLessThanMinPrice",price2num($prod->price_min,'MU').' '.$langs->trans("Currency".$conf->monnaie)) ;
@@ -935,13 +935,13 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 
 	if ($result > 0)
 	{
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
 	else
 	{
@@ -965,14 +965,14 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 		$date_start=$_POST['date_startyear'].'-'.$_POST['date_startmonth'].'-'.$_POST['date_startday'];
 		// If hour/minute are specified, append them
 		if (($_POST['date_starthour']) && ($_POST['date_startmin']))
-			$date_start.=' '.$_POST['date_starthour'].':'.$_POST['date_startmin'];
+		$date_start.=' '.$_POST['date_starthour'].':'.$_POST['date_startmin'];
 	}
 	if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
 	{
 		$date_end=$_POST['date_endyear'].'-'.$_POST['date_endmonth'].'-'.$_POST['date_endday'];
 		// If hour/minute are specified, append them
 		if (($_POST['date_endhour']) && ($_POST['date_endmin']))
-			$date_end.=' '.$_POST['date_endhour'].':'.$_POST['date_endmin'];
+		$date_end.=' '.$_POST['date_endhour'].':'.$_POST['date_endmin'];
 	}
 
 	// Define info_bits
@@ -1006,16 +1006,16 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 			'HT',
 		$info_bits
 		);
-	
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
-			facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+
+		$outputlangs = $langs;
+		if (! empty($_REQUEST['lang_id']))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	}
-	
+
 	$_GET['facid']=$_POST['facid'];   // Pour réaffichage de la fiche en cours d'édition
 }
 
@@ -1036,12 +1036,12 @@ if ($_GET['action'] == 'up' && $user->rights->facture->creer)
 	$fac->fetch($_GET['facid']);
 	$fac->line_up($_GET['rowid']);
 
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
 	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET["facid"].'#'.$_GET['rowid']);
 	exit;
@@ -1053,12 +1053,12 @@ if ($_GET['action'] == 'down' && $user->rights->facture->creer)
 	$fac->fetch($_GET['facid']);
 	$fac->line_down($_GET['rowid']);
 
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
 	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET["facid"].'#'.$_GET['rowid']);
 	exit;
@@ -1279,12 +1279,12 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 		$fac->setDocModel($user, $_REQUEST['model']);
 	}
 
-			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-			}
+	$outputlangs = $langs;
+	if (! empty($_REQUEST['lang_id']))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
 	$result=facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
@@ -1406,7 +1406,7 @@ if ($_GET['action'] == 'create')
 		print '</td></tr>';
 	}
 
-	// Factures prédéfinnies	
+	// Factures prédéfinnies
 	// TODO Use instead invoice in llx_facture table with a particular status
 	if ($conf->global->FACTURE_ENABLE_RECUR)
 	{
@@ -1464,7 +1464,7 @@ if ($_GET['action'] == 'create')
 		$options.=' ('.$facturestatic->LibStatut(0,$facparam['status']).')';
 		$options.='</option>';
 	}
-	
+
 	$facids=$facturestatic->list_qualified_avoir_invoices($soc->id);
 	if ($facids < 0)
 	{
@@ -1652,7 +1652,7 @@ if ($_GET['action'] == 'create')
 		//print '<input type="hidden" name="remise_absolue" value="'.$commande->remise_absolue.'">'."\n";
 		//print '<input type="hidden" name="remise_percent" value="'.$commande->remise_percent.'">'."\n";
 		print '<input type="hidden" name="commandeid"     value="'.$commande->id.'">';
-		 
+			
 		print '<tr><td>'.$langs->trans('Order').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a></td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
@@ -1897,13 +1897,13 @@ else
 			//$resteapayer=bcadd($fac->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 			//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 			$resteapayer = price2num($fac->total_ttc - $totalpaye - $totalavoir,'MT');
-			
+				
 			if ($fac->paye) $resteapayer=0;
 			$resteapayeraffiche=$resteapayer;
 
 			$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
 			$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
-			
+				
 			$author = new User($db);
 			if ($fac->user_author)
 			{
@@ -2047,20 +2047,20 @@ else
 				print '<br>';
 			}
 
-        	// Clone confirmation
+			// Clone confirmation
 			if ($_GET["action"] == 'clone')
 			{
 				// Create an array for form
 				$formquestion=array(
-					//'text' => $langs->trans("ConfirmClone"),
-					//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
+				//'text' => $langs->trans("ConfirmClone"),
+				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$fac->ref),'confirm_clone',$formquestion,'yes');
 				print '<br>';
 			}
-			
-			
+				
+				
 			// Invoice content
 
 			print '<table class="border" width="100%">';
@@ -2911,7 +2911,7 @@ else
 							print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
 						}
 					}
-						
+
 					// Valider
 					if ($fac->statut == 0 && $num_lignes > 0 && (($fac->type < 2 && $fac->total_ttc >= 0) || ($fac->type == 2 && $fac->total_ttc <= 0)))
 					{
@@ -3028,7 +3028,7 @@ else
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=clone&amp;object=invoice">'.$langs->trans("ToClone").'</a>';
 					}
-					
+						
 					// Clone as predefined
 					if ($conf->global->FACTURE_ENABLE_RECUR && $fac->type == 0 && $fac->statut == 0 && $user->rights->facture->creer)
 					{
