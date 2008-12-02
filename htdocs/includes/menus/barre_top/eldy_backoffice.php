@@ -329,7 +329,7 @@ class MenuTop {
             $idsel='id="shop" ';
             print '<td class="tmenu"><a '.$class.' '.$idsel.'href="'.DOL_URL_ROOT.'/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
-        
+
         // Members
         if ($conf->adherent->enabled)
         {

@@ -911,7 +911,6 @@ class MenuLeft {
 			$this->menu_array=$newmenu->liste;
 		}
 
-
 		// Affichage du menu
 		$alt=0;
 		if (! sizeof($this->menu_array))

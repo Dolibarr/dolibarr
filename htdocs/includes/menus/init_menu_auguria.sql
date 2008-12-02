@@ -27,6 +27,7 @@ insert into `llx_menu` (`rowid`, `menu_handler`, `type`, `mainmenu`, `leftmenu`,
 insert into `llx_menu` (`rowid`, `menu_handler`, `type`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values (10__+MAX_llx_menu__, 'auguria', 'top', 'energy',      '', 0, '/energie/index.php?mainmenu=energy&amp;leftmenu=', 'Energy', -1, 'energy', '', '', 2, 10);
 insert into `llx_menu` (`rowid`, `menu_handler`, `type`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values (11__+MAX_llx_menu__, 'auguria', 'top', 'shop',        '', 0, '/boutique/index.php?mainmenu=shop&amp;leftmenu=', 'OSCommerce', -1, 'shop', '', '', 0, 11);
 insert into `llx_menu` (`rowid`, `menu_handler`, `type`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values (12__+MAX_llx_menu__, 'auguria', 'top', 'shop',        '', 0, '/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu=', 'OSCommerce', -1, 'shop', '', '', 0, 12);
+insert into `llx_menu` (`rowid`, `menu_handler`, `type`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values (14__+MAX_llx_menu__, 'auguria', 'top', 'cashdesk',    '', 0, '/cashdesk/index.php?mainmenu=cashdesk&amp;leftmenu=', 'CashDesk', -1, 'cashdesk', '', '', 2, 13);
 insert into `llx_menu` (`rowid`, `menu_handler`, `type`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values (13__+MAX_llx_menu__, 'auguria', 'top', 'members',     '', 0, '/adherents/index.php?mainmenu=members&amp;leftmenu=', 'Members', -1, 'members', '', '', 2, 15);
 
 insert into `llx_menu` (`menu_handler`, `type`, `rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, perms, `target`, `user`, position) values ('auguria', 'left', 100__+MAX_llx_menu__, 'home', '', 1__+MAX_llx_menu__, '/admin/index.php?leftmenu=setup', 'Setup', 0, 'admin', '', '', 2, 0);
@@ -355,6 +356,7 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (68, '$leftmenu=="c
 insert into `llx_menu_constraint` (`rowid`, `action`) values (69, '$leftmenu=="bank"');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (70, '$leftmenu=="suppliers_bills"');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (71, '$leftmenu=="customers_bills"');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (72, '$conf->cashdesk->enabled');
 
 
 -- 
@@ -580,4 +582,5 @@ insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (10__+MAX_llx_m
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (11__+MAX_llx_menu__, 38);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (12__+MAX_llx_menu__, 39);
 insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (13__+MAX_llx_menu__, 31);
+insert into `llx_menu_const` (`fk_menu`, `fk_constraint`) values (14__+MAX_llx_menu__, 72);
 
