@@ -311,7 +311,7 @@ class pdf_oursin extends ModelePDFFactures
 					$pdf->MultiCell(80, 5, $titre, 0, 'L');
 					$pdf->SetFont('Arial','',10);
 					$pdf->SetXY($this->marges['g']+44, 217);
-					$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$fac->cond_reglement_code)!=('PaymentCondition'.$fac->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
+            		$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$fac->cond_reglement_code)!=('PaymentCondition'.$fac->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$fac->cond_reglement_code):$outputlangs->convToOutputCharset($fac->cond_reglement);
 					$pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
 				}
 
@@ -358,7 +358,7 @@ class pdf_oursin extends ModelePDFFactures
 	function _tableau_versements(&$pdf, $fac, $posy, $outputlangs)
 	{
 		$tab3_posx = $this->marges['g']+110;
-		$tab3_top = $this->marges['h']+235;
+		$tab3_top = $posy + 8;
 		$tab3_width = 80;
 		$tab3_height = 4;
 
@@ -379,6 +379,8 @@ class pdf_oursin extends ModelePDFFactures
 
 		$y=0;
 
+		$pdf->SetFont('Arial','',6);
+		
 		// Loop on each credit note included
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
@@ -426,7 +428,6 @@ class pdf_oursin extends ModelePDFFactures
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$pdf->SetFont('Arial','',6);
 			$num = $this->db->num_rows($resql);
 			$i=0;
 			while ($i < $num)
@@ -508,48 +509,73 @@ class pdf_oursin extends ModelePDFFactures
 			$pdf->MultiCell(100, $tab2_hl, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
 		}
 
-		// Tableau total
+		$index = 0;
+		
+		// Total TTC
 		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
 		$pdf->SetXY ($col1x, $tab2_top + 0);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 0);
-
 		$pdf->SetXY ($col2x, $tab2_top + 0);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
 
-		$index = 1;
-
+		// Total VAT
+		$index++;
 		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 0);
-
 		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
 
-		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+1));
+		// Total TTC
+		$index++;
+		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 		$pdf->SetTextColor(22,137,210);
 		$pdf->SetFont('Arial','B', 11);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), 0, 'L', 0);
-
-		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+1));
+		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 0);
 		$pdf->SetTextColor(0,0,0);
 
-		if ($deja_regle > 0)
-		{
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+2));
+        $creditnoteamount=$fac->getSommeCreditNote();
+		$resteapayer = $fac->total_ttc - $deja_regle - $creditnoteamount;
+		if ($object->paye) $resteapayer=0;
+		
+		if ($deja_regle > 0 || $creditnoteamount > 0)
+        {
+			$pdf->SetFont('Arial','', 10);
+        	
+			// Already payed
+            $index++;
+			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPayed"), 0, 'L', 0);
-
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+2));
+			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
-			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+3));
-			$pdf->SetTextColor(22,137,210);
-			$pdf->SetFont('Arial','B', 11);
+            // Credit note
+			if ($creditnoteamount)
+			{
+	            $index++;
+	            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+	            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("CreditNotes"), 0, 'L', 0);
+	            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+	            $pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount), 0, 'R', 0);
+			}
+			            
+			$resteapayer = $object->total_ttc - $deja_regle - $creditnoteamount;
+			if ($object->paye) $resteapayer=0;
+			
+        	$index++;
+			$pdf->SetTextColor(0,0,60);
+        	$pdf->SetFont('Arial','B', 11);
+			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), 0, 'L', 0);
-
-			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+3));
+	        $pdf->SetFillColor(224,224,224);
+			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 0);
 			$pdf->SetTextColor(0,0,0);
 		}
+		
+ 		$index++;
+        return ($tab2_top + ($tab2_hl * $index));
 	}
 
 	/*
@@ -577,7 +603,7 @@ class pdf_oursin extends ModelePDFFactures
 		for ($i = 0 ; $i < $nblignes ; $i++)
 		if ($fac->lignes[$i]->remise_percent)
 		{
-	  $rem=1;
+	  		$rem=1;
 		}
 		if ($rem==1)
 		{

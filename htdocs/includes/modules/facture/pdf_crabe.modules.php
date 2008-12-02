@@ -469,7 +469,9 @@ class pdf_crabe extends ModelePDFFactures
 
 		$y=0;
 
-		// Loop on each credit note included
+        $pdf->SetFont('Arial','',6);
+
+        // Loop on each credit note included
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
@@ -516,7 +518,6 @@ class pdf_crabe extends ModelePDFFactures
         $resql=$this->db->query($sql);
 		if ($resql)
         {
-            $pdf->SetFont('Arial','',6);
             $num = $this->db->num_rows($resql);
             $i=0;
             while ($i < $num) {
@@ -729,15 +730,14 @@ class pdf_crabe extends ModelePDFFactures
         // Tableau total
         $lltot = 200; $col1x = 120; $col2x = 182; $largcol2 = $lltot - $col2x;
 
+        $index = 0;
+        
         // Total HT
         $pdf->SetFillColor(255,255,255);
         $pdf->SetXY ($col1x, $tab2_top + 0);
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
-
         $pdf->SetXY ($col2x, $tab2_top + 0);
         $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
-
-        $index = 0;
 
         // Affichage des totaux de TVA par taux (conformement a la reglementation)
         $pdf->SetFillColor(248,248,248);
@@ -750,7 +750,6 @@ class pdf_crabe extends ModelePDFFactures
 
                 $index++;
             	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-				
 				$tvacompl='';
 				if (eregi('\*',$tvakey))
 				{
@@ -760,7 +759,6 @@ class pdf_crabe extends ModelePDFFactures
                 $totalvat =$outputlangs->transnoentities("TotalVAT").' ';
 				$totalvat.=vatrate($tvakey,1).$tvacompl;
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-
                 $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
                 $pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
             }
@@ -770,13 +768,13 @@ class pdf_crabe extends ModelePDFFactures
             $index++;
         	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
-
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
         }
 
         $useborder=0;
 
+		// Total TTC
         $index++;
         $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
         $pdf->SetTextColor(0,0,60);
@@ -784,24 +782,37 @@ class pdf_crabe extends ModelePDFFactures
         $text=$outputlangs->transnoentities("TotalTTC");
         if ($object->type == 2) $text=$outputlangs->transnoentities("TotalTTCToYourCredit");
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $text, $useborder, 'L', 1);
-
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
         $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc), $useborder, 'R', 1);
         $pdf->SetTextColor(0,0,0);
 
-        if ($deja_regle > 0)
+        $creditnoteamount=$object->getSommeCreditNote();
+		$resteapayer = $object->total_ttc - $deja_regle - $creditnoteamount;
+		if ($object->paye) $resteapayer=0;
+        
+		if ($deja_regle > 0 || $creditnoteamount > 0)
         {
+            // Already payed
             $index++;
-
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("AlreadyPayed"), 0, 'L', 0);
-
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
-			$resteapayer = $object->total_ttc - $deja_regle;
+            // Credit note
+			if ($creditnoteamount)
+			{
+	            $index++;
+	            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+	            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("CreditNotes"), 0, 'L', 0);
+	            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+	            $pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount), 0, 'R', 0);
+			}
+			            
+			$resteapayer = $object->total_ttc - $deja_regle - $creditnoteamount;
 			if ($object->paye) $resteapayer=0;
 
+			// Escompte
 			if ($object->close_code == 'discount_vat')
 			{
 	            $index++;
@@ -809,19 +820,17 @@ class pdf_crabe extends ModelePDFFactures
 
 	            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
 	            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOffered"), $useborder, 'L', 1);
-
 	            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 	            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle), $useborder, 'R', 1);
 				
 				$resteapayer=0;
 			}
 
-            $index++;
-            $pdf->SetTextColor(0,0,60);
+        	$index++;
+			$pdf->SetTextColor(0,0,60);
 	        $pdf->SetFillColor(224,224,224);
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
-
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer), $useborder, 'R', 1);
 

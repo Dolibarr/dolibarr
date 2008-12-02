@@ -393,9 +393,9 @@ class Facture extends CommonObject
 	function createFromClone($fromid,$invertdetail=0)
 	{
 		global $user,$langs;
-		
+
 		$error=0;
-		
+
 		$object=new Facture($this->db);
 
 		$this->db->begin();
@@ -415,24 +415,24 @@ class Facture extends CommonObject
 		$object->close_code         = '';
 		$object->close_note         = '';
 		$object->products = $object->lignes;	// Tant que products encore utilisé
-		
+
 		// Create clone
 		$result=$object->create($user);
 
 		// Other options
-		if ($result < 0) 
+		if ($result < 0)
 		{
 			$this->error=$object->error;
 			$error++;
 		}
-		
+
 		if (! $error)
 		{
-			
-			
-			
+				
+				
+				
 		}
-		
+
 		// End
 		if (! $error)
 		{
@@ -682,7 +682,7 @@ class Facture extends CommonObject
 	{
 		global $conf, $langs;
 		$error=0;
-		 
+			
 		// Clean parameters
 
 		if (isset($this->facnumber)) $this->facnumber=trim($this->ref);
@@ -711,7 +711,7 @@ class Facture extends CommonObject
 		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
 		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
 		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
-		 
+			
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -1913,15 +1913,15 @@ class Facture extends CommonObject
 		{
 			$obj = $this->db->fetch_object($resql);
 			if ($obj)
-	  {
-	  	// Si il y en a
-	  	return $obj->rowid;
-	  }
-	  else
-	  {
-	  	// Si aucune facture ne remplace
-	  	return 0;
-	  }
+			{
+				// Si il y en a
+				return $obj->rowid;
+			}
+			else
+			{
+				// Si aucune facture ne remplace
+				return 0;
+			}
 		}
 		else
 		{
@@ -2167,7 +2167,7 @@ class Facture extends CommonObject
 		if ($this->statut >= 0 && $this->paye == 0)
 		{
 			// Define cond_reglement_id and datelim
-			if (strval($date) != '') 
+			if (strval($date) != '')
 			{
 				$datelim=$date;
 				$cond_reglement_id=0;
@@ -2343,8 +2343,8 @@ class Facture extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$return[$obj->rowid]=array(	'id' => $obj->rowid,
-			  	'ref' => $obj->facnumber,
-			  	'status' => $obj->fk_statut);
+				'ref' => $obj->facnumber,
+				'status' => $obj->fk_statut);
 			}
 			//print_r($return);
 			return $return;
@@ -2361,7 +2361,7 @@ class Facture extends CommonObject
 	/**
 	 *  	\brief     	Renvoi liste des factures qualifiables pour correction par avoir
 	 *					Les factures qui respectent les regles suivantes sont retournees:
-	 * 					(validée + paiement en cours) ou classée (payée completement ou payée partiellement) + pas deja remplacée + pas deja avoir
+	 * 					(validée + paiement en cours) ou classée (payée completement ou payée partiellement) + pas deja remplacée + pas deja avoi
 	 *		\param		socid		Id societe
 	 *   	\return    	array		Tableau des factures ($id => $ref)
 	 */
@@ -2423,7 +2423,7 @@ class Facture extends CommonObject
 		$soc = new Societe($this->db);
 		$soc->id = $this->socid;
 		$soc->load_ban();
-		
+
 		if ($this->statut > 0 && $this->paye == 0 && $this->mode_reglement_id == 3)
 		{
 			$sql = 'SELECT count(*) FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';

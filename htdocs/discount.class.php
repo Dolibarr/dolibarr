@@ -44,12 +44,12 @@ class DiscountAbsolute
 	var $datec;					// Date creation
 	var $fk_facture_line;  		// Id invoice line when a discount linked to invoice line
 	var $fk_facture;			// Id invoice when a discoutn linked to invoice
-	var $fk_facture_source;		// Id facture avoir à l'origine de la remise
-	var $ref_facture_source;	// Ref facture avoir à l'origine de la remise
+	var $fk_facture_source;		// Id facture avoir ï¿½ l'origine de la remise
+	var $ref_facture_source;	// Ref facture avoir ï¿½ l'origine de la remise
 	
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler accès base de données
+	 *    \param  DB          handler accï¿½s base de donnï¿½es
 	 */
 	function DiscountAbsolute($DB)
 	{
@@ -59,9 +59,9 @@ class DiscountAbsolute
 
 	/**
 	 *    	\brief      Charge objet remise depuis la base
-	 *    	\param      rowid       		id du projet à charger
+	 *    	\param      rowid       		id du projet ï¿½ charger
 	 *    	\param      fk_facture_source	fk_facture_source
-	 *		\return		int					<0 si ko, =0 si non trouvé, >0 si ok
+	 *		\return		int					<0 si ko, =0 si non trouvï¿½, >0 si ok
 	 */
 	function fetch($rowid,$fk_facture_source=0)
 	{
