@@ -212,26 +212,32 @@ class modMyModule extends DolibarrModules
 
 			// Run llx_mytable.sql files
 			$handle=opendir($dir);
-			while (($file = readdir($handle))!==false)
+			if ($hanlde)
 			{
-				if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) <> '.key.sql')
+				while (($file = readdir($handle))!==false)
 				{
-					$result=run_sql($dir.$file,1);
+					if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) <> '.key.sql')
+					{
+						$result=run_sql($dir.$file,1);
+					}
 				}
+				closedir($handle);
 			}
-			closedir($handle);
-
+			
 			// Run llx_mytable.key.sql files
-			$handle=opendir($dir);
-			while (($file = readdir($handle))!==false)
+			if ($hanlde)
 			{
-				if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) == '.key.sql')
+				$handle=opendir($dir);
+				while (($file = readdir($handle))!==false)
 				{
-					$result=run_sql($dir.$file,1);
+					if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) == '.key.sql')
+					{
+						$result=run_sql($dir.$file,1);
+					}
 				}
+				closedir($handle);
 			}
-			closedir($handle);
-
+			
 			if ($error == 0)
 			{
 				$ok = 1;
