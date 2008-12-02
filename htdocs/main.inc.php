@@ -975,7 +975,8 @@ function top_menu($head, $title='', $target='')
 	$htmltext.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$_SESSION["dol_authmode"];
 	$htmltext.='<br><b>'.$langs->trans("CurrentTheme").'</b>: '.$conf->theme;
 	$htmltext.='<br><b>'.$langs->trans("CurrentUserLanguage").'</b>: '.$langs->getDefaultLang();
-
+	if (! empty($_SESSION["disablemodules"])) $htmltext.='<br><b>'.$langs->trans("DisabledModules").'</b>: <br>'.join('<br>',split(',',$_SESSION["disablemodules"]));
+	
 	$html=new Form($db);
 	print $html->textwithtooltip('',$htmltext,2,1,$text);
 
