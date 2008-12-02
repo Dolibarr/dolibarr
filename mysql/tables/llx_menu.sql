@@ -41,6 +41,7 @@ CREATE TABLE `llx_menu` (
 
 	leftmenu		varchar(1) NULL default '1',		-- Say if left menu defined in pre.inc.php and used by top menu must be overwritten by dynamic databse menu (1=yes by default)
 	perms			varchar(255),						-- Condition to show enabled or disabled
+	enabled			varchar(255) NULL default '1',		-- Condition to show or hide
 	user			integer NOT NULL default '0',	    -- 0 if menu for all users, 1 for external only, 2 for internal only
 
 	tms				timestamp
