@@ -728,8 +728,8 @@ class DolibarrModules
 
 
 	/**
-	 \brief      Insere les menus dans llx_menu*
-	 \return     int     Nombre d'erreurs (0 si ok)
+	 *	\brief      Insere les menus dans llx_menu*
+	 *	\return     int     Nombre d'erreurs (0 si ok)
 	 */
 	function insert_menus()
 	{
@@ -741,6 +741,7 @@ class DolibarrModules
 
 		$this->db->begin();
 
+		//var_dump($this->menu); exit;
 		foreach ($this->menu as $key => $value)
 		{
 			$menu = new Menubase($this->db);
@@ -749,9 +750,11 @@ class DolibarrModules
 			if (! $this->menu[$key]['fk_menu'])
 			{
 				$menu->fk_menu=0;
+				//print 'aaa'.$this->menu[$key]['fk_menu'];
 			}
 			else
 			{
+				//print 'xxx'.$this->menu[$key]['fk_menu'];exit;
 				$numparent=$this->menu[$key]['fk_menu'];
 				$numparent=eregi_replace('r=','',$numparent);
 				if (isset($this->menu[$numparent]['rowid']))
@@ -761,6 +764,7 @@ class DolibarrModules
 				else
 				{
 					$this->error="BadDefinitionOfMenuArrayInModuleDescriptor";
+					dolibarr_syslog("DolibarrModules::insert_menus ".$this->error." ".$this->menu[$key]['fk_menu'], LOG_ERR);
 					$err++;
 				}
 			}
@@ -784,7 +788,9 @@ class DolibarrModules
 				else
 				{
 					$this->error=$menu->error;
+					dolibarr_syslog('DolibarrModules::insert_menus result='.$result." ".$this->error, LOG_ERR);
 					$err++;
+					break;
 				}
 			}
 		}

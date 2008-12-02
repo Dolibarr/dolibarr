@@ -195,55 +195,59 @@ foreach ($dirlist as $dirroot)
 {
 	$dir = $dirroot . "/includes/modules/";
 
-	// Charge tableaux modules, nom, numero, orders depuis r�pertoire dir
+	// Load modules attributes in arrays (name, numero, orders) from dir directory
+	//print $dir."\n<br>";
 	$handle=opendir($dir);
-	while (($file = readdir($handle))!==false)
+	if ($handle) 	
 	{
-		//print "$i ".$file."\n<br>";
-	    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
-	    {
-	        $modName = substr($file, 0, strlen($file) - 10);
-
-	        if ($modName)
-	        {
-	            include_once($dir.$file);
-	            $objMod = new $modName($db);
-
-	            if ($objMod->numero > 0)
-	            {
-	                $j = $objMod->numero;
-	            }
-	            else
-	            {
-	                $j = 1000 + $i;
-	            }
-
-				$modulequalified=1;
-
-				// We discard modules that does not respect constraint on menu handlers
-				if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
-				if ($objMod->needtopmenu  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
-
-				// We discard modules according to features level (PS: if module is activated we always show it)
-				$const_name = 'MAIN_MODULE_'.strtoupper(eregi_replace('^mod','',get_class($objMod)));
-				if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
-				if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
-
-				if ($modulequalified)
-				{
-					$modules[$i] = $objMod;
-		            $filename[$i]= $modName;
-		            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
-					//print "x".$modName." ".$orders[$i]."\n<br>";
-					$categ[$objMod->special]++;					// Array of all different modules categories
-		            $dirmod[$i] = $dirroot;
-					$j++;
-		            $i++;
-				}
-	        }
-	    }
+		while (($file = readdir($handle))!==false)
+		{
+			//print "$i ".$file."\n<br>";
+		    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
+		    {
+		        $modName = substr($file, 0, strlen($file) - 10);
+	
+		        if ($modName)
+		        {
+		            include_once($dir.$file);
+		            $objMod = new $modName($db);
+	
+		            if ($objMod->numero > 0)
+		            {
+		                $j = $objMod->numero;
+		            }
+		            else
+		            {
+		                $j = 1000 + $i;
+		            }
+	
+					$modulequalified=1;
+	
+					// We discard modules that does not respect constraint on menu handlers
+					if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
+					if ($objMod->needtopmenu  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
+	
+					// We discard modules according to features level (PS: if module is activated we always show it)
+					$const_name = 'MAIN_MODULE_'.strtoupper(eregi_replace('^mod','',get_class($objMod)));
+					if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
+					if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+	
+					if ($modulequalified)
+					{
+						$modules[$i] = $objMod;
+			            $filename[$i]= $modName;
+			            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
+						//print "x".$modName." ".$orders[$i]."\n<br>";
+						$categ[$objMod->special]++;					// Array of all different modules categories
+			            $dirmod[$i] = $dirroot;
+						$j++;
+			            $i++;
+					}
+		        }
+		    }
+		}
+		closedir($handle);
 	}
-
 }
 
 asort($orders);
