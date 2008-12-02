@@ -474,7 +474,9 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	// Si la societe est imposee, on propose ces contacts
-	if ($_REQUEST["socid"] > 0)
+	
+	// If company is forced propose contacts
+	if ($_REQUEST["socid"] > 0 && !($_REQUEST['contactid'] > 0))
 	{
 		print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
 		$html->select_contacts($_REQUEST["socid"],$_REQUEST['contactid'],'contactid',1,1);
@@ -484,12 +486,6 @@ if ($_GET["action"] == 'create')
 	print '</table>';
 	print '<br>';
 	print '<table class="border" width="100%">';
-	
-	// Created by
-	/*print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionUserAsk").'</td><td>';
-	print $user->getNomUrl();
-	print '</td></tr>';
-	*/
 	
 	// Affecte a
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
@@ -683,7 +679,7 @@ if ($_GET["id"])
 		print '</td>';
 
         print '<td>'.$langs->trans("Contact").'</td><td width="30%">';
-        $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
+        $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);	
         print '</td></tr>';
 
 		print '</table><br><table class="border" width="100%">';
@@ -778,12 +774,27 @@ if ($_GET["id"])
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
         
         // Societe - contact
-        print '<tr><td>'.$langs->trans("Company").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None")).'</td>';
+        print '<tr><td>'.$langs->trans("Company").'</td><td>'.($act->societe->id?$act->societe->getNomUrl(1):$langs->trans("None"));
+		if ($act->societe->id && $act->type_code == 'AC_TEL')
+		{
+			if ($act->societe->fetch($act->societe->id))
+			{
+				print "<br>".dolibarr_print_phone($act->societe->tel);
+			}
+		}	
+        print '</td>';
         print '<td>'.$langs->trans("Contact").'</td>';
         print '<td>';
         if ($act->contact->id > 0)
         {
         	print $act->contact->getNomUrl(1);
+			if ($act->contact->id && $act->type_code == 'AC_TEL')
+			{
+				if ($act->contact->fetch($act->contact->id))
+				{
+					print "<br>".dolibarr_print_phone($act->contact->phone_pro);
+				}
+			}	
         }
         else
         {
