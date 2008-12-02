@@ -154,17 +154,6 @@ print "  <td width=\"80\">&nbsp;</td></tr>\n";
  * Formulaire parametres divers
  */
 
-$var=!$var;
-print "<form method=\"post\" action=\"produit.php\">";
-print "<input type=\"hidden\" name=\"action\" value=\"nbprod\">";
-print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
-print "<td align=\"right\"><input size=\"3\" type=\"text\" class=\"flat\" name=\"value\" value=\"".$conf->global->PRODUIT_LIMIT_SIZE."\"></td>";
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-print '</tr>';
-print '</form>';
-
-
 // multiprix activation/desactivation
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
@@ -230,6 +219,19 @@ else
 }
 print '</tr>';
 print '</form>';
+
+if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
+{
+	$var=!$var;
+	print "<form method=\"post\" action=\"produit.php\">";
+	print "<input type=\"hidden\" name=\"action\" value=\"nbprod\">";
+	print "<tr ".$bc[$var].">";
+	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
+	print "<td align=\"right\"><input size=\"3\" type=\"text\" class=\"flat\" name=\"value\" value=\"".$conf->global->PRODUIT_LIMIT_SIZE."\"></td>";
+	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+	print '</tr>';
+	print '</form>';
+}
 
 // Visualiser description produit dans les formulaires activation/desactivation
 $var=!$var;
