@@ -116,6 +116,14 @@ class User extends CommonObject
 		return 1;
 	}
 
+	
+	/* Polymorph functions not allowed in PHP
+	function fetch($id)
+	{
+		$this->id=$id;
+		$this->fetch();	
+	}
+	*/
 
 	/**
 	 *	\brief      Charge un objet user avec toutes ces caracteristiques depuis un id ou login

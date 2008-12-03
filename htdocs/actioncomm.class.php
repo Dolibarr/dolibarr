@@ -71,6 +71,7 @@ class ActionComm
     function ActionComm($db)
     {
         $this->db = $db;
+        /*
         $this->societe = new Societe($db);
         $this->author = new User($db);
         $this->usermod = new User($db);
@@ -80,6 +81,7 @@ class ActionComm
         {
             $this->contact = new Contact($db);
         }
+		*/
     }
 
     /**

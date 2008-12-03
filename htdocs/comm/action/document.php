@@ -69,7 +69,7 @@ $pagenext = $page + 1;
 if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     /*
-     * Creation répertoire si n'existe pas
+     * Creation rï¿½pertoire si n'existe pas
      */
 	$upload_dir = $conf->actions->dir_output.'/'.sanitizeFileName($objectid);
 	if (! is_dir($upload_dir)) create_exdir($upload_dir);
@@ -83,7 +83,7 @@ if ( $_POST["sendit"] && ! empty($conf->global->MAIN_UPLOAD_DOC))
         }
         else
         {
-            // Echec transfert (fichier dépassant la limite ?)
+            // Echec transfert (fichier dï¿½passant la limite ?)
             $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
             // print_r($_FILES);
         }
@@ -114,10 +114,19 @@ if ($objectid > 0)
 	if ($act->fetch($objectid))
 	{
 		$upload_dir = $conf->actions->dir_output.'/'.sanitizeFileName($objectid);
+
+		$company=new Societe($db);
+		$company->fetch($act->societe->id);
+		$act->societe=$company;
 		
-		$res=$act->societe->fetch($act->societe->id);
-		$res=$act->author->fetch();     // Le paramètre est le login, hors seul l'id est chargé.
-		$res=$act->contact->fetch($act->contact->id);
+		$author=new User($db);
+		$author->id=$act->author->id;
+		$author->fetch();
+		$act->author=$author;
+
+		$contact=new Contact($db);
+		$contact->fetch($act->contact->id);
+		$act->contact=$contact;
 	
 		$h=0;
 	

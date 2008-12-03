@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
 $langs->load("commercial");
 
-// Sécurité accés client
+// Security check
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -49,9 +49,6 @@ llxHeader();
 $act = new ActionComm($db);
 $act->fetch($_GET["id"]);
 $act->info($_GET["id"]);
-$res=$act->societe->fetch($act->societe->id);
-$res=$act->author->fetch();     // Le paramètre est le login, hors seul l'id est chargé.
-$res=$act->contact->fetch($act->contact->id);
 
 $h=0;
 
@@ -78,7 +75,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+// Juste pour ï¿½viter bug IE qui rï¿½organise mal div prï¿½cï¿½dents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';
 

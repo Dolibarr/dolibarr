@@ -610,10 +610,10 @@ if ($_GET["id"])
 	}
 	$act->societe = $societe;
 
-    if ($act->author->id > 0)   $res=$act->author->fetch();     // Le parametre est le login, hors seul l'id est charge.
-    if ($act->usermod->id > 0)  $res=$act->usermod->fetch();    
-    if ($act->usertodo->id > 0) $res=$act->usertodo->fetch();   
-    if ($act->userdone->id > 0) $res=$act->userdone->fetch();
+    if ($act->author->id > 0)   { $tmpuser=new User($db); $tmpuser->id=$act->author->id;   $res=$tmpuser->fetch(); $act->author=$tmpuser; }
+    if ($act->usermod->id > 0)  { $tmpuser=new User($db); $tmpuser->id=$act->usermod->id;  $res=$tmpuser->fetch(); $act->usermod=$tmpuser; }
+    if ($act->usertodo->id > 0) { $tmpuser=new User($db); $tmpuser->id=$act->usertodo->id; $res=$tmpuser->fetch(); $act->usertodo=$tmpuser; }
+    if ($act->userdone->id > 0) { $tmpuser=new User($db); $tmpuser->id=$act->userdone->id; $res=$tmpuser->fetch(); $act->userdone=$tmpuser; }
 
 	$contact = new Contact($db);
 	if ($act->contact->id)

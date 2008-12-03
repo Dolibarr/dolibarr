@@ -119,10 +119,10 @@ $next = dol_get_next_month($month, $year);
 $next_year  = $next['year'];
 $next_month = $next['month'];
 
-$max_day_in_prev_month = date("t",dolibarr_mktime(0,0,0,$prev_month,1,$prev_year));
-$max_day_in_month = date("t",dolibarr_mktime(0,0,0,$month,1,$year));
+$max_day_in_prev_month = date("t",dolibarr_mktime(0,0,0,$prev_month,1,$prev_year));	// Nb of days in previous month
+$max_day_in_month = date("t",dolibarr_mktime(0,0,0,$month,1,$year));				// Nb of days in next month
 $tmpday = -date("w",dolibarr_mktime(0,0,0,$month,1,$year))+2;
-if ($tmpday > 1) $tmpday -= 7;
+if ($tmpday >= 1) $tmpday -= 7;
 $firstdaytoshow=dolibarr_mktime(0,0,0,$prev_month,$max_day_in_prev_month+$tmpday,$prev_year);
 $next_day=7-($max_day_in_month+1-$tmpday)%7;
 if ($next_day < 6) $next_day+=7;
@@ -404,6 +404,8 @@ if ($_GET["action"] != 'show_day')
 	echo '  <td align="center">'.$langs->trans("Saturday")."</td>\n";
 	echo '  <td align="center">'.$langs->trans("Sunday")."</td>\n";
 	echo " </tr>\n";
+	
+	// In loops, tmpday contains day nb in current month (can be negative for days of previous month)
 	for($iter_week = 0; $iter_week < 6 ; $iter_week++)
 	{
 		echo " <tr>\n";
