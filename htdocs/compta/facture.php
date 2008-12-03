@@ -2205,7 +2205,7 @@ else
 			print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
 			/*
-			 * Liste des paiements
+			 * List of payments
 			 */
 			$sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
 			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
@@ -2220,7 +2220,7 @@ else
 				$i = 0;
 				print '<table class="noborder" width="100%">';
 
-				// Liste des paiements ou remboursements
+				// List of payments already done
 				print '<tr class="liste_titre">';
 				print '<td>'.($fac->type == 2 ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
 				print '<td>'.$langs->trans('Type').'</td>';
@@ -2252,6 +2252,8 @@ else
 					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>&nbsp;</td></tr>';
 					$resteapayeraffiche=$resteapayer;
 
+					$creditnoteamount=0;
+					
 					// Loop on each credit note applied
 					$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 					$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
@@ -2275,6 +2277,7 @@ else
 							print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">'.img_delete().'</a>';
 							print '</td></tr>';
 							$i++;
+							$creditnoteamount += $obj->amount_ttc;
 						}
 					}
 					else
@@ -2287,7 +2290,7 @@ else
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
-						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>&nbsp;</td></tr>';
+						print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 						$resteapayeraffiche=0;
 					}
 					// Payé partiellement ou Abandon 'badcustomer'
@@ -2295,7 +2298,7 @@ else
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("Abandoned").':',$langs->trans("HelpAbandonBadCustomer"),-1);
-						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>&nbsp;</td></tr>';
+						print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 						//$resteapayeraffiche=0;
 					}
 					// Payé partiellement ou Abandon 'product_returned'
@@ -2303,7 +2306,7 @@ else
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("ProductReturned").':',$langs->trans("HelpAbandonProductReturned"),-1);
-						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>&nbsp;</td></tr>';
+						print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 						$resteapayeraffiche=0;
 					}
 					// Payé partiellement ou Abandon 'abandon'
@@ -2313,7 +2316,7 @@ else
 						$text=$langs->trans("HelpAbandonOther");
 						if ($fac->close_note) $text.='<br><br><b>'.$langs->trans("Reason").'</b>:'.$fac->close_note;
 						print $html->textwithhelp($langs->trans("Abandoned").':',$text,-1);
-						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>&nbsp;</td></tr>';
+						print '</td><td align="right">'.price($fac->total_ttc - $creditnoteamount - $totalpaye).'</td><td>&nbsp;</td></tr>';
 						$resteapayeraffiche=0;
 					}
 					print '<tr><td colspan="2" align="right">';

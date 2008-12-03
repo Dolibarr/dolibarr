@@ -68,7 +68,7 @@ class Contact extends CommonObject
 
     /**
      *      \brief      Constructeur de l'objet contact
-     *      \param      DB      Habler d'accès base
+     *      \param      DB      Habler d'accï¿½s base
      *      \param      id      Id contact
      */
     function Contact($DB, $id=0) 
@@ -133,9 +133,9 @@ class Contact extends CommonObject
     }
 
     /*
-     *      \brief      Mise à jour des infos en base
-     *      \param      id          	Id du contact à mettre à jour
-     *      \param      user        	Objet utilisateur qui effectue la mise à jour
+     *      \brief      Mise ï¿½ jour des infos en base
+     *      \param      id          	Id du contact ï¿½ mettre ï¿½ jour
+     *      \param      user        	Objet utilisateur qui effectue la mise ï¿½ jour
      *      \param      notrigger	    0=non, 1=oui
      *      \return     int         	<0 si erreur, >0 si ok
      */
@@ -291,7 +291,7 @@ class Contact extends CommonObject
 
 	
 	/*
-	*    \brief      Mise à jour des alertes
+	*    \brief      Mise ï¿½ jour des alertes
 	*    \param      id          id du contact
 	*    \param      user        Utilisateur qui demande l'alerte
 	*/
@@ -362,7 +362,7 @@ class Contact extends CommonObject
     /*
      *    \brief      Charge l'objet contact
      *    \param      id          id du contact
-     *    \param      user        Utilisateur lié au contact pour une alerte
+     *    \param      user        Utilisateur liï¿½ au contact pour une alerte
      *    \return     int         -1 if KO, 0 if OK but not found, 1 if OK
      */
     function fetch($id, $user=0)
@@ -405,7 +405,7 @@ class Contact extends CommonObject
                 $this->ville          = $obj->ville;
                 $this->fk_pays        = $obj->fk_pays;
                 $this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
-                $this->pays           = ($obj->fk_pays > 0)?$langs->trans("Country".$obj->pays_code):$langs->trans("SelectCountry");
+                $this->pays           = ($obj->fk_pays > 0)?$langs->transnoentities("Country".$obj->pays_code):$langs->transnoentities("SelectCountry");
     
                 $this->societeid      = $obj->fk_soc;
                 $this->socid          = $obj->fk_soc;
@@ -429,7 +429,7 @@ class Contact extends CommonObject
                 $this->user_id        = $obj->user_id;
                 $this->user_login     = $obj->user_login;
 
-	            // Recherche le user Dolibarr lié à ce contact
+	            // Recherche le user Dolibarr liï¿½ ï¿½ ce contact
 	            $sql = "SELECT u.rowid ";
 	            $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	            $sql .= " WHERE u.fk_socpeople = ". $this->id;
@@ -496,7 +496,7 @@ class Contact extends CommonObject
     
     
     /*
-     *    \brief        Charge le nombre d'elements auquel est lié ce contact
+     *    \brief        Charge le nombre d'elements auquel est liï¿½ ce contact
      *                  ref_facturation
      *                  ref_contrat
      *                  ref_commande
@@ -632,7 +632,7 @@ class Contact extends CommonObject
   
     /*
      *    \brief      Charge les informations sur le contact, depuis la base
-     *    \param      id      id du contact à charger
+     *    \param      id      id du contact ï¿½ charger
      */
     function info($id)
     {
@@ -676,7 +676,7 @@ class Contact extends CommonObject
     }
     
     /*
-     *    \brief        Renvoi nombre d'emailings reçu par le contact avec son email
+     *    \brief        Renvoi nombre d'emailings reï¿½u par le contact avec son email
      *    \return       int     Nombre d'emailings
      */
     function getNbOfEMailings()
@@ -684,7 +684,7 @@ class Contact extends CommonObject
         $sql = "SELECT count(mc.email) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
         $sql.= " WHERE mc.email = '".addslashes($this->email)."'";
-        $sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoyé, 1 envoyé avec succès
+        $sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoyï¿½, 1 envoyï¿½ avec succï¿½s
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -732,7 +732,7 @@ class Contact extends CommonObject
 
     /**
      *    \brief      Retourne le libelle de civilite du contact
-     *    \return     string      Nom traduit de la civilité
+     *    \return     string      Nom traduit de la civilitï¿½
      */
     function getCivilityLabel()
     {
@@ -775,9 +775,9 @@ class Contact extends CommonObject
 
 	
 	/**
-	 *    	\brief      Retourne le libellé du statut du contact
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string      Libellé
+	 *    	\brief      Retourne le libellï¿½ du statut du contact
+	 *    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string      Libellï¿½
 	 */
 	function getLibStatut($mode)
 	{
@@ -785,10 +785,10 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *		\brief      Renvoi le libellé d'un statut donné
+	 *		\brief      Renvoi le libellï¿½ d'un statut donnï¿½
 	 *    	\param      statut      Id statut
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string		Libellé
+	 *    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	 *    	\return     string		Libellï¿½
 	 */
 	function LibStatut($statut,$mode)
 	{
@@ -853,13 +853,13 @@ class Contact extends CommonObject
 
 
 	/**
-	 *		\brief		Initialise le contact avec valeurs fictives aléatoire
+	 *		\brief		Initialise le contact avec valeurs fictives alï¿½atoire
 	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de société socids
+		// Charge tableau des id de sociï¿½tï¿½ socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe LIMIT 10";
 		$resql = $this->db->query($sql);
@@ -876,7 +876,7 @@ class Contact extends CommonObject
 			}
 		}
 
-		// Initialise paramètres
+		// Initialise paramï¿½tres
 		$this->id=0;
 		$this->specimen=1;
 		$this->nom = 'DOLIBARR';

@@ -26,9 +26,11 @@
 */
 
 require("../../master.inc.php");
+$langs->setDefaultLang('auto');
 
 $langs->load("main");
 $langs->load("other");
+
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
