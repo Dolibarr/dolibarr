@@ -135,6 +135,16 @@ function showDP(base,dateFieldID,format)
 	document.body.appendChild(showDP.box);
 }
 
+function resetDP(base,dateFieldID,format)
+{
+	var dateField=getObjectFromID(dateFieldID);
+	dateField.value = formatDate(new Date(), format);
+	dpChangeDay(dateFieldID, format);
+	
+	var alreadybox=getObjectFromID("DPCancel");
+	if (alreadybox) showDP(base,dateFieldID,format);
+}
+
 function loadMonth(base,month,year,ymd)
 {
 	showDP.box.innerHTML="Loading...";
@@ -416,7 +426,9 @@ function formatDate(date,format)
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
-	var min=date.getMinutes();
+	// Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
+	// The variable is later called "minute", not "min"
+	var minute=date.getMinutes();
 	var seconde=date.getSeconds();
 
 	var i=0;
@@ -436,10 +448,13 @@ function formatDate(date,format)
 		else if (substr == 'MM')   { result=result+(month<1||month>9?"":"0")+month; }
 		else if (substr == 'd')    { result=result+day; }
 		else if (substr == 'dd')   { result=result+(day<1||day>9?"":"0")+day; }
-		else if (substr == 'hh')   { if (hour > 12) hour-=12; result=result+(hour<1||hour>9?"":"0")+hour; }
-		else if (substr == 'HH')   { result=result+(hour<1||hour>9?"":"0")+hour; }
-		else if (substr == 'mm')   { result=result+(minute<1||minute>9?"":"0")+minute; }
-		else if (substr == 'ss')   { result=result+(seconde<1||seconde>9?"":"0")+seconde; }
+		// Fixed by Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
+		// An hour, minute, or second of "0" is valid, so we must also add a "0" in this case
+		// So, the condition should begin with "hour/minute/seconde<0", not "<1"
+		else if (substr == 'hh')   { if (hour > 12) hour-=12; result=result+(hour<0||hour>9?"":"0")+hour; }
+		else if (substr == 'HH')   { result=result+(hour<0||hour>9?"":"0")+hour; }
+		else if (substr == 'mm')   { result=result+(minute<0||minute>9?"":"0")+minute; }
+		else if (substr == 'ss')   { result=result+(seconde<0||seconde>9?"":"0")+seconde; }
 		else { result=result+substr; }
 		
 		i+=substr.length;

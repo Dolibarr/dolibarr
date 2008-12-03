@@ -509,32 +509,17 @@ if ($_GET["action"] == 'create')
 
 	// Date start
 	print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td>';
-	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action");
-	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
-	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action");
+	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datep,'ap',1,1,0,"action",1,1);
+	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
+	else $html->select_date($actioncomm->datep,'ap',1,1,1,"action",1,1);
 	print '</td></tr>';
 	// Date end
 	print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
-	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
-	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
-	else $html->select_date($actioncomm->datef,'p2',1,1,1,"action");
+	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
+	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
+	else $html->select_date($actioncomm->datef,'p2',1,1,1,"action",1,1);
 	print '</td></tr>';
 
-	// Date start done
-	/*
-	print '<tr><td>'.$langs->trans("DateActionDoneStart").'</td><td>';
-	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->date,'ad',1,1,1,"action");
-	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->date,'ad',1,1,0,"action");
-	else $html->select_date($actioncomm->date,'ad',1,1,1,"action");
-	print '</td></tr>';
-	// Date end done
-	print '<tr><td>'.$langs->trans("DateActionDoneEnd").'</td><td>';
-	if ($_REQUEST["afaire"] == 1) $html->select_date($actioncomm->dateend,'a2',1,1,1,"action");
-	else if ($_REQUEST["afaire"] == 2) $html->select_date($actioncomm->dateend,'a2',1,1,0,"action");
-	else $html->select_date($actioncomm->dateend,'a2',1,1,1,"action");
-	print '</td></tr>';
-	*/
-	
 	// Avancement
 	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
@@ -704,16 +689,16 @@ if ($_GET["id"])
 
 		// Date start
 		print '<tr><td width="30%" nowrap="nowrap">'.$langs->trans("DateActionStart").'</td><td colspan="3">';
-		if ($_REQUEST["afaire"] == 1) $html->select_date($act->datep,'ap',1,1,0,"action");
-		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datep,'ap',1,1,1,"action");
-		else $html->select_date($act->datep,'ap',1,1,1,"action");
+		if ($_REQUEST["afaire"] == 1) $html->select_date($act->datep,'ap',1,1,0,"action",1,1);
+		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
+		else $html->select_date($act->datep,'ap',1,1,1,"action",1,1);
 		if ($act->percentage == 0 && $act->datep && $act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if ($_REQUEST["afaire"] == 1) $html->select_date($act->datef,'p2',1,1,1,"action");
-		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datef,'p2',1,1,1,"action");
-		else $html->select_date($act->datef,'p2',1,1,1,"action");
+		if ($_REQUEST["afaire"] == 1) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
+		else if ($_REQUEST["afaire"] == 2) $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
+		else $html->select_date($act->datef,'p2',1,1,1,"action",1,1);
 		if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
