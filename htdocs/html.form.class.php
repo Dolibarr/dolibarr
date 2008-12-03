@@ -641,8 +641,8 @@ class Form
 		}
 
 		// On recherche les utilisateurs
-		$sql = "SELECT u.rowid, u.name, u.firstname FROM ";
-		$sql.= MAIN_DB_PREFIX ."user as u";
+		$sql = "SELECT u.rowid, u.name, u.firstname FROM";
+		$sql.= " ".MAIN_DB_PREFIX ."user as u";
 		if (is_array($exclude) && $excludeUsers) $sql.= " WHERE u.rowid NOT IN ('".$excludeUsers."')";
 		$sql.= " ORDER BY u.name ASC";
 
@@ -659,7 +659,7 @@ class Form
 				{
 					$obj = $this->db->fetch_object();
 						
-					if ($selected && $selected == $obj->rowid)
+					if ((is_object($selected) && $selected->id == $obj->rowid) || (! is_object($selected) && $selected == $obj->rowid))
 					{
 						print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
 					}
@@ -2028,8 +2028,9 @@ class Form
 	 *		@param	empty			0=Champ obligatoire, 1=Permet une saisie vide
 	 *		@param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup.
 	 *		@param	d				1=Affiche aussi les jours, mois, annees
+	 * 		@param	addnowbutton	Add a button "Now"
 	 */
-	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1)
+	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0)
 	{
 		global $conf,$langs;
 
@@ -2253,12 +2254,51 @@ class Form
 			print "M\n";
 		}
 
+		// Added by Matelli http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
+		// "Now" button
+		if ($conf->use_javascript_ajax && $addnowbutton)
+		{
+			// Script which will be inserted in the OnClick of the "Now" button
+			$reset_scripts = "";
+			
+			// Generate the date part, depending on the use or not of the javascript calendar
+			if ($conf->use_popup_calendar)
+			{
+				$base=DOL_URL_ROOT.'/lib/';
+				$reset_scripts .= 'resetDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');';
+			}
+			else
+			{
+				$reset_scripts .= 'this.form.elements[\''.$prefix.'day\'].value=formatDate(new Date(), \'dds\');';
+				$reset_scripts .= 'this.form.elements[\''.$prefix.'hour\'].value=formatDate(new Date(), \'MM\');';
+				$reset_scripts .= 'this.form.elements[\''.$prefix.'year\'].value=formatDate(new Date(), \'YYYY\');';
+			}
+			// Generate the hour part
+			if ($h)
+			{
+				$reset_scripts .= 'this.form.elements[\''.$prefix.'hour\'].value=formatDate(new Date(), \'HH\');';
+			}
+			// Generate the minute part
+			if ($m)
+			{
+				$reset_scripts .= 'this.form.elements[\''.$prefix.'min\'].value=formatDate(new Date(), \'mm\');';
+			}
+			// If reset_scripts is not empty, print the button with the reset_scripts in OnClick
+			if ($reset_scripts)
+			{			
+				print '<button class="dpInvisibleButtons" id="'.$prefix.'ButtonNow" type="button" name="_useless" value="Maintenant" onClick="'.$reset_scripts.'">';
+				print $langs->trans("Now");
+				//print img_refresh($langs->trans("Now"));
+				print '</button> ';
+			}
+		}
+		
 	}
 
 	/**
-	 \brief  	Fonction servant a afficher une durée dans une liste déroulante
-	 \param		prefix   	prefix
-	 \param  	iSecond  	Nombre de secondes
+	 *	\brief  	Fonction servant a afficher une durée dans une liste déroulante
+	 *	\param		prefix   	prefix
+	 *	\param  	iSecond  	Nombre de secondes
 	 */
 	function select_duree($prefix,$iSecond='')
 	{
