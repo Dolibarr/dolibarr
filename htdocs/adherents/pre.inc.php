@@ -15,15 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**     \file       htdocs/adherents/pre.inc.php
         \ingroup    adherent
 		\brief      Fichier de gestion du menu gauche du module adherent
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("../main.inc.php");
@@ -48,7 +45,7 @@ function llxHeader($head = "")
 	$menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"));
 	$menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"));
 
-	$menu->add(DOL_URL_ROOT."/public/adherents/index.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
+	$menu->add(DOL_URL_ROOT."/adherents/public.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
 
 	$menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Exports"));
 	$menu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"));

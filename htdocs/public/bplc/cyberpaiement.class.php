@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
-/* Classe de gestion du système de paiement de la banque Populaire
+/**
+ * 	\version	$Id$
+ */
+
+/* Classe de gestion du systeme de paiement de la banque Populaire
  * de Lorraine et Champagne
  * http://www.cyberpaiement.tm.fr/
- *
  */
 
 class Cyberpaiement
@@ -30,19 +30,19 @@ class Cyberpaiement
 
   function Cyberpaiement($conf) 
     /*
-     *   Initialisation des valeurs par défaut
+     *   Initialisation des valeurs par dï¿½faut
      */
   {
 
-    /* Numéro abonné Internet : 6 chiffres */
+    /* Numï¿½ro abonnï¿½ Internet : 6 chiffres */
     
     $this->champ000 = $conf->bplc->numabonne;
     
-    /* Code activité commercant : 4 chiffres */
+    /* Code activitï¿½ commercant : 4 chiffres */
       
     $this->champ001 = $conf->bplc->code_activite;
 
-    /* Numéro de contrat : 10 chiffres */
+    /* Numï¿½ro de contrat : 10 chiffres */
       
     $this->champ002 = $conf->bplc->num_contrat;
       
@@ -74,13 +74,13 @@ class Cyberpaiement
       
     $this->champ202 = $conf->bplc->devise;
     
-    /* Adhérent : 01 */
+    /* Adhï¿½rent : 01 */
     
     $this->champ900 = $conf->bplc->adherent;
     
 
     /* *********************************************** */
-    /* Initialisation à vide des valeurs qui ne seront */
+    /* Initialisation ï¿½ vide des valeurs qui ne seront */
     /* pas transmises                                  */
     /* *********************************************** */
 
@@ -114,12 +114,12 @@ class Cyberpaiement
     
     $this->champ101 = $prenom;
     
-    /* Société */
+    /* Sociï¿½tï¿½ */
     if (strlen(trim($societe)))
       {
 	$this->champ102 = $societe;
       }
-    /* Téléphone */
+    /* Tï¿½lï¿½phone */
     if (strlen(trim($telephone)))
       {
 	$this->champ103 = $telephone;
@@ -135,7 +135,7 @@ class Cyberpaiement
 	$this->champ106 = $fax;
       }
     
-    /* Adresse numéro et rue */
+    /* Adresse numï¿½ro et rue */
     if (strlen(trim($adresse)))
       {
 	$this->champ107 = $adresse;
@@ -167,7 +167,7 @@ class Cyberpaiement
   
   function set_commande($ref, $montant)
   {          
-    /* Référence */
+    /* Rï¿½fï¿½rence */
     
     $this->champ200 = $ref;
     

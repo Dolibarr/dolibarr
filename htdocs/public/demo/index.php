@@ -26,6 +26,7 @@
 */
 
 require("../../master.inc.php");
+
 $langs->setDefaultLang('auto');
 
 $langs->load("main");

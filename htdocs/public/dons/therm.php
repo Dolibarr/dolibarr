@@ -28,9 +28,11 @@ require("../../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/images.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/don.class.php");
 
+$langs->setDefaultLang('auto');
+
 
 /*
-* Read Values
+* 	View
 */
 $dontherm = new Don($db);
  

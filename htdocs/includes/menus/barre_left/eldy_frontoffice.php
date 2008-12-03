@@ -829,7 +829,7 @@ class MenuLeft {
 					if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export,'_blank');
 					if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export",$langs->trans("MembersTickets"),1,$user->rights->adherent->export,'_blank');
 
-					$newmenu->add(DOL_URL_ROOT."/public/adherents/index.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
+					$newmenu->add(DOL_URL_ROOT."/adherents/public.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
 					/*
 					if ($leftmenu=="member_public") $newmenu->add(DOL_URL_ROOT."/public/adherents/","Non adherent");
 					if ($leftmenu=="member_public") $newmenu->add_submenu("new.php","Inscription");

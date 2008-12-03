@@ -15,13 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
- * $Id$
- *
  * Classe de gestion du retour RSTS du systeme de paiement en ligne
  * CyberPaiement (TM) de la Banque Populaire de Lorraine
  *
- * Certaine fonction de cette classe existe de base dans PHP4 mais ont �t�
- * r�-�crites ici pour le support de PHP3
+ * Certaine fonction de cette classe existe de base dans PHP4 mais ont ete
+ * re-ecrites ici pour le support de PHP3
+ */
+
+/**
+ * 	\version	$Id$
  */
 
 class Retourbplc

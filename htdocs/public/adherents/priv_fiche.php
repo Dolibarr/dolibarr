@@ -31,6 +31,8 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 
+$langs->setDefaultLang('auto');
+
 $langs->load("main");
 $langs->load("members");
 $langs->load("companies");
