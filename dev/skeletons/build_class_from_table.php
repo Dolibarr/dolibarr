@@ -232,6 +232,14 @@ foreach($property as $key => $prop)
 			if ($i < sizeof($property)) $varprop.=",";
 			$varprop.="\";";
 		}
+		elseif ($prop['ischar'])
+		{
+			$varprop.='".(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
+			$varprop.="addslashes(\$this->".$prop['field'].")";
+			$varprop.='."\'")."';
+			if ($i < sizeof($property)) $varprop.=",";
+			$varprop.='";';
+		}
 		else
 		{
 			$varprop.='".(! isset($this->'.$prop['field'].')?\'NULL\':"\'".';
