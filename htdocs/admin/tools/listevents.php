@@ -49,12 +49,30 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
+/*
+ * Actions
+ */
+
+// Purge audit events
+if ($_POST['action'] == 'confirm_purge' && $_POST['confirm'] == 'yes' && $user->admin)
+{
+	$sql="DELETE FROM ".MAIN_DB_PREFIX."events";
+	$resql = $db->query($sql);
+	if (! $resql)
+	{
+		$mesg='<div class="error">'.$db->lasterror().'</div>';
+	}
+}
+
+
 
 /*
 *	View
 */
 
 llxHeader();
+
+$form=new Form($db);
 
 $userstatic=new User($db);
 $usefilter=0;
@@ -80,6 +98,12 @@ if ($result)
 
 	print_barre_liste($langs->trans("ListOfSecurityEvents"), $page, "listevents.php","",$sortfield,$sortorder,'',$num);
 
+	if ($_GET["action"] == 'purge')
+	{
+		$form->form_confirm($_SERVER["PHP_SELF"], $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge');
+		print '<br>';
+	}
+	
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"e.dateevent","","",'align="left"',$sortfield,$sortorder);
@@ -166,6 +190,13 @@ if ($result)
 	}
 	print "</table>";
 	$db->free();
+	
+	if ($num && $_GET["action"] != 'purge')
+	{
+	    print '<div class="tabsAction">';
+    	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
+    	print '</div>';
+	}
 }
 else
 {
@@ -174,5 +205,5 @@ else
 
 $db->close();
 
-llxFooter('$Date$ r&eacute;vision $Revision$');
+llxFooter('$Date$ - $Revision$');
 ?>

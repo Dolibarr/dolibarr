@@ -18,11 +18,11 @@
  */
 
 /**
-        \file       htdocs/admin/menus.php
-        \ingroup    core
-        \brief      Page de configuration des gestionnaires de menu
-		\version	$Id$
-*/
+ *      \file       htdocs/admin/menus.php
+ *      \ingroup    core
+ *      \brief      Page de configuration des gestionnaires de menu
+ *		\version	$Id$
+ */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/admin.lib.php");
