@@ -239,11 +239,11 @@ class MenuLeft {
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts&type=o", $langs->trans("Others"), 2, $user->rights->societe->contact->lire);
 				//$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?userid=$user->id", $langs->trans("MyContacts"), 1, $user->rights->societe->contact->lire);
 
-				// Catégories
+				// Categories
 				if ($conf->categorie->enabled)
 				{
 					$langs->load("categories");
-					// Catégories fournisseurs
+					// Categories suppliers
 					if ($conf->fournisseur->enabled)
 					{
 						$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 0, $user->rights->categorie->lire);
@@ -252,8 +252,8 @@ class MenuLeft {
 							$newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
 						}
 					}
-					// Catégories clients
-					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=2", $langs->trans("CustomersCategoriesShort"), 0, $user->rights->categorie->lire);
+					// Categories prospects/customers
+					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=2", $langs->trans("CustomersProspectsCategoriesShort"), 0, $user->rights->categorie->lire);
 					if ($user->societe_id == 0)
 					{
 						$newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=2", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);

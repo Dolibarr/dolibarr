@@ -265,7 +265,7 @@ function formCategory($db,$object,$type,$typeid)
 	
 	if ($typeid == 0) $title = $langs->trans("ProductsCategoriesShort");
 	if ($typeid == 1) $title = $langs->trans("SuppliersCategoriesShort");
-	if ($typeid == 2) $title = $langs->trans("CustomersCategoriesShort");
+	if ($typeid == 2) $title = $langs->trans("CustomersProspectsCategoriesShort");
 	if ($type == 'societe' || $type == 'fournisseur')
 	{
 		$nameId = 'socid';
@@ -277,7 +277,7 @@ function formCategory($db,$object,$type,$typeid)
 	
 	// Formulaire ajout dans une categorie
 	print '<br>';
-	print_fiche_titre($title);
+	print_fiche_titre($title,'','');
 	print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php?'.$nameId.'='.$object->id.'">';
 	print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 	print '<table class="noborder" width="100%">';

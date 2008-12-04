@@ -67,6 +67,7 @@ CustomersCategoryShort				=Categoria clienti
 ProductsCategoryShort				=Categorie prodotti
 SuppliersCategoriesShort			=Categorie fornitori
 CustomersCategoriesShort			=Categorie clienti
+CustomersProspectsCategoriesShort   =Categorie clienti
 ProductsCategoriesShort				=Categorie prodotti 
 ThisCategoryHasNoProduct			=Questa categoria non contiene alcun prodotto.
 ThisCategoryHasNoSupplier			=Questa categoria non contiene alcun fornitore.
