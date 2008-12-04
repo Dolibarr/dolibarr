@@ -68,7 +68,7 @@ class modProduit extends DolibarrModules
 		// Dir
 		$this->dirs = array();
 
-		// D�pendances
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array("modStock","modService","modBarcode");
 

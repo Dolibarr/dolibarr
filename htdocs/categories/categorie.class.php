@@ -47,7 +47,7 @@ class Categorie
 	var $description;
 	var $socid;
 	var $statut;
-	var $type;					// 0=Produit, 1=Fournisseur, 2=Tiers
+	var $type;					// 0=Produit, 1=Tiers fournisseur, 2=Tiers client/prospect
 
 	var $cats=array();			// Tableau en memoire des categories
 	var $motherof = array();	// Tableau des correspondances id_fille -> id_mere

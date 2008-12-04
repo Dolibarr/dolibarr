@@ -57,14 +57,18 @@ class modCategorie extends DolibarrModules
 	
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->special = 0;
-		$this->picto = '';
+		$this->picto = 'generic';
 	
 		// Dir
 		$this->dirs = array();
 	
-		// Dépendances
+		// Dependencies
 		$this->depends = array("modProduit");
 	
+		// Config pages
+		$this->config_page_url = array();
+		$this->langfiles = array("products","companies","categories");
+		
 		// Constantes
 		$this->const = array();
 	
@@ -104,6 +108,46 @@ class modCategorie extends DolibarrModules
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
 		$this->rights[$r][4] = 'voir';
 		$r++;
+		
+		// Exports
+		//--------
+		$r=0;
+
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='List of supplier categories';
+		$this->export_permission[$r]=array(array("categorie","lire"));
+		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'s.rowid'=>'CompanyId','s.nom'=>'Name');
+		$this->export_entities_array[$r]=array('u.rowid'=>"category",'u.label'=>"category",'u.description'=>"category",'s.rowid'=>'company','s.nom'=>'company');
+		$this->export_alias_array[$r]=array('u.rowid'=>"idcateg",'u.label'=>"label",'u.description'=>"description",'s.rowid'=>'idsoc','s.nom'=>'name');
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_fournisseur as cf, '.MAIN_DB_PREFIX.'societe as s';
+		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_societe = s.rowid';
+		$this->export_sql_end[$r] .=' AND u.type = 1';	// Supplier categories
+
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='List of customer/prospect categories';
+		$this->export_permission[$r]=array(array("categorie","lire"));
+		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'s.rowid'=>'CompanyId','s.nom'=>'Name');
+		$this->export_entities_array[$r]=array('u.rowid'=>"category",'u.label'=>"category",'u.description'=>"category",'s.rowid'=>'company','s.nom'=>'company');
+		$this->export_alias_array[$r]=array('u.rowid'=>"idcateg",'u.label'=>"label",'u.description'=>"description",'s.rowid'=>'idsoc','s.nom'=>'name');
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_societe as cf, '.MAIN_DB_PREFIX.'societe as s';
+		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_societe = s.rowid';
+		$this->export_sql_end[$r] .=' AND u.type = 2';	// Customer/Prospect categories
+		
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='List of products categories';
+		$this->export_permission[$r]=array(array("categorie","lire"));
+		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'ProductId','p.ref'=>'Ref');
+		$this->export_entities_array[$r]=array('u.rowid'=>"category",'u.label'=>"category",'u.description'=>"category",'p.rowid'=>'product','p.ref'=>'product');
+		$this->export_alias_array[$r]=array('u.rowid'=>"idcateg",'u.label'=>"label",'u.description'=>"description",'p.rowid'=>'idprod','p.ref'=>'ref');
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_product as cp, '.MAIN_DB_PREFIX.'product as p';
+		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_product = p.rowid';
+		$this->export_sql_end[$r] .=' AND u.type = 0';	// Supplier categories
 	}
 
 

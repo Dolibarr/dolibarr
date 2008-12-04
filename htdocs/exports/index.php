@@ -52,7 +52,7 @@ print '<br>';
 
 print '<table class="notopnoleftnoright" width="100%">';
 
-print '<tr><td valign="top" width="30%" class="notopnoleft">';
+print '<tr><td valign="top" width="40%" class="notopnoleft">';
 
 
 // Liste des formats d'exports disponibles
@@ -81,7 +81,7 @@ foreach($liste as $key)
 print '</table>';
 
 
-print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+print '</td><td valign="top" width="60%" class="notopnoleftnoright">';
 
 
 // Affiche les modules d'exports

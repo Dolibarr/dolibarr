@@ -15,28 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
- \defgroup   user  Module user
- \brief      Module pour g�rer les utilisateurs
+ *	\defgroup   user  Module user
+ *	\brief      Module pour gerer les utilisateurs
  */
 
 /**
- \file       htdocs/includes/modules/modUser.class.php
- \ingroup    user
- \brief      Fichier de description et activation du module Utilisateur
+ *	\file       htdocs/includes/modules/modUser.class.php
+ *	\ingroup    user
+ *	\brief      Fichier de description et activation du module Utilisateur
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
- \class      modUser
- \brief      Classe de description et activation du module User
+ *	\class      modUser
+ *	\brief      Classe de description et activation du module User
  */
-
 class modUser extends DolibarrModules
 {
 

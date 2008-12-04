@@ -45,6 +45,7 @@ $entitytoicon=array(
 	'account'=>'account',
 	'payment'=>'payment',
 	'product'=>'product','stock'=>'generic','warehouse'=>'stock',
+	'category'=>'generic',
 	'other'=>'generic',
 	);
 $entitytolang=array(		// Translation code
@@ -58,6 +59,7 @@ $entitytolang=array(		// Translation code
 	'account'=>'BankTransactions',
 	'payment'=>'Payment',
 	'product'=>'Product','stock'=>'Stock','warehouse'=>'Warehouse',
+	'category'=>'Category',
 	'other'=>'Other'
 	);
 
