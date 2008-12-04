@@ -59,8 +59,8 @@ class Export
         
     
     /**
-     *    \brief  Charge les lots de donn�es exportables
-     *    \param  user      Objet utilisateur qui exporte
+     *    \brief  Load an exportable dataset
+     *    \param  user      Object user making export
      *    \param  filter    Code export pour charger un lot de donn�es particulier
      */
     function load_arrays($user,$filter='')
@@ -120,17 +120,19 @@ class Export
                                 }
                             }
 
-                            // Nom module
+                            // Module
                             $this->array_export_module[$i]=$module;
+                            // Icon
+                            $this->array_export_icon[$i]=(isset($module->export_icon[$r])?$module->export_icon[$r]:$module->picto);
                             // Code du dataset export
                             $this->array_export_code[$i]=$module->export_code[$r];
-                            // Libell� du dataset export
+                            // Libelle du dataset export
                             $this->array_export_label[$i]=$module->getDatasetLabel($r);
-                            // Tableau des champ � exporter (cl�=champ, valeur=libell�)
+                            // Tableau des champ a exporter (cle=champ, valeur=libelle)
                             $this->array_export_fields[$i]=$module->export_fields_array[$r];
-                            // Tableau des entites � exporter (cl�=champ, valeur=entite)
+                            // Tableau des entites a exporter (cle=champ, valeur=entite)
                             $this->array_export_entities[$i]=$module->export_entities_array[$r];
-                            // Tableau des alias � exporter (cl�=champ, valeur=alias)
+                            // Tableau des alias a exporter (cle=champ, valeur=alias)
                             $this->array_export_alias[$i]=$module->export_alias_array[$r];
                             // Tableau des operations speciales sur champ
                             $this->array_export_special[$i]=$module->export_special_array[$r];
@@ -266,8 +268,8 @@ class Export
     }
     
 	/**
-	*  \brief	Cr�� un mod�le d'export
-	*  \param	user Objet utilisateur qui cr�e
+	*  \brief	Create an export model in database
+	*  \param	user Objet utilisateur qui cree
 	*/
 	function create($user)
 	{
@@ -281,8 +283,7 @@ class Export
 		$sql.= 'label, type, field)';
 		$sql.= " VALUES ('".$this->model_name."', '".$this->datatoexport."', '".$this->hexa."')";
 		
-		dolibarr_syslog("Export.class.php::create sql=".$sql);
-		
+		dolibarr_syslog("Export::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -291,15 +292,17 @@ class Export
 		}
 		else
 		{
-			$this->error=$this->db->error()." sql=".$sql;
+			$this->error=$this->db->lasterror();
+			$this->errno=$this->db->lasterrno();
+			dolibarr_syslog("Export::create error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
 	}
 
 	/**
-	*    \brief      Recup�re de la base les caract�ristiques d'un modele d'export
-	*    \param      rowid       id du mod�le � r�cup�rer
+	*    \brief      Load an export profil from database
+	*    \param      rowid       id of profil to load
 	*/
 	function fetch($id)
 	{
@@ -307,8 +310,7 @@ class Export
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'export_model as em';
 		$sql.= ' WHERE em.rowid = '.$id;
 		
-		dolibarr_syslog("Export::fetch sql=$sql");
-		
+		dolibarr_syslog("Export::fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql) ;
 		if ($result)
 		{
@@ -335,6 +337,61 @@ class Export
 		}
 	}
     
+	
+ 	/**
+	 *   \brief      Delete object in database
+     *	\param      user        	User that delete
+     *   \param      notrigger	    0=launch triggers after, 1=disable triggers
+	 *	\return		int				<0 if KO, >0 if OK
+	 */
+	function delete($user, $notrigger=0)
+	{
+		global $conf, $langs;
+		$error=0;
+		
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."export_model";
+		$sql.= " WHERE rowid=".$this->id;
+	
+		$this->db->begin();
+		
+		dolibarr_syslog(get_class($this)."::delete sql=".$sql);
+		$resql = $this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Uncomment this and change MYOBJECT to your own tag if you
+		        // want this action call a trigger.
+				
+		        //// Call triggers
+		        //include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		        //$interface=new Interfaces($this->db);
+		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		        //// End call triggers
+			}	
+		}
+		
+        // Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+	            dolibarr_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+			}	
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
+		
 }
 
 ?>

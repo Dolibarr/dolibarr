@@ -76,10 +76,14 @@ alter table llx_don add note_public     text;
 alter table llx_don add model_pdf       varchar(50);
 alter table llx_don add import_key      varchar(14);
 
+ALTER TABLE llx_export_model DROP INDEX uk_export_model;
+ALTER TABLE llx_export_model ADD UNIQUE uk_export_model (label,type);
+
 -- Reverse option
 update llx_const set visible = 1, name = 'FACTURE_ENABLE_RECUR', value='1' where name = 'FACTURE_DISABLE_RECUR' and value = '0';
 delete from llx_const where name = 'FACTURE_DISABLE_RECUR' and value = '1';
 
 
 update llx_bank_account set ref = label where ref is null or ref = '';
+
 

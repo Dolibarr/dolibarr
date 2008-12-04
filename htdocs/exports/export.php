@@ -170,6 +170,15 @@ if ($action == 'builddoc')
     }
 }
 
+if ($action == 'deleteprof')
+{
+	if ($_GET["id"])
+	{
+		$objexport->fetch($_GET["id"]);
+		$result=$objexport->delete($user);
+	}
+}
+
 if ($action == 'add_export_model')
 {
 	if ($export_name)
@@ -195,7 +204,12 @@ if ($action == 'add_export_model')
 		}
 		else
 		{
-		    $mesg='<div class="error">'.$objexport->error.'</div>';
+			$langs->load("errors");
+			if ($objexport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$mesg='<div class="error">'.$langs->trans("ErrorExportDuplicateProfil").'</div>';				
+			}
+			else $mesg='<div class="error">'.$objexport->error.'</div>';
 		}
 	}
 	else
@@ -269,10 +283,10 @@ if ($step == 1 || ! $datatoexport)
         {
             $val=!$val;
             print '<tr '.$bc[$val].'><td nospan="nospan">';
-            print img_object($objexport->array_export_module[$key]->getName(),$objexport->array_export_module[$key]->picto).' ';
             print $objexport->array_export_module[$key]->getName();
             print '</td><td>';
 			//print $value;
+            print img_object($objexport->array_export_module[$key]->getName(),$objexport->array_export_icon[$key]).' ';
             print $objexport->array_export_label[$key];
             print '</td><td align="right">';
             print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
@@ -319,13 +333,16 @@ if ($step == 2 && $datatoexport)
     // Module
     print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
+    //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
     // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
-    print '<td>'.$objexport->array_export_label[0].'</td></tr>';
+    print '<td>';
+    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
+    print $objexport->array_export_label[0];
+    print '</td></tr>';
     
     print '</table>';
     print '<br>';
@@ -459,13 +476,16 @@ if ($step == 3 && $datatoexport)
     // Module
     print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
+    //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
     // Lot de donn�es � exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
-    print '<td>'.$objexport->array_export_label[0].'</td></tr>';
+    print '<td>';
+    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
+    print $objexport->array_export_label[0];
+    print '</td></tr>';
 
     // Nbre champs export�s
     print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
@@ -521,32 +541,6 @@ if ($step == 3 && $datatoexport)
 
     print '</table>';
 	
-	// Bouton exports profils
-	if (sizeof($array_selected))
-    {
-		print '<br>';
-        print $langs->trans("SaveExportModel");
-		
-		print '<form class="nocellnopadd" action="export.php" method="post">';
-        print '<input type="hidden" name="action" value="add_export_model">';
-        print '<input type="hidden" name="step" value="'.$step.'">';
-        print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
-        print '<input type="hidden" name="hexa" value="'.$hexa.'">';
-
-        print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("ExportModelName").'</td>';
-		print '<td>&nbsp;</td>';
-		print '</tr>';
-		$var=false;
-		print '<tr '.$bc[$var].'>';
-		print '<td><input name="export_name" size="32" value=""></td><td>';
-        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-        print '</td></tr>';
-        print '</table>';
-        print '</form>';
-    }
-
     
     print '</div>';
 
@@ -565,6 +559,63 @@ if ($step == 3 && $datatoexport)
 
     print '</div>';
 
+    
+	// Area for profils export
+	if (sizeof($array_selected))
+    {
+		print '<br>';
+        print $langs->trans("SaveExportModel");
+		
+		print '<form class="nocellnopadd" action="export.php" method="post">';
+        print '<input type="hidden" name="action" value="add_export_model">';
+        print '<input type="hidden" name="step" value="'.$step.'">';
+        print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
+        print '<input type="hidden" name="hexa" value="'.$hexa.'">';
+
+        print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("ExportModelName").'</td>';
+		print '<td>&nbsp;</td>';
+		print '</tr>';
+		$var=false;
+		print '<tr '.$bc[$var].'>';
+		print '<td><input name="export_name" size="32" value=""></td><td align="right">';
+        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+        print '</td></tr>';
+
+        // List of existing export profils
+    	$sql = "SELECT rowid, label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."export_model";
+		$sql.= " WHERE type = '".$datatoexport."'";
+		$sql.= " ORDER BY rowid";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			$var=false;
+			while ($i < $num)
+			{
+				$var=!$var;
+				$obj = $db->fetch_object($resql);
+				print '<tr '.$bc[$var].'><td>';
+				print $obj->label;
+				print '</td><td align="right">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?step='.$step.'&datatoexport='.$datatoexport.'&action=deleteprof&id='.$obj->rowid.'">';
+				print img_delete();
+				print '</a>';
+				print '</tr>';
+				$i++;
+			}
+		}
+		else {
+			dolibarr_print_error($this->db);
+		}
+		        
+        print '</table>';
+        print '</form>';
+    }
+    
 }
 
 if ($step == 4 && $datatoexport)
@@ -602,13 +653,16 @@ if ($step == 4 && $datatoexport)
     // Module
     print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
     print '<td>';
-    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
+    //print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_module[0]->picto).' ';
     print $objexport->array_export_module[0]->getName();
     print '</td></tr>';
 
     // Lot de donnees a exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
-    print '<td>'.$objexport->array_export_label[0].'</td></tr>';
+    print '<td>';
+    print img_object($objexport->array_export_module[0]->getName(),$objexport->array_export_icon[0]).' ';
+    print $objexport->array_export_label[0];
+    print '</td></tr>';
 
     // Nbre champs exportes
     print '<tr><td width="25%">'.$langs->trans("ExportedFields").'</td>';
