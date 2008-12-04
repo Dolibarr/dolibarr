@@ -301,7 +301,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
     
 
 
-    // Liste des destinataires s�lectionn�s
+    // List of selected targets
 	print "\n<!-- Liste destinataires selectionnes -->\n";
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -326,7 +326,8 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         if ($search_nom)    $addu.= "&amp;search_nom=".urlencode($search_nom);
         if ($search_prenom) $addu.= "&amp;search_prenom=".urlencode($search_prenom);
         if ($search_email)  $addu.= "&amp;search_email=".urlencode($search_email);
-        print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$addu,$sortfield,$sortorder,"",$num,$mil->nbemail);
+
+        print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$addu,$sortfield,$sortorder,"",$num,$mil->nbemail,'');
 
         if ($page)			$addu.= "&amp;page=".$page;
         print '<table class="noborder" width="100%">';

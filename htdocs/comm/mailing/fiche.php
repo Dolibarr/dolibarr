@@ -526,7 +526,11 @@ else
 
             print '<table class="border" width="100%">';
 
-            print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$mil->id.'</td></tr>';
+            print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+            print '<td colspan="3">';
+			print $html->showrefnav($mil,'id');
+            print '</td></tr>';
+
             print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
             print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from).'</td></tr>';
             print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';

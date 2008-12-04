@@ -18,22 +18,27 @@
  */
 
 /**
- \file       htdocs/comm/mailing/mailing.class.php
- \ingroup    mailing
- \brief      Fichier de la classe de gestion des mailings
- \version    $Id$
+ *	\file       htdocs/comm/mailing/mailing.class.php
+ *	\ingroup    mailing
+ *	\brief      Fichier de la classe de gestion des mailings
+ *	\version    $Id$
  */
+
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 
 
 /**
  *	\class      Mailing
  *	\brief      Classe permettant la gestion des mailings
  */
-class Mailing
+class Mailing extends CommonObject
 {
-	var $id;
+	var $db;
 	var $error;
-
+    var $element='mailing';
+    var $table_element='mailing';
+	
+    var $id;
 	var $statut;
 	var $titre;
 	var $sujet;
