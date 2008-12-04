@@ -211,9 +211,11 @@ print '</tr>';
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="norss" value="<?php echo ($lastexternalrss+1) ?>">
 </td>
-</table>
-
-</form>
+</tr>
+<?php
+print '</table>';
+print '</form>';
+?>
 
 <br>
 

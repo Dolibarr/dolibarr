@@ -144,8 +144,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 </fieldset>
 
 <!-- ========================= Cadre "Différence" ============================= -->
+<form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
 <fieldset class="cadre_facturation"><legend class="titre1">Différence</legend>
-	<form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
 		<table>
 			<tr><th class="label1">Montant dû</th><th class="label1">Encaissé</th><th class="label1">Rendu</th></tr>
 			<tr>
@@ -163,7 +163,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 <fieldset class="cadre_facturation"><legend class="titre1">Mode de paiement</legend>
 		<table>
 			<input type="hidden" name="hdnChoix" value="" />
-
+			<tr>
 			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Espèces" onclick="javascript: verifClic('ESP');" /></td>
 			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Carte" onclick="javascript: verifClic('CB');" /></td>
 			<td><input class="bouton_mode_reglement" type="submit" name="btnModeReglement" value="Chèque" onclick="javascript: verifClic('CHQ');" /></td>
@@ -187,8 +187,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 				});
 			</script>
 		</table>
-	</form>
 </fieldset>
+</form>
 
 
 <script type="text/javascript">

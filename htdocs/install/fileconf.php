@@ -21,11 +21,11 @@
  */
 
 /**
-        \file       htdocs/install/fileconf.php
-        \ingroup    install
-        \brief      Demande les infos qui constituerons le contenu du fichier conf.php. Ce fichier sera remplie � l'�tape suivante
-        \version    $Id$
-*/
+ *       \file       htdocs/install/fileconf.php
+ *       \ingroup    install
+ *       \brief      Demande les infos qui constituerons le contenu du fichier conf.php (qui sera remplie a l'etape suivante)
+ *       \version    $Id$
+ */
 include_once("./inc.php");
 
 
@@ -61,17 +61,16 @@ if ($force_install_message_doliwamp)
 	print $langs->trans("KeepDefaultValues").'<br>';	
 }
 
-
-print '<table border="0" cellpadding="1" cellspacing="0">';
-
 ?>
+<table border="0" cellpadding="1" cellspacing="0">
+
 <tr>
 <td colspan="3" class="label" align="center"><h3>
 <?php echo $langs->trans("Main"); ?>
 </h3></td></tr>
-<?php
 
-print '<tr>';
+<tr>
+<?php
 print '<td valign="top" class="label"><b>';
 print $langs->trans("WebPagesDirectory");
 print "</b></td>";
