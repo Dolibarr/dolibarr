@@ -62,7 +62,7 @@ NoAttachedFiles=Aucun fichier joint
 MailingModuleDescContactCompanies=Contacts des tiers (prospects, clients, fournisseurs...)
 MailingModuleDescDolibarrUsers=Utilisateurs de Dolibarr avec e-mail
 MailingModuleDescFundationMembers=Adhérents avec e-mail
-MailingModuleDescEmailsFromFile=EMails issus d'un fichier
+MailingModuleDescEmailsFromFile=EMails issus d'un fichier texte (email;nom;prenom)
 MailingModuleDescContactsCategories=Contacts des tiers (par categorie)
 
 LineInFile=Ligne %s du fichier

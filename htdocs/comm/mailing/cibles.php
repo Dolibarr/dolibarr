@@ -162,7 +162,10 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
     
     print '<table class="border" width="100%">';
     
-    print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$mil->id.'</td></tr>';
+    print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+    print '<td colspan="3">';
+	print $html->showrefnav($mil,'id');
+    print '</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from).'</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->getLibStatut(4).'</td></tr>';
@@ -198,92 +201,97 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 	    $var=true;
         foreach ($listdir as $dir)
         {
-	        $handle=opendir($dir);
-	        
-	        while (($file = readdir($handle))!==false)
-	        {
-	            if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-	            {
-	                if (eregi("(.*)\.modules\.php$",$file,$reg))
-	                {
-	                    $modulename=$reg[1];
-	        			if ($modulename == 'example') continue;
-	        			
-	                    // Chargement de la classe
-	                    $file = $dir."/".$modulename.".modules.php";
-	                    $classname = "mailing_".$modulename;
-	                    require_once($file);
-	        
-	                    $obj = new $classname($db);
-	
-	                    $qualified=1;
-	                    foreach ($obj->require_module as $key)
-	                    {
-	                        if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
-	                        {
-	                            $qualified=0;
-	                            //print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
-	                            break;
-	                        }
-	                    }
-	                    
-	                    // Si le module mailing est qualifi�
-	                    if ($qualified)
-	                    {
-	                        $var = !$var;
-	                        print '<tr '.$bc[$var].'>';
-	                        
-	                        if ($mil->statut == 0) print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
-	                        
-	                        print '<td>';
-	                        if (! $obj->picto) $obj->picto='generic';
-	                        print img_object('',$obj->picto).' '.$obj->getDesc();
-	                        print '</td>';
-	            
-	                        /*
-	                        print '<td width=\"100\">';
-	                        print $modulename;
-	                        print "</td>";
-	                        */
-	                        $nbofrecipient=$obj->getNbOfRecipients();
-	                        print '<td align="center">';
-	                        if ($nbofrecipient >= 0)
-	                        {
-	                        	print $nbofrecipient;
-	                        }
-	                        else
-	                        {
-	                        	print $langs->trans("Error").' '.img_error($obj->error);
-	                        }
-	                        print '</td>';
-	
-	                        print '<td align="left">';
-	                        $filter=$obj->formFilter();
-	                        if ($filter) print $filter;
-	                        else print $langs->trans("None");
-	                        print '</td>';
-	        
-	                        print '<td align="right">';
-	                        if ($mil->statut == 0)
-	                        {
-	                            print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	                        }
-	                        else
-	                        {
-	                            //print $langs->trans("MailNoChangePossible");
-	                            print "&nbsp;";
-	                        }
-	                        print '</td>';
-	
-	                        if ($mil->statut == 0) print '</form>';
-	                        
-	                        print "</tr>\n";
-	                    }
-	                }
-	            }
-	        }
-	        closedir($handle);
-        }
+        	if (is_dir($dir))
+        	{
+		        $handle=opendir($dir);
+				if ($handle)
+				{        
+			        while (($file = readdir($handle))!==false)
+			        {
+			            if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+			            {
+			                if (eregi("(.*)\.modules\.php$",$file,$reg))
+			                {
+			                    $modulename=$reg[1];
+			        			if ($modulename == 'example') continue;
+			        			
+			                    // Chargement de la classe
+			                    $file = $dir."/".$modulename.".modules.php";
+			                    $classname = "mailing_".$modulename;
+			                    require_once($file);
+			        
+			                    $obj = new $classname($db);
+			
+			                    $qualified=1;
+			                    foreach ($obj->require_module as $key)
+			                    {
+			                        if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
+			                        {
+			                            $qualified=0;
+			                            //print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
+			                            break;
+			                        }
+			                    }
+			                    
+			                    // Si le module mailing est qualifi�
+			                    if ($qualified)
+			                    {
+			                        $var = !$var;
+			                        print '<tr '.$bc[$var].'>';
+			                        
+			                        if ($mil->statut == 0) print '<form name="'.$modulename.'" action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+			                        
+			                        print '<td>';
+			                        if (! $obj->picto) $obj->picto='generic';
+			                        print img_object('',$obj->picto).' '.$obj->getDesc();
+			                        print '</td>';
+			            
+			                        /*
+			                        print '<td width=\"100\">';
+			                        print $modulename;
+			                        print "</td>";
+			                        */
+			                        $nbofrecipient=$obj->getNbOfRecipients();
+			                        print '<td align="center">';
+			                        if ($nbofrecipient >= 0)
+			                        {
+			                        	print $nbofrecipient;
+			                        }
+			                        else
+			                        {
+			                        	print $langs->trans("Error").' '.img_error($obj->error);
+			                        }
+			                        print '</td>';
+			
+			                        print '<td align="left">';
+			                        $filter=$obj->formFilter();
+			                        if ($filter) print $filter;
+			                        else print $langs->trans("None");
+			                        print '</td>';
+			        
+			                        print '<td align="right">';
+			                        if ($mil->statut == 0)
+			                        {
+			                            print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+			                        }
+			                        else
+			                        {
+			                            //print $langs->trans("MailNoChangePossible");
+			                            print "&nbsp;";
+			                        }
+			                        print '</td>';
+			
+			                        if ($mil->statut == 0) print '</form>';
+			                        
+			                        print "</tr>\n";
+			                    }
+			                }
+			            }
+			        }
+			        closedir($handle);
+				}
+        	}
+        }	// End foreach dir
         
         print '</table>';
 		print '<br>';

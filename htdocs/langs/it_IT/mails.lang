@@ -62,7 +62,7 @@ NoAttachedFiles						     =Nessun file allegati
 MailingModuleDescContactCompanies			     =Contatti di terzi (potenziali clienti, clienti, fornitori...)
 MailingModuleDescDolibarrUsers				     =Tutti gli utenti Dolibarr con messaggi di posta elettronica 
 MailingModuleDescFundationMembers			     =Membri fondazione con le email 
-MailingModuleDescEmailsFromFile				     =Email da un file 
+MailingModuleDescEmailsFromFile				     =Email da un file (email;name;surname)
 							     
 LineInFile						     =Linea %s nel file 
 RecipientSelectionModules				     =Modulo di selezione di destinatari
