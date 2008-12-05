@@ -285,6 +285,7 @@ if ($step == 1 || ! $datatoexport)
         {
             $val=!$val;
             print '<tr '.$bc[$val].'><td nospan="nospan">';
+	        //print img_object($objexport->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
             print $objexport->array_export_module[$key]->getName();
             print '</td><td>';
 			//print $value;

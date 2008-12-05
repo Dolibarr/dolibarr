@@ -98,9 +98,10 @@ if (sizeof($export->array_export_code))
     {
         $val=!$val;
         print '<tr '.$bc[$val].'><td>';
-        print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
+        //print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
         print $export->array_export_module[$key]->getName();
         print '</td><td>';
+        print img_object($export->array_export_module[$key]->getName(),$export->array_export_icon[$key]).' ';
         $string=$langs->trans($export->array_export_label[$key]);
         print ($string!=$export->array_export_label[$key]?$string:$export->array_export_label[$key]);
         print '</td>';
