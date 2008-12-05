@@ -15,18 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- */
-
-/**     \defgroup   externalrss     Module externalrss
- \brief      Module pour inclure des informations externes RSS
  */
 
 /**
- \file       htdocs/includes/modules/modExternalRss.class.php
- \ingroup    externalrss
- \brief      Fichier de description et activation du module externalrss
+ *  \defgroup   externalrss     Module externalrss
+ *	\brief      Module pour inclure des informations externes RSS
+ *	\version	$Id$
+ */
+
+/**
+ *	\file       htdocs/includes/modules/modExternalRss.class.php
+ *	\ingroup    externalrss
+ *	\brief      Fichier de description et activation du module externalrss
  */
 
 include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");

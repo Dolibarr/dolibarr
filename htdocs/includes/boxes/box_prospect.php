@@ -35,7 +35,7 @@ class box_prospect extends ModeleBoxes {
     var $boxcode="lastprospects";
     var $boximg="object_company";
     var $boxlabel;
-    var $depends = array("commercial");
+    var $depends = array("societe");
 
 	var $db;
 	var $param;

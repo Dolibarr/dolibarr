@@ -33,7 +33,7 @@ class box_commandes extends ModeleBoxes {
     var $boxcode="lastcustomerorders";
     var $boximg="object_order";
     var $boxlabel;
-    var $depends = array("commercial");
+    var $depends = array("commandes");
 
 	var $db;
 	var $param;

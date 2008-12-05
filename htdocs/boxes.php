@@ -90,7 +90,16 @@ class InfoBox
 					$box->position=$obj->position;
 					$box->box_order=$obj->box_order;
 					$box->fk_user=$obj->fk_user;
-					$boxes[]=$box;
+					$enabled=true;
+					if ($box->depends && sizeof($box->depends) > 0)
+					{
+						foreach($box->depends as $module)
+						{
+//							print $module.'<br>';
+							if (empty($conf->$module->enabled)) $enabled=false;						
+						}
+					}
+					if ($enabled) $boxes[]=$box;
 					$j++;
 				}
 			}
@@ -128,7 +137,16 @@ class InfoBox
 					$box->position=$obj->position;
 					$box->box_order=$obj->box_order;
 					$box->fk_user=$obj->fk_user;
-					$boxes[]=$box;
+					$enabled=true;
+					if ($box->depends && sizeof($box->depends) > 0)
+					{
+						foreach($box->depends as $module)
+						{
+//							print $module.'<br>';
+							if (empty($conf->$module->enabled)) $enabled=false;						
+						}
+					}
+					if ($enabled) $boxes[]=$box;
 					$j++;
 				}
 			}

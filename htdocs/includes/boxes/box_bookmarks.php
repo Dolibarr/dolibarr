@@ -14,15 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/includes/boxes/box_bookmarks.php
         \ingroup    bookmark
         \brief      Module de génération de l'affichage de la box bookmark
+		\version	$Id$
 */
 
 
@@ -34,7 +32,7 @@ class box_bookmarks extends ModeleBoxes {
     var $boxcode="bookmarks";
     var $boximg="object_bookmark";
     var $boxlabel;
-    var $depends = array();
+    var $depends = array("bookmark");
 
 	var $db;
 	var $param;

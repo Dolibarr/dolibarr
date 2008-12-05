@@ -71,8 +71,8 @@ class modAgenda extends DolibarrModules
         //-------------
         $this->config_page_url = array("agenda.php");
     
-        // Dependances
-        //------------
+        // Dependancies
+        //-------------
         $this->depends = array();
         $this->requiredby = array();
         $this->langfiles = array("companies");

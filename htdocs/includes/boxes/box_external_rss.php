@@ -35,7 +35,7 @@ class box_external_rss extends ModeleBoxes {
     var $boxcode="lastrssinfos";
     var $boximg="object_rss";
     var $boxlabel;
-    var $depends = array();
+    var $depends = array("externalrss");
 
 	var $db;
 	var $param;

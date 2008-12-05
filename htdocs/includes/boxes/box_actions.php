@@ -34,7 +34,7 @@ class box_actions extends ModeleBoxes {
     var $boxcode="lastactions";
     var $boximg="object_action";
     var $boxlabel;
-    var $depends = array("action");
+    var $depends = array("agenda");
 
 	var $db;
 	var $param;
