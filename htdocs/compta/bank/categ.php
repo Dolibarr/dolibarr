@@ -74,7 +74,7 @@ if ( $_REQUEST['action'] == 'delete' )
 llxHeader();
 
 
-print_fiche_titre($langs->trans("Categories"));
+print_fiche_titre($langs->trans("Rubriques"));
 
 
 print '<form method="post" action="categ.php">';

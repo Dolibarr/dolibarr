@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -218,7 +218,7 @@ if ($result)
 		// Confirmations
 		if ($_GET["action"] == 'delete_categ')
 		{
-			$html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,$langs->trans("RemoveFromCategory"),$langs->trans("RemoveFromCategoryConfirm"),"confirm_delete_categ");
+			$html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,$langs->trans("RemoveFromRubrique"),$langs->trans("RemoveFromRubriqueConfirm"),"confirm_delete_categ");
 			print '<br>';
 		}
 
@@ -503,23 +503,8 @@ if ($result)
 print '</div>';
 
 
-/*
- *  Boutons actions
- */
-/*
- print '<div class="tabsAction">';
 
- if ($orig_account)
- {
- $acct=new Account($db,$orig_account);
- $acct->fetch($orig_account);
- print '<a class="butAction" href="rappro.php?account='.$orig_account.'">'.$langs->trans("BackToConciliate",$acct->label).'</a>';
- }
-
- print '</div>';
- */
-
-// Liste les categories
+// List of bank categories
 
 print '<br>';
 print '<table class="noborder" width="100%">';
@@ -527,7 +512,7 @@ print '<table class="noborder" width="100%">';
 print "<form method=\"post\" action=\"ligne.php?rowid=$rowid&amp;account=$account\">";
 print "<input type=\"hidden\" name=\"action\" value=\"class\">";
 print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
-print "<tr class=\"liste_titre\"><td>".$langs->trans("Categories")."</td><td colspan=\"2\">";
+print "<tr class=\"liste_titre\"><td>".$langs->trans("Rubriques")."</td><td colspan=\"2\">";
 print "<select class=\"flat\" name=\"cat1\">".$options."</select>&nbsp;";
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 print "</tr>";
@@ -551,8 +536,8 @@ if ($result)
 		print "<tr $bc[$var]>";
 
 		print "<td>$objp->label</td>";
-		print "<td align=\"center\"><a href=\"budget.php?bid=$objp->rowid\">".$langs->trans("List")."</a></td>";
-		print "<td align=\"center\"><a href=\"ligne.php?action=delete_categ&amp;rowid=$rowid&amp;fk_categ=$objp->rowid\">".img_delete($langs->trans("Remove"))."</a></td>";
+		print "<td align=\"center\"><a href=\"budget.php?bid=$objp->rowid\">".$langs->trans("ListBankTransactions")."</a></td>";
+		print "<td align=\"right\"><a href=\"ligne.php?action=delete_categ&amp;rowid=$rowid&amp;fk_categ=$objp->rowid\">".img_delete($langs->trans("Remove"))."</a></td>";
 		print "</tr>";
 
 		$i++;

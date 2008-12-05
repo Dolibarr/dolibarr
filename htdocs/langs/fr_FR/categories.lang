@@ -1,6 +1,8 @@
 # Dolibarr language file - fr_FR - categories
 Category=Categorie
-Categorie=Catégorie
+Categories=Catégories
+Rubrique=Rubrique
+Rubriques=Rubriques
 categories=catégorie(s)
 TheCategorie=La catégorie
 In=Dans

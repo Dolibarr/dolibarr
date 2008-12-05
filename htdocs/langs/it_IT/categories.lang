@@ -1,6 +1,8 @@
 # Dolibarr language file - it_IT - categories   	
 Category					=Categoria
-Categorie					=Categoria
+Categories                  =Categorie
+Rubrique=Categoria
+Rubriques=Categorie
 categories					=categorie
 TheCategorie					=La categoria
 In						=In

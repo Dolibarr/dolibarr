@@ -1431,7 +1431,7 @@ class Form
 	function select_all_categories($type,$selected='',$select_name="")
 	{
 		global $langs;
-		$langs->load("categorie");
+		$langs->load("categories");
 
 		if ($select_name=="") $select_name="catMere";
 

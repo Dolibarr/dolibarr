@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,19 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/compta/bank/budget.php
         \ingroup    banque
 		\brief      Page de budget
-		\version    $Revision$
+		\version    $Id$
 */
 
 require("./pre.inc.php");
+
+$langs->load("categories");
 
 if (!$user->rights->banque->lire)
   accessforbidden();
@@ -46,8 +45,7 @@ if ($_GET["bid"] == 0)
 	/*
 	*    Liste mouvements par catégories d'écritures financières
 	*/
-	print_titre("Ecritures bancaires par catégories");
-	print '<br>';
+	print_fiche_titre($langs->trans("BankTransactionByCategories"));
 
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
@@ -110,12 +108,11 @@ else
 		$db->free($resql);
 	}
 	
-	print_titre("Ecriture bancaire pour la catégorie: $budget_name");
-	print '<br>';
+	print_fiche_titre($langs->trans("BankTransactionForCategory",$budget_name));
 	
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
-	print '<td align="center">'.$langs->trans("Date").'</td>';
+	print '<td align="left">'.$langs->trans("Date").'</td>';
 	print '<td align="left">'.$langs->trans("Bank").'</td>';
 	print '<td width="60%">'.$langs->trans("Description").'</td><td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td>';
 	print "</tr>\n";
@@ -138,7 +135,7 @@ else
 			$objp = $db->fetch_object($result);
 			$var=!$var;
 			print "<tr $bc[$var]>";
-			print "<td align=\"center\">".dolibarr_print_date($objp->do)."</td>\n";
+			print "<td align=\"left\">".dolibarr_print_date($objp->do,'day')."</td>\n";
 	
 			print "<td><a href=\"account.php?account=$objp->bankid\">$objp->labelcompte</a></td>";
 			
@@ -147,7 +144,7 @@ else
 			$reg=array();
 			eregi('\((.+)\)',$objp->label,$reg);	// Si texte entouré de parenthèe on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
-			else print $objp->label;
+			else print dolibarr_trunc($objp->label,60);
 			print '</a></td>';
 			
 			// Montant

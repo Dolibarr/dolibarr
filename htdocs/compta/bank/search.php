@@ -49,8 +49,7 @@ if ($vline) $viewline = $vline;
 else $viewline = 50;
 
 
-print_titre($langs->trans("SearchBankMovement"));
-print '<br>';
+print_fiche_titre($langs->trans("SearchBankMovement"));
 
 print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';

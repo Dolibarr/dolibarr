@@ -98,7 +98,7 @@ if ($_GET["id"])
 	    }
 	  else
 	    {
-		  print $langs->trans("Categorie")." : ";
+		  print $langs->trans("Category")." : ";
 		  print $way;	
 		}
 	  print '</td></tr>';
