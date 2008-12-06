@@ -468,10 +468,10 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 	if ($format == 'dayhourldap')  $format='%Y%m%d%H%M%SZ';
 	if ($format == 'dayhourxcard') $format='%Y%m%dT%H%M%SZ';
 
-	// Si date non definie, on renvoie ''
-	if ($time == '') return '';		// $time=0 permis car signifie 01/01/1970 00:00:00
-
-	// Analyse de la date
+	// If date undefined or "", we return ""
+	if (strlen($time) == 0) return '';		// $time=0 allowed (it means 01/01/1970 00:00:00)
+	
+	// Analyse de la date (deprecated)
 	if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg))
 	{
 		// This part of code should not be used.
@@ -492,7 +492,7 @@ function dolibarr_print_date($time,$format='',$to_gmt=false,$outputlangs='')
 		$ret=adodb_strftime($format,$time,$to_gmt);
 	}
 
-	// Page code for text from strftime functions
+	// What is page code of texts from strftime functions ?
 	$pagecodefrom='ISO-8859-1';
 	$localtime=setlocale(LC_TIME,0);
 	if (eregi('UTF',$localtime)) $pagecodefrom='UTF-8';
@@ -2148,13 +2148,9 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 	// Round PHP function does not allow number like '1,234.5' nor '1.234,5' nor '1 234,5'
 	// Numbers must be '1234.5'
 	// Decimal delimiter for database SQL request must be '.'
-
 	$dec=','; $thousand=' ';
 	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
 	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
-
-	// Define nbofdec
-	$nbofdec=max(0,strlen($amount-intval($amount))-2);
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
@@ -2163,7 +2159,11 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 		
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
-		$amount=number_format($amount,$nbofdec,$dec,$thousand);
+		if (is_numeric($amount)) 
+		{
+			$nbofdec=max(0,strlen($amount-intval($amount))-2);
+			$amount=number_format($amount,$nbofdec,$dec,$thousand);
+		}
 		//print "QQ".$amount.'<br>';
 		
 		// Now make replace (the main goal of function)
@@ -2186,7 +2186,11 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 		
 		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
 		// to format defined by LC_NUMERIC after a calculation and we want source format to be defined by Dolibarr setup.
-		$amount=number_format($amount,min($nbofdec,$nbofdectoround),$dec,$thousand);		// Convert amount to format with dolibarr dec and thousand
+		if (is_numeric($amount))
+		{
+			$nbofdec=max(0,strlen($amount-intval($amount))-2);
+			$amount=number_format($amount,min($nbofdec,$nbofdectoround),$dec,$thousand);		// Convert amount to format with dolibarr dec and thousand
+		}
 		//print "RR".$amount.'<br>';
 
 		// Always make replace because each math function (like round) replace

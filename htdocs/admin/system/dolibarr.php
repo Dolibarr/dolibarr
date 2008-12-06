@@ -71,16 +71,31 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_NUMERIC")."</td><td>".setlocale(LC_NUMERIC,0)."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_TIME")."</td><td>".setlocale(LC_TIME,0)."</td></tr>\n";
+//$var=!$var;
+//print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
+print "<tr ".$bc[$var].'><td width="300">=> price2num(1234.56)</td><td>'.price2num(1233.56+1,'MT')."</td></tr>";
+$var=!$var;
+print "<tr ".$bc[$var].'><td width="300">=> dolibarr_print_date(0,"daytext")</td><td>'.dolibarr_print_date(0,"daytext")."</td>";
+// Thousands
+$var=!$var;
+$thousand=$langs->trans("SeparatorThousand");
+if ($thousand == 'SeparatorThousand') $thousand=' ';	// ' ' does not work on trans method
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentValueSeparatorThousand")."</td><td>".($thousand==' '?$langs->trans("Space"):$thousand)."</td></tr>\n";
 // Decimals
 $var=!$var;
 $dec=$langs->trans("SeparatorDecimal");
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentValueSeparatorDecimal")."</td><td>".$dec."</td></tr>\n";
 $var=!$var;
-$thousand=$langs->trans("SeparatorThousand");
-if ($thousand == 'SeparatorThousand') $thousand=' ';	// ' ' does not work on trans method
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentValueSeparatorThousand")."</td><td>".$thousand."</td></tr>\n";
+print "<tr ".$bc[$var].'><td width=\"300\">=> price2num('."'1".$thousand."234".$dec."56')</td><td>".price2num("1".$thousand."234".$dec."56",'MT')."</td>";
+if ($thousand != ',' && $thousand != '.')
+{
+	$var=!$var;
+	print "<tr ".$bc[$var].'><td width=\"300\">=> price2num('."'1 234.56')</td><td>".price2num("1 234.56",'MT')."</td>";
+	print "</tr>\n";
+}
+
+print '<tr class="liste_titre"><td>'.$langs->trans("TimeZone").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 // Timezone
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("DolibarrTZ")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
@@ -96,9 +111,9 @@ if (function_exists('date_default_timezone_get'))
 	print "</td></tr>\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 }
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(- dolibarr_mktime(0,0,0,1,1,1970))."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("PHPServerOffsetWithGreenwich")."</td><td>".(- dolibarr_mktime(0,0,0,1,1,1970))."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentHour")."</td><td>".dolibarr_print_date(time(),'dayhour')."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">=> ".$langs->trans("CurrentHour")."</td><td>".dolibarr_print_date(time(),'dayhour')."</td></tr>\n";
 print '</table>';
 print '<br>';
 
