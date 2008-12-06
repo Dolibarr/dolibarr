@@ -79,6 +79,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_pe
 		$result[4] = $result[5] - $result3bis;
 	}
 
+	//print "Price.lib::calcul_price_total ".$result[0]."-".$result[1]."-".$result[2];
+
 	return $result;
 }
 
