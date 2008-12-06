@@ -65,9 +65,9 @@ class Propal extends CommonObject
 	var $date_livraison;
 
 	var $fin_validite;
-	var $price;						// Total HT
-	var $tva;						// Total TVA
-	var $total;						// Total TTC
+	var $price;						// Total net of tax
+	var $tva;						// Total VAT
+	var $total;						// Total with tax
 	var $cond_reglement_id;
 	var $cond_reglement_code;
 	var $mode_reglement_id;

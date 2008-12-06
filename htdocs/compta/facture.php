@@ -693,7 +693,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 
 					if ($facid > 0)
 					{
-						$comm = New Commande($db);
+						$comm = new Commande($db);
 						if ( $comm->fetch($_POST['commandeid']) )
 						{
 							$comm->fetch_lines();
@@ -702,6 +702,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							{
 								$desc=($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 
+								// Should use a function using total_ht, total_ttc and total_vat
 								$result = $facture->addline(
 								$facid,
 								$desc,
@@ -1632,6 +1633,7 @@ if ($_GET['action'] == 'create')
 
 	if ($_GET['propalid'] > 0)
 	{
+		print "\n<!-- Propal info -->";
 		print '<input type="hidden" name="amount"         value="'.$propal->price.'">'."\n";
 		print '<input type="hidden" name="total"          value="'.$propal->total.'">'."\n";
 		print '<input type="hidden" name="tva"            value="'.$propal->tva.'">'."\n";
@@ -1646,9 +1648,11 @@ if ($_GET['action'] == 'create')
 	}
 	elseif ($_GET['commandeid'] > 0)
 	{
+		print "\n<!-- Order info -->";
+		print "\n";
 		print '<input type="hidden" name="amount"         value="'.$commande->total_ht.'">'."\n";
 		print '<input type="hidden" name="total"          value="'.$commande->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$commande->tva.'">'."\n";
+		print '<input type="hidden" name="tva"            value="'.$commande->total_tva.'">'."\n";
 		//print '<input type="hidden" name="remise_absolue" value="'.$commande->remise_absolue.'">'."\n";
 		//print '<input type="hidden" name="remise_percent" value="'.$commande->remise_percent.'">'."\n";
 		print '<input type="hidden" name="commandeid"     value="'.$commande->id.'">';
@@ -1665,6 +1669,7 @@ if ($_GET['action'] == 'create')
 		$contrat->remise_percent=$remise_percent;
 		$contrat->update_price();
 
+		print "\n<!-- Contract info -->";
 		print '<input type="hidden" name="amount"         value="'.$contrat->total_ht.'">'."\n";
 		print '<input type="hidden" name="total"          value="'.$contrat->total_ttc.'">'."\n";
 		print '<input type="hidden" name="tva"            value="'.$contrat->total_tva.'">'."\n";

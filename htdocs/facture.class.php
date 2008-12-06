@@ -1424,7 +1424,7 @@ class Facture extends CommonObject
 		// Nettoyage parametres
 		if (! $qty) $qty = 1;
 
-		dolibarr_syslog("Facture.class::add_product $idproduct, $qty, $remise_percent, $date_start, $date_end");
+		dolibarr_syslog("Facture::add_product $idproduct, $qty, $remise_percent, $date_start, $date_end", LOG_DEBUG);
 
 		if ($idproduct > 0)
 		{
@@ -1511,7 +1511,7 @@ class Facture extends CommonObject
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-
+			
 			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;

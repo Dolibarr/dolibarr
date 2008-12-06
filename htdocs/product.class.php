@@ -2090,7 +2090,7 @@ class Product extends CommonObject
 		$lien = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 		$newref=$this->ref;
-		if ($maxlength) $newref=dolibarr_trunc($newref,$maxlength);
+		if ($maxlength) $newref=dolibarr_trunc($newref,$maxlength,'middle');
 
 		if ($withpicto) {
 			if ($this->type == 0) $result.=($lien.img_object($langs->trans("ShowProduct").' '.$this->ref,'product').$lienfin.' ');

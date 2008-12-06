@@ -2039,12 +2039,12 @@ function dol_delete_dir_recursive($dir,$count=0)
 
 
 /**
- *		\brief      Fonction qui retourne un taux de tva format� pour visualisation
- *		\remarks    Fonction utilis�e dans les pdf et les pages html
+ *		\brief      Fonction qui retourne un taux de tva formate pour visualisation
+ *		\remarks    Fonction utilisee dans les pdf et les pages html
  *		\param	    rate			Rate value to format (19.6 19,6 19.6% 19,6%,...)
  *		\param		foundpercent	Add a percent % sign in output
  *		\param		info_bits		Miscellanous information on vat
- *		\return		string			Chaine avec montant format� (19,6 ou 19,6% ou 8.5% *
+ *		\return		string			Chaine avec montant formate (19,6 ou 19,6% ou 8.5% *)
  */
 function vatrate($rate,$addpercent=false,$info_bits=0)
 {
@@ -2130,15 +2130,15 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $rounding=2)
 }
 
 /**
- *	\brief     		Fonction qui retourne un numerique conforme SQL, depuis un montant au
- *					format utilisateur.
+ *	\brief     		Fonction qui retourne un numerique conforme SQL, depuis un montant issu d'une saisie
+ *					utilisateur.
  *	\remarks   		Fonction a appeler sur montants saisis avant un insert en base
  *	\param	    	amount		Montant a formater
  *	\param	    	rounding	'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *								'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *								'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
  *								''=No rounding
- *	\return			string		Montant au format numerique PHP et SQL (Exemple: '99.99999')
+ *	\return			string		Montant au format numerique universel et SQL (Exemple: '99.99999')
  *	\seealso		price		Fonction inverse de price2num
  */
 function price2num($amount,$rounding='',$alreadysqlnb=-1)
@@ -2153,27 +2153,50 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
 	if ($langs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->trans("SeparatorThousand");
 
-	//print 'x'.$dec.$thousand.'-';
+	// Define nbofdec
+	$nbofdec=max(0,strlen($amount-intval($amount))-2);
+
+	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
 	if ($alreadysqlnb != 1)	// If not a PHP number or unknown, we change format
 	{
+		//print 'ZZ'.$nbofdec.'=>'.$amount.'<br>';		
+		
+		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
+		// to format defined by LC_NUMERIC after a calculation and we want source format to be like defined by Dolibarr setup.
+		$amount=number_format($amount,$nbofdec,$dec,$thousand);
+		//print "QQ".$amount.'<br>';
+		
+		// Now make replace (the main goal of function)
 		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
-		$amount=str_replace(' ','',$amount);	// To avoid spaces
+		$amount=str_replace(' ','',$amount);		// To avoid spaces
 		$amount=str_replace($thousand,'',$amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount=str_replace($dec,'.',$amount);
 	}
+
+	// Now if rounding required
 	if ($rounding)
 	{
-		if ($rounding == 'MU')     $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_UNIT);
-		elseif ($rounding == 'MT') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_TOT);
-		elseif ($rounding == 'MS') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_SHOWN);
-		else $amount='ErrorBadParameterProvidedToFunction';
+		$nbofdectoround='';
+		if ($rounding == 'MU')     $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_UNIT;
+		elseif ($rounding == 'MT') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_TOT;
+		elseif ($rounding == 'MS') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_SHOWN; 
+		if ($nbofdectoround) $amount = round($amount,$nbofdectoround);
+		else return 'ErrorBadParameterProvidedToFunction';
+		//print 'ZZ'.$nbofdec.'-'.$nbofdectoround.'=>'.$amount.'<br>';		
+		
+		// Convert amount to format with dolibarr dec and thousand (this is because PHP convert a number
+		// to format defined by LC_NUMERIC after a calculation and we want source format to be defined by Dolibarr setup.
+		$amount=number_format($amount,min($nbofdec,$nbofdectoround),$dec,$thousand);		// Convert amount to format with dolibarr dec and thousand
+		//print "RR".$amount.'<br>';
+
 		// Always make replace because each math function (like round) replace
 		// with local values and we want a number that has a SQL string format x.y
 		if ($thousand != ',' && $thousand != '.') $amount=str_replace(',','.',$amount);	// To accept 2 notations for french users
-		$amount=str_replace(' ','',$amount);	// To avoid spaces
+		$amount=str_replace(' ','',$amount);		// To avoid spaces
 		$amount=str_replace($thousand,'',$amount);	// Replace of thousand before replace of dec to avoid pb if thousand is .
 		$amount=str_replace($dec,'.',$amount);
 	}
+	
 	return $amount;
 }
 

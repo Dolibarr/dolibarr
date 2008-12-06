@@ -65,6 +65,9 @@ class Commande extends CommonObject
 	var $date_livraison;	// Date livraison souhaitee
 	var $fk_remise_except;
 	var $remise_percent;
+	var $total_ht;			// Total net of tax
+	var $total_ttc;			// Total with tax
+	var $total_tva;			// Total VAT
 	var $remise_absolue;
 	var $modelpdf;
 	var $info_bits;
@@ -813,13 +816,13 @@ class Commande extends CommonObject
 
 
 	/**
-	 *    \brief      Recupere de la base les caracteristiques d'une commande
+	 *    \brief      Load an order from database
 	 *    \param      rowid       id de la commande a recuperer
 	 */
 	function fetch($id)
 	{
 		$sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
-		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement';
+		$sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.fk_cond_reglement, c.fk_mode_reglement';
 		$sql.= ', '.$this->db->pdate('c.date_commande').' as date_commande';
 		$sql.= ', '.$this->db->pdate('c.date_livraison').' as date_livraison';
 		$sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
@@ -848,7 +851,7 @@ class Commande extends CommonObject
 	  	$this->statut                 = $obj->fk_statut;
 	  	$this->user_author_id         = $obj->fk_user_author;
 	  	$this->total_ht               = $obj->total_ht;
-	  	$this->total_tva              = $obj->tva;
+	  	$this->total_tva              = $obj->total_tva;
 	  	$this->total_ttc              = $obj->total_ttc;
 	  	$this->date                   = $obj->date_commande;
 	  	$this->remise                 = $obj->remise;
