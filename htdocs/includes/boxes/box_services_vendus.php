@@ -33,7 +33,7 @@ class box_services_vendus extends ModeleBoxes {
 	var $boxcode="lastproductsincontract";
 	var $boximg="object_product";
 	var $boxlabel;
-	var $depends = array("produit","service");
+	var $depends = array("service","contrat");
 
 	var $db;
 	var $param;
