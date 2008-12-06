@@ -2145,8 +2145,8 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 {
 	global $langs,$conf;
 
-	// Round PHP function does not allow number like '1,234.5' nor '1.234,5' nor '1 234,5'
-	// Numbers must be '1234.5'
+	// Round PHP function does not allow number like '1,234.56' nor '1.234,56' nor '1 234,56'
+	// Numbers must be '1234.56'
 	// Decimal delimiter for database SQL request must be '.'
 	$dec=','; $thousand=' ';
 	if ($langs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->trans("SeparatorDecimal");
@@ -2180,7 +2180,8 @@ function price2num($amount,$rounding='',$alreadysqlnb=-1)
 		if ($rounding == 'MU')     $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_UNIT;
 		elseif ($rounding == 'MT') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_TOT;
 		elseif ($rounding == 'MS') $nbofdectoround=$conf->global->MAIN_MAX_DECIMALS_SHOWN; 
-		if ($nbofdectoround) $amount = round($amount,$nbofdectoround);
+		elseif ($rounding == '2')  $nbofdectoround=2; 	// For admin info page
+		if (strlen($nbofdectoround)) $amount = round($amount,$nbofdectoround);	// $nbofdectoround can be 0.
 		else return 'ErrorBadParameterProvidedToFunction';
 		//print 'ZZ'.$nbofdec.'-'.$nbofdectoround.'=>'.$amount.'<br>';		
 		

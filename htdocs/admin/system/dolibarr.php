@@ -74,7 +74,7 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","
 //$var=!$var;
 //print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var].'><td width="300">=> price2num(1234.56)</td><td>'.price2num(1233.56+1,'MT')."</td></tr>";
+print "<tr ".$bc[$var].'><td width="300">=> price2num(1234.56)</td><td>'.price2num(1233.56+1,'2')."</td></tr>";
 $var=!$var;
 print "<tr ".$bc[$var].'><td width="300">=> dolibarr_print_date(0,"daytext")</td><td>'.dolibarr_print_date(0,"daytext")."</td>";
 // Thousands
@@ -87,18 +87,17 @@ $var=!$var;
 $dec=$langs->trans("SeparatorDecimal");
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentValueSeparatorDecimal")."</td><td>".$dec."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var].'><td width=\"300\">=> price2num('."'1".$thousand."234".$dec."56')</td><td>".price2num("1".$thousand."234".$dec."56",'MT')."</td>";
-if ($thousand != ',' && $thousand != '.')
+print "<tr ".$bc[$var].'><td width=\"300\">=> price2num('."'1".$thousand."234".$dec."56')</td><td>".price2num("1".$thousand."234".$dec."56",'2')."</td>";
+if (($thousand != ',' && $thousand != '.') || ($thousand != ' '))
 {
 	$var=!$var;
-	print "<tr ".$bc[$var].'><td width=\"300\">=> price2num('."'1 234.56')</td><td>".price2num("1 234.56",'MT')."</td>";
+	print "<tr ".$bc[$var].'><td width=\"300\">=> price2num('."'1 234.56')</td><td>".price2num("1 234.56",'2')."</td>";
 	print "</tr>\n";
 }
-
-print '<tr class="liste_titre"><td>'.$langs->trans("TimeZone").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+//print '<tr class="liste_titre"><td>'.$langs->trans("TimeZone").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 // Timezone
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("DolibarrTZ")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ClientTZ")."</td><td>".$langs->trans("FeatureNotYetAvailable")."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("ServerTZ")." (variable system TZ)</td><td>".$_ENV["TZ"]."</td></tr>\n";
 $var=!$var;
