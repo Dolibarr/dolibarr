@@ -283,15 +283,8 @@ if ($resql)
 			$product_static->id = $objp->rowid;
 			$product_static->ref = $objp->ref;
 			$product_static->type = $objp->fk_product_type;
-			print $product_static->getNomUrl(1,'',16);
-			/*			print "<a href=\"fiche.php?id=$objp->rowid\">";
-			if ($objp->fk_product_type==1)
-			print img_object($langs->trans("ShowService"),"service");
-			else
-			print img_object($langs->trans("ShowProduct"),"product");
-			print '</a> ';
-			print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref."</a>";
-*/			print "</td>\n";
+			print $product_static->getNomUrl(1,'',24);
+			print "</td>\n";
 
 			// Label
 			print '<td>'.dolibarr_trunc($objp->label,40).'</td>';
