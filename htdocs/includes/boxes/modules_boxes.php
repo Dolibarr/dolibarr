@@ -209,11 +209,14 @@ class ModeleBoxes
 	                    if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
 	                    if ($maxlength) $textewithnotags=dolibarr_trunc($textewithnotags,$maxlength);
-	                    print $textewithnotags;
-
-	                    //print $texte;
+	                    if (eregi('^<img',$texte)) print $texte;	// show text with no html cleaning
+	                    else print $textewithnotags;				// show text with html cleaning
+						
+	                    // End picto
 	                    if (isset($contents[$i][$j]['url'])) print '</a>';
-	                    print $texte2withnotags;
+
+	                    if (eregi('^<img',$texte2)) print $texte2;	// show text with no html cleaning
+	                    else print $texte2withnotags;				// show text with html cleaning
 	                    print "</td>";
 	                }
 
