@@ -526,7 +526,7 @@ if ($_GET["id"] > 0)
 			$num = $db->num_rows($result);
 			if ($num)
 			{
-				print '<br>';
+				if ($somethingshown) print '<br>';
 				print_titre($langs->trans("RelatedBills"));
 				$i = 0; $total = 0;
 				print '<table class="noborder" width="100%">';
