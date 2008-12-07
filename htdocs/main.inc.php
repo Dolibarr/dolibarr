@@ -507,23 +507,22 @@ else                        // Si utilisateur externe
 // Only rodolphe and auguria menu manage canvas menu (auguria not correctly yet)
 if (! eregi('^rodolphe',$conf->left_menu) && ! eregi('^auguria',$conf->left_menu)) $conf->global->PRODUCT_CANVAS_ABILITY=0;
 
-// Si besoin de smarty
-if ($conf->global->PRODUCT_CANVAS_ABILITY)
+
+// For modules using Smarty
+if ($conf->global->MAIN_NEED_SMARTY)
 {
 	// SMARTY
 	// Definit dans le fichier de conf
 	// $dolibarr_smarty_libs_dir="/home/www/dolibarr/external-libs/smarty/libs/";
 	// $dolibarr_smarty_compile="/home/www/dolibarr/documents/smarty/templates/temp";
 	// $dolibarr_smarty_cache="/home/www/dolibarr/documents/smarty/cache/temp";
-
-	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=$dolibarr_main_document_root.'/../external-libs/smarty/libs/';
-	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=$dolibarr_main_data_root.'/smarty/templates/temp';
-	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=$dolibarr_main_data_root.'/smarty/cache/temp';
-
+	if (empty($dolibarr_smarty_libs_dir)) $dolibarr_smarty_libs_dir=DOL_DATA_ROOT.'/../external-libs/smarty/libs/';
+	if (empty($dolibarr_smarty_compile))  $dolibarr_smarty_compile=DOL_DATA_ROOT.'/smarty/templates/temp';
+	if (empty($dolibarr_smarty_cache))    $dolibarr_smarty_cache=DOL_DATA_ROOT.'/smarty/cache/temp';
+	
 	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
 	if (file_exists ($smarty_libs))
 	{
-
 		require_once($smarty_libs);
 		$smarty = new Smarty();
 		$smarty->compile_dir = $dolibarr_smarty_compile;

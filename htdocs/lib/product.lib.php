@@ -124,7 +124,7 @@ function product_prepare_head($product, $user)
 			if ($values[2]) $langs->load($values[2]);
 			$head[$h][0] = eregi_replace('__ID__',$product->id,$values[3]);
 			$head[$h][1] = $langs->trans($values[1]);
-			$head[$h][2] = 'module'.$i;
+			$head[$h][2] = 'tab'.$values[1];
 			$h++;
 		}
 	}

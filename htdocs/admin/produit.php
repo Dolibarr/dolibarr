@@ -111,6 +111,7 @@ else if ($_POST["action"] == 'confirmDeleteProdLineInForm')
 else if ($_POST["action"] == 'ProductCanvasAbility')
 {
 	dolibarr_set_const($db, "PRODUCT_CANVAS_ABILITY", $_POST["ProductCanvasAbility"]);
+	dolibarr_set_const($db, "MAIN_NEED_SMARTY", $_POST["ProductCanvasAbility"]);
 	// Create temp directory for smarty
 	if (! empty($dolibarr_smarty_compile)) create_exdir($dolibarr_smarty_compile);
 	if (! empty($dolibarr_smarty_cache))   create_exdir($dolibarr_smarty_cache);
