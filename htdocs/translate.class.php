@@ -33,8 +33,7 @@
  */
 class Translate {
 
-    var $dir;						// Directory with translation files
-    var $dir_bis;					// Second directory with translation files (for development on two workspaces)
+    var $dir;						// Directories with translation files
 
     var $defaultlang;				// Langue courante en vigueur de l'utilisateur
 
@@ -59,9 +58,8 @@ class Translate {
 		{
 			$this->charset_output=$conf->character_set_client;
 		}
-		$this->dir=(! $dir ? DOL_DOCUMENT_ROOT ."/langs" : $dir);
-		// For developpement purpose
-		$this->dir_bis=(defined('DOL_DOCUMENT_ROOT_BIS') ? DOL_DOCUMENT_ROOT_BIS ."/langs" : "");
+		if ($dir) $this->dir=array($dir);
+		else $this->dir=$conf->dol_document_root;
     }
 
 
@@ -183,118 +181,113 @@ class Translate {
 		// Check cache
 		if (! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja charge
 
-		$searchdir=$this->dir;
-		
-		// If $domain is @xxx instead of xxx then we look for module lang file htdocs/xxx/langs/code_CODE/xxx.lang 
-		// instead of global lang file htdocs/langs/code_CODE/xxx.lang
-		if (eregi('@',$domain))	// It's a language file of a module, we look in dir of this module.
-		{   
-			$domain=eregi_replace('@','',$domain);
-			$searchdir=DOL_DOCUMENT_ROOT ."/".$domain."/langs";
-		}
-		
-        // Directory of translation files
-        $scandir = $searchdir."/".$this->defaultlang;
-        $file_lang =  $scandir . "/".$domain.".lang";
-        $filelangexists=is_file($file_lang);
-        
-		// If development with 2 workspaces (for development purpose only)
-        if (! $filelangexists && $this->dir_bis)
-        {
-	        $scandir = $this->dir_bis."/".$this->defaultlang;
+		foreach($this->dir as $searchdir)
+		{
+			// If $domain is @xxx instead of xxx then we look for module lang file htdocs/xxx/langs/code_CODE/xxx.lang 
+			// instead of global lang file htdocs/langs/code_CODE/xxx.lang
+			if (eregi('@',$domain))	// It's a language file of a module, we look in dir of this module.
+			{   
+				$domain=eregi_replace('@','',$domain);
+				$searchdir=$searchdir ."/".$domain."/langs";
+			}
+			else $searchdir=$searchdir."/langs";
+			//print 'rrr'.$searchdir;
+			
+	        // Directory of translation files
+	        $scandir = $searchdir."/".$this->defaultlang;
 	        $file_lang =  $scandir . "/".$domain.".lang";
 	        $filelangexists=is_file($file_lang);
-		}
-
-        // Check in "always available" alternate file if not found or if asked
-        if ($alt || ! $filelangexists)
-        {
-            // Dir of always available alternate file (en_US or fr_FR)
-			if ($this->defaultlang == "en_US") $scandiralt = $searchdir."/fr_FR";
-            elseif (eregi('^fr',$this->defaultlang) && $this->defaultlang != 'fr_FR') $scandiralt = $searchdir."/fr_FR";
-            elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $searchdir."/en_US";
-            elseif (eregi('^es',$this->defaultlang) && $this->defaultlang != 'es_ES') $scandiralt = $searchdir."/es_ES";
-            else $scandiralt = $searchdir."/en_US";
-
-            $file_lang = $scandiralt . "/".$domain.".lang";
-            $filelangexists=is_file($file_lang);
-            $alt=1;
-        }
-
-        if ($filelangexists)
-        {
-			// Enable cache of lang file in session (faster but need more memory)
-			// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
-			$enablelangcacheinsession=false;
-			
-			if ($enablelangcacheinsession && isset($_SESSION['lang_'.$domain]))
-			{
-				foreach($_SESSION['lang_'.$domain] as $key => $value)
+	        
+	        // Check in "always available" alternate file if not found or if asked
+	        if ($alt || ! $filelangexists)
+	        {
+	            // Dir of always available alternate file (en_US or fr_FR)
+				if ($this->defaultlang == "en_US") $scandiralt = $searchdir."/fr_FR";
+	            elseif (eregi('^fr',$this->defaultlang) && $this->defaultlang != 'fr_FR') $scandiralt = $searchdir."/fr_FR";
+	            elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $searchdir."/en_US";
+	            elseif (eregi('^es',$this->defaultlang) && $this->defaultlang != 'es_ES') $scandiralt = $searchdir."/es_ES";
+	            else $scandiralt = $searchdir."/en_US";
+	
+	            $file_lang = $scandiralt . "/".$domain.".lang";
+	            $filelangexists=is_file($file_lang);
+	            $alt=1;
+	        }
+	
+	        if ($filelangexists)
+	        {
+				// Enable cache of lang file in session (faster but need more memory)
+				// Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
+				$enablelangcacheinsession=false;
+				
+				if ($enablelangcacheinsession && isset($_SESSION['lang_'.$domain]))
 				{
-					$this->tab_translate[$key]=$value;
-					$this->tab_loaded[$domain]=3;           // Marque ce fichier comme charge depuis cache session
+					foreach($_SESSION['lang_'.$domain] as $key => $value)
+					{
+						$this->tab_translate[$key]=$value;
+						$this->tab_loaded[$domain]=3;           // Marque ce fichier comme charge depuis cache session
+					}
 				}
-			}
-			else
-			{
-	            if ($fp = @fopen($file_lang,"rt"))
-	            {
-					if ($enablelangcacheinsession) $tabtranslatedomain=array();	// To save lang in session
-	                $finded = 0;
-	                while (($ligne = fgets($fp,4096)) && ($finded == 0))
-	                {
-	                    if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
-	                    {
-	                        $tab=split('=',$ligne,2);
-	                        $key=trim($tab[0]); $value='';
-	                        //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-	                        //if (! $this->getTransFromTab($key))
-	                        if (empty($this->tab_translate[$key]) && isset($tab[1]))
-	                        {
-		                        $value=trim(ereg_replace('\\\n',"\n",$tab[1]));
-								
-								if (eregi('^CHARSET$',$key))
-								{
-									// On est tombe sur une balise qui declare le format du fichier lu
-									$this->charset_inputfile=strtoupper($value);
-									//print 'File '.$file_lang.' has format '.$this->charset_inputfile.'<br>';
-								}
-								else
-								{
-									// On stocke toujours dans le tableau Tab en UTF-8
-		                        	//if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
-		                        	if ($this->charset_inputfile == 'ISO-8859-1') $value=utf8_encode($value);
-
-									// We do not load Separator values for alternate files
-									if (! $alt || (! eregi('^Separator',$key)))
+				else
+				{
+		            if ($fp = @fopen($file_lang,"rt"))
+		            {
+						if ($enablelangcacheinsession) $tabtranslatedomain=array();	// To save lang in session
+		                $finded = 0;
+		                while (($ligne = fgets($fp,4096)) && ($finded == 0))
+		                {
+		                    if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#")
+		                    {
+		                        $tab=split('=',$ligne,2);
+		                        $key=trim($tab[0]); $value='';
+		                        //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
+		                        //if (! $this->getTransFromTab($key))
+		                        if (empty($this->tab_translate[$key]) && isset($tab[1]))
+		                        {
+			                        $value=trim(ereg_replace('\\\n',"\n",$tab[1]));
+									
+									if (eregi('^CHARSET$',$key))
 									{
-										$this->tab_translate[$key]=$value;
+										// On est tombe sur une balise qui declare le format du fichier lu
+										$this->charset_inputfile=strtoupper($value);
+										//print 'File '.$file_lang.' has format '.$this->charset_inputfile.'<br>';
 									}
-									if ($enablelangcacheinsession) $tabtranslatedomain[$key]=$value;	// To save lang in session
-								}
-	                        }
-	                    }
-	                }
-					fclose($fp);
-
-	                // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
-	                if (! $alt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
-	                {
-	                    dolibarr_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
-	                    $this->load($domain,1);
-	                }
-
-	                $this->tab_loaded[$domain]=1;           // Marque ce fichier comme charge
-
-					// To save lang in session
-					if ($enablelangcacheinsession && sizeof($tabtranslatedomain)) $_SESSION['lang_'.$domain]=$tabtranslatedomain;
-	            }
-			}
-        }
-        else
-        {
-	        $this->tab_loaded[$domain]=2;           // Marque ce fichier comme non trouve
-        }
+									else
+									{
+										// On stocke toujours dans le tableau Tab en UTF-8
+			                        	//if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
+			                        	if ($this->charset_inputfile == 'ISO-8859-1') $value=utf8_encode($value);
+	
+										// We do not load Separator values for alternate files
+										if (! $alt || (! eregi('^Separator',$key)))
+										{
+											$this->tab_translate[$key]=$value;
+										}
+										if ($enablelangcacheinsession) $tabtranslatedomain[$key]=$value;	// To save lang in session
+									}
+		                        }
+		                    }
+		                }
+						fclose($fp);
+	
+		                // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
+		                if (! $alt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
+		                {
+		                    dolibarr_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
+		                    $this->load($domain,1);
+		                }
+	
+		                $this->tab_loaded[$domain]=1;           // Marque ce fichier comme charge
+	
+						// To save lang in session
+						if ($enablelangcacheinsession && sizeof($tabtranslatedomain)) $_SESSION['lang_'.$domain]=$tabtranslatedomain;
+						
+						break;		// Break loop on each root dir
+		            }
+				}
+	        }
+		}
+		
+		if (empty($this->tab_loaded[$domain])) $this->tab_loaded[$domain]=2;           // Marque ce fichier comme non trouve
 		
 		return 1;
     }

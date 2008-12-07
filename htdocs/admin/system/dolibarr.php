@@ -76,7 +76,7 @@ print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","
 $var=!$var;
 print "<tr ".$bc[$var].'><td width="300">=> price2num(1234.56)</td><td>'.price2num(1233.56+1,'2')."</td></tr>";
 $var=!$var;
-print "<tr ".$bc[$var].'><td width="300">=> dolibarr_print_date(0,"daytext")</td><td>'.dolibarr_print_date(0,"daytext")."</td>";
+print "<tr ".$bc[$var].'><td width="300">=> dolibarr_print_date(0,"dayhourtext")</td><td>'.dolibarr_print_date(0,"dayhourtext")."</td>";
 // Thousands
 $var=!$var;
 $thousand=$langs->trans("SeparatorThousand");

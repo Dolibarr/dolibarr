@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
  */
 
 /**
- \file       htdocs/includes/boxes/box_produits.php
- \ingroup    produits,services
- \brief      Module de g�n�ration de l'affichage de la box produits
- \version	$Id$
+ *	\file       htdocs/includes/boxes/box_produits.php
+ *	\ingroup    produits,services
+ *	\brief      Module de generation de l'affichage de la box produits
+ *	\version	$Id$
  */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -126,7 +126,7 @@ class box_produits extends ModeleBoxes {
 					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
                     'text' => $price);
 
-					$this->info_box_contents[$i][3] = array('td' => 'align="center" width="20"',
+					$this->info_box_contents[$i][3] = array('td' => 'align="center" width="20" nowrap="nowrap"',
                     'text' => $price_base_type);
 
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"',

@@ -33,7 +33,7 @@ if (! $user->rights->mailing->lire || $user->societe_id > 0)
 
 
 $dirmod=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
-if (defined('DOL_DOCUMENT_ROOT_BIS')) $dirmod2=DOL_DOCUMENT_ROOT_BIS."/includes/modules/mailings";
+
 
 $mesg = '';
 
@@ -193,14 +193,12 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         print "</tr>\n";
         
         clearstatcache();
-        
-        $listdir=array();
-        $listdir[]=$dirmod;
-        if (! empty($dirmod2)) $listdir[]=$dirmod2;
-        
-	    $var=true;
-        foreach ($listdir as $dir)
+
+        $var=true;
+        foreach ($conf->dol_document_root as $dirroot)
         {
+        	$dir=$dirroot."/includes/modules/mailings/";
+        	
         	if (is_dir($dir))
         	{
 		        $handle=opendir($dir);
@@ -216,7 +214,7 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 			        			if ($modulename == 'example') continue;
 			        			
 			                    // Chargement de la classe
-			                    $file = $dir."/".$modulename.".modules.php";
+			                    $file = $dir.$modulename.".modules.php";
 			                    $classname = "mailing_".$modulename;
 			                    require_once($file);
 			        

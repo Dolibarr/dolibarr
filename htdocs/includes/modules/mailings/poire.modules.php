@@ -36,7 +36,7 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 class mailing_poire extends MailingTargets
 {
     var $name='ContactCompanies';                       // Identifiant du module mailing
-    var $desc='Contacts des sociétés';      			// Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $desc='Contacts des societes';      			// Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array("commercial");            // Module mailing actif si modules require_module actifs
     var $require_admin=0;                               // Module mailing actif pour user admin ou non
     var $picto='contact';

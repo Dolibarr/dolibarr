@@ -90,9 +90,6 @@ $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);								// URL racine relative
 
-// Special code for alternate dev directories (Used on dev env only)
-if (! empty($dolibarr_main_document_root_bis)) define('DOL_DOCUMENT_ROOT_BIS', $dolibarr_main_document_root_bis);
-
 
 /*
  * Controle validite fichier conf
@@ -106,7 +103,7 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.lib.php"))
 
 
 /*
- * Creation objet $conf
+ * Create $conf object
  */
 
 // on décode le mot de passe de la base si besoin
@@ -144,6 +141,18 @@ $conf->main_force_https = $dolibarr_main_force_https;
 $charset='UTF-8';	// If not output format found in any conf file
 if (empty($character_set_client)) $character_set_client=$charset;
 $conf->character_set_client=strtoupper($character_set_client);
+
+// Define array of document root directories
+$conf->dol_document_root=array(DOL_DOCUMENT_ROOT);
+if (! empty($dolibarr_main_document_root_alt)) 
+{
+	// dolibarr_main_document_root_alt contains several directories
+	$values=split(';',$dolibarr_main_document_root_alt);
+	foreach($values as $value)
+	{
+		$conf->dol_document_root[]=$value;
+	}
+}
 
 // Defini prefix
 if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];

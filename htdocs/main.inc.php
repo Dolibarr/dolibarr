@@ -470,7 +470,7 @@ if (! empty($_GET["lang"]))
 }
 
 
-// Remplace conf->css par valeur personnalise
+// Replace conf->css by personalized value
 if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
 {
 	$conf->theme=$user->conf->MAIN_THEME;

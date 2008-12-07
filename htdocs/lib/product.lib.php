@@ -108,22 +108,36 @@ function product_prepare_head($product, $user)
 	{
 		if ($conf->stock->enabled)
 		{
-	  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-	  $head[$h][1] = $langs->trans("Stock");
-	  $head[$h][2] = 'stock';
-	  $h++;
+			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+			$head[$h][1] = $langs->trans("Stock");
+			$head[$h][2] = 'stock';
+			$h++;
 		}
 	}
 
-	/*
-	 * Onglets additionnels pour les canvas
-	 */
-	if(is_array($product->onglets))
+	// More tabs from modules
+	if (is_array($conf->tabs_modules['product']))
+	{
+		$i=0;
+		foreach ($conf->tabs_modules['product'] as $value)
+		{
+			$values=split(':',$value);
+
+			if ($values[2]) $langs->load($values[2]);
+			$head[$h][0] = eregi_replace('__ID__',$product->id,$values[3]);
+			$head[$h][1] = $langs->trans($values[1]);
+			$head[$h][2] = 'module'.$i;
+			$h++;
+		}
+	}
+
+	// More tabs from canvas
+	if (is_array($product->onglets))
 	{
 		foreach ($product->onglets as $onglet)
 		{
-	  		$head[$h] = $onglet;
-	  		$h++;
+			$head[$h] = $onglet;
+			$h++;
 		}
 	}
 

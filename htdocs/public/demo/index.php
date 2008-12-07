@@ -103,9 +103,7 @@ llxHeaderVierge($langs->trans("DolibarrDemo"));
 
 
 // Search modules
-$dirlist=array();
-$dirlist[]=DOL_DOCUMENT_ROOT;
-if (defined('DOL_DOCUMENT_ROOT_BIS')) $dirlist[]=DOL_DOCUMENT_ROOT_BIS;
+$dirlist=$conf->dol_document_root;
 
 $filename = array();
 $modules = array();

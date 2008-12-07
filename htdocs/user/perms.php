@@ -101,11 +101,11 @@ $db->begin();
 // Charge les modules soumis a permissions
 $modules = array();
 
-$listdir=array();
-$listdir[]=DOL_DOCUMENT_ROOT . "/includes/modules/";
-if (defined('DOL_DOCUMENT_ROOT_BIS') && DOL_DOCUMENT_ROOT_BIS) $listdir[]=DOL_DOCUMENT_ROOT_BIS . "/includes/modules/";
-foreach($listdir as $dir)
+$listdir=$conf->dol_document_root;
+foreach($listdir as $dirroot)
 {
+	$dir=$dirroot."/includes/modules/";
+	
 	$handle=opendir($dir);
 	while (($file = readdir($handle))!==false)
 	{

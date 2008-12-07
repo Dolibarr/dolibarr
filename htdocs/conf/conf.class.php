@@ -42,32 +42,13 @@ class Conf
 	//! Charset for HTML output
 	var $character_set_client;	// UTF8, ISO-8859-1
 
-	var $externalrss;
-	var $commande;
-	var $ficheinter;
-	var $commercial;
-	var $societe;
-	var $expedition;
-	var $compta;
-	var $banque;
-	var $don;
-	var $caisse;
-	var $fournisseur;
-	var $adherent;
-	var $produit;
-	var $service;
-	var $stock;
-	var $boutique;
-	var $projet;
-	var $postnuke;
-	var $webcal;
-	var $mantis;
-	var $propal;
-	var $categorie;
-	var $oscommerce2;
-	var $monnaie;
-	var $css;
+	var $dol_document_root;
+	
+	var $monnaie;	// Used to store current currency
+	var $css;		// Used to store current css (from theme)
+	
 	var $css_modules=array();
+	var $tabs_modules=array();
 	
 
 	/**
@@ -108,6 +89,14 @@ class Conf
 					{
 						$this->css_modules[]=$value;
 					}
+					// If this is constant for a new tab page activated by a module
+					if (eregi('^MAIN_MODULE_([A-Z_]+)_TABS_',$key) && $value)
+					{
+						$params=split(':',$value,2);
+						$this->tabs_modules[$params[0]][]=$value;
+						//print 'xxx'.$params[0].'-'.$value;
+					}
+					// If this is a module constant 
 					if (eregi('^MAIN_MODULE_([A-Z]+)$',$key,$reg) && $value)
 					{
 						$module=strtolower($reg[1]);

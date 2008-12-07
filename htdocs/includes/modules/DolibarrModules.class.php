@@ -21,15 +21,15 @@
  */
 
 /**
- \file       	htdocs/includes/modules/DolibarrModules.class.php
- \brief 		Fichier de description et activation des modules Dolibarr
- \version		$Id$
+ *	\file       	htdocs/includes/modules/DolibarrModules.class.php
+ *	\brief 			Fichier de description et activation des modules Dolibarr
+ *	\version		$Id$
  */
 
 
 /**
- \class      DolibarrModules
- \brief      Classe mere des classes de description et activation des modules Dolibarr
+ *	\class      DolibarrModules
+ *	\brief      Classe mere des classes de description et activation des modules Dolibarr
  */
 class DolibarrModules
 {
@@ -84,6 +84,9 @@ class DolibarrModules
 
 		// Insere le nom de la feuille de style
 		if (! $err) $err+=$this->insert_style_sheet();
+
+		// Insert new pages for tabs into llx_const
+		if (! $err) $err+=$this->insert_tabs();
 
 		// Insere les constantes associees au module dans llx_const
 		if (! $err) $err+=$this->insert_const();
@@ -182,6 +185,9 @@ class DolibarrModules
 		// Supprime les boites de la liste des boites disponibles
 		$err+=$this->delete_style_sheet();
 
+		// Supprime les liens de pages en onglets issus de modules
+		$err+=$this->delete_tabs();
+		
 		// Supprime les boites de la liste des boites disponibles
 		$err+=$this->delete_boxes();
 
@@ -533,9 +539,9 @@ class DolibarrModules
 	}
 
 	/**
-		\brief      Desactive feuille de style du module par suppression ligne dans llx_const
-		\return     int     Nombre d'erreurs (0 si ok)
-		*/
+	 *	\brief      Desactive feuille de style du module par suppression ligne dans llx_const
+	 *	\return     int     Nombre d'erreurs (0 si ok)
+	 */
 	function delete_style_sheet()
 	{
 		$err=0;
@@ -555,8 +561,27 @@ class DolibarrModules
 	}
 
 	/**
-	 \brief      Active la feuille de style associee au module par insertion ligne dans llx_const
-	 \return     int     Nombre d'erreurs (0 si ok)
+	 *	\brief      Remove links to new module page present in llx_const
+	 *	\return     int     Nombre d'erreurs (0 si ok)
+	 */
+	function delete_tabs()
+	{
+		$err=0;
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+		$sql.= " WHERE name like '".$this->const_name."_TABS_%'";
+		dolibarr_syslog("DolibarrModules::delete_tabs sql=".$sql);
+		if (! $this->db->query($sql))
+		{
+			$err++;
+		}
+
+		return $err;
+	}
+
+	/**
+	 *	\brief      Active la feuille de style associee au module par insertion ligne dans llx_const
+	 *	\return     int     Nombre d'erreurs (0 si ok)
 	 */
 	function insert_style_sheet()
 	{
@@ -580,8 +605,40 @@ class DolibarrModules
 	}
 
 	/**
-	 \brief      Insere les constantes associees au module dans llx_const
-	 \return     int     Nombre d'erreurs (0 si ok)
+	 *	\brief      Add links of new pages from modules in llx_const
+	 *	\return     int     Number of errors (0 if ok)
+	 */
+	function insert_tabs()
+	{
+		$err=0;
+		
+		if (! empty($this->tabs))
+		{
+			$i=0;
+			foreach ($this->tabs as $key => $value)
+			{
+				if ($value)
+				{
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible)";
+					$sql.= " VALUES ('".$this->const_name."_TABS_".$i."','chaine','".$value."',null,'0')";
+					dolibarr_syslog("DolibarrModules::insert_tabs sql=".$sql);
+					$resql=$this->db->query($sql);
+					/* Allow duplicate key
+					 if (! $resql)
+					 {
+						$err++;
+					}
+					*/
+				}
+				$i++;
+			}
+		}
+		return $err;
+	}
+	
+	/**
+	 *	\brief      Insere les constantes associees au module dans llx_const
+	 *	\return     int     Nombre d'erreurs (0 si ok)
 	 */
 	function insert_const()
 	{

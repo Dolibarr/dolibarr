@@ -65,7 +65,7 @@ if ($_GET["action"] == 'reset' && $user->admin)
 */
 function Activate($value,$withdeps=1)
 {
-	global $db, $modules, $langs;
+	global $db, $modules, $langs, $conf;
 
 	$modName = $value;
 
@@ -75,8 +75,13 @@ function Activate($value,$withdeps=1)
 	if ($modName)
 	{
 		$file = $modName . ".class.php";
-		$res=@include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
-		if (defined('DOL_DOCUMENT_ROOT_BIS') && ! $res) include_once(DOL_DOCUMENT_ROOT_BIS."/includes/modules/".$file);
+		
+		// Loop on each directory
+		foreach ($conf->dol_document_root as $dol_document_root)
+		{
+			$found=@include_once($dol_document_root."/includes/modules/".$file);
+			if ($found) break;
+		}
 		
 		$objMod = new $modName($db);
 		
@@ -136,10 +141,15 @@ function UnActivate($value,$requiredby=1)
 	if ($modName)
 	{
 		$file = $modName . ".class.php";
-		$res=@include_once(DOL_DOCUMENT_ROOT."/includes/modules/".$file);
-		if (defined('DOL_DOCUMENT_ROOT_BIS') && ! $res) include_once(DOL_DOCUMENT_ROOT_BIS."/includes/modules/".$file);
 
-		if ($res)
+		// Loop on each directory
+		foreach ($conf->dol_document_root as $dol_document_root)
+		{
+			$found=@include_once($dol_document_root."/includes/modules/".$file);
+			if ($found) break;
+		}		
+
+		if ($found)
 		{
 			$objMod = new $modName($db);
 			$result=$objMod->remove();
@@ -180,10 +190,6 @@ print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
 
 
 // Search modules
-$dirlist=array();
-$dirlist[]=DOL_DOCUMENT_ROOT;
-if (defined('DOL_DOCUMENT_ROOT_BIS')) $dirlist[]=DOL_DOCUMENT_ROOT_BIS;
-
 $filename = array();
 $modules = array();
 $orders = array();
@@ -191,7 +197,7 @@ $categ = array();
 $dirmod = array();
 $i = 0;	// is a sequencer of modules found
 $j = 0;	// j is module number. Automatically affeted if module number not defined.
-foreach ($dirlist as $dirroot)
+foreach ($conf->dol_document_root as $dirroot)
 {
 	$dir = $dirroot . "/includes/modules/";
 
