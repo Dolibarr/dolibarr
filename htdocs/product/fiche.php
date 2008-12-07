@@ -104,6 +104,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 		$product->weight_units       = $_POST["weight_units"];
 		$product->volume             = $_POST["volume"];
 		$product->volume_units       = $_POST["volume_units"];
+		$product->finished           = $_POST["finished"];
 		// MultiPrix
 		if($conf->global->PRODUIT_MULTIPRICES == 1)
 		{
@@ -166,6 +167,7 @@ $user->rights->produit->creer)
 		$product->weight_units       = $_POST["weight_units"];
 		$product->volume             = $_POST["volume"];
 		$product->volume_units       = $_POST["volume_units"];
+		$product->finished           = $_POST["finished"];
 
 		if ($product->check())
 		{
@@ -214,6 +216,7 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 	{
 		$product->ref = "Clone ".$product->ref;
 		$product->status = 0;
+		$product->finished = 1;
 		$product->id = null;
 
 		if ($product->check())
@@ -225,7 +228,7 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 
 				$db->commit();
 				$db->close();
-				
+
 				Header("Location: fiche.php?id=$id");
 				exit;
 			}
@@ -234,10 +237,10 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 				if ($product->error == 'ErrorProductAlreadyExists')
 				{
 					$db->rollback();
-	
+
 					$_error = 1;
 					$_GET["action"] = "";
-					
+						
 					$mesg='<div class="error">'.$langs->trans("ErrorProductAlreadyExists",$product->ref).'</div>';
 					//dolibarr_print_error($product->db);
 				}
@@ -630,6 +633,16 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 
 		print "</td></tr>";
 
+		// Nature
+		if ($_GET["type"] != 1)
+		{
+			print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+			$html->select_array('finished',$statutarray,$_POST["finished"]);
+			print '</td></tr>';
+		}
+		
+		//Duration
 		if ($_GET["type"] == 1)
 		{
 			print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
@@ -640,7 +653,9 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 			print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
 			print '</td></tr>';
 		}
-		else
+
+		// Weight - Volume
+		if ($_GET["type"] != 1)
 		{
 			// Le poids et le volume ne concerne que les produits et pas les services
 			print '<tr><td>'.$langs->trans("Weight").'</td><td>';
@@ -699,7 +714,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 		print '<tr><td>'.$langs->trans("MinPrice").'</td>';
 		print '<td><input name="price_min" size="10" value="'.$product->price_min.'">';
 		print '</td></tr>';
-		
+
 		// VAT
 		print '<tr><td width="20%">'.$langs->trans("VATRate").'</td><td>';
 		print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
@@ -883,7 +898,7 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print '</td></tr>';
 			}
-			
+				
 			// Prix mini
 			print '<tr><td>'.$langs->trans("MinPrice").'</td><td>';
 			if ($product->price_base_type == 'TTC')
@@ -903,10 +918,18 @@ if ($_GET["id"] || $_GET["ref"])
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print $product->getLibStatut(2);
 			print '</td></tr>';
-
+				
 			// Description
 			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
 
+			// Nature
+			if($product->type!=1)
+			{
+				print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+				print $product->getLibFinished();
+				print '</td></tr>';
+			}
+				
 			if ($product->isservice())
 			{
 				// Duration
@@ -936,7 +959,7 @@ if ($_GET["id"] || $_GET["ref"])
 					print '&nbsp;';
 				}
 				print "</td></tr>\n";
-				
+
 				print '<tr><td>'.$langs->trans("Volume").'</td><td>';
 				if ($product->volume != '')
 				{
@@ -948,7 +971,7 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print "</td></tr>\n";
 			}
-			
+				
 			// Note
 			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';
 
@@ -998,18 +1021,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  }
 	  print '</select>';
 	  print '</td></tr>';
-
-	  if ($product->isproduct() && $conf->stock->enabled)
-	  {
-	  	print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
-	  	print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
-	  	print '</td></tr>';
-	  }
-	  else
-	  {
-	  	print '<input name="seuil_stock_alerte" type="hidden" value="0">';
-	  }
-
+	   
 	  // Description (utilisé dans facture, propale...)
 	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
 	  print "\n";
@@ -1027,6 +1039,26 @@ if ($_GET["id"] || $_GET["ref"])
 	  }
 	  print "</td></tr>";
 	  print "\n";
+
+	  // Nature
+	  if($product->type!=1)
+	  {
+	  	print '<tr><td>'.$langs->trans("Nature").'</td><td>';
+	  	$statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
+	  	$html->select_array('finished',$statutarray,$product->finished);
+	  	print '</td></tr>';
+	  }
+
+	  if ($product->isproduct() && $conf->stock->enabled)
+	  {
+	  	print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
+	  	print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
+	  	print '</td></tr>';
+	  }
+	  else
+	  {
+	  	print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+	  }
 
 	  if ($product->isservice())
 	  {

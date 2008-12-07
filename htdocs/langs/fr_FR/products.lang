@@ -139,3 +139,5 @@ GenerateThumb=Générer la vignette
 ProductCanvasAbility=Utiliser les extensions speciales "canvas"
 ServiceNb=Service no %s
 ListProductByPopularity=Liste des produits/services par popularité
+Finished=Produit manufacturé
+RowMaterial=Matière première

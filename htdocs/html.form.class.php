@@ -686,9 +686,10 @@ class Form
 	 *  \param    filtertype      Filter on product type (''=nofilter, 0=product, 1=service)
 	 *  \param    limit           Limite sur le nombre de lignes retournées
 	 *  \param    price_level     Niveau de prix en fonction du client
-	 *  \param	status			-1=Return all products, 0=Products not on sell, 1=Products on sell
+	 *  \param	  status		  -1=Return all products, 0=Products not on sell, 1=Products on sell
+	 *  \param	  finished     	  2=all, 1=finished, 0=raw material
 	 */
-	function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1)
+	function select_produits($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$status=1,$finished=2)
 	{
 		global $langs,$conf;
 
@@ -705,13 +706,13 @@ class Form
 			print '</tr>';
 			print '<tr class="nocellnopadd">';
 			print '<td class="nobordernopadding" colspan="3">';
-			print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status,'');
+			print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type='.$filtertype.'&mode=1&status='.$status.'&finished='.$finished,'');
 			print '</td></tr>';
 			print '</table>';
 		}
 		else
 		{
-			$this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status);
+			$this->select_produits_do($selected,$htmlname,$filtertype,$limit,$price_level,'',$status,$finished);
 		}
 	}
 
@@ -725,7 +726,7 @@ class Form
 	 * 	\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
 	 *	\param		status			-1=Return all products, 0=Products not on sell, 1=Products on sell
 	 */
-	function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$ajaxkeysearch='',$status=1)
+	function select_produits_do($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$ajaxkeysearch='',$status=1,$finished=2)
 	{
 		global $langs,$conf,$user;
 
@@ -741,7 +742,19 @@ class Form
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 		}
-		if ($status >= 0)  $sql.= " WHERE p.envente = ".$status;
+		if($finished == 0)
+		{			
+			$sql.= " WHERE p.finished = ".$finished;
+		}
+		elseif($finished == 1)
+		{
+			$sql.= " WHERE p.finished = ".$finished;
+			if ($status >= 0)  $sql.= " AND p.envente = ".$status;
+		}
+		elseif($status >= 0)
+		{
+			$sql.= " WHERE p.envente = ".$status;
+		}
 		else $sql.= " WHERE 1 = 1";
 		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
 		{

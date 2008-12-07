@@ -201,6 +201,46 @@ class MouvementStock
 
 
 	/**
+   *      \brief      Crée un mouvement en base pour toutes les compositions de produits
+   *      \return     int     <0 si ko, 0 si ok
+   */
+  function _createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
+  {
+
+    
+  	dolibarr_syslog("MouvementStock::_createComposition $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
+    $products_compo = array();
+
+    $sql = "SELECT fk_product_composition, qte, etat_stock";
+    $sql.= " FROM ".MAIN_DB_PREFIX."product_composition";
+    $sql.= " WHERE fk_product = $fk_product;";
+
+    $all = $this->db->query($sql);
+    
+    if ($all)
+    {
+    	while($item = $this->db->fetch_object($all)	)
+    	{
+    		if($item->etat_stock != 0) array_push($products_compo,$item);
+    	}
+    	$this->db->free($resql);
+    }
+    else
+    {
+    	dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+    	return -1;
+    }
+
+    foreach($products_compo as $product)
+    {
+    	$this->_create($user, $product->fk_product_composition, $entrepot_id, ($qty*$product->qte), $type, $price=0);
+    }
+
+    return 0;
+  }
+
+
+    /**
 	 *      \brief      Calcul ???
 	 *      \return     int    		<0 si ko, >0 si ok
 	 */

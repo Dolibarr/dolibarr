@@ -71,6 +71,8 @@ class Product extends CommonObject
 	var $duration_unit;
 	// Statut indique si le produit est en vente '1' ou non '0'
 	var $status;
+	 // Statut indique si le produit est un produit finis '1' ou une matiere premi�re '0'
+  	var $finished; 
 
 	//! Unites de mesure
 	var $weight;
@@ -118,6 +120,7 @@ class Product extends CommonObject
 		$this->db = $DB;
 		$this->id   = $id ;
 		$this->status = 0;
+		$this->finished = 1;
 		$this->stock_reel = 0;
 		$this->seuil_stock_alerte = 0;
 
@@ -167,7 +170,8 @@ class Product extends CommonObject
 		if ($this->price=='')  $this->price = 0;
 		if ($this->price_min=='')  $this->price_min = 0;
 		if ($this->status=='') $this->status = 0;
-
+		if ($this->finished=='') $this->finished = 1;
+		
 		$price_ht=0;
 		$price_ttc=0;
 		$price_min_ht=0;
@@ -222,7 +226,7 @@ class Product extends CommonObject
 					if ($this->ref) $sql.= "ref, ";
 					$sql.= "price_min, price_min_ttc, ";
 					$sql.= "label, ";
-					$sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas)";
+					$sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas, finished)";
 					$sql.= " VALUES (".$this->db->idate(mktime()).", ";
 					if ($this->ref) $sql.= "'".$this->ref."',";
 					$sql.= price2num($price_min_ht).",";
@@ -233,7 +237,8 @@ class Product extends CommonObject
 					$sql.= price2num($price_ht).",";
 					$sql.= price2num($price_ttc).",";
 					$sql.= "'".$this->price_base_type."',";
-					$sql.= "'".$this->canvas."')";
+					$sql.= "'".$this->canvas."',";
+					$sql.= " ".$this->finished.")";
 
 					dolibarr_syslog("Product::Create sql=".$sql);
 					$result = $this->db->query($sql);
@@ -372,6 +377,7 @@ class Product extends CommonObject
 		if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
 		$sql .= ",tva_tx = " . $this->tva_tx;
 		$sql .= ",envente = " . $this->status;
+		$sql .= ",finished = " . ($this->finished<0 ? "null" : $this->finished);
 		$sql .= ",weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 		$sql .= ",weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 		$sql .= ",volume = " . ($this->volume!='' ? "'".$this->volume."'" : 'null');
@@ -951,7 +957,7 @@ class Product extends CommonObject
 
 		$sql = "SELECT rowid, ref, label, description, note, price, price_ttc, price_min, price_min_ttc, price_base_type, tva_tx, envente,";
 		$sql.= " fk_product_type, duration, seuil_stock_alerte,canvas,";
-		$sql.= " stock_commande, stock_loc, weight, weight_units, volume, volume_units, barcode, fk_barcode_type";
+		$sql.= " stock_commande, stock_loc, weight, weight_units, volume, volume_units, barcode, fk_barcode_type, finished";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = '".$id."'";
 		if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -975,6 +981,7 @@ class Product extends CommonObject
 			$this->tva_tx             = $result["tva_tx"];
 			$this->type               = $result["fk_product_type"];
 			$this->status             = $result["envente"];
+			$this->finished           = $result["finished"];
 			$this->duration           = $result["duration"];
 			$this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
 			$this->duration_unit      = substr($result["duration"],-1);
@@ -2151,6 +2158,21 @@ class Product extends CommonObject
 			if ($status == 1) return $langs->trans('ProductStatusOnSell').' '.img_picto($langs->trans('ProductStatusOnSell'),'statut4');
 		}
 		return $langs->trans('Unknown');
+	}
+	
+	
+	/**
+	*    	\brief      Retourne le libell� du finished du produit
+	*    	\return     string		Libelle
+	*/
+	function getLibFinished()
+	{
+		global $langs;
+		$langs->load('products');
+		
+		if ($this->finished == '0') return $langs->trans("RowMaterial");
+		if ($this->finished == '1') return $langs->trans("Finished");
+		return '';
 	}
 
 	/**

@@ -8,6 +8,7 @@
 
 alter table llx_product add column   price_min          double(24,8) DEFAULT 0;
 alter table llx_product add column   price_min_ttc      double(24,8) DEFAULT 0;
+alter table llx_product add column   finished			 tinyint	  DEFAULT NULL after canvas;
 
 alter table llx_product_price   add column price_min              double(24,8) default NULL;
 alter table llx_product_price   add column price_min_ttc          double(24,8) default NULL;

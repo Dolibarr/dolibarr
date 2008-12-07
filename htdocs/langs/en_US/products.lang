@@ -137,3 +137,5 @@ GenerateThumb=Generate thumb
 ProductCanvasAbility=Use special "canvas" addons
 ServiceNb=Service #%s
 ListProductByPopularity=List of products/services by popularity
+Finished=Manufactured product
+RowMaterial=First material
