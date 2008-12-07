@@ -62,7 +62,9 @@ class box_factures extends ModeleBoxes {
     {
         global $user, $langs, $db;
 
-        include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+		$this->max=$max;
+        
+		include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
         $facturestatic=new Facture($db);
         
         $text = $langs->trans("BoxTitleLastCustomerBills",$max);
@@ -108,59 +110,42 @@ class box_factures extends ModeleBoxes {
                               $late = '';
                               if($objp->paye == 0 && $objp->datelimite < (time() - $conf->facture->warning_delay)) { $late = img_warning(sprintf($l_due_date,dolibarr_print_date($objp->datelimite,'day')));}
                     
-                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $picto,
+                    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
+                              
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->facnumber,
                     'text2'=> $late,
                     'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
         
-                    $this->info_box_contents[$i][1] = array('align' => 'left',
+                    $this->info_box_contents[$i][2] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'maxlength'=>40,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-                    $this->info_box_contents[$i][2] = array('align' => 'right',
+                    $this->info_box_contents[$i][3] = array('td' => 'align="right"',
                     'text' => dolibarr_print_date($objp->datec,'day'),
                     );
                     
-                    $this->info_box_contents[$i][3] = array(
-                    'align' => 'right',
-					'width' => 18,
+                    $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
 
                     $i++;
                 }
                 
-                $i=$num;
-                while ($i < $max)
-                {
-                    if ($num==0 && $i==$num)
-                    {
-                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedInvoices"));
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
-                    } else {
-                        $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
-                    }
-                    $i++;
-                }
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInvoices"));
             }
             else
             {
-    	        $this->info_box_contents[0][0] = array(	'align' => 'left',
+    	        $this->info_box_contents[0][0] = array(	'td' => 'align="left"',
     	        										'maxlength'=>500,
 	            										'text' => ($db->error().' sql='.$sql));
             }
         
         }
         else {
-            $this->info_box_contents[0][0] = array('align' => 'left',
+            $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
     }

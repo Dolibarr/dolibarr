@@ -18,11 +18,11 @@
  */
 
 /**
-    \file       htdocs/includes/boxes/box_produits.php
-    \ingroup    produits,services
-    \brief      Module de g�n�ration de l'affichage de la box produits
-    \version	$Id$
-*/
+ \file       htdocs/includes/boxes/box_produits.php
+ \ingroup    produits,services
+ \brief      Module de g�n�ration de l'affichage de la box produits
+ \version	$Id$
+ */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 include_once(DOL_DOCUMENT_ROOT."/product.class.php");
@@ -30,84 +30,89 @@ include_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 class box_produits extends ModeleBoxes {
 
-    var $boxcode="lastproducts";
-    var $boximg="object_product";
-    var $boxlabel;
-    var $depends = array("produit");
+	var $boxcode="lastproducts";
+	var $boximg="object_product";
+	var $boxlabel;
+	var $depends = array("produit");
 
 	var $db;
 	var $param;
-    
-    var $info_box_head = array();
-    var $info_box_contents = array();
+
+	var $info_box_head = array();
+	var $info_box_contents = array();
 
 
-    /**
-     *      \brief      Constructeur de la classe
-     */
-    function box_produits()
-    {
-        global $langs;
-        $langs->load("boxes");
+	/**
+	 *      \brief      Constructeur de la classe
+	 */
+	function box_produits()
+	{
+		global $langs;
+		$langs->load("boxes");
 
-        $this->boxlabel=$langs->trans("BoxLastProducts");
-    }
-    
-    /**
-     *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
-     *      \param      $max        Nombre maximum d'enregistrements � charger
-     */
-    function loadBox($max=5)
-    {
-        global $user, $langs, $db, $conf;
+		$this->boxlabel=$langs->trans("BoxLastProducts");
+	}
 
-		$productstatic=new Product($db);
+	/**
+	 *      \brief      Charge les donn�es en m�moire pour affichage ult�rieur
+	 *      \param      $max        Nombre maximum d'enregistrements � charger
+	 */
+	function loadBox($max=5)
+	{
+		global $user, $langs, $db, $conf;
+
+		$this->max=$max;
 		
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts",$max));
+		include_once(DOL_DOCUMENT_ROOT."/product.class.php");
+		$productstatic=new Product($db);
 
-        if ($user->rights->produit->lire)
-        {
-            $sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.envente";
-            $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-            if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-            {
-	            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-	            $sql.= " WHERE IFNULL(c.visible,1)=1";
-            }
-            $sql .= " ORDER BY p.datec DESC";
-            $sql .= $db->plimit($max, 0);
-    
-            $result = $db->query($sql);
-            if ($result)
-            {
-                $num = $db->num_rows($result);
-                $i = 0;
-                while ($i < $num)
-                {
-                    $objp = $db->fetch_object($result);
-                    
-                    // Multilangs
-					          if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-					          {
-						           $sqld = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
-						           $sqld.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
-						           $sqld.= " LIMIT 1";
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProducts",$max));
 
-						           $resultd = $db->query($sqld);
-						           if ($resultd)
-						           {
-							           $objtp = $db->fetch_object($resultd);
-							           if ($objtp->label != '') $objp->label = $objtp->label;
-						           }
-					          }
-    
-                    $this->info_box_contents[$i][0] = array(
-                    'align' => 'left',
+		if ($user->rights->produit->lire)
+		{
+			$sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.envente";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+			if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+			{
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+				$sql.= " WHERE IFNULL(c.visible,1)=1";
+			}
+			$sql .= " ORDER BY p.datec DESC";
+			$sql .= $db->plimit($max, 0);
+
+			$result = $db->query($sql);
+			if ($result)
+			{
+				$num = $db->num_rows($result);
+				$i = 0;
+				while ($i < $num)
+				{
+					$objp = $db->fetch_object($result);
+
+					// Multilangs
+					if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+					{
+						$sqld = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
+						$sqld.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+						$sqld.= " LIMIT 1";
+
+						$resultd = $db->query($sqld);
+						if ($resultd)
+						{
+							$objtp = $db->fetch_object($resultd);
+							if ($objtp->label != '') $objp->label = $objtp->label;
+						}
+					}
+
+					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
+                    'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
+
+					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->label,
                     'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
-    
+					
 					if ($objp->price_base_type == 'HT')
 					{
 						$price=price($objp->price);
@@ -115,45 +120,39 @@ class box_produits extends ModeleBoxes {
 					}
 					else
 					{
-					    $price=price($objp->price_ttc);
+						$price=price($objp->price_ttc);
 						$price_base_type=$langs->trans("TTC");
 					}
-					$this->info_box_contents[$i][1] = array(
-                    'align' => 'right',
+					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
                     'text' => $price);
 
-					$this->info_box_contents[$i][2] = array(
-                    'align' => 'center',
-					'width' => 20,
+					$this->info_box_contents[$i][3] = array('td' => 'align="center" width="20"',
                     'text' => $price_base_type);
 
-					$this->info_box_contents[$i][3] = array(
-                    'align' => 'right',
+					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
                     'text' => dolibarr_print_date($objp->tms,'day'));
 
-                    $this->info_box_contents[$i][4] = array(
-                    'align' => 'right',
-					'width' => 18,
+					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
                     'text' => $productstatic->LibStatut($objp->envente,3));
 
-                    $i++;
-                }
-            }
-            else {
-                dolibarr_print_error($db);
-            }
-        }
-        else {
-            $this->info_box_contents[0][0] = array('align' => 'left',
+					$i++;
+				}
+			}
+			else {
+				dolibarr_print_error($db);
+			}
+		}
+		else {
+			$this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
-        }
-    }
-    
-    function showBox()
-    {
-        parent::showBox($this->info_box_head, $this->info_box_contents);
-    }
-   
+		}
+	}
+
+	function showBox()
+	{
+		parent::showBox($this->info_box_head, $this->info_box_contents);
+	}
+	 
 }
 
 ?>

@@ -60,6 +60,8 @@ class box_services_vendus extends ModeleBoxes {
 	{
 		global $user, $langs, $db, $conf;
 
+		$this->max=$max;
+		
 		include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 		$contratlignestatic=new ContratLigne($db);
 
@@ -118,34 +120,37 @@ class box_services_vendus extends ModeleBoxes {
 						}
 					}
 
-					$this->info_box_contents[$i][0] = array('align' => 'left',
+					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
+                    'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+
+					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->label,
                     'maxlength' => 16,
                     'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
-
-					$this->info_box_contents[$i][1] = array('align' => 'left',
+					
+					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'maxlength' => 40,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][2] = array('align' => 'right',
+					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
                     'text' => dolibarr_print_date($objp->datem,'day'));
 
-					$this->info_box_contents[$i][3] = array('align' => 'right',
-                    'text' => $contratlignestatic->LibStatut($objp->statut,3),
-                    'width' => 18
+					$this->info_box_contents[$i][4] = array('td' => 'align="right width="18"',
+                    'text' => $contratlignestatic->LibStatut($objp->statut,3)
 					);
 						
 					$i++;
 				}
 			}
-			else {
+			else 
+			{
 				dolibarr_print_error($db);
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
+			$this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
 		}
 

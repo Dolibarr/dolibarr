@@ -31,44 +31,43 @@
  */
 class ModeleBoxes
 {
-    var $MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
-
-    var $db;
-    var $error='';
-
+	var $db;
+	var $error='';
+	var $max=5;
+	
 	/*
-	*	\brief		Constructeur
-	*/
+	 *	\brief		Constructeur
+	 */
 	function ModeleBoxes($DB)
 	{
 		$this->db=$DB;
 	}
-	
-	
-   /**
-        \brief      Renvoi le dernier message d'erreur de cr�ation de facture
-    */
-    function error()
-    {
-        return $this->error;
-    }
 
 
-   /**
-        \brief      Charge une ligne boxe depuis son rowid
-    */
-    function fetch($rowid)
-    {
+	/**
+	 *    \brief      Renvoi le dernier message d'erreur de creation de facture
+	 */
+	function error()
+	{
+		return $this->error;
+	}
+
+
+	/**
+	 *    \brief      Charge une ligne boxe depuis son rowid
+	 */
+	function fetch($rowid)
+	{
 		// Recupere liste des boites d'un user si ce dernier a sa propre liste
 		$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b";
 		$sql.= " WHERE b.rowid = ".$rowid;
 		dolibarr_syslog("ModeleBoxes::fetch rowid=".$rowid);
 
-	    $resql = $this->db->query($sql);
-	    if ($resql)
-	    {
-	        $obj = $this->db->fetch_object($resql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
 			if ($obj)
 			{
 				$this->rowid=$obj->rowid;
@@ -90,148 +89,146 @@ class ModeleBoxes
 	}
 
 
-   /**
-        \brief      Methode standard d'affichage des boites
-        \param      $head       tableau des caract�ristiques du titre
-        \param      $contents   tableau des lignes de contenu
-    */
-    function showBox($head, $contents)
-    {
-        global $langs,$conf;
+	/**
+	 *	\brief      Methode standard d'affichage des boites
+	 *	\param      $head       tableau des caracteristiques du titre
+	 *	\param      $contents   tableau des lignes de contenu
+	 */
+	function showBox($head, $contents)
+	{
+		global $langs,$conf;
 
-        $bcx[0] = 'class="box_pair"';
-        $bcx[1] = 'class="box_impair"';
-        $var = true;
-	
-		// Define nbcol and nblines
-        $nbcol=0;
-		if (isset($contents[0])) $nbcol=sizeof($contents[0])+1;
-        $nblines=sizeof($contents);
+		$MAXLENGTHBOX=60;   // Mettre 0 pour pas de limite
+		$bcx[0] = 'class="box_pair"';
+		$bcx[1] = 'class="box_impair"';
+		$var = true;
 
-        print "\n\n<!-- Box start -->\n";
+		// Define nbcol and nblines of the box to show
+		$nbcol=0;
+		if (isset($contents[0])) $nbcol=sizeof($contents[0]);
+		$nblines=sizeof($contents);
+
+		print "\n\n<!-- Box start -->\n";
 		print '<div style="padding-right: 2px; padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$this->box_id.'">'."\n";
 
-        // Affiche titre de la boite
+		// Show box title
 		if (! empty($head['text']) || ! empty($head['sublink']))
 		{
 			print '<div id="boxto_'.$this->box_id.'_title">'."\n";
-	        print '<table width="100%" class="noborder">'."\n";
-	        print '<tr class="box_titre">';
-	        print '<td';
-	        if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
-	        print '>';
+			print '<table width="100%" class="noborder">'."\n";
+			print '<tr class="box_titre">';
+			print '<td';
+			if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
+			print '>';
 			if ($conf->use_javascript_ajax)
 			{
 				print '<table class="nobordernopadding" width="100%"><tr><td align="left">';
 			}
-	        if (! empty($head['text']))
+			if (! empty($head['text']))
 			{
-				$s=dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$this->MAXLENGTHBOX);
+				$s=dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$MAXLENGTHBOX);
 				print $s;
 			}
-	        if (! empty($head['sublink']))
-	        {
-	            print ' <a href="'.$head['sublink'].'" target="_blank">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
-	        }
+			if (! empty($head['sublink']))
+			{
+				print ' <a href="'.$head['sublink'].'" target="_blank">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
+			}
 			if ($conf->use_javascript_ajax)
-	        {
-	      		print '</td><td class="nocellnopadd" width="14">';
-	      		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-	      		print img_picto($langs->trans("MoveBox",$this->box_id),'uparrow','class="boxhandle" style="cursor:move;"');
+			{
+				print '</td><td class="nocellnopadd" width="14">';
+				// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
+				print img_picto($langs->trans("MoveBox",$this->box_id),'uparrow','class="boxhandle" style="cursor:move;"');
 				print '</td></tr></table>';
 			}
-	        print '</td>';
-	        print "</tr>\n";
-	        print "</table>\n";
+			print '</td>';
+			print "</tr>\n";
+			print "</table>\n";
 			print "</div>\n";
 		}
-		
-        // Affiche chaque ligne de la boite
-        if ($nblines) 
+
+		// Show box lines
+		if ($nblines)
 		{
 			print '<table width="100%" class="noborder">'."\n";
-	        for ($i=0, $n=$nblines; $i < $n; $i++)
-	        {
-	            if (isset($contents[$i]))
-	            {
-	                $var=!$var;
-	                if (sizeof($contents[$i]))
-	                {
-	                    if (isset($contents[$i][-1]['class'])) print '<tr valign="top" class="'.$contents[$i][-1]['class'].'">';
-	                    else print '<tr valign="top" '.$bcx[$var].'>';
-	                }
+			// Loop on each record
+			for ($i=0, $n=$nblines; $i < $n; $i++)
+			{
+				if (isset($contents[$i]))
+				{
+					$var=!$var;
+					
+					// TR
+					if (isset($contents[$i][0]['tr'])) print '<tr valign="top" '.$contents[$i][0]['tr'].'>';
+					else print '<tr valign="top" '.$bcx[$var].'>';
 
-	                // Affiche chaque cellule
-	                for ($j=0, $m=isset($contents[$i][-1])?sizeof($contents[$i])-1:sizeof($contents[$i]); $j < $m; $j++)
-	                {
-	                    $tdparam="";
-	                    if (isset($contents[$i][$j]['align'])) $tdparam.=' align="'. $contents[$i][$j]['align'].'"';
-	                    if (isset($contents[$i][$j]['nowrap'])) $tdparam.=' nowrap="'. $contents[$i][$j]['align'].'"';
-	                    if (isset($contents[$i][$j]['width'])) $tdparam.=' width="'. $contents[$i][$j]['width'].'"';
-	                    if (isset($contents[$i][$j]['colspan'])) $tdparam.=' colspan="'. $contents[$i][$j]['colspan'].'"';
-	                    if (isset($contents[$i][$j]['class'])) $tdparam.=' class="'. $contents[$i][$j]['class'].'"';
-	                    if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
+					// Loop on each TD
+					$nbcolthisline=sizeof($contents[$i]);
+					for ($j=0; $j < $nbcolthisline; $j++)
+					{
+						// Define tdparam
+						$tdparam='';
+						if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
 
-	                    if (!$contents[$i][$j]['text']) $contents[$i][$j]['text']="";
-	                    $texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
-	                    $textewithnotags=eregi_replace('<[^>]+>','',$texte);
-	                    $texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
-	                    $texte2withnotags=eregi_replace('<[^>]+>','',$texte2);
-	                    //print "xxx $textewithnotags y";
+						if (!$contents[$i][$j]['text']) $contents[$i][$j]['text']="";
+						$texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
+						$textewithnotags=eregi_replace('<[^>]+>','',$texte);
+						$texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
+						$texte2withnotags=eregi_replace('<[^>]+>','',$texte2);
+						//print "xxx $textewithnotags y";
 
-	                    if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo']) print '<td width="16">';
-	                    else print '<td '.$tdparam.'>';
+						print '<td'.$tdparam.'>';
 
-						// Picto
-	                    if (isset($contents[$i][$j]['url'])) {
-	                    	print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
-	                       //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
-		                   	print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
-	                        print '>';
-	                    }
+						// Url
+						if (! empty($contents[$i][$j]['url'])) {
+							print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
+							//print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
+							print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
+							print '>';
+						}
 
-	                    // Texte
-	                    if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo'])
-	                    {
-	                        $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
-	                        print img_object($langs->trans("Show"),$logo);
-	                        if (isset($contents[$i][$j]['url'])) print '</a>';
-	                        print '</td><td '.$tdparam.'>';
-	                        if (isset($contents[$i][$j]['url']))
-	                        {
-	                            print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
-	                            //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
-	                            print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
-	                            print '>';
-	                        }
-	                    }
-	                    $maxlength=$this->MAXLENGTHBOX;
-	                    if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
+						// Logo
+						if (! empty($contents[$i][$j]['logo']))
+						{
+							$logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
+							print img_object($langs->trans("Show"),$logo);
+						}
+							
+						$maxlength=$MAXLENGTHBOX;
+						if (! empty($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
-	                    if ($maxlength) $textewithnotags=dolibarr_trunc($textewithnotags,$maxlength);
-	                    if (eregi('^<img',$texte)) print $texte;	// show text with no html cleaning
-	                    else print $textewithnotags;				// show text with html cleaning
+						if ($maxlength) $textewithnotags=dolibarr_trunc($textewithnotags,$maxlength);
+						if (eregi('^<img',$texte)) print $texte;	// show text with no html cleaning
+						else print $textewithnotags;				// show text with html cleaning
+
+						// End Url
+						if (! empty($contents[$i][$j]['url'])) print '</a>';
+
+						if (eregi('^<img',$texte2)) print $texte2;	// show text with no html cleaning
+						else print $texte2withnotags;				// show text with html cleaning
 						
-	                    // End picto
-	                    if (isset($contents[$i][$j]['url'])) print '</a>';
+						print "</td>";
+					}
 
-	                    if (eregi('^<img',$texte2)) print $texte2;	// show text with no html cleaning
-	                    else print $texte2withnotags;				// show text with html cleaning
-	                    print "</td>";
-	                }
-
-	                if (sizeof($contents[$i])) print "</tr>\n";
-	            }
-	        }
-	        print "</table>\n";
+					print "</tr>\n";
+				}
+			}
+			
+			while ($i < $this->max)
+			{
+				$var=!$var;
+				print '<tr '.$bcx[$var].'><td colspan="'.$nbcol.'">&nbsp;</td></tr>';
+				$i++;
+			}
+							
+			print "</table>\n";
 		}
 
 		// If invisible box with no contents
 		if (empty($head['text']) && empty($head['sublink']) && ! $nblines) print "<br><br>\n";
-		
+
 		print "</div>\n";
-        print "<!-- Box end -->\n\n";
-    }
+		print "<!-- Box end -->\n\n";
+	}
 
 }
 

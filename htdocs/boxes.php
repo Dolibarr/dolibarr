@@ -64,7 +64,7 @@ class InfoBox
 		$confuserzone='MAIN_BOXES_'.$zone;
 		if ($user->id && $user->conf->$confuserzone)
 		{
-			// Recupere liste des boites d'un user si ce dernier a sa propre liste
+			// Get list of boxes of a particular user (if this one has its own list)
 			$sql = "SELECT b.rowid, b.box_id, b.position, b.box_order, b.fk_user,";
 			$sql.= " d.file, d.note";
 			$sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
@@ -73,7 +73,7 @@ class InfoBox
 			$sql.= " AND b.fk_user = ".$user->id;
 			$sql.= " ORDER BY b.box_order";
 		
-			dolibarr_syslog("InfoBox::listBoxes get user box list sql=$sql");
+			dolibarr_syslog("InfoBox::listBoxes get user box list sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -120,7 +120,7 @@ class InfoBox
 			$sql.= " AND b.fk_user = 0";
 			$sql.= " ORDER BY b.box_order";
 
-			dolibarr_syslog("InfoBox::listBoxes get default box list sql=$sql");
+			dolibarr_syslog("InfoBox::listBoxes get default box list sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{

@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/index.php
- *	\brief      Page accueil par defaut
+ *	\brief      Dolibarr home page
  *	\version    $Id$
  */
 
@@ -28,16 +28,20 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
 
-// Simule le menu par défaut sur Home
+// If not defined, we select menu "home"
 if (! isset($_GET["mainmenu"])) $_GET["mainmenu"]="home";
 
 $infobox=new InfoBox($db);
 
+/*
+ * Actions
+ */
 
+// No actions
 
 
 /*
- * Affichage page
+ * View
  */
 
 llxHeader();
@@ -76,7 +80,7 @@ print '<tr><td valign="top" class="notopnoleft">';
 
 
 /*
- * Informations
+ * Informations area
  */
 
 if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
@@ -566,12 +570,12 @@ print '</td></tr></table>';
 
 
 /*
- * Affichage des boites
- *
+ * Show boxes
  */
-$boxarray=$infobox->listboxes("0",$user);       // 0=valeur pour la page accueil
-$boxid_left = array();
-$boxid_right = array();
+$boxarray=$infobox->listboxes("0",$user);       // 0=value for home page
+
+//$boxid_left = array();
+//$boxid_right = array();
 
 if (sizeof($boxarray))
 {
@@ -580,28 +584,30 @@ if (sizeof($boxarray))
 	print '<table width="100%" class="notopnoleftnoright">';
 	print '<tr><td class="notopnoleftnoright">'."\n";
 
+	print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr>';
+	
 	// Affichage colonne gauche
-	print "\n<!-- Box container -->\n";
-	print '<table width="100%" style="border-collapse: collapse; border: 0px; margin: 0px; padding: 0px;"><tr><td width="50%" valign="top">'."\n";
+	print '<td width="50%" valign="top">'."\n";
+
+	print "\n<!-- Box left container -->\n";
 	print '<div id="left">'."\n";
 
 	$ii=0;
 	foreach ($boxarray as $key => $box)
 	{
-		//print "xxx".$key."-".$value;
 		if (eregi('^A',$box->box_order)) // colonne A
 		{
 			$ii++;
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
 			//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-			$boxid_left[$key] = $boxarray[$key]->box_id;
+			//$boxid_left[$key] = $box->box_id;
 			// Affichage boite key
 			$box->loadBox($conf->box_max_lines);
 			$box->showBox();
 		}
 	}
 
-	// If no box on left, we show add an invisible empty box
+	// If no box on left, we add an invisible empty box
 	if ($ii==0)
 	{
 		$box->box_id='A';
@@ -611,14 +617,13 @@ if (sizeof($boxarray))
 	}
 
 	print "</div>\n";
-	print '</td>';
 	print "<!-- End box container -->\n";
-	print "\n";
 
+	print "</td>\n";
 	// Affichage colonne droite
-	print "\n<!-- Box container -->\n";
 	print '<td width="50%" valign="top">';
-	//	print '<div id="right" style="position: absolute; display: block; width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
+	
+	print "\n<!-- Box right container -->\n";
 	print '<div id="right">'."\n";
 
 	$ii=0;
@@ -628,10 +633,9 @@ if (sizeof($boxarray))
 		if (eregi('^B',$box->box_order)) // colonne B
 		{
 			$ii++;
-			//print 'key:'.$key.'<br>';
-			//print 'box_id '.$boxarray[$key]->box_id.' ';
-			//print 'box_order '.$boxarray[$key]->box_order.'<br>';
-			$boxid_right[$key] = $boxarray[$key]->box_id;
+			//print 'box_id '.$boxarray[$ii]->box_id.' ';
+			//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+			//$boxid_right[$key] = $boxarray[$key]->box_id;
 			// Affichage boite key
 			$box->loadBox($conf->box_max_lines);
 			$box->showBox();
@@ -648,8 +652,9 @@ if (sizeof($boxarray))
 	}
 
 	print "</div>\n";
-	print "</td></tr></table>\n";
 	print "<!-- End box container -->\n";
+	print "</td>";
+	print "</tr></table>\n";
 	print "\n";
 
 	print "</td></tr>";

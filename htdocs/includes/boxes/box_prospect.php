@@ -19,11 +19,11 @@
  */
 
 /**
-    \file       htdocs/includes/boxes/box_prospect.php
-    \ingroup    societe
-    \brief      Module to generate the last prospects box.
-	\version	$Id$
-*/
+ *   \file       htdocs/includes/boxes/box_prospect.php
+ *   \ingroup    societe
+ *   \brief      Module to generate the last prospects box.
+ *	\version	$Id$
+ */
 
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
@@ -46,12 +46,15 @@ class box_prospect extends ModeleBoxes {
     /**
      *      \brief      Constructeur de la classe
      */
-    function box_prospect()
+    function box_prospect($DB,$param)
     {
         global $langs;
         $langs->load("boxes");
 
-        $this->boxlabel=$langs->trans("BoxLastProspects");
+		$this->db=$DB;
+		$this->param=$param;
+        
+		$this->boxlabel=$langs->trans("BoxLastProspects");
     }
 
     /**
@@ -62,7 +65,9 @@ class box_prospect extends ModeleBoxes {
     {
         global $user, $langs, $db;
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastProspects",$max));
+		$this->max=$max;
+        
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastProspects",$max));
 
         if ($user->rights->societe->lire) 
         {
@@ -91,38 +96,24 @@ class box_prospect extends ModeleBoxes {
                 {
                     $objp = $db->fetch_object($resql);
     
-                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
-                    'text' => stripslashes($objp->nom),
                     'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][1] = array('align' => 'right',
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                    'text' => $objp->nom,
+                    'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?socid=".$objp->socid);
+                    
+                    $this->info_box_contents[$i][2] = array('td' => 'align="right"',
 					'text' => dolibarr_print_date($objp->dc, "day"));
 
-                    $this->info_box_contents[$i][2] = array('align' => 'right',
-					'width' => 18,
+                    $this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
                     'text' => eregi_replace('img ','img height="14px" ',$prospectstatic->LibStatut($objp->fk_stcomm,3)));
 
                     $i++;
                 }
  
-                $i=$num;
-                while ($i < $max)
-                {
-                    if ($num==0 && $i==$num)
-                    {
-                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedProspects"));
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
-                    } else {
-                        //$this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
-                        //$this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        //$this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                        //$this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
-                    }
-                    $i++;
-                }
+				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProspects"));
             }
 			else
 			{
@@ -131,7 +122,7 @@ class box_prospect extends ModeleBoxes {
         }
         else {
 			dolibarr_syslog("box_prospect::loadBox not allowed de read this box content",LOG_ERR);
-            $this->info_box_contents[0][0] = array('align' => 'left',
+            $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
     }

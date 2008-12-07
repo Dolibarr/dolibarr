@@ -19,120 +19,110 @@
  */
 
 /**
-    \file       htdocs/includes/boxes/box_clients.php
-    \ingroup    societes
-    \brief      Module de génération de l'affichage de la box clients
-	\version	$Id$
-*/
+ \file       htdocs/includes/boxes/box_clients.php
+ \ingroup    societes
+ \brief      Module de génération de l'affichage de la box clients
+ \version	$Id$
+ */
 
 include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 
 class box_clients extends ModeleBoxes {
 
-    var $boxcode="lastcustomers";
-    var $boximg="object_company";
-    var $boxlabel;
-    var $depends = array("societe");
+	var $boxcode="lastcustomers";
+	var $boximg="object_company";
+	var $boxlabel;
+	var $depends = array("societe");
 
 	var $db;
 	var $param;
 
-    var $info_box_head = array();
-    var $info_box_contents = array();
+	var $info_box_head = array();
+	var $info_box_contents = array();
 
-    /**
-     *      \brief      Constructeur de la classe
-     */
-    function box_clients()
-    {
-        global $langs;
-        $langs->load("boxes");
+	/**
+	 *      \brief      Constructeur de la classe
+	 */
+	function box_clients()
+	{
+		global $langs;
+		$langs->load("boxes");
 
-        $this->boxlabel=$langs->trans("BoxLastCustomers");
-    }
+		$this->boxlabel=$langs->trans("BoxLastCustomers");
+	}
 
-    /**
-     *      \brief      Charge les données en mémoire pour affichage ultérieur
-     *      \param      $max        Nombre maximum d'enregistrements à charger
-     */
-    function loadBox($max=5)
-    {
-        global $user, $langs, $db;
-        $langs->load("boxes");
+	/**
+	 *      \brief      Charge les données en mémoire pour affichage ultérieur
+	 *      \param      $max        Nombre maximum d'enregistrements à charger
+	 */
+	function loadBox($max=5)
+	{
+		global $user, $langs, $db;
+		$langs->load("boxes");
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomers",$max));
+		$this->max=$max;
+		
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomers",$max));
 
-        if ($user->rights->societe->lire)
-        {
-            $sql = "SELECT s.nom, s.rowid as socid, ".$db->pdate("s.datec")." as dc";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
-            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE s.client = 1";
-            if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if ($user->societe_id > 0)
-            {
-                $sql .= " AND s.rowid = $user->societe_id";
-            }
-            $sql .= " ORDER BY s.datec DESC ";
-            $sql .= $db->plimit($max, 0);
-    
-            $result = $db->query($sql);
-    
-            if ($result)
-            {
-                $num = $db->num_rows($result);
-    
-                $i = 0;
-    			//$customerstatic=new Client($db);
-                while ($i < $num)
-                {
-                    $objp = $db->fetch_object($result);
-    
-                    $this->info_box_contents[$i][0] = array('align' => 'left',
+		if ($user->rights->societe->lire)
+		{
+			$sql = "SELECT s.nom, s.rowid as socid, ".$db->pdate("s.datec")." as dc";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= " WHERE s.client = 1";
+			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if ($user->societe_id > 0)
+			{
+				$sql .= " AND s.rowid = $user->societe_id";
+			}
+			$sql .= " ORDER BY s.datec DESC ";
+			$sql .= $db->plimit($max, 0);
+
+			$result = $db->query($sql);
+
+			if ($result)
+			{
+				$num = $db->num_rows($result);
+
+				$i = 0;
+				//$customerstatic=new Client($db);
+				while ($i < $num)
+				{
+					$objp = $db->fetch_object($result);
+
+					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
-                    'text' => stripslashes($objp->nom),
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+					
+					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                    'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-					          $this->info_box_contents[$i][1] = array('align' => 'right',
-					          'text' => dolibarr_print_date($objp->dc, "day"));
+					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
+					'text' => dolibarr_print_date($objp->dc, "day"));
 
-                    $i++;
-                }
+					$i++;
+				}
 
-                $i=$num;
-                while ($i < $max)
-                {
-                    if ($num==0 && $i==$num)
-                    {
-                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedCustomers"));
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                    } else {
-                        $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                    }
-                    $i++;
-                }
-
-            }
-            else {
-                dolibarr_print_error($db);
-            }
-        }
-        else {
-            $this->info_box_contents[0][0] = array('align' => 'left',
+				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
+			}
+			else {
+				dolibarr_print_error($db);
+			}
+		}
+		else {
+			$this->info_box_contents[0][0] = array('align' => 'left',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
-        }
+		}
 
-    }
+	}
 
-    function showBox()
-    {
-        parent::showBox($this->info_box_head, $this->info_box_contents);
-    }
+	function showBox()
+	{
+		parent::showBox($this->info_box_head, $this->info_box_contents);
+	}
 
 }
 

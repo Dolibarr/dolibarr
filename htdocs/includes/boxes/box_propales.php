@@ -62,6 +62,8 @@ class box_propales extends ModeleBoxes {
         
         global $user, $langs, $db;
 
+		$this->max=$max;
+        
 		include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
         $propalstatic=new Propal($db);
         
@@ -96,53 +98,36 @@ class box_propales extends ModeleBoxes {
                 {
                     $objp = $db->fetch_object($result);
 
-                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
-                    'text' => $objp->ref,
                     'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
 
-                    $this->info_box_contents[$i][1] = array('align' => 'left',
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                    'text' => $objp->ref,
+                    'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
+                    
+                    $this->info_box_contents[$i][2] = array('td' => 'align="left"',
                     'text' => dolibarr_trunc($objp->nom,40),
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
                     
-                    $this->info_box_contents[$i][2] = array(
-                    'align' => 'right',
+                    $this->info_box_contents[$i][3] = array('td' => 'align="right"',
                     'text' => dolibarr_print_date($objp->datec,'day'));
 
-                    $this->info_box_contents[$i][3] = array(
-                    'align' => 'right',
-					'width' => 18,
+                    $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $propalstatic->LibStatut($objp->fk_statut,3));
 
                     $i++;
                 }
                 
-                $i=$num;
-          while ($i < $max)
-          {
-            if ($num==0 && $i==$num)
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProposals"));
+            }
+            else 
             {
-                $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedProposals"));
-                $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
-                $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
-            } else {
-                $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
-                $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
-                $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
-            }
-            $i++;
-          }
-            }
-            else {
                 dolibarr_print_error($db);
             }
         }
         else {
-            $this->info_box_contents[0][0] = array('align' => 'left',
+            $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
     }

@@ -24,75 +24,80 @@ include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 class box_energie_releve extends ModeleBoxes {
 
-    var $boxcode="energie";
-    var $boximg="object_energie";
-    var $boxlabel;
-    var $depends = array("energie");
+	var $boxcode="energie";
+	var $boximg="object_energie";
+	var $boxlabel;
+	var $depends = array("energie");
 
 	var $db;
 	var $param;
-	
-    var $info_box_head = array();
-    var $info_box_contents = array();
 
-    /**
-     *      \brief      Constructeur de la classe
-     */
-    function box_energie_releve()
-    {
-        global $langs;
-        $langs->load("boxes");
+	var $info_box_head = array();
+	var $info_box_contents = array();
 
-        $this->boxlabel=$langs->trans("Energie");
-    }
-
-    /**
-     *      \brief      Charge les données en mémoire pour affichage ultérieur
-     *      \param      $max        Nombre maximum d'enregistrements à charger
-     */
-    function loadBox($max=5)
-    {
-      global $user, $langs, $db;
-      $langs->load("boxes");
-      
-      $text = '<a href="energie/">'.$langs->trans("Energie").'</a>';
-
-      $this->info_box_head = array('text' => $text,$max);
-      
-
-      $sql = "SELECT ec.libelle, ".$db->pdate("date_releve")." as date_releve, ecr.valeur, ec.rowid";
-      $sql .= " FROM ".MAIN_DB_PREFIX."energie_compteur_releve as ecr";
-      $sql .= " , ".MAIN_DB_PREFIX."energie_compteur as ec";
-      $sql .= " WHERE ecr.fk_compteur = ec.rowid";
-      $sql .= " ORDER BY ecr.date_releve DESC LIMIT 5";
-      $resql = $db->query($sql);
-      if ($resql)
+	/**
+	 *      \brief      Constructeur de la classe
+	 */
+	function box_energie_releve()
 	{
+		global $langs;
+		$langs->load("boxes");
+
+		$this->boxlabel=$langs->trans("Energie");
+	}
+
+	/**
+	 *      \brief      Charge les données en mémoire pour affichage ultérieur
+	 *      \param      $max        Nombre maximum d'enregistrements à charger
+	 */
+	function loadBox($max=5)
+	{
+		global $user, $langs, $db;
+		$langs->load("boxes");
+
+		$this->max=$max;
+
+		$text = '<a href="energie/">'.$langs->trans("Energie").'</a>';
+
+		$this->info_box_head = array('text' => $text,$max);
+
+
+		$sql = "SELECT ec.libelle, ".$db->pdate("date_releve")." as date_releve, ecr.valeur, ec.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."energie_compteur_releve as ecr";
+		$sql .= " , ".MAIN_DB_PREFIX."energie_compteur as ec";
+		$sql .= " WHERE ecr.fk_compteur = ec.rowid";
+		$sql .= " ORDER BY ecr.date_releve DESC LIMIT 5";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
 	  $num = $db->num_rows($resql);
 	  $i = 0;
 	  $var=True;
 	  while ($i < $num)
-	    {
-	      $objp = $db->fetch_object($resql);
-	      
-	      $this->info_box_contents[$i][0] = array('align' => 'left',
+	  {
+	  	$objp = $db->fetch_object($resql);
+	  	 
+	  	$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 						      'logo' => $this->boximg,
+						      'url' => DOL_URL_ROOT."/energie/compteur.php?id=".$objp->rowid);
+
+	  	$this->info_box_contents[$i][1] = array('td' => 'align="left"',
 						      'text' => $objp->libelle,
 						      'url' => DOL_URL_ROOT."/energie/compteur.php?id=".$objp->rowid);
-	      
-	      $this->info_box_contents[$i][1] = array('align' => 'left',
+	  	 
+	  	$this->info_box_contents[$i][2] = array('td' => 'align="right"',
 						      'text' => $objp->valeur);
-	      
-	      
-	      $i++;
-	    }
-	}                       
-    }
-  
-  function showBox()
-  {
-    parent::showBox($this->info_box_head, $this->info_box_contents);
-  }  
+	  	 
+	  	 
+	  	$i++;
+	  }
+		}
+	}
+
+	function showBox()
+	{
+		parent::showBox($this->info_box_head, $this->info_box_contents);
+	}
 }
 
 ?>

@@ -60,7 +60,9 @@ class box_fournisseurs extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastSuppliers",$max));
+		$this->max=$max;
+        
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastSuppliers",$max));
 
         if ($user->rights->societe->lire)
         {
@@ -89,40 +91,28 @@ class box_fournisseurs extends ModeleBoxes {
                 {
                     $objp = $db->fetch_object($result);
     
-                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
-                    'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
 
-					$this->info_box_contents[$i][1] = array('align' => 'right',
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                    'text' => $objp->nom,
+                    'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
+                    
+                    $this->info_box_contents[$i][2] = array('td' => 'align="right"',
 					'text' => dolibarr_print_date($objp->dc, "day"));
 
                     $i++;
                 }
 
-                $i=$num;
-                while ($i < $max)
-                {
-                    if ($num==0 && $i==$num)
-                    {
-                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedSuppliers"));
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                    } else {
-                        $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                    }
-                    $i++;
-                }
-
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedSuppliers"));
             }
             else {
                 dolibarr_print_error($db);
             }
         }
         else {
-            $this->info_box_contents[0][0] = array('align' => 'left',
+            $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
 

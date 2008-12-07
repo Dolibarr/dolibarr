@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Christophe
- * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,8 @@ class box_comptes extends ModeleBoxes {
 	{
 		global $user, $langs, $db, $conf;
 
+		$this->max=$max;
+		
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
 		if ($user->rights->banque->lire)
@@ -94,22 +96,19 @@ class box_comptes extends ModeleBoxes {
 					
 					$solde_total += $solde;
 
-					$this->info_box_contents[$i][0] = array('align' => 'left',
+					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
 					'logo' => $this->boximg,
+					'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid);
+					
+					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
 					'text' => $objp->label,
 					'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid);
 
-					/*
-					$this->info_box_contents[$i][1] = array('align' => 'left',
-					'text' => $objp->bank
-					);
-					*/
-					
-					$this->info_box_contents[$i][1] = array('align' => 'left',
+					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
 					'text' => $objp->number
 					);
 
-					$this->info_box_contents[$i][2] = array('align' => 'right',
+					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
 					'text' => price($solde).' '.$langs->trans("Currency".$objp->currency_code)
 					);
 
@@ -117,17 +116,10 @@ class box_comptes extends ModeleBoxes {
 				}
 
                 // Total
-				$this->info_box_contents[$i][-1] = array('class' => 'liste_total');
-				
-				$this->info_box_contents[$i][0] = array('align' => 'right',
-				//'width' => '75%',
-      			'colspan' => '3',
-				'class' => 'liste_total',
+				$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'align="right" colspan="3" class="liste_total"',
 				'text' => $langs->trans('Total')
 				);
-
-				$this->info_box_contents[$i][1] = array('align' => 'right',
-				'class' => 'liste_total',
+				$this->info_box_contents[$i][1] = array('td' => 'align="right" class="liste_total"',
 				'text' => price($solde_total).' '.$langs->trans("Currency".$conf->monnaie)
 				);
 
@@ -137,7 +129,7 @@ class box_comptes extends ModeleBoxes {
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
+			$this->info_box_contents[0][0] = array('td' => 'align="left"',
 			'text' => $langs->trans("ReadPermissionNotAllowed"));
 		}
 

@@ -60,25 +60,29 @@ class box_osc_clients extends ModeleBoxes {
         global $user, $langs, $db;
         $langs->load("boxes");
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleNbOfCustomers",$max));
+		$this->max=$max;
+        
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleNbOfCustomers",$max));
 
         if ($user->rights->boutique->lire)
         {
             $sql = "SELECT count(*) as cus FROM ".OSC_DB_NAME.".".OSC_DB_TABLE_PREFIX."customers";
     
-            $result = $db->query($sql);
-            if ($result)
+            $resql = $db->query($sql);
+            if ($resql)
             {
-                $num = $db->num_rows();
+                $num = $db->num_rows($resql);
     
                 $i = 0;
     
                 while ($i < $num)
                 {
-                    $objp = $db->fetch_object($result);
+                    $objp = $db->fetch_object($resql);
     
-                    $this->info_box_contents[$i][0] = array('align' => 'center',
+                    $this->info_box_contents[$i][0] = array('td' => 'align="center" width="16"',
                     'logo' => $this->boximg,
+                    'url' => DOL_URL_ROOT."/boutique/client/index.php");
+                    $this->info_box_contents[$i][1] = array('td' => 'align="center"',
                     'text' => $objp->cus,
                     'url' => DOL_URL_ROOT."/boutique/client/index.php");
                     $i++;
@@ -89,7 +93,7 @@ class box_osc_clients extends ModeleBoxes {
             }
         }
         else {
-            $this->info_box_contents[0][0] = array('align' => 'left',
+            $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
         

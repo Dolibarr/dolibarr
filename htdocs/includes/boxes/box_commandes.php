@@ -60,6 +60,8 @@ class box_commandes extends ModeleBoxes {
     {
         global $user, $langs, $db;
             
+		$this->max=$max;
+        
 		include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
         $commandestatic=new Commande($db);
 
@@ -95,46 +97,29 @@ class box_commandes extends ModeleBoxes {
                 {
                     $objp = $db->fetch_object($result);
 
-                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
+                    'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
+                    
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->ref,
                     'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
 
-                    $this->info_box_contents[$i][1] = array('align' => 'left',
+                    $this->info_box_contents[$i][2] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-                    $this->info_box_contents[$i][2] = array('align' => 'right',
+                    $this->info_box_contents[$i][3] = array('td' => 'align="right"',
                     'text' => dolibarr_print_date($objp->tms,'day'),
                     );
                     
-                    $this->info_box_contents[$i][3] = array(
-                    'align' => 'right',
-					'width' => 18,
+                    $this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
                     'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facturee,3));
 
                     $i++;
                 }
                 
-                $i=$num;
-                while ($i < $max)
-                {
-                    if ($num==0 && $i==$num)
-                    {
-                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedOrders"));
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
-                    } else {
-                        $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
-                    }
-                    $i++;
-                }
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedOrders"));
             }
             else {
                 dolibarr_print_error($db);

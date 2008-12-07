@@ -59,7 +59,9 @@ class box_bookmarks extends ModeleBoxes {
     {
         global $user, $langs, $db;
         $langs->load("boxes");
-
+		
+        $this->max=$max;
+        
         $this->info_box_head = array('text' => $langs->trans("BoxMyLastBookmarks",$max),
                                      'sublink' => DOL_URL_ROOT.'/bookmarks/liste.php');
         if ($user->rights->bookmark->creer)
@@ -93,29 +95,19 @@ class box_bookmarks extends ModeleBoxes {
                 {
                     $objp = $db->fetch_object($result);
     
-                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
-                    'text' => stripslashes($objp->title),
+                    'url' => $objp->url,
+                    'target' => $objp->target?'newtab':'');
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
+                    'text' => $objp->title,
                     'url' => $objp->url,
                     'target' => $objp->target?'newtab':'');
     
                     $i++;
                 }
  
-                $i=$num;
-                while ($i < $max)
-                {
-                    if ($num==0 && $i==$num)
-                    {
-                        $this->info_box_contents[$i][0] = array('align' => 'center', 'url'=> DOL_URL_ROOT.'/bookmarks/liste.php', 'text'=>$langs->trans("NoRecordedBookmarks"));
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                    } else {
-                        $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
-                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                    }
-                    $i++;
-                }
-
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center" colspan="2"', 'url'=> DOL_URL_ROOT.'/bookmarks/liste.php', 'text'=>$langs->trans("NoRecordedBookmarks"));
             }
             else
             {

@@ -62,7 +62,10 @@ class box_factures_imp extends ModeleBoxes {
     {
         global $conf, $user, $langs, $db;
 
-        $facturestatic=new Facture($db);
+		$this->max=$max;
+        
+		include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+		$facturestatic=new Facture($db);
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpayedCustomerBills",$max));
 
@@ -100,54 +103,41 @@ class box_factures_imp extends ModeleBoxes {
                     $late='';
                     if ($objp->datelimite < (time() - $conf->facture->warning_delay)) $late = img_warning(sprintf($l_due_date,dolibarr_print_date($objp->datelimite,'day')));
 
-                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
                     'logo' => $this->boximg,
+                    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
+
+                    $this->info_box_contents[$i][1] = array('td' => 'align="left"',
                     'text' => $objp->facnumber,
                     'text2'=> $late,
                     'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
-
-                    $this->info_box_contents[$i][1] = array('align' => 'left',
+                    
+                    $this->info_box_contents[$i][2] = array('td' => 'align="left"',
                     'text' => $objp->nom,
                     'maxlength'=>44,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
-                    $this->info_box_contents[$i][2] = array('align' => 'right',
+                    $this->info_box_contents[$i][3] = array('td' => 'align="right"',
                     'text' => dolibarr_print_date($objp->datelimite,'day'),
                     );
 
-                    $this->info_box_contents[$i][3] = array(
-                    'align' => 'right',
-                    'width' => 18,
+                    $this->info_box_contents[$i][3] = array('td' => 'align="right" width="18"',
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));                    
 
                     $i++;
                 }
                 
-                $i=$num;
-                while ($i < $max)
-                {
-                    if ($num==0 && $i==$num)
-                    {
-                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoUnpayedCustomerBills"));
-                    } else {
-                        $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
-                    }
-                    $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
-                    $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
-                    $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
-                    $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
-                    $i++;
-                }
+                if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoUnpayedCustomerBills"));
             }
             else
             {
-    	        $this->info_box_contents[0][0] = array(	'align' => 'left',
+    	        $this->info_box_contents[0][0] = array(	'td' => 'align="left"',
     	        										'maxlength'=>500,
 	            										'text' => ($db->error().' sql='.$sql));
             }
         }
         else {
-            $this->info_box_contents[0][0] = array('align' => 'left',
+            $this->info_box_contents[0][0] = array('td' => 'align="left"',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }
     }

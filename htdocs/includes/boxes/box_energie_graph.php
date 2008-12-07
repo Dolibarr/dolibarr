@@ -30,53 +30,57 @@ class box_energie_graph extends ModeleBoxes {
 
 	var $db;
 	var $param;
-	
+
 	var $box_multiple = 1;
-	
+
 	var $info_box_head = array();
 	var $info_box_contents = array();
-  
-  /**
-   *      \brief      Constructeur de la classe
-   */
-  function box_energie_graph()
-  {
-    global $langs;
-    $langs->load("boxes");
-    
-    $this->boxlabel=$langs->trans("EnergieGraph");
-  }
-  
-    /**
-     *      \brief      Charge les données en mémoire pour affichage ultérieur
-     *      \param      $max        Nombre maximum d'enregistrements à charger
-     */
-    function loadBox($max=5)
-    {
-      global $user, $langs, $db;
-      $langs->load("boxes");
-      
-      $text = '<a href="energie/">'.$langs->trans("Energie").'</a>';
 
-      $this->info_box_head = array('text' => $text,$max);
-      
+	/**
+	 *      \brief      Constructeur de la classe
+	 */
+	function box_energie_graph()
+	{
+		global $langs;
+		$langs->load("boxes");
 
-      $file = "small-all.1.png";
-      $libelle = '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
+		$this->boxlabel=$langs->trans("EnergieGraph");
+	}
 
-	      
-      $this->info_box_contents[0][0] = array('align' => 'left',
+	/**
+	 *      \brief      Charge les données en mémoire pour affichage ultérieur
+	 *      \param      $max        Nombre maximum d'enregistrements à charger
+	 */
+	function loadBox($max=5)
+	{
+		global $user, $langs, $db;
+		$langs->load("boxes");
+
+		$this->max=$max;
+
+		$text = '<a href="energie/">'.$langs->trans("Energie").'</a>';
+
+		$this->info_box_head = array('text' => $text,$max);
+
+
+		$file = "small-all.1.png";
+		$libelle = '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
+
+		 
+		$this->info_box_contents[0][0] = array('td' => 'align="left" width="16"',
 					      'logo' => $this->boximg,
+					      'url' => DOL_URL_ROOT."/energie/compteur.php?id=".$objp->rowid);
+		$this->info_box_contents[0][1] = array('td' => 'align="left"',
 					      'text' => $libelle,
 					      'url' => DOL_URL_ROOT."/energie/compteur.php?id=".$objp->rowid);
-      
-  
-    }
-  
-  function showBox()
-  {
-    parent::showBox($this->info_box_head, $this->info_box_contents);
-  }  
+
+
+	}
+
+	function showBox()
+	{
+		parent::showBox($this->info_box_head, $this->info_box_contents);
+	}
 }
 
 ?>

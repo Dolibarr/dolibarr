@@ -66,6 +66,8 @@ class box_external_rss extends ModeleBoxes {
         global $user, $langs, $conf;
         $langs->load("boxes");
 
+		$this->max=$max;
+        
 		// On recupere numero de param de la boite
 		ereg('^([0-9]+) ',$this->param,$reg);
 		$site=$reg[1];
@@ -136,15 +138,20 @@ class box_external_rss extends ModeleBoxes {
 	        $title=ereg_replace("([[:alnum:]])\?([[:alnum:]])","\\1'\\2",$title);   // Gère problème des apostrophes mal codée/décodée par utf8
             $title=ereg_replace("^\s+","",$title);                                  // Supprime espaces de début
             $this->info_box_contents["$href"]="$title";
-            $this->info_box_contents[$i][0] = array('align' => 'left',
+
+            $this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
             'logo' => $this->boximg,
+            'url' => $href,
+            'target' => 'newrss');
+            
+            $this->info_box_contents[$i][1] = array('td' => 'align="left"',
             'text' => $title,
             'url' => $href,
             'maxlength' => 64,
             'target' => 'newrss');
-            $this->info_box_contents[$i][1] = array('align' => 'right',
-            'text' => $date,
-            'td' => 'nowrap="1"');
+
+            $this->info_box_contents[$i][2] = array('td' => 'align="right" nowrap="1"',
+            'text' => $date);
         }
     }
     
