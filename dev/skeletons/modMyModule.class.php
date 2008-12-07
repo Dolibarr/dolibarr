@@ -194,57 +194,13 @@ class modMyModule extends DolibarrModules
 	/**
 	*		\brief		Create tables and keys required by module
 	* 					Files mymodule.sql and mymodule.key.sql with create table and create keys
-	* 					commands must be stored in directory /mysql/tables/mymodule/.
+	* 					commands must be stored in directory /mymodule/sql/
 	*					This function is called by this->init.
 	* 		\return		int		<=0 if KO, >0 if OK
 	*/
 	function load_tables()
 	{
-		include_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
-
-		global $db;
-		
-		$ok = 1;
-		if ($ok)
-		{
-			$dir = DOL_DOCUMENT_ROOT.'/mymodule/sql/';
-			$ok = 0;
-
-			// Run llx_mytable.sql files
-			$handle=opendir($dir);
-			if ($hanlde)
-			{
-				while (($file = readdir($handle))!==false)
-				{
-					if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) <> '.key.sql')
-					{
-						$result=run_sql($dir.$file,1);
-					}
-				}
-				closedir($handle);
-			}
-			
-			// Run llx_mytable.key.sql files
-			if ($hanlde)
-			{
-				$handle=opendir($dir);
-				while (($file = readdir($handle))!==false)
-				{
-					if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) == '.key.sql')
-					{
-						$result=run_sql($dir.$file,1);
-					}
-				}
-				closedir($handle);
-			}
-			
-			if ($error == 0)
-			{
-				$ok = 1;
-			}
-		}
-		
-		return $ok;
+		return $this->_load_tables('/mymodule/sql/');
 	}
 }
 

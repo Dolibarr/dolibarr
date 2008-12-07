@@ -107,11 +107,12 @@ class DolibarrModules
 			{
 				$sql=$array_sql[$i];
 
+				dolibarr_syslog("DolibarrModules::_init sql=".$sql, LOG_DEBUG);
 				$result=$this->db->query($sql);
 				if (! $result)
 				{
 					$this->error=$this->db->error();
-					dolibarr_syslog("DolibarrModules::_init Error sql=".$sql." - ".$this->error, LOG_ERR);
+					dolibarr_syslog("DolibarrModules::_init Error ".$this->error, LOG_ERR);
 					$err++;
 				}
 			}
@@ -216,10 +217,10 @@ class DolibarrModules
 
 
 	/**
-		\brief      Retourne le nom traduit du module si la traduction existe dans admin.lang,
-		sinon le nom defini par defaut dans le module.
-		\return     string      Nom du module traduit
-		*/
+	 *	\brief      Retourne le nom traduit du module si la traduction existe dans admin.lang,
+	 *				sinon le nom defini par defaut dans le module.
+	 *	\return     string      Nom du module traduit
+	 */
 	function getName()
 	{
 		global $langs;
@@ -239,10 +240,10 @@ class DolibarrModules
 
 
 	/**
-		\brief      Retourne la description traduite du module si la traduction existe dans admin.lang,
-		sinon la description definie par defaut dans le module.
-		\return     string      Nom du module traduit
-		*/
+	 *	\brief      Retourne la description traduite du module si la traduction existe dans admin.lang,
+	 *				sinon la description definie par defaut dans le module.
+	 *	\return     string      Nom du module traduit
+	 */
 	function getDesc()
 	{
 		global $langs;
@@ -262,12 +263,12 @@ class DolibarrModules
 
 
 	/**
-		\brief      Retourne la version du module.
-		Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
-		Pour les modules 'dolibarr', retourne la version de Dolibarr
-		Pour les autres modules, retourne la version du module
-		\return     string      Version du module
-		*/
+	 *	\brief      Retourne la version du module.
+	 *				Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
+	 *				Pour les modules 'dolibarr', retourne la version de Dolibarr
+	 *				Pour les autres modules, retourne la version du module
+	 *	\return     string      Version du module
+	 */
 	function getVersion()
 	{
 		global $langs;
@@ -282,8 +283,8 @@ class DolibarrModules
 
 
 	/**
-	 \brief      Retourne la version en base du module.
-	 \return     string      Version du module
+	 *	\brief      Retourne la version en base du module.
+	 *	\return     string      Version du module
 	 */
 	function getDbVersion()
 	{
@@ -318,8 +319,8 @@ class DolibarrModules
 
 
 	/**
-	 \brief      Retourne la liste des fichiers lang en rapport avec le module
-	 \return     array       Tableau des fichier lang
+	 *	\brief      Retourne la liste des fichiers lang en rapport avec le module
+	 *	\return     array       Tableau des fichier lang
 	 */
 	function getLangFilesArray()
 	{
@@ -327,8 +328,8 @@ class DolibarrModules
 	}
 
 	/**
-	 \brief      Retourne le libelle d'un lot de donnees exportable
-	 \return     string      Libelle du lot de donnees
+	 *	\brief      Retourne le libelle d'un lot de donnees exportable
+	 *	\return     string      Libelle du lot de donnees
 	 */
 	function getDatasetLabel($r)
 	{
@@ -424,8 +425,68 @@ class DolibarrModules
 
 
 	/**
-	 \brief      Insere les boites associees au module dans llx_boxes_def
-	 \return     int     Nombre d'erreurs (0 si ok)
+	 *		\brief		Create tables and keys required by module
+	 * 					Files module.sql and module.key.sql with create table and create keys
+	 * 					commands must be stored in directory reldir='/module/sql/'
+	 *					This function is called by this->init.
+	 * 		\return		int		<=0 if KO, >0 if OK
+	 */
+	function _load_tables($reldir)
+	{
+		global $db,$conf;
+
+		include_once(DOL_DOCUMENT_ROOT ."/lib/admin.lib.php");
+		
+		$ok = 1;
+		foreach($conf->dol_document_root as $dirroot)
+		{
+			if ($ok)
+			{
+				$dir = $dirroot.$reldir;
+				$ok = 0;
+	
+				// Run llx_mytable.sql files
+				$handle=opendir($dir);
+				if ($handle)
+				{
+					while (($file = readdir($handle))!==false)
+					{
+						if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) <> '.key.sql')
+						{
+							$result=run_sql($dir.$file,1);
+						}
+					}
+					closedir($handle);
+				}
+	
+				// Run llx_mytable.key.sql files
+				$handle=opendir($dir);
+				if ($handle)
+				{
+					while (($file = readdir($handle))!==false)
+					{
+						if (eregi('\.sql$',$file) && substr($file,0,4) == 'llx_' && substr($file, -8) == '.key.sql')
+						{
+							$result=run_sql($dir.$file,1);
+						}
+					}
+					closedir($handle);
+				}
+				
+				if ($error == 0)
+				{
+					$ok = 1;
+				}
+			}
+		}
+
+		return $ok;
+	}
+
+	
+	/**
+	 *	\brief      Insere les boites associees au module dans llx_boxes_def
+	 *	\return     int     Nombre d'erreurs (0 si ok)
 	 */
 	function insert_boxes()
 	{
@@ -473,8 +534,8 @@ class DolibarrModules
 
 
 	/**
-	 \brief      Supprime les documents
-	 \return     int     Nombre d'erreurs (0 si ok)
+	 *	\brief      Supprime les documents
+	 *	\return     int     Nombre d'erreurs (0 si ok)
 	 */
 	function delete_docs()
 	{
@@ -503,9 +564,9 @@ class DolibarrModules
 
 
 	/**
-		\brief      Supprime les boites
-		\return     int     Nombre d'erreurs (0 si ok)
-		*/
+	 *	\brief      Supprime les boites
+	 *	\return     int     Nombre d'erreurs (0 si ok)
+	 */
 	function delete_boxes()
 	{
 		$err=0;

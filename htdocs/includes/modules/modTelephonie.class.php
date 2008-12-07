@@ -302,160 +302,17 @@ class modTelephonie extends DolibarrModules
 
 		return $this->_remove($sql);
 	}
-	/*
-	 *
-	 *
-	 */
+
+	/**
+	*		\brief		Create tables and keys required by module
+	* 					Files mymodule.sql and mymodule.key.sql with create table and create keys
+	* 					commands must be stored in directory /mymodule/sql/.
+	*					This function is called by this->init.
+	* 		\return		int		<=0 if KO, >0 if OK
+	*/
 	function load_tables()
 	{
-		/**************************************************************************************
-		 *
-		 * Chargement fichiers tables/*.sql (non *.key.sql)
-		 * A faire avant les fichiers *.key.sql
-		 *
-		 ***************************************************************************************/
-		$ok = 1;
-		if ($ok)
-		{
-			$dir = DOL_DOCUMENT_ROOT.'/telephonie/sql/';
-
-			$ok = 0;
-			$handle=opendir($dir);
-			$table_exists = 0;
-			while (($file = readdir($handle))!==false)
-			{
-				if (substr($file, strlen($file) - 4) == '.sql' && substr($file,0,4) == 'llx_' && substr($file, -8) <> '.key.sql')
-				{
-					$name = substr($file, 0, strlen($file) - 4);
-					$buffer = '';
-					$fp = fopen($dir.$file,"r");
-					if ($fp)
-					{
-						while (!feof ($fp))
-						{
-							$buf = fgets($fp, 4096);
-							if (substr($buf, 0, 2) <> '--')
-							{
-								$buffer .= $buf;
-							}
-						}
-						fclose($fp);
-				
-					}
-
-					//print "<tr><td>Creation de la table $name/td>";
-					$requestnb++;
-					if (@$this->db->query($buffer))
-					{
-						//print "<td>OK requete ==== $buffer</td></tr>";
-					}
-					else
-					{
-						if ($this->db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS')
-						{
-							//print "<td>Deje existante</td></tr>";
-							$table_exists = 1;
-						}
-						else
-						{
-							$error++;
-						}
-					}
-				}
-					
-			}
-			closedir($handle);
-
-			if ($error == 0)
-			{
-				$ok = 1;
-			}
-		}
-
-
-		/***************************************************************************************
-		 *
-		 * Chargement fichiers tables/*.key.sql
-		 * A faire apres les fichiers *.sql
-		 *
-		 ***************************************************************************************/
-		if ($ok)
-		{
-			$okkeys = 0;
-			$handle=opendir($dir);
-			$table_exists = 0;
-			while (($file = readdir($handle))!==false)
-	  {
-	  	if (substr($file, strlen($file) - 4) == '.sql' && substr($file,0,4) == 'llx_' && substr($file, -8) == '.key.sql')
-	  	{
-	  		$name = substr($file, 0, strlen($file) - 4);
-	  		$buffer = '';
-	  		$fp = fopen($dir.$file,"r");
-	  		if ($fp)
-	  		{
-	  			while (!feof ($fp))
-	  			{
-	  				$buf = fgets($fp, 4096);
-	  					
-	  				// Cas special de lignes autorisees pour certaines versions uniquement
-	  				if (eregi('^-- V([0-9\.]+)',$buf,$reg))
-	  				{
-	  					$versioncommande=split('\.',$reg[1]);
-	  					//print var_dump($versioncommande);
-	  					//print var_dump($versionarray);
-	  					if (sizeof($versioncommande) && sizeof($versionarray)
-	  					&& versioncompare($versioncommande,$versionarray) <= 0)
-	  					{
-	  						// Version qualified, delete SQL comments
-	  						$buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
-	  						//print "Ligne $i qualifiee par version: ".$buf.'<br>';
-	  					}
-	  				}
-	  					
-	  				// Ajout ligne si non commentaire
-	  				if (! eregi('^--',$buf)) $buffer .= $buf;
-	  			}
-	  			fclose($fp);
-	  		}
-
-	  		// Si plusieurs requetes, on boucle sur chaque
-	  		$listesql=split(';',$buffer);
-	  		foreach ($listesql as $buffer)
-	  		{
-	  			if (trim($buffer))
-	  			{
-	  				$requestnb++;
-	  				if (@$this->db->query(trim($buffer)))
-	  				{
-	  					//print "<td>OK requete ==== $buffer</td></tr>";
-	  				}
-	  				else
-	  				{
-	  					if ($this->db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS' ||
-	  					$this->db->errno() == 'DB_ERROR_CANNOT_CREATE' ||
-	  					$this->db->errno() == 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS' ||
-	  					eregi('duplicate key name',$this->db->error()))
-	  					{
-			      $key_exists = 1;
-	  					}
-	  					else
-	  					{
-			      $error++;
-	  					}
-	  				}
-	  			}
-	  		}
-	  	}
-	  	 
-	  }
-	  closedir($handle);
-
-	  if ($error == 0)
-	  {
-	  	$okkeys = 1;
-	  }
-		}
-
+		return $this->_load_tables('/telephonie/sql/');
 	}
 }
 ?>

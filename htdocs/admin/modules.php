@@ -131,7 +131,7 @@ function Activate($value,$withdeps=1)
 */
 function UnActivate($value,$requiredby=1)
 {
-	global $db, $modules;
+	global $db, $modules, $conf;
 
 	$modName = $value;
 
