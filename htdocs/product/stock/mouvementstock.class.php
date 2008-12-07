@@ -105,7 +105,7 @@ class MouvementStock
 					$sql.= " (".$qty.",".$entrepot_id.",".$fk_product.")";
 				}
 
-				dolibarr_syslog("MouvementStock::_create sql=".$sql, LOG_DEBUG);
+				dolibarr_syslog("MouvementStock::_Create sql=".$sql, LOG_DEBUG);
 				if ($this->db->query($sql))
 				{
 
@@ -130,11 +130,17 @@ class MouvementStock
 		}
 		
 		// Add movement for sub products 
-		if ($conf->global->PRODUIT_SOUSPRODUITS)
+		if ($error == 0 && $conf->global->PRODUIT_SOUSPRODUITS)
 		{
 			$error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, $price=0);
 		}
 		
+		// composition module
+		if ($error == 0 && $qty < 0 && $conf->global->MAIN_MODULE_COMPOSITION)
+		{
+			$error = $this->_createProductComposition($user, $fk_product, $entrepot_id, $qty, $type, $price=0);
+		}
+			
 		if ($error == 0)
 		{
 			$this->db->commit();

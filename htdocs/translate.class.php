@@ -180,9 +180,11 @@ class Translate {
 		
 		// Check cache
 		if (! empty($this->tab_loaded[$domain])) { return; }    // Le fichier de ce domaine est deja charge
-
+	
 		foreach($this->dir as $searchdir)
 		{
+			$newalt=$alt;
+
 			// If $domain is @xxx instead of xxx then we look for module lang file htdocs/xxx/langs/code_CODE/xxx.lang 
 			// instead of global lang file htdocs/langs/code_CODE/xxx.lang
 			if (eregi('@',$domain))	// It's a language file of a module, we look in dir of this module.
@@ -191,7 +193,6 @@ class Translate {
 				$searchdir=$searchdir ."/".$domain."/langs";
 			}
 			else $searchdir=$searchdir."/langs";
-			//print 'rrr'.$searchdir;
 			
 	        // Directory of translation files
 	        $scandir = $searchdir."/".$this->defaultlang;
@@ -199,7 +200,7 @@ class Translate {
 	        $filelangexists=is_file($file_lang);
 	        
 	        // Check in "always available" alternate file if not found or if asked
-	        if ($alt || ! $filelangexists)
+	        if ($newalt || ! $filelangexists)
 	        {
 	            // Dir of always available alternate file (en_US or fr_FR)
 				if ($this->defaultlang == "en_US") $scandiralt = $searchdir."/fr_FR";
@@ -210,9 +211,10 @@ class Translate {
 	
 	            $file_lang = $scandiralt . "/".$domain.".lang";
 	            $filelangexists=is_file($file_lang);
-	            $alt=1;
+	            $newalt=1;
 	        }
 	
+			//print 'eee'.$file_lang."-".$filelangexists;
 	        if ($filelangexists)
 	        {
 				// Enable cache of lang file in session (faster but need more memory)
@@ -229,9 +231,9 @@ class Translate {
 				}
 				else
 				{
-		            if ($fp = @fopen($file_lang,"rt"))
+					if ($fp = @fopen($file_lang,"rt"))
 		            {
-						if ($enablelangcacheinsession) $tabtranslatedomain=array();	// To save lang in session
+		            	if ($enablelangcacheinsession) $tabtranslatedomain=array();	// To save lang in session
 		                $finded = 0;
 		                while (($ligne = fgets($fp,4096)) && ($finded == 0))
 		                {
@@ -258,7 +260,7 @@ class Translate {
 			                        	if ($this->charset_inputfile == 'ISO-8859-1') $value=utf8_encode($value);
 	
 										// We do not load Separator values for alternate files
-										if (! $alt || (! eregi('^Separator',$key)))
+										if (! $newalt || (! eregi('^Separator',$key)))
 										{
 											$this->tab_translate[$key]=$value;
 										}
@@ -270,7 +272,7 @@ class Translate {
 						fclose($fp);
 	
 		                // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
-		                if (! $alt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
+		                if (! $newalt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US")
 		                {
 		                    dolibarr_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$domain.".lang file)", LOG_DEBUG);
 		                    $this->load($domain,1);

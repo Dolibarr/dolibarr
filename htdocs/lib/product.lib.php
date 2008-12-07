@@ -23,7 +23,6 @@
  *	\brief      Ensemble de fonctions de base pour le module produit et service
  *	\version    $Id$
  */
-
 function product_prepare_head($product, $user)
 {
 	global $langs, $conf;
@@ -122,7 +121,6 @@ function product_prepare_head($product, $user)
 		foreach ($conf->tabs_modules['product'] as $value)
 		{
 			$values=split(':',$value);
-
 			if ($values[2]) $langs->load($values[2]);
 			$head[$h][0] = eregi_replace('__ID__',$product->id,$values[3]);
 			$head[$h][1] = $langs->trans($values[1]);
