@@ -112,11 +112,11 @@ class Export
 	                            $bool=$user->rights->$perm[0]->$perm[1];
 	                        }
 	                        if ($perm[0]=='user' && $user->admin) $bool=true;
-	                        //print("$bool<br>");
+	                        //print $bool." $perm[0]"."<br>";
 	                        
 	                        // Permissions ok
-	                        if ($bool)
-	                        {
+//	                        if ($bool)
+//	                        {
 	                            // Charge fichier lang en rapport
 	                            $langtoload=$module->getLangFilesArray();
 	                            if (is_array($langtoload))
@@ -129,6 +129,8 @@ class Export
 	
 	                            // Module
 	                            $this->array_export_module[$i]=$module;
+	                            // Permission
+	                            $this->array_export_perms[$i]=$bool;
 	                            // Icon
 	                            $this->array_export_icon[$i]=(isset($module->export_icon[$r])?$module->export_icon[$r]:$module->picto);
 	                            // Code du dataset export
@@ -151,7 +153,7 @@ class Export
 	
 	                            dolibarr_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
 	                            $i++;
-	                        }
+//	                        }
 	                    }            
 	                }
                 }

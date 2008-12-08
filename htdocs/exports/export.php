@@ -292,8 +292,15 @@ if ($step == 1 || ! $datatoexport)
             print img_object($objexport->array_export_module[$key]->getName(),$objexport->array_export_icon[$key]).' ';
             print $objexport->array_export_label[$key];
             print '</td><td align="right">';
-            print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
-            print '</td></tr>';
+            if ($objexport->array_export_perms[$key])
+            {
+            	print '<a href="'.DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$objexport->array_export_code[$key].'">'.img_picto($langs->trans("NewExport"),'filenew').'</a>';
+            }
+            else
+            {
+            	print $langs->trans("NotEnoughPermissions");
+            }
+           	print '</td></tr>';
         }
     }
     else
