@@ -35,7 +35,7 @@ $langs->load("other");
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,bookmark,boutique,cashdesk,commercial,commande,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,service,societe,stock,tax'),
+	'disablemodules'=>'banque,barcode,bookmark,boutique,cashdesk,commercial,commande,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,service,societe,stock,tax'),
 	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
 	'disablemodules'=>'barcode,boutique,bookmark,cashdesk,commercial,contrat,expedition,facture,commande,fournisseur,prelevement,produit,projet,service,societe,stock'),
 	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
