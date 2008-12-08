@@ -27,7 +27,8 @@
 
 require("../../master.inc.php");
 
-$langs->setDefaultLang('auto');
+$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
+$langs->setDefaultLang($langcode);
 
 $langs->load("main");
 $langs->load("other");
@@ -67,6 +68,10 @@ function llxHeaderVierge($title, $head = "")
 	print "<title>".$title."</title>\n";
 	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css.php">'."\n";
 	if ($head) print $head."\n";
+	print '<style type="text/css">';
+	print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
+	print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
+	print '</style>';
 	print "</head>\n";
 	print '<body style="margin: 20px;">'."\n";
 }
@@ -206,7 +211,7 @@ foreach ($demoprofiles as $profilarray)
 		//if ($i % $NBOFCOLS == 0) print '<tr>';
 		print '<tr>';
 		print '<td align="left">';
-		print '<table style="font-size:14px;" width="100%">'."\n";
+		print '<table style="font-size:14px;" width="100%" class="CTableRow'.($i%2==0?'1':'2').'">'."\n";
 		print '<tr>';
 		print '<td align="left" width="50"><a href="'.$url.'"><img src="'.$profilarray['icon'].'" width="48" border="0"></a></td>';
 		//print '<td><input type="radio" name="demochoice"';
