@@ -90,11 +90,11 @@ if ($result)
 	$i = 0;
 
 	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
-	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, "priv_liste.php", $param, $sortfield, $sortorder, '', $num);
+	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, "priv_liste.php", $param, $sortfield, $sortorder, '', $num, 0, '');
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
-	print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.prenom\">Prenom</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.nom\">Nom</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.societe\">Soci�t�</a></td>\n";
+	print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.prenom\">".$langs->trans("Surname")."</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.nom\">".$langs->trans("Name")."</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.societe\">".$langs->trans("Company")."</a></td>\n";
 	print_liste_field_titre($langs->trans("Birthdate"),"priv_liste.php","naiss","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("EMail"),"priv_liste.php","email","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Zip"),"priv_liste.php","cp","",$param,$sortfield,$sortorder);
@@ -108,7 +108,7 @@ if ($result)
 		$objp = $db->fetch_object($result);
 		$var=!$var;
 		print "<tr $bc[$var]>";
-		print "<td><a href=\"priv_fiche.php?id=$objp->rowid\">".$objp->prenom." ".$objp->nom." / ".$objp->societe."</a></TD>\n";
+		print "<td><a href=\"priv_fiche.php?id=$objp->rowid\">".$objp->prenom." ".$objp->nom.($objp->societe?" / ".$objp->societe:"")."</a></TD>\n";
 		print "<td>$objp->naiss</td>\n";
 		print "<td>$objp->email</td>\n";
 		print "<td>$objp->cp</td>\n";
