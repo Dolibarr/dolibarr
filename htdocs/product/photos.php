@@ -17,15 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- * $Id$
  */
 
 /**
         \file       htdocs/product/photos.php
         \ingroup    product
         \brief      Onglet photos de la fiche produit
-        \version    $Revision$
+        \version    $Id$
 */
 
 require("./pre.inc.php");
@@ -156,10 +154,18 @@ if ($_GET["id"] || $_GET["ref"])
 
         print "\n<div class=\"tabsAction\">\n";
 
-        if ($_GET["action"] != 'ajout_photo' && $user->rights->produit->creer && ! empty($conf->global->MAIN_UPLOAD_DOC))
+        if ($_GET["action"] != 'ajout_photo' && $user->rights->produit->creer)
         {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/photos.php?action=ajout_photo&amp;id='.$product->id.'">';
-            print $langs->trans("AddPhoto").'</a>';
+        	if (! empty($conf->global->MAIN_UPLOAD_DOC))
+        	{
+            	print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/photos.php?action=ajout_photo&amp;id='.$product->id.'">';
+            	print $langs->trans("AddPhoto").'</a>';
+        	}
+        	else
+        	{
+            	print '<a class="butActionRefused" href="#">e';
+            	print $langs->trans("AddPhoto").'</a>';
+        	}
         }
 
         print "\n</div>\n";
