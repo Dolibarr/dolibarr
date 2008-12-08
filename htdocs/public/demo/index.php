@@ -27,7 +27,8 @@
 
 require("../../master.inc.php");
 
-$langs->setDefaultLang('auto');
+$langcode=(empty($_GET["lang"])?'auto':$_GET["lang"]);
+$langs->setDefaultLang($langcode);
 
 $langs->load("main");
 $langs->load("other");
@@ -35,17 +36,23 @@ $langs->load("other");
 
 $demoprofiles=array(
 	array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-	'disablemodules'=>'banque,barcode,bookmark,boutique,cashdesk,commande,commercial,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,service,societe,stock,tax'),
+	'disablemodules'=>'banque,barcode,bookmark,boutique,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock,tax',
+	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-	'disablemodules'=>'barcode,boutique,bookmark,cashdesk,commande,commercial,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,service,societe,stock'),
+	'disablemodules'=>'barcode,boutique,bookmark,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,facture,fournisseur,prelevement,produit,projet,propal,propale,service,societe,stock',
+	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 	array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-	'disablemodules'=>'adherent,barcode,boutique,bookmark,cashdesk,don,expedition,prelevement,projet,stock'),
+	'disablemodules'=>'adherent,barcode,boutique,bookmark,cashdesk,don,expedition,prelevement,projet,stock',
+	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
 	array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-	'disablemodules'=>'adherent,boutique,bookmark,don,prelevement,produit,stock'),
+	'disablemodules'=>'adherent,boutique,bookmark,don,prelevement,produit,stock',
+	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-	'disablemodules'=>'adherent,boutique,bookmark,cashdesk,don,prelevement,service'),
+	'disablemodules'=>'adherent,boutique,bookmark,cashdesk,don,prelevement,service',
+	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 	array('default'=>'0', 'key'=>'profdemoall','label'=>'DemoCompanyAll',
-	'disablemodules'=>'adherent,boutique,bookmark,cashdesk,don'),
+	'disablemodules'=>'adherent,boutique,bookmark,cashdesk,don',
+	'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
 	);
 
 
@@ -76,13 +83,13 @@ function llxFooter()
  * Actions
  */
 
-if ($_POST["action"] == 'gotodemo')
+if ($_REQUEST["action"] == 'gotodemo')
 {
 	//print 'ee'.$_POST["demochoice"];
 	$disablestring='';
 	foreach ($demoprofiles as $profilearray)
 	{
-		if ($profilearray['key'] == $_POST["demochoice"])
+		if ($profilearray['key'] == $_REQUEST["demochoice"])
 		{
 			$disablestring=$profilearray['disablemodules'];
 			break;
@@ -184,21 +191,35 @@ print '<br>';
 
 print $langs->trans("DemoDesc").'<br>';
 print '<br>';
-print '<b>'.$langs->trans("ChooseYourDemoProfil").'</b>';
+print '<font color="#555577"><b>'.$langs->trans("ChooseYourDemoProfil").'</b></font>';
 
 print '</td></tr>';
 print '<tr><td width="50%">';
 
-print '<table style="font-size:14px;">'."\n";
+$NBOFCOLS=2;
+print '<table style="font-size:14px;" width="100%">'."\n";
+$i=0;
 foreach ($demoprofiles as $profilarray)
 {
 	if ($profilarray['default'] >= 0)
 	{
-		print '<tr><td><input type="radio" name="demochoice"';
-		if ($profilarray['default']) print ' checked="true"';
-		print ' value="'.$profilarray['key'].'"></td>';
-		print '<td>'.$langs->trans($profilarray['label']).'</td></tr>'."\n";
-	}	
+		$url=$_SERVER["PHP_SELF"].'?action=gotodemo&amp;demochoice='.$profilarray['key'];
+		//if ($i % $NBOFCOLS == 0) print '<tr>';
+		print '<tr>';
+		print '<td align="left">';
+		print '<table style="font-size:14px;" width="100%">'."\n";
+		print '<tr>';
+		print '<td align="left" width="50"><a href="'.$url.'"><img src="'.$profilarray['icon'].'" width="48" border="0"></a></td>';
+		//print '<td><input type="radio" name="demochoice"';
+		//if ($profilarray['default']) print ' checked="true"';
+		//print ' value="'.$profilarray['key'].'"></td>';
+		print '<td align="left"><a href="'.$url.'">'.$langs->trans($profilarray['label']).'</a></td></tr>';
+		print '</table>';
+		print '</td>';
+		//if ($i % $NBOFCOLS == ($NBOFCOLS-1)) print '</tr>'."\n";
+		print '</tr>'."\n";
+		$i++;
+	}
 }
 print '</table>';
 
@@ -212,10 +233,12 @@ print '<tr><td>';
 print '</td></tr>';
 
 // Button
+/*
 print '<tr><td align="center">';
 print '<input type="hidden" name="action" value="gotodemo">';
 print '<input class="button" type="submit" value=" < '.$langs->trans("GoToDemo").' > ">';
 print '</td></tr>';
+*/
 
 print '</table>';
 
