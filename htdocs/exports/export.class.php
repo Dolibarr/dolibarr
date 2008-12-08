@@ -61,11 +61,11 @@ class Export
     /**
      *    \brief  Load an exportable dataset
      *    \param  user      Object user making export
-     *    \param  filter    Code export pour charger un lot de donn�es particulier
+     *    \param  filter    Code export pour charger un lot de donnees particulier
      */
     function load_arrays($user,$filter='')
     {
-        global $langs;
+        global $langs,$conf;
         
         dolibarr_syslog("Export::load_arrays user=".$user->id." filter=".$filter);
 
@@ -81,71 +81,79 @@ class Export
             {
                 $modulename=$reg[1];
     
-                // Chargement de la classe
-                $file = $dir."/".$modulename.".class.php";
-                $classname = $modulename;
-                require_once($file);
-                $module = new $classname($this->db);
+                // Defined if module is enabled
+                $enabled=true;
+                $part=strtolower(eregi_replace('^mod','',$modulename));
+				if (empty($conf->$part->enabled)) $enabled=false;						
                 
-                if (is_array($module->export_code))
+				if ($enabled)
                 {
-                    foreach($module->export_code as $r => $value)
-                    {
-                        if ($filter && ($filter != $module->export_code[$r])) continue;
-                        
-                        // Test si permissions ok \todo tester sur toutes permissions
-                        $perm=$module->export_permission[$r][0];
-                        //print_r("$perm[0]-$perm[1]-$perm[2]<br>");
-                        if ($perm[2])
-                        {
-                            $bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
-                        }
-                        else
-                        {
-                            $bool=$user->rights->$perm[0]->$perm[1];
-                        }
-                        if ($perm[0]=='user' && $user->admin) $bool=true;
-                        //print("$bool<br>");
-                        
-                        // Permissions ok
-                        if ($bool)
-                        {
-                            // Charge fichier lang en rapport
-                            $langtoload=$module->getLangFilesArray();
-                            if (is_array($langtoload))
-                            {
-                                foreach($langtoload as $key) 
-                                {
-                                    $langs->load($key);
-                                }
-                            }
+					// Chargement de la classe
+	                $file = $dir."/".$modulename.".class.php";
+	                $classname = $modulename;
+	                require_once($file);
+	                $module = new $classname($this->db);
 
-                            // Module
-                            $this->array_export_module[$i]=$module;
-                            // Icon
-                            $this->array_export_icon[$i]=(isset($module->export_icon[$r])?$module->export_icon[$r]:$module->picto);
-                            // Code du dataset export
-                            $this->array_export_code[$i]=$module->export_code[$r];
-                            // Libelle du dataset export
-                            $this->array_export_label[$i]=$module->getDatasetLabel($r);
-                            // Tableau des champ a exporter (cle=champ, valeur=libelle)
-                            $this->array_export_fields[$i]=$module->export_fields_array[$r];
-                            // Tableau des entites a exporter (cle=champ, valeur=entite)
-                            $this->array_export_entities[$i]=$module->export_entities_array[$r];
-                            // Tableau des alias a exporter (cle=champ, valeur=alias)
-                            $this->array_export_alias[$i]=$module->export_alias_array[$r];
-                            // Tableau des operations speciales sur champ
-                            $this->array_export_special[$i]=$module->export_special_array[$r];
-
-                            // Requete sql du dataset
-                            $this->array_export_sql_start[$i]=$module->export_sql_start[$r];
-                            $this->array_export_sql_end[$i]=$module->export_sql_end[$r];
-                            //$this->array_export_sql[$i]=$module->export_sql[$r];
-
-                            dolibarr_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
-                            $i++;
-                        }
-                    }            
+                	if (is_array($module->export_code))
+	                {
+	                    foreach($module->export_code as $r => $value)
+	                    {
+	                        if ($filter && ($filter != $module->export_code[$r])) continue;
+	                        
+	                        // Test si permissions ok \todo tester sur toutes permissions
+	                        $perm=$module->export_permission[$r][0];
+	                        //print_r("$perm[0]-$perm[1]-$perm[2]<br>");
+	                        if ($perm[2])
+	                        {
+	                            $bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
+	                        }
+	                        else
+	                        {
+	                            $bool=$user->rights->$perm[0]->$perm[1];
+	                        }
+	                        if ($perm[0]=='user' && $user->admin) $bool=true;
+	                        //print("$bool<br>");
+	                        
+	                        // Permissions ok
+	                        if ($bool)
+	                        {
+	                            // Charge fichier lang en rapport
+	                            $langtoload=$module->getLangFilesArray();
+	                            if (is_array($langtoload))
+	                            {
+	                                foreach($langtoload as $key) 
+	                                {
+	                                    $langs->load($key);
+	                                }
+	                            }
+	
+	                            // Module
+	                            $this->array_export_module[$i]=$module;
+	                            // Icon
+	                            $this->array_export_icon[$i]=(isset($module->export_icon[$r])?$module->export_icon[$r]:$module->picto);
+	                            // Code du dataset export
+	                            $this->array_export_code[$i]=$module->export_code[$r];
+	                            // Libelle du dataset export
+	                            $this->array_export_label[$i]=$module->getDatasetLabel($r);
+	                            // Tableau des champ a exporter (cle=champ, valeur=libelle)
+	                            $this->array_export_fields[$i]=$module->export_fields_array[$r];
+	                            // Tableau des entites a exporter (cle=champ, valeur=entite)
+	                            $this->array_export_entities[$i]=$module->export_entities_array[$r];
+	                            // Tableau des alias a exporter (cle=champ, valeur=alias)
+	                            $this->array_export_alias[$i]=$module->export_alias_array[$r];
+	                            // Tableau des operations speciales sur champ
+	                            $this->array_export_special[$i]=$module->export_special_array[$r];
+	
+	                            // Requete sql du dataset
+	                            $this->array_export_sql_start[$i]=$module->export_sql_start[$r];
+	                            $this->array_export_sql_end[$i]=$module->export_sql_end[$r];
+	                            //$this->array_export_sql[$i]=$module->export_sql[$r];
+	
+	                            dolibarr_syslog("Export loaded for module ".$modulename." with index ".$i.", dataset=".$module->export_code[$r].", nb of fields=".sizeof($module->export_fields_code[$r]));
+	                            $i++;
+	                        }
+	                    }            
+	                }
                 }
             }
         }
